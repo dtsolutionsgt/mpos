@@ -70,7 +70,6 @@ public class Venta extends PBase {
 	private double  latitude,longitude;
 	private String  barcode;
 
-	
 	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // in Meters
 	private static final long  MIN_TIME_BW_UPDATES = 1000; // in Milliseconds
 
