@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".list_view_barras">
+    tools:context="com.dtsgt.ladapt.list_view_barras">
 
     <RelativeLayout
         android:layout_width="304dp"

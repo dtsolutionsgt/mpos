@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.dts.mpos.prueba_swipe">
+    tools:context="com.dtsgt.mpos.prueba_swipe">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

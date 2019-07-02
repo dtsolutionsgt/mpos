@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dts.mpos"
+    package="com.dtsgt.mpos"
     android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0">
@@ -24,19 +24,20 @@
         android:required="true" />
 
     <application
-        android:name="com.dts.mpos.appGlobals"
+        android:name="com.dtsgt.base.appGlobals"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/icono"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.dts.mpos.imprime_barras" />
-        <activity android:name="com.dts.mpos.desglose" />
+        <activity android:name="com.dtsgt.mpos.imprime_barras" />
+        <activity android:name="com.dtsgt.mpos.desglose" />
         <activity
-            android:name="com.dts.mpos.MainActivity"
+            android:name="com.dtsgt.mpos.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,407 +46,407 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.dts.mpos.Menu"
+            android:name="com.dtsgt.mpos.Menu"
             android:label="@string/title_activity_menu"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.Clientes"
+            android:name="com.dtsgt.mpos.Clientes"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_clientes"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.CliDet"
+            android:name="com.dtsgt.mpos.CliDet"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cli_det"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.Venta"
+            android:name="com.dtsgt.mpos.Venta"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_venta"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.ComDrop"
+            android:name="com.dtsgt.mpos.ComDrop"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_com_drop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.MessageBox"
+            android:name="com.dtsgt.mpos.MessageBox"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_message"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.Producto"
+            android:name="com.dtsgt.mpos.Producto"
             android:label="@string/title_activity_producto"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.dts.mpos.ProdCant"
+            android:name="com.dtsgt.mpos.ProdCant"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_prod_cant"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name="com.dts.mpos.PedidoRes"
+            android:name="com.dtsgt.mpos.PedidoRes"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_pedido_res"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.ObjRuta"
+            android:name="com.dtsgt.mpos.ObjRuta"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_obj_ruta"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.ObjProd"
+            android:name="com.dtsgt.mpos.ObjProd"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_obj_prod"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.InvBodega"
+            android:name="com.dtsgt.mpos.InvBodega"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_inv_bodega"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.ConsPrecio"
+            android:name="com.dtsgt.mpos.ConsPrecio"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cons_precio"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.Pago"
+            android:name="com.dtsgt.mpos.Pago"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_pago"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.Cobro"
+            android:name="com.dtsgt.mpos.Cobro"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cobro"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.Reimpresion"
+            android:name="com.dtsgt.mpos.Reimpresion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_reimpresion"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.Anulacion"
+            android:name="com.dtsgt.mpos.Anulacion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_anulacion"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.Deposito"
+            android:name="com.dtsgt.mpos.Deposito"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_deposito"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name="com.dts.mpos.ListaPromo"
+            android:name="com.dtsgt.mpos.ListaPromo"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_lista_promo"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.DeposDoc"
+            android:name="com.dtsgt.mpos.DeposDoc"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_depos_doc"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.DescBon"
+            android:name="com.dtsgt.mpos.DescBon"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_desc_bon"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.dts.mpos.PicView"
+            android:name="com.dtsgt.mpos.PicView"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_pic_view" />
         <activity
-            android:name="com.dts.mpos.ComWS"
+            android:name="com.dtsgt.mpos.ComWS"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_com_ws"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.DevolCli"
+            android:name="com.dtsgt.mpos.DevolCli"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_devol_cli"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.DevCliCant"
+            android:name="com.dtsgt.mpos.DevCliCant"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_dev_cli_cant"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name="com.dts.mpos.Exist"
+            android:name="com.dtsgt.mpos.Exist"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_exist"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.dts.mpos.DevolBod"
+            android:name="com.dtsgt.mpos.DevolBod"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_devol_bod"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.ActDisp"
+            android:name="com.dtsgt.mpos.ActDisp"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_act_disp"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.MercLista"
+            android:name="com.dtsgt.mpos.MercLista"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_merc_lista"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.MercProp"
+            android:name="com.dtsgt.mpos.MercProp"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_merc_prop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.MercComp"
+            android:name="com.dtsgt.mpos.MercComp"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_merc_comp"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.MercPreg"
+            android:name="com.dtsgt.mpos.MercPreg"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_merc_preg"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.MercAct"
+            android:name="com.dtsgt.mpos.MercAct"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_merc"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.CliNuevo"
+            android:name="com.dtsgt.mpos.CliNuevo"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cli_nuevo"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.Recarga"
+            android:name="com.dtsgt.mpos.Recarga"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_recarga"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.RecargCant"
+            android:name="com.dtsgt.mpos.RecargCant"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_recarg_cant"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.FacturaRes"
+            android:name="com.dtsgt.mpos.FacturaRes"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_factura_res"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.FinDia"
+            android:name="com.dtsgt.mpos.FinDia"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_fin_dia"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.DepositoParc"
+            android:name="com.dtsgt.mpos.DepositoParc"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_deposito_parc"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name="com.dts.mpos.UtilPrint"
+            android:name="com.dtsgt.mpos.UtilPrint"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_util_print"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.PrintDialog"
+            android:name="com.dtsgt.mpos.PrintDialog"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_print_dialog"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.dts.mpos.BonList"
+            android:name="com.dtsgt.mpos.BonList"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_bon_list"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.dts.mpos.BonVenta"
+            android:name="com.dtsgt.mpos.BonVenta"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_bon_venta"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
-            android:name="com.dts.mpos.DemoData"
+            android:name="com.dtsgt.mpos.DemoData"
             android:label="@string/title_activity_demo_data"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.DemoDataDlg"
+            android:name="com.dtsgt.mpos.DemoDataDlg"
             android:label="@string/title_activity_demo_data_dlg"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name="com.dts.mpos.CliPos"
+            android:name="com.dtsgt.mpos.CliPos"
             android:label="@string/title_activity_cli_pos"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateVisible" />
         <activity
-            android:name="com.dts.mpos.CliGPS"
+            android:name="com.dtsgt.mpos.CliGPS"
             android:label="@string/title_activity_cli_gps"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="landscape" />
         <activity
-            android:name="com.dts.mpos.LicRegis"
+            android:name="com.dtsgt.mpos.LicRegis"
             android:label="@string/title_activity_lic_regis"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.RecargaAuto"
+            android:name="com.dtsgt.mpos.RecargaAuto"
             android:label="@string/title_activity_recarga_auto"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.CliNuevoApr"
+            android:name="com.dtsgt.mpos.CliNuevoApr"
             android:label="@string/title_activity_cli_nuevo_apr"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.SolicInv"
+            android:name="com.dtsgt.mpos.SolicInv"
             android:label="@string/title_activity_solic_inv"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.Aprofam1"
+            android:name="com.dtsgt.mpos.Aprofam1"
             android:label="@string/title_activity_aprofam1"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.Municipio"
+            android:name="com.dtsgt.mpos.Municipio"
             android:label="@string/title_activity_municipio" />
         <activity
-            android:name="com.dts.mpos.CliNuevoAprEdit"
+            android:name="com.dtsgt.mpos.CliNuevoAprEdit"
             android:label="@string/title_activity_cli_nuevo_apr_edit"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name="com.dts.mpos.ComWSExist"
+            android:name="com.dtsgt.mpos.ComWSExist"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_com_wsexist"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.Tablas"
+            android:name="com.dtsgt.mpos.Tablas"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Tablas"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.InicioDia"
+            android:name="com.dtsgt.mpos.InicioDia"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Tablas"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.RepesajeLista"
+            android:name="com.dtsgt.mpos.RepesajeLista"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.Repesaje"
+            android:name="com.dtsgt.mpos.Repesaje"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
-            android:name="com.dts.mpos.DevolBodTol"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.DevolBodTol"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.DevolBodCan"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.DevolBodCan"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.Soporte"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.Soporte"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.ComWSPrec"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.ComWSPrec"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.nota_credito"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.nota_credito"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.ayudante_vehiculo"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.ayudante_vehiculo"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.ComWSRec"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.ComWSRec"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.BonBarra"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.BonBarra"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.UtilPrint2"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.UtilPrint2"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.comWSLic"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.comWSLic"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.ComWSFotos"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.ComWSFotos"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.dts.mpos.WSTest"
-            android:screenOrientation="portrait"
+            android:name="com.dtsgt.mpos.WSTest"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name="com.dts.mpos.rating"
+        <activity android:name="com.dtsgt.mpos.rating"
             android:label="Rating"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
     </application>

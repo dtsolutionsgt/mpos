@@ -8,6 +8,14 @@
     android:onClick="doFocus"
     tools:context=".Venta">
 
+    <TextView
+        android:id="@+id/textView72"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:text="TextView"
+        android:visibility="invisible" />
+
     <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
@@ -74,61 +82,6 @@
         android:paddingRight="5dp"
         android:paddingBottom="5dp"
         android:src="@drawable/next48" />
-
-    <ImageView
-        android:id="@+id/imgPFoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:clickable="true"
-        android:onClick="showPromo"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="5dp"
-        android:src="@drawable/bonus"
-        android:visibility="invisible" />
-
-    <RelativeLayout
-        android:id="@+id/rellaytot"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_above="@+id/relbotpan"
-        android:layout_alignParentBottom="false"
-        android:layout_marginBottom="5dp"
-        android:layout_toLeftOf="@+id/imgNext"
-        android:layout_toRightOf="@+id/imgPFoto"
-        android:background="@layout/blue_strip"
-        android:clickable="true"
-        android:onClick="doFocus">
-
-        <TextView
-            android:id="@+id/lblTot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:paddingRight="10dp"
-            android:text="0.00"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/lblDir"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:paddingLeft="10dp"
-            android:text="Total"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
-
-    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/reylayprod"
@@ -205,12 +158,11 @@
 
     <ListView
         android:id="@+id/listView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/rellaytot"
+        android:layout_width="1241dp"
+        android:layout_height="315dp"
+        android:layout_above="@+id/relbotpan"
         android:layout_below="@+id/reylayprod"
         android:layout_alignLeft="@+id/reylayprod"
-        android:layout_marginLeft="3dp"
         android:layout_marginTop="3dp"
         android:layout_marginRight="3dp"
         android:layout_marginBottom="5dp"
@@ -234,18 +186,74 @@
     <RelativeLayout
         android:id="@+id/relbotpan"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
+        android:layout_height="120dp"
+        android:layout_below="@id/textView72"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="false"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="1dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
+        android:layout_marginRight="2dp"
         android:layout_marginBottom="1dp"
-        android:background="@layout/blue_strip"
+        android:background="@drawable/frame_rect"
         android:clickable="true"
         android:onClick="doFocus">
+
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="57dp"
+            android:layout_height="49dp"
+            android:layout_alignEnd="@+id/textView9"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="75dp"
+            android:clickable="true"
+            android:onClick="doSoftScan"
+            android:src="@drawable/scan2" />
+
+        <RelativeLayout
+            android:id="@+id/rellaytot"
+            android:layout_width="1232dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="500dp"
+            android:layout_marginRight="-14dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/blue_strip"
+            android:clickable="false"
+            android:onClick="doFocus">
+
+            <TextView
+                android:id="@+id/lblTot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp"
+                android:text="0.00"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lblDir"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/lblTot"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="108dp"
+                android:layout_marginEnd="1203dp"
+                android:paddingLeft="10dp"
+                android:text="Total"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/textView9"
@@ -265,10 +273,12 @@
             android:id="@+id/checkBox1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/textView9"
             android:layout_alignParentBottom="true"
             android:layout_centerVertical="false"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="9dp"
+            android:layout_marginEnd="85dp"
+            android:layout_marginBottom="284dp"
             android:background="#C2E4F4"
             android:paddingRight="10dp"
             android:text="Borrar"
@@ -288,16 +298,427 @@
             android:text="Name"
             android:textColor="#1A8AC6"
             android:textSize="10sp" />
-    </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/imageView13"
-        android:layout_width="57dp"
-        android:layout_height="49dp"
-        android:layout_alignTop="@+id/imgNext"
-        android:layout_alignParentStart="true"
-        android:clickable="true"
-        android:onClick="doSoftScan"
-        android:src="@drawable/scan2" />
+        <RelativeLayout
+            android:layout_width="350dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp">
+
+            <RelativeLayout
+                android:id="@+id/relKeyBase"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentTop="false"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/textView86"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/textView92"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_centerInParent="true"
+                            android:text="X"
+                            android:visibility="invisible" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_above="@id/textView92"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true">
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginStart="1dp"
+                                android:layout_marginTop="1dp"
+                                >
+
+                            </RelativeLayout>
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true">
+
+                                <TextView
+                                    android:id="@+id/textView97"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:text="X"
+                                    android:visibility="invisible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView98"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="7"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toTopOf="@id/textView97"
+                                    app:layout_constraintEnd_toStartOf="@+id/textView97"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView99"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="8"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toTopOf="@+id/textView97"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/textView97"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView100"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="4"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/textView97"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/textView97" />
+
+                                <TextView
+                                    android:id="@+id/textView101"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="5"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/textView97"
+                                    app:layout_constraintTop_toBottomOf="@+id/textView97" />
+                            </android.support.constraint.ConstraintLayout>
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@id/textView92"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentBottom="true">
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true">
+
+                                <TextView
+                                    android:id="@+id/textView111"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:text="X"
+                                    android:visibility="invisible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView112"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="1"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toTopOf="@+id/textView111"
+                                    app:layout_constraintEnd_toStartOf="@+id/textView111"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView113"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="2"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toTopOf="@+id/textView111"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/textView111"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView114"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="0"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/textView111" />
+
+                            </android.support.constraint.ConstraintLayout>
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/textView86"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:text="X"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/textView86"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/textView91"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_centerInParent="true"
+                            android:text="X"
+                            android:visibility="invisible" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_above="@id/textView91"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true">
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true">
+
+                                <TextView
+                                    android:id="@+id/textView94"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_centerVertical="true"
+                                    android:text="X"
+                                    android:visibility="invisible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView102"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="9"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toTopOf="@+id/textView94"
+                                    app:layout_constraintEnd_toStartOf="@+id/textView94"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView104"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:padding="8dp"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toTopOf="@+id/textView94"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/textView94"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView105"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="6"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/textView94"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/textView94" />
+
+                                <TextView
+                                    android:id="@+id/textView106"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="C"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/textView94"
+                                    app:layout_constraintTop_toBottomOf="@+id/textView94" />
+
+                                <ImageView
+                                    android:id="@+id/imageView24"
+                                    android:layout_width="64dp"
+                                    android:layout_height="64dp"
+                                    android:padding="6dp"
+                                    android:src="@drawable/key_bksp"
+                                    app:layout_constraintBottom_toTopOf="@+id/textView94"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/textView94"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                            </android.support.constraint.ConstraintLayout>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@id/textView91"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentBottom="true">
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true">
+
+                                <TextView
+                                    android:id="@+id/textView107"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:text="X"
+                                    android:visibility="invisible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintLeft_toLeftOf="parent"
+                                    app:layout_constraintRight_toRightOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView108"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/textView107"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <ImageView
+                                    android:id="@+id/imageView25"
+                                    android:layout_width="64dp"
+                                    android:layout_height="139dp"
+                                    android:padding="6dp"
+                                    android:src="@drawable/key_enter"
+                                    app:layout_constraintEnd_toEndOf="@+id/textView108"
+                                    app:layout_constraintStart_toStartOf="@+id/textView108"
+                                    tools:layout_editor_absoluteY="8dp" />
+
+                                <TextView
+                                    android:id="@+id/textView109"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="3"
+                                    android:textColor="#000000"
+                                    android:textSize="36sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toTopOf="@+id/textView107"
+                                    app:layout_constraintEnd_toStartOf="@+id/textView107"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:id="@+id/textView110"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    android:background="@drawable/frame_key"
+                                    android:gravity="center"
+                                    android:text="."
+                                    android:textColor="#000000"
+                                    android:textSize="48sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/textView107"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/textView107" />
+                            </android.support.constraint.ConstraintLayout>
+                        </RelativeLayout>
+                    </RelativeLayout>
+                </android.support.constraint.ConstraintLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
