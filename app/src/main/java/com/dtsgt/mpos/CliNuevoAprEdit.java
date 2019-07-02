@@ -346,13 +346,13 @@ public class CliNuevoAprEdit extends PBase {
 			upd.add("TELEFONO",txtTel.getText().toString()+"");
 			upd.add("NIT",txtNit.getText().toString()+"");
 			upd.Where("CODIGO='"+cli+"'");
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 			
 			
 			upd.init("P_CLIENTE");		
 			upd.add("NOMBRE",txtNom.getText().toString());
 			upd.Where("CODIGO='"+cli+"'");
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 						
 			
 			upd.init("D_CLINUEVO_APR");
@@ -368,7 +368,7 @@ public class CliNuevoAprEdit extends PBase {
 			upd.add("Hijos",numhij);
 			upd.add("STATCOM","N");
 			upd.Where("CODIGO='"+cli+"'");
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 			
 
 			db.setTransactionSuccessful();				

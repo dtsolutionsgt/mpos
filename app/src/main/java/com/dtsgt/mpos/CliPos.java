@@ -322,7 +322,7 @@ public class CliPos extends PBase {
 				upd.add("NOMBRE",Nom);
 				upd.Where("CODIGO='"+NIT+"'");
 
-				db.execSQL(upd.SQL());
+				db.execSQL(upd.sql());
 
 				return true;
 

@@ -1287,7 +1287,7 @@ public class FacturaRes extends PBase {
 			upd.init("P_CLIRUTA");
 			upd.add("BANDERA",0);
 			upd.Where("CLIENTE='"+cliid+"'");
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);

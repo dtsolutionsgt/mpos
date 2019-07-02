@@ -414,7 +414,7 @@ public class PedidoRes extends PBase {
 			upd.add("BANDERA",0);
 			upd.Where("CLIENTE='"+cliid+"' AND DIA="+dweek);
 	
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("Error : " + e.getMessage());

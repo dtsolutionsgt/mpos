@@ -748,7 +748,7 @@ public class Venta extends PBase {
 
 			upd.Where("PRODUCTO='"+prodid+"'");
 
-	    	db.execSQL(upd.SQL());
+	    	db.execSQL(upd.sql());
 
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1258,7 +1258,7 @@ public class Venta extends PBase {
 			upd.add("BANDERA",cna);
 			upd.Where("CLIENTE='"+cliid+"' AND DIA="+dweek);
 
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("Error : " + e.getMessage());

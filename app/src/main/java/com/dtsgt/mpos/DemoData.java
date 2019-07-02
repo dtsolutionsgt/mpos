@@ -202,7 +202,7 @@ public class DemoData extends PBase {
 			upd.add("NOMBRE",gl.clsDemo.Desc);
 			upd.Where("CODIGO='0001000000'");
 	
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("Error : " + e.getMessage());return;
@@ -226,13 +226,13 @@ public class DemoData extends PBase {
 			upd.add("DESCLARGA",gl.clsDemo.Desc);
 			upd.Where("CODIGO='"+gl.clsDemo.Cod+"'");
 	
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 			
 			upd.init("P_PRODPRECIO");
 			upd.add("PRECIO",gl.clsDemo.val);
 			upd.Where("CODIGO='"+gl.clsDemo.Cod+"' AND (NIVEL=1)");
 	
-			db.execSQL(upd.SQL());
+			db.execSQL(upd.sql());
 			
 			db.setTransactionSuccessful();
 			db.endTransaction();
