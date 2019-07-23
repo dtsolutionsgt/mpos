@@ -42,7 +42,7 @@ public class MainActivity extends PBase {
     private BaseDatosVersion dbVers;
 
     private boolean rutapos, scanning = false;
-    private String cs1, cs2, cs3, barcode;
+    private String cs1, cs2, cs3, barcode, epresult;
 
     private String parVer = "2.0.0 / 20-Jun-2019";
 
@@ -55,10 +55,8 @@ public class MainActivity extends PBase {
 
             grantPermissions();
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
-
 
     }
 
@@ -294,6 +292,21 @@ public class MainActivity extends PBase {
         }
 
     }
+
+    public void doPrintEpson(View view) {
+        /*
+        try {
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
+            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
+            intent.putExtra("fname",Environment.getExternalStorageDirectory()+"/print.txt");
+            intent.putExtra("askprint",1);
+            this.startActivity(intent);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+        */
+    }
+
 
     //endregion
 
@@ -874,8 +887,7 @@ public class MainActivity extends PBase {
             txtUser.requestFocus();
             lblLogin.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 

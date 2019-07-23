@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
+import com.dtsgt.mant.Lista;
 
 import java.util.ArrayList;
 
@@ -1453,6 +1454,8 @@ public class Menu extends PBase {
 					}
 
 					//dialog.cancel();
+
+					startActivity(new Intent(Menu.this, Lista.class));
 				}
 			});
 

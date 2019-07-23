@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.MiscUtils;
@@ -28,11 +29,12 @@ public class PBase extends Activity {
 	protected BaseDatos.Insert ins;
 	protected BaseDatos.Update upd;
 	protected String sql;
-	
+
+	public appGlobals gl;
+	public MiscUtils mu;
+	public DateUtils du;
+	public AppMethods app;
 	protected Application vApp;
-	protected appGlobals gl;
-	protected MiscUtils mu;
-	protected DateUtils du;
 	protected clsClasses clsCls = new clsClasses();
 	protected InputMethodManager keyboard;	
 	
@@ -53,12 +55,13 @@ public class PBase extends Activity {
 
 	    opendb();
 	    ins=Con.Ins;upd=Con.Upd;
-		
+
 		vApp=this.getApplication();
 		gl=((appGlobals) this.getApplication());
-		
-		mu=new MiscUtils(this,gl.peMon);
-		du=new DateUtils();fecha=du.getActDateTime();
+
+		mu=new MiscUtils(this,"Q");
+		du=new DateUtils();
+		app=new AppMethods(this,gl,Con,db);
 		
 		keyboard = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
 

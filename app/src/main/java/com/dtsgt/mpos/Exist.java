@@ -3,9 +3,11 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -102,9 +104,24 @@ public class Exist extends PBase {
 				msgbox("No hay inventario disponible");
 				return;
 			}
-			if (doc.buildPrint("0",0)) prn.printask();
+			if (doc.buildPrint("0",0)) {
+				printEpson();
+				//prn.printask();
+			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
+
+	private void printEpson() {
+		try {
+			Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
+			intent.putExtra("mac","BT:00:01:90:85:0D:8C");
+			intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
+			intent.putExtra("askprint",1);
+			this.startActivity(intent);
+		} catch (Exception e) {
+			msgbox(e.getMessage());
 		}
 	}
 		
