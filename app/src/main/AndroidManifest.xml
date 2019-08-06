@@ -73,7 +73,7 @@
             android:label="@string/title_activity_venta"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ComDrop"
             android:configChanges="keyboardHidden|orientation|screenSize"

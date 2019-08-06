@@ -59,7 +59,7 @@ public class PBase extends Activity {
 		vApp=this.getApplication();
 		gl=((appGlobals) this.getApplication());
 
-		mu=new MiscUtils(this,"Q");
+		mu=new MiscUtils(this);
 		du=new DateUtils();
 		app=new AppMethods(this,gl,Con,db);
 		

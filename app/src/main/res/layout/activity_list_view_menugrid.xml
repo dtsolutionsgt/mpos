@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/imgNext"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
+        android:layout_height="144dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:minHeight="96dp"
@@ -18,13 +18,13 @@
         android:id="@+id/lblTrat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/imgNext"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/imgNext"
         android:gravity="center_horizontal"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="15sp" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/textView1"

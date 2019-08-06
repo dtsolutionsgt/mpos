@@ -43,14 +43,14 @@
             android:src="@drawable/inventario_blanco_gris" />
 
         <TextView
-            android:id="@+id/txtRoadTit"
+            android:id="@+id/lblTit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Recarga"
+            android:text="Ingreso de mercancía"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6" />
     </RelativeLayout>

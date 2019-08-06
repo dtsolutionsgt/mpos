@@ -55,7 +55,7 @@ public class ProdCant extends PBase {
 
 		if (rutatipo.equalsIgnoreCase("V")) imgUpd.setVisibility(View.INVISIBLE);
 		imgUpd.setVisibility(View.INVISIBLE);
-		
+
 		prc=new Precio(this,mu,gl.peDec);
 		getDisp();
 
@@ -577,7 +577,7 @@ public class ProdCant extends PBase {
 	private void setControls() {
 
 		try{
-			txtCant= (EditText) findViewById(R.id.txtMonto);
+			txtCant= (EditText) findViewById(R.id.txtFilter);
 			txtPeso= (EditText) findViewById(R.id.txtPeso);txtPeso.setVisibility(View.INVISIBLE);
 			lblDesc=(TextView) findViewById(R.id.lblFecha);
 			lblCant=(TextView) findViewById(R.id.lblCant);
@@ -590,7 +590,7 @@ public class ProdCant extends PBase {
 			lblPesoLbl=(TextView) findViewById(R.id.textView24); lblPesoLbl.setVisibility(View.INVISIBLE);
 			lblFactor=(TextView) findViewById(R.id.textView22);lblFactor.setVisibility(View.INVISIBLE);
 			lblCantPeso=(TextView) findViewById(R.id.textView21);lblCantPeso.setText("");lblCantPeso.setVisibility(View.INVISIBLE);
-			lblCodProd=(TextView) findViewById(R.id.txtRoadTit);
+			lblCodProd=(TextView) findViewById(R.id.lblTit);
 			imgProd=(ImageView) findViewById(R.id.imgPFoto);
 			imgUpd=(ImageView) findViewById(R.id.imageView1);
 			imgDel=(ImageView) findViewById(R.id.imageView2);

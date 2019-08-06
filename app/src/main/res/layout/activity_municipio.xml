@@ -11,12 +11,12 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/relbotpan"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/txtMonto" >
+        android:layout_below="@+id/txtFilter" >
 
     </ListView>
 
     <EditText
-        android:id="@+id/txtMonto"
+        android:id="@+id/txtFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/relbotpan"
@@ -29,7 +29,7 @@
         android:id="@+id/lblPTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtMonto"
+        android:layout_alignLeft="@+id/txtFilter"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:visibility="invisible" />

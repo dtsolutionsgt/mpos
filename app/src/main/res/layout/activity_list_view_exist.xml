@@ -27,7 +27,8 @@
             android:scrollHorizontally="false"
             android:text="Descripción"
             android:textSize="18sp"
-            android:textStyle="normal|bold" />
+            android:textStyle="normal|bold"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textView18"

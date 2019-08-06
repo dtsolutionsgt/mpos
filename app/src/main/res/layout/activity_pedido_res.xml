@@ -41,7 +41,7 @@
         android:background="@layout/spinner_style" />
 
     <EditText
-        android:id="@+id/txtMonto"
+        android:id="@+id/txtFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -101,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/relbotpan"
         android:layout_alignParentLeft="false"
-        android:layout_below="@+id/txtMonto"
+        android:layout_below="@+id/txtFilter"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp" >
 
@@ -147,7 +147,7 @@
             android:src="@drawable/pedidos_3_gray" />
 
         <TextView
-            android:id="@+id/txtRoadTit"
+            android:id="@+id/lblTit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

@@ -34,7 +34,7 @@
             android:src="@drawable/mantenimientos48" />
 
         <TextView
-            android:id="@+id/txtRoadTit"
+            android:id="@+id/lblTit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -64,17 +64,20 @@
             android:id="@+id/imgNext"
             android:layout_width="48dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="8dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:clickable="true"
-            android:onClick="applyFilter"
+            android:onClick="doClear"
             android:padding="3dp"
             android:src="@drawable/erase" />
 
         <EditText
-            android:id="@+id/txtMonto"
+            android:id="@+id/txtFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -103,22 +106,26 @@
         android:background="@layout/blue_strip" >
 
         <ImageView
-            android:id="@+id/imgImg"
+            android:id="@+id/imageView26"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="3dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:onClick="doExit"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:src="@drawable/mas"
-            tools:src="@drawable/prev48" />
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="0dp"
+            android:padding="4dp"
+            android:src="@drawable/prev48" />
 
+        <TextView
+            android:id="@+id/textView85"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginBottom="15dp"
+            android:layout_toEndOf="@+id/imageView26"
+            android:text="Registros : "
+            android:textColor="#FFFFFF" />
     </RelativeLayout>
 
     <ListView

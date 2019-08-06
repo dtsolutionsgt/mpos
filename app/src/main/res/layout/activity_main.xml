@@ -8,51 +8,53 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
-        android:layout_width="260dp"
+        android:layout_width="360dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" >
+        android:layout_centerInParent="true">
 
         <TextView
             android:id="@+id/lblCDisp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:ellipsize="end"
-            android:gravity="center_horizontal"
+            android:gravity="clip_vertical|center_horizontal"
             android:maxLines="1"
-            android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="Ruta 1"
+            android:paddingBottom="10dp"
+            android:text="Caja 1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="18sp" />
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblCUsed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/lblCDisp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/lblCDisp"
-            android:gravity="center_horizontal"
-            android:paddingBottom="20dp"
-            android:paddingTop="5dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:text="Tienda"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#000000"
-            android:textSize="18sp" />
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblProd"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_above="@+id/lblCant"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/lblCUsed"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="20dp"
-            android:paddingTop="10dp"
+            android:gravity="center_vertical"
+            android:paddingTop="0dp"
             android:text="Usuario"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#000000"
@@ -61,24 +63,26 @@
         <EditText
             android:id="@+id/txtUser"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/lblCUsed"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             android:layout_toRightOf="@+id/lblProd"
             android:ems="10"
             android:imeOptions="actionNext"
             android:singleLine="true"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblCant"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/txtUser"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="20dp"
             android:layout_toLeftOf="@+id/txtUser"
+            android:gravity="center_vertical"
             android:paddingTop="10dp"
             android:text="Clave"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -86,31 +90,33 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/txtMonto"
+            android:id="@+id/txtFilter"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/txtUser"
             android:layout_alignTop="@+id/lblCant"
-            android:layout_marginRight="20dp"
+            android:layout_alignEnd="@+id/txtUser"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
             android:ems="10"
             android:inputType="textPassword"
             android:singleLine="true"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblDir"
             android:layout_width="10dp"
-            android:layout_height="36dp"
-            android:layout_below="@+id/txtMonto"
-            android:layout_alignRight="@+id/txtMonto"
+            android:layout_height="48dp"
+            android:layout_below="@+id/txtFilter"
+            android:layout_alignRight="@+id/txtFilter"
             android:layout_marginTop="5dp"
             android:layout_toRightOf="@+id/lblCant"
             android:background="#A01127"
             android:clickable="true"
             android:gravity="center"
             android:onClick="doLogin"
-            android:text="Login"
+            android:text="INGRESO"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
@@ -119,9 +125,9 @@
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/lblDir"
+            android:layout_height="5dp"
             android:layout_below="@+id/lblDir"
+            android:layout_alignLeft="@+id/lblDir"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="invisible" />
@@ -146,7 +152,6 @@
             android:layout_marginBottom="20dp"
             android:clickable="true"
             android:maxWidth="610dp"
-            android:onClick="doPrintEpson"
             android:src="@drawable/logo" />
 
         <TextView

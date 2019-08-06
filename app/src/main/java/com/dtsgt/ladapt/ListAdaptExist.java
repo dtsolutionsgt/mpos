@@ -17,14 +17,15 @@ import com.dtsgt.mpos.R;
 public class ListAdaptExist extends BaseAdapter {
 	
 	private static ArrayList<clsClasses.clsExist> items;
-		
-	private int selectedIndex;
-	
 	private LayoutInflater l_Inflater;
 
-	public ListAdaptExist(Context context, ArrayList<clsClasses.clsExist> results) {
+	private int selectedIndex;
+	private boolean upeso;
+
+	public ListAdaptExist(Context context, ArrayList<clsClasses.clsExist> results,boolean usarpeso) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
+		upeso=usarpeso;
 		selectedIndex = -1;
 	}
 
@@ -79,6 +80,8 @@ public class ListAdaptExist extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
+
+		if (!upeso) holder.lblValor.setVisibility(View.INVISIBLE);
 
 		holder.lblDesc.setText(items.get(position).Cod);
 		holder.lblCod.setText(items.get(position).Desc);

@@ -62,7 +62,7 @@ public class Pago extends PBase {
 		listView = (ListView) findViewById(R.id.listView1);
 		lblSaldo = (TextView) findViewById(R.id.lblpSaldo);
 		lblTotal = (TextView) findViewById(R.id.lblPTotal);
-		txtMonto = (EditText) findViewById(R.id.txtMonto);
+		txtMonto = (EditText) findViewById(R.id.txtFilter);
 		
 		setHandlers();
 

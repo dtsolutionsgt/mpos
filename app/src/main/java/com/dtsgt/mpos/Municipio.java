@@ -35,7 +35,7 @@ public class Municipio extends PBase {
 		addlog("Municipio",""+du.getActDateTime(),gl.vend);
 
 		listView = (ListView) findViewById(R.id.listView1);
-		txtFilter = (EditText) findViewById(R.id.txtMonto);
+		txtFilter = (EditText) findViewById(R.id.txtFilter);
 
 		setHandlers();
 

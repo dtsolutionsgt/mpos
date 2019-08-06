@@ -49,7 +49,7 @@
             android:src="@drawable/clientes" />
 
         <TextView
-            android:id="@+id/txtRoadTit"
+            android:id="@+id/lblTit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -89,7 +89,7 @@
             android:src="@drawable/erase" />
 
         <EditText
-            android:id="@+id/txtMonto"
+            android:id="@+id/txtFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"

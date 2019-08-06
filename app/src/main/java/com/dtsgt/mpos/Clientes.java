@@ -51,8 +51,6 @@ public class Clientes extends PBase {
 	private ArrayList<String> ppago = new ArrayList<String>();
 
 	private AlertDialog.Builder mMenuDlg;
-	private ArrayList<String> listcode = new ArrayList<String>();
-	private ArrayList<String> listname = new ArrayList<String>();
 
 	private ListAdaptCliList adapter;
 	private clsCDB selitem;
@@ -60,20 +58,7 @@ public class Clientes extends PBase {
 
 	private int selidx, fecha, dweek, browse;
 	private String selid, bbstr, bcode;
-	private boolean scanning = false;
-
-	// Location
-	private LocationManager locationManager;
-	private Location location;
-
-	private LocationListener locationListener;
-
-	private boolean isGPSEnabled, isNetworkEnabled, canGetLocation;
-	private double latitude, longitude;
-	private String cod;
-
-	private static final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // in Meters
-	private static final long MIN_TIME_BW_UPDATES = 1000; // in Milliseconds
+	private boolean scanning = false,porcentaje;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +71,7 @@ public class Clientes extends PBase {
 		listView = (ListView) findViewById(R.id.listView1);
 		spinList = (Spinner) findViewById(R.id.spinner1);
 		spinFilt = (Spinner) findViewById(R.id.spinner8);
-		txtFiltro = (EditText) findViewById(R.id.txtMonto);
+		txtFiltro = (EditText) findViewById(R.id.txtFilter);
 		lblCant = (TextView) findViewById(R.id.lblCant);
 
 		app = new AppMethods(this, gl, Con, db);
@@ -149,10 +134,6 @@ public class Clientes extends PBase {
 
 	}
 
-	public void orderDist(View view) {
-		msgAskDist("Ordenar los clientes por distancia aérea");
-	}
-
 	private void setHandlers() {
 
 		try {
@@ -169,16 +150,9 @@ public class Clientes extends PBase {
 					selidx = position;
 					adapter.setSelectedIndex(position);
 
-					//#HS_20181211 Carga la lista de incidencias por no lectura y muestra el dialogo
-					if (gl.incNoLectura == true) {
-						listNoLectura();
-					} else {
-						showCliente();
-					}
+					showCliente();
 
-				}
-
-				;
+				};
 			});
 
 			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -276,24 +250,6 @@ public class Clientes extends PBase {
 					if (tl == 0 || tl > 1) listItems();
 				}
 			});
-
-			locationListener = new LocationListener() {
-				@Override
-				public void onLocationChanged(Location arg0) {
-				}
-
-				@Override
-				public void onProviderDisabled(String arg0) {
-				}
-
-				@Override
-				public void onProviderEnabled(String arg0) {
-				}
-
-				@Override
-				public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-				}
-			};
 
 		} catch (Exception e) {
 			addlog(new Object() {
@@ -438,39 +394,14 @@ public class Clientes extends PBase {
 	}
 
 	public void showCliente() {
-		Cursor DT;
-		float[] results = new float[1];
-		double cx=0,cy=0;
-
-		gl.gpsdist=-1;
 
 		try {
-
-			sql="SELECT COORX,COORY FROM P_CLIENTE WHERE CODIGO='"+selid+"'";
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-
-			cx=DT.getDouble(0);	cy=DT.getDouble(1);
-			if (cx+cy==0) throw new Exception();
-
-			getLocation();
-			if (latitude+longitude==0) throw new Exception();
-			Location.distanceBetween(cx,cy,latitude,longitude, results);
-
-			gl.gpsdist=(int) results[0];
-		} catch (Exception e) {
-			gl.gpsdist=-1;
-		}
-
-		try {
-			gl.cliente = selid;
-
+			//gl.cliente = selid;
 			gl.closeCliDet = false;
 			gl.closeVenta = false;
+			if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 
-			Intent intent;
-			intent = new Intent(this, CliDet.class);
-			startActivity(intent);
+			startActivity(new Intent(this, Venta.class));
 		} catch (Exception e) {
 			addlog(new Object() {
 			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -516,112 +447,70 @@ public class Clientes extends PBase {
 	}
 
 
-	// Distancia
-
-	private void ordenarPorDistancia() {
-		float[] results = new float[1];
-
-		if (items.size() == 0) return;
-
-		latitude = 0;longitude = 0;
-
-		try {
-			getLocation();
-			if (latitude + longitude == 0) throw new Exception();
-		} catch (Exception e) {
-			toast("No se puede definit posición actual");return;
-		}
-
-		for (int i = 0; i < items.size(); i++) {
-			try {
-				if (items.get(i).coorx+items.get(i).coory==0) {
-					items.get(i).valor=1000000;
-				} else {
-					Location.distanceBetween(items.get(i).coorx,items.get(i).coory,latitude,longitude, results);
-					items.get(i).valor=results[0];
-					items.get(i).Adds=" [ "+mu.frmint(items.get(i).valor)+"m ]";
-				}
-			} catch (Exception e) {
-				items.get(i).valor=1000000;
-			}
-
-			if (items.get(i).valor>=1000000) items.get(i).Adds="";
-		}
-
-		Collections.sort(items, new distanceComparator());
-
-		adapter = new ListAdaptCliList(this, items);
-		listView.setAdapter(adapter);
-
-		adapter.setSelectedIndex(0);
-		listView.setSelection(0);
-
-	}
-
-	public class distanceComparator implements Comparator<clsCDB> {
-		public int compare(clsCDB left, clsCDB right) {
-				 return (int)left.valor-(int)right.valor;
-		}
-	}
-
-	public Location getLocation() {
-
-		try {
-			locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-
-			isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-			if (!isGPSEnabled) 	toastcent("¡GPS Deshabilitado!");
-
-			isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-			if (!isGPSEnabled && !isNetworkEnabled) {
-				this.canGetLocation = false;
-			} else {
-				this.canGetLocation = true;
-				if (isNetworkEnabled) {
-					if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-					}
-					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES,
-							MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-					if (locationManager != null) {
-						location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-						if (location != null) {
-							latitude = location.getLatitude();
-							longitude = location.getLongitude();
-						}
-					}
-				}
-
-				// if GPS Enabled get lat/long using GPS Services
-				if (isGPSEnabled) {
-					if (location == null) {
-						locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,MIN_TIME_BW_UPDATES,
-								MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-
-						if (locationManager != null) {
-							location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-							if (location != null) {
-								latitude = location.getLatitude();
-								longitude = location.getLongitude();
-							}
-						}
-					}
-				}
-
-			}
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			return null;
-		}
-
-		return location;
-	}
-
-
 	// Aux
 
-    private void showItemMenu() {
+	private boolean validaVenta() {
+		Cursor DT;
+		int ci,cf,ca1,ca2;
+		long fecha_vigencia, diferencia;
+		double dd;
+		boolean resguardo=false;
+
+
+		try {
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL ";
+			DT=Con.OpenDT(sql);
+
+			DT.moveToFirst();
+
+			ca1=DT.getInt(1);
+			ci=DT.getInt(2);
+			cf=DT.getInt(3);
+			fecha_vigencia=DT.getLong(4);
+			resguardo=DT.getInt(5)==1;
+
+			if(resguardo==false){
+				if(fecha_vigencia< du.getActDate()){
+					//#HS_20181128_1556 Cambie el contenido del mensaje.
+					mu.msgbox("La resolución esta vencida. No se puede continuar con la venta.");
+					return false;
+				}
+			}
+
+			if(resguardo==false){
+				diferencia = fecha_vigencia - du.getActDate();
+				if( diferencia <= 30){
+					//#HS_20181128_1556 Cambie el contenido del mensaje.
+					mu.msgbox("La resolución vence en "+diferencia+". No se puede continuar con la venta.");
+					return false;
+				}
+			}
+
+			if (ca1>=cf) {
+				//#HS_20181128_1556 Cambie el contenido del mensaje.
+				mu.msgbox("Se han terminado los correlativos de facturas. No se puede continuar con la venta.");
+				return false;
+			}
+
+			dd=cf-ci;dd=0.75*dd;
+			ca2=ci+((int) dd);
+
+			if (ca1>ca2) {
+				//toastcent("Queda menos que 25% de talonario de facturas.");
+				//#HS_20181129_1040 agregue nuevo tipo de mensaje
+				porcentaje = true;
+			}
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n"); //+e.getMessage());
+			return false;
+		}
+
+		return true;
+	}
+
+	private void showItemMenu() {
 		try{
 			final AlertDialog Dialog;
 			final String[] selitems = {"Eliminar cliente","Cambiar datos"};
@@ -784,28 +673,6 @@ public class Clientes extends PBase {
 		}
 	}
 
-	private void msgAskDist(String msg) {
-		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setMessage("¿" + msg + "?");
-			dialog.setTitle("Clientes");
-			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					ordenarPorDistancia();
-				}
-			});
-
-			dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {}
-			});
-
-			dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-	}
-
 	private void borraCliNuevo() {
 		try {
 			db.beginTransaction();
@@ -823,81 +690,6 @@ public class Clientes extends PBase {
 			mu.msgbox(e.getMessage());
 		}
 	}
-
-	private void listNoLectura(){
-		Cursor DT;
-		String code,name;
-
-		listcode.clear();listname.clear();
-
-		try {
-
-			sql="SELECT Codigo,Nombre FROM P_CODNOLEC ORDER BY Nombre";
-
-			DT=Con.OpenDT(sql);
-			if (DT.getCount()==0) {return;}
-
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-
-			//	try {
-					code=String.valueOf(DT.getInt(0));
-					name=DT.getString(1);
-
-					listcode.add(code);
-					listname.add(name);
-			/*	} catch (Exception e) {
-					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-					mu.msgbox(e.getMessage());
-				}*/
-				DT.moveToNext();
-			}
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox( e.getMessage());return;
-		}
-
-		showIncNoLectura();
-
-	}
-
-	public void showIncNoLectura() {
-		try{
-			final AlertDialog Dialog;
-
-			final String[] selitems = new String[listname.size()];
-
-			for (int i = 0; i < listname.size(); i++) {
-				selitems[i] = listname.get(i);
-			}
-
-			mMenuDlg = new AlertDialog.Builder(this);
-			mMenuDlg.setTitle("Incidencia de no lectura");
-
-			mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-						showCliente();
-				}
-			});
-
-			mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-				}
-			});
-
-			Dialog = mMenuDlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-
 
 	// Activity Events
 	

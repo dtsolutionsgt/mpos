@@ -123,7 +123,7 @@ public class DevolBodTol extends PBase {
             dp = Con.OpenDT(sql);
 
             if (dp.getCount() == 0) {
-                adapter = new ListAdaptExist(this, items);
+                adapter = new ListAdaptExist(this, items, gl.usarpeso);
                 listView.setAdapter(adapter);
                 return;
             }
@@ -266,7 +266,7 @@ public class DevolBodTol extends PBase {
             mu.msgbox(e.getMessage());
         }
 
-        adapter = new ListAdaptExist(this, items);
+        adapter = new ListAdaptExist(this, items,gl.usarpeso);
         listView.setAdapter(adapter);
 
     }

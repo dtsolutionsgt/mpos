@@ -56,7 +56,7 @@ public class DepositoParc extends PBase {
 		addlog("DepositoParc",""+du.getActDateTime(),gl.vend);
 		
 		spinBanco = (Spinner) findViewById(R.id.spinner1);
-		txtBol = (EditText) findViewById(R.id.txtMonto);
+		txtBol = (EditText) findViewById(R.id.txtFilter);
 		txtEf = (EditText) findViewById(R.id.txtBoleta);txtEf.setText("");
 		lblCheq = (TextView) findViewById(R.id.lblCheq);lblCheq.setText("0.00");
 		lblTot = (TextView) findViewById(R.id.lblTot);lblTot.setText("0.00");

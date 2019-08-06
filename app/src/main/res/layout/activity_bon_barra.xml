@@ -99,7 +99,7 @@
                 android:src="@drawable/scan2" />
 
             <TextView
-                android:id="@+id/txtRoadTit"
+                android:id="@+id/lblTit"
                 android:layout_width="195dp"
                 android:layout_height="35dp"
                 android:layout_alignEnd="@+id/relRoadbar"

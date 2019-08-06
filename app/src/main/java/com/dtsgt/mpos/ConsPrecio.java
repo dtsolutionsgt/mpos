@@ -43,7 +43,7 @@ public class ConsPrecio extends PBase {
 		addlog("ConsPrecio",""+du.getActDateTime(),gl.vend);
 		
 		listView = (ListView) findViewById(R.id.listView1);
-		txtFilter = (EditText) findViewById(R.id.txtMonto);
+		txtFilter = (EditText) findViewById(R.id.txtFilter);
 		spinNivel = (Spinner) findViewById(R.id.spinner1);
 
 		fillSpinner();

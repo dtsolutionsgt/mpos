@@ -41,7 +41,7 @@
             android:src="@drawable/utils48" />
 
         <TextView
-            android:id="@+id/txtRoadTit"
+            android:id="@+id/lblTit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -76,7 +76,7 @@
         android:textSize="18sp" />
 
     <EditText
-        android:id="@+id/txtMonto"
+        android:id="@+id/txtFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/spinner1"
@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="false"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/txtMonto"
+        android:layout_below="@+id/txtFilter"
         android:layout_marginTop="10dp"
         android:clickable="true"
         android:onClick="doApply"

@@ -16,7 +16,7 @@
         android:visibility="invisible" />
 
     <EditText
-        android:id="@+id/txtMonto"
+        android:id="@+id/txtFilter"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

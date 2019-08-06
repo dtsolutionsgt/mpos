@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@layout/back"
+    android:background="#DBF5F3"
     android:clickable="true"
     android:onClick="doFocus"
     tools:context=".Venta">
@@ -19,7 +19,59 @@
     <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="48dp"
+        android:background="#1B76B9">
+
+        <TextView
+            android:id="@+id/lblTit4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/lblTit2"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toLeftOf="@id/lblTit3"
+            android:layout_toRightOf="@id/lblTit2"
+            android:gravity="center_horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Vendedor"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblTit3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/imgTitLogo"
+            android:background="@drawable/frame_btn"
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
+            android:text="PUBLICO"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/lblTit2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/lblTit"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/lblTit"
+            android:layout_toRightOf="@id/lblTit"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Tienda DTS"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
 
         <RelativeLayout
             android:id="@+id/relRoadbar"
@@ -39,7 +91,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="4dp"
             android:adjustViewBounds="true"
             android:src="@drawable/logo_panel" />
 
@@ -51,132 +104,58 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
-            android:padding="5dp"
-            android:src="@drawable/pedidos_1_gray" />
+            android:padding="8dp"
+            android:src="@drawable/cart" />
 
         <TextView
-            android:id="@+id/txtRoadTit"
+            android:id="@+id/lblTit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="ROAD"
+            android:text="Caja 1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6" />
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
     <ImageView
         android:id="@+id/imgNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_above="@+id/relbotpan"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="false"
-        android:layout_marginLeft="5dp"
         android:clickable="true"
         android:onClick="finishOrder"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="5dp"
-        android:src="@drawable/next48" />
-
-    <RelativeLayout
-        android:id="@+id/reylayprod"
-        android:layout_width="100dp"
-        android:layout_height="52dp"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="false"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_toLeftOf="@+id/imgImg"
-        android:background="@layout/frame_rect">
-
-        <TextView
-            android:id="@+id/lblProd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="3dp"
-            android:text="Producto"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/lblPNum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblProd"
-            android:layout_alignBottom="@+id/lblPres"
-            android:layout_alignParentRight="true"
-            android:gravity="center_vertical"
-            android:paddingRight="10dp"
-            android:text="0.00"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/lblCant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/lblPNum"
-            android:layout_alignBottom="@+id/lblPres"
-            android:layout_alignParentLeft="true"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="5dp"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/lblPres"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblProd"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/lblPNum"
-            android:gravity="center_vertical"
-            android:paddingLeft="2dp"
-            android:paddingRight="3dp"
-            android:text="UNID"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="14sp" />
-
-    </RelativeLayout>
+        android:padding="10dp"
+        android:src="@drawable/payment" />
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="1241dp"
         android:layout_height="315dp"
         android:layout_above="@+id/relbotpan"
-        android:layout_below="@+id/reylayprod"
-        android:layout_alignLeft="@+id/reylayprod"
+        android:layout_below="@id/relRoad"
         android:layout_marginTop="3dp"
+        android:layout_marginEnd="-21dp"
         android:layout_marginRight="3dp"
         android:layout_marginBottom="5dp"
+        android:layout_toStartOf="@+id/imgNext"
         android:clickable="true">
 
     </ListView>
 
     <ImageView
         android:id="@+id/imgImg"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_above="@+id/listView1"
-        android:layout_alignTop="@+id/reylayprod"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/relRoad"
         android:layout_alignParentRight="true"
+        android:layout_marginTop="-1dp"
         android:clickable="true"
         android:onClick="showProd"
         android:paddingLeft="10dp"
@@ -202,104 +181,106 @@
         android:clickable="true"
         android:onClick="doFocus">
 
-        <ImageView
-            android:id="@+id/imageView13"
-            android:layout_width="57dp"
-            android:layout_height="49dp"
-            android:layout_alignEnd="@+id/textView9"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="75dp"
-            android:clickable="true"
-            android:onClick="doSoftScan"
-            android:src="@drawable/scan2" />
-
         <RelativeLayout
             android:id="@+id/rellaytot"
             android:layout_width="1232dp"
             android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="500dp"
-            android:layout_marginRight="-14dp"
+            android:layout_alignParentBottom="false"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="2dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/blue_strip"
+            android:layout_toRightOf="@id/relKeyb"
+            android:background="#1B76B9"
             android:clickable="false"
             android:onClick="doFocus">
 
             <TextView
                 android:id="@+id/lblTot"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="3dp"
+                android:background="@drawable/frame_rect_white"
                 android:gravity="center_vertical"
+                android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="0.00"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/lblDir"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignTop="@+id/lblTot"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="108dp"
-                android:layout_marginEnd="1203dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="-1dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/relSub"
+                android:ellipsize="end"
+                android:gravity="left|center_vertical"
+                android:maxLines="2"
                 android:paddingLeft="10dp"
-                android:text="Total"
+                android:text="Pr"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/relSub"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentEnd="false"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="3dp"
+                android:layout_toLeftOf="@id/lblTot"
+                android:background="@drawable/frame_rect_white">
+
+                <TextView
+                    android:id="@+id/textView103"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="false"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="10dp"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:text="Sub : 0,000.00"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView115"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="3dp"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:text="Desc : 000,00"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+            </RelativeLayout>
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:gravity="center_horizontal"
-            android:paddingRight="10dp"
-            android:text="DTSolutions"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp" />
-
-        <CheckBox
-            android:id="@+id/checkBox1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/textView9"
-            android:layout_alignParentBottom="true"
-            android:layout_centerVertical="false"
-            android:layout_marginLeft="10dp"
-            android:layout_marginEnd="85dp"
-            android:layout_marginBottom="284dp"
-            android:background="#C2E4F4"
-            android:paddingRight="10dp"
-            android:text="Borrar"
-            android:textColor="#000000" />
-
-        <EditText
-            android:id="@+id/editText6"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="13dp"
-            android:layout_marginEnd="15dp"
-            android:background="#1A8AC6"
-            android:ems="10"
-            android:focusable="auto"
-            android:inputType="textPersonName"
-            android:text="Name"
-            android:textColor="#1A8AC6"
-            android:textSize="10sp" />
-
         <RelativeLayout
+            android:id="@+id/relKeyb"
             android:layout_width="350dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
@@ -366,7 +347,10 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_toLeftOf="@id/textView97"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="7"
                                 android:text="7"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -381,7 +365,10 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_toRightOf="@id/textView97"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="8"
                                 android:text="8"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -396,7 +383,10 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_toLeftOf="@id/textView97"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="4"
                                 android:text="4"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -411,7 +401,10 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_toRightOf="@id/textView97"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="5"
                                 android:text="5"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -444,7 +437,10 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_toLeftOf="@id/textView111"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="1"
                                 android:text="1"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -459,7 +455,10 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_toRightOf="@id/textView111"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="2"
                                 android:text="2"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -474,7 +473,10 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_alignParentBottom="true"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="0"
                                 android:text="0"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -526,7 +528,10 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_toLeftOf="@id/textView94"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="6"
                                 android:text="6"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -541,7 +546,10 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_toLeftOf="@id/textView94"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="9"
                                 android:text="9"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -569,10 +577,13 @@
                                 android:layout_toRightOf="@id/textView94"
                                 android:background="@drawable/frame_key"
                                 android:gravity="center"
+                                android:tag="C"
                                 android:text="C"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                android:clickable="true"
+                                android:onClick="doKey" />
 
                             <TextView
                                 android:id="@+id/textView104"
@@ -583,8 +594,11 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_toRightOf="@id/textView94"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
                                 android:padding="8dp"
+                                android:tag="B"
                                 android:textSize="36sp"
                                 android:textStyle="bold" />
 
@@ -623,8 +637,11 @@
                                 android:layout_alignTop="@id/textView108"
                                 android:layout_alignRight="@id/textView108"
                                 android:layout_alignBottom="@id/textView108"
+                                android:clickable="true"
+                                android:onClick="doKey"
                                 android:padding="6dp"
-                                android:src="@drawable/key_enter" />
+                                android:src="@drawable/key_enter"
+                                android:tag="E" />
 
                             <TextView
                                 android:id="@+id/textView107"
@@ -644,7 +661,10 @@
                                 android:layout_alignParentTop="true"
                                 android:layout_toLeftOf="@id/textView107"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="3"
                                 android:text="3"
                                 android:textColor="#000000"
                                 android:textSize="36sp"
@@ -659,7 +679,10 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_toLeftOf="@id/textView107"
                                 android:background="@drawable/frame_key"
+                                android:clickable="true"
                                 android:gravity="center"
+                                android:onClick="doKey"
+                                android:tag="."
                                 android:text="."
                                 android:textColor="#000000"
                                 android:textSize="48sp"
@@ -670,6 +693,222 @@
                 </android.support.constraint.ConstraintLayout>
             </RelativeLayout>
         </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relCant"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_below="@id/rellaytot"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/relKeyb"
+            android:background="@drawable/frame_rect">
+
+            <TextView
+                android:id="@+id/textView88"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/lblCant"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:gravity="center_horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="Cantidad"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/lblCant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView88"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:minWidth="100dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="000"
+                android:textColor="#000000"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relScan"
+            android:layout_width="329dp"
+            android:layout_height="64dp"
+            android:layout_alignTop="@id/relCant"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentBottom="false"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/relSend"
+            android:background="@drawable/frame_rect">
+
+            <ImageView
+                android:id="@+id/imageView13"
+                android:layout_width="42dp"
+                android:layout_height="63dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="1dp"
+                android:alpha="0.75"
+                android:clickable="true"
+                android:onClick="doSoftScan"
+                android:src="@drawable/barcode" />
+
+            <EditText
+                android:id="@+id/editText10"
+                android:layout_width="157dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="false"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="15dp"
+                android:layout_toEndOf="@+id/imageView13"
+                android:ems="10"
+                android:inputType="number" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relSend"
+            android:layout_width="80dp"
+            android:layout_height="64dp"
+            android:layout_alignTop="@id/relCant"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/frame_rect">
+
+            <TextView
+                android:id="@+id/textView93"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_below="@+id/textView90"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="0dp"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView116"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:gravity="center_horizontal"
+                android:text="Sin envio"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <GridView
+            android:layout_width="904dp"
+            android:layout_height="216dp"
+            android:layout_below="@+id/relScan"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toRightOf="@id/relKeyb" />
+
+        <ImageView
+            android:id="@+id/imageView29"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/relScan"
+            android:layout_alignBottom="@+id/relScan"
+            android:layout_alignParentEnd="false"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toEndOf="@+id/relCant"
+            android:alpha="0.75"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:src="@drawable/delete_64" />
+
+        <TextView
+            android:id="@+id/lblPrec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView29"
+            android:layout_alignBottom="@+id/imageView29"
+            android:layout_marginStart="2dp"
+            android:layout_toEndOf="@+id/imageView29"
+            android:gravity="center_vertical"
+            android:paddingRight="10dp"
+            android:text="0.00"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relArrows"
+        android:layout_width="80dp"
+        android:layout_height="207dp"
+        android:layout_above="@id/imgNext"
+        android:layout_below="@id/imgImg"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp">
+
+        <TextView
+            android:id="@+id/textView117"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_centerVertical="true"
+            android:text="TextView"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/imageView27"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_above="@+id/textView117"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="1dp"
+            android:alpha="0.5"
+            android:padding="7dp"
+            android:src="@drawable/arr_up"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/imageView28"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_below="@+id/textView117"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:alpha="0.5"
+            android:padding="7dp"
+            android:src="@drawable/arr_dn"
+            android:visibility="invisible" />
     </RelativeLayout>
 
 </RelativeLayout>

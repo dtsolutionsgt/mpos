@@ -48,7 +48,7 @@ public class Menu extends PBase {
 	
 	private int selId,selIdx,menuid,iicon;
 	private String rutatipo,sdoc;
-	private boolean rutapos,horizpos;
+	private boolean rutapos,horizpos,porcentaje;
 	
 	private final int mRequestCode = 1001;
 	private Exist Existencia = new Exist();
@@ -266,40 +266,19 @@ public class Menu extends PBase {
 				return;
 			}
 
-
 			switch (menuid) {
 
 				case 1:
+						gl.rutatipo="V";gl.rutatipog="V";
+						gl.closeCliDet = false;
+						gl.closeVenta = false;
+						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 
-					if (rutapos) {
-						Intent intentp = new Intent(this, CliPos.class);
-						startActivity(intentp);
-					} else {
-						gl.filtrocli=-1;
-						Intent intent = new Intent(this, Clientes.class);
-						//Asigna conexión actual al siguiente activity.
-
-						//#HS_201811 Verifica si hay existencias disponibles.
-						Existencia.Con = Con;
-						cantidad = Existencia.CantExistencias();
-
-						//#HS_20181206 Verifica el usuario si es DTS.
-						if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")){
-							mu.msgbox("No puede realizar esta acción");
-						}else {
-
-							if(gl.vnivel == 2){
-								msgAskSupervisor1();
-							}else {
-								startActivity(intent);
-							}
-						}
-
-					}
-
+						startActivity(new Intent(this, Venta.class));
 					break;
 
 				case 2:  // Comunicacion
+
 					gl.findiaactivo=false;
 					gl.tipo = 0;
 					gl.autocom = 0;
@@ -383,11 +362,7 @@ public class Menu extends PBase {
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
 						mu.msgbox("No puede realizar esta acción");
 					}else {
-						if (rutatipo.equalsIgnoreCase("P")) {
-							showInvMenuPreventa();
-						} else {
-							showInvMenuVenta();
-						}
+						showInvMenuVenta();
 					}
 
 					break;
@@ -420,8 +395,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
-
 
 	}
 
@@ -965,27 +938,8 @@ public class Menu extends PBase {
 			final String[] selitems = new String[itemcnt];
 
 			selitems[itempos]="Existencias";itempos++;
-			if (gl.peAceptarCarga) {
-				selitems[itempos]="Aceptar Inventario";itempos++;
-			} else {
-				if (gl.peStockItf) {
-					if (gl.peModal.equalsIgnoreCase("TOL")) {
-						//selitems[itempos]="Recarga manual";itempos++;
-						selitems[itempos]="Devolucion a bodega";itempos++;
-					} else {
-						selitems[itempos]="Devolucion a bodega";itempos++;
-					}
-				} else {
-					selitems[itempos]="Devolucion a bodega";itempos++;
-					selitems[itempos]="Recarga manual";itempos++;
-				}
-			}
-
-			//gl.peSolicInv=true;
-
-			if (gl.peSolicInv) {
-				selitems[itempos]="Solicitud de inventario";itempos++;
-			}
+			selitems[itempos]="Devolucion a bodega";itempos++;
+			selitems[itempos]="Ingreso de mercancía";itempos++;
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.inventario48);
@@ -997,9 +951,7 @@ public class Menu extends PBase {
 
 					if (mt.equalsIgnoreCase("Existencias")) menuExist();
 					if (mt.equalsIgnoreCase("Devolucion a bodega")) menuDevBod();
-					if (mt.equalsIgnoreCase("Recarga manual")) menuRecarga();
-					if (mt.equalsIgnoreCase("Aceptar Inventario")) menuRecargaAuto();
-					if (mt.equalsIgnoreCase("Solicitud de inventario")) menuSolicInv();
+					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
 
 					dialog.cancel();
 				}
@@ -1428,29 +1380,29 @@ public class Menu extends PBase {
 
 					switch (item) {
 						case 0://"Almacen",
-							;break;
+							gl.mantid=0;break;
 						case 1://"Bancos",
-							;break;
+							gl.mantid=1;break;
 						case 2://"Clientes",
-							;break;
+							gl.mantid=2;break;
 						case 3://"Empresas",
-							;break;
+							gl.mantid=3;break;
 						case 4://"Familia",
-							;break;
+							gl.mantid=4;break;
 						case 5://"Forma pago",
-							;break;
+							gl.mantid=5;break;
 						case 6://"Impuestos",
-							;break;
+							gl.mantid=6;break;
 						case 7://"Moneda",
-							;break;
+							gl.mantid=7;break;
 						case 8://"Productos",
-							;break;
+							gl.mantid=8;break;
 						case 9://"Proveedores",
-							;break;
+							gl.mantid=9;break;
 						case 10://"Usuarios",
-							;break;
+							gl.mantid=10;break;
 						case 11://"Vendedores"
-							;break;
+							gl.mantid=11;break;
 					}
 
 					//dialog.cancel();
@@ -1825,7 +1777,68 @@ public class Menu extends PBase {
 	//endregion
 
 	//region Aux
-	
+
+	private boolean validaVenta() {
+		Cursor DT;
+		int ci,cf,ca1,ca2;
+		long fecha_vigencia, diferencia;
+		double dd;
+		boolean resguardo=false;
+
+
+		try {
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL ";
+			DT=Con.OpenDT(sql);
+
+			DT.moveToFirst();
+
+			ca1=DT.getInt(1);
+			ci=DT.getInt(2);
+			cf=DT.getInt(3);
+			fecha_vigencia=DT.getLong(4);
+			resguardo=DT.getInt(5)==1;
+
+			if(resguardo==false){
+				if(fecha_vigencia< du.getActDate()){
+					//#HS_20181128_1556 Cambie el contenido del mensaje.
+					mu.msgbox("La resolución esta vencida. No se puede continuar con la venta.");
+					return false;
+				}
+			}
+
+			if(resguardo==false){
+				diferencia = fecha_vigencia - du.getActDate();
+				if( diferencia <= 30){
+					//#HS_20181128_1556 Cambie el contenido del mensaje.
+					mu.msgbox("La resolución vence en "+diferencia+". No se puede continuar con la venta.");
+					return false;
+				}
+			}
+
+			if (ca1>=cf) {
+				//#HS_20181128_1556 Cambie el contenido del mensaje.
+				mu.msgbox("Se han terminado los correlativos de facturas. No se puede continuar con la venta.");
+				return false;
+			}
+
+			dd=cf-ci;dd=0.75*dd;
+			ca2=ci+((int) dd);
+
+			if (ca1>ca2) {
+				//toastcent("Queda menos que 25% de talonario de facturas.");
+				//#HS_20181129_1040 agregue nuevo tipo de mensaje
+				porcentaje = true;
+			}
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n"); //+e.getMessage());
+			return false;
+		}
+
+		return true;
+	}
+
 	private void setPrintWidth() {
 		Cursor DT;
 		int prwd=32;

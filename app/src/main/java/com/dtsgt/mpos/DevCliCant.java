@@ -621,7 +621,7 @@ public class DevCliCant extends PBase {
 
 		try{
 
-			txtCant= (EditText) findViewById(R.id.txtMonto);
+			txtCant= (EditText) findViewById(R.id.txtFilter);
 			rlCant= (RelativeLayout) findViewById(R.id.rlCant);
 			lblPrec=(EditText) findViewById(R.id.txtPrecio);
 			txtLote = (EditText) findViewById(R.id.txtLote);

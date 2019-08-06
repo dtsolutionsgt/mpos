@@ -21,7 +21,7 @@ tools:context=".ComWSRec" >
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/txtRoadTit"
+        android:id="@+id/lblTit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

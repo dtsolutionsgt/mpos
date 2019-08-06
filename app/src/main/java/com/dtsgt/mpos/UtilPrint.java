@@ -47,7 +47,7 @@ public class UtilPrint extends PBase {
 		addlog("UtilPrint",""+du.getActDateTime(),gl.vend);
 		
 		spinPrint = (Spinner) findViewById(R.id.spinner1);
-		txtPar = (EditText) findViewById(R.id.txtMonto);
+		txtPar = (EditText) findViewById(R.id.txtFilter);
 		txtBut1 = (TextView) findViewById(R.id.textView1);txtBut1.setVisibility(View.INVISIBLE);
 
 		app = new AppMethods(this, gl, Con, db);

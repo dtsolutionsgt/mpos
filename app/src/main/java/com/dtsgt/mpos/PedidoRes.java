@@ -71,7 +71,7 @@ public class PedidoRes extends PBase {
 		addlog("PedidoRes",""+du.getActDateTime(),gl.vend);
 		
 		listView = (ListView) findViewById(R.id.listView1);
-		txtDir = (EditText) findViewById(R.id.txtMonto);
+		txtDir = (EditText) findViewById(R.id.txtFilter);
 		lblFecha = (TextView) findViewById(R.id.lblpSaldo);
 		imgBon = (ImageView) findViewById(R.id.imageView1);
 		

@@ -6,7 +6,7 @@
     tools:context=".InvBodega" >
 
     <EditText
-        android:id="@+id/txtMonto"
+        android:id="@+id/txtFilter"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/txtMonto"
+        android:layout_below="@+id/txtFilter"
         android:layout_margin="5dp" >
 
     </ListView>
@@ -44,9 +44,9 @@
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txtMonto"
+        android:layout_alignBottom="@+id/txtFilter"
         android:layout_alignLeft="@+id/listView1"
-        android:layout_alignTop="@+id/txtMonto"
+        android:layout_alignTop="@+id/txtFilter"
         android:gravity="center_vertical"
         android:paddingRight="10dp"
         android:text="Filtro"
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/imgPFoto"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/txtMonto"
+        android:layout_alignTop="@+id/txtFilter"
         android:adjustViewBounds="true"
         android:clickable="true"
         android:onClick="limpiaFiltro"

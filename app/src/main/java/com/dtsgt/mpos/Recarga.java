@@ -89,7 +89,7 @@ public class Recarga extends PBase {
 				mu.msgbox("No puede continuar, no ha agregado ninguno producto !");return;
 			}
 
-			msgAskComplete("Aplicar la recarga");
+			msgAskComplete("Aplicar ingreso");
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}

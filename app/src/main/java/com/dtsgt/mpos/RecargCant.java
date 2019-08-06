@@ -153,7 +153,7 @@ public class RecargCant extends PBase {
 
 	private void setControls() {
 		try{
-			txtCant= (EditText) findViewById(R.id.txtMonto);
+			txtCant= (EditText) findViewById(R.id.txtFilter);
 			rlCant= (RelativeLayout) findViewById(R.id.rlCant);
 			lblDesc=(TextView) findViewById(R.id.lblFecha);
 			lblPrec=(TextView) findViewById(R.id.lblPNum);

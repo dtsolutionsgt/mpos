@@ -103,7 +103,7 @@ public class MainActivity extends PBase {
             gl.parVer = parVer;
 
             txtUser = (EditText) findViewById(R.id.txtUser);
-            txtPass = (EditText) findViewById(R.id.txtMonto);
+            txtPass = (EditText) findViewById(R.id.txtFilter);
             lblRuta = (TextView) findViewById(R.id.lblCDisp);
             lblRTit = (TextView) findViewById(R.id.lblCUsed);
             lblLogin = (TextView) findViewById(R.id.lblDir);
@@ -293,21 +293,6 @@ public class MainActivity extends PBase {
 
     }
 
-    public void doPrintEpson(View view) {
-        /*
-        try {
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
-            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
-            intent.putExtra("fname",Environment.getExternalStorageDirectory()+"/print.txt");
-            intent.putExtra("askprint",1);
-            this.startActivity(intent);
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
-        */
-    }
-
-
     //endregion
 
     //region Main
@@ -336,7 +321,7 @@ public class MainActivity extends PBase {
                 gl.ruta = DT.getString(0);
                 gl.rutanom = DT.getString(1);
                 gl.vend = DT.getString(2);
-                gl.rutatipog = DT.getString(3);
+                gl.rutatipog = "V";
                 s = DT.getString(3);
                 gl.wsURL = DT.getString(4);
                 gl.impresora = DT.getString(5);
@@ -364,12 +349,7 @@ public class MainActivity extends PBase {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
-        if (rutapos) {
-            lblRTit.setText("POS No. " + gl.ruta);
-            imgLogo.setImageResource(R.drawable.retail_logo);
-        } else {
-            lblRTit.setText("Ruta No. " + gl.ruta);
-        }
+        lblRTit.setText(gl.rutanom);
 
         try {
             //#HS_20181120_1616 Se agrego el campo UNIDAD_MEDIDA_PESO.//campo INCIDENCIA_NO_LECTURA
