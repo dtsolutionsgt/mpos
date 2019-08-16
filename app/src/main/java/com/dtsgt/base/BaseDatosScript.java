@@ -1052,6 +1052,7 @@ public class BaseDatosScript {
 					"[METAU] REAL NOT NULL,"+
 					"[ACUMV] REAL NOT NULL,"+
 					"[ACUMU] REAL NOT NULL,"+
+					"[activo] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([RUTA],[CODIGO])"+
 					");";
 			database.execSQL(sql);
@@ -1080,6 +1081,7 @@ public class BaseDatosScript {
 					"[NOMBRE] TEXT NOT NULL,"+
 					"[CUENTA] TEXT NOT NULL,"+
 					"[EMPRESA] TEXT NOT NULL,"+
+					"[activo] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CODIGO],[TIPO])"+
 					");";
 			database.execSQL(sql);
@@ -1208,6 +1210,7 @@ public class BaseDatosScript {
 			sql="CREATE TABLE [P_IMPUESTO] ("+
 					"[CODIGO] INTEGER NOT NULL,"+
 					"[VALOR]  REAL NOT NULL,"+
+					"[activo] INTEGER NOT NULL,"+
 					"PRIMARY  KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);
@@ -1226,6 +1229,7 @@ public class BaseDatosScript {
 					"[CODIGO] TEXT NOT NULL,"+
 					"[MARCA] TEXT NOT NULL,"+
 					"[NOMBRE] TEXT NOT NULL,"+
+					"[Activo] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);
@@ -1315,6 +1319,7 @@ public class BaseDatosScript {
                     "[ES_VENDIBLE] INTEGER NOT NULL,"+
                     "[UNIGRASAP] REAL NOT NULL,"+
                     "[UM_SALIDA] TEXT NOT NULL,"+
+					"[activo] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);
@@ -1844,6 +1849,7 @@ public class BaseDatosScript {
 					"[LIQUIDANDO] TEXT NOT NULL,"+
 					"[BLOQUEADO] INTEGER NOT NULL,"+
 					"[DEVOLUCION_SAP] INTEGER NOT NULL,"+
+					"[activo] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);
@@ -1980,7 +1986,7 @@ public class BaseDatosScript {
                     "ACTIVO INTEGER NOT NULL,"+
                     "SYMBOLO TEXT NOT NULL,"+
                     "CAMBIO REAL NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO])"+
+					"PRIMARY KEY ([CODIGO])"+
                     ");";
             database.execSQL(sql);
 

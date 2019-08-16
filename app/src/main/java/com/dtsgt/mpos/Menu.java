@@ -84,17 +84,7 @@ public class Menu extends PBase {
 			gl.devfindia=false;
 			rutapos=false;gl.rutapos=false;
 
-			iicon=1;
-
-			if (rutatipo.equalsIgnoreCase("T")) {
-				sdoc="Factura + Pedido";
-			} else {
-				if (rutatipo.equalsIgnoreCase("V")) {
-					sdoc="Venta";iicon=102;
-				} else {
-					sdoc="Preventa";iicon=101;
-				}
-			}
+			sdoc="Venta";iicon=102;
 
 			if (rutatipo.equalsIgnoreCase("R")) {
 				sdoc="Venta";
@@ -110,7 +100,7 @@ public class Menu extends PBase {
 			horizpos=ori==2;
 
 			if (horizpos) {
-				gridView.setNumColumns(3);relbotpan.setVisibility(View.GONE);
+				gridView.setNumColumns(4);relbotpan.setVisibility(View.GONE);
 			} else {
 				gridView.setNumColumns(3);relbotpan.setVisibility(View.VISIBLE);
 			}

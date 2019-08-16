@@ -7,21 +7,23 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
@@ -31,6 +33,7 @@ import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
 
 import java.util.ArrayList;
@@ -38,10 +41,11 @@ import java.util.ArrayList;
 public class Venta extends PBase {
 
     private ListView listView;
+    private GridView gridView;
     private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant;
     private TextView lblProd,lblPrec,lblDesc,lblStot,lblKeyDP;
     private EditText txtBarra,txtFilter;
-    private ImageView imgroad,imgscan;
+    private ImageView imgroad,imgscan,imgdel;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
     private ListAdaptVenta adapter;
@@ -49,7 +53,11 @@ public class Venta extends PBase {
     private Precio prc;
     private clsKeybHandler khand;
 
+    private ListAdaptMenuVenta adaptergrid;
+
     private AlertDialog.Builder mMenuDlg;
+
+    private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
@@ -87,12 +95,15 @@ public class Venta extends PBase {
         prc=new Precio(this,mu,2);
         khand=new clsKeybHandler(this,lblCant,lblKeyDP);
 
+        menuItems();
+
         setHandlers();
         initValues();
 
         browse=0;
         gl.closeVenta = false;
         txtBarra.requestFocus();txtBarra.setText("");
+        clearItem();
     }
 
 
@@ -522,6 +533,7 @@ public class Venta extends PBase {
 
         khand.setValue(icant);
         khand.enable();khand.focus();
+        imgdel.setVisibility(View.VISIBLE);
     }
 
     private void processCant(){
@@ -1402,6 +1414,64 @@ public class Venta extends PBase {
 
     //endregion
 
+    //region Menu
+
+    public void menuItems() {
+        clsClasses.clsMenu item;
+
+        try{
+            gridView.setNumColumns(8);
+
+            mitems.clear();
+
+            try {
+
+                item = clsCls.new clsMenu();
+                item.ID=3;item.Name="Reimpresión";item.Icon=3;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=4;item.Name="Anulación";item.Icon=4;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=5;item.Name="Consultas";item.Icon=5;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=2;item.Name="Comunicación";item.Icon=2;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=7;item.Name="Existencias";item.Icon=7;
+                mitems.add(item);
+
+                /*
+                item = clsCls.new clsMenu();
+                item.ID=12;item.Name="Nueva venta";item.Icon=12;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=13;item.Name="Intercambiar venta";item.Icon=13;
+                mitems.add(item);
+                */
+
+            } catch (Exception e) {
+                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            }
+
+            adaptergrid=new ListAdaptMenuVenta(this, mitems);
+            gridView.setAdapter(adaptergrid);
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+
+    }
+
+    //endregion
+
     //region Aux
 
     private void showItemMenu() {
@@ -1441,10 +1511,12 @@ public class Venta extends PBase {
 
     }
 
+
     private void setControls(){
 
         try{
             listView = (ListView) findViewById(R.id.listView1);
+            gridView = (GridView) findViewById(R.id.gridView2);
 
             lblTot= (TextView) findViewById(R.id.lblTot);
             lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText("Desc:"+mu.frmcur(0));
@@ -1460,6 +1532,7 @@ public class Venta extends PBase {
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
             imgscan= (ImageView) findViewById(R.id.imageView13);
+            imgdel= (ImageView) findViewById(R.id.imageView29);
 
             txtBarra=(EditText) findViewById(R.id.editText10);
             //txtFilter
@@ -1691,6 +1764,7 @@ public class Venta extends PBase {
     private void clearItem() {
         prodid="";gl.pprodname="";cant=0;prec=0;
         lblProd.setText("");lblPrec.setText("");
+        imgdel.setVisibility(View.INVISIBLE);
         khand.clear(false);khand.disable();
     }
 

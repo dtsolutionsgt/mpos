@@ -1,5 +1,6 @@
 package com.dtsgt.mant;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,14 +43,16 @@ public class Lista extends PBase {
         ViewObj=new clsListaObj(this,Con,db);
 
         setMantID();
-
         setHandlers();
-
         listItems();
 
     }
 
     //region Events
+
+    public void doAdd(View view) {
+
+    }
 
     public void doClear(View view) {
         txtFilter.setText("");
@@ -121,7 +124,7 @@ public class Lista extends PBase {
             case 3://Familia
                 lblTit.setText("Empresas");break;
             case 4:
-                lblTit.setText("");
+                lblTit.setText("Familia");
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_LINEA ";
                 if (flag)  sql+="WHERE (CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')";
                 sql+="ORDER BY NOMBRE";
@@ -161,6 +164,36 @@ public class Lista extends PBase {
                 lblTit.setText("Empresas");break;
             case 4:
                 lblTit.setText("Familia");break;
+            case 5:
+                lblTit.setText("Forma pago");break;
+            case 6:
+                lblTit.setText("Impuestos");break;
+            case 7:
+                lblTit.setText("Moneda");break;
+            case 8:
+                lblTit.setText("Productos");break;
+            case 9:
+                lblTit.setText("Proveedores");break;
+            case 10:
+                lblTit.setText("Usuarios");break;
+            case 11:
+                lblTit.setText("Vendedores");break;
+        }
+    }
+
+    private void abrirMantID() {
+
+        switch (gl.mantid) {
+            case 0:
+                lblTit.setText("Almacen");break;
+            case 1:
+                lblTit.setText("Bancos");break;
+            case 2:
+                lblTit.setText("Clientes");break;
+            case 3:
+                lblTit.setText("Empresas");break;
+            case 4:
+                startActivity(new Intent(this,MantFamilia.class));break;
             case 5:
                 lblTit.setText("Forma pago");break;
             case 6:

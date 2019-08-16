@@ -1,10 +1,5 @@
 package com.dtsgt.ladapt;
 
-import java.util.ArrayList;
-
-import com.dtsgt.base.clsClasses.clsMenu;
-import com.dtsgt.mpos.R;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -14,14 +9,19 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ListAdaptMenuGrid extends BaseAdapter {
+import com.dtsgt.base.clsClasses.clsMenu;
+import com.dtsgt.mpos.R;
+
+import java.util.ArrayList;
+
+public class ListAdaptMenuVenta extends BaseAdapter {
 	private static ArrayList<clsMenu> items;
-	
+
 	private int selectedIndex;
-	
+
 	private LayoutInflater l_Inflater;
 
-	public ListAdaptMenuGrid(Context context, ArrayList<clsMenu> results) {
+	public ListAdaptMenuVenta(Context context, ArrayList<clsMenu> results) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
@@ -53,7 +53,7 @@ public class ListAdaptMenuGrid extends BaseAdapter {
 		int iconid;
 
 		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_menugrid, null);
+			convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
 			holder = new ViewHolder();
 			
 			holder.imgEst = (ImageView) convertView.findViewById(R.id.imgNext);
@@ -81,6 +81,8 @@ public class ListAdaptMenuGrid extends BaseAdapter {
 		if (items.get(position).Icon==9) holder.imgEst.setImageResource(R.drawable.utils);
 		if (items.get(position).Icon==10) holder.imgEst.setImageResource(R.drawable.cambio_usuario);
 		if (items.get(position).Icon==11) holder.imgEst.setImageResource(R.drawable.mantenimientos48);
+		if (items.get(position).Icon==12) holder.imgEst.setImageResource(R.drawable.venta_add);
+		if (items.get(position).Icon==13) holder.imgEst.setImageResource(R.drawable.venta_switch);
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
