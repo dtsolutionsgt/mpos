@@ -19,23 +19,21 @@ public class clsP_lineaObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel = "SELECT * FROM P_linea";
+    private String sel="SELECT * FROM P_linea";
     private String sql;
-    public ArrayList<clsClasses.clsP_linea> items = new ArrayList<clsClasses.clsP_linea>();
+    public ArrayList<clsClasses.clsP_linea> items= new ArrayList<clsClasses.clsP_linea>();
 
     public clsP_lineaObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
-        cont = context;
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        cont=context;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
     }
 
@@ -60,7 +58,7 @@ public class clsP_lineaObj {
     }
 
     public void fill(String specstr) {
-        fillItems(sel + " " + specstr);
+        fillItems(sel+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -78,10 +76,11 @@ public class clsP_lineaObj {
 
         ins.init("P_linea");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("MARCA", item.marca);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("IMAGEN", item.imagen);
+        ins.add("CODIGO",item.codigo);
+        ins.add("MARCA",item.marca);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("IMAGEN",item.imagen);
+        ins.add("ACTIVO",item.activo);
 
         db.execSQL(ins.sql());
 
@@ -91,11 +90,12 @@ public class clsP_lineaObj {
 
         upd.init("P_linea");
 
-        upd.add("MARCA", item.marca);
-        upd.add("NOMBRE", item.nombre);
-        upd.add("IMAGEN", item.imagen);
+        upd.add("MARCA",item.marca);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("IMAGEN",item.imagen);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='" + item.codigo + "')");
+        upd.Where("(CODIGO='"+item.codigo+"')");
 
         db.execSQL(upd.sql());
 
@@ -104,12 +104,12 @@ public class clsP_lineaObj {
     }
 
     private void deleteItem(clsClasses.clsP_linea item) {
-        sql = "DELETE FROM P_linea WHERE (CODIGO='" + item.codigo + "')";
+        sql="DELETE FROM P_linea WHERE (CODIGO='"+item.codigo+"')";
         db.execSQL(sql);
     }
 
     private void deleteItem(String id) {
-        sql = "DELETE FROM P_linea WHERE id='" + id + "'";
+        sql="DELETE FROM P_linea WHERE id='" + id+"'";
         db.execSQL(sql);
     }
 
@@ -119,37 +119,42 @@ public class clsP_lineaObj {
 
         items.clear();
 
-        dt = Con.OpenDT(sq);
-        count = dt.getCount();
-        if (dt.getCount() > 0) dt.moveToFirst();
+        dt=Con.OpenDT(sq);
+        count =dt.getCount();
+        if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_linea();
 
-            item.codigo = dt.getString(0);
-            item.marca = dt.getString(1);
-            item.nombre = dt.getString(2);
-            item.imagen = dt.getString(3);
+            item.codigo=dt.getString(0);
+            item.marca=dt.getString(1);
+            item.nombre=dt.getString(2);
+            item.imagen=dt.getString(3);
+            item.activo=dt.getInt(4);
 
             items.add(item);
 
             dt.moveToNext();
         }
 
+        if (dt!=null) dt.close();
+
     }
 
     public int newID(String idsql) {
-        Cursor dt;
+        Cursor dt=null;
         int nid;
 
         try {
-            dt = Con.OpenDT(idsql);
+            dt=Con.OpenDT(idsql);
             dt.moveToFirst();
-            nid = dt.getInt(0) + 1;
+            nid=dt.getInt(0)+1;
         } catch (Exception e) {
-            nid = 1;
+            nid=1;
         }
+
+        if (dt!=null) dt.close();
 
         return nid;
     }
@@ -158,10 +163,11 @@ public class clsP_lineaObj {
 
         ins.init("P_linea");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("MARCA", item.marca);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("IMAGEN", item.imagen);
+        ins.add("CODIGO",item.codigo);
+        ins.add("MARCA",item.marca);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("IMAGEN",item.imagen);
+        ins.add("ACTIVO",item.activo);
 
         return ins.sql();
 
@@ -171,11 +177,12 @@ public class clsP_lineaObj {
 
         upd.init("P_linea");
 
-        upd.add("MARCA", item.marca);
-        upd.add("NOMBRE", item.nombre);
-        upd.add("IMAGEN", item.imagen);
+        upd.add("MARCA",item.marca);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("IMAGEN",item.imagen);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='" + item.codigo + "')");
+        upd.Where("(CODIGO='"+item.codigo+"')");
 
         return upd.sql();
 

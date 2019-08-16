@@ -13,8 +13,10 @@ import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class Lista extends PBase {
@@ -22,6 +24,7 @@ public class Lista extends PBase {
     private ListView listView;
     private TextView lblTit,lblReg;
     private EditText txtFilter;
+    private Switch swact;
 
     private LA_Lista adapter;
     private clsListaObj ViewObj;
@@ -39,6 +42,7 @@ public class Lista extends PBase {
         lblTit = (TextView) findViewById(R.id.lblTit);
         lblReg = (TextView) findViewById(R.id.textView85);
         txtFilter = (EditText) findViewById(R.id.txtFilter);
+        swact = (Switch) findViewById(R.id.switch1);
 
         ViewObj=new clsListaObj(this,Con,db);
 
@@ -51,7 +55,8 @@ public class Lista extends PBase {
     //region Events
 
     public void doAdd(View view) {
-
+       gl.gcods="";
+       abrirMant();
     }
 
     public void doClear(View view) {
@@ -71,10 +76,19 @@ public class Lista extends PBase {
                 clsClasses.clsLista item = (clsClasses.clsLista) lvObj;
 
                 adapter.setSelectedIndex(position);
+                gl.gcods=item.f1;
+                abrirMant();
             }
 
             ;
         });
+
+        swact.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+               listItems();
+            }
+        });
+
 
         txtFilter.addTextChangedListener(new TextWatcher() {
 
@@ -94,6 +108,7 @@ public class Lista extends PBase {
     //region Main
 
     private void listItems() {
+
         try {
             lblReg.setText("Registros : 0");
             setTableSQL();
@@ -111,6 +126,8 @@ public class Lista extends PBase {
     private void setTableSQL() {
         String ft=txtFilter.getText().toString();
         boolean flag=!ft.isEmpty();
+        boolean act=!swact.isChecked();
+
 
         sql="";
 
@@ -125,8 +142,10 @@ public class Lista extends PBase {
                 lblTit.setText("Empresas");break;
             case 4:
                 lblTit.setText("Familia");
-                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_LINEA ";
-                if (flag)  sql+="WHERE (CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')";
+
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_LINEA WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag)  sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
             case 5:
@@ -181,7 +200,7 @@ public class Lista extends PBase {
         }
     }
 
-    private void abrirMantID() {
+    private void abrirMant() {
 
         switch (gl.mantid) {
             case 0:

@@ -1088,19 +1088,12 @@ public class Menu extends PBase {
 	}
 	
 	private void menuDevBod() {
-		try{
-
+		try {
 			gl.closeDevBod=false;
-
-			if (gl.peModal.equalsIgnoreCase("TOL")) {
-				startActivity(new Intent(this,DevolBodTol.class));
-			} else {
-				startActivity(new Intent(this,DevolBod.class));
-			}
-		}catch (Exception e){
+			startActivity(new Intent(this,DevolBod.class));
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 	
 	private void menuSolicInv() {
