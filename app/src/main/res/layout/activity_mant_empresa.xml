@@ -96,7 +96,10 @@
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:inputType="number"
-            android:maxLength="50"
+            android:maxLength="3"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
             android:textSize="21sp"
             android:textStyle="bold" />
 
@@ -144,6 +147,8 @@
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:maxLength="50"
+            android:maxLines="1"
+            android:singleLine="true"
             android:textSize="21sp"
             android:textStyle="bold" />
 

@@ -2,6 +2,7 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -9,16 +10,17 @@ import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class MantFamilia extends PBase {
+public class MantAlmacen extends PBase {
 
     private ImageView imgstat;
-    private EditText txt1,txt2;
+    private EditText txt1,txt2,txt3,txt4,txt5,txt6,txt7;
 
-    private clsP_lineaObj holder;
-    private clsClasses.clsP_linea item=clsCls.new clsP_linea();
+    private clsP_sucursalObj holder;
+    private clsClasses.clsP_sucursal item=clsCls.new clsP_sucursal();
 
     private String id;
     private boolean newitem=false;
@@ -26,20 +28,24 @@ public class MantFamilia extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_familia);
+        setContentView(R.layout.activity_mant_almacen);
 
         super.InitBase();
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        txt3 = (EditText) findViewById(R.id.txt3);
+        txt4 = (EditText) findViewById(R.id.txt4);
+        txt5 = (EditText) findViewById(R.id.txt5);
+        txt6 = (EditText) findViewById(R.id.txt6);
+        txt7 = (EditText) findViewById(R.id.txt7);
         imgstat = (ImageView) findViewById(R.id.imageView31);
 
-        holder =new clsP_lineaObj(this,Con,db);
+        holder =new clsP_sucursalObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
     }
-
     //region Events
 
     public void doSave(View view) {
@@ -94,8 +100,13 @@ public class MantFamilia extends PBase {
         imgstat.setVisibility(View.INVISIBLE);
 
         item.codigo="";
-        item.marca="1";
+        item.empresa="1";
+        item.descripcion="";
         item.nombre="";
+        item.direccion="";
+        item.telefono="";
+        item.nit="";
+        item.texto="";
         item.activo=1;
 
         showItem();
@@ -126,7 +137,12 @@ public class MantFamilia extends PBase {
 
     private void showItem() {
         txt1.setText(item.codigo);
-        txt2.setText(item.nombre);
+        txt2.setText(item.descripcion);
+        txt3.setText(item.nombre);
+        txt4.setText(item.direccion);
+        txt5.setText(item.telefono);
+        txt6.setText(item.nit);
+        txt7.setText(item.texto);
     }
 
     private boolean validaDatos() {
@@ -150,11 +166,42 @@ public class MantFamilia extends PBase {
 
             ss=txt2.getText().toString();
             if (ss.isEmpty()) {
-                msgbox("¡Nombre incorrecto!");
-                return false;
+                msgbox("¡Nombre incorrecto!");return false;
+            } else {
+                item.descripcion=ss;
+            }
+
+            ss=txt3.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Razón social incorrecto!");return false;
             } else {
                 item.nombre=ss;
             }
+
+            ss=txt4.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Dirección incorrecta!");return false;
+            } else {
+                item.direccion=ss;
+            }
+
+            ss=txt5.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Telefóno incorrecto!");return false;
+            } else {
+                item.telefono=ss;
+            }
+
+            ss=txt6.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡NIT incorrecto!");return false;
+            } else {
+                item.nit=ss;
+            }
+
+            ss=txt7.getText().toString();
+            if (ss.isEmpty()) ss=" ";
+            item.texto=ss;
 
             return true;
         } catch (Exception e) {
@@ -217,9 +264,9 @@ public class MantFamilia extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (item.activo==1) {
-                   item.activo=0;
+                    item.activo=0;
                 } else {
-                   item.activo=1;
+                    item.activo=1;
                 };
                 updateItem();
                 finish();
@@ -271,7 +318,6 @@ public class MantFamilia extends PBase {
     public void onBackPressed() {
         msgAskExit("Salir");
     }
-
 
     //endregion
 

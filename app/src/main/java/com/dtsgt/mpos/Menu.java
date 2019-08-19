@@ -1370,7 +1370,8 @@ public class Menu extends PBase {
 
 					switch (item) {
 						case 0://"Almacen",
-							gl.mantid=0;break;
+							gl.mantid=0;
+							startActivity(new Intent(Menu.this, Lista.class));break;
 						case 1://"Bancos",
 							gl.mantid=1;break;
 						case 2://"Clientes",

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsListaObj;
 import com.dtsgt.ladapt.LA_Lista;
@@ -147,19 +146,23 @@ public class Lista extends PBase {
         sql="";
 
         switch (gl.mantid) {
-            case 0:
-                lblTit.setText("Almacen");break;
+            case 0: // Almacen
+                sql="SELECT 0,CODIGO,DESCRIPCION,'','', '','','','' FROM P_SUCURSAL WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCRIPCION LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY DESCRIPCION";
+                break;
             case 1:
                 lblTit.setText("Bancos");break;
             case 2:
                 lblTit.setText("Clientes");break;
-            case 3: //Empresa
+            case 3: // Empresa
                 sql="SELECT 0,EMPRESA,NOMBRE,'','', '','','','' FROM P_EMPRESA ";
                 break;
-            case 4: //Familia
+            case 4: // Familia
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_LINEA WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
-                if (flag)  sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
             case 5:
@@ -178,7 +181,6 @@ public class Lista extends PBase {
                 lblTit.setText("Vendedores");break;
         }
     }
-
 
     //endregion
 
@@ -220,7 +222,7 @@ public class Lista extends PBase {
 
         switch (gl.mantid) {
             case 0:
-                lblTit.setText("Almacen");break;
+                startActivity(new Intent(this,MantAlmacen.class));break;
             case 1:
                 lblTit.setText("Bancos");break;
             case 2:
