@@ -79,6 +79,7 @@ public class Menu extends PBase {
 			lblVehiculo.setText("Vehículo:");
 			///
 
+			gl.dev = false;
 			vApp=this.getApplication();
 			rutatipo=gl.rutatipog;
 			gl.devfindia=false;

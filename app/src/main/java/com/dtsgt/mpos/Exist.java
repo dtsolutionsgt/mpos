@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,11 +35,14 @@ public class Exist extends PBase {
 	private ListView listView;
 	private EditText txtFilter;
 	private TextView lblReg;
+
+	private String prodid,savecant;
 	
 	private ArrayList<clsClasses.clsExist> items= new ArrayList<clsClasses.clsExist>();
 	private ListAdaptExist adapter;
 	private clsClasses.clsExist selitem;
 
+	private double cant,disp,dispm;
 	private clsRepBuilder rep;
 	
 	private int tipo,lns, cantExistencia;
@@ -145,14 +149,28 @@ public class Exist extends PBase {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
 					try {
-						Object lvObj = listView.getItemAtPosition(position);
-						clsClasses.clsExist item = (clsClasses.clsExist)lvObj;
+						if(!gl.dev){
+							Object lvObj = listView.getItemAtPosition(position);
+							clsClasses.clsExist item = (clsClasses.clsExist)lvObj;
 
-						itemid=item.Cod;
+							itemid=item.Cod;
 
-						adapter.setSelectedIndex(position);
+							adapter.setSelectedIndex(position);
 
-						//appProd();
+							//appProd();
+
+						}else {
+
+							Object lvObj = listView.getItemAtPosition(position);
+							clsClasses.clsExist vItem = (clsClasses.clsExist)lvObj;
+
+							prodid=vItem.Cod;
+
+							adapter.setSelectedIndex(position);
+
+							savecant="";
+							setCant();
+						}
 					} catch (Exception e) {
 						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 						mu.msgbox( e.getMessage());
@@ -198,6 +216,145 @@ public class Exist extends PBase {
 
 	   
 	}
+
+	private void setCant(){
+
+		try{
+			final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+			getDisp();
+			alert.setTitle("Ingrese la cantidad ");
+			alert.setMessage("Existencias :  "+disp+" (B) / "+dispm+" (M)");
+
+			final EditText input = new EditText(this);
+			input.setText(savecant);
+			input.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+			alert.setView(input);
+
+			alert.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					closekeyb();
+				}
+			});
+
+			alert.setNeutralButton("Estado Bueno",  new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					closekeyb();
+					setCant("B",input.getText().toString());
+				}
+			});
+
+			alert.setPositiveButton("Estado Malo", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					closekeyb();
+					setCant("M",input.getText().toString());
+				}
+			});
+
+			final AlertDialog dialog = alert.create();
+			dialog.show();
+
+			showkeyb();
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+	private void getDisp(){
+		Cursor DT;
+
+		try {
+			sql="SELECT CANT,CANTM FROM P_STOCK WHERE CODIGO='"+prodid+"'";
+			DT=Con.OpenDT(sql);
+
+			if (DT.getCount()==0) {
+				disp=0;dispm=0;	return;
+			}
+
+			DT.moveToFirst();
+
+			disp=DT.getDouble(0);
+			dispm=DT.getDouble(1);
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox( e.getMessage());
+		}
+	}
+
+	private void setCant(String est,String s){
+		double val;
+
+		try{
+			try {
+				val=Double.parseDouble(s);
+				if (val<0) throw new Exception();
+			} catch (Exception e) {
+				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+				mu.msgbox("Cantidad incorrecta");return;
+			}
+
+			if (est.equalsIgnoreCase("B")) {
+				if (val>disp) {
+					savecant=s;
+					setCant();
+					mu.msgbox("Cantidad mayor que existencia : "+disp);
+					return;
+				}
+			} else {
+				if (val>dispm) {
+					savecant=s;
+					setCant();
+					mu.msgbox("Cantidad mayor que existencia : "+dispm);
+					return;
+				}
+			}
+
+			cant=val;
+
+			addItem(est);
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+
+	private void addItem(String est){
+
+		try {
+			sql="INSERT INTO T_DEVOL VALUES('"+prodid+"',0,0)";
+			db.execSQL(sql);
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+		}
+
+		try {
+			if (est.equalsIgnoreCase("B")) {
+				sql="UPDATE T_DEVOL SET CANT="+cant+" WHERE CODIGO='"+prodid+"'";
+			} else {
+				sql="UPDATE T_DEVOL SET CANTM="+cant+" WHERE CODIGO='"+prodid+"'";
+			}
+			db.execSQL(sql);
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			return;
+		}
+
+		try {
+			sql="DELETE FROM T_DEVOL WHERE CANT=0 AND CANTM=0";
+			db.execSQL(sql);
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox("Error : " + e.getMessage());
+		}
+
+		listItems();
+
+	}
+
 
 	public float CantExistencias() {
 		Cursor DT;
