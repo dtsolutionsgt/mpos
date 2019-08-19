@@ -119,7 +119,6 @@ public class clsClasses {
 		public String codigo;
 		public String marca;
 		public String nombre;
-		public String imagen;
 		public int activo;
 	}
 

@@ -70,7 +70,7 @@ public class Deposito extends PBase {
 		addlog("Deposito",""+du.getActDateTime(),gl.vend);
 		
 		spinBanco = (Spinner) findViewById(R.id.spinner1);
-		txtBol = (EditText) findViewById(R.id.txtBoleta);
+		txtBol = (EditText) findViewById(R.id.txt1);
 		lblEf = (TextView) findViewById(R.id.lblpSaldo);lblEf.setText(mu.frmcur(0));
 		lblCheq = (TextView) findViewById(R.id.lblCheq);lblCheq.setText(mu.frmcur(0));
 		lblTot = (TextView) findViewById(R.id.lblTot);lblTot.setText(mu.frmcur(0));

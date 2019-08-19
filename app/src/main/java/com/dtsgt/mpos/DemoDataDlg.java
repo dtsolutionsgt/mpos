@@ -20,7 +20,7 @@ public class DemoDataDlg extends PBase {
 		super.InitBase();
 		addlog("DemoDataDlg",""+du.getActDateTime(),gl.vend);
 		
-		txtNom = (EditText) findViewById(R.id.txtBoleta);
+		txtNom = (EditText) findViewById(R.id.txt1);
 		txtPrec = (EditText) findViewById(R.id.editText2);
 		rlPrec = (RelativeLayout) findViewById(R.id.relativeLayout1);
 		

@@ -1394,6 +1394,13 @@ public class Menu extends PBase {
 				}
 			});
 
+			menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					toast("Pendiente implementación");
+				}
+			});
+
 			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -1403,6 +1410,14 @@ public class Menu extends PBase {
 
 			Dialog = menudlg.create();
 			Dialog.show();
+
+			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+			nbutton.setTextColor(Color.WHITE);
+
+			Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+			nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
+			nbuttonp.setTextColor(Color.WHITE);
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}

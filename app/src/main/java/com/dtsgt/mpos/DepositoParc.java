@@ -57,7 +57,7 @@ public class DepositoParc extends PBase {
 		
 		spinBanco = (Spinner) findViewById(R.id.spinner1);
 		txtBol = (EditText) findViewById(R.id.txtFilter);
-		txtEf = (EditText) findViewById(R.id.txtBoleta);txtEf.setText("");
+		txtEf = (EditText) findViewById(R.id.txt1);txtEf.setText("");
 		lblCheq = (TextView) findViewById(R.id.lblCheq);lblCheq.setText("0.00");
 		lblTot = (TextView) findViewById(R.id.lblTot);lblTot.setText("0.00");
 		lblLim = (TextView) findViewById(R.id.TextView01);lblLim.setText("0.00");

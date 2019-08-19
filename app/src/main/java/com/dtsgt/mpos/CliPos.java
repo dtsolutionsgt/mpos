@@ -23,7 +23,7 @@ public class CliPos extends PBase {
 		super.InitBase();
 		addlog("CliPos",""+du.getActDateTime(),gl.vend);
 
-		txtNIT = (EditText) findViewById(R.id.txtBoleta);txtNIT.requestFocus();
+		txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.requestFocus();
 		txtNom = (EditText) findViewById(R.id.editText2);
 		txtRef = (EditText) findViewById(R.id.editText1);
 

@@ -746,20 +746,42 @@
                 android:id="@+id/lblPrec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
+                android:layout_alignTop="@id/relCant"
+                android:layout_alignBottom="@id/relCant"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/textView89"
                 android:gravity="center_vertical"
                 android:paddingRight="10dp"
                 android:text="0.00"
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/textView89"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/relCant"
+                android:layout_alignBottom="@id/relCant"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/relCant"
+                android:gravity="center"
+                android:text="UNI"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
             <ImageView
                 android:id="@+id/imageView29"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="2dp"
+                android:layout_alignTop="@id/relCant"
+                android:layout_alignBottom="@id/relCant"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toRightOf="@id/lblPrec"
                 android:alpha="0.75"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
@@ -770,7 +792,8 @@
                 android:layout_width="329dp"
                 android:layout_height="64dp"
                 android:layout_below="@id/rellaytot"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@id/relSend"
                 android:background="@drawable/frame_rect">
 
                 <ImageView
@@ -803,6 +826,7 @@
                 android:layout_width="80dp"
                 android:layout_height="64dp"
                 android:layout_below="@id/rellaytot"
+                android:layout_alignParentRight="true"
                 android:layout_marginTop="0dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/frame_rect">
@@ -841,7 +865,7 @@
                 android:id="@+id/relGrid"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/rellaytot"
+                android:layout_below="@id/relSend"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="10dp">
 

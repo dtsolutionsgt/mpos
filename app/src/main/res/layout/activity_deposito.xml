@@ -203,7 +203,7 @@
             android:src="@drawable/consultas" />
 
         <EditText
-            android:id="@+id/txtBoleta"
+            android:id="@+id/txt1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -215,8 +215,8 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/txtBoleta"
-            android:layout_alignBottom="@+id/txtBoleta"
+            android:layout_alignTop="@+id/txt1"
+            android:layout_alignBottom="@+id/txt1"
             android:layout_alignParentLeft="true"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"

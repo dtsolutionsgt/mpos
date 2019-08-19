@@ -29,8 +29,6 @@ public class Lista extends PBase {
     private LA_Lista adapter;
     private clsListaObj ViewObj;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -247,6 +245,8 @@ public class Lista extends PBase {
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
+
+        listItems();
     }
 
     //endregion

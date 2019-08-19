@@ -79,7 +79,6 @@ public class clsP_lineaObj {
         ins.add("CODIGO",item.codigo);
         ins.add("MARCA",item.marca);
         ins.add("NOMBRE",item.nombre);
-        ins.add("IMAGEN",item.imagen);
         ins.add("ACTIVO",item.activo);
 
         db.execSQL(ins.sql());
@@ -92,7 +91,6 @@ public class clsP_lineaObj {
 
         upd.add("MARCA",item.marca);
         upd.add("NOMBRE",item.nombre);
-        upd.add("IMAGEN",item.imagen);
         upd.add("ACTIVO",item.activo);
 
         upd.Where("(CODIGO='"+item.codigo+"')");
@@ -130,8 +128,7 @@ public class clsP_lineaObj {
             item.codigo=dt.getString(0);
             item.marca=dt.getString(1);
             item.nombre=dt.getString(2);
-            item.imagen=dt.getString(3);
-            item.activo=dt.getInt(4);
+            item.activo=dt.getInt(3);
 
             items.add(item);
 
@@ -166,7 +163,6 @@ public class clsP_lineaObj {
         ins.add("CODIGO",item.codigo);
         ins.add("MARCA",item.marca);
         ins.add("NOMBRE",item.nombre);
-        ins.add("IMAGEN",item.imagen);
         ins.add("ACTIVO",item.activo);
 
         return ins.sql();
@@ -179,7 +175,6 @@ public class clsP_lineaObj {
 
         upd.add("MARCA",item.marca);
         upd.add("NOMBRE",item.nombre);
-        upd.add("IMAGEN",item.imagen);
         upd.add("ACTIVO",item.activo);
 
         upd.Where("(CODIGO='"+item.codigo+"')");

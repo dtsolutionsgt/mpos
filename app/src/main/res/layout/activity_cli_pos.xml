@@ -72,7 +72,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/txtBoleta"
+            android:layout_below="@+id/txt1"
             android:layout_marginLeft="10dp"
             android:paddingBottom="3dp"
             android:text="Nombre"
@@ -155,7 +155,7 @@
             android:textSize="15sp" />
 
         <EditText
-            android:id="@+id/txtBoleta"
+            android:id="@+id/txt1"
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
