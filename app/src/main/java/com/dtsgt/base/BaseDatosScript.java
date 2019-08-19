@@ -1405,6 +1405,7 @@ public class BaseDatosScript {
 					"[TELEFONO] TEXT NOT NULL,"+
 					"[NIT] TEXT NOT NULL,"+
 					"[TEXTO] TEXT NOT NULL,"+
+					"[ACTIVO] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);
@@ -1972,7 +1973,7 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-            sql="CREATE TABLE [P_almacen] ("+
+            sql="CREATE TABLE [P_ALMACEN] ("+
                     "CODIGO INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
@@ -1980,7 +1981,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_moneda] ("+
+            sql="CREATE TABLE [P_MONEDA] ("+
                     "CODIGO INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
@@ -1990,15 +1991,13 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_proveedor] ("+
+            sql="CREATE TABLE [P_PROVEEDOR] ("+
                     "CODIGO INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO])"+
                     ");";
             database.execSQL(sql);
-
-
 
             return 1;
 			 
@@ -2225,6 +2224,9 @@ public class BaseDatosScript {
 		try {
 			  db.execSQL("INSERT INTO Params VALUES (0,0,0,0,0,'','','','','');");
 			  db.execSQL("INSERT INTO FinDia VALUES (0,0, 0,0,0,0, 0,0,0,0);");
+			  db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
+					  "'1','','','',0,'','','',  '',0,0,'',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
+
     	      return 1;
 	    } catch (SQLiteException e) {
 	    	 msgbox(e.getMessage());

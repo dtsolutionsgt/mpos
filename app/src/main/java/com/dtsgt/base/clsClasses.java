@@ -198,6 +198,77 @@ public class clsClasses {
 		public int  activo;
 	}
 
+	public class clsP_sucursal {
+		public String codigo;
+		public String empresa;
+		public String descripcion;
+		public String nombre;
+		public String direccion;
+		public String telefono;
+		public String nit;
+		public String texto;
+		public int  activo;
+	}
+
+	public class clsP_ruta {
+		public String codigo;
+		public String nombre;
+		public String activo;
+		public String vendedor;
+		public String venta;
+		public String forania;
+		public String sucursal;
+		public String tipo;
+		public String subtipo;
+		public String bodega;
+		public String subbodega;
+		public String descuento;
+		public String bonif;
+		public String kilometraje;
+		public String impresion;
+		public String recibopropio;
+		public String celular;
+		public String rentabil;
+		public String oferta;
+		public double percrent;
+		public String pasarcredito;
+		public String teclado;
+		public String editdevprec;
+		public String editdesc;
+		public String params;
+		public int  semana;
+		public int  objano;
+		public int  objmes;
+		public String syncfold;
+		public String wlfold;
+		public String ftpfold;
+		public String email;
+		public int  lastimp;
+		public int  lastcom;
+		public int  lastexp;
+		public String impstat;
+		public String expstat;
+		public String comstat;
+		public String param1;
+		public String param2;
+		public double pesolim;
+		public int  intervalo_max;
+		public int  lecturas_valid;
+		public int  intentos_lect;
+		public int  hora_ini;
+		public int  hora_fin;
+		public int  aplicacion_usa;
+		public int  puerto_gps;
+		public int  es_ruta_oficina;
+		public int  diluir_bon;
+		public int  preimpresion_factura;
+		public int  modificar_media_pago;
+		public String idimpresora;
+		public String numversion;
+		public int  fechaversion;
+		public String arquitectura;
+	}
+
 	public class clsP_usuario {
 		public String codigo;
 		public String nombre;

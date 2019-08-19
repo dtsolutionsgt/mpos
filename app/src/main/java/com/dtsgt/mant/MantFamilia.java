@@ -71,9 +71,11 @@ public class MantFamilia extends PBase {
         try {
             holder.fill("WHERE CODIGO='"+id+"'");
             item=holder.first();
+
             showItem();
 
             txt1.setEnabled(false);
+            txt2.requestFocus();
             imgstat.setVisibility(View.VISIBLE);
             if (item.activo==1) {
                 imgstat.setImageResource(R.drawable.delete_64);
@@ -87,10 +89,12 @@ public class MantFamilia extends PBase {
 
     private void newItem() {
         newitem=true;
+        txt1.requestFocus();
 
         imgstat.setVisibility(View.INVISIBLE);
 
         item.codigo="";
+        item.marca="1";
         item.nombre="";
         item.activo=1;
 
@@ -263,7 +267,12 @@ public class MantFamilia extends PBase {
         }
     }
 
-    //endregion
+    @Override
+    public void onBackPressed() {
+        msgAskExit("Salir");
+    }
 
+
+    //endregion
 
 }

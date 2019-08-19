@@ -259,6 +259,13 @@ public class Menu extends PBase {
 			switch (menuid) {
 
 				case 1:
+						//***************
+						gl.cliente="0001000000";
+						gl.fnombre="Consumidor final";
+					    gl.fnit="C.F.";
+					    gl.fdir="Ciudad";
+					    //**************
+
 						gl.rutatipo="V";gl.rutatipog="V";
 						gl.closeCliDet = false;
 						gl.closeVenta = false;
@@ -1369,9 +1376,11 @@ public class Menu extends PBase {
 						case 2://"Clientes",
 							gl.mantid=2;break;
 						case 3://"Empresas",
-							gl.mantid=3;break;
+							gl.mantid=3;
+							startActivity(new Intent(Menu.this, Lista.class));break;
 						case 4://"Familia",
-							gl.mantid=4;break;
+							gl.mantid=4;
+							startActivity(new Intent(Menu.this, Lista.class));break;
 						case 5://"Forma pago",
 							gl.mantid=5;break;
 						case 6://"Impuestos",
@@ -1390,7 +1399,7 @@ public class Menu extends PBase {
 
 					//dialog.cancel();
 
-					startActivity(new Intent(Menu.this, Lista.class));
+
 				}
 			});
 

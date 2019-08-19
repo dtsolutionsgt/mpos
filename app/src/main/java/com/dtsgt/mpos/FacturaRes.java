@@ -806,7 +806,9 @@ public class FacturaRes extends PBase {
 				ins.add("ASIGNACION","");
 			}
 
-			ins.add("SUPERVISOR","");
+			ins.add("SUPERVISOR"," ");
+			ins.add("VEHICULO"," ");
+			ins.add("AYUDANTE"," ");
 			ins.add("CODIGOLIQUIDACION",0);
 			ins.add("RAZON_ANULACION","");
 
@@ -850,13 +852,12 @@ public class FacturaRes extends PBase {
 				ins.add("STATCOM","N");
 				ins.add("VENDEDOR",gl.vend);
 				ins.add("TOTAL",dispventa);
-				ins.add("SUPERVISOR",gl.codSupervisor);
-				ins.add("AYUDANTE",gl.ayudanteID);
+				ins.add("SUPERVISOR","0");
+				ins.add("AYUDANTE","0");
 				ins.add("CODIGOLIQUIDACION",0);
 				ins.add("ESTADO","S");
 
 				db.execSQL(ins.sql());
-
 
 				ins.init("D_NOTACRED");
 
