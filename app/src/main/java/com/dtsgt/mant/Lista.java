@@ -253,7 +253,7 @@ public class Lista extends PBase {
             case 11:
                 lblTit.setText("Vendedores");break;
             case 12:
-                startActivity(new Intent(this,MantAlmacen.class));break;
+                startActivity(new Intent(this, MantTienda.class));break;
         }
     }
 

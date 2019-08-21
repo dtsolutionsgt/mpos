@@ -2,19 +2,17 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class MantAlmacen extends PBase {
+public class MantTienda extends PBase {
 
     private ImageView imgstat;
     private EditText txt1,txt2,txt3,txt4,txt5,txt6,txt7;
@@ -28,7 +26,7 @@ public class MantAlmacen extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_almacen);
+        setContentView(R.layout.activity_mant_tienda);
 
         super.InitBase();
 

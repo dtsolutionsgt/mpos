@@ -2,22 +2,38 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
+
+import java.util.ArrayList;
 
 public class MantProducto extends PBase {
 
     private ImageView imgstat;
     private EditText txt1,txt2,txt3,txt4;
+    private Spinner spin;
 
     private clsP_productoObj holder;
     private clsClasses.clsP_producto item=clsCls.new clsP_producto();
+
+    private ArrayList<String> spincode= new ArrayList<String>();
+    private ArrayList<String> spinlist = new ArrayList<String>();
 
     private String id;
     private boolean newitem=false;
@@ -34,6 +50,7 @@ public class MantProducto extends PBase {
         txt3 = (EditText) findViewById(R.id.editText6);
         txt4 = (EditText) findViewById(R.id.editText13);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        spin = (Spinner) findViewById(R.id.spinner10);
 
         holder =new clsP_productoObj(this,Con,db);
 
@@ -62,6 +79,39 @@ public class MantProducto extends PBase {
 
     public void doExit(View view) {
         msgAskExit("Salir");
+    }
+
+    private void setHandlers() {
+
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                TextView spinlabel;
+                String scod, idposition;
+
+                try {
+                    spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);
+                    spinlabel.setPadding(5, 0, 0, 0);
+                    spinlabel.setTextSize(18);
+                    spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                    scod = spincode.get(position);
+                    item.linea = scod;
+
+                 } catch (Exception e) {
+                    addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                    mu.msgbox(e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
     }
 
     //endregion
@@ -95,11 +145,54 @@ public class MantProducto extends PBase {
         imgstat.setVisibility(View.INVISIBLE);
 
         item.codigo="";
+        item.tipo="P";
+        item.linea="";
+        item.sublinea="1";
+        item.empresa=gl.emp;
         item.marca="1";
-        //item.nombre="";
+        item.codbarra="";
+        item.desccorta="";
+        item.desclarga="";
+        item.costo=0;
+        item.factorconv=1;
+        item.unidbas="UNI";
+        item.unidmed="";
+        item.unimedfact=0;
+        item.unigra="";
+        item.unigrafact=0;
+        item.descuento="S";
+        item.bonificacion="S";
+        item.imp1=0;
+        item.imp2=0;
+        item.imp3=0;
+        item.vencomp="";
+        item.devol="N";
+        item.ofrecer="N";
+        item.rentab="N";
+        item.descmax="N";
+        item.peso_promedio=1;
+        item.modif_precio=0;
+        item.imagen="";
+        item.video="";
+        item.venta_por_peso=0;
+        item.es_prod_barra=0;
+        item.unid_inv="UNI";
+        item.venta_por_paquete=0;
+        item.venta_por_factor_conv=0;
+        item.es_serializado=0;
+        item.param_caducidad=0;
+        item.producto_padre="";
+        item.factor_padre=1;
+        item.tiene_inv=0;
+        item.tiene_vineta_o_tubo=0;
+        item.precio_vineta_o_tubo=0;
+        item.es_vendible=0;
+        item.unigrasap=0;
+        item.um_salida="UNI";
         item.activo=1;
 
         showItem();
+
     }
 
     private void addItem() {
@@ -128,6 +221,10 @@ public class MantProducto extends PBase {
     private void showItem() {
         txt1.setText(item.codigo);
         txt2.setText(item.desclarga);
+        txt3.setText(item.codbarra);
+        txt4.setText(item.unidbas);
+
+        fillSpinner(item.linea);
     }
 
     private boolean validaDatos() {
@@ -164,6 +261,45 @@ public class MantProducto extends PBase {
         }
     }
 
+    private void fillSpinner(String selid){
+        clsP_lineaObj lineas =new clsP_lineaObj(this,Con,db);
+        int selidx=0;
+        String scod;
+
+        spincode.clear();spinlist.clear();
+
+        try {
+            lineas.fill(" WHERE (Activo=1) OR (Codigo='"+selid+"') ORDER BY Nombre");
+            if (lineas.count==0) {
+                msgAskReturn("Lista de familias está vacia, no se puede continuar");return;
+            }
+
+            for (int i = 0; i <lineas.count; i++) {
+                scod=lineas.items.get(i).codigo;
+                spincode.add(scod);
+                spinlist.add(lineas.items.get(i).nombre);
+                if (scod.equalsIgnoreCase(selid)) selidx=i;
+                if (i==0 &&  newitem) item.linea=scod;
+            }
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox( e.getMessage());
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spin.setAdapter(dataAdapter);
+
+        try {
+            spin.setSelection(selidx);
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+
     //endregion
 
     //region Dialogs
@@ -187,7 +323,6 @@ public class MantProducto extends PBase {
 
         dialog.show();
     }
-
 
     private void msgAskUpdate(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -234,6 +369,21 @@ public class MantProducto extends PBase {
         dialog.show();
     }
 
+    private void msgAskReturn(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Familias");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                  finish();
+            }
+        });
+
+        dialog.show();
+    }
+
     private void msgAskExit(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
@@ -274,7 +424,5 @@ public class MantProducto extends PBase {
     }
 
     //endregion
-
-
 
 }
