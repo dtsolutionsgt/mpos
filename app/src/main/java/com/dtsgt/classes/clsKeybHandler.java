@@ -9,11 +9,12 @@ import java.text.DecimalFormat;
 
 public class clsKeybHandler {
 
+    public TextView label;
     public boolean isValid,isEnter,idle;
     public double value;
 
     private Context cont;
-    private TextView label,declabel;
+    private TextView declabel;
 
     private String val;
 
@@ -23,6 +24,11 @@ public class clsKeybHandler {
         declabel=decpointlabel;
 
         clear(true);
+    }
+
+    public void setLabel(TextView actlabel,Boolean decpoint) {
+        label=actlabel;
+        clear(decpoint);
     }
 
     public void clear(Boolean decpoint) {
@@ -36,6 +42,8 @@ public class clsKeybHandler {
         } else {
             declabel.setVisibility(View.INVISIBLE);
         }
+        label.setBackgroundColor(Color.TRANSPARENT);
+
     }
 
     public void handleKey(String keychar) {
@@ -103,6 +111,10 @@ public class clsKeybHandler {
         DecimalFormat ffrmdec2 = new DecimalFormat("#,##0.##");
         value=val;
         if (value>0) label.setText(ffrmdec2.format(val));else label.setText("");
+    }
+
+    public String getStringValue() {
+        return val;
     }
 
 }

@@ -1,12 +1,16 @@
 package com.dtsgt.mpos;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +29,7 @@ import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Menu extends PBase {
@@ -1176,7 +1181,8 @@ public class Menu extends PBase {
 	public void showInvMenuUtils() {
 		try{
 			final AlertDialog Dialog;
-			final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
+			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
+			final String[] selitems = {"Configuracion de impresora","Tablas","Información de sistema"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.utils48);
@@ -1191,16 +1197,7 @@ public class Menu extends PBase {
 						case 1:
 							startActivity(new Intent(Menu.this,Tablas.class));break;
 						case 2:
-							menuCorelZ();break;
-						case 3:
-							startActivity(new Intent(Menu.this,Soporte.class));break;
-						case 4:
-							msgbox("Serial# : "+gl.deviceId);break;
-						case 5:
-							startActivity(new Intent(Menu.this,imprime_barras.class));break;
-						case 6:
-							startActivity(new Intent(Menu.this,rating.class));break;
-
+							infoSystem();break;
 					}
 
 					dialog.cancel();
@@ -1352,6 +1349,61 @@ public class Menu extends PBase {
 
 	}
 
+	private void infoSystem() {
+		String ss,sb="",sm="",sd="";
+
+		try {
+			BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
+			int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+			sb="Carga de batería  : "+batLevel+" %";
+		} catch (Exception e) {
+			msgbox(e.getMessage());
+			sb="Carga de batería  :  -";
+		}
+
+		try {
+			ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+			ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+			activityManager.getMemoryInfo(mi);
+			int availableMegs = (int) (mi.availMem / 0x100000L);
+			int totalMegs = (int) (mi.totalMem / 0x100000L);
+			int percentAvail =(int) (100*mi.availMem/(double)mi.totalMem );
+
+			sm="Memoria disponible  :  "+percentAvail+" %  ,   "+availableMegs+" / "+totalMegs+" [ MB ]";
+		} catch (Exception e) {
+			msgbox(e.getMessage());
+			sm="Memoria disponible  :  -";
+		}
+
+		try {
+			File pathInternal = Environment.getDataDirectory();// Internal Storage
+			StatFs statInternal = new StatFs(pathInternal.getPath());
+
+			double totalStorage=(statInternal. getBlockCountLong()*statInternal.getBlockSizeLong())/ 0x100000L;
+			double freeStorage=(statInternal. getAvailableBlocksLong()*statInternal.getBlockSizeLong())/ 0x100000L;
+			int  availStorage=(int) (100*freeStorage/totalStorage );
+
+			sd="Almacenamiento disponible  :  "+availStorage+" %   ,   "+mu.round(freeStorage/1024,1)+" / "+mu.round(totalStorage/1024,1)+" [ GB ]";
+		} catch (Exception e) {
+			msgbox(e.getMessage());
+			sd="Almacenamiento disponible  :  -";
+		}
+
+		ss=sb+"\n"+sm+"\n"+sd;
+
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Información de sistema");
+		dialog.setMessage(ss);
+		dialog.setCancelable(false);
+
+		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+		dialog.show();
+
+	}
+
 	//endregion
 
 	//region Mantenimientos
@@ -1361,7 +1413,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Usuario","Vendedor"};
+			final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1371,8 +1423,8 @@ public class Menu extends PBase {
 
 					switch (item) {
 						case 0://"Almacen",
-							gl.mantid=0;
-							startActivity(new Intent(Menu.this, Lista.class));break;
+							gl.mantid=0;break;
+
 						case 1://"Bancos",
 							gl.mantid=1;break;
 						case 2://"Clientes",
@@ -1390,12 +1442,16 @@ public class Menu extends PBase {
 						case 7://"Moneda",
 							gl.mantid=7;break;
 						case 8://"Productos",
-							gl.mantid=8;break;
+							gl.mantid=8;
+							startActivity(new Intent(Menu.this, Lista.class));break;
 						case 9://"Proveedores",
 							gl.mantid=9;break;
-						case 10://"Usuarios",
+						case 10://"Tienda",
+							gl.mantid=12;
+							startActivity(new Intent(Menu.this, Lista.class));break;
+						case 11://"Usuarios",
 							gl.mantid=10;break;
-						case 11://"Vendedores"
+						case 12://"Vendedores"
 							gl.mantid=11;break;
 					}
 

@@ -165,11 +165,6 @@ public class clsClasses {
 		public String ofrecer;
 		public String rentab;
 		public String descmax;
-		public String iva;
-		public String codbarra2;
-		public int  cbconv;
-		public String bodega;
-		public String subbodega;
 		public double peso_promedio;
 		public int  modif_precio;
 		public String imagen;
@@ -189,7 +184,7 @@ public class clsClasses {
 		public int  es_vendible;
 		public double unigrasap;
 		public String um_salida;
-		public int activo;
+		public int  activo;
 	}
 
 	public class clsP_proveedor {

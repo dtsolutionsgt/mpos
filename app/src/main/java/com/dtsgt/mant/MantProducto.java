@@ -6,19 +6,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class MantFamilia extends PBase {
+public class MantProducto extends PBase {
 
     private ImageView imgstat;
-    private EditText txt1,txt2;
+    private EditText txt1,txt2,txt3,txt4;
 
-    private clsP_lineaObj holder;
-    private clsClasses.clsP_linea item=clsCls.new clsP_linea();
+    private clsP_productoObj holder;
+    private clsClasses.clsP_producto item=clsCls.new clsP_producto();
 
     private String id;
     private boolean newitem=false;
@@ -26,15 +25,17 @@ public class MantFamilia extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_familia);
+        setContentView(R.layout.activity_mant_producto);
 
         super.InitBase();
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        txt3 = (EditText) findViewById(R.id.editText6);
+        txt4 = (EditText) findViewById(R.id.editText13);
         imgstat = (ImageView) findViewById(R.id.imageView31);
 
-        holder =new clsP_lineaObj(this,Con,db);
+        holder =new clsP_productoObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
@@ -95,7 +96,7 @@ public class MantFamilia extends PBase {
 
         item.codigo="";
         item.marca="1";
-        item.nombre="";
+        //item.nombre="";
         item.activo=1;
 
         showItem();
@@ -126,7 +127,7 @@ public class MantFamilia extends PBase {
 
     private void showItem() {
         txt1.setText(item.codigo);
-        txt2.setText(item.nombre);
+        txt2.setText(item.desclarga);
     }
 
     private boolean validaDatos() {
@@ -142,7 +143,7 @@ public class MantFamilia extends PBase {
 
                 holder.fill("WHERE CODIGO='"+ss+"'");
                 if (holder.count>0) {
-                    msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
+                    //msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
                 }
 
                 item.codigo=ss;
@@ -153,7 +154,7 @@ public class MantFamilia extends PBase {
                 msgbox("¡Nombre incorrecto!");
                 return false;
             } else {
-                item.nombre=ss;
+                //item.nombre=ss;
             }
 
             return true;
@@ -217,9 +218,9 @@ public class MantFamilia extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (item.activo==1) {
-                   item.activo=0;
+                    item.activo=0;
                 } else {
-                   item.activo=1;
+                    item.activo=1;
                 };
                 updateItem();
                 finish();
@@ -273,5 +274,7 @@ public class MantFamilia extends PBase {
     }
 
     //endregion
+
+
 
 }
