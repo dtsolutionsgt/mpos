@@ -1219,7 +1219,7 @@ public class BaseDatosScript {
 			sql="CREATE TABLE [P_NIVELPRECIO] ("+
 					"[CODIGO] INTEGER NOT NULL,"+
 					"[NOMBRE] TEXT NOT NULL,"+
-					"[DECIMALES] INTEGER NOT NULL,"+
+					"[ACTIVO] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);

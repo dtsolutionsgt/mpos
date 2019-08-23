@@ -74,16 +74,103 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="1275dp"
-        android:layout_height="280dp"
+        android:layout_height="420dp"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginLeft="69dp"
+        android:layout_marginTop="227dp"
         android:layout_marginEnd="5dp"
+        android:layout_marginRight="-64dp"
         android:layout_marginBottom="5dp">
+
+        <TextView
+            android:id="@+id/lblCFact7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lblCFact4"
+            android:layout_alignStart="@+id/lblCFact4"
+            android:layout_alignEnd="@+id/lblCFact4"
+            android:layout_alignBottom="@+id/spinner15"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Precio :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <Spinner
+            android:id="@+id/spinner15"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_below="@+id/editText13"
+            android:layout_alignStart="@+id/editText13"
+            android:layout_alignEnd="@+id/spinner11"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/spinner_style" />
+
+        <Spinner
+            android:id="@+id/spinner14"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_below="@+id/spinner15"
+            android:layout_alignStart="@+id/txt2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/spinner_style" />
+
+        <Spinner
+            android:id="@+id/spinner13"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_alignTop="@+id/spinner14"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/spinner14"
+            android:background="@drawable/spinner_style" />
+
+        <Spinner
+            android:id="@+id/spinner11"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_alignTop="@+id/spinner13"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/spinner13"
+            android:background="@drawable/spinner_style" />
+
+        <TextView
+            android:id="@+id/lblCFact5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/lblCFact"
+            android:layout_alignTop="@+id/spinner11"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignBottom="@+id/spinner11"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="-5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="-0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Impuestos :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <TextView
             android:id="@+id/lblCFact4"
@@ -160,7 +247,7 @@
             android:ems="10"
             android:maxLength="50"
             android:maxLines="1"
-            android:selectAllOnFocus="true"
+            android:selectAllOnFocus="false"
             android:singleLine="true"
             android:textSize="21sp"
             android:textStyle="bold" />
@@ -185,18 +272,6 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="normal" />
-
-        <TextView
-            android:id="@+id/lblBU"
-            android:layout_width="wrap_content"
-            android:layout_height="10dp"
-            android:layout_below="@+id/lblCFact4"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="80dp"
-            android:layout_marginTop="5dp"
-            android:text="Small Text"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="invisible" />
 
         <EditText
             android:id="@+id/txt1"
@@ -250,7 +325,6 @@
             android:layout_alignParentBottom="false"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="221dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:maxLength="30" />
@@ -259,12 +333,43 @@
             android:id="@+id/editText13"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/spinner10"
+            android:layout_below="@+id/editText6"
             android:layout_alignStart="@+id/editText6"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="10dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:maxLength="10" />
+
+        <EditText
+            android:id="@+id/editText11"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/spinner15"
+            android:layout_alignBottom="@+id/spinner15"
+            android:layout_alignParentEnd="false"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/spinner15"
+            android:ems="10"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:id="@+id/textView123"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/editText11"
+            android:layout_alignBottom="@+id/editText11"
+            android:layout_alignParentEnd="false"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="380dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/editText11"
+            android:background="@drawable/frame_btn"
+            android:gravity="center"
+            android:text="Guardar"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 

@@ -198,6 +198,10 @@ public class Menu extends PBase {
 				item.ID=11;item.Name="Mantenimientos";item.Icon=11;
 				items.add(item);
 
+                item = clsCls.new clsMenu();
+                item.ID=12;item.Name="Reportes";item.Icon=12;
+                items.add(item);
+
 				item = clsCls.new clsMenu();
 				item.ID=10;item.Name="Cambio usuario";item.Icon=10;
 				items.add(item);
@@ -215,7 +219,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 
 	}
 		
@@ -296,7 +299,7 @@ public class Menu extends PBase {
 					//#HS_20181206 Verifica el usuario si es DTS.
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
 						mu.msgbox("No puede realizar esta acción");
-					}else {
+					} else {
 						if (rutatipo.equalsIgnoreCase("T")) {
 							showPrintMenuTodo();
 						} else {

@@ -109,6 +109,13 @@ public class clsClasses {
 		public int  incidencia_no_lectura;
 	}
 
+    public class clsP_factorconv {
+        public String producto;
+        public String unidadsuperior;
+        public double factorconversion;
+        public String unidadminima;
+    }
+
 	public class clsP_impuesto {
 		public int  codigo;
 		public double valor;
@@ -129,8 +136,13 @@ public class clsClasses {
 		public int  nivel;
 		public String porcobro;
 	}
+    public class clsP_nivelprecio {
+        public int  codigo;
+        public String nombre;
+        public int activo;
+    }
 
-	public class clsP_moneda {
+    public class clsP_moneda {
 		public int  codigo;
 		public String nombre;
 		public int  activo;
@@ -138,7 +150,14 @@ public class clsClasses {
 		public double cambio;
 	}
 
-	public class clsP_producto {
+    public class clsP_prodprecio {
+        public String codigo;
+        public int  nivel;
+        public double precio;
+        public String unidadmedida;
+    }
+
+    public class clsP_producto {
 		public String codigo;
 		public String tipo;
 		public String linea;

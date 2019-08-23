@@ -2,8 +2,6 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -14,26 +12,27 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_factorconvObj;
+import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_prodprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
-
 import java.util.ArrayList;
 
 public class MantProducto extends PBase {
 
     private ImageView imgstat;
     private EditText txt1,txt2,txt3,txt4;
-    private Spinner spin;
+    private Spinner spin,spin1,spin2,spin3;
 
     private clsP_productoObj holder;
     private clsClasses.clsP_producto item=clsCls.new clsP_producto();
 
-    private ArrayList<String> spincode= new ArrayList<String>();
-    private ArrayList<String> spinlist = new ArrayList<String>();
+    private ArrayList<String> spincode,code1,code2,code3,spinlist,list1,list2,list3;
 
     private String id;
     private boolean newitem=false;
@@ -51,11 +50,21 @@ public class MantProducto extends PBase {
         txt4 = (EditText) findViewById(R.id.editText13);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         spin = (Spinner) findViewById(R.id.spinner10);
+        spin1 = (Spinner) findViewById(R.id.spinner14);
+        spin2 = (Spinner) findViewById(R.id.spinner13);
+        spin3 = (Spinner) findViewById(R.id.spinner11);
 
         holder =new clsP_productoObj(this,Con,db);
 
+        spincode=new ArrayList<String>();spinlist=new ArrayList<String>();
+        code1=new ArrayList<String>();list1=new ArrayList<String>();
+        code2=new ArrayList<String>();list2=new ArrayList<String>();
+        code3=new ArrayList<String>();list3=new ArrayList<String>();
+
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
+
+        setHandlers();
     }
 
     //region Events
@@ -86,19 +95,13 @@ public class MantProducto extends PBase {
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                TextView spinlabel;
-                String scod, idposition;
+                 try {
+                    TextView spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
+                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                try {
-                    spinlabel = (TextView) parentView.getChildAt(0);
-                    spinlabel.setTextColor(Color.BLACK);
-                    spinlabel.setPadding(5, 0, 0, 0);
-                    spinlabel.setTextSize(18);
-                    spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
-
-                    scod = spincode.get(position);
+                    String scod = spincode.get(position);
                     item.linea = scod;
-
                  } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                     mu.msgbox(e.getMessage());
@@ -112,6 +115,77 @@ public class MantProducto extends PBase {
             }
 
         });
+
+        spin1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                 try {
+                    TextView spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
+                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                    String scod = code1.get(position);
+                    item.imp1 = Integer.parseInt(scod);
+                } catch (Exception e) {
+                    addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                    mu.msgbox(e.getMessage());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
+        spin2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                try {
+                    TextView spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
+                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                    String scod = code2.get(position);
+                    item.imp2 = Integer.parseInt(scod);
+                } catch (Exception e) {
+                    addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                    mu.msgbox(e.getMessage());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
+        spin3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                try {
+                    TextView spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
+                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                    String scod = code3.get(position);
+                    item.imp3 = Integer.parseInt(scod);
+                } catch (Exception e) {
+                    addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                    mu.msgbox(e.getMessage());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
+
     }
 
     //endregion
@@ -196,18 +270,66 @@ public class MantProducto extends PBase {
     }
 
     private void addItem() {
+        clsP_factorconvObj fact  =new clsP_factorconvObj(this,Con,db);
+        clsClasses.clsP_factorconv fitem= clsCls.new clsP_factorconv();
+
         try {
+            db.beginTransaction();
+
             holder.add(item);
-            gl.gcods=""+item.codigo;
+
+            fact.delete(item.codigo);
+
+            fitem.producto=item.codigo;
+            fitem.unidadsuperior = item.unidbas;
+            fitem.factorconversion = 1;
+            fitem.unidadminima =item.unidbas;
+
+            fact.add(fitem);
+
+            addItemPrecios();
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            gl.gcods = "" + item.codigo;
             finish();
         } catch (Exception e) {
+            db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
+    private void addItemPrecios() {
+        clsP_prodprecioObj prec  =new clsP_prodprecioObj(this,Con,db);
+        clsP_nivelprecioObj niv  =new clsP_nivelprecioObj(this,Con,db);
+        clsClasses.clsP_prodprecio pitem;
+        clsClasses.clsP_nivelprecio pniv= clsCls.new clsP_nivelprecio();
+
+        niv.fill("WHERE Activo=1");
+
+        for (int i = 0; i <niv.count; i++) {
+            pniv=niv.items.get(i);
+
+            pitem= clsCls.new clsP_prodprecio();
+
+            pitem.codigo=item.codigo;
+            pitem.nivel=pniv.codigo;
+            pitem.unidadmedida=item.unidbas;
+            pitem.precio=0;
+
+            prec.add(pitem);
+        }
+
+    }
+
     private void updateItem() {
         try {
+
+
             holder.update(item);
+
+
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -225,6 +347,9 @@ public class MantProducto extends PBase {
         txt4.setText(item.unidbas);
 
         fillSpinner(item.linea);
+        fillSpin1(""+(int) item.imp1);
+        fillSpin2(""+(int) item.imp2);
+        fillSpin3(""+(int) item.imp3);
     }
 
     private boolean validaDatos() {
@@ -240,9 +365,8 @@ public class MantProducto extends PBase {
 
                 holder.fill("WHERE CODIGO='"+ss+"'");
                 if (holder.count>0) {
-                    //msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
+                    msgbox("¡Código ya existe!\n"+holder.first().desclarga);return false;
                 }
-
                 item.codigo=ss;
             }
 
@@ -251,7 +375,10 @@ public class MantProducto extends PBase {
                 msgbox("¡Nombre incorrecto!");
                 return false;
             } else {
-                //item.nombre=ss;
+                if (ss.length()>50) ss=ss.substring(0,50);
+                item.desclarga=ss;
+                if (ss.length()>25) ss=ss.substring(0,25);
+                item.desccorta=ss;
             }
 
             return true;
@@ -266,7 +393,8 @@ public class MantProducto extends PBase {
         int selidx=0;
         String scod;
 
-        spincode.clear();spinlist.clear();
+        spincode.clear();
+        spinlist.clear();
 
         try {
             lineas.fill(" WHERE (Activo=1) OR (Codigo='"+selid+"') ORDER BY Nombre");
@@ -299,6 +427,119 @@ public class MantProducto extends PBase {
 
     }
 
+    private void fillSpin1(String selid){
+        clsP_impuestoObj imp =new clsP_impuestoObj(this,Con,db);
+        int selidx=0;
+        String scod;
+
+        code1.clear();list1.clear();
+
+        try {
+            imp.fill(" WHERE (Activo=1) OR (Codigo="+selid+") ORDER BY Valor");
+            if (imp.count==0) {
+                msgAskReturn("Lista de impuestos está vacia, no se puede continuar");return;
+            }
+
+            for (int i = 0; i <imp.count; i++) {
+                scod=""+imp.items.get(i).codigo;
+                code1.add(scod);
+                list1.add(""+imp.items.get(i).valor+" %");
+                if (scod.equalsIgnoreCase(selid)) selidx=i;
+                if (i==0 &&  newitem) item.imp1=Integer.parseInt(scod);
+            }
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox( e.getMessage());
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list1);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spin1.setAdapter(dataAdapter);
+
+        try {
+            spin1.setSelection(selidx);
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+    private void fillSpin2(String selid){
+        clsP_impuestoObj imp =new clsP_impuestoObj(this,Con,db);
+        int selidx=0;
+        String scod;
+
+        code2.clear();list2.clear();
+
+        try {
+            imp.fill(" WHERE (Activo=1) OR (Codigo="+selid+") ORDER BY Valor");
+            if (imp.count==0) {
+                msgAskReturn("Lista de impuestos está vacia, no se puede continuar");return;
+            }
+
+            for (int i = 0; i <imp.count; i++) {
+                scod=""+imp.items.get(i).codigo;
+                code2.add(scod);
+                list2.add(""+imp.items.get(i).valor+" %");
+                if (scod.equalsIgnoreCase(selid)) selidx=i;
+                if (i==0 &&  newitem) item.imp2=Integer.parseInt(scod);
+            }
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox( e.getMessage());
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list2);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spin2.setAdapter(dataAdapter);
+
+        try {
+            spin2.setSelection(selidx);
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+    private void fillSpin3(String selid){
+        clsP_impuestoObj imp =new clsP_impuestoObj(this,Con,db);
+        int selidx=0;
+        String scod;
+
+        code3.clear();list3.clear();
+
+        try {
+            imp.fill(" WHERE (Activo=1) OR (Codigo="+selid+") ORDER BY Valor");
+            if (imp.count==0) {
+                msgAskReturn("Lista de impuestos está vacia, no se puede continuar");return;
+            }
+
+            for (int i = 0; i <imp.count; i++) {
+                scod=""+imp.items.get(i).codigo;
+                code3.add(scod);
+                list3.add(""+imp.items.get(i).valor+" %");
+                if (scod.equalsIgnoreCase(selid)) selidx=i;
+                if (i==0 &&  newitem) item.imp3=Integer.parseInt(scod);
+            }
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox( e.getMessage());
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list3);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spin3.setAdapter(dataAdapter);
+
+        try {
+            spin3.setSelection(selidx);
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
 
     //endregion
 
@@ -313,8 +554,7 @@ public class MantProducto extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 addItem();
-                finish();
-            }
+             }
         });
 
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -333,7 +573,6 @@ public class MantProducto extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 updateItem();
-                finish();
             }
         });
 

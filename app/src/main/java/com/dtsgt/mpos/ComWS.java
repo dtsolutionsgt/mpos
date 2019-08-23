@@ -2150,7 +2150,7 @@ public class ComWS extends PBase {
 		}
 
 		if (TN.equalsIgnoreCase("P_NIVELPRECIO")) {
-			SQL = "SELECT CODIGO, NOMBRE, ISNULL(DECIMALES,0) AS DECIMALES FROM P_NIVELPRECIO ";
+			SQL = "SELECT CODIGO, NOMBRE, ACTIVO FROM P_NIVELPRECIO ";
 			return SQL;
 		}
 
