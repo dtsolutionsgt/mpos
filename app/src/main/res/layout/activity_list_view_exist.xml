@@ -85,17 +85,37 @@
 
         <TextView
             android:id="@+id/lblPValor"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
+            android:layout_alignBaseline="@+id/lblETipo"
+            android:layout_alignBottom="@+id/lblETipo"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="19dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/lblepeso"
             android:gravity="right"
-            android:paddingBottom="5dp"
-            android:paddingRight="5dp"
-            android:text="Código"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#000000"
-            android:textSize="18sp" />
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblPValor2"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/lblETipo"
+            android:layout_alignBottom="@+id/lblETipo"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="19dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/lblepeso"
+            android:gravity="right"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

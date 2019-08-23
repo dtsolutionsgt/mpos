@@ -65,6 +65,7 @@ public class ListAdaptDevBod extends BaseAdapter {
 			holder.lblLote  = (TextView) convertView.findViewById(R.id.lblETipo);
 			holder.lblLotem  = (TextView) convertView.findViewById(R.id.textView19);
 			holder.lblValor = (TextView) convertView.findViewById(R.id.lblPValor);
+			holder.lblValor2 = (TextView) convertView.findViewById(R.id.lblPValor2);
 			holder.lblValorM = (TextView) convertView.findViewById(R.id.lblValorM);
 			holder.lblValorT = (TextView) convertView.findViewById(R.id.lblValorT);
 			holder.lblPeso = (TextView) convertView.findViewById(R.id.lblepeso);
@@ -87,6 +88,7 @@ public class ListAdaptDevBod extends BaseAdapter {
 		holder.lblCod.setText(items.get(position).Desc);
 
 		holder.lblPeso.setText(items.get(position).Valor);
+		holder.lblValor2.setText(items.get(position).ValorM);
 		/*holder.lblLotem.setText(items.get(position).Valor);
 		holder.lblPeso.setText(items.get(position).Valor);
 		holder.lblValor.setText(items.get(position).Valor);
@@ -128,7 +130,7 @@ public class ListAdaptDevBod extends BaseAdapter {
 
 
 	static class ViewHolder {
-		TextView  lblLote,lblLotem,lblCod,lblDesc,lblValor,lblValorM,lblValorT,lblPeso,lblPesoM,lblPesoT;
+		TextView  lblLote,lblLotem,lblCod,lblDesc,lblValor,lblValor2,lblValorM,lblValorT,lblPeso,lblPesoM,lblPesoT;
 		RelativeLayout reltitle,relbueno,relmalo,reltot;
 	}
 

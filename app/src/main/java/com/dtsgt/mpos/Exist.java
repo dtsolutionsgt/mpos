@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.appGlobals;
@@ -42,7 +43,7 @@ public class Exist extends PBase {
 	private ListAdaptExist adapter;
 	private clsClasses.clsExist selitem;
 
-	private double cant,disp,dispm;
+	private double cantT,disp,dispm;
 	private clsRepBuilder rep;
 	
 	private int tipo,lns, cantExistencia;
@@ -75,7 +76,7 @@ public class Exist extends PBase {
 		setHandlers();
 		
 		try {
-			sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";	
+			sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";
 			db.execSQL(sql);
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -223,8 +224,8 @@ public class Exist extends PBase {
 			final AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 			getDisp();
-			alert.setTitle("Ingrese la cantidad ");
-			alert.setMessage("Existencias :  "+disp+" (B) / "+dispm+" (M)");
+			alert.setTitle("Ingrese la cantidad a devolver");
+			alert.setMessage("Existencias del producto "+prodid+" :  "+disp);
 
 			final EditText input = new EditText(this);
 			input.setText(savecant);
@@ -238,14 +239,14 @@ public class Exist extends PBase {
 				}
 			});
 
-			alert.setNeutralButton("Estado Bueno",  new DialogInterface.OnClickListener() {
+			alert.setNeutralButton("Devolver en estado Bueno",  new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					closekeyb();
 					setCant("B",input.getText().toString());
 				}
 			});
 
-			alert.setPositiveButton("Estado Malo", new DialogInterface.OnClickListener() {
+			alert.setPositiveButton("Devolver en estado Malo", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					closekeyb();
 					setCant("M",input.getText().toString());
@@ -304,15 +305,15 @@ public class Exist extends PBase {
 					return;
 				}
 			} else {
-				if (val>dispm) {
+				if (val>disp) {
 					savecant=s;
 					setCant();
-					mu.msgbox("Cantidad mayor que existencia : "+dispm);
+					mu.msgbox("Cantidad mayor que existencia : "+disp);
 					return;
 				}
 			}
 
-			cant=val;
+			cantT=val;
 
 			addItem(est);
 		}catch (Exception e){
@@ -323,19 +324,27 @@ public class Exist extends PBase {
 
 
 	private void addItem(String est){
+		Cursor DT;
+		String SQL;
 
 		try {
-			sql="INSERT INTO T_DEVOL VALUES('"+prodid+"',0,0)";
-			db.execSQL(sql);
+			SQL="SELECT * FROM T_DEVOL WHERE CODIGO= '"+prodid+"'";
+			DT=Con.OpenDT(SQL);
+
+			if (DT.getCount()==0) {
+				sql = "INSERT INTO T_DEVOL VALUES('" + prodid + "',0,0)";
+				db.execSQL(sql);
+			}
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
 
 		try {
 			if (est.equalsIgnoreCase("B")) {
-				sql="UPDATE T_DEVOL SET CANT="+cant+" WHERE CODIGO='"+prodid+"'";
+				sql="UPDATE T_DEVOL SET CANT=CANT+"+cantT+" WHERE CODIGO='"+prodid+"'";
 			} else {
-				sql="UPDATE T_DEVOL SET CANTM="+cant+" WHERE CODIGO='"+prodid+"'";
+				sql="UPDATE T_DEVOL SET CANTM=CANTM+"+cantT+" WHERE CODIGO='"+prodid+"'";
 			}
 			db.execSQL(sql);
 		} catch (Exception e) {
@@ -351,6 +360,7 @@ public class Exist extends PBase {
 			mu.msgbox("Error : " + e.getMessage());
 		}
 
+		updData();
 		listItems();
 
 	}
@@ -667,6 +677,46 @@ public class Exist extends PBase {
 		}
 
 	}
+
+	private void updData(){
+		Cursor DT;
+		String cod;
+		Double cant,cantm;
+
+		cod = "";
+		cant = 0.0;
+		cantm = 0.0;
+		try {
+			sql="SELECT CODIGO,CANT,CANTM FROM T_DEVOL";
+
+			DT=Con.OpenDT(sql);
+			if (DT.getCount()==0) {return;}
+
+			DT.moveToFirst();
+			while (!DT.isAfterLast()) {
+
+				cod=DT.getString(0);
+				cant=DT.getDouble(1);
+				cantm=DT.getDouble(2);
+
+				sql="UPDATE P_STOCK SET CANT=CANT-"+cant+", CANTM=CANTM-"+cantm+" WHERE CODIGO='"+cod+"'";
+				db.execSQL(sql);
+
+				DT.moveToNext();
+			}
+
+			sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";
+			db.execSQL(sql);
+
+
+			Toast.makeText(this, "Devolucion hecha correctamente", Toast.LENGTH_LONG).show();
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox(e.getMessage());
+		}
+	}
+
 
 	//endregion
 

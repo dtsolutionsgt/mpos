@@ -47,7 +47,7 @@ public class DevolBod extends PBase {
 
 		setHandlers();
 
-		fillData();
+		//fillData();
 		listItems();
 	}
 
@@ -566,7 +566,7 @@ public class DevolBod extends PBase {
 		try{
 			super.onResume();
 
-			//if (((appGlobals) vApp).closeVenta) super.finish();
+			listItems();
 
 			if (browse==1) {
 				browse=0;
