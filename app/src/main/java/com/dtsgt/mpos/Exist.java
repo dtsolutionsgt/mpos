@@ -43,7 +43,7 @@ public class Exist extends PBase {
 	private ListAdaptExist adapter;
 	private clsClasses.clsExist selitem;
 
-	private double cantT,disp,dispm;
+	private double cantT,disp,dispm,dispT;
 	private clsRepBuilder rep;
 	
 	private int tipo,lns, cantExistencia;
@@ -225,7 +225,7 @@ public class Exist extends PBase {
 
 			getDisp();
 			alert.setTitle("Ingrese la cantidad a devolver");
-			alert.setMessage("Existencias del producto "+prodid+" :  "+disp);
+			alert.setMessage("Existencias del producto "+prodid+" :  "+dispT);
 
 			final EditText input = new EditText(this);
 			input.setText(savecant);
@@ -278,6 +278,7 @@ public class Exist extends PBase {
 
 			disp=DT.getDouble(0);
 			dispm=DT.getDouble(1);
+			dispT = disp + dispm;
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -298,17 +299,17 @@ public class Exist extends PBase {
 			}
 
 			if (est.equalsIgnoreCase("B")) {
-				if (val>disp) {
+				if (val>dispT) {
 					savecant=s;
 					setCant();
-					mu.msgbox("Cantidad mayor que existencia : "+disp);
+					mu.msgbox("Cantidad mayor que existencia : "+dispT);
 					return;
 				}
 			} else {
-				if (val>disp) {
+				if (val>dispT) {
 					savecant=s;
 					setCant();
-					mu.msgbox("Cantidad mayor que existencia : "+disp);
+					mu.msgbox("Cantidad mayor que existencia : "+dispT);
 					return;
 				}
 			}
@@ -360,7 +361,7 @@ public class Exist extends PBase {
 			mu.msgbox("Error : " + e.getMessage());
 		}
 
-		updData();
+		updData(est);
 		listItems();
 
 	}
@@ -678,14 +679,15 @@ public class Exist extends PBase {
 
 	}
 
-	private void updData(){
+	private void updData(String est){
 		Cursor DT;
 		String cod;
-		Double cant,cantm;
+		Double cant,cantm,cantm2;
 
 		cod = "";
 		cant = 0.0;
 		cantm = 0.0;
+
 		try {
 			sql="SELECT CODIGO,CANT,CANTM FROM T_DEVOL";
 
@@ -696,11 +698,28 @@ public class Exist extends PBase {
 			while (!DT.isAfterLast()) {
 
 				cod=DT.getString(0);
-				cant=DT.getDouble(1);
-				cantm=DT.getDouble(2);
 
-				sql="UPDATE P_STOCK SET CANT=CANT-"+cant+", CANTM=CANTM-"+cantm+" WHERE CODIGO='"+cod+"'";
-				db.execSQL(sql);
+				if(est.equals("B")){
+					if(cantT>disp){
+						throw new Exception();
+					}
+
+					sql="UPDATE P_STOCK SET CANT=CANT-"+cantT+" WHERE CODIGO='"+cod+"'";
+					db.execSQL(sql);
+
+				}else if(est.equals("M")){
+					if(cantT>dispm){
+						cant = cantT - dispm;
+						cantm = cantT - cant;
+
+						sql="UPDATE P_STOCK SET CANT=CANT-"+cant+", CANTM=CANTM-"+cantm+" WHERE CODIGO='"+cod+"'";
+						db.execSQL(sql);
+					}else{
+
+						sql="UPDATE P_STOCK SET CANTM=CANTM-"+cantT+" WHERE CODIGO='"+cod+"'";
+						db.execSQL(sql);
+					}
+				}
 
 				DT.moveToNext();
 			}

@@ -362,7 +362,7 @@ public class DevolBod extends PBase {
 
 				db.execSQL(ins.sql());
 
-				if (pcant>0) {
+				/*if (pcant>0) {
 			 	    sql="UPDATE P_STOCK SET CANT=CANT-"+pcant+" WHERE CODIGO='"+pcod+"'";
 				    db.execSQL(sql);
 				    i+=1;
@@ -372,10 +372,14 @@ public class DevolBod extends PBase {
 		    	    sql="UPDATE P_STOCK SET CANTM=CANTM-"+pcant+" WHERE CODIGO='"+pcod+"'";
 				    db.execSQL(sql);
 				    i+=1;
-				}
+				}*/
 
-			    DT.moveToNext();
+				DT.moveToNext();
 			}
+
+
+			sql="DELETE FROM T_DEVOL";
+			db.execSQL(sql);
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -421,13 +425,7 @@ public class DevolBod extends PBase {
 		Double cant,cantm;
 
 		try {
-			sql="DELETE FROM T_DEVOL";
-			db.execSQL(sql);
-
-			sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
-			db.execSQL(sql);
-
-			sql="SELECT CODIGO,CANT,CANTM FROM P_STOCK";
+			sql="SELECT CODIGO,CANT,CANTM FROM T_DEVOL";
 
 			DT=Con.OpenDT(sql);
 			if (DT.getCount()==0) {return;}
@@ -435,16 +433,18 @@ public class DevolBod extends PBase {
 			DT.moveToFirst();
 			while (!DT.isAfterLast()) {
 
-			  cod=DT.getString(0);
-			  cant=DT.getDouble(1);
-			  cantm=DT.getDouble(2);
+				cod=DT.getString(0);
+				cant=DT.getDouble(1);
+				cantm=DT.getDouble(2);
 
-			  sql="INSERT INTO T_DEVOL VALUES('"+cod+"',"+cant+","+cantm+")";
-			  db.execSQL(sql);
+				sql="UPDATE P_STOCK SET CANT=CANT+"+cant+", CANTM=CANTM+"+cantm+" WHERE CODIGO='"+cod+"'";
+				db.execSQL(sql);
 
-			  DT.moveToNext();
+				DT.moveToNext();
 			}
 
+			sql="DELETE FROM T_DEVOL";
+			db.execSQL(sql);
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -463,6 +463,7 @@ public class DevolBod extends PBase {
 		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
 		    	doExit();
+		    	fillData();
 		    }
 		});
 
