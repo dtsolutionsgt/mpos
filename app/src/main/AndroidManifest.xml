@@ -31,7 +31,7 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-          <activity
+        <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
@@ -478,6 +478,15 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantProducto"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.dtsgt.mant.MantCli"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name="com.dtsgt.mant.MantVendedores"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />

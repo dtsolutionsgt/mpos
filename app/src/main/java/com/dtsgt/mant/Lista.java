@@ -178,10 +178,12 @@ public class Lista extends PBase {
                 break;
             case 9:
                 lblTit.setText("Proveedores");break;
-            case 10:
-                lblTit.setText("Usuarios");break;
-            case 11:
-                lblTit.setText("Vendedores");break;
+            case 11: // Vendedores
+                sql="SELECT DISTINCT 0,CODIGO,NOMBRE,'','', '','','','' FROM VENDEDORES WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
             case 12: // Tienda
                 sql="SELECT 0,CODIGO,DESCRIPCION,'','', '','','','' FROM P_SUCURSAL WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
@@ -220,11 +222,9 @@ public class Lista extends PBase {
                 lblTit.setText("Productos");break;
             case 9:
                 lblTit.setText("Proveedores");break;
-            case 10:
-                lblTit.setText("Usuarios");break;
             case 11:
-                lblTit.setText("Vendedores");break;
-            case 12:
+                lblTit.setText("Usuarios");break;
+              case 12:
                 lblTit.setText("Tiendas");break;
         }
     }
@@ -237,7 +237,7 @@ public class Lista extends PBase {
             case 1:
                 lblTit.setText("Bancos");break;
             case 2:
-                startActivity(new Intent(this,MantCliente.class));break;
+                startActivity(new Intent(this,MantCli.class));break;
             case 3:
                 startActivity(new Intent(this,MantEmpresa.class));break;
             case 4:
@@ -255,7 +255,7 @@ public class Lista extends PBase {
             case 10:
                 lblTit.setText("Usuarios");break;
             case 11:
-                lblTit.setText("Vendedores");break;
+                startActivity(new Intent(this, MantVendedores.class));break;
             case 12:
                 startActivity(new Intent(this, MantTienda.class));break;
         }

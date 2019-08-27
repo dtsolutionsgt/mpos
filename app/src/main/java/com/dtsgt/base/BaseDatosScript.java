@@ -1088,55 +1088,65 @@ public class BaseDatosScript {
 
 			sql="CREATE INDEX P_BANCO_idx1 ON P_BANCO(NOMBRE)";
 			database.execSQL(sql);
-			
 
-			sql="CREATE TABLE [P_CLIENTE] ("+
-					"[CODIGO] TEXT NOT NULL,"+
-					"[NOMBRE] TEXT NOT NULL,"+
-					"[BLOQUEADO] TEXT NOT NULL,"+
-					"[TIPONEG] TEXT NOT NULL,"+
-					"[TIPO] TEXT NOT NULL,"+
-					"[SUBTIPO] TEXT NOT NULL,"+
-					"[CANAL] TEXT NOT NULL,"+
-					"[SUBCANAL] TEXT NOT NULL,"+
-					"[NIVELPRECIO] INTEGER NOT NULL,"+
-					"[MEDIAPAGO] TEXT NOT NULL,"+
-					"[LIMITECREDITO] REAL NOT NULL,"+
-					"[DIACREDITO] INTEGER NOT NULL,"+
-					"[DESCUENTO] TEXT NOT NULL,"+
-					"[BONIFICACION] TEXT NOT NULL,"+
-					"[ULTVISITA] INTEGER NOT NULL,"+
-					"[IMPSPEC] REAL NOT NULL,"+
-					"[INVTIPO] TEXT NOT NULL,"+
-					"[INVEQUIPO] TEXT NOT NULL,"+
-					"[INV1] TEXT NOT NULL,"+
-					"[INV2] TEXT NOT NULL,"+
-					"[INV3] TEXT NOT NULL,"+
-					"[NIT] TEXT NOT NULL,"+
-					"[MENSAJE] TEXT NOT NULL,"+
-					"[TELEFONO] TEXT NOT NULL,"+
-					"[DIRTIPO] TEXT NOT NULL,"+
-					"[DIRECCION] TEXT NOT NULL,"+
-					"[SUCURSAL] TEXT NOT NULL,"+
-					"[COORX] REAL NOT NULL,"+
-					"[COORY] REAL NOT NULL,"+
-					"[FIRMADIG] TEXT NOT NULL,"+
-					"[CODBARRA] TEXT NOT NULL,"+
-					"[VALIDACREDITO] TEXT NOT NULL,"+
-					"[PRECIO_ESTRATEGICO] TEXT NOT NULL,"+
-					"[NOMBRE_PROPIETARIO] TEXT NOT NULL,"+
-					"[NOMBRE_REPRESENTANTE] TEXT NOT NULL,"+
-					"[BODEGA] TEXT NOT NULL,"+
-					"[COD_PAIS] TEXT NOT NULL,"+
-					"[FACT_VS_FACT] TEXT NOT NULL,"+
-					"[CHEQUEPOST] TEXT NOT NULL,"+
-					"[PERCEPCION] REAL NOT NULL,"+
-					"[TIPO_CONTRIBUYENTE] TEXT NOT NULL,"+
-					"[ID_DESPACHO] INTEGER NOT NULL,"+
-					"[ID_FACTURACION] INTEGER NOT NULL,"+
-					"[MODIF_PRECIO] INTEGER NOT NULL,"+
-					"PRIMARY KEY ([CODIGO])"+
-					");";
+            sql="CREATE TABLE [P_cliente] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "BLOQUEADO TEXT NOT NULL,"+
+                    "TIPONEG TEXT NOT NULL,"+
+                    "TIPO TEXT NOT NULL,"+
+                    "SUBTIPO TEXT NOT NULL,"+
+                    "CANAL TEXT NOT NULL,"+
+                    "SUBCANAL TEXT NOT NULL,"+
+                    "NIVELPRECIO INTEGER NOT NULL,"+
+                    "MEDIAPAGO TEXT NOT NULL,"+
+                    "LIMITECREDITO REAL NOT NULL,"+
+                    "DIACREDITO INTEGER NOT NULL,"+
+                    "DESCUENTO TEXT NOT NULL,"+
+                    "BONIFICACION TEXT NOT NULL,"+
+                    "ULTVISITA INTEGER NOT NULL,"+
+                    "IMPSPEC REAL NOT NULL,"+
+                    "INVTIPO TEXT NOT NULL,"+
+                    "INVEQUIPO TEXT NOT NULL,"+
+                    "INV1 TEXT NOT NULL,"+
+                    "INV2 TEXT NOT NULL,"+
+                    "INV3 TEXT NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "MENSAJE TEXT NOT NULL,"+
+                    "EMAIL TEXT NOT NULL,"+
+                    "ESERVICE TEXT NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "DIRTIPO TEXT NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "REGION TEXT NOT NULL,"+
+                    "SUCURSAL TEXT NOT NULL,"+
+                    "MUNICIPIO TEXT NOT NULL,"+
+                    "CIUDAD TEXT NOT NULL,"+
+                    "ZONA INTEGER NOT NULL,"+
+                    "COLONIA TEXT NOT NULL,"+
+                    "AVENIDA TEXT NOT NULL,"+
+                    "CALLE TEXT NOT NULL,"+
+                    "NUMERO TEXT NOT NULL,"+
+                    "CARTOGRAFICO TEXT NOT NULL,"+
+                    "COORX REAL NOT NULL,"+
+                    "COORY REAL NOT NULL,"+
+                    "BODEGA TEXT NOT NULL,"+
+                    "COD_PAIS TEXT NOT NULL,"+
+                    "FIRMADIG TEXT NOT NULL,"+
+                    "CODBARRA TEXT NOT NULL,"+
+                    "VALIDACREDITO TEXT NOT NULL,"+
+                    "FACT_VS_FACT TEXT NOT NULL,"+
+                    "CHEQUEPOST TEXT NOT NULL,"+
+                    "PRECIO_ESTRATEGICO TEXT NOT NULL,"+
+                    "NOMBRE_PROPIETARIO TEXT NOT NULL,"+
+                    "NOMBRE_REPRESENTANTE TEXT NOT NULL,"+
+                    "PERCEPCION REAL NOT NULL,"+
+                    "TIPO_CONTRIBUYENTE TEXT NOT NULL,"+
+                    "ID_DESPACHO INTEGER NOT NULL,"+
+                    "ID_FACTURACION INTEGER NOT NULL,"+
+                    "MODIF_PRECIO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
 			database.execSQL(sql);
 
 			sql="CREATE INDEX P_CLIENTE_idx1 ON P_CLIENTE(NOMBRE)";
@@ -1405,7 +1415,7 @@ public class BaseDatosScript {
 					"[EMPRESA] TEXT NOT NULL,"+
 					"[DESCRIPCION] TEXT NOT NULL,"+
 					"[NOMBRE] TEXT NOT NULL,"+
-					"[DIRECCION] INTEGER NOT NULL,"+
+					"[DIRECCION] TEXT NOT NULL,"+
 					"[TELEFONO] TEXT NOT NULL,"+
 					"[NIT] TEXT NOT NULL,"+
 					"[TEXTO] TEXT NOT NULL,"+
@@ -2003,6 +2013,22 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+
+            sql="CREATE TABLE [VENDEDORES] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "CLAVE TEXT NOT NULL,"+
+                    "RUTA TEXT NOT NULL,"+
+                    "NIVEL INTEGER NOT NULL,"+
+                    "NIVELPRECIO INTEGER NOT NULL,"+
+                    "BODEGA TEXT NOT NULL,"+
+                    "SUBBODEGA TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO],[RUTA])"+
+                    ");";
+            database.execSQL(sql);
+
+
             return 1;
 			 
 		} catch (SQLiteException e) {
@@ -2230,6 +2256,9 @@ public class BaseDatosScript {
 			  db.execSQL("INSERT INTO FinDia VALUES (0,0, 0,0,0,0, 0,0,0,0);");
 			  db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
 					  "'1','','','',0,'','','',  '',0,0,'',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
+
+            db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','','','', '','','','',1);");
+
 
     	      return 1;
 	    } catch (SQLiteException e) {

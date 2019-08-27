@@ -434,11 +434,6 @@ public class MainActivity extends PBase {
 
         try {
 
-            if (fecha > 2006310000) {
-                msgAskLic("¡Su licencia expiró!");
-                return false;
-            }
-
             usr = txtUser.getText().toString().trim();
             pwd = txtPass.getText().toString().trim();
 
@@ -466,7 +461,7 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM P_VENDEDOR WHERE CODIGO='" + usr + "'";
+            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() == 0) {

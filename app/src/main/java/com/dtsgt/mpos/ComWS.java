@@ -615,12 +615,12 @@ public class ComWS extends PBase {
     }
 
     private boolean validaDatos(String user,String psw){
-
         Cursor DT;
 	    boolean correctos=false;
         String dpsw;
-	    try{
 
+        /*
+	    try{
 
             sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM P_VENDEDOR WHERE CODIGO='" + user + "' AND NIVEL=1";
             DT = Con.OpenDT(sql);
@@ -637,14 +637,13 @@ public class ComWS extends PBase {
                 return false;
             }
 
-
 			correctos = true;
 
          }catch (Exception e){
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             return false;
         }
+        */
 
         return  correctos;
 
@@ -1577,7 +1576,7 @@ public class ComWS extends PBase {
 			if (!AddTable("P_BONLIST")) return false;
 			//if (!AddTable("P_PRODGRUP")) return false;
 			if (!AddTable("P_IMPUESTO")) return false;
-			if (!AddTable("P_VENDEDOR")) return false;
+			if (!AddTable("VENDEDORES")) return false;
 			if (!AddTable("P_MUNI")) return false;
 			//if (!AddTable("P_VEHICULO")) return false;
 			if (!AddTable("P_HANDHELD")) return false;
@@ -1594,7 +1593,7 @@ public class ComWS extends PBase {
 
 			if (!AddTable("P_ARCHIVOCONF")) return false;
 			if (!AddTable("P_ENCABEZADO_REPORTESHH")) return false;
-			if (!AddTable("P_PORCMERMA")) return false;
+			//if (!AddTable("P_PORCMERMA")) return false;
 
 
 			// Objetivos
@@ -1634,7 +1633,6 @@ public class ComWS extends PBase {
 			for (int i = 0; i < rc; i++) {
 
 				sql = listItems.get(i);esql = sql;
-				sql = sql.replace("INTO VENDEDORES", "INTO P_VENDEDOR");
 				sql = sql.replace("INTO P_RAZONNOSCAN", "INTO P_CODNOLEC");
                 sql = sql.replace("INTO P_ENCABEZADO_REPORTESHH_II", "INTO P_ENCABEZADO_REPORTESHH");
 
@@ -2034,7 +2032,8 @@ public class ComWS extends PBase {
 			return SQL;
 		}
 
-		if (TN.equalsIgnoreCase("P_CLIENTE")) {
+
+        if (TN.equalsIgnoreCase("P_CLIENTE")) {
 			SQL = " SELECT CODIGO,NOMBRE,BLOQUEADO,TIPONEG,TIPO,SUBTIPO,CANAL,SUBCANAL, ";
 			SQL += "NIVELPRECIO,MEDIAPAGO,LIMITECREDITO,DIACREDITO,DESCUENTO,BONIFICACION, ";
 			SQL += "dbo.AndrDate(ULTVISITA),IMPSPEC,INVTIPO,INVEQUIPO,INV1,INV2,INV3, NIT, MENSAJE, ";
@@ -2042,7 +2041,11 @@ public class ComWS extends PBase {
 			SQL += "PRECIO_ESTRATEGICO, NOMBRE_PROPIETARIO, NOMBRE_REPRESENTANTE, ";
 			SQL += "BODEGA, COD_PAIS, FACT_VS_FACT, CHEQUEPOST, PERCEPCION, TIPO_CONTRIBUYENTE, ID_DESPACHO, ID_FACTURACION,MODIF_PRECIO ";
 			SQL += "FROM P_CLIENTE ";
-			SQL += "WHERE (CODIGO IN (SELECT CLIENTE FROM P_CLIRUTA WHERE (RUTA='" + ActRuta + "') )) ";
+
+            SQL = " SELECT CODIGO, NOMBRE, BLOQUEADO, TIPONEG, TIPO, SUBTIPO, CANAL, SUBCANAL, NIVELPRECIO, MEDIAPAGO, LIMITECREDITO, DIACREDITO, DESCUENTO, BONIFICACION, ULTVISITA, IMPSPEC, INVTIPO, INVEQUIPO,  ";
+            SQL += "INV1, INV2, INV3, NIT, MENSAJE, EMAIL, ESERVICE, TELEFONO, DIRTIPO, DIRECCION, REGION, SUCURSAL, MUNICIPIO, CIUDAD, ZONA, COLONIA, AVENIDA, CALLE, NUMERO, CARTOGRAFICO, COORX, COORY, BODEGA,  ";
+            SQL += "COD_PAIS, FIRMADIG, CODBARRA, VALIDACREDITO, FACT_VS_FACT, CHEQUEPOST, PRECIO_ESTRATEGICO, NOMBRE_PROPIETARIO, NOMBRE_REPRESENTANTE, PERCEPCION, TIPO_CONTRIBUYENTE, ID_DESPACHO,  ";
+            SQL += "ID_FACTURACION, MODIF_PRECIO FROM P_CLIENTE";
 			return SQL;
 		}
 
@@ -2229,16 +2232,9 @@ public class ComWS extends PBase {
 		}
 
 		//#HS_20181206 Agregue Ruta.
-		if (TN.equalsIgnoreCase("P_VENDEDOR")) {
-
-			if (gl.peModal.equalsIgnoreCase("TOL")) {
-				SQL = "SELECT CODIGO,NOMBRE,CLAVE,RUTA,NIVEL,NIVELPRECIO,ISNULL(BODEGA,0) AS BODEGA,ISNULL(SUBBODEGA,0) AS SUBBODEGA,'' AS COD_VEHICULO,0 AS LIQUIDANDO,0 AS BLOQUEADO,0 AS DEVOLUCION_SAP,Activo  " +
-						"FROM VENDEDORES  WHERE (RUTA='" + ActRuta + "') ";
-			} else {
-				SQL = "SELECT CODIGO,NOMBRE,CLAVE,RUTA,NIVEL,NIVELPRECIO,ISNULL(BODEGA,0) AS BODEGA,ISNULL(SUBBODEGA,0) AS SUBBODEGA,COD_VEHICULO,LIQUIDANDO,BLOQUEADO,DEVOLUCION_SAP  " +
-						"FROM P_VENDEDOR  WHERE (RUTA='" + ActRuta + "') OR (NIVEL=1) ";
-			}
-
+		if (TN.equalsIgnoreCase("VENDEDORES")) {
+				SQL = "SELECT CODIGO,NOMBRE,CLAVE,RUTA,NIVEL,NIVELPRECIO,ISNULL(BODEGA,' ') AS BODEGA,ISNULL(SUBBODEGA,' ') AS SUBBODEGA, ACTIVO  " +
+                      "FROM VENDEDORES  ";
 			return SQL;
 		}
 
