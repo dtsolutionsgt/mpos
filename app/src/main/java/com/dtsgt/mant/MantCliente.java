@@ -37,12 +37,12 @@ public class MantCliente extends PBase {
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.txt);
         imgstat = (ImageView) findViewById(R.id.imageView31);
-
+*/
         holder =new clsP_clienteObj(this,Con,db);
 
         id=gl.gcods;
-        if (id.isEmpty()) newItem(); else loadItem();
-        */
+       // if (id.isEmpty()) newItem(); else loadItem();
+
     }
 
     //region Events
