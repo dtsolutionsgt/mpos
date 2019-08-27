@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dtsgt.mant.MantCliente">
+    tools:context="com.dtsgt.mant.MantVendedores">
 
     <ImageView
         android:id="@+id/imgImg2"
@@ -64,7 +64,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Cliente"
+            android:text="Usuario"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
             android:textSize="24sp"
@@ -74,7 +74,8 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="500dp"
+        android:layout_above="@id/relbotpan"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -83,7 +84,68 @@
         android:layout_marginTop="120dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
-        android:background="@layout/frame_rect">
+        android:background="@drawable/frame_rect">
+
+        <TextView
+            android:id="@+id/lblCFact12"
+            android:layout_width="240dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/txt2"
+            android:layout_alignEnd="@+id/txt2"
+            android:layout_alignParentLeft="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/editText12"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_horizontal|center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Acceso a sucursal"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/lblCFact10"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@+id/lblCFact9"
+            android:layout_alignStart="@+id/lblCFact9"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Rol"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/lblCFact9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/editText12"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignBottom="@+id/editText12"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Contraseña :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <EditText
             android:id="@+id/txt2"
@@ -124,18 +186,6 @@
             android:textSize="18sp"
             android:textStyle="normal" />
 
-        <TextView
-            android:id="@+id/lblBU"
-            android:layout_width="wrap_content"
-            android:layout_height="10dp"
-            android:layout_below="@+id/txt2"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="34dp"
-            android:layout_marginTop="60dp"
-            android:text="Small Text"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:visibility="invisible" />
-
         <EditText
             android:id="@+id/txt1"
             android:layout_width="300dp"
@@ -162,9 +212,79 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="NIT :"
+            android:text="Código :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
+
+        <EditText
+            android:id="@+id/editText12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt2"
+            android:layout_alignStart="@+id/txt2"
+            android:layout_alignEnd="@+id/txt1"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <RadioGroup
+            android:id="@+id/radiogrp"
+            android:layout_width="150dp"
+            android:layout_height="180dp"
+            android:layout_below="@+id/editText12"
+            android:layout_alignStart="@+id/editText12"
+            android:layout_alignEnd="@+id/editText12"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/frame_rect">
+
+            <RadioButton
+                android:id="@+id/radioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:text="Cajero"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radioButton3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:text="Supervisor"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radioButton4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:text="Gerente"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RadioGroup>
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lblCFact12"
+            android:layout_alignEnd="@+id/lblCFact12"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@id/radiogrp"
+            android:background="@drawable/frame_rect" />
 
     </RelativeLayout>
 

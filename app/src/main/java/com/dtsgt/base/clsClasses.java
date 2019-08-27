@@ -301,22 +301,19 @@ public class clsClasses {
 		public int  cod_rol;
 	}
 
-	public class clsP_vendedor {
-		public String codigo;
-		public String nombre;
-		public String clave;
-		public String ruta;
-		public int  nivel;
-		public int  nivelprecio;
-		public String bodega;
-		public String subbodega;
-		public String cod_vehiculo;
-		public String liquidando;
-		public int  ultima_fecha_liq;
-		public int  bloqueado;
-		public int  devolucion_sap;
-		public int activo;
+    public class clsVendedores {
+        public String codigo;
+        public String nombre;
+        public String clave;
+        public String ruta;
+        public int  nivel;
+        public int  nivelprecio;
+        public String bodega;
+        public String subbodega;
+        public int  activo;
 	}
+
+    //
 
 	public class clsLista {
 		public int  pk;
