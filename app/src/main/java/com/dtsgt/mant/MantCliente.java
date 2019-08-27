@@ -9,18 +9,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_lineaObj;
-import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class MantAlmacen extends PBase {
+public class MantCliente extends PBase {
 
     private ImageView imgstat;
-    private EditText txt1,txt2,txt3,txt4,txt5,txt6,txt7;
+    private EditText txt1,txt2,txt3;
 
-    private clsP_sucursalObj holder;
-    private clsClasses.clsP_sucursal item=clsCls.new clsP_sucursal();
+    private clsP_clienteObj holder;
+    private clsClasses.clsP_cliente item=clsCls.new clsP_cliente();
 
     private String id;
     private boolean newitem=false;
@@ -28,24 +28,23 @@ public class MantAlmacen extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_almacen);
+        setContentView(R.layout.activity_mant_cliente);
 
         super.InitBase();
 
+        /*
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
-        txt3 = (EditText) findViewById(R.id.txt3);
-        txt4 = (EditText) findViewById(R.id.txt4);
-        txt5 = (EditText) findViewById(R.id.txt5);
-        txt6 = (EditText) findViewById(R.id.txt6);
-        txt7 = (EditText) findViewById(R.id.txt7);
+        txt3 = (EditText) findViewById(R.id.txt);
         imgstat = (ImageView) findViewById(R.id.imageView31);
-
-        holder =new clsP_sucursalObj(this,Con,db);
+*/
+        holder =new clsP_clienteObj(this,Con,db);
 
         id=gl.gcods;
-        if (id.isEmpty()) newItem(); else loadItem();
+       // if (id.isEmpty()) newItem(); else loadItem();
+
     }
+
     //region Events
 
     public void doSave(View view) {
@@ -58,7 +57,7 @@ public class MantAlmacen extends PBase {
     }
 
     public void doStatus(View view) {
-        if (item.activo==1) {
+        if (item.bloqueado.equalsIgnoreCase("N")) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
@@ -80,10 +79,9 @@ public class MantAlmacen extends PBase {
 
             showItem();
 
-            txt1.setEnabled(false);
-            txt2.requestFocus();
+            txt1.requestFocus();
             imgstat.setVisibility(View.VISIBLE);
-            if (item.activo==1) {
+            if (item.bloqueado.equalsIgnoreCase("N")) {
                 imgstat.setImageResource(R.drawable.delete_64);
             } else {
                 imgstat.setImageResource(R.drawable.mas);
@@ -99,15 +97,61 @@ public class MantAlmacen extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo="";
-        item.empresa="1";
-        item.descripcion="";
-        item.nombre="";
-        item.direccion="";
-        item.telefono="";
-        item.nit="";
-        item.texto="";
-        item.activo=1;
+        item.codigo=" ";
+        item.nombre=" ";
+        item.bloqueado ="N";
+        item.tiponeg = "1";
+        item.tipo = "1";
+        item.subtipo = "1";
+        item.canal = "1";
+        item.subcanal = "1";
+        item.nivelprecio = 1;
+        item.mediapago = "1";
+        item.limitecredito = 0;
+        item.diacredito = 0;
+        item.descuento = "S";
+        item.bonificacion = "S";
+        item.ultvisita = 0;
+        item.impspec = 0;
+        item.invtipo = "0";
+        item.invequipo = "N";
+        item.inv1 = "N";
+        item.inv2 = "N";
+        item.inv3 = "N";
+        item.nit = " ";
+        item.mensaje = "";
+        item.email = " ";
+        item.eservice =  " ";
+        item.telefono =  " ";
+        item.dirtipo = " ";
+        item.direccion =" ";
+        item.region =  " ";
+        item.sucursal =  " ";
+        item.municipio =  " ";
+        item.ciudad =  " ";
+        item.zona = 0;
+        item.colonia =  " ";
+        item.avenida =  " ";
+        item.calle =  " ";
+        item.numero =  " ";
+        item.cartografico =  " ";
+        item.coorx = 0;
+        item.coory = 0;
+        item.bodega =  " ";
+        item.cod_pais =  " ";
+        item.firmadig =  " ";
+        item.codbarra =  " ";
+        item.validacredito ="S";
+        item.fact_vs_fact =  " ";
+        item.chequepost =  " ";
+        item.precio_estrategico =  "N";
+        item.nombre_propietario =  " ";
+        item.nombre_representante = " ";
+        item.percepcion = 0;
+        item.tipo_contribuyente = " ";
+        item.id_despacho = 0;
+        item.id_facturacion = 0;
+        item.modif_precio = 0;
 
         showItem();
     }
@@ -137,12 +181,7 @@ public class MantAlmacen extends PBase {
 
     private void showItem() {
         txt1.setText(item.codigo);
-        txt2.setText(item.descripcion);
-        txt3.setText(item.nombre);
-        txt4.setText(item.direccion);
-        txt5.setText(item.telefono);
-        txt6.setText(item.nit);
-        txt7.setText(item.texto);
+        txt2.setText(item.nombre);
     }
 
     private boolean validaDatos() {
@@ -150,58 +189,29 @@ public class MantAlmacen extends PBase {
 
         try {
 
-            if (newitem) {
-                ss=txt1.getText().toString();
-                if (ss.isEmpty()) {
-                    msgbox("¡Falta definir código!");return false;
-                }
 
-                holder.fill("WHERE CODIGO='"+ss+"'");
-                if (holder.count>0) {
-                    msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
-                }
-
-                item.codigo=ss;
+            ss = txt1.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Falta definir NIT!");
+                return false;
             }
 
-            ss=txt2.getText().toString();
-            if (ss.isEmpty()) {
-                msgbox("¡Nombre incorrecto!");return false;
-            } else {
-                item.descripcion=ss;
+            holder.fill("WHERE CODIGO='" + ss + "'");
+            if (holder.count > 0) {
+                msgbox("¡NIT ya existe!\n" + holder.first().nombre);
+                return false;
             }
 
-            ss=txt3.getText().toString();
+            item.nit = txt1.getText().toString();
+            if (newitem) item.codigo = item.nit;
+
+            ss = txt2.getText().toString();
             if (ss.isEmpty()) {
-                msgbox("¡Razón social incorrecto!");return false;
+                msgbox("¡Nombre incorrecto!");
+                return false;
             } else {
                 item.nombre=ss;
             }
-
-            ss=txt4.getText().toString();
-            if (ss.isEmpty()) {
-                msgbox("¡Dirección incorrecta!");return false;
-            } else {
-                item.direccion=ss;
-            }
-
-            ss=txt5.getText().toString();
-            if (ss.isEmpty()) {
-                msgbox("¡Telefóno incorrecto!");return false;
-            } else {
-                item.telefono=ss;
-            }
-
-            ss=txt6.getText().toString();
-            if (ss.isEmpty()) {
-                msgbox("¡NIT incorrecto!");return false;
-            } else {
-                item.nit=ss;
-            }
-
-            ss=txt7.getText().toString();
-            if (ss.isEmpty()) ss=" ";
-            item.texto=ss;
 
             return true;
         } catch (Exception e) {
@@ -234,7 +244,6 @@ public class MantAlmacen extends PBase {
         dialog.show();
     }
 
-
     private void msgAskUpdate(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
@@ -263,10 +272,10 @@ public class MantAlmacen extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                if (item.activo==1) {
-                    item.activo=0;
+                if (item.bloqueado.equalsIgnoreCase("N")) {
+                    item.bloqueado="S";
                 } else {
-                    item.activo=1;
+                    item.bloqueado="N";
                 };
                 updateItem();
                 finish();

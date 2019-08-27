@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"   xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dtsgt.mant.MantAlmacen">
+    tools:context="com.dtsgt.mant.MantCliente">
 
     <ImageView
         android:id="@+id/imgImg2"
@@ -63,7 +64,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Almacen"
+            android:text="Cliente"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
             android:textSize="24sp"
@@ -84,171 +85,6 @@
         android:layout_marginBottom="5dp"
         android:background="@layout/frame_rect">
 
-        <TextView
-            android:id="@+id/textView118"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/txt7"
-            android:layout_alignBottom="@id/txt7"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Texto pie :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/textView119"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/txt6"
-            android:layout_alignBottom="@id/txt6"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="NIT :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/textView120"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/txt5"
-            android:layout_alignBottom="@id/txt5"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Telefóno :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/textView121"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/txt4"
-            android:layout_alignBottom="@id/txt4"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Dirección :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/textView96"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/txt3"
-            android:layout_alignBottom="@id/txt3"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Razón social :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF" />
-
-        <EditText
-            android:id="@+id/txt4"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txt3"
-            android:layout_alignParentEnd="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="250dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="35"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/txt5"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txt4"
-            android:layout_alignParentEnd="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="250dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="35"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/txt6"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txt5"
-            android:layout_alignParentEnd="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="250dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="35"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/txt7"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txt6"
-            android:layout_alignParentEnd="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="250dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="35"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/txt3"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txt2"
-            android:layout_alignParentEnd="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="250dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="35"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
         <EditText
             android:id="@+id/txt2"
             android:layout_width="500dp"
@@ -262,10 +98,10 @@
             android:ems="10"
             android:maxLength="50"
             android:maxLines="1"
+            android:selectAllOnFocus="true"
             android:singleLine="true"
             android:textSize="21sp"
-            android:textStyle="bold"
-            android:selectAllOnFocus="true" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblCFact"
@@ -292,10 +128,10 @@
             android:id="@+id/lblBU"
             android:layout_width="wrap_content"
             android:layout_height="10dp"
-            android:layout_below="@id/txt7"
+            android:layout_below="@+id/txt2"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="21dp"
-            android:layout_marginTop="1dp"
+            android:layout_marginLeft="34dp"
+            android:layout_marginTop="60dp"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="invisible" />
@@ -310,10 +146,10 @@
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:maxLength="15"
-            android:textSize="21sp"
-            android:textStyle="bold"
             android:maxLines="1"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView2"
@@ -326,7 +162,7 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Código :"
+            android:text="NIT :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
 

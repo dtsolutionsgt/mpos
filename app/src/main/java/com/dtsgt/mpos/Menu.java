@@ -1,12 +1,16 @@
 package com.dtsgt.mpos;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +29,7 @@ import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class Menu extends PBase {
@@ -193,6 +198,10 @@ public class Menu extends PBase {
 				item.ID=11;item.Name="Mantenimientos";item.Icon=11;
 				items.add(item);
 
+                item = clsCls.new clsMenu();
+                item.ID=12;item.Name="Reportes";item.Icon=12;
+                items.add(item);
+
 				item = clsCls.new clsMenu();
 				item.ID=10;item.Name="Cambio usuario";item.Icon=10;
 				items.add(item);
@@ -210,7 +219,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 
 	}
 		
@@ -291,7 +299,7 @@ public class Menu extends PBase {
 					//#HS_20181206 Verifica el usuario si es DTS.
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
 						mu.msgbox("No puede realizar esta acción");
-					}else {
+					} else {
 						if (rutatipo.equalsIgnoreCase("T")) {
 							showPrintMenuTodo();
 						} else {
@@ -1176,7 +1184,8 @@ public class Menu extends PBase {
 	public void showInvMenuUtils() {
 		try{
 			final AlertDialog Dialog;
-			final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
+			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
+			final String[] selitems = {"Configuracion de impresora","Tablas","Información de sistema"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.utils48);
@@ -1191,16 +1200,7 @@ public class Menu extends PBase {
 						case 1:
 							startActivity(new Intent(Menu.this,Tablas.class));break;
 						case 2:
-							menuCorelZ();break;
-						case 3:
-							startActivity(new Intent(Menu.this,Soporte.class));break;
-						case 4:
-							msgbox("Serial# : "+gl.deviceId);break;
-						case 5:
-							startActivity(new Intent(Menu.this,imprime_barras.class));break;
-						case 6:
-							startActivity(new Intent(Menu.this,rating.class));break;
-
+							infoSystem();break;
 					}
 
 					dialog.cancel();
@@ -1352,6 +1352,61 @@ public class Menu extends PBase {
 
 	}
 
+	private void infoSystem() {
+		String ss,sb="",sm="",sd="";
+
+		try {
+			BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
+			int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+			sb="Carga de batería  : "+batLevel+" %";
+		} catch (Exception e) {
+			msgbox(e.getMessage());
+			sb="Carga de batería  :  -";
+		}
+
+		try {
+			ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+			ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+			activityManager.getMemoryInfo(mi);
+			int availableMegs = (int) (mi.availMem / 0x100000L);
+			int totalMegs = (int) (mi.totalMem / 0x100000L);
+			int percentAvail =(int) (100*mi.availMem/(double)mi.totalMem );
+
+			sm="Memoria disponible  :  "+percentAvail+" %  ,   "+availableMegs+" / "+totalMegs+" [ MB ]";
+		} catch (Exception e) {
+			msgbox(e.getMessage());
+			sm="Memoria disponible  :  -";
+		}
+
+		try {
+			File pathInternal = Environment.getDataDirectory();// Internal Storage
+			StatFs statInternal = new StatFs(pathInternal.getPath());
+
+			double totalStorage=(statInternal. getBlockCountLong()*statInternal.getBlockSizeLong())/ 0x100000L;
+			double freeStorage=(statInternal. getAvailableBlocksLong()*statInternal.getBlockSizeLong())/ 0x100000L;
+			int  availStorage=(int) (100*freeStorage/totalStorage );
+
+			sd="Almacenamiento disponible  :  "+availStorage+" %   ,   "+mu.round(freeStorage/1024,1)+" / "+mu.round(totalStorage/1024,1)+" [ GB ]";
+		} catch (Exception e) {
+			msgbox(e.getMessage());
+			sd="Almacenamiento disponible  :  -";
+		}
+
+		ss=sb+"\n"+sm+"\n"+sd;
+
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Información de sistema");
+		dialog.setMessage(ss);
+		dialog.setCancelable(false);
+
+		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+		dialog.show();
+
+	}
+
 	//endregion
 
 	//region Mantenimientos
@@ -1361,7 +1416,8 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Usuario","Vendedor"};
+            //final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
+            final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1369,39 +1425,23 @@ public class Menu extends PBase {
 			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 
-					switch (item) {
-						case 0://"Almacen",
-							gl.mantid=0;
-							startActivity(new Intent(Menu.this, Lista.class));break;
-						case 1://"Bancos",
-							gl.mantid=1;break;
-						case 2://"Clientes",
-							gl.mantid=2;break;
-						case 3://"Empresas",
-							gl.mantid=3;
-							startActivity(new Intent(Menu.this, Lista.class));break;
-						case 4://"Familia",
-							gl.mantid=4;
-							startActivity(new Intent(Menu.this, Lista.class));break;
-						case 5://"Forma pago",
-							gl.mantid=5;break;
-						case 6://"Impuestos",
-							gl.mantid=6;break;
-						case 7://"Moneda",
-							gl.mantid=7;break;
-						case 8://"Productos",
-							gl.mantid=8;break;
-						case 9://"Proveedores",
-							gl.mantid=9;break;
-						case 10://"Usuarios",
-							gl.mantid=10;break;
-						case 11://"Vendedores"
-							gl.mantid=11;break;
-					}
+				    ss=selitems[item];
 
-					//dialog.cancel();
+				    if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
+                    if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
+                    if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+                    if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
+                    if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
+                    if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
+                    if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
+                    if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
+                    if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
+                    if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
+                    if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
+                    if (ss.equalsIgnoreCase("Usuario")) gl.mantid=10;
+                    if (ss.equalsIgnoreCase("Vendedor")) gl.mantid=11;
 
-
+                    startActivity(new Intent(Menu.this, Lista.class));
 				}
 			});
 

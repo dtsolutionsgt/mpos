@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
-
 
 public class clsP_productoObj {
 
@@ -103,11 +101,6 @@ public class clsP_productoObj {
         ins.add("OFRECER",item.ofrecer);
         ins.add("RENTAB",item.rentab);
         ins.add("DESCMAX",item.descmax);
-        ins.add("IVA",item.iva);
-        ins.add("CODBARRA2",item.codbarra2);
-        ins.add("CBCONV",item.cbconv);
-        ins.add("BODEGA",item.bodega);
-        ins.add("SUBBODEGA",item.subbodega);
         ins.add("PESO_PROMEDIO",item.peso_promedio);
         ins.add("MODIF_PRECIO",item.modif_precio);
         ins.add("IMAGEN",item.imagen);
@@ -162,11 +155,6 @@ public class clsP_productoObj {
         upd.add("OFRECER",item.ofrecer);
         upd.add("RENTAB",item.rentab);
         upd.add("DESCMAX",item.descmax);
-        upd.add("IVA",item.iva);
-        upd.add("CODBARRA2",item.codbarra2);
-        upd.add("CBCONV",item.cbconv);
-        upd.add("BODEGA",item.bodega);
-        upd.add("SUBBODEGA",item.subbodega);
         upd.add("PESO_PROMEDIO",item.peso_promedio);
         upd.add("MODIF_PRECIO",item.modif_precio);
         upd.add("IMAGEN",item.imagen);
@@ -246,31 +234,26 @@ public class clsP_productoObj {
             item.ofrecer=dt.getString(23);
             item.rentab=dt.getString(24);
             item.descmax=dt.getString(25);
-            item.iva=dt.getString(26);
-            item.codbarra2=dt.getString(27);
-            item.cbconv=dt.getInt(28);
-            item.bodega=dt.getString(29);
-            item.subbodega=dt.getString(30);
-            item.peso_promedio=dt.getDouble(31);
-            item.modif_precio=dt.getInt(32);
-            item.imagen=dt.getString(33);
-            item.video=dt.getString(34);
-            item.venta_por_peso=dt.getInt(35);
-            item.es_prod_barra=dt.getInt(36);
-            item.unid_inv=dt.getString(37);
-            item.venta_por_paquete=dt.getInt(38);
-            item.venta_por_factor_conv=dt.getInt(39);
-            item.es_serializado=dt.getInt(40);
-            item.param_caducidad=dt.getInt(41);
-            item.producto_padre=dt.getString(42);
-            item.factor_padre=dt.getDouble(43);
-            item.tiene_inv=dt.getInt(44);
-            item.tiene_vineta_o_tubo=dt.getInt(45);
-            item.precio_vineta_o_tubo=dt.getDouble(46);
-            item.es_vendible=dt.getInt(47);
-            item.unigrasap=dt.getDouble(48);
-            item.um_salida=dt.getString(49);
-            item.activo=dt.getInt(50);
+            item.peso_promedio=dt.getDouble(26);
+            item.modif_precio=dt.getInt(27);
+            item.imagen=dt.getString(28);
+            item.video=dt.getString(29);
+            item.venta_por_peso=dt.getInt(30);
+            item.es_prod_barra=dt.getInt(31);
+            item.unid_inv=dt.getString(32);
+            item.venta_por_paquete=dt.getInt(33);
+            item.venta_por_factor_conv=dt.getInt(34);
+            item.es_serializado=dt.getInt(35);
+            item.param_caducidad=dt.getInt(36);
+            item.producto_padre=dt.getString(37);
+            item.factor_padre=dt.getDouble(38);
+            item.tiene_inv=dt.getInt(39);
+            item.tiene_vineta_o_tubo=dt.getInt(40);
+            item.precio_vineta_o_tubo=dt.getDouble(41);
+            item.es_vendible=dt.getInt(42);
+            item.unigrasap=dt.getDouble(43);
+            item.um_salida=dt.getString(44);
+            item.activo=dt.getInt(45);
 
             items.add(item);
 
@@ -328,11 +311,6 @@ public class clsP_productoObj {
         ins.add("OFRECER",item.ofrecer);
         ins.add("RENTAB",item.rentab);
         ins.add("DESCMAX",item.descmax);
-        ins.add("IVA",item.iva);
-        ins.add("CODBARRA2",item.codbarra2);
-        ins.add("CBCONV",item.cbconv);
-        ins.add("BODEGA",item.bodega);
-        ins.add("SUBBODEGA",item.subbodega);
         ins.add("PESO_PROMEDIO",item.peso_promedio);
         ins.add("MODIF_PRECIO",item.modif_precio);
         ins.add("IMAGEN",item.imagen);
@@ -387,11 +365,6 @@ public class clsP_productoObj {
         upd.add("OFRECER",item.ofrecer);
         upd.add("RENTAB",item.rentab);
         upd.add("DESCMAX",item.descmax);
-        upd.add("IVA",item.iva);
-        upd.add("CODBARRA2",item.codbarra2);
-        upd.add("CBCONV",item.cbconv);
-        upd.add("BODEGA",item.bodega);
-        upd.add("SUBBODEGA",item.subbodega);
         upd.add("PESO_PROMEDIO",item.peso_promedio);
         upd.add("MODIF_PRECIO",item.modif_precio);
         upd.add("IMAGEN",item.imagen);

@@ -109,6 +109,13 @@ public class clsClasses {
 		public int  incidencia_no_lectura;
 	}
 
+    public class clsP_factorconv {
+        public String producto;
+        public String unidadsuperior;
+        public double factorconversion;
+        public String unidadminima;
+    }
+
 	public class clsP_impuesto {
 		public int  codigo;
 		public double valor;
@@ -129,8 +136,13 @@ public class clsClasses {
 		public int  nivel;
 		public String porcobro;
 	}
+    public class clsP_nivelprecio {
+        public int codigo;
+        public String nombre;
+        public int activo;
+    }
 
-	public class clsP_moneda {
+    public class clsP_moneda {
 		public int  codigo;
 		public String nombre;
 		public int  activo;
@@ -138,7 +150,22 @@ public class clsClasses {
 		public double cambio;
 	}
 
-	public class clsP_producto {
+    public class clsP_prodprecio {
+        public String codigo;
+        public int  nivel;
+        public double precio;
+        public String unidadmedida;
+    }
+
+    public class clsP_nivelpreciolist {
+        public String codigo;
+        public int  nivel;
+        public String nombre;
+        public double precio;
+        public String unidadmedida;
+	}
+
+    public class clsP_producto {
 		public String codigo;
 		public String tipo;
 		public String linea;
@@ -165,11 +192,6 @@ public class clsClasses {
 		public String ofrecer;
 		public String rentab;
 		public String descmax;
-		public String iva;
-		public String codbarra2;
-		public int  cbconv;
-		public String bodega;
-		public String subbodega;
 		public double peso_promedio;
 		public int  modif_precio;
 		public String imagen;
@@ -189,7 +211,7 @@ public class clsClasses {
 		public int  es_vendible;
 		public double unigrasap;
 		public String um_salida;
-		public int activo;
+		public int  activo;
 	}
 
 	public class clsP_proveedor {

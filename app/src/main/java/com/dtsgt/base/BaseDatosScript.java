@@ -1219,7 +1219,7 @@ public class BaseDatosScript {
 			sql="CREATE TABLE [P_NIVELPRECIO] ("+
 					"[CODIGO] INTEGER NOT NULL,"+
 					"[NOMBRE] TEXT NOT NULL,"+
-					"[DECIMALES] INTEGER NOT NULL,"+
+					"[ACTIVO] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);
@@ -1284,6 +1284,7 @@ public class BaseDatosScript {
 					"[DESCCORTA] TEXT NOT NULL,"+
 					"[DESCLARGA] TEXT NOT NULL,"+
 					"[COSTO] REAL NOT NULL,"+
+
 					"[FACTORCONV] REAL NOT NULL,"+
 					"[UNIDBAS] TEXT NOT NULL,"+
 					"[UNIDMED] TEXT NOT NULL,"+
@@ -1294,6 +1295,7 @@ public class BaseDatosScript {
 					"[BONIFICACION] TEXT NOT NULL,"+
 					"[IMP1] REAL NOT NULL,"+
 					"[IMP2] REAL NOT NULL,"+
+
 					"[IMP3] REAL NOT NULL,"+
 					"[VENCOMP] TEXT NOT NULL,"+
 					"[DEVOL] TEXT NOT NULL,"+
@@ -1304,6 +1306,7 @@ public class BaseDatosScript {
 					"[MODIF_PRECIO] INTEGER NOT NULL,"+
 					"[IMAGEN] TEXT NOT NULL,"+
                     "[VIDEO] TEXT NOT NULL,"+
+
                     "[VENTA_POR_PESO] INTEGER NOT NULL,"+
                     "[ES_PROD_BARRA] INTEGER NOT NULL,"+
                     "[UNID_INV] TEXT NOT NULL,"+
@@ -1314,6 +1317,7 @@ public class BaseDatosScript {
                     "[PRODUCTO_PADRE] TEXT NOT NULL,"+
                     "[FACTOR_PADRE] REAL NOT NULL,"+
                     "[TIENE_INV] INTEGER NOT NULL,"+
+
                     "[TIENE_VINETA_O_TUBO] INTEGER NOT NULL,"+
                     "[PRECIO_VINETA_O_TUBO] REAL NOT NULL,"+
                     "[ES_VENDIBLE] INTEGER NOT NULL,"+

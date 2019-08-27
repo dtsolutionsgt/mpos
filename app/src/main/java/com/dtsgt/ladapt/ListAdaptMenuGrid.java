@@ -81,6 +81,7 @@ public class ListAdaptMenuGrid extends BaseAdapter {
 		if (items.get(position).Icon==9) holder.imgEst.setImageResource(R.drawable.utils);
 		if (items.get(position).Icon==10) holder.imgEst.setImageResource(R.drawable.cambio_usuario);
 		if (items.get(position).Icon==11) holder.imgEst.setImageResource(R.drawable.mantenimientos48);
+        if (items.get(position).Icon==12) holder.imgEst.setImageResource(R.drawable.reportes);
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));

@@ -80,7 +80,6 @@ public class Lista extends PBase {
                 abrirMant();
             }
 
-            ;
         });
 
         swact.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -147,15 +146,15 @@ public class Lista extends PBase {
 
         switch (gl.mantid) {
             case 0: // Almacen
-                sql="SELECT 0,CODIGO,DESCRIPCION,'','', '','','','' FROM P_SUCURSAL WHERE ";
-                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
-                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCRIPCION LIKE '%"+ft+"%')) ";
-                sql+="ORDER BY DESCRIPCION";
-                break;
+                lblTit.setText("Almacenes");break;
             case 1:
                 lblTit.setText("Bancos");break;
-            case 2:
-                lblTit.setText("Clientes");break;
+            case 2: // Clientes
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_CLIENTE WHERE ";
+                if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
             case 3: // Empresa
                 sql="SELECT 0,EMPRESA,NOMBRE,'','', '','','','' FROM P_EMPRESA ";
                 break;
@@ -171,14 +170,24 @@ public class Lista extends PBase {
                 lblTit.setText("Impuestos");break;
             case 7:
                 lblTit.setText("Moneda");break;
-            case 8:
-                lblTit.setText("Productos");break;
+            case 8: //Productos
+                sql="SELECT 0,CODIGO,DESCLARGA,'','', '','','','' FROM P_PRODUCTO WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCLARGA LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY DESCLARGA";
+                break;
             case 9:
                 lblTit.setText("Proveedores");break;
             case 10:
                 lblTit.setText("Usuarios");break;
             case 11:
                 lblTit.setText("Vendedores");break;
+            case 12: // Tienda
+                sql="SELECT 0,CODIGO,DESCRIPCION,'','', '','','','' FROM P_SUCURSAL WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCRIPCION LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY DESCRIPCION";
+                break;
         }
     }
 
@@ -215,6 +224,8 @@ public class Lista extends PBase {
                 lblTit.setText("Usuarios");break;
             case 11:
                 lblTit.setText("Vendedores");break;
+            case 12:
+                lblTit.setText("Tiendas");break;
         }
     }
 
@@ -222,11 +233,11 @@ public class Lista extends PBase {
 
         switch (gl.mantid) {
             case 0:
-                startActivity(new Intent(this,MantAlmacen.class));break;
+                lblTit.setText("Almacen");break;
             case 1:
                 lblTit.setText("Bancos");break;
             case 2:
-                lblTit.setText("Clientes");break;
+                startActivity(new Intent(this,MantCliente.class));break;
             case 3:
                 startActivity(new Intent(this,MantEmpresa.class));break;
             case 4:
@@ -238,13 +249,15 @@ public class Lista extends PBase {
             case 7:
                 lblTit.setText("Moneda");break;
             case 8:
-                lblTit.setText("Productos");break;
+                startActivity(new Intent(this,MantProducto.class));break;
             case 9:
                 lblTit.setText("Proveedores");break;
             case 10:
                 lblTit.setText("Usuarios");break;
             case 11:
                 lblTit.setText("Vendedores");break;
+            case 12:
+                startActivity(new Intent(this, MantTienda.class));break;
         }
     }
 

@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
@@ -42,10 +44,11 @@ public class Venta extends PBase {
 
     private ListView listView;
     private GridView gridView;
-    private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant;
+    private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant,lblBarra;
     private TextView lblProd,lblPrec,lblDesc,lblStot,lblKeyDP;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan,imgdel;
+    private RelativeLayout relCant,relScan;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
     private ListAdaptVenta adapter;
@@ -69,7 +72,7 @@ public class Venta extends PBase {
 
     private String emp,cliid,prodid,um,tiposcan,barcode;
     private int nivel,dweek,clidia;
-    private boolean sinimp,softscanexist,porpeso,usarscan;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
 
     private AppMethods app;
 
@@ -246,14 +249,40 @@ public class Venta extends PBase {
         //}
     }
 
+    public void doClickCant(View viev) {
+        if (!khand.label.equals(lblCant)) {
+            khand.clear(false);
+            khand.disable();
+        }
+        khand.setLabel(lblCant,false);
+        khand.disable();
+        handlecant=true;
+     }
+
+    public void doClickScan(View viev) {
+        if (!khand.label.equals(lblBarra)) {
+            khand.clear(false);
+            khand.disable();
+        }
+        khand.setLabel(lblBarra,false);
+        khand.enable();
+        khand.focus();
+        handlecant=false;
+    }
+
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
-            if (khand.isValid) {
-                gl.dval=khand.value;
-                processCant();
+            if (handlecant) {
+                if (khand.isValid) {
+                    gl.dval=khand.value;
+                    processCant();
+                }
+            } else {
+                barcode=khand.getStringValue();
+                if (!barcode.isEmpty()) addBarcode();
             }
-        }
+         }
     }
 
     private void setHandlers(){
@@ -279,19 +308,6 @@ public class Venta extends PBase {
                         prodid=vItem.Cod;
                         adapter.setSelectedIndex(position);
 
-						/*
-
-						//#CKFK 20190517 Agregué la validación de que esta pantalla solo se levanta cuando sea venta directa
-						if (prodBarra(prodid) && gl.rutatipo.equalsIgnoreCase("V")) {
-							gl.gstr=prodid;
-							gl.gstr2=vItem.Nombre;
-							browse=4;
-							startActivity(new Intent(Venta.this,RepesajeLista.class));
-						} else {
-							setCant();
-						}
-
-						*/
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                         mu.msgbox( e.getMessage());
@@ -530,6 +546,9 @@ public class Venta extends PBase {
             icant=0;
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
+
+
+        doClickCant(null);
 
         khand.setValue(icant);
         khand.enable();khand.focus();
@@ -803,6 +822,7 @@ public class Venta extends PBase {
     private void addBarcode() {
         gl.barra=barcode;
 
+        /*
         if (barraBonif()) {
             toastlong("¡La barra es parte de bonificacion!");
             txtBarra.setText("");return;
@@ -813,6 +833,7 @@ public class Venta extends PBase {
             listItems();
             return;
         }
+        */
 
         if (barraProducto()) {
             txtBarra.setText("");return;
@@ -983,15 +1004,17 @@ public class Venta extends PBase {
 
         try {
 
-            sql="SELECT P_STOCK.CODIGO " +
+            sql="SELECT P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA " +
                     "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO	" +
-                    "WHERE (P_PRODUCTO.CODBARRA='"+barcode+"') ";
+                    "WHERE (P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"')";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
 
                 gl.gstr=dt.getString(0);gl.um="UN";
+                gl.pprodname=dt.getString(1);
+
                 processItem();
                 return true;
             }
@@ -1526,6 +1549,7 @@ public class Venta extends PBase {
             lblVend= (TextView) findViewById(R.id.lblTit4);
             lblNivel= (TextView) findViewById(R.id.lblTit3);
             lblCant= (TextView) findViewById(R.id.lblCant);lblCant.setText("");
+            lblBarra= (TextView) findViewById(R.id.textView122);lblBarra.setText("");
             lblProd=(TextView) findViewById(R.id.lblDir);lblProd.setText("");
             lblKeyDP=(TextView) findViewById(R.id.textView110);
             lblPrec= (TextView) findViewById(R.id.lblPrec);lblPrec.setText("");
@@ -1535,7 +1559,9 @@ public class Venta extends PBase {
             imgdel= (ImageView) findViewById(R.id.imageView29);
 
             txtBarra=(EditText) findViewById(R.id.editText10);
-            //txtFilter
+
+            relCant= (RelativeLayout) findViewById(R.id.relCant);
+            relScan= (RelativeLayout) findViewById(R.id.relScan);
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
