@@ -1416,7 +1416,8 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
+            //final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
+            final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1424,43 +1425,23 @@ public class Menu extends PBase {
 			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 
-					switch (item) {
-						case 0://"Almacen",
-							gl.mantid=0;break;
+				    ss=selitems[item];
 
-						case 1://"Bancos",
-							gl.mantid=1;break;
-						case 2://"Clientes",
-							gl.mantid=2;break;
-						case 3://"Empresas",
-							gl.mantid=3;
-							startActivity(new Intent(Menu.this, Lista.class));break;
-						case 4://"Familia",
-							gl.mantid=4;
-							startActivity(new Intent(Menu.this, Lista.class));break;
-						case 5://"Forma pago",
-							gl.mantid=5;break;
-						case 6://"Impuestos",
-							gl.mantid=6;break;
-						case 7://"Moneda",
-							gl.mantid=7;break;
-						case 8://"Productos",
-							gl.mantid=8;
-							startActivity(new Intent(Menu.this, Lista.class));break;
-						case 9://"Proveedores",
-							gl.mantid=9;break;
-						case 10://"Tienda",
-							gl.mantid=12;
-							startActivity(new Intent(Menu.this, Lista.class));break;
-						case 11://"Usuarios",
-							gl.mantid=10;break;
-						case 12://"Vendedores"
-							gl.mantid=11;break;
-					}
+				    if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
+                    if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
+                    if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+                    if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
+                    if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
+                    if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
+                    if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
+                    if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
+                    if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
+                    if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
+                    if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
+                    if (ss.equalsIgnoreCase("Usuario")) gl.mantid=10;
+                    if (ss.equalsIgnoreCase("Vendedor")) gl.mantid=11;
 
-					//dialog.cancel();
-
-
+                    startActivity(new Intent(Menu.this, Lista.class));
 				}
 			});
 

@@ -149,8 +149,12 @@ public class Lista extends PBase {
                 lblTit.setText("Almacenes");break;
             case 1:
                 lblTit.setText("Bancos");break;
-            case 2:
-                lblTit.setText("Clientes");break;
+            case 2: // Clientes
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_CLIENTE WHERE ";
+                if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
             case 3: // Empresa
                 sql="SELECT 0,EMPRESA,NOMBRE,'','', '','','','' FROM P_EMPRESA ";
                 break;
@@ -233,7 +237,7 @@ public class Lista extends PBase {
             case 1:
                 lblTit.setText("Bancos");break;
             case 2:
-                lblTit.setText("Clientes");break;
+                startActivity(new Intent(this,MantCliente.class));break;
             case 3:
                 startActivity(new Intent(this,MantEmpresa.class));break;
             case 4:

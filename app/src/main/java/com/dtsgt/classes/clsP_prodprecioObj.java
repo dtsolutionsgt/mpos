@@ -11,12 +11,12 @@ public class clsP_prodprecioObj {
 
     public int count;
 
-    private Context cont;
-    private BaseDatos Con;
-    private SQLiteDatabase db;
+    public Context cont;
+    public BaseDatos Con;
+    public SQLiteDatabase db;
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
-    private clsClasses clsCls = new clsClasses();
+    public clsClasses clsCls = new clsClasses();
 
     private String sel = "SELECT * FROM P_prodprecio";
     private String sql;

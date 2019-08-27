@@ -137,7 +137,7 @@ public class clsClasses {
 		public String porcobro;
 	}
     public class clsP_nivelprecio {
-        public int  codigo;
+        public int codigo;
         public String nombre;
         public int activo;
     }
@@ -156,6 +156,14 @@ public class clsClasses {
         public double precio;
         public String unidadmedida;
     }
+
+    public class clsP_nivelpreciolist {
+        public String codigo;
+        public int  nivel;
+        public String nombre;
+        public double precio;
+        public String unidadmedida;
+	}
 
     public class clsP_producto {
 		public String codigo;
