@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dtsgt.mant.MantAlmacen">
+    tools:context="com.dtsgt.mant.MantNivelPrecio">
 
     <ImageView
         android:id="@+id/imgImg2"
@@ -64,7 +64,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Almacen"
+            android:text="Familia"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
             android:textSize="24sp"
@@ -144,7 +144,6 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
-            android:inputType="number"
             android:maxLength="15"
             android:maxLines="1"
             android:singleLine="true"

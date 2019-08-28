@@ -2,25 +2,23 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsP_impuestoObj;
-import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class MantImpuesto extends PBase {
+public class MantMoneda extends PBase {
 
     private ImageView imgstat;
-    private EditText txt1,txt2;
+    private EditText txt1,txt2,txt3,txt4;
 
-    private clsP_impuestoObj holder;
-    private clsClasses.clsP_impuesto item=clsCls.new clsP_impuesto();
+    private clsP_monedaObj holder;
+    private clsClasses.clsP_moneda item=clsCls.new clsP_moneda();
 
     private String id;
     private boolean newitem=false;
@@ -28,20 +26,21 @@ public class MantImpuesto extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_impuesto);
+        setContentView(R.layout.activity_mant_moneda);
 
         super.InitBase();
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        txt3 = (EditText) findViewById(R.id.txt3);
+        txt4 = (EditText) findViewById(R.id.txt4);
         imgstat = (ImageView) findViewById(R.id.imageView31);
 
-        holder =new clsP_impuestoObj(this,Con,db);
+        holder =new clsP_monedaObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
     }
-
 
     //region Events
 
@@ -97,8 +96,10 @@ public class MantImpuesto extends PBase {
         imgstat.setVisibility(View.INVISIBLE);
 
         item.codigo=0;
-        item.valor=0;
+        item.nombre="";
         item.activo=1;
+        item.symbolo="";
+        item.cambio=0.0;
 
         showItem();
     }
@@ -127,13 +128,19 @@ public class MantImpuesto extends PBase {
     //region Aux
 
     private void showItem() {
-        if(newitem) txt1.setText(""); else txt1.setText(""+item.codigo);
-        if(newitem) txt2.setText(""); else txt2.setText(""+item.valor);
+        if(newitem){
+            txt1.setText("");
+            txt4.setText("");
+        }else {
+            txt1.setText(""+item.codigo);
+            txt4.setText(""+item.cambio);
+        }
+        txt2.setText(item.nombre);
+        txt3.setText(item.symbolo);
     }
 
     private boolean validaDatos() {
         String ss;
-        double imp;
 
         try {
 
@@ -143,29 +150,37 @@ public class MantImpuesto extends PBase {
                     msgbox("¡Falta definir código!");return false;
                 }
 
-                holder.fill("WHERE CODIGO="+ss);
+                holder.fill("WHERE CODIGO='"+ss+"'");
                 if (holder.count>0) {
-                    msgbox("¡Código ya existe!\n"+holder.first().valor);return false;
+                    msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
                 }
 
                 item.codigo=Integer.parseInt(ss);
             }
 
             ss=txt2.getText().toString();
-
-            try {
-                if (ss.isEmpty()) {
-                    msgbox("¡Valor incorrecto!"); return false;
-                }
-
-                imp=Double.parseDouble(ss);
-                if (imp<0) throw new Exception();
-
-                item.valor=imp;
-            } catch (Exception e) {
-                msgbox("Valor incorrecto");return false;
+            if (ss.isEmpty()) {
+                msgbox("¡Nombre incorrecto!");
+                return false;
+            } else {
+                item.nombre=ss;
             }
 
+            ss=txt3.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Simbolo incorrecto!");
+                return false;
+            } else {
+                item.symbolo=ss;
+            }
+
+            ss=txt4.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Cambio incorrecto!");
+                return false;
+            } else {
+                item.cambio=Double.parseDouble(ss);
+            }
 
             return true;
         } catch (Exception e) {

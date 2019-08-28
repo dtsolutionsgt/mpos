@@ -130,6 +130,7 @@ public class MantBanco extends PBase {
     private void showItem() {
         txt1.setText(item.codigo);
         txt2.setText(item.nombre);
+        txt3.setText(item.cuenta);
     }
 
     private boolean validaDatos() {

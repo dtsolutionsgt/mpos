@@ -175,16 +175,24 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
-            case 5:
-                lblTit.setText("Forma pago");break;
+            case 5: //Forma de pago
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_MEDIAPAGO WHERE ";
+                if (act) sql+="(ACTIVO='S') ";else sql+="(ACTIVO='N') ";
+                if (flag) sql+="AND ((CODIGO="+ft+") OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
             case 6: // Impuesto
                 sql="SELECT 0,CODIGO,VALOR,'','', '','','','' FROM P_IMPUESTO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (VALOR LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY VALOR";
                 break;
-            case 7:
-                lblTit.setText("Moneda");break;
+            case 7: //Moneda
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_MONEDA WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
             case 8: //Productos
                 sql="SELECT 0,CODIGO,DESCLARGA,'','', '','','','' FROM P_PRODUCTO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
@@ -211,8 +219,12 @@ public class Lista extends PBase {
                 break;
             case 13:
                 lblTit.setText("Caja");break;
-            case 14:
-                lblTit.setText("Nivel precio");break;
+            case 14: // Nivel Precio
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_NIVELPRECIO WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
         }
     }
 
@@ -236,7 +248,8 @@ public class Lista extends PBase {
             case 4:
                 lblTit.setText("Familia");break;
             case 5:
-                lblTit.setText("Forma pago");break;
+                lblTit.setText("Forma pago");
+                imgadd.setVisibility(View.INVISIBLE);break;
             case 6:
                 lblTit.setText("Impuestos");break;
             case 7:
@@ -270,21 +283,23 @@ public class Lista extends PBase {
             case 4:
                 startActivity(new Intent(this,MantFamilia.class));break;
             case 5:
-                lblTit.setText("Forma pago");break;//4
+                startActivity(new Intent(this,MantMediaPago.class));break;
             case 6:
                 startActivity(new Intent(this,MantImpuesto.class));break;
             case 7:
-                lblTit.setText("Moneda");break;//3
+                startActivity(new Intent(this,MantMoneda.class));break;
             case 8:
                 startActivity(new Intent(this,MantProducto.class));break;
             case 9:
                 startActivity(new Intent(this,MantProveedor.class));break;
             case 10:
-                lblTit.setText("Usuarios");break;//2
+                lblTit.setText("Usuarios");break;
             case 11:
                 startActivity(new Intent(this, MantVendedores.class));break;
             case 12:
                 startActivity(new Intent(this, MantTienda.class));break;
+            case 14:
+                startActivity(new Intent(this, MantNivelPrecio.class));break;
         }
     }
 

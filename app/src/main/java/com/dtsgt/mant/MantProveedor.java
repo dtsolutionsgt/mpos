@@ -124,7 +124,7 @@ public class MantProveedor extends PBase {
     //region Aux
 
     private void showItem() {
-        txt1.setText(""+item.codigo);
+        if(newitem) txt1.setText(""); else txt1.setText(""+item.codigo);
         txt2.setText(item.nombre);
     }
 
