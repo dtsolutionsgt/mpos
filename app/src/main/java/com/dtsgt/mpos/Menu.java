@@ -1429,9 +1429,9 @@ public class Menu extends PBase {
 
 				    if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
                     if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
-                    if (ss.equalsIgnoreCase("Caja")) gl.mantid=14;
+                    if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
                     if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
-                    if (ss.equalsIgnoreCase("Descuento")) gl.mantid=13;
+                    if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
                     if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
                     if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
                     if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
@@ -1443,7 +1443,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
                     if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
 
-                    if (gl.mantid==13) {
+                    if (gl.mantid==15) {
                         //startActivity(new Intent(Menu.this, ListaDesc.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));

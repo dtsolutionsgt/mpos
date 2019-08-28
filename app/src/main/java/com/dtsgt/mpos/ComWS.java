@@ -2371,7 +2371,7 @@ public class ComWS extends PBase {
 
 		if (TN.equalsIgnoreCase("P_SUCURSAL")) {
 			SQL = " SELECT CODIGO, EMPRESA, DESCRIPCION, NOMBRE, DIRECCION, TELEFONO, NIT, TEXTO, ACTIVO " +
-					" FROM P_SUCURSAL WHERE CODIGO IN (SELECT SUCURSAL FROM P_RUTA WHERE CODIGO = '" + ActRuta + "')";
+					" FROM P_SUCURSAL ";
 			return SQL;
 		}
 

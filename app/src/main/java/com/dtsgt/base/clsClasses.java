@@ -76,7 +76,25 @@ public class clsClasses {
 		public int  modif_precio;
 	}
 
-	public class clsP_empresa {
+    public class clsP_descuento {
+        public String cliente;
+        public int  ctipo;
+        public String producto;
+        public int  ptipo;
+        public int  tiporuta;
+        public double rangoini;
+        public double rangofin;
+        public String desctipo;
+        public double valor;
+        public String globdesc;
+        public String porcant;
+        public int  fechaini;
+        public int  fechafin;
+        public int  coddesc;
+        public String nombre;
+    }
+
+    public class clsP_empresa {
 		public String empresa;
 		public String nombre;
 		public String initpath;

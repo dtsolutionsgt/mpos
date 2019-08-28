@@ -217,8 +217,12 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCRIPCION LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY DESCRIPCION";
                 break;
-            case 13:
-                lblTit.setText("Caja");break;
+            case 13: // Caja
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_RUTA WHERE ";
+                if (act) sql+="(ACTIVO='S') ";else sql+="(ACTIVO='N?) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
             case 14: // Nivel Precio
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_NIVELPRECIO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
@@ -298,8 +302,6 @@ public class Lista extends PBase {
                 startActivity(new Intent(this, MantVendedores.class));break;
             case 12:
                 startActivity(new Intent(this, MantTienda.class));break;
-            case 14:
-                startActivity(new Intent(this, MantNivelPrecio.class));break;
         }
     }
 
