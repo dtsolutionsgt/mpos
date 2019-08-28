@@ -17,7 +17,7 @@ import com.dtsgt.mpos.R;
 public class MantVendedores extends PBase {
 
     private ImageView imgstat;
-    private EditText txt1,txt2;
+    private EditText txt1,txt2,txt3;
 
     private clsVendedoresObj holder;
     private clsClasses.clsVendedores item=clsCls.new clsVendedores();
@@ -34,6 +34,7 @@ public class MantVendedores extends PBase {
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        txt3 = (EditText) findViewById(R.id.editText12);
         imgstat = (ImageView) findViewById(R.id.imageView31);
 
         holder =new clsVendedoresObj(this,Con,db);
@@ -97,6 +98,12 @@ public class MantVendedores extends PBase {
 
         item.codigo="";
         item.nombre="";
+        item.clave="";
+        item.ruta="";
+        item.nivel=1;
+        item.nivelprecio=1;
+        item.bodega="";
+        item.subbodega="";
         item.activo=1;
 
         showItem();
@@ -128,6 +135,7 @@ public class MantVendedores extends PBase {
     private void showItem() {
         txt1.setText(item.codigo);
         txt2.setText(item.nombre);
+        txt3.setText(item.clave);
     }
 
     private boolean validaDatos() {
@@ -155,6 +163,14 @@ public class MantVendedores extends PBase {
                 return false;
             } else {
                 item.nombre=ss;
+            }
+
+            ss=txt3.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Clave incorrecta!");
+                return false;
+            } else {
+                item.clave=ss;
             }
 
             return true;

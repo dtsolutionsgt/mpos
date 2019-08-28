@@ -44,7 +44,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult;
 
-    private String parVer = "2.0.0 / 20-Jun-2019";
+    private String parVer = "2.1.1 / 28-Ago-2019";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class MainActivity extends PBase {
         try {
             super.InitBase();
 
-            this.setTitle("ROAD");
+            this.setTitle("MPos");
             gl.parVer = parVer;
 
             txtUser = (EditText) findViewById(R.id.txtUser);

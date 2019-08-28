@@ -209,6 +209,10 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCRIPCION LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY DESCRIPCION";
                 break;
+            case 13:
+                lblTit.setText("Caja");break;
+            case 14:
+                lblTit.setText("Nivel precio");break;
         }
     }
 
@@ -243,8 +247,12 @@ public class Lista extends PBase {
                 lblTit.setText("Proveedores");break;
             case 11:
                 lblTit.setText("Usuarios");break;
-              case 12:
+            case 12:
                 lblTit.setText("Tiendas");break;
+            case 13:
+                lblTit.setText("Caja");break;
+            case 14:
+                lblTit.setText("Nivel precio");break;
         }
     }
 

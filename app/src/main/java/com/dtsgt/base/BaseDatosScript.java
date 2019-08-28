@@ -2250,22 +2250,53 @@ public class BaseDatosScript {
 	}
 	
 	public int scriptData(SQLiteDatabase db) {
-				
-		try {
-			  db.execSQL("INSERT INTO Params VALUES (0,0,0,0,0,'','','','','');");
-			  db.execSQL("INSERT INTO FinDia VALUES (0,0, 0,0,0,0, 0,0,0,0);");
-			  db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
-					  "'1','','','',0,'','','',  '',0,0,'',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
 
-            db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','','','', '','','','',1);");
+        try {
+            db.execSQL("INSERT INTO Params VALUES (0,0,0,0,0,'','','','','');");
+            db.execSQL("INSERT INTO FinDia VALUES (0,0, 0,0,0,0, 0,0,0,0);");
 
+            datosIniciales(db);
 
-    	      return 1;
-	    } catch (SQLiteException e) {
-	    	 msgbox(e.getMessage());
-	    	 return 0;
-	    }
+            return 1;
+        } catch (Exception e) {
+            msgbox(e.getMessage());return 0;
+        }
 	}
+
+	private void datosIniciales(SQLiteDatabase db) {
+
+        db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
+                "'1','','','',0,'','','',  '',0,0,'',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
+        db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre de negocio','Nombre de negocio','', '','','','',1);");
+        db.execSQL("INSERT INTO FinDia VALUES ('1','Supervisor','1','1', 3,1,'','',1);");
+
+
+        db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('1','EFECTIVO','S',1,'N');");
+        db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('2','CHEQUE','N',2,'N');");
+        db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('5','TARJETA CREDITO','S',4,'N');");
+        db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('6','DOLLAR','N',1,'N');");
+
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (1,'','GPS Margen ( Metros )','50')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (2,'','Stock Interfaz','N')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (3,'','Modalidad','TOL')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (4,'','Solicitud de inventario','N')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (5,'','Pantalla aceptar carga','N')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (6,'','Boton Inventario ( Comunicacion )','N')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (7,'','Boton Precios ( Comunicacion )','N')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (8,'','Boton Recarga ( Comunicacion )','N')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (9,'','Cantidad de decimales en calculos','2')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (10,'','Cantidad de decimales impresion','2')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (11,'','Cantidad de decimales para cantidad','2')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (12,'','Simbolo de moneda','Q')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (13,'','Seleccionar ayudante y vehículo','N')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (14,'','Envio parcial','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (15,'','Ordenar producto por nombre','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (16,'','Formato factura','TOL')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (17,'','Pregunta si es correcta la impresion de la factura','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (18,'','Restringir venta por GPS margen','P')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (19,'','Margen de error de GPS','10')");
+
+    }
 	
 	private void msgbox(String msg) {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);

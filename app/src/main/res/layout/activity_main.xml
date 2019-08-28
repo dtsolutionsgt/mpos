@@ -177,26 +177,32 @@
 
         <ImageView
             android:id="@+id/imgPFoto"
-            android:layout_width="42dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
             android:clickable="true"
             android:onClick="comMan"
-            android:padding="5dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
             android:src="@drawable/sincronizar_blanco" />
 
         <ImageView
             android:id="@+id/imageView1"
-            android:layout_width="24dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
+            android:adjustViewBounds="true"
             android:clickable="true"
             android:onClick="doRegister"
-            android:paddingLeft="3dp"
-            android:paddingRight="4dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="2dp"
             android:src="@drawable/lic_icon" />
 
         <TextView
@@ -205,12 +211,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/imageView1"
+            android:layout_centerHorizontal="true"
             android:clickable="true"
             android:gravity="center_vertical"
             android:onClick="doRegister"
             android:paddingRight="10dp"
-            android:text="DTSolutions"
+            android:text="Copyright (C) DTSolutions S.A. , Guatemala"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
@@ -218,40 +224,15 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:gravity="center_horizontal"
-        android:text="Copyright (C)"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="13sp" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/relbotpan"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:gravity="center_horizontal"
-        android:paddingBottom="10dp"
-        android:text="DTSolutions S.A., 2019"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="13sp" />
-
-    <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/textView3"
-        android:layout_alignLeft="@+id/textView3"
-        android:layout_alignRight="@+id/relbotpan"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="60dp"
         android:gravity="center_horizontal"
         android:text="ROAD ver. 9.4  -  26/04/2019"
         android:textColor="#000000"

@@ -1417,7 +1417,7 @@ public class Menu extends PBase {
 			final AlertDialog Dialog;
 
             //final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
-            final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario"};
+            final String[] selitems = {"Banco","Caja","Cliente","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1429,19 +1429,26 @@ public class Menu extends PBase {
 
 				    if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
                     if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
+                    if (ss.equalsIgnoreCase("Caja")) gl.mantid=14;
                     if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+                    if (ss.equalsIgnoreCase("Descuento")) gl.mantid=13;
                     if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
                     if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
                     if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
                     if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
                     if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
+                    if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
                     if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
                     if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
                     if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
                     if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
 
-                    startActivity(new Intent(Menu.this, Lista.class));
-				}
+                    if (gl.mantid==13) {
+                        //startActivity(new Intent(Menu.this, ListaDesc.class));
+                    } else {
+                        startActivity(new Intent(Menu.this, Lista.class));
+                    }
+ 				}
 			});
 
 			menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
@@ -1468,12 +1475,11 @@ public class Menu extends PBase {
 			Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
 			nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
 			nbuttonp.setTextColor(Color.WHITE);
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
 	}
-
 
 	//endregion
 
