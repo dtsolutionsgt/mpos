@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dtsgt.mant.MantFamilia">
+    tools:context="com.dtsgt.mant.MantBanco">
 
     <ImageView
         android:id="@+id/imgImg2"
@@ -64,7 +64,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Proveedores"
+            android:text="Banco"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
             android:textSize="24sp"
@@ -73,13 +73,14 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
-        android:layout_width="match_parent"
+        android:layout_width="1275dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
@@ -94,6 +95,26 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="30dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:maxLength="50"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txt3"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt2"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="13dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="25dp"
+            android:layout_toEndOf="@+id/textView124"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:maxLength="50"
@@ -130,7 +151,8 @@
             android:layout_height="10dp"
             android:layout_below="@+id/txt2"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="3dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="65dp"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="invisible" />
@@ -162,6 +184,23 @@
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:text="Código :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/textView124"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lblCFact"
+            android:layout_alignBottom="@+id/txt1"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="-108dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Cuenta :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
 

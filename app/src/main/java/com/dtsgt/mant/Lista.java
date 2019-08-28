@@ -141,14 +141,25 @@ public class Lista extends PBase {
         boolean flag=!ft.isEmpty();
         boolean act=!swact.isChecked();
 
+        gl.banco = false;
 
         sql="";
 
         switch (gl.mantid) {
             case 0: // Almacen
-                lblTit.setText("Almacenes");break;
-            case 1:
-                lblTit.setText("Bancos");break;
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_ALMACEN WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
+            case 1: //Banco
+                sql="SELECT 0,CODIGO,NOMBRE,CUENTA,'', '','','','' FROM P_BANCO WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+
+                gl.banco = true;
+                break;
             case 2: // Clientes
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_CLIENTE WHERE ";
                 if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
@@ -166,8 +177,12 @@ public class Lista extends PBase {
                 break;
             case 5:
                 lblTit.setText("Forma pago");break;
-            case 6:
-                lblTit.setText("Impuestos");break;
+            case 6: // Impuesto
+                sql="SELECT 0,CODIGO,VALOR,'','', '','','','' FROM P_IMPUESTO WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (VALOR LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY VALOR";
+                break;
             case 7:
                 lblTit.setText("Moneda");break;
             case 8: //Productos
@@ -176,8 +191,12 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCLARGA LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY DESCLARGA";
                 break;
-            case 9:
-                lblTit.setText("Proveedores");break;
+            case 9: // Proveedores
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_PROVEEDOR WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
             case 11: // Vendedores
                 sql="SELECT DISTINCT 0,CODIGO,NOMBRE,'','', '','','','' FROM VENDEDORES WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
@@ -233,9 +252,9 @@ public class Lista extends PBase {
 
         switch (gl.mantid) {
             case 0:
-                lblTit.setText("Almacen");break;
+                startActivity(new Intent(this,MantAlmacen.class));break;
             case 1:
-                lblTit.setText("Bancos");break;
+                startActivity(new Intent(this,MantBanco.class));break;
             case 2:
                 startActivity(new Intent(this,MantCli.class));break;
             case 3:
@@ -243,17 +262,17 @@ public class Lista extends PBase {
             case 4:
                 startActivity(new Intent(this,MantFamilia.class));break;
             case 5:
-                lblTit.setText("Forma pago");break;
+                lblTit.setText("Forma pago");break;//4
             case 6:
-                lblTit.setText("Impuestos");break;
+                startActivity(new Intent(this,MantImpuesto.class));break;
             case 7:
-                lblTit.setText("Moneda");break;
+                lblTit.setText("Moneda");break;//3
             case 8:
                 startActivity(new Intent(this,MantProducto.class));break;
             case 9:
-                lblTit.setText("Proveedores");break;
+                startActivity(new Intent(this,MantProveedor.class));break;
             case 10:
-                lblTit.setText("Usuarios");break;
+                lblTit.setText("Usuarios");break;//2
             case 11:
                 startActivity(new Intent(this, MantVendedores.class));break;
             case 12:

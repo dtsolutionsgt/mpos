@@ -10,6 +10,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/lblV3"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="2dp"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/lblV4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblV3"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="416dp"
+        android:layout_marginTop="0dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

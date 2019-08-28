@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
@@ -22,6 +23,7 @@ public class LA_Lista extends BaseAdapter {
     private MiscUtils mu;
     private DateUtils du;
     private AppMethods app;
+    private appGlobals appG;
 
     private ArrayList<clsClasses.clsLista> items = new ArrayList<clsClasses.clsLista>();
     private int selectedIndex;
@@ -35,6 +37,7 @@ public class LA_Lista extends BaseAdapter {
         mu = owner.mu;
         du = owner.du;
         app = owner.app;
+        appG = owner.gl;
     }
 
     public void setSelectedIndex(int ind) {
@@ -68,6 +71,7 @@ public class LA_Lista extends BaseAdapter {
 
             holder.lbl2 = (TextView) convertView.findViewById(R.id.lblV2);
             holder.lbl3 = (TextView) convertView.findViewById(R.id.lblV3);
+            holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
 
             convertView.setTag(holder);
         } else {
@@ -76,6 +80,11 @@ public class LA_Lista extends BaseAdapter {
 
         holder.lbl2.setText("" + items.get(position).f1);
         holder.lbl3.setText("" + items.get(position).f2);
+        if(appG.banco){
+            holder.lbl4.setText("" + items.get(position).f3);
+        }else {
+            holder.lbl4.setVisibility(View.GONE);
+        }
 
         if (selectedIndex != -1 && position == selectedIndex) {
             convertView.setBackgroundColor(Color.rgb(26, 138, 198));
@@ -87,7 +96,7 @@ public class LA_Lista extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl2, lbl3;
+        TextView lbl2, lbl3, lbl4;
     }
 
 }
