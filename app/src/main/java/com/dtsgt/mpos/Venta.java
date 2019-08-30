@@ -1003,10 +1003,9 @@ public class Venta extends PBase {
         Cursor dt;
 
         try {
-
             sql="SELECT P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA " +
-                    "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO	" +
-                    "WHERE (P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"')";
+                "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO	" +
+                "WHERE (P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"')  COLLATE NOCASE";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {
@@ -1534,7 +1533,6 @@ public class Venta extends PBase {
 
     }
 
-
     private void setControls(){
 
         try{
@@ -1574,6 +1572,9 @@ public class Venta extends PBase {
         String contrib;
 
         tiposcan="*";
+
+        lblTit.setText(gl.cajanom);
+        lblAlm.setText(gl.tiendanom);
 
         try {
             sql="SELECT TIPO_HH FROM P_ARCHIVOCONF WHERE RUTA='"+gl.ruta+"'";

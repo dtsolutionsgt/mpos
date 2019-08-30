@@ -812,8 +812,9 @@
                 android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@id/relSend"
                 android:background="@drawable/frame_rect"
-                android:clickable="false"
-                android:focusableInTouchMode="false">
+                android:clickable="true"
+                android:focusableInTouchMode="false"
+                android:onClick="doClickScan">
 
                 <ImageView
                     android:id="@+id/imageView13"
@@ -824,7 +825,7 @@
                     android:layout_marginTop="1dp"
                     android:alpha="0.75"
                     android:clickable="true"
-                    android:onClick="doSoftScan"
+                    android:onClick="doClickScan"
                     android:src="@drawable/barcode" />
 
                 <EditText
