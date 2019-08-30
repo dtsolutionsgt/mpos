@@ -149,65 +149,24 @@ public class Menu extends PBase {
 
 			items.clear();selIdx=-1;
 
-			try {
+			if (gl.modoinicial) {
+			    addMenuItem(11,"Mantenimientos");
+                addMenuItem(2,"Comunicación");
+                addMenuItem(9,"Utilerias");
+                addMenuItem(10,"Cambio usuario");
+			} else {
+                addMenuItem(1,"Venta");
+                addMenuItem(6,"Caja");
+                addMenuItem(3,"Reimpresión");
+                addMenuItem(4,"Anulación");
+                addMenuItem(7,"Inventario");
+                addMenuItem(2,"Comunicación");
+                addMenuItem( 9,"Utilerias");
+                addMenuItem(11,"Mantenimientos");
+                addMenuItem(12,"Reportes");
+                addMenuItem(10,"Cambio usuario");
 
-				item = clsCls.new clsMenu();
-				item.ID=1;item.Name="Venta";item.Icon=iicon;
-				items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=2;item.Name="Comunicación";item.Icon=2;
-				items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=3;item.Name="Reimpresión";item.Icon=3;
-				items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=4;item.Name="Anulación";item.Icon=4;
-				items.add(item);
-
-				if (!rutapos) {
-					item = clsCls.new clsMenu();
-					item.ID=5;item.Name="Consultas";item.Icon=5;
-					items.add(item);
-				}
-
-				item = clsCls.new clsMenu();
-				item.ID=6;item.Name="Depósito";item.Icon=6;
-				items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=7;item.Name="Inventario";item.Icon=7;
-				items.add(item);
-
-			//#HS_20181211 Agregue nuevo boton en menu: Inicio de dia.
-			//item = clsCls.new clsMenu();
-			//item.ID=11;item.Name="Inicio de día";item.Icon=8;
-			//items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=8;item.Name="Cierre del día";item.Icon=8;
-				items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=9;item.Name="Utilerias";item.Icon=9;
-				items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=11;item.Name="Mantenimientos";item.Icon=11;
-				items.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=12;item.Name="Reportes";item.Icon=12;
-                items.add(item);
-
-				item = clsCls.new clsMenu();
-				item.ID=10;item.Name="Cambio usuario";item.Icon=10;
-				items.add(item);
-			} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			}
+            }
 
 			adaptergrid=new ListAdaptMenuGrid(this, items);
 			gridView.setAdapter(adaptergrid);
@@ -1957,6 +1916,15 @@ public class Menu extends PBase {
 	public void doWSTest(View view) {
 		startActivity(new Intent(Menu.this,WSTest.class));
 	}
+
+	private void addMenuItem(int mid,String text) {
+        clsMenu item = clsCls.new clsMenu();
+        item.ID=mid;
+        item.Name=text;
+        item.Icon=mid;
+        items.add(item);
+    }
+
 
 	//endregion
 

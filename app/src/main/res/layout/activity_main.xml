@@ -154,15 +154,6 @@
             android:maxWidth="610dp"
             android:src="@drawable/logo" />
 
-        <TextView
-            android:id="@+id/textView81"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:text="TextView"
-            android:textSize="20sp"
-            android:textStyle="normal|bold" />
     </RelativeLayout>
 
     <RelativeLayout

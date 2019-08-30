@@ -712,7 +712,7 @@ public class FacturaRes extends PBase {
 			gl.closeCliDet=true;
 			gl.closeVenta=true;
 
-			if (!prn.isEnabled()) super.finish();
+			//if (!prn.isEnabled()) super.finish();
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1295,8 +1295,6 @@ public class FacturaRes extends PBase {
             db.endTransaction();
             mu.msgbox("Error (factura) " + e.getMessage());return false;
         }
-
-		saveAtten(tot);
 
 		return true;
 	}

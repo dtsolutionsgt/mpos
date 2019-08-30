@@ -7,23 +7,35 @@
     android:background="@layout/back"
     tools:context=".ComDrop">
 
+    <ImageView
+        android:id="@+id/imageView34"
+        android:layout_width="150dp"
+        android:layout_height="96dp"
+        android:layout_below="@+id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="0dp"
+        android:onClick="askSendManual"
+        android:src="@drawable/mantenimientos48" />
+
     <Button
         android:id="@+id/btnSenHand"
-        android:layout_width="96dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView23"
-        android:layout_marginStart="31dp"
-        android:layout_marginLeft="75dp"
-        android:layout_marginTop="1dp"
-        android:layout_toEndOf="@+id/btnSend"
-        android:layout_toRightOf="@+id/textView1"
+        android:layout_below="@+id/imageView34"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="-1dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
         android:background="@layout/back"
         android:minWidth="64dp"
         android:minHeight="32dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:text="Enviar manual"
-        android:textSize="15sp" />
+        android:text="Enviar Configuración"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:id="@+id/relRoad"
@@ -107,47 +119,42 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:layout_above="@+id/relbotpan"
         android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true"
-        android:layout_margin="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
         android:background="@layout/frame_rect">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textView81"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="-1dp"
             android:padding="5dp"
-            android:text="Ruta"
+            android:text="URL"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/txtRuta"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/textView2"
-            android:ems="10"
-            android:nextFocusRight="@id/txtEmp"
-            android:singleLine="true">
-
-            <requestFocus />
-        </EditText>
 
         <EditText
             android:id="@+id/txtWS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txtRuta"
-            android:layout_alignParentLeft="true"
+            android:layout_alignStart="@+id/txtEmp"
+            android:layout_alignParentLeft="false"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
             android:ems="10"
-            android:hint="http://172.16.10.9/rdc7_sap_qas_andr/wsandr.asmx"
-            android:nextFocusForward="@id/txtEmp"
-            android:text="http://172.16.10.9/rdc7_sap_qas_andr/wsandr.asmx" />
+            android:enabled="true"
+            android:nextFocusForward="@id/txtEmp" />
 
         <TextView
             android:id="@+id/textView3"
@@ -163,18 +170,20 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView2"
-            android:layout_alignBottom="@+id/textView2"
-            android:layout_toRightOf="@+id/txtRuta"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="-1dp"
             android:padding="5dp"
             android:text="Empresa"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/txtEmp"
-            android:layout_width="60dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/txtWS"
+            android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/textView4"
             android:ems="10"
             android:nextFocusLeft="@id/txtRuta"
@@ -225,16 +234,14 @@
 
     <ImageView
         android:id="@+id/imageView5"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_above="@+id/btnSend"
-        android:layout_alignLeft="@+id/btnRec"
-        android:layout_alignRight="@+id/btnRec"
-        android:layout_marginLeft="0dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="1dp"
-        android:layout_toStartOf="@+id/imageView6"
+        android:layout_width="150dp"
+        android:layout_height="96dp"
+        android:layout_alignTop="@+id/imageView6"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="3dp"
+        android:layout_toStartOf="@+id/textView1"
         android:adjustViewBounds="true"
         android:clickable="true"
         android:onClick="askRec"
@@ -242,14 +249,13 @@
 
     <ImageView
         android:id="@+id/imageView6"
-        android:layout_width="96dp"
-        android:layout_height="64dp"
-        android:layout_alignLeft="@+id/btnSend"
+        android:layout_width="150dp"
+        android:layout_height="95dp"
         android:layout_alignTop="@+id/progressBar2"
-        android:layout_alignRight="@+id/btnSend"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
         android:layout_marginRight="0dp"
+        android:layout_toEndOf="@+id/textView1"
         android:adjustViewBounds="true"
         android:clickable="true"
         android:onClick="askSend"
@@ -260,10 +266,11 @@
         android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView5"
+        android:layout_alignStart="@+id/imageView5"
+        android:layout_alignEnd="@+id/imageView5"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="64dp"
-        android:layout_toStartOf="@+id/btnSend"
+        android:layout_marginEnd="0dp"
         android:layout_toLeftOf="@+id/textView1"
         android:background="@layout/back"
         android:minWidth="64dp"
@@ -272,15 +279,20 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="Recibir"
-        android:textSize="14sp" />
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnSend"
         android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView6"
-        android:layout_marginLeft="-53dp"
+        android:layout_alignStart="@+id/imageView6"
+        android:layout_alignEnd="@+id/imageView6"
+        android:layout_marginStart="33dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
         android:layout_toRightOf="@+id/textView1"
         android:background="@layout/back"
         android:minWidth="64dp"
@@ -289,7 +301,8 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="Enviar "
-        android:textSize="15sp" />
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView1"
@@ -349,28 +362,6 @@
             android:textColor="#FFFFFF"
             android:visibility="visible" />
 
-        <TextView
-            android:id="@+id/textView82"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/imageView19"
-            android:layout_alignEnd="@+id/imageView19"
-            android:layout_alignParentBottom="true"
-            android:gravity="center_horizontal"
-            android:text="Imagenes"
-            android:textColor="#FFFFFF"
-            android:textSize="10sp" />
-
-        <ImageView
-            android:id="@+id/imageView19"
-            android:layout_width="64dp"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:onClick="doFotos"
-            android:paddingTop="3dp"
-            android:paddingBottom="10dp"
-            android:src="@drawable/fotos" />
     </RelativeLayout>
 
     <ImageView
@@ -385,15 +376,5 @@
         android:padding="5dp"
         android:src="@drawable/comunicacion_blanco_gris"
         android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/imageView23"
-        android:layout_width="96dp"
-        android:layout_height="64dp"
-        android:layout_alignTop="@+id/imageView6"
-        android:layout_marginStart="32dp"
-        android:layout_toEndOf="@+id/imageView6"
-        android:onClick="askSendManual"
-        android:src="@drawable/enviaarchivosmanual" />
 
 </RelativeLayout>

@@ -152,6 +152,7 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
             case 1: //Banco
                 sql="SELECT 0,CODIGO,NOMBRE,CUENTA,'', '','','','' FROM P_BANCO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
@@ -160,69 +161,90 @@ public class Lista extends PBase {
 
                 gl.banco = true;
                 break;
+
             case 2: // Clientes
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_CLIENTE WHERE ";
                 if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
             case 3: // Empresa
                 sql="SELECT 0,EMPRESA,NOMBRE,'','', '','','','' FROM P_EMPRESA ";
                 break;
+
             case 4: // Familia
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_LINEA WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
             case 5: //Forma de pago
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_MEDIAPAGO WHERE ";
                 if (act) sql+="(ACTIVO='S') ";else sql+="(ACTIVO='N') ";
                 if (flag) sql+="AND ((CODIGO="+ft+") OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
             case 6: // Impuesto
                 sql="SELECT 0,CODIGO,VALOR,'','', '','','','' FROM P_IMPUESTO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (VALOR LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY VALOR";
                 break;
+
             case 7: //Moneda
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_MONEDA WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
             case 8: //Productos
                 sql="SELECT 0,CODIGO,DESCLARGA,'','', '','','','' FROM P_PRODUCTO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCLARGA LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY DESCLARGA";
                 break;
+
             case 9: // Proveedores
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_PROVEEDOR WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
             case 11: // Vendedores
                 sql="SELECT DISTINCT 0,CODIGO,NOMBRE,'','', '','','','' FROM VENDEDORES WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
             case 12: // Tienda
                 sql="SELECT 0,CODIGO,DESCRIPCION,'','', '','','','' FROM P_SUCURSAL WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCRIPCION LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY DESCRIPCION";
                 break;
+
             case 13: // Caja
+                sql="SELECT 0,P_RUTA.CODIGO,P_SUCURSAL.DESCRIPCION || ' - ' || P_RUTA.NOMBRE,'','', '','','','' ";
+                sql+="FROM P_RUTA INNER JOIN P_SUCURSAL ON P_RUTA.SUCURSAL=P_SUCURSAL.CODIGO WHERE ";
+                if (act) sql+="(P_RUTA.ACTIVO='S') ";else sql+="(P_RUTA.ACTIVO='N') ";
+                if (flag) sql+="AND ((P_RUTA.CODIGO='"+ft+"') OR (P_RUTA.NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY P_SUCURSAL.DESCRIPCION,P_RUTA.NOMBRE";
+
+                /*
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_RUTA WHERE ";
-                if (act) sql+="(ACTIVO='S') ";else sql+="(ACTIVO='N?) ";
+                if (act) sql+="(ACTIVO='S') ";else sql+="(ACTIVO='N') ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
+                */
+
                 break;
+
             case 14: // Nivel Precio
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_NIVELPRECIO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
@@ -296,12 +318,12 @@ public class Lista extends PBase {
                 startActivity(new Intent(this,MantProducto.class));break;
             case 9:
                 startActivity(new Intent(this,MantProveedor.class));break;
-            case 10:
-                lblTit.setText("Usuarios");break;
             case 11:
                 startActivity(new Intent(this, MantVendedores.class));break;
             case 12:
                 startActivity(new Intent(this, MantTienda.class));break;
+            case 13:
+                startActivity(new Intent(this, MantCaja.class));break;
         }
     }
 
@@ -327,6 +349,5 @@ public class Lista extends PBase {
     }
 
     //endregion
-
 
 }

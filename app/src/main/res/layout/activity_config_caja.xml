@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dtsgt.mant.MantCaja">
+    tools:context="com.dtsgt.mpos.ConfigCaja">
 
     <ImageView
         android:id="@+id/imgImg2"
@@ -64,7 +64,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Caja"
+            android:text="Asignación de caja"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
             android:textSize="24sp"
@@ -74,7 +74,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="1275dp"
-        android:layout_height="180dp"
+        android:layout_height="105dp"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -86,84 +86,44 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="5dp">
 
+        <Spinner
+            android:id="@+id/spinner12"
+            android:layout_width="400dp"
+            android:layout_height="42dp"
+            android:layout_below="@+id/spinner10"
+            android:layout_alignEnd="@+id/txt2"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/textView2"
+            android:background="@drawable/spinner_style" />
+
         <TextView
             android:id="@+id/lblCFact2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
+            android:layout_below="@+id/textView2"
             android:layout_alignStart="@+id/lblCFact"
-            android:layout_alignTop="@+id/spinner10"
             android:layout_alignEnd="@+id/textView2"
-            android:layout_alignBottom="@+id/spinner10"
             android:layout_alignParentLeft="true"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Familia :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="normal" />
-
-        <EditText
-            android:id="@+id/txt2"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView2"
-            android:layout_alignParentEnd="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="50"
-            android:maxLines="1"
-            android:selectAllOnFocus="false"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/lblCFact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/txt2"
-            android:layout_alignEnd="@+id/textView2"
-            android:layout_alignBottom="@+id/txt2"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
+            android:layout_marginEnd="-4dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Nombre :"
+            android:text="Caja :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="normal" />
 
-        <EditText
-            android:id="@+id/txt1"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="false"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="15"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
         <TextView
             android:id="@+id/textView2"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_alignTop="@+id/txt1"
             android:layout_alignBottom="@+id/txt1"
             android:layout_alignParentLeft="true"
@@ -171,20 +131,19 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Código :"
+            android:text="Tienda :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
 
         <Spinner
             android:id="@+id/spinner10"
-            android:layout_width="match_parent"
+            android:layout_width="400dp"
             android:layout_height="42dp"
-            android:layout_below="@+id/txt2"
-            android:layout_alignStart="@+id/txt2"
             android:layout_alignEnd="@+id/txt2"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="01dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/textView2"
             android:background="@drawable/spinner_style" />
 
     </RelativeLayout>
@@ -229,16 +188,5 @@
         android:clickable="true"
         android:onClick="doExit"
         android:src="@drawable/prev48" />
-
-    <ImageView
-        android:id="@+id/imageView31"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/relRoad"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:onClick="doStatus"
-        android:src="@drawable/delete_64" />
 
 </RelativeLayout>

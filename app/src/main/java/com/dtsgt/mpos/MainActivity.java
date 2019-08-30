@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
 public class MainActivity extends PBase {
 
     private EditText txtUser, txtPass;
-    private TextView lblRuta, lblRTit, lblLogin, lblVer, lblID;
+    private TextView lblRuta, lblRTit, lblLogin, lblVer;
     private ImageView imgLogo;
 
     private BaseDatosVersion dbVers;
@@ -108,7 +108,6 @@ public class MainActivity extends PBase {
             lblRTit = (TextView) findViewById(R.id.lblCUsed);
             lblLogin = (TextView) findViewById(R.id.lblDir);
             lblVer = (TextView) findViewById(R.id.textView10);
-            lblID = (TextView) findViewById(R.id.textView81);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
 
             lblVer.setText("Version " + gl.parVer);
@@ -123,6 +122,14 @@ public class MainActivity extends PBase {
 
             initSession();
 
+            try {
+                File file1 = new File(Environment.getExternalStorageDirectory(), "/debug.txt");
+                if (file1.exists()) gl.debug=true;else gl.debug=false;
+            } catch (Exception e) {
+                gl.debug=false;
+            }
+
+
             /*
             if (!validaLicencia()) {
                 startActivity(new Intent(this, comWSLic.class));
@@ -132,10 +139,8 @@ public class MainActivity extends PBase {
             }
             */
 
-            //#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true
-            if (gl.debug) {
-                txtUser.setText("1");
-                txtPass.setText("1");
+             if (gl.debug) {
+                txtUser.setText("1");txtPass.setText("1");
             }
 
         } catch (Exception e) {
@@ -171,15 +176,7 @@ public class MainActivity extends PBase {
     //region Events
 
     public void comMan(View view) {
-        try {
-            entraComunicacion();
-        } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-
+        acesoAdmin();
     }
 
     public void gotoMenu() {
@@ -302,12 +299,16 @@ public class MainActivity extends PBase {
         String s, rn = "";
         String vCellCom = "";
 
+        /*
         if (dbVacia()) {
             gl.modoadmin = true;
             gl.autocom = 0;
             toastcent("¡La base de datos está vacia!");
             startActivity(new Intent(MainActivity.this, ComWS.class));
         }
+        */
+
+        configBase();
 
         try {
             //#HS_20181122_1505 Se agrego el campo Impresion.
@@ -349,8 +350,6 @@ public class MainActivity extends PBase {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
-        lblRTit.setText(gl.rutanom);
-
         try {
             //#HS_20181120_1616 Se agrego el campo UNIDAD_MEDIDA_PESO.//campo INCIDENCIA_NO_LECTURA
             sql = " SELECT EMPRESA,NOMBRE,DEVOLUCION_MERCANCIA,USARPESO,FIN_DIA,DEPOSITO_PARCIAL,UNIDAD_MEDIDA_PESO," +
@@ -361,7 +360,6 @@ public class MainActivity extends PBase {
                 DT.moveToFirst();
 
                 gl.emp = DT.getString(0);
-                lblRuta.setText(DT.getString(1));
                 gl.empnom = DT.getString(1);
                 gl.devol = DT.getInt(2) == 1;
                 s = DT.getString(3);
@@ -372,7 +370,7 @@ public class MainActivity extends PBase {
                 gl.depparc = DT.getInt(5) == 1;
                 gl.lotedf = DT.getString(8);
             } else {
-                gl.emp = "";lblRuta.setText("");
+                gl.emp = "";
                 gl.devol = false;
                 msgbox("¡No se pudo cargar configuración de la empresa!");
             }
@@ -399,7 +397,6 @@ public class MainActivity extends PBase {
         //Id de Dispositivo
         gl.deviceId = androidid();
         gl.devicename = getLocalBluetoothName();
-        lblID.setText(gl.devicename);
 
         try {
             AppMethods app = new AppMethods(this, gl, Con, db);
@@ -432,6 +429,8 @@ public class MainActivity extends PBase {
         Cursor DT;
         String usr, pwd, dpwd;
 
+        configBase();
+
         try {
 
             usr = txtUser.getText().toString().trim();
@@ -447,7 +446,6 @@ public class MainActivity extends PBase {
             }
 
             if (usr.equalsIgnoreCase("DTS") && pwd.equalsIgnoreCase("DTS")) {
-
                 gl.vendnom = "DTS";
                 gl.vend = "DTS";
                 gl.vnivel = 1;
@@ -461,7 +459,7 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'";
+            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() == 0) {
@@ -476,16 +474,38 @@ public class MainActivity extends PBase {
                 return false;
             }
 
+            gl.nivel = DT.getInt(2);
+
+            if (gl.caja.isEmpty() || gl.tienda.isEmpty()) {
+                if (gl.nivel==3) {
+                    gl.modoinicial=true;return true;
+                } else {
+                    toastlong("No está configurada la caja. Informe al gerente.");
+                    acesoAdmin();return false;
+                }
+            } else {
+               gl.modoinicial=false;
+            }
+
+            if (gl.nivel!=3) {
+
+                sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES " +
+                      "WHERE (CODIGO='" + usr + "') AND (RUTA='"+gl.tienda+"') COLLATE NOCASE";
+                DT = Con.OpenDT(sql);
+
+                if (DT.getCount() == 0) {
+                    mu.msgbox("¡El usuario no tiene permiso de ingreso para "+gl.tiendanom+"!");return false;
+                }
+            }
+
             gl.vendnom = DT.getString(0);
             gl.vend = usr;
-            gl.vnivel = DT.getInt(2);
             gl.vnivprec = DT.getInt(3);
 
             return true;
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             return false;
         }
 
@@ -679,7 +699,9 @@ public class MainActivity extends PBase {
 
     //region Aux
 
-    private void entraComunicacion() {
+    private void acesoAdmin() {
+
+        if (!tieneTiendaCaja()) return;
 
         try {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -689,45 +711,34 @@ public class MainActivity extends PBase {
             final EditText input = new EditText(this);
             alert.setView(input);
 
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
             input.setText("");
             input.requestFocus();
 
             alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    String s;
-
-                    try {
-                        s = input.getText().toString();
-
+                     try {
+                        String s = input.getText().toString();
                         if (s.equalsIgnoreCase("1965")) {
-                            gl.modoadmin = true;
-                            gl.autocom = 0;
-                            startActivity(new Intent(MainActivity.this, ComWS.class));
+                            startActivity(new Intent(MainActivity.this, ConfigCaja.class));
                         } else {
-                            mu.msgbox("Contraseña incorrecta");
-                            return;
+                            mu.msgbox("Contraseña incorrecta");return;
                         }
 
                     } catch (Exception e) {
-                        addlog(new Object() {
-                        }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+                        addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
                     }
                 }
             });
 
             alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
+                public void onClick(DialogInterface dialog, int whichButton) {}
             });
 
             alert.show();
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
-
-
     }
 
     private boolean dbVacia() {
@@ -850,6 +861,74 @@ public class MainActivity extends PBase {
             return mBluetoothAdapter.getName();
         }
     }
+
+    public void configBase() {
+        Cursor DT;
+
+        gl.tienda="";gl.caja="";
+        gl.tiendanom="";gl.cajanom="";
+
+        try {
+            sql = "SELECT url,sucursal,ruta FROM Params";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            gl.urlglob=DT.getString(0);
+            gl.tienda=DT.getString(1);
+            gl.caja=DT.getString(2);
+
+            if (!gl.tienda.isEmpty()) {
+                try {
+                    sql = "SELECT DESCRIPCION FROM P_SUCURSAL WHERE CODIGO='"+gl.tienda+"'";
+                    DT = Con.OpenDT(sql);
+                    DT.moveToFirst();
+                    gl.tiendanom=DT.getString(0);
+                } catch (Exception e) {
+                    gl.tiendanom="";
+                }
+            }
+
+            if (!gl.caja.isEmpty()) {
+                try {
+                    sql = "SELECT NOMBRE FROM P_RUTA WHERE CODIGO='"+gl.caja+"'";
+                    DT = Con.OpenDT(sql);
+                    DT.moveToFirst();
+                    gl.cajanom=DT.getString(0);
+                } catch (Exception e) {
+                    gl.cajanom="";
+                }
+            }
+
+        } catch (Exception e) {
+             gl.tiendanom="";gl.cajanom="";
+        }
+
+        lblRTit.setText(gl.tiendanom);
+        lblRuta.setText(gl.cajanom);
+    }
+
+    public boolean tieneTiendaCaja() {
+        Cursor DT;
+
+        try {
+
+            sql = "SELECT DESCRIPCION FROM P_SUCURSAL";
+            DT = Con.OpenDT(sql);
+            if (DT.getCount()==0) {
+                msgbox("¡No se puede continuar, no está definida ninguna tienda!");return false;
+            }
+
+            sql = "SELECT NOMBRE FROM P_RUTA";
+            DT = Con.OpenDT(sql);
+            if (DT.getCount()==0) {
+                msgbox("¡No se puede continuar, no está definida ninguna caja!");return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+   }
 
     //endregion
 

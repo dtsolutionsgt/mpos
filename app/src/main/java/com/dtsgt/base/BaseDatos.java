@@ -346,7 +346,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 	    	    public void onClick(DialogInterface dialog, int which) {
 	    	    }
 	    	});
-			dialog.show();
+			//dialog.show();
 		
 		}   	  
 }
