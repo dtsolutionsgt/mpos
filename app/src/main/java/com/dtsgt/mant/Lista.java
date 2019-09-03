@@ -8,6 +8,7 @@ import android.view.View;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsListaObj;
 import com.dtsgt.ladapt.LA_Lista;
+import com.dtsgt.ladapt.listAdapt_desc;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import android.widget.AdapterView;
@@ -28,6 +29,7 @@ public class Lista extends PBase {
     private Switch swact;
 
     private LA_Lista adapter;
+    private listAdapt_desc adapt;
     private clsListaObj ViewObj;
 
     @Override
@@ -75,7 +77,12 @@ public class Lista extends PBase {
                 Object lvObj = listView.getItemAtPosition(position);
                 clsClasses.clsLista item = (clsClasses.clsLista) lvObj;
 
-                adapter.setSelectedIndex(position);
+                if(gl.mantid==15){
+                    adapt.setSelectedIndex(position);
+                }else {
+                    adapter.setSelectedIndex(position);
+                }
+
                 gl.gcods=item.f1;
                 abrirMant();
             }
@@ -116,8 +123,14 @@ public class Lista extends PBase {
             setTableSQL();
 
             ViewObj.fillSelect(sql);
-            adapter=new LA_Lista(this,this,ViewObj.items);
-            listView.setAdapter(adapter);
+
+            if(gl.disc){
+                adapt=new listAdapt_desc(this,this,ViewObj.items);
+                listView.setAdapter(adapt);
+            }else {
+                adapter=new LA_Lista(this,this,ViewObj.items);
+                listView.setAdapter(adapter);
+            }
 
             lblReg.setText("Registros : "+ViewObj.count);
         } catch (Exception e) {
@@ -130,8 +143,11 @@ public class Lista extends PBase {
         }
 
         if (selidx>-1) {
-            adapter.setSelectedIndex(selidx);
-            //listView.smoothScrollToPosition(selidx);
+            if(gl.disc){
+                adapt.setSelectedIndex(selidx);
+            }else {
+                adapter.setSelectedIndex(selidx);
+            }
          }
 
     }
@@ -142,6 +158,7 @@ public class Lista extends PBase {
         boolean act=!swact.isChecked();
 
         gl.banco = false;
+        gl.disc = false;
 
         sql="";
 
@@ -251,6 +268,13 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+            case 15: // Descuento
+                sql="SELECT 0,d.PRODUCTO,p.DESCCORTA,d.VALOR,d.FECHAINI,d.FECHAFIN,'','','' FROM P_DESCUENTO d INNER JOIN P_PRODUCTO p on d.PRODUCTO = p.CODIGO WHERE ";
+                if (act) sql+="(d.ACTIVO=1) ";else sql+="(d.ACTIVO=0) ";
+                if (flag) sql+="AND ((d.PRODUCTO='"+ft+"') OR (p.DESCCORTA LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY d.PRODUCTO";
+                gl.disc=true;
+                break;
         }
     }
 
@@ -292,6 +316,8 @@ public class Lista extends PBase {
                 lblTit.setText("Caja");break;
             case 14:
                 lblTit.setText("Nivel precio");break;
+            case 15:
+                lblTit.setText("Descuento");break;
         }
     }
 
@@ -323,7 +349,11 @@ public class Lista extends PBase {
             case 12:
                 startActivity(new Intent(this, MantTienda.class));break;
             case 13:
-                startActivity(new Intent(this, MantCaja.class));break;
+                /*startActivity(new Intent(this, MantCaja.class));*/break;
+            case 14:
+                startActivity(new Intent(this, MantNivelPrecio.class));break;
+            case 15:
+                startActivity(new Intent(this, MantDescuento.class));break;
         }
     }
 

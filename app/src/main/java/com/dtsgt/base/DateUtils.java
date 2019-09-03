@@ -11,9 +11,12 @@ public class DateUtils {
 		long vy,vm,vd;
 		String s;
 		
-		vy=(long) f/100000000;f=f % 100000000;
-		vm=(long) f/1000000;f=f % 1000000;
-		vd=(long) f/10000;f=f % 10000;
+		vy=(long) f/100000000;
+		f=f % 100000000;
+		vm=(long) f/1000000;
+		f=f % 1000000;
+		vd=(long) f/10000;
+		f=f % 10000;
 		
 		s="";
 		if (vd>9) { s=s+String.valueOf(vd)+"/";} else {s=s+"0"+String.valueOf(vd)+"/";}  
@@ -218,6 +221,30 @@ public class DateUtils {
 		c=c*10000+month*100+day;
 
 		return c*10000;
+	}
+
+	public long cfechaDesc(int year,int month, int day) {
+		long c;
+		String d,mes,dia,ano;
+
+		year = year - 2000;
+		ano = Integer.toString(year);
+		mes = Integer.toString(month);
+		dia = Integer.toString(day);
+
+		if (dia.length()<2) {
+			dia = "0" + day;
+		}
+
+		if (mes.length()<2) {
+			mes = "0" + month;
+		}
+
+		d= ano + mes + dia + "0000";
+
+		c=Long.parseLong(d);
+
+		return c;
 	}
 	
 	public long parsedate(int date,int hour,int min) {

@@ -93,6 +93,7 @@ public class clsP_descuentoObj {
         ins.add("FECHAFIN", item.fechafin);
         ins.add("CODDESC", item.coddesc);
         ins.add("NOMBRE", item.nombre);
+        ins.add("ACTIVO", item.activo);
 
         db.execSQL(ins.sql());
 
@@ -111,6 +112,7 @@ public class clsP_descuentoObj {
         upd.add("FECHAFIN", item.fechafin);
         upd.add("CODDESC", item.coddesc);
         upd.add("NOMBRE", item.nombre);
+        upd.add("ACTIVO", item.activo);
 
         upd.Where("(CLIENTE='" + item.cliente + "') AND (CTIPO=" + item.ctipo + ") AND (PRODUCTO='" + item.producto + "') AND (PTIPO=" + item.ptipo + ") AND (TIPORUTA=" + item.tiporuta + ") AND (RANGOINI=" + item.rangoini + ")");
 
@@ -159,6 +161,7 @@ public class clsP_descuentoObj {
             item.fechafin = dt.getInt(12);
             item.coddesc = dt.getInt(13);
             item.nombre = dt.getString(14);
+            item.activo = dt.getInt(15);
 
             items.add(item);
 
@@ -205,6 +208,7 @@ public class clsP_descuentoObj {
         ins.add("FECHAFIN", item.fechafin);
         ins.add("CODDESC", item.coddesc);
         ins.add("NOMBRE", item.nombre);
+        ins.add("ACTIVO", item.activo);
 
         return ins.sql();
 
@@ -223,6 +227,7 @@ public class clsP_descuentoObj {
         upd.add("FECHAFIN", item.fechafin);
         upd.add("CODDESC", item.coddesc);
         upd.add("NOMBRE", item.nombre);
+        upd.add("ACTIVO", item.activo);
 
         upd.Where("(CLIENTE='" + item.cliente + "') AND (CTIPO=" + item.ctipo + ") AND (PRODUCTO='" + item.producto + "') AND (PTIPO=" + item.ptipo + ") AND (TIPORUTA=" + item.tiporuta + ") AND (RANGOINI=" + item.rangoini + ")");
 

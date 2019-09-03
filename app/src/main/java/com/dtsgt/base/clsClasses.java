@@ -92,6 +92,7 @@ public class clsClasses {
         public int  fechafin;
         public int  coddesc;
         public String nombre;
+        public int activo;
     }
 
     public class clsP_empresa {

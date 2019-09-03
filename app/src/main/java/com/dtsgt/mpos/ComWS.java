@@ -1933,7 +1933,7 @@ public class ComWS extends PBase {
         }
 
         if (TN.equalsIgnoreCase("P_DESCUENTO")) {
-            SQL = "SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,DESCTIPO,VALOR,GLOBDESC,PORCANT,dbo.AndrDateIni(FECHAINI),dbo.AndrDateFin(FECHAFIN),CODDESC,NOMBRE ";
+            SQL = "SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,DESCTIPO,VALOR,GLOBDESC,PORCANT,dbo.AndrDateIni(FECHAINI),dbo.AndrDateFin(FECHAFIN),CODDESC,NOMBRE,ACTIVO ";
             SQL += "FROM P_DESCUENTO WHERE EMP='"+emp+"'";
             return SQL;
         }
@@ -4243,7 +4243,7 @@ public class ComWS extends PBase {
 		}
 
 	}
-	
+
 
 	private boolean setComParams() {
 		String ss;

@@ -22,8 +22,8 @@ public class appGlobals extends Application {
 	public String ref1,ref2,ref3,fnombre,fnit,fdir,escaneo,corel_d_mov,barra,parVer,gcods;
 	public String tienda,tiendanom,caja,cajanom,urlglob;
 	public int tiponcredito,validarCred,gpsdist,gcodi;
-    public boolean vcredito,vcheque,vchequepost,validimp,dev,banco;
-	public boolean closeCliDet,closeVenta,promapl,pagado,pagocobro,sinimp,rutapos,devol,modoadmin;
+    public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc;
+	public boolean closeCliDet,closeVenta,promapl,pagado,pagocobro,sinimp,rutapos,devol,modoadmin,reportList;
 	public boolean usarpeso,banderafindia,depparc,incNoLectura,cobroPendiente,findiaactivo,banderaCobro;
 	public int mpago;
 

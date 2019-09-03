@@ -31,7 +31,6 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -524,6 +523,11 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantNivelPrecio"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.dtsgt.mant.MantDescuento"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />

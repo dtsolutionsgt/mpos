@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dtsgt.mant.MantNivelPrecio">
+    tools:context="com.dtsgt.mant.MantDescuento">
 
     <ImageView
         android:id="@+id/imgImg2"
@@ -64,7 +64,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Nivel de Precio"
+            android:text="Descuento"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
             android:textSize="24sp"
@@ -74,20 +74,39 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
+        android:layout_marginLeft="0dp"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="5dp"
+        android:layout_marginRight="0dp"
         android:layout_marginBottom="5dp"
         android:background="@layout/frame_rect">
 
+        <TextView
+            android:id="@+id/textView126"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt"
+            android:layout_alignBottom="@+id/lblCFact16"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/lblCFact16"
+            android:background="@drawable/frame_btn"
+            android:gravity="center"
+            android:onClick="showDateDialog1"
+            android:text="00/00/0000"
+            android:textSize="21dp"
+            android:textStyle="bold" />
+
         <EditText
             android:id="@+id/txt2"
-            android:layout_width="500dp"
+            android:layout_width="1080dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView2"
             android:layout_alignParentEnd="true"
@@ -100,7 +119,24 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:textSize="21sp"
+            android:textSize="21dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txt"
+            android:layout_width="168dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt2"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLength="50"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:textSize="21dp"
             android:textStyle="bold" />
 
         <TextView
@@ -108,7 +144,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/txt2"
-            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignEnd="@id/textView2"
             android:layout_alignBottom="@+id/txt2"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
@@ -118,7 +154,68 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Nombre :"
+            android:text="Nombre Prod :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/lblCFact6"
+            android:layout_width="139dp"
+            android:layout_height="64dp"
+            android:layout_alignTop="@+id/txt"
+            android:layout_alignEnd="@+id/lblCFact"
+            android:layout_alignBottom="@+id/txt"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Valor :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/lblCFact16"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@+id/lblCFact6"
+            android:layout_alignEnd="@+id/lblCFact6"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Fecha inicio :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/lblCFact18"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@+id/lblCFact16"
+            android:layout_alignEnd="@+id/lblCFact6"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="9dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Fecha fin :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
@@ -130,13 +227,29 @@
             android:layout_height="10dp"
             android:layout_below="@+id/txt2"
             android:layout_alignParentLeft="true"
-            android:layout_marginTop="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="165dp"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="invisible" />
 
-        <EditText
-            android:id="@+id/txt1"
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/spinner12"
+            android:layout_alignBottom="@+id/spinner12"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Código :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
+
+        <Spinner
+            android:id="@+id/spinner12"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="false"
@@ -147,23 +260,40 @@
             android:maxLength="15"
             android:maxLines="1"
             android:singleLine="true"
-            android:textSize="21sp"
+            android:textSize="21dp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="150dp"
+            android:id="@+id/textView125"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/txt1"
-            android:layout_alignBottom="@+id/txt1"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Código :"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF" />
+            android:layout_below="@+id/textView126"
+            android:layout_alignBottom="@+id/lblCFact18"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/lblCFact16"
+            android:background="@drawable/frame_btn"
+            android:gravity="center"
+            android:onClick="showDateDialog2"
+            android:text="00/00/0000"
+            android:textSize="21dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView128"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txt"
+            android:layout_alignBottom="@+id/txt"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+            android:layout_toEndOf="@+id/txt"
+            android:gravity="center"
+            android:text="%"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

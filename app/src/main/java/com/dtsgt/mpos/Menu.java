@@ -68,6 +68,7 @@ public class Menu extends PBase {
 
 			super.InitBase();
 			addlog("Menu",""+du.getActDateTime(),gl.vend);
+			gl.reportList=false;
 
 			gridView = (GridView) findViewById(R.id.gridView1);
 			relbotpan = (RelativeLayout) findViewById(R.id.relbotpan);
@@ -354,6 +355,10 @@ public class Menu extends PBase {
 
 				case 11:	// Inicio día
 					showMantMenu();
+					break;
+
+				case 12:
+					showReportMenu();
 					break;
 
 			}
@@ -1403,7 +1408,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
 
                     if (gl.mantid==15) {
-                        //startActivity(new Intent(Menu.this, ListaDesc.class));
+                        startActivity(new Intent(Menu.this, Lista.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }
@@ -1439,6 +1444,81 @@ public class Menu extends PBase {
 		}
 
 	}
+
+	//endregion
+
+	public void showReportMenu() {
+
+		try{
+			final AlertDialog Dialog;
+
+			final String[] selitems = {"Reporte Venta", "Reporte Inventario", "Reporte 1", "Reporte 2", "Reporte 3", "Reporte 4", "Reporte 5"};
+
+			menudlg = new AlertDialog.Builder(this);
+			menudlg.setTitle("Mantenimientos");
+
+			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+
+					ss=selitems[item];
+
+					if (ss.equalsIgnoreCase("Reporte Venta")) gl.mantid=0; gl.reportList=true;
+					/*if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
+					if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
+					if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+					if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
+					if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
+					if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
+					if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
+					if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
+					if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
+					if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
+					if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
+					if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
+					if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
+					if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
+
+					if (gl.mantid==15) {
+						startActivity(new Intent(Menu.this, Lista.class));
+					} else {
+						startActivity(new Intent(Menu.this, Lista.class));
+					}*/
+					startActivity(new Intent(Menu.this,Exist.class));
+				}
+			});
+
+			menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					toast("Pendiente implementación");
+				}
+			});
+
+			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+
+			Dialog = menudlg.create();
+			Dialog.show();
+
+			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+			nbutton.setTextColor(Color.WHITE);
+
+			Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+			nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
+			nbuttonp.setTextColor(Color.WHITE);
+		} catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+	//region Reportes
+
+
 
 	//endregion
 
@@ -1934,6 +2014,7 @@ public class Menu extends PBase {
  	protected void onResume() {
 		try{
 			super.onResume();
+			gl.reportList=false;
 			setPrintWidth();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

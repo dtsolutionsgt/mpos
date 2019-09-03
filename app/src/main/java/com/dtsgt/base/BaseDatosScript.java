@@ -1365,6 +1365,7 @@ public class BaseDatosScript {
 					"[FECHAFIN] INTEGER NOT NULL,"+
 					"[CODDESC] INTEGER NOT NULL,"+
 					"[NOMBRE] TEXT NOT NULL,"+
+					"[ACTIVO] INTEGER NOT NULL,"+
 					"PRIMARY KEY ([CLIENTE],[CTIPO],[PRODUCTO],[PTIPO],[TIPORUTA],[RANGOINI])"+
 					");";
 			database.execSQL(sql);

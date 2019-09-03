@@ -115,7 +115,7 @@ public class MantCaja extends PBase {
 
     private void loadItem() {
         try {
-            holder.fill("WHERE CODIGO='"+id+"'");
+            holder.fill(" WHERE CODIGO='"+id+"'");
             item=holder.first();
 
             showItem();
