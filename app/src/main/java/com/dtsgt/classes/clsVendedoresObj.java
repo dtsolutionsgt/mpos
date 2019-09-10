@@ -140,7 +140,7 @@ public class clsVendedoresObj {
             item.clave = dt.getString(2);
             item.ruta = dt.getString(3);
             item.nivel = dt.getInt(4);
-            item.nivelprecio = dt.getInt(5);
+            item.nivelprecio = dt.getDouble(5);
             item.bodega = dt.getString(6);
             item.subbodega = dt.getString(7);
             item.activo = dt.getInt(8);

@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,8 +23,8 @@
             android:ellipsize="end"
             android:gravity="clip_vertical|center_horizontal"
             android:maxLines="1"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             android:text="Caja 1"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="24sp"
@@ -37,8 +38,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:gravity="center_horizontal|center_vertical"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             android:text="Tienda"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#000000"
@@ -70,6 +71,7 @@
             android:layout_toRightOf="@+id/lblProd"
             android:ems="10"
             android:imeOptions="actionNext"
+            android:inputType="number"
             android:singleLine="true"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -99,7 +101,7 @@
             android:layout_marginEnd="0dp"
             android:layout_marginRight="0dp"
             android:ems="10"
-            android:inputType="textPassword"
+            android:inputType="numberPassword"
             android:singleLine="true"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -145,14 +147,27 @@
             android:id="@+id/imgNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_below="@+id/textView82"
+            android:layout_centerHorizontal="true"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="5dp"
             android:clickable="true"
             android:maxWidth="610dp"
             android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/textView82"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="false"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="TextView"
+            android:textSize="32sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
@@ -228,5 +243,16 @@
         android:text="ROAD ver. 9.4  -  26/04/2019"
         android:textColor="#000000"
         android:textSize="13sp" />
+
+    <ImageView
+        android:id="@+id/imageView19"
+        android:layout_width="96dp"
+        android:layout_height="64dp"
+        android:layout_above="@+id/relbotpan"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="false"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/logo_nuevo" />
 
 </RelativeLayout>

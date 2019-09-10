@@ -15,7 +15,7 @@ import com.dtsgt.mpos.R;
 import java.util.ArrayList;
 
 public class ListAdaptMenuVenta extends BaseAdapter {
-	private static ArrayList<clsMenu> items;
+	private ArrayList<clsMenu> items;
 
 	private int selectedIndex;
 
@@ -83,6 +83,8 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		if (items.get(position).Icon==11) holder.imgEst.setImageResource(R.drawable.mantenimientos48);
 		if (items.get(position).Icon==12) holder.imgEst.setImageResource(R.drawable.venta_add);
 		if (items.get(position).Icon==13) holder.imgEst.setImageResource(R.drawable.venta_switch);
+
+        if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));

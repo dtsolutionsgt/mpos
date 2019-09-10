@@ -86,6 +86,41 @@
         android:layout_marginRight="0dp"
         android:layout_marginBottom="5dp">
 
+        <CheckBox
+            android:id="@+id/checkBox9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/editText15"
+            android:layout_alignTop="@+id/editText6"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="6dp"
+            android:text="Permite cantidad decimal"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblCFact15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/lblCFact"
+            android:layout_alignTop="@+id/editText6"
+            android:layout_alignEnd="@+id/spinner15"
+            android:layout_alignBottom="@+id/editText6"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="406dp"
+            android:layout_marginLeft="416dp"
+            android:layout_marginTop="54dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="-54dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Costo :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
         <TextView
             android:id="@+id/lblCFact7"
             android:layout_width="wrap_content"
@@ -386,10 +421,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="60dp"
+            android:layout_marginStart="130dp"
             android:layout_marginTop="14dp"
             android:layout_toEndOf="@+id/txt1"
             android:text="No valida existencias"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editText15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/editText11"
+            android:layout_alignTop="@+id/lblCFact15"
+            android:layout_alignEnd="@+id/editText11"
+            android:layout_alignBottom="@+id/lblCFact15"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:ems="10"
+            android:inputType="numberDecimal"
             android:textSize="21sp"
             android:textStyle="bold" />
 

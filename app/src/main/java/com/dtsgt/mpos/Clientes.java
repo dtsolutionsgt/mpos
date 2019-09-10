@@ -397,8 +397,6 @@ public class Clientes extends PBase {
 
 		try {
 			//gl.cliente = selid;
-			gl.closeCliDet = false;
-			gl.closeVenta = false;
 			if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 
 			startActivity(new Intent(this, Venta.class));

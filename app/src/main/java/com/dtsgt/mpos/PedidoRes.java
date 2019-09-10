@@ -299,9 +299,6 @@ public class PedidoRes extends PBase {
 				prn.printask(printcallback);
 			}
 
-			gl.closeCliDet=true;
-			gl.closeVenta=true;
-
 			if (!gl.impresora.equalsIgnoreCase("S")) {
 				super.finish();
 			}

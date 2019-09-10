@@ -49,7 +49,7 @@ public class clsDataBuilder {
 		
 		fname = Environment.getExternalStorageDirectory()+"/SyncFold/rd_data.txt";
 		logname = Environment.getExternalStorageDirectory()+"/roadenvio.txt";
-		namefile = Environment.getExternalStorageDirectory()+"/data.acr";
+		namefile = Environment.getExternalStorageDirectory()+"/data.txt";
 
 	}
 	
@@ -184,7 +184,7 @@ public class clsDataBuilder {
 
 	public int saveArchivo(String fecha){
 		String s;
-		if (items.size()==0) {return 1;}
+		if (items.size()==0) return 1;
 
 		try {
 

@@ -1654,8 +1654,6 @@ public class desglose extends PBase {
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    gl.closeCliDet = true;
-                    gl.closeVenta = true;
 
                     impres++;
                     toast("Impres " + impres);

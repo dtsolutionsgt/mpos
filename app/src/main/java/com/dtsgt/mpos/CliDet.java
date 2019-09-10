@@ -956,7 +956,6 @@ public class CliDet extends PBase {
 
 	private void doExit(){
 		try{
-			gl.closeCliDet=true;
 			super.finish();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1185,8 +1184,6 @@ public class CliDet extends PBase {
 
 		try{
 			super.onResume();
-
-			if (gl.closeCliDet) super.finish();
 
 			calcCredit();
 

@@ -236,8 +236,6 @@ public class Menu extends PBase {
 					    //**************
 
 						gl.rutatipo="V";gl.rutatipog="V";
-						gl.closeCliDet = false;
-						gl.closeVenta = false;
 						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 
 						startActivity(new Intent(this, Venta.class));

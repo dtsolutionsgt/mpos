@@ -25,7 +25,7 @@ public class clsP_bancoObj {
     public ArrayList<clsClasses.clsP_banco> items= new ArrayList<clsClasses.clsP_banco>();
 
     public clsP_bancoObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
-        cont=context;
+         cont=context;
         Con=dbconnection;
         ins=Con.Ins;upd=Con.Upd;
         db = dbase;

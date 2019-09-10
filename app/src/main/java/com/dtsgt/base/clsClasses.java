@@ -2,7 +2,6 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
-
 	public class clsP_almacen {
 		public int  codigo;
 		public String nombre;
@@ -326,7 +325,7 @@ public class clsClasses {
         public String clave;
         public String ruta;
         public int  nivel;
-        public int  nivelprecio;
+        public double nivelprecio;
         public String bodega;
         public String subbodega;
         public int  activo;
@@ -378,7 +377,7 @@ public class clsClasses {
 
 	public class clsMenu {
 		public int ID,Icon;
-		public String Name;
+		public String Name,Cod;
 	}	
 	
 	public class clsVenta {

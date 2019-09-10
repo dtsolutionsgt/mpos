@@ -110,9 +110,6 @@ public class CliPos extends PBase {
 		try{
 			((appGlobals) vApp).rutatipo="V";
 
-			((appGlobals) vApp).closeCliDet=false;
-			((appGlobals) vApp).closeVenta=false;
-
 			((appGlobals) vApp).cliente="C.F.";
 			//((appGlobals) vApp).cliente="0001000000";
 			((appGlobals) vApp).nivel=1;
@@ -133,9 +130,6 @@ public class CliPos extends PBase {
 
 		try{
 			((appGlobals) vApp).rutatipo="V";
-
-			((appGlobals) vApp).closeCliDet=false;
-			((appGlobals) vApp).closeVenta=false;
 
 			((appGlobals) vApp).cliente=snit;
 			((appGlobals) vApp).nivel=1;

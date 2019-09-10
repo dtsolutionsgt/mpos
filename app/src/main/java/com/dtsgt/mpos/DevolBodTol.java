@@ -55,9 +55,7 @@ public class DevolBodTol extends PBase {
         rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp, "");
 
         listItems();
-
-        gl.closeVenta=false;
-    }
+   }
 
     //region Events
 
@@ -282,14 +280,7 @@ public class DevolBodTol extends PBase {
 
             if (gl.closeDevBod) super.finish();
 
-            if (browse==1) {
-                browse=0;
-                if (gl.closeVenta) {
-                    gl.closeVenta=false;
-                    super.finish();
-                }
-                return;
-            }
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }

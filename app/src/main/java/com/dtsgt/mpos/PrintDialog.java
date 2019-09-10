@@ -66,9 +66,6 @@ public class PrintDialog extends PBase {
 			dialog.setMessage("Impresion correcta ?");
 			dialog.setNegativeButton("Si", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					gl.closeCliDet=true;
-					gl.closeVenta=true;
-
 					try{
 						db.execSQL("UPDATE FinDia SET val7=7");
 					} catch (Exception e){

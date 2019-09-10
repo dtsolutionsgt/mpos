@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -19,14 +17,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
-import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,13 +33,21 @@ import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsDataBuilder;
 import com.dtsgt.classes.SwipeListener;
+import com.dtsgt.classes.clsExport;
 import com.dtsgt.classes.clsFinDia;
 import com.dtsgt.classes.clsLicence;
+import com.dtsgt.classes.clsP_bancoObj;
+import com.dtsgt.classes.clsP_clienteObj;
+import com.dtsgt.classes.clsP_descuentoObj;
+import com.dtsgt.classes.clsP_empresaObj;
+import com.dtsgt.classes.clsP_impuestoObj;
+import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_mediapagoObj;
+import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.ladapt.ListAdaptEnvio;
 
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -54,8 +57,6 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -72,13 +73,14 @@ public class ComWS extends PBase {
 
 	private int isbusy, fecha, lin, reccnt, ultcor, ultcor_ant, licResult, licResultRuta;
 	private String emp, ActRuta, mac,rootdir,err, ruta, rutatipo, sp, docstock, ultSerie, ultSerie_ant,rrs;
-	private String licSerial,licRuta,licSerialEnc,licRutaEnc,parImprID;
+	private String licSerial,licRuta,licSerialEnc,licRutaEnc,parImprID,acterr,actproc;
 	private boolean fFlag, showprogress, pendientes, envioparcial, findiaactivo, errflag,esEnvioManual=false;
 
 	private SQLiteDatabase dbT;
 	private BaseDatos ConT;
 	private BaseDatos.Insert insT;
 	private AppMethods clsAppM;
+	private clsExport exp;
 
 	private ArrayList<String> listItems = new ArrayList<String>();
 	private ArrayList<String> results = new ArrayList<String>();
@@ -102,7 +104,7 @@ public class ComWS extends PBase {
 	public AsyncCallConfirm wsCtask;
 
 	private static String sstr, fstr, fprog, finf, ferr, fterr, idbg, dbg, ftmsg, esql, ffpos;
-	private int scon, running, pflag, stockflag, conflag;
+	private int scon, running, pflag, stockflag, conflag,sendmode;
 	private String ftext, slsync, senv;
 	private String fsql, fsqli, fsqlf, strliqid;
 	private boolean  ftflag, esvacio, liqid;
@@ -124,9 +126,15 @@ public class ComWS extends PBase {
 		System.setProperty("line.separator", "\r\n");
         rootdir=Environment.getExternalStorageDirectory()+"/RoadFotos/";
 
+        ruta="";
+        ActRuta = ruta;
+        emp = gl.emp;
+        rutatipo = gl.rutatipog;
+
 		dbld = new clsDataBuilder(this);
 		claseFindia = new clsFinDia(this);
 		clsAppM = new AppMethods(this, gl, Con, db);
+		exp =new clsExport(Con,emp);
 
 		lblInfo = (TextView) findViewById(R.id.lblETipo);
 		lblParam = (TextView) findViewById(R.id.lblProd);
@@ -159,11 +167,6 @@ public class ComWS extends PBase {
         txtPassword = new EditText(this,null);
 
 		txtVersion.setText("14-Junio-2019");
-        ruta="";
-		ActRuta = ruta;
-
-		emp = gl.emp;
-		rutatipo = gl.rutatipog;
 
 		this.setTitle("Comunicación");
 
@@ -191,7 +194,7 @@ public class ComWS extends PBase {
 		setHandlers();
 
         URL = gl.urlglob;
-        URL="http://192.168.1.137/wsMPos/wsandr.asmx";
+        URL="http://192.168.1.137/MPos/wsMPos.asmx";
         txtWS.setText(URL);txtEmp.setText(emp);
         if (gl.debug) {
             txtWS.setEnabled(true);txtEmp.setEnabled(true);
@@ -253,20 +256,6 @@ public class ComWS extends PBase {
 				return;
 			}
 
-			/*
-			if (!validaLicencia()) {
-				mu.msgbox("Licencia inválida!");
-				return;
-			}
-			*/
-
-			if (gl.banderafindia) {
-				if (!puedeComunicar()) {
-					mu.msgbox("No ha hecho fin de dia, no puede comunicar datos");
-					return;
-				}
-			}
-
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
 			dialog.setTitle("Envio");
@@ -274,6 +263,7 @@ public class ComWS extends PBase {
 
 			dialog.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
+                    sendmode=0;
 					runSend();
 				}
 			});
@@ -286,37 +276,24 @@ public class ComWS extends PBase {
 			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 		}
 
-
 	}
 
-    public void askSendManual(View view) {
-
+    public void askActualize(View view) {
         try {
             if (isbusy == 1) {
                 toastcent("Por favor, espere que se termine la tarea actual.");
                 return;
             }
 
-            if (!validaLicencia()) {
-                mu.msgbox("Licencia inválida!");
-                return;
-            }
-
-            if (gl.banderafindia) {
-                if (!puedeComunicar()) {
-                    mu.msgbox("No ha hecho fin de dia, no puede comunicar datos");
-                    return;
-                }
-            }
-
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Envio");
-            dialog.setMessage("¿Va a realizar la COMUNICACIÓN MANUAL, está seguro?");
+            dialog.setTitle("Actualización");
+            dialog.setMessage("¿Actualizar catalogos?");
 
-            dialog.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    DatosSupervisor();
+                    sendmode=1;
+                    runSend();
                 }
             });
 
@@ -325,472 +302,9 @@ public class ComWS extends PBase {
             dialog.show();
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
-
-
-    }
-
-	public void askSendContinue() {
-
-		try {
-
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Envio");
-			dialog.setMessage("La COMUNICACIÓN MANUAL no envía los datos directamente a liquidación,¿está seguro?");
-
-			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					if (sendDataManual()){
-						askOk();
-					}
-				}
-			});
-
-			dialog.setNegativeButton("No", null);
-
-			dialog.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-
-
-	}
-
-	public void askSendCorrect() {
-
-		try {
-
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Envio");
-			dialog.setMessage("¿Comunicación correcta?");
-
-			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					askOkCom();
-				}
-			});
-
-			dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					askIncorrect();
-				}
-			});
-
-			dialog.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-
-	}
-
-	public void askIncorrect() {
-
-		try {
-
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Envio");
-			dialog.setMessage("¿Está seguro de que la comunicacion NO fue correcta?");
-
-			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					return;
-				}
-			});
-
-			dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					Eliminatablas();
-				}
-			});
-
-			dialog.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-
-	}
-
-	private void askOk() {
-
-		try {
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setTitle("Envio");//	alert.setMessage("Serial");
-
-			final TextView input = new TextView(this);
-			alert.setView(input);
-
-			input.setText("Archivo de datos creado conecte el dispotivo al ordenador");
-			input.requestFocus();
-
-			alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					askSendCorrect();
-				}
-			});
-
-			alert.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-
-
-	}
-
-	private void askOkCom() {
-
-		try {
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setTitle("Envio");//	alert.setMessage("Serial");
-
-			final TextView input = new TextView(this);
-			alert.setView(input);
-
-			input.setText("Está seguro de que la comunicación fue correcta");
-			input.requestFocus();
-
-			alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					Eliminatablas();
-				}
-			});
-
-			alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					return;
-				}
-			});
-
-			alert.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-
-
-	}
-
-    private void DatosSupervisor() {
-
-        try{
-
-            final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-            alert.setTitle("Envío");
-
-            final LinearLayout layout   = new LinearLayout(this);
-            layout.setOrientation(LinearLayout.VERTICAL);
-
-            if(lblUser.getParent()!= null){
-                ((ViewGroup) lblUser.getParent()).removeView(lblUser);
-            }
-
-            if(lblPassword.getParent()!= null){
-                ((ViewGroup) lblPassword.getParent()).removeView(lblPassword);
-            }
-
-            if(txtUser.getParent()!= null){
-                ((ViewGroup) txtUser.getParent()).removeView(txtUser);
-            }
-
-            if(txtPassword.getParent()!= null){
-                ((ViewGroup) txtPassword.getParent()).removeView(txtPassword);
-            }
-
-            lblUser.setText("Usuario: ");
-            lblPassword.setText("Contraseña: ");
-			txtPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-
-			txtUser.setText("");
-			txtPassword.setText("");
-
-            layout.addView(lblUser);
-            layout.addView(txtUser);
-			layout.addView(lblPassword);
-            layout.addView(txtPassword);
-
-            alert.setView(layout);
-
-            showkeyb();
-            alert.setCancelable(false);
-            alert.create();
-
-            alert.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-
-                    String usr, pwd;
-					boolean dtCorrectos;
-
-                    usr = txtUser.getText().toString().trim();
-                    pwd = txtPassword.getText().toString().trim();
-
-                    if (mu.emptystr(usr)) {
-                        toast("Usuario incorrecto.");
-                        return;
-                    }
-
-                    if (mu.emptystr(pwd)) {
-                        toast("Contraseña incorrecta.");
-						return;
-                    }
-
-					dtCorrectos = validaDatos(usr,pwd);
-
-                    if (dtCorrectos){
-						askSendContinue();
-					}else{
-						layout.removeAllViews();
-						return;
-					}
-
-                }
-            });
-
-            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    layout.removeAllViews();
-                }
-            });
-
-            alert.show();
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-
-    private boolean validaDatos(String user,String psw){
-        Cursor DT;
-	    boolean correctos=false;
-        String dpsw;
-
-        /*
-	    try{
-
-            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM P_VENDEDOR WHERE CODIGO='" + user + "' AND NIVEL=1";
-            DT = Con.OpenDT(sql);
-
-            if (DT.getCount() == 0) {
-               mu.msgbox("Usuario incorrecto !");
-				return false;
-            }
-
-            DT.moveToFirst();
-            dpsw = DT.getString(1);
-            if (!psw.equalsIgnoreCase(dpsw)) {
-				mu.msgbox("Contraseña incorrecta !");
-                return false;
-            }
-
-			correctos = true;
-
-         }catch (Exception e){
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            return false;
         }
-        */
-
-        return  correctos;
-
     }
-
-	private boolean sendDataManual() {
-
-		errflag = false;
-
-		senv = "Envío terminado \n \n";
-
-		items.clear();
-		dbld.clearlog();
-
-		try {
-
-			esEnvioManual = true;
-
-			envioFacturas();
-
-			envioPedidos();
-
-			envioNotasCredito();
-
-			envioNotasDevolucion();
-
-			envioCobros();
-
-			envioDepositos();
-
-			envio_D_MOV();
-
-			envioCli();
-
-			envioAtten();
-
-			envioCoord();
-
-			envioSolicitud();
-
-            envioRating();
-
-			updateAcumulados();
-
-			updateInventario();
-
-			update_Corel_GrandTotal();
-
-			envioFinDia();
-
-			dbld.saveArchivo(du.getActDateStr());
-
-			esEnvioManual = false;
-
-			errflag = true;
-
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			esEnvioManual = false;
-		}
-
-		return errflag;
-	}
-
-	private void Eliminatablas(){
-        boolean Eliminadas = false;
-		try{
-
-			claseFindia.updateFinDia(du.getActDate());
-			claseFindia.updateComunicacion(2);
-
-			ActualizaStatcom();
-			Eliminadas = claseFindia.eliminarTablasD();
-
-			if (Eliminadas){
-			    mu.msgbox("Envío de datos correcto");
-            }
-
-			visibilidadBotones();
-
-		}catch (Exception e){
-
-		}
-	}
-
-	private boolean puedeComunicar() {
-
-		boolean vPuedeCom = false;
-
-		try {
-
-			//#CKFK 20190304 Agregué validación para verificar si ya se realizó la comunicación de los datos.
-			if (gl.banderafindia) {
-
-				return ((claseFindia.getImprimioCierreZ() == 7));
-
-			} else {
-				return true;
-			}
-
-		} catch (Exception ex) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), ex.getMessage(), "");
-		}
-
-		return vPuedeCom;
-	}
-
-	public void askExist(View view) {
-
-		try {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Existencias bodega");
-			dialog.setMessage("¿Actualizar existencias?");
-
-			dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					runExist();
-				}
-			});
-
-			dialog.setNegativeButton("Cancelar", null);
-
-			dialog.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-		if (isbusy == 1) {
-			toastcent("Por favor, espere que se termine la tarea actual.");
-			return;
-		}
-
-	}
-
-	public void askPrecios(View view) {
-
-		try {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Precios");
-			dialog.setMessage("¿Actualizar precios?");
-
-			dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					runPrecios();
-				}
-			});
-
-			dialog.setNegativeButton("Cancelar", null);
-
-			dialog.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-		if (isbusy == 1) {
-			toastcent("Por favor, espere que se termine la tarea actual.");
-			return;
-		}
-
-	}
-
-	public void askRecarga(View view) {
-
-		try {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Recarga de inventario");
-			dialog.setMessage("¿Recargar inventario?");
-
-			dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					runRecarga();
-				}
-			});
-
-			dialog.setNegativeButton("Cancelar", null);
-
-			dialog.show();
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
-		if (isbusy == 1) {
-			toastcent("Por favor, espere hasta que se termine la tarea actual.");
-			return;
-		}
-
-	}
 
 	public void doFotos(View view) {
 		startActivity(new Intent(this,ComWSFotos.class));
@@ -874,7 +388,6 @@ public class ComWS extends PBase {
 			addlog(new Object() {
 			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 		}
-
 
 	}
 
@@ -1131,8 +644,7 @@ public class ComWS extends PBase {
 	public int commitSQL() {
 		int rc;
 		String s, ss;
-		//#CKFK 20190429 Creé esta variable para retornar si la comunicación fue correcta o no
-		//e hice modificaciones en la función para garantizar esta funcionalidad
+
 		int vCommit=0;
 
 		METHOD_NAME = "Commit";
@@ -1187,7 +699,62 @@ public class ComWS extends PBase {
 		return vCommit;
 	}
 
-	public int OpenDTt(String sql) {
+    public int actualize() {
+	    int rc,vCommit=0;
+
+        METHOD_NAME = "Actualize";sstr = "OK";
+        if (dbld.size() == 0) return 1;
+
+        s = "";
+        for (int i = 0; i < dbld.size(); i++) {
+            ss = dbld.items.get(i);
+            ss.replace("#","");
+            s = s + ss + "#";
+        }
+
+        if (showprogress) {
+            fprog = "Enviando ...";
+            wsStask.onProgressUpdate();
+        }
+
+        try {
+
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            envelope.dotNet = true;
+
+            PropertyInfo param = new PropertyInfo();
+            param.setType(String.class);
+            param.setName("SQL");
+            param.setValue(s);
+
+            request.addProperty(param);
+            envelope.setOutputSoapObject(request);
+
+            HttpTransportSE transport = new HttpTransportSE(URL);
+            transport.call(NAMESPACE + METHOD_NAME, envelope);
+
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+
+            s = response.toString();
+
+            sstr = "#";
+            if (s.equalsIgnoreCase("#")) vCommit =1;// return 1;
+
+            sstr = s;
+            //return 0;
+
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+            sstr = e.getMessage();
+            vCommit=0;
+        }
+
+        return vCommit;
+    }
+
+    public int OpenDTt(String sql) {
 		int rc;
 
 		METHOD_NAME = "OpenDT";
@@ -1275,7 +842,6 @@ public class ComWS extends PBase {
 		return 0;
 	}
 
-	//#HS_20181219 Funcion para enviar JSON al Web Service.
 	public int envioFachada() {
 		String METHOD_NAME = "GuardaFachada";
 		s = "";
@@ -1508,6 +1074,10 @@ public class ComWS extends PBase {
             if (!AddTable("P_ENCABEZADO_REPORTESHH")) return false;
             if (!AddTable("P_BONIF")) return false;
             if (!AddTable("P_PARAMEXT")) return false;
+            if (!AddTable("P_MONEDA")) return false;
+            if (!AddTable("P_PROVEEDOR")) return false;
+
+
            //procesaParamsExt();
 
             /*
@@ -1594,9 +1164,7 @@ public class ComWS extends PBase {
 					dbT.execSQL(sql);
 				} catch (Exception e) {
 					Log.d("M", "Something happend there " + e.getMessage());
-					addlog(new Object() {
-					}.getClass().getEnclosingMethod().getName(), e.getMessage() + "EJC", "Yo fui " + sql);
-					Log.e("z", e.getMessage());
+					addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(),sql);
 				}
 
 				try {
@@ -1658,18 +1226,13 @@ public class ComWS extends PBase {
 			fprog = "Actualización incompleta";
 			wsRtask.onProgressUpdate();
 
-			Log.e("Error", e.getMessage());
 			try {
 				ConT.close();
 			} catch (Exception ee) {
-				addlog(new Object() {
-				}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+				addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
 			}
 
-			sstr = e.getMessage();
-			ferr = sstr + "\n" + sql;
-			esql = sql;
-
+			sstr = e.getMessage();ferr = sstr + "\n" + sql;esql = sql;
 			return false;
 		}
 
@@ -1745,7 +1308,6 @@ public class ComWS extends PBase {
 		}
 
 	}
-
 
 	private boolean Actualiza_FinDia() {
 
@@ -1933,7 +1495,7 @@ public class ComWS extends PBase {
         }
 
         if (TN.equalsIgnoreCase("P_DESCUENTO")) {
-            SQL = "SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,DESCTIPO,VALOR,GLOBDESC,PORCANT,dbo.AndrDateIni(FECHAINI),dbo.AndrDateFin(FECHAFIN),CODDESC,NOMBRE,ACTIVO ";
+            SQL = "SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,DESCTIPO,VALOR,GLOBDESC,PORCANT,FECHAINI,FECHAFIN,CODDESC,NOMBRE,ACTIVO ";
             SQL += "FROM P_DESCUENTO WHERE EMP='"+emp+"'";
             return SQL;
         }
@@ -1977,31 +1539,41 @@ public class ComWS extends PBase {
 
         if (TN.equalsIgnoreCase("VENDEDORES")) {
             SQL = "SELECT CODIGO,NOMBRE,CLAVE,RUTA,NIVEL,NIVELPRECIO,ISNULL(BODEGA,' ') AS BODEGA,ISNULL(SUBBODEGA,' ') AS SUBBODEGA, ACTIVO  " +
-                    "FROM VENDEDORES  ";
+                  "FROM VENDEDORES WHERE EMPRESA='"+emp+"'";
             return SQL;
         }
 
         if (TN.equalsIgnoreCase("P_ARCHIVOCONF")) {
             SQL = "SELECT RUTA,TIPO_HH,IDIOMA,TIPO_IMPRESORA,SERIAL_HH,MODIF_PESO,PUERTO_IMPRESION, " +
-                  "LBS_O_KGS,NOTA_CREDITO FROM P_ARCHIVOCONF WHERE (EMPRESA='" + ActRuta + "')";
+                  "LBS_O_KGS,NOTA_CREDITO FROM P_ARCHIVOCONF WHERE (EMPRESA='" + emp + "')";
             return SQL;
         }
 
         if (TN.equalsIgnoreCase("P_ENCABEZADO_REPORTESHH")) {
             SQL = "SELECT CODIGO,TEXTO,SUCURSAL FROM P_ENCABEZADO_REPORTESHH " +
-                  "WHERE (EMPRESA='" + ActRuta + "')";
+                  "WHERE (EMPRESA='" + emp + "')";
             return SQL;
         }
 
         if (TN.equalsIgnoreCase("P_BONIF")) {
              SQL = "SELECT  CLIENTE, CTIPO, PRODUCTO, PTIPO, TIPORUTA, TIPOBON, RANGOINI, RANGOFIN, TIPOLISTA, TIPOCANT, VALOR," +
                     "LISTA, CANTEXACT, GLOBBON, PORCANT, dbo.AndrDate(FECHAINI), dbo.AndrDate(FECHAFIN), CODDESC, NOMBRE, EMP, UMPRODUCTO , UMBONIFICACION " +
-                    "FROM P_BONIF WHERE (EMP='" + ActRuta + "')";;
+                    "FROM P_BONIF WHERE (EMP='" + emp + "')";;
              return SQL;
         }
 
         if (TN.equalsIgnoreCase("P_PARAMEXT")) {
-            SQL = "SELECT ID,Nombre,Valor FROM P_PARAMEXT WHERE (EMPRESA='" + ActRuta + "')";
+            SQL = "SELECT ID,Nombre,Valor FROM P_PARAMEXT WHERE (EMPRESA='" + emp + "')";
+            return SQL;
+        }
+
+        if (TN.equalsIgnoreCase("P_PROVEEDOR")) {
+            SQL = "SELECT CODIGO, NOMBRE, ACTIVO FROM P_PROVEEDOR WHERE (EMPRESA='" + emp + "')";
+            return SQL;
+        }
+
+        if (TN.equalsIgnoreCase("P_MONEDA")) {
+            SQL = "SELECT CODIGO,NOMBRE,ACTIVO,SYMBOLO,CAMBIO FROM P_MONEDA WHERE (EMPRESA='" + emp + "')";
             return SQL;
         }
 
@@ -2308,79 +1880,6 @@ public class ComWS extends PBase {
 
 	}
 
-	private boolean validaDatos(boolean completo) {
-
-		Cursor dt;
-
-		try {
-
-			if (!rutatipo.equalsIgnoreCase("P")) {
-				sql = "SELECT RESOL FROM P_COREL";
-				dt = Con.OpenDT(sql);
-				if (dt.getCount() == 0) {
-					msgbox("No está definido correlativo de facturas");
-					return false;
-				}
-			}
-
-			sql = "SELECT Codigo FROM P_CLIENTE";
-			dt = Con.OpenDT(sql);
-			if (dt.getCount() == 0) {
-				msgbox("Lista de clientes está vacia");
-				return false;
-			}
-
-			sql = "SELECT Ruta FROM P_CLIRUTA";
-			dt = Con.OpenDT(sql);
-			if (dt.getCount() == 0) {
-				msgbox("Lista de clientes por ruta está vacia");
-				return false;
-			}
-
-			sql = "SELECT Codigo FROM P_PRODUCTO";
-			dt = Con.OpenDT(sql);
-			if (dt.getCount() == 0) {
-				msgbox("Lista de productos está vacia");
-				return false;
-			}
-
-			if (completo) {
-
-				sql = "SELECT Nivel FROM P_PRODPRECIO ";
-				dt = Con.OpenDT(sql);
-				if (dt.getCount() == 0) {
-					msgbox("Lista de precios está vacia");
-					return false;
-				}
-
-				sql = "SELECT Producto FROM P_FACTORCONV ";
-				dt = Con.OpenDT(sql);
-				if (dt.getCount() == 0) {
-					msgbox("Lista de conversiones está vacia");
-					return false;
-				}
-
-				if (gl.peStockItf) {
-					sql = "SELECT Codigo FROM P_STOCK ";
-					dt = Con.OpenDT(sql);
-					if (dt.getCount() == 0) {
-						msgbox("La carga de productos está vacia");
-						return false;
-					}
-				}
-
-			}
-
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-			Log.d("ValidaDatos", e.getMessage());
-		}
-
-		return true;
-	}
-
-	//#HS_20181123_1623 Agregue funcion FinDia para el commit y update de tablas.
 	private boolean FinDia() {
 
 		try {
@@ -2415,7 +1914,6 @@ public class ComWS extends PBase {
 		return true;
 	}
 
-	//#CKFK_20190325 Agregué funcion ActualizaStatcom que es una copia de FinDia pero sin el CommitSQL
 	private boolean ActualizaStatcom() {
 
 		try {
@@ -2561,6 +2059,7 @@ public class ComWS extends PBase {
 
 		running = 1;
 		fstr = "No connect";
+		errflag=false;
 		scon = 0;
 
 		try {
@@ -2571,15 +2070,16 @@ public class ComWS extends PBase {
 
 			if (scon == 1) {
 				fstr = "Sync OK";
-				if (!getData()) fstr = "Recepcion incompleta : " + fstr;
+				if (!getData()) {
+				    fstr = "Recepcion incompleta : " + fstr;errflag=true;
+                }
 			} else {
-				fstr = "No se puede conectar al web service : " + sstr;
+				fstr = "No se puede conectar al web service : " + sstr;errflag=true;
 			}
 
 		} catch (Exception e) {
-			scon = 0;
+            errflag=true;
 			fstr = "No se puede conectar al web service. " + e.getMessage();
-			Log.d("E", fstr + sstr);
 		}
 
 	}
@@ -2591,34 +2091,19 @@ public class ComWS extends PBase {
 		running = 0;
 
 		try {
-			if (fstr.equalsIgnoreCase("Sync OK")) {
-
+			if (!errflag) {
 				lblInfo.setText(" ");
-				s = "Recepción completa.";
-				if (stockflag == 1) s = s + "\nSe actualizó inventario.";
-
-				validaDatos(true);
-
-				if (stockflag == 1) sendConfirm();
-
-				//msgAskExit(s);
-
+	            msgAskExit("Recepción completa.");
 			} else {
-				lblInfo.setText(fstr);
+				lblInfo.setText(fstr);isbusy = 0;
 				mu.msgbox("Ocurrió error : \n" + fstr + " (" + reccnt + ") "+sql);
-				//mu.msgbox("::" + esql);
-				isbusy = 0;
 				barInfo.setVisibility(View.INVISIBLE);
 				addlog("Recepcion", fstr, esql);
 				return;
 			}
 
-			pendientes = validaPendientes();
 			visibilidadBotones();
-
 			isbusy = 0;
-			comparaCorrel();
-
 			paramsExtra();
 
 			if (ftflag) msgbox(ftmsg);
@@ -2686,125 +2171,44 @@ public class ComWS extends PBase {
 
 	private boolean sendData() {
 
-		errflag = false;
-
-		senv = "Envío terminado \n \n";
-
-		if (gl.peModal.equalsIgnoreCase("TOL")) {
-			if (!validaLiquidacion()) {
-				liqid = false;
-				senv = "La liquidación no está cerrada, no se puede enviar datos";
-				return false;
-			} else {
-				liqid = true;
-			}
-		} else {
-			liqid = true;
-		}
-
-		items.clear();
-		dbld.clearlog();
+		errflag = false;senv = "Envío terminado \n \n";
+		items.clear();dbld.clearlog();
 
 		try {
 
 			envioFacturas();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-			envioPedidos();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-			envioNotasCredito();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-			envioNotasDevolucion();
-			if (!fstr.equals("Sync OK")){
+			if (errflag){
 				dbld.savelog();
 				return true;
 			}
 
-			envioCobros();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-
+			/*
 			envioDepositos();
 			if (!fstr.equals("Sync OK")){
 				dbld.savelog();
 				return true;
 			}
+			*/
 
-			envio_D_MOV();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-			envioCli();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-
-			envioAtten();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-			envioCoord();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-
-			envioSolicitud();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-
-            envioRating();
-            if (!fstr.equals("Sync OK")){
-                dbld.savelog();
-                return true;
-            }
-
+			/*
 			updateAcumulados();
 			if (!fstr.equals("Sync OK")){
 				dbld.savelog();
 				return true;
 			}
-			updateInventario();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
-
-			if (!update_Corel_GrandTotal()){
-				dbld.savelog();
-				return true;
-			}
-
-			envioFinDia();
-			if (!fstr.equals("Sync OK")){
-				dbld.savelog();
-				return true;
-			}
+			*/
 
 			dbld.savelog();
 			dbld.saveArchivo(du.getActDateStr());
 
+			/*
             if (commitSQL() == 1) {
                 errflag = false;
             } else {
                 errflag = true;
                 fterr += "\n" + sstr;
             }
+            */
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -2891,38 +2295,27 @@ public class ComWS extends PBase {
 
 					i += 1;
 					fprog = "Factura " + i;
-					if (!esEnvioManual){
-						wsStask.onProgressUpdate();
-					}
+					wsStask.onProgressUpdate();
 
-					if (envioparcial) dbld.clear();
+					dbld.clear();
 
 					dbld.insert("D_FACTURA", "WHERE COREL='" + cor + "'");
 					dbld.insert("D_FACTURAD", "WHERE COREL='" + cor + "'");
 					dbld.insert("D_FACTURAP", "WHERE COREL='" + cor + "'");
-					dbld.insert("D_FACTURAD_LOTES", "WHERE COREL='" + cor + "'");
 					dbld.insert("D_FACTURAF", "WHERE COREL='" + cor + "'");
-
-					dbld.insert("D_STOCKB_DEV", "WHERE COREL='" + cor + "'");
 					dbld.insert("D_BONIF", "WHERE COREL='" + cor + "'");
-					dbld.insert("D_BONIF_LOTES", "WHERE COREL='" + cor + "'");
-					dbld.insert("D_BONIF_BARRA", "WHERE COREL='" + cor + "'");
-					dbld.insert("D_BONIFFALT", "WHERE COREL='" + cor + "'");
-					dbld.insert("D_REL_PROD_BON", "WHERE COREL='" + cor + "'");
 
 					dbld.add("UPDATE P_COREL SET CORELULT=" + ccorel + "  WHERE RUTA='" + fruta + "'");
 
-					if (envioparcial && !esEnvioManual) {
-						if (commitSQL() == 1) {
-							sql = "UPDATE D_FACTURA SET STATCOM='S' WHERE COREL='" + cor + "'";
-							db.execSQL(sql);
-							pc += 1;
-						} else {
-							errflag = true;
-							fterr += "\nFactura : " + sstr;
-							dbg = sstr;
-						}
-					}else pc += 1;
+                    if (commitSQL() == 1) {
+                        sql = "UPDATE D_FACTURA SET STATCOM='S' WHERE COREL='" + cor + "'";
+                        db.execSQL(sql);
+                        pc += 1;
+                    } else {
+                        errflag = true;
+                        fterr += "\nFactura : " + sstr;
+                        dbg = sstr;
+                    }
 
 				} catch (Exception e) {
 					addlog(new Object() {
@@ -2936,12 +2329,6 @@ public class ComWS extends PBase {
 
 			DT.close();
 
-			if (envioparcial && (fterr.isEmpty()) && !esEnvioManual) {
-				sql = "DELETE FROM D_FACTURA_BARRA";
-				db.execSQL(sql);
-				sql = "DELETE FROM D_STOCKB_DEV";
-				db.execSQL(sql);
-			}
 
 		} catch (Exception e) {
 			addlog(new Object() {
@@ -2950,15 +2337,12 @@ public class ComWS extends PBase {
 			dbg = fstr;
 		}
 
-		//#CKFK 20190325 Sea el envío parcial o no se deben mostrar las facturas comunicadas
-		//if (envioparcial) {
-			if (pc != pcc) {
-				int pf = pcc - pc;
-				senv += "Facturas : " + pc + " , NO ENVIADO : " + pf + "\n";
-			} else {
-				senv += "Facturas : " + pc + "\n";
-			}
-		//}
+        if (pc != pcc) {
+            int pf = pcc - pc;
+            senv += "Facturas : " + pc + " , NO ENVIADO : " + pf + "\n";
+        } else {
+            senv += "Facturas : " + pc + "\n";
+        }
 
 	}
 
@@ -3774,7 +3158,6 @@ public class ComWS extends PBase {
 		}
 	}
 
-	//#CKFK 20190522 Función creada para enviar los rating
     public void envioRating() {
         Cursor DT;
         String ruta, vendedor, comentario, fecha;
@@ -3964,8 +3347,300 @@ public class ComWS extends PBase {
 		}
 	}
 
-
 	//endregion
+
+    //region WS Actualize methods
+
+    private boolean Actualiza() {
+	    boolean haserror=false;
+
+        errflag = false;senv ="Actualización terminada.\n \n";
+        items.clear();dbld.clearlog();acterr="";
+
+        //if (!AddTable("P_MEDIAPAGO")) return false;
+        //if (!AddTable("P_MONEDA")) return false;
+
+        //if (!AddTable("P_PRODUCTO")) return false;
+        //if (!AddTable("P_FACTORCONV")) return false;
+        //if (!AddTable("P_PARAMEXT")) return false;
+        //if (!AddTable("P_PRODPRECIO")) return false;
+        //if (!AddTable("P_PROVEEDOR")) return false;
+        //if (!AddTable("P_SUCURSAL")) return false;
+        //if (!AddTable("VENDEDORES")) return false;
+
+
+        //---if (!AddTable("P_COREL")) return false;
+
+
+        try {
+            if (!actBanco()) haserror=true;
+            if (!actCaja()) haserror=true;
+            if (!actCliente()) haserror=true;
+            if (!actDesc()) haserror=true;
+            if (!actEmpresa()) haserror=true;
+            if (!actFamilia()) haserror=true;
+            if (!actImpuesto()) haserror=true;
+            if (!actMedia()) haserror=true;
+
+            if (!actNivelPrecio()) haserror=true;
+
+
+
+            dbld.savelog();
+            dbld.saveArchivo(du.getActDateStr());
+
+        }catch (Exception e){
+        }
+
+        errflag=haserror;
+        return errflag;
+    }
+
+    public boolean actNivelPrecio() {
+        clsP_nivelprecioObj holder=new clsP_nivelprecioObj(this,Con,db);
+
+        actproc="NivelPrecio";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+               dbld.add(exp.nivelprecio_ins(holder.items.get(i)));
+               dbld.add(exp.nivelprecio_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actBanco() {
+        clsP_bancoObj holder=new clsP_bancoObj(this,Con,db);
+
+        actproc="Banco";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.banco_ins(holder.items.get(i)));
+                dbld.add(exp.banco_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actCaja() {
+        clsP_rutaObj holder=new clsP_rutaObj(this,Con,db);
+
+        actproc="Caja";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.ruta_ins(holder.items.get(i)));
+                dbld.add(exp.ruta_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actCliente() {
+        clsP_clienteObj holder=new clsP_clienteObj(this,Con,db);
+
+        actproc="Cliente";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.cliente_ins(holder.items.get(i)));
+                dbld.add(exp.cliente_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actDesc() {
+        clsP_descuentoObj holder=new clsP_descuentoObj(this,Con,db);
+
+        actproc="Descuento";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.desc_ins(holder.items.get(i)));
+                dbld.add(exp.desc_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actEmpresa() {
+        clsP_empresaObj holder=new clsP_empresaObj(this,Con,db);
+
+        actproc="Empresa";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.empresa_ins(holder.items.get(i)));
+                dbld.add(exp.empresa_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actFamilia() {
+        clsP_lineaObj holder=new clsP_lineaObj(this,Con,db);
+
+        actproc="Familia";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.linea_ins(holder.items.get(i)));
+                dbld.add(exp.linea_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actImpuesto() {
+        clsP_impuestoObj holder=new clsP_impuestoObj(this,Con,db);
+
+        actproc="Impuesto";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.impuesto_ins(holder.items.get(i)));
+                dbld.add(exp.impuesto_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actMedia() {
+        clsP_mediapagoObj holder=new clsP_mediapagoObj(this,Con,db);
+
+        actproc="Media pago";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.media_ins(holder.items.get(i)));
+                dbld.add(exp.media_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+
+    //endregion
 
 	//region WS Envio Handling Methods
 	
@@ -3979,21 +3654,17 @@ public class ComWS extends PBase {
 			if (getTest()==1) scon=1;
 
 			if (scon==1) {
-				fstr="Sync OK";
-
-				if (!sendData()) {
-					fstr="Envio incompleto : "+sstr;
-				} else {
-
-				}
+				fstr="Envío completo.";
+                if (sendmode==0) {
+                    if (!sendData()) fstr="Envio incompleto : "+sstr;
+                } else {
+                    if (!Actualiza()) fstr="Actualizacion incompleta : "+sstr;
+                }
 			} else {
 				fstr="No se puede conectar al web service : "+sstr;
 			}
-					
 		} catch (Exception e) {
-			scon=0;
-			fstr="No se puede conectar al web service. "+e.getMessage();
-			Log.d("E", fstr + sstr);
+			scon=0;fstr="No se puede conectar al web service. "+e.getMessage();
 		}
 	}
 			
@@ -4018,43 +3689,21 @@ public class ComWS extends PBase {
 
 			if (!errflag) {
 				lblInfo.setText(" ");
-
-				if (!envioparcial){
-
-					claseFindia.updateComunicacion(2);
-					claseFindia.updateFinDia(du.getActDate());
-
-					findiaactivo=gl.findiaactivo;
-					if (ultimoCierreFecha()==du.getActDate()) findiaactivo=true;
-
-					if (findiaactivo) {
-						ActualizaStatcom();
-						claseFindia.eliminarTablasD();
-					}
-				}
-
 				msgResultEnvio(senv);
-
 			} else {
-				lblInfo.setText(fterr);
-                isbusy = 0;
-                barInfo.setVisibility(View.INVISIBLE);
-				mu.msgbox("Ocurrió error : \n" + fterr );
-				addlog("Envío", fterr, esql);
-				return;
-			}
 
-			if(envioparcial){
-
-                findiaactivo=gl.findiaactivo;
-                if (ultimoCierreFecha()==du.getActDate()) findiaactivo=true;
-
-                if (findiaactivo) {
-                    FinDia();
-                    claseFindia.eliminarTablasD();
+                if (sendmode==0) {
+                    lblInfo.setText(fterr);
+                    barInfo.setVisibility(View.INVISIBLE);
+                    mu.msgbox("Ocurrió error : \n" + fterr );
+                    addlog("Envío", fterr, esql);
+                } else {
+                    lblInfo.setText("Error de actualización");
+                    barInfo.setVisibility(View.INVISIBLE);
+                    mu.msgbox("Ocurrió error : \n"+acterr+"\n" +fstr );
+                    addlog("Actualizacion", acterr, fstr);
                 }
-
-            }
+			}
 
 			visibilidadBotones();
 			//if (!errflag) ComWS.super.finish();
@@ -4233,19 +3882,8 @@ public class ComWS extends PBase {
 	//endregion
 	
 	//region Aux
-	
-	public void comManual(View view) {
-		try{
-			Intent intent = new Intent(this,ComDrop.class);
-			startActivity(intent);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
 
-	}
-
-
-	private boolean setComParams() {
+    private boolean setComParams() {
 		String ss;
 
 		try{
@@ -4323,7 +3961,7 @@ public class ComWS extends PBase {
 		
 		return crl;
 	}
-	//#HS_20181129_1006 Agregue funcion para obtener la serie.
+
 	private String ultSerie(){
 		Cursor DT;
 		String serie="";
@@ -4344,7 +3982,7 @@ public class ComWS extends PBase {
 
 		return serie;
 	}
-	//#HS_20181121_1048 Se creo la funcion Get_Fecha_Inventario().
+
 	private int Get_Fecha_Inventario() 	{
 		Cursor DT;
 		int fecha = 0;
@@ -4387,130 +4025,16 @@ public class ComWS extends PBase {
     }
 
 	private void visibilidadBotones() {
-		Cursor dt;
-
-		boolean recep = false;
-
-		esvacio = false;
 
 		try {
-			try {
-				sql = "SELECT * FROM P_RUTA";
-				dt = Con.OpenDT(sql);
-				esvacio = dt.getCount() == 0;
-			} catch (Exception e) {
-				//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-				esvacio = true;
-			}
+			lblEnv.setVisibility(View.VISIBLE);
+			imgEnv.setVisibility(View.VISIBLE);
 
+			lblRec.setVisibility(View.VISIBLE);
+			imgRec.setVisibility(View.VISIBLE);
 
-
-				if (!esvacio) {
-				int fc = Get_Fecha_Inventario();
-				recep = fc == du.getActDate();
-			}
-
-			//Invisible botón y texto de envío
-			lblEnv.setVisibility(View.INVISIBLE);
-			imgEnv.setVisibility(View.INVISIBLE);
-
-			//Invisible botón y texto de envío manual
-			lblEnvM.setVisibility(View.INVISIBLE);
-			imgEnvM.setVisibility(View.INVISIBLE);
-
-			//Invisible botón y texto de recepción
-			lblRec.setVisibility(View.INVISIBLE);
-			imgRec.setVisibility(View.INVISIBLE);
-
-			//Tiene documentos
-			boolean TieneFact, TienePedidos, TieneCobros, TieneDevol, YaComunico, TieneInventario, TieneOtros;
-
-			if (!envioparcial) {
-				TieneFact = (clsAppM.getDocCountTipo("Facturas", false) > 0 ? true : false);
-				TienePedidos = (clsAppM.getDocCountTipo("Pedidos", false) > 0 ? true : false);
-				TieneCobros = (clsAppM.getDocCountTipo("Cobros", false) > 0 ? true : false);
-				TieneDevol = (clsAppM.getDocCountTipo("Devoluciones", false) > 0 ? true : false);
-				YaComunico = (claseFindia.getComunicacion() == 2 ? true : false);
-				TieneInventario = (clsAppM.getDocCountTipo("Inventario", false) > 0 ? true : false);
-			} else {
-				TieneFact = (clsAppM.getDocCountTipo("Facturas", true) > 0 ? true : false);
-				TienePedidos = (clsAppM.getDocCountTipo("Pedidos", true) > 0 ? true : false);
-				TieneCobros = (clsAppM.getDocCountTipo("Cobros", true) > 0 ? true : false);
-				TieneDevol = (clsAppM.getDocCountTipo("Devoluciones", true) > 0 ? true : false);
-				YaComunico = (claseFindia.getComunicacion() == 2 ? true : false);
-				TieneInventario = (clsAppM.getDocCountTipo("Inventario", true) > 0 ? true : false);
-			}
-
-			if (gl.peModal.equalsIgnoreCase("TOL")) {
-				if (claseFindia.yaHizoFindeDia()) {
-					if (YaComunico) {
-						if ((rutatipo.equalsIgnoreCase("V") && !TieneInventario) || (!rutatipo.equalsIgnoreCase("V"))) {
-							lblRec.setVisibility(View.VISIBLE);
-							imgRec.setVisibility(View.VISIBLE);
-							lblEnv.setVisibility(View.INVISIBLE);
-							imgEnv.setVisibility(View.INVISIBLE);
-							lblEnvM.setVisibility(View.INVISIBLE);
-							imgEnvM.setVisibility(View.INVISIBLE);
-						} else if ((rutatipo.equalsIgnoreCase("V") && TieneInventario &&
-								(TieneFact || TieneCobros || TieneDevol || TienePedidos)) ||
-								(!rutatipo.equalsIgnoreCase("V"))) {
-							lblRec.setVisibility(View.INVISIBLE);
-							imgRec.setVisibility(View.INVISIBLE);
-							lblEnv.setVisibility(View.VISIBLE);
-							imgEnv.setVisibility(View.VISIBLE);
-							lblEnvM.setVisibility(View.VISIBLE);
-							imgEnvM.setVisibility(View.VISIBLE);
-						}
-					}
-				} else {
-					if ((!YaComunico) && !(TieneFact || TienePedidos) && !TieneCobros && !TieneDevol) {
-						lblRec.setVisibility(View.VISIBLE);
-						imgRec.setVisibility(View.VISIBLE);
-						lblEnv.setVisibility(View.INVISIBLE);
-						imgEnv.setVisibility(View.INVISIBLE);
-						lblEnvM.setVisibility(View.INVISIBLE);
-						imgEnvM.setVisibility(View.INVISIBLE);
-					} else {
-						if (YaComunico) {
-							lblRec.setVisibility(View.VISIBLE);
-							imgRec.setVisibility(View.VISIBLE);
-							lblEnv.setVisibility(View.INVISIBLE);
-							imgEnv.setVisibility(View.INVISIBLE);
-							lblEnvM.setVisibility(View.INVISIBLE);
-							imgEnvM.setVisibility(View.INVISIBLE);
-						} else {
-							lblRec.setVisibility(View.INVISIBLE);
-							imgRec.setVisibility(View.INVISIBLE);
-							lblEnv.setVisibility(View.VISIBLE);
-							imgEnv.setVisibility(View.VISIBLE);
-							lblEnvM.setVisibility(View.VISIBLE);
-							imgEnvM.setVisibility(View.VISIBLE);
-						}
-					}
-				}
-			} else {
-				if (((rutatipo.equalsIgnoreCase("V")) || (rutatipo.equalsIgnoreCase("D")) && !TieneInventario)
-						|| ((!rutatipo.equalsIgnoreCase("V")) && (!rutatipo.equalsIgnoreCase("D")))) {
-
-					lblRec.setVisibility(View.VISIBLE);
-					imgRec.setVisibility(View.VISIBLE);
-					lblEnv.setVisibility(View.INVISIBLE);
-					imgEnv.setVisibility(View.INVISIBLE);
-					lblEnvM.setVisibility(View.INVISIBLE);
-					imgEnvM.setVisibility(View.INVISIBLE);
-				} else {
-					if (((((rutatipo.equalsIgnoreCase("V")) || (rutatipo.equalsIgnoreCase("D"))) && TieneInventario
-							&& (TieneFact || TieneCobros || TienePedidos) || TieneDevol)) || ((!rutatipo.equalsIgnoreCase("V"))
-							&& (!rutatipo.equalsIgnoreCase("D")))) {
-						lblRec.setVisibility(View.INVISIBLE);
-						imgRec.setVisibility(View.INVISIBLE);
-						lblEnv.setVisibility(View.VISIBLE);
-						imgEnv.setVisibility(View.VISIBLE);
-						lblEnvM.setVisibility(View.VISIBLE);
-						imgEnvM.setVisibility(View.VISIBLE);
-					}
-				}
-			}
+            lblEnvM.setVisibility(View.VISIBLE);
+            imgEnvM.setVisibility(View.VISIBLE);
 
 		} catch (Exception e) {
 			addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
@@ -4561,8 +4085,7 @@ public class ComWS extends PBase {
 
 	}
 
-	//CKFK 20190222 Se creó esta función para saber si existen datos en la base de datos
-    public boolean ExistenDatosSinEnviar(){
+	public boolean ExistenDatosSinEnviar(){
 
         try {
 
@@ -4586,7 +4109,6 @@ public class ComWS extends PBase {
 
     };
 
-	//CKFK 20190222 Se creó esta función para saber si existen datos en la base de datos
 	public boolean ExisteInventario(){
 
 		try {
@@ -4607,7 +4129,6 @@ public class ComWS extends PBase {
 
 	};
 
-	//CKFK 20190222 Se creó esta función para saber si existen datos en la base de datos
 	public boolean ExistenDatos(){
 
 		try {
@@ -4632,59 +4153,6 @@ public class ComWS extends PBase {
 
 	};
 
-	private void msgResultEnvio(String msg) {
-		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
-			dialog.setMessage(msg);
-			dialog.setIcon(R.drawable.ic_quest);
-
-			dialog.setPositiveButton("Envio correcto", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which)
-				{
-					startActivity(new Intent(ComWS.this,rating.class));
-					ComWS.super.finish();
-				}
-			});
-
-			dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-
-	}
-
-	private void msgAskExit(String msg) {
-		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
-			dialog.setMessage(msg);
-			dialog.setIcon(R.drawable.ic_quest);
-
-			dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-
-					if (gl.modoadmin) {
-						restartApp();
-					} else {
-						finish();
-					};
-				}
-			});
-
-			dialog.show();
-
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-
-	}
-
-	// #JP corregido 20190226
 	private void BorraDatosAnteriores(String msg) {
 		try{
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -4705,82 +4173,6 @@ public class ComWS extends PBase {
 			});
 
 			dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-
-	}
-
-	private void msgAskExitComplete() {
-		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
-			dialog.setMessage("Está seguro de salir de la aplicación?");
-			dialog.setIcon(R.drawable.ic_quest);
-
-			dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					System.exit(0);
-				}
-			});
-
-			dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					;
-				}
-			});
-
-			dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-
-	}
-
-	private void msgAskConfirmaRecibido(){
-
-		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Recepción");
-			dialog.setMessage("¿Recibir datos nuevos?");
-
-			dialog.setPositiveButton("Recibir", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					runRecep();
-				}
-			});
-
-			dialog.setNegativeButton("Cancelar", null);
-
-			dialog.show();
-
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-
-	}
-
-	private void msgAskSinLicencia(){
-
-		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Licencia");
-			dialog.setMessage("El dispositivo no tiene licencia válida");
-
-			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					restartApp();
-				}
-			});
-
-			dialog.show();
-
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -4834,8 +4226,302 @@ public class ComWS extends PBase {
 		return  vGetStatusRec;
 	}
 
+    private void Eliminatablas(){
+        boolean Eliminadas = false;
+        try{
 
-	//endregion
+            claseFindia.updateFinDia(du.getActDate());
+            claseFindia.updateComunicacion(2);
+
+            ActualizaStatcom();
+            Eliminadas = claseFindia.eliminarTablasD();
+
+            if (Eliminadas){
+                mu.msgbox("Envío de datos correcto");
+            }
+
+            visibilidadBotones();
+
+        }catch (Exception e){
+
+        }
+    }
+
+    private boolean puedeComunicar() {
+
+        boolean vPuedeCom = false;
+
+        try {
+
+            //#CKFK 20190304 Agregué validación para verificar si ya se realizó la comunicación de los datos.
+            if (gl.banderafindia) {
+
+                return ((claseFindia.getImprimioCierreZ() == 7));
+
+            } else {
+                return true;
+            }
+
+        } catch (Exception ex) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), ex.getMessage(), "");
+        }
+
+        return vPuedeCom;
+    }
+
+    //endregion
+
+    //region Dialogs
+
+    public void askSendCorrect() {
+
+        try {
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle("Envio");
+            dialog.setMessage("¿Comunicación correcta?");
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    askOkCom();
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    askIncorrect();
+                }
+            });
+
+            dialog.show();
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+
+    }
+
+    public void askIncorrect() {
+
+        try {
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle("Envio");
+            dialog.setMessage("¿Está seguro de que la comunicacion NO fue correcta?");
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    return;
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    Eliminatablas();
+                }
+            });
+
+            dialog.show();
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+
+    }
+
+    private void askOk() {
+
+        try {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+            alert.setTitle("Envio");//	alert.setMessage("Serial");
+
+            final TextView input = new TextView(this);
+            alert.setView(input);
+
+            input.setText("Archivo de datos creado conecte el dispotivo al ordenador");
+            input.requestFocus();
+
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    askSendCorrect();
+                }
+            });
+
+            alert.show();
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+
+
+    }
+
+    private void askOkCom() {
+
+        try {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+            alert.setTitle("Envio");//	alert.setMessage("Serial");
+
+            final TextView input = new TextView(this);
+            alert.setView(input);
+
+            input.setText("Está seguro de que la comunicación fue correcta");
+            input.requestFocus();
+
+            alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    Eliminatablas();
+                }
+            });
+
+            alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    return;
+                }
+            });
+
+            alert.show();
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+
+
+    }
+
+    private void msgResultEnvio(String msg) {
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle(R.string.app_name);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+
+    }
+
+    private void msgAskExit(String msg) {
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle(R.string.app_name);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    if (gl.modoadmin) {
+                        finish();
+                        //restartApp();
+                    } else {
+                        finish();
+                    };
+                }
+            });
+
+            dialog.show();
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+
+    }
+
+    private void msgAskExitComplete() {
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle(R.string.app_name);
+            dialog.setMessage("Está seguro de salir de la aplicación?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    System.exit(0);
+                }
+            });
+
+            dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    ;
+                }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+
+    }
+
+    private void msgAskConfirmaRecibido(){
+
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle("Recepción");
+            dialog.setMessage("¿Recibir datos nuevos?");
+
+            dialog.setPositiveButton("Recibir", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    runRecep();
+                }
+            });
+
+            dialog.setNegativeButton("Cancelar", null);
+
+            dialog.show();
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+
+    }
+
+    private void msgAskSinLicencia(){
+
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle("Licencia");
+            dialog.setMessage("El dispositivo no tiene licencia válida");
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    restartApp();
+                }
+            });
+
+            dialog.show();
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+
+    }
+
+    //endregion
 
 	//region Activity Events
 	

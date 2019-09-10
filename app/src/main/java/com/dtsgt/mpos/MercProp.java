@@ -570,8 +570,6 @@ public class MercProp extends PBase {
 		try{
 			super.onResume();
 
-			if (((appGlobals) vApp).closeVenta) super.finish();
-
 			if (browse==1) {
 				browse=0;
 				processItem();return;

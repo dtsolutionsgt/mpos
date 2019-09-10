@@ -1837,7 +1837,7 @@ public class BaseDatosScript {
 					"[CODDESC] INTEGER NOT NULL,"+
 					"[NOMBRE] TEXT NOT NULL,"+
 					"[EMP] TEXT NOT NULL,"+
-					"[UMPRODUCTO] TEXT NOT NULL,"+
+					"[UMPRODUCTO] TEXT NOT NULL," +
 					"[UMBONIFICACION] TEXT NOT NULL,"+
 					"PRIMARY KEY ([CLIENTE],[CTIPO],[PRODUCTO],[PTIPO],[TIPORUTA],[TIPOBON],[RANGOINI])"+
 					");";
@@ -2024,7 +2024,7 @@ public class BaseDatosScript {
                     "CLAVE TEXT NOT NULL,"+
                     "RUTA TEXT NOT NULL,"+
                     "NIVEL INTEGER NOT NULL,"+
-                    "NIVELPRECIO INTEGER NOT NULL,"+
+                    "NIVELPRECIO REAL NOT NULL,"+
                     "BODEGA TEXT NOT NULL,"+
                     "SUBBODEGA TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
@@ -2261,11 +2261,11 @@ public class BaseDatosScript {
             db.execSQL("INSERT INTO FinDia VALUES (0,0, 0,0,0,0, 0,0,0,0);");
 
             db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
-                    "'1','','','',0,'','','',  '',0,0,'',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
-            db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1',' ','','', '','','',1);");
+                    "'2','Nombre Empresa','','',0,'','','',  '',0,0,'GUA',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
+            db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre Negocio','Nombre Negocio','', '','','',1);");
             db.execSQL("INSERT INTO VENDEDORES VALUES ('1','Gerente','1','1', 3,1,'','',1);");
 
-            datosIniciales(db);
+           datosIniciales(db);
 
             return 1;
         } catch (Exception e) {

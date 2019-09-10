@@ -14,7 +14,6 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_P_sucursal;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -22,7 +21,7 @@ import android.widget.ListView;
 public class MantVendedores extends PBase {
 
     private ImageView imgstat;
-    private EditText txt1,txt2,txt3;
+    private EditText txt1,txt2,txt3,txt4;
     private RadioButton rb1,rb2,rb3;
     private ListView listView;
 
@@ -44,6 +43,7 @@ public class MantVendedores extends PBase {
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.editText12);
+        txt4 = (EditText) findViewById(R.id.editText14);
         rb1 = (RadioButton) findViewById(R.id.radioButton);
         rb2 = (RadioButton) findViewById(R.id.radioButton3);
         rb3 = (RadioButton) findViewById(R.id.radioButton4);
@@ -136,7 +136,7 @@ public class MantVendedores extends PBase {
         item.clave="";
         item.ruta="";
         item.nivel=1;
-        item.nivelprecio=1;
+        item.nivelprecio=0;
         item.bodega="";
         item.subbodega="";
         item.activo=1;
@@ -221,6 +221,7 @@ public class MantVendedores extends PBase {
         txt1.setText(item.codigo);
         txt2.setText(item.nombre);
         txt3.setText(item.clave);
+        txt4.setText(""+item.nivelprecio);
 
         rb1.setChecked(true);
         if (item.nivel==2) rb2.setChecked(true);
@@ -260,6 +261,18 @@ public class MantVendedores extends PBase {
                 return false;
             } else {
                 item.clave=ss;
+            }
+
+            ss=txt4.getText().toString();if (ss.isEmpty()) ss="0";
+            if (ss.isEmpty()) {
+                msgbox("¡Comisión incorrecta!");return false;
+            } else {
+                try {
+                    item.nivelprecio=Double.parseDouble(ss);
+                    if (item.nivelprecio<0 || item.nivelprecio>=100) throw new Exception();
+                } catch (Exception e) {
+                    msgbox("¡Comisión incorrecta!");return false;
+                }
             }
 
             item.nivel=1;

@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -35,6 +36,8 @@ import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
 
@@ -43,12 +46,12 @@ import java.util.ArrayList;
 public class Venta extends PBase {
 
     private ListView listView;
-    private GridView gridView;
+    private GridView gridView,grdfam,grdprod;
     private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant,lblBarra;
-    private TextView lblProd,lblPrec,lblDesc,lblStot,lblKeyDP;
+    private TextView lblProd,lblDesc,lblStot,lblKeyDP;
     private EditText txtBarra,txtFilter;
-    private ImageView imgroad,imgscan,imgdel;
-    private RelativeLayout relCant,relScan;
+    private ImageView imgroad,imgscan;
+    private RelativeLayout relScan;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
     private ListAdaptVenta adapter;
@@ -57,10 +60,12 @@ public class Venta extends PBase {
     private clsKeybHandler khand;
 
     private ListAdaptMenuVenta adaptergrid;
+    private ListAdaptGridFam adapterf;
 
     private AlertDialog.Builder mMenuDlg;
 
     private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
+    private ArrayList<clsClasses.clsMenu> fitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
@@ -70,9 +75,9 @@ public class Venta extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot;
     private double px,py,cpx,cpy,cdist;
 
-    private String emp,cliid,prodid,um,tiposcan,barcode;
+    private String emp,cliid,prodid,um,tiposcan,barcode,imgfold;
     private int nivel,dweek,clidia;
-    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,decimal;
 
     private AppMethods app;
 
@@ -86,9 +91,11 @@ public class Venta extends PBase {
 
         setControls();
 
+        gl.iniciaVenta=false;
         emp=gl.emp;
         nivel=1;gl.nivel=nivel;
         cliid=gl.cliente;cliid="0";
+        decimal=false;
 
         gl.atentini=du.getActDateTime();
         gl.ateninistr=du.geActTimeStr();
@@ -99,14 +106,14 @@ public class Venta extends PBase {
         khand=new clsKeybHandler(this,lblCant,lblKeyDP);
 
         menuItems();
-
         setHandlers();
         initValues();
 
         browse=0;
-        gl.closeVenta = false;
         txtBarra.requestFocus();txtBarra.setText("");
         clearItem();
+
+        listFamily();
     }
 
 
@@ -254,7 +261,7 @@ public class Venta extends PBase {
             khand.clear(false);
             khand.disable();
         }
-        khand.setLabel(lblCant,false);
+        khand.setLabel(lblCant,decimal);
         khand.disable();
         handlecant=true;
      }
@@ -264,7 +271,7 @@ public class Venta extends PBase {
             khand.clear(false);
             khand.disable();
         }
-        khand.setLabel(lblBarra,false);
+        khand.setLabel(lblBarra,decimal);
         khand.enable();
         khand.focus();
         handlecant=false;
@@ -345,21 +352,7 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-/*
-        txtBarra.addTextChangedListener(new TextWatcher() {
 
-            public void afterTextChanged(Editable s) {}
-
-            public void beforeTextChanged(CharSequence s, int start,int count, int after) { }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String ss=s.toString();
-                if (s.length()>0 && s.subSequence(s.length()-1, s.length()).toString().equalsIgnoreCase("\n")) {
-                    toast("enter");
-                }
-            }
-        });
-*/
         txtBarra.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
@@ -375,6 +368,19 @@ public class Venta extends PBase {
                 return false;
             }
         });
+
+        grdfam.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                try {
+                    Object lvObj = listView.getItemAtPosition(position);
+                    clsClasses.clsMenu vItem = ( clsClasses.clsMenu)lvObj;
+                    //prodid=vItem.Cod;
+                    adapterf.setSelectedIndex(position);
+                } catch (Exception e) {}
+            };
+        });
+
 
     }
 
@@ -491,7 +497,6 @@ public class Venta extends PBase {
             khand.enable();khand.focus();
 
             prodPrecio();
-            lblPrec.setText(gl.peMon+mu.frmdec(prec));
 
             setCant();
         }catch (Exception e){
@@ -552,7 +557,6 @@ public class Venta extends PBase {
 
         khand.setValue(icant);
         khand.enable();khand.focus();
-        imgdel.setVisibility(View.VISIBLE);
     }
 
     private void processCant(){
@@ -1438,11 +1442,34 @@ public class Venta extends PBase {
 
     //region Menu
 
+    public void listFamily() {
+        clsP_lineaObj P_lineaObj=new clsP_lineaObj(this,Con,db);
+        clsClasses.clsMenu item;
+
+        try {
+            fitems.clear();
+            P_lineaObj.fill();
+
+            for (int i = 0; i <P_lineaObj.count; i++) {
+                item=clsCls.new clsMenu();
+                item.Cod=P_lineaObj.items.get(i).codigo;
+                item.Name=P_lineaObj.items.get(i).nombre;
+                fitems.add(item);
+            }
+
+            adapterf=new ListAdaptGridFam(this,fitems,imgfold);
+            grdfam.setAdapter(adapterf);
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());
+        }
+
+
+    }
+
     public void menuItems() {
         clsClasses.clsMenu item;
 
         try{
-            gridView.setNumColumns(8);
 
             mitems.clear();
 
@@ -1477,6 +1504,10 @@ public class Venta extends PBase {
                 item.ID=13;item.Name="Intercambiar venta";item.Icon=13;
                 mitems.add(item);
                 */
+
+                item = clsCls.new clsMenu();
+                item.ID=101;item.Name="Baktún";item.Icon=101;
+                mitems.add(item);
 
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1538,10 +1569,12 @@ public class Venta extends PBase {
         try{
             listView = (ListView) findViewById(R.id.listView1);
             gridView = (GridView) findViewById(R.id.gridView2);
+            grdfam = (GridView) findViewById(R.id.grdFam);
+            grdprod = (GridView) findViewById(R.id.grdProd);
 
             lblTot= (TextView) findViewById(R.id.lblTot);
-            lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText("Desc:"+mu.frmcur(0));
-            lblStot= (TextView) findViewById(R.id.textView103); lblStot.setText("Sub:"+mu.frmcur(0));
+            lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText("Descuento : "+mu.frmcur(0));
+            lblStot= (TextView) findViewById(R.id.textView103); lblStot.setText("Subtotal : "+mu.frmcur(0));
             lblTit= (TextView) findViewById(R.id.lblTit);
             lblAlm= (TextView) findViewById(R.id.lblTit2);
             lblVend= (TextView) findViewById(R.id.lblTit4);
@@ -1550,16 +1583,13 @@ public class Venta extends PBase {
             lblBarra= (TextView) findViewById(R.id.textView122);lblBarra.setText("");
             lblProd=(TextView) findViewById(R.id.lblDir);lblProd.setText("");
             lblKeyDP=(TextView) findViewById(R.id.textView110);
-            lblPrec= (TextView) findViewById(R.id.lblPrec);lblPrec.setText("");
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
             imgscan= (ImageView) findViewById(R.id.imageView13);
-            imgdel= (ImageView) findViewById(R.id.imageView29);
 
             txtBarra=(EditText) findViewById(R.id.editText10);
 
-            relCant= (RelativeLayout) findViewById(R.id.relCant);
-            relScan= (RelativeLayout) findViewById(R.id.relScan);
+             relScan= (RelativeLayout) findViewById(R.id.relScan);
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1673,6 +1703,9 @@ public class Venta extends PBase {
 
         clsBonFiltro clsBFilt=new clsBonFiltro(this,gl.ruta,gl.cliente);
 
+        imgfold= Environment.getExternalStorageDirectory()+ "/RoadFotos/";
+
+
         dweek=mu.dayofweek();
 
         lblTot.setText(gl.peMon+mu.frmdec(0));
@@ -1723,7 +1756,6 @@ public class Venta extends PBase {
 
     private void doExit(){
         try{
-            gl.closeCliDet=true;
             super.finish();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1790,8 +1822,7 @@ public class Venta extends PBase {
 
     private void clearItem() {
         prodid="";gl.pprodname="";cant=0;prec=0;
-        lblProd.setText("");lblPrec.setText("");
-        imgdel.setVisibility(View.INVISIBLE);
+        lblProd.setText("");
         khand.clear(false);khand.disable();
     }
 
@@ -1810,7 +1841,15 @@ public class Venta extends PBase {
 
             }
 
-            if (gl.closeVenta) super.finish();
+            if (gl.iniciaVenta){
+                try {
+                    db.execSQL("DELETE FROM T_VENTA");
+                    listItems();
+                } catch (SQLException e) {
+                    addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+                    mu.msgbox("Error : " + e.getMessage());
+                }
+            }
 
             if (browse==1) {
                 browse=0;processItem();return;

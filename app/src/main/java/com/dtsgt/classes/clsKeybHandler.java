@@ -42,7 +42,7 @@ public class clsKeybHandler {
         } else {
             declabel.setVisibility(View.INVISIBLE);
         }
-        label.setBackgroundColor(Color.TRANSPARENT);
+        //label.setBackgroundColor(Color.TRANSPARENT);
 
     }
 

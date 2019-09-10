@@ -534,9 +534,6 @@ public class DevolCli extends PBase {
 				sql="DELETE FROM T_CxCD";
 				db.execSQL(sql);
 
-                gl.closeCliDet = true;
-                gl.closeVenta = true;
-
 				createDoc();
 				//msgAskSave("Aplicar pago y crear un recibo");
 
@@ -897,10 +894,6 @@ public class DevolCli extends PBase {
 		try{
 			super.onResume();
 
-			if (gl.closeVenta==true){
-				limpiavariables_devol();
-				super.finish();
-			}
 
 			if (browse==1) {
 				browse=0;

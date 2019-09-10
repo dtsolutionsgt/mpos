@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,7 +38,7 @@ import java.lang.reflect.Field;
 public class MainActivity extends PBase {
 
     private EditText txtUser, txtPass;
-    private TextView lblRuta, lblRTit, lblLogin, lblVer;
+    private TextView lblRuta, lblRTit, lblLogin, lblVer, lblEmp;
     private ImageView imgLogo;
 
     private BaseDatosVersion dbVers;
@@ -108,6 +110,7 @@ public class MainActivity extends PBase {
             lblRTit = (TextView) findViewById(R.id.lblCUsed);
             lblLogin = (TextView) findViewById(R.id.lblDir);
             lblVer = (TextView) findViewById(R.id.textView10);
+            lblEmp = (TextView) findViewById(R.id.textView82);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
 
             lblVer.setText("Version " + gl.parVer);
@@ -406,6 +409,8 @@ public class MainActivity extends PBase {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
         }
+
+        configBase();
 
     }
 
@@ -905,6 +910,18 @@ public class MainActivity extends PBase {
 
         lblRTit.setText(gl.tiendanom);
         lblRuta.setText(gl.cajanom);
+        lblEmp.setText(gl.empnom);
+
+        try {
+            String emplogo = Environment.getExternalStorageDirectory() + "/mposlogo.png";
+            File file = new File(emplogo);
+            if (file.exists()) {
+                Bitmap bmImg = BitmapFactory.decodeFile(emplogo);
+                imgLogo.setImageBitmap(bmImg);
+            }
+        } catch (Exception e) {
+        }
+
     }
 
     public boolean tieneTiendaCaja() {

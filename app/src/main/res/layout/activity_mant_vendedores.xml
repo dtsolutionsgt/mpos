@@ -86,10 +86,44 @@
         android:layout_marginBottom="5dp"
         android:background="@drawable/frame_rect">
 
+        <EditText
+            android:id="@+id/editText14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt2"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/lblCFact14"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblCFact14"
+            android:layout_width="150dp"
+            android:layout_height="42dp"
+            android:layout_below="@+id/txt2"
+            android:layout_alignParentLeft="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="3dp"
+            android:layout_toEndOf="@+id/editText12"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Comisión"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
         <TextView
             android:id="@+id/lblCFact12"
             android:layout_width="240dp"
-            android:layout_height="40dp"
+            android:layout_height="42dp"
             android:layout_alignTop="@+id/radiogrp"
             android:layout_alignEnd="@+id/txt2"
             android:layout_alignParentLeft="false"
@@ -120,7 +154,7 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Rol"
+            android:text="Rol :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
@@ -195,6 +229,7 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
+            android:inputType="number"
             android:maxLength="15"
             android:maxLines="1"
             android:singleLine="true"
@@ -227,7 +262,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:ems="10"
-            android:inputType="number|textPersonName"
+            android:inputType="number"
             android:textSize="21sp"
             android:textStyle="bold" />
 

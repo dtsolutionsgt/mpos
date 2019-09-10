@@ -29,9 +29,9 @@ import java.util.ArrayList;
 public class MantProducto extends PBase {
 
     private ImageView imgstat;
-    private EditText txt1,txt2,txt3,txt4,txt5;
+    private EditText txt1,txt2,txt3,txt4,txt5,txt6;
     private Spinner spin,spin1,spin2,spin3,spinp;
-    private CheckBox cbTipo;
+    private CheckBox cbTipo,cbDec;
 
     private clsP_productoObj holder;
     private clsClasses.clsP_producto item=clsCls.new clsP_producto();
@@ -55,6 +55,7 @@ public class MantProducto extends PBase {
         txt3 = (EditText) findViewById(R.id.editText6);
         txt4 = (EditText) findViewById(R.id.editText13);
         txt5 = (EditText) findViewById(R.id.editText11);
+        txt6 = (EditText) findViewById(R.id.editText15);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         spin = (Spinner) findViewById(R.id.spinner10);
         spin1 = (Spinner) findViewById(R.id.spinner14);
@@ -62,6 +63,7 @@ public class MantProducto extends PBase {
         spin3 = (Spinner) findViewById(R.id.spinner11);
         spinp = (Spinner) findViewById(R.id.spinner15);
         cbTipo = (CheckBox) findViewById(R.id.checkBox8);
+        cbDec = (CheckBox) findViewById(R.id.checkBox9);
 
         holder =new clsP_productoObj(this,Con,db);
 
@@ -272,7 +274,7 @@ public class MantProducto extends PBase {
         item.factorconv=1;
         item.unidbas="UNI";
         item.unidmed="";
-        item.unimedfact=0;
+        item.unimedfact=0;// cantidad minima
         item.unigra="";
         item.unigrafact=0;
         item.descuento="S";
@@ -302,7 +304,7 @@ public class MantProducto extends PBase {
         item.tiene_vineta_o_tubo=0;
         item.precio_vineta_o_tubo=0;
         item.es_vendible=0;
-        item.unigrasap=0;
+        item.unigrasap=0; // 1 -permite decimales en cantidad
         item.um_salida="UNI";
         item.activo=1;
 
@@ -494,7 +496,10 @@ public class MantProducto extends PBase {
         txt2.setText(item.desclarga);
         txt3.setText(item.codbarra);
         txt4.setText(item.unidbas);
+        txt6.setText(mu.frmdecno(item.costo));
+
         cbTipo.setChecked(!item.tipo.equalsIgnoreCase("P"));
+        cbDec.setChecked(item.unigrasap==1);
 
         if (!fillSpinner(item.linea)) return;
         if (!showPrices()) return;
@@ -505,6 +510,7 @@ public class MantProducto extends PBase {
 
     private boolean validaDatos() {
         String ss;
+        double dval;
 
         try {
 
@@ -532,7 +538,19 @@ public class MantProducto extends PBase {
                 item.desccorta=ss;
             }
 
+            ss=txt6.getText().toString();
+            if (ss.isEmpty()) ss="0";
+
+            try {
+               dval=Double.parseDouble(ss);
+               if (dval<0) throw new Exception();
+               item.costo=dval;
+            } catch (Exception ex) {
+                msgbox("¡Costo incorrecto!");return false;
+            }
+
             if (cbTipo.isChecked()) item.tipo="S";else item.tipo="P";
+            if (cbDec.isChecked()) item.unigrasap=1;else item.unigrasap=0;
 
             return true;
         } catch (Exception e) {

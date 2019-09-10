@@ -709,17 +709,18 @@ public class FacturaRes extends PBase {
 			}
 			*/
 
-			gl.closeCliDet=true;
-			gl.closeVenta=true;
+			//gl.closeCliDet=true;
+			//gl.closeVenta=true;
+            gl.iniciaVenta=true;
 
-			//if (!prn.isEnabled()) super.finish();
+			if (!prn.isEnabled()) super.finish();
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("impressOrder: "  + e.getMessage());
 
-			gl.closeCliDet = true;
-			gl.closeVenta = true;
+			//gl.closeCliDet = true;
+			//gl.closeVenta = true;
 
 			super.finish();
 		}
@@ -829,144 +830,6 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
-			//region Devolución de  producto.
-			if (gl.dvbrowse!=0){
-
-				Cursor DT;
-				String pcod;
-				Double pcant;
-
-				if (dev_ins==1){
-
-				ins.init("D_CxC");
-
-				ins.add("COREL",gl.dvcorreld);
-				ins.add("RUTA",gl.ruta);
-				ins.add("CLIENTE",gl.cliente);
-				ins.add("FECHA",fecha);
-				ins.add("ANULADO","N");
-				ins.add("EMPRESA",gl.emp);
-				ins.add("TIPO", gl.dvestado);
-				ins.add("REFERENCIA",corel);
-				ins.add("IMPRES",0);
-				ins.add("STATCOM","N");
-				ins.add("VENDEDOR",gl.vend);
-				ins.add("TOTAL",dispventa);
-				ins.add("SUPERVISOR","0");
-				ins.add("AYUDANTE","0");
-				ins.add("CODIGOLIQUIDACION",0);
-				ins.add("ESTADO","S");
-
-				db.execSQL(ins.sql());
-
-				ins.init("D_NOTACRED");
-
-				ins.add("COREL",gl.dvcorrelnc);corelNC=gl.dvcorrelnc;
-				ins.add("ANULADO","N");
-				ins.add("FECHA",fecha);
-				ins.add("RUTA",gl.ruta);
-				ins.add("VENDEDOR",gl.vend);
-				ins.add("CLIENTE",gl.cliente);
-				ins.add("TOTAL",dispventa);
-				ins.add("FACTURA",corel);
-				ins.add("SERIE","0");
-				ins.add("CORELATIVO",gl.dvactualnc);
-				ins.add("STATCOM","N");
-				ins.add("CODIGOLIQUIDACION",0);
-				ins.add("RESOLNC","N");
-				ins.add("SERIEFACT",0);
-				ins.add("CORELFACT",0);
-				ins.add("IMPRES",0);
-
-				db.execSQL(ins.sql());
-
-
-				sql="SELECT Item,CODIGO,CANT,CODDEV,TOTAL,PRECIO,PRECLISTA,REF,PESO,LOTE,UMVENTA,UMSTOCK,UMPESO,FACTOR,POR_PESO FROM T_CxCD WHERE CANT>0";
-				DT=Con.OpenDT(sql);
-
-				DT.moveToFirst();
-				while (!DT.isAfterLast()) {
-
-					pcod=DT.getString(1);
-					pcant=DT.getDouble(2);
-
-					ins.init("D_CxCD");
-
-					ins.add("COREL",gl.dvcorreld);
-					ins.add("ITEM",DT.getInt(0));
-					ins.add("CODIGO",DT.getString(1));
-					ins.add("CANT",DT.getDouble(2));
-					ins.add("CODDEV",DT.getString(3));
-					ins.add("ESTADO",gl.dvestado);
-					ins.add("TOTAL",DT.getDouble(4));
-					ins.add("PRECIO",DT.getDouble(5));
-					ins.add("PRECLISTA",DT.getDouble(6));
-					ins.add("REF",DT.getString(7));
-					ins.add("PESO",DT.getDouble(8));
-					ins.add("FECHA_CAD",0);
-					ins.add("LOTE",DT.getString(9));
-					ins.add("UMVENTA",DT.getString(10));
-					ins.add("UMSTOCK",DT.getString(11));
-					ins.add("UMPESO",DT.getString(12));
-					ins.add("FACTOR",DT.getDouble(13));
-					db.execSQL(ins.sql());
-
-					ins.init("D_NOTACREDD");
-
-					ins.add("COREL",gl.dvcorrelnc);
-					ins.add("PRODUCTO",DT.getString(1));
-					ins.add("PRECIO_ORIG",DT.getDouble(5));
-					ins.add("PRECIO_ACT",0);
-					ins.add("CANT",DT.getDouble(2));
-					ins.add("PESO",DT.getDouble(8));
-					ins.add("POR_PRESO", DT.getString(14));
-					ins.add("UMVENTA",DT.getString(10));
-					ins.add("UMSTOCK",DT.getString(11));
-					ins.add("UMPESO",DT.getString(12));
-					ins.add("FACTOR",DT.getDouble(13));
-					db.execSQL(ins.sql());
-
-					if (!gl.peModal.equalsIgnoreCase("TOL")) {
-
-						try {
-							sql="INSERT INTO P_STOCK VALUES ('"+pcod+"',0,0,0)";
-							db.execSQL(sql);
-						} catch (Exception e) {
-							addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-						}
-
-						if (gl.dvestado.equalsIgnoreCase("M")) {
-							sql="UPDATE P_STOCK SET CANTM=CANTM+"+pcant+" WHERE CODIGO='"+pcod+"'";
-						} else {
-							sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO='"+pcod+"'";
-						}
-						db.execSQL(sql);
-
-					}
-
-					DT.moveToNext();
-
-				}
-
-				sql="UPDATE P_CORREL_OTROS SET ACTUAL="+gl.dvactuald+" WHERE RUTA='"+gl.ruta+"' AND TIPO='D'";
-				db.execSQL(sql);
-
-				sql="UPDATE P_CORREL_OTROS SET ACTUAL="+gl.dvactualnc+" WHERE RUTA='"+gl.ruta+"' AND TIPO='NC'";
-				db.execSQL(sql);
-
-				Toast.makeText(this,"Devolución guardada", Toast.LENGTH_SHORT).show();
-
-				sql="DELETE FROM T_CxCD";
-				db.execSQL(sql);
-
-				dev_ins = 0;
-
-                }
-
-			}
-
-			//endregion
-
 			//region D_FACTURAD
 
 			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL1,VAL2,UM,FACTOR,UMSTOCK FROM T_VENTA";
@@ -1020,62 +883,30 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAP
 
-			if(!gl.cobroPendiente) {
 
-				sql = "SELECT ITEM,CODPAGO,TIPO,VALOR,DESC1,DESC2,DESC3 FROM T_PAGO";
-				dt = Con.OpenDT(sql);
+            sql = "SELECT ITEM,CODPAGO,TIPO,VALOR,DESC1,DESC2,DESC3 FROM T_PAGO";
+            dt = Con.OpenDT(sql);
 
-				dt.moveToFirst();
-				while (!dt.isAfterLast()) {
+            dt.moveToFirst();
+            while (!dt.isAfterLast()) {
 
-					ins.init("D_FACTURAP");
-					ins.add("COREL", corel);
-					ins.add("ITEM", dt.getInt(0));
-					ins.add("ANULADO", "N");
-					ins.add("EMPRESA", gl.emp);
-					ins.add("CODPAGO", dt.getInt(1));
-					ins.add("TIPO", dt.getString(2));
-					ins.add("VALOR", dt.getDouble(3));
-					ins.add("DESC1", dt.getString(4));
-					ins.add("DESC2", dt.getString(5));
-					ins.add("DESC3", dt.getString(6));
-					ins.add("DEPOS", "N");
+                ins.init("D_FACTURAP");
+                ins.add("COREL", corel);
+                ins.add("ITEM", dt.getInt(0));
+                ins.add("ANULADO", "N");
+                ins.add("EMPRESA", gl.emp);
+                ins.add("CODPAGO", dt.getInt(1));
+                ins.add("TIPO", dt.getString(2));
+                ins.add("VALOR", dt.getDouble(3));
+                ins.add("DESC1", dt.getString(4));
+                ins.add("DESC2", dt.getString(5));
+                ins.add("DESC3", dt.getString(6));
+                ins.add("DEPOS", "N");
 
-					db.execSQL(ins.sql());
+                db.execSQL(ins.sql());
 
-					dt.moveToNext();
-				}
-
-			} else {
-
-				try {
-					ins.init("P_COBRO");
-
-					ins.add("DOCUMENTO", corel);
-					ins.add("EMPRESA", gl.emp);
-					ins.add("RUTA", gl.ruta);
-					ins.add("CLIENTE", gl.cliente);
-					ins.add("TIPODOC", "R");
-					ins.add("VALORORIG", tot);
-					ins.add("SALDO", tot);
-					ins.add("CANCELADO", 0);
-					ins.add("FECHAEMIT", fecha);
-					ins.add("FECHAV", fecha);
-					ins.add("CONTRASENA", corel);
-					ins.add("ID_TRANSACCION", 0);
-					ins.add("REFERENCIA", 0);
-					ins.add("ASIGNACION", 0);
-
-					db.execSQL(ins.sql());
-
-					Toast.makeText(this, "Se guardo la factura pendiente de pago",Toast.LENGTH_LONG).show();
-
-				}catch (Exception e){
-					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-					mu.msgbox("PendientePago: "+e.getMessage());
-				}
-
-			}
+                dt.moveToNext();
+            }
 
 			//endregion
 
@@ -1089,47 +920,6 @@ public class FacturaRes extends PBase {
 			ins.add("DIRECCION",gl.fdir);
 
 			db.execSQL(ins.sql());
-
-			//endregion
-
-			//region D_STOCKB_DEV
-
-			sql="INSERT INTO D_FACTURA_BARRA SELECT * FROM P_STOCKB WHERE BARRA IN (SELECT BARRA FROM T_BARRA)";
-			db.execSQL(sql);
-
-			sql="UPDATE D_FACTURA_BARRA SET Corel='"+corel+"' WHERE Corel=''";
-			db.execSQL(sql);
-
-			try {
-
-				sql="SELECT BARRA,CODIGO,PESO FROM P_STOCKB WHERE BARRA IN (SELECT BARRA FROM T_BARRA)";
-				dt=Con.OpenDT(sql);
-
-				if (dt.getCount()>0) dt.moveToFirst();
-				while (!dt.isAfterLast()) {
-
-					ins.init("D_STOCKB_DEV");
-
-					ins.add("BARRA",dt.getString(0));
-					ins.add("RUTA",gl.ruta);
-					ins.add("VENDEDOR",gl.vend);
-					ins.add("CODIGO",dt.getString(1));
-					ins.add("COREL",corel);
-					ins.add("FECHA",fecha);
-					ins.add("PESO",dt.getDouble(2));
-					ins.add("CODIGOLIQUIDACION",0);
-
-					db.execSQL(ins.sql());
-
-					dt.moveToNext();
-				}
-			} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-			}
-
-			sql="DELETE FROM P_STOCKB WHERE BARRA IN (SELECT BARRA FROM T_BARRA)";
-			db.execSQL(sql);
 
 			//endregion
 
@@ -1188,76 +978,6 @@ public class FacturaRes extends PBase {
 
             //endregion
 
-            //region T_BARRA_BONIF
-
-            sql="INSERT INTO D_FACTURA_BARRA SELECT * FROM P_STOCKB WHERE BARRA IN (SELECT BARRA FROM T_BARRA_BONIF)";
-            db.execSQL(sql);
-
-            sql="UPDATE D_FACTURA_BARRA SET Corel='"+corel+"' WHERE Corel=''";
-            db.execSQL(sql);
-
-			sql="SELECT BARRA,CODIGO,PESO FROM T_BARRA_BONIF";
-			dt=Con.OpenDT(sql);
-
-			if (dt.getCount()>0) {
-				dt.moveToFirst();
-				while (!dt.isAfterLast()) {
-
-					vbarra=dt.getString(0);
-					vprod=dt.getString(1);
-					vpeso=dt.getDouble(2);
-
-					vumstock=app.umStock(vprod);
-					vumventa=app.umVenta(vprod);
-					vfactor=app.factorPeso(vprod);
-
-					ins.init("D_BONIF_BARRA");
-
-					ins.add("COREL",corel);
-					ins.add("BARRA",vbarra);
-					ins.add("PESO",vpeso);
-					ins.add("PRODUCTO",vprod);
-					ins.add("UMVENTA",vumventa);
-					ins.add("UMSTOCK",vumstock);
-					ins.add("UMPESO",gl.umpeso);
-					ins.add("FACTOR",vfactor);
-
-					db.execSQL(ins.sql());
-
-					dt.moveToNext();
-				}
-			}
-
-			sql="DELETE FROM P_STOCKB WHERE BARRA IN (SELECT BARRA FROM T_BARRA_BONIF)";
-			db.execSQL(sql);
-
-            //endregion
-
-			//region T_BONIFFALT
-
-            sql = "SELECT PRODID,PRODUCTO,CANT FROM T_BONIFFALT";
-            dt = Con.OpenDT(sql);
-
-            if (dt.getCount() > 0) dt.moveToFirst();
-            while (!dt.isAfterLast()) {
-
-                ins.init("D_BONIFFALT");
-
-                ins.add("COREL", corel);
-                ins.add("FECHA", fecha);
-                ins.add("ANULADO", "N");
-                ins.add("RUTA", gl.ruta);
-                ins.add("CLIENTE", gl.cliente);
-                ins.add("PRODUCTO", dt.getString(1));
-                ins.add("CANT", dt.getDouble(2));
-
-                db.execSQL(ins.sql());
-
-                dt.moveToNext();
-            }
-
-            //endregion
-
 			//endregion
 
 			//region Actualizacion de ultimo correlativo
@@ -1284,11 +1004,6 @@ public class FacturaRes extends PBase {
 			}
 
 			saved=true;
-
-			upd.init("P_CLIRUTA");
-			upd.add("BANDERA",0);
-			upd.Where("CLIENTE='"+cliid+"'");
-			db.execSQL(upd.sql());
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -2329,8 +2044,6 @@ public class FacturaRes extends PBase {
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					gl.closeCliDet = true;
-					gl.closeVenta = true;
 
 					impres++;toast("Impres "+impres);
 
@@ -2396,7 +2109,6 @@ public class FacturaRes extends PBase {
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}	
 	
 	private void clearGlobals() {
