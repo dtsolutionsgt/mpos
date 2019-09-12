@@ -46,8 +46,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends PBase {
 
-    private EditText txtUser, txtPass;
-    private TextView lblRuta, lblRTit, lblLogin, lblVer, lblEmp, lblPass,lblKeyDP;
+    private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass,lblKeyDP;
     private ImageView imgLogo;
 
     private BaseDatosVersion dbVers;
@@ -59,7 +58,7 @@ public class MainActivity extends PBase {
     private clsKeybHandler khand;
 
     private boolean rutapos, scanning = false;
-    private String cs1, cs2, cs3, barcode, epresult;
+    private String cs1, cs2, cs3, barcode, epresult,usr, pwd;
 
     private String parVer = "2.1.1 / 28-Ago-2019";
 
@@ -119,11 +118,8 @@ public class MainActivity extends PBase {
             this.setTitle("MPos");
             gl.parVer = parVer;
 
-            txtUser = (EditText) findViewById(R.id.txtUser);
-            txtPass = (EditText) findViewById(R.id.txtFilter);
             lblRuta = (TextView) findViewById(R.id.lblCDisp);
             lblRTit = (TextView) findViewById(R.id.lblCUsed);
-            lblLogin = (TextView) findViewById(R.id.lblDir);
             lblVer = (TextView) findViewById(R.id.textView10);
             lblEmp = (TextView) findViewById(R.id.textView82);
             lblPass = (TextView) findViewById(R.id.lblPass);
@@ -143,8 +139,6 @@ public class MainActivity extends PBase {
             khand=new clsKeybHandler(this,lblPass,lblKeyDP);
             khand.enable();
 
-            txtUser.requestFocus();
-
             initSession();
 
             try {
@@ -154,19 +148,13 @@ public class MainActivity extends PBase {
                 gl.debug=false;
             }
 
-
             /*
             if (!validaLicencia()) {
                 startActivity(new Intent(this, comWSLic.class));
                 return;
             } else {
                 supervisorRuta();
-            }
-            */
-
-             if (gl.debug) {
-                txtUser.setText("1");txtPass.setText("1");
-            }
+            } */
 
         } catch (Exception e) {
             addlog(new Object() {
@@ -206,10 +194,6 @@ public class MainActivity extends PBase {
 
     public void gotoMenu() {
         try {
-            txtUser.setText("");
-            txtPass.setText("");
-            txtUser.requestFocus();
-
             Intent intent = new Intent(this, Menu.class);
             startActivity(intent);
         } catch (Exception e) {
@@ -233,16 +217,13 @@ public class MainActivity extends PBase {
         try {
             processLogIn();
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
     public void doLoginScreen(View view) {
-        browse=1;
-        startActivity(new Intent(this,Login.class));
+        usr="1";pwd="1";
+        if (checkUser()) gotoMenu();
     }
 
     public void doRegister(View view) {
@@ -263,7 +244,8 @@ public class MainActivity extends PBase {
         khand.handleKey(ss);
         if (khand.isEnter) {
             if (khand.isValid) {
-                //toast(khand.val);
+                pwd=khand.val;
+                processLogIn();
             }
         }
     }
@@ -271,63 +253,27 @@ public class MainActivity extends PBase {
     private void setHandlers() {
 
         try {
-            txtUser.setOnKeyListener(new OnKeyListener() {
+
+            listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-                    if (arg2.getAction() == KeyEvent.ACTION_DOWN) {
-                        switch (arg1) {
-                            case KeyEvent.KEYCODE_ENTER:
-                                //toast("key ");
-                                txtPass.requestFocus();
-                                return true;
-                        }
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+
+                    try {
+                        Object lvObj = listView.getItemAtPosition(position);
+                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+
+                        adapter.setSelectedIndex(position);
+                        usr=item.Cod;
+
+                    } catch (Exception e) {
+                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                        mu.msgbox( e.getMessage());
                     }
-                    return false;
-                }
+                };
             });
 
-            txtPass.setOnKeyListener(new OnKeyListener() {
-                @Override
-                public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-                    if (arg2.getAction() == KeyEvent.ACTION_DOWN) {
-                        switch (arg1) {
-                            case KeyEvent.KEYCODE_ENTER:
-                                processLogIn();
-                                return true;
-                        }
-                    }
-                    return false;
-                }
-            });
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
-
-    }
-
-    private void compareSC(CharSequence s) {
-        try {
-            String os, bc;
-
-            bc = txtUser.getText().toString();
-            if (mu.emptystr(bc) || bc.length() < 2) {
-                txtUser.setText("");
-                scanning = false;
-                return;
-            }
-            os = s.toString();
-
-            if (bc.equalsIgnoreCase(os)) {
-                //Toast.makeText(this,"Codigo barra : " +bc, Toast.LENGTH_SHORT).show();
-                msgbox("Barra: " + bc);
-            }
-
-            txtUser.setText("");
-            scanning = false;
-        } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
 
     }
@@ -455,54 +401,34 @@ public class MainActivity extends PBase {
     }
 
     private void processLogIn() {
-        lblLogin.setVisibility(View.INVISIBLE);
 
         /*/
         if (!validaLicencia()) {
-            lblLogin.setVisibility(View.VISIBLE);
-            mu.msgbox("¡Licencia invalida!");
+             mu.msgbox("¡Licencia invalida!");
             startActivity(new Intent(this,comWSLic.class));
             return;
         }
         */
 
         if (checkUser()) gotoMenu();
-        else lblLogin.setVisibility(View.VISIBLE);
+
     }
 
     private boolean checkUser() {
         Cursor DT;
-        String usr, pwd, dpwd;
+        String dpwd;
 
         configBase();
 
         try {
 
-            usr = txtUser.getText().toString().trim();
-            pwd = txtPass.getText().toString().trim();
-
-            if (mu.emptystr(usr)) {
-                mu.msgbox("Usuario incorrecto.");
-                return false;
+            if (usr.isEmpty()) {
+                mu.msgbox("Usuario incorrecto.");return false;
             }
-            if (mu.emptystr(pwd)) {
-                mu.msgbox("Contraseña incorrecta.");
-                return false;
+            if (pwd.isEmpty()) {
+                mu.msgbox("Contraseña incorrecta.");return false;
             }
 
-            if (usr.equalsIgnoreCase("DTS") && pwd.equalsIgnoreCase("DTS")) {
-                gl.vendnom = "DTS";
-                gl.vend = "DTS";
-                gl.vnivel = 1;
-                gl.vnivprec = 1;
-
-                return true;
-            }
-
-            if (usr.equalsIgnoreCase("Venta") && pwd.equalsIgnoreCase("Venta")) {
-                showDemoMenu();
-                return false;
-            }
 
             sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
             DT = Con.OpenDT(sql);
@@ -546,6 +472,8 @@ public class MainActivity extends PBase {
             gl.vendnom = DT.getString(0);
             gl.vend = usr;
             gl.vnivprec = DT.getInt(3);
+
+            khand.clear();khand.enable();
 
             return true;
 
@@ -991,6 +919,8 @@ public class MainActivity extends PBase {
         clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
         clsClasses.clsMenu item;
 
+        usr="";pwd="";
+
         try {
             mitems.clear();
             VendedoresObj.fill();
@@ -1017,8 +947,6 @@ public class MainActivity extends PBase {
         try {
             super.onResume();
             initSession();
-            txtUser.requestFocus();
-            lblLogin.setVisibility(View.VISIBLE);
 
             if (browse==1) {
                 browse=0;return;

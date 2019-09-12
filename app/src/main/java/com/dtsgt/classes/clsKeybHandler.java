@@ -32,10 +32,18 @@ public class clsKeybHandler {
         clear(decpoint);
     }
 
+    public void clear() {
+        isValid=false;
+        isEnter=false;
+        idle=true;
+        value=-1;val="";
+        label.setText("");
+      }
+
     public void clear(Boolean decpoint) {
         isValid=false;
         isEnter=false;
-        idle=false;
+        idle=true;
         value=-1;val="";
         label.setText("");
         if (decpoint) {
@@ -44,7 +52,6 @@ public class clsKeybHandler {
             declabel.setVisibility(View.INVISIBLE);
         }
         //label.setBackgroundColor(Color.TRANSPARENT);
-
     }
 
     public void handleKey(String keychar) {

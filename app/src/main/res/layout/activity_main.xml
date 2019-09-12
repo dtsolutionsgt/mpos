@@ -16,33 +16,6 @@
         android:layout_marginStart="10dp">
 
         <TextView
-            android:id="@+id/lblProd"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/lblCant"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
-            android:gravity="center_vertical"
-            android:paddingTop="0dp"
-            android:text="Usuario"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#000000"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/lblCant"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
-            android:gravity="center_vertical"
-            android:paddingTop="10dp"
-            android:text="Clave"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#000000"
-            android:textSize="18sp" />
-
-        <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="5dp"
@@ -60,34 +33,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp">
-
-        <EditText
-            android:id="@+id/txtFilter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblCDisp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:inputType="numberPassword"
-            android:singleLine="true"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/txtUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txtFilter"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:imeOptions="actionNext"
-            android:inputType="number"
-            android:singleLine="true"
-            android:textSize="24sp"
-            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imgNext"
@@ -137,24 +82,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="24sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/lblDir"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:layout_below="@+id/txtUser"
-            android:layout_alignStart="@+id/txtUser"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:background="#A01127"
-            android:clickable="true"
-            android:gravity="center"
-            android:onClick="doLogin"
-            android:text="INGRESO"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:visibility="visible" />
 
         <TextView
             android:id="@+id/textView82"
@@ -733,6 +660,7 @@
         android:layout_below="@id/textView127"
         android:layout_alignParentStart="false"
         android:layout_alignParentBottom="false"
+        android:layout_marginLeft="10dp"
         android:layout_marginBottom="0dp"
         android:layout_toLeftOf="@id/relEnter" />
 

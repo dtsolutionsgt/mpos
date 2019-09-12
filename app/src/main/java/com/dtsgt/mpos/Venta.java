@@ -250,30 +250,10 @@ public class Venta extends PBase {
         //}
     }
 
-    public void doClickCant(View viev) {
-        if (!khand.label.equals(lblCant)) {
-            khand.clear(false);
-            khand.disable();
-        }
-        khand.setLabel(lblCant,decimal);
-        khand.disable();
-        handlecant=true;
-     }
-
-    public void doClickScan(View viev) {
-        if (!khand.label.equals(lblBarra)) {
-            khand.clear(false);
-            khand.disable();
-        }
-        khand.setLabel(lblBarra,decimal);
-        khand.enable();
-        khand.focus();
-        handlecant=false;
-    }
-
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
+            /*
             if (handlecant) {
                 if (khand.isValid) {
                     gl.dval=khand.value;
@@ -283,6 +263,7 @@ public class Venta extends PBase {
                 barcode=khand.getStringValue();
                 if (!barcode.isEmpty()) addBarcode();
             }
+            */
          }
     }
 
@@ -584,7 +565,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     private boolean processProdBarra(String barra) {
@@ -633,9 +613,6 @@ public class Venta extends PBase {
             icant=0;
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
-
-
-        doClickCant(null);
 
         khand.setValue(icant);
         khand.enable();khand.focus();
@@ -907,25 +884,12 @@ public class Venta extends PBase {
     private void addBarcode() {
         gl.barra=barcode;
 
-        /*
-        if (barraBonif()) {
-            toastlong("¡La barra es parte de bonificacion!");
-            txtBarra.setText("");return;
-        }
-
-        if (barraBolsa()) {
-            txtBarra.setText("");
-            listItems();
-            return;
-        }
-        */
-
         if (barraProducto()) {
             txtBarra.setText("");return;
+        } else {
+            toastlong("¡La barra "+barcode+" no existe!");
+            txtBarra.setText("");
         }
-
-        toastlong("¡La barra "+barcode+" no existe!");
-        txtBarra.setText("");
     }
 
     private boolean barraBolsa() {
@@ -1088,13 +1052,21 @@ public class Venta extends PBase {
         Cursor dt;
 
         try {
-            sql="SELECT P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA " +
-                "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO	" +
-                "WHERE (P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"')  COLLATE NOCASE";
+
+            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA " +
+                    "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
+                    "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
+                    "WHERE (P_STOCK.CANT > 0) AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"')) ";
+            sql += "UNION ";
+            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA FROM P_PRODUCTO " +
+                    "WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M')) " +
+                    "AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"'))  COLLATE NOCASE";
+
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
+                khand.clear();
 
                 gl.gstr=dt.getString(0);gl.um="UN";
                 gl.pprodname=dt.getString(1);
@@ -1728,11 +1700,14 @@ public class Venta extends PBase {
                     gl.gstr = "";browse = 1;gl.prodtipo = 1;
                     startActivity(new Intent(this, Producto.class));break;
                 case 51:
-                     break;
+                    if (khand.isValid) {
+                        barcode=khand.val;addBarcode();
+                    }
+                    break;
                 case 52:
-                     break;
+                    break;
                 case 53:
-                     break;
+                    break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -1927,6 +1902,7 @@ public class Venta extends PBase {
         lblTot.setText("Total : "+gl.peMon+mu.frmdec(0));
         lblVend.setText(gl.vendnom);
 
+        khand.clear(false);khand.enable();
     }
 
     private boolean hasProducts(){
@@ -2095,7 +2071,6 @@ public class Venta extends PBase {
     private void clearItem() {
         prodid="";gl.pprodname="";cant=0;prec=0;
         lblProd.setText("");
-        //khand.clear(false);khand.disable();
     }
 
     //endregion

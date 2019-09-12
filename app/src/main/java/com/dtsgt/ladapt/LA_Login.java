@@ -66,7 +66,7 @@ public class LA_Login extends BaseAdapter {
 		holder.lblName.setText(items.get(position).Name);
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
-			convertView.setBackgroundColor(Color.rgb(0, 128, 0));
+			convertView.setBackgroundColor(Color.rgb(26,138,198));
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
         }
