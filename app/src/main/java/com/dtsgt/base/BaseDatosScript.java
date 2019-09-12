@@ -2065,7 +2065,7 @@ public class BaseDatosScript {
 					"[VAL3] REAL NOT NULL,"+
 					"[VAL4] TEXT NOT NULL,"+					
 					"[PERCEP] REAL NOT NULL,"+
-					"PRIMARY KEY ([PRODUCTO],[UM])"+
+					"PRIMARY KEY ([PRODUCTO],[UM],[EMPRESA])"+
 					");";
 			database.execSQL(sql);
 

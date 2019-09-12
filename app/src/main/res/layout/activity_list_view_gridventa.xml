@@ -7,13 +7,13 @@
     <ImageView
         android:id="@+id/imgNext"
         android:layout_width="match_parent"
-        android:layout_height="125dp"
+        android:layout_height="115dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:adjustViewBounds="true"
         android:minHeight="96dp"
         android:padding="0dp"
-        android:src="@drawable/ok48" />
+        android:src="@drawable/bonus" />
 
     <TextView
         android:id="@+id/lblTrat"
@@ -22,9 +22,9 @@
         android:layout_below="@+id/imgNext"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:ellipsize="end"
+        android:ellipsize="middle"
         android:gravity="center_horizontal"
-        android:maxLines="1"
+        android:maxLines="2"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="18sp" />

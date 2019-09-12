@@ -819,6 +819,7 @@ public class FacturaRes extends PBase {
 
 			//region Bonificacion
 
+            /*
 			clsBonifSave bonsave=new clsBonifSave(this,corel,"V");
 
 			bonsave.ruta=gl.ruta;
@@ -827,7 +828,7 @@ public class FacturaRes extends PBase {
 			bonsave.emp=gl.emp;
 
 			bonsave.save();
-
+            */
 			//endregion
 
 			//region D_FACTURAD
@@ -838,10 +839,10 @@ public class FacturaRes extends PBase {
 			dt.moveToFirst();
 			while (!dt.isAfterLast()) {
 
-				porpeso=prodPorPeso(dt.getString(0));
+				porpeso=false;
 				factpres=dt.getDouble(12);
 				peso=dt.getDouble(8);
-				vumstock=app.umStock(dt.getString(0));
+				vumstock=dt.getString(11);
 
 			  	ins.init("D_FACTURAD");
 				ins.add("COREL",corel);
@@ -882,7 +883,6 @@ public class FacturaRes extends PBase {
 			//endregion
 
 			//region D_FACTURAP
-
 
             sql = "SELECT ITEM,CODPAGO,TIPO,VALOR,DESC1,DESC2,DESC3 FROM T_PAGO";
             dt = Con.OpenDT(sql);
@@ -927,6 +927,7 @@ public class FacturaRes extends PBase {
 
             //region D_BONIF
 
+            /*
 			sql="SELECT ITEM,PRODID,BONIID,CANT,PRECIO,COSTO,UMVENTA,UMSTOCK,UMPESO,FACTOR FROM T_BONITEM";
 			dt=Con.OpenDT(sql);
 
@@ -976,6 +977,8 @@ public class FacturaRes extends PBase {
 				}
 			}
 
+
+             */
             //endregion
 
 			//endregion
@@ -994,11 +997,10 @@ public class FacturaRes extends PBase {
 			db.execSQL(ins.sql());
 
 			//endregion
-
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
-			if(gl.dvbrowse!=0){
+			if (gl.dvbrowse!=0) {
 				gl.dvbrowse =0;
 				gl.tiponcredito=0;
 			}

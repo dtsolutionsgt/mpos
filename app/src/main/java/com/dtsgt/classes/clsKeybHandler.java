@@ -2,8 +2,10 @@ package com.dtsgt.classes;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+
 
 import java.text.DecimalFormat;
 
@@ -12,11 +14,10 @@ public class clsKeybHandler {
     public TextView label;
     public boolean isValid,isEnter,idle;
     public double value;
+    public String val;
 
     private Context cont;
     private TextView declabel;
-
-    private String val;
 
     public clsKeybHandler(Context context, TextView outputlabel, TextView decpointlabel){
         cont=context;
@@ -92,7 +93,8 @@ public class clsKeybHandler {
 
         isValid=value>=0;
         label.setText(val);
-        label.setBackgroundColor(Color.TRANSPARENT);
+
+        //label.setBackgroundColor(Color.TRANSPARENT);
     }
 
     public void enable() {
@@ -104,7 +106,7 @@ public class clsKeybHandler {
     }
 
     public void focus() {
-        label.setBackgroundColor(Color.parseColor("#02D42E"));
+        //label.setBackgroundColor(Color.parseColor("#02D42E"));
     }
 
     public void setValue(double val) {

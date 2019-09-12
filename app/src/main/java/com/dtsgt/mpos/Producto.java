@@ -74,9 +74,7 @@ public class Producto extends PBase {
 		setHandlers();
 		
 		listItems();
-		
-		//spinFam.requestFocus();
-		
+
 	}
 
 
@@ -205,10 +203,6 @@ public class Producto extends PBase {
 
 						listItems();
 
-						spinFam.requestFocus();
-						//if (act>0) {hidekeyb();}
-						hidekeyb();
-
 						act += 1;
 					} catch (Exception e) {
 						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -269,17 +263,11 @@ public class Producto extends PBase {
 						if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA='"+famid+"') ";
 					}
 					if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
-					sql+="UNION ";
-
-					sql+="SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA " +
-						"FROM P_PRODUCTO INNER JOIN	P_STOCKB ON P_STOCKB.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
-						"P_PRODPRECIO ON (P_STOCKB.CODIGO=P_PRODPRECIO.CODIGO)  " +
-						"WHERE (P_STOCKB.CANT > 0) AND (P_PRODPRECIO.NIVEL = " + gl.nivel +")";
 
 					sql+="UNION ";
 					sql+="SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,''  " +
 							"FROM P_PRODUCTO "  +
-							"WHERE (P_PRODUCTO.TIPO ='S') ";
+							"WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M'))";
 					if (!mu.emptystr(famid)){
 						if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA='"+famid+"') ";
 					}
@@ -295,24 +283,15 @@ public class Producto extends PBase {
 
 					break;	
 					
-				case 2: // Mercadeo propio
-					sql="SELECT CODIGO,DESCCORTA,'' FROM P_PRODUCTO WHERE 1=1 ";
-					if (!mu.emptystr(famid)){
-						if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA='"+famid+"') ";
-					}
-					if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
+				case 2: // Recarga
+				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS FROM P_PRODUCTO WHERE Tipo='P' ";
+                    if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
+                    if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
 
-					if (ordPorNombre) sql+="ORDER BY DESCCORTA"; else sql+="ORDER BY CODIGO";
-					break;
-					
-				case 3:  // Mercadeo comp
-					sql="SELECT CODIGO,NOMBRE,'' FROM P_MERPRODCOMP WHERE 1=1 ";
-					if (!mu.emptystr(famid)) {sql=sql+"AND (MARCA='"+famid+"') ";}
-					if (vF.length()>0) {sql=sql+"AND ((NOMBRE LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
+                    if (ordPorNombre) sql+="ORDER BY DESCCORTA"; else sql+="ORDER BY CODIGO";
+                    break;
 
-                    if (ordPorNombre) sql+="ORDER BY NOMBRE"; else sql+="ORDER BY CODIGO";
-					break;
-			}
+            }
 				
 			DT=Con.OpenDT(sql);
 
@@ -342,8 +321,7 @@ public class Producto extends PBase {
 
 			  DT.moveToNext();
 			}
-		} catch (Exception e)
-		{
+		} catch (Exception e) 		{
 		   //	mu.msgbox( e.getMessage());
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			Log.d("prods",e.getMessage());
@@ -373,7 +351,7 @@ public class Producto extends PBase {
 		try{
 			for (int i = items.size()-1; i >=0; i--) {
 				if (getDisp(items.get(i).Cod)) {
-					sdisp=mu.frmdecimal(disp_und,gl.peDecImp)+" "+ltrim(um,6)+"  "+mu.frmdecimal(disp_peso,gl.peDecImp)+" "+ltrim(gl.umpeso,6);
+					sdisp=mu.frmdecimal(disp_und,gl.peDecImp)+" "+ltrim(um,6);
 					items.get(i).Text=sdisp;
 				} else {
 					items.remove(i);

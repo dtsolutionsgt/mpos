@@ -431,7 +431,22 @@ public class AppMethods {
         }
     }
 
-	public boolean ventaRepesaje(String cod) {
+    public String prodTipo(String cod) {
+        Cursor DT;
+
+        try {
+            String sql = "SELECT TIPO FROM P_PRODUCTO WHERE CODIGO='" + cod + "'";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            return  DT.getString(0);
+        } catch (Exception e) {
+            toast(e.getMessage());
+            return "P";
+        }
+    }
+
+    public boolean ventaRepesaje(String cod) {
 		Cursor DT;
 		String umm;
 
@@ -668,11 +683,6 @@ public class AppMethods {
 		try {
 			sql = "SELECT UNIDADMEDIDA FROM P_STOCK WHERE CODIGO='"+cod+ "'";
 			DT = Con.OpenDT(sql);
-
-			if (DT.getCount()==0) {
-				sql = "SELECT UNIDADMEDIDA FROM P_STOCKB WHERE CODIGO='"+cod+ "'";
-				DT = Con.OpenDT(sql);
-			}
 
 			DT.moveToFirst();
 			umm=DT.getString(0);

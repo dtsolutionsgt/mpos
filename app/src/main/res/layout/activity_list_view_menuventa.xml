@@ -12,7 +12,7 @@
         android:layout_alignParentRight="true"
         android:adjustViewBounds="true"
         android:minHeight="96dp"
-        android:padding="10dp"
+        android:padding="3dp"
         android:src="@drawable/ok48" />
 
     <TextView
@@ -30,7 +30,7 @@
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
+        android:layout_height="5dp"
         android:layout_below="@+id/lblTrat"
         android:layout_centerHorizontal="true"
         android:text="Small Text"

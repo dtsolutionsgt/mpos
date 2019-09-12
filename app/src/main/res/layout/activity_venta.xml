@@ -15,7 +15,7 @@
         android:layout_below="@id/relRoad"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="110dp"
         android:layout_marginEnd="5dp"
         android:numColumns="1" />
 
@@ -161,7 +161,7 @@
             android:layout_height="315dp"
             android:layout_above="@+id/relbotpan"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="29dp"
+            android:layout_marginBottom="59dp"
             android:background="@drawable/frame_rect"
             android:clickable="true">
 
@@ -188,54 +188,20 @@
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginBottom="5dp"
-                android:background="@drawable/frame_rect_blue"
+                android:background="@drawable/blue_strip"
                 android:clickable="false"
                 android:onClick="doFocus">
-
-                <RelativeLayout
-                    android:id="@+id/relSub"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="false"
-                    android:layout_alignParentEnd="false"
-                    android:layout_marginLeft="-1dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="-1dp"
-                    android:layout_marginBottom="3dp"
-                    android:layout_toLeftOf="@id/lblTot"
-                    android:background="@drawable/frame_rect_white">
-
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/lblTot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/frame_rect_white"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:text="0.00"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="#FFFFFF"
-                    android:textSize="30sp"
-                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/lblCant"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
-                    android:layout_marginLeft="5dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="0dp"
                     android:layout_marginTop="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="0dp"
                     android:layout_marginBottom="5dp"
-                    android:layout_toStartOf="@+id/lblTot"
                     android:background="#FFFFFF"
                     android:gravity="center_vertical"
                     android:minWidth="100dp"
@@ -670,52 +636,13 @@
                 android:layout_below="@id/rellaytot"
                 android:layout_toLeftOf="@id/relKeyb">
 
-                <ImageView
-                    android:id="@+id/imgNext2"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_below="@+id/imgImg"
-                    android:layout_alignParentRight="false"
-                    android:layout_alignParentBottom="false"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginRight="70dp"
-                    android:layout_marginBottom="105dp"
-                    android:clickable="true"
-                    android:onClick="finishOrder"
-                    android:padding="10dp"
-                    android:src="@drawable/barcode_btn" />
-
-                <ImageView
-                    android:id="@+id/imgNext"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_below="@id/imgImg"
-                    android:layout_alignParentRight="false"
-                    android:layout_alignParentBottom="false"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="130dp"
-                    android:layout_marginRight="14dp"
-                    android:clickable="true"
-                    android:onClick="finishOrder"
-                    android:padding="10dp"
-                    android:src="@drawable/payment" />
-
-                <ImageView
-                    android:id="@+id/imgImg"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="false"
-                    android:layout_alignParentBottom="false"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="50dp"
-                    android:clickable="true"
-                    android:onClick="showProd"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="5dp"
-                    android:src="@drawable/btn_search" />
+                <GridView
+                    android:id="@+id/grdbtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:numColumns="2" />
 
                 <RelativeLayout
                     android:id="@+id/relScan"
@@ -784,18 +711,18 @@
         <RelativeLayout
             android:id="@+id/relsubtot"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="60dp"
             android:layout_above="@id/textView89"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="-1dp"
             android:layout_marginRight="-1dp"
-            android:background="@drawable/frame_rect_blue">
+            android:background="@drawable/blue_strip">
 
             <TextView
                 android:id="@+id/textView115"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="5dp"
@@ -810,11 +737,14 @@
             <TextView
                 android:id="@+id/textView103"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
+                android:layout_height="30dp"
+                android:layout_alignStart="@+id/textView115"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentTop="false"
                 android:layout_alignParentEnd="false"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="false"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="0dp"
                 android:layout_marginRight="5dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="3dp"
@@ -822,6 +752,24 @@
                 android:text="Subtotal : 0.00"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lblTot"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginBottom="3dp"
+                android:background="@drawable/frame_rect_white"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="0.00"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#FFFFFF"
+                android:textSize="30sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -881,7 +829,7 @@
             android:id="@+id/lblDir"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_above="@+id/textView88"
+            android:layout_alignTop="@id/textView88"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="-1dp"
             android:layout_marginBottom="0dp"
@@ -955,5 +903,32 @@
         android:layout_toLeftOf="@id/gridView2"
         android:background="@drawable/blue_strip">
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relLock"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="false"
+        android:layout_marginTop="53dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/frame_rect">
+
+        <ImageView
+            android:id="@+id/imageView35"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="2dp"
+            android:clickable="true"
+            android:onClick="finishOrder"
+            android:padding="15dp"
+            android:src="@drawable/payment" />
     </RelativeLayout>
 </RelativeLayout>

@@ -53,7 +53,8 @@
         android:minWidth="80dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="18sp" />
+        android:textSize="21sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/lblFecha"

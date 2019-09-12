@@ -3895,7 +3895,7 @@ public class ComWS extends PBase {
 			emp =ss;
 
 			ss=txtWS.getText().toString().trim();
-			//ss="http://192.168.1.142/wsAndr/wsandr.asmx";
+			//ss="http://192.168.1.137/MPos/wsMPos.asmx";
 			if (mu.emptystr(ss) || ss.equalsIgnoreCase("*")) {
 				mu.msgbox("La dirección de Web service no esta definida.");return false;
 			}

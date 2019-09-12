@@ -26,22 +26,37 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.ladapt.LA_Login;
+import com.dtsgt.ladapt.ListAdaptMenu;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class MainActivity extends PBase {
 
     private EditText txtUser, txtPass;
-    private TextView lblRuta, lblRTit, lblLogin, lblVer, lblEmp;
+    private TextView lblRuta, lblRTit, lblLogin, lblVer, lblEmp, lblPass,lblKeyDP;
     private ImageView imgLogo;
 
     private BaseDatosVersion dbVers;
+
+    private ListView listView;
+    private LA_Login adapter;
+    private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
+
+    private clsKeybHandler khand;
 
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult;
@@ -111,7 +126,11 @@ public class MainActivity extends PBase {
             lblLogin = (TextView) findViewById(R.id.lblDir);
             lblVer = (TextView) findViewById(R.id.textView10);
             lblEmp = (TextView) findViewById(R.id.textView82);
+            lblPass = (TextView) findViewById(R.id.lblPass);
+            lblKeyDP = (TextView) findViewById(R.id.textView110);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
+
+            listView = (ListView) findViewById(R.id.listView1);
 
             lblVer.setText("Version " + gl.parVer);
 
@@ -120,6 +139,9 @@ public class MainActivity extends PBase {
             dbVers.checkVersion(1);
 
             setHandlers();
+
+            khand=new clsKeybHandler(this,lblPass,lblKeyDP);
+            khand.enable();
 
             txtUser.requestFocus();
 
@@ -218,6 +240,11 @@ public class MainActivity extends PBase {
         }
     }
 
+    public void doLoginScreen(View view) {
+        browse=1;
+        startActivity(new Intent(this,Login.class));
+    }
+
     public void doRegister(View view) {
         try {
             startActivity(new Intent(this, comWSLic.class));
@@ -226,6 +253,18 @@ public class MainActivity extends PBase {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+    }
+
+    public void doKey(View view) {
+        String ss;
+        ss=view.getTag().toString();
+
+        khand.handleKey(ss);
+        if (khand.isEnter) {
+            if (khand.isValid) {
+                //toast(khand.val);
+            }
         }
     }
 
@@ -412,6 +451,7 @@ public class MainActivity extends PBase {
 
         configBase();
 
+        llenaUsuarios();
     }
 
     private void processLogIn() {
@@ -947,6 +987,28 @@ public class MainActivity extends PBase {
         }
    }
 
+    public void llenaUsuarios() {
+        clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+        clsClasses.clsMenu item;
+
+        try {
+            mitems.clear();
+            VendedoresObj.fill();
+
+            for (int i = 0; i <VendedoresObj.count; i++) {
+                item=clsCls.new clsMenu();
+                item.Cod=VendedoresObj.items.get(i).codigo;
+                item.Name=VendedoresObj.items.get(i).nombre;
+                mitems.add(item);
+            }
+
+            adapter=new LA_Login(this,mitems);
+            listView.setAdapter(adapter);
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Activity Events
@@ -957,6 +1019,11 @@ public class MainActivity extends PBase {
             initSession();
             txtUser.requestFocus();
             lblLogin.setVisibility(View.VISIBLE);
+
+            if (browse==1) {
+                browse=0;return;
+            }
+
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }

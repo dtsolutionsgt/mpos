@@ -82,8 +82,8 @@ public class ListAdaptVenta extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 							
-		holder.lblCod.setText(items.get(position).Nombre);
-		holder.lblNombre.setText(items.get(position).Cod);
+		holder.lblCod.setText(items.get(position).Cod);
+		holder.lblNombre.setText(items.get(position).Nombre);
 		
 		//val=items.get(position).Cant;
 		//holder.lblCant.setText(frmdec.format(val)+" "+items.get(position).um);

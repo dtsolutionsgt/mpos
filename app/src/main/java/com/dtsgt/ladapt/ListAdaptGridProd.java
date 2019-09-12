@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +17,14 @@ import com.dtsgt.mpos.R;
 import java.io.File;
 import java.util.ArrayList;
 
-public class ListAdaptGridFam extends BaseAdapter {
+public class ListAdaptGridProd extends BaseAdapter {
 	private ArrayList<clsMenu> items;
 
 	private int selectedIndex;
     private String imgpath;
 	private LayoutInflater l_Inflater;
 
-	public ListAdaptGridFam(Context context, ArrayList<clsMenu> results,String imgfold) {
+	public ListAdaptGridProd(Context context, ArrayList<clsMenu> results, String imgfold) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
@@ -73,7 +72,7 @@ public class ListAdaptGridFam extends BaseAdapter {
         holder.imgEst.setImageResource(R.drawable.blank256);
 
         try {
-            String prodimg = imgpath+"familia/"+items.get(position).Cod+".png";
+            String prodimg = imgpath+items.get(position).Cod+".png";
             File file = new File(prodimg);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(prodimg);

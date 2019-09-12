@@ -75,6 +75,7 @@ public class Recarga extends PBase {
 			((appGlobals) vApp).gstr="";
 			browse=1;
 			itempos=-1;
+			gl.prodtipo=2;
 			Intent intent = new Intent(this,Producto.class);
 			startActivity(intent);
 		}catch (Exception e){

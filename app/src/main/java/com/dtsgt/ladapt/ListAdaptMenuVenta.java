@@ -84,7 +84,13 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		if (items.get(position).Icon==12) holder.imgEst.setImageResource(R.drawable.venta_add);
 		if (items.get(position).Icon==13) holder.imgEst.setImageResource(R.drawable.venta_switch);
 
+        if (items.get(position).Icon==50) holder.imgEst.setImageResource(R.drawable.btn_search);
+        if (items.get(position).Icon==51) holder.imgEst.setImageResource(R.drawable.barcode_btn);
+        if (items.get(position).Icon==52) holder.imgEst.setImageResource(R.drawable.vendedor);
+        if (items.get(position).Icon==53) holder.imgEst.setImageResource(R.drawable.lock);
+
         if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
+
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
