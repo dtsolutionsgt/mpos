@@ -40,7 +40,7 @@ public class VentaEdit extends PBase {
     }
 
     public void doApply(View view) {
-        gl.retcant=-1;
+        gl.retcant=cant;
         finish();
     }
 
@@ -126,14 +126,11 @@ public class VentaEdit extends PBase {
         }
     }
 
-
-
-    //endregion
+   //endregion
 
     //region Activity Events
 
 
     //endregion
-
 
 }

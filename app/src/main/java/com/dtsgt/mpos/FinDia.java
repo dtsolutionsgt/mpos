@@ -133,8 +133,8 @@ public class FinDia extends PBase {
                 buildReports();
             }
 
-            if (fail) rslt = false;
-            else rslt = completeProcess();
+            //if (fail) rslt = false;else rslt = completeProcess();
+            if (fail) rslt = false;else rslt =true;
 
             pBar.setVisibility(View.INVISIBLE);
             idle = true;

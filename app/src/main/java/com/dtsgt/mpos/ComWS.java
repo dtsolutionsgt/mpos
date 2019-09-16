@@ -206,8 +206,7 @@ public class ComWS extends PBase {
 	public void askRec(View view) {
 
 		if (isbusy == 1) {
-			toastcent("Por favor, espere que se termine la tarea actual.");
-			return;
+			toastcent("Por favor, espere que se termine la tarea actual.");return;
 		}
 
 		licSerial=gl.deviceId;
@@ -221,31 +220,7 @@ public class ComWS extends PBase {
 			licRutaEnc="";
 		}
 
-		//CKFK 20190222 Se agregó esta validación para no sobreescribir los datos si ya se importaron
-		if (!gl.modoadmin) {
-
-			if (gl.banderafindia) {
-
-				int fechaUltimoCierre;
-
-				fechaUltimoCierre = claseFindia.ultimoCierreFecha();
-
-				if ((du.getActDate() == fechaUltimoCierre) && ExistenDatos()) {
-					//claseFindia.
-					claseFindia.eliminarTablasD();
-				}
-
-			}
-
-			if (ExistenDatos()) {
-				BorraDatosAnteriores("¿Tiene facturas, pedidos, cobros, devoluciones o inventario, está seguro de borrar los datos?");
-			} else {
-				msgAskConfirmaRecibido();
-			}
-		} else {
-			msgAskConfirmaRecibido();
-		}
-
+        msgAskConfirmaRecibido();
 	}
 
 	public void askSend(View view) {
@@ -309,7 +284,6 @@ public class ComWS extends PBase {
 	public void doFotos(View view) {
 		startActivity(new Intent(this,ComWSFotos.class));
 	}
-
 
 	private void setHandlers() {
 		ralBack.setOnTouchListener(new SwipeListener(this) {
@@ -1076,7 +1050,9 @@ public class ComWS extends PBase {
             if (!AddTable("P_PARAMEXT")) return false;
             if (!AddTable("P_MONEDA")) return false;
             if (!AddTable("P_PROVEEDOR")) return false;
-
+            if (!AddTable("P_PRODMENU")) return false;
+            if (!AddTable("P_PRODOPC")) return false;
+            if (!AddTable("P_PRODOPCLIST")) return false;
 
            //procesaParamsExt();
 
@@ -1574,6 +1550,21 @@ public class ComWS extends PBase {
 
         if (TN.equalsIgnoreCase("P_MONEDA")) {
             SQL = "SELECT CODIGO,NOMBRE,ACTIVO,SYMBOLO,CAMBIO FROM P_MONEDA WHERE (EMPRESA='" + emp + "')";
+            return SQL;
+        }
+
+        if (TN.equalsIgnoreCase("P_PRODMENU")) {
+            SQL = "SELECT CODIGO,ITEM,NOMBRE,IDOPCION,CANT,ORDEN,BANDERA,NOTA FROM P_PRODMENU WHERE (EMPRESA='" + emp + "')";
+            return SQL;
+        }
+
+        if (TN.equalsIgnoreCase("P_PRODOPC")) {
+            SQL = "SELECT ID,NOMBRE,ACTIVO FROM P_PRODOPC WHERE (EMPRESA='" + emp + "')";
+            return SQL;
+        }
+
+        if (TN.equalsIgnoreCase("P_PRODOPCLIST")) {
+            SQL = "SELECT ID,PRODUCTO,CANT,IDRECETA FROM P_PRODOPCLIST WHERE (EMPRESA='" + emp + "')";
             return SQL;
         }
 

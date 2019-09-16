@@ -74,7 +74,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="1275dp"
-        android:layout_height="400dp"
+        android:layout_height="600dp"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -85,6 +85,73 @@
         android:layout_marginEnd="5dp"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="5dp">
+
+        <TextView
+            android:id="@+id/lblCFact17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lblCFact5"
+            android:layout_alignStart="@+id/lblCFact"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignBottom="@+id/radiogrp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="1dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="-1dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Tipo :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <RadioGroup
+            android:id="@+id/radiogrp"
+            android:layout_width="750dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/spinner14"
+            android:layout_alignStart="@+id/spinner14"
+            android:layout_alignEnd="@+id/textView123"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/frame_rect"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="0dp"
+                android:layout_weight="1"
+                android:text="Con existencia"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radioButton3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:text="Sin existencia"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radioButton4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_weight="1"
+                android:text="Menu con opciones"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+        </RadioGroup>
 
         <CheckBox
             android:id="@+id/checkBox9"
@@ -97,6 +164,157 @@
             android:text="Permite cantidad decimal"
             android:textSize="21sp"
             android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txt2"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:maxLength="50"
+            android:maxLines="1"
+            android:selectAllOnFocus="false"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txt1"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editText6"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinner10"
+            android:layout_alignStart="@+id/spinner10"
+            android:layout_alignEnd="@+id/txt1"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:maxLength="30"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editText13"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText6"
+            android:layout_alignStart="@+id/editText6"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:maxLength="10"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editText11"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/spinner15"
+            android:layout_alignBottom="@+id/spinner15"
+            android:layout_alignParentEnd="false"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/spinner15"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editText15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/editText11"
+            android:layout_alignTop="@+id/lblCFact15"
+            android:layout_alignEnd="@+id/editText11"
+            android:layout_alignBottom="@+id/lblCFact15"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinner15"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_below="@+id/editText13"
+            android:layout_alignStart="@+id/editText13"
+            android:layout_alignEnd="@+id/spinner11"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/spinner_style" />
+
+        <Spinner
+            android:id="@+id/spinner14"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_below="@+id/spinner15"
+            android:layout_alignStart="@+id/txt2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/spinner_style" />
+
+        <Spinner
+            android:id="@+id/spinner13"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_alignTop="@+id/spinner14"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/spinner14"
+            android:background="@drawable/spinner_style" />
+
+        <Spinner
+            android:id="@+id/spinner11"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_alignTop="@+id/spinner13"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/spinner13"
+            android:background="@drawable/spinner_style" />
+
+        <Spinner
+            android:id="@+id/spinner10"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:layout_below="@+id/txt2"
+            android:layout_alignStart="@+id/txt2"
+            android:layout_alignEnd="@+id/txt2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="01dp"
+            android:background="@drawable/spinner_style" />
 
         <TextView
             android:id="@+id/lblCFact15"
@@ -142,48 +360,6 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="normal" />
-
-        <Spinner
-            android:id="@+id/spinner15"
-            android:layout_width="100dp"
-            android:layout_height="42dp"
-            android:layout_below="@+id/editText13"
-            android:layout_alignStart="@+id/editText13"
-            android:layout_alignEnd="@+id/spinner11"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/spinner_style" />
-
-        <Spinner
-            android:id="@+id/spinner14"
-            android:layout_width="100dp"
-            android:layout_height="42dp"
-            android:layout_below="@+id/spinner15"
-            android:layout_alignStart="@+id/txt2"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/spinner_style" />
-
-        <Spinner
-            android:id="@+id/spinner13"
-            android:layout_width="100dp"
-            android:layout_height="42dp"
-            android:layout_alignTop="@+id/spinner14"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="0dp"
-            android:layout_toEndOf="@+id/spinner14"
-            android:background="@drawable/spinner_style" />
-
-        <Spinner
-            android:id="@+id/spinner11"
-            android:layout_width="100dp"
-            android:layout_height="42dp"
-            android:layout_alignTop="@+id/spinner13"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="0dp"
-            android:layout_toEndOf="@+id/spinner13"
-            android:background="@drawable/spinner_style" />
 
         <TextView
             android:id="@+id/lblCFact5"
@@ -269,24 +445,6 @@
             android:textSize="18sp"
             android:textStyle="normal" />
 
-        <EditText
-            android:id="@+id/txt2"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView2"
-            android:layout_alignParentEnd="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="50"
-            android:maxLines="1"
-            android:selectAllOnFocus="false"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
         <TextView
             android:id="@+id/lblCFact"
             android:layout_width="wrap_content"
@@ -308,21 +466,6 @@
             android:textSize="18sp"
             android:textStyle="normal" />
 
-        <EditText
-            android:id="@+id/txt1"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="false"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="15"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
         <TextView
             android:id="@+id/textView2"
             android:layout_width="150dp"
@@ -337,65 +480,6 @@
             android:text="Código :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
-
-        <Spinner
-            android:id="@+id/spinner10"
-            android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:layout_below="@+id/txt2"
-            android:layout_alignStart="@+id/txt2"
-            android:layout_alignEnd="@+id/txt2"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="01dp"
-            android:background="@drawable/spinner_style" />
-
-        <EditText
-            android:id="@+id/editText6"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/spinner10"
-            android:layout_alignStart="@+id/spinner10"
-            android:layout_alignEnd="@+id/txt1"
-            android:layout_alignParentBottom="false"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:maxLength="30"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editText13"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/editText6"
-            android:layout_alignStart="@+id/editText6"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:maxLength="10"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editText11"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/spinner15"
-            android:layout_alignBottom="@+id/spinner15"
-            android:layout_alignParentEnd="false"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toEndOf="@+id/spinner15"
-            android:ems="10"
-            android:inputType="numberDecimal"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView123"
@@ -415,35 +499,6 @@
             android:onClick="doPrice"
             android:text="Aplicar"
             android:textSize="18sp" />
-
-        <CheckBox
-            android:id="@+id/checkBox8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="14dp"
-            android:layout_toEndOf="@+id/txt1"
-            android:text="No valida existencias"
-            android:textSize="21sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/editText15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/editText11"
-            android:layout_alignTop="@+id/lblCFact15"
-            android:layout_alignEnd="@+id/editText11"
-            android:layout_alignBottom="@+id/lblCFact15"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:ems="10"
-            android:inputType="numberDecimal"
-            android:textSize="21sp"
-            android:textStyle="bold" />
 
     </RelativeLayout>
 

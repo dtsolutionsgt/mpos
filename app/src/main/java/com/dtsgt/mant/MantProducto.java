@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
@@ -31,7 +32,8 @@ public class MantProducto extends PBase {
     private ImageView imgstat;
     private EditText txt1,txt2,txt3,txt4,txt5,txt6;
     private Spinner spin,spin1,spin2,spin3,spinp;
-    private CheckBox cbTipo,cbDec;
+    private CheckBox cbDec;
+    private RadioButton rb1,rb2,rb3;
 
     private clsP_productoObj holder;
     private clsClasses.clsP_producto item=clsCls.new clsP_producto();
@@ -62,8 +64,10 @@ public class MantProducto extends PBase {
         spin2 = (Spinner) findViewById(R.id.spinner13);
         spin3 = (Spinner) findViewById(R.id.spinner11);
         spinp = (Spinner) findViewById(R.id.spinner15);
-        cbTipo = (CheckBox) findViewById(R.id.checkBox8);
-        cbDec = (CheckBox) findViewById(R.id.checkBox9);
+         cbDec = (CheckBox) findViewById(R.id.checkBox9);
+        rb1 = (RadioButton) findViewById(R.id.radioButton);
+        rb2 = (RadioButton) findViewById(R.id.radioButton3);
+        rb3 = (RadioButton) findViewById(R.id.radioButton4);
 
         holder =new clsP_productoObj(this,Con,db);
 
@@ -492,13 +496,13 @@ public class MantProducto extends PBase {
     //region Aux
 
     private void showItem() {
+
         txt1.setText(item.codigo);
         txt2.setText(item.desclarga);
         txt3.setText(item.codbarra);
         txt4.setText(item.unidbas);
         txt6.setText(mu.frmdecno(item.costo));
 
-        cbTipo.setChecked(!item.tipo.equalsIgnoreCase("P"));
         cbDec.setChecked(item.unigrasap==1);
 
         if (!fillSpinner(item.linea)) return;
@@ -506,6 +510,10 @@ public class MantProducto extends PBase {
         if (!fillSpin1(""+(int) item.imp1)) return;
         fillSpin2(""+(int) item.imp2);
         fillSpin3(""+(int) item.imp3);
+
+        rb1.setChecked(true);
+        if (item.tipo.equalsIgnoreCase("S")) rb2.setChecked(true);
+        if (item.tipo.equalsIgnoreCase("M")) rb3.setChecked(true);
     }
 
     private boolean validaDatos() {
@@ -549,7 +557,10 @@ public class MantProducto extends PBase {
                 msgbox("¡Costo incorrecto!");return false;
             }
 
-            if (cbTipo.isChecked()) item.tipo="S";else item.tipo="P";
+            item.tipo="P";
+            if (rb2.isChecked()) item.tipo="S";
+            if (rb3.isChecked()) item.tipo="M";
+
             if (cbDec.isChecked()) item.unigrasap=1;else item.unigrasap=0;
 
             return true;

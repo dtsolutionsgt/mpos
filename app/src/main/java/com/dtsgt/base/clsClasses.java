@@ -168,6 +168,12 @@ public class clsClasses {
 		public double cambio;
 	}
 
+    public class clsP_paramext {
+        public int  id;
+        public String nombre;
+        public String valor;
+    }
+
     public class clsP_prodprecio {
         public String codigo;
         public int  nivel;
@@ -182,6 +188,24 @@ public class clsClasses {
         public double precio;
         public String unidadmedida;
 	}
+
+    public class clsP_prodmenu {
+        public String codigo;
+        public int  item;
+        public String nombre;
+        public int  idopcion;
+        public int  cant;
+        public int  orden;
+        public int  bandera;
+        public String nota;
+    }
+
+    public class clsP_prodopclist {
+        public int  id;
+        public String producto;
+        public double cant;
+        public int  idreceta;
+    }
 
     public class clsP_producto {
 		public String codigo;
@@ -381,7 +405,7 @@ public class clsClasses {
 	}	
 	
 	public class clsVenta {
-		public String Cod,Nombre,um,val,valp,sdesc;
+		public String Cod,Nombre,um,val,valp,sdesc,emp;
 		public double Cant,Peso,Prec,Desc,Total,imp,percep;
 		
 	}
@@ -436,7 +460,6 @@ public class clsClasses {
 		public double val;
 	}
 
-	//#HS_20181121_1546 Se agregó clsFinDia y los campos de la tabla FinDia.
 	public class clsFinDiaItems {
 		public int id, corel, val1, val2, val3, val4, val5, val6, val7, val8;
 	}
@@ -459,6 +482,11 @@ public class clsClasses {
 	public class clsBarras{
 		public String barra,peso;
 	}
+
+    public class clsOpcion {
+        public int ID,bandera,listid;
+        public String Name,Cod,Descrip;
+    }
 
 	//endregion
 

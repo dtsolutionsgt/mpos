@@ -833,7 +833,7 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAD
 
-			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL1,VAL2,UM,FACTOR,UMSTOCK FROM T_VENTA";
+			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL1,VAL2,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
 			dt=Con.OpenDT(sql);
 
 			dt.moveToFirst();
@@ -862,7 +862,7 @@ public class FacturaRes extends PBase {
 				ins.add("UMVENTA",dt.getString(11));
 				ins.add("FACTOR",dt.getDouble(12));
 				ins.add("UMSTOCK",vumstock);
-				ins.add("UMPESO",gl.umpeso); //#HS_20181120_1625 Se agrego el valor gl.umpeso anteriormente estaba ""
+				ins.add("UMPESO",dt.getString(13));
 
 			    db.execSQL(ins.sql());
 

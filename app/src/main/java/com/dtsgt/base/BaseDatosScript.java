@@ -568,7 +568,7 @@ public class BaseDatosScript {
 					"[FACTOR] REAL NOT NULL,"+
 					"[UMSTOCK] TEXT NOT NULL,"+
 					"[UMPESO] TEXT NOT NULL,"+										
-					"PRIMARY KEY ([COREL],[PRODUCTO])"+
+					"PRIMARY KEY ([COREL],[PRODUCTO],[UMPESO])"+
 					");";
 			database.execSQL(sql);
 			
@@ -2032,6 +2032,51 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [P_PRODMENU] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "ITEM INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "IDOPCION INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
+                    "BANDERA INTEGER NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO],[ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_PRODOPC] ("+
+                    "ID TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_PRODOPCLIST] ("+
+                    "ID TEXT NOT NULL,"+
+                    "PRODUCTO TEXT NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "IDRECETA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID],[PRODUCTO])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [T_PRODMENU] ("+
+                    "ID     INTEGER NOT NULL,"+
+                    "IDSESS INTEGER NOT NULL,"+
+                    "IDITEM INTEGER NOT NULL,"+
+                    "CODIGO TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "DESCRIP TEXT NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "BANDERA INTEGER NOT NULL,"+
+                    "IDLISTA INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID],[IDSESS],[IDITEM])"+
+                    ");";
+            database.execSQL(sql);
+
 
             return 1;
 			 
@@ -2299,6 +2344,11 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (17,'Pregunta si es correcta la impresion de la factura','S')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (18,'Restringir venta por GPS margen','P')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (19,'Margen de error de GPS','10')");
+
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','S')");
+
 
     }
 	

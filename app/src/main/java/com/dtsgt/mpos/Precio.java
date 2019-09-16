@@ -56,7 +56,11 @@ public class Precio {
 		clsDescuento clsDesc=new clsDescuento(cont,prodid,cant);
 		desc=clsDesc.getDesc();
 
-		if (cant>0) prodPrecio(ppeso);else prodPrecioBase();
+		if (cant>0) {
+		    prodPrecio(ppeso);
+        } else {
+		    prodPrecioBase();
+        }
 
 		return prec;
 	}

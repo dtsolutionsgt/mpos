@@ -245,8 +245,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_factura_res"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".FinDia"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -530,7 +530,18 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".Login"
+        <activity
+            android:name=".ProdMenu"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".Login"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.dtsgt.mant.MantConfig"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -551,6 +562,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>

@@ -7,14 +7,17 @@
     android:background="#60000000"
     android:clickable="true"
     android:onClick="doClose"
-    tools:context=".VentaEdit">
+    tools:context=".ProdMenu">
 
     <RelativeLayout
-        android:layout_width="545dp"
-        android:layout_height="400dp"
+        android:layout_width="600dp"
+        android:layout_height="match_parent"
         android:layout_alignParentTop="false"
         android:layout_alignParentEnd="false"
-        android:layout_centerInParent="true"
+        android:layout_centerInParent="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/frame_rect_blue">
 
         <RelativeLayout
@@ -74,10 +77,10 @@
                 android:id="@+id/imageView27"
                 android:layout_width="70dp"
                 android:layout_height="76dp"
-                android:layout_below="@+id/textView116"
                 android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="25dp"
                 android:clickable="true"
                 android:onClick="doDelete"
                 android:src="@drawable/borrar" />
@@ -111,17 +114,25 @@
                 android:onClick="doInc"
                 android:src="@drawable/mas" />
 
-            <TextView
-                android:id="@+id/textView116"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="false"
-                android:layout_alignParentEnd="false"
-                android:layout_centerInParent="true"
-                android:text="TextView"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:visibility="visible" />
+            <RelativeLayout
+                android:id="@+id/relList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/textView117"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="20dp">
+
+                <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/textView117"
@@ -136,6 +147,21 @@
                 android:textColor="@android:color/holo_blue_dark"
                 android:textSize="48sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView116"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/imageView27"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="110dp"
+                android:text="TextView"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:visibility="invisible" />
         </RelativeLayout>
 
         <TextView
@@ -153,7 +179,7 @@
             android:maxLines="2"
             android:text="TextView"
             android:textColor="#FFFFFF"
-            android:textSize="24sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
     </RelativeLayout>
 

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
+import com.dtsgt.mant.MantConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -1379,7 +1380,7 @@ public class Menu extends PBase {
 			final AlertDialog Dialog;
 
             //final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
-            final String[] selitems = {"Banco","Caja","Cliente","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario"};
+            final String[] selitems = {"Banco","Caja","Cliente","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1404,8 +1405,11 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
                     if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
                     if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
+                    if (ss.equalsIgnoreCase("Configuración")) gl.mantid=16;
 
-                    if (gl.mantid==15) {
+                    if (gl.mantid==16) {
+                        startActivity(new Intent(Menu.this, MantConfig.class));
+                    } else if (gl.mantid==15) {
                         startActivity(new Intent(Menu.this, Lista.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
@@ -1445,22 +1449,23 @@ public class Menu extends PBase {
 
 	//endregion
 
-	public void showReportMenu() {
+	//region Reportes
 
-		try{
-			final AlertDialog Dialog;
+    public void showReportMenu() {
+        try{
+            final AlertDialog Dialog;
 
-			final String[] selitems = {"Reporte Venta", "Reporte Inventario", "Reporte 1", "Reporte 2", "Reporte 3", "Reporte 4", "Reporte 5"};
+            final String[] selitems = {"Reporte Venta", "Reporte Inventario", "Reporte 1", "Reporte 2", "Reporte 3", "Reporte 4", "Reporte 5"};
 
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setTitle("Mantenimientos");
+            menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Mantenimientos");
 
-			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
 
-					ss=selitems[item];
+                    ss=selitems[item];
 
-					if (ss.equalsIgnoreCase("Reporte Venta")) gl.mantid=0; gl.reportList=true;
+                    if (ss.equalsIgnoreCase("Reporte Venta")) gl.mantid=0; gl.reportList=true;
 					/*if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
 					if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
 					if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
@@ -1481,42 +1486,38 @@ public class Menu extends PBase {
 					} else {
 						startActivity(new Intent(Menu.this, Lista.class));
 					}*/
-					startActivity(new Intent(Menu.this,Exist.class));
-				}
-			});
+                    startActivity(new Intent(Menu.this,Exist.class));
+                }
+            });
 
-			menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					toast("Pendiente implementación");
-				}
-			});
+            menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    toast("Pendiente implementación");
+                }
+            });
 
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
 
-			Dialog = menudlg.create();
-			Dialog.show();
+            Dialog = menudlg.create();
+            Dialog.show();
 
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
 
-			Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-			nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbuttonp.setTextColor(Color.WHITE);
-		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-	//region Reportes
-
-
+            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbuttonp.setTextColor(Color.WHITE);
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
 	//endregion
 
