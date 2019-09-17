@@ -15,16 +15,16 @@ public class appGlobals extends Application {
 	public String ubas,emp, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante, ayudanteID, vehiculo, vehiculoID;
 	public String wsURL,bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel;
 	public int itemid,gint,tipo,nivel,prodtipo,prw,boldep,vnivel,vnivprec,media;
-	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant;
+	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid;
 	public long nuevaFecha,atentini;
 	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp;
 	public boolean CellCom,closeDevBod,modoinicial;
 	public String ref1,ref2,ref3,fnombre,fnit,fdir,escaneo,corel_d_mov,barra,parVer,gcods;
-	public String tienda,tiendanom,caja,cajanom,urlglob;
+	public String tienda,tiendanom,caja,cajanom,urlglob,titReport;
 	public int tiponcredito,validarCred,gpsdist,gcodi;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta;
 	public boolean closeCliDet,closeVenta,promapl,pagado,pagocobro,sinimp,rutapos,devol,modoadmin,reportList;
-   	public boolean usarpeso,banderafindia,depparc,incNoLectura,cobroPendiente,findiaactivo,banderaCobro;
+	public boolean usarpeso,banderafindia,depparc,incNoLectura,cobroPendiente,findiaactivo,banderaCobro;
 	public int mpago;
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true por defecto estará en false

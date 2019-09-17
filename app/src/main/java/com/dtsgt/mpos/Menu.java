@@ -69,7 +69,6 @@ public class Menu extends PBase {
 
 			super.InitBase();
 			addlog("Menu",""+du.getActDateTime(),gl.vend);
-			gl.reportList=false;
 
 			gridView = (GridView) findViewById(R.id.gridView1);
 			relbotpan = (RelativeLayout) findViewById(R.id.relbotpan);
@@ -1449,13 +1448,13 @@ public class Menu extends PBase {
 
 	//endregion
 
-	//region Reportes
+	public void showReportMenu() {
 
-    public void showReportMenu() {
-        try{
-            final AlertDialog Dialog;
+		try{
 
-            final String[] selitems = {"Reporte Venta", "Reporte Inventario", "Reporte 1", "Reporte 2", "Reporte 3", "Reporte 4", "Reporte 5"};
+			final AlertDialog Dialog;
+
+			final String[] selitems = {"Reporte de Facturas por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia"};
 
             menudlg = new AlertDialog.Builder(this);
             menudlg.setTitle("Mantenimientos");
@@ -1465,30 +1464,19 @@ public class Menu extends PBase {
 
                     ss=selitems[item];
 
-                    if (ss.equalsIgnoreCase("Reporte Venta")) gl.mantid=0; gl.reportList=true;
-					/*if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
-					if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
-					if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
-					if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
-					if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
-					if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
-					if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
-					if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
-					if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
-					if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
-					if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
-					if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
-					if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
-					if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
+					if (ss.equalsIgnoreCase("Reporte de Facturas por Día")) gl.reportid=1;
+					if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
+					if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
+					if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
+					if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
+					if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
+					if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
+					if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
 
-					if (gl.mantid==15) {
-						startActivity(new Intent(Menu.this, Lista.class));
-					} else {
-						startActivity(new Intent(Menu.this, Lista.class));
-					}*/
-                    startActivity(new Intent(Menu.this,Exist.class));
-                }
-            });
+					gl.titReport = ss;
+					startActivity(new Intent(Menu.this,Reportes.class));
+				}
+			});
 
             menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
                 @Override
@@ -2013,7 +2001,6 @@ public class Menu extends PBase {
  	protected void onResume() {
 		try{
 			super.onResume();
-			gl.reportList=false;
 			setPrintWidth();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

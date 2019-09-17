@@ -93,7 +93,7 @@ public class FacturaRes extends PBase {
 		contadoCheck = (CheckBox) findViewById(R.id.checkContado);
 
 		imgBon = (ImageView) findViewById(R.id.imageView6);
-		imgMPago = (ImageView) findViewById(R.id.imageView1);
+		imgMPago = (ImageView) findViewById(R.id.btnImp);
 		imgCred = (ImageView) findViewById(R.id.imageView3);
 		imgPend = (ImageView) findViewById(R.id.imageView12);
 		imgCash = (ImageView) findViewById(R.id.imageView2);

@@ -623,7 +623,7 @@
             android:src="@drawable/telefono" />
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/btnImp"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentTop="false"
@@ -674,7 +674,7 @@
             android:layout_alignBottom="@+id/textView4"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="false"
-            android:layout_toLeftOf="@+id/imageView1"
+            android:layout_toLeftOf="@+id/btnImp"
             android:layout_toRightOf="@+id/imgPFoto">
 
             <ImageView
@@ -706,9 +706,9 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView1"
-            android:layout_alignLeft="@+id/imageView1"
-            android:layout_alignRight="@+id/imageView1"
+            android:layout_below="@+id/btnImp"
+            android:layout_alignLeft="@+id/btnImp"
+            android:layout_alignRight="@+id/btnImp"
             android:gravity="center_horizontal"
             android:text="Devolución"
             android:textAppearance="?android:attr/textAppearanceSmall"

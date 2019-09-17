@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_margin="10dp"
-        android:layout_toLeftOf="@+id/imageView1" >
+        android:layout_toLeftOf="@+id/btnImp" >
 
         <TextView
             android:id="@+id/lblFact"
@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/textView3"
-        android:layout_toLeftOf="@+id/imageView1"
+        android:layout_toLeftOf="@+id/btnImp"
         android:layout_toRightOf="@+id/lblDVTot"
         android:ems="10"
         android:maxLength="24" />
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/txtCNTel"
         android:layout_alignTop="@+id/textView4"
-        android:layout_toLeftOf="@+id/imageView1"
+        android:layout_toLeftOf="@+id/btnImp"
         android:ems="10"
         android:maxLength="24" />
 
@@ -185,7 +185,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/btnImp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

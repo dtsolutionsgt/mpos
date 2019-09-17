@@ -38,7 +38,7 @@
         android:src="@drawable/next48" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/btnImp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -54,7 +54,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignTop="@+id/imageView2"
         android:layout_margin="5dp"
-        android:layout_toRightOf="@+id/imageView1"
+        android:layout_toRightOf="@+id/btnImp"
         android:background="@layout/frame_rect"
         android:clickable="true"
         android:gravity="center"
@@ -95,7 +95,7 @@
         android:id="@+id/listView1"
         android:layout_width="wrap_content"
         android:layout_height="447dp"
-        android:layout_above="@+id/imageView1"
+        android:layout_above="@+id/btnImp"
         android:layout_below="@+id/relLey"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="5dp"

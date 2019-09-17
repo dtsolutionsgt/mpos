@@ -62,7 +62,6 @@ public class Exist extends PBase {
 		
 		super.InitBase();
 		addlog("Exist",""+du.getActDateTime(),gl.vend);
-		if(gl.reportList) addlog("Exist_Report",""+du.getActDateTime(),gl.vend);
 		
 		tipo=((appGlobals) vApp).tipo;
 
@@ -76,14 +75,12 @@ public class Exist extends PBase {
 
 		setHandlers();
 
-		if (!gl.reportList) {
 			try {
 				sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";
 				db.execSQL(sql);
 			} catch (SQLException e) {
 				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			}
-		}
 		
 		rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp, "");
 		
@@ -101,7 +98,7 @@ public class Exist extends PBase {
 		/*int cant = CantExistencias();
 		Toast.makeText(this, "Cantidad." + cant, Toast.LENGTH_SHORT).show();*/
 
-}
+	}
 
 	
 	//region Events
