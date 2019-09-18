@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/textView1"
             android:layout_below="@+id/textView2"
-            android:layout_toLeftOf="@+id/imageView1" >
+            android:layout_toLeftOf="@+id/btnImp" >
 
             <TextView
                 android:id="@+id/textView3"
@@ -87,14 +87,14 @@
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView1"
+            android:layout_below="@+id/btnImp"
             android:layout_centerHorizontal="true"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="invisible" />
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/btnImp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

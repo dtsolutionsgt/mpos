@@ -114,7 +114,7 @@
         </RelativeLayout>
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/btnImp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -128,9 +128,9 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageView1"
+            android:layout_alignTop="@+id/btnImp"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/imageView1"
+            android:layout_toLeftOf="@+id/btnImp"
             android:gravity="center_vertical|center_horizontal"
             android:text="BONIFICACIÓN"
             android:textColor="#000000"
@@ -143,7 +143,7 @@
             android:layout_height="wrap_content"
             android:layout_alignWithParentIfMissing="true"
             android:layout_above="@+id/relMonto"
-            android:layout_below="@+id/imageView1"
+            android:layout_below="@+id/btnImp"
             android:layout_alignParentLeft="true"
             android:layout_margin="10dp"></ListView>
 

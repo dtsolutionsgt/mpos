@@ -502,6 +502,12 @@ public class clsClasses {
         public String Name,Cod,Descrip;
     }
 
+    public class clsReport{
+        public String codProd, descrip, corel, serie, um;
+        public int correl,cant;
+        public double total,imp;
+        public long fecha;
+    }
 	//endregion
 
 }

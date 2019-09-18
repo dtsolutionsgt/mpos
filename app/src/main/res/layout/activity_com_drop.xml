@@ -203,7 +203,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/relbotpan"
-        android:layout_alignLeft="@+id/imageView1"
+        android:layout_alignLeft="@+id/btnImp"
         android:layout_alignParentRight="true"
         android:gravity="center_horizontal"
         android:paddingBottom="3dp"
@@ -212,7 +212,7 @@
         android:textSize="10sp" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/btnImp"
         android:layout_width="64dp"
         android:layout_height="48dp"
         android:layout_above="@+id/lblCPago"

@@ -190,7 +190,7 @@ public class DepositoParc extends PBase {
 		try{
 			listView =  (ListView) dialog.findViewById(R.id.listView1);
 			btnSave   = (ImageView) dialog.findViewById(R.id.imageView2);
-			btnCancel = (ImageView) dialog.findViewById(R.id.imageView1);
+			btnCancel = (ImageView) dialog.findViewById(R.id.btnImp);
 
 			adapter=new ListAdaptDepos(this, items);
 			listView.setAdapter(adapter);

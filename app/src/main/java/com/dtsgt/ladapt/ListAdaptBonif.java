@@ -66,7 +66,7 @@ public class ListAdaptBonif extends BaseAdapter {
 			holder.lblDesc = (TextView) convertView.findViewById(R.id.textView1);
 			holder.lblTot = (TextView) convertView.findViewById(R.id.textView3);
 			holder.lblPrec = (TextView) convertView.findViewById(R.id.textView4);
-			holder.imgBand = (ImageView) convertView.findViewById(R.id.imageView1);
+			holder.imgBand = (ImageView) convertView.findViewById(R.id.btnImp);
 			
 			convertView.setTag(holder);
 		} else {

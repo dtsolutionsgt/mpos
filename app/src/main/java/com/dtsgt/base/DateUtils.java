@@ -193,6 +193,23 @@ public class DateUtils {
 		return sy+sm+sd;
 	}
 
+	public String univfechaReport(long f) {
+		long vy,vm,vd;
+		String sy,sm,sd;
+
+		//yyyy-MM-dd
+
+		vy=(long) f/100000000;f=f % 100000000;
+		vm=(long) f/1000000;f=f % 1000000;
+		vd=(long) f/10000;f=f % 10000;
+
+		if (vy>9) sy="20"+vy; else sy="200"+vy;
+		if (vm>9) sm=""+vm; else sm="0"+vm;
+		if (vd>9) sd=""+vd; else sd="0"+vd;
+
+		return sd+"/"+sm+"/"+sy;
+	}
+
 	public long ffecha00(long f) {
 		f=(long) f/10000;
 		f=f*10000;
@@ -357,6 +374,22 @@ public class DateUtils {
 		//#HS_20181120_1725 Campo de fecha sin hora.
 		f=cfechaSinHora(cyear,cmonth,cday);
 		fecha=f;
+
+		return fecha;
+	}
+
+	public long getFechaActualReport(){
+		long f,fecha;
+		int cyear,cmonth,cday,ch,cm;
+
+		final Calendar c = Calendar.getInstance();
+		cyear = c.get(Calendar.YEAR);
+		cmonth = c.get(Calendar.MONTH)+1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+
+		//#HS_20181120_1725 Campo de fecha sin hora.
+		f=cfechaSinHora(cyear,cmonth,cday);
+		fecha=f*10000;
 
 		return fecha;
 	}

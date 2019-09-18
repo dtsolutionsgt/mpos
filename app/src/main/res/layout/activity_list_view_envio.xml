@@ -38,7 +38,7 @@
         android:textStyle="bold" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/btnImp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/lblEPend"
@@ -52,9 +52,9 @@
         android:id="@+id/lblEEnv"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView1"
+        android:layout_alignBottom="@+id/btnImp"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imageView1"
+        android:layout_toLeftOf="@+id/btnImp"
         android:gravity="right|center_vertical"
         android:paddingBottom="5dp"
         android:paddingRight="15dp"

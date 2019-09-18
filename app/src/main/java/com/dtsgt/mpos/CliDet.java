@@ -94,7 +94,7 @@ public class CliDet extends PBase {
 		relCamara=(RelativeLayout) findViewById(R.id.relCamara);
 		
 		imgCobro= (ImageView) findViewById(R.id.imageView2);
-		imgDevol= (ImageView) findViewById(R.id.imageView1);
+		imgDevol= (ImageView) findViewById(R.id.btnImp);
 		imgRoadTit = (ImageView) findViewById(R.id.imgRoadTit);
 
 		app = new AppMethods(this, gl, Con, db);

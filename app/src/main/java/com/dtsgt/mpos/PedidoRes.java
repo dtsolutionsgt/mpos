@@ -73,7 +73,7 @@ public class PedidoRes extends PBase {
 		listView = (ListView) findViewById(R.id.listView1);
 		txtDir = (EditText) findViewById(R.id.txtFilter);
 		lblFecha = (TextView) findViewById(R.id.lblpSaldo);
-		imgBon = (ImageView) findViewById(R.id.imageView1);
+		imgBon = (ImageView) findViewById(R.id.btnImp);
 		
 		spinList = (Spinner) findViewById(R.id.spinner1);
 		
