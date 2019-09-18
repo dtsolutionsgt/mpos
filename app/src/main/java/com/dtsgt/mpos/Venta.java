@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -122,6 +123,15 @@ public class Venta extends PBase {
         clearItem();
 
         listFamily();
+
+        Handler mtimer = new Handler();
+        Runnable mrunner=new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(Venta.this,Clientes.class));
+            }
+        };
+        mtimer.postDelayed(mrunner,1000);
     }
 
     //region Events
@@ -291,7 +301,7 @@ public class Venta extends PBase {
 
                         prodid=item.Cod;gl.prodmenu=prodid;
                         uprodid=prodid;
-                        uid=item.emp;
+                        uid=item.emp;gl.menuitemid=uid;
                         adapter.setSelectedIndex(position);
 
                         gl.gstr=item.Nombre;
@@ -304,6 +314,7 @@ public class Venta extends PBase {
                             browse=6;
                             startActivity(new Intent(Venta.this,VentaEdit.class));
                         } else {
+                            gl.newmenuitem=false;
                             browse=7;
                             startActivity(new Intent(Venta.this,ProdMenu.class));
                         }
@@ -417,7 +428,6 @@ public class Venta extends PBase {
                 return true;
             }
         });
-
 
         gridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -749,6 +759,8 @@ public class Venta extends PBase {
 
     private void processMenuItem() {
 
+        gl.menuitemid=""+counter;
+        gl.newmenuitem=true;
         gl.gstr=gl.pprodname;
         gl.retcant=1;
 
@@ -1784,7 +1796,10 @@ public class Venta extends PBase {
             sql += "ORDER BY P_PRODUCTO.DESCCORTA";
             dt=Con.OpenDT(sql);
 
-            if (dt.getCount()==0) return;
+            if (dt.getCount()==0){
+                msgbox("¡Ninguno articulo de la familia tiene existencia disponible!");return;
+            }
+
             dt.moveToFirst();
 
             while (!dt.isAfterLast()) {
@@ -1892,6 +1907,7 @@ public class Venta extends PBase {
                     }
                     break;
                 case 52:
+                    startActivity(new Intent(Venta.this,Clientes.class));
                     break;
                 case 53:
                     break;
@@ -2043,6 +2059,9 @@ public class Venta extends PBase {
             db.execSQL(sql);
 
             sql="DELETE FROM T_BONIFFALT";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_PRODMENU";
             db.execSQL(sql);
 
         } catch (SQLException e) {
@@ -2297,11 +2316,12 @@ public class Venta extends PBase {
             super.onResume();
             try {
                 txtBarra.requestFocus();
-            } catch (Exception e) {
+             } catch (Exception e) {
 
             }
 
             if (gl.iniciaVenta){
+                gl.iniciaVenta=false;
                 try {
                     db.execSQL("DELETE FROM T_VENTA");
                     listItems();
@@ -2309,6 +2329,17 @@ public class Venta extends PBase {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
                     mu.msgbox("Error : " + e.getMessage());
                 }
+
+                Handler mtimer = new Handler();
+                Runnable mrunner=new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(Venta.this,Clientes.class));
+                    }
+                };
+                mtimer.postDelayed(mrunner,1000);
+
+
             }
 
             if (browse==1) {

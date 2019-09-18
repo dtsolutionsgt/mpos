@@ -75,8 +75,8 @@ public class Clientes extends PBase {
 		lblCant = (TextView) findViewById(R.id.lblCant);
 
 		app = new AppMethods(this, gl, Con, db);
-		gl.validimp = app.validaImpresora();
-		if (!gl.validimp) msgbox("¡La impresora no está autorizada!");
+		//gl.validimp = app.validaImpresora();
+		//if (!gl.validimp) msgbox("¡La impresora no está autorizada!");
 
 		setHandlers();
 
@@ -128,8 +128,7 @@ public class Clientes extends PBase {
 			Intent intent = new Intent(this, CliNuevo.class);
 			startActivity(intent);
 		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+			addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 		}
 
 	}
@@ -150,7 +149,8 @@ public class Clientes extends PBase {
 					selidx = position;
 					adapter.setSelectedIndex(position);
 
-					showCliente();
+					//showCliente();
+                    finish();
 
 				};
 			});
@@ -276,64 +276,16 @@ public class Clientes extends PBase {
 
 		try {
 
-			cobros.clear();
-			sql = "SELECT DISTINCT CLIENTE FROM P_COBRO ";
-			DT = Con.OpenDT(sql);
-
-			if (DT.getCount() > 0) {
-				DT.moveToFirst();
-				for (int i = 0; i < DT.getCount(); i++) {
-					//	try {
-					cobros.add(DT.getString(0));
-					DT.moveToNext();
-				/*	} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-					}*/
-				}
+			sql = "SELECT CODIGO,NOMBRE,ZONA,COORX,COORY " +
+					"FROM P_CLIENTE WHERE (1=1) ";
+			if (!filt.isEmpty()) {
+				sql += "AND ((CODIGO LIKE '%" + filt + "%') OR (NOMBRE LIKE '%" + filt + "%')) ";
 			}
-
-			ppago.clear();
-			sql = "SELECT D_FACTURA.CLIENTE " +
-					"FROM D_FACTURA INNER JOIN  D_FACTURAP ON  D_FACTURA.COREL = D_FACTURAP.COREL " +
-					"GROUP BY  D_FACTURA.CLIENTE, D_FACTURA.COREL, D_FACTURA.ANULADO " +
-					"HAVING  (D_FACTURA.ANULADO='N') AND (SUM(D_FACTURAP.VALOR=0))";
-
-			sql = "SELECT DISTINCT CLIENTE FROM D_FACTURA WHERE (ANULADO='N') AND (COREL NOT IN " +
-					"  (SELECT DISTINCT D_FACTURA_1.COREL " +
-					"   FROM D_FACTURA AS D_FACTURA_1 INNER JOIN " +
-					"   D_FACTURAP ON D_FACTURA_1.COREL=D_FACTURAP.COREL))";
-
+			sql += "ORDER BY NOMBRE";
 
 			DT = Con.OpenDT(sql);
 
-			if (DT.getCount() > 0) {
-				DT.moveToFirst();
-				for (int i = 0; i < DT.getCount(); i++) {
-					//	try {
-					ss = DT.getString(0);
-					if (!ppago.contains(ss)) ppago.add(ss);
-					DT.moveToNext();
-				/*	} catch (Exception e) {
-					}*/
-				}
-			}
-
-			sql = "SELECT DISTINCT P_CLIRUTA.CLIENTE,P_CLIENTE.NOMBRE,P_CLIRUTA.BANDERA,P_CLIENTE.COORX,P_CLIENTE.COORY " +
-					"FROM P_CLIRUTA INNER JOIN P_CLIENTE ON P_CLIRUTA.CLIENTE=P_CLIENTE.CODIGO " +
-					"WHERE (1=1) ";
-
-			if (mu.emptystr(filt)) {
-				if (dweek != 0) sql += "AND (P_CLIRUTA.DIA =" + dweek + ") ";
-			}
-
-			if (!mu.emptystr(filt)) {
-				sql += "AND ((P_CLIRUTA.CLIENTE LIKE '%" + filt + "%') OR (P_CLIENTE.NOMBRE LIKE '%" + filt + "%')) ";
-			}
-			sql += "ORDER BY P_CLIRUTA.SECUENCIA,P_CLIENTE.NOMBRE";
-
-			DT = Con.OpenDT(sql);
-
-			lblCant.setText("" + DT.getCount() + "");
+			//lblCant.setText("" + DT.getCount() + "");
 
 
 			if (DT.getCount() > 0) {
@@ -694,7 +646,7 @@ public class Clientes extends PBase {
 	protected void onResume() {
 		try{
 			super.onResume();
-			listItems();
+			//listItems();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}

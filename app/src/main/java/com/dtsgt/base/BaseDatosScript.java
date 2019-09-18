@@ -978,7 +978,19 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-			return 1;
+            sql= "CREATE TABLE [D_RATING]("+
+                    "[IDRATING] INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                    "[RUTA] TEXT NOT NULL,"+
+                    "[VENDEDOR] TEXT NOT NULL,"+
+                    "[RATING] REAL NOT NULL,"+
+                    "[COMENTARIO] TEXT NOT NULL,"+
+                    "[IDTRANSERROR] INTEGER NOT NULL,"+
+                    "[FECHA] INTEGER NOT NULL,"+
+                    "[STATCOM] TEXT NOT NULL"+
+                    ");";
+            database.execSQL(sql);
+
+            return 1;
 		} catch (SQLiteException e) {
 		   	msgbox(e.getMessage());
 		   	return 0;
@@ -1979,18 +1991,6 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-			sql= "CREATE TABLE [D_RATING]("+
-					"[IDRATING] INTEGER PRIMARY KEY AUTOINCREMENT,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"[VENDEDOR] TEXT NOT NULL,"+
-					"[RATING] REAL NOT NULL,"+
-					"[COMENTARIO] TEXT NOT NULL,"+
-					"[IDTRANSERROR] INTEGER NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL"+
-					");";
-			database.execSQL(sql);
-
             sql="CREATE TABLE [P_ALMACEN] ("+
                     "CODIGO INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
@@ -2061,22 +2061,6 @@ public class BaseDatosScript {
                     "PRIMARY KEY ([ID],[PRODUCTO])"+
                     ");";
             database.execSQL(sql);
-
-            sql="CREATE TABLE [T_PRODMENU] ("+
-                    "ID     INTEGER NOT NULL,"+
-                    "IDSESS INTEGER NOT NULL,"+
-                    "IDITEM INTEGER NOT NULL,"+
-                    "CODIGO TEXT NOT NULL,"+
-                    "NOMBRE TEXT NOT NULL,"+
-                    "DESCRIP TEXT NOT NULL,"+
-                    "NOTA TEXT NOT NULL,"+
-                    "BANDERA INTEGER NOT NULL,"+
-                    "IDLISTA INTEGER NOT NULL,"+
-                    "CANT INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([ID],[IDSESS],[IDITEM])"+
-                    ");";
-            database.execSQL(sql);
-
 
             return 1;
 			 
@@ -2288,6 +2272,21 @@ public class BaseDatosScript {
                     "[PRODUCTO] TEXT NOT NULL,"+
                     "[CANT]     REAL NOT NULL,"+
                     "PRIMARY KEY ([PRODID],[PRODUCTO])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [T_PRODMENU] ("+
+                    "ID     INTEGER NOT NULL,"+
+                    "IDSESS INTEGER NOT NULL,"+
+                    "IDITEM INTEGER NOT NULL,"+
+                    "CODIGO TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "DESCRIP TEXT NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "BANDERA INTEGER NOT NULL,"+
+                    "IDLISTA INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID],[IDSESS],[IDITEM])"+
                     ");";
             database.execSQL(sql);
 

@@ -1548,20 +1548,31 @@ public class FacturaRes extends PBase {
 				public void onClick(DialogInterface dialog, int whichButton) {
 
 					peexit=false;
+
 					svuelt= txtVuelto.getText().toString();
                     gl.brw=1;
+                    sefect=""+tot;
 
                     if (!svuelt.equalsIgnoreCase("")){
-                        if (Double.parseDouble(svuelt)<0.0){
-                            toast("Monto ingresado no genera vuelto");
+                        double vuel=Double.parseDouble(svuelt);
+                        vuel=vuel-tot;
+
+                        if (vuel<0.00) {
+                            msgbox("Pago insuficiente");return;
+                        }
+
+                        if (vuel==0.0){
+                            msgAskVuelto("Monto ingresado no genera vuelto");
+                        } else {
+                            msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
                         }
                     }
 
                     svuelt=""+tot;
                     sefect=""+tot;
 
-					applyCash();
-					checkPago();
+					//applyCash();
+					//checkPago();
 
 				}
 			});
@@ -1585,7 +1596,26 @@ public class FacturaRes extends PBase {
 
 	}
 
-	public void Davuelto(){
+
+    private void msgAskVuelto(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Vuelto");
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                applyCash();
+                checkPago();
+                finish();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    public void Davuelto(){
 
 		try{
 
@@ -1872,7 +1902,7 @@ public class FacturaRes extends PBase {
 		Cursor DT;
 		double tpago;
 
-		if (pagocompleto) return;
+		//if (pagocompleto) return;
 
 		try {
 

@@ -355,6 +355,20 @@ public class clsClasses {
         public int  activo;
 	}
 
+    public class clsT_prodmenu {
+        public int  id;
+        public int  idsess;
+        public int  iditem;
+        public String codigo;
+        public String nombre;
+        public String descrip;
+        public String nota;
+        public int  bandera;
+        public int  idlista;
+        public int  cant;
+    }
+
+
     //
 
 	public class clsLista {

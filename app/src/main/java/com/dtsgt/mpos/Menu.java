@@ -239,6 +239,7 @@ public class Menu extends PBase {
 						gl.rutatipo="V";gl.rutatipog="V";
 						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 
+                        gl.iniciaVenta=true;
 						startActivity(new Intent(this, Venta.class));
 					break;
 
