@@ -1,18 +1,12 @@
 package com.dtsgt.mant;
 
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsListaObj;
-import com.dtsgt.ladapt.LA_Lista;
-import com.dtsgt.ladapt.listAdapt_desc;
-import com.dtsgt.mpos.PBase;
-import com.dtsgt.mpos.R;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,7 +14,15 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class Lista extends PBase {
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsListaObj;
+import com.dtsgt.ladapt.LA_Lista;
+import com.dtsgt.ladapt.LA_Lista2;
+import com.dtsgt.ladapt.listAdapt_desc;
+import com.dtsgt.mpos.PBase;
+import com.dtsgt.mpos.R;
+
+public class Lista2 extends PBase {
 
     private ListView listView;
     private TextView lblTit,lblReg;
@@ -28,7 +30,7 @@ public class Lista extends PBase {
     private ImageView imgadd;
     private Switch swact;
 
-    private LA_Lista adapter;
+    private LA_Lista2 adapter;
     private listAdapt_desc adapt;
     private clsListaObj ViewObj;
 
@@ -37,7 +39,7 @@ public class Lista extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista);
+        setContentView(R.layout.activity_lista2);
 
         super.InitBase();
 
@@ -58,11 +60,12 @@ public class Lista extends PBase {
 
     }
 
+
     //region Events
 
     public void doAdd(View view) {
-       gl.gcods="";
-       abrirMant();
+        gl.gcods="";
+        abrirMant();
     }
 
     public void doClear(View view) {
@@ -75,7 +78,7 @@ public class Lista extends PBase {
 
     private void setHandlers() {
 
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object lvObj = listView.getItemAtPosition(position);
@@ -99,7 +102,7 @@ public class Lista extends PBase {
 
         swact.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               listItems();
+                listItems();
             }
         });
 
@@ -136,7 +139,7 @@ public class Lista extends PBase {
                 adapt=new listAdapt_desc(this,this,ViewObj.items);
                 listView.setAdapter(adapt);
             }else {
-                adapter=new LA_Lista(this,this,ViewObj.items);
+                adapter=new LA_Lista2(this,this,ViewObj.items);
                 listView.setAdapter(adapter);
             }
 
@@ -156,7 +159,7 @@ public class Lista extends PBase {
             }else {
                 adapter.setSelectedIndex(selidx);
             }
-         }
+        }
 
     }
 
@@ -343,9 +346,6 @@ public class Lista extends PBase {
 
     private void abrirMant() {
 
-        browse=1;
-        gl.savemantid=gl.mantid;
-
         switch (gl.mantid) {
             case 0:
                 startActivity(new Intent(this,MantAlmacen.class));break;
@@ -398,11 +398,6 @@ public class Lista extends PBase {
             ViewObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
-        }
-
-        if (browse==1) {
-            browse=0;
-            gl.mantid=gl.savemantid;
         }
 
         listItems();

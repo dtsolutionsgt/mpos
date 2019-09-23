@@ -1376,11 +1376,13 @@ public class Menu extends PBase {
 
 	public void showMantMenu() {
 
+	    gl.listaedit=true;
+
 		try{
 			final AlertDialog Dialog;
 
             //final String[] selitems = {"Almacen","Banco","Cliente","Empresa","Familia","Forma pago","Impuesto","Moneda","Producto","Proveedor","Tienda","Usuario","Vendedor"};
-            final String[] selitems = {"Banco","Caja","Cliente","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
+            final String[] selitems = {"Banco","Caja","Cliente","Combo","Combo Opción","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1394,6 +1396,8 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
                     if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
                     if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+                    if (ss.equalsIgnoreCase("Combo")) gl.mantid=17;
+                    if (ss.equalsIgnoreCase("Combo Opción")) gl.mantid=18;
                     if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
                     if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
                     if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;

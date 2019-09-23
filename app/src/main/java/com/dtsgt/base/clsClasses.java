@@ -200,9 +200,15 @@ public class clsClasses {
         public String nota;
     }
 
+    public class clsP_prodopc {
+        public int  id;
+        public String nombre;
+        public int  activo;
+    }
+
     public class clsP_prodopclist {
         public int  id;
-        public String producto;
+        public String producto,nombre;
         public double cant;
         public int  idreceta;
     }

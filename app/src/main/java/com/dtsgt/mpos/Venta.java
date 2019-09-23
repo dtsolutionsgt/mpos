@@ -755,6 +755,14 @@ public class Venta extends PBase {
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
+
+        try {
+            sql="DELETE FROM T_VENTA WHERE CANT=0";
+            db.execSQL(sql);
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
     }
 
     private void processMenuItem() {
@@ -779,6 +787,7 @@ public class Venta extends PBase {
         gl.dval=gl.retcant;
         gl.limcant=getDisp(prodid);
         processCant(true);
+        listItems();
 
     }
 
@@ -2314,10 +2323,10 @@ public class Venta extends PBase {
     protected void onResume() {
         try{
             super.onResume();
+
             try {
                 txtBarra.requestFocus();
-             } catch (Exception e) {
-
+            } catch (Exception e) {
             }
 
             if (gl.iniciaVenta){
@@ -2338,8 +2347,6 @@ public class Venta extends PBase {
                     }
                 };
                 mtimer.postDelayed(mrunner,1000);
-
-
             }
 
             if (browse==1) {

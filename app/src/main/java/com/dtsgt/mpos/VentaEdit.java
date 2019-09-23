@@ -59,7 +59,7 @@ public class VentaEdit extends PBase {
      }
 
     public void doDelete(View view) {
-        msgAskDelete("Eliminar registro de la venta");
+        msgAskDelete("Eliminar articulo de la venta");
     }
 
     //endregion

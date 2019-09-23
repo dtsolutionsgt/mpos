@@ -194,7 +194,7 @@ public class ComWS extends PBase {
 		setHandlers();
 
         URL = gl.urlglob;
-        URL="http://192.168.1.52/wsmpos/wsAndr.asmx";
+        URL="http://192.168.1.137/wsmpos/wsAndr.asmx";
         txtWS.setText(URL);txtEmp.setText(emp);
         if (gl.debug) {
             txtWS.setEnabled(true);txtEmp.setEnabled(true);
@@ -1050,6 +1050,7 @@ public class ComWS extends PBase {
             if (!AddTable("P_PARAMEXT")) return false;
             if (!AddTable("P_MONEDA")) return false;
             if (!AddTable("P_PROVEEDOR")) return false;
+
             if (!AddTable("P_PRODMENU")) return false;
             if (!AddTable("P_PRODOPC")) return false;
             if (!AddTable("P_PRODOPCLIST")) return false;
