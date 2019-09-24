@@ -17,7 +17,38 @@ public class clsClasses {
 		public int activo;
 	}
 
-	public class clsP_cliente {
+    public class clsP_cajaajuste {
+        public String sucursal;
+        public String ruta;
+        public int  corel;
+        public int  item;
+        public int  tipo;
+        public int  fecha;
+        public double monto;
+        public String vendedor;
+    }
+
+    public class clsP_cajacierre {
+        public String sucursal;
+        public String ruta;
+        public int  corel;
+        public int  estado;
+        public int  fecha;
+        public String vendedor;
+        public double montoini;
+        public double montofin;
+        public double montodif;
+    }
+
+    public class clsP_cajareporte {
+        public String sucursal;
+        public String ruta;
+        public int  corel;
+        public int  linea;
+        public String texto;
+    }
+
+    public class clsP_cliente {
 		public String codigo;
 		public String nombre;
 		public String bloqueado;
@@ -154,6 +185,7 @@ public class clsClasses {
 		public int  nivel;
 		public String porcobro;
 	}
+
     public class clsP_nivelprecio {
         public int codigo;
         public String nombre;

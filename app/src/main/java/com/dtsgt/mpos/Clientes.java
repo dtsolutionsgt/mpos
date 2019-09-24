@@ -32,6 +32,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsCDB;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.ladapt.ListAdaptCliList;
+import com.dtsgt.mant.MantCli;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,13 +120,12 @@ public class Clientes extends PBase {
 
 	}
 
-	public void showVenta(View view) {
+	public void CliNuevo(View view) {
 
 		try {
-			gl.tcorel = mu.getCorelBase();//gl.ruta/
-
-			//Intent intent = new Intent(this,CliNuevoApr.class);
-			Intent intent = new Intent(this, CliNuevo.class);
+            gl.gcods="";
+            browse=1;
+			Intent intent = new Intent(this, MantCli.class);
 			startActivity(intent);
 		} catch (Exception e) {
 			addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -149,7 +149,7 @@ public class Clientes extends PBase {
 					selidx = position;
 					adapter.setSelectedIndex(position);
 
-					//showCliente();
+					gl.cliente=sitem.Cod;
                     finish();
 
 				};
@@ -647,6 +647,16 @@ public class Clientes extends PBase {
 		try{
 			super.onResume();
 			//listItems();
+
+            if (browse==1) {
+                browse=0;
+                if (!gl.gcods.isEmpty()) {
+                    gl.cliente=gl.gcods;
+                    finish();
+                }
+                return;
+            }
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}

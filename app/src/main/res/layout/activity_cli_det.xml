@@ -360,7 +360,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:clickable="true"
-            android:onClick="showVenta">
+            android:onClick="CliNuevo">
 
             <ImageView
                 android:id="@+id/imageView4"
@@ -371,7 +371,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="false"
                 android:clickable="false"
-                android:onClick="showVenta"
+                android:onClick="CliNuevo"
                 android:paddingTop="6dp"
                 android:paddingBottom="6dp"
                 android:src="@drawable/next48" />

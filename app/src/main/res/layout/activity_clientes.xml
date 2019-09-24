@@ -142,7 +142,7 @@
             android:layout_marginTop="2dp"
             android:adjustViewBounds="true"
             android:clickable="true"
-            android:onClick="showVenta"
+            android:onClick="CliNuevo"
             android:paddingBottom="3dp"
             android:paddingTop="3dp"
             android:src="@drawable/mas" />

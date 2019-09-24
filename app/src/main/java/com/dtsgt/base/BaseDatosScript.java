@@ -2062,6 +2062,43 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [P_CAJAAJUSTE] ("+
+                    "SUCURSAL TEXT NOT NULL,"+
+                    "RUTA TEXT NOT NULL,"+
+                    "COREL INTEGER NOT NULL,"+
+                    "ITEM INTEGER NOT NULL,"+
+                    "TIPO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "MONTO REAL NOT NULL,"+
+                    "VENDEDOR TEXT NOT NULL,"+
+                    "PRIMARY KEY ([SUCURSAL],[RUTA],[COREL],[ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_CAJACIERRE] ("+
+                    "SUCURSAL TEXT NOT NULL,"+
+                    "RUTA TEXT NOT NULL,"+
+                    "COREL INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "VENDEDOR TEXT NOT NULL,"+
+                    "MONTOINI REAL NOT NULL,"+
+                    "MONTOFIN REAL NOT NULL,"+
+                    "MONTODIF REAL NOT NULL,"+
+                    "PRIMARY KEY ([SUCURSAL],[RUTA],[COREL])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_CAJAREPORTE] ("+
+                    "SUCURSAL TEXT NOT NULL,"+
+                    "RUTA TEXT NOT NULL,"+
+                    "COREL INTEGER NOT NULL,"+
+                    "LINEA INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([SUCURSAL],[RUTA],[COREL],[LINEA])"+
+                    ");";
+            database.execSQL(sql);
+
             return 1;
 			 
 		} catch (SQLiteException e) {

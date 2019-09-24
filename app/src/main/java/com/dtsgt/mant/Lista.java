@@ -285,6 +285,13 @@ public class Lista extends PBase {
                 gl.disc=true;
                 break;
 
+            case 17: //Combos
+                sql="SELECT 0,CODIGO,DESCLARGA,'','', '','','','' FROM P_PRODUCTO WHERE (TIPO='M') AND ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (DESCLARGA LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY DESCLARGA";
+                break;
+
             case 18: // Combo opcion
                 sql="SELECT 0,ID,NOMBRE,'','', '','','','' FROM P_PRODOPC WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";

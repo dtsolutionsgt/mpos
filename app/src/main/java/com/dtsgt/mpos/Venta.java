@@ -97,6 +97,7 @@ public class Venta extends PBase {
 
         setControls();
 
+        gl.cliente="";
         gl.iniciaVenta=false;
         emp=gl.emp;
         nivel=1;
@@ -128,6 +129,7 @@ public class Venta extends PBase {
         Runnable mrunner=new Runnable() {
             @Override
             public void run() {
+                browse=8;
                 startActivity(new Intent(Venta.this,Clientes.class));
             }
         };
@@ -167,10 +169,14 @@ public class Venta extends PBase {
                 mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
             }
 
+            if (gl.cliente.isEmpty()) {
+                browse=8;
+                startActivity(new Intent(this,Clientes.class));
+                return;
+            }
+
             gl.gstr="";
             browse=1;
-
-            // Descuentos
 
             gl.bonprodid="*";
             gl.bonus.clear();
@@ -1683,7 +1689,7 @@ public class Venta extends PBase {
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     borraBarra();
-                }
+                 }
             });
 
             dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -1916,6 +1922,7 @@ public class Venta extends PBase {
                     }
                     break;
                 case 52:
+                    browse=8;
                     startActivity(new Intent(Venta.this,Clientes.class));
                     break;
                 case 53:
@@ -2115,7 +2122,7 @@ public class Venta extends PBase {
         dweek=mu.dayofweek();
 
         lblTot.setText("Total : "+gl.peMon+mu.frmdec(0));
-        lblVend.setText(gl.vendnom);
+        lblVend.setText("");
 
         khand.clear(false);khand.enable();
     }
@@ -2315,7 +2322,27 @@ public class Venta extends PBase {
         }
     }
 
-    //endregion111111111
+    private void cargaCliente() {
+        Cursor DT;
+        String ss;
+
+        if (gl.cliente.isEmpty()) {
+            toast("Cliente pendiente");return;
+        }
+
+        try {
+            sql = "SELECT NOMBRE,LIMITECREDITO FROM P_CODIGO WHERE CODIGO='"+gl.cliente+"'";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+            if (DT.getDouble(1)>0) ss=" [ "+mu.frmcur(DT.getDouble(1))+" ] ";else ss=" [ 0.00 ]";
+
+            lblVend.setText(gl.cliente+""+DT.getString(0)+" "+ss);
+        } catch (Exception e) {
+            lblVend.setText("");
+        }
+    }
+
+    //endregion
 
     //region Activity Events
 
@@ -2343,6 +2370,7 @@ public class Venta extends PBase {
                 Runnable mrunner=new Runnable() {
                     @Override
                     public void run() {
+                        browse=8;
                         startActivity(new Intent(Venta.this,Clientes.class));
                     }
                 };
@@ -2376,6 +2404,12 @@ public class Venta extends PBase {
             if (browse==7) {
                 browse=0;processCantMenu();return;
             }
+
+            if (browse==8) {
+                browse=0;
+                cargaCliente();return;
+            }
+
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
