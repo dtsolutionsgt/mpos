@@ -7,8 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.util.Log;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.graphics.Color;
 import android.os.Bundle;
+import com.dtsgt.ladapt.ListAdaptProd;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
@@ -32,12 +38,14 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
 import com.dtsgt.base.clsClasses.clsReport;
 import com.dtsgt.classes.clsDocument;
+import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.ListAdaptExist;
+import com.dtsgt.ladapt.ListAdaptProd;
 import com.dtsgt.ladapt.ListReportVenta;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,18 +62,24 @@ import java.util.Calendar;
 public class Reportes extends PBase {
 
     private Button btnImp;
-    private TextView lblDateini,lblDatefin, lblImp, lblFact,lblTit,lblProd;
+    private TextView lblDateini,lblDatefin, lblImp, lblFact,lblTit,lblProd,txtFill,txtTitle;
+    private ImageView btnClear;
     private Spinner spinnProd;
+    private CheckBox cbDet;
 
     private String prodid,savecant;
 
+    private ArrayList<clsClasses.clsCD> itemsFill;
     private ArrayList<clsClasses.clsVenta> items= new ArrayList<clsClasses.clsVenta>();
     private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
     private ArrayList<String> spinlist = new ArrayList<String>();
     private ArrayList<String> spincode = new ArrayList<String>();
     private ListAdaptExist adapter;
+    private ListAdaptProd adaptFill;
     private ListReportVenta adapt;
     private clsClasses.clsReport item;
+
+    private ListView lvReport;
 
     private double cantT,disp,dispm,dispT;
     private clsRepBuilder rep;
@@ -73,9 +87,10 @@ public class Reportes extends PBase {
     private clsP_lineaObj linea;
     private clsP_mediapagoObj medP;
     private clsP_productoObj prod;
+    private clsP_clienteObj cli;
 
     private int tipo, cantExistencia;
-    private String itemid, CERO="0", nameProd, nameVend, id_item;
+    private String CERO="0", nameProd, nameVend, id_item;
     private clsClasses.clsVenta itemV;
 
     private Reportes.clsDocExist doc;
@@ -84,6 +99,7 @@ public class Reportes extends PBase {
 
     private AppMethods app;
     private int SumaCant = 0;
+
 
     public final Calendar c = Calendar.getInstance();
     private static final String BARRA = "/";
@@ -101,6 +117,8 @@ public class Reportes extends PBase {
         super.InitBase();
         addlog("Reportes",""+du.getActDateTime(),gl.vend);
 
+        lvReport = (ListView) findViewById(R.id.listViewReport);lvReport.setVisibility(View.INVISIBLE);
+        txtFill = (TextView) findViewById(R.id.txtFill);txtFill.setVisibility(View.INVISIBLE);
         lblProd = (TextView) findViewById(R.id.txtProdName);
         lblDateini = (TextView) findViewById(R.id.lblDateini);
         lblDatefin = (TextView) findViewById(R.id.lblDatefin);
@@ -108,18 +126,27 @@ public class Reportes extends PBase {
         lblFact = (TextView) findViewById(R.id.txtFact);
         lblTit = (TextView) findViewById(R.id.lblTit);
         spinnProd = (Spinner) findViewById(R.id.spinProd);
+        txtTitle = (TextView) findViewById(R.id.txtTitle);txtTitle.setVisibility(View.INVISIBLE);
+        btnClear = (ImageView) findViewById(R.id.imageView37);btnClear.setVisibility(View.INVISIBLE);
+        cbDet = (CheckBox) findViewById(R.id.cbDet);
 
-        if(gl.reportid!=3 && gl.reportid!=4 && gl.reportid!=7 && gl.reportid!=8){
+        if(gl.reportid!=4){
             lblProd.setVisibility(View.INVISIBLE);
             spinnProd.setVisibility(View.INVISIBLE);
+        }
+
+        if(gl.reportid!=11 && gl.reportid!=12){
+            cbDet.setVisibility(View.INVISIBLE);
         }
 
         linea =new clsP_lineaObj(this,Con,db);
         medP =new clsP_mediapagoObj(this,Con,db);
         prod =new clsP_productoObj(this,Con,db);
+        cli =new clsP_clienteObj(this,Con,db);
 
         lblTit.setText(gl.titReport);
         getFechaAct();
+        itemsFill= new ArrayList<clsClasses.clsCD>();
 
         report = false;
 
@@ -131,6 +158,14 @@ public class Reportes extends PBase {
 
         setHandlers();
         FillSpinner();
+
+        if(gl.reportid==3 || gl.reportid==7 || gl.reportid==8 || gl.reportid==11){
+            txtTitle.setVisibility(View.VISIBLE);
+            btnClear.setVisibility(View.VISIBLE);
+            txtFill.setVisibility(View.VISIBLE);
+            lvReport.setVisibility(View.VISIBLE);
+            listItems();
+        }
 
         rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp, "");
 
@@ -174,6 +209,109 @@ public class Reportes extends PBase {
     //endregion
 
     //region Main
+
+    private void listItems() {
+        Cursor DT;
+        clsClasses.clsCD vItem;
+        String vF,cod,name,condi="";
+
+        itemsFill.clear();id_item="*";
+
+        vF=txtFill.getText().toString().replace("'","");
+
+        String sql = "";
+
+        try {
+
+
+            if(!vF.isEmpty()){
+                condi = " WHERE CODIGO LIKE '%"+vF+"%'";
+            }
+
+            switch(gl.reportid){
+                case 3:
+                    sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
+                    break;
+                case 7:
+                    sql="SELECT CODIGO, DESCCORTA FROM P_PRODUCTO"+ condi;
+                    break;
+                case 8:
+                    sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
+                    break;
+                case 11:
+                    sql="SELECT CODIGO, NOMBRE FROM P_CLIENTE"+ condi;
+                    break;
+            }
+
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()==0) {
+
+                if(!vF.isEmpty()){
+                    if(gl.reportid==7){
+                        condi = " WHERE DESCCORTA LIKE '%'"+vF+"%'";
+                    }else {
+                        condi = " WHERE NOMBRE LIKE '%"+vF+"%'";
+                    }
+                }
+
+                switch(gl.reportid){
+                    case 3:
+                        sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
+                        break;
+                    case 7:
+                        sql="SELECT CODIGO, DESCCORTA FROM P_PRODUCTO"+ condi;
+                        break;
+                    case 8:
+                        sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
+                        break;
+                    case 11:
+                        sql="SELECT CODIGO, NOMBRE FROM P_CLIENTE"+ condi;
+                        break;
+                }
+
+                DT=Con.OpenDT(sql);
+
+                if (DT.getCount()==0) return;
+            }
+
+            if(gl.reportid!=12){
+                vItem = clsCls.new clsCD();
+                vItem.Cod="Todos";
+                vItem.Desc="";
+                vItem.um="";
+                vItem.Text="";
+                itemsFill.add(vItem);
+            }
+
+
+            DT.moveToFirst();
+            while (!DT.isAfterLast()) {
+
+                cod=DT.getString(0);
+                name=DT.getString(1);
+
+                vItem = clsCls.new clsCD();
+                vItem.Cod=cod;
+                vItem.Desc=name;
+
+                vItem.um="";
+                vItem.Text="";
+
+                itemsFill.add(vItem);
+
+                DT.moveToNext();
+            }
+        } catch (Exception e) 		{
+            mu.msgbox( e.getMessage());
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            Log.d("prods",e.getMessage());
+        }
+
+        adaptFill=new ListAdaptProd(this,itemsFill);
+        lvReport.setAdapter(adaptFill);
+
+    }
 
     public void GeneratePrint(View view){
         try{
@@ -363,6 +501,37 @@ public class Reportes extends PBase {
                             "GROUP BY L.NOMBRE";
                     break;
 
+                case 11:
+                    if(id_item.equals("Todos")){
+                        condition = " AND 1=1 ";
+                    }else{
+                        condition = " AND C.CODIGO = '"+ id_item +"' ";
+                    }
+
+                    sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
+                            "FROM P_CLIENTE C " +
+                            "INNER JOIN D_FACTURA F ON C.CODIGO = F.CLIENTE " +
+                            "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
+                            "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
+                    break;
+
+                case 12:
+                    if(id_item.equals("Todos")){
+                        condition = " AND 1=1 ";
+                    }else{
+                        condition = " AND C.CODIGO = '"+ id_item +"' ";
+                    }
+
+                    sql="SELECT F.COREL, C.CODIGO, 0, P.CODIGO, P.DESCCORTA, C.NOMBRE, D.CANT, D.PRECIO, D.PRECIO*D.CANT, F.FECHA, 0 " +
+                            "FROM D_FACTURA F " +
+                            "INNER JOIN P_CLIENTE C ON C.CODIGO = F.CLIENTE "+
+                            "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
+                            "INNER JOIN P_PRODUCTO P ON P.CODIGO = D.PRODUCTO " +
+                            "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, D.CANT, D.PRECIO, F.TOTAL";
+                    break;
+
                 default:
                     msgbox("Error, al identificar el tipo de reporte, cierre la ventana e intentelo de nuevo");return false;
             }
@@ -392,6 +561,7 @@ public class Reportes extends PBase {
                 item.imp = dt.getDouble(7);
                 item.total = dt.getDouble(8);
                 item.fecha = dt.getLong(9);
+                item.tipo = 0;
 
                 itemR.add(item);
 
@@ -410,6 +580,97 @@ public class Reportes extends PBase {
     private void setHandlers(){
 
         try{
+            lvReport.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    try {
+
+                        Object lvObj = lvReport.getItemAtPosition(position);
+                        clsClasses.clsCD item = (clsClasses.clsCD) lvObj;
+
+                        adaptFill.setSelectedIndex(position);
+
+                        report =  false;
+                        id_item = item.Cod;
+
+                        if(id_item.equals("NO")) { lblProd.setText("");}
+
+                        if(!id_item.equals("Todos")){
+
+                            if(gl.reportid==3 || gl.reportid==8){
+
+                                linea.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(linea.count==0) return;
+                                nameProd = linea.first().nombre.trim();
+                                lblProd.setText(nameProd);
+
+                            }else if(gl.reportid==4){
+
+                                medP.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(medP.count==0) return;
+                                nameVend = medP.first().nombre.trim();
+                                lblProd.setText(nameVend);
+
+                            }else if(gl.reportid==7){
+
+                                prod.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(prod.count==0) return;
+                                nameVend = prod.first().desccorta.trim();
+                                lblProd.setText(nameVend);
+
+                            }else if(gl.reportid==11){
+
+                                cli.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(cli.count==0) return;
+                                nameVend = cli.first().nombre.trim();
+                                lblProd.setText(nameVend);
+
+                            }
+
+                        }else {
+                            lblProd.setText("");
+                        }
+
+                        itemR.clear();
+                        lblFact.setText("");
+                        lblImp.setText("GENERAR");
+                        report=false;
+
+                    } catch (Exception e) {
+                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                        mu.msgbox(e.getMessage());
+                    }
+                }
+            });
+
+
+            cbDet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    report = false;
+                    lblImp.setText("GENERAR");
+                    lblFact.setText("");
+
+                    if(cbDet.isChecked()){
+                        gl.reportid=12;
+                    }else{
+                        gl.reportid=11;
+                    }
+
+                }
+            });
+
+            txtFill.addTextChangedListener(new TextWatcher() {
+
+                public void afterTextChanged(Editable s) {}
+
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    listItems();
+                }
+            });
+
             spinnProd.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -419,7 +680,7 @@ public class Reportes extends PBase {
                         spinlabel=(TextView)parentView.getChildAt(0);
                         spinlabel.setTextColor(Color.BLACK);
                         spinlabel.setPadding(5, 0, 0, 0);
-                        spinlabel.setTextSize(24);
+                        spinlabel.setTextSize(18);
 
                         id_item = spincode.get(position);
 
@@ -446,6 +707,13 @@ public class Reportes extends PBase {
                                 prod.fill("WHERE CODIGO = '"+id_item+"'");
                                 if(prod.count==0) return;
                                 nameVend = prod.first().desccorta.trim();
+                                lblProd.setText(nameVend);
+
+                            }else if(gl.reportid==11){
+
+                                cli.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(cli.count==0) return;
+                                nameVend = cli.first().nombre.trim();
                                 lblProd.setText(nameVend);
 
                             }
@@ -528,16 +796,12 @@ public class Reportes extends PBase {
         }
     }
 
-    public void test(View view){
-        sql="UPDATE P_PRODUCTO SET COSTO = 4.00 WHERE LINEA = LINEA";
-        db.execSQL(sql);
-    }
-
     //endregion
 
     //region clase clsDocExist
 
     private class clsDocExist extends clsDocument {
+        String fechaR="";
         int cantF,cantfF;
         double tot,totF;
         double porcentaje=0.0, comision;
@@ -741,7 +1005,6 @@ public class Reportes extends PBase {
                                 totF += itemR.get(a).total;
                             }
 
-                            comision = (itemR.get(i).total * itemR.get(i).imp) / 100;
 
                             rep.add("Codigo     Nombre");
                             rep.add("Cant       %       Total    Comision");
@@ -749,10 +1012,13 @@ public class Reportes extends PBase {
                             acc = 2;
                         }
 
+                        comision = (itemR.get(i).total * itemR.get(i).imp) / 100;
+
                         rep.addtot(itemR.get(i).corel, itemR.get(i).descrip);
-                        rep.add4lrrTot(Integer.toString(itemR.get(i).cant), itemR.get(i).imp+"%", itemR.get(i).total, comision);
+                        rep.add4lrrTotV(Integer.toString(itemR.get(i).cant), itemR.get(i).imp+"%", itemR.get(i).total, comision);
 
                         SumaCant = SumaCant + itemR.get(i).cant;
+                        totSinImpF += comision;
                     }else if(gl.reportid==7 || gl.reportid==8){
 
                         if(acc==1){
@@ -776,6 +1042,68 @@ public class Reportes extends PBase {
                         rep.addtot(itemR.get(i).corel, "    "+itemR.get(i).descrip);
                         rep.add4(itemR.get(i).total, itemR.get(i).imp, tot, porcentaje);
 
+                    }else if(gl.reportid==11){
+
+                        if(acc==1){
+
+                            rep.add("Codigo        Nombre");
+                            rep.add("Fecha       Cant.Fact       Total");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        fechaR = du.univfechaReport(itemR.get(i).fecha);
+
+                        rep.addtwo(itemR.get(i).corel, itemR.get(i).descrip);
+                        rep.add3lrrTot(fechaR, ""+itemR.get(i).cant, itemR.get(i).total);
+
+                        SumaCant = SumaCant + itemR.get(i).cant;
+                        totF += itemR.get(i).total;
+                    }else if(gl.reportid==12){
+
+                        if(acc==1){
+
+                            rep.add("Codigo Cliente: "+itemR.get(0).serie);
+                            rep.add("Nombre Cliente: "+itemR.get(0).um);
+
+                            rep.add("Fecha        Corelativo");
+                            rep.add("Producto   Cant    Precio    Total");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        if(!fechaR.equals(du.univfechaReport(itemR.get(i).fecha))){
+
+                            if(i!=0){
+                                rep.line();
+                                rep.add4lrrT("", ""+cantF, 0.0,tot);
+                                rep.empty();
+                                cantF = 0;
+                                tot = 0;
+                            }
+
+                            fechaR = du.univfechaReport(itemR.get(i).fecha);
+                            rep.addtwo(fechaR, itemR.get(i).corel);
+                            rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
+
+                        }else if(i+1==itemR.size()){
+
+                            rep.line();
+                            rep.add4lrrT("", ""+cantF, 0.0,tot);
+                            rep.empty();
+                            cantF = 0;
+                            tot = 0;
+
+                        }else {
+
+                            rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
+
+                        }
+
+                        cantF += itemR.get(i).cant;
+                        tot += itemR.get(i).total;
+                        SumaCant += itemR.get(i).cant;
+                        totF += itemR.get(i).total;
                     }
                 }
                 rep.line();
@@ -793,13 +1121,14 @@ public class Reportes extends PBase {
 
             try {
 
-                rep.empty();
                 if(gl.reportid==1) rep.add3Tot(SumaCant, totSinImpF, impF, totF);
                 if(gl.reportid==2) rep.add4lrrTot("Total: ","",Integer.toString(cantfF),totF);
                 if(gl.reportid==3) rep.add4lrrTotPorc(Integer.toString(SumaCant), "",totF,0.0);
                 if(gl.reportid==4 || gl.reportid==5) rep.add4lrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
-                if(gl.reportid==6) rep.add4lrrTot(Integer.toString(SumaCant), "", totF, comision);
+                if(gl.reportid==6) rep.add4lrrTotV(""+SumaCant, "",totF, totSinImpF);
                 if(gl.reportid==7 || gl.reportid==8) rep.add4(totF, impF, totSinImpF, 0.0);
+                if(gl.reportid==11) rep.add3lrrTot("", ""+SumaCant, totF);
+                if(gl.reportid==12) rep.add4lrrT("Total: ", ""+SumaCant, 0.0,totF);
                 rep.empty();
 
                 return true;
@@ -841,6 +1170,11 @@ public class Reportes extends PBase {
 
     //region AUX
 
+    public void clear(View view){
+        txtFill.setText("");
+        lblProd.setText("");
+    }
+
     private void FillSpinner(){
         Cursor DT;
         String icode,name,select="",none="";
@@ -864,6 +1198,12 @@ public class Reportes extends PBase {
 
                 select = "Seleccione producto...";
                 none = "Productos inexistentes";
+            }else if(gl.reportid==11){
+                sql="SELECT CODIGO, NOMBRE FROM P_CLIENTE";
+
+                select = "Seleccione un cliente...";
+                none = "No hay clientes existentes";
+
             }
 
             DT=Con.OpenDT(sql);

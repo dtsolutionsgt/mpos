@@ -1459,7 +1459,7 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Reporte de Facturas por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia"};
+			final String[] selitems = {"Reporte de Facturas por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
 
             menudlg = new AlertDialog.Builder(this);
             menudlg.setTitle("Mantenimientos");
@@ -1477,9 +1477,18 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
 					if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
 					if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
+					if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
+					if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
+					if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
 
 					gl.titReport = ss;
-					startActivity(new Intent(Menu.this,Reportes.class));
+
+					if (gl.reportid == 9 || gl.reportid == 10) {
+						startActivity(new Intent(Menu.this,CierreX.class));
+					}else{
+						startActivity(new Intent(Menu.this,Reportes.class));
+					}
+
 				}
 			});
 

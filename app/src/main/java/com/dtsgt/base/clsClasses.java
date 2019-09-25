@@ -542,7 +542,7 @@ public class clsClasses {
 
     public class clsReport{
         public String codProd, descrip, corel, serie, um;
-        public int correl,cant;
+        public int correl,cant,tipo;
         public double total,imp;
         public long fecha;
     }

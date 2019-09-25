@@ -272,7 +272,7 @@ public class clsRepBuilder {
 
         sval=cursym+decfrm.format(v3);
 
-        ts=ltrim(s1,prwt)+rtrim(s2,prwt)+rtrim(sval,prwt);
+        ts=ltrim(s1,prwt-2)+rtrim(s2,prwt-5)+rtrim(sval,prwt+5);
         items.add(ts);
     }
 
@@ -335,6 +335,32 @@ public class clsRepBuilder {
         items.add(ts);
     }
 
+	public void add4lrrTotV(String s1,String s2,double s3,double v3) {
+		String stot,scom;
+		int tot;
+
+		scom=cursym+decfrm.format(v3);
+		stot=cursym+decfrm.format(s3);
+
+		tot=scom.length()-5;
+
+		ts=ltrim(s1,prwt-2)+ltrim(s2,prwt-4)+ltrim(stot,prwt-tot)+ltrim(scom,prwt);
+		items.add(ts);
+	}
+
+	public void add4lrrT(String s1,String s2,double s3,double v3) {
+		String stot,scom;
+		int tot;
+
+		scom=cursym+decfrm.format(v3);
+		stot=cursym+decfrm.format(s3);
+
+		tot=scom.length()-5;
+
+		ts=ltrim(s1,prwt+1)+ltrim(s2,prwt-6)+ltrim(stot,prwt-tot-1)+ltrim(scom,prwt);
+		items.add(ts);
+	}
+
     public void add4(double s1,double s2,double s3,double v3) {
         String s3tot,s1tot,s2tot;
         int tot;
@@ -383,6 +409,11 @@ public class clsRepBuilder {
 	
 	public void addtot(String s1,String val) {
 		ts=ltrim(s1,prw-30)+" "+ltrim(val,25);
+		items.add(ts);
+	}
+
+	public void addtwo(String s1,String val) {
+		ts=ltrim(s1,prw-23)+" "+ltrim(val,25);
 		items.add(ts);
 	}
 

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CierreX">
+
+    <TextView
+        android:id="@+id/txtFact2"
+        android:layout_width="790dp"
+        android:layout_height="1086dp"
+        android:layout_below="@+id/relFilters"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="77dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="top|center_vertical"
+        android:scrollbars="vertical"
+        android:typeface="monospace" />
+
+    <RelativeLayout
+        android:id="@+id/relFilters"
+        android:layout_width="1238dp"
+        android:layout_height="228dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="17dp"
+        android:background="@drawable/layout_filter"
+        tools:context=".Reportes">
+
+        <ImageView
+            android:id="@+id/btnImp"
+            android:layout_width="121dp"
+            android:layout_height="88dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="47dp"
+            android:clickable="true"
+            android:onClick="GeneratePrintCierre"
+            android:padding="5dp"
+            android:src="@drawable/reimpresion48" />
+
+        <TextView
+            android:id="@+id/txtBtn"
+            android:layout_width="115dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/btnImp"
+            android:layout_alignStart="@+id/btnImp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="42dp"
+            android:gravity="center"
+            android:text="TextView"
+            android:textSize="24sp" />
+
+        <RadioGroup
+            android:layout_width="509dp"
+            android:layout_height="170dp"
+            android:layout_below="@+id/textView129"
+            android:layout_marginStart="159dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="23dp"
+            android:layout_toStartOf="@+id/btnImp">
+
+            <CheckBox
+                android:id="@+id/checkBox16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte Ventas por Vendedor"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox19"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte Ventas por Cliente Consolidado"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte Ventas por Cliente Detalle"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox17"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Margen y Beneficio por Productos"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox18"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Margen y Beneficio por Familia"
+                android:textSize="24sp" />
+
+        </RadioGroup>
+
+        <RadioGroup
+            android:layout_width="435dp"
+            android:layout_height="170dp"
+            android:layout_below="@+id/textView129"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="385dp">
+
+            <CheckBox
+                android:id="@+id/checkBox11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte de Facturas por Día"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte Venta por Día"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox13"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte Venta por Producto"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte por Forma de Pago"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte por Familia"
+                android:textSize="24sp" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textView129"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="106dp"
+            android:text="Filtros"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relRoad"
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <ImageView
+            android:id="@+id/imgTitLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/logo_panel" />
+
+        <ImageView
+            android:id="@+id/imgRoadTit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/relRoadbar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="true"
+            android:padding="5dp"
+            android:src="@drawable/existencias" />
+
+        <RelativeLayout
+            android:id="@+id/relRoadbar"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
+            android:background="#9A999E"></RelativeLayout>
+
+        <TextView
+            android:id="@+id/lblTit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/imgRoadTit"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Cierre"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#1A8AC6" />
+    </RelativeLayout>
+
+</RelativeLayout>
