@@ -315,8 +315,7 @@ public class Menu extends PBase {
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
 						mu.msgbox("No puede realizar esta acción");
 					}else {
-						Intent intent6 = new Intent(this, Deposito.class);
-						startActivity(intent6);
+						showCajaMenu();
 					}
 
 					break;
@@ -1462,7 +1461,7 @@ public class Menu extends PBase {
 			final String[] selitems = {"Reporte de Facturas por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
 
             menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Mantenimientos");
+            menudlg.setTitle("Reportes");
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -1520,6 +1519,61 @@ public class Menu extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
+
+	public void showCajaMenu() {
+
+		try{
+
+			final AlertDialog Dialog;
+
+			final String[] selitems = {"Inicio de Caja", "Ajuste de Caja", "Fin de Caja"};
+
+			menudlg = new AlertDialog.Builder(this);
+			menudlg.setTitle("Caja");
+
+			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+
+					ss=selitems[item];
+
+					if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
+					if (ss.equalsIgnoreCase("Ajuste de Caja")) gl.cajaid=2;
+					if (ss.equalsIgnoreCase("Fin de Caja")) gl.cajaid=3;
+
+					gl.titReport = ss;
+
+					startActivity(new Intent(Menu.this,Caja.class));
+				}
+			});
+
+			menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					toast("Pendiente implementación");
+				}
+			});
+
+			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
+				}
+			});
+
+			Dialog = menudlg.create();
+			Dialog.show();
+
+			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+			nbutton.setTextColor(Color.WHITE);
+
+			Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+			nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
+			nbuttonp.setTextColor(Color.WHITE);
+		} catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
 
 	//endregion
 

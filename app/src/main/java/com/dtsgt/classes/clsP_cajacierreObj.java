@@ -70,6 +70,10 @@ public class clsP_cajacierreObj {
         return items.get(0);
     }
 
+    public clsClasses.clsP_cajacierre last() {
+        return items.get(count);
+    }
+
 
     // Private
 
