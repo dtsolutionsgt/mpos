@@ -47,6 +47,9 @@ import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_paramextObj;
+import com.dtsgt.classes.clsP_prodmenuObj;
+import com.dtsgt.classes.clsP_prodopcObj;
+import com.dtsgt.classes.clsP_prodopclistObj;
 import com.dtsgt.classes.clsP_prodprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_proveedorObj;
@@ -3359,15 +3362,10 @@ public class ComWS extends PBase {
         errflag = false;senv ="Actualización terminada.\n \n";
         items.clear();dbld.clearlog();acterr="";
 
-        //---if (!AddTable("P_PRODMENU")) return false;
-        //---if (!AddTable("P_PRODOPC")) return false;
-        //---if (!AddTable("P_PRODOPCLIST")) return false;
-
         //---if (!AddTable("P_COREL")) return false;
 
         try {
 
-            /*
             if (!actBanco()) haserror=true;
             if (!actCaja()) haserror=true;
             if (!actCliente()) haserror=true;
@@ -3376,11 +3374,7 @@ public class ComWS extends PBase {
             if (!actFamilia()) haserror=true;
             if (!actImpuesto()) haserror=true;
             if (!actMedia()) haserror=true;
-            */
-
             if (!actNivelPrecio()) haserror=true;
-
-            /*
             if (!actMoneda()) haserror=true;
             if (!actProducto()) haserror=true;
             if (!actFactorconv()) haserror=true;
@@ -3388,8 +3382,9 @@ public class ComWS extends PBase {
             if (!actProdprecio()) haserror=true;
             if (!actProveedor()) haserror=true;
             if (!actSucursal()) haserror=true;
-            if (!()) haserror=true;
-            */
+            if (!actProdMenu()) haserror=true;
+            if (!actProdOpc()) haserror=true;
+            if (!actProdOpcList()) haserror=true;
 
             dbld.savelog();
             dbld.saveArchivo(du.getActDateStr());
@@ -3401,11 +3396,10 @@ public class ComWS extends PBase {
         return errflag;
     }
 
+    public boolean actProdOpcList() {
+        clsP_prodopclistObj holder=new clsP_prodopclistObj(this,Con,db);
 
-    public boolean actSucursal() {
-        clsP_sucursalObj holder=new clsP_sucursalObj(this,Con,db);
-
-        actproc="Sucursal";acterr=actproc;
+        actproc="Producto opcion";acterr=actproc;
 
         try {
             fprog = actproc;wsStask.onProgressUpdate();
@@ -3415,8 +3409,94 @@ public class ComWS extends PBase {
 
             dbld.clear();
             for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.prodopclist_ins(holder.items.get(i)));
+                dbld.add(exp.prodopclist_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actProdOpc() {
+        clsP_prodopcObj holder=new clsP_prodopcObj(this,Con,db);
+
+        actproc="Producto opcion";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.prodopc_ins(holder.items.get(i)));
+                dbld.add(exp.prodopc_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actProdMenu() {
+        clsP_prodmenuObj holder=new clsP_prodmenuObj(this,Con,db);
+
+        actproc="Producto menu";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.prodmenu_ins(holder.items.get(i)));
+                dbld.add(exp.prodmenu_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
+    }
+
+    public boolean actSucursal() {
+        clsP_sucursalObj holder=new clsP_sucursalObj(this,Con,db);
+
+        actproc="Tienda";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+
+            String ss;
+
+            for (int i = 0; i <holder.count; i++) {
                 dbld.add(exp.sucursal_ins(holder.items.get(i)));
+                //ss=exp.sucursal_ins(holder.items.get(i));
                 dbld.add(exp.sucursal_upd(holder.items.get(i)));
+                //ss=exp.sucursal_upd(holder.items.get(i));
             }
 
             if (actualize()==0) {

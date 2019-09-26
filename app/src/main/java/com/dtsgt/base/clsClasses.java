@@ -31,8 +31,10 @@ public class clsClasses {
     }
 
     public class clsP_cajapagos {
+        public String empresa;
         public String sucursal;
         public String ruta;
+        public int  corel;
         public int  item;
         public int  anulado;
         public int  fecha;

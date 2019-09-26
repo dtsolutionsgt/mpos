@@ -2078,8 +2078,10 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
             sql="CREATE TABLE [P_cajapagos] ("+
+                    "EMPRESA TEXT NOT NULL,"+
                     "SUCURSAL TEXT NOT NULL,"+
                     "RUTA TEXT NOT NULL,"+
+                    "COREL INTEGER NOT NULL,"+
                     "ITEM INTEGER NOT NULL,"+
                     "ANULADO INTEGER NOT NULL,"+
                     "FECHA INTEGER NOT NULL,"+
@@ -2091,7 +2093,7 @@ public class BaseDatosScript {
                     "OBSERVACION TEXT NOT NULL,"+
                     "VENDEDOR TEXT NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "PRIMARY KEY ([SUCURSAL],[RUTA],[ITEM])"+
+                    "PRIMARY KEY ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[ITEM])"+
                     ");";
             database.execSQL(sql);
 
