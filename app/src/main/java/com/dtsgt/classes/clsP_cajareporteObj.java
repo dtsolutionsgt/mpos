@@ -21,23 +21,21 @@ public class clsP_cajareporteObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel = "SELECT * FROM P_cajareporte";
+    private String sel="SELECT * FROM P_cajareporte";
     private String sql;
-    public ArrayList<clsClasses.clsP_cajareporte> items = new ArrayList<clsClasses.clsP_cajareporte>();
+    public ArrayList<clsClasses.clsP_cajareporte> items= new ArrayList<clsClasses.clsP_cajareporte>();
 
     public clsP_cajareporteObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
-        cont = context;
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        cont=context;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
     }
 
@@ -62,7 +60,7 @@ public class clsP_cajareporteObj {
     }
 
     public void fill(String specstr) {
-        fillItems(sel + " " + specstr);
+        fillItems(sel+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -80,11 +78,12 @@ public class clsP_cajareporteObj {
 
         ins.init("P_cajareporte");
 
-        ins.add("SUCURSAL", item.sucursal);
-        ins.add("RUTA", item.ruta);
-        ins.add("COREL", item.corel);
-        ins.add("LINEA", item.linea);
-        ins.add("TEXTO", item.texto);
+        ins.add("SUCURSAL",item.sucursal);
+        ins.add("RUTA",item.ruta);
+        ins.add("COREL",item.corel);
+        ins.add("LINEA",item.linea);
+        ins.add("TEXTO",item.texto);
+        ins.add("STATCOM",item.statcom);
 
         db.execSQL(ins.sql());
 
@@ -94,9 +93,10 @@ public class clsP_cajareporteObj {
 
         upd.init("P_cajareporte");
 
-        upd.add("TEXTO", item.texto);
+        upd.add("TEXTO",item.texto);
+        upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='" + item.sucursal + "') AND (RUTA='" + item.ruta + "') AND (COREL=" + item.corel + ") AND (LINEA=" + item.linea + ")");
+        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")");
 
         db.execSQL(upd.sql());
 
@@ -105,12 +105,12 @@ public class clsP_cajareporteObj {
     }
 
     private void deleteItem(clsClasses.clsP_cajareporte item) {
-        sql = "DELETE FROM P_cajareporte WHERE (SUCURSAL='" + item.sucursal + "') AND (RUTA='" + item.ruta + "') AND (COREL=" + item.corel + ") AND (LINEA=" + item.linea + ")";
+        sql="DELETE FROM P_cajareporte WHERE (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")";
         db.execSQL(sql);
     }
 
     private void deleteItem(String id) {
-        sql = "DELETE FROM P_cajareporte WHERE id='" + id + "'";
+        sql="DELETE FROM P_cajareporte WHERE id='" + id+"'";
         db.execSQL(sql);
     }
 
@@ -120,42 +120,43 @@ public class clsP_cajareporteObj {
 
         items.clear();
 
-        dt = Con.OpenDT(sq);
-        count = dt.getCount();
-        if (dt.getCount() > 0) dt.moveToFirst();
+        dt=Con.OpenDT(sq);
+        count =dt.getCount();
+        if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_cajareporte();
 
-            item.sucursal = dt.getString(0);
-            item.ruta = dt.getString(1);
-            item.corel = dt.getInt(2);
-            item.linea = dt.getInt(3);
-            item.texto = dt.getString(4);
+            item.sucursal=dt.getString(0);
+            item.ruta=dt.getString(1);
+            item.corel=dt.getInt(2);
+            item.linea=dt.getInt(3);
+            item.texto=dt.getString(4);
+            item.statcom=dt.getString(5);
 
             items.add(item);
 
             dt.moveToNext();
         }
 
-        if (dt != null) dt.close();
+        if (dt!=null) dt.close();
 
     }
 
     public int newID(String idsql) {
-        Cursor dt = null;
+        Cursor dt=null;
         int nid;
 
         try {
-            dt = Con.OpenDT(idsql);
+            dt=Con.OpenDT(idsql);
             dt.moveToFirst();
-            nid = dt.getInt(0) + 1;
+            nid=dt.getInt(0)+1;
         } catch (Exception e) {
-            nid = 1;
+            nid=1;
         }
 
-        if (dt != null) dt.close();
+        if (dt!=null) dt.close();
 
         return nid;
     }
@@ -164,11 +165,12 @@ public class clsP_cajareporteObj {
 
         ins.init("P_cajareporte");
 
-        ins.add("SUCURSAL", item.sucursal);
-        ins.add("RUTA", item.ruta);
-        ins.add("COREL", item.corel);
-        ins.add("LINEA", item.linea);
-        ins.add("TEXTO", item.texto);
+        ins.add("SUCURSAL",item.sucursal);
+        ins.add("RUTA",item.ruta);
+        ins.add("COREL",item.corel);
+        ins.add("LINEA",item.linea);
+        ins.add("TEXTO",item.texto);
+        ins.add("STATCOM",item.statcom);
 
         return ins.sql();
 
@@ -178,9 +180,10 @@ public class clsP_cajareporteObj {
 
         upd.init("P_cajareporte");
 
-        upd.add("TEXTO", item.texto);
+        upd.add("TEXTO",item.texto);
+        upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='" + item.sucursal + "') AND (RUTA='" + item.ruta + "') AND (COREL=" + item.corel + ") AND (LINEA=" + item.linea + ")");
+        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")");
 
         return upd.sql();
 

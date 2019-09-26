@@ -43,8 +43,8 @@ import java.util.List;
 public class FacturaRes extends PBase {
 
 	private ListView listView;
-	private TextView lblPago,lblFact,lblTalon,lblMPago,lblCred,lblPend,lblCash;
-	private ImageView imgBon,imgMPago,imgCred,imgPend, imgCash;
+	private TextView lblPago,lblFact,lblTalon,lblMPago,lblCred,lblCash;
+	private ImageView imgBon,imgMPago,imgCred, imgCash;
 	private CheckBox contadoCheck;
 	private TextView lblVuelto;
 	private EditText txtVuelto;
@@ -88,14 +88,12 @@ public class FacturaRes extends PBase {
 		lblTalon = (TextView) findViewById(R.id.lblTalon);
 		lblMPago = (TextView) findViewById(R.id.lblCVence);
 		lblCred = (TextView) findViewById(R.id.lblPend);
-		lblPend = (TextView) findViewById(R.id.lblCVence2);
 		lblCash = (TextView) findViewById(R.id.textView4);
 		contadoCheck = (CheckBox) findViewById(R.id.checkContado);
 
 		imgBon = (ImageView) findViewById(R.id.imageView6);
 		imgMPago = (ImageView) findViewById(R.id.btnImp);
 		imgCred = (ImageView) findViewById(R.id.imageView3);
-		imgPend = (ImageView) findViewById(R.id.imageView12);
 		imgCash = (ImageView) findViewById(R.id.imageView2);
 
 		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
@@ -132,8 +130,6 @@ public class FacturaRes extends PBase {
 			lblCred.setVisibility(View.INVISIBLE);
 			lblCash.setVisibility(View.VISIBLE);
 			imgCash.setVisibility(View.VISIBLE);
-			lblPend.setVisibility(View.INVISIBLE);
-			imgPend.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.VISIBLE);
 			lblMPago.setVisibility(View.VISIBLE);
 		}
@@ -146,8 +142,6 @@ public class FacturaRes extends PBase {
 			lblCred.setVisibility(View.INVISIBLE);
 			lblCash.setVisibility(View.VISIBLE);
 			imgCash.setVisibility(View.VISIBLE);
-			lblPend.setVisibility(View.VISIBLE);
-			imgPend.setVisibility(View.VISIBLE);
 		}
 
 		if (media==4) {
@@ -158,8 +152,6 @@ public class FacturaRes extends PBase {
 					contadoCheck.setVisibility(View.INVISIBLE);
 					lblCash.setVisibility(View.VISIBLE);
 					imgCash.setVisibility(View.VISIBLE);
-					lblPend.setVisibility(View.INVISIBLE);
-					imgPend.setVisibility(View.INVISIBLE);
 					imgCred.setVisibility(View.INVISIBLE);
 					lblCred.setVisibility(View.INVISIBLE);
 					imgMPago.setVisibility(View.VISIBLE);
@@ -168,8 +160,6 @@ public class FacturaRes extends PBase {
 					contadoCheck.setVisibility(View.VISIBLE);
 					lblCash.setVisibility(View.INVISIBLE);
 					imgCash.setVisibility(View.INVISIBLE);
-					lblPend.setVisibility(View.INVISIBLE);
-					imgPend.setVisibility(View.INVISIBLE);
 					imgCred.setVisibility(View.VISIBLE);
 					lblCred.setVisibility(View.VISIBLE);
 					imgMPago.setVisibility(View.INVISIBLE);
@@ -179,8 +169,6 @@ public class FacturaRes extends PBase {
 				contadoCheck.setVisibility(View.VISIBLE);
 				lblCash.setVisibility(View.INVISIBLE);
 				imgCash.setVisibility(View.INVISIBLE);
-				lblPend.setVisibility(View.INVISIBLE);
-				imgPend.setVisibility(View.INVISIBLE);
 				imgCred.setVisibility(View.VISIBLE);
 				lblCred.setVisibility(View.VISIBLE);
 				imgMPago.setVisibility(View.INVISIBLE);
@@ -192,8 +180,6 @@ public class FacturaRes extends PBase {
 		if (gl.dvbrowse!=0){
 			lblCash.setVisibility(View.VISIBLE);
 			imgCash.setVisibility(View.VISIBLE);
-			lblPend.setVisibility(View.INVISIBLE);
-			imgPend.setVisibility(View.INVISIBLE);
 			imgCred.setVisibility(View.INVISIBLE);
 			lblCred.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.VISIBLE);
@@ -312,8 +298,6 @@ public class FacturaRes extends PBase {
 			contadoCheck.setText("Pagar al Contado");
 			lblCash.setVisibility(View.VISIBLE);
 			imgCash.setVisibility(View.VISIBLE);
-			lblPend.setVisibility(View.INVISIBLE);
-			imgPend.setVisibility(View.INVISIBLE);
 			imgCred.setVisibility(View.INVISIBLE);
 			lblCred.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.VISIBLE);
@@ -322,8 +306,6 @@ public class FacturaRes extends PBase {
 			contadoCheck.setText("Pagar al Contado");
 			lblCash.setVisibility(View.INVISIBLE);
 			imgCash.setVisibility(View.INVISIBLE);
-			lblPend.setVisibility(View.INVISIBLE);
-			imgPend.setVisibility(View.INVISIBLE);
 			imgCred.setVisibility(View.VISIBLE);
 			lblCred.setVisibility(View.VISIBLE);
 			imgMPago.setVisibility(View.INVISIBLE);

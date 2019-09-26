@@ -2331,12 +2331,12 @@ public class Venta extends PBase {
         }
 
         try {
-            sql = "SELECT NOMBRE,LIMITECREDITO FROM P_CODIGO WHERE CODIGO='"+gl.cliente+"'";
+            sql = "SELECT NOMBRE,LIMITECREDITO FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
-            if (DT.getDouble(1)>0) ss=" [ "+mu.frmcur(DT.getDouble(1))+" ] ";else ss=" [ 0.00 ]";
+            if (DT.getDouble(1)>0.01) ss=" [ "+mu.frmcur(DT.getDouble(1))+" ] ";else ss="";
 
-            lblVend.setText(gl.cliente+""+DT.getString(0)+" "+ss);
+            lblVend.setText(gl.cliente+" - "+DT.getString(0)+" "+ss);
         } catch (Exception e) {
             lblVend.setText("");
         }

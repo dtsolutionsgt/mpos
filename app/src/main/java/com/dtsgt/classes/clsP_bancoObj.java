@@ -124,7 +124,9 @@ public class clsP_bancoObj {
 
         dt=Con.OpenDT(sq);
         count =dt.getCount();
-        if (dt.getCount()>0) dt.moveToFirst();
+        if (count>0){
+            dt.moveToFirst();
+        }
 
         while (!dt.isAfterLast()) {
 
