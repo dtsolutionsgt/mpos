@@ -73,12 +73,34 @@
             android:id="@+id/txtFill"
             android:layout_width="324dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/spinProd"
+            android:layout_alignTop="@+id/txtTitle"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="156dp"
-            android:layout_marginTop="33dp"
+            android:layout_marginStart="150dp"
+            android:layout_marginTop="-3dp"
             android:ems="10"
             android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lblCFact15"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="24dp"
+            android:text="Buscar"
+            android:textSize="24sp" />
+
+        <ImageView
+            android:id="@+id/imageView37"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignTop="@+id/txtFill"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="4dp"
+            android:layout_toEndOf="@+id/txtFill"
+            android:onClick="clear"
+            android:src="@drawable/erase" />
 
         <ImageView
             android:id="@+id/btnImp"
@@ -93,59 +115,27 @@
             android:padding="5dp"
             android:src="@drawable/reimpresion48" />
 
-        <ImageView
-            android:id="@+id/imageView37"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/spinProd"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="33dp"
-            android:layout_toEndOf="@+id/txtFill"
-            android:onClick="clear"
-            android:src="@drawable/erase" />
-
         <ListView
             android:id="@+id/listViewReport"
-            android:layout_width="412dp"
-            android:layout_height="wrap_content"
+            android:layout_width="408dp"
+            android:layout_height="378dp"
             android:layout_below="@+id/txtFill"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="17dp" />
-
-        <Spinner
-            android:id="@+id/spinProd"
-            android:layout_width="258dp"
-            android:layout_height="51dp"
-            android:layout_below="@+id/lblCFact15"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="61dp"
-            android:layout_marginTop="46dp" />
+            android:layout_marginStart="68dp"
+            android:layout_marginTop="14dp" />
 
         <TextView
             android:id="@+id/txtProdName"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_alignTop="@+id/spinProd"
-            android:layout_alignBottom="@+id/spinProd"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:layout_marginStart="39dp"
-            android:layout_marginTop="-1dp"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/spinProd"
             android:gravity="center"
             android:textSize="24sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/txtTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/spinProd"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="36dp"
-            android:text="Buscar"
-            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/txtBtn"
@@ -253,8 +243,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/listViewReport"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="66dp"
-            android:layout_marginTop="13dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="19dp"
             android:text="Reporte Detallado"
             android:textSize="18sp" />
 

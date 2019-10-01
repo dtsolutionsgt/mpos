@@ -26,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses.clsMenu;
+import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -228,18 +229,25 @@ public class Menu extends PBase {
 			switch (menuid) {
 
 				case 1:
+
+					gl.cajaid=3;
+					if(valida()){
 						//***************
 						gl.cliente="0001000000";
 						gl.fnombre="Consumidor final";
-					    gl.fnit="C.F.";
-					    gl.fdir="Ciudad";
-					    //**************
+						gl.fnit="C.F.";
+						gl.fdir="Ciudad";
+						//**************
 
 						gl.rutatipo="V";gl.rutatipog="V";
 						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 
-                        gl.iniciaVenta=true;
+						gl.iniciaVenta=true;
 						startActivity(new Intent(this, Venta.class));
+					}else {
+						msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
+					}
+
 					break;
 
 				case 2:  // Comunicacion
@@ -1526,7 +1534,7 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Inicio de Caja", "Ajuste de Caja", "Fin de Caja"};
+			final String[] selitems = {"Inicio de Caja", "Ajuste de Pagos de Caja", "Fin de Caja"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Caja");
@@ -1537,12 +1545,23 @@ public class Menu extends PBase {
 					ss=selitems[item];
 
 					if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
-					if (ss.equalsIgnoreCase("Ajuste de Caja")) gl.cajaid=2;
+					if (ss.equalsIgnoreCase("Ajuste de Pagos de Caja")) gl.cajaid=2;
 					if (ss.equalsIgnoreCase("Fin de Caja")) gl.cajaid=3;
 
 					gl.titReport = ss;
 
-					startActivity(new Intent(Menu.this,Caja.class));
+					if(valida()){
+						startActivity(new Intent(Menu.this,Caja.class));
+					}else {
+						String txt="";
+
+						if(gl.cajaid==0) txt = "La caja no se ha abierto, si desea iniciar turno debe realizar el fin de caja.";
+						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el inicio de caja.";
+						if(gl.cajaid==2) txt = "área en proceso informático";
+						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja";
+						msgAskValid(txt);
+					}
+
 				}
 			});
 
@@ -1925,6 +1944,55 @@ public class Menu extends PBase {
 	//endregion
 
 	//region Aux
+
+	public boolean valida(){
+		try{
+
+			clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
+
+			caja.fill();
+
+			if(gl.cajaid==1){
+
+				if(caja.count==0) return true;
+
+				if(caja.last().estado==0){
+					return false;
+				}
+			} else if(gl.cajaid==3){
+
+				if(caja.count==0) {
+					gl.cajaid=0;
+					return false;
+				}
+
+				if(caja.last().estado==1){
+					return false;
+				}
+			}else if(gl.cajaid==2) return false;
+
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			msgbox("Ocurrió error (valida) "+e);return false;
+		}
+
+		return true;
+	}
+
+	private void msgAskValid(String msg) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Registro");
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+
+		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
 
 	private boolean validaVenta() {
 		Cursor DT;

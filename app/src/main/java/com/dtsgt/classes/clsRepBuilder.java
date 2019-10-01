@@ -408,7 +408,7 @@ public class clsRepBuilder {
 	}
 	
 	public void addtot(String s1,String val) {
-		ts=ltrim(s1,prw-30)+" "+ltrim(val,25);
+		ts=ltrim(s1,prw-30)+" "+ltrim(val,15);
 		items.add(ts);
 	}
 

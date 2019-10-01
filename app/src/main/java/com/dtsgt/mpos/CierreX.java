@@ -28,15 +28,26 @@ public class CierreX extends PBase {
     private printer prn;
     private CierreX.clsDocExist doc;
 
-    private TextView txtbtn,lblFact;
+    private TextView txtbtn,lblFact,lblTit;
     private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet;
     private int bFactxDia, bVentaxDia, bVentaxProd, bxFPago, bxFam, bVentaxVend, bMBxProd, bMBxFam, bClienteCon, bClienteDet, sw=0;;
     private boolean report, enc=true;
 
     private clsClasses.clsReport item;
+    private clsClasses.clsBonifProd itemZ;
+
     private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
+    private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<clsClasses.clsBonifProd>();
 
     private Long dateini, datefin;
+
+    //Reporte Z
+    private int codPago;
+    private String nombrePago;
+    private Double valorPago, montoIni, montoFin, montoDif;
+    //Reporte Z
+
+    private String condition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +57,7 @@ public class CierreX extends PBase {
         super.InitBase();
         addlog("Cierres",""+du.getActDateTime(),gl.vend);
 
+        lblTit = (TextView) findViewById(R.id.lblTit);
         txtbtn = (TextView) findViewById(R.id.txtBtn);
         FactxDia = (CheckBox) findViewById(R.id.checkBox11);
         VentaxDia = (CheckBox) findViewById(R.id.checkBox12);
@@ -61,6 +73,12 @@ public class CierreX extends PBase {
 
         datefin = du.getActDateTime();
         dateini = du.getActDate();
+
+        if(gl.reportid==9){
+            lblTit.setText("Cierre X");
+        }else if(gl.reportid==10){
+            lblTit.setText("Cierre Z");
+        }
 
         report = false;
 
@@ -251,6 +269,8 @@ public class CierreX extends PBase {
         try{
             itemR.clear();
 
+            if(gl.reportid==10) reporteZ();
+
             for(int i=0; i<10; i++){
                 if(i==0) sw=bFactxDia;
                 if(i==1) sw=bVentaxDia;
@@ -269,92 +289,149 @@ public class CierreX extends PBase {
                         break;
 
                     case 1:
+                        if(gl.reportid==9){
+                            condition =" WHERE KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE KILOMETRAJE = "+gl.corelZ+" ";
+                        }
+
                         sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
-                                "FROM D_FACTURA WHERE FECHA>='"+dateini+"' AND FECHA<='"+datefin+"' " +
+                                "FROM D_FACTURA "+
+                                condition+
                                 "GROUP BY SERIE, IMPMONTO, FECHA " +
                                 "ORDER BY FECHA";
                         break;
                     case 2:
+                        if(gl.reportid==9){
+                            condition =" WHERE KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE KILOMETRAJE = "+gl.corelZ+" ";
+                        }
+
                         sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
                                 "SUM(TOTAL), FECHA " +
-                                "FROM D_FACTURA WHERE FECHA=FECHA AND " +
-                                "FECHA>="+ dateini +" AND FECHA<="+datefin+" " +
+                                "FROM D_FACTURA "+
+                                condition+
+                                //"FECHA>="+ dateini +" AND FECHA<="+datefin+" " +
                                 "GROUP BY FECHA, SERIE";
                         break;
                     case 3:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
 
                         sql="SELECT '', '', 0, D.PRODUCTO, P.DESCCORTA, D.UMVENTA, " +
                                 " SUM(D.CANT), 0,SUM(D.TOTAL), F.FECHA " +
                                 " FROM P_LINEA L INNER JOIN P_PRODUCTO P ON L.CODIGO = P.LINEA " +
                                 " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO  " +
                                 " INNER JOIN D_FACTURA F ON F.COREL = D.COREL  " +
-                                " WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                condition+
                                 " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                                 " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
                         break;
                     case 4:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
 
                         sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 FROM P_MEDIAPAGO M " +
                                 "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                                "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
-                                "WHERE F.ANULADO='N' AND F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+
+                                condition+
+                                "AND F.ANULADO='N' "+
                                 " GROUP BY M.NOMBRE";
                         break;
 
                     case 5:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
 
                         sql="SELECT '', '', 0, '', L.NOMBRE, '', SUM(D.CANT), 0, SUM(D.TOTAL), 0 FROM P_LINEA L " +
                                 "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO " +
                                 "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
                                 "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
-                                "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                condition +
                                 " GROUP BY L.NOMBRE";
                         break;
 
                     case 6:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
 
                         sql="SELECT V.CODIGO, '', 0, '', V.NOMBRE, '', COUNT(COREL), V.NIVELPRECIO, SUM(F.TOTAL), 0 FROM VENDEDORES V " +
                                 "INNER JOIN D_FACTURA F ON F.VENDEDOR = V.CODIGO " +
-                                "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                condition+
                                 " GROUP BY V.CODIGO, V.NOMBRE, V.NIVELPRECIO";
                         break;
 
                     case 7:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
 
                         sql="SELECT D.PRODUCTO, '', 0, '',  P.DESCCORTA, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM D_FACTURAD D " +
                                 "INNER JOIN P_PRODUCTO P ON D.PRODUCTO = P.CODIGO " +
                                 "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
-                                "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                condition+
                                 " GROUP BY D.PRODUCTO, P.DESCCORTA, P.COSTO, D.PRECIO";
                         break;
 
                     case 8:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
 
                         sql="SELECT L.CODIGO, '', 0, '', L.NOMBRE, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM P_LINEA L " +
                                 "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO " +
                                 "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
                                 "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
-                                "WHERE P.LINEA=L.CODIGO AND F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                condition+
+                                "AND P.LINEA=L.CODIGO "+
                                 " GROUP BY L.NOMBRE";
                         break;
 
                     case 9:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
+
                         sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
                                 "FROM P_CLIENTE C " +
                                 "INNER JOIN D_FACTURA F ON C.CODIGO = F.CLIENTE " +
                                 "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
-                                "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                condition+
                                 " GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
                         break;
 
                     case 10:
+                        if(gl.reportid==9){
+                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                        }
 
                         sql="SELECT F.COREL, C.CODIGO, 0, P.CODIGO, P.DESCCORTA, C.NOMBRE, SUM(D.CANT), D.PRECIO, D.PRECIO*D.CANT, F.FECHA, 0 " +
                                 "FROM D_FACTURA F " +
                                 "INNER JOIN P_CLIENTE C ON C.CODIGO = F.CLIENTE "+
                                 "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
                                 "INNER JOIN P_PRODUCTO P ON P.CODIGO = D.PRODUCTO " +
-                                "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                                condition+
                                 " GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, D.PRECIO";
                         break;
 
@@ -405,6 +482,52 @@ public class CierreX extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("fillItems: "+e);
             return false;
+        }
+    }
+
+    private void reporteZ(){
+        Cursor dt;
+
+        try{
+            sql="SELECT P.CODPAGO, M.NOMBRE, '', 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0 " +
+                    "FROM P_CAJACIERRE C " +
+                    "INNER JOIN D_FACTURA F ON C.COREL=F.KILOMETRAJE " +
+                    "INNER JOIN D_FACTURAP P ON F.COREL=P.COREL " +
+                    "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO=M.CODIGO " +
+                    "WHERE F.KILOMETRAJE = " + gl.corelZ +
+                    " GROUP BY P.CODPAGO, M.NOMBRE, P.VALOR, C.MONTOINI, C.MONTOFIN, C.MONTODIF";
+
+            dt = Con.OpenDT(sql);
+
+            if(dt==null) {
+                msgbox("Ocurrío un error en reporte Z, vuelva a intentarlo");
+            }
+
+            if(dt.getCount()!=0){
+                dt.moveToFirst();
+
+                while(!dt.isAfterLast()){
+
+                    itemZ = clsCls.new clsBonifProd();
+
+                    itemZ.id=dt.getString(0);
+                    itemZ.nombre=dt.getString(1);
+                    itemZ.prstr=dt.getString(2);
+                    itemZ.flag=dt.getInt(3);
+                    itemZ.cant=dt.getDouble(4);
+                    itemZ.cantmin=dt.getDouble(5);
+                    itemZ.disp=dt.getDouble(6);
+                    itemZ.precio=dt.getDouble(7);
+                    itemZ.costo=dt.getDouble(8);
+
+                    itemRZ.add(itemZ);
+
+                    dt.moveToNext();
+                }
+            }
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox("reporteZ: "+e);
         }
     }
 
@@ -535,6 +658,21 @@ public class CierreX extends PBase {
                 count8 += count7;
                 count9 += count8;
                 count10 += count9;
+
+                if(gl.reportid==10){
+                    rep.add("           REPORTE DE CUADRE");
+                    rep.add("M.PAGO    MONTO INI   MONTO FIN   DIF.");
+                    rep.line();
+                    for(int j=0; j<itemRZ.size(); j++){
+                        if(!itemRZ.get(j).id.equals("1")){
+                            rep.add4lrrTot(itemRZ.get(j).nombre,"",itemRZ.get(j).disp,itemRZ.get(j).precio);
+                        }else {
+                            rep.add4lrrTot(itemRZ.get(j).nombre,"Q."+itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+                        }
+                    }
+
+                    rep.empty();
+                }
 
                 for (int i = 0; i <itemR.size(); i++) {
 

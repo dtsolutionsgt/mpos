@@ -71,7 +71,7 @@ public class clsP_cajacierreObj {
     }
 
     public clsClasses.clsP_cajacierre last() {
-        return items.get(count);
+        return items.get(count-1);
     }
 
 

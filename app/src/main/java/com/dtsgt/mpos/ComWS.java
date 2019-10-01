@@ -138,7 +138,7 @@ public class ComWS extends PBase {
 
         ruta="";
         ActRuta = ruta;
-        emp = gl.emp;
+        emp = "3";
         rutatipo = gl.rutatipog;
 
 		dbld = new clsDataBuilder(this);
@@ -206,7 +206,7 @@ public class ComWS extends PBase {
         URL = gl.urlglob;
         URL="http://192.168.1.137/wsmpos/wsAndr.asmx";
         URL="http://192.168.1.137/mpos/wsMpos.asmx";
-        //URL="http://192.168.1.52/wsmpos/wsAndr.asmx";
+        URL="http://192.168.1.52/wsmpos/wsAndr.asmx";
         txtWS.setText(URL);txtEmp.setText(emp);
         if (gl.debug) {
             txtWS.setEnabled(true);txtEmp.setEnabled(true);

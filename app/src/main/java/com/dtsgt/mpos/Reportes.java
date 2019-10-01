@@ -64,7 +64,6 @@ public class Reportes extends PBase {
     private Button btnImp;
     private TextView lblDateini,lblDatefin, lblImp, lblFact,lblTit,lblProd,txtFill,txtTitle;
     private ImageView btnClear;
-    private Spinner spinnProd;
     private CheckBox cbDet;
 
     private String prodid,savecant;
@@ -125,15 +124,11 @@ public class Reportes extends PBase {
         lblImp = (TextView) findViewById(R.id.txtBtn);
         lblFact = (TextView) findViewById(R.id.txtFact);
         lblTit = (TextView) findViewById(R.id.lblTit);
-        spinnProd = (Spinner) findViewById(R.id.spinProd);
         txtTitle = (TextView) findViewById(R.id.txtTitle);txtTitle.setVisibility(View.INVISIBLE);
         btnClear = (ImageView) findViewById(R.id.imageView37);btnClear.setVisibility(View.INVISIBLE);
         cbDet = (CheckBox) findViewById(R.id.cbDet);
 
-        if(gl.reportid!=4){
-            lblProd.setVisibility(View.INVISIBLE);
-            spinnProd.setVisibility(View.INVISIBLE);
-        }
+        lblProd.setVisibility(View.INVISIBLE);
 
         if(gl.reportid!=11 && gl.reportid!=12){
             cbDet.setVisibility(View.INVISIBLE);
@@ -157,9 +152,8 @@ public class Reportes extends PBase {
         lblImp.setText("GENERAR");
 
         setHandlers();
-        FillSpinner();
 
-        if(gl.reportid==3 || gl.reportid==7 || gl.reportid==8 || gl.reportid==11){
+        if(gl.reportid==3 || gl.reportid==4 || gl.reportid==7 || gl.reportid==8 || gl.reportid==11){
             txtTitle.setVisibility(View.VISIBLE);
             btnClear.setVisibility(View.VISIBLE);
             txtFill.setVisibility(View.VISIBLE);
@@ -232,6 +226,9 @@ public class Reportes extends PBase {
                 case 3:
                     sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
                     break;
+                case 4:
+                    sql="SELECT CODIGO, NOMBRE FROM P_MEDIAPAGO"+ condi;
+                    break;
                 case 7:
                     sql="SELECT CODIGO, DESCCORTA FROM P_PRODUCTO"+ condi;
                     break;
@@ -258,6 +255,9 @@ public class Reportes extends PBase {
                 switch(gl.reportid){
                     case 3:
                         sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
+                        break;
+                    case 4:
+                        sql="SELECT CODIGO, NOMBRE FROM P_MEDIAPAGO"+ condi;
                         break;
                     case 7:
                         sql="SELECT CODIGO, DESCCORTA FROM P_PRODUCTO"+ condi;
@@ -671,74 +671,6 @@ public class Reportes extends PBase {
                 }
             });
 
-            spinnProd.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    TextView spinlabel;
-
-                    try {
-                        spinlabel=(TextView)parentView.getChildAt(0);
-                        spinlabel.setTextColor(Color.BLACK);
-                        spinlabel.setPadding(5, 0, 0, 0);
-                        spinlabel.setTextSize(18);
-
-                        id_item = spincode.get(position);
-
-                        if(id_item.equals("NO")) { lblProd.setText("");}
-
-                        if(!id_item.equals("Todos")){
-
-                            if(gl.reportid==3 || gl.reportid==8){
-
-                                linea.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(linea.count==0) return;
-                                nameProd = linea.first().nombre.trim();
-                                lblProd.setText(nameProd);
-
-                            }else if(gl.reportid==4){
-
-                                medP.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(medP.count==0) return;
-                                nameVend = medP.first().nombre.trim();
-                                lblProd.setText(nameVend);
-
-                            }else if(gl.reportid==7){
-
-                                prod.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(prod.count==0) return;
-                                nameVend = prod.first().desccorta.trim();
-                                lblProd.setText(nameVend);
-
-                            }else if(gl.reportid==11){
-
-                                cli.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(cli.count==0) return;
-                                nameVend = cli.first().nombre.trim();
-                                lblProd.setText(nameVend);
-
-                            }
-
-                        }else {
-                            lblProd.setText("");
-                        }
-
-                        itemR.clear();
-                        lblFact.setText("");
-                        lblImp.setText("GENERAR");
-                        report=false;
-                    } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox( e.getMessage());
-                    }
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parentView) {
-                    return;
-                }
-
-            });
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -1173,80 +1105,6 @@ public class Reportes extends PBase {
     public void clear(View view){
         txtFill.setText("");
         lblProd.setText("");
-    }
-
-    private void FillSpinner(){
-        Cursor DT;
-        String icode,name,select="",none="";
-
-        try{
-
-            if(gl.reportid==3 || gl.reportid==8){
-                sql="SELECT CODIGO, NOMBRE FROM P_LINEA";
-
-                select = "Seleccione una familia...";
-                none = "No hay familias existentes";
-
-            }else if(gl.reportid==4){
-                sql="SELECT CODIGO, NOMBRE FROM P_MEDIAPAGO";
-
-                select = "Seleccione forma de pago...";
-                none = "Formas de pagos inexistentes";
-
-            }else if(gl.reportid==7){
-                sql="SELECT CODIGO, DESCCORTA FROM P_PRODUCTO";
-
-                select = "Seleccione producto...";
-                none = "Productos inexistentes";
-            }else if(gl.reportid==11){
-                sql="SELECT CODIGO, NOMBRE FROM P_CLIENTE";
-
-                select = "Seleccione un cliente...";
-                none = "No hay clientes existentes";
-
-            }
-
-            DT=Con.OpenDT(sql);
-
-            if(DT.getCount()<=0){
-                spinlist.add(none);
-            }else{
-                spinlist.add(select);
-                spincode.add("NO");
-                spinlist.add("Todos");
-                spincode.add("Todos");
-
-                DT.moveToFirst();
-                while (!DT.isAfterLast()) {
-
-                    icode=DT.getString(0);
-                    name=DT.getString(1);
-
-                    spinlist.add(icode+ " - " + name);
-                    spincode.add(icode);
-
-                    DT.moveToNext();
-                }
-            }
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            spinnProd.setSelection(0);
-        }
-
-        try{
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            spinnProd.setAdapter(dataAdapter);
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            spinnProd.setSelection(0);
-        }
-
     }
 
     public void showDateDialog1(View view) {

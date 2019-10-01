@@ -117,7 +117,7 @@
         android:layout_marginTop="56dp"
         android:background="@drawable/blue_strip"
         android:gravity="center"
-        android:text="MONTO"
+        android:text="MONTO INICIAL"
         android:textColor="#FFFFFFFF"
         android:textSize="30sp" />
 
@@ -163,5 +163,31 @@
         android:text="FECHA"
         android:textColor="#FFFFFFFF"
         android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/textView134"
+        android:layout_width="291dp"
+        android:layout_height="44dp"
+        android:layout_below="@+id/textView133"
+        android:layout_alignStart="@+id/textView133"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="55dp"
+        android:background="@drawable/blue_strip"
+        android:gravity="center"
+        android:text="MONTO FINAL"
+        android:textColor="#FFFFFFFF"
+        android:textSize="30sp" />
+
+    <EditText
+        android:id="@+id/editText20"
+        android:layout_width="384dp"
+        android:layout_height="52dp"
+        android:layout_below="@+id/editText19"
+        android:layout_alignStart="@+id/editText19"
+        android:layout_marginStart="-1dp"
+        android:layout_marginTop="52dp"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:textSize="24sp" />
 
 </RelativeLayout>
