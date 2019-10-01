@@ -214,15 +214,20 @@ public class clsDocument {
 	}
 
     protected void saveHeadLines(int reimpres) {
-        String s;
+        String s,ss,ss2;
 		String mPago,dPago;
 
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) 		{
 
-            s=lines.get(i);
-            s=encabezado(s);
+            s=lines.get(i);if (s.isEmpty()) s=" ";
+
+            try {
+                s=encabezado(s);
+            } catch (Exception e) {
+                s="##";
+            }
 
             if (docpedido) {
                 s=s.replace("Factura serie","Pedido");
@@ -241,51 +246,52 @@ public class clsDocument {
 				s=s.replace("Factura","Recibo");
 			}
 
-            //if (residx==1) {
+			if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) rep.add(s);
 
-            /*    residx=0;
-            }*/
-
-			if (!s.equalsIgnoreCase("@@")) rep.add(s);
-
+			/*
 			if(i==7){
 				rep.add("");
-
-				if (docfactura) {
+        		if (docfactura) {
 					rep.add(resol);
 					rep.add(resfecha);
 					rep.add(resvence);
 					rep.add(resrango);
 				}
-			}
+  			}
+  		   */
         }
 
-        if (!emptystr(nit)) rep.add("RUC : "+nit);
-        if (!emptystr(clidir)) rep.add("Dir : "+clidir);
-        if(docfactura){
-			if(condicionPago==4){
+        rep.add("Fecha : "+fsfecha);
 
+        if (docfactura){
+
+            if (!emptystr(nit)) rep.add("NIT : "+nit);
+            if (!emptystr(clidir)) rep.add("Dir : "+clidir);
+
+			if (condicionPago==4){
 				mPago= "Credito";
-
 				if(diacred==1){
 					dPago="dia";
 				}else{
 					dPago="dias";
 				}
 				rep.add("Condiciones de pago: "+mPago+" "+diacred+" "+dPago);
-
-			}else{
+			} else {
 				mPago= "Contado";
 				rep.add("Condiciones de pago: "+mPago);
 			}
 		}
-		rep.add("");
+
+        rep.add("");
+
+        /*
         if(pass){
         	rep.add(nombre);
         	rep.add("Caja: "+ruta);
         	rep.add("Vendedor: "+vendcod+" "+vendedor);
 		}
-		rep.add("Fecha : "+fsfecha);
+
+
 		rep.add("");
 
         //if (!emptystr(clicod)) rep.add("Codigo: "+clicod);
@@ -298,6 +304,7 @@ public class clsDocument {
             rep.add("");
 
         }
+        */
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -337,114 +344,137 @@ public class clsDocument {
         String s,lu,a;
         int idx;
 
-        //residx=0;
-		if (emptystr(l)) return "";
-        //lu=l.toUpperCase().trim();
+    	if (l.isEmpty()) return " ";
         lu=l.trim();
 
         if (lu.length()==1 && lu.equalsIgnoreCase("N")) {
-            s=nombre;s=rep.ctrim(s);return s;
+            //s=nombre;s=rep.ctrim(s);return s;
+            return "##";
         }
 
         if (l.indexOf("dd-MM-yyyy")>=0) {
-            s=DU.sfecha(DU.getActDateTime());
-            l=l.replace("dd-MM-yyyy",s);return l;
+            //s=DU.sfecha(DU.getActDateTime());
+            //l=l.replace("dd-MM-yyyy",s);return l;
+            return DU.sfecha(DU.getActDateTime());
         }
 
         if (l.indexOf("HH:mm:ss")>=0) {
-            s=DU.shora(DU.getActDateTime());
-            l=l.replace("HH:mm:ss",s);return l;
+            //s=DU.shora(DU.getActDateTime());
+            //l=l.replace("HH:mm:ss",s);return l;
+            return "##";
         }
 
 		if (l.indexOf("@Numero") >=0) {
+		    if (docfactura) {
+                int index = l.indexOf("@Numero");
 
-			int index = l.indexOf("@Numero");
+                String temp = l.substring(index + 7, index + 9);
+                String temp1 = l.substring(index + 9, index + 10);
 
-			String temp = l.substring(index + 7, index + 9);
-			String temp1 = l.substring(index + 9, index + 10);
+                int ctemp= Integer.parseInt(temp);
 
-			int ctemp= Integer.parseInt(temp);
+                String str=StringUtils.leftPad("", ctemp, temp1);
 
-			String str=StringUtils.leftPad("", ctemp, temp1);
+                if (!serie.isEmpty()) {
+                    numero = StringUtils.right(str + numero, Integer.parseInt(temp));
 
-			if (!serie.isEmpty()) {
-				numero = StringUtils.right(str + numero, Integer.parseInt(temp));
+                    if (!numero.isEmpty()){
+                        int ctemp1= Integer.parseInt(numero);
+                        if (ctemp1==0) numero = StringUtils.leftPad("", ctemp);
+                    }
 
-				if (!numero.isEmpty()){
+                }
+
+                try {
+                    if (l.length() > index + numero.length() ){
+                        l = l.substring(0, index) + numero + l.substring(index + 10);
+                    }else{
+                        l = l.substring(0, index) + numero;
+                    }
+                } catch (Exception e) {
+                    String ll=l;
+                }
+
+                if (l.indexOf("@Numero")>=0) {
+                    l = StringUtils.replace(l,"@Numero","");
+                    if (temp.length()>0 && temp1.length()>0){
+                        l=StringUtils.replace(l,temp+temp1,"");
+                    }
+                }
+            } else {
+		        l="##";
+            }
+		}
+
+		if (StringUtils.upperCase(l).indexOf("@SerNum") != -1) {
+            if (docfactura) {
+                int index = StringUtils.upperCase(l).indexOf("@SerNum");
+
+                String temp = l.substring(index + 7, index + 9);
+                String temp1 = l.substring(index + 10, index + 11);
+
+                int ctemp= Integer.parseInt(temp);
+
+                String str=StringUtils.leftPad("", ctemp, temp1);
+
+                numero = StringUtils.right(str + numero, Integer.parseInt(temp));
+
+                if (!numero.isEmpty()){
                     int ctemp1= Integer.parseInt(numero);
                     if (ctemp1==0) numero = StringUtils.leftPad("", ctemp);
                 }
 
+                try {
+                    if ((l.length()) > index + serie.length() + numero.length()) {
+                        l = l.substring(0, index) + serie + numero + l.substring(index + 1 + serie.length() + numero.length());
+                    }else{
+                        l = l.substring(0, index) + serie + numero;
+                    }
+                } catch (Exception e) {
+                    String ll=l;
+                    l="serie ::";
+                }
+
+                if (l.indexOf("@SerNum")>=0) {
+                    l = StringUtils.replace(l,"@SerNum","");
+                }
+
+            } else {
+                l="##";
             }
-
-			if (l.length() > index + numero.length() ){
-				l = l.substring(0, index) + numero + l.substring(index + 10);
-			}else{
-				l = l.substring(0, index) + numero;
-			}
-
-			if (l.indexOf("@Numero")>=0) {
-				l = StringUtils.replace(l,"@Numero","");
-				if (temp.length()>0 && temp1.length()>0){
-					l=StringUtils.replace(l,temp+temp1,"");
-				}
-			}
-		}
-
-		if (StringUtils.upperCase(l).indexOf("@SerNum") != -1) {
-
-			int index = StringUtils.upperCase(l).indexOf("@SerNum");
-
-			String temp = l.substring(index + 7, index + 9);
-			String temp1 = l.substring(index + 10, index + 11);
-
-			int ctemp= Integer.parseInt(temp);
-
-			String str=StringUtils.leftPad("", ctemp, temp1);
-
-			numero = StringUtils.right(str + numero, Integer.parseInt(temp));
-
-            if (!numero.isEmpty()){
-                int ctemp1= Integer.parseInt(numero);
-                if (ctemp1==0) numero = StringUtils.leftPad("", ctemp);
-            }
-
-			if ((l.length()) > index + serie.length() + numero.length()) {
-				l = l.substring(0, index) + serie + numero + l.substring(index + 1 + serie.length() + numero.length());
-			}else{
-				l = l.substring(0, index) + serie + numero;
-			}
-
-			if (l.indexOf("@SerNum")>=0) {
-				l = StringUtils.replace(l,"@SerNum","");
-			}
 		}
 
 		idx=l.indexOf("@Serie");
         if (idx>=0) {
-
-			if (l.length() > idx + serie.length()) {
-				l = l.substring(0, idx) + serie + l.substring(idx + 6, idx + l.length() - idx - 6);
-			}else{
-				l = l.substring(0, idx) + serie;
-			}
-
-			if (l.indexOf("@Serie")>=0) {
-				l = StringUtils.replace(l,"@Serie","");
-			}
-
+            if (docfactura) {
+                if (l.length() > idx + serie.length()) {
+                    l = l.substring(0, idx) + serie + l.substring(idx + 6, idx + l.length() - idx - 6);
+                }else{
+                    l = l.substring(0, idx) + serie;
+                }
+                if (l.indexOf("@Serie")>=0) {
+                    l = StringUtils.replace(l,"@Serie","");
+                }
+                l="No.: "+serie +" - "+numero;
+            } else {
+                l="##";
+            }
         }
 
 		if ((l.indexOf("No.:")>=0) && (l.trim().length()==4)) {
-			l = StringUtils.replace(l,"No.:","@@");
-			l=l.trim();
+            if (docfactura) {
+                l = StringUtils.replace(l,"No.:","@@");
+                l=l.trim();
+            } else {
+                l="##";
+            }
 		}
 
         idx=lu.indexOf("@Vendedor");
         if (idx>=0) {
         	rep.addc("");
             if (emptystr(vendedor)) return "@@";
-            l=l.replace("@Vendedor",vendcod+" - "+vendedor);return l;
+            l=l.replace("@Vendedor",vendedor);return l;
         }
 
         idx=lu.indexOf("@Ruta");

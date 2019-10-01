@@ -228,8 +228,6 @@ public class clsP_cajapagosObj {
 
         return upd.sql();
 
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
-
     }
 
 }

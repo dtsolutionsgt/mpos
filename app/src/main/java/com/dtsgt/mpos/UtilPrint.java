@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_archivoconfObj;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -25,8 +27,7 @@ public class UtilPrint extends PBase {
 	
 	private Spinner  spinPrint;
 	private EditText txtPar;
-	private TextView txtBut1;
-	
+
 	private ArrayList<String> spincode= new ArrayList<String>();
     private String prtipo,prpar;
     private int pridx;
@@ -34,9 +35,8 @@ public class UtilPrint extends PBase {
 	private AppMethods app;
     private printer prn;
     private Runnable printclose,printcallback;
-   
-    // Datamax "00:03:19:8E:76:7E"
-    // Zebra "00:22:58:01:04:28"
+
+    // Epson TM - "00:01:90:85:0D:8C"
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,6 @@ public class UtilPrint extends PBase {
 		
 		spinPrint = (Spinner) findViewById(R.id.spinner1);
 		txtPar = (EditText) findViewById(R.id.txtFilter);
-		txtBut1 = (TextView) findViewById(R.id.textView1);txtBut1.setVisibility(View.INVISIBLE);
 
 		app = new AppMethods(this, gl, Con, db);
 
@@ -61,8 +60,7 @@ public class UtilPrint extends PBase {
 		buildFile();
 
 		printcallback= new Runnable() {
-		    public void run() {
-		    }
+		    public void run() { }
 		};
 				
 		printclose= new Runnable() {
@@ -81,18 +79,11 @@ public class UtilPrint extends PBase {
 	
 	public void doApply(View view) {
 		try{
-			//if (!app.validaImpresora(txtPar.getText().toString().trim())) {
-			//	msgbox("¡La impresora no está autorizada!");return;
-			//}
-
 			updateItem();
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
-	}
-	
-	public void doAction(View view) {
 	}
 	
 	public void doTestPrint(View view) {
@@ -105,6 +96,11 @@ public class UtilPrint extends PBase {
 			if (mu.emptystr(prpar)) {
 				mu.msgbox("Parametro de impresion incorrecto");return;
 			}
+
+			if (buildFile()) {
+			   app.doPrint();
+            }
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -127,12 +123,7 @@ public class UtilPrint extends PBase {
 				    
 			    	prtipo=spincode.get(position);
 				    pridx=position;	
-			    	
-			    	txtBut1.setVisibility(View.INVISIBLE);
-			    	//if (pridx==2) {
-			    	//	txtBut1.setText("Conectar");txtBut1.setVisibility(View.VISIBLE);
-			    	//}
-			    	
+
 		        } catch (Exception e) {
 					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 				   	mu.msgbox( e.getMessage());
@@ -153,19 +144,21 @@ public class UtilPrint extends PBase {
 	
 	private void loadItem() {
 		Cursor DT;
-		
+
+        prtipo="";prpar="";
+
 		try {
 
 			sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF";
 			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
 
-			//#EJC20181127: Se agregó validación de RowCount
-			if (DT.getCount()>0)
-			{
+			if (DT.getCount()>0) {
+                DT.moveToFirst();
 				prtipo=DT.getString(0);
 				prpar=DT.getString(1);
-			}
+			} else {
+                addItem();
+            }
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -208,6 +201,28 @@ public class UtilPrint extends PBase {
 		
 	}
 
+	private void addItem() {
+
+        try {
+            clsP_archivoconfObj arch=new clsP_archivoconfObj(this,Con,db);
+            clsClasses.clsP_archivoconf item = clsCls.new clsP_archivoconf();
+
+            item.ruta = gl.caja;
+            item.tipo_hh="";
+            item.idioma="";
+            item.tipo_impresora="SIN IMPRESORA";
+            item.serial_hh="";
+            item.modif_peso="";
+            item.puerto_impresion="";
+            item.lbs_o_kgs="";
+            item.nota_credito=0;
+
+            arch.add(item);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
 	// Aux
 	
@@ -218,10 +233,9 @@ public class UtilPrint extends PBase {
 
 			spincode.clear();
 			
-			s="SIN IMPRESORA"; spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=0;
-			s="DATAMAX";       spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=1;
-			s="ZEBRA CPCL";    spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=2;
-							
+			s="SIN IMPRESORA";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=0;
+			s="EPSON TM BlueTooth";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=1;
+
 			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spincode);
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				
@@ -234,13 +248,13 @@ public class UtilPrint extends PBase {
 		}
 	}	
 	
-	private void buildFile() {
+	private boolean buildFile() {
 
 		BufferedWriter writer = null;
 		FileWriter wfile;
 		String fname;	
 		
-		fname = Environment.getExternalStorageDirectory()+"/"+"printtest.txt";
+		fname = Environment.getExternalStorageDirectory()+"/"+"print.txt";
 		
 		try {
 
@@ -255,13 +269,13 @@ public class UtilPrint extends PBase {
 			writer.write(" ");writer.write("\r\n");
 			
 		    writer.close();
-		    
+
+		    return true;
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			mu.msgbox("No se puede crear archivo de impresion : "+e.getMessage());
+			mu.msgbox("No se puede crear archivo de impresion : "+e.getMessage());return false;
 		}
 		
 	}
-	
 
 }

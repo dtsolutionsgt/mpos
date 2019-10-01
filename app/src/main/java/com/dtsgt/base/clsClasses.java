@@ -8,7 +8,19 @@ public class clsClasses {
 		public int  activo;
 	}
 
-	public class clsP_banco {
+    public class clsP_archivoconf {
+        public String ruta;
+        public String tipo_hh;
+        public String idioma;
+        public String tipo_impresora;
+        public String serial_hh;
+        public String modif_peso;
+        public String puerto_impresion;
+        public String lbs_o_kgs;
+        public int  nota_credito;
+    }
+
+    public class clsP_banco {
 		public String codigo;
 		public String tipo;
 		public String nombre;

@@ -16,6 +16,48 @@ public class clsExport {
         emp=empresa;
     }
 
+    //region Archivo Configuracion
+
+    public String archivo_ins(clsClasses.clsP_archivoconf item) {
+
+        ins.init("P_archivoconf");
+
+        ins.add("RUTA", item.ruta);
+        ins.add("TIPO_HH", item.tipo_hh);
+        ins.add("IDIOMA", item.idioma);
+        ins.add("TIPO_IMPRESORA", item.tipo_impresora);
+        ins.add("SERIAL_HH", item.serial_hh);
+        ins.add("MODIF_PESO", item.modif_peso);
+        ins.add("PUERTO_IMPRESION", item.puerto_impresion);
+        ins.add("LBS_O_KGS", item.lbs_o_kgs);
+        ins.add("NOTA_CREDITO", item.nota_credito);
+        ins.add("EMPRESA",emp);
+
+        return ins.sql();
+
+    }
+
+    public String archivo_upd(clsClasses.clsP_archivoconf item) {
+
+        upd.init("P_archivoconf");
+
+        upd.add("TIPO_HH", item.tipo_hh);
+        upd.add("IDIOMA", item.idioma);
+        upd.add("TIPO_IMPRESORA", item.tipo_impresora);
+        upd.add("SERIAL_HH", item.serial_hh);
+        upd.add("MODIF_PESO", item.modif_peso);
+        upd.add("PUERTO_IMPRESION", item.puerto_impresion);
+        upd.add("LBS_O_KGS", item.lbs_o_kgs);
+        upd.add("NOTA_CREDITO", item.nota_credito);
+
+        upd.Where("(RUTA='" + item.ruta + "') AND (EMPRESA='"+emp+"')");
+
+        return upd.sql();
+
+    }
+
+    //endregion
+
     //region Banco
 
     public String banco_ins(clsClasses.clsP_banco item) {

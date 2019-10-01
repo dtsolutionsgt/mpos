@@ -3,6 +3,7 @@ package com.dtsgt.base;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -10,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -53,94 +55,7 @@ public class AppMethods {
 		upd=Con.Upd;
 	}
 
-	//Función para saber la cantidad de registros en una tabla
-	public int getDocCount(String ss,String pps) {
-
-		Cursor DT;
-		int cnt =0;
-		String st;
-
-		try {
-			sql=ss;
-			DT=Con.OpenDT(sql);
-
-			if (DT.getCount()>0){
-				cnt=DT.getCount();
-				st=pps+" "+cnt;
-				sp=sp+st+"\n";
-			}
-
-			return cnt;
-		} catch (Exception e) {
-			//mu.msgbox(sql+"\n"+e.getMessage());
-			return 0;
-		}
-	}
-
-	//Función para saber la cantidad de registros en una tabla específica
-	public int getDocCountTipo(String tipo, boolean sinEnviar) {
-
-		Cursor DT;
-		int cnt = 0;
-		String st, ss;
-		String pps = "";
-
-		try {
-
-			switch(tipo) {
-				case "Facturas":
-
-					sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_FACTURA";
-					sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
-					break;
-
-				case "Pedidos":
-
-					sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_PEDIDO";
-					sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
-					break;
-
-				case "Cobros":
-
-					sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_COBRO";
-					sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
-					break;
-
-				case "Devolucion":
-
-					sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_NOTACRED";
-					sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
-					break;
-
-				case "Inventario":
-
-					sql=" SELECT IFNULL(SUM(A.CANT),0) AS CANT " +
-						" FROM (SELECT IFNULL(COUNT(DOCUMENTO),0) AS CANT FROM P_STOCK " +
-						" UNION SELECT IFNULL(COUNT(DOCUMENTO),0) AS CANT FROM P_STOCKB " +
-						" UNION SELECT IFNULL(COUNT(DOCUMENTO),0) AS CAN FROM P_STOCK_PALLET) A";
-					break;
-			}
-
-			DT=Con.OpenDT(sql);
-
-			if (DT.getCount()>0){
-			    DT.moveToFirst();
-				cnt=DT.getInt(0);
-			}
-
-			st=pps+" "+cnt;
-			sp=sp+st+"\n";
-
-		} catch (Exception e) {
-
-		}
-
-		return cnt;
-
-	}
-
-
-	// Public
+	//region Public
 	
 	public void parametrosExtra() {
 		Cursor dt;
@@ -393,9 +308,9 @@ public class AppMethods {
 
 	}
 
+    //endregion
 
-
-    // Productos
+    //region Productos
 
     public boolean ventaPeso(String cod) {
         Cursor DT;
@@ -839,8 +754,167 @@ public class AppMethods {
 		}
 	}
 
+    //endregion
 
-	// Common
+    //region Impresion
+
+    public void doPrint() {
+        loadPrintConfig();
+
+        if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
+            toast("No se puede imprimir. No está definida impresora");return;
+        }
+
+        if (gl.prpar.isEmpty()) {
+            toast("No se puede imprimir. No está definido el MAC.");return;
+        }
+
+        if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
+            printEpsonTMBT();
+        }
+
+    }
+
+    private void printEpsonTMBT() {
+        try {
+            Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
+
+            intent.putExtra("mac","BT:"+gl.prpar);
+            intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
+            intent.putExtra("askprint",1);
+
+            cont.startActivity(intent);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    private void loadPrintConfig() {
+        Cursor DT;
+
+        //00:01:90:85:0D:8C
+
+        try {
+            gl.prtipo="";gl.prpar="";
+
+            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                gl.prtipo=DT.getString(0);
+                gl.prpar=DT.getString(1);
+            }
+
+        } catch (Exception e) {
+            gl.prtipo="";gl.prpar="00:01:90:85:0D:8C";
+        }
+
+    }
+
+    public boolean impresora() {
+        loadPrintConfig();
+
+        if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //endregion
+
+	//region Aux
+
+    //Función para saber la cantidad de registros en una tabla
+    public int getDocCount(String ss,String pps) {
+
+        Cursor DT;
+        int cnt =0;
+        String st;
+
+        try {
+            sql=ss;
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0){
+                cnt=DT.getCount();
+                st=pps+" "+cnt;
+                sp=sp+st+"\n";
+            }
+
+            return cnt;
+        } catch (Exception e) {
+            //mu.msgbox(sql+"\n"+e.getMessage());
+            return 0;
+        }
+    }
+
+    //Función para saber la cantidad de registros en una tabla específica
+    public int getDocCountTipo(String tipo, boolean sinEnviar) {
+
+        Cursor DT;
+        int cnt = 0;
+        String st, ss;
+        String pps = "";
+
+        try {
+
+            switch(tipo) {
+                case "Facturas":
+
+                    sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_FACTURA";
+                    sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
+                    break;
+
+                case "Pedidos":
+
+                    sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_PEDIDO";
+                    sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
+                    break;
+
+                case "Cobros":
+
+                    sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_COBRO";
+                    sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
+                    break;
+
+                case "Devolucion":
+
+                    sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_NOTACRED";
+                    sql += (sinEnviar?" WHERE STATCOM = 'N'":"");
+                    break;
+
+                case "Inventario":
+
+                    sql=" SELECT IFNULL(SUM(A.CANT),0) AS CANT " +
+                            " FROM (SELECT IFNULL(COUNT(DOCUMENTO),0) AS CANT FROM P_STOCK " +
+                            " UNION SELECT IFNULL(COUNT(DOCUMENTO),0) AS CANT FROM P_STOCKB " +
+                            " UNION SELECT IFNULL(COUNT(DOCUMENTO),0) AS CAN FROM P_STOCK_PALLET) A";
+                    break;
+            }
+
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0){
+                DT.moveToFirst();
+                cnt=DT.getInt(0);
+            }
+
+            st=pps+" "+cnt;
+            sp=sp+st+"\n";
+
+        } catch (Exception e) {
+
+        }
+
+        return cnt;
+
+    }
+
+    //endregion
+
+    //region Common
 	
 	protected void toast(String msg) {
 		Toast toast= Toast.makeText(cont,msg, Toast.LENGTH_SHORT);  
@@ -908,5 +982,7 @@ public class AppMethods {
 		return activo;
 
 	}
+
+    //endregion
 
 }

@@ -641,6 +641,11 @@ public class FacturaRes extends PBase {
 
 			impres=0;
 
+			if (app.impresora()) {
+                fdoc.buildPrint(corel, 0,gl.peFormatoFactura);
+                app.doPrint();
+            }
+
 			/*
 			if (prn.isEnabled()) {
 
@@ -695,7 +700,8 @@ public class FacturaRes extends PBase {
 			//gl.closeVenta=true;
             gl.iniciaVenta=true;
 
-			if (!prn.isEnabled()) super.finish();
+			//if (!prn.isEnabled())
+            super.finish();
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

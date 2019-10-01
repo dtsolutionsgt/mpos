@@ -493,27 +493,9 @@ public class Reimpresion extends PBase {
 		}
 
 		try {
-
-			if(prn.isEnabled()){
-				if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura))
-				    prn.printask(printcallback);
-
-			}else if(!prn.isEnabled()){
-				fdoc.buildPrint(itemid,impr,gl.peFormatoFactura);
-
-				corelNC=getCorelNotaCred(itemid);
-
-				if (!corelNC.isEmpty()){
-					/*fdev=new clsDocDevolucion(this,prn.prw,gl.peMon,gl.peDecImp, "printnc.txt");
-					fdev.deviceid =gl.deviceId;*/
-
-					fdev.buildPrint(corelNC, 1, "TOL");
-					toast("Reimpresion de factura y nota de credito generada");
-				}else{
-					toast("Reimpresion de factura generada");
-				}
-			}
-
+            if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura)) {
+                app.doPrint();
+            }
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox(e.getMessage());
@@ -522,14 +504,9 @@ public class Reimpresion extends PBase {
 	
 	private void imprRecarga() {
 		try {
-			if(prn.isEnabled()){
-				mdoc.buildPrint(itemid,1);
-				prn.printask();
-			}else if(!prn.isEnabled()){
-				mdoc.buildPrint(itemid,1);
-				toast("Reimpresion de recarga generada");
-			}
-		} catch (Exception e) {
+            mdoc.buildPrint(itemid,1);
+            app.doPrint();
+ 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox(e.getMessage());
 		}
@@ -849,8 +826,10 @@ public class Reimpresion extends PBase {
 		return vCorelNC;
 	}
 
+
 	// Aprofam
-	
+
+    /*
 	private void aprNotePrn(String corel) {
 		
 		aprLoadHeadData(corel);
@@ -1085,7 +1064,7 @@ public class Reimpresion extends PBase {
 			msgbox(e.getMessage());return false;
 		}				
 	}
-
+    */
 	
 	// Aux
 	

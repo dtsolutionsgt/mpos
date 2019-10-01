@@ -36,6 +36,7 @@ import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsExport;
 import com.dtsgt.classes.clsFinDia;
 import com.dtsgt.classes.clsLicence;
+import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_descuentoObj;
@@ -136,7 +137,7 @@ public class ComWS extends PBase {
 		System.setProperty("line.separator", "\r\n");
         rootdir=Environment.getExternalStorageDirectory()+"/RoadFotos/";
 
-        ruta="";
+        ruta=gl.ruta;
         ActRuta = ruta;
         emp = "3";
         rutatipo = gl.rutatipog;
@@ -1058,7 +1059,7 @@ public class ComWS extends PBase {
 			if (!AddTable("P_MEDIAPAGO")) return false;
 			if (!AddTable("P_IMPUESTO")) return false;
 			if (!AddTable("VENDEDORES")) return false;
-            //if (!AddTable("P_ARCHIVOCONF")) return false;
+            if (!AddTable("P_ARCHIVOCONF")) return false;
             if (!AddTable("P_ENCABEZADO_REPORTESHH")) return false;
             if (!AddTable("P_BONIF")) return false;
             if (!AddTable("P_PARAMEXT")) return false;
@@ -1536,7 +1537,7 @@ public class ComWS extends PBase {
 
         if (TN.equalsIgnoreCase("P_ARCHIVOCONF")) {
             SQL = "SELECT RUTA,TIPO_HH,IDIOMA,TIPO_IMPRESORA,SERIAL_HH,MODIF_PESO,PUERTO_IMPRESION, " +
-                  "LBS_O_KGS,NOTA_CREDITO FROM P_ARCHIVOCONF WHERE (EMPRESA='" + emp + "')";
+                  "LBS_O_KGS,NOTA_CREDITO FROM P_ARCHIVOCONF WHERE (RUTA='"+ActRuta+"') AND (EMPRESA='" + emp + "')  ";
             return SQL;
         }
 
@@ -3367,6 +3368,7 @@ public class ComWS extends PBase {
 
         try {
 
+            if (!actArchConfig()) haserror=true;
             if (!actBanco()) haserror=true;
             if (!actCaja()) haserror=true;
             if (!actCliente()) haserror=true;
@@ -3395,6 +3397,33 @@ public class ComWS extends PBase {
 
         errflag=haserror;
         return errflag;
+    }
+
+    public boolean actArchConfig() {
+        clsP_archivoconfObj holder=new clsP_archivoconfObj(this,Con,db);
+
+        actproc="Archivo de configuración";acterr=actproc;
+
+        try {
+            fprog = actproc;wsStask.onProgressUpdate();
+
+            holder.fill();
+            if (holder.count==0) return true;
+
+            dbld.clear();
+            for (int i = 0; i <holder.count; i++) {
+                dbld.add(exp.archivo_ins(holder.items.get(i)));
+                dbld.add(exp.archivo_upd(holder.items.get(i)));
+            }
+
+            if (actualize()==0) {
+                fstr=sstr;return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+            fstr = e.getMessage();return false;
+        }
     }
 
     public boolean actProdOpcList() {

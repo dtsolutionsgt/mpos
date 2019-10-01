@@ -37,6 +37,14 @@ public class clsDocMov extends clsDocument {
 		items.clear();
 		
 		try {
+
+            sql="SELECT FECHA FROM D_MOV WHERE (COREL='"+corel+"')";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            int ff=DT.getInt(0);
+            fsfecha=DU.sfecha(ff)+" "+DU.shora(ff);
+
 			sql="SELECT D_MOVD.PRODUCTO,P_PRODUCTO.DESCLARGA,D_MOVD.CANT,D_MOVD.CANTM,D_MOVD.PESO,D_MOVD.PESOM " +
 				"FROM D_MOVD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO = D_MOVD.PRODUCTO " +
 				"WHERE (D_MOVD.COREL='"+corel+"')";	
@@ -80,9 +88,9 @@ public class clsDocMov extends clsDocument {
 		itemData item;
 		
 		if (modo==0) {
-			rep.add("RECARGA MANUAL");			
+			rep.addc("RECARGA MANUAL");
 		} else {	
-			rep.add("DEVOLUCION A BODEGA");
+			rep.addc("DEVOLUCION A BODEGA");
 		}
 		
 		rep.line();

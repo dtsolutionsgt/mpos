@@ -2394,8 +2394,8 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','S')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','S')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','S')");
-
-
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (103,'Pos modalidad','')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','S')");
     }
 	
 	private void msgbox(String msg) {

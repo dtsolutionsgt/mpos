@@ -19,7 +19,7 @@ public class appGlobals extends Application {
 	public long nuevaFecha,atentini;
 	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp;
 	public boolean CellCom,closeDevBod,modoinicial,newmenuitem;
-	public String ref1,ref2,ref3,fnombre,fnit,fdir,escaneo,corel_d_mov,barra,parVer,gcods;
+	public String ref1,ref2,ref3,fnombre,fnit,fdir,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String tienda,tiendanom,caja,cajanom,urlglob,menuitemid,titReport,pickcode,pickname;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit;

@@ -71,7 +71,7 @@
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:text="Parámetro de impresión"
+        android:text="Bluetooth MAC"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="18sp" />
 
@@ -143,24 +143,5 @@
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ImageView01"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@layout/frame_btn"
-        android:clickable="true"
-        android:onClick="doAction"
-        android:paddingBottom="10dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="10dp"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000"
-        android:textSize="18sp" />
 
 </RelativeLayout>

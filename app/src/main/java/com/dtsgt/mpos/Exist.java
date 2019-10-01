@@ -110,8 +110,8 @@ public class Exist extends PBase {
 				return;
 			}
 			if (doc.buildPrint("0",0)) {
-				printEpson();
 				//prn.printask();
+                app.doPrint();
 			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

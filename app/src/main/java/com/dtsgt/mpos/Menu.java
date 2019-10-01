@@ -262,47 +262,10 @@ public class Menu extends PBase {
 
 
 				case 3:  // Reimpresion
-
-					//#HS_20181206 Verifica el usuario si es DTS.
-					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
-						mu.msgbox("No puede realizar esta acción");
-					} else {
-						if (rutatipo.equalsIgnoreCase("T")) {
-							showPrintMenuTodo();
-						} else {
-							if (rutatipo.equalsIgnoreCase("V")) {
-								if (gl.peAceptarCarga) {
-									showPrintMenuVentaApr();
-								} else {
-									showPrintMenuVenta();
-								}
-							} else {
-								showPrintMenuPreventa();
-							}
-						}
-					}
-
-					break;
+			        showPrintMenuTodo();break;
 
 				case 4:  // Anulacion
-
-					//#HS_20181206 Verifica el usuario si es DTS.
-					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
-						mu.msgbox("No puede realizar esta acción");
-					}else {
-						if (rutapos) {
-							showVoidMenuVenta();
-						} else {
-							if (rutatipo.equalsIgnoreCase("T")) {
-								showVoidMenuTodo();
-							} else {
-								if (rutatipo.equalsIgnoreCase("V")) showVoidMenuVenta();
-								else showVoidMenuPreventa();
-							}
-						}
-					}
-
-					break;
+				    showVoidMenuTodo();break;
 
 				case 5:  // Consultas
 
@@ -380,9 +343,11 @@ public class Menu extends PBase {
 	
 	public void showPrintMenuTodo() {
 
-		try{
+		try {
 			final AlertDialog Dialog;
-			final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
+			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
+            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.reimpresion48);
@@ -395,72 +360,11 @@ public class Menu extends PBase {
 						case 0:
 							menuImprDoc(3);break;
 						case 1:
-							menuImprDoc(0);break;
-						case 2:
-							menuImprDoc(1);break;
-						case 3:
 							menuImprDoc(2);break;
-						case 4:
+						case 2:
 							menuImprDoc(4);break;
-						case 5:
-							menuImprDoc(5);break;
-						case 6:
-							menuImprDoc(99);break;
-						case 7:
-							menuImprDoc(6);break;
-					}
-
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-	
-	public void showPrintMenuVenta() {
-
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Factura","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota de crédito"};
-
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.reimpresion48);
-			menudlg.setTitle("Reimpresión");
-
-			menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							menuImprDoc(3);break;
-						case 1:
-							menuImprDoc(1);break;
-						case 2:
-							menuImprDoc(2);break;
 						case 3:
-							menuImprDoc(4);break;
-						case 4:
 							menuImprDoc(5);break;
-						case 5:
-							menuImprDoc(99);break;
-						case 6:
-							menuImprDoc(6);break;
 					}
 
 					dialog.cancel();
@@ -480,112 +384,12 @@ public class Menu extends PBase {
 			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
 			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
 	}
-	
-	public void showPrintMenuVentaApr() {
 
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Factura","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia","Nota de crédito"};
-
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.reimpresion48);
-			menudlg.setTitle("Reimpresión");
-
-			menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							menuImprDoc(3);break;
-						case 1:
-							menuImprDoc(1);break;
-						case 2:
-							menuImprDoc(2);break;
-						case 3:
-							menuImprDoc(4);break;
-						case 4:
-							menuImprDoc(5);break;
-						case 5:
-							menuImprDoc(99);break;
-						case 6:
-							menuImprDoc(6);break;
-					}
-
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-	
-	public void showPrintMenuPreventa() {
-
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Pedido","Recibo","Deposito","Nota de crédito"};
-
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.reimpresion48);
-			menudlg.setTitle("Reimpresión");
-
-			menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							menuImprDoc(0);break;
-						case 1:
-							menuImprDoc(1);break;
-						case 2:
-							menuImprDoc(2);break;
-						case 3:
-							menuImprDoc(6);break;
-					}
-
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-	
 	public void menuImprDoc(int doctipo) {
 		try{
 			gl.tipo=doctipo;
@@ -605,7 +409,9 @@ public class Menu extends PBase {
 	public void showVoidMenuTodo() {
 		try{
 			final AlertDialog Dialog;
-			final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega", "Nota crédito"};
+			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega", "Nota crédito"};
+            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.anulacion48);
@@ -618,18 +424,12 @@ public class Menu extends PBase {
 						case 0:
 							gl.tipo=3;break;
 						case 1:
-							gl.tipo=0;break;
-						case 2:
-							gl.tipo=1;break;
-						case 3:
 							gl.tipo=2;break;
-						case 4:
+						case 2:
 							gl.tipo=4;break;
-						case 5:
+						case 3:
 							gl.tipo=5;break;
-						case 6:
-							gl.tipo=6;break;
-					}
+						}
 
 					menuAnulDoc();
 					dialog.cancel();
@@ -654,108 +454,7 @@ public class Menu extends PBase {
 		}
 
 	}	
-	
-	public void showVoidMenuVenta() {
-		try{
 
-			final AlertDialog Dialog;
-			final String[] selitems = {"Factura","Recibo","Deposito","Recarga","Devolución a bodega", "Nota crédito"};
-
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.anulacion48);
-			menudlg.setTitle("Anulación");
-
-			menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							gl.tipo=3;break;
-						case 1:
-							gl.tipo=1;break;
-						case 2:
-							gl.tipo=2;break;
-						case 3:
-							gl.tipo=4;break;
-						case 4:
-							gl.tipo=5;break;
-						case 5:
-							gl.tipo=6;break;
-					}
-
-					menuAnulDoc();
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-
-		}catch(Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-
-	public void showVoidMenuPreventa() {
-
-		try{
-
-		}catch (Exception e){final AlertDialog Dialog;
-			final String[] selitems = {"Pedido","Recibo","Deposito", "Nota crédito"};
-
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.anulacion48);
-			menudlg.setTitle("Anulaci�n");
-
-			menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							gl.tipo=0;break;
-						case 1:
-							gl.tipo=1;break;
-						case 2:
-							gl.tipo=2;break;
-						case 3:
-							gl.tipo=6;break;
-					}
-
-					menuAnulDoc();
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-	
 	private void menuAnulDoc() {
 		try{
 			Intent intent = new Intent(this,Anulacion.class);
@@ -1166,7 +865,7 @@ public class Menu extends PBase {
 
 					switch (item) {
 						case 0:
-							menuConfImpres();break;
+                            startActivity(new Intent(Menu.this,UtilPrint.class));break;
 						case 1:
 							startActivity(new Intent(Menu.this,Tablas.class));break;
 						case 2:
@@ -1389,7 +1088,7 @@ public class Menu extends PBase {
 			final AlertDialog Dialog;
 
             //final String[] selitems = {"Banco","Caja","Cliente","Combo","Combo Opción","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
-            final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario"};
+            final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
