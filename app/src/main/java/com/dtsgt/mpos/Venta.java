@@ -170,6 +170,7 @@ public class Venta extends PBase {
             }
 
             if (gl.cliente.isEmpty()) {
+                toast("Cliente pendiente");
                 browse=8;
                 startActivity(new Intent(this,Clientes.class));
                 return;
@@ -1851,6 +1852,7 @@ public class Venta extends PBase {
                 item.ID=4;item.Name="Anulación";item.Icon=4;
                 mitems.add(item);
 
+                /*
                 item = clsCls.new clsMenu();
                 item.ID=2;item.Name="Comunicación";item.Icon=2;
                 mitems.add(item);
@@ -1862,6 +1864,7 @@ public class Venta extends PBase {
                 item = clsCls.new clsMenu();
                 item.ID=101;item.Name="Baktún";item.Icon=101;
                 mitems.add(item);
+                */
 
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1884,14 +1887,14 @@ public class Venta extends PBase {
 
                 item = clsCls.new clsMenu();
                 item.ID=51;item.Name="Barra";item.Icon=51;
-                mmitems.add(item);
+                //mmitems.add(item);
 
                 item = clsCls.new clsMenu();
                 item.ID=52;item.Name="Cliente";item.Icon=52;
                 mmitems.add(item);
 
                 item = clsCls.new clsMenu();
-                item.ID=53;item.Name="Bloquear";item.Icon=53;
+                //item.ID=53;item.Name="Bloquear";item.Icon=53;
                 mmitems.add(item);
 
             } catch (Exception e) {
@@ -1907,6 +1910,133 @@ public class Venta extends PBase {
     }
 
     private void processMenuMenu(int menuid) {
+        try {
+            switch (menuid) {
+                case 3:
+                     showPrintMenuTodo();break;
+                case 4:
+                     showVoidMenuTodo();break;
+            }
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+    }
+
+    public void showPrintMenuTodo() {
+
+        try {
+            final AlertDialog Dialog;
+            //final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
+            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setIcon(R.drawable.reimpresion48);
+            menudlg.setTitle("Reimpresión");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                    switch (item) {
+                        case 0:
+                            menuImprDoc(3);break;
+                        case 1:
+                            menuImprDoc(2);break;
+                        case 2:
+                            menuImprDoc(4);break;
+                        case 3:
+                            menuImprDoc(5);break;
+                    }
+
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+    public void menuImprDoc(int doctipo) {
+        try{
+            gl.tipo=doctipo;
+
+            Intent intent = new Intent(this,Reimpresion.class);
+            startActivity(intent);
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+
+    public void showVoidMenuTodo() {
+        try{
+            final AlertDialog Dialog;
+            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setIcon(R.drawable.anulacion48);
+            menudlg.setTitle("Anulación");
+
+            menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                    switch (item) {
+                        case 0:
+                            gl.tipo=3;break;
+                        case 1:
+                            gl.tipo=2;break;
+                        case 2:
+                            gl.tipo=4;break;
+                        case 3:
+                            gl.tipo=5;break;
+                    }
+
+                    menuAnulDoc();
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void menuAnulDoc() {
+        try{
+            Intent intent = new Intent(this,Anulacion.class);
+            startActivity(intent);
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
 
     }
 
@@ -2331,10 +2461,14 @@ public class Venta extends PBase {
         }
 
         try {
-            sql = "SELECT NOMBRE,LIMITECREDITO FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
+            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
             if (DT.getDouble(1)>0.01) ss=" [ "+mu.frmcur(DT.getDouble(1))+" ] ";else ss="";
+
+            gl.fnombre=DT.getString(0);
+            gl.fnit=DT.getString(2);
+            gl.fdir=DT.getString(3);
 
             lblVend.setText(gl.cliente+" - "+DT.getString(0)+" "+ss);
         } catch (Exception e) {

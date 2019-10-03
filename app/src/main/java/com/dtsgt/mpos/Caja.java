@@ -74,7 +74,7 @@ public class Caja extends PBase {
                     msgbox("El monto inicial debe ser mayor a 0");
                 }
 
-            }else if(gl.cajaid==3 && !MontoFin.getText().toString().trim().isEmpty()){
+            } else if(gl.cajaid==3 && !MontoFin.getText().toString().trim().isEmpty()){
                 montoFin = Double.parseDouble(MontoFin.getText().toString().trim());
 
                 if(montoFin>0){
@@ -190,6 +190,12 @@ public class Caja extends PBase {
                 caja.update(itemC);
 
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
+                db.execSQL(sql);
+
+                sql="UPDATE D_DEPOS SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
+                db.execSQL(sql);
+
+                sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
                 db.execSQL(sql);
 
                 Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();

@@ -453,7 +453,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}	
 
 	private void menuAnulDoc() {
@@ -1125,14 +1124,7 @@ public class Menu extends PBase {
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }
- 				}
-			});
-
-			menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					toast("Pendiente implementación");
-				}
+ 		    		}
 			});
 
 			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
@@ -1159,6 +1151,8 @@ public class Menu extends PBase {
 	}
 
 	//endregion
+
+    //region Reportes
 
 	public void showReportMenu() {
 
@@ -1221,8 +1215,11 @@ public class Menu extends PBase {
         }
     }
 
-	public void showCajaMenu() {
+    //endregion
 
+    //region Caja
+
+	public void showCajaMenu() {
 		try{
 
 			final AlertDialog Dialog;
@@ -1657,13 +1654,13 @@ public class Menu extends PBase {
 			} else if(gl.cajaid==3 || gl.cajaid==5){
 
 				if(caja.count==0) {
-					gl.cajaid=0;
+					if(gl.cajaid==3) gl.cajaid=0;
 					return false;
 				}
 
 				if(caja.last().estado==1){
 					return false;
-				}else {
+				}else if(gl.cajaid==5) {
 					if(caja.last().fecha!=du.getFechaActual()){
 						gl.cajaid=6; return false;
 					}

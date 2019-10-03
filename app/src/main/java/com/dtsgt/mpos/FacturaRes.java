@@ -252,7 +252,7 @@ public class FacturaRes extends PBase {
 
 		setHandlers();
 
-		txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER);
+        txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER  | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
 	}
 
@@ -712,7 +712,6 @@ public class FacturaRes extends PBase {
 
 			super.finish();
 		}
-
 	}
 
  	private void singlePrint() {
@@ -1583,7 +1582,6 @@ public class FacturaRes extends PBase {
 		}
 
 	}
-
 
     private void msgAskVuelto(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);

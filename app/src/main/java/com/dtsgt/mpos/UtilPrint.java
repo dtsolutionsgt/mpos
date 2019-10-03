@@ -167,7 +167,10 @@ public class UtilPrint extends PBase {
 	    }	
 		
 		txtPar.setText(prpar);
-		
+        if (gl.debug) {
+            if (prpar.isEmpty()) txtPar.setText("00:01:90:85:0D:8C");
+        }
+
 	}
 	
 	private void updateItem() {
