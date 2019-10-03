@@ -30,7 +30,7 @@ public class CierreX extends PBase {
 
     private TextView txtbtn,lblFact,lblTit;
     private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet;
-    private int bFactxDia, bVentaxDia, bVentaxProd, bxFPago, bxFam, bVentaxVend, bMBxProd, bMBxFam, bClienteCon, bClienteDet, sw=0;;
+    private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8, bClienteCon=9, bClienteDet=10, sw=0;;
     private boolean report, enc=true;
 
     private clsClasses.clsReport item;
@@ -59,16 +59,16 @@ public class CierreX extends PBase {
 
         lblTit = (TextView) findViewById(R.id.lblTit);
         txtbtn = (TextView) findViewById(R.id.txtBtn);
-        FactxDia = (CheckBox) findViewById(R.id.checkBox11);
-        VentaxDia = (CheckBox) findViewById(R.id.checkBox12);
-        VentaxProd = (CheckBox) findViewById(R.id.checkBox13);
-        xFPago = (CheckBox) findViewById(R.id.checkBox14);
-        xFam = (CheckBox) findViewById(R.id.checkBox15);
-        VentaxVend = (CheckBox) findViewById(R.id.checkBox16);
-        MBxProd = (CheckBox) findViewById(R.id.checkBox17);
-        MBxFam = (CheckBox) findViewById(R.id.checkBox18);
-        ClienteCon = (CheckBox) findViewById(R.id.checkBox19);
-        ClienteDet = (CheckBox) findViewById(R.id.checkBox20);
+        FactxDia = (CheckBox) findViewById(R.id.checkBox11); FactxDia.setChecked(true);
+        VentaxDia = (CheckBox) findViewById(R.id.checkBox12); VentaxDia.setChecked(true);
+        VentaxProd = (CheckBox) findViewById(R.id.checkBox13); VentaxProd.setChecked(true);
+        xFPago = (CheckBox) findViewById(R.id.checkBox14); xFPago.setChecked(true);
+        xFam = (CheckBox) findViewById(R.id.checkBox15); xFam.setChecked(true);
+        VentaxVend = (CheckBox) findViewById(R.id.checkBox16); VentaxVend.setChecked(true);
+        MBxProd = (CheckBox) findViewById(R.id.checkBox17); MBxProd.setChecked(true);
+        MBxFam = (CheckBox) findViewById(R.id.checkBox18); MBxFam.setChecked(true);
+        ClienteCon = (CheckBox) findViewById(R.id.checkBox19); ClienteCon.setChecked(true);
+        ClienteDet = (CheckBox) findViewById(R.id.checkBox20); ClienteDet.setChecked(true);
         lblFact = (TextView) findViewById(R.id.txtFact2);
 
         datefin = du.getActDateTime();
@@ -105,7 +105,8 @@ public class CierreX extends PBase {
 
     public void printDoc() {
         try{
-            printEpson();
+            app.doPrint();
+            //printEpson();
             //prn.printask();
 
         }catch (Exception e){
@@ -199,7 +200,7 @@ public class CierreX extends PBase {
 
         VentaxVend.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(FactxDia.isChecked()){
+                if(VentaxVend.isChecked()){
                     bVentaxVend = 6;
                 } else{
                     bVentaxVend = 0;
@@ -290,9 +291,9 @@ public class CierreX extends PBase {
 
                     case 1:
                         if(gl.reportid==9){
-                            condition =" WHERE KILOMETRAJE = 0 ";
+                            condition =" WHERE ANULADO='N' AND KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE ANULADO='N' AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
@@ -303,9 +304,9 @@ public class CierreX extends PBase {
                         break;
                     case 2:
                         if(gl.reportid==9){
-                            condition =" WHERE KILOMETRAJE = 0 ";
+                            condition =" WHERE ANULADO='N' AND KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE ANULADO='N' AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
@@ -317,9 +318,9 @@ public class CierreX extends PBase {
                         break;
                     case 3:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', '', 0, D.PRODUCTO, P.DESCCORTA, D.UMVENTA, " +
@@ -333,9 +334,9 @@ public class CierreX extends PBase {
                         break;
                     case 4:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 FROM P_MEDIAPAGO M " +
@@ -348,9 +349,9 @@ public class CierreX extends PBase {
 
                     case 5:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', '', 0, '', L.NOMBRE, '', SUM(D.CANT), 0, SUM(D.TOTAL), 0 FROM P_LINEA L " +
@@ -363,9 +364,9 @@ public class CierreX extends PBase {
 
                     case 6:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT V.CODIGO, '', 0, '', V.NOMBRE, '', COUNT(COREL), V.NIVELPRECIO, SUM(F.TOTAL), 0 FROM VENDEDORES V " +
@@ -376,9 +377,9 @@ public class CierreX extends PBase {
 
                     case 7:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT D.PRODUCTO, '', 0, '',  P.DESCCORTA, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM D_FACTURAD D " +
@@ -390,9 +391,9 @@ public class CierreX extends PBase {
 
                     case 8:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT L.CODIGO, '', 0, '', L.NOMBRE, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM P_LINEA L " +
@@ -406,9 +407,9 @@ public class CierreX extends PBase {
 
                     case 9:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
@@ -421,9 +422,9 @@ public class CierreX extends PBase {
 
                     case 10:
                         if(gl.reportid==9){
-                            condition =" WHERE F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT F.COREL, C.CODIGO, 0, P.CODIGO, P.DESCCORTA, C.NOMBRE, SUM(D.CANT), D.PRECIO, D.PRECIO*D.CANT, F.FECHA, 0 " +
@@ -494,7 +495,7 @@ public class CierreX extends PBase {
                     "INNER JOIN D_FACTURA F ON C.COREL=F.KILOMETRAJE " +
                     "INNER JOIN D_FACTURAP P ON F.COREL=P.COREL " +
                     "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO=M.CODIGO " +
-                    "WHERE F.KILOMETRAJE = " + gl.corelZ +
+                    "WHERE F.ANULADO='N' AND F.KILOMETRAJE = " + gl.corelZ +
                     " GROUP BY P.CODPAGO, M.NOMBRE, P.VALOR, C.MONTOINI, C.MONTOFIN, C.MONTODIF";
 
             dt = Con.OpenDT(sql);
@@ -536,7 +537,7 @@ public class CierreX extends PBase {
             if(!report) {
                 if(fillItems()){
                     if (itemR.size() == 0) {
-                        msgbox("No hay inventario disponible");
+                        msgbox("No se ha realizado ninguna venta entre los parámetros impuestos.");
                         return;
                     }
                     doc.buildPrint("0", 0);
@@ -660,16 +661,30 @@ public class CierreX extends PBase {
                 count10 += count9;
 
                 if(gl.reportid==10){
-                    rep.add("           REPORTE DE CUADRE");
-                    rep.add("M.PAGO    MONTO INI   MONTO FIN   DIF.");
+                    rep.add("         REPORTE DE CUADRE");
+                    rep.add("CODIGO  M.PAGO");
+                    rep.add("MONT.INI        MONT.FIN       DIF.");
                     rep.line();
                     for(int j=0; j<itemRZ.size(); j++){
                         if(!itemRZ.get(j).id.equals("1")){
-                            rep.add4lrrTot(itemRZ.get(j).nombre,"",itemRZ.get(j).disp,itemRZ.get(j).precio);
+                            rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
+                            rep.add4lrrTotZ(0.0,itemRZ.get(j).disp,itemRZ.get(j).precio);
+
+                            tot+=0;
+                            totF+=itemRZ.get(j).disp;
+                            totSinImp+=itemRZ.get(j).precio;
                         }else {
-                            rep.add4lrrTot(itemRZ.get(j).nombre,"Q."+itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+                            rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
+                            rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+
+                            tot+=itemRZ.get(j).cantmin;
+                            totF+=itemRZ.get(j).disp;
+                            totSinImp+=itemRZ.get(j).precio;
                         }
                     }
+
+                    rep.line();
+                    rep.add4lrrTotZ(tot,totF,totSinImp);
 
                     rep.empty();
                 }
@@ -770,7 +785,12 @@ public class CierreX extends PBase {
 
                         if(i!=0){
                             if(itemR.get(i).fecha==itemR.get(i-1).fecha){
-                                rep.add4lrrTot("",itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
+                                if(i-1<count2){
+                                    rep.add4lrrTot(fecha,itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
+                                }else {
+                                    rep.add4lrrTot("",itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
+                                }
+
                             }else {
                                 rep.add4lrrTot(fecha,itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
                             }
@@ -789,7 +809,6 @@ public class CierreX extends PBase {
                             rep.empty();
                             tot = 0;
                         }
-
 
                         //Reporte 3
                     }else if(itemR.get(i).tipo==3){

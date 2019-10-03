@@ -230,7 +230,7 @@ public class Menu extends PBase {
 
 				case 1:
 
-					gl.cajaid=3;
+					gl.cajaid=5;
 					if(valida()){
 						//***************
 						gl.cliente="0001000000";
@@ -245,7 +245,8 @@ public class Menu extends PBase {
 						gl.iniciaVenta=true;
 						startActivity(new Intent(this, Venta.class));
 					}else {
-						msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
+						if(gl.cajaid==5) msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
+						if(gl.cajaid==6) msgAskValid("No se realizó el último cierre de caja, si desea iniciar operaciones debe realizar el cierre y luego el inicio de caja");
 					}
 
 					break;
@@ -1198,13 +1199,6 @@ public class Menu extends PBase {
 				}
 			});
 
-            menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    toast("Pendiente implementación");
-                }
-            });
-
             menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -1233,7 +1227,7 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Inicio de Caja", "Ajuste de Pagos de Caja", "Fin de Caja"};
+			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depositos","Fin de Caja"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Caja");
@@ -1244,7 +1238,8 @@ public class Menu extends PBase {
 					ss=selitems[item];
 
 					if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
-					if (ss.equalsIgnoreCase("Ajuste de Pagos de Caja")) gl.cajaid=2;
+					if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
+					if (ss.equalsIgnoreCase("Depositos")) gl.cajaid=4;
 					if (ss.equalsIgnoreCase("Fin de Caja")) gl.cajaid=3;
 
 					gl.titReport = ss;
@@ -1257,6 +1252,7 @@ public class Menu extends PBase {
 						if(gl.cajaid==0) txt = "La caja no se ha abierto, si desea iniciar turno debe realizar el fin de caja.";
 						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el inicio de caja.";
 						if(gl.cajaid==2) txt = "área en proceso informático";
+						if(gl.cajaid==4) txt = "área en proceso informático";
 						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja";
 						msgAskValid(txt);
 					}
@@ -1658,7 +1654,7 @@ public class Menu extends PBase {
 				if(caja.last().estado==0){
 					return false;
 				}
-			} else if(gl.cajaid==3){
+			} else if(gl.cajaid==3 || gl.cajaid==5){
 
 				if(caja.count==0) {
 					gl.cajaid=0;
@@ -1667,8 +1663,13 @@ public class Menu extends PBase {
 
 				if(caja.last().estado==1){
 					return false;
+				}else {
+					if(caja.last().fecha!=du.getFechaActual()){
+						gl.cajaid=6; return false;
+					}
 				}
-			}else if(gl.cajaid==2) return false;
+
+			}else if(gl.cajaid==2 || gl.cajaid==4) return false;
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

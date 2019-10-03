@@ -104,6 +104,7 @@ public class Caja extends PBase {
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox("Error en save: "+e);return;
         }
 
     }
@@ -132,6 +133,7 @@ public class Caja extends PBase {
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox("Error montoDif: "+e);return;
         }
     }
 
@@ -176,6 +178,7 @@ public class Caja extends PBase {
 
                 caja.add(itemC);
 
+                msgAcc=1;
                 msgAskExit("Inicio de caja correcto");
 
             }else if(gl.cajaid==3){
@@ -197,12 +200,13 @@ public class Caja extends PBase {
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox("Error saveMontoIni: "+e);return;
         }
     }
 
 
     public void doExit(View view) {
-        msgAskExit("Salir");
+        msgAskExit("¿Salir?");
     }
 
     //endregion
@@ -213,7 +217,7 @@ public class Caja extends PBase {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         dialog.setTitle("Registro");
-        dialog.setMessage("¿" + msg + "?");
+        dialog.setMessage(msg);
 
         if(msgAcc==0){
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -264,6 +268,7 @@ public class Caja extends PBase {
 
 
         } catch (Exception ex) {
+            msgbox("Error msgboxValidaMonto: "+ex);return;
         }
     }
 

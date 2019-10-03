@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.graphics.Color;
 import android.os.Bundle;
+
+import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.ladapt.ListAdaptProd;
 import android.os.Environment;
 import android.text.Editable;
@@ -80,6 +82,7 @@ public class Reportes extends PBase {
 
     private ListView lvReport;
 
+    private clsDocFactura fdoc;
     private double cantT,disp,dispm,dispT;
     private clsRepBuilder rep;
     private boolean dateTxt,report;
@@ -315,7 +318,8 @@ public class Reportes extends PBase {
 
     public void GeneratePrint(View view){
         try{
-            AskReport();
+            if(!report) AskReport();
+            if(report) app.doPrint();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("GeneratePrint: "+e);
@@ -353,7 +357,7 @@ public class Reportes extends PBase {
             if(!report) {
                 if(fillItems()){
                     if (itemR.size() == 0) {
-                        msgbox("No hay inventario disponible");
+                        msgbox("No se ha realizado ninguna venta entre los parámetros impuestos.");
                         return;
                     }
                     doc.buildPrint("0", 0);
@@ -414,6 +418,7 @@ public class Reportes extends PBase {
                 case 1:
                     sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
                             "FROM D_FACTURA WHERE FECHA>='"+dateini+"' AND FECHA<='"+datefin+"' " +
+                            "AND ANULADO='N' " +
                             "GROUP BY SERIE, IMPMONTO, FECHA " +
                             "ORDER BY FECHA";
                     break;
@@ -422,6 +427,7 @@ public class Reportes extends PBase {
                             "SUM(TOTAL), FECHA " +
                             "FROM D_FACTURA WHERE FECHA=FECHA AND " +
                             "FECHA>="+ dateini +" AND FECHA<="+datefin+" " +
+                            "AND ANULADO='N' " +
                             "GROUP BY FECHA, SERIE";
                     break;
                 case 3:
@@ -437,6 +443,7 @@ public class Reportes extends PBase {
                             " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO  " +
                             " INNER JOIN D_FACTURA F ON F.COREL = D.COREL  " +
                             " WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "AND F.ANULADO='N' " +
                             " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                             " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
                     break;
@@ -451,6 +458,7 @@ public class Reportes extends PBase {
                             "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                             "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
                             "WHERE F.ANULADO='N' AND F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "AND F.ANULADO='N' " +
                             "GROUP BY M.NOMBRE";
                     break;
 
@@ -461,7 +469,8 @@ public class Reportes extends PBase {
                             "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
                             "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                             "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
-                            " GROUP BY L.NOMBRE";
+                            " AND F.ANULADO='N' " +
+                            "GROUP BY L.NOMBRE";
                     break;
 
                 case 6:
@@ -469,7 +478,8 @@ public class Reportes extends PBase {
                     sql="SELECT V.CODIGO, '', 0, '', V.NOMBRE, '', COUNT(COREL), V.NIVELPRECIO, SUM(F.TOTAL), 0 FROM VENDEDORES V " +
                             "INNER JOIN D_FACTURA F ON F.VENDEDOR = V.CODIGO " +
                             "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
-                            " GROUP BY V.CODIGO, V.NOMBRE, V.NIVELPRECIO";
+                            " AND F.ANULADO='N' " +
+                            "GROUP BY V.CODIGO, V.NOMBRE, V.NIVELPRECIO";
                     break;
 
                 case 7:
@@ -483,6 +493,7 @@ public class Reportes extends PBase {
                             "INNER JOIN P_PRODUCTO P ON D.PRODUCTO = P.CODIGO " +
                             "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                             "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "AND F.ANULADO='N' " +
                             "GROUP BY D.PRODUCTO, P.DESCCORTA, P.COSTO, D.PRECIO";
                     break;
 
@@ -498,6 +509,7 @@ public class Reportes extends PBase {
                             "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
                             "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                             "WHERE P.LINEA=L.CODIGO AND F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "AND F.ANULADO='N' " +
                             "GROUP BY L.NOMBRE";
                     break;
 
@@ -513,6 +525,7 @@ public class Reportes extends PBase {
                             "INNER JOIN D_FACTURA F ON C.CODIGO = F.CLIENTE " +
                             "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
                             "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "AND F.ANULADO='N' " +
                             "GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
                     break;
 
@@ -529,6 +542,7 @@ public class Reportes extends PBase {
                             "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
                             "INNER JOIN P_PRODUCTO P ON P.CODIGO = D.PRODUCTO " +
                             "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            "AND F.ANULADO='N' " +
                             "GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, D.CANT, D.PRECIO, F.TOTAL";
                     break;
 
@@ -780,6 +794,7 @@ public class Reportes extends PBase {
                     if(gl.reportid==1){
 
                         if(acc==1){
+                            rep.add("       REPORTE FACTURAS POR DIA");
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
                             rep.empty();
@@ -830,6 +845,7 @@ public class Reportes extends PBase {
 
                         fecha = du.sfecha(itemR.get(i).fecha);
                         if(acc==1){
+                            rep.add("      REPORTE DE VENTAS POR DIA");
                             rep.add("Fecha      Serie   Cant.Fact   Total");
                             rep.line();
                             acc = 2;
@@ -867,7 +883,6 @@ public class Reportes extends PBase {
                             tot = 0;
                         }
 
-
                     //Reporte 3
                     }else if(gl.reportid==3){
 
@@ -877,6 +892,7 @@ public class Reportes extends PBase {
                                 totF += itemR.get(a).total;
                             }
 
+                            rep.add("      REPORTE VENTA POR PRODUCTO");
                             rep.add("Cod   Descripcion");
                             rep.add("Cant        UM       Total        %");
                             rep.line();
@@ -899,6 +915,7 @@ public class Reportes extends PBase {
                                 totF += itemR.get(a).total;
                             }
 
+                            rep.add("     REPORTE POR FORMA DE PAGO");
                             rep.add("Forma    Cantidad");
                             rep.add("Pago      Factura     Total     %");
                             rep.line();
@@ -917,6 +934,7 @@ public class Reportes extends PBase {
                                 totF += itemR.get(a).total;
                             }
 
+                            rep.add("      REPORTE VENTA POR FAMILIA");
                             rep.add("Seccion   Cant.Art    Total      %");
                             rep.line();
                             acc = 2;
@@ -938,6 +956,7 @@ public class Reportes extends PBase {
                             }
 
 
+                            rep.add("    REPORTE VENTAS POR VENDEDOR");
                             rep.add("Codigo     Nombre");
                             rep.add("Cant       %       Total    Comision");
                             rep.line();
@@ -961,6 +980,8 @@ public class Reportes extends PBase {
                                 impF += itemR.get(a).imp;
                             }
 
+                            if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICION POR PRODUCTO");
+                            if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICION POR FAMILIA");
                             rep.add("Codigo     Nombre");
                             rep.add("Venta      Costo    Beneficio    %");
                             rep.line();
@@ -978,6 +999,7 @@ public class Reportes extends PBase {
 
                         if(acc==1){
 
+                            rep.add("REPORTE VENTAS POR CLIENTE CONSOLIDADO");
                             rep.add("Codigo        Nombre");
                             rep.add("Fecha       Cant.Fact       Total");
                             rep.line();
@@ -995,6 +1017,7 @@ public class Reportes extends PBase {
 
                         if(acc==1){
 
+                            rep.add("REPORTE VENTAS POR CLIENTE DETALLE");
                             rep.add("Codigo Cliente: "+itemR.get(0).serie);
                             rep.add("Nombre Cliente: "+itemR.get(0).um);
 
@@ -1003,6 +1026,12 @@ public class Reportes extends PBase {
                             rep.line();
                             acc = 2;
                         }
+
+                        /*Nueva validacion
+                        if(itemR.get(i).serie.equals(itemR.get(i+1).serie)){
+                            rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
+                        }
+                        */
 
                         if(!fechaR.equals(du.univfechaReport(itemR.get(i).fecha))){
 
@@ -1015,6 +1044,9 @@ public class Reportes extends PBase {
                             }
 
                             fechaR = du.univfechaReport(itemR.get(i).fecha);
+                            if(itemR.get(i).serie.equals(itemR.get(i+1).serie)){
+                                rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
+                            }
                             rep.addtwo(fechaR, itemR.get(i).corel);
                             rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
 
@@ -1028,6 +1060,9 @@ public class Reportes extends PBase {
 
                         }else {
 
+                            if(itemR.get(i).serie.equals(itemR.get(i+1).serie)){
+                                rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
+                            }
                             rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
 
                         }

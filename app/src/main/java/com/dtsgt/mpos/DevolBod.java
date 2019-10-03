@@ -255,6 +255,9 @@ public class DevolBod extends PBase {
 			cant=val;
 
 			addItem(est);
+
+			Toast.makeText(this, "Devolucion realizada correctamente", Toast.LENGTH_LONG).show();
+			super.finish();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -289,8 +292,6 @@ public class DevolBod extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("Error : " + e.getMessage());
 		}
-
-		listItems();
 
 	}
 

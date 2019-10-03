@@ -318,7 +318,7 @@ public class clsRepBuilder {
 
 		tot=sval.length()-2;
 
-		ts=ltrim(s1,prwt)+ltrim(s2,prwt-3)+ltrim(stot,prwt-tot)+ltrim(sval,prwt);
+		ts=ltrim(s1,prwt)+ltrim(s2,prwt-3)+ltrim(stot,prwt-tot)+rtrim(sval,prwt);
 		items.add(ts);
 	}
 
@@ -345,6 +345,20 @@ public class clsRepBuilder {
 		tot=scom.length()-5;
 
 		ts=ltrim(s1,prwt-2)+ltrim(s2,prwt-4)+ltrim(stot,prwt-tot)+ltrim(scom,prwt);
+		items.add(ts);
+	}
+
+	public void add4lrrTotZ(double s2,double s3,double v3) {
+		String stot,scom,sini;
+		int tot;
+
+		scom=cursym+decfrm.format(v3);
+		stot=cursym+decfrm.format(s3);
+		sini=cursym+decfrm.format(s2);
+
+		tot=scom.length()-3;
+
+		ts=ltrim(sini,prwt+4)+ltrim(stot,prwt+2)+ltrim(scom,prwt);
 		items.add(ts);
 	}
 

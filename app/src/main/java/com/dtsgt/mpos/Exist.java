@@ -820,7 +820,7 @@ public class Exist extends PBase {
 
 				rep.empty();
 				rep.add("Total unidades:  " + StringUtils.leftPad(mu.frmdecimal(SumaCant,gl.peDecImp), 10));
-				rep.add("Total peso:      " + StringUtils.leftPad(mu.frmdecimal(SumaPeso,gl.peDecImp), 10));
+				//rep.add("Total peso:      " + StringUtils.leftPad(mu.frmdecimal(SumaPeso,gl.peDecImp), 10));
 				rep.add("Total registros: " + StringUtils.leftPad(String.valueOf(lns), 7));
 				rep.empty();
 				rep.empty();
