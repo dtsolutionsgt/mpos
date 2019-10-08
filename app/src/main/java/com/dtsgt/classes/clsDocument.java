@@ -21,7 +21,8 @@ public class clsDocument {
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
 	public clsRepBuilder rep;
-	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod,docdesglose,pass;
+	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
+	public boolean docdesglose,pass,facturaflag;
 	public int ffecha,pendiente,diacred,condicionPago;
 	
 	protected android.database.sqlite.SQLiteDatabase db;
@@ -111,6 +112,56 @@ public class clsDocument {
 
 		return true;
 	}
+
+    public boolean buildPrint(String corel,int reimpres,String modo,boolean esfactura) {
+        int flag;
+
+        modofact=modo;
+        facturaflag=esfactura;
+        rep.clear();
+
+        try{
+
+            if (!buildHeader(corel,reimpres)) return false;
+            if (!buildDetail()) return false;
+            if (!buildFooter()) return false;
+
+            flag=0;
+
+            if (modofact.equalsIgnoreCase("TOL")) {
+                if (docfactura && (reimpres==10)) flag=1;
+                if (docfactura && (reimpres==4) || docdesglose) flag=0;
+                if (doccanastabod){
+                    if (reimpres==1){
+                        flag=1;
+                    }else{
+                        flag=0;
+                    }
+                }
+                if (docrecibo && (reimpres==0)) flag=0;
+                if (docdevolucion && (reimpres==1)) flag = 1;
+                if (docpedido && (reimpres==1)) flag = 1;
+            } else if(modofact.equalsIgnoreCase("*")) {
+                if (doccanastabod) flag = 0;
+                if (docdevolucion || docpedido) flag = 1;
+            }
+
+            if (flag==0) {
+                if (!rep.save()) return false;
+            } else if (flag==1){
+                if (!rep.save(2)) return false;
+            } else if (flag==2){
+                if (!rep.save(3)) return false;
+            } else if (flag==3){
+                if (!rep.save(3)) return false;
+            }
+
+        }catch (Exception e){
+            setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+        return true;
+    }
 
 	public boolean buildPrintAppend(String corel,int reimpres,String modo) {
 		int flag;
@@ -229,6 +280,11 @@ public class clsDocument {
                 s="##";
             }
 
+            if (s.contains("%%")) {
+                rep.add(nombre);
+                s=s.replace("%%%","");
+            }
+
             if (docpedido) {
                 s=s.replace("Factura serie","Pedido");
                 s=s.replace("numero : 0","");
@@ -281,30 +337,6 @@ public class clsDocument {
 				rep.add("Condiciones de pago: "+mPago);
 			}
 		}
-
-        rep.add("");
-
-        /*
-        if(pass){
-        	rep.add(nombre);
-        	rep.add("Caja: "+ruta);
-        	rep.add("Vendedor: "+vendcod+" "+vendedor);
-		}
-
-
-		rep.add("");
-
-        //if (!emptystr(clicod)) rep.add("Codigo: "+clicod);
-
-        if (!emptystr(add1)) {
-
-            rep.add("");
-            rep.add(add1);
-            if (!emptystr(add2)) rep.add(add2);
-            rep.add("");
-
-        }
-        */
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -455,7 +487,7 @@ public class clsDocument {
                 if (l.indexOf("@Serie")>=0) {
                     l = StringUtils.replace(l,"@Serie","");
                 }
-                l="No.: "+serie +" - "+numero;
+                l="%%%Serie :"+serie +" No. :"+numero;
             } else {
                 l="##";
             }
@@ -495,7 +527,6 @@ public class clsDocument {
 
         return l;
     }
-
 
     // Private
 

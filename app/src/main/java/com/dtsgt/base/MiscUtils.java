@@ -14,7 +14,7 @@ import java.util.Calendar;
 public class MiscUtils {
 		
 	private Context cCont;
-	private DecimalFormat ffrmdec,ffrmint,ffrmdec2,ffrmgps; 
+	private DecimalFormat ffrmdec,ffrmint,ffrmint2,ffrmdec2,ffrmgps;
 	private String curr;
 
 	private PBase pB;
@@ -24,8 +24,9 @@ public class MiscUtils {
 		curr=currsymb;
 		
 		ffrmdec = new DecimalFormat("#,##0.00"); 
-		ffrmint = new DecimalFormat("#,##0"); 
-		ffrmdec2 = new DecimalFormat("#,##0.##"); 
+		ffrmint = new DecimalFormat("#,##0");
+        ffrmint2 = new DecimalFormat("###0");
+        ffrmdec2 = new DecimalFormat("#,##0.##");
 		ffrmgps = new DecimalFormat("##0.0000000");
 	}
 	
@@ -34,7 +35,8 @@ public class MiscUtils {
 		curr="";
 		
 		ffrmdec = new DecimalFormat("#,##0.00"); 
-		ffrmint = new DecimalFormat("#,##0"); 
+		ffrmint = new DecimalFormat("#,##0");
+        ffrmint2 = new DecimalFormat("###0");
 		ffrmdec2 = new DecimalFormat("#,##0.##"); 
 		ffrmgps = new DecimalFormat("##0.0000000");
 	}
@@ -79,8 +81,12 @@ public class MiscUtils {
 	public String frmint(double val) {
 		return ffrmint.format(val);
 	}
-	
-	public String frmgps(double val) {
+
+    public String frmint2(int val) {
+        return ffrmint2.format(val);
+    }
+
+    public String frmgps(double val) {
 		return ffrmgps.format(val);
 	}
 	

@@ -202,6 +202,8 @@ public class Caja extends PBase {
 
                 gl.reportid=10;
                 startActivity(new Intent(this, CierreX.class));
+
+                finish();
             }
 
         }catch (Exception e){

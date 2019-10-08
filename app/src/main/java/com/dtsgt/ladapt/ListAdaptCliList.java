@@ -77,8 +77,8 @@ public class ListAdaptCliList extends BaseAdapter {
 		ppago= items.get(position).ppend;
 
 		iconid=R.drawable.blank24;
-		if (val>0) iconid=R.drawable.disable24;
-		if (val==0) iconid=R.drawable.icok24;
+		//if (val>0) iconid=R.drawable.disable24;
+		//if (val==0) iconid=R.drawable.icok24;
 		holder.imgBand.setImageResource(iconid);
 
 		if (cobro==1) holder.imgCobro.setImageResource(R.drawable.cobro48);else holder.imgCobro.setImageResource(R.drawable.blank24);

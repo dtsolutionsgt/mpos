@@ -306,6 +306,71 @@ public class AppMethods {
 			gl.peMargenGPS =0;
 		}
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=100";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peMCent=val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peMCent=false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=101";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peMPrOrdCos=val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peMPrOrdCos=false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=102";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peMImg=val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peMImg=false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=103";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0).toUpperCase();
+            if (emptystr(val)) throw new Exception();
+
+            gl.peMMod=val;
+        } catch (Exception e) {
+            gl.peMMod=" ";
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=104";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peMFact=val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peMFact=false;
+        }
+
 	}
 
     //endregion
@@ -759,6 +824,12 @@ public class AppMethods {
     //region Impresion
 
     public void doPrint() {
+        doPrint(0);
+    }
+
+    public void doPrint(int copies) {
+	    if (copies<1) copies=1;
+
         loadPrintConfig();
 
         if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
@@ -770,18 +841,19 @@ public class AppMethods {
         }
 
         if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
-            printEpsonTMBT();
+            printEpsonTMBT(copies);
         }
 
     }
 
-    private void printEpsonTMBT() {
+    private void printEpsonTMBT(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
 
             intent.putExtra("mac","BT:"+gl.prpar);
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
             intent.putExtra("askprint",1);
+            intent.putExtra("copies",copies);
 
             cont.startActivity(intent);
         } catch (Exception e) {

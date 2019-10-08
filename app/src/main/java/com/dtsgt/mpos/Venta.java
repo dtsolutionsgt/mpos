@@ -2142,6 +2142,8 @@ public class Venta extends PBase {
         Cursor DT;
         String contrib;
 
+        app.parametrosExtra();
+
         tiposcan="*";
 
         lblTit.setText(gl.cajanom);

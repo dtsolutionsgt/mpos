@@ -15,7 +15,7 @@ import com.dtsgt.mpos.R;
 
 public class MantCli extends PBase {
     private ImageView imgstat;
-    private EditText txt1,txt2,txt3;
+    private EditText txt1,txt2,txt3,txt4;
 
     private clsP_clienteObj holder;
     private clsClasses.clsP_cliente item=clsCls.new clsP_cliente();
@@ -33,6 +33,7 @@ public class MantCli extends PBase {
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.txt3);
+        txt4 = (EditText) findViewById(R.id.txt8);
         imgstat = (ImageView) findViewById(R.id.imageView31);
 
         holder =new clsP_clienteObj(this,Con,db);
@@ -179,10 +180,12 @@ public class MantCli extends PBase {
         txt1.setText(item.nit);
         txt2.setText(item.nombre);
         txt3.setText(item.direccion);
+        txt4.setText(mu.frmint2((int) item.limitecredito));
     }
 
     private boolean validaDatos() {
         String ss;
+        int ival;
 
         try {
 
@@ -203,13 +206,21 @@ public class MantCli extends PBase {
 
             ss = txt2.getText().toString();
             if (ss.isEmpty()) {
-                msgbox("¡Nombre incorrecto!");
-                return false;
+                msgbox("¡Nombre incorrecto!");return false;
             } else {
                 item.nombre=ss;
             }
 
             item.direccion=txt3.getText().toString();
+
+            try {
+                ss = txt4.getText().toString();if (ss.isEmpty()) ss="0";
+                ival=Integer.parseInt(ss);
+                if (ival<0) throw new Exception();
+                item.limitecredito=ival;
+            } catch (Exception e) {
+                msgbox("¡Limite credito incorrecto!");return false;
+            }
 
             return true;
         } catch (Exception e) {

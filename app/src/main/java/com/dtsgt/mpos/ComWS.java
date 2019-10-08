@@ -206,7 +206,7 @@ public class ComWS extends PBase {
 
         URL = gl.urlglob;
         URL="http://192.168.1.52/wsmpos/wsAndr.asmx";
-        URL="http://192.168.1.137/mpos/wsMpos.asmx";
+        URL="http://192.168.1.94/mpos/wsMpos.asmx";
         txtWS.setText(URL);txtEmp.setText(emp);
         if (gl.debug) {
             txtWS.setEnabled(true);txtEmp.setEnabled(true);
@@ -1436,7 +1436,6 @@ public class ComWS extends PBase {
 		ff = du.ffecha24(du.getActDate());
 		long ObjAno = du.getyear(du.getActDate());
 		long ObjMes = du.getmonth(du.getActDate());
-
 
         if (TN.equalsIgnoreCase("P_RUTA")) {
             SQL = "SELECT CODIGO, NOMBRE, ACTIVO, VENDEDOR, VENTA, FORANIA, SUCURSAL, TIPO, SUBTIPO, " +

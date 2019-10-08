@@ -493,7 +493,7 @@ public class Reimpresion extends PBase {
 		}
 
 		try {
-            if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura)) {
+            if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 app.doPrint();
             }
 		} catch (Exception e) {
@@ -573,7 +573,7 @@ public class Reimpresion extends PBase {
 		}
 	}
 
-	//CM_20190506: Valida si tiene cantastas y devolución
+	//CM_20190506: Valida si tiene canastas y devolución
 
 	private String tieneCanasta(String vCorel){
 

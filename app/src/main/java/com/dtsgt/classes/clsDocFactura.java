@@ -88,7 +88,11 @@ public class clsDocFactura extends clsDocument {
 				}else if (cantimpres==-2){
 					nombre = "FACTURA PENDIENTE DE PAGO";
 				}else if (cantimpres==0){
-					nombre = "FACTURA";
+					if (facturaflag) {
+					    nombre = "FACTURA";
+                    }else {
+					    nombre = "TICKET";
+                    }
 				}
 
 			}
@@ -207,27 +211,6 @@ public class clsDocFactura extends clsDocument {
 		
 	}
 
-	private boolean esPendientePago(String corel){
-
-		boolean vPendiente=false;
-		Cursor DT;
-
-		try{
-
-			sql = "SELECT DOCUMENTO FROM P_COBRO WHERE DOCUMENTO = '"+ corel + "'";
-			DT=Con.OpenDT(sql);
-
-			if(DT.getCount() > 0){
-				vPendiente=true;
-			}
-
-		}catch(Exception ex){
-			Toast.makeText(cont,"esPendientePago : "+ex.getMessage(), Toast.LENGTH_LONG).show();
-		}
-
-		return vPendiente;
-	}
-	
 	protected boolean loadDocData(String corel) {
 		Cursor DT;
 		itemData item,bon;
@@ -336,17 +319,38 @@ public class clsDocFactura extends clsDocument {
 		return true;
 	}
 
-
-	// Detalle por empresa
+	//region Detalle por empresa
 
 	protected boolean buildDetail() {
-		if (modofact.equalsIgnoreCase("*")) return detailBase();
-		if (modofact.equalsIgnoreCase("TOL")) return detailToledano();
-
-		return false;
+	    if (modofact.equalsIgnoreCase("GUA")) {
+            return detailBaseGUA();
+        } else {
+            return detailBase();
+        }
 	}
 
-	protected boolean detailToledano() {
+    protected boolean detailBaseGUA() {
+        itemData item;
+        String cu,cp;
+
+        //rep.add("Cantidad ","Precio   ","Total");
+        rep.add3sss("Cantidad ","Precio","Total");
+        rep.line();
+
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            rep.add(item.nombre);
+            rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+            //cu=frmdecimal(item.cant,decimp)+" ";
+            //rep.add3lrr(cu,item.prec,item.tot);
+        }
+
+        rep.line();
+
+        return true;
+    }
+
+    protected boolean detailToledano() {
 		itemData item;
 		String ss;
 
@@ -398,7 +402,9 @@ public class clsDocFactura extends clsDocument {
 		return true;
 	}
 
-	// Bonificaciones
+	//endregion
+
+	//region Bonificaciones
 
 	private void bonificaciones() {
 		itemData item;
@@ -434,16 +440,79 @@ public class clsDocFactura extends clsDocument {
 		rep.add("");
 	}
 
-	// Pie por empresa
+    //endregion
+
+	//region Pie por empresa
 
 	protected boolean buildFooter() {
-		if (modofact.equalsIgnoreCase("*")) return footerBase();
-		if (modofact.equalsIgnoreCase("TOL")) return footerToledano();
-
-		return false;
+        if (modofact.equalsIgnoreCase("GUA")) {
+            if (facturaflag) { // Factura
+                return footerBaseGUA();
+            } else { // Ticket
+                return footerBaseGUATicket();
+            }
+        } else {
+            return footerBase();
+        }
 	}
 
-	private boolean footerBase() {
+    private boolean footerBaseGUATicket() {
+        double totimp,totperc;
+
+        if (desc!=0) {
+            rep.addtotsp("Subtotal", stot);
+            rep.addtotsp("Descuento", -desc);
+        }
+        rep.addtotsp("TOTAL A PAGAR ", tot);
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.addc("----------------------");
+        rep.addc("Firma cliente  ");
+        rep.add("");
+
+        return super.buildFooter();
+    }
+
+    private boolean footerBaseGUA() {
+        double totimp,totperc;
+
+        if (sinimp) {
+            stot=stot-imp;
+            totperc=stot*(percep/100);totperc=round2(totperc);
+            totimp=imp-totperc;
+
+            rep.addtotsp("Subtotal", stot);
+            rep.addtotsp("Impuesto", totimp);
+            if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion", totperc);
+            rep.addtotsp("Descuento", -desc);
+            rep.addtotsp("TOTAL", tot);
+        } else {
+            if (desc!=0) {
+                rep.addtotsp("Subtotal", stot);
+                rep.addtotsp("Descuento", -desc);
+            }
+            rep.addtotsp("TOTAL A PAGAR ", tot);
+        }
+
+        rep.add("");
+        rep.add("Sujeto a Pagos Trimestrales");
+        rep.add("");
+
+        //#HS_20181212 Validación para factura pendiente de pago
+        if(pendiente == 4){
+            rep.add("");
+            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
+            rep.add("EXIJA SU FACTURA ORIGINAL");
+            rep.add("");
+        }
+
+        return super.buildFooter();
+    }
+
+
+    private boolean footerBase() {
 		double totimp,totperc;
 
 		if (sinimp) {
@@ -547,8 +616,9 @@ public class clsDocFactura extends clsDocument {
 		return super.buildFooter();
 	}
 
+    //endregion
 
-	// Aux
+	//region Aux
 	
 	public double round2(double val){
 		int ival;
@@ -567,6 +637,28 @@ public class clsDocFactura extends clsDocument {
 		public String cod,nombre,um,ump;
 		public double cant,peso,prec,imp,descper,desc,tot;
 	}
-	
-	
+
+    private boolean esPendientePago(String corel){
+
+        boolean vPendiente=false;
+        Cursor DT;
+
+        try{
+
+            sql = "SELECT DOCUMENTO FROM P_COBRO WHERE DOCUMENTO = '"+ corel + "'";
+            DT=Con.OpenDT(sql);
+
+            if(DT.getCount() > 0){
+                vPendiente=true;
+            }
+
+        }catch(Exception ex){
+            Toast.makeText(cont,"esPendientePago : "+ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+        return vPendiente;
+    }
+
+    //endregion
+
 }

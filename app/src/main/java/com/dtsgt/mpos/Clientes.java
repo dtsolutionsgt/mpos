@@ -22,9 +22,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
@@ -46,6 +48,7 @@ public class Clientes extends PBase {
 	private Spinner spinList, spinFilt;
 	private EditText txtFiltro;
 	private TextView lblCant;
+    private Switch swact;
 
 	private ArrayList<clsCDB> items = new ArrayList<clsCDB>();
 	private ArrayList<String> cobros = new ArrayList<String>();
@@ -74,6 +77,7 @@ public class Clientes extends PBase {
 		spinFilt = (Spinner) findViewById(R.id.spinner8);
 		txtFiltro = (EditText) findViewById(R.id.txtFilter);
 		lblCant = (TextView) findViewById(R.id.lblCant);
+        swact = (Switch) findViewById(R.id.switch2);
 
 		app = new AppMethods(this, gl, Con, db);
 		//gl.validimp = app.validaImpresora();
@@ -251,9 +255,14 @@ public class Clientes extends PBase {
 				}
 			});
 
+            swact.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    listItems();
+                }
+            });
+
 		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+			addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 			mu.msgbox(e.getMessage());
 		}
 
@@ -267,6 +276,7 @@ public class Clientes extends PBase {
 		clsCDB vItem;
 		int vP;
 		String id, filt, ss;
+        boolean act=!swact.isChecked();
 
 		items.clear();
 
@@ -277,7 +287,8 @@ public class Clientes extends PBase {
 		try {
 
 			sql = "SELECT CODIGO,NOMBRE,ZONA,COORX,COORY " +
-					"FROM P_CLIENTE WHERE (1=1) ";
+					"FROM P_CLIENTE WHERE (1=1) AND ";
+            if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
 			if (!filt.isEmpty()) {
 				sql += "AND ((CODIGO LIKE '%" + filt + "%') OR (NOMBRE LIKE '%" + filt + "%')) ";
 			}
@@ -330,8 +341,7 @@ public class Clientes extends PBase {
 			}
 
 		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+			addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
 			mu.msgbox(e.getMessage());
 		}
 
