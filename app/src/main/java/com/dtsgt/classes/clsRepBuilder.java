@@ -316,9 +316,9 @@ public class clsRepBuilder {
 
 		stot=cursym+decfrm.format(s3);
 
-		tot=sval.length()-2;
+		tot=sval.length();
 
-		ts=ltrim(s1,prwt)+ltrim(s2,prwt-3)+ltrim(stot,prwt-tot)+rtrim(sval,prwt);
+		ts=ltrim(s1,prwt)+ltrim(s2,prwt-2)+ltrim(stot,prwt-tot)+ltrim(sval,prwt);
 		items.add(ts);
 	}
 

@@ -294,7 +294,7 @@ public class Pago extends PBase {
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   	mu.msgbox( e.getMessage());
-	    }	
+	    }
 		
 		lblSaldo.setText(mu.frmdec(saldo));
 		actMonto();
@@ -342,14 +342,14 @@ public class Pago extends PBase {
 
 			// Cheque
 			if (s.equalsIgnoreCase("2")) {
-				cpago=2;tpago="C";
+				cpago=3;tpago="B";
 				showBancoDialog();
 				return;
 			}
 
 			// Tarjeta
-			if (s.equalsIgnoreCase("3")) {
-				cpago=3;tpago="K";
+			if (s.equalsIgnoreCase("5")) {
+				cpago=2;tpago="C";
 				showBancoDialog();
 				return;
 			}

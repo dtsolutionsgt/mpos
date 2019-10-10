@@ -1246,21 +1246,14 @@ public class Menu extends PBase {
 					}else {
 						String txt="";
 
-						if(gl.cajaid==0) txt = "La caja no se ha abierto, si desea iniciar turno debe realizar el fin de caja.";
-						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el inicio de caja.";
-						if(gl.cajaid==2) txt = "área en proceso informático";
-						if(gl.cajaid==4) txt = "área en proceso informático";
-						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja";
+						if(gl.cajaid==0) txt = "La caja no se ha abierto, si desea iniciar turno debe realizar el inicio de caja.";
+						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
+						if(gl.cajaid==2) txt = "Pendiente implementación.";
+						if(gl.cajaid==4) txt = "Pendiente implementación.";
+						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja.";
 						msgAskValid(txt);
 					}
 
-				}
-			});
-
-			menudlg.setPositiveButton("Actualizar catalogos", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					toast("Pendiente implementación");
 				}
 			});
 
@@ -1670,7 +1663,8 @@ public class Menu extends PBase {
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			msgbox("Ocurrió error (valida) "+e);return false;
+			msgbox("Ocurrió error (valida) "+e);
+			return false;
 		}
 
 		return true;

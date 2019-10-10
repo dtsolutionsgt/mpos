@@ -101,12 +101,10 @@ public class clsDocCanastaBod extends clsDocument {
                     "FROM D_MOVDCAN M INNER JOIN P_PRODUCTO P ON M.PRODUCTO=P.CODIGO "+
                     "WHERE M.COREL='"+corel+"'";
             }else if(vTipo.equals("PASEANTE")) {
-                sql=" SELECT M.PRODUCTO,P.DESCLARGA,M.CANT,M.PESO,M.LOTE,M.UNIDADMEDIDA "+
-                    " FROM D_MOVD M INNER JOIN P_PRODUCTO P ON M.PRODUCTO=P.CODIGO "+
-                    " WHERE M.COREL='"+corel+"'"+
-                    " UNION SELECT M.PRODUCTO,P.DESCLARGA,COUNT(M.BARRA) AS CANT,M.PESO,'' AS LOTE,M.UNIDADMEDIDA " +
-                    " FROM D_MOVDB M INNER JOIN P_PRODUCTO P ON M.PRODUCTO=P.CODIGO " +
-                    " WHERE M.COREL='"+corel+"'";
+                sql="SELECT M.PRODUCTO,P.DESCCORTA,M.CANT,M.CANTM,M.UNIDADMEDIDA " +
+                        "FROM D_MOVD M " +
+                        "INNER JOIN P_PRODUCTO P ON M.PRODUCTO=P.CODIGO " +
+                        "WHERE M.COREL='"+corel+"'";
             }
 
             DTs=Con.OpenDT(sql);
@@ -124,11 +122,10 @@ public class clsDocCanastaBod extends clsDocument {
                     item =new itemData();
 
                     item.cod= ss;
-                    item.nombre=DTs.getString(1);ss=DTs.getString(1);
+                    item.nombre=DTs.getString(1);
                     item.cant=DTs.getDouble(2);
                     item.peso=DTs.getDouble(3);
-                    item.lote=DTs.getString(4);
-                    item.um=DTs.getString(5);
+                    item.um=DTs.getString(4);
 
                     items.add(item);
 
@@ -156,31 +153,41 @@ public class clsDocCanastaBod extends clsDocument {
     protected boolean detailToledano() {
         itemData item;
         String ss;
+        tot=0;totcant=0;stot=0;
 
         rep.add("");
-        rep.add("CODIGO   DESCRIPCION        UM");
-        rep.add("          CANTIDAD              PESO");
+        rep.add("CODIGO   DESCRIPCION");
+        rep.add("UM       CANTIDAD          ESTADO");
         rep.line();
 
         for (int i = 0; i <items.size(); i++) {
             item=items.get(i);
 
-            ss=rep.ltrim(item.cod+" "+item.nombre,prw-10);
-            ss=ss+rep.rtrim(item.um,4);
-            rep.add(ss);
-            ss=rep.rtrim("", 6)+" "+rep.rtrim(frmdecimal(item.cant,2),8);
-            ss=rep.ltrim(ss,prw-10);
-            ss=ss+" "+rep.rtrim(frmdecimal(item.peso,3),9);
-            rep.add(ss);
+            if(item.cant>0){
+                ss=rep.ltrim(item.cod+"      "+item.nombre,prw);
+                rep.add(ss);
+                ss=rep.rtrim(item.um,2)+"       "+rep.rtrim(""+item.cant,4);
+                ss=ss+" "+rep.rtrim("BUENO",18);
+                rep.add(ss);
+                tot+=item.cant;
+            }
 
-            totcant += item.cant;
-            tot += item.peso;
+            if(item.peso>0){
+                ss=rep.ltrim(item.cod+"      "+item.nombre,prw-10);
+                rep.add(ss);
+                ss=rep.rtrim(item.um,2)+"       "+rep.rtrim(""+item.peso,4);
+                ss=ss+" "+rep.rtrim("MALO",18);
+                rep.add(ss);
+                stot+=item.peso;
+            }
+
+            totcant += item.cant+item.peso;
         }
 
         rep.line();
         ss=rep.rtrim("", 6)+" "+rep.rtrim(frmdecimal(totcant,2),8);
-        ss=rep.ltrim(ss,prw-10);
-        ss=ss+" "+rep.rtrim(frmdecimal(tot,3),9);
+        /*ss=rep.ltrim(ss,prw-10);
+        ss=ss+" "+rep.rtrim(frmdecimal(tot,3),9);*/
         rep.add(ss);
 
         return true;
@@ -190,6 +197,8 @@ public class clsDocCanastaBod extends clsDocument {
 
         rep.add("");
         rep.add("Total items: " + totitems);
+        rep.add("Total estado bueno: " + tot);
+        rep.add("Total estado malo: " + stot);
         rep.add("");
         rep.add("Serial : "+deviceid);
         rep.add("");

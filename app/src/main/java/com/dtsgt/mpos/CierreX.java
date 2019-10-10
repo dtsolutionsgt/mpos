@@ -1,6 +1,8 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -125,6 +127,16 @@ public class CierreX extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("printEpson" + e.getMessage());
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(report){
+            msgAskExit("Está seguro de salir");
+        }else {
+            msgbox("No es posible salir sin generar el reporte antes");
+        }
+
     }
 
     //endregion
@@ -496,13 +508,15 @@ public class CierreX extends PBase {
                     "INNER JOIN D_FACTURAP P ON F.COREL=P.COREL " +
                     "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO=M.CODIGO " +
                     "WHERE F.ANULADO='N' AND F.KILOMETRAJE = " + gl.corelZ +
-                    " GROUP BY P.CODPAGO, M.NOMBRE, P.VALOR, C.MONTOINI, C.MONTOFIN, C.MONTODIF";
+                    " GROUP BY P.CODPAGO, M.NOMBRE";
 
             dt = Con.OpenDT(sql);
 
             if(dt==null) {
                 msgbox("Ocurrío un error en reporte Z, vuelva a intentarlo");
             }
+
+            itemRZ.clear();
 
             if(dt.getCount()!=0){
                 dt.moveToFirst();
@@ -537,7 +551,7 @@ public class CierreX extends PBase {
             if(!report) {
                 if(fillItems()){
                     if (itemR.size() == 0) {
-                        msgbox("No se ha realizado ninguna venta entre los parámetros impuestos.");
+                        msgbox("No se ha realizado ninguna venta desde el ultimo cierre Z.");
                         return;
                     }
                     doc.buildPrint("0", 0);
@@ -665,6 +679,9 @@ public class CierreX extends PBase {
                     rep.add("CODIGO  M.PAGO");
                     rep.add("MONT.INI        MONT.FIN       DIF.");
                     rep.line();
+
+                    tot=0;totF=0;totSinImp=0;
+
                     for(int j=0; j<itemRZ.size(); j++){
                         if(!itemRZ.get(j).id.equals("1")){
                             rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
@@ -682,6 +699,7 @@ public class CierreX extends PBase {
                             totSinImp+=itemRZ.get(j).precio;
                         }
                     }
+                    tot=0;totF=0;totSinImp=0;
 
                     rep.line();
                     rep.add4lrrTotZ(tot,totF,totSinImp);
@@ -1131,6 +1149,30 @@ public class CierreX extends PBase {
             }
 
         }
+
+    }
+
+    //endregion
+
+    //region AUX
+
+    private void msgAskExit(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Registro");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
 
     }
 

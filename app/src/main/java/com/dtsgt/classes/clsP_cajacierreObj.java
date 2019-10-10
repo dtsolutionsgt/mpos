@@ -87,6 +87,8 @@ public class clsP_cajacierreObj {
         ins.add("ESTADO",item.estado);
         ins.add("FECHA",item.fecha);
         ins.add("VENDEDOR",item.vendedor);
+        ins.add("CODPAGO",item.codpago);
+        ins.add("FONDOCAJA",item.fondocaja);
         ins.add("MONTOINI",item.montoini);
         ins.add("MONTOFIN",item.montofin);
         ins.add("MONTODIF",item.montodif);
@@ -103,12 +105,13 @@ public class clsP_cajacierreObj {
         upd.add("ESTADO",item.estado);
         upd.add("FECHA",item.fecha);
         upd.add("VENDEDOR",item.vendedor);
+        upd.add("FONDOCAJA",item.fondocaja);
         upd.add("MONTOINI",item.montoini);
         upd.add("MONTOFIN",item.montofin);
         upd.add("MONTODIF",item.montodif);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+")");
+        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
 
         db.execSQL(upd.sql());
 
@@ -146,10 +149,12 @@ public class clsP_cajacierreObj {
             item.estado=dt.getInt(3);
             item.fecha=dt.getInt(4);
             item.vendedor=dt.getString(5);
-            item.montoini=dt.getDouble(6);
-            item.montofin=dt.getDouble(7);
-            item.montodif=dt.getDouble(8);
-            item.statcom=dt.getString(9);
+            item.codpago=dt.getInt(6);
+            item.fondocaja=dt.getDouble(7);
+            item.montoini=dt.getDouble(8);
+            item.montofin=dt.getDouble(9);
+            item.montodif=dt.getDouble(10);
+            item.statcom=dt.getString(11);
 
             items.add(item);
 
@@ -187,6 +192,8 @@ public class clsP_cajacierreObj {
         ins.add("ESTADO",item.estado);
         ins.add("FECHA",item.fecha);
         ins.add("VENDEDOR",item.vendedor);
+        ins.add("CODPAGO",item.codpago);
+        ins.add("FONDOCAJA",item.fondocaja);
         ins.add("MONTOINI",item.montoini);
         ins.add("MONTOFIN",item.montofin);
         ins.add("MONTODIF",item.montodif);
@@ -203,12 +210,13 @@ public class clsP_cajacierreObj {
         upd.add("ESTADO",item.estado);
         upd.add("FECHA",item.fecha);
         upd.add("VENDEDOR",item.vendedor);
+        upd.add("FONDOCAJA",item.fondocaja);
         upd.add("MONTOINI",item.montoini);
         upd.add("MONTOFIN",item.montofin);
         upd.add("MONTODIF",item.montodif);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+")");
+        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
 
         return upd.sql();
 

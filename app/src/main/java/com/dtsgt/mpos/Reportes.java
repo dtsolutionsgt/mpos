@@ -318,8 +318,15 @@ public class Reportes extends PBase {
 
     public void GeneratePrint(View view){
         try{
-            if(!report) AskReport();
-            if(report) app.doPrint();
+            if(!report) {
+                AskReport();
+                return;
+            }
+
+            if(report) {
+                app.doPrint();
+                return;
+            }
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("GeneratePrint: "+e);
@@ -1027,11 +1034,17 @@ public class Reportes extends PBase {
                             acc = 2;
                         }
 
-                        /*Nueva validacion
-                        if(itemR.get(i).serie.equals(itemR.get(i+1).serie)){
+                        //Nueva validacion
+                        if(acc==2){
+                            rep.empty();
                             rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
+                            rep.empty();
+                            acc=3;
+                        }else if(i+1!=itemR.size() && !itemR.get(i).serie.equals(itemR.get(i+1).serie)){
+                            rep.empty();
+                            rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
+                            rep.empty();
                         }
-                        */
 
                         if(!fechaR.equals(du.univfechaReport(itemR.get(i).fecha))){
 
@@ -1044,9 +1057,6 @@ public class Reportes extends PBase {
                             }
 
                             fechaR = du.univfechaReport(itemR.get(i).fecha);
-                            if(itemR.get(i).serie.equals(itemR.get(i+1).serie)){
-                                rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
-                            }
                             rep.addtwo(fechaR, itemR.get(i).corel);
                             rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
 
@@ -1060,9 +1070,6 @@ public class Reportes extends PBase {
 
                         }else {
 
-                            if(itemR.get(i).serie.equals(itemR.get(i+1).serie)){
-                                rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
-                            }
                             rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
 
                         }

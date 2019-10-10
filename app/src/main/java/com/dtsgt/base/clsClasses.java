@@ -36,6 +36,8 @@ public class clsClasses {
         public int  estado;
         public int  fecha;
         public String vendedor;
+		public int codpago;
+		public double fondocaja;
         public double montoini;
         public double montofin;
         public double montodif;
