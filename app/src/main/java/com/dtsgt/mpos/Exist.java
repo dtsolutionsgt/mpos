@@ -317,6 +317,10 @@ public class Exist extends PBase {
 			cantT=val;
 
 			addItem(est);
+
+			Toast.makeText(this, "Agregado correctamente", Toast.LENGTH_SHORT).show();
+			super.finish();
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -361,8 +365,8 @@ public class Exist extends PBase {
 			mu.msgbox("Error : " + e.getMessage());
 		}
 
-		updData(est);
-		listItems();
+		//updData(est);
+		//listItems();
 
 	}
 
@@ -679,63 +683,6 @@ public class Exist extends PBase {
 
 	}
 
-	private void updData(String est){
-		Cursor DT;
-		String cod;
-		Double cant,cantm,cantm2;
-
-		cod = "";
-		cant = 0.0;
-		cantm = 0.0;
-
-		try {
-			sql="SELECT CODIGO,CANT,CANTM FROM T_DEVOL";
-
-			DT=Con.OpenDT(sql);
-			if (DT.getCount()==0) {return;}
-
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-
-				cod=DT.getString(0);
-
-				if(est.equals("B")){
-					if(cantT>disp){
-						throw new Exception();
-					}
-
-					sql="UPDATE P_STOCK SET CANT=CANT-"+cantT+" WHERE CODIGO='"+cod+"'";
-					db.execSQL(sql);
-
-				}else if(est.equals("M")){
-					if(cantT>dispm){
-						cant = cantT - dispm;
-						cantm = cantT - cant;
-
-						sql="UPDATE P_STOCK SET CANT=CANT-"+cant+", CANTM=CANTM-"+cantm+" WHERE CODIGO='"+cod+"'";
-						db.execSQL(sql);
-					}else{
-
-						sql="UPDATE P_STOCK SET CANTM=CANTM-"+cantT+" WHERE CODIGO='"+cod+"'";
-						db.execSQL(sql);
-					}
-				}
-
-				DT.moveToNext();
-			}
-
-			sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";
-			db.execSQL(sql);
-
-
-			Toast.makeText(this, "Devolucion hecha correctamente", Toast.LENGTH_LONG).show();
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox(e.getMessage());
-		}
-	}
-
 
 	//endregion
 
@@ -758,7 +705,7 @@ public class Exist extends PBase {
 		protected boolean buildDetail() {
 			clsExist item;
 			String s1,s2,lote;
-            int ic;
+            int ic,tot=0;
 
 			try {
 				String vf=txtFilter.getText().toString();
@@ -767,8 +714,8 @@ public class Exist extends PBase {
 				rep.empty();
 				rep.line();lns=items.size();
 
-				rep.add("Cod  Descripcion");
-				rep.add("Lote         Cantidad UM     Peso UM");
+				rep.add("CODIGO   DESCRIPCION");
+				rep.add("UM       CANTIDAD          ESTADO");
 				rep.line();
 
 				for (int i = 0; i <items.size(); i++) {
@@ -779,7 +726,7 @@ public class Exist extends PBase {
 
                     switch (item.flag) {
                         case 0:
-                            rep.add(item.Cod + " " + item.Desc);
+                            rep.add(item.Cod + "   " + item.Desc);
                             /*if (ic<2) {
                                 if (!(lote==null || lote.isEmpty())) rep.add(item.Cod);
                             } else {
@@ -787,18 +734,23 @@ public class Exist extends PBase {
                             }*/
                             break;
                         case 1:
-                            rep.add3lrr(item.Lote,item.Valor,item.Peso);break;
+							ss=rep.rtrim(item.Peso ,2)+"       "+rep.rtrim(""+item.Valor,4);
+							ss=ss+" "+rep.rtrim("BUENO",18);
+							rep.add(ss);
+							tot+=item.cant;break;
                         case 2:
                             rep.add("Estado malo");
-                            rep.add3lrr(item.Lote,item.ValorM,item.PesoM);break;
+                            rep.add3lrr(item.Lote,item.ValorM,item.PesoM);
+							tot+=item.cant;break;
                         case 3:
-                            rep.add3lrr("Total",item.ValorT,item.PesoT);break;
+							ss=rep.rtrim("", 6)+" "+rep.rtrim(frmdecimal(tot,2),8);
+							rep.add(ss);
                     }
 
 					//rep.add3lrr(item.Cod,item.Peso,item.Valor);
 					//if (item.flag==1) rep.add3lrr("Est.malo" ,item.PesoM,item.ValorM);
 				}
-  			rep.line();
+  				rep.line();
 				return true;
 			} catch (Exception e) {
 				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

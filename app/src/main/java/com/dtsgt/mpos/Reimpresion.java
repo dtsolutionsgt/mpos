@@ -227,7 +227,7 @@ public class Reimpresion extends PBase {
 						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 						mu.msgbox( e.getMessage());
 					}
-				};
+			};
 			});
 
 			listView.setOnItemLongClickListener(new OnItemLongClickListener() {

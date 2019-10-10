@@ -17,6 +17,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsDocCanastaBod;
+import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.ladapt.ListAdaptDevBod;
 
 public class DevolBod extends PBase {
@@ -27,7 +29,11 @@ public class DevolBod extends PBase {
 	private ListAdaptDevBod adapter;
 	private clsClasses.clsExist selitem;
 
-	private String prodid,savecant;
+	private clsDocCanastaBod fpaseantebod;
+	private printer prn_paseante;
+	private Runnable printclose,printcallback;
+
+	private String prodid,savecant,corel;
 	private double cant,disp,dispm;
 
 	@Override
@@ -45,9 +51,44 @@ public class DevolBod extends PBase {
 		fecha=du.getFechaActual();
 		gl.dev =  false;
 
-		setHandlers();
+		try{
+			sql="DELETE FROM T_DEVOL";
+			db.execSQL(sql);
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
 
-		//fillData();
+		//region Impresion
+
+		prn_paseante=new printer(this,printclose,gl.validimp);
+
+		fpaseantebod=new clsDocCanastaBod(this,prn_paseante.prw,gl.peMon,gl.peDecImp, "printpaseante.txt");
+		fpaseantebod.deviceid =gl.deviceId;
+		fpaseantebod.vTipo="PASEANTE";
+
+		printcallback = new Runnable() {
+			public void run() {
+				try {
+
+				} catch (Exception e) {
+					msgbox(e.getMessage());
+				}
+
+			}
+		};
+
+        printclose = new Runnable() {
+            public void run() {
+                try {
+
+                } catch (Exception e) {
+                }
+            }
+        };
+
+		//endregion
+
+		setHandlers();
 		listItems();
 	}
 
@@ -184,7 +225,7 @@ public class DevolBod extends PBase {
 		try{
 			final AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-			getDisp();
+			getDisp(prodid);
 			alert.setTitle("Ingrese la cantidad ");
 			alert.setMessage("Existencias :  "+disp+" (B) / "+dispm+" (M)");
 
@@ -256,8 +297,6 @@ public class DevolBod extends PBase {
 
 			addItem(est);
 
-			Toast.makeText(this, "Devolucion realizada correctamente", Toast.LENGTH_LONG).show();
-			super.finish();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -313,7 +352,7 @@ public class DevolBod extends PBase {
 
 	private void saveDevol(){
 		Cursor DT;
-		String corel,pcod;
+		String pcod;
 		Double pcant,pcantm;
 		int i;
 
@@ -338,8 +377,7 @@ public class DevolBod extends PBase {
 
 			db.execSQL(ins.sql());
 
-
-			sql="SELECT CODIGO,CANT,CANTM FROM T_DEVOL WHERE CANT+CANTM>0";
+			sql="SELECT CODIGO,SUM(CANT),SUM(CANTM) FROM T_DEVOL WHERE CANT+CANTM>0 GROUP BY CODIGO";
 			DT=Con.OpenDT(sql);
 			i=1;
 
@@ -363,21 +401,10 @@ public class DevolBod extends PBase {
 
 				db.execSQL(ins.sql());
 
-				/*if (pcant>0) {
-			 	    sql="UPDATE P_STOCK SET CANT=CANT-"+pcant+" WHERE CODIGO='"+pcod+"'";
-				    db.execSQL(sql);
-				    i+=1;
-				}
-
-				if (pcantm>0) {
-		    	    sql="UPDATE P_STOCK SET CANTM=CANTM-"+pcant+" WHERE CODIGO='"+pcod+"'";
-				    db.execSQL(sql);
-				    i+=1;
-				}*/
-
 				DT.moveToNext();
 			}
 
+			updData();
 
 			sql="DELETE FROM T_DEVOL";
 			db.execSQL(sql);
@@ -386,7 +413,7 @@ public class DevolBod extends PBase {
 			db.endTransaction();
 
 			Toast.makeText(this,"Devolución aplicada", Toast.LENGTH_SHORT).show();
-			super.finish();
+			msgAskPrint();
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -396,13 +423,114 @@ public class DevolBod extends PBase {
 
 	}
 
+	private void updData(){
+		Cursor DT;
+		String cod;
+		Double cant,cantm,cantT,cantTM;
+
+		cod = "";
+		cantT = 0.0;
+		cantTM=0.0;
+
+		try {
+			sql="SELECT CODIGO,CANT,CANTM FROM T_DEVOL";
+
+			DT=Con.OpenDT(sql);
+			if (DT.getCount()==0) {return;}
+
+			DT.moveToFirst();
+			while (!DT.isAfterLast()) {
+
+				cod=DT.getString(0);
+				cantT=DT.getDouble(1);
+				cantTM=DT.getDouble(2);
+
+				getDisp(cod);
+
+				if(cantT>0){
+
+					if(cantT>disp) throw new Exception();
+
+					if(cantTM>0){
+
+						if(cantTM>dispm){
+							cantm = cantTM-dispm;
+							cant = cantT + cantm;
+
+							if(cant>disp) throw new Exception();
+
+							sql="UPDATE P_STOCK SET CANT=CANT-"+cant+", CANTM=CANTM-"+dispm+" WHERE CODIGO='"+cod+"'";
+							db.execSQL(sql);
+						}else if(cantTM<=dispm){
+							sql="UPDATE P_STOCK SET CANT=CANT-"+cantT+", CANTM=CANTM-"+cantTM+" WHERE CODIGO='"+cod+"'";
+							db.execSQL(sql);
+						}
+
+					} else {
+						sql="UPDATE P_STOCK SET CANT=CANT-"+cantT+" WHERE CODIGO='"+cod+"'";
+						db.execSQL(sql);
+					}
+
+				}else if(cantTM>0){
+					if(cantTM>dispm){
+						cantm = cantTM-dispm;
+						cant = cantT + cantm;
+
+						if(cant>disp) throw new Exception();
+
+						sql="UPDATE P_STOCK SET CANT=CANT-"+cant+", CANTM=CANTM-"+dispm+" WHERE CODIGO='"+cod+"'";
+						db.execSQL(sql);
+					}else if(cantTM<=dispm){
+						sql="UPDATE P_STOCK SET CANTM=CANTM-"+cantTM+" WHERE CODIGO='"+cod+"'";
+						db.execSQL(sql);
+					}
+				}
+
+				DT.moveToNext();
+			}
+
+			sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";
+			db.execSQL(sql);
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox("Error en updData: "+e.getMessage());
+		}
+	}
+
+	private void imprDevol(int impres) {
+		try {
+
+			String vModo=(gl.peModal.equalsIgnoreCase("TOL")?"TOL":"*");
+			try {
+				fpaseantebod.buildPrint(corel,0,vModo);
+			} catch (Exception e) {}
+
+			if (prn_paseante.isEnabled() && impres==1) {
+
+				prn_paseante.printask(printcallback, "printpaseante.txt");
+
+			}else if(!prn_paseante.isEnabled() || impres==0){
+
+				Toast.makeText(this, "Documento solo fue generado con éxito", Toast.LENGTH_LONG).show();
+
+			}
+
+			super.finish();
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			mu.msgbox(e.getMessage());
+		}
+	}
+
 	// Aux
 
-	private void getDisp(){
+	private void getDisp(String cod){
 		Cursor DT;
 
 		try {
-			sql="SELECT CANT,CANTM FROM P_STOCK WHERE CODIGO='"+prodid+"'";
+			sql="SELECT CANT,CANTM FROM P_STOCK WHERE CODIGO='"+cod+"'";
 			DT=Con.OpenDT(sql);
 
 			if (DT.getCount()==0) {
@@ -464,13 +592,12 @@ public class DevolBod extends PBase {
 		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
 		    	doExit();
-		    	fillData();
+		    	//fillData();
 		    }
 		});
 
 		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {
-		    	;
 		    }
 		});
 
@@ -534,6 +661,31 @@ public class DevolBod extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
+
+	}
+
+	private void msgAskPrint() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle(R.string.app_name);
+		dialog.setMessage("¿Imprimir Devolución?");
+		dialog.setCancelable(false);
+
+		dialog.setIcon(R.drawable.ic_quest);
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				imprDevol(1);
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				imprDevol(0);
+			}
+		});
+
+		dialog.show();
 
 	}
 

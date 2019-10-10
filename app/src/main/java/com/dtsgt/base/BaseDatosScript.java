@@ -2069,11 +2069,13 @@ public class BaseDatosScript {
                     "ESTADO INTEGER NOT NULL,"+
                     "FECHA INTEGER NOT NULL,"+
                     "VENDEDOR TEXT NOT NULL,"+
+					"CODPAGO INTEGER NOT NULL,"+
+					"FONDOCAJA REAL NOT NULL,"+
                     "MONTOINI REAL NOT NULL,"+
                     "MONTOFIN REAL NOT NULL,"+
                     "MONTODIF REAL NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "PRIMARY KEY ([SUCURSAL],[RUTA],[COREL])"+
+                    "PRIMARY KEY ([SUCURSAL],[RUTA],[COREL],[CODPAGO])"+
                     ");";
             database.execSQL(sql);
 

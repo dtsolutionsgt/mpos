@@ -17,14 +17,14 @@ import com.dtsgt.classes.clsP_cajapagosObj;
 
 public class Caja extends PBase {
 
-    private TextView lblTit, lblMontoIni, lblMontoFin;
-    private EditText Vendedor, Fecha, MontoIni, MontoFin;
+    private TextView lblTit, lblMontoIni, lblMontoFin,lblMontoCred;
+    private EditText Vendedor, Fecha, MontoIni, MontoFin, MontoCred;
 
     private clsClasses.clsP_cajacierre itemC;
 
-    private double montoIni=0, montoFin=0, montoDif=0;
+    private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoCred=0;
 
-    private int acc=1,msgAcc=0;
+    private int acc=1,msgAcc=0,cred=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +41,32 @@ public class Caja extends PBase {
         Vendedor = (EditText) findViewById(R.id.editText18);
         lblMontoFin = (TextView) findViewById(R.id.textView134);
         MontoFin = (EditText) findViewById(R.id.editText20);
+        MontoCred = (EditText) findViewById(R.id.editText17);
+        lblMontoCred = (TextView) findViewById(R.id.textView130);
 
         Vendedor.setText(gl.vendnom);
         Fecha.setText(du.getActDateStr());
         lblTit.setText(gl.titReport);
+
+        try{
+            Cursor dt;
+
+            sql="SELECT * FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL WHERE F.KILOMETRAJE=0 AND P.CODPAGO!=1";
+            dt=Con.OpenDT(sql);
+
+            if(dt.getCount()>0){
+                lblMontoCred.setVisibility(View.VISIBLE);
+                MontoCred.setVisibility(View.VISIBLE);cred=1;
+            }else {
+                lblMontoCred.setVisibility(View.INVISIBLE);
+                MontoCred.setVisibility(View.INVISIBLE);cred=0;
+            }
+
+            if(dt!=null) dt.close();
+        }catch (Exception e){
+            msgbox("Error en consulta 'onCreate Caja': "+e);
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+        }
 
         if(gl.cajaid==1){
             lblMontoFin.setVisibility(View.INVISIBLE);
@@ -54,7 +76,7 @@ public class Caja extends PBase {
 
             caja.fill(" WHERE ESTADO=0");
             MontoIni.setEnabled(false);
-            MontoIni.setText(""+caja.last().montoini);
+            MontoIni.setText(""+caja.last().fondocaja);
         }
 
         itemC = clsCls.new clsP_cajacierre();
@@ -66,9 +88,9 @@ public class Caja extends PBase {
 
         try{
             if(gl.cajaid==1 && !MontoIni.getText().toString().trim().isEmpty()){
-                montoIni = Double.parseDouble(MontoIni.getText().toString().trim());
+                fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
 
-                if(montoIni>0){
+                if(fondoCaja>0){
                     saveMontoIni();
                 }else{
                     msgbox("El monto inicial debe ser mayor a 0");
@@ -78,13 +100,20 @@ public class Caja extends PBase {
                 montoFin = Double.parseDouble(MontoFin.getText().toString().trim());
 
                 if(montoFin>0){
-                    montoIni = Double.parseDouble(MontoIni.getText().toString().trim());
+
+                    if(cred==1 && !MontoCred.getText().toString().trim().isEmpty()){
+                        montoCred = Double.parseDouble(MontoCred.getText().toString().trim());
+                    }else  if(cred==1 && MontoCred.getText().toString().trim().isEmpty()){
+                        msgbox("Se realizaron ventas con crédito, no puede dejar el monto crédito vacío");return;
+                    }
+
+                    fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
 
                     montoDif();
 
                     if(montoDif!=0){
                         if(acc==1){
-                            msgboxValidaMonto("El monto ha haber y el monto ingresado no cuadran, ¿Está seguro de continuar?");
+                            msgboxValidaMonto("El monto no cuadra, ¿Está seguro de continuar?");
                             acc=0;
                         }else {
                             saveMontoIni();
@@ -115,10 +144,24 @@ public class Caja extends PBase {
 
         try{
 
-            sql="SELECT SUM(TOTAL) FROM D_FACTURA WHERE KILOMETRAJE=0";
-            dt = Con.OpenDT(sql);
+            clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
 
-            if(dt.getCount()==0) tot=0; else tot = dt.getDouble(0);
+
+            if(gl.cajaid==3){
+                caja.fill(" WHERE ESTADO = 0");
+                fondoCaja = caja.last().fondocaja;
+            }
+
+            sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
+                    "FROM D_FACTURAP P " +
+                    "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                    "WHERE F.KILOMETRAJE=0 AND P.CODPAGO=1 " +
+                    "GROUP BY P.CODPAGO";
+
+            dt=Con.OpenDT(sql);
+
+            if(dt==null) throw new Exception();
+            if(dt.getCount()==0) tot=0; else tot = fondoCaja+dt.getDouble(1);
             if(dt!=null) dt.close();
 
 
@@ -128,7 +171,7 @@ public class Caja extends PBase {
             if(dt.getCount()==0) pago=0; else pago = dt.getDouble(0);
             if(dt!=null) dt.close();
 
-            montoDif = (montoIni +  tot) - pago;
+            montoDif = tot - pago;
             montoDif = montoDif - montoFin;
 
         }catch (Exception e){
@@ -139,6 +182,7 @@ public class Caja extends PBase {
 
 
     public void saveMontoIni(){
+        Cursor dt;
         int fecha=0;
 
         try{
@@ -159,20 +203,22 @@ public class Caja extends PBase {
                 caja.fill(" WHERE ESTADO = 0");
                 gl.corelZ = caja.last().corel;
                 fecha = caja.last().fecha;
-                montoIni = caja.last().montoini;
+                fondoCaja = caja.last().fondocaja;
             }
 
             itemC.sucursal =  gl.tienda;
             itemC.ruta = gl.caja;
             itemC.corel = gl.corelZ;
             itemC.vendedor =  gl.vend;
-            itemC.montoini = montoIni;
+            itemC.fondocaja = fondoCaja;
             itemC.statcom = "N";
 
             if(gl.cajaid==1){
                 itemC.fecha = (int) du.getFechaActual();
 
                 itemC.estado = 0;
+                itemC.codpago = 0;
+                itemC.montoini = 0;
                 itemC.montofin = 0;
                 itemC.montodif = 0;
 
@@ -182,12 +228,49 @@ public class Caja extends PBase {
                 msgAskExit("Inicio de caja correcto");
 
             }else if(gl.cajaid==3){
-                itemC.fecha = fecha;
-                itemC.estado = 1;
-                itemC.montofin = montoFin;
-                itemC.montodif = montoDif;
 
-                caja.update(itemC);
+                sql="SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR) " +
+                        "FROM D_FACTURAP P " +
+                        "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                        "WHERE F.KILOMETRAJE=0 " +
+                        "GROUP BY P.CODPAGO";
+
+                dt=Con.OpenDT(sql);
+
+                if(dt==null) throw new Exception();
+
+                dt.moveToFirst();
+
+                while(!dt.isAfterLast()){
+
+                    itemC.codpago=dt.getInt(0);
+                    itemC.fecha = fecha;
+                    itemC.estado = 1;
+
+                    if(dt.getInt(0)==1){
+                        montoIni = fondoCaja+dt.getDouble(2);
+                        itemC.montoini = montoIni;
+                        itemC.montofin = montoFin;
+                        itemC.montodif = montoFin-montoIni;
+
+                        sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
+                        db.execSQL(sql);
+
+                        caja.update(itemC);
+                    }
+
+                    if(cred==1){
+                        if(dt.getInt(0)!=1){
+                            itemC.montoini=0;
+                            itemC.montofin = montoCred;
+                            itemC.montodif = montoCred;
+
+                            caja.add(itemC);
+                        }
+                    }
+
+                    dt.moveToNext();
+                }
 
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
                 db.execSQL(sql);
@@ -202,8 +285,7 @@ public class Caja extends PBase {
 
                 gl.reportid=10;
                 startActivity(new Intent(this, CierreX.class));
-
-                finish();
+                super.finish();
             }
 
         }catch (Exception e){
