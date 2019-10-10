@@ -105,6 +105,7 @@ public class FacturaRes extends PBase {
 		rutapos=gl.rutapos;
 		media=gl.media;
 		credito=gl.credito;
+
 		gl.cobroPendiente = false;
 		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
 		notaC = gl.tiponcredito;
@@ -115,12 +116,12 @@ public class FacturaRes extends PBase {
 			lblMPago.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.INVISIBLE);
 			lblCred.setText("Pago\nTarjeta");
-			//imgCred.setImageResource(R.drawable.card_credit);
+			imgCred.setImageResource(R.drawable.card_credit);
 		} else {
 			lblMPago.setVisibility(View.VISIBLE);
 			imgMPago.setVisibility(View.VISIBLE);
 			lblCred.setText("Pago\nCrédito");
-			//imgCred.setImageResource(R.drawable.credit);
+			imgCred.setImageResource(R.drawable.credit);
 		}
 
 		if (media==1) {
@@ -185,7 +186,11 @@ public class FacturaRes extends PBase {
 			lblMPago.setVisibility(View.VISIBLE);
 		}
 
-		fecha=du.getActDateTime();
+        contadoCheck.setVisibility(View.INVISIBLE);
+        lblCash.setVisibility(View.VISIBLE);
+        imgCash.setVisibility(View.VISIBLE);
+
+        fecha=du.getActDateTime();
 		fechae=fecha;
 		if (gl.peModal.equalsIgnoreCase("TOL")) fecha=app.fechaFactTol(du.getActDate());
 

@@ -2522,7 +2522,7 @@ public class Venta extends PBase {
         }
 
         try {
-            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
+            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO,LIMITECREDITO FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
             if (DT.getDouble(1)>0.01) ss=" [ "+mu.frmcur(DT.getDouble(1))+" ] ";else ss="";
@@ -2530,6 +2530,9 @@ public class Venta extends PBase {
             gl.fnombre=DT.getString(0);
             gl.fnit=DT.getString(2);
             gl.fdir=DT.getString(3);
+
+            gl.media=DT.getInt(4);
+            gl.credito=DT.getDouble(5);
 
             lblVend.setText(gl.cliente+" - "+DT.getString(0)+" "+ss);
         } catch (Exception e) {
