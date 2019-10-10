@@ -6,11 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -36,6 +40,7 @@ import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.ladapt.ListAdaptCliList;
 import com.dtsgt.mant.MantCli;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,6 +54,7 @@ public class Clientes extends PBase {
 	private EditText txtFiltro;
 	private TextView lblCant;
     private Switch swact;
+    private ImageView imgAdd;
 
 	private ArrayList<clsCDB> items = new ArrayList<clsCDB>();
 	private ArrayList<String> cobros = new ArrayList<String>();
@@ -78,10 +84,13 @@ public class Clientes extends PBase {
 		txtFiltro = (EditText) findViewById(R.id.txtFilter);
 		lblCant = (TextView) findViewById(R.id.lblCant);
         swact = (Switch) findViewById(R.id.switch2);
+        imgAdd = (ImageView) findViewById(R.id.imageView12);
 
 		app = new AppMethods(this, gl, Con, db);
 		//gl.validimp = app.validaImpresora();
 		//if (!gl.validimp) msgbox("¡La impresora no está autorizada!");
+
+        loadAdd();
 
 		setHandlers();
 
@@ -650,6 +659,18 @@ public class Clientes extends PBase {
 			mu.msgbox(e.getMessage());
 		}
 	}
+
+	private void loadAdd() {
+        try {
+            String emplogo = Environment.getExternalStorageDirectory() + "/mposlogo.png";
+            File file = new File(emplogo);
+            if (file.exists()) {
+                Bitmap bmImg = BitmapFactory.decodeFile(emplogo);
+                imgAdd.setImageBitmap(bmImg);
+            }
+        } catch (Exception e) {
+        }
+    }
 
 	// Activity Events
 	

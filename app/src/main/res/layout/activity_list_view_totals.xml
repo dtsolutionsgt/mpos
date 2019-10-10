@@ -14,7 +14,8 @@
         android:paddingBottom="5dp"
         android:text="Código"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="18sp" />
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/lblPNum"
@@ -28,8 +29,8 @@
         android:paddingBottom="5dp"
         android:text="Descripción"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="18sp"
-        android:textStyle="normal" />
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/imgNext"

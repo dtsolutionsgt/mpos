@@ -21,24 +21,30 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/lblFact"
+        android:layout_below="@+id/textView137"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toStartOf="@+id/textView136"
         android:paddingBottom="5dp">
 
-        <ImageView
-            android:id="@+id/btnImp"
-            android:layout_width="128dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
+        <CheckBox
+            android:id="@+id/checkContado"
+            android:layout_width="126dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="97dp"
+            android:layout_marginEnd="119dp"
+            android:checked="false"
             android:clickable="true"
-            android:onClick="paySelect"
-            android:src="@drawable/cobro"
-            tools:ignore="OnClick" />
+            android:onClick="checkedBox"
+            android:text="Pagar Al Contado" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -53,22 +59,6 @@
             android:onClick="payCash"
             android:src="@drawable/pago_efectivo" />
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView2"
-            android:layout_alignLeft="@+id/imageView2"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="0dp"
-            android:clickable="true"
-            android:gravity="center"
-            android:onClick="payCash"
-            android:text="Pago Efectivo"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp" />
-
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="128dp"
@@ -82,21 +72,28 @@
             android:src="@drawable/pago"
             tools:ignore="OnClick" />
 
-        <TextView
-            android:id="@+id/lblPend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView3"
-            android:layout_alignLeft="@+id/imageView3"
-            android:layout_alignParentRight="true"
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="128dp"
+            android:layout_height="48dp"
+            android:layout_alignTop="@+id/imageView3"
+            android:layout_alignRight="@+id/lblCVence"
+            android:layout_alignParentLeft="true"
             android:clickable="true"
-            android:gravity="center"
-            android:onClick="payCred"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:text="Pago Crédito"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp" />
+            android:onClick="showBon"
+            android:src="@drawable/regalo" />
+
+        <ImageView
+            android:id="@+id/btnImp"
+            android:layout_width="128dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:onClick="paySelect"
+            android:src="@drawable/cobro"
+            tools:ignore="OnClick" />
 
         <TextView
             android:id="@+id/lblCVence"
@@ -114,29 +111,37 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textSize="15sp" />
 
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="128dp"
-            android:layout_height="48dp"
-            android:layout_alignTop="@+id/imageView3"
-            android:layout_alignRight="@+id/lblCVence"
-            android:layout_alignParentLeft="true"
-            android:clickable="true"
-            android:onClick="showBon"
-            android:src="@drawable/regalo" />
-
-        <CheckBox
-            android:id="@+id/checkContado"
-            android:layout_width="126dp"
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_below="@+id/imageView2"
+            android:layout_alignLeft="@+id/imageView2"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="97dp"
-            android:layout_marginEnd="119dp"
-            android:checked="false"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="0dp"
             android:clickable="true"
-            android:onClick="checkedBox"
-            android:text="Pagar Al Contado" />
+            android:gravity="center"
+            android:onClick="payCash"
+            android:text="Pago Efectivo"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/lblPend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView3"
+            android:layout_alignLeft="@+id/imageView3"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="payCred"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:text="Pago Crédito"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp" />
 
     </RelativeLayout>
 
@@ -144,55 +149,22 @@
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imgPFoto"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imgPFoto"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@+id/textView136"
         android:layout_toRightOf="@+id/imageView5"
+        android:background="@drawable/blue_strip"
         android:gravity="center"
-        android:paddingLeft="10dp"
-        android:paddingBottom="3dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="5dp"
         android:text="Pago incompleto"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="18sp" />
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView4"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:background="@layout/blue_strip">
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/lblTalon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:gravity="center_horizontal"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#FFFFFF" />
-
-    <TextView
-        android:id="@+id/lblFact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/lblTalon"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:gravity="center_horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="5dp"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -218,17 +190,70 @@
 
     <ListView
         android:id="@+id/listView1"
-        android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/relativeLayout1"
-        android:layout_below="@+id/imgPFoto"
-        android:layout_alignParentLeft="false"
-        android:layout_centerHorizontal="true"
+        android:layout_width="843dp"
+        android:layout_height="106dp"
+        android:layout_above="@id/textView137"
+        android:layout_below="@+id/TextView01"
+        android:layout_alignParentStart="true"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:layout_toStartOf="@+id/textView136">
 
     </ListView>
+
+    <TextView
+        android:id="@+id/textView136"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="0dp"
+        android:background="@drawable/blue_strip" />
+
+    <TextView
+        android:id="@+id/textView137"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/blue_strip" />
+
+    <RelativeLayout
+        android:id="@+id/reltalon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/textView137"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/textView136">
+
+        <TextView
+            android:id="@+id/lblFact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
 </RelativeLayout>

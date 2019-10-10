@@ -81,7 +81,7 @@ public class Venta extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot;
     private double px,py,cpx,cpy,cdist;
 
-    private String emp,uid,cliid,prodid,uprodid,famid,um,tiposcan,barcode,imgfold,tipo;
+    private String emp,uid,seluid,cliid,prodid,uprodid,famid,um,tiposcan,barcode,imgfold,tipo;
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,decimal,menuitemadd;
 
@@ -308,7 +308,7 @@ public class Venta extends PBase {
 
                         prodid=item.Cod;gl.prodmenu=prodid;
                         uprodid=prodid;
-                        uid=item.emp;gl.menuitemid=uid;
+                        uid=item.emp;gl.menuitemid=uid;seluid=uid;
                         adapter.setSelectedIndex(position);
 
                         gl.gstr=item.Nombre;
@@ -478,7 +478,7 @@ public class Venta extends PBase {
         double tt,stot,tdesc,desc;
         int ii;
 
-        items.clear();tot=0;ttimp=0;ttperc=0;tdesc=0;selidx=-1;ii=0;
+        items.clear();tot=0;ttimp=0;ttperc=0;tdesc=0;selidx=-1;ii=0;seluid="";
 
         try {
             sql="SELECT T_VENTA.PRODUCTO, P_PRODUCTO.DESCCORTA, T_VENTA.TOTAL, T_VENTA.CANT, T_VENTA.PRECIODOC, " +
@@ -512,7 +512,11 @@ public class Venta extends PBase {
                         item.um=app.umVenta(item.Cod);
                     }
                     item.Peso=DT.getDouble(9);
-                    item.emp=DT.getString(12);if (item.emp.equalsIgnoreCase(uid)) selidx=ii;
+                    item.emp=DT.getString(12);
+                    if (item.emp.equalsIgnoreCase(uid)) {
+                        selidx=ii;
+                        seluid=uid;
+                    }
                     desc=DT.getDouble(11);tdesc+=desc;
 
                     item.val=mu.frmdecimal(item.Cant,gl.peDecImp)+" "+ltrim(item.um,6);
@@ -564,7 +568,7 @@ public class Venta extends PBase {
         if (selidx>-1) {
             adapter.setSelectedIndex(selidx);
             listView.smoothScrollToPosition(selidx);
-        }
+        } else seluid="";
 
     }
 
@@ -1886,16 +1890,24 @@ public class Venta extends PBase {
                 mmitems.add(item);
 
                 item = clsCls.new clsMenu();
-                item.ID=51;item.Name="Barra";item.Icon=51;
-                //mmitems.add(item);
-
-                item = clsCls.new clsMenu();
                 item.ID=52;item.Name="Cliente";item.Icon=52;
                 mmitems.add(item);
 
                 item = clsCls.new clsMenu();
-                //item.ID=53;item.Name="Bloquear";item.Icon=53;
+                item.ID=54;item.Name="Borrar linea ";item.Icon=54;
                 mmitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=55;item.Name="Borrar todo ";item.Icon=55;
+                mmitems.add(item);
+
+                //item = clsCls.new clsMenu();
+                //item.ID=51;item.Name="Barra";item.Icon=51;
+                //mmitems.add(item);
+
+                //item = clsCls.new clsMenu();
+                //item.ID=53;item.Name="Bloquear";item.Icon=53;
+                //mmitems.add(item);
 
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1982,7 +1994,6 @@ public class Venta extends PBase {
 
     }
 
-
     public void showVoidMenuTodo() {
         try{
             final AlertDialog Dialog;
@@ -2057,11 +2068,59 @@ public class Venta extends PBase {
                     break;
                 case 53:
                     break;
+                case 54:
+                    borraLinea();break;
+                case 55:
+                    borraTodo();break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
+
+    private void borraLinea() {
+        if (seluid.isEmpty()) return;
+
+        try {
+            sql="DELETE  FROM T_VENTA WHERE EMPRESA='"+seluid+"'";
+            db.execSQL(sql);
+            listItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void borraTodo() {
+        msgAskTodo("Borrar toda la venta");
+    }
+
+
+    private void msgAskTodo(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Venta");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    sql="DELETE FROM T_VENTA";
+                    db.execSQL(sql);
+                    listItems();
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
 
     //endregion
 

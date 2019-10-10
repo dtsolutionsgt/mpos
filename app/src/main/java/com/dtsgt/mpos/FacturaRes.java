@@ -43,7 +43,7 @@ import java.util.List;
 public class FacturaRes extends PBase {
 
 	private ListView listView;
-	private TextView lblPago,lblFact,lblTalon,lblMPago,lblCred,lblCash;
+	private TextView lblPago,lblFact,lblMPago,lblCred,lblCash;
 	private ImageView imgBon,imgMPago,imgCred, imgCash;
 	private CheckBox contadoCheck;
 	private TextView lblVuelto;
@@ -85,7 +85,6 @@ public class FacturaRes extends PBase {
 		listView = (ListView) findViewById(R.id.listView1);
 		lblPago = (TextView) findViewById(R.id.TextView01);
 		lblFact = (TextView) findViewById(R.id.lblFact);
-		lblTalon = (TextView) findViewById(R.id.lblTalon);
 		lblMPago = (TextView) findViewById(R.id.lblCVence);
 		lblCred = (TextView) findViewById(R.id.lblPend);
 		lblCash = (TextView) findViewById(R.id.textView4);
@@ -1380,11 +1379,11 @@ public class FacturaRes extends PBase {
 		//#HS_20181128_1602 Cambie el texto del mensaje.
 		if (fcorel==cf) mu.msgbox("Esta es la última factura disponible.");
 
-		lblFact.setText("Factura : "+fserie+" - "+fcorel);
+		if (gl.peMFact) s="Factura : ";else s="Ticket : ";
+		lblFact.setText(s+fserie+" - "+fcorel+" , Talonario : "+fcorel+" / "+cf);
 
-		s="Talonario : "+fcorel+" / "+cf+"\n";
-		s=s+"Disponible : "+(cf-fcorel);
-		lblTalon.setText(s);
+		//s="Talonario : "+fcorel+" / "+cf+" - Disponible : "+(cf-fcorel);
+		//lblTalon.setText(s);
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1918,10 +1917,10 @@ public class FacturaRes extends PBase {
             }
         }	else{
             if (tpago<tot) {
-                lblPago.setText("Pago incompleto.\n"+s);
+                lblPago.setText("Pago incompleto."+s);
                 pago=false;
             } else {
-                lblPago.setText("Pago COMPLETO.\n"+s);
+                lblPago.setText("Pago COMPLETO."+s);
                 pago=true;
 				pagocompleto=true;
                 //if (rutapos) askSavePos(); else askSave();

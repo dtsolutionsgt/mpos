@@ -67,9 +67,13 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ComWS extends PBase {
@@ -204,9 +208,12 @@ public class ComWS extends PBase {
 
 		setHandlers();
 
-        URL = gl.urlglob;
-        URL="http://192.168.1.52/wsmpos/wsAndr.asmx";
-        URL="http://192.168.1.94/mpos/wsMpos.asmx";
+        //URL = gl.urlglob;
+        //URL="http://192.168.1.52/wsmpos/wsAndr.asmx";
+        //URL="http://192.168.1.94/mpos/wsMpos.asmx";
+
+        URL=getWSUrl();
+
         txtWS.setText(URL);txtEmp.setText(emp);
         if (gl.debug) {
             txtWS.setEnabled(true);txtEmp.setEnabled(true);
@@ -4573,6 +4580,25 @@ public class ComWS extends PBase {
         }
 
         return vPuedeCom;
+    }
+
+    private String getWSUrl() {
+	    String defurl="http://192.168.1.94/mpos/wsMpos.asmx";
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+            if (!file1.exists()) return defurl;
+
+            FileInputStream fIn = new FileInputStream(file1);
+            BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+            String wsurl = myReader.readLine();
+            myReader.close();
+
+            return wsurl;
+        } catch (Exception e) {
+            return  defurl;
+        }
+
     }
 
     //endregion

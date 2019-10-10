@@ -47,6 +47,10 @@ public class VentaEdit extends PBase {
     public void doDec(View view) {
         if (cant>0) cant--;
         lbl2.setText(""+cant);
+        if (cant==0) {
+            gl.retcant=0;
+            finish();
+        }
      }
 
     public void doInc(View view) {
@@ -59,7 +63,9 @@ public class VentaEdit extends PBase {
      }
 
     public void doDelete(View view) {
-        msgAskDelete("Eliminar articulo de la venta");
+        //msgAskDelete("Eliminar articulo de la venta");
+        gl.retcant=0;
+        finish();
     }
 
     //endregion
@@ -84,14 +90,14 @@ public class VentaEdit extends PBase {
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            dialog.setNegativeButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     gl.retcant=0;
                     finish();
                 }
             });
 
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("No", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {}
             });
 
