@@ -4583,7 +4583,8 @@ public class ComWS extends PBase {
     }
 
     private String getWSUrl() {
-	    String defurl="http://192.168.1.94/mpos/wsMpos.asmx";
+	    //String defurl="http://192.168.1.94/mpos/wsMpos.asmx";
+		String defurl="http://192.168.1.52/wsmpos/wsAndr.asmx";
 
         try {
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");

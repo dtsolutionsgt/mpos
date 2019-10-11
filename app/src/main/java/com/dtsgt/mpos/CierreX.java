@@ -46,7 +46,7 @@ public class CierreX extends PBase {
     //Reporte Z
     private int codPago;
     private String nombrePago;
-    private Double valorPago, montoIni, montoFin, montoDif;
+    private Double valorPago, montoIni, montoFin, montoDif, Fondo;
     //Reporte Z
 
     private String condition;
@@ -502,13 +502,11 @@ public class CierreX extends PBase {
         Cursor dt;
 
         try{
-            sql="SELECT P.CODPAGO, M.NOMBRE, '', 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0 " +
+            sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0 " +
                     "FROM P_CAJACIERRE C " +
-                    "INNER JOIN D_FACTURA F ON C.COREL=F.KILOMETRAJE " +
-                    "INNER JOIN D_FACTURAP P ON F.COREL=P.COREL " +
-                    "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO=M.CODIGO " +
-                    "WHERE F.ANULADO='N' AND F.KILOMETRAJE = " + gl.corelZ +
-                    " GROUP BY P.CODPAGO, M.NOMBRE";
+                    "INNER JOIN P_MEDIAPAGO M ON C.CODPAGO = M.CODIGO " +
+                    "WHERE C.COREL = "+ gl.corelZ +
+                    " GROUP BY M.CODIGO";
 
             dt = Con.OpenDT(sql);
 
@@ -521,13 +519,15 @@ public class CierreX extends PBase {
             if(dt.getCount()!=0){
                 dt.moveToFirst();
 
+                Fondo = dt.getDouble(2);
+
                 while(!dt.isAfterLast()){
 
                     itemZ = clsCls.new clsBonifProd();
 
                     itemZ.id=dt.getString(0);
                     itemZ.nombre=dt.getString(1);
-                    itemZ.prstr=dt.getString(2);
+                    itemZ.prstr="";
                     itemZ.flag=dt.getInt(3);
                     itemZ.cant=dt.getDouble(4);
                     itemZ.cantmin=dt.getDouble(5);
@@ -632,7 +632,7 @@ public class CierreX extends PBase {
         }
 
         protected boolean buildDetail() {
-            int acc1=1, acc2=1, acc3=1, acc4=1, acc5=1, acc6=1, acc7=1, acc9=1, acc10=1;
+            int acc1=1, acc2=1, acc3=1, acc4=1, acc5=1, acc6=1, acc7=1, acc9=1, acc10=1,counter=0;
             String series="", fecha="";
 
             try {
@@ -675,6 +675,8 @@ public class CierreX extends PBase {
                 count10 += count9;
 
                 if(gl.reportid==10){
+                    rep.add("FONDO CAJA:        Q."+Fondo);
+                    rep.empty();
                     rep.add("         REPORTE DE CUADRE");
                     rep.add("CODIGO  M.PAGO");
                     rep.add("MONT.INI        MONT.FIN       DIF.");
@@ -683,27 +685,32 @@ public class CierreX extends PBase {
                     tot=0;totF=0;totSinImp=0;
 
                     for(int j=0; j<itemRZ.size(); j++){
-                        if(!itemRZ.get(j).id.equals("1")){
-                            rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
-                            rep.add4lrrTotZ(0.0,itemRZ.get(j).disp,itemRZ.get(j).precio);
 
-                            tot+=0;
-                            totF+=itemRZ.get(j).disp;
-                            totSinImp+=itemRZ.get(j).precio;
-                        }else {
-                            rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
-                            rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
+                        rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
+                        rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
 
-                            tot+=itemRZ.get(j).cantmin;
-                            totF+=itemRZ.get(j).disp;
-                            totSinImp+=itemRZ.get(j).precio;
+                        tot+=itemRZ.get(j).cantmin;
+                        totF+=itemRZ.get(j).disp;
+                        totSinImp+=itemRZ.get(j).precio;
+                    }
+
+                    for(int a=0; a<itemRZ.size(); a++){
+                        if(itemRZ.get(a).id.equals("1")){
+                            counter+=1;
                         }
                     }
-                    tot=0;totF=0;totSinImp=0;
+
+                    if (counter==0){
+                        tot+=Fondo;
+                        totF+=Fondo;
+                    }
 
                     rep.line();
                     rep.add4lrrTotZ(tot,totF,totSinImp);
 
+                    rep.add("Totales sumados con el fondo de caja");
+
+                    tot=0;totF=0;totSinImp=0;
                     rep.empty();
                 }
 
