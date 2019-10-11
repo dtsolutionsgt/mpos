@@ -22,7 +22,7 @@ public class Caja extends PBase {
 
     private clsClasses.clsP_cajacierre itemC;
 
-    private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoCred=0;
+    private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoDifCred=0, montoCred=0;
 
     private int acc=1,msgAcc=0,cred=0;
 
@@ -99,10 +99,12 @@ public class Caja extends PBase {
             } else if(gl.cajaid==3 && !MontoFin.getText().toString().trim().isEmpty()){
                 montoFin = Double.parseDouble(MontoFin.getText().toString().trim());
 
-                if(montoFin>0){
+                if(montoFin>=0){
 
                     if(cred==1 && !MontoCred.getText().toString().trim().isEmpty()){
                         montoCred = Double.parseDouble(MontoCred.getText().toString().trim());
+                        if(montoCred<0){ msgbox("Se realizaron ventas con crédito, el monto crédito no puede ser menor a 0");return;}
+                        if(montoCred==0){ msgbox("Se realizaron ventas con crédito, el monto crédito no puede ser 0");return;}
                     }else  if(cred==1 && MontoCred.getText().toString().trim().isEmpty()){
                         msgbox("Se realizaron ventas con crédito, no puede dejar el monto crédito vacío");return;
                     }
@@ -113,18 +115,38 @@ public class Caja extends PBase {
 
                     if(montoDif!=0){
                         if(acc==1){
-                            msgboxValidaMonto("El monto no cuadra, ¿Está seguro de continuar?");
+                            msgboxValidaMonto("El monto de efectvio no cuadra, ¿Está seguro de continuar?");
                             acc=0;
                         }else {
                             saveMontoIni();
                         }
 
                     }else {
-                        saveMontoIni();
+
+                        if(cred==1){
+
+                            if(montoDifCred!=0){
+                                if(acc==1){
+                                    msgboxValidaMonto("El monto de credito no cuadra, ¿Está seguro de continuar?");
+                                    acc=0;
+                                }else {
+                                    saveMontoIni();
+                                }
+
+                            }else {
+                                saveMontoIni();
+                            }
+
+
+                        }else {
+                            saveMontoIni();
+                        }
+
+
                     }
 
-                }else{
-                    msgbox("El monto final debe ser mayor a 0");
+                }else if(montoFin<0){
+                    msgbox("El monto final no puede ser menor a 0");
                 }
 
             }else {
@@ -140,7 +162,7 @@ public class Caja extends PBase {
 
     public void montoDif(){
         Cursor dt;
-        double tot,pago;
+        double tot,totCred,pago;
 
         try{
 
@@ -164,6 +186,22 @@ public class Caja extends PBase {
             if(dt.getCount()==0) tot=0; else tot = fondoCaja+dt.getDouble(1);
             if(dt!=null) dt.close();
 
+            if(cred==1){
+                sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
+                        "FROM D_FACTURAP P " +
+                        "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                        "WHERE F.KILOMETRAJE=0 AND P.CODPAGO=5 " +
+                        "GROUP BY P.CODPAGO";
+
+                dt=Con.OpenDT(sql);
+
+                if(dt==null) throw new Exception();
+                if(dt.getCount()==0) totCred=0; else totCred = dt.getDouble(1);
+                if(dt!=null) dt.close();
+
+                montoDifCred = montoCred - totCred;
+            }
+
 
             sql="SELECT SUM(MONTO) FROM P_cajapagos WHERE COREL=0";
             dt = Con.OpenDT(sql);
@@ -172,7 +210,7 @@ public class Caja extends PBase {
             if(dt!=null) dt.close();
 
             montoDif = tot - pago;
-            montoDif = montoDif - montoFin;
+            montoDif = montoFin - montoDif;
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -260,10 +298,11 @@ public class Caja extends PBase {
                     }
 
                     if(cred==1){
-                        if(dt.getInt(0)!=1){
-                            itemC.montoini=0;
+                        if(dt.getInt(0)==5){
+                            montoIni = dt.getDouble(2);
+                            itemC.montoini = montoIni;
                             itemC.montofin = montoCred;
-                            itemC.montodif = montoCred;
+                            itemC.montodif = montoCred - montoIni;
 
                             caja.add(itemC);
                         }

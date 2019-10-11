@@ -1789,8 +1789,8 @@ public class FacturaRes extends PBase {
 			ins.init("T_PAGO");
 
 			ins.add("ITEM",1);
-			ins.add("CODPAGO",4);
-			ins.add("TIPO","K");
+			ins.add("CODPAGO",5);
+			ins.add("TIPO","C");
 			ins.add("VALOR",epago);
 			ins.add("DESC1","");
 			ins.add("DESC2","");

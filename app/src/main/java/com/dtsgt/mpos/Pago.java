@@ -349,7 +349,7 @@ public class Pago extends PBase {
 
 			// Tarjeta
 			if (s.equalsIgnoreCase("5")) {
-				cpago=2;tpago="C";
+				cpago=5;tpago="C";
 				showBancoDialog();
 				return;
 			}
@@ -546,7 +546,7 @@ public class Pago extends PBase {
 
 			if (cpago==2) {
 				alert.setTitle("Numero de Cheque");
-			} else if(cpago==3) {
+			} else if(cpago==3 || cpago==5) {
 				alert.setTitle("Numero de Cheque");
 			} else {
 				alert.setTitle("Pendiente especificación");
@@ -563,7 +563,7 @@ public class Pago extends PBase {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					if (cpago==2) {
 						checkNum(input.getText().toString(),false);
-					} else if (cpago==3) {
+					} else if (cpago==3 || cpago==5) {
 						checkNum(input.getText().toString(),true);
 					}
 
