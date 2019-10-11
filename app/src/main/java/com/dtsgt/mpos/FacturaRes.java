@@ -35,6 +35,7 @@ import com.dtsgt.classes.clsBonifSave;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
+import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.ladapt.ListAdaptTotals;
 
 import java.util.ArrayList;
@@ -43,9 +44,8 @@ import java.util.List;
 public class FacturaRes extends PBase {
 
 	private ListView listView;
-	private TextView lblPago,lblFact,lblMPago,lblCred,lblCash;
+	private TextView lblPago,lblFact,lblMPago,lblCred,lblCash,lblMonto,lblKeyDP,lblTotal;
 	private ImageView imgBon,imgMPago,imgCred, imgCash;
-	private CheckBox contadoCheck;
 	private TextView lblVuelto;
 	private EditText txtVuelto;
 	private RelativeLayout rl_facturares;
@@ -62,6 +62,7 @@ public class FacturaRes extends PBase {
 	private clsDocFactura fdoc;
 	private clsDocDevolucion fdev;
 	private AppMethods app;
+    private clsKeybHandler khand;
 
 	private long fecha,fechae;
 	private int fcorel,clidia,media;
@@ -88,7 +89,9 @@ public class FacturaRes extends PBase {
 		lblMPago = (TextView) findViewById(R.id.lblCVence);
 		lblCred = (TextView) findViewById(R.id.lblPend);
 		lblCash = (TextView) findViewById(R.id.textView4);
-		contadoCheck = (CheckBox) findViewById(R.id.checkContado);
+        lblMonto = (TextView) findViewById(R.id.lblCant2);lblMonto.setText("");
+        lblKeyDP = (TextView) findViewById(R.id.textView110);
+        lblTotal = (TextView) findViewById(R.id.lblFact3);
 
 		imgBon = (ImageView) findViewById(R.id.imageView6);
 		imgMPago = (ImageView) findViewById(R.id.btnImp);
@@ -111,8 +114,11 @@ public class FacturaRes extends PBase {
 		notaC = gl.tiponcredito;
 
 		app = new AppMethods(this, gl, Con, db);
+        khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
 
-		if (rutapos) {
+        //region Botones visibilidad
+
+        if (rutapos) {
 			lblMPago.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.INVISIBLE);
 			lblCred.setText("Pago\nTarjeta");
@@ -125,7 +131,6 @@ public class FacturaRes extends PBase {
 		}
 
 		if (media==1) {
-			contadoCheck.setVisibility(View.INVISIBLE);
 			imgCred.setVisibility(View.INVISIBLE);
 			lblCred.setVisibility(View.INVISIBLE);
 			lblCash.setVisibility(View.VISIBLE);
@@ -135,7 +140,6 @@ public class FacturaRes extends PBase {
 		}
 
 		if (media <= 3){
-			contadoCheck.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.VISIBLE);
 			lblMPago.setVisibility(View.VISIBLE);
 			imgCred.setVisibility(View.INVISIBLE);
@@ -149,7 +153,6 @@ public class FacturaRes extends PBase {
 			if (gl.vcredito) {
 
 				if (credito<=0 || gl.facturaVen != 0) {
-					contadoCheck.setVisibility(View.INVISIBLE);
 					lblCash.setVisibility(View.VISIBLE);
 					imgCash.setVisibility(View.VISIBLE);
 					imgCred.setVisibility(View.INVISIBLE);
@@ -157,7 +160,6 @@ public class FacturaRes extends PBase {
 					imgMPago.setVisibility(View.VISIBLE);
 					lblMPago.setVisibility(View.VISIBLE);
 				}else if(credito > 0){
-					contadoCheck.setVisibility(View.VISIBLE);
 					lblCash.setVisibility(View.INVISIBLE);
 					imgCash.setVisibility(View.INVISIBLE);
 					imgCred.setVisibility(View.VISIBLE);
@@ -166,7 +168,6 @@ public class FacturaRes extends PBase {
 					lblMPago.setVisibility(View.INVISIBLE);
 				}
 			} else {
-				contadoCheck.setVisibility(View.VISIBLE);
 				lblCash.setVisibility(View.INVISIBLE);
 				imgCash.setVisibility(View.INVISIBLE);
 				imgCred.setVisibility(View.VISIBLE);
@@ -186,9 +187,10 @@ public class FacturaRes extends PBase {
 			lblMPago.setVisibility(View.VISIBLE);
 		}
 
-        contadoCheck.setVisibility(View.INVISIBLE);
-        lblCash.setVisibility(View.VISIBLE);
-        imgCash.setVisibility(View.VISIBLE);
+        lblCash.setVisibility(View.INVISIBLE);
+        imgCash.setVisibility(View.INVISIBLE);
+
+        //endregion
 
         fecha=du.getActDateTime();
 		fechae=fecha;
@@ -296,27 +298,6 @@ public class FacturaRes extends PBase {
 
 	}
 
-	public void checkedBox(View view){
-		contadoCheck.setVisibility(View.VISIBLE);
-		if(contadoCheck.isChecked()){
-			contadoCheck.setText("Pagar al Contado");
-			lblCash.setVisibility(View.VISIBLE);
-			imgCash.setVisibility(View.VISIBLE);
-			imgCred.setVisibility(View.INVISIBLE);
-			lblCred.setVisibility(View.INVISIBLE);
-			imgMPago.setVisibility(View.VISIBLE);
-			lblMPago.setVisibility(View.VISIBLE);
-		} else if(!contadoCheck.isChecked()) {
-			contadoCheck.setText("Pagar al Contado");
-			lblCash.setVisibility(View.INVISIBLE);
-			imgCash.setVisibility(View.INVISIBLE);
-			imgCred.setVisibility(View.VISIBLE);
-			lblCred.setVisibility(View.VISIBLE);
-			imgMPago.setVisibility(View.INVISIBLE);
-			lblMPago.setVisibility(View.INVISIBLE);
-		}
-	}
-
 	public void payCash(View view) {
 
 		try{
@@ -343,8 +324,9 @@ public class FacturaRes extends PBase {
 				msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
 			}
 
-			inputCredito();
+			//inputCredito();
 
+            msgAskCredito();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("payCred: " + e.getMessage());
@@ -427,6 +409,10 @@ public class FacturaRes extends PBase {
 
 	}
 
+    public void doKey(View view) {
+        khand.handleKey(view.getTag().toString());
+        if (khand.isEnter) validaPagoEfectivo();
+    }
 
 	//endregion
 
@@ -581,8 +567,6 @@ public class FacturaRes extends PBase {
 					items.add(item);
 				}
 
-
-
 			} else {
 
 				totimp=mu.round2(totimp);
@@ -624,6 +608,8 @@ public class FacturaRes extends PBase {
 
 		adapter=new ListAdaptTotals(this,items);
 		listView.setAdapter(adapter);
+
+        lblTotal.setText(mu.frmcur(tot));
 	}
 
  	private void finishOrder(){
@@ -1766,7 +1752,27 @@ public class FacturaRes extends PBase {
 
 	}
 
-	private void applyCredit() {
+    private void msgAskCredito() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Pago Crédito");
+        dialog.setMessage("Monto a pagar : "+tot);
+
+        dialog.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                sefect=""+tot;
+                applyCredit();
+                checkPago();
+            }
+        });
+
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+    }
+
+    private void applyCredit() {
 		double epago;
 
 		try {
@@ -1939,6 +1945,30 @@ public class FacturaRes extends PBase {
         }
 
 	}
+
+	private void validaPagoEfectivo() {
+
+        svuelt= khand.val;
+
+        if (!svuelt.equalsIgnoreCase("")){
+            double vuel=Double.parseDouble(svuelt);
+            vuel=vuel-tot;
+
+            if (vuel<0.00) {
+                msgbox("Pago insuficiente , falta "+mu.frmcur(-vuel));return;
+            }
+
+            if (vuel==0.0){
+                msgAskVuelto("Monto ingresado no genera vuelto");
+            } else {
+                msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
+            }
+        }
+
+        svuelt=""+tot;
+        sefect=""+tot;
+
+    }
 
 	private String androidid() {
 		String uniqueID="";

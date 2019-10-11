@@ -1,9 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_facturares"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@layout/back"
+    android:background="#DBF5F3"
     tools:context=".PedidoRes">
 
     <ImageView
@@ -19,153 +20,6 @@
         android:src="@drawable/next48"
         android:visibility="invisible" />
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView137"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="false"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toStartOf="@+id/textView136"
-        android:paddingBottom="5dp">
-
-        <CheckBox
-            android:id="@+id/checkContado"
-            android:layout_width="126dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="97dp"
-            android:layout_marginEnd="119dp"
-            android:checked="false"
-            android:clickable="true"
-            android:onClick="checkedBox"
-            android:text="Pagar Al Contado" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="128dp"
-            android:layout_height="48dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="4dp"
-            android:layout_marginRight="0dp"
-            android:clickable="true"
-            android:contentDescription="TODO"
-            android:onClick="payCash"
-            android:src="@drawable/pago_efectivo" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="128dp"
-            android:layout_height="48dp"
-            android:layout_below="@+id/textView4"
-            android:layout_alignLeft="@+id/textView4"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="20dp"
-            android:clickable="true"
-            android:onClick="payCred"
-            android:src="@drawable/pago"
-            tools:ignore="OnClick" />
-
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="128dp"
-            android:layout_height="48dp"
-            android:layout_alignTop="@+id/imageView3"
-            android:layout_alignRight="@+id/lblCVence"
-            android:layout_alignParentLeft="true"
-            android:clickable="true"
-            android:onClick="showBon"
-            android:src="@drawable/regalo" />
-
-        <ImageView
-            android:id="@+id/btnImp"
-            android:layout_width="128dp"
-            android:layout_height="48dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp"
-            android:clickable="true"
-            android:onClick="paySelect"
-            android:src="@drawable/cobro"
-            tools:ignore="OnClick" />
-
-        <TextView
-            android:id="@+id/lblCVence"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btnImp"
-            android:layout_alignRight="@+id/btnImp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginStart="0dp"
-            android:clickable="true"
-            android:gravity="center"
-            android:onClick="paySelect"
-            android:text="Pago"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView2"
-            android:layout_alignLeft="@+id/imageView2"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="0dp"
-            android:clickable="true"
-            android:gravity="center"
-            android:onClick="payCash"
-            android:text="Pago Efectivo"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/lblPend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView3"
-            android:layout_alignLeft="@+id/imageView3"
-            android:layout_alignParentRight="true"
-            android:clickable="true"
-            android:gravity="center"
-            android:onClick="payCred"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:text="Pago Crédito"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/TextView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="58dp"
-        android:layout_marginEnd="0dp"
-        android:layout_toStartOf="@+id/textView136"
-        android:layout_toRightOf="@+id/imageView5"
-        android:background="@drawable/blue_strip"
-        android:gravity="center"
-        android:paddingTop="0dp"
-        android:paddingBottom="5dp"
-        android:text="Pago incompleto"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
@@ -175,18 +29,6 @@
         android:layout_alignParentRight="true"
         android:scaleType="fitXY"
         android:src="@drawable/sepgray" />
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:clickable="true"
-        android:onClick="prevScreen"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
-        android:src="@drawable/prev48" />
 
     <ListView
         android:id="@+id/listView1"
@@ -202,6 +44,659 @@
         android:layout_toStartOf="@+id/textView136">
 
     </ListView>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView137"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toStartOf="@+id/textView136"
+        android:paddingBottom="5dp">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="128dp"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="262dp"
+            android:clickable="true"
+            android:contentDescription="TODO"
+            android:onClick="payCash"
+            android:src="@drawable/pago_efectivo" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:clickable="true"
+            android:onClick="payCred"
+            android:src="@drawable/pago"
+            tools:ignore="OnClick" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="104dp"
+            android:layout_height="65dp"
+            android:layout_alignRight="@+id/lblCVence"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="33dp"
+            android:clickable="true"
+            android:onClick="showBon"
+            android:src="@drawable/regalo" />
+
+        <ImageView
+            android:id="@+id/btnImp"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:clickable="true"
+            android:onClick="paySelect"
+            android:src="@drawable/cobro"
+            tools:ignore="OnClick" />
+
+        <TextView
+            android:id="@+id/lblCVence"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnImp"
+            android:layout_alignStart="@+id/btnImp"
+            android:layout_alignRight="@+id/btnImp"
+            android:layout_alignParentLeft="false"
+            android:layout_marginStart="0dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="paySelect"
+            android:text="Pago mixto"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView2"
+            android:layout_alignLeft="@+id/imageView2"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="false"
+            android:layout_marginEnd="0dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="payCash"
+            android:text="Pago Efectivo"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/lblPend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView3"
+            android:layout_alignLeft="@+id/imageView3"
+            android:layout_alignEnd="@+id/imageView3"
+            android:layout_alignParentRight="false"
+            android:layout_marginEnd="0dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="payCred"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:text="Pago Crédito"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="15sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/reltalon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/textView137"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/textView136">
+
+        <TextView
+            android:id="@+id/lblFact3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lblFact2"
+            android:layout_below="@+id/lblFact"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="0 000,000.00"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="96sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblFact2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/lblCant2"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="PAGO EFECTIVO - Ingrese total billetes"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblCant2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="5dp"
+            android:background="#FFFFFF"
+            android:gravity="center_horizontal|center_vertical"
+            android:minWidth="100dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="000"
+            android:textColor="#000000"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblFact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="409dp"
+        android:layout_height="259dp"
+        android:layout_below="@id/textView137"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/relativeLayout1"
+        android:layout_toRightOf="@id/textView136">
+
+        <RelativeLayout
+            android:id="@+id/relKeyBase"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/textView86"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_above="@id/textView92"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true">
+
+                        <TextView
+                            android:id="@+id/textView97"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_centerInParent="true"
+                            android:layout_centerVertical="true"
+                            android:text="X"
+                            android:visibility="invisible" />
+
+                        <TextView
+                            android:id="@+id/textView98"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_above="@id/textView97"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_toLeftOf="@id/textView97"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="7"
+                            android:text="7"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView99"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_above="@id/textView97"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_toRightOf="@id/textView97"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="8"
+                            android:text="8"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView100"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_below="@id/textView97"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toLeftOf="@id/textView97"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="4"
+                            android:text="4"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView101"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_below="@id/textView97"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toRightOf="@id/textView97"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="5"
+                            android:text="5"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/textView92"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true">
+
+                        <TextView
+                            android:id="@+id/textView111"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_centerInParent="true"
+                            android:layout_centerVertical="true"
+                            android:text="X"
+                            android:visibility="invisible" />
+
+                        <TextView
+                            android:id="@+id/textView112"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_above="@id/textView111"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_toLeftOf="@id/textView111"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="1"
+                            android:text="1"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView113"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_above="@id/textView111"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_toRightOf="@id/textView111"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="2"
+                            android:text="2"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView114"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_below="@id/textView111"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="true"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="0"
+                            android:text="0"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/textView92"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:text="X"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/textView86"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_above="@id/textView91"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true">
+
+                        <ImageView
+                            android:id="@+id/imageView24"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_alignLeft="@id/textView104"
+                            android:layout_alignTop="@id/textView104"
+                            android:layout_alignRight="@id/textView104"
+                            android:layout_alignBottom="@id/textView104"
+                            android:padding="6dp"
+                            android:src="@drawable/key_bksp" />
+
+                        <TextView
+                            android:id="@+id/textView102"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_above="@id/textView94"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_toLeftOf="@id/textView94"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="9"
+                            android:text="9"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView105"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_below="@id/textView94"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toLeftOf="@id/textView94"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="6"
+                            android:text="6"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView106"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_above="@id/textView94"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="false"
+                            android:layout_toRightOf="@id/textView94"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="C"
+                            android:text="C"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView104"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_below="@id/textView94"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toRightOf="@id/textView94"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:padding="8dp"
+                            android:tag="B"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView94"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_centerInParent="true"
+                            android:text="X"
+                            android:visibility="invisible" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/textView91"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true">
+
+                        <ImageView
+                            android:id="@+id/imageView25"
+                            android:layout_width="64dp"
+                            android:layout_height="139dp"
+                            android:layout_alignLeft="@id/textView108"
+                            android:layout_alignTop="@id/textView108"
+                            android:layout_alignRight="@id/textView108"
+                            android:layout_alignBottom="@id/textView108"
+                            android:clickable="true"
+                            android:onClick="doKey"
+                            android:padding="6dp"
+                            android:src="@drawable/key_enter"
+                            android:tag="E" />
+
+                        <TextView
+                            android:id="@+id/textView108"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toRightOf="@id/textView107"
+                            android:background="@drawable/frame_key" />
+
+                        <TextView
+                            android:id="@+id/textView107"
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_centerInParent="true"
+                            android:layout_centerVertical="true"
+                            android:text="X"
+                            android:visibility="invisible" />
+
+                        <TextView
+                            android:id="@+id/textView109"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_above="@id/textView107"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentTop="true"
+                            android:layout_toLeftOf="@id/textView107"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="3"
+                            android:text="3"
+                            android:textColor="#000000"
+                            android:textSize="36sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView110"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_below="@id/textView107"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toLeftOf="@id/textView107"
+                            android:background="@drawable/frame_key"
+                            android:clickable="true"
+                            android:gravity="center"
+                            android:onClick="doKey"
+                            android:tag="."
+                            android:text="."
+                            android:textColor="#000000"
+                            android:textSize="48sp"
+                            android:textStyle="bold" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/textView91"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_centerInParent="true"
+                        android:text="X"
+                        android:visibility="invisible" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/textView86"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:text="X"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="58dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@+id/textView136"
+        android:layout_toRightOf="@+id/imageView5"
+        android:background="@drawable/blue_strip"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="Pago incompleto"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView136"
@@ -226,34 +721,25 @@
         android:background="@drawable/blue_strip" />
 
     <RelativeLayout
-        android:id="@+id/reltalon"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/textView137"
-        android:layout_alignParentEnd="true"
+        android:layout_height="58dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="58dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/textView136">
+        android:background="#FFFFFF">
 
-        <TextView
-            android:id="@+id/lblFact"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="false"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:clickable="true"
+            android:onClick="prevScreen"
+            android:paddingLeft="10dp"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:text="Medium Text"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold" />
+            android:src="@drawable/prev48" />
     </RelativeLayout>
 
 </RelativeLayout>
