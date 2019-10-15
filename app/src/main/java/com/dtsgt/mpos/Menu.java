@@ -152,20 +152,23 @@ public class Menu extends PBase {
 			items.clear();selIdx=-1;
 
 			if (gl.modoinicial) {
+
 			    addMenuItem(11,"Mantenimientos");
                 addMenuItem(2,"Comunicación");
                 addMenuItem(9,"Utilerias");
                 addMenuItem(10,"Cambio usuario");
+
 			} else {
+
                 addMenuItem(1,"Venta");
                 addMenuItem(6,"Caja");
                 addMenuItem(3,"Reimpresión");
                 addMenuItem(4,"Anulación");
                 addMenuItem(7,"Inventario");
                 addMenuItem(2,"Comunicación");
-                addMenuItem( 9,"Utilerias");
-                addMenuItem(11,"Mantenimientos");
-                addMenuItem(12,"Reportes");
+                if (gl.rol>1) addMenuItem(9,"Utilerias");
+                if (gl.rol>2) addMenuItem(11,"Mantenimientos");
+                if (gl.rol>1) addMenuItem(12,"Reportes");
                 addMenuItem(10,"Cambio usuario");
 
             }
@@ -180,7 +183,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 		
 	public void setHandlers(){
@@ -257,6 +259,7 @@ public class Menu extends PBase {
 					gl.tipo = 0;
 					gl.autocom = 0;
 					gl.modoadmin = false;
+                    gl.comquickrec = false;
 					Intent intent2 = new Intent(this, ComWS.class);
 					startActivity(intent2);
 					break;
@@ -1224,7 +1227,7 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depositos","Fin de Caja"};
+			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depositos","Cierre de Caja"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Caja");
@@ -1237,7 +1240,7 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
 					if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
 					if (ss.equalsIgnoreCase("Depositos")) gl.cajaid=4;
-					if (ss.equalsIgnoreCase("Fin de Caja")) gl.cajaid=3;
+					if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
 
 					gl.titReport = ss;
 

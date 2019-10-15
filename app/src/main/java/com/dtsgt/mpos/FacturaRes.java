@@ -190,6 +190,9 @@ public class FacturaRes extends PBase {
         lblCash.setVisibility(View.INVISIBLE);
         imgCash.setVisibility(View.INVISIBLE);
 
+        lblMPago.setVisibility(View.VISIBLE);
+        imgMPago.setVisibility(View.VISIBLE);
+
         //endregion
 
         fecha=du.getActDateTime();
@@ -1769,6 +1772,8 @@ public class FacturaRes extends PBase {
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {}
         });
+
+        dialog.show();
 
     }
 

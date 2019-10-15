@@ -445,7 +445,7 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            gl.nivel = DT.getInt(2);
+            gl.nivel = DT.getInt(2);gl.rol=gl.nivel;
 
             if (gl.caja.isEmpty() || gl.tienda.isEmpty()) {
                 if (gl.nivel==3) {

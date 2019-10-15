@@ -83,6 +83,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		if (items.get(position).Icon==11) holder.imgEst.setImageResource(R.drawable.mantenimientos48);
 		if (items.get(position).Icon==12) holder.imgEst.setImageResource(R.drawable.venta_add);
 		if (items.get(position).Icon==13) holder.imgEst.setImageResource(R.drawable.venta_switch);
+        if (items.get(position).Icon==14) holder.imgEst.setImageResource(R.drawable.recibir_rapido);
 
         if (items.get(position).Icon==50) holder.imgEst.setImageResource(R.drawable.btn_search);
         if (items.get(position).Icon==51) holder.imgEst.setImageResource(R.drawable.barcode_btn);

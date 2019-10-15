@@ -23,7 +23,7 @@ public class clsDocument {
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag;
-	public int ffecha,pendiente,diacred,condicionPago;
+	public int ffecha,pendiente,diacred,pagoefectivo;
 	
 	protected android.database.sqlite.SQLiteDatabase db;
 	protected BaseDatos Con;
@@ -324,17 +324,10 @@ public class clsDocument {
             if (!emptystr(nit)) rep.add("NIT : "+nit);
             if (!emptystr(clidir)) rep.add("Dir : "+clidir);
 
-			if (condicionPago==4){
-				mPago= "Credito";
-				if(diacred==1){
-					dPago="dia";
-				}else{
-					dPago="dias";
-				}
-				rep.add("Condiciones de pago: "+mPago+" "+diacred+" "+dPago);
+			if (pagoefectivo==1){
+                rep.add("Condiciones de pago: Efectivo");
 			} else {
-				mPago= "Contado";
-				rep.add("Condiciones de pago: "+mPago);
+                rep.add("Condiciones de pago: Credito");
 			}
 		}
 

@@ -14,11 +14,11 @@ public class appGlobals extends Application {
 	public String ruta,rutanom,sucur,rutatipo,rutatipog,vend,vendnom,gstr,gstr2,prod,prodmenu,um,umpres,umstock,cliente,clitipo;
 	public String ubas,emp, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante, ayudanteID, vehiculo, vehiculoID;
 	public String wsURL,bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel;
-	public int itemid,gint,tipo,nivel,prodtipo,prw,boldep,vnivel,vnivprec,media;
+	public int itemid,gint,tipo,nivel,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
 	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid;
 	public long nuevaFecha,atentini;
 	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp;
-	public boolean CellCom,closeDevBod,modoinicial,newmenuitem;
+	public boolean CellCom,closeDevBod,modoinicial,newmenuitem,comquickrec;
 	public String ref1,ref2,ref3,fnombre,fnit,fdir,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String tienda,tiendanom,caja,cajanom,urlglob,menuitemid,titReport,pickcode,pickname;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid;

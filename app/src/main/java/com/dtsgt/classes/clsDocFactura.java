@@ -163,13 +163,16 @@ public class clsDocFactura extends clsDocument {
 	    }
 
 		try {
-			sql="SELECT CODPAGO FROM D_FACTURAP WHERE COREL='"+corel+"'";
+			sql="SELECT TIPO FROM D_FACTURAP WHERE (COREL='"+corel+"') AND (TIPO='E')";
 			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
 
-			condicionPago=DT.getInt(0);
-
+			if (DT.getCount()>0) {
+			    pagoefectivo=1;
+            } else {
+			    pagoefectivo=0;
+            }
 		} catch (Exception e) {
+            pagoefectivo=0;
 		}
 
 		try {

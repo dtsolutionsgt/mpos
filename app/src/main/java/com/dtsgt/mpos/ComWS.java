@@ -218,6 +218,23 @@ public class ComWS extends PBase {
         if (gl.debug) {
             txtWS.setEnabled(true);txtEmp.setEnabled(true);
         }
+
+        if (gl.rol!=3) {
+            lblEnvM.setVisibility(View.INVISIBLE);
+            imgEnvM.setVisibility(View.INVISIBLE);
+        }
+
+        if (gl.comquickrec) {
+            txtWS.setEnabled(false);txtEmp.setEnabled(false);
+
+            lblRec.setEnabled(false);
+            imgRec.setEnabled(false);
+            lblEnv.setVisibility(View.INVISIBLE);
+            imgEnv.setVisibility(View.INVISIBLE);
+
+
+        }
+
 	}
 
 	//region Events
@@ -2105,7 +2122,12 @@ public class ComWS extends PBase {
 		try {
 			if (!errflag) {
 				lblInfo.setText(" ");
-	            msgAskExit("Recepción completa.");
+                if (gl.comquickrec) {
+                    toast("Actualización completa.");
+                    finish();return;
+                } else {
+                    msgAskExit("Recepción completa.");
+                }
 			} else {
 				lblInfo.setText(fstr);isbusy = 0;
 				mu.msgbox("Ocurrió error : \n" + fstr + " (" + reccnt + ") "+sql);

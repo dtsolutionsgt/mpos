@@ -50,7 +50,7 @@ public class Venta extends PBase {
     private ListView listView;
     private GridView gridView,grdbtn,grdfam,grdprod;
     private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant,lblBarra;
-    private TextView lblProd,lblDesc,lblStot,lblKeyDP;
+    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan;
     private RelativeLayout relScan;
@@ -561,8 +561,8 @@ public class Venta extends PBase {
             tdesc=mu.round(tdesc,2);
             stot=tot-tdesc;
             lblTot.setText(gl.peMon+mu.frmcur(tot));
-            lblDesc.setText("Descuento : "+mu.frmcur(tdesc));
-            lblStot.setText("Subtotal : "+mu.frmcur(stot));
+            lblDesc.setText("Desc : "+mu.frmcur(tdesc));
+            lblStot.setText("Subt : "+mu.frmcur(stot));
         }
 
         if (selidx>-1) {
@@ -583,7 +583,6 @@ public class Venta extends PBase {
             gl.um=app.umVenta(prodid); um=gl.um;
             gl.bonprodid=prodid;
 
-            lblProd.setText(gl.pprodname);
             khand.enable();khand.focus();
 
             prodPrecio();
@@ -1856,11 +1855,11 @@ public class Venta extends PBase {
                 item.ID=4;item.Name="Anulación";item.Icon=4;
                 mitems.add(item);
 
-                /*
                 item = clsCls.new clsMenu();
-                item.ID=2;item.Name="Comunicación";item.Icon=2;
+                item.ID=14;item.Name="Actualizar";item.Icon=14;
                 mitems.add(item);
 
+                /*
                 item = clsCls.new clsMenu();
                 item.ID=7;item.Name="Existencias";item.Icon=7;
                 mitems.add(item);
@@ -1928,6 +1927,8 @@ public class Venta extends PBase {
                      showPrintMenuTodo();break;
                 case 4:
                      showVoidMenuTodo();break;
+                case 14:
+                    showQuickRecep();break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2041,6 +2042,36 @@ public class Venta extends PBase {
         }
     }
 
+    public void showQuickRecep() {
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Actualización de parametros");
+        dialog.setMessage("¿Actualizar parametros ce venta?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    gl.findiaactivo=false;
+                    gl.tipo = 0;
+                    gl.autocom = 0;
+                    gl.modoadmin = false;
+                    gl.comquickrec = true;
+                    startActivity(new Intent(Venta.this, ComWS.class));
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
     private void menuAnulDoc() {
         try{
             Intent intent = new Intent(this,Anulacion.class);
@@ -2093,6 +2124,7 @@ public class Venta extends PBase {
     private void borraTodo() {
         msgAskTodo("Borrar toda la venta");
     }
+
 
 
     private void msgAskTodo(String msg) {
@@ -2173,15 +2205,16 @@ public class Venta extends PBase {
             grdbtn = (GridView) findViewById(R.id.grdbtn);
 
             lblTot= (TextView) findViewById(R.id.lblTot);
-            lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText("Descuento : "+mu.frmcur(0));
-            lblStot= (TextView) findViewById(R.id.textView103); lblStot.setText("Subtotal : "+mu.frmcur(0));
+            lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
+            lblStot= (TextView) findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
             lblTit= (TextView) findViewById(R.id.lblTit);
             lblAlm= (TextView) findViewById(R.id.lblTit2);
             lblVend= (TextView) findViewById(R.id.lblTit4);
             lblNivel= (TextView) findViewById(R.id.lblTit3);
+            lblPokl= (TextView) findViewById(R.id.lblTit5);
+
             lblCant= (TextView) findViewById(R.id.lblCant);lblCant.setText("");
             lblBarra= (TextView) findViewById(R.id.textView122);lblBarra.setText("");
-            lblProd=(TextView) findViewById(R.id.lblDir);lblProd.setText("");
             lblKeyDP=(TextView) findViewById(R.id.textView110);
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
@@ -2207,6 +2240,7 @@ public class Venta extends PBase {
 
         lblTit.setText(gl.cajanom);
         lblAlm.setText(gl.tiendanom);
+        lblPokl.setText(gl.vendnom);
 
         try {
             sql="SELECT TIPO_HH FROM P_ARCHIVOCONF WHERE RUTA='"+gl.ruta+"'";
@@ -2483,7 +2517,6 @@ public class Venta extends PBase {
 
     private void clearItem() {
         prodid="";gl.pprodname="";cant=0;prec=0;
-        lblProd.setText("");
     }
 
     private void openItem() {
@@ -2516,28 +2549,71 @@ public class Venta extends PBase {
     private void cargaCliente() {
         Cursor DT;
         String ss;
+        double lcred,cred,disp;
 
         if (gl.cliente.isEmpty()) {
             toast("Cliente pendiente");return;
         }
 
         try {
-            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO,LIMITECREDITO FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
+            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
-            if (DT.getDouble(1)>0.01) ss=" [ "+mu.frmcur(DT.getDouble(1))+" ] ";else ss="";
+
 
             gl.fnombre=DT.getString(0);
             gl.fnit=DT.getString(2);
             gl.fdir=DT.getString(3);
 
             gl.media=DT.getInt(4);
-            gl.credito=DT.getDouble(5);
+
+            lcred=DT.getDouble(1);
+            if (lcred>0) {
+                cred=totalCredito();
+                if (cred>=0) {
+                    disp=lcred-cred;if (disp<0) disp=0;
+                } else disp=0;
+             } else {
+                disp=0;
+            }
+
+            gl.credito=disp;
+            if (disp>0) ss=" [ Credito : "+mu.frmcur(disp)+"  ] ";else ss="";
 
             lblVend.setText(gl.cliente+" - "+DT.getString(0)+" "+ss);
         } catch (Exception e) {
             lblVend.setText("");
         }
+    }
+
+    private double totalCredito() {
+        Cursor dt;
+        double cred=0;
+        int mm,yy;
+        long ff;
+
+        try {
+            mm=du.getmonth(du.getActDate());
+            yy=du.getyear(du.getActDate());
+            ff=du.cfecha(yy,mm,1);
+
+            sql="SELECT SUM(D_FACTURAP.VALOR) FROM D_FACTURAP  "+
+               "INNER JOIN D_FACTURA ON D_FACTURAP.COREL=D_FACTURA.COREL "+
+               "WHERE (D_FACTURA.FECHA>="+ff+") AND (D_FACTURA.ANULADO='N') " +
+               "AND (D_FACTURA.CLIENTE='"+gl.cliente+"') AND (D_FACTURAP.TIPO='C')";
+            dt = Con.OpenDT(sql);
+
+            try {
+                cred=dt.getDouble(0);
+            } catch (Exception e) {
+                cred=0;
+            }
+
+        } catch (Exception e) {
+            msgbox("No se puede determinar crédito dispónible, error : "+e.getMessage());return -1;
+        }
+
+        return cred;
     }
 
     //endregion
