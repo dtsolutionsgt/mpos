@@ -70,7 +70,7 @@ public class FacturaRes extends PBase {
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,stot0,stot,descmon,totimp,totperc,credito;
-	private double dispventa;
+	private double dispventa,falt;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pagocompleto=false;
 
 
@@ -753,7 +753,7 @@ public class FacturaRes extends PBase {
 			ins.init("D_FACTURA");
 			ins.add("COREL",corel);
 			ins.add("ANULADO","N");
-			ins.add("FECHA",fecha);
+			if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
 			ins.add("EMPRESA",gl.emp);
 			ins.add("RUTA",gl.ruta);
 			ins.add("VENDEDOR",gl.vend);
@@ -1528,32 +1528,33 @@ public class FacturaRes extends PBase {
 			alert.setPositiveButton("Pagar", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 
-					peexit=false;
+				peexit=false;
 
-					svuelt= txtVuelto.getText().toString();
-                    gl.brw=1;
-                    sefect=""+tot;
+				svuelt= txtVuelto.getText().toString();
+				gl.brw=1;
+				sefect=""+tot;
 
-                    if (!svuelt.equalsIgnoreCase("")){
-                        double vuel=Double.parseDouble(svuelt);
-                        vuel=vuel-tot;
+				if (!svuelt.equalsIgnoreCase("")){
+					double vuel=Double.parseDouble(svuelt);
+					falt=tot-vuel;
+					vuel=vuel-tot;
 
-                        if (vuel<0.00) {
-                            msgbox("Pago insuficiente");return;
-                        }
+					if (vuel<0.00) {
+						msgbox("Pago insuficiente, faltan Q."+falt);return;
+					}
 
-                        if (vuel==0.0){
-                            msgAskVuelto("Monto ingresado no genera vuelto");
-                        } else {
-                            msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
-                        }
-                    }
+					if (vuel==0.0){
+						msgAskVuelto("Pago Realizado Correctamente");
+					} else {
+						msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
+					}
+				}
 
-                    svuelt=""+tot;
-                    sefect=""+tot;
+				svuelt=""+tot;
+				sefect=""+tot;
 
-					//applyCash();
-					//checkPago();
+				//applyCash();
+				//checkPago();
 
 				}
 			});

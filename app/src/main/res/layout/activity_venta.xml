@@ -109,6 +109,7 @@
             android:text="Vendedor"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <TextView

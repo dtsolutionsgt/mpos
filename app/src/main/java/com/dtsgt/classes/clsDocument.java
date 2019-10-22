@@ -252,7 +252,7 @@ public class clsDocument {
 	protected boolean buildFooter() {
 		
 		return true;
-	}	
+	}
 	
 	protected boolean loadDocData(String corel) {
 		return true;

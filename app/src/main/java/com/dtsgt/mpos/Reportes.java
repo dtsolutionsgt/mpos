@@ -1054,6 +1054,7 @@ public class Reportes extends PBase {
                                 rep.empty();
                                 cantF = 0;
                                 tot = 0;
+
                             }
 
                             fechaR = du.univfechaReport(itemR.get(i).fecha);

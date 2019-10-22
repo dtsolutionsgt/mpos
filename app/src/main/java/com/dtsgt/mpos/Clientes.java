@@ -295,7 +295,7 @@ public class Clientes extends PBase {
 
 		try {
 
-			sql = "SELECT CODIGO,NOMBRE,ZONA,COORX,COORY " +
+			sql = "SELECT CODIGO,NOMBRE,ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL " +
 					"FROM P_CLIENTE WHERE (1=1) AND ";
             if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
 			if (!filt.isEmpty()) {
@@ -321,9 +321,13 @@ public class Clientes extends PBase {
 					ss = DT.getString(0);
 					vItem.Desc = DT.getString(1);
 					vItem.Bandera = DT.getInt(2);
-					vItem.Adds = "";
 					vItem.coorx = DT.getDouble(3);
 					vItem.coory = DT.getDouble(4);
+
+					vItem.nit=DT.getString(5);
+					vItem.Adds=DT.getString(6);
+					vItem.Date=DT.getLong(7);
+					vItem.email=DT.getString(8);
 
 					if (cobros.contains(ss)) vItem.Cobro = 1;
 					else vItem.Cobro = 0;

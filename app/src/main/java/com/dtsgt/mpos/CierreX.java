@@ -32,7 +32,7 @@ public class CierreX extends PBase {
 
     private TextView txtbtn,lblFact,lblTit;
     private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet;
-    private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8, bClienteCon=9, bClienteDet=10, sw=0;;
+    private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8, bClienteCon=9, bClienteDet=10, sw=0,counter=0;
     private boolean report, enc=true;
 
     private clsClasses.clsReport item;
@@ -43,11 +43,7 @@ public class CierreX extends PBase {
 
     private Long dateini, datefin;
 
-    //Reporte Z
-    private int codPago;
-    private String nombrePago;
-    private Double valorPago, montoIni, montoFin, montoDif, Fondo;
-    //Reporte Z
+    private Double Fondo;
 
     private String condition;
 
@@ -539,6 +535,28 @@ public class CierreX extends PBase {
 
                     dt.moveToNext();
                 }
+
+
+            }else if(dt.getCount()==0){
+
+                itemZ = clsCls.new clsBonifProd();
+
+                Fondo = gl.fondoCaja;
+
+                itemZ.id="";
+                itemZ.nombre="Fondo de Caja";
+                itemZ.prstr="";
+                itemZ.flag=0;
+                itemZ.cant=0;
+                itemZ.cantmin=gl.fondoCaja;
+                itemZ.disp=gl.FinMonto;
+                itemZ.precio=gl.fondoCaja-gl.FinMonto;
+                itemZ.costo=0;
+
+                counter=1;
+
+                itemRZ.add(itemZ);
+
             }
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -552,7 +570,7 @@ public class CierreX extends PBase {
                 if(fillItems()){
                     if (itemR.size() == 0) {
                         msgbox("No se ha realizado ninguna venta desde el ultimo cierre Z.");
-                        return;
+                        //return;
                     }
                     doc.buildPrint("0", 0);
                     getTXT();
@@ -632,7 +650,7 @@ public class CierreX extends PBase {
         }
 
         protected boolean buildDetail() {
-            int acc1=1, acc2=1, acc3=1, acc4=1, acc5=1, acc6=1, acc7=1, acc9=1, acc10=1,counter=0;
+            int acc1=1, acc2=1, acc3=1, acc4=1, acc5=1, acc6=1, acc7=1, acc9=1, acc10=1;
             String series="", fecha="";
 
             try {

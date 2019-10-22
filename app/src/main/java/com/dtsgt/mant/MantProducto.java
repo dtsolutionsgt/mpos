@@ -64,7 +64,7 @@ public class MantProducto extends PBase {
         spin2 = (Spinner) findViewById(R.id.spinner13);
         spin3 = (Spinner) findViewById(R.id.spinner11);
         spinp = (Spinner) findViewById(R.id.spinner15);
-         cbDec = (CheckBox) findViewById(R.id.checkBox9);
+        cbDec = (CheckBox) findViewById(R.id.checkBox9);
         rb1 = (RadioButton) findViewById(R.id.radioButton);
         rb2 = (RadioButton) findViewById(R.id.radioButton3);
         rb3 = (RadioButton) findViewById(R.id.radioButton4);

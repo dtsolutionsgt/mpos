@@ -5,61 +5,125 @@
     android:layout_height="match_parent"
     tools:context=".Img_view_list" >
 
-    <TextView
-        android:id="@+id/lblETipo"
-        android:layout_width="282dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="74dp"
-        android:layout_toLeftOf="@+id/imgNext"
-        android:gravity="center_vertical"
-        android:paddingLeft="5dp"
-        android:paddingBottom="5dp"
-        android:text="Código"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/lblPNum"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lblETipo"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:paddingLeft="5dp"
-        android:paddingBottom="5dp"
-        android:text="Descripción"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="18sp"
-        android:textStyle="normal" />
-
-    <ImageView
-        android:id="@+id/imgNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_height="101dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:padding="2dp"
-        android:src="@drawable/icok24" />
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="1dp" >
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="37dp"
-        android:layout_height="29dp"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/imageView8"
-        android:src="@drawable/pago_pend" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".Img_view_list">
 
-    <ImageView
-        android:id="@+id/imageView8"
-        android:layout_width="37dp"
-        android:layout_height="29dp"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/imgNext"
-        android:padding="4dp"
-        android:src="@drawable/cobro48" />
+            <ImageView
+                android:id="@+id/imgNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:padding="2dp"
+                android:src="@drawable/icok24" />
 
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="37dp"
+                android:layout_height="29dp"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/imageView8"
+                android:src="@drawable/pago_pend" />
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="37dp"
+                android:layout_height="29dp"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/imgNext"
+                android:padding="4dp"
+                android:src="@drawable/cobro48" />
+
+            <TextView
+                android:id="@+id/lblPNum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lblETipo"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:paddingLeft="5dp"
+                android:paddingBottom="5dp"
+                android:text="Descripción"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="24sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblETipo"
+                android:layout_width="390dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="21dp"
+                android:layout_marginRight="382dp"
+                android:layout_toStartOf="@+id/textView138"
+                android:layout_toLeftOf="@+id/imgNext"
+                android:gravity="center_vertical"
+                android:paddingLeft="5dp"
+                android:paddingBottom="5dp"
+                android:text="Código"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView138"
+                android:layout_width="308dp"
+                android:layout_height="29dp"
+                android:layout_alignEnd="@+id/imageView8"
+                android:layout_marginEnd="79dp"
+                android:text="NIT"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView140"
+                android:layout_width="273dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/lblPNum"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="-1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_toStartOf="@+id/textView139"
+                android:text="Telefono"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView141"
+                android:layout_width="176dp"
+                android:layout_height="33dp"
+                android:layout_below="@+id/lblPNum"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="1dp"
+                android:text="Fecha Nacimiento"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView139"
+                android:layout_width="227dp"
+                android:layout_height="33dp"
+                android:layout_below="@+id/lblPNum"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="3dp"
+                android:layout_toStartOf="@+id/textView141"
+                android:gravity="center_horizontal"
+                android:text="Email"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

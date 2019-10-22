@@ -1,8 +1,13 @@
 package com.dtsgt.classes;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Environment;
 import android.widget.Toast;
+
+import com.dtsgt.base.MiscUtils;
+import com.dtsgt.mpos.R;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -29,7 +34,7 @@ public class clsRepBuilder {
 	private String frmstr,ts;
 	
 	public clsRepBuilder(Context context,int printwidth,boolean regular,String cursymbol,int decimpres, String archivo) {
-		
+
 		cont=context; 
 		prw=printwidth;
 		seplen=prw;
@@ -40,7 +45,7 @@ public class clsRepBuilder {
 		prwq=(int) Math.floor(aux/4);
 		prwt=(int) Math.floor(aux/3);
 		prwh=(int) Math.floor(aux/2);
-		
+
 		System.setProperty("line.separator","\r\n");
 		if (regular) {
 			if (!archivo.isEmpty()){
@@ -363,19 +368,42 @@ public class clsRepBuilder {
 	}
 
 	public void add4lrrT(String s1,String s2,double s3,double v3) {
-		String stot,scom;
-		int tot;
+		String stot,scom,str,error,error1;
+		int tot,rest;
 
-		scom=cursym+decfrm.format(v3);
-		stot=cursym+decfrm.format(s3);
+		try{
 
-		tot=scom.length()-5;
+			if(s1.length()>=12){
 
-		ts=ltrim(s1,prwt+1)+ltrim(s2,prwt-6)+ltrim(stot,prwt-tot-1)+ltrim(scom,prwt);
-		items.add(ts);
+				rest=s1.length()-11;
+				str = s1.substring(0, s1.length()-rest);
+				str = str+" ";
+				s1 = str;
+
+			}else if(s1.length()<12 && !s1.isEmpty()){
+
+				str = s1.substring(0, s1.length()-1);
+				s1 = str;
+
+			}
+
+
+			scom=cursym+decfrm.format(v3);
+			stot=cursym+decfrm.format(s3);
+
+			tot=scom.length()-5;
+
+			ts=ltrim(s1,prwt+1)+ltrim(s2,prwt-6)+ltrim(stot,prwt-tot-1)+ltrim(scom,prwt);
+			items.add(ts);
+
+		}catch (Exception e){
+			error=e+"";
+			error1=error;
+		}
+
 	}
 
-    public void add4(double s1,double s2,double s3,double v3) {
+	public void add4(double s1,double s2,double s3,double v3) {
         String s3tot,s1tot,s2tot;
         int tot;
         String sval;
@@ -427,6 +455,11 @@ public class clsRepBuilder {
 	}
 	
 	public void addtot(String s1,String val) {
+		String str;
+
+		str = val.substring(0, val.length()-1);
+		val = str;
+
 		ts=ltrim(s1,prw-30)+" "+ltrim(val,15);
 		items.add(ts);
 	}

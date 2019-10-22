@@ -86,7 +86,7 @@ public class clsClasses {
 		public int  diacredito;
 		public String descuento;
 		public String bonificacion;
-		public int  ultvisita;
+		public long ultvisita;
 		public double impspec;
 		public String invtipo;
 		public String invequipo;
@@ -451,9 +451,10 @@ public class clsClasses {
 	}
 	
 	public class clsCDB {
-		public String Cod,Desc,Adds;
+		public String Cod,Desc,Adds,nit,email;
 		public int Bandera,Cobro,ppend;
 		public double valor,coorx,coory;
+		public long Date;
 	}
 	
 	public class clsCFDV {

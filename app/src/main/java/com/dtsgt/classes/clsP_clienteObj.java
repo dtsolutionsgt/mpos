@@ -245,7 +245,7 @@ public class clsP_clienteObj {
             item.diacredito = dt.getInt(11);
             item.descuento = dt.getString(12);
             item.bonificacion = dt.getString(13);
-            item.ultvisita = dt.getInt(14);
+            item.ultvisita = dt.getLong(14);
             item.impspec = dt.getDouble(15);
             item.invtipo = dt.getString(16);
             item.invequipo = dt.getString(17);

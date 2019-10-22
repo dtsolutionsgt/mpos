@@ -86,6 +86,9 @@ public class Menu extends PBase {
 			lblVehiculo.setText("Vehículo:");
 			///
 
+			gl.validDate=false;
+			gl.lastDate=0;
+
 			gl.dev = false;
 			vApp=this.getApplication();
 			rutatipo=gl.rutatipog;
@@ -233,6 +236,7 @@ public class Menu extends PBase {
 				case 1:
 
 					gl.cajaid=5;
+
 					if(valida()){
 						//***************
 						gl.cliente="0001000000";
@@ -248,7 +252,7 @@ public class Menu extends PBase {
 						startActivity(new Intent(this, Venta.class));
 					}else {
 						if(gl.cajaid==5) msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
-						if(gl.cajaid==6) msgAskValid("No se realizó el último cierre de caja, si desea iniciar operaciones debe realizar el cierre y luego el inicio de caja");
+						if(gl.cajaid==6) msgAskValidUltZ("No se realizó el último cierre de caja, ¿Desea continuar la venta con la fecha: "+du.univfechaReport(gl.lastDate)+", o desea realizar el cierre Z?");
 					}
 
 					break;
@@ -1633,6 +1637,16 @@ public class Menu extends PBase {
 
 	//region Aux
 
+	public void CierreZ(){
+		gl.cajaid=3;
+		startActivity(new Intent(Menu.this, Caja.class));
+	}
+
+	public void VentaDate(){
+		if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
+		startActivity(new Intent(Menu.this,Venta.class));
+	}
+
 	public boolean valida(){
 		try{
 
@@ -1658,6 +1672,8 @@ public class Menu extends PBase {
 					return false;
 				}else if(gl.cajaid==5) {
 					if(caja.last().fecha!=du.getFechaActual()){
+						gl.validDate=true;
+						gl.lastDate=caja.last().fecha;
 						gl.cajaid=6; return false;
 					}
 				}
@@ -1682,6 +1698,30 @@ public class Menu extends PBase {
 
 		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
+
+
+	private void msgAskValidUltZ(String msg) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Registro");
+		dialog.setMessage(msg);
+		dialog.setCancelable(true);
+
+		dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				VentaDate();
+			}
+		});
+
+		dialog.setNegativeButton("Realizar Cierre Z", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				CierreZ();
+			}
 		});
 
 		dialog.show();

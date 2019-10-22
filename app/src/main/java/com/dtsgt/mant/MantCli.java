@@ -1,26 +1,41 @@
 package com.dtsgt.mant;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
+import java.util.Calendar;
+
 public class MantCli extends PBase {
     private ImageView imgstat;
-    private EditText txt1,txt2,txt3,txt4;
+    private TextView lblDateCli;
+    private EditText txt1,txt2,txt3,txt4,txt5,txt6;
 
     private clsP_clienteObj holder;
     private clsClasses.clsP_cliente item=clsCls.new clsP_cliente();
 
-    private String id;
+    public final Calendar c = Calendar.getInstance();
+    private static final String BARRA = "/";
+    final int mes = c.get(Calendar.MONTH);
+    final int dia = c.get(Calendar.DAY_OF_MONTH);
+    final int anio = c.get(Calendar.YEAR);
+    public int cyear, cmonth, cday;
+    private long date=0;
+
+    private String id, CERO="0";
     private boolean newitem=false;
 
     @Override
@@ -34,7 +49,10 @@ public class MantCli extends PBase {
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.txt3);
         txt4 = (EditText) findViewById(R.id.txt8);
+        txt5 = (EditText) findViewById(R.id.txt9);
+        txt6= (EditText) findViewById(R.id.txt11);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        lblDateCli = (TextView) findViewById(R.id.lblDateCli);
 
         holder =new clsP_clienteObj(this,Con,db);
 
@@ -166,6 +184,10 @@ public class MantCli extends PBase {
     private void updateItem() {
         try {
             holder.update(item);
+
+            sql="UPDATE P_CLIENTE SET CODIGO='"+item.nit+"' WHERE CODIGO='"+item.codigo+"'";
+            db.execSQL(sql);
+            Toast.makeText(this, "Cliente Actualizado Correctamente", Toast.LENGTH_LONG).show();
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -176,11 +198,51 @@ public class MantCli extends PBase {
 
     //region Aux
 
+    public void showDateDialog1(View view) {
+        try{
+            obtenerFecha();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+    private void obtenerFecha(){
+        try{
+
+            DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                    final int mesActual = month + 1;
+                    String diaFormateado = (dayOfMonth < 10)? CERO + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+                    String mesFormateado = (mesActual < 10)? CERO + String.valueOf(mesActual):String.valueOf(mesActual);
+                    lblDateCli.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+                    cyear = year;
+                    cmonth = Integer.parseInt(mesFormateado);
+                    cday = Integer.parseInt(diaFormateado);
+                    date = du.cfechaDesc(cyear, cmonth, cday);
+                }
+            },anio, mes, dia);
+
+            recogerFecha.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
     private void showItem() {
+        String dateShow;
+
         txt1.setText(item.nit);
         txt2.setText(item.nombre);
         txt3.setText(item.direccion);
         txt4.setText(mu.frmint2((int) item.limitecredito));
+        txt5.setText(item.email);
+        txt6.setText(item.telefono);
+        dateShow = du.univfechaReport(item.ultvisita);
+        lblDateCli.setText(dateShow);
+        date = item.ultvisita;
     }
 
     private boolean validaDatos() {
@@ -195,11 +257,23 @@ public class MantCli extends PBase {
                 return false;
             }
 
-            holder.fill("WHERE CODIGO='" + ss + "'");
-            if (holder.count > 0) {
-                msgbox("¡NIT ya existe!\n" + holder.first().nombre);
-                return false;
+            if(newitem){
+                holder.fill("WHERE CODIGO='" + ss + "'");
+                if (holder.count > 0) {
+                    msgbox("¡NIT ya existe!\n" + holder.first().nombre);
+                    return false;
+                }
+            }else {
+                if(!item.codigo.equals(ss)){
+                    holder.fill("WHERE NIT='" + ss + "'");
+                    if(holder.count>0){
+                        msgbox("¡NIT ya existe!\n" + holder.first().nombre);
+                        return false;
+                    }
+                }
+
             }
+
 
             item.nit = txt1.getText().toString();
             if (newitem) item.codigo = item.nit;
@@ -220,6 +294,33 @@ public class MantCli extends PBase {
                 item.limitecredito=ival;
             } catch (Exception e) {
                 msgbox("¡Limite credito incorrecto!");return false;
+            }
+
+            try {
+                ss = txt5.getText().toString();
+
+                if (!ss.isEmpty()){
+                    item.email = ss;
+                }
+
+            } catch (Exception e) {
+                msgbox("Error al ingresar correo: "+e);return false;
+            }
+
+            try {
+                ss = txt6.getText().toString();
+
+                if (!ss.isEmpty()){
+                    item.telefono = ss;
+                }
+
+            } catch (Exception e) {
+                msgbox("Error al ingresar teléfono: "+e);return false;
+            }
+
+            if(date!=0){
+                item.ultvisita= date;
+                date=0;
             }
 
             return true;

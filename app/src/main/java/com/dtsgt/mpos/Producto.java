@@ -231,7 +231,7 @@ public class Producto extends PBase {
 		Cursor DT;
 		clsCD vItem;
 		int cantidad;
-		String vF,cod,name,um;
+		String vF,cod,name,um,exist="";
 
 		ArrayList<clsCD> vitems = new ArrayList<clsCD>();;
 
@@ -246,7 +246,7 @@ public class Producto extends PBase {
 			switch (prodtipo) {
 
 				case 0: // Preventa
-					sql="SELECT CODIGO,DESCCORTA,UNIDBAS FROM P_PRODUCTO WHERE 1=1 ";
+					sql="SELECT CODIGO,DESCCORTA,UNIDBAS,TIPO FROM P_PRODUCTO WHERE 1=1 ";
 					if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
 					if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
 
@@ -255,19 +255,19 @@ public class Producto extends PBase {
 					
 				case 1:  // Venta
 
-					sql="SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA " +
+					sql="SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.TIPO " +
 						"FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
 						"P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
-						"WHERE (P_STOCK.CANT > 0) AND (P_PRODPRECIO.NIVEL = " + gl.nivel +")";
+						"WHERE (P_PRODPRECIO.NIVEL = " + gl.nivel +")";
 					if (!mu.emptystr(famid)){
 						if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA='"+famid+"') ";
 					}
 					if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
 
 					sql+="UNION ";
-					sql+="SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,''  " +
+					sql+="SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA, P_PRODUCTO.TIPO  " +
 							"FROM P_PRODUCTO "  +
-							"WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M'))";
+							"WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M') OR (P_PRODUCTO.TIPO ='P')) ";
 					if (!mu.emptystr(famid)){
 						if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA='"+famid+"') ";
 					}
@@ -284,7 +284,7 @@ public class Producto extends PBase {
 					break;	
 					
 				case 2: // Recarga
-				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS FROM P_PRODUCTO WHERE Tipo='P' ";
+				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS,TIPO FROM P_PRODUCTO WHERE Tipo='P' ";
                     if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
                     if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
 
@@ -303,8 +303,11 @@ public class Producto extends PBase {
 				  
 			  cod=DT.getString(0);	
 			  name=DT.getString(1);
-			  um=DT.getString(2);
-			
+			  um="UN";
+			  exist = "";
+
+			  if(DT.getString(2).equals("P")) exist=DT.getString(2);
+
 			  vItem = clsCls.new clsCD();
 			  
 			  vItem.Cod=cod;
@@ -314,15 +317,15 @@ public class Producto extends PBase {
 			  if (um.equalsIgnoreCase(""))  um="UN";
 
 			  vItem.um=um;
-			  vItem.Text="";
+			  vItem.Text=exist;
 
 			  items.add(vItem);
 			  vitems.add(vItem);
 
 			  DT.moveToNext();
 			}
-		} catch (Exception e) 		{
-		   //	mu.msgbox( e.getMessage());
+		} catch (Exception e){
+		    //mu.msgbox( e.getMessage());
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			Log.d("prods",e.getMessage());
 	    }

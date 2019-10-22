@@ -199,11 +199,19 @@ public class DateUtils {
 
 		//yyyy-MM-dd
 
-		vy=(long) f/100000000;f=f % 100000000;
-		vm=(long) f/1000000;f=f % 1000000;
-		vd=(long) f/10000;f=f % 10000;
+		vy=(long) f/100000000;
+		f=f % 100000000;
+		vm=(long) f/1000000;
+		f=f % 1000000;
+		vd=(long) f/10000;
+		f=f % 10000;
 
-		if (vy>9) sy="20"+vy; else sy="200"+vy;
+		if(vy<100){
+			if (vy>9) sy="20"+vy; else sy="200"+vy;
+		}else {
+			sy = "" + vy;
+		}
+
 		if (vm>9) sm=""+vm; else sm="0"+vm;
 		if (vd>9) sd=""+vd; else sd="0"+vd;
 
@@ -243,8 +251,15 @@ public class DateUtils {
 	public long cfechaDesc(int year,int month, int day) {
 		long c;
 		String d,mes,dia,ano;
+		int siglo;
 
-		year = year - 2000;
+		if(year<2000){
+			siglo = 0;
+		}else {
+			siglo = 2000;
+		}
+
+		year = year - siglo;
 		ano = Integer.toString(year);
 		mes = Integer.toString(month);
 		dia = Integer.toString(day);
@@ -364,6 +379,7 @@ public class DateUtils {
 	//#HS_20181121_1008 Funcion para obtener la fecha sin hora.
 	public long getFechaActual(){
 		long f,fecha;
+		String fechaS;
 		int cyear,cmonth,cday,ch,cm;
 
 		final Calendar c = Calendar.getInstance();
@@ -373,7 +389,8 @@ public class DateUtils {
 
 		//#HS_20181120_1725 Campo de fecha sin hora.
 		f=cfechaSinHora(cyear,cmonth,cday);
-		fecha=f;
+		fechaS=f+"0000";
+		fecha= Long.parseLong(fechaS);
 
 		return fecha;
 	}

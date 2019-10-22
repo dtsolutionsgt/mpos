@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses.clsCDB;
 import com.dtsgt.mpos.R;
 
@@ -18,14 +19,18 @@ public class ListAdaptCliList extends BaseAdapter {
 
 	private static ArrayList<clsCDB> items;
 
+	public DateUtils du;
 	private int selectedIndex;
+	private String date;
 
 	private LayoutInflater l_Inflater;
+
 
 	public ListAdaptCliList(Context context, ArrayList<clsCDB> results) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
+		du=new DateUtils();
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -63,15 +68,32 @@ public class ListAdaptCliList extends BaseAdapter {
 			holder.imgBand = (ImageView) convertView.findViewById(R.id.imgNext);
 			holder.imgCobro = (ImageView) convertView.findViewById(R.id.imageView8);
 			holder.imgPPago = (ImageView) convertView.findViewById(R.id.imageView7);
+			holder.lblDate  = (TextView) convertView.findViewById(R.id.textView141);
+			holder.lblTel = (TextView) convertView.findViewById(R.id.textView140);
+			holder.lblNit  = (TextView) convertView.findViewById(R.id.textView138);
+			holder.lblEmail  = (TextView) convertView.findViewById(R.id.textView139);
 			
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 					
-		holder.lblCod.setText(items.get(position).Cod+" "+items.get(position).Adds);
+		holder.lblCod.setText("Cod: "+items.get(position).Cod);
+		holder.lblNit.setText("NIT: "+items.get(position).nit);
 		holder.lblDesc.setText(items.get(position).Desc);
-		
+		if(items.get(position).Date<=10000000) holder.lblDate.setText("");
+
+		if(items.get(position).Date>=10000000) {
+			date = du.univfechaReport(items.get(position).Date);
+			holder.lblDate.setText(date);
+		}
+
+		if(items.get(position).Adds.isEmpty()) holder.lblTel.setText("No hay teléfono registrado");
+		if(!items.get(position).Adds.isEmpty()) holder.lblTel.setText("Tel: "+ items.get(position).Adds);
+
+		if(items.get(position).email.isEmpty()) holder.lblEmail.setText("");
+		if(!items.get(position).email.isEmpty()) holder.lblEmail.setText(items.get(position).email);
+
 		val= items.get(position).Bandera;
 		cobro= items.get(position).Cobro;
 		ppago= items.get(position).ppend;
@@ -95,7 +117,7 @@ public class ListAdaptCliList extends BaseAdapter {
 	
 	
 	static class ViewHolder {
-		TextView  lblCod,lblDesc;
+		TextView  lblCod,lblDesc,lblDate,lblTel,lblNit,lblEmail;
 		ImageView  imgBand,imgCobro,imgPPago;
 	}
 	
