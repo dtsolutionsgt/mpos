@@ -481,10 +481,10 @@
 
             <ImageView
                 android:id="@+id/imgCamara"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_width="61dp"
+                android:layout_height="46dp"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="0dp"
+                android:layout_marginStart="3dp"
                 android:paddingEnd="6dp"
                 android:paddingBottom="6dp"
                 android:src="@drawable/camara" />

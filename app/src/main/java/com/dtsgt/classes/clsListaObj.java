@@ -1,6 +1,9 @@
 package com.dtsgt.classes;
 
+import java.io.OptionalDataException;
 import java.util.ArrayList;
+import java.util.Optional;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -55,15 +58,15 @@ public class clsListaObj {
     }
 
     public void fill() {
-        fillItems(sel);
+        fillItems(sel,0);
     }
 
     public void fill(String specstr) {
-        fillItems(sel + " " + specstr);
+        fillItems(sel + " " + specstr,0);
     }
 
-    public void fillSelect(String sq) {
-        fillItems(sq);
+    public void fillSelect(String sq,int valid) {
+        fillItems(sq, valid);
     }
 
     public clsClasses.clsLista first() {
@@ -122,9 +125,10 @@ public class clsListaObj {
         db.execSQL(sql);
     }
 
-    private void fillItems(String sq) {
+    private void fillItems(String sq, int valid) {
         Cursor dt;
         clsClasses.clsLista item;
+        int rangoI,rangoF;
 
         items.clear();
 
@@ -137,8 +141,15 @@ public class clsListaObj {
             item = clsCls.new clsLista();
 
             item.pk = dt.getInt(0);
-            item.f1 = dt.getString(1);
-            item.f2 = dt.getString(2);
+            if(valid==20){
+                rangoI = dt.getInt(9);
+                rangoF = dt.getInt(10);
+                item.f1 ="Serie: "+ dt.getString(1)+",   Del "+rangoI+" Hasta "+rangoF;
+                if(dt.getString(2).equals("P")) item.f2 = "Pagos"; else item.f2="Correlativo Desconocido";
+            }else {
+                item.f1 = dt.getString(1);
+                item.f2 = dt.getString(2);
+            }
             item.f3 = dt.getString(3);
             item.f4 = dt.getString(4);
             item.f5 = dt.getString(5);

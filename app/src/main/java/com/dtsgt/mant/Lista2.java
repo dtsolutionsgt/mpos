@@ -133,7 +133,7 @@ public class Lista2 extends PBase {
             lblReg.setText("Registros : 0");
             setTableSQL();
 
-            ViewObj.fillSelect(sql);
+            ViewObj.fillSelect(sql,0);
 
             if(gl.disc){
                 adapt=new listAdapt_desc(this,this,ViewObj.items);

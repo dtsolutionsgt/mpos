@@ -1248,7 +1248,14 @@ public class BaseDatosScript {
 					"PRIMARY KEY ([CODIGO])"+
 					");";
 			database.execSQL(sql);
-			
+
+			sql="CREATE TABLE [P_CONCEPTOPAGO] ("+
+					"[CODIGO] INTEGER NOT NULL,"+
+					"[NOMBRE] TEXT NOT NULL,"+
+					"[ACTIVO] INTEGER NOT NULL,"+
+					"PRIMARY KEY ([CODIGO])"+
+					");";
+			database.execSQL(sql);
 
 			sql="CREATE TABLE [P_LINEA] ("+
 					"[CODIGO] TEXT NOT NULL,"+
@@ -1790,6 +1797,7 @@ public class BaseDatosScript {
 			database.execSQL(sql);
 			
 			sql="CREATE TABLE [P_CORREL_OTROS] ("+
+					"[EMPRESA] TEXT NOT NULL,"+
 					"[RUTA] TEXT NOT NULL,"+
 					"[SERIE] TEXT NOT NULL,"+
 					"[TIPO] TEXT NOT NULL,"+
@@ -1797,7 +1805,7 @@ public class BaseDatosScript {
 					"[FINAL] INTEGER NOT NULL,"+
 					"[ACTUAL] INTEGER NOT NULL,"+
 					"[ENVIADO] TEXT NOT NULL,"+
-					"PRIMARY KEY (RUTA,SERIE,TIPO)"+
+					"PRIMARY KEY (EMPRESA,RUTA,SERIE,TIPO)"+
 					");";
 			database.execSQL(sql);
 			

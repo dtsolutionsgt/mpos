@@ -51,7 +51,7 @@ public class clsClasses {
         public int  corel;
         public int  item;
         public int  anulado;
-        public int  fecha;
+        public long  fecha;
         public int  tipo;
         public int  proveedor;
         public double monto;
@@ -214,6 +214,12 @@ public class clsClasses {
         public String nombre;
         public int activo;
     }
+
+	public class clsP_conceptopago {
+		public int codigo;
+		public String nombre;
+		public int activo;
+	}
 
     public class clsP_moneda {
 		public int  codigo;
@@ -570,6 +576,12 @@ public class clsClasses {
         public double total,imp;
         public long fecha;
     }
+
+	public class clsP_correlativos{
+		public String empresa,ruta,serie,tipo,enviado;
+		public int inicial,fin,actual;
+	}
+
 	//endregion
 
 }

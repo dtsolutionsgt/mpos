@@ -3,7 +3,6 @@ package com.dtsgt.mant;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
@@ -16,6 +15,19 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.Toast;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import java.util.Calendar;
 
@@ -38,6 +50,10 @@ public class MantCli extends PBase {
     private String id, CERO="0";
     private boolean newitem=false;
 
+    private ImageView img1;
+    private String idfoto,signfile;
+    private int TAKE_PHOTO_CODE = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +69,34 @@ public class MantCli extends PBase {
         txt6= (EditText) findViewById(R.id.txt11);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         lblDateCli = (TextView) findViewById(R.id.lblDateCli);
+        img1 = (ImageView) findViewById(R.id.imageView43);
 
         holder =new clsP_clienteObj(this,Con,db);
 
         id=gl.gcods;
+
+        idfoto=id;
+
+        showImage();
+        setHandlers();
+
         if (id.isEmpty()) newItem(); else loadItem();
     }
 
     //region Events
+
+    private void setHandlers() {
+        txt1.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                item.codigo = txt1.getText().toString().trim();
+            }
+        });
+    }
 
     public void doSave(View view) {
         if (!validaDatos()) return;
@@ -86,6 +122,70 @@ public class MantCli extends PBase {
     //endregion
 
     //region Main
+
+
+    private void resizeFoto() {
+        try {
+
+            String fname = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg";
+            File file = new File(fname);
+
+            Bitmap bitmap = BitmapFactory.decodeFile(fname);
+            bitmap=mu.scaleBitmap(bitmap,640,360);
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,80,out);
+
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            msgbox("No se logro procesar la foto. Por favor tome la de nuevo.");
+        }
+    }
+
+    public void camera(View view){
+        try{
+            if (!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+                msgbox("El dispositivo no soporta toma de foto");return;
+            }
+
+            if(item.codigo.isEmpty()){
+                msgbox("Debe agregar un codigo de producto para tomar la foto");return;
+            }
+
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            //=item.codigo;
+            signfile= Environment.getExternalStorageDirectory()+"/RoadFotos/Cliente/"+idfoto+".jpg";
+            //callback=1;
+
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File URLfoto = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg");
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(URLfoto));
+            startActivityForResult(cameraIntent,TAKE_PHOTO_CODE);
+
+
+        }catch (Exception e){
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+            mu.msgbox("Error en camera: "+e.getMessage());
+        }
+    }
+
+    public void showImage(){
+
+        try {
+            String prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg";
+            File file = new File(prodimg);
+            if (file.exists()) {
+                Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                img1.setImageBitmap(bmImg);
+            }
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+
+    }
+
 
     private void loadItem() {
         try {
@@ -437,6 +537,28 @@ public class MantCli extends PBase {
     public void onBackPressed() {
         msgAskExit("Salir");
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        try {
+            if (requestCode == TAKE_PHOTO_CODE) {
+                if (resultCode == RESULT_OK) {
+                    toast("Foto OK.");
+                    resizeFoto();
+                    /*codCamera =  2;
+                    showCamera();*/
+                    showImage();
+                } else {
+                    Toast.makeText(this,"SIN FOTO.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e){
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+        }
+    }
+
 
     //endregion
 }

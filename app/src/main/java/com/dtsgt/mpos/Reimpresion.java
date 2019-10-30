@@ -20,6 +20,7 @@ import com.dtsgt.classes.clsDocCanastaBod;
 import com.dtsgt.classes.clsDocCobro;
 import com.dtsgt.classes.clsDocDepos;
 import com.dtsgt.classes.clsDocDevolucion;
+import com.dtsgt.classes.clsDocCajaPagos;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocMov;
 import com.dtsgt.classes.clsDocPedido;
@@ -51,6 +52,7 @@ public class Reimpresion extends PBase {
 	private clsDocDepos ddoc;
 	private clsDocCobro cdoc;
 	private clsDocDevolucion fdev;
+	private clsDocCajaPagos fcpag;
 	private clsDocCanastaBod fcanastabod;
 	private clsDocCanastaBod fpaseantebod;
 	private clsDocPedido docPed;
@@ -101,6 +103,9 @@ public class Reimpresion extends PBase {
 
 		fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
 		fdev.deviceid =gl.deviceId;
+
+		fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+		fcpag.deviceid =gl.deviceId;
 
 		fcanastabod=new clsDocCanastaBod(this,prn_can.prw,gl.peMon,gl.peDecImp, "printdevcan.txt");
 		fcanastabod.deviceid =gl.deviceId;
@@ -178,6 +183,10 @@ public class Reimpresion extends PBase {
 			fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
 			fdev.deviceid =gl.deviceId;
 			lblTipo.setText("Nota Crédito");break;
+		case 7:
+			fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+			fcpag.deviceid =gl.deviceId;
+			lblTipo.setText("Pagos de Caja");break;
 			
 		case 99:  
 			lblTipo.setText("Cierre de día");break;
@@ -312,6 +321,12 @@ public class Reimpresion extends PBase {
 					 "FROM D_NOTACRED INNER JOIN P_CLIENTE ON D_NOTACRED.CLIENTE=P_CLIENTE.CODIGO "+
 					 "WHERE (D_NOTACRED.STATCOM='N') ORDER BY D_NOTACRED.COREL DESC";
 			}
+
+			if (tipo==7) {
+				sql="SELECT COREL,OBSERVACION,'',MONTO,'',0 "+
+						"FROM P_CAJAPAGOS "+
+						"WHERE (STATCOM='N') AND (ANULADO=0) ORDER BY COREL DESC";
+			}
 			
 			if (tipo<99) {
 				
@@ -332,7 +347,7 @@ public class Reimpresion extends PBase {
 
 						if (tipo==3) {
 							sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
-						} else if (tipo==1||tipo==6){
+						} else if (tipo==1||tipo==6||tipo==7){
 							sf=DT.getString(0);
 						}else {
 							f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
@@ -420,6 +435,8 @@ public class Reimpresion extends PBase {
 					imprDevol();break;
 				case 6:
 					imprUltNotaCredito();break;
+				case 7:
+					imprPagoCaja();break;
 				case 99:
 					imprFindia();break;
 			}
@@ -475,6 +492,18 @@ public class Reimpresion extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox(e.getMessage());
 		}	
+	}
+
+	private void imprPagoCaja() {
+		try {
+			fcpag.buildPrint(itemid, 1,gl.peModal);
+			app.doPrint();
+
+			toast("Reimpresion de deposito generada");
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			mu.msgbox(e.getMessage());
+		}
 	}
 	
 	private void imprFactura() {

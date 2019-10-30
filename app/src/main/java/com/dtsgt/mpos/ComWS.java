@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -17,7 +19,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.base.Base64;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses;
@@ -69,6 +71,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -2216,6 +2219,23 @@ public class ComWS extends PBase {
 				return true;
 			}
 
+			sendFotoFamilia();
+			if (errflag){
+				dbld.savelog();
+				return true;
+			}
+
+			sendFotoProd();
+			if (errflag){
+				dbld.savelog();
+				return true;
+			}
+
+			sendFotoCli();
+			if (errflag){
+				dbld.savelog();
+				return true;
+			}
 			/*
 			envioDepositos();
 			if (!fstr.equals("Sync OK")){
@@ -2378,6 +2398,179 @@ public class ComWS extends PBase {
             senv += "Facturas : " + pc + "\n";
         }
 
+	}
+
+	public void sendFotoCli(){
+		try{
+			Cursor DT;
+			String cod;
+
+			sql="SELECT CODIGO FROM P_CLIENTE";
+
+			DT=Con.OpenDT(sql);
+
+			if(DT.getCount()==0) return;
+
+			DT.moveToFirst();
+
+			while (!DT.isAfterLast()){
+
+				cod=DT.getString(0);
+
+				File file = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + cod + ".jpg");
+				if (file.exists()) {
+					sendFoto(gl.emp,cod,3);
+				}
+
+				DT.moveToNext();
+
+			}
+
+		}catch (Exception e){
+			addlog(new Object() {
+			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+		}
+	}
+
+	public void sendFotoProd(){
+		try{
+			Cursor DT;
+			String cod;
+
+			sql="SELECT CODIGO FROM P_PRODUCTO";
+
+			DT=Con.OpenDT(sql);
+
+			if(DT.getCount()==0) return;
+
+			DT.moveToFirst();
+
+			while (!DT.isAfterLast()){
+
+				cod=DT.getString(0);
+
+				File file = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Producto/" + cod + ".jpg");
+				if (file.exists()) {
+					sendFoto(gl.emp,cod,2);
+				}
+
+				DT.moveToNext();
+
+			}
+
+		}catch (Exception e){
+			addlog(new Object() {
+			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+		}
+	}
+
+	public void sendFotoFamilia(){
+		try{
+			Cursor DT;
+			String cod;
+
+			sql="SELECT CODIGO FROM P_LINEA";
+
+			DT=Con.OpenDT(sql);
+
+			if(DT.getCount()==0) return;
+
+			DT.moveToFirst();
+
+			while (!DT.isAfterLast()){
+
+				cod=DT.getString(0);
+
+				File file = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia/" + cod + ".jpg");
+				if (file.exists()) {
+					sendFoto(gl.emp,cod,1);
+				}
+
+				DT.moveToNext();
+
+			}
+
+		}catch (Exception e){
+			addlog(new Object() {
+			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+		}
+	}
+
+
+	public int sendFoto(String empresa, String cod, int valid) {
+		String fname,resstr="";
+
+		if(valid==1){
+			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/Familia/" + cod + ".jpg";
+		}else if(valid==2){
+			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/Producto/" + cod + ".jpg";
+		}else if(valid==3){
+			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + cod + ".jpg";
+		}else {
+			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/" + cod + ".jpg";
+		}
+
+		METHOD_NAME = "saveImage";
+
+		try {
+
+			Bitmap bmp = BitmapFactory.decodeFile(fname);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			bmp.compress(Bitmap.CompressFormat.PNG,100, out);
+			byte[] imagebyte = out.toByteArray();
+			String strBase64 = Base64.encodeBytes(imagebyte);
+
+			int iv1=strBase64.length();
+
+			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+			envelope.dotNet = true;
+
+			PropertyInfo param = new PropertyInfo();
+			param.setType(String.class);
+			param.setName("empresa");
+			param.setValue(empresa);
+			request.addProperty(param);
+
+			PropertyInfo param2 = new PropertyInfo();
+			param2.setType(String.class);
+			param2.setName("cod");
+			param2.setValue(cod);
+			request.addProperty(param2);
+
+			PropertyInfo param3 = new PropertyInfo();
+			param3.setType(String.class);
+			param3.setName("imgdata");
+			param3.setValue(strBase64);
+			request.addProperty(param3);
+
+			PropertyInfo param4 = new PropertyInfo();
+			param4.setType(String.class);
+			param4.setName("valid");
+			param4.setValue(valid);
+			request.addProperty(param4);
+
+			envelope.setOutputSoapObject(request);
+
+			HttpTransportSE transport = new HttpTransportSE(URL);
+			transport.call(NAMESPACE + METHOD_NAME, envelope);
+
+			SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+
+			resstr = response.toString();
+
+			if (resstr.equalsIgnoreCase("#")) {
+				return 1;
+			} else {
+				throw new Exception(resstr);
+			}
+		} catch (Exception e) {
+			addlog(new Object() {
+			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+			errflag=true;
+		}
+
+		return 0;
 	}
 
 	public void envioPedidos() {

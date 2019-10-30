@@ -87,7 +87,14 @@ public class Lista extends PBase {
                     adapter.setSelectedIndex(position);
                 }
 
-                gl.gcods=item.f1;
+                if(gl.mantid!=20) {
+                    gl.gcods=item.f1;
+                } else {
+                    if(item.f2.equals("Pagos")){
+                        gl.gcods="P";
+                    }
+                }
+
                 if (listaedit) {
                     abrirMant();
                 } else {
@@ -130,7 +137,7 @@ public class Lista extends PBase {
             lblReg.setText("Registros : 0");
             setTableSQL();
 
-            ViewObj.fillSelect(sql);
+            ViewObj.fillSelect(sql,gl.mantid);
 
             if(gl.disc){
                 adapt=new listAdapt_desc(this,this,ViewObj.items);
@@ -298,6 +305,19 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((ID='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+
+            case 19: // Concepto Pago
+                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_CONCEPTOPAGO WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
+
+            case 20: // Correlativos
+                sql="SELECT 0,SERIE,TIPO,'','', '','','','',INICIAL,FINAL FROM P_CORREL_OTROS ";
+                if (flag) sql+="WHERE ((SERIE='"+ft+"') ";
+                sql+="ORDER BY SERIE";
+                break;
         }
     }
 
@@ -345,6 +365,10 @@ public class Lista extends PBase {
                 lblTit.setText("Combo");break;
             case 18:
                 lblTit.setText("Combo opciones");break;
+            case 19:
+                lblTit.setText("Concepto Pago");break;
+            case 20:
+                lblTit.setText("Correlativos");break;
         }
     }
 
@@ -386,6 +410,10 @@ public class Lista extends PBase {
                 startActivity(new Intent(this, MantDescuento.class));break;
             case 18:
                 startActivity(new Intent(this, MantOpcion.class));break;
+            case 19:
+                startActivity(new Intent(this, MantConceptoPago.class));break;
+            case 20:
+                startActivity(new Intent(this, MantCorelPagos.class));break;
         }
     }
 

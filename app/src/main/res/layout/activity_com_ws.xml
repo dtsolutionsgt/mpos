@@ -12,9 +12,10 @@
         android:layout_width="150dp"
         android:layout_height="96dp"
         android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-11dp"
+        android:layout_marginEnd="57dp"
+        android:layout_toStartOf="@+id/textView1"
         android:onClick="askActualize"
         android:src="@drawable/mantenimientos48" />
 
@@ -23,11 +24,11 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView34"
-        android:layout_centerHorizontal="true"
         android:layout_marginStart="-1dp"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginEnd="28dp"
+        android:layout_toStartOf="@+id/textView1"
         android:background="@layout/back"
         android:minWidth="64dp"
         android:minHeight="32dp"
@@ -376,5 +377,38 @@
         android:padding="5dp"
         android:src="@drawable/comunicacion_blanco_gris"
         android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/imageView46"
+        android:layout_width="116dp"
+        android:layout_height="96dp"
+        android:layout_below="@+id/textView1"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="63dp"
+        android:layout_marginTop="-11dp"
+        android:layout_marginEnd="451dp"
+        android:layout_toEndOf="@+id/textView1"
+        android:onClick="doFotos"
+        android:src="@drawable/act_stock" />
+
+    <Button
+        android:id="@+id/btnSend2"
+        android:layout_width="169dp"
+        android:layout_height="61dp"
+        android:layout_below="@+id/imageView46"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="1dp"
+        android:layout_toEndOf="@+id/textView1"
+        android:layout_toRightOf="@+id/textView1"
+        android:background="@layout/back"
+        android:minWidth="64dp"
+        android:minHeight="32dp"
+        android:onClick="doFotos"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Recibir Imágenes"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>
