@@ -149,7 +149,7 @@ public class clsP_cajapagosObj {
             item.corel=dt.getInt(3);
             item.item=dt.getInt(4);
             item.anulado=dt.getInt(5);
-            item.fecha=dt.getInt(6);
+            item.fecha=dt.getLong(6);
             item.tipo=dt.getInt(7);
             item.proveedor=dt.getInt(8);
             item.monto=dt.getDouble(9);

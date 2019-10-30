@@ -2,78 +2,45 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.StrictMode;
-import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_conceptopagoObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-import java.io.File;
-import java.io.FileOutputStream;
+public class MantConceptoPago extends PBase {
 
-public class MantFamilia extends PBase {
-
-    private ImageView imgstat,img1;
+    private ImageView imgstat;
     private EditText txt1,txt2;
 
-    private clsP_lineaObj holder;
-    private clsClasses.clsP_linea item=clsCls.new clsP_linea();
+    private clsP_conceptopagoObj holder;
+    private clsClasses.clsP_conceptopago item=clsCls.new clsP_conceptopago();
 
-    private String id,idfoto,signfile;
+    private String id;
     private boolean newitem=false;
-    private int TAKE_PHOTO_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_familia);
+        setContentView(R.layout.activity_mant_concepto_pago);
 
         super.InitBase();
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         imgstat = (ImageView) findViewById(R.id.imageView31);
-        img1 = (ImageView) findViewById(R.id.imageView41);
 
-        holder =new clsP_lineaObj(this,Con,db);
+        holder =new clsP_conceptopagoObj(this,Con,db);
 
         id=gl.gcods;
-        idfoto=id;
         if (id.isEmpty()) newItem(); else loadItem();
-        showImage();
-        setHandlers();
     }
 
     //region Events
-
-    private void setHandlers() {
-
-        txt1.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {}
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                item.codigo = txt1.getText().toString().trim();
-            }
-        });
-    }
 
     public void doSave(View view) {
         if (!validaDatos()) return;
@@ -99,24 +66,6 @@ public class MantFamilia extends PBase {
     //endregion
 
     //region Main
-
-    private void resizeFoto() {
-        try {
-
-            String fname = Environment.getExternalStorageDirectory() + "/RoadFotos/Familia/" + idfoto + ".jpg";
-            File file = new File(fname);
-
-            Bitmap bitmap = BitmapFactory.decodeFile(fname);
-            bitmap=mu.scaleBitmap(bitmap,640,360);
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG,80,out);
-
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            msgbox("No se logro procesar la foto. Por favor tome la de nuevo.");
-        }
-    }
 
     private void loadItem() {
         try {
@@ -144,8 +93,7 @@ public class MantFamilia extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo="";
-        item.marca="1";
+        item.codigo=0;
         item.nombre="";
         item.activo=1;
 
@@ -171,56 +119,12 @@ public class MantFamilia extends PBase {
         }
     }
 
-    public void camera(View view){
-        try{
-            if (!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
-                msgbox("El dispositivo no soporta toma de foto");return;
-            }
-
-            if(item.codigo.isEmpty()){
-                msgbox("Debe agregar un codigo de producto para tomar la foto");return;
-            }
-
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
-
-            //idfoto=item.codigo;
-            signfile= Environment.getExternalStorageDirectory()+"/RoadFotos/Familia/"+idfoto+".jpg";
-            //callback=1;
-
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File URLfoto = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia/" + idfoto + ".jpg");
-            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(URLfoto));
-            startActivityForResult(cameraIntent,TAKE_PHOTO_CODE);
-
-
-        }catch (Exception e){
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-            mu.msgbox("Error en camera: "+e.getMessage());
-        }
-    }
-
-    public void showImage(){
-
-        try {
-            String prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Familia/" + idfoto + ".jpg";
-            File file = new File(prodimg);
-            if (file.exists()) {
-                Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
-                img1.setImageBitmap(bmImg);
-            }
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
-
-    }
-
     //endregion
 
     //region Aux
 
     private void showItem() {
-        txt1.setText(item.codigo);
+        if(newitem) txt1.setText(""); else txt1.setText(""+item.codigo);
         txt2.setText(item.nombre);
     }
 
@@ -240,7 +144,7 @@ public class MantFamilia extends PBase {
                     msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
                 }
 
-                item.codigo=ss;
+                item.codigo=Integer.parseInt(ss);
             }
 
             ss=txt2.getText().toString();
@@ -312,9 +216,9 @@ public class MantFamilia extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (item.activo==1) {
-                   item.activo=0;
+                    item.activo=0;
                 } else {
-                   item.activo=1;
+                    item.activo=1;
                 };
                 updateItem();
                 finish();
@@ -365,27 +269,6 @@ public class MantFamilia extends PBase {
     @Override
     public void onBackPressed() {
         msgAskExit("Salir");
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        try {
-            if (requestCode == TAKE_PHOTO_CODE) {
-                if (resultCode == RESULT_OK) {
-                    toast("Foto OK.");
-                    resizeFoto();
-                    /*codCamera =  2;
-                    showCamera();*/
-                    showImage();
-                } else {
-                    Toast.makeText(this,"SIN FOTO.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        } catch (Exception e){
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-        }
     }
 
     //endregion

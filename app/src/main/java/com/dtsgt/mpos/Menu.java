@@ -130,8 +130,10 @@ public class Menu extends PBase {
 
 		}catch (Exception e)
 		{
-			Log.e("Mnu", e.getMessage());
+			Log.e("Menu", e.getMessage());
 		}
+
+		insertCorrel();
 
 	}
 
@@ -147,7 +149,21 @@ public class Menu extends PBase {
 		}
 
 	}
-	
+
+	public void insertCorrel(){
+		try{
+			Cursor dt;
+			sql="SELECT * FROM P_CORREL_OTROS";
+			dt=Con.OpenDT(sql);
+			if(dt.getCount()==0){
+				db.execSQL("INSERT INTO P_CORREL_OTROS VALUES ("+gl.emp+", "+gl.ruta+",'A','P',1,1000,1,'N')");
+			}
+			if(dt!=null) dt.close();
+		}catch (Exception e){
+			Log.e("Menu insertar corr_otrs", e.getMessage());
+		}
+	}
+
 	public void listItems() {
 		try{
 			clsMenu item;
@@ -354,7 +370,7 @@ public class Menu extends PBase {
 		try {
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
-            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+            final String[] selitems = {"Factura","Deposito","Pagos","Recarga","Devolución a bodega"};
 
 
 			menudlg = new AlertDialog.Builder(this);
@@ -370,8 +386,10 @@ public class Menu extends PBase {
 						case 1:
 							menuImprDoc(2);break;
 						case 2:
-							menuImprDoc(4);break;
+							menuImprDoc(7);break;
 						case 3:
+							menuImprDoc(4);break;
+						case 4:
 							menuImprDoc(5);break;
 					}
 
@@ -1096,6 +1114,7 @@ public class Menu extends PBase {
 
             //final String[] selitems = {"Banco","Caja","Cliente","Combo","Combo Opción","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
             final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración","Formato de impresión"};
+            final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Concepto Pago","Nivel precio","Producto","Proveedor","Tienda","Usuario","Correlativos","Configuración"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1103,35 +1122,38 @@ public class Menu extends PBase {
 			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 
-				    ss=selitems[item];
+				ss=selitems[item];
 
-				    if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
-                    if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
-                    if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
-                    if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
-                    if (ss.equalsIgnoreCase("Combo")) gl.mantid=17;
-                    if (ss.equalsIgnoreCase("Combo Opción")) gl.mantid=18;
-                    if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
-                    if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
-                    if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
-                    if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
-                    if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
-                    if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
-                    if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
-                    if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
-                    if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
-                    if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
-                    if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
-                    if (ss.equalsIgnoreCase("Configuración")) gl.mantid=16;
-                    if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid=17;
+				if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
+				if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
+				if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
+				if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+				if (ss.equalsIgnoreCase("Combo")) gl.mantid=17;
+				if (ss.equalsIgnoreCase("Combo Opción")) gl.mantid=18;
+				if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
+				if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
+				if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
+				if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
+				if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
+				if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
+				if (ss.equalsIgnoreCase("Concepto Pago")) gl.mantid=19;
+				if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
+				if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
+				if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
+				if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
+				if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
+				if (ss.equalsIgnoreCase("Correlativos")) gl.mantid=20;
+				if (ss.equalsIgnoreCase("Configuración")) gl.mantid=16;
+                if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid=17;
 
-                    if (gl.mantid==16) {
-                        startActivity(new Intent(Menu.this, MantConfig.class));
-                    } else if (gl.mantid==15) {
-                        startActivity(new Intent(Menu.this, Lista.class));
-                    } else {
-                        startActivity(new Intent(Menu.this, Lista.class));
-                    }
+
+				if (gl.mantid==16) {
+					startActivity(new Intent(Menu.this, MantConfig.class));
+				} else if (gl.mantid==15) {
+					startActivity(new Intent(Menu.this, Lista.class));
+				} else {
+					startActivity(new Intent(Menu.this, Lista.class));
+				}
  		    		}
 			});
 
@@ -1250,15 +1272,21 @@ public class Menu extends PBase {
 					gl.titReport = ss;
 
 					if(valida()){
-						startActivity(new Intent(Menu.this,Caja.class));
+
+						if(gl.cajaid!=2){
+							startActivity(new Intent(Menu.this,Caja.class));
+						}else {
+							startActivity(new Intent(Menu.this,CajaPagos.class));
+						}
+
 					}else {
 						String txt="";
 
-						if(gl.cajaid==0) txt = "La caja no se ha abierto, si desea iniciar turno debe realizar el inicio de caja.";
+						if(gl.cajaid==0 || gl.cajaid==2)txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
 						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
-						if(gl.cajaid==2) txt = "Pendiente implementación.";
+						//if(gl.cajaid==2) txt = "Pendiente implementación.";
 						if(gl.cajaid==4) txt = "Pendiente implementación.";
-						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja.";
+						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
 						msgAskValid(txt);
 					}
 
@@ -1654,13 +1682,24 @@ public class Menu extends PBase {
 
 			caja.fill();
 
-			if(gl.cajaid==1){
+			if(gl.cajaid==1 || gl.cajaid==2){
 
-				if(caja.count==0) return true;
+				if(gl.cajaid==1){
+					if(caja.count==0) return true;
 
-				if(caja.last().estado==0){
-					return false;
+					if(caja.last().estado==0){
+						return false;
+					}
 				}
+
+				if(gl.cajaid==2){
+					if(caja.count==0) return false;
+
+					if(caja.last().estado==0){
+						return true;
+					}
+				}
+
 			} else if(gl.cajaid==3 || gl.cajaid==5){
 
 				if(caja.count==0) {
@@ -1678,7 +1717,7 @@ public class Menu extends PBase {
 					}
 				}
 
-			}else if(gl.cajaid==2 || gl.cajaid==4) return false;
+			}else if(gl.cajaid==4) return false;
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

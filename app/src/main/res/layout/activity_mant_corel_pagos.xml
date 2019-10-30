@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dtsgt.mant.MantFamilia">
+    tools:context="com.dtsgt.mant.MantCorelPagos">
 
     <ImageView
         android:id="@+id/imgImg2"
@@ -64,7 +64,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Familia"
+            android:text="Correlativo de Pagos"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6"
             android:textSize="24sp"
@@ -73,34 +73,19 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
-        android:layout_width="1247dp"
-        android:layout_height="245dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
-        android:layout_marginLeft="18dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
         android:background="@layout/frame_rect">
-
-        <EditText
-            android:id="@+id/txt1"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblBU"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="16dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="15"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/txt2"
@@ -108,9 +93,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView2"
             android:layout_alignParentEnd="true"
-            android:layout_marginLeft="12dp"
-            android:layout_marginTop="13dp"
-            android:layout_marginEnd="7dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:maxLength="50"
@@ -120,43 +105,73 @@
             android:textSize="21sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/imageView41"
-            android:layout_width="121dp"
-            android:layout_height="86dp"
-            android:layout_alignBottom="@+id/lblBU"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="-2dp"
-            android:layout_toEndOf="@+id/imageView40"
-            android:src="@drawable/blank24"
-            tools:src="@drawable/erase" />
+        <EditText
+            android:id="@+id/txt10"
+            android:layout_width="1081dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt2"
+            android:layout_alignStart="@+id/txt2"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="-11dp"
+            android:layout_marginLeft="-1dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="30dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:maxLength="50"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/imageView40"
-            android:layout_width="130dp"
-            android:layout_height="62dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="44dp"
-            android:layout_marginTop="16dp"
-            android:onClick="camera"
-            android:src="@drawable/camara" />
+        <EditText
+            android:id="@+id/txt12"
+            android:layout_width="1080dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt10"
+            android:layout_alignStart="@+id/txt10"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="-10dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="31dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:maxLength="50"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/txt1"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblBU"
-            android:layout_width="127dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView40"
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            android:layout_below="@+id/textView145"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="47dp"
-            android:layout_marginTop="1dp"
-            android:gravity="center"
-            android:text="Agregar Foto"
+            android:layout_marginLeft="31dp"
+            android:layout_marginTop="15dp"
+            android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textSize="18sp"
-            android:visibility="visible" />
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/lblCFact"
@@ -166,14 +181,14 @@
             android:layout_alignEnd="@+id/textView2"
             android:layout_alignBottom="@+id/txt2"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="33dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="-2dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Nombre :"
+            android:text="Inicial :"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
@@ -181,18 +196,52 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="151dp"
-            android:layout_height="45dp"
-            android:layout_below="@+id/lblBU"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txt1"
             android:layout_alignBottom="@+id/txt1"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="31dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="-5dp"
+            android:layout_marginLeft="10dp"
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Código :"
+            android:text="Serie :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/textView143"
+            android:layout_width="147dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txt10"
+            android:layout_alignEnd="@+id/lblCFact"
+            android:layout_alignBottom="@+id/txt10"
+            android:layout_marginTop="-1dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Final :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/textView145"
+            android:layout_width="146dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txt12"
+            android:layout_alignEnd="@+id/textView143"
+            android:layout_alignBottom="@+id/txt12"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Actual: "
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
 
@@ -238,17 +287,6 @@
         android:clickable="true"
         android:onClick="doExit"
         android:src="@drawable/prev48" />
-
-    <ImageView
-        android:id="@+id/imageView31"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/relRoad"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:onClick="doStatus"
-        android:src="@drawable/delete_64" />
 
 
 </RelativeLayout>

@@ -386,6 +386,24 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
         }
 
+        try {
+            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia");
+            directory.mkdirs();
+        } catch (Exception e) {
+        }
+
+        try {
+            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Producto");
+            directory.mkdirs();
+        } catch (Exception e) {
+        }
+
+        try {
+            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente");
+            directory.mkdirs();
+        } catch (Exception e) {
+        }
+
         //Id de Dispositivo
         gl.deviceId = androidid();
         gl.devicename = getLocalBluetoothName();
