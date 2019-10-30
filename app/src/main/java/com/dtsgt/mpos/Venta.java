@@ -1283,7 +1283,7 @@ public class Venta extends PBase {
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
-                khand.clear();
+                khand.clear(true);
 
                 gl.gstr=dt.getString(0);gl.um="UN";
                 gl.pprodname=dt.getString(1);
@@ -1924,9 +1924,9 @@ public class Venta extends PBase {
         try {
             switch (menuid) {
                 case 3:
-                     showPrintMenuTodo();break;
+                    menuImprDoc(3);break;
                 case 4:
-                     showVoidMenuTodo();break;
+                    gl.tipo=3;menuAnulDoc();break;
                 case 14:
                     showQuickRecep();break;
             }
@@ -2047,7 +2047,7 @@ public class Venta extends PBase {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         dialog.setTitle("Actualización de parametros");
-        dialog.setMessage("¿Actualizar parametros ce venta?");
+        dialog.setMessage("¿Actualizar parametros de venta?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -2079,7 +2079,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     private void processMenuBtn(int menuid) {
@@ -2349,7 +2348,7 @@ public class Venta extends PBase {
         lblTot.setText("Total : "+gl.peMon+mu.frmdec(0));
         lblVend.setText("");
 
-        khand.clear(false);khand.enable();
+        khand.clear(true);khand.enable();
     }
 
     private boolean hasProducts(){

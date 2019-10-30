@@ -16,7 +16,6 @@ public class clsDocFactura extends clsDocument {
 	private String 	contrib,corelNotaC,asignacion,ccorel,corelF;
 	private int decimp,totitems;
 
-
 	public clsDocFactura(Context context,int printwidth,String cursymbol,int decimpres, String archivo) {
 		super(context, printwidth,cursymbol,decimpres, archivo);
 

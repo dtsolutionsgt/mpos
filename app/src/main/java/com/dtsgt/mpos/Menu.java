@@ -1095,7 +1095,7 @@ public class Menu extends PBase {
 			final AlertDialog Dialog;
 
             //final String[] selitems = {"Banco","Caja","Cliente","Combo","Combo Opción","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
-            final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
+            final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración","Formato de impresión"};
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Mantenimientos");
@@ -1123,6 +1123,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
                     if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
                     if (ss.equalsIgnoreCase("Configuración")) gl.mantid=16;
+                    if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid=17;
 
                     if (gl.mantid==16) {
                         startActivity(new Intent(Menu.this, MantConfig.class));
@@ -1313,7 +1314,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 
 	}
 

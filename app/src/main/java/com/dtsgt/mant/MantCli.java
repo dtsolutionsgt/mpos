@@ -3,6 +3,8 @@ package com.dtsgt.mant;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -76,6 +78,18 @@ public class MantCli extends PBase {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
+        }
+    }
+
+    public void doEnroll(View view) {
+        try {
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.uubio.uusample");
+            intent.putExtra("method","1");
+            intent.putExtra("param","codigo");
+
+            this.startActivity(intent);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
         }
     }
 

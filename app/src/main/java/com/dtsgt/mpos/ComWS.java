@@ -231,6 +231,17 @@ public class ComWS extends PBase {
             imgRec.setEnabled(false);
             lblEnv.setVisibility(View.INVISIBLE);
             imgEnv.setVisibility(View.INVISIBLE);
+            lblEnvM.setVisibility(View.INVISIBLE);
+            imgEnvM.setVisibility(View.INVISIBLE);
+
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    runRecep();
+                }
+            };
+            mtimer.postDelayed(mrunner,200);
 
 
         }
@@ -351,7 +362,6 @@ public class ComWS extends PBase {
 					keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
 				}
 			}catch (Exception e){
-
 			}
 
 			isbusy = 1;
@@ -4828,7 +4838,6 @@ public class ComWS extends PBase {
     }
 
     private void msgAskConfirmaRecibido(){
-
         try{
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
@@ -4848,8 +4857,6 @@ public class ComWS extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-
     }
 
     private void msgAskSinLicencia(){

@@ -278,6 +278,10 @@ public class MainActivity extends PBase {
 
     }
 
+    public void doFPTest(View view) {
+        startActivity(new Intent(this,FingPTest.class));
+    }
+
     //endregion
 
     //region Main

@@ -2110,6 +2110,15 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [FPRINT] ("+
+                    "EMPRESA TEXT NOT NULL,"+
+                    "CODIGO TEXT NOT NULL,"+
+                    "DEDO INTEGER NOT NULL,"+
+                    "IMAGE BLOB,"+
+                    "PRIMARY KEY ([EMPRESA],[CODIGO],[DEDO])"+
+                    ");";
+            database.execSQL(sql);
+
 
             return 1;
 			 
