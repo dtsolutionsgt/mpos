@@ -91,7 +91,7 @@ public class Reportes extends PBase {
     private clsP_productoObj prod;
     private clsP_clienteObj cli;
 
-    private int tipo, cantExistencia;
+    private int tipo, cantExistencia,validCli;
     private String CERO="0", nameProd, nameVend, id_item;
     private clsClasses.clsVenta itemV;
 
@@ -108,7 +108,7 @@ public class Reportes extends PBase {
     final int mes = c.get(Calendar.MONTH);
     final int dia = c.get(Calendar.DAY_OF_MONTH);
     final int anio = c.get(Calendar.YEAR);
-    public int cyear, cmonth, cday;
+    public int cyear, cmonth, cday, validCB=0;
     private long datefin,dateini;
 
     @Override
@@ -133,8 +133,12 @@ public class Reportes extends PBase {
 
         lblProd.setVisibility(View.INVISIBLE);
 
-        if(gl.reportid!=11 && gl.reportid!=12){
+        if(gl.reportid!=11 && gl.reportid!=12 && gl.reportid!=3 && gl.reportid!=6){
             cbDet.setVisibility(View.INVISIBLE);
+        }
+
+        if(gl.reportid==3 || gl.reportid==6){
+            cbDet.setText("Reporte Consolidado");
         }
 
         linea =new clsP_lineaObj(this,Con,db);
@@ -523,8 +527,10 @@ public class Reportes extends PBase {
                 case 11:
                     if(id_item.equals("Todos")){
                         condition = " AND 1=1 ";
+                        validCli=1;
                     }else{
                         condition = " AND C.CODIGO = '"+ id_item +"' ";
+                        validCli=2;
                     }
 
                     sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
@@ -673,9 +679,19 @@ public class Reportes extends PBase {
                     lblFact.setText("");
 
                     if(cbDet.isChecked()){
-                        gl.reportid=12;
+                        if(gl.reportid!=3 && gl.reportid!=6){
+                            gl.reportid=12;
+                        }else {
+                            validCB=1;
+                        }
+
                     }else{
-                        gl.reportid=11;
+                        if(gl.reportid!=3 && gl.reportid!=6){
+                            gl.reportid=11;
+                        }else {
+                            validCB=0;
+                        }
+
                     }
 
                 }
@@ -801,7 +817,7 @@ public class Reportes extends PBase {
                     if(gl.reportid==1){
 
                         if(acc==1){
-                            rep.add("       REPORTE FACTURAS POR DIA");
+                            rep.add("     REPORTE DOCUMENTOS POR DIA");
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
                             rep.empty();
@@ -900,16 +916,22 @@ public class Reportes extends PBase {
                             }
 
                             rep.add("      REPORTE VENTA POR PRODUCTO");
-                            rep.add("Cod   Descripcion");
-                            rep.add("Cant        UM       Total        %");
+                            if(validCB==1) rep.add("            CONSOLIDADO");
+                            if(validCB==0) rep.add("Cod   Descripcion");
+                            if(validCB==0) rep.add("Cant        UM       Total        %");
+                            if(validCB==1) rep.add("Cod        Descripcion        Total");
                             rep.line();
                             acc = 2;
                         }
 
                         porcentaje = (100 /totF) * itemR.get(i).total;
 
-                        rep.addtot(itemR.get(i).codProd,itemR.get(i).descrip);
-                        rep.add4lrrTotPorc(Integer.toString(itemR.get(i).cant), itemR.get(i).um,itemR.get(i).total,porcentaje);
+                        if(validCB==0){
+                            rep.addtot(itemR.get(i).codProd,itemR.get(i).descrip);
+                            rep.add4lrrTotPorc(Integer.toString(itemR.get(i).cant), itemR.get(i).um,itemR.get(i).total,porcentaje);
+                        }else {
+                            rep.addtot3(itemR.get(i).codProd,itemR.get(i).descrip,itemR.get(i).total);
+                        }
 
                         SumaCant = SumaCant + itemR.get(i).cant;
 
@@ -964,16 +986,23 @@ public class Reportes extends PBase {
 
 
                             rep.add("    REPORTE VENTAS POR VENDEDOR");
-                            rep.add("Codigo     Nombre");
-                            rep.add("Cant       %       Total    Comision");
+                            if(validCB==1) rep.add("              CONSOLIDADO");
+                            if(validCB==0) rep.add("Codigo     Nombre");
+                            if(validCB==0) rep.add("Cant       %       Total    Comision");
+                            if(validCB==1) rep.add("Codigo     Nombre             Total");
                             rep.line();
                             acc = 2;
                         }
 
                         comision = (itemR.get(i).total * itemR.get(i).imp) / 100;
 
-                        rep.addtot(itemR.get(i).corel, itemR.get(i).descrip);
-                        rep.add4lrrTotV(Integer.toString(itemR.get(i).cant), itemR.get(i).imp+"%", itemR.get(i).total, comision);
+                        if(validCB==0){
+                            rep.addtot(itemR.get(i).corel, itemR.get(i).descrip);
+
+                            rep.add4lrrTotV(Integer.toString(itemR.get(i).cant), itemR.get(i).imp+"%", itemR.get(i).total, comision);
+                        }else {
+                            rep.addtot3(itemR.get(i).corel, itemR.get(i).descrip, itemR.get(i).total);
+                        }
 
                         SumaCant = SumaCant + itemR.get(i).cant;
                         totSinImpF += comision;
@@ -1015,7 +1044,13 @@ public class Reportes extends PBase {
 
                         fechaR = du.univfechaReport(itemR.get(i).fecha);
 
-                        rep.addtwo(itemR.get(i).corel, itemR.get(i).descrip);
+                        if(validCli==2){
+                            rep.addtwo(itemR.get(i).corel, itemR.get(i).descrip);
+                            validCli=3;
+                        }else if(validCli==1){
+                            rep.addtwo(itemR.get(i).corel, itemR.get(i).descrip);
+                        }
+
                         rep.add3lrrTot(fechaR, ""+itemR.get(i).cant, itemR.get(i).total);
 
                         SumaCant = SumaCant + itemR.get(i).cant;
@@ -1098,9 +1133,22 @@ public class Reportes extends PBase {
 
                 if(gl.reportid==1) rep.add3Tot(SumaCant, totSinImpF, impF, totF);
                 if(gl.reportid==2) rep.add4lrrTot("Total: ","",Integer.toString(cantfF),totF);
-                if(gl.reportid==3) rep.add4lrrTotPorc(Integer.toString(SumaCant), "",totF,0.0);
+                if(gl.reportid==3) {
+                    if(validCB==0){
+                        rep.add4lrrTotPorc(Integer.toString(SumaCant), "",totF,0.0);
+                    }else {
+                        rep.addtot3("","",totF);
+                    }
+
+                }
                 if(gl.reportid==4 || gl.reportid==5) rep.add4lrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
-                if(gl.reportid==6) rep.add4lrrTotV(""+SumaCant, "",totF, totSinImpF);
+                if(gl.reportid==6) {
+                    if(validCB==0){
+                        rep.add4lrrTotV(""+SumaCant, "",totF, totSinImpF);
+                    }else {
+                        rep.addtot3("","",totF);
+                    }
+                }
                 if(gl.reportid==7 || gl.reportid==8) rep.add4(totF, impF, totSinImpF, 0.0);
                 if(gl.reportid==11) rep.add3lrrTot("", ""+SumaCant, totF);
                 if(gl.reportid==12) rep.add4lrrT("Total: ", ""+SumaCant, 0.0,totF);
@@ -1127,8 +1175,6 @@ public class Reportes extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-
     }
 
     @Override
@@ -1137,8 +1183,7 @@ public class Reportes extends PBase {
             super.onPause();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
+        }p
     }
 
     //endregion

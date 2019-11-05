@@ -487,7 +487,7 @@ public class clsRepBuilder {
     public void addtot3(String s1,String s2,double val) {
         String sval;
 
-        sval = aproxDec(val);
+        sval = cursym+decfrm.format(val);
 
         ts=ltrim(s1,prw-25)+ltrim(s2,prw-24)+rtrim(sval,12);
         items.add(ts);

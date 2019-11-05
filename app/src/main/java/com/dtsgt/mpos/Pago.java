@@ -472,7 +472,7 @@ public class Pago extends PBase {
 			
 			sql="SELECT Codigo,Nombre FROM P_BANCO WHERE (TIPO<>'D') ORDER BY Nombre";
 		
-			DT=Con.OpenDT(sql);
+			DT=Con.OpenDT(sql);	
 			if (DT.getCount()==0) {return;}
 			
 			DT.moveToFirst();

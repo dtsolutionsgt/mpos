@@ -1190,7 +1190,7 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Reporte de Facturas por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
+			final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
 
             menudlg = new AlertDialog.Builder(this);
             menudlg.setTitle("Reportes");
@@ -1200,7 +1200,7 @@ public class Menu extends PBase {
 
                     ss=selitems[item];
 
-					if (ss.equalsIgnoreCase("Reporte de Facturas por Día")) gl.reportid=1;
+					if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
 					if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
 					if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
 					if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;

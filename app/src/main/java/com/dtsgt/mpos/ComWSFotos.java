@@ -28,7 +28,11 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ComWSFotos extends PBase {
@@ -38,7 +42,7 @@ public class ComWSFotos extends PBase {
     private EditText txtRuta,txtWS,txtEmp;
     private CheckBox chkAll;
 
-    private int isbusy,reccnt,rec;
+    private int isbusy,reccnt,reccnt2,reccnt3,rec;
     private String ruta,rootdir;
 
     private SQLiteDatabase dbT;
@@ -47,6 +51,8 @@ public class ComWSFotos extends PBase {
     private AppMethods clsAppM;
 
     private ArrayList<String> listItems=new ArrayList<String>();
+    private ArrayList<String> listItems2=new ArrayList<String>();
+    private ArrayList<String> listItems3=new ArrayList<String>();
 
 
     // Web Service
@@ -96,13 +102,34 @@ public class ComWSFotos extends PBase {
 
         gl.isOnWifi = clsAppM.isOnWifi();
 
-        getWSURL();
+        URL = getWSUrl();
+        //getWSURL();
 
         dbld=new clsDataBuilder(this);
 
     }
 
     //region Events
+
+    private String getWSUrl() {
+        //String defurl="http://192.168.1.94/mpos/wsMpos.asmx";
+        String defurl="http://192.168.1.52/wsmpos/wsAndr.asmx";
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+            if (!file1.exists()) return defurl;
+
+            FileInputStream fIn = new FileInputStream(file1);
+            BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+            String wsurl = myReader.readLine();
+            myReader.close();
+
+            return wsurl;
+        } catch (Exception e) {
+            return  defurl;
+        }
+
+    }
 
     public void askRec(View view) {
 
@@ -137,13 +164,10 @@ public class ComWSFotos extends PBase {
 
         try{
             if (isbusy==1) return;
-            if (!setComParams()) return;
+            //if (!setComParams()) return;
 
-            if (chkAll.isChecked()) {
-                sql = "SELECT CODIGO FROM P_PRODUCTO";
-            } else {
-                sql = "SELECT DISTINCT CODIGO FROM P_STOCK";
-            }
+            sql = "SELECT CODIGO FROM P_PRODUCTO";
+
             dt = Con.OpenDT(sql);
             reccnt=dt.getCount();
             if (reccnt>0) dt.moveToFirst();else return;
@@ -152,6 +176,31 @@ public class ComWSFotos extends PBase {
                 listItems.add(dt.getString(0));
                 dt.moveToNext();
             }
+            if(dt!=null) dt.close();
+
+            sql = "SELECT CODIGO FROM P_LINEA";
+
+            dt = Con.OpenDT(sql);
+            reccnt2=dt.getCount();
+            if (reccnt2>0) dt.moveToFirst();else return;
+
+            while (!dt.isAfterLast()) {
+                listItems2.add(dt.getString(0));
+                dt.moveToNext();
+            }
+            if(dt!=null) dt.close();
+
+            sql = "SELECT CODIGO FROM P_CLIENTE";
+
+            dt = Con.OpenDT(sql);
+            reccnt3=dt.getCount();
+            if (reccnt3>0) dt.moveToFirst();else return;
+
+            while (!dt.isAfterLast()) {
+                listItems3.add(dt.getString(0));
+                dt.moveToNext();
+            }
+            if(dt!=null) dt.close();
 
             isbusy=1;
 
@@ -171,7 +220,7 @@ public class ComWSFotos extends PBase {
 
     //region Web Service Methods
 
-    public int guardaImagen(String idprod) {
+    public int guardaImagen(String idprod,int valid) {
         int rc;
         String s, ss,resstr;
 
@@ -186,9 +235,21 @@ public class ComWSFotos extends PBase {
 
             PropertyInfo param = new PropertyInfo();
             param.setType(String.class);
-            param.setName("idprod");
-            param.setValue(idprod);
+            param.setName("empresa");
+            param.setValue(gl.emp);
             request.addProperty(param);
+
+            PropertyInfo param2 = new PropertyInfo();
+            param2.setType(String.class);
+            param2.setName("idprod");
+            param2.setValue(idprod);
+            request.addProperty(param2);
+
+            PropertyInfo param3 = new PropertyInfo();
+            param3.setType(String.class);
+            param3.setName("valid");
+            param3.setValue(valid);
+            request.addProperty(param3);
 
             envelope.setOutputSoapObject(request);
 
@@ -206,10 +267,23 @@ public class ComWSFotos extends PBase {
 
                 int bs=imgbytes.length;
 
-                FileOutputStream fos = new FileOutputStream(rootdir+idprod+".jpg");
-                BufferedOutputStream outputStream = new BufferedOutputStream(fos);
-                outputStream.write(imgbytes);
-                outputStream.close();
+                if(valid==1){
+                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/RoadFotos/Producto/" + idprod + ".jpg");
+                    BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                    outputStream.write(imgbytes);
+                    outputStream.close();
+                }else if(valid==2){
+                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/RoadFotos/familia/" + idprod + ".jpg");
+                    BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                    outputStream.write(imgbytes);
+                    outputStream.close();
+                }else if(valid==3){
+                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idprod + ".jpg");
+                    BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                    outputStream.write(imgbytes);
+                    outputStream.close();
+                }
+
 
             } catch (Exception ee) {
                 sstr = ee.getMessage();return 0;
@@ -274,9 +348,29 @@ public class ComWSFotos extends PBase {
             for (int i = 0; i <reccnt; i++) {
 
                 ims=listItems.get(i);
-                if (guardaImagen(ims)==1) rec++;
+                if (guardaImagen(ims,1)==1) rec++;
 
                 fprog = "Procesando "+(i+1)+" / "+reccnt;
+                wsRtask.onProgressUpdate();
+            }
+
+
+            for (int i = 0; i <reccnt2; i++) {
+
+                ims=listItems2.get(i);
+                if (guardaImagen(ims,2)==1) rec++;
+
+                fprog = "Procesando "+(i+1)+" / "+reccnt2;
+                wsRtask.onProgressUpdate();
+            }
+
+
+            for (int i = 0; i <reccnt3; i++) {
+
+                ims=listItems3.get(i);
+                if (guardaImagen(ims,3)==1) rec++;
+
+                fprog = "Procesando "+(i+1)+" / "+reccnt3;
                 wsRtask.onProgressUpdate();
             }
 

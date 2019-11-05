@@ -127,12 +127,13 @@ public class CierreX extends PBase {
 
     @Override
     public void onBackPressed() {
-        if(report){
+        if(gl.reportid==5){
+            msgAskExit("Está seguro de salir");
+        }else if(report){
             msgAskExit("Está seguro de salir");
         }else {
             msgbox("No es posible salir sin generar el reporte antes");
         }
-
     }
 
     //endregion
@@ -748,7 +749,7 @@ public class CierreX extends PBase {
                             SumaCant=0;
 
                             rep.empty();
-                            rep.add("       REPORTE FACTURAS POR DIA");
+                            rep.add("     REPORTE DOCUMENTOS POR DIA");
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha));

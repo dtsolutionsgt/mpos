@@ -41,7 +41,7 @@ dependencies {
     implementation files('libs/ZSDK_ANDROID_API.jar')
     implementation files('libs/ePOS2.jar')
     implementation files('libs/libdpfr6.so')
-    implementation files('libs/dpuareu.jar')
+    //implementation files('libs/dpuareu.jar')
     //implementation files('libs/dpuareu.aar')
     implementation files('src/main/jniLibs/httpcore-4.4.10.jar')
     implementation files('src/main/jniLibs/httpclient-4.5.6.jar')

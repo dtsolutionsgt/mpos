@@ -8,10 +8,7 @@ import android.os.Environment;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import com.digitalpersona.uareu.Engine;
-import com.digitalpersona.uareu.Fmd;
-import com.digitalpersona.uareu.Reader;
-import com.digitalpersona.uareu.UareUGlobal;
+
 import com.dtsgt.classes.Globals;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -21,10 +18,10 @@ public class FingPTest extends PBase {
 
     private ImageView img1,img2;
 
-    private Reader m_reader = null;
+   /* private Reader m_reader = null;
     private Engine m_engine = null;
     private Fmd m_fmd = null;
-    private Reader.CaptureResult cap_result = null;
+    private Reader.CaptureResult cap_result = null;*/
     private int m_DPI = 0;
     private String m_deviceName = "$01$/dev/bus/usb/001/002";
 
@@ -172,7 +169,7 @@ public class FingPTest extends PBase {
 
     private boolean initializeReader() {
         try {
-            Globals.DefaultImageProcessing = Reader.ImageProcessing.IMG_PROC_DEFAULT;
+            /*Globals.DefaultImageProcessing = Reader.ImageProcessing.IMG_PROC_DEFAULT;
 
             //Context applContext = getApplicationContext();
             //m_reader = Globals.getInstance().getReader(m_deviceName, applContext);
@@ -180,7 +177,7 @@ public class FingPTest extends PBase {
             m_reader = Globals.getInstance().getReader(m_deviceName, this);
             m_reader.Open(Reader.Priority.COOPERATIVE);
             m_DPI = Globals.GetFirstDPI(m_reader);
-            m_engine = UareUGlobal.GetEngine();
+            m_engine = UareUGlobal.GetEngine();*/
             return true;
         } catch (Exception e) {
             m_deviceName = "";

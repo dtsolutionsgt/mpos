@@ -10,18 +10,18 @@ package com.dtsgt.classes;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import com.digitalpersona.uareu.Reader;
+/*import com.digitalpersona.uareu.Reader;
 import com.digitalpersona.uareu.Reader.Capabilities;
 import com.digitalpersona.uareu.ReaderCollection;
 import com.digitalpersona.uareu.UareUException;
-import com.digitalpersona.uareu.UareUGlobal;
+import com.digitalpersona.uareu.UareUGlobal;*/
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class Globals 
 {
-	public static Reader.ImageProcessing DefaultImageProcessing = Reader.ImageProcessing.IMG_PROC_DEFAULT;
+	/*public static Reader.ImageProcessing DefaultImageProcessing = Reader.ImageProcessing.IMG_PROC_DEFAULT;
 	//public static final Reader.ImageProcessing DefaultImageProcessing = Reader.ImageProcessing.IMG_PROC_PIV;
 
 	public Reader getReader(String name, Context applContext) throws UareUException
@@ -50,7 +50,7 @@ public class Globals
         return readers;
 	}
 
-	private ReaderCollection readers = null;
+	private ReaderCollection readers = null;*/
 	private static Globals instance;
 
 	static 
@@ -110,7 +110,7 @@ public class Globals
 		return bitmap;
 	}
 
-	public static final String QualityToString(Reader.CaptureResult result)
+	/*public static final String QualityToString(Reader.CaptureResult result)
 	{
 		if(result == null)
 		{
@@ -146,5 +146,5 @@ public class Globals
 	{
 		Capabilities caps = reader.GetCapabilities();
 		return caps.resolutions[0];
-	}
+	}*/
 }
