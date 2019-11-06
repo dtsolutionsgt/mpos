@@ -113,7 +113,7 @@
             android:layout_marginTop="16dp"
             android:onClick="camera"
             android:src="@drawable/camara"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/imageView43"
@@ -126,7 +126,7 @@
             android:layout_marginBottom="-3dp"
             android:layout_toEndOf="@+id/imageView42"
             android:src="@drawable/blank24"
-            android:visibility="invisible"
+            android:visibility="visible"
             tools:src="@drawable/erase" />
 
         <TextView
@@ -143,7 +143,7 @@
             android:text="Agregar Foto"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textSize="18sp"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <EditText
             android:id="@+id/txt1"

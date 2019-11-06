@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsCDB;
-import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.ladapt.ListAdaptCliList;
 import com.dtsgt.mant.MantCli;
 import java.io.BufferedReader;
@@ -192,6 +191,8 @@ public class Clientes extends PBase {
 						selidx = position;
 						adapter.setSelectedIndex(position);
 
+                        fotoCliente();
+
 						pedit = puedeeditarse();
 						pbor = puedeborrarse();
 
@@ -206,15 +207,6 @@ public class Clientes extends PBase {
 						}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 					}
 					return true;
-				}
-			});
-
-			listView.setOnTouchListener(new SwipeListener(this) {
-				public void onSwipeRight() {
-					finish();
-				}
-
-				public void onSwipeLeft() {
 				}
 			});
 
@@ -719,6 +711,37 @@ public class Clientes extends PBase {
             }
         } catch (Exception e) {
         }
+    }
+
+    private void fotoCliente() {
+	    String prodimg;
+        File file;
+
+        try {
+            prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selid + ".png";
+            file = new File(prodimg);
+            if (file.exists()) {
+                Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                imgAdd.setImageBitmap(bmImg);
+            } else {
+                prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selid + ".jpg";
+                file = new File(prodimg);
+                if (file.exists()) {
+                    Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                    imgAdd.setImageBitmap(bmImg);
+                } else {
+                    prodimg = Environment.getExternalStorageDirectory() + "/mposlogo.png";
+                    file = new File(prodimg);
+                    if (file.exists()) {
+                        Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                        imgAdd.setImageBitmap(bmImg);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+
     }
 
     private void listFPrints() {

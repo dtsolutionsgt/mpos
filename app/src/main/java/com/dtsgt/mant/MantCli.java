@@ -317,13 +317,22 @@ public class MantCli extends PBase {
     }
 
     public void showImage(){
+        String prodimg;
+        File file;
 
         try {
-            String prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg";
-            File file = new File(prodimg);
+            prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".png";
+            file = new File(prodimg);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
                 img1.setImageBitmap(bmImg);
+            } else {
+                prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg";
+                file = new File(prodimg);
+                if (file.exists()) {
+                    Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                    img1.setImageBitmap(bmImg);
+                }
             }
         } catch (Exception e) {
             msgbox(e.getMessage());

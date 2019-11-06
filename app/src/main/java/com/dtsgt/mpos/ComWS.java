@@ -2229,23 +2229,23 @@ public class ComWS extends PBase {
 				return true;
 			}
 
+			/*
 			sendFotoFamilia();
 			if (errflag){
-				dbld.savelog();
-				return true;
+				dbld.savelog();return true;
 			}
 
 			sendFotoProd();
 			if (errflag){
-				dbld.savelog();
-				return true;
+				dbld.savelog();return true;
 			}
 
 			sendFotoCli();
 			if (errflag){
-				dbld.savelog();
-				return true;
+				dbld.savelog();return true;
 			}
+			*/
+
 			/*
 			envioDepositos();
 			if (!fstr.equals("Sync OK")){

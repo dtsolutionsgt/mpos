@@ -393,12 +393,6 @@ public class MainActivity extends PBase {
         }
 
         try {
-            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Producto");
-            directory.mkdirs();
-        } catch (Exception e) {
-        }
-
-        try {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente");
             directory.mkdirs();
         } catch (Exception e) {

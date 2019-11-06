@@ -240,7 +240,9 @@
         android:layout_below="@+id/relativeLayout1"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@id/reladd" />
+        android:layout_toLeftOf="@id/reladd"
+        android:clickable="true"
+        android:longClickable="true" />
 
     <RelativeLayout
         android:id="@+id/reladd"

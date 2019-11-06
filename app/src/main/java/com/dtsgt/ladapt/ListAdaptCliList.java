@@ -88,7 +88,7 @@ public class ListAdaptCliList extends BaseAdapter {
 			holder.lblDate.setText(date);
 		}
 
-		if(items.get(position).Adds.isEmpty()) holder.lblTel.setText("No hay teléfono registrado");
+		if(items.get(position).Adds.isEmpty()) holder.lblTel.setText("");
 		if(!items.get(position).Adds.isEmpty()) holder.lblTel.setText("Tel: "+ items.get(position).Adds);
 
 		if(items.get(position).email.isEmpty()) holder.lblEmail.setText("");
