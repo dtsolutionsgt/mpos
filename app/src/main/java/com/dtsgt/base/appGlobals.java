@@ -31,10 +31,10 @@ public class appGlobals extends Application {
 	public boolean debug=true;
 
 	//Devolución Cliente
-	public String devtipo,devrazon,dvumventa,dvumstock,dvumpeso,dvlote;
+	public String devtipo,devrazon,dvumventa,dvumstock,dvumpeso,dvlote,scancliente;
 	public double dvfactor,dvpeso,dvprec,dvpreclista,dvtotal;
 	public int dvbrowse=0,tienelote,facturaVen,brw=0;
-    public boolean dvporpeso,devfindia,devprncierre,gpspass;
+    public boolean dvporpeso,devfindia,devprncierre,gpspass,climode;
     public double dvdispventa;
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
@@ -46,9 +46,7 @@ public class appGlobals extends Application {
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps;
     public boolean peMCent,peMPrOrdCos,peMImg,peMFact;
 
-	
 	// Descuentos
-	
 	public String promprod;
 	public double promcant,promdesc,prommdesc,descglob,descgtotal;
 	public int prommodo;

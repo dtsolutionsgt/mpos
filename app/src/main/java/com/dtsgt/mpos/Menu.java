@@ -1107,6 +1107,8 @@ public class Menu extends PBase {
 
 	public void showMantMenu() {
 
+	    gl.climode=false;
+
 	    gl.listaedit=true;
 
 		try{

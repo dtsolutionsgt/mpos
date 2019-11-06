@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.appGlobals;
@@ -72,6 +73,7 @@ public class LA_Lista extends BaseAdapter {
             holder.lbl2 = (TextView) convertView.findViewById(R.id.lblV2);
             holder.lbl3 = (TextView) convertView.findViewById(R.id.lblV3);
             holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
+            holder.img1 = (ImageView) convertView.findViewById(R.id.imageView48);
 
             convertView.setTag(holder);
         } else {
@@ -86,6 +88,12 @@ public class LA_Lista extends BaseAdapter {
             holder.lbl4.setVisibility(View.GONE);
         }
 
+        if(items.get(position).f8.isEmpty()) {
+            holder.img1.setVisibility(View.INVISIBLE);
+        } else {
+            holder.img1.setVisibility(View.VISIBLE);
+        }
+
         if (selectedIndex != -1 && position == selectedIndex) {
             convertView.setBackgroundColor(Color.rgb(26, 138, 198));
         } else {
@@ -97,6 +105,7 @@ public class LA_Lista extends BaseAdapter {
 
     static class ViewHolder {
         TextView lbl2, lbl3, lbl4;
+        ImageView img1;
     }
 
 }

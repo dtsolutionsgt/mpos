@@ -107,6 +107,7 @@ public class Venta extends PBase {
 
         gl.atentini=du.getActDateTime();
         gl.ateninistr=du.geActTimeStr();
+        gl.climode=true;
 
         app = new AppMethods(this, gl, Con, db);
 
@@ -129,6 +130,7 @@ public class Venta extends PBase {
         Runnable mrunner=new Runnable() {
             @Override
             public void run() {
+                gl.scancliente="";
                 browse=8;
                 startActivity(new Intent(Venta.this,Clientes.class));
             }
@@ -2094,6 +2096,7 @@ public class Venta extends PBase {
                     break;
                 case 52:
                     browse=8;
+                    gl.climode=false;
                     startActivity(new Intent(Venta.this,Clientes.class));
                     break;
                 case 53:
@@ -2123,8 +2126,6 @@ public class Venta extends PBase {
     private void borraTodo() {
         msgAskTodo("Borrar toda la venta");
     }
-
-
 
     private void msgAskTodo(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -2550,6 +2551,8 @@ public class Venta extends PBase {
         String ss;
         double lcred,cred,disp;
 
+        if (!gl.scancliente.isEmpty()) gl.cliente=gl.scancliente;
+        gl.scancliente="";
         if (gl.cliente.isEmpty()) {
             toast("Cliente pendiente");return;
         }
@@ -2558,7 +2561,6 @@ public class Venta extends PBase {
             sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
-
 
             gl.fnombre=DT.getString(0);
             gl.fnit=DT.getString(2);
@@ -2577,9 +2579,9 @@ public class Venta extends PBase {
             }
 
             gl.credito=disp;
-            if (disp>0) ss=" [ Credito : "+mu.frmcur(disp)+"  ] ";else ss="";
+            if (disp>0) ss=" [Cred: "+mu.frmcur(disp)+" ]";else ss="";
 
-            lblVend.setText(gl.cliente+" - "+DT.getString(0)+" "+ss);
+            lblVend.setText(DT.getString(0)+" "+ss);
         } catch (Exception e) {
             lblVend.setText("");
         }
@@ -2624,6 +2626,8 @@ public class Venta extends PBase {
         try{
             super.onResume();
 
+            gl.climode=true;
+
             try {
                 txtBarra.requestFocus();
             } catch (Exception e) {
@@ -2631,6 +2635,9 @@ public class Venta extends PBase {
 
             if (gl.iniciaVenta){
                 gl.iniciaVenta=false;
+
+                lblVend.setText(" ");
+
                 try {
                     db.execSQL("DELETE FROM T_VENTA");
                     listItems();
@@ -2648,6 +2655,10 @@ public class Venta extends PBase {
                     }
                 };
                 mtimer.postDelayed(mrunner,1000);
+            }
+
+            if (!gl.scancliente.isEmpty()) {
+                 cargaCliente();
             }
 
             if (browse==1) {
