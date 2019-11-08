@@ -51,8 +51,7 @@ public class DateUtils {
 			
 		return sh+":"+sm;
 	}
-	
-	
+
 	public String geActTimeStr(){
 		long f,ch,cm,cs;
 		String s,ss;
@@ -108,7 +107,6 @@ public class DateUtils {
 		return s;
 	}
 
-	//#CKFK 20190509 Modifiqué para quitale el 00 que le puso Henry
 	public String univfechasinhora(long f) {
 		int vy,vm,vd;
 		String s;
@@ -218,7 +216,7 @@ public class DateUtils {
 		return sd+"/"+sm+"/"+sy;
 	}
 
-	public long ffecha00(long f) {
+   public long ffecha00(long f) {
 		f=(long) f/10000;
 		f=f*10000;
 		return f;
@@ -230,7 +228,6 @@ public class DateUtils {
 		return f;
 	}
 
-	//#HS_20181121_1008 Funcion para fecha sin hora.
 	public long cfechaSinHora(int year,int month, int day) {
 		long c;
 		c=year % 100;
@@ -376,7 +373,6 @@ public class DateUtils {
 		return f;
 	}
 
-	//#HS_20181121_1008 Funcion para obtener la fecha sin hora.
 	public long getFechaActual(){
 		long f,fecha;
 		String fechaS;
@@ -487,5 +483,35 @@ public class DateUtils {
 
 		return s;
 	}
-	
+
+	//region Fecha larga
+
+    public long fechalarga(int year,int month, int day) {
+        long c;
+
+        c=year % 10000;
+        c=c*10000+month*100+day;
+        return c;
+    }
+
+    public String sfechaLarga(long f) {
+        long vy,vm,vd;
+        String sy,sm,sd;
+
+        if (f==0) return "--/--/--";
+
+        vy=(long) f/10000;
+        f=f % 10000;
+        vm=(long) f/100;
+        vd=f % 100;
+
+        sy=""+vy;
+        if (vm>9) sm=""+vm; else sm="0"+vm;
+        if (vd>9) sd=""+vd; else sd="0"+vd;
+
+        return sd+"/"+sm+"/"+sy;
+    }
+
+
+    //endregion
 }

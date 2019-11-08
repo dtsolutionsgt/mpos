@@ -187,12 +187,15 @@ public class Clientes extends PBase {
 						Object lvObj = listView.getItemAtPosition(position);
 						clsClasses.clsCDB item = (clsClasses.clsCDB) lvObj;
 
-						selid = item.Cod;
+						selid = item.Cod; gl.cliente=selid;
 						selidx = position;
 						adapter.setSelectedIndex(position);
 
-                        fotoCliente();
+                        //fotoCliente();
 
+                        showEditMenu();
+
+                        /*
 						pedit = puedeeditarse();
 						pbor = puedeborrarse();
 
@@ -202,6 +205,8 @@ public class Clientes extends PBase {
 							if (pbor) msgAskBor("Eliminar cliente nuevo");
 							if (pedit) msgAskEdit("Cambiar datos de cliente nuevo");
 						}
+
+                         */
 					} catch (Exception e) {
 						addlog(new Object() {
 						}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -426,7 +431,9 @@ public class Clientes extends PBase {
 	}
 
 	private void fprintClient() {
+        Cursor dt;
         String sbuff = "",ss = "";
+        boolean flag=false;
 
         try {
 
@@ -447,9 +454,27 @@ public class Clientes extends PBase {
             file.delete();
 
             if (!sbuff.isEmpty()) {
-                gl.cliente=sbuff;
-                gl.scancliente=sbuff;
-                finish();
+
+                try {
+                    sql="SELECT BLOQUEADO FROM P_CLIENTE WHERE CODIGO='"+sbuff+"'";
+                    dt=Con.OpenDT(sql);
+
+                    if (dt.getCount()>0) {
+                        dt.moveToFirst();
+                        String blq=dt.getString(0);
+                        if (blq.equalsIgnoreCase("N")) flag=true;
+                    }
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+
+                if (flag) {
+                    gl.cliente=sbuff;
+                    gl.scancliente=sbuff;
+                    finish();
+                } else {
+                    msgbox("¡NO SE PUEDE VENDER A ESTE CLIENTE!");
+                }
             }
         } catch (Exception e) {
         }
@@ -553,6 +578,45 @@ public class Clientes extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
+
+    }
+
+    private void showEditMenu() {
+        try{
+            final AlertDialog Dialog;
+            final String[] selitems = {"Cambiar datos","Ver foto"};
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Cliente");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    switch (item) {
+                        case 0:
+                            gl.gcods=gl.cliente;
+                            browse=2;
+                            startActivity(new Intent(Clientes.this, MantCli.class));
+                            break;
+                        case 1:
+                            fotoCliente();break;
+                    }
+
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
 
     }
 
@@ -783,6 +847,12 @@ public class Clientes extends PBase {
                     gl.cliente=gl.gcods;
                     finish();
                 }
+                return;
+            }
+
+            if (browse==2) {
+                browse=0;
+                listItems();
                 return;
             }
 

@@ -135,7 +135,7 @@ public class Venta extends PBase {
                 startActivity(new Intent(Venta.this,Clientes.class));
             }
         };
-        mtimer.postDelayed(mrunner,1000);
+        mtimer.postDelayed(mrunner,100);
     }
 
     //region Events
@@ -1853,9 +1853,11 @@ public class Venta extends PBase {
                 item.ID=3;item.Name="Reimpresión";item.Icon=3;
                 mitems.add(item);
 
-                item = clsCls.new clsMenu();
-                item.ID=4;item.Name="Anulación";item.Icon=4;
-                mitems.add(item);
+                if (gl.rol>1) {
+                    item = clsCls.new clsMenu();
+                    item.ID=4;item.Name="Anulación";item.Icon=4;
+                    mitems.add(item);
+                }
 
                 item = clsCls.new clsMenu();
                 item.ID=14;item.Name="Actualizar";item.Icon=14;
@@ -2152,7 +2154,6 @@ public class Venta extends PBase {
         dialog.show();
 
     }
-
 
     //endregion
 
@@ -2654,7 +2655,7 @@ public class Venta extends PBase {
                         startActivity(new Intent(Venta.this,Clientes.class));
                     }
                 };
-                mtimer.postDelayed(mrunner,1000);
+                mtimer.postDelayed(mrunner,100);
             }
 
             if (!gl.scancliente.isEmpty()) {

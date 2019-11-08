@@ -81,12 +81,7 @@ public class ListAdaptCliList extends BaseAdapter {
 		holder.lblCod.setText("Cod: "+items.get(position).Cod);
 		holder.lblNit.setText("NIT: "+items.get(position).nit);
 		holder.lblDesc.setText(items.get(position).Desc);
-		if(items.get(position).Date<=10000000) holder.lblDate.setText("");
-
-		if(items.get(position).Date>=10000000) {
-			date = du.univfechaReport(items.get(position).Date);
-			holder.lblDate.setText(date);
-		}
+		holder.lblDate.setText(du.sfechaLarga(items.get(position).Date));
 
 		if(items.get(position).Adds.isEmpty()) holder.lblTel.setText("");
 		if(!items.get(position).Adds.isEmpty()) holder.lblTel.setText("Tel: "+ items.get(position).Adds);

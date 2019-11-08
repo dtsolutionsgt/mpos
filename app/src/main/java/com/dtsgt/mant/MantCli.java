@@ -54,7 +54,7 @@ public class MantCli extends PBase {
     final int dia = c.get(Calendar.DAY_OF_MONTH);
     final int anio = c.get(Calendar.YEAR);
     public int cyear, cmonth, cday;
-    private long date=0;
+    private long fechalarga=0;
 
     private String id, CERO="0";
     private boolean newitem=false;
@@ -153,6 +153,10 @@ public class MantCli extends PBase {
 
     public void doEnroll(View view) {
 
+        if (newitem) {
+            toast("Primero debe guardar cliente");return;
+        }
+
         try {
             File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_erl.txt");
             if (file.exists()) file.delete();
@@ -210,8 +214,8 @@ public class MantCli extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo=" ";
-        item.nombre=" ";
+        item.codigo="";
+        item.nombre="";
         item.bloqueado ="N";
         item.tiponeg = "1";
         item.tipo = "1";
@@ -288,6 +292,10 @@ public class MantCli extends PBase {
     }
 
     public void camera(View view){
+        if (newitem) {
+            toast("Primero debe guardar cliente");return;
+        }
+
         try{
             if (!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
                 msgbox("El dispositivo no soporta toma de foto");return;
@@ -344,7 +352,9 @@ public class MantCli extends PBase {
         try {
             holder.add(item);
             gl.gcods=""+item.codigo;
-            finish();
+            id=item.codigo;
+            //finish();
+            newitem=false;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -383,14 +393,14 @@ public class MantCli extends PBase {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                     final int mesActual = month + 1;
-                    String diaFormateado = (dayOfMonth < 10)? CERO + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
-                    String mesFormateado = (mesActual < 10)? CERO + String.valueOf(mesActual):String.valueOf(mesActual);
-                    lblDateCli.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+
                     cyear = year;
-                    cmonth = Integer.parseInt(mesFormateado);
-                    cday = Integer.parseInt(diaFormateado);
-                    date = du.cfechaDesc(cyear, cmonth, cday);
+                    cmonth = mesActual;
+                    cday = dayOfMonth;
+                    fechalarga = du.fechalarga(cyear, cmonth, cday);
+                    lblDateCli.setText(du.sfechaLarga(fechalarga));
                 }
+
             },anio, mes, dia);
 
             recogerFecha.show();
@@ -401,7 +411,6 @@ public class MantCli extends PBase {
     }
 
     private void showItem() {
-        String dateShow;
 
         txt1.setText(item.nit);
         txt2.setText(item.nombre);
@@ -409,9 +418,8 @@ public class MantCli extends PBase {
         txt4.setText(mu.frmint2((int) item.limitecredito));
         txt5.setText(item.email);
         txt6.setText(item.telefono);
-        dateShow = du.univfechaReport(item.ultvisita);
-        lblDateCli.setText(dateShow);
-        date = item.ultvisita;
+        fechalarga = item.ultvisita;
+        lblDateCli.setText(du.sfechaLarga(fechalarga));
 
         muestraHuella();
     }
@@ -422,7 +430,7 @@ public class MantCli extends PBase {
 
         try {
 
-            ss = txt1.getText().toString();
+            ss = txt1.getText().toString();ss=ss.trim();
             if (ss.isEmpty()) {
                 msgbox("¡Falta definir NIT!");
                 return false;
@@ -435,6 +443,7 @@ public class MantCli extends PBase {
                     return false;
                 }
             }else {
+                /*
                 if(!item.codigo.equals(ss)){
                     holder.fill("WHERE NIT='" + ss + "'");
                     if(holder.count>0){
@@ -442,11 +451,10 @@ public class MantCli extends PBase {
                         return false;
                     }
                 }
-
+                */
             }
 
-
-            item.nit = txt1.getText().toString();
+            item.nit = ss;
             if (newitem) item.codigo = item.nit;
 
             ss = txt2.getText().toString();
@@ -489,10 +497,7 @@ public class MantCli extends PBase {
                 msgbox("Error al ingresar teléfono: "+e);return false;
             }
 
-            if(date!=0){
-                item.ultvisita= date;
-                date=0;
-            }
+            item.ultvisita= fechalarga;
 
             return true;
         } catch (Exception e) {
@@ -601,7 +606,7 @@ public class MantCli extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 addItem();
-                finish();
+                //finish();
             }
         });
 
