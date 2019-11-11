@@ -81,14 +81,9 @@ public class ListAdaptCliList extends BaseAdapter {
 		holder.lblCod.setText("Cod: "+items.get(position).Cod);
 		holder.lblNit.setText("NIT: "+items.get(position).nit);
 		holder.lblDesc.setText(items.get(position).Desc);
-		if(items.get(position).Date<=10000000) holder.lblDate.setText("");
+		holder.lblDate.setText(du.sfechaLarga(items.get(position).Date));
 
-		if(items.get(position).Date>=10000000) {
-			date = du.univfechaReport(items.get(position).Date);
-			holder.lblDate.setText(date);
-		}
-
-		if(items.get(position).Adds.isEmpty()) holder.lblTel.setText("No hay teléfono registrado");
+		if(items.get(position).Adds.isEmpty()) holder.lblTel.setText("");
 		if(!items.get(position).Adds.isEmpty()) holder.lblTel.setText("Tel: "+ items.get(position).Adds);
 
 		if(items.get(position).email.isEmpty()) holder.lblEmail.setText("");
@@ -98,9 +93,8 @@ public class ListAdaptCliList extends BaseAdapter {
 		cobro= items.get(position).Cobro;
 		ppago= items.get(position).ppend;
 
-		iconid=R.drawable.blank24;
-		//if (val>0) iconid=R.drawable.disable24;
-		//if (val==0) iconid=R.drawable.icok24;
+		iconid=R.drawable.fpicon;
+		if (val==0) iconid=R.drawable.blank48;
 		holder.imgBand.setImageResource(iconid);
 
 		if (cobro==1) holder.imgCobro.setImageResource(R.drawable.cobro48);else holder.imgCobro.setImageResource(R.drawable.blank24);

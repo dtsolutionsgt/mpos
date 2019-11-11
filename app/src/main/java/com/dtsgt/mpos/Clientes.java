@@ -1,20 +1,14 @@
 package com.dtsgt.mpos;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -24,7 +18,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,20 +25,17 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsCDB;
-import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.ladapt.ListAdaptCliList;
 import com.dtsgt.mant.MantCli;
-
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
 
 public class Clientes extends PBase {
 
@@ -59,6 +49,7 @@ public class Clientes extends PBase {
 	private ArrayList<clsCDB> items = new ArrayList<clsCDB>();
 	private ArrayList<String> cobros = new ArrayList<String>();
 	private ArrayList<String> ppago = new ArrayList<String>();
+    private ArrayList<String> fprints = new ArrayList<String>();
 
 	private AlertDialog.Builder mMenuDlg;
 
@@ -69,6 +60,9 @@ public class Clientes extends PBase {
 	private int selidx, fecha, dweek, browse;
 	private String selid, bbstr, bcode;
 	private boolean scanning = false,porcentaje;
+
+    final int REQUEST_CODE=101;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +101,7 @@ public class Clientes extends PBase {
 
 		gl.escaneo = "N";
 
+        if (gl.climode) callFPScan(null);
 	}
 
 	@Override
@@ -118,8 +113,7 @@ public class Clientes extends PBase {
 		return super.dispatchKeyEvent(e);
 	}
 
-
-	// Events
+	//region Events
 
 	public void applyFilter(View view) {
 		try {
@@ -130,7 +124,6 @@ public class Clientes extends PBase {
 			addlog(new Object() {
 			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 		}
-
 	}
 
 	public void CliNuevo(View view) {
@@ -145,6 +138,23 @@ public class Clientes extends PBase {
 		}
 
 	}
+
+	public void callFPScan(View view) {
+        try {
+            File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_idf.txt");
+            if (file.exists()) file.delete();
+        } catch (Exception e) {}
+
+        try {
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.uubio.uusample");
+            intent.putExtra("method","2");
+
+            browse=2;
+            startActivity(intent);
+        } catch (Exception e) {
+            //msgbox(e.getMessage());
+        }
+    }
 
 	private void setHandlers() {
 
@@ -163,6 +173,7 @@ public class Clientes extends PBase {
 					adapter.setSelectedIndex(position);
 
 					gl.cliente=sitem.Cod;
+					gl.scancliente=sitem.Cod;
                     finish();
 
 				};
@@ -176,10 +187,15 @@ public class Clientes extends PBase {
 						Object lvObj = listView.getItemAtPosition(position);
 						clsClasses.clsCDB item = (clsClasses.clsCDB) lvObj;
 
-						selid = item.Cod;
+						selid = item.Cod; gl.cliente=selid;
 						selidx = position;
 						adapter.setSelectedIndex(position);
 
+                        //fotoCliente();
+
+                        showEditMenu();
+
+                        /*
 						pedit = puedeeditarse();
 						pbor = puedeborrarse();
 
@@ -189,20 +205,13 @@ public class Clientes extends PBase {
 							if (pbor) msgAskBor("Eliminar cliente nuevo");
 							if (pedit) msgAskEdit("Cambiar datos de cliente nuevo");
 						}
+
+                         */
 					} catch (Exception e) {
 						addlog(new Object() {
 						}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 					}
 					return true;
-				}
-			});
-
-			listView.setOnTouchListener(new SwipeListener(this) {
-				public void onSwipeRight() {
-					finish();
-				}
-
-				public void onSwipeLeft() {
 				}
 			});
 
@@ -277,8 +286,9 @@ public class Clientes extends PBase {
 
 	}
 
+    //endregion
 
-	// Main
+	//region Main
 
 	public void listItems() {
 		Cursor DT;
@@ -288,6 +298,7 @@ public class Clientes extends PBase {
         boolean act=!swact.isChecked();
 
 		items.clear();
+        listFPrints();
 
 		selidx = -1;
 		vP = 0;
@@ -320,7 +331,7 @@ public class Clientes extends PBase {
 					vItem.Cod = DT.getString(0);
 					ss = DT.getString(0);
 					vItem.Desc = DT.getString(1);
-					vItem.Bandera = DT.getInt(2);
+					if (fprints.contains(ss)) vItem.Bandera = 1;else vItem.Bandera = 0;
 					vItem.coorx = DT.getDouble(3);
 					vItem.coory = DT.getDouble(4);
 
@@ -354,8 +365,8 @@ public class Clientes extends PBase {
 			}
 
 		} catch (Exception e) {
-			addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-			mu.msgbox(e.getMessage());
+			//addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+			//mu.msgbox(e.getMessage());
 		}
 
 		adapter = new ListAdaptCliList(this, items);
@@ -419,8 +430,59 @@ public class Clientes extends PBase {
 		}
 	}
 
+	private void fprintClient() {
+        Cursor dt;
+        String sbuff = "",ss = "";
+        boolean flag=false;
 
-	// Aux
+        try {
+
+            gl.scancliente="";
+
+            File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_idf.txt");
+            if (!file.exists()) {
+                listItems();
+                return;
+            }
+
+            FileInputStream fIn = new FileInputStream(file);
+            BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+            while ((ss = myReader.readLine()) != null) {
+                sbuff+=ss;
+            }
+            myReader.close();
+            file.delete();
+
+            if (!sbuff.isEmpty()) {
+
+                try {
+                    sql="SELECT BLOQUEADO FROM P_CLIENTE WHERE CODIGO='"+sbuff+"'";
+                    dt=Con.OpenDT(sql);
+
+                    if (dt.getCount()>0) {
+                        dt.moveToFirst();
+                        String blq=dt.getString(0);
+                        if (blq.equalsIgnoreCase("N")) flag=true;
+                    }
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+
+                if (flag) {
+                    gl.cliente=sbuff;
+                    gl.scancliente=sbuff;
+                    finish();
+                } else {
+                    msgbox("¡NO SE PUEDE VENDER A ESTE CLIENTE!");
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    //endregion
+
+	//region Aux
 
 	private boolean validaVenta() {
 		Cursor DT;
@@ -516,6 +578,45 @@ public class Clientes extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
+
+    }
+
+    private void showEditMenu() {
+        try{
+            final AlertDialog Dialog;
+            final String[] selitems = {"Cambiar datos","Ver foto"};
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Cliente");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    switch (item) {
+                        case 0:
+                            gl.gcods=gl.cliente;
+                            browse=2;
+                            startActivity(new Intent(Clientes.this, MantCli.class));
+                            break;
+                        case 1:
+                            fotoCliente();break;
+                    }
+
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
 
     }
 
@@ -676,7 +777,64 @@ public class Clientes extends PBase {
         }
     }
 
-	// Activity Events
+    private void fotoCliente() {
+	    String prodimg;
+        File file;
+
+        try {
+            prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selid + ".png";
+            file = new File(prodimg);
+            if (file.exists()) {
+                Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                imgAdd.setImageBitmap(bmImg);
+            } else {
+                prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selid + ".jpg";
+                file = new File(prodimg);
+                if (file.exists()) {
+                    Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                    imgAdd.setImageBitmap(bmImg);
+                } else {
+                    prodimg = Environment.getExternalStorageDirectory() + "/mposlogo.png";
+                    file = new File(prodimg);
+                    if (file.exists()) {
+                        Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                        imgAdd.setImageBitmap(bmImg);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+
+    }
+
+    private void listFPrints() {
+        Cursor dt;
+        String ss;
+
+        try {
+            fprints.clear();
+
+            sql="SELECT DISTINCT CODIGO FROM FPrint";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+                    fprints.add(dt.getString(0));
+                    dt.moveToNext();
+                }
+            }
+
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    //endregion
+
+	//region Activity Events
 	
 	protected void onResume() {
 		try{
@@ -692,10 +850,19 @@ public class Clientes extends PBase {
                 return;
             }
 
-		}catch (Exception e){
+            if (browse==2) {
+                browse=0;
+                listItems();
+                return;
+            }
+
+            fprintClient();
+
+        }catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
+
+	//endregion
 
 }

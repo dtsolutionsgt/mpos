@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;

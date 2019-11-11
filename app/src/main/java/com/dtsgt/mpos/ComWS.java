@@ -310,21 +310,7 @@ public class ComWS extends PBase {
                 return;
             }
 
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Actualización");
-            dialog.setMessage("¿Actualizar catalogos?");
-
-            dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    sendmode=1;
-                    runSend();
-                }
-            });
-
-            dialog.setNegativeButton("Cancelar", null);
-
-            dialog.show();
+            msgAskActualiza();
 
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2229,23 +2215,23 @@ public class ComWS extends PBase {
 				return true;
 			}
 
+			/*
 			sendFotoFamilia();
 			if (errflag){
-				dbld.savelog();
-				return true;
+				dbld.savelog();return true;
 			}
 
 			sendFotoProd();
 			if (errflag){
-				dbld.savelog();
-				return true;
+				dbld.savelog();return true;
 			}
 
 			sendFotoCli();
 			if (errflag){
-				dbld.savelog();
-				return true;
+				dbld.savelog();return true;
 			}
+			*/
+
 			/*
 			envioDepositos();
 			if (!fstr.equals("Sync OK")){
@@ -4216,7 +4202,7 @@ public class ComWS extends PBase {
 		try{
             if (scon==0) {
                 lblInfo.setText(fstr);writeErrLog(fstr);
-                mu.msgbox(fstr);
+                msgFinEnvio(fstr);
 				lblInfo.setText(fstr);
 				isbusy = 0;
 				barInfo.setVisibility(View.INVISIBLE);
@@ -4226,18 +4212,18 @@ public class ComWS extends PBase {
 
 			if (!errflag) {
 				lblInfo.setText(" ");
-				msgResultEnvio(senv);
+                msgFinEnvio(senv);
 			} else {
 
                 if (sendmode==0) {
                     lblInfo.setText(fterr);
                     barInfo.setVisibility(View.INVISIBLE);
-                    mu.msgbox("Ocurrió error : \n" + fterr );
+                    msgFinEnvio("Ocurrió error : \n" + fterr );
                     addlog("Envío", fterr, esql);
                 } else {
                     lblInfo.setText("Error de actualización");
                     barInfo.setVisibility(View.INVISIBLE);
-                    mu.msgbox("Ocurrió error : \n"+acterr+"\n" +fstr );
+                    msgFinEnvio("Ocurrió error : \n"+acterr+"\n" +fstr );
                     addlog("Actualizacion", acterr, fstr);
                 }
 			}
@@ -4247,10 +4233,9 @@ public class ComWS extends PBase {
 
 			isbusy=0;
 
-		}catch (Exception e){
+        }catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 
 	}
 			
@@ -4970,7 +4955,6 @@ public class ComWS extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
-
     }
 
     private void msgAskExit(String msg) {
@@ -5072,6 +5056,46 @@ public class ComWS extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
+    }
+
+    private void msgFinEnvio(String msg){
+
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle("Envío");
+            dialog.setMessage(msg);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    msgAskActualiza();
+                }
+            });
+
+            dialog.show();
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+    private void msgAskActualiza() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Actualización");
+        dialog.setMessage("¿Actualizar catalogos?");
+
+        dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                sendmode=1;
+                runSend();
+            }
+        });
+
+        dialog.setNegativeButton("Cancelar", null);
+
+        dialog.show();
 
     }
 

@@ -89,6 +89,21 @@
         android:background="@layout/frame_rect">
 
         <ImageView
+            android:id="@+id/imageView51"
+            android:layout_width="96dp"
+            android:layout_height="36dp"
+            android:layout_alignTop="@+id/txt11"
+            android:layout_alignBottom="@+id/lblDateCli"
+            android:layout_marginTop="-3dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="3dp"
+            android:layout_toStartOf="@+id/imageView49"
+            android:alpha="0.5"
+            android:clickable="true"
+            android:onClick="doCancelFPrint"
+            android:src="@drawable/fprint_del" />
+
+        <ImageView
             android:id="@+id/imageView42"
             android:layout_width="130dp"
             android:layout_height="62dp"
@@ -97,7 +112,8 @@
             android:layout_marginStart="44dp"
             android:layout_marginTop="16dp"
             android:onClick="camera"
-            android:src="@drawable/camara" />
+            android:src="@drawable/camara"
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/imageView43"
@@ -110,6 +126,7 @@
             android:layout_marginBottom="-3dp"
             android:layout_toEndOf="@+id/imageView42"
             android:src="@drawable/blank24"
+            android:visibility="visible"
             tools:src="@drawable/erase" />
 
         <TextView
@@ -417,7 +434,7 @@
             android:visibility="invisible" />
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/imageView49"
             android:layout_width="96dp"
             android:layout_height="36dp"
             android:layout_alignTop="@+id/txt11"
@@ -429,6 +446,46 @@
             android:clickable="true"
             android:onClick="doEnroll"
             android:src="@drawable/fplogo_gr" />
+
+        <ImageView
+            android:id="@+id/imageView50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="27dp"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/fpicon" />
+
+        <TextView
+            android:id="@+id/textView146"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView49"
+            android:layout_alignStart="@+id/imageView49"
+            android:layout_alignEnd="@+id/imageView49"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:gravity="center_horizontal"
+            android:text="Enrollar huella"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textView147"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView51"
+            android:layout_alignStart="@+id/imageView51"
+            android:layout_alignEnd="@+id/imageView51"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:gravity="center_horizontal"
+            android:text="Borrar huella"
+            android:textSize="12sp" />
 
     </RelativeLayout>
 

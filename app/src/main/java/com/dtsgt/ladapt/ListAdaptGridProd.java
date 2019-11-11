@@ -55,6 +55,7 @@ public class ListAdaptGridProd extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
 		int iconid;
+        File file;
 
 		if (convertView == null) {
 			convertView = l_Inflater.inflate(R.layout.activity_list_view_gridventa, null);
@@ -73,10 +74,17 @@ public class ListAdaptGridProd extends BaseAdapter {
 
         try {
             String prodimg = imgpath+items.get(position).Cod+".png";
-            File file = new File(prodimg);
+            file = new File(prodimg);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
                 holder.imgEst.setImageBitmap(bmImg);
+            } else {
+                prodimg = imgpath+items.get(position).Cod+".jpg";
+                file = new File(prodimg);
+                if (file.exists()) {
+                    Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                    holder.imgEst.setImageBitmap(bmImg);
+                }
             }
         } catch (Exception e) {
             holder.imgEst.setImageResource(R.drawable.blank256);

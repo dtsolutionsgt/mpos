@@ -1,6 +1,7 @@
 package com.dtsgt.mant;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +21,8 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class Lista extends PBase {
 
     private ListView listView;
@@ -31,6 +34,8 @@ public class Lista extends PBase {
     private LA_Lista adapter;
     private listAdapt_desc adapt;
     private clsListaObj ViewObj;
+
+    private ArrayList<String> fprints = new ArrayList<String>();
 
     private boolean listaedit;
 
@@ -152,9 +157,15 @@ public class Lista extends PBase {
             mu.msgbox(e.getMessage());
         }
 
+        if (gl.mantid==2) listFPrints();
+
         for (int i = 0; i <ViewObj.count; i++) {
             ss=ViewObj.items.get(i).f1;
             if (ss.equalsIgnoreCase(gl.gcods)) selidx=i;
+
+            if (gl.mantid==2) {
+                if (fprints.contains(ss)) ViewObj.items.get(i).f8="X";
+            }
         }
 
         if (selidx>-1) {
@@ -415,6 +426,30 @@ public class Lista extends PBase {
             case 20:
                 startActivity(new Intent(this, MantCorelPagos.class));break;
         }
+    }
+
+    private void listFPrints() {
+        Cursor dt;
+        String ss;
+
+        try {
+            fprints.clear();
+
+            sql="SELECT DISTINCT CODIGO FROM FPrint";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+                    fprints.add(dt.getString(0));
+                    dt.moveToNext();
+                }
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     //endregion

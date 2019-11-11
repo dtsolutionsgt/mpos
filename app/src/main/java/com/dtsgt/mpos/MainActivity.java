@@ -60,7 +60,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult,usr, pwd;
 
-    private String parVer = "2.1.1 / 28-Ago-2019";
+    private String parVer = "2.3.1 / 08-Nov-2019";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -388,12 +388,6 @@ public class MainActivity extends PBase {
 
         try {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia");
-            directory.mkdirs();
-        } catch (Exception e) {
-        }
-
-        try {
-            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Producto");
             directory.mkdirs();
         } catch (Exception e) {
         }
