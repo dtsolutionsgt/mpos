@@ -184,7 +184,7 @@ public class ComWS extends PBase {
         txtUser = new EditText(this,null);
         txtPassword = new EditText(this,null);
 
-		txtVersion.setText("11-Nov-2019");
+		txtVersion.setText("12-Nov-2019");
 
 		this.setTitle("Comunicación");
 
@@ -290,6 +290,8 @@ public class ComWS extends PBase {
 				public void onClick(DialogInterface dialog, int which) {
                     sendmode=0;
 					runSend();
+
+					msgAskActualiza();
 				}
 			});
 
@@ -4192,7 +4194,7 @@ public class ComWS extends PBase {
 	}
 			
 	public void wsSendFinished(){
-				
+
 		barInfo.setVisibility(View.INVISIBLE);
 		lblParam.setVisibility(View.INVISIBLE);
 		running=0;
@@ -5068,7 +5070,6 @@ public class ComWS extends PBase {
 
             dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    msgAskActualiza();
                 }
             });
 
