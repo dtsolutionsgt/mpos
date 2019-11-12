@@ -172,7 +172,7 @@ public class Reimpresion extends PBase {
 			lblTipo.setText("Deposito");break;
 		case 3:  
 			fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
-			lblTipo.setText("Factura");break;
+			lblTipo.setText((gl.peMFact?"Factura":"Ticket"));break;
 		case 4:  
 			mdoc=new clsDocMov(this,prn.prw,"Recarga",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
 			lblTipo.setText("Recarga");break;
@@ -524,7 +524,14 @@ public class Reimpresion extends PBase {
 		try {
             if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 app.doPrint();
-            }
+
+				try {
+					sql="UPDATE D_FACTURA SET IMPRES=2 WHERE COREL='"+itemid+"'";
+					db.execSQL(sql);
+				} catch (Exception e) {
+				}
+
+			}
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox(e.getMessage());

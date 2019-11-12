@@ -43,7 +43,7 @@ public class MantCli extends PBase {
 
     private ImageView imgstat,imgfprint;
     private TextView lblDateCli,lblfprint;
-    private EditText txt1,txt2,txt3,txt4,txt5,txt6;
+    private EditText txt1,txt2,txt3,txt4,txt5,txt6,txtCodCliente;
 
     private clsP_clienteObj holder;
     private clsClasses.clsP_cliente item=clsCls.new clsP_cliente();
@@ -78,12 +78,15 @@ public class MantCli extends PBase {
         txt4 = (EditText) findViewById(R.id.txt8);
         txt5 = (EditText) findViewById(R.id.txt9);
         txt6= (EditText) findViewById(R.id.txt11);
+        txtCodCliente= (EditText) findViewById(R.id.txtCodCliente);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgfprint= (ImageView) findViewById(R.id.imageView51);
         lblDateCli = (TextView) findViewById(R.id.lblDateCli);
         lblfprint= (TextView) findViewById(R.id.textView147);
         img1 = (ImageView) findViewById(R.id.imageView43);
         img2 = (ImageView) findViewById(R.id.imageView50);
+
+        txtCodCliente.setEnabled(false);
 
         holder =new clsP_clienteObj(this,Con,db);
 
@@ -420,6 +423,7 @@ public class MantCli extends PBase {
         txt6.setText(item.telefono);
         fechalarga = item.ultvisita;
         lblDateCli.setText(du.sfechaLarga(fechalarga));
+        txtCodCliente.setText(item.codigo);
 
         muestraHuella();
     }

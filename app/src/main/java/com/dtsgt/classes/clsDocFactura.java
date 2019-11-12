@@ -81,9 +81,17 @@ public class clsDocFactura extends clsDocument {
 				}
 
 				if (cantimpres>0){
-					nombre = "COPIA DE FACTURA";
+					if (facturaflag) {
+						nombre = "COPIA DE FACTURA";
+					}else {
+						nombre = "COPIA DE TICKET";
+					}
 				}else if (cantimpres==-1){
-					nombre = "FACTURA ANULADA";
+					if (facturaflag) {
+						nombre = "FACTURA ANULADA";
+					}else {
+						nombre = "TICKET ANULADO";
+					}
 				}else if (cantimpres==-2){
 					nombre = "FACTURA PENDIENTE DE PAGO";
 				}else if (cantimpres==0){

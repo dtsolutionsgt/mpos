@@ -78,7 +78,7 @@ public class Anulacion extends PBase {
 		if (tipo==0) lblTipo.setText("Pedido");
 		if (tipo==1) lblTipo.setText("Recibo");
 		if (tipo==2) lblTipo.setText("Depósito");
-		if (tipo==3) lblTipo.setText("Factura");
+		if (tipo==3) lblTipo.setText((gl.peMFact?"Factura":"Ticket"));
 		if (tipo==4) lblTipo.setText("Recarga");
 		if (tipo==5) lblTipo.setText("Devolución a bodega");
 		if (tipo==6) lblTipo.setText("Nota de crédito");

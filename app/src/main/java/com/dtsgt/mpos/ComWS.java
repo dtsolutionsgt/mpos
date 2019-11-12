@@ -184,7 +184,7 @@ public class ComWS extends PBase {
         txtUser = new EditText(this,null);
         txtPassword = new EditText(this,null);
 
-		txtVersion.setText("14-Junio-2019");
+		txtVersion.setText("11-Nov-2019");
 
 		this.setTitle("Comunicación");
 

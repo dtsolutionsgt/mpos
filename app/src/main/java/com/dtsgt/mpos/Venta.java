@@ -1944,7 +1944,7 @@ public class Venta extends PBase {
         try {
             final AlertDialog Dialog;
             //final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
-            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
 
             AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
             menudlg.setIcon(R.drawable.reimpresion48);
@@ -2002,7 +2002,7 @@ public class Venta extends PBase {
     public void showVoidMenuTodo() {
         try{
             final AlertDialog Dialog;
-            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
 
 
             AlertDialog.Builder menudlg = new AlertDialog.Builder(this);

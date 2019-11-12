@@ -88,6 +88,23 @@
         android:layout_marginBottom="5dp"
         android:background="@layout/frame_rect">
 
+        <TextView
+            android:id="@+id/txtCodigo"
+            android:layout_width="150dp"
+            android:layout_height="49dp"
+            android:layout_below="@+id/imageView42"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="-456dp"
+            android:layout_marginLeft="29dp"
+            android:layout_marginTop="33dp"
+            android:layout_toEndOf="@+id/txt1"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Código :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF" />
+
         <ImageView
             android:id="@+id/imageView51"
             android:layout_width="96dp"
@@ -95,7 +112,7 @@
             android:layout_alignTop="@+id/txt11"
             android:layout_alignBottom="@+id/lblDateCli"
             android:layout_marginTop="-3dp"
-            android:layout_marginEnd="50dp"
+            android:layout_marginEnd="13dp"
             android:layout_marginBottom="3dp"
             android:layout_toStartOf="@+id/imageView49"
             android:alpha="0.5"
@@ -147,12 +164,11 @@
 
         <EditText
             android:id="@+id/txt1"
-            android:layout_width="373dp"
+            android:layout_width="294dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView42"
-            android:layout_alignParentTop="false"
+            android:layout_below="@+id/txtCodCliente"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="38dp"
+            android:layout_marginTop="13dp"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:maxLength="15"
@@ -161,15 +177,30 @@
             android:textSize="21sp"
             android:textStyle="bold" />
 
+        <EditText
+            android:id="@+id/txtCodCliente"
+            android:layout_width="294dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView43"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="14dp"
+            android:layout_toRightOf="@id/textView2"
+            android:ems="10"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textStyle="bold"/>
+
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView42"
+            android:layout_width="152dp"
+            android:layout_height="47dp"
+            android:layout_below="@+id/txtCodigo"
             android:layout_alignBottom="@+id/txt1"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="31dp"
-            android:layout_marginTop="38dp"
+            android:layout_marginLeft="29dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
@@ -342,7 +373,7 @@
 
         <EditText
             android:id="@+id/txt11"
-            android:layout_width="365dp"
+            android:layout_width="349dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt9"
             android:layout_marginStart="12dp"
@@ -383,8 +414,8 @@
 
         <TextView
             android:id="@+id/lblDateCli"
-            android:layout_width="358dp"
-            android:layout_height="44dp"
+            android:layout_width="336dp"
+            android:layout_height="46dp"
             android:layout_below="@+id/txt11"
             android:layout_alignBottom="@+id/lblCFact16"
             android:layout_marginStart="25dp"
@@ -540,6 +571,19 @@
         android:clickable="true"
         android:onClick="doStatus"
         android:src="@drawable/delete_64" />
+
+    <EditText
+        android:id="@+id/txt13"
+        android:layout_width="294dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="444dp"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:maxLength="15"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textSize="21sp"
+        android:textStyle="bold" />
 
 
 </RelativeLayout>

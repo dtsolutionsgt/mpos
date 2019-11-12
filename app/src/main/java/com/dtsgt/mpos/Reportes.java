@@ -1183,7 +1183,7 @@ public class Reportes extends PBase {
             super.onPause();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }p
+        }
     }
 
     //endregion

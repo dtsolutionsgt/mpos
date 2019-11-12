@@ -374,8 +374,7 @@ public class Menu extends PBase {
 		try {
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
-            final String[] selitems = {"Factura","Deposito","Pagos","Recarga","Devolución a bodega"};
-
+			final String[] selitems  = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Pagos","Recarga","Devolución a bodega"};;
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.reimpresion48);
@@ -440,7 +439,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega", "Nota crédito"};
-            final String[] selitems = {"Factura","Deposito","Recarga","Devolución a bodega"};
+            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
 
 
 			menudlg = new AlertDialog.Builder(this);
