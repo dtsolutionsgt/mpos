@@ -219,6 +219,26 @@ public class clsP_clienteObj {
         db.execSQL(sql);
     }
 
+    public int maxID() {
+
+        int maximo=0;
+        Cursor dt;
+
+        try{
+            sql = "SELECT MAX(CODIGO)+1 FROM P_cliente";
+            dt = Con.OpenDT(sql);
+            count = dt.getCount();
+            if (dt.getCount() > 0) {
+                dt.moveToFirst();
+                maximo =  dt.getInt(0);
+            }
+        }catch (Exception ex){
+            maximo=0;
+        }
+
+        return maximo;
+    }
+
     private void fillItems(String sq) {
         Cursor dt;
         clsClasses.clsP_cliente item;

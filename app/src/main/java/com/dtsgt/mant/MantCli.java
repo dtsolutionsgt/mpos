@@ -98,6 +98,15 @@ public class MantCli extends PBase {
         setHandlers();
 
         if (id.isEmpty()) newItem(); else loadItem();
+
+        try{
+            if (newitem){
+                txtCodCliente.setText(String.valueOf(holder.maxID()));
+            }
+        }catch (Exception ex){
+            Toast.makeText(this,"Error " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -132,7 +141,8 @@ public class MantCli extends PBase {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                item.codigo = txt1.getText().toString().trim();
+                //#CKFK 20191118 Se modifico esto para que el codigo no sea el NIT
+               // item.codigo = txt1.getText().toString().trim();
             }
         });
     }
@@ -217,7 +227,7 @@ public class MantCli extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo="";
+        item.codigo= String.valueOf(holder.maxID());
         item.nombre="";
         item.bloqueado ="N";
         item.tiponeg = "1";
@@ -351,7 +361,8 @@ public class MantCli extends PBase {
 
     }
 
-    private void addItem() {
+    private void
+    addItem() {
         try {
             holder.add(item);
             gl.gcods=""+item.codigo;
@@ -367,8 +378,8 @@ public class MantCli extends PBase {
         try {
             holder.update(item);
 
-            sql="UPDATE P_CLIENTE SET CODIGO='"+item.nit+"' WHERE CODIGO='"+item.codigo+"'";
-            db.execSQL(sql);
+//            sql="UPDATE P_CLIENTE SET CODIGO='"+item.nit+"' WHERE CODIGO='"+item.codigo+"'";
+//            db.execSQL(sql);
             Toast.makeText(this, "Cliente Actualizado Correctamente", Toast.LENGTH_LONG).show();
             finish();
         } catch (Exception e) {
@@ -459,7 +470,8 @@ public class MantCli extends PBase {
             }
 
             item.nit = ss;
-            if (newitem) item.codigo = item.nit;
+            //#CKFK 20191118 Modifique esto para que el codigo no sea el nit
+            //if (newitem) item.codigo = item.nit;
 
             ss = txt2.getText().toString();
             if (ss.isEmpty()) {
