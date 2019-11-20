@@ -167,11 +167,13 @@ public class Venta extends PBase {
             clsDeGlob clsDeG;
             String s,ss;
 
-            if (!hasProducts()) {
+            if (!hasProducts())
+            {
                 mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
             }
 
-            if (gl.cliente.isEmpty()) {
+            if (gl.cliente.isEmpty())
+            {
                 toast("Cliente pendiente");
                 browse=8;
                 startActivity(new Intent(this,Clientes.class));
@@ -2634,15 +2636,18 @@ public class Venta extends PBase {
             } catch (Exception e) {
             }
 
-            if (gl.iniciaVenta){
+            if (gl.iniciaVenta)
+            {
                 gl.iniciaVenta=false;
 
                 lblVend.setText(" ");
 
-                try {
+                try
+                {
                     db.execSQL("DELETE FROM T_VENTA");
                     listItems();
-                } catch (SQLException e) {
+                } catch (SQLException e)
+                {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
                     mu.msgbox("Error : " + e.getMessage());
                 }
@@ -2658,11 +2663,13 @@ public class Venta extends PBase {
                 mtimer.postDelayed(mrunner,100);
             }
 
-            if (!gl.scancliente.isEmpty()) {
+            if (!gl.scancliente.isEmpty())
+            {
                  cargaCliente();
             }
 
-            if (browse==1) {
+            if (browse==1)
+            {
                 browse=0;processItem(false);return;
             }
 

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import java.io.OutputStreamWriter;
 import java.util.Calendar;
 
 public class MantCli extends PBase {
@@ -64,6 +66,8 @@ public class MantCli extends PBase {
     private int TAKE_PHOTO_CODE = 0;
 
     final int REQUEST_CODE=101;
+
+    Intent intentbiomuu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +104,8 @@ public class MantCli extends PBase {
         if (id.isEmpty()) newItem(); else loadItem();
 
         try{
-            if (newitem){
+            if (newitem)
+            {
                 txtCodCliente.setText(String.valueOf(holder.maxID()));
             }
         }catch (Exception ex){
@@ -164,28 +169,58 @@ public class MantCli extends PBase {
         }
     }
 
-    public void doEnroll(View view) {
+    public void doEnroll(View view)
+    {
 
-        if (newitem) {
+        if (newitem)
+        {
             toast("Primero debe guardar cliente");return;
         }
 
-        try {
+        try
+        {
             File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_erl.txt");
             if (file.exists()) file.delete();
-        } catch (Exception e) {}
+        } catch (Exception e)
+        {
+            Log.e("bio",e.getMessage());
+        }
 
         try {
+
             String ss = txt2.getText().toString();if (ss.isEmpty()) ss="-";
 
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.uubio.uusample");
-            intent.putExtra("method","1");
-            intent.putExtra("param1",id);
-            intent.putExtra("param2",ss);
+            File file = new File(Environment.getExternalStorageDirectory() + "/user.txt");
+
+            FileOutputStream fOut = new FileOutputStream(file);
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+
+            try
+            {
+                myOutWriter.append("1");
+                myOutWriter.append("\n\r");
+                myOutWriter.append(id);
+                myOutWriter.append("\n\r");
+                myOutWriter.append(ss);
+                myOutWriter.append("\n\r");
+
+            } finally {
+                myOutWriter.close();
+                fOut.close();
+            }
+
+            intentbiomuu= this.getPackageManager().getLaunchIntentForPackage("com.dts.uubio.uusample");
+            intentbiomuu.putExtra("method","1");
+            intentbiomuu.putExtra("param1",id);
+            intentbiomuu.putExtra("param2",ss);
 
             browse=1;
-            startActivityForResult(intent, REQUEST_CODE);
-        } catch (Exception e) {
+
+            startActivityForResult(intentbiomuu, REQUEST_CODE);
+
+        } catch (Exception e)
+        {
+            Log.e("bio",e.getMessage());
             msgbox(e.getMessage());
         }
     }
@@ -600,7 +635,9 @@ public class MantCli extends PBase {
             db.execSQL("DELETE FROM FPrint WHERE CODIGO='"+id+"'");
 
             File huella = new File(Environment.getExternalStorageDirectory()+ "/fpuaudata/"+id+".uud");
-            if (!huella.exists()) huella.delete();
+            if (huella.exists()){
+                huella.delete();
+            }
 
             toast("Huella borrada");
             muestraHuella();

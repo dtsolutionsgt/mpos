@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,7 +34,9 @@ import com.dtsgt.mant.MantCli;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -140,18 +143,60 @@ public class Clientes extends PBase {
 	}
 
 	public void callFPScan(View view) {
-        try {
+        try
+        {
             File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_idf.txt");
             if (file.exists()) file.delete();
         } catch (Exception e) {}
 
-        try {
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.uubio.uusample");
-            intent.putExtra("method","2");
+        try
+        {
 
-            browse=2;
-            startActivity(intent);
-        } catch (Exception e) {
+            try {
+
+                File file = new File(Environment.getExternalStorageDirectory() + "/user.txt");
+
+                FileOutputStream fOut = new FileOutputStream(file);
+                OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+
+                try
+                {
+                    myOutWriter.append("2");
+                    myOutWriter.append("\n\r");
+                    myOutWriter.append("0");
+                    myOutWriter.append("\n\r");
+                    myOutWriter.append("");
+                    myOutWriter.append("\n\r");
+
+                } finally
+                {
+                    myOutWriter.close();
+                    fOut.close();
+                }
+
+                Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.uubio.uusample");
+                intent.putExtra("method","2");
+
+                if(view !=null)
+                {
+                    //browse=1;
+                }else
+                {
+                    //browse=2;
+                }
+
+                browse=2;
+
+                startActivity(intent);
+
+            } catch (Exception e)
+            {
+                Log.e("bio",e.getMessage());
+                msgbox(e.getMessage());
+            }
+
+        } catch (Exception e)
+        {
             //msgbox(e.getMessage());
         }
     }
@@ -308,8 +353,11 @@ public class Clientes extends PBase {
 
 			sql = "SELECT CODIGO,NOMBRE,ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL " +
 					"FROM P_CLIENTE WHERE (1=1) AND ";
-            if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
-			if (!filt.isEmpty()) {
+
+			if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
+
+			if (!filt.isEmpty())
+			{
 				sql += "AND ((CODIGO LIKE '%" + filt + "%') OR (NOMBRE LIKE '%" + filt + "%')) ";
 			}
 			sql += "ORDER BY NOMBRE";
@@ -430,7 +478,8 @@ public class Clientes extends PBase {
 		}
 	}
 
-	private void fprintClient() {
+	private void fprintClient()
+    {
         Cursor dt;
         String sbuff = "",ss = "";
         boolean flag=false;
@@ -440,7 +489,9 @@ public class Clientes extends PBase {
             gl.scancliente="";
 
             File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_idf.txt");
-            if (!file.exists()) {
+
+            if (!file.exists())
+            {
                 listItems();
                 return;
             }
@@ -456,6 +507,7 @@ public class Clientes extends PBase {
             if (!sbuff.isEmpty()) {
 
                 try {
+
                     sql="SELECT BLOQUEADO FROM P_CLIENTE WHERE CODIGO='"+sbuff+"'";
                     dt=Con.OpenDT(sql);
 
@@ -468,7 +520,8 @@ public class Clientes extends PBase {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
 
-                if (flag) {
+                if (flag)
+                {
                     gl.cliente=sbuff;
                     gl.scancliente=sbuff;
                     finish();
@@ -841,22 +894,25 @@ public class Clientes extends PBase {
 			super.onResume();
 			//listItems();
 
-            if (browse==1) {
+            fprintClient();
+
+            if (browse==1)
+            {
                 browse=0;
-                if (!gl.gcods.isEmpty()) {
+                if (!gl.gcods.isEmpty())
+                {
                     gl.cliente=gl.gcods;
                     finish();
                 }
                 return;
             }
 
-            if (browse==2) {
+            if (browse==2)
+            {
                 browse=0;
                 listItems();
                 return;
             }
-
-            fprintClient();
 
         }catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

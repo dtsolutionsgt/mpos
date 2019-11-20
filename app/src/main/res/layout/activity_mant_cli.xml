@@ -574,10 +574,15 @@
 
     <EditText
         android:id="@+id/txt13"
-        android:layout_width="294dp"
+        android:layout_width="94dp"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageView31"
+        android:layout_alignBottom="@+id/imageView31"
         android:layout_marginLeft="444dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="102dp"
+        android:layout_marginBottom="2dp"
+        android:layout_toStartOf="@+id/imgImg2"
         android:ems="10"
         android:maxLength="15"
         android:maxLines="1"
