@@ -1191,9 +1191,9 @@ public class ComWS extends PBase {
 						SystemClock.sleep(20);
 					}
 				} catch (Exception e) {
+                    Log.e("z", e.getMessage());
 					addlog(new Object() {
 					}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-					Log.e("z", e.getMessage());
 				}
 			}
 
