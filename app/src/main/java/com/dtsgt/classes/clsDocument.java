@@ -380,7 +380,7 @@ public class clsDocument {
         if (l.indexOf("dd-MM-yyyy")>=0) {
             //s=DU.sfecha(DU.getActDateTime());
             //l=l.replace("dd-MM-yyyy",s);return l;
-            return DU.sfecha(DU.getActDateTime());
+            return DU.sfecha(DU.getActDateTime())+" "+DU.shora(DU.getActDateTime());
         }
 
         if (l.indexOf("HH:mm:ss")>=0) {
