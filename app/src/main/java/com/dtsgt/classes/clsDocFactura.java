@@ -37,7 +37,7 @@ public class clsDocFactura extends clsDocument {
 		nombre="FACTURA";
 		
 		try {
-			sql=" SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,DESMONTO,IMPMONTO,EMPRESA,FECHA,ADD1,ADD2,IMPRES, ANULADO " +
+			sql=" SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,DESMONTO,IMPMONTO,EMPRESA,FECHAENTR,ADD1,ADD2,IMPRES, ANULADO " +
 				" FROM D_FACTURA WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);
 
@@ -57,7 +57,7 @@ public class clsDocFactura extends clsDocument {
 				stot=tot+desc;
 
 				empp=DT.getString(8);
-				ffecha=DT.getInt(9);fsfecha=sfecha(ffecha);
+				ffecha=DT.getInt(9);fsfecha=sfecha(ffecha)+" "+shora(ffecha);
 
 				add1=DT.getString(10);
 				add2=DT.getString(11);

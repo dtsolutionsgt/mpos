@@ -263,11 +263,30 @@ public class FacturaRes extends PBase {
 
         txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER  | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
+        if (tot>credito) credito=0;
+
+        lblCash.setVisibility(View.INVISIBLE);
+        imgCash.setVisibility(View.INVISIBLE);
+
+        if (credito<=0) {
+            imgCred.setVisibility(View.INVISIBLE);
+            lblCred.setVisibility(View.INVISIBLE);
+            imgMPago.setVisibility(View.INVISIBLE);
+            lblMPago.setVisibility(View.INVISIBLE);
+        }else if(credito > 0){
+            imgCred.setVisibility(View.VISIBLE);
+            lblCred.setVisibility(View.VISIBLE);
+       }
+
+        imgMPago.setVisibility(View.INVISIBLE);
+        lblMPago.setVisibility(View.INVISIBLE);
+
+        /*
         if (tot>credito) {
             imgCred.setVisibility(View.INVISIBLE);
             lblCred.setVisibility(View.INVISIBLE);
         }
-
+        */
     }
 
 	//region Events

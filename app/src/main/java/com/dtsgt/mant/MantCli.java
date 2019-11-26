@@ -104,10 +104,7 @@ public class MantCli extends PBase {
         if (id.isEmpty()) newItem(); else loadItem();
 
         try{
-            if (newitem)
-            {
-                txtCodCliente.setText(String.valueOf(holder.maxID()));
-            }
+            if (newitem)  txtCodCliente.setText(String.valueOf(holder.maxID()));
         }catch (Exception ex){
             Toast.makeText(this,"Error " + ex.getMessage(), Toast.LENGTH_SHORT).show();
         }
