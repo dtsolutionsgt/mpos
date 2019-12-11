@@ -60,7 +60,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult,usr, pwd;
 
-    private String parVer = "2.3.6 / 26-Nov-2019 ";
+    private String parVer = "2.3.8 / 11-Dic-2019 ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,9 +243,13 @@ public class MainActivity extends PBase {
 
         khand.handleKey(ss);
         if (khand.isEnter) {
-            if (khand.isValid) {
-                pwd=khand.val;
-                processLogIn();
+            if (khand.val.isEmpty()) {
+                toast("Falta contraseña");
+            } else {
+                if (khand.isValid) {
+                    pwd=khand.val;
+                    processLogIn();
+                }
             }
         }
     }

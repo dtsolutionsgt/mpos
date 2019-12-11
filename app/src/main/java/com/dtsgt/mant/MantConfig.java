@@ -12,11 +12,11 @@ import com.dtsgt.mpos.R;
 
 public class MantConfig extends PBase {
 
-    private CheckBox cb100,cb101,cb102,cb104;
+    private CheckBox cb100,cb101,cb102,cb103,cb104;
 
     private clsP_paramextObj holder;
 
-    private boolean value100,value101,value102,value104;
+    private boolean value100,value101,value102,value103,value104;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,7 @@ public class MantConfig extends PBase {
         cb100 = (CheckBox) findViewById(R.id.checkBox8);
         cb101 = (CheckBox) findViewById(R.id.checkBox10);
         cb102 = (CheckBox) findViewById(R.id.checkBox21);
+        cb103 = (CheckBox) findViewById(R.id.checkBox23);
         cb104 = (CheckBox) findViewById(R.id.checkBox22);
 
         holder =new clsP_paramextObj(this,Con,db);

@@ -1196,7 +1196,7 @@ public class Menu extends PBase {
 
             //final String[] selitems = {"Banco","Caja","Cliente","Combo","Combo Opción","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
             //final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración","Formato de impresión"};
-            final String[] selitems = {"Cliente","Proveedor"};
+            final String[] selitems = {"Cliente","Proveedor","Familia","Producto"};
 
             menudlg = new AlertDialog.Builder(this);
             menudlg.setTitle("Mantenimientos");

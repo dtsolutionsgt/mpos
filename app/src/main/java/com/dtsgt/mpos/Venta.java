@@ -1794,21 +1794,22 @@ public class Venta extends PBase {
     private void listProduct() {
         Cursor dt;
         clsClasses.clsMenu item;
+        ArrayList<String> pcodes = new ArrayList<String>();
+        String pcode;
 
         try {
-            pitems.clear();
+            pitems.clear();pcodes.clear();
 
-            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA " +
+            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA,P_PRODUCTO.ACTIVO " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
                     "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
-                    "WHERE (P_STOCK.CANT > 0) ";
+                    "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1)";
             if (!mu.emptystr(famid)) {
-                if (!famid.equalsIgnoreCase("0"))
-                    sql = sql + "AND (P_PRODUCTO.LINEA='" + famid + "') ";
+                if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA='" + famid + "') ";
             }
 
             sql += "UNION ";
-            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,''  " +
+            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,'',P_PRODUCTO.ACTIVO  " +
                     "FROM P_PRODUCTO " +
                     "WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M'))";
             if (!mu.emptystr(famid)) {
@@ -1827,10 +1828,15 @@ public class Venta extends PBase {
 
             while (!dt.isAfterLast()) {
 
-                item=clsCls.new clsMenu();
-                item.Cod=dt.getString(0);
-                item.Name=dt.getString(1)+" \n[ "+gl.peMon+prodPrecioBase(item.Cod)+" ]";
-                pitems.add(item);
+                pcode=dt.getString(0);
+                if (!pcodes.contains(pcode)) {
+                    if (dt.getInt(3)==1) {
+                        item=clsCls.new clsMenu();
+                        item.Cod=dt.getString(0);
+                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+prodPrecioBase(item.Cod)+" ]";
+                        pitems.add(item);pcodes.add(pcode);
+                    }
+                }
 
                 dt.moveToNext();
             }

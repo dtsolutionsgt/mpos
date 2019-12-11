@@ -86,6 +86,41 @@
         android:background="@drawable/frame_rect">
 
         <CheckBox
+            android:id="@+id/checkBox23"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/checkBox21"
+            android:layout_alignStart="@+id/checkBox21"
+            android:layout_alignParentEnd="false"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="63dp"
+            android:clickable="true"
+            android:enabled="true" />
+
+        <TextView
+            android:id="@+id/lblCFact22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/checkBox21"
+            android:layout_alignStart="@+id/lblCFact"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignBottom="@+id/checkBox22"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="-6dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="74dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="-64dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Imprimir factura"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <CheckBox
             android:id="@+id/checkBox22"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
@@ -208,7 +243,7 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Imprimir orden para cosina"
+            android:text="Imprimir orden para cocina"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textSize="18sp"

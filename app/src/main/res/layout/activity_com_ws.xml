@@ -383,10 +383,9 @@
         android:layout_width="116dp"
         android:layout_height="96dp"
         android:layout_below="@+id/textView1"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentEnd="false"
         android:layout_marginStart="63dp"
         android:layout_marginTop="-11dp"
-        android:layout_marginEnd="451dp"
         android:layout_toEndOf="@+id/textView1"
         android:onClick="doFotos"
         android:src="@drawable/act_stock" />
