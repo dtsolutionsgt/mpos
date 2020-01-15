@@ -166,16 +166,13 @@ public class MantCli extends PBase {
         }
     }
 
-    public void doEnroll(View view)
-    {
+    public void doEnroll(View view)  {
 
-        if (newitem)
-        {
+        if (newitem) {
             toast("Primero debe guardar cliente");return;
         }
 
-        try
-        {
+        try  {
             File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_erl.txt");
             if (file.exists()) file.delete();
         } catch (Exception e)
@@ -192,8 +189,7 @@ public class MantCli extends PBase {
             FileOutputStream fOut = new FileOutputStream(file);
             OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
 
-            try
-            {
+            try  {
                 myOutWriter.append("1");
                 myOutWriter.append("\n\r");
                 myOutWriter.append(id);
@@ -215,8 +211,7 @@ public class MantCli extends PBase {
 
             startActivityForResult(intentbiomuu, REQUEST_CODE);
 
-        } catch (Exception e)
-        {
+        } catch (Exception e)  {
             Log.e("bio",e.getMessage());
             msgbox(e.getMessage());
         }

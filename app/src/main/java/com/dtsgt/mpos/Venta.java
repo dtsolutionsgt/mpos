@@ -39,7 +39,9 @@ import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.ladapt.ListAdaptGridFam;
+import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
+import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
 
@@ -50,7 +52,7 @@ public class Venta extends PBase {
     private ListView listView;
     private GridView gridView,grdbtn,grdfam,grdprod;
     private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant,lblBarra;
-    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl;
+    private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan;
     private RelativeLayout relScan;
@@ -64,7 +66,9 @@ public class Venta extends PBase {
     private ListAdaptMenuVenta adaptergrid;
     private ListAdaptMenuVenta adapterb;
     private ListAdaptGridFam adapterf;
+    private ListAdaptGridFamList adapterfl;
     private ListAdaptGridProd adapterp;
+    private ListAdaptGridProdList adapterpl;
 
     private AlertDialog.Builder mMenuDlg;
 
@@ -83,7 +87,8 @@ public class Venta extends PBase {
 
     private String emp,uid,seluid,cliid,prodid,uprodid,famid,um,tiposcan,barcode,imgfold,tipo;
     private int nivel,dweek,clidia,counter;
-    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,decimal,menuitemadd;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
+    private boolean decimal,menuitemadd,usarbio,imgflag;
 
     private AppMethods app;
 
@@ -97,8 +102,9 @@ public class Venta extends PBase {
 
         setControls();
 
-        gl.cliente="";
-        gl.iniciaVenta=false;
+        //gl.cliente="";
+        //gl.iniciaVenta=false;
+        gl.scancliente="";
         emp=gl.emp;
         nivel=1;
         gl.nivel=nivel;
@@ -110,6 +116,7 @@ public class Venta extends PBase {
         gl.climode=true;
 
         app = new AppMethods(this, gl, Con, db);
+        app.parametrosExtra();
 
         counter=1;
 
@@ -124,18 +131,33 @@ public class Venta extends PBase {
         txtBarra.requestFocus();txtBarra.setText("");
         clearItem();
 
-        listFamily();
+        imgflag=gl.peMImg;
+        setVisual();
 
-        Handler mtimer = new Handler();
-        Runnable mrunner=new Runnable() {
-            @Override
-            public void run() {
-                gl.scancliente="";
-                browse=8;
-                startActivity(new Intent(Venta.this,Clientes.class));
-            }
-        };
-        mtimer.postDelayed(mrunner,100);
+        if(!gl.exitflag) {
+
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    gl.scancliente="";
+                    browse=8;
+
+                    gl.iniciaVenta=false;
+
+                    if (usarbio) {
+                        startActivity(new Intent(Venta.this,Clientes.class));
+                    } else {
+                        if (!gl.cliposflag) {
+                            gl.cliposflag=true;
+                            startActivity(new Intent(Venta.this,CliPos.class));
+                        }
+                    }
+                }
+            };
+            mtimer.postDelayed(mrunner,100);
+        }
+
     }
 
     //region Events
@@ -172,8 +194,7 @@ public class Venta extends PBase {
                 mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
             }
 
-            if (gl.cliente.isEmpty())
-            {
+            if (gl.cliente.isEmpty()) {
                 toast("Cliente pendiente");
                 browse=8;
                 startActivity(new Intent(this,Clientes.class));
@@ -239,7 +260,6 @@ public class Venta extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             mu.msgbox("finishOrder: "+e.getMessage());
         }
-
     }
 
     public void showPromo(View view){
@@ -389,7 +409,12 @@ public class Venta extends PBase {
                     Object lvObj = grdfam.getItemAtPosition(position);
                     clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
                     famid=item.Cod;
-                    adapterf.setSelectedIndex(position);
+
+                    if (imgflag) {
+                        adapterf.setSelectedIndex(position);
+                    } else {
+                        adapterfl.setSelectedIndex(position);
+                    }
 
                     listProduct();
                 } catch (Exception e) {
@@ -405,7 +430,11 @@ public class Venta extends PBase {
                     Object lvObj = grdprod.getItemAtPosition(position);
                     clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
-                    adapterp.setSelectedIndex(position);
+                    if (imgflag) {
+                        adapterp.setSelectedIndex(position);
+                    } else {
+                        adapterpl.setSelectedIndex(position);
+                    }
 
                     prodid=item.Cod;
                     gl.gstr=prodid;gl.prodmenu=prodid;
@@ -1644,6 +1673,7 @@ public class Venta extends PBase {
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    gl.cliposflag=true;
                     if (gl.dvbrowse!=0) gl.dvbrowse =0;
                     doExit();
                 }
@@ -1657,8 +1687,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-
     }
 
     private void msgAskDel(String msg) {
@@ -1774,7 +1802,7 @@ public class Venta extends PBase {
 
         try {
             fitems.clear();
-            P_lineaObj.fill();
+            P_lineaObj.fill("WHERE Activo=1");
 
             for (int i = 0; i <P_lineaObj.count; i++) {
                 item=clsCls.new clsMenu();
@@ -1783,8 +1811,14 @@ public class Venta extends PBase {
                 fitems.add(item);
             }
 
-            adapterf=new ListAdaptGridFam(this,fitems,imgfold);
-            grdfam.setAdapter(adapterf);
+            if (imgflag) {
+                adapterf=new ListAdaptGridFam(this,fitems,imgfold);
+                grdfam.setAdapter(adapterf);
+            } else {
+                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold);
+                grdfam.setAdapter(adapterfl);
+            }
+
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
         }
@@ -1844,8 +1878,13 @@ public class Venta extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
 
-        adapterp=new ListAdaptGridProd(this,pitems,imgfold);
-        grdprod.setAdapter(adapterp);
+        if (imgflag) {
+            adapterp=new ListAdaptGridProd(this,pitems,imgfold);
+            grdprod.setAdapter(adapterp);
+        } else {
+            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold);
+            grdprod.setAdapter(adapterpl);
+        }
 
     }
 
@@ -2095,6 +2134,7 @@ public class Venta extends PBase {
 
     private void processMenuBtn(int menuid) {
         try {
+
             switch (menuid) {
                 case 50:
                     gl.gstr = "";browse = 1;gl.prodtipo = 1;
@@ -2105,16 +2145,24 @@ public class Venta extends PBase {
                     }
                     break;
                 case 52:
-                    browse=8;
-                    gl.climode=false;
-                    startActivity(new Intent(Venta.this,Clientes.class));
+                    if (!gl.exitflag) {
+                        browse=8;
+                        gl.climode=false;
+
+                        if (usarbio) {
+                            startActivity(new Intent(Venta.this,Clientes.class));
+                        } else {
+                            startActivity(new Intent(Venta.this,CliPos.class));
+                        }
+                    }
                     break;
                 case 53:
                     break;
                 case 54:
                     borraLinea();break;
                 case 55:
-                    borraTodo();break;
+                    borraTodo();
+                    break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2201,7 +2249,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     private void setControls(){
@@ -2225,6 +2272,7 @@ public class Venta extends PBase {
             lblCant= (TextView) findViewById(R.id.lblCant);lblCant.setText("");
             lblBarra= (TextView) findViewById(R.id.textView122);lblBarra.setText("");
             lblKeyDP=(TextView) findViewById(R.id.textView110);
+            lblDir=(TextView) findViewById(R.id.lblDir);
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
             imgscan= (ImageView) findViewById(R.id.imageView13);
@@ -2239,11 +2287,24 @@ public class Venta extends PBase {
 
     }
 
+    private void setVisual() {
+        if (imgflag) {
+            grdfam.setNumColumns(3);
+            grdprod.setNumColumns(3);
+        } else {
+            grdfam.setNumColumns(2);
+            grdprod.setNumColumns(1);
+        }
+
+        listFamily();
+    }
+
     private void initValues(){
         Cursor DT;
         String contrib;
 
         app.parametrosExtra();
+        usarbio=gl.peMMod.equalsIgnoreCase("1");
 
         tiposcan="*";
 
@@ -2404,11 +2465,12 @@ public class Venta extends PBase {
 
     private void doExit(){
         try{
+            gl.exitflag=true;
+            gl.cliposflag=true;
             super.finish();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     public String ltrim(String ss,int sw) {
@@ -2426,7 +2488,7 @@ public class Venta extends PBase {
         return ss;
     }
 
-     private String prodTipo(String prodid) {
+    private String prodTipo(String prodid) {
         try {
             return app.prodTipo(prodid);
         } catch (Exception e) {
@@ -2635,6 +2697,10 @@ public class Venta extends PBase {
         try{
             super.onResume();
 
+            if (gl.exitflag) {
+                return;
+            }
+
             gl.climode=true;
 
             try {
@@ -2642,18 +2708,14 @@ public class Venta extends PBase {
             } catch (Exception e) {
             }
 
-            if (gl.iniciaVenta)
-            {
-                gl.iniciaVenta=false;
+            if (gl.iniciaVenta) {
 
                 lblVend.setText(" ");
 
-                try
-                {
+                try  {
                     db.execSQL("DELETE FROM T_VENTA");
                     listItems();
-                } catch (SQLException e)
-                {
+                } catch (SQLException e){
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
                     mu.msgbox("Error : " + e.getMessage());
                 }
@@ -2663,19 +2725,27 @@ public class Venta extends PBase {
                     @Override
                     public void run() {
                         browse=8;
-                        startActivity(new Intent(Venta.this,Clientes.class));
+                        gl.iniciaVenta=false;
+
+                        if (usarbio) {
+                            startActivity(new Intent(Venta.this,Clientes.class));
+                        } else {
+                            if (!gl.cliposflag) {
+                                gl.cliposflag=true;
+                                startActivity(new Intent(Venta.this,CliPos.class));
+                            }
+                        }
+
                     }
                 };
                 mtimer.postDelayed(mrunner,100);
+            } else {
+
             }
 
-            if (!gl.scancliente.isEmpty())
-            {
-                 cargaCliente();
-            }
+            if (!gl.scancliente.isEmpty()) cargaCliente();
 
-            if (browse==1)
-            {
+            if (browse==1)   {
                 browse=0;processItem(false);return;
             }
 
@@ -2722,7 +2792,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     //endregion

@@ -104,9 +104,23 @@ public class ListAdaptVenta extends BaseAdapter {
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
+            holder.lblCod.setTextColor(Color.WHITE);
+            holder.lblNombre.setTextColor(Color.WHITE);
+            holder.lblCant.setTextColor(Color.WHITE);
+            holder.lblPrec.setTextColor(Color.WHITE);
+            holder.lblDesc.setTextColor(Color.WHITE);
+            holder.lblTot.setTextColor(Color.WHITE);
+            holder.lblPeso.setTextColor(Color.WHITE);
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
-        }
+            holder.lblCod.setTextColor(Color.parseColor("#1B76B9"));
+            holder.lblNombre.setTextColor(Color.parseColor("#1B76B9"));
+            holder.lblCant.setTextColor(Color.parseColor("#1B76B9"));
+            holder.lblPrec.setTextColor(Color.parseColor("#1B76B9"));
+            holder.lblDesc.setTextColor(Color.parseColor("#1B76B9"));
+            holder.lblTot.setTextColor(Color.parseColor("#1B76B9"));
+            holder.lblPeso.setTextColor(Color.parseColor("#1B76B9"));
+		}
 		
 		return convertView;
 	}

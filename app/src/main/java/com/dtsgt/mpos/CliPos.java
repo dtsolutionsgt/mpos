@@ -14,8 +14,11 @@ import com.dtsgt.base.appGlobals;
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef;
-	
-	@Override
+
+	private String snit,sname,sdir;
+
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_cli_pos);
@@ -32,6 +35,8 @@ public class CliPos extends PBase {
 		txtNIT.setText("");
 		txtNom.setText("");
 		txtRef.setText("");
+
+        gl.cliposflag=true;
 	}
 
 	
@@ -42,7 +47,6 @@ public class CliPos extends PBase {
 	}
 
 	public void clienteNIT(View view) {
-		String snit,sname,sdir;
 
 		try{
 			snit=txtNIT.getText().toString();
@@ -50,7 +54,6 @@ public class CliPos extends PBase {
 			sdir=txtRef.getText().toString();
 
 			if (!validaNIT(snit)) {
-				mu.msgbox("NIT Incorrecto");
 				toast("NIT incorrecto");return;
 			}
 			if (mu.emptystr(sname)) {
@@ -99,7 +102,6 @@ public class CliPos extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
-
 	}
 
 
@@ -108,13 +110,16 @@ public class CliPos extends PBase {
 	private void procesaCF() {
 
 		try{
-			((appGlobals) vApp).rutatipo="V";
+			gl.rutatipo="V";
+            gl.cliente="C.F.";
+            gl.nivel=1;
+            gl.percepcion=0;
+            gl.contrib="";
 
-			((appGlobals) vApp).cliente="C.F.";
-			//((appGlobals) vApp).cliente="0001000000";
-			((appGlobals) vApp).nivel=1;
-			((appGlobals) vApp).percepcion=0;
-			((appGlobals) vApp).contrib="";
+            gl.fnombre="Consumidor final";
+            gl.fnit="C.F.";
+            gl.fdir="Ciudad";
+            gl.media=1;
 
 			Intent intent = new Intent(this,Venta.class);
 			startActivity(intent);
@@ -132,9 +137,15 @@ public class CliPos extends PBase {
 			((appGlobals) vApp).rutatipo="V";
 
 			((appGlobals) vApp).cliente=snit;
-			((appGlobals) vApp).nivel=1;
-			((appGlobals) vApp).percepcion=0;
-			((appGlobals) vApp).contrib="";
+            gl.nivel=1;
+            gl.percepcion=0;
+            gl.contrib="";
+
+            gl.fnombre=sname;
+            gl.fnit=snit;
+            gl.fdir=sdir;
+
+            gl.media=1;
 
 			Intent intent = new Intent(this,Venta.class);
 			startActivity(intent);

@@ -355,7 +355,7 @@ public class AppMethods {
 
             gl.peMMod=val;
         } catch (Exception e) {
-            gl.peMMod=" ";
+            gl.peMMod="1";
         }
 
         try {

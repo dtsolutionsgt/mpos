@@ -231,6 +231,9 @@ public class Menu extends PBase {
 		Float cantidad;
 		//toast("menu id : "+menuid);
 
+
+        app.parametrosExtra();
+
 		try{
 			prtype = getPrinterType();
 			if (prtype == 2) {
@@ -254,17 +257,18 @@ public class Menu extends PBase {
 					gl.cajaid=5;
 
 					if(valida()){
-						//***************
-						gl.cliente="0001000000";
+
+						gl.cliente="C.F.";
 						gl.fnombre="Consumidor final";
 						gl.fnit="C.F.";
 						gl.fdir="Ciudad";
-						//**************
 
+                        gl.cliposflag=false;
 						gl.rutatipo="V";gl.rutatipog="V";
 						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 
 						gl.iniciaVenta=true;
+						gl.exitflag=false;
 						startActivity(new Intent(this, Venta.class));
 					}else {
 						if(gl.cajaid==5) msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
@@ -2002,11 +2006,9 @@ public class Menu extends PBase {
 	@Override
 	public void onBackPressed() {
 		try{
-
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 
 	//endregion

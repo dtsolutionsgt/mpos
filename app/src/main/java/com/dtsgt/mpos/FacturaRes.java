@@ -644,7 +644,7 @@ public class FacturaRes extends PBase {
 		if (!saved) {
 			if (!saveOrder()) return;
 		}
-
+        gl.cliposflag=false;
 		impressOrder();
 
 	}

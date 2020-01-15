@@ -92,8 +92,10 @@ public class ListAdaptGridProd extends BaseAdapter {
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
+            holder.lblName.setTextColor(Color.WHITE);
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
+            holder.lblName.setTextColor(Color.parseColor("#1B76B9"));
         }
 		
 		

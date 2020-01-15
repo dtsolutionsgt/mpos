@@ -66,7 +66,6 @@ public class Clientes extends PBase {
 
     final int REQUEST_CODE=101;
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -143,14 +142,12 @@ public class Clientes extends PBase {
 	}
 
 	public void callFPScan(View view) {
-        try
-        {
+        try   {
             File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_idf.txt");
             if (file.exists()) file.delete();
         } catch (Exception e) {}
 
-        try
-        {
+        try  {
 
             try {
 
@@ -159,8 +156,7 @@ public class Clientes extends PBase {
                 FileOutputStream fOut = new FileOutputStream(file);
                 OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
 
-                try
-                {
+                try  {
                     myOutWriter.append("2");
                     myOutWriter.append("\n\r");
                     myOutWriter.append("0");
@@ -168,8 +164,7 @@ public class Clientes extends PBase {
                     myOutWriter.append("");
                     myOutWriter.append("\n\r");
 
-                } finally
-                {
+                } finally  {
                     myOutWriter.close();
                     fOut.close();
                 }
@@ -177,11 +172,9 @@ public class Clientes extends PBase {
                 Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.uubio.uusample");
                 intent.putExtra("method","2");
 
-                if(view !=null)
-                {
+                if(view !=null) {
                     //browse=1;
-                }else
-                {
+                } else  {
                     //browse=2;
                 }
 
@@ -189,14 +182,12 @@ public class Clientes extends PBase {
 
                 startActivity(intent);
 
-            } catch (Exception e)
-            {
+            } catch (Exception e)  {
                 Log.e("bio",e.getMessage());
                 msgbox(e.getMessage());
             }
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             //msgbox(e.getMessage());
         }
     }
@@ -356,8 +347,7 @@ public class Clientes extends PBase {
 
 			if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
 
-			if (!filt.isEmpty())
-			{
+			if (!filt.isEmpty()) {
 				sql += "AND ((CODIGO LIKE '%" + filt + "%') OR (NOMBRE LIKE '%" + filt + "%')) ";
 			}
 			sql += "ORDER BY NOMBRE";
@@ -478,8 +468,7 @@ public class Clientes extends PBase {
 		}
 	}
 
-	private void fprintClient()
-    {
+	private void fprintClient()   {
         Cursor dt;
         String sbuff = "",ss = "";
         boolean flag=false;
@@ -520,8 +509,7 @@ public class Clientes extends PBase {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
 
-                if (flag)
-                {
+                if (flag) {
                     gl.cliente=sbuff;
                     gl.scancliente=sbuff;
                     finish();
@@ -896,25 +884,22 @@ public class Clientes extends PBase {
 
             fprintClient();
 
-            if (browse==1)
-            {
+            if (browse==1) {
                 browse=0;
-                if (!gl.gcods.isEmpty())
-                {
+                if (!gl.gcods.isEmpty()) {
                     gl.cliente=gl.gcods;
                     finish();
                 }
                 return;
             }
 
-            if (browse==2)
-            {
+            if (browse==2) {
                 browse=0;
                 listItems();
                 return;
             }
 
-        }catch (Exception e){
+        } catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
