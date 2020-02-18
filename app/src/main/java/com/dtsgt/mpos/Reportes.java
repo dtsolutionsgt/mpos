@@ -338,7 +338,6 @@ public class Reportes extends PBase {
     }
 
     private void AskReport() {
-
         try{
 
             if(dateini <= 0){
@@ -387,7 +386,6 @@ public class Reportes extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("msgAskReport: "+e);
         }
-
     }
 
     public void getTXT(){

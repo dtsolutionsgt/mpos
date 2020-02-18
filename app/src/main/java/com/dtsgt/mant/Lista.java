@@ -174,7 +174,11 @@ public class Lista extends PBase {
             }else {
                 adapter.setSelectedIndex(selidx);
             }
-         }
+        }
+
+        if (gl.mantid==2) {
+            if (gl.rol==1) imgadd.setVisibility(View.INVISIBLE);
+        }
 
     }
 

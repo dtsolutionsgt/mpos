@@ -225,7 +225,7 @@ public class clsP_clienteObj {
         Cursor dt;
 
         try{
-            sql = "SELECT MAX(CODIGO)+1 FROM P_cliente";
+            sql = "SELECT MAX(CAST(CODIGO AS INTEGER))+1 FROM P_cliente";
             dt = Con.OpenDT(sql);
             count = dt.getCount();
             if (dt.getCount() > 0) {

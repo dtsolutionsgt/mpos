@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/textView72"
-        android:layout_width="10dp"
+        android:layout_width="6dp"
         android:layout_height="10dp"
         android:layout_centerInParent="true"
         android:text="TextView"
@@ -190,7 +190,7 @@
 
         <RelativeLayout
             android:id="@+id/relbotpan"
-            android:layout_width="700dp"
+            android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_alignTop="@id/textView89"
             android:layout_alignParentLeft="false"
@@ -207,11 +207,22 @@
                 android:layout_width="1232dp"
                 android:layout_height="56dp"
                 android:layout_marginLeft="0dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/blue_strip"
                 android:clickable="false"
                 android:onClick="doFocus">
+
+                <EditText
+                    android:id="@+id/editText10"
+                    android:layout_width="1dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="0dp"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:text="abcd"
+                    android:textColor="#FFFFFF" />
 
                 <TextView
                     android:id="@+id/lblCant"
@@ -219,19 +230,24 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginStart="50dp"
                     android:layout_marginLeft="50dp"
-                    android:layout_marginTop="11dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
                     android:layout_marginRight="0dp"
                     android:layout_marginBottom="5dp"
                     android:background="#F4B39C"
+                    android:clickable="true"
                     android:gravity="center_vertical"
                     android:minWidth="100dp"
+                    android:onClick="doFocusScan"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="000"
                     android:textColor="#000000"
                     android:textSize="30sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="visible" />
 
                 <RelativeLayout
                     android:id="@+id/relbarcode"
@@ -239,9 +255,12 @@
                     android:layout_height="40dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="11dp"
-                    android:background="#FFFFFF">
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="#FFFFFF"
+                    android:visibility="visible">
 
                     <ImageView
                         android:id="@+id/imageView52"
@@ -249,6 +268,8 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="0dp"
                         android:layout_marginBottom="0dp"
+                        android:clickable="true"
+                        android:onClick="doFocusScan"
                         android:src="@drawable/barcode" />
                 </RelativeLayout>
 
@@ -699,18 +720,6 @@
                     android:onClick="doClickScan"
                     android:visibility="invisible">
 
-                    <EditText
-                        android:id="@+id/editText10"
-                        android:layout_width="10dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="false"
-                        android:layout_alignParentBottom="false"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="0dp"
-                        android:layout_toEndOf="@+id/imageView13"
-                        android:ems="10"
-                        android:inputType="number" />
-
                     <ImageView
                         android:id="@+id/imageView13"
                         android:layout_width="42dp"
@@ -894,7 +903,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp">
+            android:layout_marginTop="1dp">
 
             <GridView
                 android:id="@+id/grdFam"

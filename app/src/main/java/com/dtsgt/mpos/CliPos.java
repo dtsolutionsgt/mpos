@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -36,14 +38,13 @@ public class CliPos extends PBase {
 		txtNom.setText("");
 		txtRef.setText("");
 
-        gl.cliposflag=true;
+        //gl.cliposflag=true;
 	}
-
 	
-	//  Events
+	//region  Events
 
 	public void consFinal(View view) {
-		if (agregaCliente("C.F.","Consumidor final","")) procesaCF() ;	
+		if (agregaCliente("C.F.","Consumidor final","Ciudad")) procesaCF() ;
 	}
 
 	public void clienteNIT(View view) {
@@ -67,45 +68,37 @@ public class CliPos extends PBase {
 
 	}
 
+	public void buscarCliente(View view) {
+        gl.cliente="";
+        browse=1;
+        startActivity(new Intent(this,Clientes.class));
+    }
+
 	private void setHandlers() {
 
 		try{
-			txtNIT.setOnKeyListener(new OnKeyListener() {
-				@Override
-				public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-					if (arg2.getAction() == KeyEvent.ACTION_DOWN) {
-						switch (arg1) {
-							case KeyEvent.KEYCODE_ENTER:
-								txtNom.requestFocus();
-								buscaCliente();
-								return true;
-						}
-					}
-					return false;
-				}
-			});
 
-			txtNom.setOnKeyListener(new OnKeyListener() {
-				@Override
-				public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-					if (arg2.getAction() == KeyEvent.ACTION_DOWN) {
-						switch (arg1) {
-							case KeyEvent.KEYCODE_ENTER:
-								clienteNIT(arg0);
-								return true;
-						}
-					}
-					return false;
-				}
-			});
+            txtNIT.addTextChangedListener(new TextWatcher() {
+
+                public void afterTextChanged(Editable s) {}
+
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                     buscaCliente();
+                }
+            });
+
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
 	}
 
+    //endregion
 
-	// Main
+	//region Main
 
 	private void procesaCF() {
 
@@ -121,10 +114,12 @@ public class CliPos extends PBase {
             gl.fdir="Ciudad";
             gl.media=1;
 
-			Intent intent = new Intent(this,Venta.class);
-			startActivity(intent);
+			//Intent intent = new Intent(this,Venta.class);
+			//startActivity(intent);
 
 			limpiaCampos();
+
+            finish();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -134,9 +129,9 @@ public class CliPos extends PBase {
 	private void procesaNIT(String snit) {
 
 		try{
-			((appGlobals) vApp).rutatipo="V";
+			gl.rutatipo="V";
 
-			((appGlobals) vApp).cliente=snit;
+			gl.cliente=snit;
             gl.nivel=1;
             gl.percepcion=0;
             gl.contrib="";
@@ -147,18 +142,21 @@ public class CliPos extends PBase {
 
             gl.media=1;
 
-			Intent intent = new Intent(this,Venta.class);
-			startActivity(intent);
+			//Intent intent = new Intent(this,Venta.class);
+			//startActivity(intent);
 
 			limpiaCampos();
+
+			finish();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
 	}
 
+    //endregion
 	
-	// Aux
+	//region Aux
 
 	private boolean validaNIT(String N)  {
 
@@ -237,18 +235,14 @@ public class CliPos extends PBase {
 				txtNIT.requestFocus();return;
 			}
 
-		//	try {
-				sql="SELECT Nombre FROM P_CLIENTE WHERE CODIGO='"+NIT+"'";
-				DT=Con.OpenDT(sql);
-				DT.moveToFirst();
+			sql="SELECT Nombre,Direccion FROM P_CLIENTE WHERE CODIGO='"+NIT+"'";
+			DT=Con.OpenDT(sql);
+			DT.moveToFirst();
 
-				txtNom.setText(DT.getString(0));
-		/*	} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			}*/
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			txtNom.setText("");
+			txtNom.setText(DT.getString(0));
+			txtRef.setText(DT.getString(1));
+		} catch (Exception e){
+		    txtNom.setText("");txtRef.setText("");
 		}
 
 	}
@@ -285,31 +279,41 @@ public class CliPos extends PBase {
 
 			ins.add("NIT",NIT);
 			ins.add("MENSAJE","N");
-			ins.add("TELEFONO"," ");
+            ins.add("EMAIL","");
+            ins.add("ESERVICE","");
+	        ins.add("TELEFONO"," ");
 			ins.add("DIRTIPO","N");
-			//ins.add("DIRECCION","Ciudad");
 			ins.add("DIRECCION",dir);
+            ins.add("REGION"," ");
 			ins.add("SUCURSAL","1");
 
-			ins.add("COORX",0);
+            ins.add("MUNICIPIO"," ");
+            ins.add("CIUDAD"," ");
+            ins.add("ZONA","1");
+            ins.add("COLONIA"," ");
+            ins.add("AVENIDA"," ");
+            ins.add("CALLE"," ");
+            ins.add("NUMERO"," ");
+            ins.add("CARTOGRAFICO"," ");
+
+    		ins.add("COORX",0);
 			ins.add("COORY",0);
+            ins.add("BODEGA","");
+            ins.add("COD_PAIS","");
 			ins.add("FIRMADIG","N");
 			ins.add("CODBARRA","");
 			ins.add("VALIDACREDITO","N");
+            ins.add("FACT_VS_FACT","0");
+            ins.add("CHEQUEPOST","N");
+
 			ins.add("PRECIO_ESTRATEGICO","N");
 			ins.add("NOMBRE_PROPIETARIO","");
 			ins.add("NOMBRE_REPRESENTANTE","");
-
-			ins.add("BODEGA","");
-			ins.add("COD_PAIS","");
-			ins.add("FACT_VS_FACT","0");
-			ins.add("CHEQUEPOST","N");
-
 			ins.add("PERCEPCION",0);
 			ins.add("TIPO_CONTRIBUYENTE","");
 			ins.add("ID_DESPACHO",0);
 			ins.add("ID_FACTURACION",0);
-			ins.add("MODIF_PRECIO",0);		
+			ins.add("MODIF_PRECIO",0);
 
 			db.execSQL(ins.sql());
 
@@ -325,6 +329,7 @@ public class CliPos extends PBase {
 
 				upd.init("P_CLIENTE");
 				upd.add("NOMBRE",Nom);
+                upd.add("DIRECCION",dir);
 				upd.Where("CODIGO='"+NIT+"'");
 
 				db.execSQL(upd.sql());
@@ -351,4 +356,24 @@ public class CliPos extends PBase {
 
 	}
 
+    //endregion
+
+    //region Activity Events
+
+    protected void onResume() {
+        try{
+            super.onResume();
+
+            if (browse==1) {
+                browse=0;
+                if (! gl.cliente.isEmpty()) finish();
+                return;
+            }
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    //endregion
 }

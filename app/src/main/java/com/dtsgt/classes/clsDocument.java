@@ -304,17 +304,19 @@ public class clsDocument {
 
 			if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) rep.add(s);
 
-			/*
-			if(i==7){
-				rep.add("");
-        		if (docfactura) {
-					rep.add(resol);
-					rep.add(resfecha);
-					rep.add(resvence);
-					rep.add(resrango);
-				}
-  			}
-  		   */
+            if (docfactura) {
+                if (!modofact.equalsIgnoreCase("TICKET")) {
+                    if (i==7){
+                        rep.add("");
+                        if (docfactura) {
+                            rep.add(resol);
+                            rep.add(resfecha);
+                            rep.add(resvence);
+                            rep.add(resrango);
+                        }
+                    }
+                }
+            }
         }
 
         rep.add("Fecha : "+fsfecha);

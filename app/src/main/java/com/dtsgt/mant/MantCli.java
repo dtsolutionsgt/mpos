@@ -43,7 +43,7 @@ import java.util.Calendar;
 
 public class MantCli extends PBase {
 
-    private ImageView imgstat,imgfprint;
+    private ImageView imgstat,imgfprint,imgsave,imgdel;
     private TextView lblDateCli,lblfprint;
     private EditText txt1,txt2,txt3,txt4,txt5,txt6,txtCodCliente;
 
@@ -85,6 +85,8 @@ public class MantCli extends PBase {
         txtCodCliente= (EditText) findViewById(R.id.txtCodCliente);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgfprint= (ImageView) findViewById(R.id.imageView51);
+        imgsave= (ImageView) findViewById(R.id.imageView31);
+        imgdel= (ImageView) findViewById(R.id.imgImg2);
         lblDateCli = (TextView) findViewById(R.id.lblDateCli);
         lblfprint= (TextView) findViewById(R.id.textView147);
         img1 = (ImageView) findViewById(R.id.imageView43);
@@ -108,6 +110,12 @@ public class MantCli extends PBase {
         }catch (Exception ex){
             Toast.makeText(this,"Error " + ex.getMessage(), Toast.LENGTH_SHORT).show();
         }
+
+        if (gl.rol==1) {
+            imgsave.setVisibility(View.INVISIBLE);
+            imgdel.setVisibility(View.INVISIBLE);
+        }
+
 
     }
 

@@ -11,6 +11,8 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -88,7 +90,7 @@ public class Venta extends PBase {
     private String emp,uid,seluid,cliid,prodid,uprodid,famid,um,tiposcan,barcode,imgfold,tipo;
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
-    private boolean decimal,menuitemadd,usarbio,imgflag;
+    private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
 
     private AppMethods app;
 
@@ -150,7 +152,9 @@ public class Venta extends PBase {
                     } else {
                         if (!gl.cliposflag) {
                             gl.cliposflag=true;
-                            startActivity(new Intent(Venta.this,CliPos.class));
+                            if (!gl.exitflag) {
+                                startActivity(new Intent(Venta.this,CliPos.class));
+                            }
                         }
                     }
                 }
@@ -249,6 +253,8 @@ public class Venta extends PBase {
             }
             gl.brw=0;
 
+            browse=0;
+
             Intent intent = new Intent(this,FacturaRes.class);
             startActivity(intent);
 
@@ -294,6 +300,8 @@ public class Venta extends PBase {
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
+            barcode=khand.getStringValue();
+            if (!barcode.isEmpty()) addBarcode();
             /*
             if (handlecant) {
                 if (khand.isValid) {
@@ -309,6 +317,10 @@ public class Venta extends PBase {
     }
 
     public void subItemClick(int position,int handle) {
+    }
+
+    public void doFocusScan(View view) {
+        txtBarra.requestFocus();
     }
 
     private void setHandlers(){
@@ -386,19 +398,28 @@ public class Venta extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
-        txtBarra.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View arg0, int arg1, KeyEvent arg2) {
-                if (arg2.getAction() == KeyEvent.ACTION_DOWN) {
-                    switch (arg1) {
-                        case KeyEvent.KEYCODE_ENTER:
-                            barcode=txtBarra.getText().toString();
-                            txtBarra.requestFocus();
-                            if (!barcode.isEmpty()) processProdBarra(barcode);
-                            return true;
-                    }
+
+        txtBarra.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start,int count, int after) { }
+
+            public void onTextChanged(CharSequence s, int start,int before, int count) {
+                //mu.msgbox("start "+start+" before "+before+" count "+count);
+
+                final CharSequence ss=s;
+
+                if (!scanning) {
+                    scanning=true;
+                    Handler handlerTimer = new Handler();
+                    handlerTimer.postDelayed(new Runnable(){
+                        public void run() {
+                            compareSC(ss);
+                        }}, 500);
                 }
-                return false;
+
+
             }
         });
 
@@ -1675,6 +1696,8 @@ public class Venta extends PBase {
                 public void onClick(DialogInterface dialog, int which) {
                     gl.cliposflag=true;
                     if (gl.dvbrowse!=0) gl.dvbrowse =0;
+                    browse=0;
+                    gl.forcedclose=true;
                     doExit();
                 }
             });
@@ -2152,7 +2175,9 @@ public class Venta extends PBase {
                         if (usarbio) {
                             startActivity(new Intent(Venta.this,Clientes.class));
                         } else {
-                            startActivity(new Intent(Venta.this,CliPos.class));
+                            if (!gl.forcedclose) {
+                                startActivity(new Intent(Venta.this,CliPos.class));
+                            }
                         }
                     }
                     break;
@@ -2466,7 +2491,7 @@ public class Venta extends PBase {
     private void doExit(){
         try{
             gl.exitflag=true;
-            gl.cliposflag=true;
+            gl.cliposflag=false;
             super.finish();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -2622,6 +2647,9 @@ public class Venta extends PBase {
         String ss;
         double lcred,cred,disp;
 
+        browse=0;
+
+        gl.exitflag=false;
         if (!gl.scancliente.isEmpty()) gl.cliente=gl.scancliente;
         gl.scancliente="";
         if (gl.cliente.isEmpty()) {
@@ -2688,6 +2716,26 @@ public class Venta extends PBase {
         return cred;
     }
 
+    private void compareSC(CharSequence s) {
+        String os,bc;
+
+        bc=txtBarra.getText().toString();
+        if (bc.isEmpty() || bc.length()<2) {
+            txtBarra.setText("");
+            scanning=false;
+            return;
+        }
+        os=s.toString();
+
+        if (bc.equalsIgnoreCase(os)) {
+            barcode=bc;
+            addBarcode();
+        }
+
+        txtBarra.setText("");txtBarra.requestFocus();
+        scanning=false;
+    }
+
     //endregion
 
     //region Activity Events
@@ -2697,7 +2745,8 @@ public class Venta extends PBase {
         try{
             super.onResume();
 
-            if (gl.exitflag) {
+            if (gl.forcedclose) {
+                super.finish();
                 return;
             }
 
@@ -2710,6 +2759,7 @@ public class Venta extends PBase {
 
             if (gl.iniciaVenta) {
 
+                browse=0;
                 lblVend.setText(" ");
 
                 try  {
@@ -2732,18 +2782,22 @@ public class Venta extends PBase {
                         } else {
                             if (!gl.cliposflag) {
                                 gl.cliposflag=true;
-                                startActivity(new Intent(Venta.this,CliPos.class));
+                                if (!gl.forcedclose) {
+                                    startActivity(new Intent(Venta.this,CliPos.class));
+                                }
                             }
                         }
-
                     }
                 };
                 mtimer.postDelayed(mrunner,100);
             } else {
-
             }
 
             if (!gl.scancliente.isEmpty()) cargaCliente();
+
+            if (browse==-1)   {
+                browse=0;finish();return;
+            }
 
             if (browse==1)   {
                 browse=0;processItem(false);return;
@@ -2775,14 +2829,16 @@ public class Venta extends PBase {
 
             if (browse==8) {
                 browse=0;
-                cargaCliente();return;
+                if (gl.forcedclose) {
+                    super.finish();
+                } else {
+                    cargaCliente();
+                }
             }
-
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     @Override

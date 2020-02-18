@@ -2,21 +2,33 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
+import java.util.ArrayList;
+
 public class MantConfig extends PBase {
 
     private CheckBox cb100,cb102,cb103,cb104;
+    private Spinner spin16;
 
     private clsP_paramextObj holder;
 
+    private ArrayList<String> items16= new ArrayList<String>();
+
     private boolean value100,value102,value103,value104;
+    private String value16;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +41,12 @@ public class MantConfig extends PBase {
         cb102 = (CheckBox) findViewById(R.id.checkBox10);
         cb103 = (CheckBox) findViewById(R.id.checkBox23);
         cb104 = (CheckBox) findViewById(R.id.checkBox22);
+        spin16 = (Spinner) findViewById(R.id.spinner16);
 
         holder =new clsP_paramextObj(this,Con,db);
+
+        setHandlers();
+
         loadItem();
 
     }
@@ -43,6 +59,31 @@ public class MantConfig extends PBase {
 
     public void doExit(View view) {
         msgAskExit("Salir");
+    }
+
+    public void setHandlers() {
+        spin16.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                try {
+                    TextView spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);
+                    spinlabel.setPadding(5,0,0,0);spinlabel.setTextSize(18);
+                    spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                    value16=items16.get(position);
+
+                } catch (Exception e) { }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
     }
 
     //endregion
@@ -86,6 +127,14 @@ public class MantConfig extends PBase {
         }
         cb104.setChecked(value104);
 
+        try {
+            holder.fill("WHERE ID="+16);
+            value16=holder.first().valor;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" .16. "+e.getMessage());
+            value16="GUA";
+        }
+        fillSpin16();
 
     }
 
@@ -101,12 +150,14 @@ public class MantConfig extends PBase {
 
             db.beginTransaction();
 
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=16");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=100");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=101");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=102");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=103");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=104");
 
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES ( 16,'Formato factura','"+value16+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','"+s100+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','N')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','"+s102+"')");
@@ -127,6 +178,29 @@ public class MantConfig extends PBase {
 
     //region Aux
 
+    private void fillSpin16() {
+        int selidx=0;
+
+        try {
+
+
+            items16.clear();
+            items16.add("GUA");if (value16.equalsIgnoreCase("GUA")) selidx=0;
+            items16.add("TICKET");if (value16.equalsIgnoreCase("TICKET")) selidx=1;
+
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, items16);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spin16.setAdapter(dataAdapter);
+
+            try {
+                spin16.setSelection(selidx);
+            } catch (Exception e) {
+                spin16.setSelection(0);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 

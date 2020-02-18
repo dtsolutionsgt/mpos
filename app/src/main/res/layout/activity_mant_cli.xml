@@ -588,7 +588,8 @@
         android:maxLines="1"
         android:singleLine="true"
         android:textSize="21sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

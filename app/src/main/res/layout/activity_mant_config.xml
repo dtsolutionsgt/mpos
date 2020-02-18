@@ -69,12 +69,13 @@
             android:textColor="#1A8AC6"
             android:textSize="24sp"
             android:textStyle="bold" />
+
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="wrap_content"
-        android:layout_height="180dp"
+        android:layout_height="220dp"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
@@ -83,6 +84,27 @@
         android:layout_toStartOf="@+id/imgImg2"
         android:layout_toEndOf="@+id/imageView30"
         android:background="@drawable/frame_rect">
+
+        <TextView
+            android:id="@+id/lblCFact24"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_below="@+id/lblCFact22"
+            android:layout_alignStart="@+id/lblCFact22"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignParentLeft="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Formato impresión"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <CheckBox
             android:id="@+id/checkBox10"
@@ -221,6 +243,20 @@
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="invisible" />
+
+        <Spinner
+            android:id="@+id/spinner16"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignStart="@+id/checkBox23"
+            android:layout_alignTop="@+id/lblCFact24"
+            android:layout_alignEnd="@+id/checkBox23"
+            android:layout_alignBottom="@+id/lblCFact24"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/spinner_style"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
 
     </RelativeLayout>
 

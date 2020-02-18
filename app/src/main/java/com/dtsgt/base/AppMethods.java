@@ -848,6 +848,10 @@ public class AppMethods {
 
     private void printEpsonTMBT(int copies) {
         try {
+
+            //Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
+
+
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
 
             intent.putExtra("mac","BT:"+gl.prpar);

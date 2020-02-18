@@ -453,7 +453,7 @@ public class clsClasses {
 	//region Aux
 
 	public class clsCD {
-		public String Cod,Desc,Text,um;
+		public String Cod,Desc,Text,um,prec;
 	}
 	
 	public class clsCDB {

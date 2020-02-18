@@ -66,13 +66,10 @@ public class Producto extends PBase {
 
         items = new ArrayList<clsCD>();
 		
-		act=0;
-		ordPorNombre=gl.peOrdPorNombre;
+		act=0;ordPorNombre=gl.peOrdPorNombre;
 
 		fillSpinner();
-		
 		setHandlers();
-		
 		listItems();
 
 	}
@@ -231,7 +228,8 @@ public class Producto extends PBase {
 		Cursor DT;
 		clsCD vItem;
 		int cantidad;
-		String vF,cod,name,um,exist="";
+		double disp;
+		String vF,cod,name,exist,um;
 
 		ArrayList<clsCD> vitems = new ArrayList<clsCD>();;
 
@@ -255,7 +253,7 @@ public class Producto extends PBase {
 					
 				case 1:  // Venta
 
-					sql="SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.TIPO " +
+					sql="SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS " +
 						"FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
 						"P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
 						"WHERE (P_PRODPRECIO.NIVEL = " + gl.nivel +")";
@@ -265,7 +263,7 @@ public class Producto extends PBase {
 					if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
 
 					sql+="UNION ";
-					sql+="SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA, P_PRODUCTO.TIPO  " +
+					sql+="SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS  " +
 							"FROM P_PRODUCTO "  +
 							"WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M') OR (P_PRODUCTO.TIPO ='P')) ";
 					if (!mu.emptystr(famid)){
@@ -299,33 +297,27 @@ public class Producto extends PBase {
 			if (cantidad==0) return;
 			
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
-				  
-			  cod=DT.getString(0);	
-			  name=DT.getString(1);
-			  um="UN";
-			  exist = "";
 
-			  if(DT.getString(2).equals("P")) exist=DT.getString(2);
+                cod = DT.getString(0);
+                name = DT.getString(1);
+                um = DT.getString(2);
+                disp=getDisp(cod);
 
-			  vItem = clsCls.new clsCD();
-			  
-			  vItem.Cod=cod;
-			  vItem.Desc=name;
+                vItem = clsCls.new clsCD();
 
-			  //#EJC20181127: En aprof. no tienen un viene vacío, colocar por defecto un.
-			  if (um.equalsIgnoreCase(""))  um="UN";
+                vItem.Cod = cod;
+                vItem.prec="Precio : "+gl.peMon+prodPrecioBase(cod);
+                vItem.Desc = name;
+                if (disp>0) exist="Exist : "+mu.frmdecno(disp)+" "+um; else exist="";
+                vItem.Text=exist;
 
-			  vItem.um=um;
-			  vItem.Text=exist;
+                items.add(vItem);vitems.add(vItem);
 
-			  items.add(vItem);
-			  vitems.add(vItem);
-
-			  DT.moveToNext();
+                DT.moveToNext();
 			}
 		} catch (Exception e){
-		    //mu.msgbox( e.getMessage());
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			Log.d("prods",e.getMessage());
 	    }
@@ -335,7 +327,7 @@ public class Producto extends PBase {
 		adapter=new ListAdaptProd(this,vitems);
 		listView.setAdapter(adapter);
 		
-		if (prodtipo==1) dispUmCliente();
+		//if (prodtipo==1) dispUmCliente();
 		
 	}
 	
@@ -349,25 +341,8 @@ public class Producto extends PBase {
 
 	}
 	
-	private void dispUmCliente() {
-		String sdisp;
-		try{
-			for (int i = items.size()-1; i >=0; i--) {
-				if (getDisp(items.get(i).Cod)) {
-					sdisp=mu.frmdecimal(disp_und,gl.peDecImp)+" "+ltrim(um,6);
-					items.get(i).Text=sdisp;
-				} else {
-					items.remove(i);
-				}
-			}
 
-			adapter.notifyDataSetChanged();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-	}
-	
-	private boolean getDisp(String prodid) {
+	private double getDisp(String prodid) {
 		Cursor dt;
 		String umstock = "";
 		double umf1,umf2,umfactor;
@@ -401,7 +376,7 @@ public class Producto extends PBase {
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			return false;
+			return 0;
 		}
 		
 		try {
@@ -441,7 +416,7 @@ public class Producto extends PBase {
 
 			dt.close();
 
-			if (disp_und >0)	return true;
+			if (disp_und >0)	return disp_und;
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -469,7 +444,7 @@ public class Producto extends PBase {
 				dt.moveToFirst();			
 				umf1=dt.getDouble(0);
 			} else {	
-				return false;
+				return 0;
 			}
 
 			dt.close();
@@ -482,7 +457,7 @@ public class Producto extends PBase {
 				dt.moveToFirst();			
 				umf2=dt.getDouble(0);
 			} else {	
-				return false;
+				return 0;
 			}
 
 			dt.close();
@@ -515,10 +490,10 @@ public class Producto extends PBase {
 
 			if (!porpeso) disp_und = disp_und /umfactor; else disp_und =dt.getDouble(1);*/
 
-			return true;
+			return disp_und;
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			return false;
+			return 0;
 	    }	
 		
 	}
@@ -629,8 +604,27 @@ public class Producto extends PBase {
 
     }
 
+    private String prodPrecioBase(String prid) {
+        Cursor DT;
+        double pr,stot,pprec,tsimp;
+        String sprec="";
 
-	// Activity Events
+        try {
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prid+"') AND (NIVEL="+gl.nivel+") ";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            pr=DT.getDouble(0);
+        } catch (Exception e) {
+            pr=0;
+        }
+
+        sprec=mu.frmdec(pr);
+        return sprec;
+    }
+
+
+    // Activity Events
 	
 	protected void onResume() {
 		try{

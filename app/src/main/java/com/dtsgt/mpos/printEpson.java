@@ -25,6 +25,7 @@ public class printEpson extends printBase{
 	private Printer mPrinter = null;
 	private final int mRequestCode = 1001;
 
+	//00:01:90:85:0D:8C
 	
 	public printEpson(Context context,String printerMAC,Device device,Printer printer) {
 		super(context,printerMAC);
@@ -37,8 +38,7 @@ public class printEpson extends printBase{
 	
 	// Main
 	
-	public void printask(Runnable callBackHook)
-	{
+	public void printask(Runnable callBackHook)	{
 
 		hasCallback=true;
 		callback=callBackHook;
@@ -47,16 +47,14 @@ public class printEpson extends printBase{
 		msgAskPrint();
 	}
 	
-	public void printask()
-	{
+	public void printask()	{
 		hasCallback=false;
 		
 		fname="print.txt";errmsg="";
 		msgAskPrint();				
 	}
 	
-	public boolean print()
-	{
+	public boolean print()	{
 		hasCallback=false;
 		
 		fname="print.txt";errmsg="";
@@ -69,16 +67,14 @@ public class printEpson extends printBase{
 		return true;
 	}
 	
-	public void printask(String fileName)
-	{
+	public void printask(String fileName)	{
 		hasCallback=false;
 		
 		fname=fileName;	errmsg="";
 		msgAskPrint();				
 	}
 		
-	public boolean print(String fileName)
-	{
+	public boolean print(String fileName)	{
 		hasCallback=false;
 		
 		fname=fileName;errmsg="";
@@ -95,8 +91,7 @@ public class printEpson extends printBase{
 
 	// Private
 	
-	private boolean loadFile()
-	{
+	private boolean loadFile()	{
 
 		File ffile;
 		BufferedReader dfile;
@@ -144,15 +139,13 @@ public class printEpson extends printBase{
 		}			
 	}
 	
-	private void doStartPrint()
-	{
+	private void doStartPrint()	{
 		showmsg("Imprimiendo ...");
 		AsyncPrintCall wsRtask = new AsyncPrintCall();
 		wsRtask.execute();
 	}
 	
-	private class AsyncPrintCall extends AsyncTask<String, Void, Void>
-	{
+	private class AsyncPrintCall extends AsyncTask<String, Void, Void> {
 
 		@Override
 	    protected Void doInBackground(String... params) {
@@ -164,8 +157,7 @@ public class printEpson extends printBase{
 	    }
 	 
 	    @Override
-	    protected void onPostExecute(Void result)
-		{
+	    protected void onPostExecute(Void result){
 	    	try {
 	    		doCallBack();
 			} catch (Exception e) {}
@@ -179,8 +171,7 @@ public class printEpson extends printBase{
 	 
     }	
 	
-	private void doCallBack()
-	{
+	private void doCallBack(){
 		//showmsg("Impresión completa.");
 		
 		if (!hasCallback) return;
@@ -195,8 +186,7 @@ public class printEpson extends printBase{
 			
 	}
 	
-	public void processPrint()
-	{
+	public void processPrint()	{
 		
 		try {
 

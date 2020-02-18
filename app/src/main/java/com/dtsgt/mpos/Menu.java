@@ -269,6 +269,7 @@ public class Menu extends PBase {
 
 						gl.iniciaVenta=true;
 						gl.exitflag=false;
+						gl.forcedclose=false;
 						startActivity(new Intent(this, Venta.class));
 					}else {
 						if(gl.cajaid==5) msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
@@ -1758,7 +1759,7 @@ public class Menu extends PBase {
 
 	public void VentaDate(){
 		if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
-		startActivity(new Intent(Menu.this,Venta.class));
+		//startActivity(new Intent(Menu.this,Venta.class));
 	}
 
 	public boolean valida(){

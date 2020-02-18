@@ -53,7 +53,7 @@ public class ListAdaptProd extends BaseAdapter {
 	
 		if (convertView == null) {
 			
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_cd, null);
+			convertView = l_Inflater.inflate(R.layout.activity_list_view_prod, null);
 			holder = new ViewHolder();
 			
 			holder.lblCod  = (TextView) convertView.findViewById(R.id.lblETipo);
@@ -67,12 +67,9 @@ public class ListAdaptProd extends BaseAdapter {
 		}
 					
 		holder.lblCod.setText(items.get(position).Cod);
-		//holder.lblCod.setText(items.get(position).Cod+"  "+items.get(position).um);
 		holder.lblDesc.setText(items.get(position).Desc);
-		holder.lblExtra.setText("");
+		holder.lblExtra.setText(items.get(position).prec);
 		holder.lblExist.setText(items.get(position).Text);
-		if(items.get(position).Text.equals("P")) holder.lblExist.setText("0 UNI");
-
 		
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));

@@ -83,7 +83,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  try {
 			  vCursor = vDatabase.rawQuery(pSQL, null);
 			  vCursor.moveToLast();
-		  }catch(Exception ex){
+		  } catch(Exception ex){
 		  	//msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
 			  vError = ex.getMessage();
 		  }
@@ -115,8 +115,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  public void add(String pField, String pValue , String pTipo) {
 			  String SV;
 			  
-			  try 
-			  {
+			  try  {
 
 				  if (pField == "") return;
 				  if (pTipo == "") return;

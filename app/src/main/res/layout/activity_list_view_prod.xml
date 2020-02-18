@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Img_view_list" >
+
+    <TextView
+        android:id="@+id/lblETipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblPNum"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="0dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
+        android:text="Fecha"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/lblPNum"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_weight="1"
+        android:width="0dip"
+        android:maxLines="100"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
+        android:scrollHorizontally="false"
+        android:text="Nombre"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="18sp"
+        android:textStyle="normal|bold" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lblETipo"
+        android:layout_alignParentRight="false"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/lblETipo"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView142"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView1"
+        android:layout_alignParentRight="false"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/textView1"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="18sp" />
+
+</RelativeLayout>

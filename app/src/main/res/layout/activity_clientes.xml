@@ -83,7 +83,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="5dp"
         android:layout_toLeftOf="@id/reladd"
-        android:background="@layout/frame_rect">
+        android:background="@drawable/frame_rect">
 
         <EditText
             android:id="@+id/txtFilter"

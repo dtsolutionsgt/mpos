@@ -166,7 +166,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginBottom="62dp"
         android:gravity="center_horizontal"
-        android:text="ROAD ver. 9.4  -  26/04/2019"
+        android:text="ROAD ver. 9.5  -  21/01/2020"
         android:textColor="#000000"
         android:textSize="13sp" />
 

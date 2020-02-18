@@ -23,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ public class Clientes extends PBase {
 	private TextView lblCant;
     private Switch swact;
     private ImageView imgAdd;
+    private RelativeLayout reladd;
 
 	private ArrayList<clsCDB> items = new ArrayList<clsCDB>();
 	private ArrayList<String> cobros = new ArrayList<String>();
@@ -62,7 +64,7 @@ public class Clientes extends PBase {
 
 	private int selidx, fecha, dweek, browse;
 	private String selid, bbstr, bcode;
-	private boolean scanning = false,porcentaje;
+	private boolean scanning = false,porcentaje,usarbio;
 
     final int REQUEST_CODE=101;
 
@@ -81,29 +83,30 @@ public class Clientes extends PBase {
 		lblCant = (TextView) findViewById(R.id.lblCant);
         swact = (Switch) findViewById(R.id.switch2);
         imgAdd = (ImageView) findViewById(R.id.imageView12);
+        reladd = (RelativeLayout) findViewById(R.id.reladd);
 
 		app = new AppMethods(this, gl, Con, db);
-		//gl.validimp = app.validaImpresora();
-		//if (!gl.validimp) msgbox("¡La impresora no está autorizada!");
+        usarbio=gl.peMMod.equalsIgnoreCase("1");
 
         loadAdd();
 
 		setHandlers();
 
-		selid = "";
-		selidx = -1;
+		selid = "";selidx = -1;
 
 		dweek = mu.dayofweek();
 
 		fillSpinners();
-
 		listItems();
-
 		closekeyb();
 
 		gl.escaneo = "N";
+        if (usarbio) {
+            if (gl.climode) callFPScan(null);
+        } else {
+            reladd.setVisibility(View.GONE);
+        }
 
-        if (gl.climode) callFPScan(null);
 	}
 
 	@Override
@@ -193,7 +196,6 @@ public class Clientes extends PBase {
     }
 
 	private void setHandlers() {
-
 		try {
 
 			listView.setOnItemClickListener(new OnItemClickListener() {
@@ -319,7 +321,6 @@ public class Clientes extends PBase {
 			addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 			mu.msgbox(e.getMessage());
 		}
-
 	}
 
     //endregion
