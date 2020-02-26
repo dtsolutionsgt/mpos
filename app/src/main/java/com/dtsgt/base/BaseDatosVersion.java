@@ -27,73 +27,27 @@ public class BaseDatosVersion {
 		db=dbase;
 		Con=dbCon;
 	}
+
+
+    public void update(){
+        if (!update01()) return;
+    }
 	
-	public void checkVersion(int actversion) {
-		
-		items.clear();
-		
-		aver=actversion;
-		pver=getDBVersion();
-		
-		if (aver==pver) return;
-		
-		for (int version = pver; version <=aver; version++) {
-			updateVersion(version);	
-		}	
-		
-		if (processDBUpdates()) Toast.makeText(cont,"La base de datos ha sido actualizada a versión "+aver+".", Toast.LENGTH_SHORT).show();;
-		
-	}
-	
-	
+
 	// Private
 
-	private int getDBVersion() {
-		Cursor dt;
-		int dbv=0;
-		
-		try {
-			sql="SELECT dbver FROM Params";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-			
-			dbv=dt.getInt(0);
-		} catch (Exception e) {
-			return -1;
-		}
-		
-		return dbv;
-	}
+
 	
-	private void updateVersion(int vers) {
-		
-		switch (vers) {
-		case 1:  
-			ver1();break;
-		case 0:  
-			ver0();break;	
-		}		
-	}
-	
-	private boolean processDBUpdates() {
-		int icount;
-		
+	private boolean update01() {
+
 		try {
-			
-			icount=items.size();
-			
+
 			db.beginTransaction();
-			
-			if (icount>=0) {
-				for (int i = 0; i < icount; i++) {
-					sql=items.get(i);
-					db.execSQL(sql);
-				}	
-			}
-			
-			sql="UPDATE Params SET dbver="+aver;
-		    db.execSQL(sql);
-			
+
+
+			db.execSQL(sql);
+
+
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		
@@ -106,18 +60,7 @@ public class BaseDatosVersion {
 		
 	}
 	
-	
-	// Versiones
-	
-	private void ver1() {
-		
-	}
-	
-	private void ver0() {
-		
-	}
-	
-	
+
 	// Aux
 	
  	private void msgbox(String msg) {

@@ -371,6 +371,19 @@ public class AppMethods {
             gl.peMFact=false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFEL=val;
+        } catch (Exception e) {
+            gl.peFEL="";
+        }
+
 	}
 
     //endregion
@@ -844,14 +857,14 @@ public class AppMethods {
             printEpsonTMBT(copies);
         }
 
+        if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
+            HPEngageUSB(copies);
+        }
+
     }
 
     private void printEpsonTMBT(int copies) {
         try {
-
-            //Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
-
-
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
 
             intent.putExtra("mac","BT:"+gl.prpar);
@@ -861,7 +874,18 @@ public class AppMethods {
 
             cont.startActivity(intent);
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox("El controlador de impresión de Epson TM BT no está instalado");
+            //msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
+        }
+    }
+
+    private void HPEngageUSB(int copies) {
+        try {
+            Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
+            cont.startActivity(intent);
+        } catch (Exception e) {
+            msgbox("El controlador de impresión de HP Engage USB no está instalado");
+            //msgbox("El controlador de HP Engage USB no está instalado\n"+e.getMessage());
         }
     }
 

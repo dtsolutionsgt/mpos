@@ -182,14 +182,14 @@ public class UtilPrint extends PBase {
 			if(gl.impresora.equalsIgnoreCase("S")){
 				if(prtipo.equalsIgnoreCase("SIN IMPRESORA")){
 					msgbox("Debe seleccionar una impresora.");
-				}else {
+				} else {
 					sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"'";
 					db.execSQL(sql);
 
 					Toast.makeText(this,"Configuración guardada.", Toast.LENGTH_SHORT).show();
 					super.finish();
 				}
-			}else{
+			} else {
 				sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"'";
 				db.execSQL(sql);
 
@@ -238,6 +238,7 @@ public class UtilPrint extends PBase {
 			
 			s="SIN IMPRESORA";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=0;
 			s="EPSON TM BlueTooth";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=1;
+            s="HP Engage USB";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=2;
 
 			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spincode);
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

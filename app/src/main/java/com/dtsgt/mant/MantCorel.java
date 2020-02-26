@@ -5,50 +5,53 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsP_CorrelativosObj;
+import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class MantCorelPagos extends PBase {
+public class MantCorel extends PBase {
 
-    private EditText txt1,txt2,txt3,txt4;
-    private clsP_CorrelativosObj holder;
+    private EditText txt1,txt2,txt3,txt4,txt5;
+    private clsP_corelObj holder;
     private String id;
 
-    private clsClasses.clsP_correlativos item=clsCls.new clsP_correlativos();
+    private clsClasses.clsP_corel item=clsCls.new clsP_corel();
 
     private boolean newitem=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_corel_pagos);
+        setContentView(R.layout.activity_mant_corel);
 
         super.InitBase();
+
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.txt10);
         txt4 = (EditText) findViewById(R.id.txt12);txt4.setEnabled(false);
+        txt5 = (EditText) findViewById(R.id.txt14);
 
-        holder =new clsP_CorrelativosObj(this,Con,db);
+        holder =new clsP_corelObj(this,Con,db);
 
-        id=gl.gcods;
-        if (id.isEmpty()) newItem(); else loadItem();
+        loadItem();
     }
 
     //region Main
 
     private void loadItem() {
         try {
-            holder.fill("WHERE TIPO='"+id+"'");
-            item=holder.first();
+            holder.fill();
+            if (holder.count==0) {
+                newItem();
+            } else {
+                item=holder.first();
+                showItem();
+            }
 
-            showItem();
-
-            txt1.requestFocus();
+            txt5.requestFocus();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -57,16 +60,18 @@ public class MantCorelPagos extends PBase {
 
     private void newItem() {
         newitem=true;
-        txt1.requestFocus();
+        txt5.requestFocus();
 
-        item.empresa=gl.emp;
-        item.ruta=gl.ruta;
+        item.resol="";
         item.serie="";
-        item.tipo="";
-        item.inicial=0;
-        item.fin=0;
-        item.actual=0;
-        item.enviado="N";
+        item.corelini=0;
+        item.corelfin=0;
+        item.corelult=0;
+        item.fechares=0;
+        item.ruta="";
+        item.fechavig=0;
+        item.resguardo=0;
+        item.valor1=0;
 
         showItem();
     }
@@ -78,11 +83,13 @@ public class MantCorelPagos extends PBase {
             txt2.setText("");
             txt3.setText("");
             txt4.setText("");
+            txt5.setText("");
         } else {
             txt1.setText(item.serie);
-            txt2.setText(""+item.inicial);
-            txt3.setText(""+item.fin);
-            txt4.setText(""+item.actual);
+            txt2.setText(""+item.corelini);
+            txt3.setText(""+item.corelfin);
+            txt4.setText(""+item.corelult);
+            txt5.setText(item.resol);
         }
     }
 
@@ -100,11 +107,16 @@ public class MantCorelPagos extends PBase {
 
         try {
 
+            ss=txt5.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Falta definir la resolución!");return false;
+            }
+            item.resol=ss;
+
             ss=txt1.getText().toString();
             if (ss.isEmpty()) {
-                msgbox("¡Falta definir serie!");return false;
+                msgbox("¡Falta definir la serie!");return false;
             }
-
             item.serie=ss;
 
             ss=txt2.getText().toString();
@@ -112,7 +124,7 @@ public class MantCorelPagos extends PBase {
                 msgbox("¡Falta definir inicial!");
                 return false;
             } else {
-                item.inicial=Integer.parseInt(ss);
+                item.corelini=Integer.parseInt(ss);
             }
 
             ss=txt3.getText().toString();
@@ -120,10 +132,10 @@ public class MantCorelPagos extends PBase {
                 msgbox("¡Falta definir final!");
                 return false;
             } else {
-                item.fin=Integer.parseInt(ss);
+                item.corelfin=Integer.parseInt(ss);
             }
 
-            item.actual = item.inicial;
+            //item.corelult=item.corelini;
 
             return true;
         } catch (Exception e) {
@@ -134,12 +146,6 @@ public class MantCorelPagos extends PBase {
 
     private void updateItem() {
         try {
-            holder.fill(" WHERE SERIE='"+item.serie+"'");
-
-            if(holder.count!=0){
-                //if(item.)
-            }
-
             holder.update(item);
             finish();
         } catch (Exception e) {
@@ -150,7 +156,6 @@ public class MantCorelPagos extends PBase {
     private void addItem() {
         try {
             holder.add(item);
-            gl.gcods=item.tipo;
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -198,7 +203,6 @@ public class MantCorelPagos extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 addItem();
-                finish();
             }
         });
 
@@ -218,7 +222,6 @@ public class MantCorelPagos extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 updateItem();
-                finish();
             }
         });
 
@@ -231,3 +234,4 @@ public class MantCorelPagos extends PBase {
 
     //endregion
 }
+

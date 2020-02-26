@@ -132,7 +132,7 @@ public class MainActivity extends PBase {
 
             // DB VERSION
             dbVers = new BaseDatosVersion(this, db, Con);
-            dbVers.checkVersion(1);
+            dbVers.update();
 
             setHandlers();
 

@@ -1754,21 +1754,21 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-	
-			sql="CREATE TABLE [P_COREL] ("+
-					"[RESOL] TEXT NOT NULL,"+
-					"[SERIE] TEXT NOT NULL,"+
-					"[CORELINI] INTEGER NOT NULL,"+
-					"[CORELFIN] INTEGER NOT NULL,"+
-					"[CORELULT] INTEGER NOT NULL,"+
-					"[FECHARES] TEXT NOT NULL,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"[FECHAVIG] INTEGER NOT NULL,"+
-					"[RESGUARDO] INTEGER NOT NULL,"+
-					"[VALOR1] INTEGER NOT NULL,"+
-					"PRIMARY KEY (RESOL,SERIE)"+
-					");";
-			database.execSQL(sql);
+
+            sql="CREATE TABLE [P_corel] ("+
+                    "RESOL TEXT NOT NULL,"+
+                    "SERIE TEXT NOT NULL,"+
+                    "CORELINI INTEGER NOT NULL,"+
+                    "CORELFIN INTEGER NOT NULL,"+
+                    "CORELULT INTEGER NOT NULL,"+
+                    "FECHARES INTEGER NOT NULL,"+
+                    "RUTA TEXT NOT NULL,"+
+                    "FECHAVIG INTEGER NOT NULL,"+
+                    "RESGUARDO INTEGER NOT NULL,"+
+                    "VALOR1 INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([RESOL],[SERIE],[CORELINI])"+
+                    ");";
+            database.execSQL(sql);
 			
 			sql="CREATE TABLE [P_CORELNC] ("+
 					"[RESOL] TEXT NOT NULL,"+
@@ -2127,6 +2127,28 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [P_usgrupo] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "CUENTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_usgrupoopc] ("+
+                    "GRUPO TEXT NOT NULL,"+
+                    "OPCION INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([GRUPO],[OPCION])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_usopcion] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "MENUGROUP TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            database.execSQL(sql);
 
             return 1;
 			 
@@ -2411,10 +2433,12 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (19,'Margen de error de GPS','10')");
 
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','S')");
-        db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','N')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','S')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (103,'Pos modalidad','')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','')");
+
     }
 	
 	private void msgbox(String msg) {

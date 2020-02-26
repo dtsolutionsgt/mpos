@@ -30,6 +30,7 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
+import com.dtsgt.mant.MantCorel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -1119,74 +1120,75 @@ public class Menu extends PBase {
 
 	    gl.listaedit=true;
 
-		try{
-			final AlertDialog Dialog;
+        try {
+            final AlertDialog Dialog;
 
-            //final String[] selitems = {"Banco","Caja","Cliente","Combo","Combo Opción","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
-            //final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración","Formato de impresión"};
-            final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Concepto Pago","Nivel precio","Producto","Proveedor","Tienda","Usuario","Correlativos","Configuración"};
+            final String[] selitems = {"Banco", "Caja", "Cliente", "Empresa", "Familia", "Forma pago", "Impuesto", "Concepto pago", "Nivel precio", "Producto", "Proveedor", "Tienda", "Usuario", "Resolución de facturas", "Configuración"};
 
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setTitle("Mantenimientos");
+            menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Mantenimientos");
 
-			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
+            menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
 
-				ss=selitems[item];
+                    ss = selitems[item];
 
-				if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
-				if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
-				if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
-				if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
-				if (ss.equalsIgnoreCase("Combo")) gl.mantid=17;
-				if (ss.equalsIgnoreCase("Combo Opción")) gl.mantid=18;
-				if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
-				if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
-				if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
-				if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
-				if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
-				if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
-				if (ss.equalsIgnoreCase("Concepto Pago")) gl.mantid=19;
-				if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
-				if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
-				if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
-				if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
-				if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
-				if (ss.equalsIgnoreCase("Correlativos")) gl.mantid=20;
-				if (ss.equalsIgnoreCase("Configuración")) gl.mantid=16;
-                if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid=17;
+                    if (ss.equalsIgnoreCase("Almacen")) gl.mantid = 0;
+                    if (ss.equalsIgnoreCase("Banco")) gl.mantid = 1;
+                    if (ss.equalsIgnoreCase("Caja")) gl.mantid = 13;
+                    if (ss.equalsIgnoreCase("Cliente")) gl.mantid = 2;
+                    if (ss.equalsIgnoreCase("Combo")) gl.mantid = 17;
+                    if (ss.equalsIgnoreCase("Combo opción")) gl.mantid = 18;
+                    if (ss.equalsIgnoreCase("Descuento")) gl.mantid = 15;
+                    if (ss.equalsIgnoreCase("Empresa")) gl.mantid = 3;
+                    if (ss.equalsIgnoreCase("Familia")) gl.mantid = 4;
+                    if (ss.equalsIgnoreCase("Forma pago")) gl.mantid = 5;
+                    if (ss.equalsIgnoreCase("Impuesto")) gl.mantid = 6;
+                    if (ss.equalsIgnoreCase("Moneda")) gl.mantid = 7;
+                    if (ss.equalsIgnoreCase("Concepto pago")) gl.mantid = 19;
+                    if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid = 14;
+                    if (ss.equalsIgnoreCase("Producto")) gl.mantid = 8;
+                    if (ss.equalsIgnoreCase("Proveedor")) gl.mantid = 9;
+                    if (ss.equalsIgnoreCase("Tienda")) gl.mantid = 12;
+                    if (ss.equalsIgnoreCase("Usuario")) gl.mantid = 11;
+                    if (ss.equalsIgnoreCase("Resolución de facturas")) gl.mantid = 20;
+                    if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 16;
+                    if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
 
+                    if (gl.mantid == 16) {
+                        startActivity(new Intent(Menu.this, MantConfig.class));
+                    } else if (gl.mantid == 15) {
+                        startActivity(new Intent(Menu.this, Lista.class));
+                    } else if (gl.mantid == 20) {
+                        startActivity(new Intent(Menu.this, MantCorel.class));
+                    } else {
+                        startActivity(new Intent(Menu.this, Lista.class));
+                    }
 
-				if (gl.mantid==16) {
-					startActivity(new Intent(Menu.this, MantConfig.class));
-				} else if (gl.mantid==15) {
-					startActivity(new Intent(Menu.this, Lista.class));
-				} else {
-					startActivity(new Intent(Menu.this, Lista.class));
-				}
- 		    		}
-			});
+                }
+            });
 
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
 
-			Dialog = menudlg.create();
-			Dialog.show();
+            Dialog = menudlg.create();
+            Dialog.show();
 
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
 
-			Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-			nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbuttonp.setTextColor(Color.WHITE);
-		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
+            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbuttonp.setTextColor(Color.WHITE);
+
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
 
 	}
 

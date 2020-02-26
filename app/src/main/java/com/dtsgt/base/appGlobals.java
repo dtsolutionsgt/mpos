@@ -13,7 +13,7 @@ public class appGlobals extends Application {
 
 	public String ruta,rutanom,sucur,rutatipo,rutatipog,vend,vendnom,gstr,gstr2,prod,prodmenu,um,umpres,umstock,cliente,clitipo;
 	public String ubas,emp, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante, ayudanteID, vehiculo, vehiculoID;
-	public String wsURL,bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel;
+	public String wsURL,bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel,CodDev;
 	public int itemid,gint,tipo,nivel,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
 	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid;
 	public long nuevaFecha,atentini,lastDate;
@@ -40,7 +40,7 @@ public class appGlobals extends Application {
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
 	// Parametros Extra
-	public String peModal,peMon,peFormatoFactura,CodDev,peMMod;
+	public String peModal,peMon,peFormatoFactura,peMMod,peFEL;
 	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,endPrint;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre;
 	public boolean peImprFactCorrecta;

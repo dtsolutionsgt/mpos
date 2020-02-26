@@ -129,6 +129,19 @@ public class clsClasses {
 		public int  modif_precio;
 	}
 
+    public class clsP_corel {
+        public String resol;
+        public String serie;
+        public int  corelini;
+        public int  corelfin;
+        public int  corelult;
+        public int  fechares;
+        public String ruta;
+        public int  fechavig;
+        public int  resguardo;
+        public int  valor1;
+    }
+
     public class clsP_descuento {
         public String cliente;
         public int  ctipo;
@@ -410,6 +423,24 @@ public class clsClasses {
 		public int  cod_rol;
 	}
 
+    public class clsP_usgrupo {
+        public String codigo;
+        public String nombre;
+        public String cuenta;
+    }
+
+    public class clsP_usgrupoopc {
+        public String grupo;
+        public int  opcion;
+    }
+
+    public class clsP_usopcion {
+        public int  codigo;
+        public String menugroup;
+        public String nombre;
+    }
+
+
     public class clsVendedores {
         public String codigo;
         public String nombre;
@@ -583,5 +614,17 @@ public class clsClasses {
 	}
 
 	//endregion
+
+    public class clsView {
+        public int  pk;
+        public String f1;
+        public String f2;
+        public String f3;
+        public String f4;
+        public String f5;
+        public String f6;
+        public String f7;
+        public String f8;
+    }
 
 }
