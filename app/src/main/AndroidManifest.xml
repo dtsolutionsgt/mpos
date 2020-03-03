@@ -33,7 +33,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".FingPTest" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -545,6 +544,12 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.dtsgt.mant.MantRol"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".FingPTest" />
         <activity
             android:name=".ConfigCaja"
             android:screenOrientation="landscape"

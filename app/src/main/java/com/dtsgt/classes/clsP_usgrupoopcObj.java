@@ -102,6 +102,7 @@ public class clsP_usgrupoopcObj {
 
     private void deleteItem(String id) {
         sql="DELETE FROM P_usgrupoopc WHERE id='" + id+"'";
+
         db.execSQL(sql);
     }
 

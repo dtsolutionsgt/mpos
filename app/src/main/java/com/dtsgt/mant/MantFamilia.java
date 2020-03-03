@@ -28,7 +28,7 @@ import java.io.FileOutputStream;
 
 public class MantFamilia extends PBase {
 
-    private ImageView imgstat,img1;
+    private ImageView imgstat,img1,imgadd;
     private EditText txt1,txt2;
 
     private clsP_lineaObj holder;
@@ -49,6 +49,7 @@ public class MantFamilia extends PBase {
         txt2 = (EditText) findViewById(R.id.txt2);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         img1 = (ImageView) findViewById(R.id.imageView41);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_lineaObj(this,Con,db);
 
@@ -57,6 +58,13 @@ public class MantFamilia extends PBase {
         if (id.isEmpty()) newItem(); else loadItem();
         showImage();
         setHandlers();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     //region Events

@@ -31,6 +31,7 @@ import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
 import com.dtsgt.mant.MantCorel;
+import com.dtsgt.mant.MantRol;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -166,29 +167,51 @@ public class Menu extends PBase {
 	}
 
 	public void listItems() {
-		try{
-			clsMenu item;
+        clsMenu item;
 
-			items.clear();selIdx=-1;
+        lblVendedor.setText(gl.vendnom);
+        lblRuta.setText(gl.ruta);
 
-			if (gl.modoinicial) {
 
-			    addMenuItem(11,"Mantenimientos");
-                addMenuItem(2,"Comunicación");
-                addMenuItem(9,"Utilerias");
-                addMenuItem(10,"Cambio usuario");
+        items.clear();selIdx=-1;
 
-			} else {
+        try{
 
-                addMenuItem(1,"Venta");
-                addMenuItem(6,"Caja");
-                addMenuItem(3,"Reimpresión");
-                addMenuItem(7,"Inventario");
-                addMenuItem(2,"Comunicación");
-                if (gl.rol>1) addMenuItem(9,"Utilerias");
-                if (gl.rol>1) addMenuItem(11,"Mantenimientos");
-                if (gl.rol>1) addMenuItem(12,"Reportes");
-                if (gl.rol>1) addMenuItem(4,"Anulación");
+            if (gl.modoinicial) {
+
+                addMenuItem(11, "Mantenimientos");
+                addMenuItem(2, "Comunicación");
+                addMenuItem(9, "Utilerias");
+                addMenuItem(10, "Cambio usuario");
+
+            } else {
+
+                if (gl.grantaccess) {
+
+                    if (app.grant(1,gl.rol)) addMenuItem(1,"Venta");
+                    if (app.grant(2,gl.rol)) addMenuItem(6,"Caja");
+                    if (app.grant(3,gl.rol)) addMenuItem(3,"Reimpresión");
+                    if (app.grant(4,gl.rol)) addMenuItem(7,"Inventario");
+                    if (app.grant(5,gl.rol)) addMenuItem(2,"Comunicación");
+                    if (app.grant(6,gl.rol)) addMenuItem(9,"Utilerias");
+                    if (app.grant(7,gl.rol)) addMenuItem(11,"Mantenimientos");
+                    if (app.grant(8,gl.rol)) addMenuItem(12,"Reportes");
+                    if (app.grant(9,gl.rol)) addMenuItem(4,"Anulación");
+
+                } else {
+
+                    addMenuItem(1,"Venta");
+                    addMenuItem(6,"Caja");
+                    addMenuItem(3,"Reimpresión");
+                    addMenuItem(7,"Inventario");
+                    addMenuItem(2,"Comunicación");
+                    if (gl.rol>1) addMenuItem(9,"Utilerias");
+                    if (gl.rol>1) addMenuItem(11,"Mantenimientos");
+                    if (gl.rol>1) addMenuItem(12,"Reportes");
+                    if (gl.rol>1) addMenuItem(4,"Anulación");
+
+                }
+
                 addMenuItem(10,"Cambio usuario");
 
             }
@@ -197,9 +220,6 @@ public class Menu extends PBase {
 			gridView.setAdapter(adaptergrid);
 			adaptergrid.setSelectedIndex(selIdx);
 
-			//#HS_20181206 agrega el vendedor en lblVendedor y la ruta.
-			lblVendedor.setText(gl.vendnom);
-			lblRuta.setText(gl.ruta);
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -230,8 +250,6 @@ public class Menu extends PBase {
 		int prtype;
 		boolean epssetflag = false;
 		Float cantidad;
-		//toast("menu id : "+menuid);
-
 
         app.parametrosExtra();
 
@@ -305,7 +323,6 @@ public class Menu extends PBase {
 					}else {
 						showConsMenu();
 					}
-
 					break;
 
 				case 6:  // Deposito
@@ -353,10 +370,14 @@ public class Menu extends PBase {
 					break;
 
 				case 11:
-                    if (gl.rol>2){
-                        showMantMenu();
-                    }else {
-                        showMantCliente();
+				    if (gl.grantaccess) {
+                        if (app.grant(11,gl.rol)) {
+                            showMantMenu();
+                        } else {
+                            if (app.grant(12,gl.rol)) showMantCliente();
+                        }
+                    } else {
+                        if (gl.rol>2) showMantMenu(); else showMantCliente();
                     }
 					break;
 
@@ -1123,7 +1144,7 @@ public class Menu extends PBase {
         try {
             final AlertDialog Dialog;
 
-            final String[] selitems = {"Banco", "Caja", "Cliente", "Empresa", "Familia", "Forma pago", "Impuesto", "Concepto pago", "Nivel precio", "Producto", "Proveedor", "Tienda", "Usuario", "Resolución de facturas", "Configuración"};
+            final String[] selitems = {"Banco", "Caja", "Cliente", "Empresa", "Familia", "Forma pago", "Impuesto", "Concepto pago", "Nivel precio", "Producto", "Proveedor", "Tienda", "Usuario","Roles", "Resolución de facturas", "Configuración"};
 
             menudlg = new AlertDialog.Builder(this);
             menudlg.setTitle("Mantenimientos");
@@ -1154,6 +1175,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Resolución de facturas")) gl.mantid = 20;
                     if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 16;
                     if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
+                    if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
 
                     if (gl.mantid == 16) {
                         startActivity(new Intent(Menu.this, MantConfig.class));
@@ -1161,6 +1183,8 @@ public class Menu extends PBase {
                         startActivity(new Intent(Menu.this, Lista.class));
                     } else if (gl.mantid == 20) {
                         startActivity(new Intent(Menu.this, MantCorel.class));
+                    } else if (gl.mantid == 21) {
+                        startActivity(new Intent(Menu.this, MantRol.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }

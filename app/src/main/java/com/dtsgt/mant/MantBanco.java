@@ -14,7 +14,7 @@ import com.dtsgt.mpos.R;
 
 public class MantBanco extends PBase {
 
-    private ImageView imgstat;
+    private ImageView imgstat,imgadd;
     private EditText txt1,txt2,txt3;
 
     private clsP_bancoObj holder;
@@ -34,11 +34,19 @@ public class MantBanco extends PBase {
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.txt3);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_bancoObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
+
+        if (gl.grantaccess) {
+           if (!app.grant(13,gl.rol)) {
+               imgadd.setVisibility(View.INVISIBLE);
+               imgstat.setVisibility(View.INVISIBLE);
+           }
+        }
     }
 
     //region Events

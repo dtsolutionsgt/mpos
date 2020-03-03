@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.mpos.CryptUtil;
 import com.dtsgt.mpos.R;
 
@@ -385,6 +386,19 @@ public class AppMethods {
         }
 
 	}
+
+	public boolean grant(int menuopt,int rol) {
+
+        try {
+            clsP_usgrupoopcObj P_usgrupoopcObj=new clsP_usgrupoopcObj(cont,Con,db);
+            P_usgrupoopcObj.fill("WHERE (GRUPO='"+rol+"') AND (OPCION="+menuopt+")");
+            return P_usgrupoopcObj.count>0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
+    }
 
     //endregion
 

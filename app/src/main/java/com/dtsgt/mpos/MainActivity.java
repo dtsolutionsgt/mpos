@@ -139,6 +139,8 @@ public class MainActivity extends PBase {
             khand=new clsKeybHandler(this,lblPass,lblKeyDP);
             khand.enable();
 
+            gl.grantaccess=true;
+
             initSession();
 
             try {

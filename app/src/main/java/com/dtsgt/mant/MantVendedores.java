@@ -2,13 +2,18 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_usgrupoObj;
 import com.dtsgt.classes.clsVendedoresBL;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_P_sucursal;
@@ -17,18 +22,25 @@ import com.dtsgt.mpos.R;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MantVendedores extends PBase {
 
     private ImageView imgstat;
     private EditText txt1,txt2,txt3,txt4;
-    private RadioButton rb1,rb2,rb3;
     private ListView listView;
+    private Spinner spin;
 
     private clsVendedoresObj holder;
     private clsClasses.clsVendedores item=clsCls.new clsVendedores();
     private LA_P_sucursal adapter;
     private clsP_sucursalObj P_sucursalObj;
+
+    private ArrayList<String> spincode=new ArrayList<String>();
+    private ArrayList<String> spinlist=new ArrayList<String>();
 
     private String id;
     private boolean newitem=false;
@@ -44,11 +56,9 @@ public class MantVendedores extends PBase {
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.editText12);
         txt4 = (EditText) findViewById(R.id.editText14);
-        rb1 = (RadioButton) findViewById(R.id.radioButton);
-        rb2 = (RadioButton) findViewById(R.id.radioButton3);
-        rb3 = (RadioButton) findViewById(R.id.radioButton4);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         listView = (ListView) findViewById(R.id.listView1);
+        spin = (Spinner) findViewById(R.id.spinner18);
 
         id=gl.gcods;
 
@@ -99,6 +109,33 @@ public class MantVendedores extends PBase {
 
             };
         });
+
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                try {
+                    TextView spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
+                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                    String scod = spincode.get(position);
+                    item.nivel =Integer.parseInt(scod);
+                } catch (Exception e) {
+                    addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                    mu.msgbox(e.getMessage());
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
+
+
     }
 
     //endregion
@@ -209,12 +246,6 @@ public class MantVendedores extends PBase {
 
     //endregion
 
-    //Region Sucursales
-
-
-
-    //endregion
-
     //region Aux
 
     private void showItem() {
@@ -223,9 +254,7 @@ public class MantVendedores extends PBase {
         txt3.setText(item.clave);
         txt4.setText(""+item.nivelprecio);
 
-        rb1.setChecked(true);
-        if (item.nivel==2) rb2.setChecked(true);
-        if (item.nivel==3) rb3.setChecked(true);
+        fillSpinner(""+item.nivel);
     }
 
     private boolean validaDatos() {
@@ -275,16 +304,49 @@ public class MantVendedores extends PBase {
                 }
             }
 
-            item.nivel=1;
-            if (rb2.isChecked()) item.nivel=2;
-            if (rb3.isChecked()) item.nivel=3;
-
             return true;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return false;
         }
     }
+
+    private boolean fillSpinner(String selid){
+        clsP_usgrupoObj grupos =new clsP_usgrupoObj(this,Con,db);
+        int selidx=0;
+        String scod;
+
+        spincode.clear();spinlist.clear();
+
+        try {
+            grupos.fill(" WHERE (Cuenta='S') ORDER BY Nombre");
+
+            for (int i = 0; i <grupos.count; i++) {
+                scod=grupos.items.get(i).codigo;
+                spincode.add(scod);
+                spinlist.add(grupos.items.get(i).nombre);
+                if (scod.equalsIgnoreCase(selid)) selidx=i;
+            }
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox( e.getMessage());
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spin.setAdapter(dataAdapter);
+
+        try {
+            spin.setSelection(selidx);
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+        return true;
+
+    }
+
 
     //endregion
 

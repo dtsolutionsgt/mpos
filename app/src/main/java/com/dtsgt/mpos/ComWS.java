@@ -1068,6 +1068,7 @@ public class ComWS extends PBase {
 		scomp = 0;idbg = "";stockflag = 0;ftmsg = "";ftflag = false;rrs="...";
 
 		try {
+
             if (!AddTable("P_EMPRESA")) return false;
 			if (!AddTable("P_RUTA")) return false;
 			if (!AddTable("P_CLIENTE")) return false;

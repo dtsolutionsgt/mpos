@@ -61,6 +61,14 @@ public class Lista extends PBase {
         setHandlers();
         //listItems();
 
+        if (gl.grantaccess) {
+            if (!app.grant(10,gl.rol)) imgadd.setVisibility(View.INVISIBLE);
+        } else {
+            if (gl.mantid==2) {
+                if (gl.rol==1) imgadd.setVisibility(View.INVISIBLE);
+            }
+        }
+
     }
 
     //region Events
@@ -176,9 +184,6 @@ public class Lista extends PBase {
             }
         }
 
-        if (gl.mantid==2) {
-            if (gl.rol==1) imgadd.setVisibility(View.INVISIBLE);
-        }
 
     }
 
