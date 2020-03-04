@@ -77,6 +77,7 @@ public class MantVendedores extends PBase {
                 imgstat.setVisibility(View.INVISIBLE);
             }
         }
+
     }
 
     //region Events
