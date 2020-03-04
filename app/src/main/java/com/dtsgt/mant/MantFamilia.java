@@ -175,6 +175,7 @@ public class MantFamilia extends PBase {
         try {
             holder.update(item);
             finish();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
