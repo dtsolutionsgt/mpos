@@ -151,14 +151,14 @@
 
         <RadioGroup
             android:id="@+id/radiogrp"
-            android:layout_width="750dp"
+            android:layout_width="850dp"
             android:layout_height="48dp"
             android:layout_below="@+id/spinner14"
             android:layout_alignStart="@+id/spinner14"
-            android:layout_alignEnd="@+id/textView123"
+            android:layout_alignEnd="@+id/spinner10"
             android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
+            android:layout_marginEnd="250dp"
             android:background="@drawable/frame_rect"
             android:orientation="horizontal">
 

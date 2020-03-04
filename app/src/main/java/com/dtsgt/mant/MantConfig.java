@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class MantConfig extends PBase {
 
     private CheckBox cb100,cb102,cb103,cb104,cb105;
     private Spinner spin16;
+    private ImageView imgadd;
 
     private clsP_paramextObj holder;
 
@@ -43,12 +45,19 @@ public class MantConfig extends PBase {
         cb104  = (CheckBox) findViewById(R.id.checkBox22);
         spin16 = (Spinner) findViewById(R.id.spinner16);
         cb105  = (CheckBox) findViewById(R.id.checkBox21);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_paramextObj(this,Con,db);
 
         setHandlers();
 
         loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+             }
+        }
 
     }
 

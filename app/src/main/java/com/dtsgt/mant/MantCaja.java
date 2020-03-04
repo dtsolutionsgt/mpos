@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class MantCaja extends PBase {
 
-    private ImageView imgstat;
+    private ImageView imgstat,imgadd;
     private EditText txt1,txt2;
     private Spinner spin;
 
@@ -45,6 +45,7 @@ public class MantCaja extends PBase {
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
         spin = (Spinner) findViewById(R.id.spinner10);
 
         holder =new clsP_rutaObj(this,Con,db);
@@ -56,6 +57,13 @@ public class MantCaja extends PBase {
         setHandlers();
 
         if (id.isEmpty()) newItem(); else loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+            }
+        }
 
     }
 

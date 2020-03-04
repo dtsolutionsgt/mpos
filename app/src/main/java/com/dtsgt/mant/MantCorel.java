@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_corelObj;
@@ -14,6 +15,8 @@ import com.dtsgt.mpos.R;
 public class MantCorel extends PBase {
 
     private EditText txt1,txt2,txt3,txt4,txt5;
+    private ImageView imgadd;
+
     private clsP_corelObj holder;
     private String id;
 
@@ -33,10 +36,17 @@ public class MantCorel extends PBase {
         txt3 = (EditText) findViewById(R.id.txt10);
         txt4 = (EditText) findViewById(R.id.txt12);txt4.setEnabled(false);
         txt5 = (EditText) findViewById(R.id.txt14);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_corelObj(this,Con,db);
 
         loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     //region Main

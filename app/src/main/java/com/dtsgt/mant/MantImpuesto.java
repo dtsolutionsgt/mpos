@@ -16,7 +16,7 @@ import com.dtsgt.mpos.R;
 
 public class MantImpuesto extends PBase {
 
-    private ImageView imgstat;
+    private ImageView imgstat,imgadd;
     private EditText txt1,txt2;
 
     private clsP_impuestoObj holder;
@@ -35,11 +35,19 @@ public class MantImpuesto extends PBase {
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_impuestoObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
 

@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
@@ -28,8 +29,9 @@ import java.io.FileOutputStream;
 
 public class MantFamilia extends PBase {
 
-    private ImageView imgstat,img1,imgadd;
+    private ImageView imgstat,img1,imgadd,imgfotoadd,imgfotodel;
     private EditText txt1,txt2;
+    private TextView lblfoto;
 
     private clsP_lineaObj holder;
     private clsClasses.clsP_linea item=clsCls.new clsP_linea();
@@ -47,7 +49,10 @@ public class MantFamilia extends PBase {
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        lblfoto = (TextView) findViewById(R.id.lblBU);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgfotoadd  = (ImageView) findViewById(R.id.imageView40);
+        imgfotodel = (ImageView) findViewById(R.id.imageView41);
         img1 = (ImageView) findViewById(R.id.imageView41);
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -64,6 +69,9 @@ public class MantFamilia extends PBase {
             if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);
+                lblfoto.setVisibility(View.INVISIBLE);
+                imgfotoadd.setVisibility(View.INVISIBLE);
+                imgfotodel.setVisibility(View.INVISIBLE);
             }
         }
     }

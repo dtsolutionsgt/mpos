@@ -43,7 +43,7 @@ import java.util.Calendar;
 
 public class MantCli extends PBase {
 
-    private ImageView imgstat,imgfprint,imgsave,imgdel;
+    private ImageView imgstat,imgfprint,imgsave,imgdel,imgadd;
     private TextView lblDateCli,lblfprint;
     private EditText txt1,txt2,txt3,txt4,txt5,txt6,txtCodCliente;
 
@@ -86,6 +86,7 @@ public class MantCli extends PBase {
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgfprint= (ImageView) findViewById(R.id.imageView51);
         imgsave= (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
         imgdel= (ImageView) findViewById(R.id.imgImg2);
         lblDateCli = (TextView) findViewById(R.id.lblDateCli);
         lblfprint= (TextView) findViewById(R.id.textView147);
@@ -116,7 +117,12 @@ public class MantCli extends PBase {
             imgdel.setVisibility(View.INVISIBLE);
         }
 
-
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     @Override

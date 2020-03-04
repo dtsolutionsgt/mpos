@@ -15,6 +15,8 @@ import com.dtsgt.mpos.R;
 public class MantCorelPagos extends PBase {
 
     private EditText txt1,txt2,txt3,txt4;
+    private ImageView imgadd;
+
     private clsP_CorrelativosObj holder;
     private String id;
 
@@ -32,11 +34,18 @@ public class MantCorelPagos extends PBase {
         txt2 = (EditText) findViewById(R.id.txt2);
         txt3 = (EditText) findViewById(R.id.txt10);
         txt4 = (EditText) findViewById(R.id.txt12);txt4.setEnabled(false);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_CorrelativosObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     //region Main

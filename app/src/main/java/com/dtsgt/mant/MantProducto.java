@@ -42,8 +42,9 @@ import java.io.FileOutputStream;
 
 public class MantProducto extends PBase {
 
-    private ImageView imgstat;
+    private ImageView imgstat,imgadd,imgfotoadd,imgfotodel;
     private EditText txt1,txt2,txt3,txt4,txt5,txt6;
+    private TextView lblfotoadd,btnprec;
     private Spinner spin,spin1,spin2,spin3,spinp;
     private CheckBox cbDec;
     private RadioButton rb1,rb2,rb3;
@@ -75,7 +76,12 @@ public class MantProducto extends PBase {
         txt4 = (EditText) findViewById(R.id.editText13);
         txt5 = (EditText) findViewById(R.id.editText11);
         txt6 = (EditText) findViewById(R.id.editText15);
+        lblfotoadd = (TextView) findViewById(R.id.lblBU3);
+        btnprec = (TextView) findViewById(R.id.textView123);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
+        imgfotoadd = (ImageView) findViewById(R.id.imageView44);
+        imgfotodel = (ImageView) findViewById(R.id.imageView45);
         spin = (Spinner) findViewById(R.id.spinner10);
         spin1 = (Spinner) findViewById(R.id.spinner14);
         spin2 = (Spinner) findViewById(R.id.spinner13);
@@ -104,6 +110,17 @@ public class MantProducto extends PBase {
         buildPrices();
         if (id.isEmpty()) newItem(); else loadItem();
         showPrices();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+                imgfotoadd.setVisibility(View.INVISIBLE);
+                imgfotodel.setVisibility(View.INVISIBLE);
+                lblfotoadd.setVisibility(View.INVISIBLE);
+                btnprec.setVisibility(View.INVISIBLE);
+            }
+        }
 
     }
 

@@ -14,7 +14,7 @@ import com.dtsgt.mpos.R;
 
 public class MantMediaPago extends PBase {
 
-    private ImageView imgstat,imgUpd;
+    private ImageView imgstat,imgUpd,imgadd;
     private EditText txt1,txt2;
 
     private clsP_mediapagoObj holder;
@@ -34,6 +34,7 @@ public class MantMediaPago extends PBase {
         txt2 = (EditText) findViewById(R.id.txt2);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgUpd = (ImageView) findViewById(R.id.imgImg2);imgUpd.setVisibility(View.INVISIBLE);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         txt1.setEnabled(false);
         txt2.setEnabled(false);
@@ -42,6 +43,13 @@ public class MantMediaPago extends PBase {
 
         id=gl.gcods;
         loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     //region Events

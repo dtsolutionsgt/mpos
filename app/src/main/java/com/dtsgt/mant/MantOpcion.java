@@ -25,7 +25,7 @@ import java.util.Comparator;
 
 public class MantOpcion extends PBase {
 
-    private ImageView imgstat;
+    private ImageView imgstat,imgadd,imgitemadd,imgitemdel;
     private EditText txt1,txt2;
     private ListView listView;
 
@@ -51,6 +51,9 @@ public class MantOpcion extends PBase {
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
+        imgitemadd = (ImageView) findViewById(R.id.imageView37);
+        imgitemdel = (ImageView) findViewById(R.id.imageView38);
         listView = (ListView) findViewById(R.id.listView1);
 
         holder =new clsP_prodopcObj(this,Con,db);
@@ -64,6 +67,15 @@ public class MantOpcion extends PBase {
             id=Integer.parseInt(gl.gcods);
             loadItem();
             listItems();
+        }
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+                imgitemadd.setVisibility(View.INVISIBLE);
+                imgitemdel.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

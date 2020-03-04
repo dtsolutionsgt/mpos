@@ -54,6 +54,11 @@ public class MantRol extends PBase {
 
         listItems();
 
+        listView.setEnabled(true);
+        if (gl.grantaccess) {
+            if (!app.grant(13, gl.rol)) listView.setEnabled(false);
+        }
+
     }
 
     //region Events
@@ -82,6 +87,7 @@ public class MantRol extends PBase {
                     delItem();
                 }
                 adapter.notifyDataSetChanged();
+
             };
         });
 

@@ -14,6 +14,7 @@ import com.dtsgt.mpos.R;
 public class MantEmpresa extends PBase {
 
     private EditText txt1,txt2;
+    private ImageView imgadd;
 
     private clsP_empresaObj holder;
     private clsClasses.clsP_empresa item=clsCls.new clsP_empresa();
@@ -28,10 +29,17 @@ public class MantEmpresa extends PBase {
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_empresaObj(this,Con,db);
 
         loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+            }
+        }
 
     }
 

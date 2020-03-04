@@ -14,7 +14,7 @@ import com.dtsgt.mpos.R;
 
 public class MantTienda extends PBase {
 
-    private ImageView imgstat;
+    private ImageView imgstat,imgadd;
     private EditText txt1,txt2,txt3,txt4,txt5,txt6,txt7;
 
     private clsP_sucursalObj holder;
@@ -38,11 +38,19 @@ public class MantTienda extends PBase {
         txt6 = (EditText) findViewById(R.id.txt6);
         txt7 = (EditText) findViewById(R.id.txt7);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         holder =new clsP_sucursalObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+            }
+        }
     }
     //region Events
 

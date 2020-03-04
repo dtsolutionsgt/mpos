@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 public class MantVendedores extends PBase {
 
-    private ImageView imgstat;
+    private ImageView imgstat,imgadd;
     private EditText txt1,txt2,txt3,txt4;
     private ListView listView;
     private Spinner spin;
@@ -57,6 +57,7 @@ public class MantVendedores extends PBase {
         txt3 = (EditText) findViewById(R.id.editText12);
         txt4 = (EditText) findViewById(R.id.editText14);
         imgstat = (ImageView) findViewById(R.id.imageView31);
+        imgadd = (ImageView) findViewById(R.id.imgImg2);
         listView = (ListView) findViewById(R.id.listView1);
         spin = (Spinner) findViewById(R.id.spinner18);
 
@@ -69,6 +70,13 @@ public class MantVendedores extends PBase {
 
         setHandlers();
         listItems();
+
+        if (gl.grantaccess) {
+            if (!app.grant(13,gl.rol)) {
+                imgadd.setVisibility(View.INVISIBLE);
+                imgstat.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     //region Events
