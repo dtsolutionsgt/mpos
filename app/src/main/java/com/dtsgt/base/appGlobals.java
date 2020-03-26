@@ -20,7 +20,7 @@ public class appGlobals extends Application {
 	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp,fondoCaja,FinMonto;
 	public boolean CellCom,closeDevBod,modoinicial,newmenuitem,validDate,comquickrec;
 	public String ref1,ref2,ref3,fnombre,fnit,fdir,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
-	public String tienda,tiendanom,caja,cajanom,urlglob,menuitemid,titReport,pickcode,pickname;
+	public String tienda,tiendanom,caja,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet,closeVenta,promapl,pagado,pagocobro,sinimp,rutapos,devol,modoadmin,reportList;
@@ -42,7 +42,7 @@ public class appGlobals extends Application {
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL;
 	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,endPrint;
-	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre;
+	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio;
 	public boolean peImprFactCorrecta;
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps;
     public boolean peMCent,peMPrOrdCos,peMImg,peMFact;

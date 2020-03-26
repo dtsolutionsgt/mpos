@@ -385,6 +385,20 @@ public class AppMethods {
             gl.peFEL="";
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=106";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFotoBio=val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peFotoBio=true;
+        }
+
+
 	}
 
 	public boolean grant(int menuopt,int rol) {
@@ -545,97 +559,12 @@ public class AppMethods {
 	}
 
 	public double getPeso() {
-		Cursor DT;
-		double sumaPesoB=0,sumaPeso=0;
-
-		sql = "SELECT IFNULL(SUM(S.PESO),0) AS PESOTOT " +
-				" FROM P_STOCKB S, P_PRODUCTO P " +
-				" WHERE P.ES_PROD_BARRA = 1 AND S.CODIGO= P.CODIGO AND (S.COREL = '' OR S.COREL IS NULL)" +
-				" AND S.BARRA NOT IN (SELECT BARRA FROM D_BONIF_BARRA WHERE COREL NOT IN " +
-				" (SELECT COREL FROM D_FACTURA WHERE ANULADO = 'S'))";
-		DT=Con.OpenDT(sql);
-
-		if (DT.getCount()>0) {
-			DT.moveToFirst();
-			sumaPesoB=DT.getDouble(0);
-		}
-
-		DT.close();
-
-		sql = " SELECT IFNULL(SUM(S.PESO),0) AS PESOTOT " +
-		      " FROM P_STOCK_PALLET S, P_PRODUCTO P " +
-		      " WHERE P.ES_PROD_BARRA = 1 AND S.CODIGO= P.CODIGO AND (S.COREL = '' OR S.COREL IS NULL)" +
-		      " AND S.BARRAPRODUCTO NOT IN (SELECT BARRA FROM D_BONIF_BARRA WHERE COREL NOT IN " +
-			  " (SELECT COREL FROM D_FACTURA WHERE ANULADO = 'S'))";
-		DT=Con.OpenDT(sql);
-
-		if (DT.getCount()>0) {
-			DT.moveToFirst();
-			sumaPesoB+=DT.getDouble(0);
-		}
-
-		DT.close();
-
-		sql = " SELECT SUM(S.PESO) AS PESOTOT, SUM(S.CANT) AS CANTUNI " +
-		      " FROM P_STOCK S, P_PRODUCTO P " +
-		      " WHERE P.ES_PROD_BARRA = 0 AND S.CODIGO= P.CODIGO AND S.CANT > 0";
-		DT=Con.OpenDT(sql);
-
-		if (DT.getCount()>0) {
-			DT.moveToFirst();
-			sumaPeso=DT.getDouble(0);
-		}
-
-		DT.close();
-
-		sql = " SELECT SUM(S.PESO) AS PESOTOT " +
-		      " FROM P_STOCK_PALLET S, P_PRODUCTO P " +
-		      " WHERE P.ES_PROD_BARRA = 0 AND S.CODIGO= P.CODIGO AND S.CANT > 0";
-		DT=Con.OpenDT(sql);
-
-		if (DT.getCount()>0) {
-			DT.moveToFirst();
-			sumaPeso+=DT.getDouble(0);
-		}
-
-		DT.close();
-
-		sumaPeso = sumaPeso + sumaPesoB;
-
-		return sumaPeso;
+		return 0;
 	}
 
 	public double getCantidad() {
 		Cursor DT;
-		double sumaCantB=0,sumaCant=0;
-
-		sql = "SELECT IFNULL(COUNT(S.CODIGO),0) AS CANTUNI " +
-				" FROM P_STOCKB S, P_PRODUCTO P " +
-				" WHERE P.ES_PROD_BARRA = 1 AND S.CODIGO= P.CODIGO AND (S.COREL = '' OR S.COREL IS NULL)" +
-				" AND S.BARRA NOT IN (SELECT BARRA FROM D_BONIF_BARRA WHERE COREL NOT IN " +
-				" (SELECT COREL FROM D_FACTURA WHERE ANULADO = 'S'))";
-		DT=Con.OpenDT(sql);
-
-		if (DT.getCount()>0) {
-			DT.moveToFirst();
-			sumaCantB=DT.getDouble(0);
-		}
-
-		DT.close();
-
-		sql = " SELECT IFNULL(COUNT(S.CODIGO),0) AS CANTUNI " +
-				" FROM P_STOCK_PALLET S, P_PRODUCTO P " +
-				" WHERE P.ES_PROD_BARRA = 1 AND S.CODIGO= P.CODIGO AND (S.COREL = '' OR S.COREL IS NULL)" +
-				" AND S.BARRAPRODUCTO NOT IN (SELECT BARRA FROM D_BONIF_BARRA WHERE COREL NOT IN " +
-				" (SELECT COREL FROM D_FACTURA WHERE ANULADO = 'S'))";
-		DT=Con.OpenDT(sql);
-
-		if (DT.getCount()>0) {
-			DT.moveToFirst();
-			sumaCantB+=DT.getDouble(0);
-		}
-
-		DT.close();
+		double sumaCant=0;
 
 		sql = " SELECT SUM(S.CANT) AS CANTUNI " +
 				" FROM P_STOCK S, P_PRODUCTO P " +
@@ -648,20 +577,6 @@ public class AppMethods {
 		}
 
 		DT.close();
-
-		sql = " SELECT SUM(S.CANT) AS CANTUNI " +
-			  " FROM P_STOCK_PALLET S, P_PRODUCTO P " +
-			  " WHERE P.ES_PROD_BARRA = 0 AND S.CODIGO= P.CODIGO AND S.CANT > 0";
-		DT=Con.OpenDT(sql);
-
-		if (DT.getCount()>0) {
-			DT.moveToFirst();
-			sumaCant+=DT.getDouble(0);
-		}
-
-		DT.close();
-
-		sumaCant = sumaCant + sumaCantB;
 
 		return sumaCant;
 	}
@@ -740,43 +655,7 @@ public class AppMethods {
 	}
 
 	public boolean validaImpresora() {
-		CryptUtil cu=new CryptUtil();
-		Cursor dt;
-		String se,sd,prid;
-
-		if (gl.impresora.equalsIgnoreCase("N")) return true;
-
-		try {
-			sql = "SELECT prnserie FROM Params";
-			dt = Con.OpenDT(sql);
-			dt.moveToFirst();
-
-			prid = dt.getString(0);
-		} catch (Exception e) {
-			return false;
-		}
-
-		try {
-
-			sql="SELECT NUMSERIE FROM P_IMPRESORA";
-			dt=Con.OpenDT(sql);
-
-			if (dt.getCount()>0) dt.moveToFirst();
-			while (!dt.isAfterLast()) {
-				se=dt.getString(0);
-				//sd=cu.decrypt(se);
-				sd=se;
-
-				if (sd.equalsIgnoreCase(prid)) return true;
-
-				dt.moveToNext();
-			}
-		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-
-		return false;
-
+		return true;
 	}
 
 	public String impresTipo() {
@@ -828,23 +707,7 @@ public class AppMethods {
 		}
 	}
 
-	public long fechaFactTol(long f0) {
-		Cursor DT;
-		String sql;
-		long ff;
 
-		try {
-			sql = "SELECT FECHA FROM P_FECHA";
-			DT = Con.OpenDT(sql);
-
-			DT.moveToFirst();
-			ff=DT.getLong(0);
-
-			return ff;
-		} catch (Exception e) {
-			return f0;
-		}
-	}
 
     //endregion
 
@@ -1002,9 +865,7 @@ public class AppMethods {
                 case "Inventario":
 
                     sql=" SELECT IFNULL(SUM(A.CANT),0) AS CANT " +
-                            " FROM (SELECT IFNULL(COUNT(DOCUMENTO),0) AS CANT FROM P_STOCK " +
-                            " UNION SELECT IFNULL(COUNT(DOCUMENTO),0) AS CANT FROM P_STOCKB " +
-                            " UNION SELECT IFNULL(COUNT(DOCUMENTO),0) AS CAN FROM P_STOCK_PALLET) A";
+                            " FROM (SELECT IFNULL(COUNT(DOCUMENTO),0) AS CANT FROM P_STOCK ) A";
                     break;
             }
 

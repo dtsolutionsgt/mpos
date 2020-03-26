@@ -715,46 +715,7 @@ public class ProdCant extends PBase {
 	}
 
 	private boolean checkLimits(double vpeso,double opeso) {
-
-		Cursor dt;
-		double pmin,pmax;
-		String ss;
-
-		try {
-
-			sql="SELECT PORCMINIMO,PORCMAXIMO FROM P_PORCMERMA WHERE PRODUCTO='"+prodid+"'";
-			dt=Con.OpenDT(sql);
-
-			if (dt.getCount() == 0) {
-				toast("No está definido rango de repesaje para el producto, no se podrá modificar el peso");
-				//#EJC20190226: Si no está definido repesaje no se puede modificar el peso según observación de Carolina se debe dejar vender.
-				txtPeso.setEnabled(false);
-				return true;
-			}
-
-			dt.moveToFirst();
-
-			pmin = opeso - dt.getDouble(0) * opeso / 100;
-			pmax = opeso + dt.getDouble(1) * opeso / 100;
-
-			if (vpeso<pmin) {
-				ss="El repesaje ("+mu.frmdecimal(vpeso, gl.peDecImp)+") está por debajo de los porcentajes permitidos," +
-						" minimo : "+mu.frmdecimal(pmin, gl.peDecImp)+", no se puede aplicar.";
-				msgbox(ss);return false;
-			}
-
-			if (vpeso>pmax) {
-				ss="El repesaje ("+mu.frmdecimal(vpeso, gl.peDecImp)+") está por encima de los percentajes permitidos," +
-						" máximo : "+mu.frmdecimal(pmax, gl.peDecImp)+", no se puede aplicar.";
-				msgbox(ss);return false;
-			}
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-
-		return true;
+			return true;
 	}
 
 	private void setPrecio() {
@@ -812,17 +773,7 @@ public class ProdCant extends PBase {
 	}
 	
 	private double getDispInv(){
-		Cursor DT;
-		
-		try {
-			sql="SELECT CANT FROM P_STOCKINV WHERE CODIGO='"+prodid+"'";
-           	DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			return DT.getDouble(0);
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			return 0;
-	    }		
+	    return 0;
 	}
 
     private void paramProd() {

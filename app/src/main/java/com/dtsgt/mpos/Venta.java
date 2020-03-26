@@ -1163,128 +1163,6 @@ public class Venta extends PBase {
         }
     }
 
-    private boolean barraBolsa() {
-        Cursor dt;
-        double ppeso=0,pprecdoc=0,factbolsa;
-        String uum,umven;
-        boolean isnew=true;
-
-        porpeso=true;
-
-        try {
-            sql="SELECT CODIGO,CANT,PESO,UNIDADMEDIDA " +
-                    "FROM P_STOCKB WHERE (BARRA='"+barcode+"') ";
-            dt=Con.OpenDT(sql);
-            if (dt.getCount()==0) return false;
-
-            try {
-
-                dt.moveToFirst();
-
-                prodid = dt.getString(0);
-                cant = dt.getInt(1);
-                ppeso = dt.getDouble(2);
-                uum = dt.getString(3);
-                um=uum;
-                umven=app.umVenta(prodid);
-                factbolsa=app.factorPres(prodid,umven,um);
-                cant=cant*factbolsa;
-
-                //if (sinimp) precdoc=precsin; else precdoc=prec;
-
-                if (prodPorPeso(prodid)) {
-                    prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, ppeso,umven);
-                    if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,uum,gl.umpeso,ppeso)) {
-                        if (prc.precioespecial>0) prec=prc.precioespecial;
-                    }
-                } else {
-                    prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,umven);
-                    if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,uum,gl.umpeso,0)) {
-                        if (prc.precioespecial>0) prec=prc.precioespecial;
-                    }
-                }
-
-                if (prodPorPeso(prodid)) prec=mu.round2(prec/ppeso);
-                pprecdoc = prec;
-
-                prodtot = prec;
-                if (factbolsa>1) prodtot = cant*prec;
-                if (prodPorPeso(prodid)) prodtot=mu.round2(prec*ppeso);
-
-                try {
-                    ins.init("T_BARRA");
-
-                    ins.add("BARRA",barcode);
-                    ins.add("CODIGO",prodid);
-                    ins.add("PRECIO",prodtot);
-                    ins.add("PESO",ppeso);
-                    ins.add("PESOORIG",ppeso);
-                    ins.add("CANTIDAD",cant);
-
-                    db.execSQL(ins.sql());
-
-                    toast(barcode);
-                } catch (Exception e) {
-                    isnew=false;
-                    msgAskBarra("Borrar la barra "+barcode);return true;
-                }
-
-                prec=mu.round(prec,2);
-                prodtot=mu.round(prodtot,2);
-
-                ins.init("T_VENTA");
-
-                ins.add("PRODUCTO",prodid);
-                ins.add("EMPRESA",emp);
-                if (prodPorPeso(prodid)) {
-                    ins.add("UM",gl.umpeso);
-                } else {
-                    if (factbolsa==1) ins.add("UM",umven);else ins.add("UM",umven);
-                }
-                ins.add("CANT",cant);
-                ins.add("UMSTOCK",umven);
-                ins.add("FACTOR",gl.umfactor);
-                if (prodPorPeso(prodid)) {
-                    //ins.add("PRECIO",gl.prectemp);
-                    ins.add("PRECIO",prec);
-                } else {
-                    ins.add("PRECIO",prec);
-                }
-                ins.add("IMP",0);
-                ins.add("DES",0);
-                ins.add("DESMON",0);
-                ins.add("TOTAL",prodtot);
-                if (prodPorPeso(prodid)) {
-                    //ins.add("PRECIODOC",gl.prectemp);
-                    ins.add("PRECIODOC",pprecdoc);
-                } else {
-                    ins.add("PRECIODOC",pprecdoc);
-                }
-                ins.add("PESO",ppeso);
-                ins.add("VAL1",0);
-                ins.add("VAL2","");
-                ins.add("VAL3",0);
-                ins.add("VAL4","");
-                ins.add("PERCEP",percep);
-
-                db.execSQL(ins.sql());
-
-            } catch (SQLException e) {
-
-            }
-
-            actualizaTotalesBarra();
-
-            if (isnew) validaBarraBon();
-
-            return true;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-        return false;
-    }
-
     private void actualizaTotalesBarra() {
         Cursor dt;
         int ccant;
@@ -1402,30 +1280,6 @@ public class Venta extends PBase {
         return true;
     }
 
-    private void validaBarraBon() {
-        clsBonif clsBonif;
-        int bcant,bontotal,boncant,bfaltcant,bon;
-
-        gl.bonbarprod=prodid;
-
-        bcant=cantBolsa();
-        boncant=cantBonif();
-        bfaltcant=cantFalt();
-
-        clsBonif = new clsBonif(this, prodid, bcant, 0);
-        if (clsBonif.tieneBonif()) {
-            bon=(int) clsBonif.items.get(0).valor;
-            gl.bonbarid=clsBonif.items.get(0).lista;
-        } else {
-            bon=0;gl.bonbarid="";
-        }
-
-        bontotal=boncant+bfaltcant;
-
-        //toast("Bolsas : "+bcant+" bon : "+bon+"  / "+bontotal);
-        if (bon>bontotal) startActivity(new Intent(this,BonBarra.class));
-
-    }
 
     private int cantBolsa() {
         try {
@@ -1526,42 +1380,6 @@ public class Venta extends PBase {
 
     //region No atencion
 
-    private void listAten(){
-        Cursor DT;
-        String code,name;
-
-        lcode.clear();lname.clear();
-
-        try {
-
-            sql="SELECT Codigo,Nombre FROM P_CODATEN ORDER BY Nombre";
-
-            DT=Con.OpenDT(sql);
-            if (DT.getCount()==0) {return;}
-
-            DT.moveToFirst();
-            while (!DT.isAfterLast()) {
-
-                try {
-                    code=String.valueOf(DT.getInt(0));
-                    name=DT.getString(1);
-
-                    lcode.add(code);
-                    lname.add(name);
-                } catch (Exception e) {
-                    mu.msgbox(e.getMessage());
-                }
-                DT.moveToNext();
-            }
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox( e.getMessage());return;
-        }
-
-        showAtenDialog();
-
-    }
-
     public void showAtenDialog() {
         try{
             final AlertDialog Dialog;
@@ -1600,7 +1418,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     private void setNoAtt(String scna){
@@ -1614,18 +1431,6 @@ public class Venta extends PBase {
         }
 
         String cliid=gl.cliente;
-
-        try
-        {
-            upd.init("P_CLIRUTA");
-            upd.add("BANDERA",cna);
-            upd.Where("CLIENTE='"+cliid+"' AND DIA="+dweek);
-
-            db.execSQL(upd.sql());
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
 
         saveAtten(""+cna);
     }
@@ -2364,13 +2169,7 @@ public class Venta extends PBase {
         }
 
         try {
-            sql="SELECT INITPATH FROM P_EMPRESA WHERE EMPRESA='"+emp+"'";
-            DT=Con.OpenDT(sql);
-            DT.moveToFirst();
-
-            String sim=DT.getString(0);
-            sinimp=sim.equalsIgnoreCase("S");
-
+            sinimp=false;
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             sinimp=false;
@@ -2474,18 +2273,7 @@ public class Venta extends PBase {
     }
 
     private boolean hasCredits(){
-        Cursor DT;
-
-        try {
-            sql="SELECT SALDO FROM P_COBRO WHERE CLIENTE='"+cliid+"'";
-            DT=Con.OpenDT(sql);
-            if (DT.getCount()>0) return true;
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox(e.getMessage());
-        }
-
-        return false;
+         return false;
     }
 
     private void doExit(){

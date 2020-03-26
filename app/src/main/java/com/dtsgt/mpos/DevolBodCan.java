@@ -328,7 +328,6 @@ public class DevolBodCan extends PBase {
         corel=gl.ruta+"_"+mu.getCorelBase();
 
         fecha=du.getActDateTime();
-        if (gl.peModal.equalsIgnoreCase("TOL")) fecha=app.fechaFactTol(du.getActDate());
 
         try {
 
@@ -383,117 +382,7 @@ public class DevolBodCan extends PBase {
                 }
             }
 
-            sql="SELECT CODIGO,BARRA,SUM(CANT),SUM(PESO),CODIGOLIQUIDACION,UNIDADMEDIDA FROM P_STOCKB GROUP BY CODIGO,UNIDADMEDIDA,CODIGOLIQUIDACION,BARRA " +
-                    "HAVING SUM(PESO)>0 ";
-            DT=Con.OpenDT(sql);
-
-            if(DT.getCount()>0){
-
-                DT.moveToFirst();
-
-                while (!DT.isAfterLast()) {
-
-                    pcod=DT.getString(0);
-                    barra=DT.getString(1);
-                    ppeso=DT.getDouble(3);
-                    um=DT.getString(5);
-
-                    ins.init("D_MOVDB");
-
-                    ins.add("COREL",corel);
-                    ins.add("PRODUCTO",pcod);
-                    ins.add("BARRA",barra);
-                    ins.add("PESO",ppeso);
-                    ins.add("CODIGOLIQUIDACION",0);
-                    ins.add("UNIDADMEDIDA",um);
-
-                    db.execSQL(ins.sql());
-
-                    DT.moveToNext();
-                }
-
-            }
-
-            sql="SELECT CODIGO,BARRAPALLET,BARRAPRODUCTO,LOTEPRODUCTO,SUM(CANT),SUM(PESO),UNIDADMEDIDA,CODIGOLIQUIDACION FROM P_STOCK_PALLET GROUP BY CODIGO,UNIDADMEDIDA,CODIGOLIQUIDACION,BARRAPALLET,BARRAPRODUCTO,LOTEPRODUCTO";
-            DT=Con.OpenDT(sql);
-
-            if(DT.getCount()>0){
-
-                DT.moveToFirst();
-
-                while (!DT.isAfterLast()) {
-
-                    pcod=DT.getString(0);
-                    barrapallet = DT.getString(1);
-                    barra = DT.getString(2);
-                    plote=DT.getString(3);
-                    pcant=DT.getDouble(4);
-                    ppeso=DT.getDouble(5);
-                    um=DT.getString(6);
-
-                    ins.init("D_MOVDPALLET");
-
-                    ins.add("COREL",corel);
-                    ins.add("PRODUCTO",pcod);
-                    ins.add("BARRAPALLET",barrapallet);
-                    ins.add("BARRAPRODUCTO",barra);
-                    ins.add("LOTEPRODUCTO",plote);
-                    ins.add("CANT",pcant);
-                    ins.add("PESO",ppeso);
-                    ins.add("UNIDADMEDIDA",um);
-                    ins.add("CODIGOLIQUIDACION",0);
-
-                    db.execSQL(ins.sql());
-
-                    DT.moveToNext();
-                }
-
-            }
-
-            sql="SELECT CODIGO,SUM(CANT),SUM(PESO),LOTE,UMVENTA FROM D_CXCD INNER JOIN D_CxC ON D_CxC.COREL = D_CxCD.COREL WHERE D_CxC.STATCOM='N' GROUP BY CODIGO,UMVENTA,LOTE";
-            DT=Con.OpenDT(sql);
-
-            if(DT.getCount()>0){
-
-                DT.moveToFirst();
-
-                while (!DT.isAfterLast()) {
-
-                    pcod=DT.getString(0);
-                    pcant=DT.getDouble(1);
-                    ppeso=DT.getDouble(2);
-                    plote=DT.getString(3);
-                    um=DT.getString(4);
-
-                    ins.init("D_MOVDCAN");
-
-                    ins.add("COREL",corel);
-                    ins.add("PRODUCTO",pcod);
-                    ins.add("CANT",pcant);
-                    ins.add("CANTM",0);
-                    ins.add("PESO",ppeso);
-                    ins.add("PESOM",0);
-                    ins.add("CODIGOLIQUIDACION",0);
-                    ins.add("BARRA","");
-                    ins.add("LOTE",plote);
-                    ins.add("PASEANTE",0);
-                    ins.add("UNIDADMEDIDA",um);
-
-                    db.execSQL(ins.sql());
-
-                    DT.moveToNext();
-
-                }
-
-            }
-
             sql="DELETE FROM P_STOCK";
-            db.execSQL(sql);
-
-            sql="DELETE FROM P_STOCKB";
-            db.execSQL(sql);
-
-            sql="DELETE FROM P_STOCK_PALLET";
             db.execSQL(sql);
 
             sql="UPDATE FinDia SET val5 = 5";
@@ -668,17 +557,7 @@ public class DevolBodCan extends PBase {
             return false;
         }
 
-        try {
-            sql="SELECT IFNULL(COUNT(BARRA),0) FROM P_STOCKB";
-            dt=Con.OpenDT(sql);
-
-            cantbolsa=dt.getLong(0);
-
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            return false;
-        }
+        cantbolsa=0;
 
         try {
             sql="SELECT IFNULL(SUM(CANT),0) FROM D_CXC E INNER JOIN D_CXCD D ON  E.COREL = D.COREL WHERE E.ANULADO = 'N'";

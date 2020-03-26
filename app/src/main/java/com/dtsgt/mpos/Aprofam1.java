@@ -45,9 +45,7 @@ public class Aprofam1 extends PBase {
 		gl.ref1="";gl.ref2="";gl.ref3="";ref1="*";ref2="*";
 		
 		setHandlers();
-		
-		fillSpin1();	
-		fillSpin2();
+
 	}
 	   
 	   
@@ -170,62 +168,6 @@ public class Aprofam1 extends PBase {
    
     // Aux 
    
-	private void fillSpin1(){
-		Cursor DT;
 
-		code1.clear();list1.clear();
-		code1.add("*");list1.add("");
-		
-		try {
-
-			sql="SELECT Codigo,Nombre FROM P_REF1 ORDER BY Nombre";
-			DT=Con.OpenDT(sql);
-		
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-				code1.add(DT.getString(0));
-				list1.add(DT.getString(1));
-				DT.moveToNext();
-			}
-
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list1);
-			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-			spin1.setAdapter(dataAdapter);
-			spin1.setSelection(-1);
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox(e.getMessage());
-		}
-	}
-	
-	private void fillSpin2(){
-		Cursor DT;
-
-		code2.clear();list2.clear();
-		code2.add("*");list2.add("");
-		
-		try {
-
-			sql="SELECT Codigo,Nombre FROM P_REF2 ORDER BY Nombre";
-			DT=Con.OpenDT(sql);
-		
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-				code2.add(DT.getString(0));
-				list2.add(DT.getString(1));
-				DT.moveToNext();
-			}
-
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list2);
-			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-			spin2.setAdapter(dataAdapter);
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox(e.getMessage());
-		}
-	}
-	
 	
 }

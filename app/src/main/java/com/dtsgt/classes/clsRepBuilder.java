@@ -1,16 +1,9 @@
 package com.dtsgt.classes;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Environment;
 import android.widget.Toast;
-
-import com.dtsgt.base.MiscUtils;
-import com.dtsgt.mpos.R;
-
 import org.apache.commons.lang.StringUtils;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.text.DecimalFormat;

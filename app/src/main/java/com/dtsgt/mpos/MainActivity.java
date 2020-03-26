@@ -60,7 +60,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult,usr, pwd;
 
-    private String parVer = "2.4 / 04-Mar-2020 ";
+    private String parVer = "2.5.2 / 12-Mar-2020 ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,7 +139,7 @@ public class MainActivity extends PBase {
             khand=new clsKeybHandler(this,lblPass,lblKeyDP);
             khand.enable();
 
-            gl.grantaccess=true;
+            gl.grantaccess=false;
 
             initSession();
 
@@ -159,10 +159,8 @@ public class MainActivity extends PBase {
             } */
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }
@@ -350,8 +348,7 @@ public class MainActivity extends PBase {
 
         try {
             //#HS_20181120_1616 Se agrego el campo UNIDAD_MEDIDA_PESO.//campo INCIDENCIA_NO_LECTURA
-            sql = " SELECT EMPRESA,NOMBRE,DEVOLUCION_MERCANCIA,USARPESO,FIN_DIA,DEPOSITO_PARCIAL,UNIDAD_MEDIDA_PESO," +
-                    " INCIDENCIA_NO_LECTURA, LOTE_POR_DEFECTO FROM P_EMPRESA";
+            sql = " SELECT EMPRESA,NOMBRE FROM P_EMPRESA";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {
@@ -359,14 +356,13 @@ public class MainActivity extends PBase {
 
                 gl.emp = DT.getString(0);
                 gl.empnom = DT.getString(1);
-                gl.devol = DT.getInt(2) == 1;
-                s = DT.getString(3);
-                gl.usarpeso = s.equalsIgnoreCase("S");
-                gl.banderafindia = DT.getInt(4) == 1;
-                gl.umpeso = DT.getString(6);
-                gl.incNoLectura = DT.getInt(7) == 1; //#HS_20181211 Agregue campo incNoLectura para validacion en cliente.
-                gl.depparc = DT.getInt(5) == 1;
-                gl.lotedf = DT.getString(8);
+                gl.devol = false;
+                gl.usarpeso = false;
+                gl.banderafindia = false;
+                gl.umpeso = "";
+                gl.incNoLectura = false; //#HS_20181211 Agregue campo incNoLectura para validacion en cliente.
+                gl.depparc = false;
+                gl.lotedf = "";
             } else {
                 gl.emp = "";
                 gl.devol = false;
@@ -502,190 +498,6 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
             addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             return false;
-        }
-
-    }
-
-    public void supervisorRuta() {
-        Cursor DT;
-
-        try {
-
-            sql = "SELECT CODIGO FROM P_VENDEDOR WHERE RUTA = '" + gl.ruta + "' AND NIVEL = 2";
-            DT = Con.OpenDT(sql);
-            DT.moveToFirst();
-
-            if (DT.getCount() > 0) {
-                gl.codSupervisor = DT.getString(0);
-            }else{
-                gl.codSupervisor = "";
-            }
-
-        } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-            Log.d("supervisorRuta error: ", e.getMessage());
-        }
-
-    }
-
-    //endregion
-
-    //region Ventas Demo
-
-    public void showDemoMenu() {
-
-        try {
-            final AlertDialog Dialog;
-            final String[] selitems = {"Datos de cliente", "Base de datos original", "Borrar datos de venta"};
-
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Datos de demo");
-
-            menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    switch (item) {
-                        case 0:
-                            Intent intent = new Intent(MainActivity.this, DemoData.class);
-                            startActivity(intent);
-                            break;
-                        case 1:
-                            copyRawFile();
-                            break;
-                        case 2:
-                            borrarDatos(1);
-                            break;
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-        } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
-
-    }
-
-    private void copyRawFile() {
-        String fn;
-        int rid, rslt;
-        try {
-            Field[] fields = R.raw.class.getFields();
-            for (Field f : fields)
-                try {
-                    fn = f.getName();
-                    if (fn.equalsIgnoreCase("rd_param")) {
-                        rid = f.getInt(null);
-                        rslt = copyRawFile(rid);
-                        if (rslt == 1) {
-                            Intent intent = new Intent(this, ComDrop.class);
-                            startActivity(intent);
-                        }
-                    }
-                } catch (Exception e) {
-                    addlog(new Object() {
-                    }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-                }
-        } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
-
-    }
-
-    private int copyRawFile(int rawid) {
-
-        try {
-            InputStream in = getResources().openRawResource(rawid);
-            File file = new File(Environment.getExternalStorageDirectory(), "/SyncFold/rd_param.txt");
-            FileOutputStream out = new FileOutputStream(file);
-
-            byte[] buff = new byte[1024];
-            int read = 0;
-
-            try {
-                while ((read = in.read(buff)) > 0) {
-                    out.write(buff, 0, read);
-                }
-            } finally {
-                in.close();
-                out.close();
-            }
-            return 1;
-        } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            mu.msgbox("Error : " + e.getMessage());
-            return 0;
-        }
-    }
-
-    private void borrarDatos(int showmsg) {
-
-        try {
-
-            db.beginTransaction();
-
-            sql = "DELETE FROM D_FACTURA";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_FACTURAD";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_FACTURAP";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_FACTURAD_LOTES";
-            db.execSQL(sql);
-
-            sql = "DELETE FROM D_PEDIDO";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_PEDIDOD";
-            db.execSQL(sql);
-
-            sql = "DELETE FROM D_BONIF";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_BONIF_LOTES";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_REL_PROD_BON";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_BONIFFALT";
-            db.execSQL(sql);
-
-            sql = "DELETE FROM D_DEPOS";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_DEPOSD";
-            db.execSQL(sql);
-
-            sql = "DELETE FROM D_MOV";
-            db.execSQL(sql);
-            sql = "DELETE FROM D_MOVD";
-            db.execSQL(sql);
-
-            sql = "DELETE FROM D_ATENCION";
-            db.execSQL(sql);
-
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            if (showmsg == 1)
-                Toast.makeText(this, "Datos de venta borrados", Toast.LENGTH_SHORT).show();
-
-        } catch (SQLException e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-            db.endTransaction();
-            mu.msgbox("Error : " + e.getMessage());
         }
 
     }

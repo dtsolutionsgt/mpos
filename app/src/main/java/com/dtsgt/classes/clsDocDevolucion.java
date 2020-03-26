@@ -149,12 +149,7 @@ public class clsDocDevolucion extends clsDocument {
 
 
         try {
-            sql="SELECT NOMBRE FROM P_VENDEDOR  WHERE CODIGO='"+vend+"'";
-            DT=Con.OpenDT(sql);
-            DT.moveToFirst();
-
-            val=DT.getString(0);
-
+            val=vend;
             vendcod=vend;
         } catch (Exception e) {
             val=vend;

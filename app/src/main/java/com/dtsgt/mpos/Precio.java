@@ -72,8 +72,6 @@ public class Precio {
 
 		if (cant==0) return false;
 
-		prodPrecioEsp(ppeso,cliente,clitipo);
-		precioespecial=prec;
 		return prec>0;
 	}
 
@@ -287,97 +285,6 @@ public class Precio {
 		
 	}
 
-	private void prodPrecioEsp(double ppeso,String cliente,String clitipo) {
-		Cursor dt;
-		double pr,prr,stot,pprec,tsimp;
-		String sprec="",vcod,vval;
-
-		pr=0;
-		try {
-			if (ppeso>0) {
-				sql="SELECT PRECIO,CODIGO,VALOR FROM TMP_PRECESPEC WHERE (PRODUCTO='"+prodid+"') AND (UNIDADMEDIDA='"+umpeso+"') ";
-			} else {
-				sql="SELECT PRECIO,CODIGO,VALOR FROM TMP_PRECESPEC WHERE (PRODUCTO='"+prodid+"') AND (UNIDADMEDIDA='"+um+"') ";
-			}
-			dt=Con.OpenDT(sql);
-
-			if (dt.getCount() > 0) {
-				dt.moveToFirst();
-				while (!dt.isAfterLast()) {
-					prr = dt.getDouble(0);
-					vcod = dt.getString(1);
-					vval=dt.getString(2);
-
-					if (vcod.equalsIgnoreCase("TIPO")) {
-						if (vval.equalsIgnoreCase(clitipo)){
-							pr=prr;break;
-						}
-					} else {
-						if (vval.equalsIgnoreCase(cliente)){
-							pr=prr;break;
-						}
-					}
-
-					dt.moveToNext();
-				}
-			}
-
-		} catch (Exception e) {
-			pr=0;
-		}
-
-		totsin=pr*cant;tsimp=mu.round(totsin,ndec);
-		imp=0;
-		pr=pr*(1+imp/100);
-
-		// total
-		stot=pr*cant;stot=mu.round(stot,ndec);
-		if (imp>0) impval=stot-tsimp; else impval=0;
-		descmon=(double) (stot*desc/100);descmon=mu.round(descmon,ndec);
-		tot=stot-descmon;
-
-		if (cant>0) prec=(double) (tot/cant); else prec=pr;
-
-		try {
-			sprec=ffrmprec.format(prec);sprec=sprec.replace(",",".");
-			pprec=Double.parseDouble(sprec);
-			precdoc=mu.round(pprec,ndec);
-		} catch (Exception e) {
-			precdoc=prec;
-		}
-
-		if (ppeso>0) prec=prec*ppeso/cant;
-
-		try {
-			sprec=ffrmprec.format(prec);sprec=sprec.replace(",",".");
-			pprec=Double.parseDouble(sprec);
-			pprec=mu.round(pprec,ndec);
-		} catch (Exception e) {
-			pprec=prec;
-		}
-		prec=pprec;
-
-		// total
-		stot=prec*cant;stot=mu.round(stot,ndec);
-		if (imp>0) impval=stot-tsimp; else impval=0;
-		descmon=(double) (stot*desc/100);descmon=mu.round(descmon,ndec);
-		tot=stot-descmon;
-
-		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
-		totsin=mu.round(precsin*cant,ndec);
-		if (cant>0) precsin=(double) (totsin/cant);
-
-		try {
-			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
-			pprec=Double.parseDouble(sprec);
-			pprec=mu.round(pprec,ndec);
-		} catch (Exception e) {
-			pprec=precsin;
-		}
-
-		precsin=pprec;
-
-	}
 
 
 	// Aux

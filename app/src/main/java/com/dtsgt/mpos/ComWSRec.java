@@ -188,11 +188,7 @@ public class ComWSRec extends PBase {
 
             s="";
 
-            // if (delcmd.equalsIgnoreCase("DELETE FROM P_COBRO")) {
-            // 	idbg=idbg+" RC ="+rc+"---";
-            //}
-
-            for (int i = 0; i < rc; i++) {
+             for (int i = 0; i < rc; i++) {
 
                 String str = ((SoapObject)result.getProperty(0)).getPropertyAsString(i);
                 //s=s+str+"\n";
@@ -382,10 +378,7 @@ public class ComWSRec extends PBase {
 
             if(TieneRuta && TieneProd && TieneClientes){
                 if (!AddTable_SinBorrar("P_STOCK")) return false;
-                if (!AddTable_SinBorrar("P_STOCK_PALLET")) return false;
-                if (!AddTable_SinBorrar("P_STOCKB")) return false;
-                if (!AddTable("TMP_PRECESPEC")) return false;
-                if (!AddTable("P_PRODPRECIO")) return false;
+                 if (!AddTable("P_PRODPRECIO")) return false;
                 if (!AddTable("P_FACTORCONV")) return false;
             }else{
                 msgbox("No tiene datos de la ruta, clientes y productos, debe hacer una carga de datos completa");
@@ -597,49 +590,6 @@ public class ComWSRec extends PBase {
 
         try{
 
-            if (TN.equalsIgnoreCase("P_STOCK")) {
-
-                if (gl.peModal.equalsIgnoreCase("TOL")) {
-                    SQL = "SELECT CODIGO, CANT, CANTM, PESO, plibra, LOTE, DOCUMENTO, dbo.AndrDate(FECHA), ANULADO, CENTRO, " +
-                          "STATUS, ENVIADO, CODIGOLIQUIDACION, COREL_D_MOV, UNIDADMEDIDA " +
-                          "FROM P_STOCK WHERE RUTA='" + gl.ruta + "' AND  (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') " +
-                          "AND (STATUS='A') AND (COREL_D_MOV='') AND (CODIGOLIQUIDACION=0) AND (ANULADO=0) AND (ENVIADO = 0)" +
-                          "AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH WHERE (FECHA>='" + fsqli + "') " +
-                          "AND (FECHA<='" + fsqlf + "'))";
-                } else if (gl.peModal.equalsIgnoreCase("APR")) {
-                    SQL = "SELECT CODIGO, CANT, CANTM, PESO, plibra, LOTE, DOCUMENTO, dbo.AndrDate(FECHA), ANULADO, CENTRO, " +
-                          "STATUS, ENVIADO, CODIGOLIQUIDACION, COREL_D_MOV, UNIDADMEDIDA " +
-                          "FROM P_STOCK WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsql + "') ";
-                } else {
-                    SQL = "SELECT CODIGO, CANT, CANTM, PESO, plibra, LOTE, DOCUMENTO, dbo.AndrDate(FECHA), ANULADO, CENTRO, " +
-                          "STATUS, ENVIADO, CODIGOLIQUIDACION, COREL_D_MOV, UNIDADMEDIDA " +
-                          "FROM P_STOCK WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsql + "') ";
-                }
-
-                return SQL;
-            }
-
-            //CKFK 20190222 Agregué a la consulta el AND (ENVIADO = 0)
-            if (TN.equalsIgnoreCase("P_STOCKB")) {
-                SQL = "SELECT RUTA, BARRA, CODIGO, CANT, COREL, PRECIO, PESO, DOCUMENTO,dbo.AndrDate(FECHA), ANULADO, CENTRO, " +
-                      "STATUS, ENVIADO, CODIGOLIQUIDACION, COREL_D_MOV, UNIDADMEDIDA, DOC_ENTREGA " +
-                      "FROM P_STOCKB WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') " +
-                      "AND (STATUS='A') AND (COREL_D_MOV='') AND (CODIGOLIQUIDACION=0) AND (ANULADO=0) " +
-                      "AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH WHERE (FECHA>='" + fsqli + "') " +
-                        "AND (FECHA<='" + fsqlf + "'))";
-                return SQL;
-            }
-
-            //CKFK 20190304 Agregué la consulta para obtener los datos de P_STOCK_PALLET
-            if (TN.equalsIgnoreCase("P_STOCK_PALLET")) {
-                SQL = "SELECT DOCUMENTO, RUTA, BARRAPALLET, CODIGO, BARRAPRODUCTO, LOTEPRODUCTO, CANT, COREL, PRECIO, PESO, " +
-                      "UNIDADMEDIDA,dbo.AndrDate(FECHA), ANULADO, CENTRO, STATUS, ENVIADO, CODIGOLIQUIDACION, COREL_D_MOV, DOC_ENTREGA  " +
-                      "FROM P_STOCK_PALLET WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') " +
-                      "AND (STATUS='A') AND (COREL_D_MOV='') AND (CODIGOLIQUIDACION=0) AND (ANULADO=0) " +
-                      "AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH WHERE (FECHA>='" + fsqli + "') " +
-                        "AND (FECHA<='" + fsqlf + "'))";
-                return SQL;
-            }
 
             if (TN.equalsIgnoreCase("P_FACTORCONV")) {
                 //#EJC20181112
@@ -648,7 +598,7 @@ public class ComWSRec extends PBase {
                       " FROM P_PRODUCTO WHERE LINEA IN (SELECT DISTINCT LINEA FROM P_LINEARUTA " +
                       " WHERE RUTA = '" + gl.ruta + "')) " +
                       " OR ((PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "') " +
-                      " OR PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCKB WHERE RUTA='" + gl.ruta + "')))";
+                      " ))";
 
                 return SQL;
             }
@@ -659,14 +609,7 @@ public class ComWSRec extends PBase {
                       " WHERE ( (CODIGO IN ( SELECT CODIGO FROM P_PRODUCTO WHERE " +
                       "(LINEA IN (SELECT LINEA FROM P_LINEARUTA WHERE RUTA='" + gl.ruta + "')))) " +
                       "OR  (CODIGO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "'))) " +
-                      "AND (NIVEL IN (SELECT DISTINCT NIVELPRECIO FROM P_CLIENTE " +
-                      "WHERE CODIGO IN (SELECT DISTINCT CLIENTE FROM P_CLIRUTA WHERE RUTA='" + gl.ruta + "'))) ";
-                return SQL;
-            }
-
-            if (TN.equalsIgnoreCase("TMP_PRECESPEC")) {
-                SQL = "SELECT CODIGO,VALOR,PRODUCTO,PRECIO,UNIDADMEDIDA FROM TMP_PRECESPEC " +
-                      " WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') ";
+                      "AND (NIVEL IN (SELECT DISTINCT NIVELPRECIO FROM P_CLIENTE  )  ) ";
                 return SQL;
             }
 
@@ -690,14 +633,6 @@ public class ComWSRec extends PBase {
             String SQL = " INSERT INTO P_DOC_ENVIADOS_HH " +
                     " SELECT DISTINCT DOCUMENTO, RUTA, FECHA, 1 " +
                     " FROM P_STOCK WHERE FECHA = '" +  Now + "' AND RUTA = '" + ruta + "' " +
-                    " AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH)" +
-                    " UNION " +
-                    " SELECT DISTINCT DOCUMENTO, RUTA, FECHA, 1 " +
-                    " FROM P_STOCKB WHERE FECHA = '" + Now + "' AND RUTA = '" + ruta + "' " +
-                    " AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH)" +
-                    " UNION " +
-                    " SELECT DISTINCT DOCUMENTO, RUTA, FECHA, 1 " +
-                    " FROM P_STOCK_PALLET WHERE FECHA = '" + Now + "' AND RUTA = '" + ruta + "' " +
                     " AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH)";
 
             dbld.clear();
@@ -784,7 +719,7 @@ public class ComWSRec extends PBase {
             } catch (Exception e) {
                 if (scon==0){
                     fstr="No se puede conectar al web service : "+sstr;
-                    lblInfo.setText(fstr);
+                   // lblInfo.setText(fstr);
                 }
                 msgbox(fstr);
             }

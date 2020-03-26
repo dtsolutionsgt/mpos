@@ -59,9 +59,6 @@ public class ayudante_vehiculo extends PBase {
 
         setHandlers();
 
-        ListaAyudantes();
-        ListaVehiculos();
-
         btnOmitir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,89 +75,6 @@ public class ayudante_vehiculo extends PBase {
 
     }
 
-
-    private void ListaAyudantes(){
-
-        Cursor DT;
-        clsAyudante item;
-
-        items.clear();
-
-        try {
-
-            sql="SELECT CODIGO,NOMBRE FROM P_VENDEDOR WHERE RUTA = '" + gl.ruta + "' AND NIVEL = 5 ";
-
-            DT=Con.OpenDT(sql);
-
-            if(DT.getCount()>0) {
-
-                DT.moveToFirst();
-
-                while (!DT.isAfterLast())
-                {
-
-                    item = clsCls.new clsAyudante();
-
-                    item.idayudante=DT.getString(0);
-                    item.nombreayudante=DT.getString(1);
-
-                    items.add(item);
-
-                    DT.moveToNext();
-                }
-
-            }
-
-            adapter=new ListAdaptAyudante(this,items);
-            listAyu.setAdapter(adapter);
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox(e.getMessage()+"\n"+sql);
-
-        }
-
-    }
-
-    private void  ListaVehiculos(){
-        Cursor DT;
-        clsVehiculo item1;
-
-        items1.clear();
-
-    try{
-
-        sql="SELECT CODIGO, MARCA, PLACA FROM P_VEHICULO ";
-        DT=Con.OpenDT(sql);
-
-        if(DT.getCount()>0) {
-            DT.moveToFirst();
-
-            while (!DT.isAfterLast()) {
-
-                item1 = clsCls.new clsVehiculo();
-
-                item1.idVehiculo=DT.getString(0);
-                item1.marca=DT.getString(1);
-                item1.placa=DT.getString(2);
-
-                items1.add(item1);
-
-                DT.moveToNext();
-            }
-
-        }
-
-        adapter1=new ListAdaptVehiculo(this,items1);
-        listVehi.setAdapter(adapter1);
-
-    }catch (Exception e){
-        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-        mu.msgbox(e.getMessage()+"\n"+sql);
-
-    }
-
-    }
 
     private void setHandlers(){
 

@@ -190,49 +190,7 @@ public class DevolCli extends PBase {
         cntotl = 0;
 
 		items.clear();
-		
-		try {
-			
-			sql="SELECT T_CxCD.CODIGO, T_CxCD.CANT, P_CODDEV.DESCRIPCION, P_PRODUCTO.DESCCORTA, T_CxCD.ITEM,T_CxCD.PESO,T_CxCD.TOTAL "+
-			     " FROM T_CxCD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_CxCD.CODIGO "+
-				 " LEFT JOIN P_CODDEV ON (P_CODDEV.CODIGO=T_CxCD.CODDEV AND P_CODDEV.ESTADO='"+estado+"') "+
-			     " ORDER BY P_PRODUCTO.DESCCORTA";
-			
-			DT=Con.OpenDT(sql);
-			if (DT.getCount()==0) {return;}
-			
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-				  
-			  vItem = clsCls.new clsCFDV();
-			  
-			  vItem.Cod=DT.getString(0);
-			  vItem.Desc=DT.getString(3);
-			  vItem.Valor=DT.getString(2);
-			  s=mu.frmdec(DT.getDouble(1));
-			  vItem.Fecha=s;
-			  vItem.id=DT.getInt(4);
 
-            cntprd = cntprd+1;
-            cntunis = cntunis + Double.parseDouble(s);
-            cntkgs = mu.round(cntkgs + DT.getDouble(5),gl.peDec);
-            cntotl = mu.round(cntotl + DT.getDouble(6),2);
-
-			  items.add(vItem);	
-
-			 // vItem.Cod = gl.CodDev;
-			  DT.moveToNext();
-			}
-
-            lblCantProds.setText(String.valueOf(cntprd));
-            lblCantUnd.setText(String.valueOf(cntunis));
-            lblCantKgs.setText(String.valueOf(cntkgs));
-            lblCantTotal.setText(mu.frmcur(cntotl));
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		   	mu.msgbox( e.getMessage());
-	    }
 			 
 		adapter=new ListAdaptDevCli(this,items);
 		listView.setAdapter(adapter);
@@ -401,7 +359,6 @@ public class DevolCli extends PBase {
 		gl.dvcorrelnc = obtienecorrel("NC");
 
 		fecha=du.getActDateTime();
-		if (gl.peModal.equalsIgnoreCase("TOL")) fecha=app.fechaFactTol(du.getActDate());
 
 		cntotl=mu.round(cntotl,2);
 

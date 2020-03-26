@@ -263,74 +263,12 @@ public class CliNuevo extends PBase {
 
 			db.execSQL(ins.sql());
 
-			// P_CLIRUTA
-			int dv;
-			for (int i = 0; i < 8; i++) {
-
-				dv = 0;
-				switch (i) {
-					case 1:
-						dv = d1;
-						break;
-					case 2:
-						dv = d2;
-						break;
-					case 3:
-						dv = d3;
-						break;
-					case 4:
-						dv = d4;
-						break;
-					case 5:
-						dv = d5;
-						break;
-					case 6:
-						dv = d6;
-						break;
-					case 7:
-						dv = d7;
-						break;
-				}
-
-				if (dv == 1) {
-					ins.init("P_CLIRUTA");
-
-					ins.add("RUTA", ((appGlobals) vApp).ruta);
-					ins.add("CLIENTE", corel);
-					ins.add("SEMANA", 0);
-					ins.add("DIA", i);
-					ins.add("SECUENCIA", -1);
-					ins.add("BANDERA", -1);
-
-					db.execSQL(ins.sql());
-				}
-
-			}
-
-		//	try {
-				ins.init("D_CLICOORD");
-
-				ins.add("CODIGO", corel);
-				ins.add("STAMP", du.getCorelBase());
-				ins.add("COORX", latitude);
-				ins.add("COORY", longitude);
-				ins.add("STATCOM", "N");
-
-				db.execSQL(ins.sql());
-		/*	} catch (SQLException e) {
-				addlog(new Object() {
-				}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-				msgbox(e.getMessage());
-			}
-		*/
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
 			if (gl.peModal.equalsIgnoreCase("APR")) {
 				super.finish();
 
-				gl.tcorel = corel;//gl.ruta/
-				startActivity(new Intent(this, CliNuevoApr.class));
 			} else {
 
 				if (vender==1) {

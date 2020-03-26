@@ -73,6 +73,10 @@ public class PBase extends Activity {
 	protected void wsCallBack(Boolean throwing,String errmsg) throws Exception {
 		if (throwing) throw new Exception(errmsg);
 	}
+
+    public void wsCallBack(Boolean throwing,String errmsg,int errlevel) throws Exception {
+
+    }
 	
 	// Aux
 	

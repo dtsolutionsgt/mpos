@@ -48,7 +48,7 @@ public class Clientes extends PBase {
 	private EditText txtFiltro;
 	private TextView lblCant;
     private Switch swact;
-    private ImageView imgAdd;
+    private ImageView imgAdd,imgFoto;
     private RelativeLayout reladd;
 
 	private ArrayList<clsCDB> items = new ArrayList<clsCDB>();
@@ -83,6 +83,7 @@ public class Clientes extends PBase {
 		lblCant = (TextView) findViewById(R.id.lblCant);
         swact = (Switch) findViewById(R.id.switch2);
         imgAdd = (ImageView) findViewById(R.id.imageView12);
+        imgFoto = (ImageView) findViewById(R.id.imageView55);
         reladd = (RelativeLayout) findViewById(R.id.reladd);
 
 		app = new AppMethods(this, gl, Con, db);
@@ -106,6 +107,8 @@ public class Clientes extends PBase {
         } else {
             reladd.setVisibility(View.GONE);
         }
+
+        imgFoto.setImageResource(R.drawable.blank256);
 
 	}
 
@@ -331,10 +334,11 @@ public class Clientes extends PBase {
 		Cursor DT;
 		clsCDB vItem;
 		int vP;
-		String id, filt, ss;
+		String id, filt, ss,idfoto="";
         boolean act=!swact.isChecked();
 
 		items.clear();
+        imgFoto.setImageResource(R.drawable.blank256);
         listFPrints();
 
 		selidx = -1;
@@ -367,7 +371,7 @@ public class Clientes extends PBase {
 
 					vItem = clsCls.new clsCDB();
 
-					vItem.Cod = DT.getString(0);
+					vItem.Cod = DT.getString(0);idfoto=DT.getString(0);
 					ss = DT.getString(0);
 					vItem.Desc = DT.getString(1);
 					if (fprints.contains(ss)) vItem.Bandera = 1;else vItem.Bandera = 0;
@@ -416,6 +420,9 @@ public class Clientes extends PBase {
 			listView.setSelection(selidx);
 		}
 
+		if (idfoto.isEmpty()) return;
+		if (items.size()==1 && gl.peFotoBio) mostrarFotoCliente(idfoto);
+
 	}
 
 	public void showCliente() {
@@ -432,16 +439,7 @@ public class Clientes extends PBase {
 
 	}
 
-	private void editCliente() {
-		try {
-			gl.tcorel = selid;
-			startActivity(new Intent(this, CliNuevoAprEdit.class));
-		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-		}
 
-	}
 
 	private void barcodeClient() {
 		Cursor dt;
@@ -601,7 +599,7 @@ public class Clientes extends PBase {
 						case 0:
 							msgAskBor("Eliminar cliente");break;
 						case 1:
-							editCliente();break;
+							break;
 					}
 
 					dialog.cancel();
@@ -775,7 +773,7 @@ public class Clientes extends PBase {
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					editCliente();
+					;
 				}
 			});
 
@@ -794,8 +792,7 @@ public class Clientes extends PBase {
 			db.beginTransaction();
 
 			db.execSQL("DELETE FROM D_CLINUEVO WHERE CODIGO='"+selid+"'");
-			db.execSQL("DELETE FROM P_CLIRUTA WHERE CLIENTE='"+selid+"'");
-					
+
 			db.setTransactionSuccessful();
 			db.endTransaction();
 			
@@ -828,26 +825,46 @@ public class Clientes extends PBase {
             file = new File(prodimg);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
-                imgAdd.setImageBitmap(bmImg);
+                imgFoto.setImageBitmap(bmImg);
             } else {
                 prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selid + ".jpg";
                 file = new File(prodimg);
                 if (file.exists()) {
                     Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
-                    imgAdd.setImageBitmap(bmImg);
+                    imgFoto.setImageBitmap(bmImg);
                 } else {
-                    prodimg = Environment.getExternalStorageDirectory() + "/mposlogo.png";
-                    file = new File(prodimg);
-                    if (file.exists()) {
-                        Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
-                        imgAdd.setImageBitmap(bmImg);
-                    }
+                    imgFoto.setImageResource(R.drawable.blank256);
                 }
             }
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
 
+    }
+
+    private void mostrarFotoCliente(String selcliid) {
+        String prodimg;
+        File file;
+
+        try {
+            prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selcliid + ".png";
+            file = new File(prodimg);
+            if (file.exists()) {
+                Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                imgFoto.setImageBitmap(bmImg);
+            } else {
+                prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selcliid + ".jpg";
+                file = new File(prodimg);
+                if (file.exists()) {
+                    Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                    imgFoto.setImageBitmap(bmImg);
+                } else {
+                    imgFoto.setImageResource(R.drawable.blank256);
+                }
+            }
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
     }
 
     private void listFPrints() {

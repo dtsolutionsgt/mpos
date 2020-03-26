@@ -386,13 +386,7 @@ public class Exist extends PBase {
 				cantidad = 0;
 			}
 
-			sql = "SELECT BARRA FROM P_STOCKB";
-			if (Con != null){
-				DT = Con.OpenDT(sql);
-				cantb = DT.getCount();
-			}else {
-				cantb = 0;
-			}
+			cantb = 0;
 
 			cantidad=cantidad+cantb;
 		} catch (Exception e) {
@@ -420,11 +414,6 @@ public class Exist extends PBase {
 					"FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=P_STOCK.CODIGO  WHERE 1=1 ";
 			if (vF.length() > 0) sql = sql + "AND ((P_PRODUCTO.DESCLARGA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
 			sql += "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA ";
-			sql += "UNION ";
-			sql += "SELECT P_STOCKB.CODIGO,P_PRODUCTO.DESCLARGA " +
-					"FROM P_STOCKB INNER JOIN P_PRODUCTO ON P_STOCKB.CODIGO=P_PRODUCTO.CODIGO ";
-			if (vF.length() > 0) sql = sql + "AND ((P_PRODUCTO.DESCLARGA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
-			sql += "GROUP BY P_STOCKB.CODIGO, P_PRODUCTO.DESCLARGA ";
 			sql += "ORDER BY P_PRODUCTO.DESCLARGA";
 
 			dp = Con.OpenDT(sql);
@@ -448,12 +437,7 @@ public class Exist extends PBase {
 					   "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=P_STOCK.CODIGO  " +
 					   "WHERE (P_PRODUCTO.CODIGO='"+pcod+"') " +
                        "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA,P_STOCK.UNIDADMEDIDA,P_STOCK.LOTE,P_STOCK.DOCUMENTO,P_STOCK.CENTRO,P_STOCK.STATUS ";
-           		sql+=  "UNION ";
-				sql+=  "SELECT P_STOCKB.CODIGO,P_PRODUCTO.DESCLARGA,SUM(P_STOCKB.CANT) AS TOTAL, 0 AS Expr2,P_STOCKB.UNIDADMEDIDA, '' AS Expr4, P_STOCKB.DOCUMENTO,P_STOCKB.CENTRO,P_STOCKB.STATUS, SUM(P_STOCKB.PESO) AS Expr3 "+
-				       "FROM  P_STOCKB INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=P_STOCKB.CODIGO "+
-				       "WHERE (P_PRODUCTO.CODIGO='"+pcod+"') " +
-					   "GROUP BY P_STOCKB.CODIGO,P_PRODUCTO.DESCLARGA,P_STOCKB.UNIDADMEDIDA,P_STOCKB.DOCUMENTO,P_STOCKB.CENTRO,P_STOCKB.STATUS "+
-				       "ORDER BY TOTAL ";
+           		sql+=  "ORDER BY TOTAL ";
 
 				dt = Con.OpenDT(sql);
 				icnt=dt.getCount();

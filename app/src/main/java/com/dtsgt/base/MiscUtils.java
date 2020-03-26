@@ -131,7 +131,11 @@ public class MiscUtils {
 			return false;
 		}
 	}
-	
+
+	public int bool(Boolean value) {
+	    if (value) return 1;else return 0;
+    }
+
 	public int dayofweek() {
 		Calendar calendar = Calendar.getInstance();
 		int day = calendar.get(Calendar.DAY_OF_WEEK);

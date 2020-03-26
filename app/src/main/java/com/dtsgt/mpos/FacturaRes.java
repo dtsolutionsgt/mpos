@@ -197,7 +197,6 @@ public class FacturaRes extends PBase {
 
         fecha=du.getActDateTime();
 		fechae=fecha;
-		if (gl.peModal.equalsIgnoreCase("TOL")) fecha=app.fechaFactTol(du.getActDate());
 
 		dweek=mu.dayofweek();
 
@@ -2222,25 +2221,7 @@ public class FacturaRes extends PBase {
 	}
 	
 	private void cliPorDia() {
-		Cursor DT;
-		
-		int dweek=mu.dayofweek();
-		
-		try {
-			sql="SELECT DISTINCT CLIENTE FROM P_CLIRUTA WHERE (P_CLIRUTA.DIA ="+dweek+") ";
-			DT=Con.OpenDT(sql);
-
-			if(DT.getCount()>0){
-                clidia=DT.getCount();
-            }else {
-                clidia=0;
-            }
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("cliPorDia: " + e.getMessage() );
-		}
-			
+        clidia=0;
 	}
 
 	private boolean prodPorPeso(String prodid) {

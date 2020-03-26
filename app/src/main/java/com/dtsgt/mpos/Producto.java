@@ -352,9 +352,7 @@ public class Producto extends PBase {
 		
 		try {			
 			//sql="SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+gl.nivel+")";
-			sql=" SELECT UNIDADMEDIDA FROM P_STOCK WHERE (CODIGO='"+prodid+"') " +
-			    " UNION \n" +
-				" SELECT UNIDADMEDIDA FROM P_STOCKB WHERE (CODIGO='" + prodid + "') ";
+			sql=" SELECT UNIDADMEDIDA FROM P_STOCK WHERE (CODIGO='"+prodid+"') ";
 			dt=Con.OpenDT(sql);
 
 			if (dt.getCount()>0){
@@ -382,10 +380,7 @@ public class Producto extends PBase {
 		try {
 			sql=" SELECT  IFNULL(SUM(A.CANT),0) AS CANT, IFNULL(SUM(A.PESO),0) AS PESO " +
 				" FROM(SELECT IFNULL(SUM(CANT),0) AS CANT, IFNULL(SUM(PESO),0) AS PESO " +
-				" FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+um+"')" +
-			    " UNION \n" +
-			    " SELECT IFNULL(SUM(CANT),0) AS CANT, IFNULL(SUM(PESO),0) AS PESO " +
-				" FROM P_STOCKB WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+um+"')) AS A";
+				" FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+um+"') ) AS A";
 			dt=Con.OpenDT(sql);
 
 			if (dt.getCount()>0) {
@@ -401,10 +396,7 @@ public class Producto extends PBase {
 
 				sql=" SELECT  IFNULL(SUM(A.CANT),0) AS CANT, IFNULL(SUM(A.PESO),0) AS PESO " +
 					" FROM(SELECT IFNULL(SUM(CANT),0) AS CANT, IFNULL(SUM(PESO),0) AS PESO " +
-					" FROM P_STOCK WHERE (CODIGO='"+prodid+"')" +
-					" UNION \n" +
-					" SELECT IFNULL(SUM(CANT),0) AS CANT, IFNULL(SUM(PESO),0) AS PESO " +
-					" FROM P_STOCKB WHERE (CODIGO='"+prodid+"')) AS A";
+					" FROM P_STOCK WHERE (CODIGO='"+prodid+"')) AS A";
 				dt=Con.OpenDT(sql);
 
 				if (dt.getCount()>0) {
@@ -423,9 +415,7 @@ public class Producto extends PBase {
 	    }
 		
 		try {
-			sql="SELECT UNIDADMEDIDA FROM P_STOCK WHERE (CODIGO='"+prodid+"')" +
-				" UNION \n" +
-				" SELECT UNIDADMEDIDA FROM P_STOCKB WHERE (CODIGO='"+prodid+"')";
+			sql="SELECT UNIDADMEDIDA FROM P_STOCK WHERE (CODIGO='"+prodid+"')";
 			dt=Con.OpenDT(sql);
 
 			if (dt.getCount()>0){
@@ -466,10 +456,7 @@ public class Producto extends PBase {
 
 			sql=" SELECT  IFNULL(SUM(A.CANT),0) AS CANT, IFNULL(SUM(A.PESO),0) AS PESO " +
 				" FROM(SELECT IFNULL(SUM(CANT),0) AS CANT, IFNULL(SUM(PESO),0) AS PESO " +
-				" FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+umstock+"')" +
-				" UNION \n" +
-				" SELECT IFNULL(SUM(CANT),0) AS CANT, IFNULL(SUM(PESO),0) AS PESO " +
-				" FROM P_STOCKB WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+umstock+"')) AS A";
+				" FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+umstock+"')) AS A";
 			dt=Con.OpenDT(sql);
 			if(dt.getCount()>0) {
 				dt.moveToFirst();
@@ -478,17 +465,6 @@ public class Producto extends PBase {
 			}
 
 			dt.close();
-
-			/*if (disp_und ==0) {
-				sql="SELECT SUM(CANT),SUM(PESO) FROM P_STOCKB WHERE (CODIGO='"+prodid+"')";
-				dt=Con.OpenDT(sql);
-				if(dt.getCount()>0) {
-					dt.moveToFirst();
-					disp_und =dt.getDouble(0);
-				}
-			}
-
-			if (!porpeso) disp_und = disp_und /umfactor; else disp_und =dt.getDouble(1);*/
 
 			return disp_und;
 		} catch (Exception e) {
@@ -522,7 +498,7 @@ public class Producto extends PBase {
 			case 2: // Mercadeo propio
 				sql="SELECT Codigo,Nombre FROM P_LINEA ORDER BY Nombre";break;
 			case 3:  // Mercadeo comp
-				sql="SELECT Codigo,Nombre FROM P_MERMARCACOMP ORDER BY Nombre";break;	
+				break;
 			}			
 						
 			DT=Con.OpenDT(sql);					

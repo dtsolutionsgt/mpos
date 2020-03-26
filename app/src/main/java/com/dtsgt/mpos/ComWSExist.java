@@ -189,12 +189,7 @@ public class ComWSExist extends PBase {
 	        idbg=idbg+" rec " +rc +"  ";
 	           
 	        s="";
-	         
-	        // if (delcmd.equalsIgnoreCase("DELETE FROM P_COBRO")) {
-	        // 	idbg=idbg+" RC ="+rc+"---";
-	        //}
-	        
-	        for (int i = 0; i < rc; i++) {
+	         for (int i = 0; i < rc; i++) {
 	        	
 	        	String str = ((SoapObject)result.getProperty(0)).getPropertyAsString(i);
 	        	//s=s+str+"\n";
@@ -383,12 +378,8 @@ public class ComWSExist extends PBase {
 			DT.close();
 
 			if(TieneRuta && TieneProd && TieneClientes){
-				if (!AddTable("P_STOCKINV")) return false;
-				if (!AddTable("TMP_PRECESPEC")) return false;
 				if (!AddTable("P_PRODPRECIO")) return false;
 				if (!AddTable("P_STOCK")) return false;
-				if (!AddTable("P_STOCK_PALLET")) return false;
-				if (!AddTable("P_STOCKB")) return false;
 				if (!AddTable("P_FACTORCONV")) return false;
 			}else{
 				msgbox("No tiene datos de la ruta, clientes y productos, debe hacer una carga de datos completa");
@@ -501,15 +492,7 @@ public class ComWSExist extends PBase {
 			String SQL = " INSERT INTO P_DOC_ENVIADOS_HH " +
 					" SELECT DISTINCT DOCUMENTO, RUTA, FECHA, 1 " +
 					" FROM P_STOCK WHERE FECHA = '" +  Now + "' AND RUTA = '" + ruta + "' " +
-					" AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH)" +
-					" UNION " +
-					" SELECT DISTINCT DOCUMENTO, RUTA, FECHA, 1 " +
-					" FROM P_STOCKB WHERE FECHA = '" + Now + "' AND RUTA = '" + ruta + "' " +
-					" AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH)" +
-					" UNION " +
-					" SELECT DISTINCT DOCUMENTO, RUTA, FECHA, 1 " +
-					" FROM P_STOCK_PALLET WHERE FECHA = '" + Now + "' AND RUTA = '" + ruta + "' " +
-					" AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH)";
+					" AND DOCUMENTO NOT IN (SELECT DOCUMENTO FROM P_DOC_ENVIADOS_HH) ";
 
 			dbld.clear();
 			dbld.add(SQL);
@@ -615,10 +598,7 @@ public class ComWSExist extends PBase {
 		fsqlf=du.univfechasql(du.ffecha24(du.getActDate()))+" 23:59:59";
 
 		try{
-		  if (TN.equalsIgnoreCase("P_STOCKINV")) {
-			  SQL = "SELECT * FROM P_STOCKINV";
-			  return SQL;
-		  }
+
 		  if (TN.equalsIgnoreCase("P_STOCK")) {
 
 			  if (gl.peModal.equalsIgnoreCase("TOL")) {
@@ -636,25 +616,6 @@ public class ComWSExist extends PBase {
 			  return SQL;
 		  }
 
-		  //CKFK 20190222 Agregué a la consulta el AND (ENVIADO = 0)
-		  if (TN.equalsIgnoreCase("P_STOCKB")) {
-			  SQL = "SELECT RUTA, BARRA, CODIGO, CANT, COREL, PRECIO, PESO, DOCUMENTO,dbo.AndrDate(FECHA), ANULADO, CENTRO, " +
-					  "STATUS, ENVIADO, CODIGOLIQUIDACION, COREL_D_MOV, UNIDADMEDIDA, DOC_ENTREGA " +
-					  "FROM P_STOCKB WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') " +
-					  "AND (STATUS='A') AND (COREL_D_MOV='') AND (CODIGOLIQUIDACION=0) AND (ANULADO=0) ";
-			  return SQL;
-		  }
-
-		  //CKFK 20190304 Agregué la consulta para obtener los datos de P_STOCK_PALLET
-		  if (TN.equalsIgnoreCase("P_STOCK_PALLET")) {
-			  SQL = "SELECT DOCUMENTO, RUTA, BARRAPALLET, CODIGO, BARRAPRODUCTO, LOTEPRODUCTO, CANT, COREL, PRECIO, PESO, " +
-					  "UNIDADMEDIDA,dbo.AndrDate(FECHA), ANULADO, CENTRO, STATUS, ENVIADO, CODIGOLIQUIDACION, COREL_D_MOV, DOC_ENTREGA  " +
-					  "FROM P_STOCK_PALLET WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') " +
-					  "AND (STATUS='A') AND (COREL_D_MOV='') AND (CODIGOLIQUIDACION=0) AND (ANULADO=0) ";
-			  return SQL;
-		  }
-
-
 		  if (TN.equalsIgnoreCase("P_FACTORCONV")) {
 			  //#EJC20181112
 			  //SQL = "SELECT PRODUCTO,UNIDADSUPERIOR,FACTORCONVERSION,UNIDADMINIMA FROM P_FACTORCONV ";
@@ -662,7 +623,7 @@ public class ComWSExist extends PBase {
 					  " FROM P_PRODUCTO WHERE LINEA IN (SELECT DISTINCT LINEA FROM P_LINEARUTA " +
 					  " WHERE RUTA = '" + gl.ruta + "')) " +
 					  " OR ((PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "') " +
-					  " OR PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCKB WHERE RUTA='" + gl.ruta + "')))";
+					  " ))";
 
 			  return SQL;
 		  }
@@ -673,16 +634,8 @@ public class ComWSExist extends PBase {
 			  SQL = "SELECT CODIGO,NIVEL,PRECIO,UNIDADMEDIDA FROM P_PRODPRECIO ";
 			  SQL += " WHERE ( (CODIGO IN ( SELECT CODIGO FROM P_PRODUCTO WHERE (LINEA IN (SELECT LINEA FROM P_LINEARUTA WHERE RUTA='" + gl.ruta + "')) ) ) ";
 			  SQL += " OR  (CODIGO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "')) ) ";
-			  SQL += " AND (NIVEL IN (SELECT DISTINCT NIVELPRECIO FROM P_CLIENTE WHERE CODIGO IN (SELECT DISTINCT CLIENTE FROM P_CLIRUTA WHERE RUTA='" + gl.ruta + "'))) ";
-			  return SQL;
+				  return SQL;
 		  }
-
-		  if (TN.equalsIgnoreCase("TMP_PRECESPEC")) {
-			  SQL = "SELECT CODIGO,VALOR,PRODUCTO,PRECIO,UNIDADMEDIDA FROM TMP_PRECESPEC ";
-			  SQL += " WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') ";
-			  return SQL;
-		  }
-
 
 	  }catch (Exception e){
 		  addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -754,7 +707,6 @@ public class ComWSExist extends PBase {
 			} catch (Exception e) {
 				if (scon==0){
 					fstr="No se puede conectar al web service : "+sstr;
-					lblInfo.setText(fstr);
 				}
 				msgbox(fstr);
 			}

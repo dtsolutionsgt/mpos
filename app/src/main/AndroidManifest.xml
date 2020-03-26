@@ -32,7 +32,6 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -115,11 +114,6 @@
             android:name=".ObjProd"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_obj_prod"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".InvBodega"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_inv_bodega"
             android:screenOrientation="landscape" />
         <activity
             android:name=".ConsPrecio"
@@ -218,31 +212,6 @@
             android:label="@string/title_activity_act_disp"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".MercLista"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_merc_lista"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".MercProp"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_merc_prop"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".MercComp"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_merc_comp"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".MercPreg"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_merc_preg"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".MercAct"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_merc"
-            android:screenOrientation="landscape" />
-        <activity
             android:name=".CliNuevo"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cli_nuevo"
@@ -304,16 +273,6 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
-            android:name=".DemoData"
-            android:label="@string/title_activity_demo_data"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".DemoDataDlg"
-            android:label="@string/title_activity_demo_data_dlg"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateVisible" />
-        <activity
             android:name=".CliPos"
             android:label="@string/title_activity_cli_pos"
             android:screenOrientation="landscape"
@@ -335,11 +294,6 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
-            android:name=".CliNuevoApr"
-            android:label="@string/title_activity_cli_nuevo_apr"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
-        <activity
             android:name=".SolicInv"
             android:label="@string/title_activity_solic_inv"
             android:screenOrientation="landscape"
@@ -347,14 +301,6 @@
         <activity
             android:name=".Aprofam1"
             android:label="@string/title_activity_aprofam1"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
-        <activity
-            android:name=".Municipio"
-            android:label="@string/title_activity_municipio" />
-        <activity
-            android:name=".CliNuevoAprEdit"
-            android:label="@string/title_activity_cli_nuevo_apr_edit"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
@@ -391,11 +337,6 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
-            android:name=".DevolBodTol"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".DevolBodCan"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
@@ -426,16 +367,6 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".BonBarra"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".UtilPrint2"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".comWSLic"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
@@ -457,7 +388,6 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".EPrint" />
-        <activity android:name=".imprime_barras" />
         <activity android:name=".desglose" />
         <activity
             android:name="com.dtsgt.mant.Lista"
@@ -501,11 +431,6 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantImpuesto"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name="com.dtsgt.mant.MantAlmacen"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -611,10 +536,10 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.dtsgt.mant.MantCorelPagos"
+            android:name=".WSRec"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
     </application>
 
 </manifest>

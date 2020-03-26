@@ -172,11 +172,7 @@ public class LicRegis extends PBase {
 	        		stockflag=1;	
 	        	}
 	        }
-	         
-	        // if (delcmd.equalsIgnoreCase("DELETE FROM P_COBRO")) {
-	        // 	idbg=idbg+" RC ="+rc+"---";
-	        //}
-	        
+
 	        for (int i = 0; i < rc; i++) {
 	        	
 	        	String str = ((SoapObject)result.getProperty(0)).getPropertyAsString(i);

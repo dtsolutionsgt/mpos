@@ -95,42 +95,7 @@ public class RecargaAuto extends PBase {
 	}
 
 	private void listItems(){
-		Cursor DT;
-		clsClasses.clsCFDV vItem;	
-		String s;
-
-		items.clear();
-
-		try {
-
-			sql="SELECT P_STOCK_APR.CODIGO, P_STOCK_APR.CANT, ' ', P_PRODUCTO.DESCCORTA, P_STOCK_APR.PESO "+
-					"FROM P_STOCK_APR INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=P_STOCK_APR.CODIGO "+
-					"ORDER BY P_PRODUCTO.DESCCORTA";
-
-			DT=Con.OpenDT(sql);
-			if (DT.getCount()==0) {return;}
-
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-
-				vItem = clsCls.new clsCFDV();
-
-				vItem.Cod=DT.getString(0);
-				vItem.Desc=DT.getString(3);
-				vItem.Valor=DT.getString(2);
-				s=mu.frmdec(DT.getDouble(1));
-				vItem.Fecha=s;
-				vItem.id=DT.getInt(4);
-
-				items.add(vItem);	
-
-				DT.moveToNext();
-			}
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox( e.getMessage());
-		}
-
+	    items.clear();
 		adapter=new ListAdaptDevCli(this,items);
 		listView.setAdapter(adapter);
 	}
@@ -163,34 +128,6 @@ public class RecargaAuto extends PBase {
 
 			db.execSQL(ins.sql());
 
-			sql="SELECT PESO,CODIGO,CANT FROM P_STOCK_APR WHERE CANT>0";
-			DT=Con.OpenDT(sql);
-
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-
-				pcod=DT.getString(1);
-				pcant=DT.getDouble(2);
-
-				ins.init("D_MOVD");
-
-				ins.add("COREL",corel);
-				ins.add("PRODUCTO",pcod);
-				ins.add("CANT",pcant);
-				ins.add("CANTM",0);
-				ins.add("PESO",0);
-				ins.add("PESOM",0);
-				ins.add("LOTE",pcod);
-				ins.add("CODIGOLIQUIDACION",0);
-
-				db.execSQL(ins.sql());
-
-				updateStock(corel,pcod,pcant);
-
-				DT.moveToNext();
-			}
-			
-			db.execSQL("DELETE FROM P_STOCK_APR");
 
 			db.setTransactionSuccessful();
 
@@ -337,17 +274,7 @@ public class RecargaAuto extends PBase {
 	}	
 
 	private boolean hasProducts(){
-		Cursor DT;
-
-		try {
-			sql="SELECT CODIGO FROM P_STOCK_APR";	
-			DT=Con.OpenDT(sql);
-
-			return DT.getCount()>0;
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			return false;
-		}	
+		return false;
 	}
 
 	private void doExit(){

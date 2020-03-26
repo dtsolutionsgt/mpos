@@ -307,8 +307,7 @@ public class Anulacion extends PBase {
 			if (tipo==1) anulRecib(itemid);
 			
 			if (tipo==2) {
-				getDepTipo();
-				if (depparc==0) anulDepos(itemid); else anulDeposParc(itemid);
+				anulDepos(itemid);
 			}
 			
 			if (tipo==3) {
@@ -433,41 +432,7 @@ public class Anulacion extends PBase {
 			sql="UPDATE D_FACTURAP SET Anulado='S' WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
-			//  Barras
-
-			sql="INSERT INTO P_STOCKB SELECT * FROM D_FACTURA_BARRA WHERE Corel='"+itemid+"'";
-			db.execSQL(sql);
-
-			sql="UPDATE P_STOCKB SET Corel='' WHERE Corel='"+itemid+"'";
-			db.execSQL(sql);
-
-			sql="DELETE FROM D_FACTURA_BARRA WHERE Corel='"+itemid+"'";
-			db.execSQL(sql);
-
-			sql="DELETE FROM D_STOCKB_DEV WHERE Corel='"+itemid+"'";
-			db.execSQL(sql);
-
-            sql = "UPDATE D_NOTACRED SET ANULADO ='S' WHERE FACTURA ='" + itemid + "'";
-            db.execSQL(sql);
-
-            sql = "UPDATE D_CXC SET ANULADO ='S' WHERE REFERENCIA ='" + itemid + "' AND TIPO  = 'N' ";
-            db.execSQL(sql);
-
 			anulBonif(itemid);
-
-			// Nota credito
-
-			sql="SELECT COREL FROM D_NOTACRED WHERE FACTURA='"+itemid+"'";
-			DT=Con.OpenDT(sql);
-			if (DT.getCount()>0) {
-				DT.moveToFirst();ncred=DT.getString(0);
-
-				sql = "UPDATE D_CXC SET ANULADO='S' WHERE COREL='" + ncred + "' ";
-				db.execSQL(sql);
-
-				sql = "UPDATE D_NOTACRED SET ANULADO='S' WHERE COREL='" + ncred + "'";
-				db.execSQL(sql);
-			}
 
 			//ImpresionFactura();
 
@@ -778,14 +743,7 @@ public class Anulacion extends PBase {
 			sql="SELECT PRODUCTO,UNIDADMEDIDA FROM D_MOVDB WHERE (COREL='"+itemid+"')";
 			DT=Con.OpenDT(sql);
 
-			if(DT.getCount()>0){
-				sql="INSERT INTO P_STOCKB " +
-					"SELECT M.RUTA, D.BARRA, D.PRODUCTO, 1, '' AS COREL, 0 AS PRECIO, D.PESO, '' AS DOCUMENTO, " +
-					" M.FECHA, 0 AS ANULADO, '' AS CENTRO, 'A' AS ESTATUS, " +
-					"0 AS ENVIADO, 0 AS CODIGOLIQUIDACION, '' AS COREL_D_MOV, D.UNIDADMEDIDA, '' AS DOCENTREGA " +
-					"FROM D_MOV M INNER JOIN D_MOVDB D ON M.COREL = D.COREL WHERE (M.COREL='"+itemid+"')";
-				db.execSQL(sql);
-			}
+
 
 			sql="UPDATE FinDia SET val5 = 0";
 			db.execSQL(sql);
@@ -1084,165 +1042,6 @@ public class Anulacion extends PBase {
 	
 	//region Aprofam
 	
-	private boolean aprValidaNC() {
-		Cursor DT;
-		int ci,cf,ca1,ca2;
-		double dd;
-		
-		try {
-			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_CORELNC ";	
-			DT=Con.OpenDT(sql);
-				
-			DT.moveToFirst();
-			
-			ca1=DT.getInt(1);
-			ci=DT.getInt(2);
-			cf=DT.getInt(3);
-	
-			if (ca1>=cf) {
-				msgbox("Se ha acabado el talonario de notas de crédito. No se puede continuar con la anulación de factura.");
-				return false;
-			}
-			
-			dd=cf-ci;dd=0.75*dd;
-			ca2=ci+((int) dd);
-			
-			if (ca1>ca2) {
-				toastcent("Queda menos que 25% de talonario de notas de crédito.");
-			}
-			
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox("No esta definido correlativo de notas de crédito. No se puede continuar con la anulación de factura.\n"+e.getMessage());
-			return false;
-		}	
-					
-		return true;
-		
-	}
-	
-	private void aprNuevaNC() {
-		Cursor DT;
-		String corel,factser,cli;
-		int factcor;
-		double facttot;
-		
-		aprAssignCorel();		
-		if (fcorel==0) return;		
-		
-		try {	
-			
-			corel=((appGlobals) vApp).ruta+"_"+mu.getCorelBase();
-			fecha=du.getActDateTime();
-			
-			sql="SELECT TOTAL,SERIE,CORELATIVO,CLIENTE FROM D_FACTURA WHERE Corel='"+itemid+"'";
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			
-			factser=DT.getString(1);
-			factcor=DT.getInt(2);
-			facttot=DT.getDouble(0);
-			cli=DT.getString(3);
-					
-			try {
-				
-				db.beginTransaction();
-				    			
-				ins.init("D_NOTACRED");
-				
-				ins.add("COREL",corel);
-				ins.add("ANULADO","N");
-				ins.add("FECHA",fecha);
-				ins.add("RUTA",gl.ruta);
-				ins.add("VENDEDOR",gl.vend);
-				ins.add("CLIENTE",cli);
-				ins.add("TOTAL",facttot);
-				ins.add("FACTURA",itemid);
-				ins.add("SERIE",fserie);
-				ins.add("CORELATIVO",fcorel);
-				ins.add("STATCOM","N");				
-				ins.add("CODIGOLIQUIDACION",0);
-				ins.add("RESOLNC",fres);
-				ins.add("SERIEFACT",factser);pfser=factser;
-				ins.add("CORELFACT",factcor);pfcor=""+factcor;
-				ins.add("IMPRES",1);
-					      	
-				db.execSQL(ins.sql());
-								
-				// Actualizacion de ultimo correlativo				
-				sql="UPDATE P_CORELNC SET CORELULT="+fcorel+"  WHERE RUTA='"+gl.ruta+"'";	
-				db.execSQL(sql);
-							
-				db.setTransactionSuccessful();					
-				db.endTransaction();
-			
-			} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-				db.endTransaction();
-				mu.msgbox("Error (nota credito) " + e.getMessage());return;
-			}
-
-			if (prn.isEnabled()) aprNotePrn(corel);
-			
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-			
-	}	
-	
-	private void aprNotePrn(String corel) {
-		
-		aprLoadHeadData(corel);
-		
-		try {
-			
-			rep=new clsRepBuilder(this,prn.prw,true,gl.peMon,gl.peDecImp, "");
-			
-			buildHeader(corel,0);
-			
-			rep.line();
-			rep.empty();
-			rep.addc("NOTA CREDITO");
-			rep.empty();
-			rep.line();
-			rep.empty();
-				
-			rep.add("Factura serie : "+pfser+" numero : "+pfcor);
-			rep.add("Monto total : "+mu.frmdec(ptot));			
-			rep.empty();
-			rep.line();
-			rep.empty();
-			rep.empty();
-			rep.empty();
-			rep.empty();
-			rep.empty();
-			
-			buildHeader(corel,2);
-			
-			rep.line();
-			rep.empty();
-			rep.addc("NOTA CREDITO");
-			rep.empty();
-			rep.line();
-			rep.empty();
-				
-			rep.add("Factura serie : "+pfser+" numero : "+pfcor);
-			rep.add("Monto total : "+mu.frmdec(ptot));			
-			rep.empty();
-			rep.line();
-			rep.empty();
-			rep.empty();
-			rep.empty();
-			
-			rep.save();
-			
-			prn.printask();
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-	}
 
 	private boolean aprLoadHeadData(String corel) {
 		Cursor DT;
@@ -1270,11 +1069,7 @@ public class Anulacion extends PBase {
 			ff=DT.getInt(2);presvence="Resolucion vence : "+du.sfecha(ff);		
 			presrango="Serie : "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
 
-			sql="SELECT NOMBRE FROM P_VENDEDOR  WHERE CODIGO='"+pvend+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			pvendedor=DT.getString(0);
+			pvendedor="";
 
 			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION FROM P_CLIENTE WHERE CODIGO='"+pcli+"'";
 			DT=Con.OpenDT(sql);	
@@ -1422,43 +1217,6 @@ public class Anulacion extends PBase {
 		}				
 	}
 
-	private void aprAssignCorel(){
-		Cursor DT;
-		int cf,ca1;
-		
-		fcorel=0;fserie="";fres="";
-		try{
-			try {
-				sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,RESOL FROM P_CORELNC WHERE RUTA='"+gl.ruta+"'";
-				DT=Con.OpenDT(sql);
-
-				DT.moveToFirst();
-
-				fserie=DT.getString(0);
-				ca1=DT.getInt(1);
-				cf=DT.getInt(3);
-				fres=DT.getString(4);
-
-				fcorel=ca1+1;
-			} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-				fcorel=0;fserie="";
-				msgbox("No existe correlativo disponible, no se puede emitir la nota de crédito");
-				return;
-			}
-
-			if (fcorel>cf) {
-				msgbox("Se ha acabado el talonario de notas de crédito. No se puede continuar con la anulación de factura.");
-				fcorel=0;return;
-			}
-
-			if (fcorel==cf) mu.msgbox("Esta es la última nota de crédito.");
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}
-
-				
-	}
 
 	//endregion
 	
@@ -1486,24 +1244,6 @@ public class Anulacion extends PBase {
 		}
 			
 	}
-
-	private void getDepTipo() {
-		Cursor DT;
-		
-		try {
-			sql="SELECT BOLETA_DEPOSITO,DEPOSITO_PARCIAL FROM P_EMPRESA";
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			
-			gl.boldep=DT.getInt(0);
-			depparc=DT.getInt(1);
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			gl.boldep=0;
-			depparc=0;
-		}
-		
-	}	
 	
 	private boolean checkFactDepos() {
 		Cursor dt;

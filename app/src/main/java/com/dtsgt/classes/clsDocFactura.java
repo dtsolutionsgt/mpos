@@ -125,27 +125,13 @@ public class clsDocFactura extends clsDocument {
 	    }	
 		
 		try {
-			sql="SELECT INITPATH FROM P_EMPRESA WHERE EMPRESA='"+empp+"'";
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-		
-			String sim=DT.getString(0);
-			sinimp=sim.equalsIgnoreCase("S");
+            sinimp=false;
 			
 		} catch (Exception e) {
 			sinimp=false;
 	    }	
 				
-		try {
-			sql="SELECT NOMBRE FROM P_VENDEDOR  WHERE CODIGO='"+vend+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			val=DT.getString(0);
-		} catch (Exception e) {
-			val=vend;
-	    }	
-		
+		val=vend;
 		vendedor=val;
 		
 		try {
@@ -194,28 +180,8 @@ public class clsDocFactura extends clsDocument {
 		} catch (Exception e) {
 	    }	
 		
-		
-		try {
-			sql="SELECT NOMBRE FROM P_REF1  WHERE CODIGO='"+add1+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			add1=add1+" - "+DT.getString(0);
-		} catch (Exception e) {
-	    }
-				
-		try {
-			sql="SELECT NOMBRE FROM P_REF2  WHERE CODIGO='"+add2+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			add2=add2+" - "+DT.getString(0);
-		} catch (Exception e) {
-	    }
-		
-		//Toast.makeText(cont,"Percep "+percep+"  Sinimp "+sinimp, Toast.LENGTH_SHORT).show();
-		
-		//cliente=val;
+		add1=add1+" - ";
+		add2=add2+" - ";
 		
 		return true;
 		
@@ -649,23 +615,7 @@ public class clsDocFactura extends clsDocument {
 	}
 
     private boolean esPendientePago(String corel){
-
         boolean vPendiente=false;
-        Cursor DT;
-
-        try{
-
-            sql = "SELECT DOCUMENTO FROM P_COBRO WHERE DOCUMENTO = '"+ corel + "'";
-            DT=Con.OpenDT(sql);
-
-            if(DT.getCount() > 0){
-                vPendiente=true;
-            }
-
-        }catch(Exception ex){
-            Toast.makeText(cont,"esPendientePago : "+ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
         return vPendiente;
     }
 

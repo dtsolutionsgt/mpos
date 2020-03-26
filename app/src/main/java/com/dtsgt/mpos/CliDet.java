@@ -132,8 +132,6 @@ public class CliDet extends PBase {
 
 		habilitaOpciones();
 
-		miniFachada();
-
 		setHandlers();
 
 	}
@@ -264,36 +262,6 @@ public class CliDet extends PBase {
 	}
 
 	public void mostrarFachada(View view){
-		Cursor DT;
-		imgDB = false; imgPath=false;
-		try {
-
-			path = (Environment.getExternalStorageDirectory() + "/RoadFotos/" + cod + ".jpg");
-			File archivo = new File(path);
-
-			sql = "SELECT IMAGEN FROM P_CLIENTE_FACHADA WHERE CODIGO ='"+ cod +"'";
-			DT=Con.OpenDT(sql);
-
-			if(DT.getCount() > 0){
-				DT.moveToFirst();
-				imagenbase64 = DT.getString(0);
-				imgDB = true;
-			}
-
-			if (archivo.exists()) {
-				imgPath = true;
-				inputFachada();
-			}else if(imgDB == true){
-				inputFachada();
-			}else{
-				Toast.makeText(this,"Fachada no disponible",Toast.LENGTH_LONG).show();
-			}
-
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox("inputFachada: " + e.getMessage());
-		}
-
 	}
 
 	@Override
@@ -468,21 +436,11 @@ public class CliDet extends PBase {
 	}
 	
 	private double getUsedCred(){
-		Cursor DT;
 		double tpg,tsal,cu=0;
 	
 		try {
-			sql="SELECT SUM(SALDO) FROM P_COBRO WHERE (CLIENTE='"+cod+"')";
-           	DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			tsal=DT.getDouble(0);
-	
-			
-			sql="SELECT SUM(TOTAL) FROM D_COBRO WHERE (ANULADO='N') AND (CLIENTE='"+cod+"')";
-           	DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			tpg=DT.getDouble(0);
-			
+			tsal=0;
+			tpg=0;
 			cu=tsal-tpg;
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -568,38 +526,6 @@ public class CliDet extends PBase {
 		
 	}
 
-	private void miniFachada(){
-		Cursor DT;
-		imgDB = false;
-		try {
-
-			path = (Environment.getExternalStorageDirectory() + "/RoadFotos/" + cod + ".jpg");
-			File archivo = new File(path);
-
-			sql = "SELECT IMAGEN FROM P_CLIENTE_FACHADA WHERE CODIGO ='"+ cod +"'";
-			DT=Con.OpenDT(sql);
-
-			if(DT.getCount() > 0){
-				DT.moveToFirst();
-				imagenbase64 = DT.getString(0);
-				imgDB = true;
-			}
-
-			if(archivo.exists()){
-				imgRoadTit.setImageURI(Uri.fromFile(archivo));
-			}else if(imgDB == true){
-				byte[] btImagen = Base64.decode(imagenbase64, Base64.DEFAULT);
-				Bitmap bitm = BitmapFactory.decodeByteArray(btImagen,0,btImagen.length);
-				imgRoadTit.setImageBitmap(redimensionarImagen(bitm,200,200));
-			}else{
-				imgRoadTit.setImageResource(R.drawable.cliente);
-			}
-
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox("inputFachada: " + e.getMessage());
-		}
-	}
 
 	//endregion
 
@@ -717,19 +643,7 @@ public class CliDet extends PBase {
 	}
 
 	private void runVenta() {
-
-		try{
-			if (merc==1) {
-				browse=1;
-				Intent intent = new Intent(this,MercLista.class);
-				startActivity(intent);
-			} else {
-				initVenta();
-			}
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
+	    initVenta();
 	}
 
 	public void showDir(View view) {

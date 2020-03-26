@@ -205,10 +205,7 @@ public class BonList extends PBase {
 			case 3:  
 				sql="SELECT CODIGO,DESCLARGA,1,0 FROM P_PRODUCTO WHERE CODIGO=''";break;	
 			default:  
-				sql="SELECT P_BONLIST.PRODUCTO, P_PRODUCTO.DESCLARGA, P_BONLIST.CANT, P_BONLIST.CANTMIN " +
-					"FROM P_PRODUCTO INNER JOIN P_BONLIST ON P_PRODUCTO.CODIGO = P_BONLIST.PRODUCTO " +
-					"WHERE (P_BONLIST.CODIGO='"+lista+"') ORDER BY P_PRODUCTO.DESCLARGA";break;
-			}
+				}
 			
 			DT=Con.OpenDT(sql);
 			//mu.msgbox("Regs. "+DT.getCount());
@@ -723,36 +720,9 @@ public class BonList extends PBase {
 		Cursor DT;
 		double sdisp,bcant,bpcant;
 
-		/*if (rutatipo.equalsIgnoreCase("V")) {
-			sql="SELECT SUM(CANT) FROM P_STOCK WHERE CODIGO='"+prodid+"'";
-		} else {
-			sql="SELECT CANT FROM P_STOCKINV WHERE CODIGO='"+prodid+"'";
-		}
-
-		try {
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			sdisp=DT.getDouble(0);
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			sdisp=0;
-		}
-
-		if (prodid.equalsIgnoreCase(bonprodid)) bpcant=bonprodcant; else bpcant=0;
-
-		// Total en lista de bonoficaciones
-
-		bcant=0;
-
-		return sdisp-bcant-bpcant;*/
-
 		try {
 
-			if (rutatipo.equalsIgnoreCase("V")) {
-				sql="SELECT SUM(CANT) FROM P_STOCK WHERE CODIGO='"+prodid+"'";
-			} else {
-				sql="SELECT CANT FROM P_STOCKINV WHERE CODIGO='"+prodid+"'";
-			}
+		    sql="SELECT SUM(CANT) FROM P_STOCK WHERE CODIGO='"+prodid+"'";
 
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();
@@ -775,10 +745,7 @@ public class BonList extends PBase {
 		double sdisp;
 
 		try {
-			sql="SELECT BONVOLTOL FROM P_EMPRESA";
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			sdisp=DT.getDouble(0);
+            sdisp=25;
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			sdisp=25;

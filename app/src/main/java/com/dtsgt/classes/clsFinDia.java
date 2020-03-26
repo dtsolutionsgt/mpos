@@ -297,18 +297,6 @@ public class clsFinDia extends PBase {
     }
     //#CKFK 20190305 Creé esta función para actualizar el val8 en la tabla FinDia
     public void updateGrandTotalCorelZ(double valor, int corel){
-        try{
-
-            //#CKFK_20190328 Moví esto que estaba en ProcessComplete para acá porque de lo contrario no se actualizaban los valores.
-            sql = "UPDATE FinDia SET Corel=" + corel + ", val8 = val8 + " + valor;
-            db.execSQL(sql);
-            sql = "UPDATE P_HANDHELD SET CorelZ=" + corel + ", GrandTotal = GrandTotal + " + valor;
-            db.execSQL(sql);
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            msgbox("updateGrandTotal: " + e.getMessage());
-        }
     }
 
     public void updateCorrelativoZ(int valor){

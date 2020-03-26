@@ -96,15 +96,8 @@ public class Menu extends PBase {
 			rutatipo=gl.rutatipog;
 			gl.devfindia=false;
 			rutapos=false;gl.rutapos=false;
-
 			sdoc="Venta";iicon=102;
-
-			if (rutatipo.equalsIgnoreCase("R")) {
-				sdoc="Venta";
-				rutapos=true;
-				gl.rutapos=true;
-			}
-
+			rutapos=true;gl.rutapos=true;
 			selId=-1;selIdx=-1;
 
 			setHandlers();
@@ -127,16 +120,11 @@ public class Menu extends PBase {
 				gl.ayudanteID="";gl.vehiculoID="";
 			}
 
-			//#CKFK 20190423 Quité esta validación de configuración de impresora
-			//ConfImpresora();
-
-		}catch (Exception e)
-		{
-			Log.e("Menu", e.getMessage());
+		} catch (Exception e) {
+			msgbox(e.getMessage());
 		}
 
 		insertCorrel();
-
 	}
 
 	//region  Main
@@ -298,16 +286,7 @@ public class Menu extends PBase {
 					break;
 
 				case 2:  // Comunicacion
-
-					gl.findiaactivo=false;
-					gl.tipo = 0;
-					gl.autocom = 0;
-					gl.modoadmin = false;
-                    gl.comquickrec = false;
-					Intent intent2 = new Intent(this, ComWS.class);
-					startActivity(intent2);
-					break;
-
+                    showMenuCom();break;
 
 				case 3:  // Reimpresion
 			        showPrintMenuTodo();break;
@@ -327,7 +306,7 @@ public class Menu extends PBase {
 
 				case 6:  // Deposito
 
-					getDepTipo();
+					//getDepTipo();
 
 					//#HS_20181206 Verifica el usuario si es DTS.
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
@@ -521,7 +500,58 @@ public class Menu extends PBase {
 	}
 
 	//endregion
-	
+
+    //region Comunicacion
+
+    private void showMenuCom() {
+        final AlertDialog Dialog;
+        final String[] selitems = {"Envio de datos","Recepcion de parametros","Envio de huellas","Comunicacion anterior"};
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Comunicación");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        ;break;
+                    case 1:
+                        gl.autocom = 0;
+                        startActivity(new Intent(Menu.this,WSRec.class));
+                        break;
+                    case 2:
+                        ;break;
+                    case 3:
+                        comEnterior();break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    private void comEnterior() {
+        gl.findiaactivo=false;
+        gl.tipo = 0;
+        gl.autocom = 0;
+        gl.modoadmin = false;
+        gl.comquickrec = false;
+        Intent intent2 = new Intent(this, ComWS.class);
+        startActivity(intent2);
+    }
+
+    //endregion
+
 	//region Consultas
 	
 	public void showConsMenu() {
@@ -620,9 +650,6 @@ public class Menu extends PBase {
 	
 	private void menuInvBod() {
 		try{
-			Intent intent = new Intent(this,InvBodega.class);
-			startActivity(intent);
-
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -949,16 +976,7 @@ public class Menu extends PBase {
 		}
 
 	}		
-	
-	private void menuConfImpres() {
-		try{
-			Intent intent = new Intent(this,UtilPrint2.class);
-			startActivity(intent);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-	}
-	
+
 	private void menuCorelZ() {
 		Cursor DT;
 		int coract;
@@ -1642,78 +1660,6 @@ public class Menu extends PBase {
 		}
 	}
 
-	//#HS_20181207 Lista los ayudantes de la ruta.
-	private void getlistAyudante(){
-		Cursor DT;
-
-		try {
-			sql="SELECT CODIGO,NOMBRE FROM P_VENDEDOR WHERE RUTA = '" + gl.ruta + "' AND NIVEL = 5 " +
-			    "Union\n" +
-					" Select '','Seleccione un ayudante' from P_VENDEDOR";
-
-			DT=Con.OpenDT(sql);
-			if(DT.getCount()>0) {
-
-				DT.moveToFirst();
-
-				while (!DT.isAfterLast())
-				{
-					listIDAyudante.add(DT.getString(0));
-					listAyudante.add(DT.getString(1));
-					DT.moveToNext();
-				}
-
-			}else if(DT.getCount() == 0){
-				listIDVehiculo.add("");
-				listVehiculo.add("No hay ayudantes disponibles");
-			}
-
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, listAyudante);
-			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-			Ayudante.setAdapter(dataAdapter);
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox(e.getMessage());
-		}
-
-	}
-
-	private void getlistVehiculo(){
-		Cursor DT;
-
-		try {
-			sql="SELECT CODIGO, MARCA, PLACA FROM P_VEHICULO " +
-			"Union \n" +
-					" Select '','Seleccione un vehículo','' from P_VEHICULO";
-			DT=Con.OpenDT(sql);
-
-			if(DT.getCount()>0) {
-				DT.moveToFirst();
-
-				while (!DT.isAfterLast()) {
-					listIDVehiculo.add(DT.getString(0));
-					listVehiculo.add(DT.getString(1) + "-" + DT.getString(2));
-					DT.moveToNext();
-				}
-			}else if(DT.getCount() == 0){
-				listIDVehiculo.add("");
-				listVehiculo.add("No hay vehiculos disponibles");
-			}
-
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, listVehiculo);
-			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-			Vehiculo.setAdapter(dataAdapter);
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox(e.getMessage());
-		}
-
-	}
-
 	private void msgAskAyudante() {
 		try{
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -1959,23 +1905,7 @@ public class Menu extends PBase {
 		
 	}
 	
-	private void getDepTipo() {
-		Cursor DT;
-		
-		try {
-			sql="SELECT BOLETA_DEPOSITO,DEPOSITO_PARCIAL FROM P_EMPRESA";
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			
-			gl.boldep=DT.getInt(0);
-			gl.depparc=DT.getInt(1)==1;
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			gl.boldep=0;
-			gl.depparc=false;
-		}
-		
-	}	
+
 		
 	private int getPrinterType() {
 		Cursor DT;

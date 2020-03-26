@@ -449,7 +449,6 @@ public class Deposito extends PBase {
 		if (!checkValues()) return false;
 
 		fecha=du.getActDateTime();
-		if (gl.peModal.equalsIgnoreCase("TOL")) fecha=app.fechaFactTol(du.getActDate());
 
 		try {
 			

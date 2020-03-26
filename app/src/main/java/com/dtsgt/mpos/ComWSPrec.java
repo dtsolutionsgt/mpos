@@ -188,12 +188,7 @@ public class ComWSPrec extends PBase {
             idbg=idbg+" rec " +rc +"  ";
 
             s="";
-
-            // if (delcmd.equalsIgnoreCase("DELETE FROM P_COBRO")) {
-            // 	idbg=idbg+" RC ="+rc+"---";
-            //}
-
-            for (int i = 0; i < rc; i++) {
+     for (int i = 0; i < rc; i++) {
 
                 String str = ((SoapObject)result.getProperty(0)).getPropertyAsString(i);
                 //s=s+str+"\n";
@@ -381,7 +376,6 @@ public class ComWSPrec extends PBase {
             DT.close();
 
             if(TieneRuta && TieneProd && TieneClientes){
-                if (!AddTable("TMP_PRECESPEC")) return false;
                 if (!AddTable("P_PRODPRECIO")) return false;
                 if (!AddTable("P_FACTORCONV")) return false;
             }else{
@@ -566,7 +560,7 @@ public class ComWSPrec extends PBase {
                         " FROM P_PRODUCTO WHERE LINEA IN (SELECT DISTINCT LINEA FROM P_LINEARUTA " +
                         " WHERE RUTA = '" + gl.ruta + "')) " +
                         " OR ((PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "') " +
-                        " OR PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCKB WHERE RUTA='" + gl.ruta + "')))";
+                        "  ))";
 
                 return SQL;
             }
@@ -576,18 +570,10 @@ public class ComWSPrec extends PBase {
                 SQL = "SELECT CODIGO,NIVEL,PRECIO,UNIDADMEDIDA FROM P_PRODPRECIO ";
                 SQL += " WHERE ( (CODIGO IN ( SELECT CODIGO FROM P_PRODUCTO WHERE (LINEA IN (SELECT LINEA FROM P_LINEARUTA WHERE RUTA='" + gl.ruta + "')) ) ) ";
                 SQL += " OR  (CODIGO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "')) ) ";
-                SQL += " AND (NIVEL IN (SELECT DISTINCT NIVELPRECIO FROM P_CLIENTE WHERE CODIGO IN (SELECT DISTINCT CLIENTE FROM P_CLIRUTA WHERE RUTA='" + gl.ruta + "'))) ";
-                return SQL;
+               return SQL;
             }
 
-            if (TN.equalsIgnoreCase("TMP_PRECESPEC")) {
-                SQL = "SELECT CODIGO,VALOR,PRODUCTO,PRECIO,UNIDADMEDIDA FROM TMP_PRECESPEC ";
-                SQL += " WHERE RUTA='" + gl.ruta + "' AND (FECHA>='" + fsqli + "') AND (FECHA<='" + fsqlf + "') ";
-                return SQL;
-            }
-
-
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
         return SQL;

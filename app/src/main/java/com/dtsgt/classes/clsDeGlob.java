@@ -158,7 +158,7 @@ public class clsDeGlob {
 				sql="SELECT SUM(CANT),SUM(TOTAL) FROM T_VENTA WHERE PRODUCTO IN (SELECT CODIGO FROM P_PRODUCTO WHERE MARCA='"+codigo+"') ";
 				break;	
 			case 4:	// Grupo  
-				sql="SELECT SUM(CANT),SUM(TOTAL) FROM T_VENTA WHERE PRODUCTO IN (SELECT PRODUCTO FROM P_PRODGRUP WHERE CODIGO='"+codigo+"') ";
+				sql="";
 				break;	
 			case 5:	// Volumen 
 				sql="SELECT SUM(CANT),SUM(TOTAL) FROM T_VENTA ";
@@ -188,12 +188,7 @@ public class clsDeGlob {
 		Cursor DT;
 		
 		try {
-			sql="SELECT ACUMDESC,DESCMAX FROM P_EMPRESA";
-           	DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-			
-			if (DT.getString(0).equalsIgnoreCase("N")) acum=false;
-			maxlimit=DT.getDouble(1);
+           maxlimit=0;acum=true;
 		} catch (Exception e) {
 			maxlimit=0;acum=true;
 	    }

@@ -147,7 +147,7 @@ public class clsBonifGlob {
 				vSQL="SELECT SUM(CANT),SUM(TOTAL) FROM T_VENTA WHERE PRODUCTO IN (SELECT CODIGO FROM P_PRODUCTO WHERE MARCA='"+codigo+"') ";
 				;break;	
 			case 4:	// Grupo  
-				vSQL="SELECT SUM(CANT),SUM(TOTAL) FROM T_VENTA WHERE PRODUCTO IN (SELECT PRODUCTO FROM P_PRODGRUP WHERE CODIGO='"+codigo+"') ";
+				vSQL="";
 				;break;	
 			case 5:	// Volumen 
 				vSQL="SELECT SUM(CANT),SUM(TOTAL) FROM T_VENTA ";

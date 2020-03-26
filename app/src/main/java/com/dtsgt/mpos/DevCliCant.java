@@ -76,8 +76,7 @@ public class DevCliCant extends PBase {
 
 		gl.dvporpeso = prodPorPeso(prodid);
 
-		fillSpinner();
-		fillcmbUM();
+    	fillcmbUM();
 
 		devrazon=gl.devrazon;
 		razon=devrazon;
@@ -481,54 +480,7 @@ public class DevCliCant extends PBase {
 
 	// Aux
 	
-	private void fillSpinner(){
-		Cursor DT;
-		String icode,iname;
-			
-		spincode.add("0");
-		spinlist.add("Seleccione una razón ....");
-		  
-		try {
-				
-			sql="SELECT CODIGO,DESCRIPCION FROM P_CODDEV WHERE ESTADO='"+estado+"'  ORDER BY DESCRIPCION";
-			DT=Con.OpenDT(sql);
-					
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-					  
-			  icode=DT.getString(0);
-			  iname=DT.getString(1);
-				  
-			  spincode.add(icode);
-			  spinlist.add(iname);
-			  
-			  DT.moveToNext();
-			}
-					
-		} catch (SQLException e) {
 
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox(e.getMessage());
-		} catch (Exception e) {
-
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		   	mu.msgbox( e.getMessage());
-	    }
-					
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			
-		spin.setAdapter(dataAdapter);
-			
-		try {
-			spin.setSelection(0);
-		} catch (Exception e) {
-
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			spin.setSelection(0);
-	    }
-		
-	}
 
 	private void fillcmbUM(){
 		Cursor DT;

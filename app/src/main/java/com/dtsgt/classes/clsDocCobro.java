@@ -172,18 +172,8 @@ public class clsDocCobro extends clsDocument {
 		} catch (Exception e) {
 			Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
 	    }	
-		
-		
-		try {
-			sql="SELECT NOMBRE FROM P_VENDEDOR  WHERE CODIGO='"+vend+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			val=DT.getString(0);
-		} catch (Exception e) {
-			val=vend;
-	    }
-		
+
+        val=vend;
 		vendedor=val;
 		vendcod=vend;
 		

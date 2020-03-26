@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
 
-
 public class clsP_lineaObj {
 
     public int count;
@@ -80,6 +79,7 @@ public class clsP_lineaObj {
         ins.add("MARCA",item.marca);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
+        ins.add("CODIGO_LINEA",item.codigo_linea);
 
         db.execSQL(ins.sql());
 
@@ -89,11 +89,12 @@ public class clsP_lineaObj {
 
         upd.init("P_linea");
 
+        upd.add("CODIGO",item.codigo);
         upd.add("MARCA",item.marca);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_LINEA="+item.codigo_linea+")");
 
         db.execSQL(upd.sql());
 
@@ -102,7 +103,7 @@ public class clsP_lineaObj {
     }
 
     private void deleteItem(clsClasses.clsP_linea item) {
-        sql="DELETE FROM P_linea WHERE (CODIGO='"+item.codigo+"')";
+        sql="DELETE FROM P_linea WHERE (CODIGO_LINEA="+item.codigo_linea+")";
         db.execSQL(sql);
     }
 
@@ -129,6 +130,7 @@ public class clsP_lineaObj {
             item.marca=dt.getString(1);
             item.nombre=dt.getString(2);
             item.activo=dt.getInt(3);
+            item.codigo_linea=dt.getInt(4);
 
             items.add(item);
 
@@ -164,6 +166,7 @@ public class clsP_lineaObj {
         ins.add("MARCA",item.marca);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
+        ins.add("CODIGO_LINEA",item.codigo_linea);
 
         return ins.sql();
 
@@ -173,11 +176,12 @@ public class clsP_lineaObj {
 
         upd.init("P_linea");
 
+        upd.add("CODIGO",item.codigo);
         upd.add("MARCA",item.marca);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_LINEA="+item.codigo_linea+")");
 
         return upd.sql();
 

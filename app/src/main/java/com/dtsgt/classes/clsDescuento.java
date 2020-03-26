@@ -248,13 +248,7 @@ public class clsDescuento {
 	    }
 		
 		try {
-			vSQL="SELECT ACUMDESC,DESCMAX FROM P_EMPRESA";
-           	DT=Con.OpenDT(vSQL);
-			DT.moveToFirst();
-			
-			if (DT.getString(0).equalsIgnoreCase("N")) acum=false;
-			dmax=DT.getDouble(1);
-			
+            dmax=0;acum=true;
 		} catch (Exception e) {
 			dmax=0;acum=true;
 	    }

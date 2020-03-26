@@ -568,28 +568,10 @@ public class Repesaje extends PBase {
         String ss;
 
         try {
-            sql="SELECT PORCMINIMO,PORCMAXIMO FROM P_PORCMERMA WHERE PRODUCTO='"+prodid+"'";
-            dt=Con.OpenDT(sql);
 
-            if (dt.getCount() == 0) {
-                msgbox("El repesaje no se puede aplicar,\n no esta definido rango de repesaje para el producto.");return false;
-            }
-            dt.moveToFirst();
+            msgbox("El repesaje no se puede aplicar,\n no esta definido rango de repesaje para el producto.");
+            return false;
 
-            pmin = opeso - dt.getDouble(0) * opeso / 100;
-            pmax = opeso + dt.getDouble(1) * opeso / 100;
-
-            if (tpeso<pmin) {
-                ss="El repesaje ("+mu.frmdecimal(tpeso, gl.peDecImp)+") está por debajo de los percentajes permitidos," +
-                        " minimo : "+mu.frmdecimal(pmin, gl.peDecImp)+", no se puede aplicar.";
-                msgbox(ss);return false;
-            }
-
-            if (tpeso>pmax) {
-                ss="El repesaje ("+mu.frmdecimal(tpeso, gl.peDecImp)+") está por debajo de los percentajes permitidos," +
-                        " máximo : "+mu.frmdecimal(pmax, gl.peDecImp)+", no se puede aplicar.";
-                msgbox(ss);return false;
-            }
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);

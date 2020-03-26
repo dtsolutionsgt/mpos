@@ -1848,28 +1848,6 @@ public class FinDia extends PBase {
             }
             rep.add(vCadena);
 
-            sql = "SELECT SERIE, ACTUAL FROM P_CORRELREC";
-            DT = Con.OpenDT(sql);
-
-            if (DT.getCount() > 0){
-                DT.moveToFirst();
-                vCadena = "Siguiente Recibo      :" + StringUtils.leftPad(DT.getString(0) + StringUtils.right("000000" + Integer.toString(DT.getInt(1)+1), 6),13);
-            }else{
-                vCadena = "Siguiente Recibo      :" + StringUtils.leftPad("0", 13);
-            }
-            rep.add(vCadena);
-
-            sql = "SELECT SERIE, ACTUAL FROM P_CORREL_OTROS WHERE TIPO = 'NC'";
-            DT = Con.OpenDT(sql);
-
-            if (DT.getCount() > 0){
-                DT.moveToFirst();
-                vCadena = "Siguiente Nota Credito:" + StringUtils.leftPad(DT.getString(0) + StringUtils.right("000000" + Integer.toString(DT.getInt(1)+1), 6),13);
-            }else{
-                vCadena = "Siguiente Nota Credito:" + StringUtils.leftPad("0", 13);
-            }
-            rep.add(vCadena);
-
             corelativoZ = corelz + 1;
             vCadena = "Siguiente Informe Z   :" + StringUtils.leftPad(mu.frmint(corelativoZ), 13);
 
@@ -2452,15 +2430,7 @@ public class FinDia extends PBase {
 	private void msgAskDevInventario() {
 
         try{
-            if (!Ya_Realizo_Devolucion()) {
-
-                browse=1;
-                startActivity(new Intent(this,DevolBodTol.class));
-                toastlong("No ha efectuado la devolución a bodega,debe proceder a realizarla antes de fin del dia");
-
-            } else  {
-                startFDD();
-            }
+            startFDD();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -2568,28 +2538,6 @@ public class FinDia extends PBase {
                 vTotalUB = DT.getDouble(1);
             }
 
-            //Producto con HU
-            sql = " SELECT SUM(ifnull(S.CANT,0)) AS PESOTOT, COUNT(S.CODIGO)AS CANTUNI " +
-            " FROM P_STOCKB S, P_PRODUCTO P " +
-            " WHERE P.ES_PROD_BARRA = 1 AND S.CODIGO= P.CODIGO AND (S.COREL = '' OR S.COREL IS NULL)";
-
-                    /*+
-            " AND S.BARRA NOT IN (SELECT BARRA FROM D_BONIF_BARRA WHERE COREL NOT IN (" +
-            " SELECT COREL FROM D_FACTURA WHERE ANULADO = 'S')) "; */
-
-            DT=Con.OpenDT(sql);
-
-            if (DT.getCount()!=0)
-            {
-                DT.moveToFirst();
-
-                vTotalLbsB +=   DT.getDouble(0);
-                vTotalUB += DT.getDouble(1);
-            }
-
-            //Devolución de dañado.
-            sql = " SELECT SUM(S.PESO) AS PESOTOT, SUM(S.CANT)AS CANTUNI " +
-            " FROM D_CXC E, D_CxCD S, P_PRODUCTO P WHERE E.COREL = S.COREL AND S.CODIGO= P.CODIGO AND E.ANULADO = 'N' ";
 
             DT=Con.OpenDT(sql);
 

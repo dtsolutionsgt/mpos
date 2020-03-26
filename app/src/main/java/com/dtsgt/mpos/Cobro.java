@@ -648,12 +648,11 @@ public class Cobro extends PBase {
 		double tpago;
 		String doc="";
 
-		if (!assignCorel()) return false;
+		//if (!assignCorel()) return false;
 
-		corel= correlativo_recibo();
+		corel= "";
 
 		fecha=du.getActDateTime();
-		if (gl.peModal.equalsIgnoreCase("TOL")) fecha=app.fechaFactTol(du.getActDate());
 
 
 		try {
@@ -764,10 +763,7 @@ public class Cobro extends PBase {
 						DT.moveToNext();
 					}
 
-                      // Ultimo corel
-                      sql="UPDATE P_CORRELREC SET ACTUAL="+fcorel+"  WHERE RUTA='"+gl.ruta+"'";
-                      db.execSQL(sql);
-                  }
+                      }
 
                   db.setTransactionSuccessful();
                   db.endTransaction();
@@ -828,37 +824,6 @@ public class Cobro extends PBase {
 		}
 
 		return true;
-	}
-
-	private String correlativo_recibo(){
-
-		Cursor DT;
-		int cor=0;
-		String crr = "";
-
-		try{
-
-			sql="SELECT SERIE,ACTUAL FROM P_CORRELREC WHERE RUTA='"+gl.ruta+"'" ;
-			DT=Con.OpenDT(sql);
-
-			if(DT.getCount()>0){
-
-				DT.moveToFirst();
-				cor =DT.getInt(1)+1;
-
-				crr= DT.getString(0) + StringUtils.right("000000" + Integer.toString(cor), 6);
-
-			}else{
-				crr=gl.ruta+"_"+mu.getCorelBase();
-			}
-
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}
-
-		return crr;
-
 	}
 
 	private void docList(){
@@ -1207,39 +1172,6 @@ public class Cobro extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("initSession"+ e.getMessage());
 		}
-
-	}
-
-	private boolean assignCorel(){
-		Cursor DT;
-		int ca,ci,cf,ca1,ca2;
-
-		fcorel=0;fserie="";
-
-		try {
-
-			sql="SELECT SERIE,INICIAL,FINAL,ACTUAL FROM P_CORRELREC WHERE RUTA='"+gl.ruta+"'";
-			DT=Con.OpenDT(sql);
-
-			if(DT.getCount()==0)return false;
-
-			DT.moveToFirst();
-
-			fserie=DT.getString(0);
-			ci=DT.getInt(1);
-			cf=DT.getInt(2);
-			ca=DT.getInt(3);
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			fcorel=0;fserie="";
-			mu.msgbox("No está definido correlativo de recibos.");return false;
-		}
-
-		fcorel=ca+1;
-		if (fcorel>cf) toast("Se ha acabado el talonario de los recibos.");
-
-		return true;
 
 	}
 

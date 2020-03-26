@@ -283,11 +283,6 @@ public class comWSLic extends PBase {
                 }
             }
 
-            // if (delcmd.equalsIgnoreCase("DELETE FROM P_COBRO")) {
-            // 	idbg=idbg+" RC ="+rc+"---";
-            //}
-
-
             for (int i = 0; i < rc; i++) {
                 String str = "";
                 try {

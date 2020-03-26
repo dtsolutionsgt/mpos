@@ -175,11 +175,7 @@ public class Lista2 extends PBase {
 
         switch (gl.mantid) {
             case 0: // Almacen
-                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_ALMACEN WHERE ";
-                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
-                if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
-                sql+="ORDER BY NOMBRE";
-                break;
+                   break;
 
             case 1: //Banco
                 sql="SELECT 0,CODIGO,NOMBRE,CUENTA,'', '','','','' FROM P_BANCO WHERE ";
@@ -348,7 +344,6 @@ public class Lista2 extends PBase {
 
         switch (gl.mantid) {
             case 0:
-                startActivity(new Intent(this,MantAlmacen.class));break;
             case 1:
                 startActivity(new Intent(this,MantBanco.class));break;
             case 2:

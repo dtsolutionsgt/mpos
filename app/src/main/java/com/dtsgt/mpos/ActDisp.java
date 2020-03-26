@@ -48,13 +48,7 @@ public class ActDisp extends PBase {
 			complete=false;
 				
 			try {
-				
-				if (prodid.equalsIgnoreCase("*")) {
-					if (fillTable("SELECT * FROM P_STOCKINV","DELETE FROM P_STOCKINV")==0) return false;
-				} else {	
-					if (fillTable("SELECT * FROM P_STOCKINV WHERE Codigo='"+prodid+"'","DELETE FROM P_STOCKINV WHERE Codigo='"+prodid+"'")==0) return false;
-				}
-						
+
 				complete=true;
 			} catch (Exception e) {
 				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);

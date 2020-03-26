@@ -1,0 +1,128 @@
+package com.dtsgt.classesws;
+
+
+import org.simpleframework.xml.Element;
+
+public class clsBeP_COREL {
+
+    @Element(required=false) public String RESOL;
+    @Element(required=false) public String SERIE;
+    @Element(required=false) public int CORELINI;
+    @Element(required=false) public int CORELFIN;
+    @Element(required=false) public int CORELULT;
+    @Element(required=false) public Long FECHARES;
+    @Element(required=false) public String RUTA;
+    @Element(required=false) public String EMP;
+    @Element(required=false) public String ACTIVA;
+    @Element(required=false) public String HANDHELD;
+    @Element(required=false) public Long FECHAVIG;
+    @Element(required=false) public int RESGUARDO;
+    @Element(required=false) public int VALOR1;
+
+
+    public clsBeP_COREL() {
+    }
+
+    public clsBeP_COREL(String RESOL,String SERIE,int CORELINI,int CORELFIN,
+                        int CORELULT,Long FECHARES,String RUTA,String EMP,
+                        String ACTIVA,String HANDHELD,Long FECHAVIG,int RESGUARDO,
+                        int VALOR1) {
+
+        this.RESOL=RESOL;
+        this.SERIE=SERIE;
+        this.CORELINI=CORELINI;
+        this.CORELFIN=CORELFIN;
+        this.CORELULT=CORELULT;
+        this.FECHARES=FECHARES;
+        this.RUTA=RUTA;
+        this.EMP=EMP;
+        this.ACTIVA=ACTIVA;
+        this.HANDHELD=HANDHELD;
+        this.FECHAVIG=FECHAVIG;
+        this.RESGUARDO=RESGUARDO;
+        this.VALOR1=VALOR1;
+
+    }
+
+
+    public String getRESOL() {
+        return RESOL;
+    }
+    public void setRESOL(String value) {
+        RESOL=value;
+    }
+    public String getSERIE() {
+        return SERIE;
+    }
+    public void setSERIE(String value) {
+        SERIE=value;
+    }
+    public int getCORELINI() {
+        return CORELINI;
+    }
+    public void setCORELINI(int value) {
+        CORELINI=value;
+    }
+    public int getCORELFIN() {
+        return CORELFIN;
+    }
+    public void setCORELFIN(int value) {
+        CORELFIN=value;
+    }
+    public int getCORELULT() {
+        return CORELULT;
+    }
+    public void setCORELULT(int value) {
+        CORELULT=value;
+    }
+    public Long getFECHARES() {
+        return FECHARES;
+    }
+    public void setFECHARES(Long value) {
+        FECHARES=value;
+    }
+    public String getRUTA() {
+        return RUTA;
+    }
+    public void setRUTA(String value) {
+        RUTA=value;
+    }
+    public String getEMP() {
+        return EMP;
+    }
+    public void setEMP(String value) {
+        EMP=value;
+    }
+    public String getACTIVA() {
+        return ACTIVA;
+    }
+    public void setACTIVA(String value) {
+        ACTIVA=value;
+    }
+    public String getHANDHELD() {
+        return HANDHELD;
+    }
+    public void setHANDHELD(String value) {
+        HANDHELD=value;
+    }
+    public Long getFECHAVIG() {
+        return FECHAVIG;
+    }
+    public void setFECHAVIG(Long value) {
+        FECHAVIG=value;
+    }
+    public int getRESGUARDO() {
+        return RESGUARDO;
+    }
+    public void setRESGUARDO(int value) {
+        RESGUARDO=value;
+    }
+    public int getVALOR1() {
+        return VALOR1;
+    }
+    public void setVALOR1(int value) {
+        VALOR1=value;
+    }
+
+}
+

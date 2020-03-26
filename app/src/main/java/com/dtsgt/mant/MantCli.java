@@ -271,58 +271,26 @@ public class MantCli extends PBase {
         item.codigo= String.valueOf(holder.maxID());
         item.nombre="";
         item.bloqueado ="N";
-        item.tiponeg = "1";
-        item.tipo = "1";
-        item.subtipo = "1";
-        item.canal = "1";
-        item.subcanal = "1";
         item.nivelprecio = 1;
-        item.mediapago = "1";
+        item.mediapago = 1;
         item.limitecredito = 0;
         item.diacredito = 0;
         item.descuento = "S";
         item.bonificacion = "S";
         item.ultvisita = 0;
         item.impspec = 0;
-        item.invtipo = "0";
-        item.invequipo = "N";
-        item.inv1 = "N";
-        item.inv2 = "N";
-        item.inv3 = "N";
         item.nit = " ";
-        item.mensaje = "";
         item.email = " ";
         item.eservice =  " ";
         item.telefono =  " ";
-        item.dirtipo = " ";
         item.direccion =" ";
-        item.region =  " ";
-        item.sucursal =  " ";
-        item.municipio =  " ";
-        item.ciudad =  " ";
-        item.zona = 0;
-        item.colonia =  " ";
-        item.avenida =  " ";
-        item.calle =  " ";
-        item.numero =  " ";
-        item.cartografico =  " ";
         item.coorx = 0;
         item.coory = 0;
         item.bodega =  " ";
         item.cod_pais =  " ";
-        item.firmadig =  " ";
         item.codbarra =  " ";
-        item.validacredito ="S";
-        item.fact_vs_fact =  " ";
-        item.chequepost =  " ";
-        item.precio_estrategico =  "N";
-        item.nombre_propietario =  " ";
-        item.nombre_representante = " ";
         item.percepcion = 0;
         item.tipo_contribuyente = " ";
-        item.id_despacho = 0;
-        item.id_facturacion = 0;
-        item.modif_precio = 0;
 
         showItem();
     }
@@ -402,8 +370,7 @@ public class MantCli extends PBase {
 
     }
 
-    private void
-    addItem() {
+    private void  addItem() {
         try {
             holder.add(item);
             gl.gcods=""+item.codigo;

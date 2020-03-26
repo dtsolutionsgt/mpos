@@ -149,27 +149,12 @@ public class clsDocPedido extends clsDocument {
 	    }	
 		
 		try {
-			sql="SELECT INITPATH FROM P_EMPRESA WHERE EMPRESA='"+empp+"'";
-			DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-		
-			String sim=DT.getString(0);
-			sinimp=sim.equalsIgnoreCase("S");
-			
+            sinimp=false;
 		} catch (Exception e) {
 			sinimp=false;
 	    }	
-				
-		try {
-			sql="SELECT NOMBRE FROM P_VENDEDOR  WHERE CODIGO='"+vend+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			val=DT.getString(0);
-		} catch (Exception e) {
-			val=vend;
-	    }	
 
+        val=vend;
 	    vendcod=vend;
 		vendedor=val;
 
@@ -205,30 +190,7 @@ public class clsDocPedido extends clsDocument {
 					
 		} catch (Exception e) {
 	    }	
-		
-		
-		try {
-			sql="SELECT NOMBRE FROM P_REF1  WHERE CODIGO='"+add1+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			add1=add1+" - "+DT.getString(0);
-		} catch (Exception e) {
-	    }
-				
-		try {
-			sql="SELECT NOMBRE FROM P_REF2  WHERE CODIGO='"+add2+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			add2=add2+" - "+DT.getString(0);
-		} catch (Exception e) {
-	    }
-		
-		//Toast.makeText(cont,"Percep "+percep+"  Sinimp "+sinimp, Toast.LENGTH_SHORT).show();
-		
-		//cliente=val;
-		
+
 		return true;
 		
 	}

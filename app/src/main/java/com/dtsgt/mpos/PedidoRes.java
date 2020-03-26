@@ -406,16 +406,7 @@ public class PedidoRes extends PBase {
 		   	return false;
 		}
 		
-		try {
-			upd.init("P_CLIRUTA");
-			upd.add("BANDERA",0);
-			upd.Where("CLIENTE='"+cliid+"' AND DIA="+dweek);
-	
-			db.execSQL(upd.sql());
-		} catch (SQLException e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox("Error : " + e.getMessage());
-		}	
+
 		
 		saveAtten();
 		
@@ -593,22 +584,7 @@ public class PedidoRes extends PBase {
 			spname.add("");txtDir.setText("");
 			mu.msgbox( e.getMessage());
 	    }		
-		
-		
-		try {
-			
-			sql="SELECT DIRECCION_ENTREGA FROM P_CLIDIR WHERE CODIGO_CLIENTE='"+cliid+"' ORDER BY DIRECCION_ENTREGA";
-			DT=Con.OpenDT(sql);
-			
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-			  spname.add(DT.getString(0));
-			  DT.moveToNext();
-			}
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		   	mu.msgbox( e.getMessage());
-	    }
+
 		
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spname);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

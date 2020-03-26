@@ -2,11 +2,6 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
-	public class clsP_almacen {
-		public int  codigo;
-		public String nombre;
-		public int  activo;
-	}
 
     public class clsP_archivoconf {
         public String ruta;
@@ -28,6 +23,31 @@ public class clsClasses {
 		public String empresa;
 		public int activo;
 	}
+
+    public class clsP_bonif {
+        public String cliente;
+        public int  ctipo;
+        public String producto;
+        public int  ptipo;
+        public int  tiporuta;
+        public String tipobon;
+        public double rangoini;
+        public double rangofin;
+        public int  tipolista;
+        public String tipocant;
+        public double valor;
+        public String lista;
+        public String cantexact;
+        public String globbon;
+        public String porcant;
+        public long  fechaini;
+        public long  fechafin;
+        public int  coddesc;
+        public String nombre;
+        public String emp;
+        public String umproducto;
+        public String umbonificacion;
+    }
 
     public class clsP_cajacierre {
         public String sucursal;
@@ -72,62 +92,31 @@ public class clsClasses {
     }
 
     public class clsP_cliente {
-		public String codigo;
-		public String nombre;
-		public String bloqueado;
-		public String tiponeg;
-		public String tipo;
-		public String subtipo;
-		public String canal;
-		public String subcanal;
-		public int  nivelprecio;
-		public String mediapago;
-		public double limitecredito;
-		public int  diacredito;
-		public String descuento;
-		public String bonificacion;
-		public long ultvisita;
-		public double impspec;
-		public String invtipo;
-		public String invequipo;
-		public String inv1;
-		public String inv2;
-		public String inv3;
-		public String nit;
-		public String mensaje;
-		public String email;
-		public String eservice;
-		public String telefono;
-		public String dirtipo;
-		public String direccion;
-		public String region;
-		public String sucursal;
-		public String municipio;
-		public String ciudad;
-		public int  zona;
-		public String colonia;
-		public String avenida;
-		public String calle;
-		public String numero;
-		public String cartografico;
-		public double coorx;
-		public double coory;
-		public String bodega;
-		public String cod_pais;
-		public String firmadig;
-		public String codbarra;
-		public String validacredito;
-		public String fact_vs_fact;
-		public String chequepost;
-		public String precio_estrategico;
-		public String nombre_propietario;
-		public String nombre_representante;
-		public double percepcion;
-		public String tipo_contribuyente;
-		public int  id_despacho;
-		public int  id_facturacion;
-		public int  modif_precio;
-	}
+        public String codigo;
+        public String nombre;
+        public String bloqueado;
+        public int  nivelprecio;
+        public int  mediapago;
+        public double limitecredito;
+        public int  diacredito;
+        public String descuento;
+        public String bonificacion;
+        public long  ultvisita;
+        public double impspec;
+        public String nit;
+        public String email;
+        public String eservice;
+        public String telefono;
+        public String direccion;
+        public double coorx;
+        public double coory;
+        public String bodega;
+        public String cod_pais;
+        public String codbarra;
+        public double percepcion;
+        public String tipo_contribuyente;
+        public int  codigo_cliente;
+    }
 
     public class clsP_corel {
         public String resol;
@@ -135,9 +124,9 @@ public class clsClasses {
         public int  corelini;
         public int  corelfin;
         public int  corelult;
-        public int  fechares;
+        public long  fechares;
         public String ruta;
-        public int  fechavig;
+        public long  fechavig;
         public int  resguardo;
         public int  valor1;
     }
@@ -162,37 +151,10 @@ public class clsClasses {
     }
 
     public class clsP_empresa {
-		public String empresa;
-		public String nombre;
-		public String initpath;
-		public String ftppath;
-		public int  numreimpres;
-		public String moddesc;
-		public String usarpeso;
-		public String devconprec;
-		public String acumdesc;
-		public double descmax;
-		public double bonvoltol;
-		public String cod_pais;
-		public int  boleta_deposito;
-		public int  editar_direccion;
-		public int  deposito_parcial;
-		public int  col_imp;
-		public int  inv_enlinea;
-		public int  fin_dia;
-		public int  presentacion_multiple;
-		public int  precios_especiales;
-		public int  autoriz_modif_descbon;
-		public int  cambio_por_cambio;
-		public int  devolucion_mercancia;
-		public int  cobros_sin_referencia;
-		public double porcentaje_nc;
-		public double porc_merma;
-		public String producto_error_suma;
-		public String unidad_medida_peso;
-		public String lote_por_defecto;
-		public int  incidencia_no_lectura;
-	}
+        public String empresa;
+        public String nombre;
+        public int  col_imp;
+    }
 
     public class clsP_factorconv {
         public String producto;
@@ -207,14 +169,15 @@ public class clsClasses {
 		public int activo;
 	}
 
-	public class clsP_linea {
-		public String codigo;
-		public String marca;
-		public String nombre;
-		public int activo;
-	}
+    public class clsP_linea {
+        public String codigo;
+        public String marca;
+        public String nombre;
+        public int  activo;
+        public int  codigo_linea;
+    }
 
-	public class clsP_mediapago {
+    public class clsP_mediapago {
 		public int  codigo;
 		public String nombre;
 		public String activo;
