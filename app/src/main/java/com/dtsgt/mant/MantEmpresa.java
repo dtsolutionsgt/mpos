@@ -141,6 +141,7 @@ public class MantEmpresa extends PBase {
         dialog.show();
     }
 
+
     private void msgAskExit(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 

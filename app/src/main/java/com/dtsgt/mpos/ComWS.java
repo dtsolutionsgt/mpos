@@ -1417,7 +1417,6 @@ public class ComWS extends PBase {
             return SQL;
         }
 
-
         return SQL;
 	}
 

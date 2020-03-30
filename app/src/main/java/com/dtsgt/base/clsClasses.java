@@ -156,6 +156,12 @@ public class clsClasses {
         public int  col_imp;
     }
 
+    public class clsP_encabezado_reporteshh {
+        public int  codigo;
+        public String texto;
+        public String sucursal;
+    }
+
     public class clsP_factorconv {
         public String producto;
         public String unidadsuperior;
