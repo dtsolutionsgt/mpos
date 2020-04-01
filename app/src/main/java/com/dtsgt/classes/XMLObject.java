@@ -28,6 +28,7 @@ public class XMLObject {
     private Cursor data;
     private int adimx,adimy;
 
+
     public String debg="";
 
     public XMLObject(WebService webservice) {

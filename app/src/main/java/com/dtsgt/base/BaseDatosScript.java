@@ -177,6 +177,16 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_LINEA_idx1 ON P_LINEA(NOMBRE)";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [P_prodcombo] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "PRODUCTO TEXT NOT NULL,"+
+                    "TIPO TEXT NOT NULL,"+
+                    "CANTMIN REAL NOT NULL,"+
+                    "CANTTOT REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO],[PRODUCTO])"+
+                    ");";
+            database.execSQL(sql);
+
 
             sql="CREATE TABLE [P_PRODPRECIO] ("+
                     "[CODIGO] TEXT NOT NULL,"+

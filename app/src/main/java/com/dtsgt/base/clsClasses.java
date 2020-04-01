@@ -217,6 +217,15 @@ public class clsClasses {
         public String valor;
     }
 
+    public class clsP_prodcombo {
+        public String codigo;
+        public String producto;
+        public String tipo;
+        public double cantmin;
+        public double canttot;
+    }
+
+
     public class clsP_prodprecio {
         public String codigo;
         public int  nivel;

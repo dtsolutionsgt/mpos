@@ -3,17 +3,28 @@ package com.dtsgt.classes;
 import android.os.AsyncTask;
 
 import com.dtsgt.mpos.PBase;
+
+import org.w3c.dom.Node;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class WebService {
 
@@ -84,18 +95,30 @@ public class WebService {
            wr.write(body);
            wr.flush();
 
-           // Get the response
-           BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+           int responsecode = ((HttpURLConnection) conn).getResponseCode();
 
-           while ((line = rd.readLine()) != null) mResult += line;
+           if (responsecode!=299 ) {
+               BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+               while ((line = rd.readLine()) != null) mResult += line;
+               rd.close();rd.close();
 
-           wr.close();rd.close();
+               mResult=mResult.replace("ñ","n");
+               xmlresult=mResult;
 
-           mResult=mResult.replace("ñ","n");
-           xmlresult=mResult;
+           } if (responsecode==299 ) {
 
-       }catch (Exception e){
-           throw new Exception(" WebService callMethod : "+ e.getMessage());
+               BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+               while ((line = rd.readLine()) != null) mResult += line;
+               rd.close();rd.close();
+
+               mResult=mResult.replace("ñ","n");
+               xmlresult=mResult;
+
+               throw new Exception("Error al procesar la solicitud :\n " + parseError());
+           }
+
+       } catch (Exception e){
+           throw new Exception(e.getMessage());
        }
     }
 
@@ -192,6 +215,20 @@ public class WebService {
         @Override
         protected void onProgressUpdate(Void... values) {}
 
+    }
+
+    //endregion
+
+    //region Aux
+
+    public String parseError() {
+        try {
+            int p1=xmlresult.indexOf("<Error>")+7;
+            int p2=xmlresult.indexOf("</Error>");
+            return xmlresult.substring(p1,p2);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     //endregion
