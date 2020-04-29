@@ -386,9 +386,8 @@ public class MantProducto extends PBase {
         imgstat.setVisibility(View.INVISIBLE);
 
         item.codigo="";
-        item.tipo="P";
+        item.codigo_tipo="P";
         item.linea="";
-        item.sublinea="1";
         item.empresa=gl.emp;
         item.marca="1";
         item.codbarra="";
@@ -632,8 +631,8 @@ public class MantProducto extends PBase {
         fillSpin3(""+(int) item.imp3);
 
         rb1.setChecked(true);
-        if (item.tipo.equalsIgnoreCase("S")) rb2.setChecked(true);
-        if (item.tipo.equalsIgnoreCase("M")) rb3.setChecked(true);
+        if (item.codigo_tipo.equalsIgnoreCase("S")) rb2.setChecked(true);
+        if (item.codigo_tipo.equalsIgnoreCase("M")) rb3.setChecked(true);
     }
 
     private boolean validaDatos() {
@@ -677,9 +676,9 @@ public class MantProducto extends PBase {
                 msgbox("¡Costo incorrecto!");return false;
             }
 
-            item.tipo="P";
-            if (rb2.isChecked()) item.tipo="S";
-            if (rb3.isChecked()) item.tipo="M";
+            item.codigo_tipo="P";
+            if (rb2.isChecked()) item.codigo_tipo="S";
+            if (rb3.isChecked()) item.codigo_tipo="M";
 
             if (cbDec.isChecked()) item.unigrasap=1;else item.unigrasap=0;
 

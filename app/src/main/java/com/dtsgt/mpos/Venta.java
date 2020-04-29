@@ -1634,7 +1634,7 @@ public class Venta extends PBase {
 
             for (int i = 0; i <P_lineaObj.count; i++) {
                 item=clsCls.new clsMenu();
-                item.Cod=P_lineaObj.items.get(i).codigo;
+                item.Cod=P_lineaObj.items.get(i).codigo_linea+"";
                 item.Name=P_lineaObj.items.get(i).nombre;
                 fitems.add(item);
             }
@@ -1667,16 +1667,16 @@ public class Venta extends PBase {
                     "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
                     "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1)";
             if (!mu.emptystr(famid)) {
-                if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA='" + famid + "') ";
+                if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
 
             sql += "UNION ";
             sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,'',P_PRODUCTO.ACTIVO  " +
                     "FROM P_PRODUCTO " +
-                    "WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M'))";
+                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M'))";
             if (!mu.emptystr(famid)) {
                 if (!famid.equalsIgnoreCase("0"))
-                    sql = sql + "AND (P_PRODUCTO.LINEA='" + famid + "') ";
+                    sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
 
             sql += "ORDER BY P_PRODUCTO.DESCCORTA";
@@ -1778,6 +1778,11 @@ public class Venta extends PBase {
                 item = clsCls.new clsMenu();
                 item.ID=55;item.Name="Borrar todo ";item.Icon=55;
                 mmitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID=56;item.Name="Ventas";item.Icon=56;
+                mmitems.add(item);
+
 
                 //item = clsCls.new clsMenu();
                 //item.ID=51;item.Name="Barra";item.Icon=51;
@@ -1993,6 +1998,9 @@ public class Venta extends PBase {
                 case 55:
                     borraTodo();
                     break;
+                case 56:
+                    showMenuSwitch();
+                    break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2040,6 +2048,50 @@ public class Venta extends PBase {
         dialog.show();
 
     }
+
+    private void showMenuSwitch() {
+
+        try {
+            final AlertDialog Dialog;
+            final String[] selitems = {"Iniciar nueva venta","Cambiar venta"};
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setIcon(R.drawable.reimpresion48);
+            menudlg.setTitle("Ventas");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                    switch (item) {
+                        case 0:
+                            ;break;
+                        case 1:
+                            ;break;
+                    }
+
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
 
     //endregion
 

@@ -154,6 +154,18 @@ public class clsClasses {
         public String empresa;
         public String nombre;
         public int  col_imp;
+        public String  logo;
+        public String razon_social;
+        public String identificacion_tributaria;
+        public String telefono;
+        public String cod_pais;
+        public String nombre_contacto;
+        public String apellido_contacto;
+        public String direccion;
+        public String correo;
+        public String codigo_activacion;
+        public int  cod_cant_emp;
+        public int  cantidad_puntos_venta;
     }
 
     public class clsP_encabezado_reporteshh {
@@ -266,132 +278,88 @@ public class clsClasses {
     }
 
     public class clsP_producto {
-		public String codigo;
-		public String tipo;
-		public String linea;
-		public String sublinea;
-		public String empresa;
-		public String marca;
-		public String codbarra;
-		public String desccorta;
-		public String desclarga;
-		public double costo;
-		public double factorconv;
-		public String unidbas;
-		public String unidmed;
-		public double unimedfact;
-		public String unigra;
-		public double unigrafact;
-		public String descuento;
-		public String bonificacion;
-		public double imp1;
-		public double imp2;
-		public double imp3;
-		public String vencomp;
-		public String devol;
-		public String ofrecer;
-		public String rentab;
-		public String descmax;
-		public double peso_promedio;
-		public int  modif_precio;
-		public String imagen;
-		public String video;
-		public int  venta_por_peso;
-		public int  es_prod_barra;
-		public String unid_inv;
-		public int  venta_por_paquete;
-		public int  venta_por_factor_conv;
-		public int  es_serializado;
-		public int  param_caducidad;
-		public String producto_padre;
-		public double factor_padre;
-		public int  tiene_inv;
-		public int  tiene_vineta_o_tubo;
-		public double precio_vineta_o_tubo;
-		public int  es_vendible;
-		public double unigrasap;
-		public String um_salida;
-		public int  activo;
-	}
+        public int  codigo_producto;
+        public String codigo;
+        public String codigo_tipo;
+        public String linea;
+        public String empresa;
+        public String marca;
+        public String codbarra;
+        public String desccorta;
+        public String desclarga;
+        public double costo;
+        public double factorconv;
+        public String unidbas;
+        public String unidmed;
+        public double unimedfact;
+        public String unigra;
+        public double unigrafact;
+        public String descuento;
+        public String bonificacion;
+        public double imp1;
+        public double imp2;
+        public double imp3;
+        public String vencomp;
+        public String devol;
+        public String ofrecer;
+        public String rentab;
+        public String descmax;
+        public String iva;
+        public String codbarra2;
+        public int  cbconv;
+        public String bodega;
+        public String subbodega;
+        public double peso_promedio;
+        public int  modif_precio;
+        public String imagen;
+        public String video;
+        public int  venta_por_peso;
+        public int  es_prod_barra;
+        public String unid_inv;
+        public int  venta_por_paquete;
+        public int  venta_por_factor_conv;
+        public int  es_serializado;
+        public int  param_caducidad;
+        public String producto_padre;
+        public double factor_padre;
+        public int  tiene_inv;
+        public int  tiene_vineta_o_tubo;
+        public double precio_vineta_o_tubo;
+        public int  es_vendible;
+        public double unigrasap;
+        public String um_salida;
+        public int  activo;
+    }
 
-	public class clsP_proveedor {
-		public int  codigo;
-		public String nombre;
-		public int  activo;
-	}
+    public class clsP_proveedor {
+        public int  codigo_proveedor;
+        public String codigo;
+        public String nombre;
+        public int  activo;
+    }
 
-	public class clsP_sucursal {
-		public String codigo;
-		public String empresa;
-		public String descripcion;
-		public String nombre;
-		public String direccion;
-		public String telefono;
-		public String nit;
-		public String texto;
-		public int  activo;
-	}
+    public class clsP_sucursal {
+        public int  codigo_sucursal;
+        public String codigo;
+        public String empresa;
+        public int  codigo_nivel_precio;
+        public String descripcion;
+        public String nombre;
+        public String direccion;
+        public String telefono;
+        public String nit;
+        public String texto;
+        public int  activo;
+    }
 
-	public class clsP_ruta {
-		public String codigo;
-		public String nombre;
-		public String activo;
-		public String vendedor;
-		public String venta;
-		public String forania;
-		public String sucursal;
-		public String tipo;
-		public String subtipo;
-		public String bodega;
-		public String subbodega;
-		public String descuento;
-		public String bonif;
-		public String kilometraje;
-		public String impresion;
-		public String recibopropio;
-		public String celular;
-		public String rentabil;
-		public String oferta;
-		public double percrent;
-		public String pasarcredito;
-		public String teclado;
-		public String editdevprec;
-		public String editdesc;
-		public String params;
-		public int  semana;
-		public int  objano;
-		public int  objmes;
-		public String syncfold;
-		public String wlfold;
-		public String ftpfold;
-		public String email;
-		public int  lastimp;
-		public int  lastcom;
-		public int  lastexp;
-		public String impstat;
-		public String expstat;
-		public String comstat;
-		public String param1;
-		public String param2;
-		public double pesolim;
-		public int  intervalo_max;
-		public int  lecturas_valid;
-		public int  intentos_lect;
-		public int  hora_ini;
-		public int  hora_fin;
-		public int  aplicacion_usa;
-		public int  puerto_gps;
-		public int  es_ruta_oficina;
-		public int  diluir_bon;
-		public int  preimpresion_factura;
-		public int  modificar_media_pago;
-		public String idimpresora;
-		public String numversion;
-		public int  fechaversion;
-		public String arquitectura;
-	}
+    public class clsP_ruta {
+        public String codigo;
+        public String sucursal;
+        public String nombre;
+        public int  codigo_ruta;
+    }
 
-	public class clsP_usuario {
+    public class clsP_usuario {
 		public String codigo;
 		public String nombre;
 		public String cod_grupo;
@@ -429,7 +397,8 @@ public class clsClasses {
         public String bodega;
         public String subbodega;
         public int  activo;
-	}
+        public int  codigo_vendedor;
+    }
 
     public class clsT_prodmenu {
         public int  id;

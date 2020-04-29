@@ -334,8 +334,8 @@ public class Caja extends PBase {
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
                 db.execSQL(sql);
 
-                sql="UPDATE D_DEPOS SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
-                db.execSQL(sql);
+                //sql="UPDATE D_DEPOS SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
+                //db.execSQL(sql);
 
                 sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
                 db.execSQL(sql);

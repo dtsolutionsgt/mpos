@@ -48,7 +48,7 @@ public class clsP_empresaObj {
         deleteItem(item);
     }
 
-    public void delete(String id) {
+    public void delete(int id) {
         deleteItem(id);
     }
 
@@ -78,6 +78,18 @@ public class clsP_empresaObj {
         ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("COL_IMP",item.col_imp);
+        ins.add("LOGO",item.logo);
+        ins.add("RAZON_SOCIAL",item.razon_social);
+        ins.add("IDENTIFICACION_TRIBUTARIA",item.identificacion_tributaria);
+        ins.add("TELEFONO",item.telefono);
+        ins.add("COD_PAIS",item.cod_pais);
+        ins.add("NOMBRE_CONTACTO",item.nombre_contacto);
+        ins.add("APELLIDO_CONTACTO",item.apellido_contacto);
+        ins.add("DIRECCION",item.direccion);
+        ins.add("CORREO",item.correo);
+        ins.add("CODIGO_ACTIVACION",item.codigo_activacion);
+        ins.add("COD_CANT_EMP",item.cod_cant_emp);
+        ins.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
 
         db.execSQL(ins.sql());
 
@@ -89,8 +101,20 @@ public class clsP_empresaObj {
 
         upd.add("NOMBRE",item.nombre);
         upd.add("COL_IMP",item.col_imp);
+        upd.add("LOGO",item.logo);
+        upd.add("RAZON_SOCIAL",item.razon_social);
+        upd.add("IDENTIFICACION_TRIBUTARIA",item.identificacion_tributaria);
+        upd.add("TELEFONO",item.telefono);
+        upd.add("COD_PAIS",item.cod_pais);
+        upd.add("NOMBRE_CONTACTO",item.nombre_contacto);
+        upd.add("APELLIDO_CONTACTO",item.apellido_contacto);
+        upd.add("DIRECCION",item.direccion);
+        upd.add("CORREO",item.correo);
+        upd.add("CODIGO_ACTIVACION",item.codigo_activacion);
+        upd.add("COD_CANT_EMP",item.cod_cant_emp);
+        upd.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
 
-        upd.Where("(EMPRESA='"+item.empresa+"')");
+        upd.Where("(EMPRESA="+item.empresa+")");
 
         db.execSQL(upd.sql());
 
@@ -99,12 +123,12 @@ public class clsP_empresaObj {
     }
 
     private void deleteItem(clsClasses.clsP_empresa item) {
-        sql="DELETE FROM P_empresa WHERE (EMPRESA='"+item.empresa+"')";
+        sql="DELETE FROM P_empresa WHERE (EMPRESA="+item.empresa+")";
         db.execSQL(sql);
     }
 
-    private void deleteItem(String id) {
-        sql="DELETE FROM P_empresa WHERE id='" + id+"'";
+    private void deleteItem(int id) {
+        sql="DELETE FROM P_empresa WHERE id=" + id;
         db.execSQL(sql);
     }
 
@@ -125,6 +149,18 @@ public class clsP_empresaObj {
             item.empresa=dt.getString(0);
             item.nombre=dt.getString(1);
             item.col_imp=dt.getInt(2);
+            item.logo=dt.getString(3);
+            item.razon_social=dt.getString(4);
+            item.identificacion_tributaria=dt.getString(5);
+            item.telefono=dt.getString(6);
+            item.cod_pais=dt.getString(7);
+            item.nombre_contacto=dt.getString(8);
+            item.apellido_contacto=dt.getString(9);
+            item.direccion=dt.getString(10);
+            item.correo=dt.getString(11);
+            item.codigo_activacion=dt.getString(12);
+            item.cod_cant_emp=dt.getInt(13);
+            item.cantidad_puntos_venta=dt.getInt(14);
 
             items.add(item);
 
@@ -159,6 +195,18 @@ public class clsP_empresaObj {
         ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("COL_IMP",item.col_imp);
+        ins.add("LOGO",item.logo);
+        ins.add("RAZON_SOCIAL",item.razon_social);
+        ins.add("IDENTIFICACION_TRIBUTARIA",item.identificacion_tributaria);
+        ins.add("TELEFONO",item.telefono);
+        ins.add("COD_PAIS",item.cod_pais);
+        ins.add("NOMBRE_CONTACTO",item.nombre_contacto);
+        ins.add("APELLIDO_CONTACTO",item.apellido_contacto);
+        ins.add("DIRECCION",item.direccion);
+        ins.add("CORREO",item.correo);
+        ins.add("CODIGO_ACTIVACION",item.codigo_activacion);
+        ins.add("COD_CANT_EMP",item.cod_cant_emp);
+        ins.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
 
         return ins.sql();
 
@@ -170,8 +218,20 @@ public class clsP_empresaObj {
 
         upd.add("NOMBRE",item.nombre);
         upd.add("COL_IMP",item.col_imp);
+        upd.add("LOGO",item.logo);
+        upd.add("RAZON_SOCIAL",item.razon_social);
+        upd.add("IDENTIFICACION_TRIBUTARIA",item.identificacion_tributaria);
+        upd.add("TELEFONO",item.telefono);
+        upd.add("COD_PAIS",item.cod_pais);
+        upd.add("NOMBRE_CONTACTO",item.nombre_contacto);
+        upd.add("APELLIDO_CONTACTO",item.apellido_contacto);
+        upd.add("DIRECCION",item.direccion);
+        upd.add("CORREO",item.correo);
+        upd.add("CODIGO_ACTIVACION",item.codigo_activacion);
+        upd.add("COD_CANT_EMP",item.cod_cant_emp);
+        upd.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
 
-        upd.Where("(EMPRESA='"+item.empresa+"')");
+        upd.Where("(EMPRESA="+item.empresa+")");
 
         return upd.sql();
 

@@ -18,23 +18,21 @@ public class clsP_sucursalObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel = "SELECT * FROM P_sucursal";
+    private String sel="SELECT * FROM P_sucursal";
     private String sql;
-    public ArrayList<clsClasses.clsP_sucursal> items = new ArrayList<clsClasses.clsP_sucursal>();
+    public ArrayList<clsClasses.clsP_sucursal> items= new ArrayList<clsClasses.clsP_sucursal>();
 
     public clsP_sucursalObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
-        cont = context;
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        cont=context;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
     }
 
@@ -50,7 +48,7 @@ public class clsP_sucursalObj {
         deleteItem(item);
     }
 
-    public void delete(String id) {
+    public void delete(int id) {
         deleteItem(id);
     }
 
@@ -59,7 +57,7 @@ public class clsP_sucursalObj {
     }
 
     public void fill(String specstr) {
-        fillItems(sel + " " + specstr);
+        fillItems(sel+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -77,15 +75,17 @@ public class clsP_sucursalObj {
 
         ins.init("P_sucursal");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("EMPRESA", item.empresa);
-        ins.add("DESCRIPCION", item.descripcion);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("DIRECCION", item.direccion);
-        ins.add("TELEFONO", item.telefono);
-        ins.add("NIT", item.nit);
-        ins.add("TEXTO", item.texto);
-        ins.add("ACTIVO", item.activo);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO",item.codigo);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("CODIGO_NIVEL_PRECIO",item.codigo_nivel_precio);
+        ins.add("DESCRIPCION",item.descripcion);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("DIRECCION",item.direccion);
+        ins.add("TELEFONO",item.telefono);
+        ins.add("NIT",item.nit);
+        ins.add("TEXTO",item.texto);
+        ins.add("ACTIVO",item.activo);
 
         db.execSQL(ins.sql());
 
@@ -95,16 +95,18 @@ public class clsP_sucursalObj {
 
         upd.init("P_sucursal");
 
-        upd.add("EMPRESA", item.empresa);
-        upd.add("DESCRIPCION", item.descripcion);
-        upd.add("NOMBRE", item.nombre);
-        upd.add("DIRECCION", item.direccion);
-        upd.add("TELEFONO", item.telefono);
-        upd.add("NIT", item.nit);
-        upd.add("TEXTO", item.texto);
-        upd.add("ACTIVO", item.activo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("EMPRESA",item.empresa);
+        upd.add("CODIGO_NIVEL_PRECIO",item.codigo_nivel_precio);
+        upd.add("DESCRIPCION",item.descripcion);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("DIRECCION",item.direccion);
+        upd.add("TELEFONO",item.telefono);
+        upd.add("NIT",item.nit);
+        upd.add("TEXTO",item.texto);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='" + item.codigo + "')");
+        upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 
         db.execSQL(upd.sql());
 
@@ -113,12 +115,12 @@ public class clsP_sucursalObj {
     }
 
     private void deleteItem(clsClasses.clsP_sucursal item) {
-        sql = "DELETE FROM P_sucursal WHERE (CODIGO='" + item.codigo + "')";
+        sql="DELETE FROM P_sucursal WHERE (CODIGO_SUCURSAL="+item.codigo_sucursal+")";
         db.execSQL(sql);
     }
 
-    private void deleteItem(String id) {
-        sql = "DELETE FROM P_sucursal WHERE id='" + id + "'";
+    private void deleteItem(int id) {
+        sql="DELETE FROM P_sucursal WHERE id=" + id;
         db.execSQL(sql);
     }
 
@@ -128,46 +130,48 @@ public class clsP_sucursalObj {
 
         items.clear();
 
-        dt = Con.OpenDT(sq);
-        count = dt.getCount();
-        if (dt.getCount() > 0) dt.moveToFirst();
+        dt=Con.OpenDT(sq);
+        count =dt.getCount();
+        if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_sucursal();
 
-            item.codigo = dt.getString(0);
-            item.empresa = dt.getString(1);
-            item.descripcion = dt.getString(2);
-            item.nombre = dt.getString(3);
-            item.direccion = dt.getString(4);
-            item.telefono = dt.getString(5);
-            item.nit = dt.getString(6);
-            item.texto = dt.getString(7);
-            item.activo = dt.getInt(8);
+            item.codigo_sucursal=dt.getInt(0);
+            item.codigo=dt.getString(1);
+            item.empresa=dt.getString(2);
+            item.codigo_nivel_precio=dt.getInt(3);
+            item.descripcion=dt.getString(4);
+            item.nombre=dt.getString(5);
+            item.direccion=dt.getString(6);
+            item.telefono=dt.getString(7);
+            item.nit=dt.getString(8);
+            item.texto=dt.getString(9);
+            item.activo=dt.getInt(10);
 
             items.add(item);
 
             dt.moveToNext();
         }
 
-        if (dt != null) dt.close();
+        if (dt!=null) dt.close();
 
     }
 
     public int newID(String idsql) {
-        Cursor dt = null;
+        Cursor dt=null;
         int nid;
 
         try {
-            dt = Con.OpenDT(idsql);
+            dt=Con.OpenDT(idsql);
             dt.moveToFirst();
-            nid = dt.getInt(0) + 1;
+            nid=dt.getInt(0)+1;
         } catch (Exception e) {
-            nid = 1;
+            nid=1;
         }
 
-        if (dt != null) dt.close();
+        if (dt!=null) dt.close();
 
         return nid;
     }
@@ -176,15 +180,17 @@ public class clsP_sucursalObj {
 
         ins.init("P_sucursal");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("EMPRESA", item.empresa);
-        ins.add("DESCRIPCION", item.descripcion);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("DIRECCION", item.direccion);
-        ins.add("TELEFONO", item.telefono);
-        ins.add("NIT", item.nit);
-        ins.add("TEXTO", item.texto);
-        ins.add("ACTIVO", item.activo);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO",item.codigo);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("CODIGO_NIVEL_PRECIO",item.codigo_nivel_precio);
+        ins.add("DESCRIPCION",item.descripcion);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("DIRECCION",item.direccion);
+        ins.add("TELEFONO",item.telefono);
+        ins.add("NIT",item.nit);
+        ins.add("TEXTO",item.texto);
+        ins.add("ACTIVO",item.activo);
 
         return ins.sql();
 
@@ -194,16 +200,18 @@ public class clsP_sucursalObj {
 
         upd.init("P_sucursal");
 
-        upd.add("EMPRESA", item.empresa);
-        upd.add("DESCRIPCION", item.descripcion);
-        upd.add("NOMBRE", item.nombre);
-        upd.add("DIRECCION", item.direccion);
-        upd.add("TELEFONO", item.telefono);
-        upd.add("NIT", item.nit);
-        upd.add("TEXTO", item.texto);
-        upd.add("ACTIVO", item.activo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("EMPRESA",item.empresa);
+        upd.add("CODIGO_NIVEL_PRECIO",item.codigo_nivel_precio);
+        upd.add("DESCRIPCION",item.descripcion);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("DIRECCION",item.direccion);
+        upd.add("TELEFONO",item.telefono);
+        upd.add("NIT",item.nit);
+        upd.add("TEXTO",item.texto);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='" + item.codigo + "')");
+        upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 
         return upd.sql();
 

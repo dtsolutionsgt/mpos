@@ -12,7 +12,7 @@ public class clsBeP_COREL {
     @Element(required=false) public int CORELULT;
     @Element(required=false) public Long FECHARES;
     @Element(required=false) public String RUTA;
-    @Element(required=false) public String EMP;
+    @Element(required=false) public String EMPRESA;
     @Element(required=false) public String ACTIVA;
     @Element(required=false) public String HANDHELD;
     @Element(required=false) public Long FECHAVIG;
@@ -24,7 +24,7 @@ public class clsBeP_COREL {
     }
 
     public clsBeP_COREL(String RESOL,String SERIE,int CORELINI,int CORELFIN,
-                        int CORELULT,Long FECHARES,String RUTA,String EMP,
+                        int CORELULT,Long FECHARES,String RUTA,String EMPRESA,
                         String ACTIVA,String HANDHELD,Long FECHAVIG,int RESGUARDO,
                         int VALOR1) {
 
@@ -35,7 +35,7 @@ public class clsBeP_COREL {
         this.CORELULT=CORELULT;
         this.FECHARES=FECHARES;
         this.RUTA=RUTA;
-        this.EMP=EMP;
+        this.EMPRESA=EMPRESA;
         this.ACTIVA=ACTIVA;
         this.HANDHELD=HANDHELD;
         this.FECHAVIG=FECHAVIG;
@@ -88,10 +88,10 @@ public class clsBeP_COREL {
         RUTA=value;
     }
     public String getEMP() {
-        return EMP;
+        return EMPRESA;
     }
     public void setEMP(String value) {
-        EMP=value;
+        EMPRESA=value;
     }
     public String getACTIVA() {
         return ACTIVA;

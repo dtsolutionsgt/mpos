@@ -1831,7 +1831,6 @@ public class ComWS extends PBase {
 		return errflag;
 	}
 
-
 	public void envioFacturas() {
 		Cursor DT;
 		String cor, fruta, tt;

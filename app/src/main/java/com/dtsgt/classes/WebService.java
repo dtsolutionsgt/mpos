@@ -64,6 +64,11 @@ public class WebService {
         }
     }
 
+
+    public void callEmptyMethod() {
+
+    }
+
     public void callMethod(String methodName, Object... args) throws Exception {
 
        try{

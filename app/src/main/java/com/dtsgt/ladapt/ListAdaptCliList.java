@@ -78,8 +78,10 @@ public class ListAdaptCliList extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 					
-		holder.lblCod.setText("Cod: "+items.get(position).Cod);
-		holder.lblNit.setText("NIT: "+items.get(position).nit);
+		//holder.lblCod.setText("Cod: "+items.get(position).Cod);
+		//holder.lblNit.setText("NIT: "+items.get(position).nit);
+        holder.lblNit.setText("");
+        holder.lblCod.setText("NIT: "+items.get(position).nit);
 		holder.lblDesc.setText(items.get(position).Desc);
 		holder.lblDate.setText(du.sfechaLarga(items.get(position).Date));
 

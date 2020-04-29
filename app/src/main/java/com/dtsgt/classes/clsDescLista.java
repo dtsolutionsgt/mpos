@@ -115,7 +115,7 @@ public class clsDescLista {
 		if (ptipo==5) return "Volumen de compra";
 		
 		if (ptipo==0) vSQL="SELECT DESCLARGA FROM P_PRODUCTO WHERE CODIGO='"+tid+"'";
-		if (ptipo==1) vSQL="SELECT NOMBRE FROM P_SUBLINEA WHERE CODIGO='"+tid+"'";
+		if (ptipo==1) vSQL="SELECT DESCLARGA FROM P_PRODUCTO WHERE 1<0";
 		if (ptipo==2) vSQL="SELECT NOMBRE FROM P_LINEA WHERE CODIGO='"+tid+"'";
 		if (ptipo==3) vSQL="SELECT NOMBRE FROM P_MARCA WHERE CODIGO='"+tid+"'";
 		

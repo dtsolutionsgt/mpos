@@ -2,7 +2,6 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -26,7 +25,16 @@ import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodopcObj;
+import com.dtsgt.classes.clsP_prodopclistObj;
 import com.dtsgt.classes.clsP_prodprecioObj;
+import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_proveedorObj;
+import com.dtsgt.classes.clsP_rutaObj;
+import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_usgrupoObj;
+import com.dtsgt.classes.clsP_usgrupoopcObj;
+import com.dtsgt.classes.clsP_usopcionObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classesws.clsBeP_ARCHIVOCONF;
 import com.dtsgt.classesws.clsBeP_ARCHIVOCONFList;
 import com.dtsgt.classesws.clsBeP_BANCO;
@@ -56,15 +64,30 @@ import com.dtsgt.classesws.clsBeP_NIVELPRECIO;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIOList;
 import com.dtsgt.classesws.clsBeP_PRODCOMBO;
 import com.dtsgt.classesws.clsBeP_PRODCOMBOList;
-import com.dtsgt.classesws.clsBeP_PRODIMAGEN;
-import com.dtsgt.classesws.clsBeP_PRODIMAGENList;
 import com.dtsgt.classesws.clsBeP_PRODMENU;
 import com.dtsgt.classesws.clsBeP_PRODMENUList;
 import com.dtsgt.classesws.clsBeP_PRODOPC;
 import com.dtsgt.classesws.clsBeP_PRODOPCLIST;
+import com.dtsgt.classesws.clsBeP_PRODOPCLISTList;
 import com.dtsgt.classesws.clsBeP_PRODOPCListx;
 import com.dtsgt.classesws.clsBeP_PRODPRECIO;
 import com.dtsgt.classesws.clsBeP_PRODPRECIOList;
+import com.dtsgt.classesws.clsBeP_PRODUCTO;
+import com.dtsgt.classesws.clsBeP_PRODUCTOList;
+import com.dtsgt.classesws.clsBeP_PROVEEDOR;
+import com.dtsgt.classesws.clsBeP_PROVEEDORList;
+import com.dtsgt.classesws.clsBeP_RUTA;
+import com.dtsgt.classesws.clsBeP_RUTAList;
+import com.dtsgt.classesws.clsBeP_SUCURSAL;
+import com.dtsgt.classesws.clsBeP_SUCURSALList;
+import com.dtsgt.classesws.clsBeP_USGRUPO;
+import com.dtsgt.classesws.clsBeP_USGRUPOList;
+import com.dtsgt.classesws.clsBeP_USGRUPOOPC;
+import com.dtsgt.classesws.clsBeP_USGRUPOOPCList;
+import com.dtsgt.classesws.clsBeP_USOPCION;
+import com.dtsgt.classesws.clsBeP_USOPCIONList;
+import com.dtsgt.classesws.clsBeVENDEDORES;
+import com.dtsgt.classesws.clsBeVENDEDORESList;
 
 import java.util.ArrayList;
 
@@ -129,13 +152,15 @@ public class WSRec extends PBase {
                         callMethod("GetP_ARCHIVOCONF", "EMPRESA", gl.emp, "RUTA", gl.ruta);
                         break;
                     case 4:
-                        callMethod("GetP_BONIF", "EMPRESA", gl.emp);
+                        //callMethod("GetP_BONIF", "EMPRESA", gl.emp);
+                        callEmptyMethod();
                         break;
                     case 5:
                         callMethod("GetP_COREL", "EMPRESA", gl.emp);
                         break;
                     case 6:
-                        callMethod("GetP_DESCUENTO", "EMPRESA", gl.emp);
+                        //callMethod("GetP_DESCUENTO", "EMPRESA", gl.emp);
+                        callEmptyMethod();
                         break;
                     case 7:
                         callMethod("GetP_FACTORCONV", "EMPRESA", gl.emp);
@@ -148,38 +173,69 @@ public class WSRec extends PBase {
                         break;
                     case 10:
                         callMethod("GetP_CLIENTE", "EMPRESA", gl.emp);
+                        callEmptyMethod();
                         break;
                     case 11:
                         callMethod("GetP_ENCABEZADO_REPORTESHH", "EMPRESA", gl.emp);
                         break;
                     case 12:
                         callMethod("GetP_MEDIAPAGO", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 13:
                         callMethod("GetP_MONEDA", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 14:
                         callMethod("GetP_NIVELPRECIO", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 15:
                         callMethod("GetP_PRODCOMBO", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 16:
                         callMethod("GetP_PRODMENU", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 17:
                         callMethod("GetP_PRODPRECIO", "EMPRESA", gl.emp);
-                        break;
+                         break;
                     case 18:
                         callMethod("GetP_PRODOPC", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 19:
                         callMethod("GetP_PRODOPCLIST", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 20:
                         callMethod("GetP_PROVEEDOR", "EMPRESA", gl.emp);
                         break;
-
+                    case 21:
+                        callMethod("GetP_PRODUCTO", "EMPRESA", gl.emp);
+                        break;
+                    case 22:
+                        callMethod("GetP_RUTA", "EMPRESA", gl.emp);
+                        break;
+                    case 23:
+                        callMethod("GetP_SUCURSAL", "EMPRESA", gl.emp);
+                        break;
+                    case 24:
+                        callMethod("GetP_USGRUPO", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
+                        break;
+                    case 25:
+                        callMethod("GetP_USGRUPOOPC", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
+                        break;
+                    case 26:
+                        callMethod("GetP_USOPCION", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
+                        break;
+                    case 27:
+                        callMethod("GetVENDEDORES", "EMPRESA", gl.emp);
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();
@@ -206,13 +262,13 @@ public class WSRec extends PBase {
                     processConfig();if (ws.errorflag) { processComplete();break;}
                     execws(4);break;
                 case 4:
-                    processBonif();if (ws.errorflag) { processComplete();break;}
+                    //processBonif();if (ws.errorflag) { processComplete();break;}
                     execws(5);break;
                 case 5:
                     processCorel();if (ws.errorflag) { processComplete();break;}
                     execws(6);break;
                 case 6:
-                    processDescuento();if (ws.errorflag) { processComplete();break;}
+                    //processDescuento();if (ws.errorflag) { processComplete();break;}
                     execws(7);break;
                 case 7:
                     processFactor();if (ws.errorflag) { processComplete();break;}
@@ -239,7 +295,7 @@ public class WSRec extends PBase {
                     processNivel();if (ws.errorflag) { processComplete();break;}
                     execws(15);break;
                 case 15:
-                    processCombo();if (ws.errorflag) { processComplete();break;}
+                    processCombo();if (ws.errorflag) {processComplete();break;}
                     execws(16);break;
                 case 16:
                     processProdMenu();if (ws.errorflag) { processComplete();break;}
@@ -251,14 +307,33 @@ public class WSRec extends PBase {
                     processOpciones();if (ws.errorflag) { processComplete();break;}
                     execws(19);break;
                 case 19:
-                    processOpcionesList();if (ws.errorflag) { processComplete();break;}
+                     processOpcionesList();if (ws.errorflag) { processComplete();break;}
                     execws(20);break;
-
                 case 20:
                     processProveedores();if (ws.errorflag) { processComplete();break;}
+                    execws(21);break;
+                case 21:
+                    processProductos();if (ws.errorflag) { processComplete();break;}
+                    execws(22);break;
+                case 22:
+                    processRutas();if (ws.errorflag) { processComplete();break;}
+                    execws(23);break;
+                case 23:
+                    processSucursales();if (ws.errorflag) { processComplete();break;}
+                    execws(24);break;
+                case 24:
+                    processUsrGrupos();if (ws.errorflag) { processComplete();break;}
+                    execws(25);break;
+                case 25:
+                    processUsrGrOpc();if (ws.errorflag) { processComplete();break;}
+                    execws(26);break;
+                case 26:
+                    processGrOpciones();if (ws.errorflag) { processComplete();break;}
+                    execws(27);break;
+                case 27:
+                    processVendedores();if (ws.errorflag) { processComplete();break;}
                     processComplete();
                     break;
-
             }
 
         } catch (Exception e) {
@@ -266,8 +341,6 @@ public class WSRec extends PBase {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
         }
-
-
     }
 
     //endregion
@@ -278,66 +351,59 @@ public class WSRec extends PBase {
 
         switch (callbackvalue) {
             case 1:
-                plabel = "Cargando empresas";
-                break;
+                plabel = "Cargando empresas";break;
             case 2:
-                plabel = "Cargando bancos";
-                break;
+                plabel = "Cargando bancos";break;
             case 3:
-                plabel = "Cargando Configuración";
-                break;
+                plabel = "Cargando Configuración";break;
             case 4:
-                plabel = "Cargando bonificaciones";
-                break;
+                plabel = "Cargando bonificaciones";break;
             case 5:
-                plabel = "Cargando correlativos";
-                break;
+                plabel = "Cargando correlativos";break;
             case 6:
-                plabel = "Cargando descuentos";
-                break;
+                plabel = "Cargando descuentos";break;
             case 7:
-                plabel = "Cargando factores";
-                break;
+                plabel = "Cargando factores";break;
             case 8:
-                plabel = "Cargando impuestos";
-                break;
+                plabel = "Cargando impuestos";break;
             case 9:
-                plabel = "Cargando familias";
-                break;
+                plabel = "Cargando familias";break;
             case 10:
-                plabel = "Cargando clientes";
-                break;
+                plabel = "Cargando clientes";break;
             case 11:
-                plabel = "Cargando encabezados";
-                break;
+                plabel = "Cargando encabezados";break;
             case 12:
-                plabel = "Cargando medias pago ";
-                break;
+                plabel = "Cargando medias pago ";break;
             case 13:
-                plabel = "Cargando monedas";
-                break;
+                plabel = "Cargando monedas";break;
             case 14:
-                plabel = "Cargando niveles precio";
-                break;
+                plabel = "Cargando niveles precio";break;
             case 15:
-                plabel = "Cargando combos";
-                break;
+                plabel = "Cargando combos";break;
             case 16:
-                plabel = "Cargando menus";
-                break;
+                plabel = "Cargando menus";break;
             case 17:
-                plabel = "Cargando precios";
-                break;
+                plabel = "Cargando precios";break;
             case 18:
-                plabel = "Cargando opciones";
-                break;
+                plabel = "Cargando opciones";break;
             case 19:
-                plabel = "Cargando opciones";
-                break;
+                plabel = "Cargando opciones";break;
             case 20:
-                plabel = "Cargando proveedores";
-                break;
-
+                plabel = "Cargando proveedores";break;
+            case 21:
+                plabel = "Cargando productos";break;
+            case 22:
+                plabel = "Cargando cajas";break;
+            case 23:
+                plabel = "Cargando tienda";break;
+            case 24:
+                plabel = "Cargando permisos";break;
+            case 25:
+                plabel = "Cargando opciones";break;
+            case 26:
+                plabel = "Cargando opciones";break;
+            case 27:
+                plabel = "Cargando usuarios";break;
         }
 
         updateLabel();
@@ -402,9 +468,21 @@ public class WSRec extends PBase {
 
             item = xobj.getresult(clsBeP_EMPRESA.class, "GetP_EMPRESA");
 
-            var.empresa = item.EMPRESA;
+            var.empresa =""+ item.EMPRESA;
             var.nombre = item.NOMBRE;
             var.col_imp = item.COL_IMP;
+            var.logo="";
+            var.razon_social=item.RAZON_SOCIAL+"";
+            var.identificacion_tributaria=item.IDENTIFICACION_TRIBUTARIA+"";
+            var.telefono=item.TELEFONO+"";
+            var.cod_pais=item.COD_PAIS+"";
+            var.nombre_contacto=item.NOMBRE_CONTACTO+"";
+            var.apellido_contacto=item.APELLIDO_CONTACTO+"";
+            var.direccion=item.DIRECCION+"";
+            var.correo=item.CORREO+"";
+            var.codigo_activacion=item.CODIGO_ACTIVACION+"";
+            var.cod_cant_emp=item.COD_CANT_EMP;
+            var.cantidad_puntos_venta=item.CANTIDAD_PUNTOS_VENTA;
 
             clsP_empresaObj P_empresaObj = new clsP_empresaObj(this, Con, db);
 
@@ -424,6 +502,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_BANCO");
 
             items = xobj.getresult(clsBeP_BANCOList.class, "GetP_BANCO");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
         } catch (Exception e) {
             ws.error = e.getMessage();
             ws.errorflag = true;
@@ -431,7 +515,6 @@ public class WSRec extends PBase {
     }
 
     private void processConfig() {
-
         try {
             clsP_archivoconfObj handler = new clsP_archivoconfObj(this, Con, db);
             clsBeP_ARCHIVOCONFList items = new clsBeP_ARCHIVOCONFList();
@@ -441,6 +524,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_ARCHIVOCONF");
 
             items = xobj.getresult(clsBeP_ARCHIVOCONFList.class, "GetP_ARCHIVOCONF");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -478,6 +567,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_BONIF");
 
             items = xobj.getresult(clsBeP_BONIFList.class, "GetP_BONIF");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -529,6 +624,12 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_CORELList.class, "GetP_COREL");
 
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -566,6 +667,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_DESCUENTO");
 
             items = xobj.getresult(clsBeP_DESCUENTOList.class, "GetP_DESCUENTO");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -611,6 +718,12 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_FACTORCONVList.class, "GetP_FACTORCONV");
 
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -642,6 +755,12 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_IMPUESTOList.class, "GetP_IMPUESTO");
 
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -672,6 +791,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_LINEA");
 
             items = xobj.getresult(clsBeP_LINEAList.class, "GetP_LINEA");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -705,6 +830,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_CLIENTE");
 
             items = xobj.getresult(clsBeP_CLIENTEList.class, "GetP_CLIENTE");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -758,6 +889,12 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_ENCABEZADO_REPORTESHHList.class, "GetP_ENCABEZADO_REPORTESHH");
 
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -789,6 +926,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_MEDIAPAGO");
 
             items = xobj.getresult(clsBeP_MEDIAPAGOList.class, "GetP_MEDIAPAGO");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -824,6 +967,12 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_MONEDAList.class, "GetP_MONEDA");
 
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -857,6 +1006,12 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_NIVELPRECIOList.class, "GetP_NIVELPRECIO");
 
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -887,6 +1042,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_PRODCOMBO");
 
             items = xobj.getresult(clsBeP_PRODCOMBOList.class, "GetP_PRODCOMBO");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -921,6 +1082,12 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_PRODMENU");
 
             items = xobj.getresult(clsBeP_PRODMENUList.class, "GetP_PRODMENU");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
 
             for (int i = 0; i < items.items.size(); i++) {
 
@@ -958,6 +1125,18 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODPRECIOList.class, "GetP_PRODPRECIO");
 
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -990,6 +1169,12 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODOPCListx.class, "GetP_PRODOPC");
 
+             try {
+                 if (items.items.size()==0) return;
+             } catch (Exception e) {
+                 return;
+             }
+
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
@@ -1011,11 +1196,436 @@ public class WSRec extends PBase {
     }
 
     private void processOpcionesList() {
+        try {
+            clsP_prodopclistObj handler = new clsP_prodopclistObj(this, Con, db);
+            clsBeP_PRODOPCLISTList items = new clsBeP_PRODOPCLISTList();
+            clsBeP_PRODOPCLIST item = new clsBeP_PRODOPCLIST();
+            clsClasses.clsP_prodopclist var;
 
+            script.add("DELETE FROM P_PRODOPCLIST");
+
+            items = xobj.getresult(clsBeP_PRODOPCLISTList.class, "GetP_PRODOPCLIST");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_prodopclist();
+
+                var.id = item.ID;
+                var.producto = item.PRODUCTO;
+                var.cant = item.CANT;
+                var.idreceta = item.IDRECETA;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
     }
 
     private void processProveedores() {
+        try {
+            clsP_proveedorObj handler = new clsP_proveedorObj(this, Con, db);
+            clsBeP_PROVEEDORList items = new clsBeP_PROVEEDORList();
+            clsBeP_PROVEEDOR item = new clsBeP_PROVEEDOR();
+            clsClasses.clsP_proveedor var;
 
+            script.add("DELETE FROM P_PROVEEDOR");
+
+            items = xobj.getresult(clsBeP_PROVEEDORList.class, "GetP_PROVEEDOR");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_proveedor();
+
+                var.codigo_proveedor=item.CODIGO_PROVEEDOR;
+                var.codigo=item.CODIGO;
+                var.nombre=item.NOMBRE;
+                var.activo=item.ACTIVO;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processProductos() {
+        try {
+            clsP_productoObj handler = new clsP_productoObj(this, Con, db);
+            clsBeP_PRODUCTOList items = new clsBeP_PRODUCTOList();
+            clsBeP_PRODUCTO item = new clsBeP_PRODUCTO();
+            clsClasses.clsP_producto var;
+
+            script.add("DELETE FROM P_PRODUCTO");
+
+            items = xobj.getresult(clsBeP_PRODUCTOList.class, "GetP_PRODUCTO");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_producto();
+
+                var.codigo_producto=item.CODIGO_PRODUCTO;
+                var.codigo=item.CODIGO;
+                var.codigo_tipo=item.CODIGO_TIPO;
+                var.linea=item.LINEA;
+                var.empresa=item.EMPRESA;
+                var.marca=item.MARCA;
+                var.codbarra=item.CODBARRA+"";;
+                var.desccorta=item.DESCCORTA;
+                var.desclarga=item.DESCLARGA;
+                var.costo=item.COSTO;
+                var.factorconv=item.FACTORCONV;
+                var.unidbas=item.UNIDBAS+"";
+                var.unidmed=item.UNIDMED+"";
+                var.unimedfact=item.UNIMEDFACT;
+                var.unigra=item.UNIGRA+"";
+                var.unigrafact=item.UNIGRAFACT;
+                var.descuento=item.DESCUENTO;
+                var.bonificacion=item.BONIFICACION;
+                var.imp1=item.IMP1;
+                var.imp2=item.IMP2;
+                var.imp3=item.IMP3;
+                var.vencomp=item.VENCOMP+"";
+                var.devol=item.DEVOL;
+                var.ofrecer=item.OFRECER;
+                var.rentab=item.RENTAB;
+                var.descmax=item.DESCMAX;
+                var.iva=item.IVA;
+                var.codbarra2=item.CODBARRA2+"";
+                var.cbconv=item.CBCONV;
+                var.bodega=item.BODEGA+"";
+                var.subbodega=item.SUBBODEGA+"";
+                var.peso_promedio=item.PESO_PROMEDIO;
+                var.modif_precio=mu.bool(item.MODIF_PRECIO);
+                var.imagen=item.IMAGEN+"";
+                var.video=item.VIDEO+"";
+                var.venta_por_peso=mu.bool(item.VENTA_POR_PESO);
+                var.es_prod_barra=mu.bool(item.ES_PROD_BARRA);
+                var.unid_inv=item.UNID_INV+"";
+                var.venta_por_paquete=mu.bool(item.VENTA_POR_PAQUETE);
+                var.venta_por_factor_conv=mu.bool(item.VENTA_POR_FACTOR_CONV);
+                var.es_serializado=mu.bool(item.ES_SERIALIZADO);
+                var.param_caducidad=item.PARAM_CADUCIDAD;
+                var.producto_padre=item.PRODUCTO_PADRE+"";
+                var.factor_padre=item.FACTOR_PADRE;
+                var.tiene_inv=mu.bool(item.TIENE_INV);
+                var.tiene_vineta_o_tubo=mu.bool(item.TIENE_VINETA_O_TUBO);
+                var.precio_vineta_o_tubo=item.PRECIO_VINETA_O_TUBO;
+                var.es_vendible=mu.bool(item.ES_VENDIBLE);
+                var.unigrasap=item.UNIGRASAP;
+                var.um_salida=item.UM_SALIDA+"";
+                var.activo=item.Activo;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processRutas() {
+        try {
+            clsP_rutaObj handler = new clsP_rutaObj(this, Con, db);
+            clsBeP_RUTAList items = new clsBeP_RUTAList();
+            clsBeP_RUTA item = new clsBeP_RUTA();
+            clsClasses.clsP_ruta var;
+
+            script.add("DELETE FROM P_RUTA");
+
+            items = xobj.getresult(clsBeP_RUTAList.class, "GetP_RUTA");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_ruta();
+
+                var.codigo=item.CODIGO;
+                var.sucursal=""+item.SUCURSAL;
+                var.nombre=item.NOMBRE;
+                var.codigo_ruta=item.CODIGO_RUTA;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processSucursales() {
+        try {
+            clsP_sucursalObj handler = new clsP_sucursalObj(this, Con, db);
+            clsBeP_SUCURSALList items = new clsBeP_SUCURSALList();
+            clsBeP_SUCURSAL item = new clsBeP_SUCURSAL();
+            clsClasses.clsP_sucursal var;
+
+            script.add("DELETE FROM P_SUCURSAL");
+
+            items = xobj.getresult(clsBeP_SUCURSALList.class, "GetP_SUCURSAL");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_sucursal();
+
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.codigo = item.CODIGO;
+                var.empresa = ""+item.EMPRESA;
+                var.codigo_nivel_precio=item.CODIGO_NIVEL_PRECIO;
+                var.descripcion = item.DESCRIPCION;
+                var.nombre = item.NOMBRE;
+                var.direccion = item.DIRECCION;
+                var.telefono = item.TELEFONO;
+                var.nit = item.NIT;
+                var.texto = item.TEXTO;
+                var.activo =mu.bool(item.ACTIVO);
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processUsrGrupos(){
+        try {
+            clsP_usgrupoObj handler = new clsP_usgrupoObj(this, Con, db);
+            clsBeP_USGRUPOList items = new clsBeP_USGRUPOList();
+            clsBeP_USGRUPO item = new clsBeP_USGRUPO();
+            clsClasses.clsP_usgrupo var;
+
+            script.add("DELETE FROM P_USGRUPO");
+
+            items = xobj.getresult(clsBeP_USGRUPOList.class, "GetP_USGRUPO");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_usgrupo();
+
+                var.codigo=item.CODIGO+"";
+                var.nombre=item.NOMBRE;
+                var.cuenta=item.CUENTA;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processUsrGrOpc() {
+
+        try {
+            clsP_usgrupoopcObj handler = new clsP_usgrupoopcObj(this, Con, db);
+            clsBeP_USGRUPOOPCList items = new clsBeP_USGRUPOOPCList();
+            clsBeP_USGRUPOOPC item = new clsBeP_USGRUPOOPC();
+            clsClasses.clsP_usgrupoopc var;
+
+            script.add("DELETE FROM P_USGRUPOOPC");
+
+            items = xobj.getresult(clsBeP_USGRUPOOPCList.class, "GetP_USGRUPOOPC");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_usgrupoopc();
+
+                var.grupo=item.GRUPO+"";
+                var.opcion=item.OPCION;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+
+    }
+
+    private void processGrOpciones() {
+
+        try {
+            clsP_usopcionObj handler = new clsP_usopcionObj(this, Con, db);
+            clsBeP_USOPCIONList items = new clsBeP_USOPCIONList();
+            clsBeP_USOPCION item = new clsBeP_USOPCION();
+            clsClasses.clsP_usopcion var;
+
+            script.add("DELETE FROM P_USOPCION");
+
+            items = xobj.getresult(clsBeP_USOPCIONList.class, "GetP_USOPCION");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_usopcion();
+
+                var.codigo=item.CODIGO;
+                var.menugroup=item.MENUGROUP;
+                var.nombre=item.NOMBRE;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processVendedores() {
+        //GetVENDEDORES", "EMPRESA", gl.emp);
+        try {
+            clsVendedoresObj handler = new clsVendedoresObj(this, Con, db);
+            clsBeVENDEDORESList items = new clsBeVENDEDORESList();
+            clsBeVENDEDORES item = new clsBeVENDEDORES();
+            clsClasses.clsVendedores var;
+
+            script.add("DELETE FROM VENDEDORES");
+
+            items = xobj.getresult(clsBeVENDEDORESList.class, "GetVENDEDORES");
+
+            try {
+                if (items.items.size()==0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsVendedores();
+
+                var.codigo=item.CODIGO;
+                var.ruta=item.RUTA+"";
+                var.nombre=item.NOMBRE;
+                var.clave=item.CLAVE+"";
+                var.nivel=item.NIVEL;
+                var.nivelprecio=item.NIVELPRECIO;
+                var.bodega=item.BODEGA+"";
+                var.subbodega=item.SUBBODEGA+"";
+                var.activo=mu.bool(item.ACTIVO);
+                var.codigo_vendedor=item.CODIGO_VENDEDOR;
+
+                script.add(handler.addItemSql(var));
+
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
     }
 
     //endregion

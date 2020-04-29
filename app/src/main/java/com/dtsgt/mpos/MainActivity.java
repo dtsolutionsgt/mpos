@@ -134,6 +134,8 @@ public class MainActivity extends PBase {
             dbVers = new BaseDatosVersion(this, db, Con);
             dbVers.update();
 
+            //db.execSQL("ALTER TABLE VENDEDORES ADD COLUMN CODIGO_VENDEDOR INTEGER;");
+
             setHandlers();
 
             khand=new clsKeybHandler(this,lblPass,lblKeyDP);
@@ -295,20 +297,20 @@ public class MainActivity extends PBase {
         String s, rn = "";
         String vCellCom = "";
 
-        /*
         if (dbVacia()) {
+            gl.emp="3";
             gl.modoadmin = true;
             gl.autocom = 0;
             toastcent("¡La base de datos está vacia!");
-            startActivity(new Intent(MainActivity.this, ComWS.class));
+            startActivity(new Intent(MainActivity.this, WSRec.class));
         }
-        */
+
 
         configBase();
 
         try {
             //#HS_20181122_1505 Se agrego el campo Impresion.
-            sql = "SELECT CODIGO,NOMBRE,VENDEDOR,VENTA,WLFOLD,IMPRESION,SUCURSAL,CELULAR FROM P_RUTA";
+            sql = "SELECT CODIGO,NOMBRE,SUCURSAL FROM P_RUTA";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {
@@ -317,19 +319,16 @@ public class MainActivity extends PBase {
 
                 gl.ruta = DT.getString(0);
                 gl.rutanom = DT.getString(1);
-                gl.vend = DT.getString(2);
+                gl.vend = "1";
                 gl.rutatipog = "V";
-                s = DT.getString(3);
-                gl.wsURL = DT.getString(4);
-                gl.impresora = DT.getString(5);
-                gl.sucur = DT.getString(6);
+                gl.wsURL = "";
+                gl.impresora = "";
+                gl.sucur = DT.getString(2);
 
-                if (!mu.emptystr(DT.getString(7))) {
-                    vCellCom = DT.getString(7);
-                }
-                gl.CellCom = (vCellCom.equalsIgnoreCase("S"));
+                vCellCom ="";
+                gl.CellCom = false;
 
-                rutapos = s.equalsIgnoreCase("R");
+                rutapos = true;
 
             } else {
 
@@ -364,7 +363,7 @@ public class MainActivity extends PBase {
                 gl.depparc = false;
                 gl.lotedf = "";
             } else {
-                gl.emp = "";
+                gl.emp = "3";
                 gl.devol = false;
                 msgbox("¡No se pudo cargar configuración de la empresa!");
             }
@@ -762,7 +761,7 @@ public class MainActivity extends PBase {
             for (int i = 0; i <VendedoresObj.count; i++) {
                 item=clsCls.new clsMenu();
                 item.Cod=VendedoresObj.items.get(i).codigo;
-                item.Name=VendedoresObj.items.get(i).nombre;
+                item.Name=VendedoresObj.items.get(i).ruta;
                 mitems.add(item);
             }
 

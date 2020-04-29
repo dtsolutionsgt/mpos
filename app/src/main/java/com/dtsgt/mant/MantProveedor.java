@@ -101,7 +101,7 @@ public class MantProveedor extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo=0;
+        item.codigo="";
         item.nombre="";
         item.activo=1;
 
@@ -152,7 +152,7 @@ public class MantProveedor extends PBase {
                     msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
                 }
 
-                item.codigo=Integer.parseInt(ss);
+                item.codigo=ss;
             }
 
             ss=txt2.getText().toString();

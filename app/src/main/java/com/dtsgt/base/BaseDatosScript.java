@@ -88,9 +88,22 @@ public class BaseDatosScript {
                     "EMPRESA TEXT NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "COL_IMP INTEGER NOT NULL,"+
+                    "LOGO TEXT NOT NULL,"+
+                    "RAZON_SOCIAL TEXT NOT NULL,"+
+                    "IDENTIFICACION_TRIBUTARIA TEXT NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "COD_PAIS TEXT NOT NULL,"+
+                    "NOMBRE_CONTACTO TEXT NOT NULL,"+
+                    "APELLIDO_CONTACTO TEXT NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "CORREO TEXT NOT NULL,"+
+                    "CODIGO_ACTIVACION TEXT NOT NULL,"+
+                    "COD_CANT_EMP INTEGER NOT NULL,"+
+                    "CANTIDAD_PUNTOS_VENTA INTEGER NOT NULL,"+
                     "PRIMARY KEY ([EMPRESA])"+
                     ");";
             database.execSQL(sql);
+
 
             sql="CREATE TABLE [P_BANCO] ("+
                     "[CODIGO] TEXT NOT NULL,"+
@@ -202,54 +215,59 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_PRODPRECIO_idx2 ON P_PRODPRECIO(NIVEL)";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_PRODUCTO] ("+
-                    "[CODIGO] TEXT NOT NULL,"+
-                    "[TIPO] TEXT NOT NULL,"+
-                    "[LINEA] TEXT NOT NULL,"+
-                    "[SUBLINEA] TEXT NOT NULL,"+
-                    "[EMPRESA] TEXT NOT NULL,"+
-                    "[MARCA] TEXT NOT NULL,"+
-                    "[CODBARRA] TEXT NOT NULL,"+
-                    "[DESCCORTA] TEXT NOT NULL,"+
-                    "[DESCLARGA] TEXT NOT NULL,"+
-                    "[COSTO] REAL NOT NULL,"+
-                    "[FACTORCONV] REAL NOT NULL,"+
-                    "[UNIDBAS] TEXT NOT NULL,"+
-                    "[UNIDMED] TEXT NOT NULL,"+
-                    "[UNIMEDFACT] REAL NOT NULL,"+
-                    "[UNIGRA] TEXT NOT NULL,"+
-                    "[UNIGRAFACT] REAL NOT NULL,"+
-                    "[DESCUENTO] TEXT NOT NULL,"+
-                    "[BONIFICACION] TEXT NOT NULL,"+
-                    "[IMP1] REAL NOT NULL,"+
-                    "[IMP2] REAL NOT NULL,"+
-                    "[IMP3] REAL NOT NULL,"+
-                    "[VENCOMP] TEXT NOT NULL,"+
-                    "[DEVOL] TEXT NOT NULL,"+
-                    "[OFRECER] TEXT NOT NULL,"+
-                    "[RENTAB] TEXT NOT NULL,"+
-                    "[DESCMAX] TEXT NOT NULL,"+
-                    "[PESO_PROMEDIO] REAL NOT NULL,"+
-                    "[MODIF_PRECIO] INTEGER NOT NULL,"+
-                    "[IMAGEN] TEXT NOT NULL,"+
-                    "[VIDEO] TEXT NOT NULL,"+
-                    "[VENTA_POR_PESO] INTEGER NOT NULL,"+
-                    "[ES_PROD_BARRA] INTEGER NOT NULL,"+
-                    "[UNID_INV] TEXT NOT NULL,"+
-                    "[VENTA_POR_PAQUETE] INTEGER NOT NULL,"+
-                    "[VENTA_POR_FACTOR_CONV] INTEGER NOT NULL,"+
-                    "[ES_SERIALIZADO] INTEGER NOT NULL,"+
-                    "[PARAM_CADUCIDAD] INTEGER NOT NULL,"+
-                    "[PRODUCTO_PADRE] TEXT NOT NULL,"+
-                    "[FACTOR_PADRE] REAL NOT NULL,"+
-                    "[TIENE_INV] INTEGER NOT NULL,"+
-                    "[TIENE_VINETA_O_TUBO] INTEGER NOT NULL,"+
-                    "[PRECIO_VINETA_O_TUBO] REAL NOT NULL,"+
-                    "[ES_VENDIBLE] INTEGER NOT NULL,"+
-                    "[UNIGRASAP] REAL NOT NULL,"+
-                    "[UM_SALIDA] TEXT NOT NULL,"+
-                    "[activo] INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO])"+
+            sql="CREATE TABLE [P_producto] ("+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CODIGO TEXT NOT NULL,"+
+                    "CODIGO_TIPO TEXT NOT NULL,"+
+                    "LINEA TEXT NOT NULL,"+
+                    "EMPRESA TEXT NOT NULL,"+
+                    "MARCA TEXT NOT NULL,"+
+                    "CODBARRA TEXT NOT NULL,"+
+                    "DESCCORTA TEXT NOT NULL,"+
+                    "DESCLARGA TEXT NOT NULL,"+
+                    "COSTO REAL NOT NULL,"+
+                    "FACTORCONV REAL NOT NULL,"+
+                    "UNIDBAS TEXT NOT NULL,"+
+                    "UNIDMED TEXT NOT NULL,"+
+                    "UNIMEDFACT REAL NOT NULL,"+
+                    "UNIGRA TEXT NOT NULL,"+
+                    "UNIGRAFACT REAL NOT NULL,"+
+                    "DESCUENTO TEXT NOT NULL,"+
+                    "BONIFICACION TEXT NOT NULL,"+
+                    "IMP1 REAL NOT NULL,"+
+                    "IMP2 REAL NOT NULL,"+
+                    "IMP3 REAL NOT NULL,"+
+                    "VENCOMP TEXT NOT NULL,"+
+                    "DEVOL TEXT NOT NULL,"+
+                    "OFRECER TEXT NOT NULL,"+
+                    "RENTAB TEXT NOT NULL,"+
+                    "DESCMAX TEXT NOT NULL,"+
+                    "IVA TEXT NOT NULL,"+
+                    "CODBARRA2 TEXT NOT NULL,"+
+                    "CBCONV INTEGER NOT NULL,"+
+                    "BODEGA TEXT NOT NULL,"+
+                    "SUBBODEGA TEXT NOT NULL,"+
+                    "PESO_PROMEDIO REAL NOT NULL,"+
+                    "MODIF_PRECIO INTEGER NOT NULL,"+
+                    "IMAGEN TEXT NOT NULL,"+
+                    "VIDEO TEXT NOT NULL,"+
+                    "VENTA_POR_PESO INTEGER NOT NULL,"+
+                    "ES_PROD_BARRA INTEGER NOT NULL,"+
+                    "UNID_INV TEXT NOT NULL,"+
+                    "VENTA_POR_PAQUETE INTEGER NOT NULL,"+
+                    "VENTA_POR_FACTOR_CONV INTEGER NOT NULL,"+
+                    "ES_SERIALIZADO INTEGER NOT NULL,"+
+                    "PARAM_CADUCIDAD INTEGER NOT NULL,"+
+                    "PRODUCTO_PADRE TEXT NOT NULL,"+
+                    "FACTOR_PADRE REAL NOT NULL,"+
+                    "TIENE_INV INTEGER NOT NULL,"+
+                    "TIENE_VINETA_O_TUBO INTEGER NOT NULL,"+
+                    "PRECIO_VINETA_O_TUBO REAL NOT NULL,"+
+                    "ES_VENDIBLE INTEGER NOT NULL,"+
+                    "UNIGRASAP REAL NOT NULL,"+
+                    "UM_SALIDA TEXT NOT NULL,"+
+                    "Activo INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PRODUCTO])"+
                     ");";
             database.execSQL(sql);
 
@@ -292,17 +310,19 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
 
-            sql="CREATE TABLE [P_SUCURSAL] ("+
-                    "[CODIGO] TEXT NOT NULL,"+
-                    "[EMPRESA] TEXT NOT NULL,"+
-                    "[DESCRIPCION] TEXT NOT NULL,"+
-                    "[NOMBRE] TEXT NOT NULL,"+
-                    "[DIRECCION] TEXT NOT NULL,"+
-                    "[TELEFONO] TEXT NOT NULL,"+
-                    "[NIT] TEXT NOT NULL,"+
-                    "[TEXTO] TEXT NOT NULL,"+
-                    "[ACTIVO] INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO])"+
+            sql="CREATE TABLE [P_sucursal] ("+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO TEXT NOT NULL,"+
+                    "EMPRESA TEXT NOT NULL,"+
+                    "CODIGO_NIVEL_PRECIO INTEGER NOT NULL,"+
+                    "DESCRIPCION TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_SUCURSAL])"+
                     ");";
             database.execSQL(sql);
 
@@ -350,11 +370,11 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
 
-            sql="CREATE TABLE [P_RUTA] ("+
-                    "[CODIGO] TEXT NOT NULL,"+
-                    "[NOMBRE] TEXT NOT NULL,"+
-                    "[ACTIVO] TEXT NOT NULL,"+
-                    "[SUCURSAL] TEXT NOT NULL,"+
+            sql="CREATE TABLE [P_ruta] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "SUCURSAL TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "CODIGO_RUTA INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO])"+
                     ");";
             database.execSQL(sql);
@@ -450,14 +470,14 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_PROVEEDOR] ("+
-                    "CODIGO INTEGER NOT NULL,"+
+            sql="CREATE TABLE [P_proveedor] ("+
+                    "CODIGO TEXT NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO])"+
+                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PROVEEDOR])"+
                     ");";
             database.execSQL(sql);
-
 
             sql="CREATE TABLE [VENDEDORES] ("+
                     "CODIGO TEXT NOT NULL,"+
@@ -469,6 +489,7 @@ public class BaseDatosScript {
                     "BODEGA TEXT NOT NULL,"+
                     "SUBBODEGA TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO],[RUTA])"+
                     ");";
             database.execSQL(sql);
@@ -591,14 +612,174 @@ public class BaseDatosScript {
         }
     }
 
-
-
     private int scriptTablasD(SQLiteDatabase database) {
 		String sql;
 		  
 		try {
-		  
-			sql="CREATE TABLE [D_PEDIDO] ("+
+
+            sql="CREATE TABLE [D_FACTURA] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[ANULADO] TEXT NOT NULL,"+
+                    "[FECHA] INTEGER NOT NULL,"+
+                    "[EMPRESA] TEXT NOT NULL,"+
+                    "[RUTA] TEXT NOT NULL,"+
+                    "[VENDEDOR] TEXT NOT NULL,"+
+                    "[CLIENTE] TEXT NOT NULL,"+
+                    "[KILOMETRAJE] REAL NOT NULL,"+
+                    "[FECHAENTR] INTEGER NOT NULL,"+
+                    "[FACTLINK] TEXT NOT NULL,"+
+                    "[TOTAL] REAL NOT NULL,"+
+                    "[DESMONTO] REAL NOT NULL,"+
+                    "[IMPMONTO] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[BANDERA] TEXT NOT NULL,"+
+                    "[STATCOM] TEXT NOT NULL,"+
+                    "[CALCOBJ] TEXT NOT NULL,"+
+                    "[SERIE] TEXT NOT NULL,"+
+                    "[CORELATIVO] INTEGER NOT NULL,"+
+                    "[IMPRES] INTEGER NOT NULL,"+
+                    "[ADD1] TEXT NOT NULL,"+
+                    "[ADD2] TEXT NOT NULL,"+
+                    "[ADD3] TEXT NOT NULL,"+
+                    "[DEPOS] TEXT NOT NULL,"+
+                    "[PEDCOREL] TEXT NOT NULL,"+
+                    "[REFERENCIA] TEXT NOT NULL,"+
+                    "[ASIGNACION] TEXT NOT NULL,"+
+                    "[SUPERVISOR] TEXT NOT NULL,"+
+                    "[AYUDANTE] TEXT NOT NULL,"+
+                    "[VEHICULO] TEXT NOT NULL,"+
+                    "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
+                    "[RAZON_ANULACION] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE INDEX D_FACTURA_idx1 ON D_FACTURA(ANULADO)";
+            database.execSQL(sql);
+            sql="CREATE INDEX D_FACTURA_idx2 ON D_FACTURA(FECHA)";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [D_FACTURAD] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[EMPRESA] TEXT NOT NULL,"+
+                    "[ANULADO] TEXT NOT NULL,"+
+                    "[CANT] REAL NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL,"+
+                    "[IMP] REAL NOT NULL,"+
+                    "[DES] REAL NOT NULL,"+
+                    "[DESMON] REAL NOT NULL,"+
+                    "[TOTAL] REAL NOT NULL,"+
+                    "[PRECIODOC] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[VAL1] REAL NOT NULL,"+
+                    "[VAL2] TEXT NOT NULL,"+
+                    "[UMVENTA] TEXT NOT NULL,"+
+                    "[FACTOR] REAL NOT NULL,"+
+                    "[UMSTOCK] TEXT NOT NULL,"+
+                    "[UMPESO] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[PRODUCTO],[UMPESO])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [D_FACTURAP] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[ITEM] INTEGER NOT NULL,"+
+                    "[ANULADO] TEXT NOT NULL,"+
+                    "[EMPRESA] TEXT NOT NULL,"+
+                    "[CODPAGO] INTEGER NOT NULL,"+
+                    "[TIPO] TEXT NOT NULL,"+
+                    "[VALOR] REAL NOT NULL,"+
+                    "[DESC1] TEXT NOT NULL,"+
+                    "[DESC2] TEXT NOT NULL,"+
+                    "[DESC3] TEXT NOT NULL,"+
+                    "[DEPOS] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [D_FACTURAF] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[NOMBRE] TEXT NOT NULL,"+
+                    "[NIT] TEXT NOT NULL,"+
+                    "[DIRECCION] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [D_BONIF] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[ITEM] INTEGER NOT NULL,"+
+                    "[FECHA] INTEGER NOT NULL,"+
+                    "[ANULADO] TEXT NOT NULL,"+
+                    "[EMPRESA] TEXT NOT NULL,"+
+                    "[RUTA] TEXT NOT NULL,"+
+                    "[CLIENTE] TEXT NOT NULL,"+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[CANT] REAL NOT NULL,"+
+                    "[VENPED] TEXT NOT NULL,"+
+                    "[TIPO] TEXT NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL,"+
+                    "[COSTO] REAL NOT NULL,"+
+                    "[TOTAL] REAL NOT NULL,"+
+                    "[STATCOM] TEXT NOT NULL,"+
+                    "[UMVENTA] TEXT NOT NULL,"+
+                    "[UMSTOCK] TEXT NOT NULL,"+
+                    "[UMPESO] TEXT NOT NULL,"+
+                    "[FACTOR] REAL NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            // ****************
+
+            sql="CREATE TABLE [D_MOV] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[RUTA] TEXT NOT NULL,"+
+                    "[ANULADO] TEXT NOT NULL,"+
+                    "[FECHA] INTEGER NOT NULL,"+
+                    "[TIPO] TEXT NOT NULL,"+
+                    "[USUARIO] TEXT NOT NULL,"+
+                    "[REFERENCIA] TEXT NOT NULL,"+
+                    "[STATCOM] TEXT NOT NULL,"+
+                    "[IMPRES] INTEGER NOT NULL,"+
+                    "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE INDEX D_MOV_idx1 ON D_MOV(ANULADO)";
+            database.execSQL(sql);
+            sql="CREATE INDEX D_MOV_idx2 ON D_MOV(TIPO)";
+            database.execSQL(sql);
+            sql="CREATE INDEX D_MOV_idx3 ON D_MOV(STATCOM)";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [D_MOVD] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[CANT] REAL NOT NULL,"+
+                    "[CANTM] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[PESOM] REAL NOT NULL,"+
+                    "[LOTE] TEXT NOT NULL,"+
+                    "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
+                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE],[UNIDADMEDIDA])"+
+                    ");";
+            database.execSQL(sql);
+
+
+
+            /*
+
+            sql="CREATE TABLE [D_PEDIDO] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[ANULADO] TEXT NOT NULL,"+
 					"[FECHA] INTEGER NOT NULL,"+
@@ -757,155 +938,6 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-			
-			sql="CREATE TABLE [D_MERPROPIO] ("+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"PRIMARY KEY ([CLIENTE],[PRODUCTO],[FECHA])"+
-					");";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [D_MERCOMP] ("+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"[DESCUENTO] REAL NOT NULL,"+
-					"[DIAVISITA] INTEGER NOT NULL,"+
-					"[FRECUENCIA] INTEGER NOT NULL,"+
-					"PRIMARY KEY ([CLIENTE],[PRODUCTO],[FECHA])"+
-					");";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [D_MEREQUIPO] ("+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[SERIAL] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[TIPO] INTEGER NOT NULL,"+
-					"[ESTADO] INTEGER NOT NULL,"+
-					"[CODBARRA] TEXT NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"PRIMARY KEY ([CLIENTE],[SERIAL],[FECHA])"+
-					");";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [D_MERFALTA] ("+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"PRIMARY KEY ([CLIENTE],[PRODUCTO],[FECHA])"+
-					");";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [D_MERPREGUNTA] ("+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[CODIGO] INTEGER NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[RESP] INTEGER NOT NULL,"+
-					"[STATCOM] INTEGER NOT NULL,"+
-					"[FOTO] TEXT NOT NULL,"+
-					"[GRABACION] TEXT NOT NULL,"+
-					"[STATCOMG] INTEGER NOT NULL,"+
-					"PRIMARY KEY ([CLIENTE],[CODIGO],[FECHA])"+
-					");";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [D_COBRO] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"[VENDEDOR] TEXT NOT NULL,"+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[KILOMETRAJE] REAL NOT NULL,"+
-					"[CORELC] TEXT NOT NULL,"+
-					"[BANDERA] TEXT NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"[IMPRES] INTEGER NOT NULL,"+
-					"[DEPOS] TEXT NOT NULL,"+
-					"[TOTAL] REAL NOT NULL,"+
-					"[CALCOBJ] TEXT NOT NULL,"+
-					"[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-					"[SERIE] TEXT NOT NULL,"+
-					"[CORELATIVO] INTEGER NOT NULL,"+
-					"PRIMARY KEY ([COREL])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE INDEX D_COBRO_idx1 ON D_COBRO(ANULADO)";
-			database.execSQL(sql);
-			sql="CREATE INDEX D_COBRO_idx2 ON D_COBRO(CLIENTE)";
-			database.execSQL(sql);
-			sql="CREATE INDEX D_COBRO_idx3 ON D_COBRO(STATCOM)";
-			database.execSQL(sql);
-			sql="CREATE INDEX D_COBRO_idx4 ON D_COBRO(CALCOBJ)";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [D_COBROD] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[DOCUMENTO] TEXT NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[TIPODOC] TEXT NOT NULL,"+
-					"[MONTO] REAL NOT NULL,"+
-					"[PAGO] REAL NOT NULL,"+
-					"[CONTRASENA] TEXT NOT NULL,"+
-					"[ID_TRANSACCION] INTEGER NOT NULL,"+
-					"[REFERENCIA] TEXT NOT NULL,"+
-					"[ASIGNACION] TEXT NOT NULL,"+
-					"PRIMARY KEY ([COREL],[DOCUMENTO])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE INDEX D_COBROD_idx1 ON D_COBROD(ANULADO)";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [D_COBROD_SR] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[DOCUMENTO] TEXT NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[TIPODOC] TEXT NOT NULL,"+
-					"[MONTO] REAL NOT NULL,"+
-					"[PAGO] REAL NOT NULL,"+
-					"[CONTRASENA] TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[DOCUMENTO])"+
-					");";
-			database.execSQL(sql);
-
-
-            sql="CREATE TABLE [D_COBROP] ("+
-                    "[COREL] TEXT NOT NULL,"+
-                    "[ITEM] INTEGER NOT NULL,"+
-                    "[ANULADO] TEXT NOT NULL,"+
-                    "[EMPRESA] TEXT NOT NULL,"+
-                    "[CODPAGO] INTEGER NOT NULL,"+
-                    "[TIPO] TEXT NOT NULL,"+
-                    "[VALOR] REAL NOT NULL,"+
-                    "[DESC1] TEXT NOT NULL,"+
-                    "[DESC2] TEXT NOT NULL,"+
-                    "[DESC3] TEXT NOT NULL,"+
-                    "[DEPOS] TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[ITEM])"+
-                    ");";
-            database.execSQL(sql);
-
-            sql="CREATE INDEX D_COBROP_idx1 ON D_COBROP(ANULADO)";
-            database.execSQL(sql);
 
 			sql="CREATE TABLE [D_CLINUEVO] ("+
 					"[CODIGO] TEXT NOT NULL,"+
@@ -1018,100 +1050,7 @@ public class BaseDatosScript {
 			database.execSQL(sql);
       
 
-			sql="CREATE TABLE [D_FACTURA] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"[VENDEDOR] TEXT NOT NULL,"+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[KILOMETRAJE] REAL NOT NULL,"+
-					"[FECHAENTR] INTEGER NOT NULL,"+
-					"[FACTLINK] TEXT NOT NULL,"+
-					"[TOTAL] REAL NOT NULL,"+
-					"[DESMONTO] REAL NOT NULL,"+
-					"[IMPMONTO] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[BANDERA] TEXT NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"[CALCOBJ] TEXT NOT NULL,"+
-					"[SERIE] TEXT NOT NULL,"+
-					"[CORELATIVO] INTEGER NOT NULL,"+
-					"[IMPRES] INTEGER NOT NULL,"+
-					"[ADD1] TEXT NOT NULL,"+
-					"[ADD2] TEXT NOT NULL,"+
-					"[ADD3] TEXT NOT NULL,"+
-					"[DEPOS] TEXT NOT NULL,"+
-					"[PEDCOREL] TEXT NOT NULL,"+
-					"[REFERENCIA] TEXT NOT NULL,"+
-					"[ASIGNACION] TEXT NOT NULL,"+
-					"[SUPERVISOR] TEXT NOT NULL,"+
-					"[AYUDANTE] TEXT NOT NULL,"+
-					"[VEHICULO] TEXT NOT NULL,"+
-					"[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-					"[RAZON_ANULACION] TEXT NOT NULL,"+
-					"PRIMARY KEY ([COREL])"+
-					");";
-			database.execSQL(sql);
 
-			sql="CREATE INDEX D_FACTURA_idx1 ON D_FACTURA(ANULADO)";
-			database.execSQL(sql);
-			sql="CREATE INDEX D_FACTURA_idx2 ON D_FACTURA(FECHA)";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [D_FACTURAD] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[IMP] REAL NOT NULL,"+
-					"[DES] REAL NOT NULL,"+
-					"[DESMON] REAL NOT NULL,"+
-					"[TOTAL] REAL NOT NULL,"+
-					"[PRECIODOC] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[VAL1] REAL NOT NULL,"+
-					"[VAL2] TEXT NOT NULL,"+					
-					"[UMVENTA] TEXT NOT NULL,"+
-					"[FACTOR] REAL NOT NULL,"+
-					"[UMSTOCK] TEXT NOT NULL,"+
-					"[UMPESO] TEXT NOT NULL,"+										
-					"PRIMARY KEY ([COREL],[PRODUCTO],[UMPESO])"+
-					");";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [D_FACTURAP] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[ITEM] INTEGER NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[CODPAGO] INTEGER NOT NULL,"+
-					"[TIPO] TEXT NOT NULL,"+
-					"[VALOR] REAL NOT NULL,"+
-					"[DESC1] TEXT NOT NULL,"+
-					"[DESC2] TEXT NOT NULL,"+
-					"[DESC3] TEXT NOT NULL,"+
-					"[DEPOS] TEXT NOT NULL,"+
-					"PRIMARY KEY ([COREL],[ITEM])"+
-					");";
-			database.execSQL(sql);
-			
-			
-			sql="CREATE TABLE [D_FACTURAF] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[NOMBRE] TEXT NOT NULL,"+
-					"[NIT] TEXT NOT NULL,"+
-					"[DIRECCION] TEXT NOT NULL,"+
-					"PRIMARY KEY ([COREL])"+
-					");";
-			database.execSQL(sql);
-			
-			
 			sql="CREATE TABLE [D_FACTURAD_LOTES] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[PRODUCTO] TEXT NOT NULL,"+
@@ -1176,42 +1115,7 @@ public class BaseDatosScript {
 			database.execSQL(sql);
 
 
-			sql="CREATE TABLE [D_MOV] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[TIPO] TEXT NOT NULL,"+
-					"[USUARIO] TEXT NOT NULL,"+
-					"[REFERENCIA] TEXT NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"[IMPRES] INTEGER NOT NULL,"+
-					"[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-					"PRIMARY KEY ([COREL])"+
-					");";
-			database.execSQL(sql);
 
-			sql="CREATE INDEX D_MOV_idx1 ON D_MOV(ANULADO)";
-			database.execSQL(sql);
-			sql="CREATE INDEX D_MOV_idx2 ON D_MOV(TIPO)";
-			database.execSQL(sql);
-			sql="CREATE INDEX D_MOV_idx3 ON D_MOV(STATCOM)";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [D_MOVD] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[CANTM] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[PESOM] REAL NOT NULL,"+
-					"[LOTE] TEXT NOT NULL,"+
-					"[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-					"[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
-					"PRIMARY KEY ([COREL],[PRODUCTO],[LOTE],[UNIDADMEDIDA])"+
-					");";
-			database.execSQL(sql);
 
 			sql="CREATE TABLE [D_MOVDB] ("+
 					"[COREL] TEXT NOT NULL,"+
@@ -1253,128 +1157,6 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-			sql="CREATE TABLE [D_ATENCION] ("+
-					"[RUTA] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[HORALLEG] TEXT NOT NULL,"+
-					"[HORASAL] TEXT NOT NULL,"+
-					"[TIEMPO] INTEGER NOT NULL,"+
-					"[VENDEDOR] TEXT NOT NULL,"+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[DIAACT] INTEGER NOT NULL,"+
-					"[DIA] INTEGER NOT NULL,"+
-					"[DIAFLAG] TEXT NOT NULL,"+
-					"[SECUENCIA] INTEGER NOT NULL,"+
-					"[SECUENACT] INTEGER NOT NULL,"+
-					"[CODATEN] TEXT NOT NULL,"+
-					"[KILOMET] REAL NOT NULL,"+
-					"[VALORVENTA] REAL NOT NULL,"+
-					"[VALORNEXT] REAL NOT NULL,"+
-					"[CLIPORDIA] INTEGER NOT NULL,"+
-					"[CODOPER] TEXT NOT NULL,"+
-					"[COREL] TEXT NOT NULL,"+
-					"[SCANNED] TEXT NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"[LLEGO_COMPETENCIA_ANTES] INTEGER NOT NULL,"+
-					"[CoorX] REAL NOT NULL,"+
-					"[CoorY] REAL NOT NULL,"+
-					"[CliCoorX] REAL NOT NULL,"+
-					"[CliCoorY] REAL NOT NULL,"+
-					"[Dist] REAL NOT NULL,"+
-					"PRIMARY KEY ([RUTA],[FECHA],[HORALLEG])"+
-					");";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [D_BONIF] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[ITEM] INTEGER NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[VENPED] TEXT NOT NULL,"+
-					"[TIPO] TEXT NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[COSTO] REAL NOT NULL,"+
-					"[TOTAL] REAL NOT NULL,"+
-					"[STATCOM] TEXT NOT NULL,"+
-					"[UMVENTA] TEXT NOT NULL,"+
-					"[UMSTOCK] TEXT NOT NULL,"+
-					"[UMPESO] TEXT NOT NULL,"+
-					"[FACTOR] REAL NOT NULL,"+
-					"PRIMARY KEY ([COREL],[ITEM])"+
-					");";
-			database.execSQL(sql);
-
-
-			sql="CREATE TABLE [D_BONIF_BARRA] ("+
-					"[COREL] TEXT NOT NULL," +
-					"[BARRA] TEXT NOT NULL," +
-					"[PESO] REAL NOT NULL," +
-					"[PRODUCTO] TEXT NOT NULL," +
-					"[UMVENTA] TEXT NOT NULL," +
-					"[UMSTOCK] TEXT NOT NULL," +
-					"[UMPESO] TEXT NOT NULL," +
-					"[FACTOR] REAL NOT NULL," +
-					"PRIMARY KEY ([COREL],[BARRA])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE TABLE [D_BONIF_LOTES] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[LOTE] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[UMVENTA] TEXT NOT NULL,"+
-					"[UMSTOCK] TEXT NOT NULL,"+
-					"[UMPESO] TEXT NOT NULL,"+
-					"[FACTOR] REAL NOT NULL,"+
-					"PRIMARY KEY ([COREL],[PRODUCTO],[LOTE])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE TABLE [D_BONIF_STOCK] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[CODIGO] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[CANTM] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[plibra] REAL NOT NULL,"+
-					"[LOTE] TEXT NOT NULL,"+
-					"[DOCUMENTO] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[ANULADO] INTEGER NOT NULL,"+
-					"[CENTRO] TEXT NOT NULL,"+
-					"[STATUS] TEXT NOT NULL,"+
-					"[ENVIADO] INTEGER NOT NULL,"+
-					"[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-					"[COREL_D_MOV] TEXT NOT NULL,"+
-					"[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
-					"PRIMARY KEY ([COREL],[CODIGO],[LOTE],[DOCUMENTO],[STATUS],[UNIDADMEDIDA])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE INDEX D_BONIF_STOCK_idx1 ON D_BONIF_STOCK(COREL)";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [D_BONIFFALT] ("+
-					"[COREL] TEXT NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[ANULADO] TEXT NOT NULL,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"[CLIENTE] TEXT NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"PRIMARY KEY ([COREL],[PRODUCTO])"+
-					");";
-			database.execSQL(sql);
-			
 
 			sql="CREATE TABLE [D_REL_PROD_BON] ("+
 					"[COREL] TEXT NOT NULL,"+
@@ -1490,17 +1272,7 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-            sql= "CREATE TABLE [D_RATING]("+
-                    "[IDRATING] INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                    "[RUTA] TEXT NOT NULL,"+
-                    "[VENDEDOR] TEXT NOT NULL,"+
-                    "[RATING] REAL NOT NULL,"+
-                    "[COMENTARIO] TEXT NOT NULL,"+
-                    "[IDTRANSERROR] INTEGER NOT NULL,"+
-                    "[FECHA] INTEGER NOT NULL,"+
-                    "[STATCOM] TEXT NOT NULL"+
-                    ");";
-            database.execSQL(sql);
+             */
 
             return 1;
 		} catch (SQLiteException e) {
@@ -1743,10 +1515,10 @@ public class BaseDatosScript {
                     "'http://192.168.1.137/wsMPos/wsandr.asmx','','');");
             db.execSQL("INSERT INTO FinDia VALUES (0,0, 0,0,0,0, 0,0,0,0);");
 
-            db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
-                    "'2','Nombre Empresa','','',0,'','','',  '',0,0,'GUA',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
-            db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre Negocio','Nombre Negocio','', '','','',1);");
-            db.execSQL("INSERT INTO VENDEDORES VALUES ('1','Gerente','1','1', 3,1,'','',1);");
+            //db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
+            //        "'2','Nombre Empresa','','',0,'','','',  '',0,0,'GUA',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
+            //db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre Negocio','Nombre Negocio','', '','','',1);");
+            //db.execSQL("INSERT INTO VENDEDORES VALUES ('1','Gerente','1','1', 3,1,'','',1);");
 
            datosIniciales(db);
 

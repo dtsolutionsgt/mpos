@@ -254,9 +254,9 @@ public class Lista2 extends PBase {
                 break;
 
             case 13: // Caja
-                sql="SELECT 0,P_RUTA.CODIGO,P_SUCURSAL.DESCRIPCION || ' - ' || P_RUTA.NOMBRE,'','', '','','','' ";
-                sql+="FROM P_RUTA INNER JOIN P_SUCURSAL ON P_RUTA.SUCURSAL=P_SUCURSAL.CODIGO WHERE ";
-                if (act) sql+="(P_RUTA.ACTIVO='S') ";else sql+="(P_RUTA.ACTIVO='N') ";
+                sql="SELECT 0,P_RUTA.CODIGO,P_SUCURSAL.DESCRIPCION,P_RUTA.NOMBRE,'','', '','','','' ";
+                sql+="FROM P_RUTA INNER JOIN P_SUCURSAL ON P_RUTA.SUCURSAL=P_SUCURSAL.CODIGO WHERE (1=1) ";
+                //if (act) sql+="(P_RUTA.ACTIVO='S') ";else sql+="(P_RUTA.ACTIVO='N') ";
                 if (flag) sql+="AND ((P_RUTA.CODIGO='"+ft+"') OR (P_RUTA.NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY P_SUCURSAL.DESCRIPCION,P_RUTA.NOMBRE";
 

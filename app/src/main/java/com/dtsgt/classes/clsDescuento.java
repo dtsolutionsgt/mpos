@@ -233,7 +233,7 @@ public class clsDescuento {
 		Cursor DT;
 		
 		try {
-			vSQL="SELECT DESCUENTO,LINEA,SUBLINEA,MARCA FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
+			vSQL="SELECT DESCUENTO,LINEA,'' AS SUBLINEA,MARCA FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
 			

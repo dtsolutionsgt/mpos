@@ -334,7 +334,7 @@ public class clsBonif {
 		Cursor DT;
 		
 		try {
-			vSQL="SELECT BONIFICACION,LINEA,SUBLINEA,MARCA FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
+			vSQL="SELECT BONIFICACION,LINEA,'' as SUBLINEA,MARCA FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
 			

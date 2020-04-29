@@ -12,29 +12,27 @@ public class clsVendedoresObj {
     public int count;
 
     private Context cont;
-    public BaseDatos Con;
-    public SQLiteDatabase db;
+    private BaseDatos Con;
+    private SQLiteDatabase db;
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
-    public clsClasses clsCls = new clsClasses();
+    private clsClasses clsCls = new clsClasses();
 
-    private String sel = "SELECT * FROM Vendedores";
+    private String sel="SELECT * FROM Vendedores";
     private String sql;
-    public ArrayList<clsClasses.clsVendedores> items = new ArrayList<clsClasses.clsVendedores>();
+    public ArrayList<clsClasses.clsVendedores> items= new ArrayList<clsClasses.clsVendedores>();
 
     public clsVendedoresObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
-        cont = context;
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        cont=context;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
     }
 
@@ -59,7 +57,7 @@ public class clsVendedoresObj {
     }
 
     public void fill(String specstr) {
-        fillItems(sel + " " + specstr);
+        fillItems(sel+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -77,15 +75,16 @@ public class clsVendedoresObj {
 
         ins.init("Vendedores");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("CLAVE", item.clave);
-        ins.add("RUTA", item.ruta);
-        ins.add("NIVEL", item.nivel);
-        ins.add("NIVELPRECIO", item.nivelprecio);
-        ins.add("BODEGA", item.bodega);
-        ins.add("SUBBODEGA", item.subbodega);
-        ins.add("ACTIVO", item.activo);
+        ins.add("CODIGO",item.codigo);
+        ins.add("RUTA",item.ruta);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("CLAVE",item.clave);
+        ins.add("NIVEL",item.nivel);
+        ins.add("NIVELPRECIO",item.nivelprecio);
+        ins.add("BODEGA",item.bodega);
+        ins.add("SUBBODEGA",item.subbodega);
+        ins.add("ACTIVO",item.activo);
+        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
 
         db.execSQL(ins.sql());
 
@@ -95,15 +94,17 @@ public class clsVendedoresObj {
 
         upd.init("Vendedores");
 
-        upd.add("NOMBRE", item.nombre);
-        upd.add("CLAVE", item.clave);
-        upd.add("NIVEL", item.nivel);
-        upd.add("NIVELPRECIO", item.nivelprecio);
-        upd.add("BODEGA", item.bodega);
-        upd.add("SUBBODEGA", item.subbodega);
-        upd.add("ACTIVO", item.activo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("RUTA",item.ruta);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("CLAVE",item.clave);
+        upd.add("NIVEL",item.nivel);
+        upd.add("NIVELPRECIO",item.nivelprecio);
+        upd.add("BODEGA",item.bodega);
+        upd.add("SUBBODEGA",item.subbodega);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='" + item.codigo + "') AND (RUTA='" + item.ruta + "')");
+        upd.Where("(CODIGO_VENDEDOR="+item.codigo_vendedor+")");
 
         db.execSQL(upd.sql());
 
@@ -112,12 +113,12 @@ public class clsVendedoresObj {
     }
 
     private void deleteItem(clsClasses.clsVendedores item) {
-        sql = "DELETE FROM Vendedores WHERE (CODIGO='" + item.codigo + "') AND (RUTA='" + item.ruta + "')";
+        sql="DELETE FROM Vendedores WHERE (CODIGO_VENDEDOR="+item.codigo_vendedor+")";
         db.execSQL(sql);
     }
 
     private void deleteItem(String id) {
-        sql = "DELETE FROM Vendedores WHERE id='" + id + "'";
+        sql="DELETE FROM Vendedores WHERE id='" + id+"'";
         db.execSQL(sql);
     }
 
@@ -127,46 +128,47 @@ public class clsVendedoresObj {
 
         items.clear();
 
-        dt = Con.OpenDT(sq);
-        count = dt.getCount();
-        if (dt.getCount() > 0) dt.moveToFirst();
+        dt=Con.OpenDT(sq);
+        count =dt.getCount();
+        if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsVendedores();
 
-            item.codigo = dt.getString(0);
-            item.nombre = dt.getString(1);
-            item.clave = dt.getString(2);
-            item.ruta = dt.getString(3);
-            item.nivel = dt.getInt(4);
-            item.nivelprecio = dt.getDouble(5);
-            item.bodega = dt.getString(6);
-            item.subbodega = dt.getString(7);
-            item.activo = dt.getInt(8);
+            item.codigo=dt.getString(0);
+            item.ruta=dt.getString(1);
+            item.nombre=dt.getString(2);
+            item.clave=dt.getString(3);
+            item.nivel=dt.getInt(4);
+            item.nivelprecio=dt.getDouble(5);
+            item.bodega=dt.getString(6);
+            item.subbodega=dt.getString(7);
+            item.activo=dt.getInt(8);
+            item.codigo_vendedor=dt.getInt(9);
 
             items.add(item);
 
             dt.moveToNext();
         }
 
-        if (dt != null) dt.close();
+        if (dt!=null) dt.close();
 
     }
 
     public int newID(String idsql) {
-        Cursor dt = null;
+        Cursor dt=null;
         int nid;
 
         try {
-            dt = Con.OpenDT(idsql);
+            dt=Con.OpenDT(idsql);
             dt.moveToFirst();
-            nid = dt.getInt(0) + 1;
+            nid=dt.getInt(0)+1;
         } catch (Exception e) {
-            nid = 1;
+            nid=1;
         }
 
-        if (dt != null) dt.close();
+        if (dt!=null) dt.close();
 
         return nid;
     }
@@ -175,15 +177,16 @@ public class clsVendedoresObj {
 
         ins.init("Vendedores");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("CLAVE", item.clave);
-        ins.add("RUTA", item.ruta);
-        ins.add("NIVEL", item.nivel);
-        ins.add("NIVELPRECIO", item.nivelprecio);
-        ins.add("BODEGA", item.bodega);
-        ins.add("SUBBODEGA", item.subbodega);
-        ins.add("ACTIVO", item.activo);
+        ins.add("CODIGO",item.codigo);
+        ins.add("RUTA",item.ruta);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("CLAVE",item.clave);
+        ins.add("NIVEL",item.nivel);
+        ins.add("NIVELPRECIO",item.nivelprecio);
+        ins.add("BODEGA",item.bodega);
+        ins.add("SUBBODEGA",item.subbodega);
+        ins.add("ACTIVO",item.activo);
+        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
 
         return ins.sql();
 
@@ -193,15 +196,17 @@ public class clsVendedoresObj {
 
         upd.init("Vendedores");
 
-        upd.add("NOMBRE", item.nombre);
-        upd.add("CLAVE", item.clave);
-        upd.add("NIVEL", item.nivel);
-        upd.add("NIVELPRECIO", item.nivelprecio);
-        upd.add("BODEGA", item.bodega);
-        upd.add("SUBBODEGA", item.subbodega);
-        upd.add("ACTIVO", item.activo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("RUTA",item.ruta);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("CLAVE",item.clave);
+        upd.add("NIVEL",item.nivel);
+        upd.add("NIVELPRECIO",item.nivelprecio);
+        upd.add("BODEGA",item.bodega);
+        upd.add("SUBBODEGA",item.subbodega);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='" + item.codigo + "') AND (RUTA='" + item.ruta + "')");
+        upd.Where("(CODIGO_VENDEDOR="+item.codigo_vendedor+")");
 
         return upd.sql();
 

@@ -432,7 +432,6 @@ public class AppMethods {
 			return  umm.equalsIgnoreCase(gl.umpeso);
 
         } catch (Exception e) {
-            toast(e.getMessage());
             return false;
         }
     }
@@ -677,7 +676,7 @@ public class AppMethods {
 			return dt.getString(0);
 
 		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			return "SIN IMPRESORA";
 		}
 	}
@@ -702,7 +701,7 @@ public class AppMethods {
 			return cu.decrypt(dt.getString(0));
 
 		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			return " #### ";
 		}
 	}

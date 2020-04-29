@@ -514,7 +514,9 @@ public class Menu extends PBase {
             public void onClick(DialogInterface dialog, int item) {
                 switch (item) {
                     case 0:
-                        ;break;
+                        gl.autocom = 0;
+                        startActivity(new Intent(Menu.this,WSEnv.class));
+                        break;
                     case 1:
                         gl.autocom = 0;
                         startActivity(new Intent(Menu.this,WSRec.class));

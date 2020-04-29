@@ -347,13 +347,13 @@ public class Clientes extends PBase {
 
 		try {
 
-			sql = "SELECT CODIGO,NOMBRE,ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL " +
+			sql = "SELECT CODIGO,NOMBRE,'' AS ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL " +
 					"FROM P_CLIENTE WHERE (1=1) AND ";
 
 			if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
 
 			if (!filt.isEmpty()) {
-				sql += "AND ((CODIGO LIKE '%" + filt + "%') OR (NOMBRE LIKE '%" + filt + "%')) ";
+				sql += "AND ((NIT LIKE '%" + filt + "%') OR (NOMBRE LIKE '%" + filt + "%')) ";
 			}
 			sql += "ORDER BY NOMBRE";
 
@@ -438,8 +438,6 @@ public class Clientes extends PBase {
 		}
 
 	}
-
-
 
 	private void barcodeClient() {
 		Cursor dt;
@@ -889,6 +887,24 @@ public class Clientes extends PBase {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private int nitnum(String nit) {
+        int pp;
+
+        try {
+            nit=nit.toUpperCase();
+            pp=nit.indexOf("-");
+            if (pp<0) return 0;
+
+            int A=(int) nit.charAt(pp+1);
+            String snit=nit.substring(0,pp)+A;
+            int nnit=Integer.parseInt(snit);
+
+            return nnit;
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     //endregion

@@ -9,7 +9,7 @@ public class clsVendedoresBL {
     }
 
     public void delete(String cod) {
-        parent.db.execSQL("DELETE FROM VENDEDORES WHERE CODIGO='" + cod + "'");
+        //parent.db.execSQL("DELETE FROM VENDEDORES WHERE CODIGO='" + cod + "'");
     }
 
 }

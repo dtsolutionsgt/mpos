@@ -210,7 +210,8 @@ public class ConfigCaja extends PBase {
         cajacode.add("");cajalist.add("");
 
         try {
-            ruta.fill(" WHERE (Activo='S') OR (Codigo='"+selid+"') ORDER BY Nombre");
+            //ruta.fill(" WHERE (Activo='S') OR (Codigo='"+selid+"') ORDER BY Nombre");
+            ruta.fill("  ORDER BY Nombre");
             if (ruta.count==0) {
                 msgAskReturn("Lista de rutas está vacia, no se puede continuar");return false;
             }

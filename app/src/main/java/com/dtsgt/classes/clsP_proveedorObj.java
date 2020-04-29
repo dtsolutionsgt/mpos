@@ -18,23 +18,21 @@ public class clsP_proveedorObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel = "SELECT * FROM P_proveedor";
+    private String sel="SELECT * FROM P_proveedor";
     private String sql;
-    public ArrayList<clsClasses.clsP_proveedor> items = new ArrayList<clsClasses.clsP_proveedor>();
+    public ArrayList<clsClasses.clsP_proveedor> items= new ArrayList<clsClasses.clsP_proveedor>();
 
     public clsP_proveedorObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
-        cont = context;
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        cont=context;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
     }
 
@@ -59,7 +57,7 @@ public class clsP_proveedorObj {
     }
 
     public void fill(String specstr) {
-        fillItems(sel + " " + specstr);
+        fillItems(sel+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -77,9 +75,10 @@ public class clsP_proveedorObj {
 
         ins.init("P_proveedor");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("ACTIVO", item.activo);
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("CODIGO",item.codigo);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("ACTIVO",item.activo);
 
         db.execSQL(ins.sql());
 
@@ -89,10 +88,11 @@ public class clsP_proveedorObj {
 
         upd.init("P_proveedor");
 
-        upd.add("NOMBRE", item.nombre);
-        upd.add("ACTIVO", item.activo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO=" + item.codigo + ")");
+        upd.Where("(CODIGO_PROVEEDOR="+item.codigo_proveedor+")");
 
         db.execSQL(upd.sql());
 
@@ -101,12 +101,12 @@ public class clsP_proveedorObj {
     }
 
     private void deleteItem(clsClasses.clsP_proveedor item) {
-        sql = "DELETE FROM P_proveedor WHERE (CODIGO=" + item.codigo + ")";
+        sql="DELETE FROM P_proveedor WHERE (CODIGO_PROVEEDOR="+item.codigo_proveedor+")";
         db.execSQL(sql);
     }
 
     private void deleteItem(int id) {
-        sql = "DELETE FROM P_proveedor WHERE id=" + id;
+        sql="DELETE FROM P_proveedor WHERE id=" + id;
         db.execSQL(sql);
     }
 
@@ -116,36 +116,41 @@ public class clsP_proveedorObj {
 
         items.clear();
 
-        dt = Con.OpenDT(sq);
-        count = dt.getCount();
-        if (dt.getCount() > 0) dt.moveToFirst();
+        dt=Con.OpenDT(sq);
+        count =dt.getCount();
+        if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_proveedor();
 
-            item.codigo = dt.getInt(0);
-            item.nombre = dt.getString(1);
-            item.activo = dt.getInt(2);
+            item.codigo_proveedor=dt.getInt(0);
+            item.codigo=dt.getString(1);
+            item.nombre=dt.getString(2);
+            item.activo=dt.getInt(3);
 
             items.add(item);
 
             dt.moveToNext();
         }
 
+        if (dt!=null) dt.close();
+
     }
 
     public int newID(String idsql) {
-        Cursor dt;
+        Cursor dt=null;
         int nid;
 
         try {
-            dt = Con.OpenDT(idsql);
+            dt=Con.OpenDT(idsql);
             dt.moveToFirst();
-            nid = dt.getInt(0) + 1;
+            nid=dt.getInt(0)+1;
         } catch (Exception e) {
-            nid = 1;
+            nid=1;
         }
+
+        if (dt!=null) dt.close();
 
         return nid;
     }
@@ -154,9 +159,10 @@ public class clsP_proveedorObj {
 
         ins.init("P_proveedor");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("ACTIVO", item.activo);
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("CODIGO",item.codigo);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("ACTIVO",item.activo);
 
         return ins.sql();
 
@@ -166,10 +172,11 @@ public class clsP_proveedorObj {
 
         upd.init("P_proveedor");
 
-        upd.add("NOMBRE", item.nombre);
-        upd.add("ACTIVO", item.activo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO=" + item.codigo + ")");
+        upd.Where("(CODIGO_PROVEEDOR="+item.codigo_proveedor+")");
 
         return upd.sql();
 
@@ -178,3 +185,4 @@ public class clsP_proveedorObj {
     }
 
 }
+

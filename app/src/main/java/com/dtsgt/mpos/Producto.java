@@ -68,8 +68,10 @@ public class Producto extends PBase {
 		
 		act=0;ordPorNombre=gl.peOrdPorNombre;
 
-		fillSpinner();
-		setHandlers();
+        setHandlers();
+
+		fillSpinner();// Toast index 0
+
 		listItems();
 
 	}
@@ -99,6 +101,7 @@ public class Producto extends PBase {
 
     private void setHandlers() {
 		try{
+
 			listView.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -197,7 +200,6 @@ public class Producto extends PBase {
 
 						scod = spincode.get(position);
 						famid = scod;
-
 						listItems();
 
 						act += 1;
@@ -220,7 +222,6 @@ public class Producto extends PBase {
 		}
 
     }
-
 
     // Main
 	
@@ -282,7 +283,7 @@ public class Producto extends PBase {
 					break;	
 					
 				case 2: // Recarga
-				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS,TIPO FROM P_PRODUCTO WHERE Tipo='P' ";
+				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS,CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_TIPO='P' ";
                     if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
                     if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
 
@@ -308,10 +309,10 @@ public class Producto extends PBase {
                 vItem = clsCls.new clsCD();
 
                 vItem.Cod = cod;
-                vItem.prec="Precio : "+gl.peMon+prodPrecioBase(cod);
+                vItem.prec="Precio : "+gl.peMon+prodPrecioBase(cod);if (prodtipo==2) vItem.prec="";
                 vItem.Desc = name;
                 if (disp>0) exist="Exist : "+mu.frmdecno(disp)+" "+um; else exist="";
-                vItem.Text=exist;
+                vItem.Text=exist;if (prodtipo==2) vItem.Text="";
 
                 items.add(vItem);vitems.add(vItem);
 
@@ -340,13 +341,11 @@ public class Producto extends PBase {
 		}
 
 	}
-	
 
 	private double getDisp(String prodid) {
 		Cursor dt;
 		String umstock = "";
 		double umf1,umf2,umfactor;
-        boolean porpeso=prodPorPeso(prodid);
 
         disp_und =0;
 		
@@ -373,7 +372,7 @@ public class Producto extends PBase {
 			dt.close();
 
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			return 0;
 		}
 		
@@ -408,10 +407,10 @@ public class Producto extends PBase {
 
 			dt.close();
 
-			if (disp_und >0)	return disp_und;
+			if (disp_und >0) return disp_und;
 
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 	    }
 		
 		try {
@@ -468,72 +467,77 @@ public class Producto extends PBase {
 
 			return disp_und;
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			return 0;
 	    }	
 		
 	}
-	
 	
 	// Aux
 	
 	private void fillSpinner(){
 		Cursor DT;
 		String icode,iname;
-			
-		spincode.add("0");
-		spinlist.add("< TODAS >");
-		  
-		try {
-			
-			switch (prodtipo) {  
-			case 0: // Preventa
-				sql="SELECT Codigo,Nombre FROM P_LINEA ORDER BY Nombre";break;
-			case 1:  // Venta   
-				sql="SELECT DISTINCT P_PRODUCTO.LINEA,P_LINEA.NOMBRE "+
-				     "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO " +
-				     "INNER JOIN P_LINEA ON P_PRODUCTO.LINEA=P_LINEA.CODIGO " +
-				     "WHERE (P_STOCK.CANT > 0) ORDER BY P_LINEA.NOMBRE";
-				break;	
-			case 2: // Mercadeo propio
-				sql="SELECT Codigo,Nombre FROM P_LINEA ORDER BY Nombre";break;
-			case 3:  // Mercadeo comp
-				break;
-			}			
-						
-			DT=Con.OpenDT(sql);					
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-					  
-			  icode=DT.getString(0);
-			  iname=DT.getString(1);
-				  
-			  spincode.add(icode);
-			  spinlist.add(iname);
-			  
-			  DT.moveToNext();
-			}
-					
-		} catch (SQLException e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox(e.getMessage());
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		   	mu.msgbox( e.getMessage());
-	    }
-					
+
+        try {
+            spincode.clear();
+            spinlist.clear();
+
+            spincode.add("0");
+            //spinlist.add("< TODAS >"); // Toast index 0
+        } catch (Exception e) {
+
+        }
+
+        try {
+
+            switch (prodtipo) {
+                case 0: // Preventa
+                    sql="SELECT CODIGO_LINEA,Nombre FROM P_LINEA ORDER BY Nombre";break;
+                case 1:  // Venta
+                    sql="SELECT DISTINCT P_PRODUCTO.LINEA,P_LINEA.NOMBRE "+
+                            "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO " +
+                            "INNER JOIN P_LINEA ON P_PRODUCTO.LINEA=P_LINEA.CODIGO_LINEA " +
+                            "WHERE (P_STOCK.CANT > 0) ORDER BY P_LINEA.NOMBRE";
+                    break;
+                case 2: // Mercadeo propio
+                    sql="SELECT CODIGO_LINEA,Nombre FROM P_LINEA ORDER BY Nombre";break;
+                case 3:  // Mercadeo comp
+                    break;
+            }
+
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                while (!DT.isAfterLast()) {
+
+                    icode=DT.getString(0);
+                    iname=DT.getString(1);
+
+                    spincode.add(icode);
+                    spinlist.add(iname);
+
+                    DT.moveToNext();
+                }
+            }
+
+        } catch (Exception e) {
+            mu.msgbox( e.getMessage());
+        }
+
+
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			
 		spinFam.setAdapter(dataAdapter);
-			
+
 		try {
 			spinFam.setSelection(0);
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			spinFam.setSelection(0);
 	    }
-		
+
 	}	
 
 	public String ltrim(String ss,int sw) {
@@ -551,15 +555,6 @@ public class Producto extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 		return ss;
-	}
-
-    private boolean prodPorPeso(String prodid) {
-		try {
-			return app.ventaPeso(prodid);
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			return false;
-		}
 	}
 
 	private boolean prodBarra(String prodid) {

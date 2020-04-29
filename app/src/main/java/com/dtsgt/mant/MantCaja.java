@@ -79,11 +79,14 @@ public class MantCaja extends PBase {
     }
 
     public void doStatus(View view) {
+        /*
         if (item.activo.equalsIgnoreCase("S")) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
         }
+
+         */
     }
 
     public void doExit(View view) {
@@ -131,11 +134,15 @@ public class MantCaja extends PBase {
             txt1.setEnabled(false);
             txt2.requestFocus();
             imgstat.setVisibility(View.VISIBLE);
+
+            /*
             if (item.activo.equalsIgnoreCase("S")) {
                 imgstat.setImageResource(R.drawable.delete_64);
             } else {
                 imgstat.setImageResource(R.drawable.mas);
             }
+
+             */
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -149,60 +156,7 @@ public class MantCaja extends PBase {
 
         item.codigo="";
         item.nombre="";
-        item.activo="S";
-        item.vendedor="";
-        item.venta="V";
-        item.forania="N";
         item.sucursal="1";
-        item.tipo="1";
-        item.subtipo="1";
-        item.bodega="1";
-        item.subbodega="1";
-        item.descuento="S";
-        item.bonif="S";
-        item.kilometraje="N";
-        item.impresion="S";
-        item.recibopropio="N";
-        item.celular="N";
-        item.rentabil="N";
-        item.oferta="N";
-        item.percrent=0;
-        item.pasarcredito="N";
-        item.teclado="N";
-        item.editdevprec="N";
-        item.editdesc="N";
-        item.params="N";
-        item.semana=1;
-        item.objano=0;
-        item.objmes=0;
-        item.syncfold="";
-        item.wlfold="";
-        item.ftpfold="";
-        item.email="";
-        item.lastimp=0;
-        item.lastcom=0;
-        item.lastexp=0;
-        item.impstat="";
-        item.expstat="";
-        item.comstat="";
-        item.param1="";
-        item.param2="";
-        item.pesolim=0;
-        item.intervalo_max=5;
-        item.lecturas_valid=3;
-        item.intentos_lect=30;
-        item.hora_ini=10;
-        item.hora_fin=22;
-        item.aplicacion_usa=3;
-        item.puerto_gps=0;
-        item.es_ruta_oficina=0;
-        item.diluir_bon=0;
-        item.preimpresion_factura=0;
-        item.modificar_media_pago=0;
-        item.idimpresora="";
-        item.numversion="";
-        item.fechaversion=0;
-        item.arquitectura="";
 
         showItem();
     }
@@ -362,11 +316,14 @@ public class MantCaja extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                /*
                 if (item.activo.equalsIgnoreCase("S")) {
                     item.activo="N";
                 } else {
                     item.activo="N";
                 };
+
+                 */
                 updateItem();
                 finish();
             }

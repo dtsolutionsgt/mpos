@@ -48,7 +48,7 @@ public class clsP_productoObj {
         deleteItem(item);
     }
 
-    public void delete(String id) {
+    public void delete(int id) {
         deleteItem(id);
     }
 
@@ -75,10 +75,10 @@ public class clsP_productoObj {
 
         ins.init("P_producto");
 
+        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
         ins.add("CODIGO",item.codigo);
-        ins.add("TIPO",item.tipo);
+        ins.add("CODIGO_TIPO",item.codigo_tipo);
         ins.add("LINEA",item.linea);
-        ins.add("SUBLINEA",item.sublinea);
         ins.add("EMPRESA",item.empresa);
         ins.add("MARCA",item.marca);
         ins.add("CODBARRA",item.codbarra);
@@ -101,6 +101,11 @@ public class clsP_productoObj {
         ins.add("OFRECER",item.ofrecer);
         ins.add("RENTAB",item.rentab);
         ins.add("DESCMAX",item.descmax);
+        ins.add("IVA",item.iva);
+        ins.add("CODBARRA2",item.codbarra2);
+        ins.add("CBCONV",item.cbconv);
+        ins.add("BODEGA",item.bodega);
+        ins.add("SUBBODEGA",item.subbodega);
         ins.add("PESO_PROMEDIO",item.peso_promedio);
         ins.add("MODIF_PRECIO",item.modif_precio);
         ins.add("IMAGEN",item.imagen);
@@ -120,7 +125,7 @@ public class clsP_productoObj {
         ins.add("ES_VENDIBLE",item.es_vendible);
         ins.add("UNIGRASAP",item.unigrasap);
         ins.add("UM_SALIDA",item.um_salida);
-        ins.add("ACTIVO",item.activo);
+        ins.add("Activo",item.activo);
 
         db.execSQL(ins.sql());
 
@@ -130,9 +135,9 @@ public class clsP_productoObj {
 
         upd.init("P_producto");
 
-        upd.add("TIPO",item.tipo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("CODIGO_TIPO",item.codigo_tipo);
         upd.add("LINEA",item.linea);
-        upd.add("SUBLINEA",item.sublinea);
         upd.add("EMPRESA",item.empresa);
         upd.add("MARCA",item.marca);
         upd.add("CODBARRA",item.codbarra);
@@ -155,6 +160,11 @@ public class clsP_productoObj {
         upd.add("OFRECER",item.ofrecer);
         upd.add("RENTAB",item.rentab);
         upd.add("DESCMAX",item.descmax);
+        upd.add("IVA",item.iva);
+        upd.add("CODBARRA2",item.codbarra2);
+        upd.add("CBCONV",item.cbconv);
+        upd.add("BODEGA",item.bodega);
+        upd.add("SUBBODEGA",item.subbodega);
         upd.add("PESO_PROMEDIO",item.peso_promedio);
         upd.add("MODIF_PRECIO",item.modif_precio);
         upd.add("IMAGEN",item.imagen);
@@ -174,9 +184,9 @@ public class clsP_productoObj {
         upd.add("ES_VENDIBLE",item.es_vendible);
         upd.add("UNIGRASAP",item.unigrasap);
         upd.add("UM_SALIDA",item.um_salida);
-        upd.add("ACTIVO",item.activo);
+        upd.add("Activo",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_PRODUCTO="+item.codigo_producto+")");
 
         db.execSQL(upd.sql());
 
@@ -185,12 +195,12 @@ public class clsP_productoObj {
     }
 
     private void deleteItem(clsClasses.clsP_producto item) {
-        sql="DELETE FROM P_producto WHERE (CODIGO='"+item.codigo+"')";
+        sql="DELETE FROM P_producto WHERE (CODIGO_PRODUCTO="+item.codigo_producto+")";
         db.execSQL(sql);
     }
 
-    private void deleteItem(String id) {
-        sql="DELETE FROM P_producto WHERE id='" + id+"'";
+    private void deleteItem(int id) {
+        sql="DELETE FROM P_producto WHERE id=" + id;
         db.execSQL(sql);
     }
 
@@ -208,10 +218,10 @@ public class clsP_productoObj {
 
             item = clsCls.new clsP_producto();
 
-            item.codigo=dt.getString(0);
-            item.tipo=dt.getString(1);
-            item.linea=dt.getString(2);
-            item.sublinea=dt.getString(3);
+            item.codigo_producto=dt.getInt(0);
+            item.codigo=dt.getString(1);
+            item.codigo_tipo=dt.getString(2);
+            item.linea=dt.getString(3);
             item.empresa=dt.getString(4);
             item.marca=dt.getString(5);
             item.codbarra=dt.getString(6);
@@ -234,26 +244,31 @@ public class clsP_productoObj {
             item.ofrecer=dt.getString(23);
             item.rentab=dt.getString(24);
             item.descmax=dt.getString(25);
-            item.peso_promedio=dt.getDouble(26);
-            item.modif_precio=dt.getInt(27);
-            item.imagen=dt.getString(28);
-            item.video=dt.getString(29);
-            item.venta_por_peso=dt.getInt(30);
-            item.es_prod_barra=dt.getInt(31);
-            item.unid_inv=dt.getString(32);
-            item.venta_por_paquete=dt.getInt(33);
-            item.venta_por_factor_conv=dt.getInt(34);
-            item.es_serializado=dt.getInt(35);
-            item.param_caducidad=dt.getInt(36);
-            item.producto_padre=dt.getString(37);
-            item.factor_padre=dt.getDouble(38);
-            item.tiene_inv=dt.getInt(39);
-            item.tiene_vineta_o_tubo=dt.getInt(40);
-            item.precio_vineta_o_tubo=dt.getDouble(41);
-            item.es_vendible=dt.getInt(42);
-            item.unigrasap=dt.getDouble(43);
-            item.um_salida=dt.getString(44);
-            item.activo=dt.getInt(45);
+            item.iva=dt.getString(26);
+            item.codbarra2=dt.getString(27);
+            item.cbconv=dt.getInt(28);
+            item.bodega=dt.getString(29);
+            item.subbodega=dt.getString(30);
+            item.peso_promedio=dt.getDouble(31);
+            item.modif_precio=dt.getInt(32);
+            item.imagen=dt.getString(33);
+            item.video=dt.getString(34);
+            item.venta_por_peso=dt.getInt(35);
+            item.es_prod_barra=dt.getInt(36);
+            item.unid_inv=dt.getString(37);
+            item.venta_por_paquete=dt.getInt(38);
+            item.venta_por_factor_conv=dt.getInt(39);
+            item.es_serializado=dt.getInt(40);
+            item.param_caducidad=dt.getInt(41);
+            item.producto_padre=dt.getString(42);
+            item.factor_padre=dt.getDouble(43);
+            item.tiene_inv=dt.getInt(44);
+            item.tiene_vineta_o_tubo=dt.getInt(45);
+            item.precio_vineta_o_tubo=dt.getDouble(46);
+            item.es_vendible=dt.getInt(47);
+            item.unigrasap=dt.getDouble(48);
+            item.um_salida=dt.getString(49);
+            item.activo=dt.getInt(50);
 
             items.add(item);
 
@@ -285,10 +300,10 @@ public class clsP_productoObj {
 
         ins.init("P_producto");
 
+        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
         ins.add("CODIGO",item.codigo);
-        ins.add("TIPO",item.tipo);
+        ins.add("CODIGO_TIPO",item.codigo_tipo);
         ins.add("LINEA",item.linea);
-        ins.add("SUBLINEA",item.sublinea);
         ins.add("EMPRESA",item.empresa);
         ins.add("MARCA",item.marca);
         ins.add("CODBARRA",item.codbarra);
@@ -311,6 +326,11 @@ public class clsP_productoObj {
         ins.add("OFRECER",item.ofrecer);
         ins.add("RENTAB",item.rentab);
         ins.add("DESCMAX",item.descmax);
+        ins.add("IVA",item.iva);
+        ins.add("CODBARRA2",item.codbarra2);
+        ins.add("CBCONV",item.cbconv);
+        ins.add("BODEGA",item.bodega);
+        ins.add("SUBBODEGA",item.subbodega);
         ins.add("PESO_PROMEDIO",item.peso_promedio);
         ins.add("MODIF_PRECIO",item.modif_precio);
         ins.add("IMAGEN",item.imagen);
@@ -330,7 +350,7 @@ public class clsP_productoObj {
         ins.add("ES_VENDIBLE",item.es_vendible);
         ins.add("UNIGRASAP",item.unigrasap);
         ins.add("UM_SALIDA",item.um_salida);
-        ins.add("ACTIVO",item.activo);
+        ins.add("Activo",item.activo);
 
         return ins.sql();
 
@@ -340,9 +360,9 @@ public class clsP_productoObj {
 
         upd.init("P_producto");
 
-        upd.add("TIPO",item.tipo);
+        upd.add("CODIGO",item.codigo);
+        upd.add("CODIGO_TIPO",item.codigo_tipo);
         upd.add("LINEA",item.linea);
-        upd.add("SUBLINEA",item.sublinea);
         upd.add("EMPRESA",item.empresa);
         upd.add("MARCA",item.marca);
         upd.add("CODBARRA",item.codbarra);
@@ -365,6 +385,11 @@ public class clsP_productoObj {
         upd.add("OFRECER",item.ofrecer);
         upd.add("RENTAB",item.rentab);
         upd.add("DESCMAX",item.descmax);
+        upd.add("IVA",item.iva);
+        upd.add("CODBARRA2",item.codbarra2);
+        upd.add("CBCONV",item.cbconv);
+        upd.add("BODEGA",item.bodega);
+        upd.add("SUBBODEGA",item.subbodega);
         upd.add("PESO_PROMEDIO",item.peso_promedio);
         upd.add("MODIF_PRECIO",item.modif_precio);
         upd.add("IMAGEN",item.imagen);
@@ -384,9 +409,9 @@ public class clsP_productoObj {
         upd.add("ES_VENDIBLE",item.es_vendible);
         upd.add("UNIGRASAP",item.unigrasap);
         upd.add("UM_SALIDA",item.um_salida);
-        upd.add("ACTIVO",item.activo);
+        upd.add("Activo",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_PRODUCTO="+item.codigo_producto+")");
 
         return upd.sql();
 

@@ -13,6 +13,8 @@ import android.widget.EditText;
 
 import com.dtsgt.base.appGlobals;
 
+import java.text.DecimalFormat;
+
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef;
@@ -235,7 +237,8 @@ public class CliPos extends PBase {
 				txtNIT.requestFocus();return;
 			}
 
-			sql="SELECT Nombre,Direccion FROM P_CLIENTE WHERE CODIGO='"+NIT+"'";
+			int nnit=nitnum(NIT);
+			sql="SELECT Nombre,Direccion FROM P_CLIENTE WHERE CODIGO_CLIENTE="+nnit;
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 
@@ -249,101 +252,80 @@ public class CliPos extends PBase {
 
 	private boolean agregaCliente(String NIT,String Nom,String dir) {
 
-		try {
+        int codigo=nitnum(NIT);
 
+		try {
 			ins.init("P_CLIENTE");
 
-			ins.add("CODIGO",NIT);
-			ins.add("NOMBRE",Nom);
-			ins.add("BLOQUEADO","N");
-			ins.add("TIPONEG","");
-			ins.add("TIPO","");
-			ins.add("SUBTIPO","");
-			ins.add("CANAL","");
-			ins.add("SUBCANAL","");
-			ins.add("NIVELPRECIO",1);
+            ins.add("CODIGO_CLIENTE",codigo);
 
-			ins.add("MEDIAPAGO","1");
-			ins.add("LIMITECREDITO",0);
-			ins.add("DIACREDITO",0);
-			ins.add("DESCUENTO","N");
-			ins.add("BONIFICACION","N");
-			ins.add("ULTVISITA",fecha);
-
-			ins.add("IMPSPEC",0);
-			ins.add("INVTIPO","N");
-			ins.add("INVEQUIPO","N");
-			ins.add("INV1","N");
-			ins.add("INV2","N");
-			ins.add("INV3","N");
-
-			ins.add("NIT",NIT);
-			ins.add("MENSAJE","N");
+            ins.add("CODIGO",""+codigo);
+            ins.add("NOMBRE",Nom);
+            ins.add("BLOQUEADO","N");
+            ins.add("NIVELPRECIO",1);
+            ins.add("MEDIAPAGO","1");
+            ins.add("LIMITECREDITO",0);
+            ins.add("DIACREDITO",0);
+            ins.add("DESCUENTO","S");
+            ins.add("BONIFICACION","S");
+            ins.add("ULTVISITA",du.getActDate());
+            ins.add("IMPSPEC",0);
+            ins.add("NIT",NIT.toUpperCase());
             ins.add("EMAIL","");
-            ins.add("ESERVICE","");
-	        ins.add("TELEFONO"," ");
-			ins.add("DIRTIPO","N");
-			ins.add("DIRECCION",dir);
-            ins.add("REGION"," ");
-			ins.add("SUCURSAL","1");
-
-            ins.add("MUNICIPIO"," ");
-            ins.add("CIUDAD"," ");
-            ins.add("ZONA","1");
-            ins.add("COLONIA"," ");
-            ins.add("AVENIDA"," ");
-            ins.add("CALLE"," ");
-            ins.add("NUMERO"," ");
-            ins.add("CARTOGRAFICO"," ");
-
-    		ins.add("COORX",0);
-			ins.add("COORY",0);
-            ins.add("BODEGA","");
+            ins.add("ESERVICE","N");
+            ins.add("TELEFONO"," ");
+            ins.add("DIRECCION",dir);
+            ins.add("COORX",0);
+            ins.add("COORY",0);
+            ins.add("BODEGA",""+gl.sucur);
             ins.add("COD_PAIS","");
-			ins.add("FIRMADIG","N");
-			ins.add("CODBARRA","");
-			ins.add("VALIDACREDITO","N");
-            ins.add("FACT_VS_FACT","0");
-            ins.add("CHEQUEPOST","N");
-
-			ins.add("PRECIO_ESTRATEGICO","N");
-			ins.add("NOMBRE_PROPIETARIO","");
-			ins.add("NOMBRE_REPRESENTANTE","");
-			ins.add("PERCEPCION",0);
+            ins.add("CODBARRA","");
+  			ins.add("PERCEPCION",0);
 			ins.add("TIPO_CONTRIBUYENTE","");
-			ins.add("ID_DESPACHO",0);
-			ins.add("ID_FACTURACION",0);
-			ins.add("MODIF_PRECIO",0);
 
 			db.execSQL(ins.sql());
 
 			return true;
 
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-
-			//toast(e.getMessage());
-			//MU.msgbox("E", e.getMessage());
 
 			try {
 
 				upd.init("P_CLIENTE");
 				upd.add("NOMBRE",Nom);
                 upd.add("DIRECCION",dir);
-				upd.Where("CODIGO='"+NIT+"'");
+                ins.add("ESERVICE","N");
+				upd.Where("CODIGO_CLIENTE="+codigo);
 
 				db.execSQL(upd.sql());
 
 				return true;
 
 			} catch (SQLException e1) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 				mu.msgbox(e1.getMessage());return false;
 			}
 
 		}
 
 	}
+
+	private int nitnum(String nit) {
+        int pp;
+
+        try {
+            nit=nit.toUpperCase();
+            pp=nit.indexOf("-");
+            if (pp<0) return 0;
+
+            int A=(int) nit.charAt(pp+1);
+            String snit=nit.substring(0,pp)+A;
+            int nnit=Integer.parseInt(snit);
+
+            return nnit;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 
 	private void limpiaCampos() {
 		try{
