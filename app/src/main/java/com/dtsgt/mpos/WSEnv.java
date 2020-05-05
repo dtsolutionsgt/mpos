@@ -2,13 +2,19 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.SQLException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.base.clsDataBuilder;
 import com.dtsgt.classes.XMLObject;
+import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_facturadObj;
+import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bonifObj;
 import com.dtsgt.classes.clsP_clienteObj;
@@ -89,18 +95,30 @@ import com.dtsgt.classesws.clsBeP_USOPCIONList;
 import com.dtsgt.classesws.clsBeVENDEDORES;
 import com.dtsgt.classesws.clsBeVENDEDORESList;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class WSEnv extends PBase {
 
-    private TextView lbl1;
+    private TextView lbl1,lbl2;
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
     private XMLObject xobj;
-    private ArrayList<String> script = new ArrayList<String>();
 
-    private String plabel;
+    private clsD_facturaObj D_facturaObj;
+    private clsD_facturadObj D_facturadObj;
+    private clsD_facturapObj D_facturapObj;
+
+    private ArrayList<String> clients = new ArrayList<String>();
+    private ArrayList<String> fact = new ArrayList<String>();
+
+    private String CSQL,plabel,rs,corel,ferr,idfact;
+    private int ftot,fsend,fidx;
+    private boolean factsend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,21 +127,26 @@ public class WSEnv extends PBase {
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);
-        lbl1.setText("");
+        lbl1 = (TextView) findViewById(R.id.textView7);lbl1.setText("");
+        lbl2 = (TextView) findViewById(R.id.textView151);lbl2.setText("");
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
         getURL();
         ws = new WebServiceHandler(WSEnv.this, gl.wsurl);
         xobj = new XMLObject(ws);
+
+        D_facturaObj=new clsD_facturaObj(this,Con,db);
+        D_facturadObj=new clsD_facturadObj(this,Con,db);
+        D_facturapObj=new clsD_facturapObj(this,Con,db);
+
     }
 
 
     //region Events
 
     public void doStart(View view) {
-        script.clear();
+        prepareSend();
         pbar.setVisibility(View.VISIBLE);
         execws(1);
     }
@@ -143,13 +166,18 @@ public class WSEnv extends PBase {
             try {
                 switch (ws.callback) {
                     case 1:
-                        callMethod("Commit", "SQL", "12345");
+                        processClients();
+                        if (clients.size()>0) callMethod("Commit", "SQL", CSQL);
                         break;
-
+                    case 2:
+                        processFactura();
+                        if (ftot>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
                 }
             } catch (Exception e) {
-                error = e.getMessage();
-                errorflag = true;
+                error = e.getMessage();errorflag=true;
             }
         }
     }
@@ -166,15 +194,22 @@ public class WSEnv extends PBase {
 
             switch (ws.callback) {
                 case 1:
-                    processEmpresas();if (ws.errorflag) { processComplete();break;}
-                    //execws(3);
+                    if (clients.size()>0) statusClients();
+                    execws(2);
+                    break;
+                case 2:
+                    statusFactura();
+                    if (fidx>=ftot) {
+                        //processComplete();
+                    } else {
+                        //execws(2);
+                    }
                     processComplete();
                     break;
         }
 
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
         }
     }
@@ -211,31 +246,11 @@ public class WSEnv extends PBase {
         if (ws.errorflag) {
             msgboxwait(ws.error);
         } else {
-            processData();
-        }
-    }
-
-    private boolean processData() {
-
-        try {
-            db.beginTransaction();
-
-            for (int i = 0; i < script.size(); i++) {
-                sql = script.get(i);
-                db.execSQL(sql);
-                //msgbox(sql);
-            }
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            msgboxwait("Recepción completa");
-
-            return true;
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox("DB Commit Error\n" + e.getMessage() + "\n" + sql);
-            return false;
+            ss ="Envío completo\n";
+            ss+="Facturas total : "+ftot+"\n";
+            ss+="Facturas sin envio : "+(ftot-fsend);
+            msgboxwait(ss);
+            if (!ferr.isEmpty()) msgbox("Factura : "+idfact+"\n"+ferr);
         }
     }
 
@@ -243,53 +258,172 @@ public class WSEnv extends PBase {
 
     //region Envío
 
-    private void processEmpresas() {
+    private void processFactura() {
+        fidx++;corel=fact.get(fidx);
+        factsend=false;
+
+        clients.clear();
+
         try {
+            D_facturaObj.fill("WHERE COREL='"+corel+"'");
+            D_facturadObj.fill("WHERE COREL='"+corel+"'");
+            D_facturapObj.fill("WHERE COREL='"+corel+"'");
 
-            /*
-            clsBeP_EMPRESA item = new clsBeP_EMPRESA();
-            clsClasses.clsP_empresa var = clsCls.new clsP_empresa();
+            idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
-            script.add("DELETE FROM P_EMPRESA");
+            CSQL=addFactheader(D_facturaObj.first())+ "*";
 
-            item = xobj.getresult(clsBeP_EMPRESA.class, "GetP_EMPRESA");
+            for (int i = 0; i <D_facturadObj.count; i++) {
+                CSQL=CSQL +D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + "*";
+            }
 
-            var.empresa =""+ item.EMPRESA;
-            var.nombre = item.NOMBRE;
-            var.col_imp = item.COL_IMP;
-            var.logo="";
-            var.razon_social=item.RAZON_SOCIAL+"";
-            var.identificacion_tributaria=item.IDENTIFICACION_TRIBUTARIA+"";
-            var.telefono=item.TELEFONO+"";
-            var.cod_pais=item.COD_PAIS+"";
-            var.nombre_contacto=item.NOMBRE_CONTACTO+"";
-            var.apellido_contacto=item.APELLIDO_CONTACTO+"";
-            var.direccion=item.DIRECCION+"";
-            var.correo=item.CORREO+"";
-            var.codigo_activacion=item.CODIGO_ACTIVACION+"";
-            var.cod_cant_emp=item.COD_CANT_EMP;
-            var.cantidad_puntos_venta=item.CANTIDAD_PUNTOS_VENTA;
+            for (int i = 0; i <D_facturapObj.count; i++) {
+                CSQL=CSQL +D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + "*";
+            }
 
-            clsP_empresaObj P_empresaObj = new clsP_empresaObj(this, Con, db);
-
-            script.add(P_empresaObj.addItemSql(var));
-*/
         } catch (Exception e) {
-            ws.error = e.getMessage();ws.errorflag = true;
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
+    public String addFactheader(clsClasses.clsD_factura item) {
+
+        String fs=""+du.univfechalong(item.fecha);
+
+        ins.init("D_factura");
+
+        ins.add("EMPRESA",item.empresa);
+        ins.add("COREL",item.corel);
+        ins.add("ANULADO",item.anulado);
+        ins.add("FECHA",fs);
+        ins.add("RUTA",item.ruta);
+        ins.add("VENDEDOR",item.vendedor);
+        ins.add("CLIENTE",item.cliente);
+        ins.add("KILOMETRAJE",item.kilometraje);
+        ins.add("FECHAENTR",fs);
+        ins.add("FACTLINK",item.factlink);
+        ins.add("TOTAL",item.total);
+        ins.add("DESMONTO",item.desmonto);
+        ins.add("IMPMONTO",item.impmonto);
+        ins.add("PESO",item.peso);
+        ins.add("BANDERA",item.bandera);
+        ins.add("STATCOM",item.statcom);
+        ins.add("CALCOBJ",item.calcobj);
+        ins.add("SERIE",item.serie);
+        ins.add("CORELATIVO",item.corelativo);
+        ins.add("IMPRES",item.impres);
+        ins.add("ADD1",item.add1);
+        ins.add("ADD2",item.add2);
+        ins.add("ADD3",item.add3);
+        ins.add("DEPOS",item.depos);
+        ins.add("PEDCOREL",item.pedcorel);
+        ins.add("REFERENCIA",item.referencia);
+        ins.add("ASIGNACION",item.asignacion);
+        ins.add("SUPERVISOR",item.supervisor);
+        ins.add("AYUDANTE",item.ayudante);
+        ins.add("VEHICULO",item.vehiculo);
+        ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
+        ins.add("RAZON_ANULACION",item.razon_anulacion);
+
+        return ins.sql();
+
+    }
+
+    private void statusFactura() {
+
+        try {
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+            if (!rs.equalsIgnoreCase("#")) {
+                ferr=rs;factsend=true;return;
+            } else {
+                factsend=true;
+            }
+
+            try {
+                sql="UPDATE D_Factura SET STATCOM='S' WHERE COREL='"+corel+"'";
+                db.execSQL(sql);
+            } catch (SQLException e) {
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    private void processClients() {
+        int ccli;
+
+        clients.clear();
+
+        try {
+            clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
+            P_clienteObj.fill("WHERE ESERVICE='N'");
+
+            CSQL="";
+            for (int i = 0; i <P_clienteObj.count; i++) {
+
+                ccli=P_clienteObj.items.get(i).codigo_cliente;
+                P_clienteObj.items.get(i).eservice="S";
+
+                ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+ccli+")";
+                CSQL = CSQL + ss + "*";
+                ss=P_clienteObj.addItemSql(P_clienteObj.items.get(i),Integer.parseInt(gl.emp));
+                CSQL = CSQL + ss + "*";
+
+                clients.add(""+ccli);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void statusClients() {
+        try {
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+            if (!rs.equalsIgnoreCase("#")) {
+                ws.error=rs;ws.errorflag=true;return;
+            }
+
+            for (int i = 0; i <clients.size(); i++) {
+                try {
+                    sql="UPDATE P_CLIENTE SET ESERVICE='S' WHERE CODIGO_CLIENTE="+clients.get(i);
+                    db.execSQL(sql);
+                } catch (SQLException e) {
+                }
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
 
     //endregion
 
     //region Aux
 
+    private void prepareSend() {
+        ferr="";
+
+        try {
+            D_facturaObj.fill("WHERE STATCOM='N'");
+            ftot=D_facturaObj.count;
+            fsend=0;
+            if (ftot>0) fidx=-1;else fidx=0;
+
+            fact.clear();
+            for (int i = 0; i <ftot; i++) {
+                fact.add(D_facturaObj.items.get(i).corel);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
 
-        /*
         try {
-            File file1 = new File(Environment.getExternalStorageDirectory(), "/tomws.txt");
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
             if (file1.exists()) {
                 FileInputStream fIn = new FileInputStream(file1);
                 BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
@@ -301,9 +435,8 @@ public class WSEnv extends PBase {
             gl.wsurl ="";
         }
 
-        if (!gl.wsurl.isEmpty()) lblurl.setText(gl.wsurl);else lblurl.setText("Falta archivo con URL");
+        if (!gl.wsurl.isEmpty()) lbl2.setText(gl.wsurl);else lbl2.setText("Falta archivo con URL");
 
-        */
     }
 
     private void updateLabel() {

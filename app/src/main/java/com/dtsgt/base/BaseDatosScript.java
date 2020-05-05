@@ -25,7 +25,7 @@ public class BaseDatosScript {
 					"ID integer NOT NULL primary key,"+
 					"EmpID     INTEGER  NOT NULL,"+
 					"dbver     INTEGER  NOT NULL,"+
-					"param1    INTEGER  NOT NULL,"+
+					"param1    INTEGER  NOT NULL,"+  //
 					"param2    INTEGER  NOT NULL,"+
 					"prn       TEXT     NOT NULL,"+
 					"prnparam  TEXT     NOT NULL,"+
@@ -617,86 +617,79 @@ public class BaseDatosScript {
 		  
 		try {
 
-            sql="CREATE TABLE [D_FACTURA] ("+
-                    "[COREL] TEXT NOT NULL,"+
-                    "[ANULADO] TEXT NOT NULL,"+
-                    "[FECHA] INTEGER NOT NULL,"+
-                    "[EMPRESA] TEXT NOT NULL,"+
-                    "[RUTA] TEXT NOT NULL,"+
-                    "[VENDEDOR] TEXT NOT NULL,"+
-                    "[CLIENTE] TEXT NOT NULL,"+
-                    "[KILOMETRAJE] REAL NOT NULL,"+
-                    "[FECHAENTR] INTEGER NOT NULL,"+
-                    "[FACTLINK] TEXT NOT NULL,"+
-                    "[TOTAL] REAL NOT NULL,"+
-                    "[DESMONTO] REAL NOT NULL,"+
-                    "[IMPMONTO] REAL NOT NULL,"+
-                    "[PESO] REAL NOT NULL,"+
-                    "[BANDERA] TEXT NOT NULL,"+
-                    "[STATCOM] TEXT NOT NULL,"+
-                    "[CALCOBJ] TEXT NOT NULL,"+
-                    "[SERIE] TEXT NOT NULL,"+
-                    "[CORELATIVO] INTEGER NOT NULL,"+
-                    "[IMPRES] INTEGER NOT NULL,"+
-                    "[ADD1] TEXT NOT NULL,"+
-                    "[ADD2] TEXT NOT NULL,"+
-                    "[ADD3] TEXT NOT NULL,"+
-                    "[DEPOS] TEXT NOT NULL,"+
-                    "[PEDCOREL] TEXT NOT NULL,"+
-                    "[REFERENCIA] TEXT NOT NULL,"+
-                    "[ASIGNACION] TEXT NOT NULL,"+
-                    "[SUPERVISOR] TEXT NOT NULL,"+
-                    "[AYUDANTE] TEXT NOT NULL,"+
-                    "[VEHICULO] TEXT NOT NULL,"+
-                    "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-                    "[RAZON_ANULACION] TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL])"+
+            sql="CREATE TABLE [D_factura] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "ANULADO TEXT NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "RUTA INTEGER NOT NULL,"+
+                    "VENDEDOR INTEGER NOT NULL,"+
+                    "CLIENTE INTEGER NOT NULL,"+
+                    "KILOMETRAJE REAL NOT NULL,"+
+                    "FECHAENTR INTEGER NOT NULL,"+
+                    "FACTLINK TEXT NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "DESMONTO REAL NOT NULL,"+
+                    "IMPMONTO REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "BANDERA TEXT NOT NULL,"+
+                    "STATCOM TEXT NOT NULL,"+
+                    "CALCOBJ TEXT NOT NULL,"+
+                    "SERIE TEXT NOT NULL,"+
+                    "CORELATIVO INTEGER NOT NULL,"+
+                    "IMPRES INTEGER NOT NULL,"+
+                    "ADD1 TEXT NOT NULL,"+
+                    "ADD2 TEXT NOT NULL,"+
+                    "ADD3 TEXT NOT NULL,"+
+                    "DEPOS TEXT NOT NULL,"+
+                    "PEDCOREL TEXT NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "ASIGNACION TEXT NOT NULL,"+
+                    "SUPERVISOR TEXT NOT NULL,"+
+                    "AYUDANTE TEXT NOT NULL,"+
+                    "VEHICULO TEXT NOT NULL,"+
+                    "CODIGOLIQUIDACION INTEGER NOT NULL,"+
+                    "RAZON_ANULACION TEXT NOT NULL,"+
+                    "PRIMARY KEY ([EMPRESA],[COREL])"+
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE INDEX D_FACTURA_idx1 ON D_FACTURA(ANULADO)";
-            database.execSQL(sql);
-            sql="CREATE INDEX D_FACTURA_idx2 ON D_FACTURA(FECHA)";
-            database.execSQL(sql);
-
-
-            sql="CREATE TABLE [D_FACTURAD] ("+
-                    "[COREL] TEXT NOT NULL,"+
-                    "[PRODUCTO] TEXT NOT NULL,"+
-                    "[EMPRESA] TEXT NOT NULL,"+
-                    "[ANULADO] TEXT NOT NULL,"+
-                    "[CANT] REAL NOT NULL,"+
-                    "[PRECIO] REAL NOT NULL,"+
-                    "[IMP] REAL NOT NULL,"+
-                    "[DES] REAL NOT NULL,"+
-                    "[DESMON] REAL NOT NULL,"+
-                    "[TOTAL] REAL NOT NULL,"+
-                    "[PRECIODOC] REAL NOT NULL,"+
-                    "[PESO] REAL NOT NULL,"+
-                    "[VAL1] REAL NOT NULL,"+
-                    "[VAL2] TEXT NOT NULL,"+
-                    "[UMVENTA] TEXT NOT NULL,"+
-                    "[FACTOR] REAL NOT NULL,"+
-                    "[UMSTOCK] TEXT NOT NULL,"+
-                    "[UMPESO] TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[PRODUCTO],[UMPESO])"+
+            sql="CREATE TABLE [D_facturad] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "UMPESO TEXT NOT NULL,"+
+                    "ANULADO TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "IMP REAL NOT NULL,"+
+                    "DES REAL NOT NULL,"+
+                    "DESMON REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "PRECIODOC REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "VAL1 REAL NOT NULL,"+
+                    "VAL2 TEXT NOT NULL,"+
+                    "UMVENTA TEXT NOT NULL,"+
+                    "FACTOR REAL NOT NULL,"+
+                    "UMSTOCK TEXT NOT NULL,"+
+                    "PRIMARY KEY ([EMPRESA],[COREL],[PRODUCTO],[UMPESO])"+
                     ");";
             database.execSQL(sql);
 
-
-            sql="CREATE TABLE [D_FACTURAP] ("+
-                    "[COREL] TEXT NOT NULL,"+
-                    "[ITEM] INTEGER NOT NULL,"+
-                    "[ANULADO] TEXT NOT NULL,"+
-                    "[EMPRESA] TEXT NOT NULL,"+
-                    "[CODPAGO] INTEGER NOT NULL,"+
-                    "[TIPO] TEXT NOT NULL,"+
-                    "[VALOR] REAL NOT NULL,"+
-                    "[DESC1] TEXT NOT NULL,"+
-                    "[DESC2] TEXT NOT NULL,"+
-                    "[DESC3] TEXT NOT NULL,"+
-                    "[DEPOS] TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[ITEM])"+
+            sql="CREATE TABLE [D_facturap] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "ITEM INTEGER NOT NULL,"+
+                    "ANULADO TEXT NOT NULL,"+
+                    "CODPAGO INTEGER NOT NULL,"+
+                    "TIPO TEXT NOT NULL,"+
+                    "VALOR REAL NOT NULL,"+
+                    "DESC1 TEXT NOT NULL,"+
+                    "DESC2 TEXT NOT NULL,"+
+                    "DESC3 TEXT NOT NULL,"+
+                    "DEPOS TEXT NOT NULL,"+
+                    "PRIMARY KEY ([EMPRESA],[COREL],[ITEM])"+
                     ");";
             database.execSQL(sql);
 
@@ -732,6 +725,16 @@ public class BaseDatosScript {
                     "[UMPESO] TEXT NOT NULL,"+
                     "[FACTOR] REAL NOT NULL,"+
                     "PRIMARY KEY ([COREL],[ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [D_FACT_LOG] ("+
+                    "[ITEM] INTEGER NOT NULL,"+
+                    "[SERIE] TEXT NOT NULL,"+
+                    "[COREL] INTEGER NOT NULL,"+
+                    "[FECHA] INTEGER NOT NULL,"+
+                    "[RUTA] INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ITEM])"+
                     ");";
             database.execSQL(sql);
 
@@ -1038,18 +1041,6 @@ public class BaseDatosScript {
 					"PRIMARY KEY ([COREL],[DENOMINACION],[TIPO],[MONEDA])"+
 					");";
 			database.execSQL(sql);
-
-			sql="CREATE TABLE [D_FACT_LOG] ("+
-					"[ITEM] INTEGER NOT NULL,"+
-					"[SERIE] TEXT NOT NULL,"+
-					"[COREL] INTEGER NOT NULL,"+
-					"[FECHA] INTEGER NOT NULL,"+
-					"[RUTA] TEXT NOT NULL,"+
-					"PRIMARY KEY ([ITEM])"+
-					");";
-			database.execSQL(sql);
-      
-
 
 			sql="CREATE TABLE [D_FACTURAD_LOTES] ("+
 					"[COREL] TEXT NOT NULL,"+

@@ -64,7 +64,6 @@ public class WebService {
         }
     }
 
-
     public void callEmptyMethod() {
 
     }

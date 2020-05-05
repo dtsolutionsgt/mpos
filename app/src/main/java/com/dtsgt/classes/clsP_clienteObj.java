@@ -268,6 +268,40 @@ public class clsP_clienteObj {
 
     }
 
+    public String addItemSql(clsClasses.clsP_cliente item,int idemp) {
+
+        ins.init("P_cliente");
+
+        ins.add("EMPRESA",idemp);
+        ins.add("CODIGO",item.codigo);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("BLOQUEADO",item.bloqueado);
+        ins.add("NIVELPRECIO",item.nivelprecio);
+        ins.add("MEDIAPAGO",item.mediapago);
+        ins.add("LIMITECREDITO",item.limitecredito);
+        ins.add("DIACREDITO",item.diacredito);
+        ins.add("DESCUENTO",item.descuento);
+        ins.add("BONIFICACION",item.bonificacion);
+        ins.add("ULTVISITA",item.ultvisita);
+        ins.add("IMPSPEC",item.impspec);
+        ins.add("NIT",item.nit);
+        ins.add("EMAIL",item.email);
+        ins.add("ESERVICE",item.eservice);
+        ins.add("TELEFONO",item.telefono);
+        ins.add("DIRECCION",item.direccion);
+        ins.add("COORX",item.coorx);
+        ins.add("COORY",item.coory);
+        ins.add("BODEGA",item.bodega);
+        ins.add("COD_PAIS",item.cod_pais);
+        ins.add("CODBARRA",item.codbarra);
+        ins.add("PERCEPCION",item.percepcion);
+        ins.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
+        ins.add("CODIGO_CLIENTE",item.codigo_cliente);
+
+        return ins.sql();
+
+    }
+
     public String updateItemSql(clsClasses.clsP_cliente item) {
 
         upd.init("P_cliente");

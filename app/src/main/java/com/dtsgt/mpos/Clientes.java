@@ -228,7 +228,7 @@ public class Clientes extends PBase {
 						Object lvObj = listView.getItemAtPosition(position);
 						clsClasses.clsCDB item = (clsClasses.clsCDB) lvObj;
 
-						selid = item.Cod; gl.cliente=selid;
+						selid = item.Cod; gl.cliente=""+nitnum(item.Cod);
 						selidx = position;
 						adapter.setSelectedIndex(position);
 
@@ -347,7 +347,7 @@ public class Clientes extends PBase {
 
 		try {
 
-			sql = "SELECT CODIGO,NOMBRE,'' AS ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL " +
+			sql = "SELECT CODIGO_CLIENTE,NOMBRE,'' AS ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL " +
 					"FROM P_CLIENTE WHERE (1=1) AND ";
 
 			if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";

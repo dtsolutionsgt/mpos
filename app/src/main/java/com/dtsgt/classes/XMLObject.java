@@ -68,8 +68,7 @@ public class XMLObject {
         return data;
     }
 
-    public Object getSingle( String name, Class<?> cl)
-            throws Exception {
+    public Object getSingle( String name, Class<?> cl)  throws Exception {
 
         String body=getXMLRegionSingle(name);
 

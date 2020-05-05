@@ -68,7 +68,24 @@ public class DateUtils {
 		
 		return s;
 	}
-	
+
+    public long addDays(long f,int days){
+        int cyear,cmonth,cday;
+
+        final Calendar c = Calendar.getInstance();
+
+        c.set(getyear(f), getmonth(f)-1, getday(f));
+        c.add(Calendar.DATE, days);
+
+        cyear = c.get(Calendar.YEAR);
+        cmonth = c.get(Calendar.MONTH)+1;
+        cday = c.get(Calendar.DAY_OF_MONTH);
+
+        f=cfecha(cyear,cmonth,cday);
+
+        return f;
+    }
+
 	public String sSecond(){
 		long cs;
 		String sss;
@@ -156,7 +173,7 @@ public class DateUtils {
 		return s;
 	}
 
-	public String univfechaext(long f) {
+	public String univfechalong(long f) {
 		long vy,vm,vd;
 		String s;
 
@@ -166,13 +183,31 @@ public class DateUtils {
 		vm=(long) f/100;f=f % 100;
 		vd=(long) f;
 
-		s=""+vy;
+		s="20"+vy;
 		if (vm>9) s=s+vm; else s=s+"0"+vm;
 		if (vd>9) s=s+vd; else s=s+"0"+vd;
 		s=vy+" "+vm+":"+vd+":00"; //#HS_20181128_1102 Agregue " "+vm+":"+vd+":00" para que devolviera la hora.
 
 		return s;
 	}
+
+    public String univfechaext(long f) {
+        long vy,vm,vd;
+        String s;
+
+        //yyyyMMdd hh:mm:ss
+
+        vy=(long) f/10000;f=f % 10000;
+        vm=(long) f/100;f=f % 100;
+        vd=(long) f;
+
+        s=""+vy;
+        if (vm>9) s=s+vm; else s=s+"0"+vm;
+        if (vd>9) s=s+vd; else s=s+"0"+vd;
+        s=vy+" "+vm+":"+vd+":00"; //#HS_20181128_1102 Agregue " "+vm+":"+vd+":00" para que devolviera la hora.
+
+        return s;
+    }
 
 	public String univfechasql(long f) {
 		long vy,vm,vd;

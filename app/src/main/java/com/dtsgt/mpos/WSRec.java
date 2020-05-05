@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -89,18 +90,22 @@ import com.dtsgt.classesws.clsBeP_USOPCIONList;
 import com.dtsgt.classesws.clsBeVENDEDORES;
 import com.dtsgt.classesws.clsBeVENDEDORESList;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class WSRec extends PBase {
 
-    private TextView lbl1;
+    private TextView lbl1,lbl2;
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
 
-    private String plabel;
+    private String plabel,fechasync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +114,8 @@ public class WSRec extends PBase {
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);
-        lbl1.setText("");
+        lbl1 = (TextView) findViewById(R.id.textView7); lbl1.setText("");
+        lbl2 = (TextView) findViewById(R.id.textView150); lbl2.setText("");
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
@@ -118,6 +123,9 @@ public class WSRec extends PBase {
         ws = new WebServiceHandler(WSRec.this, gl.wsurl);
         xobj = new XMLObject(ws);
 
+        long fs=app.getDateRecep();
+        if (fs>0) fs=du.addDays(fs,-1);
+        fechasync=""+fs;
     }
 
     //region Events
@@ -172,7 +180,7 @@ public class WSRec extends PBase {
                         callMethod("GetP_LINEA", "EMPRESA", gl.emp);
                         break;
                     case 10:
-                        callMethod("GetP_CLIENTE", "EMPRESA", gl.emp);
+                        callMethod("GetP_CLIENTE", "EMPRESA", gl.emp,"FECHA",fechasync);
                         callEmptyMethod();
                         break;
                     case 11:
@@ -445,7 +453,10 @@ public class WSRec extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+            app.setDateRecep(du.getActDate());
+
             msgboxwait("Recepción completa");
+
 
             return true;
         } catch (Exception e) {
@@ -827,7 +838,7 @@ public class WSRec extends PBase {
             clsBeP_CLIENTE item = new clsBeP_CLIENTE();
             clsClasses.clsP_cliente var;
 
-            script.add("DELETE FROM P_CLIENTE");
+            //script.add("DELETE FROM P_CLIENTE");
 
             items = xobj.getresult(clsBeP_CLIENTEList.class, "GetP_CLIENTE");
 
@@ -856,9 +867,9 @@ public class WSRec extends PBase {
                 var.impspec = item.IMPSPEC;
                 var.nit = item.NIT;
                 var.email = item.EMAIL + "";
-                var.eservice = item.ESERVICE + "";
+                var.eservice = "S";
                 var.telefono = item.TELEFONO + "";
-                var.direccion = item.DIRECCION;
+                var.direccion = item.DIRECCION + "";
                 var.coorx = item.COORX;
                 var.coory = item.COORY;
                 var.bodega = item.BODEGA + "";
@@ -868,6 +879,9 @@ public class WSRec extends PBase {
                 var.tipo_contribuyente = item.TIPO_CONTRIBUYENTE + "";
                 var.codigo_cliente = item.CODIGO_CLIENTE;
 
+                ss=handler.addItemSql(var);
+
+                script.add("DELETE FROM P_CLIENTE WHERE CODIGO_CLIENTE="+var.codigo_cliente);
                 script.add(handler.addItemSql(var));
 
             }
@@ -1635,9 +1649,8 @@ public class WSRec extends PBase {
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
 
-        /*
         try {
-            File file1 = new File(Environment.getExternalStorageDirectory(), "/tomws.txt");
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
             if (file1.exists()) {
                 FileInputStream fIn = new FileInputStream(file1);
                 BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
@@ -1649,9 +1662,8 @@ public class WSRec extends PBase {
             gl.wsurl ="";
         }
 
-        if (!gl.wsurl.isEmpty()) lblurl.setText(gl.wsurl);else lblurl.setText("Falta archivo con URL");
+        if (!gl.wsurl.isEmpty()) lbl2.setText(gl.wsurl);else lbl2.setText("Falta archivo con URL");
 
-        */
     }
 
     private void updateLabel() {

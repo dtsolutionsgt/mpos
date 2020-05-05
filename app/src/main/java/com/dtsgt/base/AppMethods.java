@@ -455,7 +455,7 @@ public class AppMethods {
         Cursor DT;
 
         try {
-            String sql = "SELECT TIPO FROM P_PRODUCTO WHERE CODIGO='" + cod + "'";
+            String sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
@@ -706,8 +706,6 @@ public class AppMethods {
 		}
 	}
 
-
-
     //endregion
 
     //region Impresion
@@ -884,6 +882,30 @@ public class AppMethods {
 
         return cnt;
 
+    }
+
+    public long getDateRecep() {
+        Cursor dt;
+
+        try {
+            sql="SELECT param1 FROM Params";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            return dt.getLong(0);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return 0;
+        }
+    }
+
+    public void setDateRecep(long ff) {
+         try {
+            sql = "UPDATE Params SET param1="+ff;
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
     }
 
     //endregion

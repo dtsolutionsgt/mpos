@@ -646,10 +646,14 @@ public class Venta extends PBase {
             tipo=prodTipo(prodid);
 
             if (!tipo.equalsIgnoreCase("M")) {
-                if (gl.limcant!=0) {
-                    processCant(updateitem);
+                if (tipo.equalsIgnoreCase("P")) {
+                    if (gl.limcant!=0) {
+                        processCant(updateitem);
+                    } else {
+                        msgAskLimit("El producto no está disponible.\n¿Continuar con la venta?",updateitem);
+                    }
                 } else {
-                    msgAskLimit("El producto no está disponible.\n¿Continuar con la venta?",updateitem);
+                    processCant(updateitem);
                 }
             } else {
                 processMenuItem();
@@ -2432,7 +2436,7 @@ public class Venta extends PBase {
         String tipo;
 
         try {
-            sql = "SELECT TIPO FROM P_PRODUCTO WHERE CODIGO='" + prid + "'";
+            sql = "SELECT TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + prid ;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
             tipo=DT.getString(0);

@@ -130,10 +130,12 @@ public class CliPos extends PBase {
 
 	private void procesaNIT(String snit) {
 
-		try{
+        int codigo=nitnum(snit);
+
+		try {
 			gl.rutatipo="V";
 
-			gl.cliente=snit;
+			gl.cliente=""+codigo;
             gl.nivel=1;
             gl.percepcion=0;
             gl.contrib="";
@@ -272,7 +274,7 @@ public class CliPos extends PBase {
             ins.add("IMPSPEC",0);
             ins.add("NIT",NIT.toUpperCase());
             ins.add("EMAIL","");
-            ins.add("ESERVICE","N");
+            ins.add("ESERVICE","N"); // estado envio
             ins.add("TELEFONO"," ");
             ins.add("DIRECCION",dir);
             ins.add("COORX",0);

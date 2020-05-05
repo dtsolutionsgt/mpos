@@ -558,8 +558,6 @@ public class ComWS extends PBase {
 		}
 	}
 
-
-
 	public int commitSQL() {
 		int rc;
 		String s, ss;
@@ -2015,7 +2013,6 @@ public class ComWS extends PBase {
 			}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 		}
 	}
-
 
 	public int sendFoto(String empresa, String cod, int valid) {
 		String fname,resstr="";

@@ -2,6 +2,75 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
+    public class clsD_factura {
+        public int  empresa;
+        public String corel;
+        public String anulado;
+        public long fecha;
+        public int  ruta;
+        public int  vendedor;
+        public int  cliente;
+        public double kilometraje;
+        public long fechaentr;
+        public String factlink;
+        public double total;
+        public double desmonto;
+        public double impmonto;
+        public double peso;
+        public String bandera;
+        public String statcom;
+        public String calcobj;
+        public String serie;
+        public int  corelativo;
+        public int  impres;
+        public String add1;
+        public String add2;
+        public String add3;
+        public String depos;
+        public String pedcorel;
+        public String referencia;
+        public String asignacion;
+        public String supervisor;
+        public String ayudante;
+        public String vehiculo;
+        public int  codigoliquidacion;
+        public String razon_anulacion;
+    }
+
+    public class clsD_facturad {
+        public int  empresa;
+        public String corel;
+        public int  producto;
+        public String umpeso;
+        public String anulado;
+        public double cant;
+        public double precio;
+        public double imp;
+        public double des;
+        public double desmon;
+        public double total;
+        public double preciodoc;
+        public double peso;
+        public double val1;
+        public String val2;
+        public String umventa;
+        public double factor;
+        public String umstock;
+    }
+
+    public class clsD_facturap {
+        public int  empresa;
+        public String corel;
+        public int  item;
+        public String anulado;
+        public int  codpago;
+        public String tipo;
+        public double valor;
+        public String desc1;
+        public String desc2;
+        public String desc3;
+        public String depos;
+    }
 
     public class clsP_archivoconf {
         public String ruta;

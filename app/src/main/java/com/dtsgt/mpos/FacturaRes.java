@@ -718,6 +718,7 @@ public class FacturaRes extends PBase {
             gl.iniciaVenta=true;
 
 			//if (!prn.isEnabled())
+
             super.finish();
 
 		}catch (Exception e){
@@ -774,10 +775,11 @@ public class FacturaRes extends PBase {
 			peso=dt.getDouble(3);
 
 			ins.init("D_FACTURA");
-			ins.add("COREL",corel);
+
+            ins.add("EMPRESA",gl.emp);
+         	ins.add("COREL",corel);
 			ins.add("ANULADO","N");
 			if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
-			ins.add("EMPRESA",gl.emp);
 			ins.add("RUTA",gl.ruta);
 			ins.add("VENDEDOR",gl.vend);
 			ins.add("CLIENTE",gl.cliente);
@@ -1355,7 +1357,7 @@ public class FacturaRes extends PBase {
 
 		try {
 
-			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE RUTA='"+gl.ruta+"'";
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE RUTA="+gl.ruta;
 			DT=Con.OpenDT(sql);
 
 			if(DT.getCount()>0){
@@ -1372,15 +1374,12 @@ public class FacturaRes extends PBase {
             }
 
 
-			sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA='"+gl.ruta+"' AND SERIE='"+fserie+"'";
+			sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
 			DT=Con.OpenDT(sql);
 
 			if (DT.getCount()>0){
-
                 DT.moveToFirst();
-
                 ca2=DT.getInt(0);
-
             }else {
                 ca2=0;
             }
@@ -1413,21 +1412,17 @@ public class FacturaRes extends PBase {
 		Cursor DT;
 
 		try {
-			sql="SELECT TIPO FROM P_PRODUCTO WHERE CODIGO='"+prcodd+"'";
+			sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prcodd;
            	DT=Con.OpenDT(sql);
 
            	if(DT.getCount()>0){
-
                 DT.moveToFirst();
-
                 return DT.getString(0).equalsIgnoreCase("P");
             }else {
            	    return false;
             }
 
-
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("esProductoConStock: " + e.getMessage());
 			return false;
 	    }
