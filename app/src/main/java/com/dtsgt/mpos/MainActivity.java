@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -18,30 +17,22 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnKeyListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
-import com.dtsgt.ladapt.ListAdaptMenu;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class MainActivity extends PBase {
@@ -65,7 +56,8 @@ public class MainActivity extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        try {
+        try
+        {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
@@ -302,7 +294,9 @@ public class MainActivity extends PBase {
             gl.modoadmin = true;
             gl.autocom = 0;
             toastcent("¡La base de datos está vacia!");
-            startActivity(new Intent(MainActivity.this, WSRec.class));
+            Intent intent = new Intent(MainActivity.this, WSRec.class);
+            intent.putExtra("bd_vacia",true);
+            startActivity(intent);
         }
 
 
@@ -417,7 +411,8 @@ public class MainActivity extends PBase {
         llenaUsuarios();
     }
 
-    private void processLogIn() {
+    private void processLogIn()
+    {
 
         /*/
         if (!validaLicencia()) {
@@ -431,7 +426,8 @@ public class MainActivity extends PBase {
 
     }
 
-    private boolean checkUser() {
+    private boolean checkUser()
+    {
         Cursor DT;
         String dpwd;
 
@@ -439,13 +435,14 @@ public class MainActivity extends PBase {
 
         try {
 
-            if (usr.isEmpty()) {
+            if (usr.isEmpty())
+            {
                 mu.msgbox("Usuario incorrecto.");return false;
             }
-            if (pwd.isEmpty()) {
+            if (pwd.isEmpty())
+            {
                 mu.msgbox("Contraseña incorrecta.");return false;
             }
-
 
             sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
             DT = Con.OpenDT(sql);

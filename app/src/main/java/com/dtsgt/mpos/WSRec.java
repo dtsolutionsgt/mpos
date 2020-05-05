@@ -94,6 +94,7 @@ import java.util.ArrayList;
 public class WSRec extends PBase {
 
     private TextView lbl1;
+    private TextView lblTitulo;
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
@@ -102,27 +103,50 @@ public class WSRec extends PBase {
 
     private String plabel;
 
+    private boolean pbd_vacia =false;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wsrec);
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);
-        lbl1.setText("");
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
         getURL();
+
         ws = new WebServiceHandler(WSRec.this, gl.wsurl);
         xobj = new XMLObject(ws);
 
+        pbd_vacia = getIntent().getBooleanExtra("bd_vacia",false);
+
+        if (pbd_vacia)
+        {
+            //#EJC20200505_1645: Mostrar URL a la que está conectado...
+            lbl1 = (TextView) findViewById(R.id.textView7);
+            lbl1.setText("Conectar a: " + gl.wsurl);
+
+            //#EJC20200505: Colocar Título BD vacía
+            lblTitulo = (TextView) findViewById(R.id.lblTit6);
+            lblTitulo.setText("B.D. Vacía");
+
+        }else
+        {
+            //#EJC20200505: Colocar Título Sync
+            lblTitulo = (TextView) findViewById(R.id.lblTit6);
+            lblTitulo.setText("Sincronización");
+
+            lbl1 = (TextView) findViewById(R.id.textView7);
+            lbl1.setText("");
+        }
+
     }
 
-    //region Events
-
-    public void doStart(View view) {
+    public void doStart(View view)
+    {
         script.clear();
         pbar.setVisibility(View.VISIBLE);
         execws(1);
@@ -419,27 +443,33 @@ public class WSRec extends PBase {
         mtimer.postDelayed(mrunner, 200);
     }
 
-    private void processComplete() {
+    private void processComplete()
+    {
         pbar.setVisibility(View.INVISIBLE);
         plabel = "";
+
         updateLabel();
 
-        if (ws.errorflag) {
+        if (ws.errorflag)
+        {
             msgboxwait(ws.error);
-        } else {
+        } else
+        {
             processData();
         }
     }
 
-    private boolean processData() {
+    private boolean processData()
+    {
 
         try {
+
             db.beginTransaction();
 
-            for (int i = 0; i < script.size(); i++) {
+            for (int i = 0; i < script.size(); i++)
+            {
                 sql = script.get(i);
                 db.execSQL(sql);
-                //msgbox(sql);
             }
 
             db.setTransactionSuccessful();
@@ -448,18 +478,17 @@ public class WSRec extends PBase {
             msgboxwait("Recepción completa");
 
             return true;
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
             db.endTransaction();
             msgbox("DB Commit Error\n" + e.getMessage() + "\n" + sql);
             return false;
         }
     }
 
-    //endregion
-
-    //region Recepción
-
-    private void processEmpresas() {
+    private void processEmpresas()
+    {
         try {
             clsBeP_EMPRESA item = new clsBeP_EMPRESA();
             clsClasses.clsP_empresa var = clsCls.new clsP_empresa();
@@ -781,8 +810,10 @@ public class WSRec extends PBase {
         }
     }
 
-    private void processLinea() {
-        try {
+    private void processLinea()
+    {
+        try
+        {
             clsP_lineaObj handler = new clsP_lineaObj(this, Con, db);
             clsBeP_LINEAList items = new clsBeP_LINEAList();
             clsBeP_LINEA item = new clsBeP_LINEA();
@@ -792,13 +823,16 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_LINEAList.class, "GetP_LINEA");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
 
@@ -814,7 +848,8 @@ public class WSRec extends PBase {
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
@@ -1632,7 +1667,8 @@ public class WSRec extends PBase {
 
     //region Aux
 
-    private void getURL() {
+    private void getURL()
+    {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
 
         /*
@@ -1659,7 +1695,11 @@ public class WSRec extends PBase {
         Runnable runnable = new Runnable() {
             public void run() {
                 handler.post(new Runnable(){
-                    public void run() {
+                    public void run()
+                    {
+                        //#Validé que pLabel no fuera null
+                        //(Ocurre cuando hay error en conexión)
+                        if (plabel!=null)
                         lbl1.setText(plabel);
                      }
                 });
