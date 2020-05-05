@@ -108,7 +108,8 @@ public class WSRec extends PBase {
     private String plabel,fechasync;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wsrec);
 
@@ -130,26 +131,28 @@ public class WSRec extends PBase {
 
     //region Events
 
-    public void doStart(View view) {
+    public void doStart(View view)
+    {
         script.clear();
         pbar.setVisibility(View.VISIBLE);
         execws(1);
     }
 
-    //endregion
+    public class WebServiceHandler extends com.dtsgt.classes.WebService
+    {
 
-    //region WebService handler
-
-    public class WebServiceHandler extends com.dtsgt.classes.WebService {
-
-        public WebServiceHandler(PBase Parent, String Url) {
+        public WebServiceHandler(PBase Parent, String Url)
+        {
             super(Parent, Url);
         }
 
         @Override
-        public void wsExecute() {
-            try {
-                switch (ws.callback) {
+        public void wsExecute()
+        {
+            try
+            {
+                switch (ws.callback)
+                {
                     case 1:
                         callMethod("GetP_EMPRESA", "EMPRESA", gl.emp);
                         break;
@@ -245,7 +248,8 @@ public class WSRec extends PBase {
                         callMethod("GetVENDEDORES", "EMPRESA", gl.emp);
                         break;
                 }
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 error = e.getMessage();
                 errorflag = true;
             }
@@ -253,16 +257,21 @@ public class WSRec extends PBase {
     }
 
     @Override
-    public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
+    public void wsCallBack(Boolean throwing, String errmsg, int errlevel)
+    {
+
         try {
+
             if (throwing) throw new Exception(errmsg);
 
-            if (ws.errorflag) {
+            if (ws.errorflag)
+            {
                 processComplete();
                 return;
             }
 
-            switch (ws.callback) {
+            switch (ws.callback)
+            {
                 case 1:
                     processEmpresas();if (ws.errorflag) { processComplete();break;}
                     execws(3);break;
@@ -344,20 +353,20 @@ public class WSRec extends PBase {
                     break;
             }
 
-        } catch (Exception e) {
-            msgbox(new Object() {
+        } catch (Exception e)
+        {
+            msgbox(new Object()
+            {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
         }
     }
 
-    //endregion
+    private void execws(int callbackvalue)
+    {
 
-    //region Main
-
-    private void execws(int callbackvalue) {
-
-        switch (callbackvalue) {
+        switch (callbackvalue)
+        {
             case 1:
                 plabel = "Cargando empresas";break;
             case 2:
@@ -417,9 +426,11 @@ public class WSRec extends PBase {
         updateLabel();
 
         Handler mtimer = new Handler();
-        Runnable mrunner = new Runnable() {
+        Runnable mrunner = new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 ws.callback = callbackvalue;
                 ws.execute();
             }
@@ -427,27 +438,31 @@ public class WSRec extends PBase {
         mtimer.postDelayed(mrunner, 200);
     }
 
-    private void processComplete() {
+    private void processComplete()
+    {
         pbar.setVisibility(View.INVISIBLE);
         plabel = "";
         updateLabel();
 
-        if (ws.errorflag) {
+        if (ws.errorflag)
+        {
             msgboxwait(ws.error);
-        } else {
+        } else
+        {
             processData();
         }
     }
 
-    private boolean processData() {
-
+    private boolean processData()
+    {
         try {
+
             db.beginTransaction();
 
-            for (int i = 0; i < script.size(); i++) {
+            for (int i = 0; i < script.size(); i++)
+            {
                 sql = script.get(i);
                 db.execSQL(sql);
-                //msgbox(sql);
             }
 
             db.setTransactionSuccessful();
@@ -457,21 +472,20 @@ public class WSRec extends PBase {
 
             msgboxwait("Recepción completa");
 
-
             return true;
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
             db.endTransaction();
             msgbox("DB Commit Error\n" + e.getMessage() + "\n" + sql);
             return false;
         }
     }
 
-    //endregion
-
-    //region Recepción
-
-    private void processEmpresas() {
-        try {
+    private void processEmpresas()
+    {
+        try
+        {
             clsBeP_EMPRESA item = new clsBeP_EMPRESA();
             clsClasses.clsP_empresa var = clsCls.new clsP_empresa();
 
@@ -499,13 +513,16 @@ public class WSRec extends PBase {
 
             script.add(P_empresaObj.addItemSql(var));
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();ws.errorflag = true;
         }
     }
 
-    private void processBancos() {
-        try {
+    private void processBancos()
+    {
+        try
+        {
             clsBeP_BANCOList items = new clsBeP_BANCOList();
             clsBeP_BANCO item = new clsBeP_BANCO();
             clsClasses.clsP_banco var = clsCls.new clsP_banco();
@@ -514,19 +531,25 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_BANCOList.class, "GetP_BANCO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processConfig() {
+    private void processConfig()
+    {
         try {
+
             clsP_archivoconfObj handler = new clsP_archivoconfObj(this, Con, db);
             clsBeP_ARCHIVOCONFList items = new clsBeP_ARCHIVOCONFList();
             clsBeP_ARCHIVOCONF item = new clsBeP_ARCHIVOCONF();
@@ -536,18 +559,18 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_ARCHIVOCONFList.class, "GetP_ARCHIVOCONF");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_archivoconf();
-
                 var.ruta = item.RUTA;
                 var.tipo_hh = item.TIPO_HH + "";
                 var.idioma = item.IDIOMA + "";
@@ -559,17 +582,19 @@ public class WSRec extends PBase {
                 var.nota_credito = mu.bool(item.NOTA_CREDITO);
 
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processBonif() {
-        try {
+    private void processBonif()
+    {
+        try
+        {
             clsP_bonifObj handler = new clsP_bonifObj(this, Con, db);
             clsBeP_BONIFList items = new clsBeP_BONIFList();
             clsBeP_BONIF item = new clsBeP_BONIF();
@@ -579,18 +604,20 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_BONIFList.class, "GetP_BONIF");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
 
                 var = clsCls.new clsP_bonif();
-
                 var.cliente = item.CLIENTE;
                 var.ctipo = item.CTIPO;
                 var.producto = item.PRODUCTO;
@@ -618,14 +645,17 @@ public class WSRec extends PBase {
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processCorel() {
-        try {
+    private void processCorel()
+    {
+        try
+        {
             clsP_corelObj handler = new clsP_corelObj(this, Con, db);
             clsBeP_CORELList items = new clsBeP_CORELList();
             clsBeP_COREL item = new clsBeP_COREL();
@@ -635,18 +665,20 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_CORELList.class, "GetP_COREL");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
 
                 var = clsCls.new clsP_corel();
-
                 var.resol = item.RESOL;
                 var.serie = item.ACTIVA;
                 var.corelini = item.CORELINI;
@@ -659,17 +691,19 @@ public class WSRec extends PBase {
                 var.valor1 = item.VALOR1;
 
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processDescuento() {
-        try {
+    private void processDescuento()
+    {
+        try
+        {
             clsP_descuentoObj handler = new clsP_descuentoObj(this, Con, db);
             clsBeP_DESCUENTOList items = new clsBeP_DESCUENTOList();
             clsBeP_DESCUENTO item = new clsBeP_DESCUENTO();
@@ -679,18 +713,20 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_DESCUENTOList.class, "GetP_DESCUENTO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
 
                 var = clsCls.new clsP_descuento();
-
                 var.cliente = item.CLIENTE;
                 var.ctipo = item.CTIPO;
                 var.producto = item.PRODUCTO;
@@ -712,14 +748,17 @@ public class WSRec extends PBase {
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processFactor() {
-        try {
+    private void processFactor()
+    {
+        try
+        {
             clsP_factorconvObj handler = new clsP_factorconvObj(this, Con, db);
             clsBeP_FACTORCONVList items = new clsBeP_FACTORCONVList();
             clsBeP_FACTORCONV item = new clsBeP_FACTORCONV();
@@ -729,18 +768,20 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_FACTORCONVList.class, "GetP_FACTORCONV");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
 
                 var = clsCls.new clsP_factorconv();
-
                 var.producto = item.PRODUCTO;
                 var.unidadsuperior = item.UNIDADSUPERIOR;
                 var.factorconversion = item.FACTORCONVERSION;
@@ -749,14 +790,17 @@ public class WSRec extends PBase {
                 script.add(handler.addItemSql(var));
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processImpuesto() {
-        try {
+    private void processImpuesto()
+    {
+        try
+        {
             clsP_impuestoObj handler = new clsP_impuestoObj(this, Con, db);
             clsBeP_IMPUESTOList items = new clsBeP_IMPUESTOList();
             clsBeP_IMPUESTO item = new clsBeP_IMPUESTO();
@@ -766,34 +810,37 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_IMPUESTOList.class, "GetP_IMPUESTO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_impuesto();
-
                 var.codigo = item.CODIGO;
                 var.valor = item.VALOR;
                 var.activo = item.Activo;
-
                 script.add(handler.addItemSql(var));
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processLinea() {
-        try {
+    private void processLinea()
+    {
+        try
+        {
             clsP_lineaObj handler = new clsP_lineaObj(this, Con, db);
             clsBeP_LINEAList items = new clsBeP_LINEAList();
             clsBeP_LINEA item = new clsBeP_LINEA();
@@ -803,57 +850,59 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_LINEAList.class, "GetP_LINEA");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_linea();
-
                 var.codigo = item.CODIGO;
                 var.marca = item.MARCA;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
                 var.codigo_linea = item.CODIGO_LINEA;
-
                 script.add(handler.addItemSql(var));
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processCliente() {
+    private void processCliente()
+    {
         try {
+
             clsP_clienteObj handler = new clsP_clienteObj(this, Con, db);
             clsBeP_CLIENTEList items = new clsBeP_CLIENTEList();
             clsBeP_CLIENTE item = new clsBeP_CLIENTE();
             clsClasses.clsP_cliente var;
 
-            //script.add("DELETE FROM P_CLIENTE");
-
             items = xobj.getresult(clsBeP_CLIENTEList.class, "GetP_CLIENTE");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_cliente();
-
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.bloqueado = item.BLOQUEADO;
@@ -886,14 +935,18 @@ public class WSRec extends PBase {
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processEncabezado() {
-        try {
+    private void processEncabezado()
+    {
+        try
+        {
+
             clsP_encabezado_reporteshhObj handler = new clsP_encabezado_reporteshhObj(this, Con, db);
             clsBeP_ENCABEZADO_REPORTESHHList items = new clsBeP_ENCABEZADO_REPORTESHHList();
             clsBeP_ENCABEZADO_REPORTESHH item = new clsBeP_ENCABEZADO_REPORTESHH();
@@ -903,34 +956,35 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_ENCABEZADO_REPORTESHHList.class, "GetP_ENCABEZADO_REPORTESHH");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_encabezado_reporteshh();
-
                 var.codigo = item.CODIGO;
                 var.texto = item.TEXTO + "";
                 var.sucursal = item.SUCURSAL;
-
                 script.add(handler.addItemSql(var));
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processMedia() {
-
+    private void processMedia()
+    {
         try {
             clsP_mediapagoObj handler = new clsP_mediapagoObj(this, Con, db);
             clsBeP_MEDIAPAGOList items = new clsBeP_MEDIAPAGOList();
@@ -941,36 +995,36 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_MEDIAPAGOList.class, "GetP_MEDIAPAGO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_mediapago();
-
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 if (item.ACTIVO) var.activo = "S";
                 else var.activo = "N";
                 var.nivel = item.NIVEL;
                 var.porcobro = item.PORCOBRO;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processMoneda() {
+    private void processMoneda()
+    {
         try {
             clsP_monedaObj handler = new clsP_monedaObj(this, Con, db);
             clsBeP_MONEDAList items = new clsBeP_MONEDAList();
@@ -981,35 +1035,35 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_MONEDAList.class, "GetP_MONEDA");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_moneda();
-
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
                 var.symbolo = item.SYMBOLO;
                 var.cambio = item.CAMBIO;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processNivel() {
+    private void processNivel()
+    {
         try {
             clsP_nivelprecioObj handler = new clsP_nivelprecioObj(this, Con, db);
             clsBeP_NIVELPRECIOList items = new clsBeP_NIVELPRECIOList();
@@ -1020,34 +1074,37 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_NIVELPRECIOList.class, "GetP_NIVELPRECIO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_nivelprecio();
-
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
-
                 script.add(handler.addItemSql(var));
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processCombo() {
-        try {
+    private void processCombo()
+    {
+        try
+        {
             clsP_prodcomboObj handler = new clsP_prodcomboObj(this, Con, db);
             clsBeP_PRODCOMBOList items = new clsBeP_PRODCOMBOList();
             clsBeP_PRODCOMBO item = new clsBeP_PRODCOMBO();
@@ -1057,37 +1114,39 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODCOMBOList.class, "GetP_PRODCOMBO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodcombo();
-
                 var.codigo = item.CODIGO;
                 var.producto = item.PRODUCTO;
                 var.tipo = item.TIPO;
                 var.cantmin = item.CANTMIN;
                 var.canttot = item.CANTTOT;
-
                 script.add(handler.addItemSql(var));
 
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processProdMenu() {
-
-        try {
+    private void processProdMenu()
+    {
+        try
+        {
             clsP_prodmenuObj handler = new clsP_prodmenuObj(this, Con, db);
             clsBeP_PRODMENUList items = new clsBeP_PRODMENUList();
             clsBeP_PRODMENU item = new clsBeP_PRODMENU();
@@ -1097,18 +1156,18 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODMENUList.class, "GetP_PRODMENU");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodmenu();
-
                 var.codigo = item.CODIGO;
                 var.item = item.ITEM;
                 var.nombre = item.NOMBRE;
@@ -1117,19 +1176,20 @@ public class WSRec extends PBase {
                 var.orden = item.ORDEN;
                 var.bandera = item.BANDERA;
                 var.nota = item.NOTA + "";
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processPrecios() {
-        try {
+    private void processPrecios()
+    {
+        try
+        {
             clsP_prodprecioObj handler = new clsP_prodprecioObj(this, Con, db);
             clsBeP_PRODPRECIOList items = new clsBeP_PRODPRECIOList();
             clsBeP_PRODPRECIO item = new clsBeP_PRODPRECIO();
@@ -1139,41 +1199,44 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODPRECIOList.class, "GetP_PRODPRECIO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodprecio();
-
                 var.codigo = item.CODIGO;
                 var.nivel = item.NIVEL;
                 var.precio = item.PRECIO;
                 var.unidadmedida = item.UNIDADMEDIDA;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processOpciones() {
-         try {
+    private void processOpciones()
+    {
+         try
+         {
             clsP_prodopcObj handler = new clsP_prodopcObj(this, Con, db);
             clsBeP_PRODOPCListx items = new clsBeP_PRODOPCListx();
             clsBeP_PRODOPC item = new clsBeP_PRODOPC();
@@ -1183,34 +1246,35 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODOPCListx.class, "GetP_PRODOPC");
 
-             try {
+             try
+             {
                  if (items.items.size()==0) return;
-             } catch (Exception e) {
+             } catch (Exception e)
+             {
                  return;
              }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodopc();
-
                 var.id = item.ID;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+         {
             ws.error = e.getMessage();
             ws.errorflag = true;
-        }
+         }
     }
 
-    private void processOpcionesList() {
-        try {
+    private void processOpcionesList()
+    {
+        try
+        {
             clsP_prodopclistObj handler = new clsP_prodopclistObj(this, Con, db);
             clsBeP_PRODOPCLISTList items = new clsBeP_PRODOPCLISTList();
             clsBeP_PRODOPCLIST item = new clsBeP_PRODOPCLIST();
@@ -1220,42 +1284,37 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODOPCLISTList.class, "GetP_PRODOPCLIST");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-
-            try {
-                if (items.items.size()==0) return;
-            } catch (Exception e) {
-                return;
-            }
-
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodopclist();
-
                 var.id = item.ID;
                 var.producto = item.PRODUCTO;
                 var.cant = item.CANT;
                 var.idreceta = item.IDRECETA;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processProveedores() {
-        try {
+    private void processProveedores()
+    {
+        try
+        {
             clsP_proveedorObj handler = new clsP_proveedorObj(this, Con, db);
             clsBeP_PROVEEDORList items = new clsBeP_PROVEEDORList();
             clsBeP_PROVEEDOR item = new clsBeP_PROVEEDOR();
@@ -1265,41 +1324,45 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PROVEEDORList.class, "GetP_PROVEEDOR");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_proveedor();
-
                 var.codigo_proveedor=item.CODIGO_PROVEEDOR;
                 var.codigo=item.CODIGO;
                 var.nombre=item.NOMBRE;
                 var.activo=item.ACTIVO;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processProductos() {
-        try {
+    private void processProductos()
+    {
+        try
+        {
             clsP_productoObj handler = new clsP_productoObj(this, Con, db);
             clsBeP_PRODUCTOList items = new clsBeP_PRODUCTOList();
             clsBeP_PRODUCTO item = new clsBeP_PRODUCTO();
@@ -1309,24 +1372,27 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_PRODUCTOList.class, "GetP_PRODUCTO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_producto();
-
                 var.codigo_producto=item.CODIGO_PRODUCTO;
                 var.codigo=item.CODIGO;
                 var.codigo_tipo=item.CODIGO_TIPO;
@@ -1378,19 +1444,20 @@ public class WSRec extends PBase {
                 var.unigrasap=item.UNIGRASAP;
                 var.um_salida=item.UM_SALIDA+"";
                 var.activo=item.Activo;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processRutas() {
-        try {
+    private void processRutas()
+    {
+        try
+        {
             clsP_rutaObj handler = new clsP_rutaObj(this, Con, db);
             clsBeP_RUTAList items = new clsBeP_RUTAList();
             clsBeP_RUTA item = new clsBeP_RUTA();
@@ -1400,41 +1467,37 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_RUTAList.class, "GetP_RUTA");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            try {
-                if (items.items.size()==0) return;
-            } catch (Exception e) {
-                return;
-            }
-
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_ruta();
-
                 var.codigo=item.CODIGO;
                 var.sucursal=""+item.SUCURSAL;
                 var.nombre=item.NOMBRE;
                 var.codigo_ruta=item.CODIGO_RUTA;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processSucursales() {
-        try {
+    private void processSucursales()
+    {
+        try
+        {
             clsP_sucursalObj handler = new clsP_sucursalObj(this, Con, db);
             clsBeP_SUCURSALList items = new clsBeP_SUCURSALList();
             clsBeP_SUCURSAL item = new clsBeP_SUCURSAL();
@@ -1444,24 +1507,27 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_SUCURSALList.class, "GetP_SUCURSAL");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_sucursal();
-
                 var.codigo_sucursal=item.CODIGO_SUCURSAL;
                 var.codigo = item.CODIGO;
                 var.empresa = ""+item.EMPRESA;
@@ -1473,19 +1539,20 @@ public class WSRec extends PBase {
                 var.nit = item.NIT;
                 var.texto = item.TEXTO;
                 var.activo =mu.bool(item.ACTIVO);
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processUsrGrupos(){
-        try {
+    private void processUsrGrupos()
+    {
+        try
+        {
             clsP_usgrupoObj handler = new clsP_usgrupoObj(this, Con, db);
             clsBeP_USGRUPOList items = new clsBeP_USGRUPOList();
             clsBeP_USGRUPO item = new clsBeP_USGRUPO();
@@ -1495,35 +1562,36 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_USGRUPOList.class, "GetP_USGRUPO");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_usgrupo();
-
                 var.codigo=item.CODIGO+"";
                 var.nombre=item.NOMBRE;
                 var.cuenta=item.CUENTA;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processUsrGrOpc() {
-
-        try {
+    private void processUsrGrOpc()
+    {
+        try
+        {
             clsP_usgrupoopcObj handler = new clsP_usgrupoopcObj(this, Con, db);
             clsBeP_USGRUPOOPCList items = new clsBeP_USGRUPOOPCList();
             clsBeP_USGRUPOOPC item = new clsBeP_USGRUPOOPC();
@@ -1533,35 +1601,36 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_USGRUPOOPCList.class, "GetP_USGRUPOOPC");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
+            for (int i = 0; i < items.items.size(); i++)
+            {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_usgrupoopc();
-
                 var.grupo=item.GRUPO+"";
                 var.opcion=item.OPCION;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
 
     }
 
-    private void processGrOpciones() {
-
-        try {
+    private void processGrOpciones()
+    {
+        try
+        {
             clsP_usopcionObj handler = new clsP_usopcionObj(this, Con, db);
             clsBeP_USOPCIONList items = new clsBeP_USOPCIONList();
             clsBeP_USOPCION item = new clsBeP_USOPCION();
@@ -1571,35 +1640,35 @@ public class WSRec extends PBase {
 
             items = xobj.getresult(clsBeP_USOPCIONList.class, "GetP_USOPCION");
 
-            try {
+            try
+            {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_usopcion();
-
                 var.codigo=item.CODIGO;
                 var.menugroup=item.MENUGROUP;
                 var.nombre=item.NOMBRE;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    private void processVendedores() {
-        //GetVENDEDORES", "EMPRESA", gl.emp);
-        try {
+    private void processVendedores()
+    {
+        try
+        {
             clsVendedoresObj handler = new clsVendedoresObj(this, Con, db);
             clsBeVENDEDORESList items = new clsBeVENDEDORESList();
             clsBeVENDEDORES item = new clsBeVENDEDORES();
@@ -1611,16 +1680,15 @@ public class WSRec extends PBase {
 
             try {
                 if (items.items.size()==0) return;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 return;
             }
 
-            for (int i = 0; i < items.items.size(); i++) {
-
+            for (int i = 0; i < items.items.size(); i++)
+            {
                 item = items.items.get(i);
-
                 var = clsCls.new clsVendedores();
-
                 var.codigo=item.CODIGO;
                 var.ruta=item.RUTA+"";
                 var.nombre=item.NOMBRE;
@@ -1631,34 +1699,34 @@ public class WSRec extends PBase {
                 var.subbodega=item.SUBBODEGA+"";
                 var.activo=mu.bool(item.ACTIVO);
                 var.codigo_vendedor=item.CODIGO_VENDEDOR;
-
                 script.add(handler.addItemSql(var));
-
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
     }
 
-    //endregion
-
-    //region Aux
-
-    private void getURL() {
+    private void getURL()
+    {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
-            if (file1.exists()) {
+
+            if (file1.exists())
+            {
                 FileInputStream fIn = new FileInputStream(file1);
                 BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
                 gl.wsurl = myReader.readLine();
                 myReader.close();
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             gl.wsurl ="";
         }
 
@@ -1666,13 +1734,19 @@ public class WSRec extends PBase {
 
     }
 
-    private void updateLabel() {
+    private void updateLabel()
+    {
         Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            public void run() {
-                handler.post(new Runnable(){
-                    public void run() {
-                        lbl1.setText(plabel);
+        Runnable runnable = new Runnable()
+        {
+            public void run()
+            {
+                handler.post(new Runnable()
+                {
+                    public void run()
+                    {
+                        if (plabel!=null)
+                            lbl1.setText(plabel);
                      }
                 });
             }
@@ -1680,18 +1754,17 @@ public class WSRec extends PBase {
         new Thread(runnable).start();
     }
 
-    //endregion
-
-    //region Dialogs
-
-    private void msgboxwait(String msg) {
+    private void msgboxwait(String msg)
+    {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         dialog.setTitle("Recepción");
         dialog.setMessage(msg);
 
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 finish();
             }
         });
@@ -1700,15 +1773,10 @@ public class WSRec extends PBase {
 
     }
 
-    //endregion
-
-    //region Activity Events
-
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         super.onBackPressed();
     }
-
-    //endregion
 
 }
