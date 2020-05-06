@@ -90,6 +90,8 @@ import com.dtsgt.classesws.clsBeP_USOPCIONList;
 import com.dtsgt.classesws.clsBeVENDEDORES;
 import com.dtsgt.classesws.clsBeVENDEDORESList;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,12 +101,13 @@ import java.util.ArrayList;
 public class WSRec extends PBase {
 
     private TextView lbl1,lbl2;
+    private TextView lblTitulo;
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
-
+    private boolean pbd_vacia = false;
     private String plabel,fechasync;
 
     @Override
@@ -116,20 +119,29 @@ public class WSRec extends PBase {
         super.InitBase();
 
         lbl1 = (TextView) findViewById(R.id.textView7); lbl1.setText("");
+        lblTitulo = (TextView) findViewById(R.id.lblTit6);
         lbl2 = (TextView) findViewById(R.id.textView150); lbl2.setText("");
+
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
         getURL();
+
         ws = new WebServiceHandler(WSRec.this, gl.wsurl);
         xobj = new XMLObject(ws);
 
         long fs=app.getDateRecep();
         if (fs>0) fs=du.addDays(fs,-1);
         fechasync=""+fs;
-    }
 
-    //region Events
+        pbd_vacia = getIntent().getBooleanExtra("bd_vacia",false);
+
+        if (pbd_vacia)
+        {
+            lblTitulo.setText("B.D. Vacía");
+            lbl2.setText("Conectado a: " + gl.wsURL);
+        }
+    }
 
     public void doStart(View view)
     {
@@ -259,9 +271,8 @@ public class WSRec extends PBase {
     @Override
     public void wsCallBack(Boolean throwing, String errmsg, int errlevel)
     {
-
-        try {
-
+        try
+        {
             if (throwing) throw new Exception(errmsg);
 
             if (ws.errorflag)
@@ -442,6 +453,7 @@ public class WSRec extends PBase {
     {
         pbar.setVisibility(View.INVISIBLE);
         plabel = "";
+
         updateLabel();
 
         if (ws.errorflag)

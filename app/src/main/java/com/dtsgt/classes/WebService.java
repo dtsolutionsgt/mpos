@@ -1,6 +1,7 @@
 package com.dtsgt.classes;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.dtsgt.mpos.PBase;
 
@@ -38,18 +39,20 @@ public class WebService {
     private URL mUrl;
     private String mMethodName,mResult,argstr;
 
-    public WebService(PBase Parent,String Url) {
+    public WebService(PBase Parent,String Url)
+    {
         parent=Parent;
-        try {
+        try
+        {
             mUrl = new URL(Url);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException e)
+        {
             e.printStackTrace();
         }
     }
 
-    //region Public methods
-
-    public void execute() {
+    public void execute()
+    {
         errorflag =false;error="";
         AsyncCallWS wstask = new AsyncCallWS();
         wstask.execute();
@@ -57,10 +60,13 @@ public class WebService {
 
     public void wsExecute(){ }
 
-    public void wsFinished() {
-        try {
+    public void wsFinished()
+    {
+        try
+        {
             parent.wsCallBack(errorflag,error,0);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
         }
     }
 
@@ -101,7 +107,8 @@ public class WebService {
 
            int responsecode = ((HttpURLConnection) conn).getResponseCode();
 
-           if (responsecode!=299 ) {
+           if (responsecode!=299 && responsecode!=404)
+           {
                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                while ((line = rd.readLine()) != null) mResult += line;
                rd.close();rd.close();
@@ -109,7 +116,8 @@ public class WebService {
                mResult=mResult.replace("ñ","n");
                xmlresult=mResult;
 
-           } if (responsecode==299 ) {
+           }if (responsecode==299 )
+           {
 
                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                while ((line = rd.readLine()) != null) mResult += line;
@@ -119,9 +127,14 @@ public class WebService {
                xmlresult=mResult;
 
                throw new Exception("Error al procesar la solicitud :\n " + parseError());
+
+           }if (responsecode==404)
+           {
+               throw new Exception("No se obtuvo acceso a: \n" + mUrl.toURI());
            }
 
-       } catch (Exception e){
+       } catch (Exception e)
+       {
            throw new Exception(e.getMessage());
        }
     }
@@ -133,10 +146,13 @@ public class WebService {
     private String buildArgs(Object... args) throws IllegalArgumentException, IllegalAccessException {
         String result = "";
         String argName = "";
-        for (int i = 0; i < args.length; i++) {
-            if (i % 2 == 0) {
+        for (int i = 0; i < args.length; i++)
+        {
+            if (i % 2 == 0)
+            {
                 argName = args[i].toString();
-            } else {
+            } else
+            {
                 result += "<" + argName + ">";
                 argstr = result;
                 result += buildArgValue(args[i]);
@@ -148,13 +164,16 @@ public class WebService {
         return result;
     }
 
-    private String buildArgValue(Object obj) throws IllegalArgumentException, IllegalAccessException {
-        //Class<?> cl = obj.getClass();
+    private String buildArgValue(Object obj) throws IllegalArgumentException, IllegalAccessException
+    {
 
         Class<?> cl = null;
-        try {
+
+        try
+        {
             cl = obj.getClass();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             return "";
         }
 
@@ -162,17 +181,20 @@ public class WebService {
 
         if (cl.isPrimitive()) return obj.toString();
         if (cl.getName().contains("java.lang.")) return obj.toString();
-        if (cl.getName().equals("java.util.Date")) {
+        if (cl.getName().equals("java.util.Date"))
+        {
             DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
             return dfm.format((Date) obj);
         }
 
-        if (cl.isArray()) {
+        if (cl.isArray())
+        {
             String xmlName = cl.getName().substring(cl.getName().lastIndexOf(".") + 1);
             xmlName = xmlName.replace(";", "");
             Object[] arr = (Object[]) obj;
 
-            for (int i = 0; i < arr.length; i++) {
+            for (int i = 0; i < arr.length; i++)
+            {
                 result += "<" + xmlName + ">";
                 result += buildArgValue(arr[i]);
                 result += "</" + xmlName + ">";
@@ -182,7 +204,8 @@ public class WebService {
 
         Field[] fields = cl.getDeclaredFields();
 
-        for (int i = 0; i < fields.length - 1; i++) {
+        for (int i = 0; i < fields.length - 1; i++)
+        {
             result += "<" + fields[i].getName() + ">";
             result += buildArgValue(fields[i].get(obj));
             result += "</" + fields[i].getName() + ">";
@@ -198,18 +221,27 @@ public class WebService {
     private class AsyncCallWS extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected Void doInBackground(String... params) {
-            try {
+        protected Void doInBackground(String... params)
+        {
+            try
+            {
                 wsExecute();
-            } catch (Exception e) {}
+            } catch (Exception e)
+            {
+                Log.e("wsExecute", e.getMessage());
+            }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
-            try {
+        protected void onPostExecute(Void result)
+        {
+            try
+            {
                 wsFinished();
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
+                Log.e("wsFinished", e.getMessage());
             }
         }
 
@@ -225,12 +257,15 @@ public class WebService {
 
     //region Aux
 
-    public String parseError() {
-        try {
+    public String parseError()
+    {
+        try
+        {
             int p1=xmlresult.indexOf("<Error>")+7;
             int p2=xmlresult.indexOf("</Error>");
             return xmlresult.substring(p1,p2);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             return "";
         }
     }
