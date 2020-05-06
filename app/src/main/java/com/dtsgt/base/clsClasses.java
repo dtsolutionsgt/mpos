@@ -1,5 +1,7 @@
 package com.dtsgt.base;
 
+import java.net.PortUnreachableException;
+
 public class clsClasses {
 
     public class clsD_factura {
@@ -185,6 +187,7 @@ public class clsClasses {
         public double percepcion;
         public String tipo_contribuyente;
         public int  codigo_cliente;
+        public String imagen;
     }
 
     public class clsP_corel {
@@ -256,11 +259,13 @@ public class clsClasses {
 		public int activo;
 	}
 
-    public class clsP_linea {
+    public class clsP_linea
+    {
         public String codigo;
         public String marca;
         public String nombre;
         public int  activo;
+        public String imagen;
         public int  codigo_linea;
     }
 

@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -92,9 +94,11 @@ import com.dtsgt.classesws.clsBeVENDEDORESList;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -109,6 +113,7 @@ public class WSRec extends PBase {
     private ArrayList<String> script = new ArrayList<String>();
     private boolean pbd_vacia = false;
     private String plabel,fechasync;
+    private String rootdir= Environment.getExternalStorageDirectory()+"/RoadFotos/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -494,7 +499,6 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_EMPRESA");
 
             item = xobj.getresult(clsBeP_EMPRESA.class, "GetP_EMPRESA");
-
             var.empresa =""+ item.EMPRESA;
             var.nombre = item.NOMBRE;
             var.col_imp = item.COL_IMP;
@@ -510,9 +514,7 @@ public class WSRec extends PBase {
             var.codigo_activacion=item.CODIGO_ACTIVACION+"";
             var.cod_cant_emp=item.COD_CANT_EMP;
             var.cantidad_puntos_venta=item.CANTIDAD_PUNTOS_VENTA;
-
             clsP_empresaObj P_empresaObj = new clsP_empresaObj(this, Con, db);
-
             script.add(P_empresaObj.addItemSql(var));
 
         } catch (Exception e)
@@ -582,7 +584,6 @@ public class WSRec extends PBase {
                 var.puerto_impresion = item.PUERTO_IMPRESION + "";
                 var.lbs_o_kgs = item.LBS_O_KGS + "";
                 var.nota_credito = mu.bool(item.NOTA_CREDITO);
-
                 script.add(handler.addItemSql(var));
             }
 
@@ -616,9 +617,7 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_bonif();
                 var.cliente = item.CLIENTE;
                 var.ctipo = item.CTIPO;
@@ -642,9 +641,7 @@ public class WSRec extends PBase {
                 var.emp = item.EMP;
                 var.umproducto = item.UMPRODUCTO + "";
                 var.umbonificacion = item.UMBONIFICACION + "";
-
                 script.add(handler.addItemSql(var));
-
             }
 
         } catch (Exception e)
@@ -679,7 +676,6 @@ public class WSRec extends PBase {
             {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_corel();
                 var.resol = item.RESOL;
                 var.serie = item.ACTIVA;
@@ -691,7 +687,6 @@ public class WSRec extends PBase {
                 var.fechavig = item.FECHAVIG;
                 var.resguardo = item.RESGUARDO;
                 var.valor1 = item.VALOR1;
-
                 script.add(handler.addItemSql(var));
             }
 
@@ -725,9 +720,7 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_descuento();
                 var.cliente = item.CLIENTE;
                 var.ctipo = item.CTIPO;
@@ -745,9 +738,7 @@ public class WSRec extends PBase {
                 var.coddesc = item.CODDESC;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
-
                 script.add(handler.addItemSql(var));
-
             }
 
         } catch (Exception e)
@@ -780,15 +771,12 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_factorconv();
                 var.producto = item.PRODUCTO;
                 var.unidadsuperior = item.UNIDADSUPERIOR;
                 var.factorconversion = item.FACTORCONVERSION;
                 var.unidadminima = item.UNIDADMINIMA;
-
                 script.add(handler.addItemSql(var));
             }
 
@@ -822,14 +810,12 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
                 var = clsCls.new clsP_impuesto();
                 var.codigo = item.CODIGO;
                 var.valor = item.VALOR;
                 var.activo = item.Activo;
                 script.add(handler.addItemSql(var));
-
             }
 
         } catch (Exception e)
@@ -862,16 +848,43 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
                 var = clsCls.new clsP_linea();
+                var.codigo_linea = item.CODIGO_LINEA;
                 var.codigo = item.CODIGO;
                 var.marca = item.MARCA;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
-                var.codigo_linea = item.CODIGO_LINEA;
+                var.imagen = item.IMAGEN;
                 script.add(handler.addItemSql(var));
 
+                try {
+
+                    String img =  var.imagen;
+
+                    if(img!=null)
+                    {
+                        String filePathImg = rootdir+var.codigo+".jpg";
+                        File file = new File(filePathImg);
+
+                        if(!file.exists())
+                        {
+
+                            byte[] imgbytes= Base64.decode(img, Base64.DEFAULT);
+                            int bs=imgbytes.length;
+
+                            FileOutputStream fos = new FileOutputStream(filePathImg);
+                            BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                            outputStream.write(imgbytes);
+                            outputStream.close();
+                        }
+
+                    }
+
+                } catch (Exception ee)
+                {
+                    Log.e("ImgOp", ee.getMessage());
+                }
             }
 
         } catch (Exception e)
@@ -902,7 +915,6 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
                 var = clsCls.new clsP_cliente();
                 var.codigo = item.CODIGO;
@@ -929,14 +941,38 @@ public class WSRec extends PBase {
                 var.percepcion = item.PERCEPCION;
                 var.tipo_contribuyente = item.TIPO_CONTRIBUYENTE + "";
                 var.codigo_cliente = item.CODIGO_CLIENTE;
-
+                var.imagen = item.IMAGEN;
                 ss=handler.addItemSql(var);
 
                 script.add("DELETE FROM P_CLIENTE WHERE CODIGO_CLIENTE="+var.codigo_cliente);
                 script.add(handler.addItemSql(var));
 
-            }
+                try {
 
+                    String img =  var.imagen;
+
+                    if(img!=null)
+                    {
+                        String filePathImg = rootdir+var.codigo+".jpg";
+                        File file = new File(filePathImg);
+
+                        if(!file.exists())
+                        {
+                            byte[] imgbytes= Base64.decode(img, Base64.DEFAULT);
+                            int bs=imgbytes.length;
+
+                            FileOutputStream fos = new FileOutputStream(filePathImg);
+                            BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                            outputStream.write(imgbytes);
+                            outputStream.close();
+                            imgbytes = null;
+                        }
+                    }
+                } catch (Exception ee)
+                {
+                    Log.e("ImgOp", ee.getMessage());
+                }
+            }
         } catch (Exception e)
         {
             ws.error = e.getMessage();
@@ -968,14 +1004,12 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
                 var = clsCls.new clsP_encabezado_reporteshh();
                 var.codigo = item.CODIGO;
                 var.texto = item.TEXTO + "";
                 var.sucursal = item.SUCURSAL;
                 script.add(handler.addItemSql(var));
-
             }
 
         } catch (Exception e)
@@ -1028,6 +1062,7 @@ public class WSRec extends PBase {
     private void processMoneda()
     {
         try {
+
             clsP_monedaObj handler = new clsP_monedaObj(this, Con, db);
             clsBeP_MONEDAList items = new clsBeP_MONEDAList();
             clsBeP_MONEDA item = new clsBeP_MONEDA();
@@ -1086,14 +1121,12 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++)
             {
-
                 item = items.items.get(i);
                 var = clsCls.new clsP_nivelprecio();
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
                 script.add(handler.addItemSql(var));
-
             }
 
         } catch (Exception e)
@@ -1447,6 +1480,37 @@ public class WSRec extends PBase {
                 var.um_salida=item.UM_SALIDA+"";
                 var.activo=item.Activo;
                 script.add(handler.addItemSql(var));
+
+
+                try {
+
+                    String img =  var.imagen;
+
+                    if(img!=null)
+                    {
+                        String filePathImg = rootdir+var.codigo+".jpg";
+                        File file = new File(filePathImg);
+
+                        if(!file.exists())
+                        {
+                            byte[] imgbytes= Base64.decode(img, Base64.DEFAULT);
+                            int bs=imgbytes.length;
+
+                            FileOutputStream fos = new FileOutputStream(filePathImg);
+                            BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                            outputStream.write(imgbytes);
+                            outputStream.close();
+                            imgbytes = null;
+
+                        }
+
+                    }
+
+                } catch (Exception ee)
+                {
+                    Log.e("ImgOp", ee.getMessage());
+                }
+
             }
 
         } catch (Exception e)

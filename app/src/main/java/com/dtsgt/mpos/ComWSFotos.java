@@ -116,6 +116,7 @@ public class ComWSFotos extends PBase {
         String defurl="http://192.168.1.52/wsmpos/wsAndr.asmx";
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
             if (!file1.exists()) return defurl;
 

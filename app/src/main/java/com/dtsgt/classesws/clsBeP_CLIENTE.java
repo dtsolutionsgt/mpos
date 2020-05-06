@@ -30,7 +30,7 @@ public class clsBeP_CLIENTE {
     @Element(required=false) public String CODBARRA;
     @Element(required=false) public double PERCEPCION;
     @Element(required=false) public String TIPO_CONTRIBUYENTE;
-
+    @Element(required=false) public String IMAGEN;
 
     public clsBeP_CLIENTE() {
     }
@@ -41,7 +41,8 @@ public class clsBeP_CLIENTE {
                           double IMPSPEC,String NIT,String EMAIL,String ESERVICE,
                           String TELEFONO,String DIRECCION,double COORX,double COORY,
                           String BODEGA,String COD_PAIS,String CODBARRA,double PERCEPCION,
-                          String TIPO_CONTRIBUYENTE) {
+                          String TIPO_CONTRIBUYENTE,
+                          String IMAGEN) {
 
         this.CODIGO_CLIENTE=CODIGO_CLIENTE;
         this.CODIGO=CODIGO;
@@ -68,7 +69,7 @@ public class clsBeP_CLIENTE {
         this.CODBARRA=CODBARRA;
         this.PERCEPCION=PERCEPCION;
         this.TIPO_CONTRIBUYENTE=TIPO_CONTRIBUYENTE;
-
+        this.IMAGEN = IMAGEN;
     }
 
 
@@ -221,6 +222,12 @@ public class clsBeP_CLIENTE {
     }
     public void setTIPO_CONTRIBUYENTE(String value) {
         TIPO_CONTRIBUYENTE=value;
+    }
+    public String getIMAGEN() {
+        return IMAGEN;
+    }
+    public void setIMAGEN(String value) {
+        IMAGEN=value;
     }
 
 }

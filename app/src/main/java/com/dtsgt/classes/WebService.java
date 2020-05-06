@@ -70,7 +70,8 @@ public class WebService {
         }
     }
 
-    public void callEmptyMethod() {
+    public void callEmptyMethod()
+    {
 
     }
 
@@ -116,7 +117,7 @@ public class WebService {
                mResult=mResult.replace("ñ","n");
                xmlresult=mResult;
 
-           }if (responsecode==299 )
+           }if (responsecode==299)
            {
 
                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -139,11 +140,8 @@ public class WebService {
        }
     }
 
-    //endregion
-
-    //region Arguments
-
-    private String buildArgs(Object... args) throws IllegalArgumentException, IllegalAccessException {
+    private String buildArgs(Object... args) throws IllegalArgumentException, IllegalAccessException
+    {
         String result = "";
         String argName = "";
         for (int i = 0; i < args.length; i++)
@@ -199,6 +197,7 @@ public class WebService {
                 result += buildArgValue(arr[i]);
                 result += "</" + xmlName + ">";
             }
+
             return result;
         }
 
@@ -213,10 +212,6 @@ public class WebService {
 
         return result;
     }
-
-    //endregion
-
-    //region WebService Async Call Class
 
     private class AsyncCallWS extends AsyncTask<String, Void, Void> {
 
@@ -253,10 +248,6 @@ public class WebService {
 
     }
 
-    //endregion
-
-    //region Aux
-
     public String parseError()
     {
         try
@@ -269,7 +260,4 @@ public class WebService {
             return "";
         }
     }
-
-    //endregion
-
 }
