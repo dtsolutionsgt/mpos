@@ -203,34 +203,27 @@ public class WSRec extends PBase {
                         break;
                     case 12:
                         callMethod("GetP_MEDIAPAGO", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 13:
                         callMethod("GetP_MONEDA", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 14:
                         callMethod("GetP_NIVELPRECIO", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 15:
                         callMethod("GetP_PRODCOMBO", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 16:
                         callMethod("GetP_PRODMENU", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 17:
                         callMethod("GetP_PRODPRECIO", "EMPRESA", gl.emp);
                          break;
                     case 18:
                         callMethod("GetP_PRODOPC", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 19:
                         callMethod("GetP_PRODOPCLIST", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 20:
                         callMethod("GetP_PROVEEDOR", "EMPRESA", gl.emp);
@@ -246,15 +239,12 @@ public class WSRec extends PBase {
                         break;
                     case 24:
                         callMethod("GetP_USGRUPO", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 25:
                         callMethod("GetP_USGRUPOOPC", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 26:
                         callMethod("GetP_USOPCION", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 27:
                         callMethod("GetVENDEDORES", "EMPRESA", gl.emp);

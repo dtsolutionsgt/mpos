@@ -54,14 +54,17 @@ public class MainActivity extends PBase {
     private String parVer = "2.5.2 / 12-Mar-2020 ";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
 
         try
         {
+
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
             grantPermissions();
+
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -69,11 +72,13 @@ public class MainActivity extends PBase {
     }
 
     // Grant permissions
-
-    private void grantPermissions() {
+    private void grantPermissions()
+    {
 
         try {
-            if (Build.VERSION.SDK_INT >= 20) {
+
+            if (Build.VERSION.SDK_INT >= 20)
+            {
 
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -102,9 +107,11 @@ public class MainActivity extends PBase {
         }
     }
 
-    private void startApplication() {
+    private void startApplication()
+    {
 
-        try {
+        try
+        {
             super.InitBase();
 
             this.setTitle("MPos");
@@ -126,8 +133,6 @@ public class MainActivity extends PBase {
             dbVers = new BaseDatosVersion(this, db, Con);
             dbVers.update();
 
-            //db.execSQL("ALTER TABLE VENDEDORES ADD COLUMN CODIGO_VENDEDOR INTEGER;");
-
             setHandlers();
 
             khand=new clsKeybHandler(this,lblPass,lblKeyDP);
@@ -137,10 +142,12 @@ public class MainActivity extends PBase {
 
             initSession();
 
-            try {
+            try
+            {
                 File file1 = new File(Environment.getExternalStorageDirectory(), "/debug.txt");
                 if (file1.exists()) gl.debug=true;else gl.debug=false;
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 gl.debug=false;
             }
 
@@ -148,11 +155,13 @@ public class MainActivity extends PBase {
             if (!validaLicencia()) {
                 startActivity(new Intent(this, comWSLic.class));
                 return;
-            } else {
+            } else
+            {
                 supervisorRuta();
             } */
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -289,7 +298,8 @@ public class MainActivity extends PBase {
         String s, rn = "";
         String vCellCom = "";
 
-        if (dbVacia()) {
+        if (dbVacia())
+        {
             gl.emp="3";
             gl.modoadmin = true;
             gl.autocom = 0;
@@ -299,7 +309,6 @@ public class MainActivity extends PBase {
             startActivity(intent);
         }
 
-
         configBase();
 
         try {
@@ -307,10 +316,9 @@ public class MainActivity extends PBase {
             sql = "SELECT CODIGO,NOMBRE,SUCURSAL FROM P_RUTA";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount() > 0) {
-
+            if (DT.getCount() > 0)
+            {
                 DT.moveToFirst();
-
                 gl.ruta = DT.getString(0);
                 gl.rutanom = DT.getString(1);
                 gl.vend = "1";
@@ -324,18 +332,19 @@ public class MainActivity extends PBase {
 
                 rutapos = true;
 
-            } else {
-
+            } else
+            {
                 gl.ruta = "";
                 gl.rutanom = "";
                 gl.vend = "0";
                 gl.rutatipog = "V";
                 gl.wsURL = "http://192.168.1.1/wsAndr/wsAndr.asmx";
-
             }
 
-        } catch (Exception e) {
-            addlog(new Object() {
+        } catch (Exception e)
+        {
+            addlog(new Object()
+            {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
@@ -344,9 +353,9 @@ public class MainActivity extends PBase {
             sql = " SELECT EMPRESA,NOMBRE FROM P_EMPRESA";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount() > 0) {
+            if (DT.getCount() > 0)
+            {
                 DT.moveToFirst();
-
                 gl.emp = DT.getString(0);
                 gl.empnom = DT.getString(1);
                 gl.devol = false;
@@ -356,52 +365,65 @@ public class MainActivity extends PBase {
                 gl.incNoLectura = false; //#HS_20181211 Agregue campo incNoLectura para validacion en cliente.
                 gl.depparc = false;
                 gl.lotedf = "";
-            } else {
+            } else
+            {
                 gl.emp = "3";
                 gl.devol = false;
                 msgbox("¡No se pudo cargar configuración de la empresa!");
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             msgbox("¡No se pudo cargar configuración de la empresa!");
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
         gl.vendnom = "Vendedor 1";
 
-        try {
+        try
+        {
             File directory = new File(Environment.getExternalStorageDirectory() + "/SyncFold");
             directory.mkdirs();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
         }
 
-        try {
+        try
+        {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos");
             directory.mkdirs();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
         }
 
-        try {
+        try
+        {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia");
             directory.mkdirs();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
         }
 
-        try {
+        try
+        {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente");
             directory.mkdirs();
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
         }
 
         //Id de Dispositivo
         gl.deviceId = androidid();
         gl.devicename = getLocalBluetoothName();
 
-        try {
+        try
+        {
             AppMethods app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
-        } catch (Exception e) {
-            addlog(new Object() {
+        } catch (Exception e)
+        {
+            addlog(new Object()
+            {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
         }
@@ -433,7 +455,8 @@ public class MainActivity extends PBase {
 
         configBase();
 
-        try {
+        try
+        {
 
             if (usr.isEmpty())
             {
@@ -447,38 +470,45 @@ public class MainActivity extends PBase {
             sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount() == 0) {
+            if (DT.getCount() == 0)
+            {
                 mu.msgbox("Usuario incorrecto !");
                 return false;
             }
 
             DT.moveToFirst();
             dpwd = DT.getString(1);
-            if (!pwd.equalsIgnoreCase(dpwd)) {
+            if (!pwd.equalsIgnoreCase(dpwd))
+            {
                 mu.msgbox("Contraseña incorrecta !");
                 return false;
             }
 
             gl.nivel = DT.getInt(2);gl.rol=gl.nivel;
 
-            if (gl.caja.isEmpty() || gl.tienda.isEmpty()) {
-                if (gl.nivel==3) {
+            if (gl.caja.isEmpty() || gl.tienda.isEmpty())
+            {
+                if (gl.nivel==3)
+                {
                     gl.modoinicial=true;return true;
-                } else {
+                } else
+                {
                     toastlong("No está configurada la caja. Informe al gerente.");
                     acesoAdmin();return false;
                 }
-            } else {
+            } else
+            {
                gl.modoinicial=false;
             }
 
-            if (gl.nivel!=3) {
-
+            if (gl.nivel!=3)
+            {
                 sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES " +
                       "WHERE (CODIGO='" + usr + "') AND (RUTA='"+gl.tienda+"') COLLATE NOCASE";
                 DT = Con.OpenDT(sql);
 
-                if (DT.getCount() == 0) {
+                if (DT.getCount() == 0)
+                {
                     mu.msgbox("¡El usuario no tiene permiso de ingreso para "+gl.tiendanom+"!");return false;
                 }
             }
@@ -491,22 +521,21 @@ public class MainActivity extends PBase {
 
             return true;
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             return false;
         }
 
     }
 
-    //endregion
-
-    //region Aux
-
-    private void acesoAdmin() {
+    private void acesoAdmin()
+    {
 
         if (!tieneTiendaCaja()) return;
 
-        try {
+        try
+        {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
             alert.setTitle("Contraseña de administrador");//	alert.setMessage("Serial");
@@ -518,55 +547,73 @@ public class MainActivity extends PBase {
             input.setText("");
             input.requestFocus();
 
-            alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                     try {
+            alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int whichButton)
+                {
+                     try
+                     {
                         String s = input.getText().toString();
-                        if (s.equalsIgnoreCase("1965")) {
+                        if (s.equalsIgnoreCase("1965"))
+                        {
                             startActivity(new Intent(MainActivity.this, ConfigCaja.class));
-                        } else {
+                        } else
+                        {
                             mu.msgbox("Contraseña incorrecta");return;
                         }
 
-                    } catch (Exception e) {
+                    } catch (Exception e)
+                    {
                         addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
                     }
                 }
             });
 
-            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {}
+            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+            {
+                public void onClick(DialogInterface dialog, int whichButton)
+                {
+
+                }
             });
 
             alert.show();
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
             addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 
-    private boolean dbVacia() {
+    private boolean dbVacia()
+    {
         Cursor dt;
 
-        try {
+        try
+        {
             sql = "SELECT CODIGO FROM P_RUTA";
             dt = Con.OpenDT(sql);
 
             return dt.getCount() == 0;
-        } catch (Exception e) {
-            addlog(new Object() {
+
+        } catch (Exception e)
+        {
+            addlog(new Object()
+            {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
             return true;
         }
     }
 
-    private boolean validaLicencia() {
+    private boolean validaLicencia()
+    {
         CryptUtil cu = new CryptUtil();
         Cursor dt;
         String lic, lickey, licruta, rutaencrypt;
         Integer msgLic = 0;
 
-        try {
-
+        try
+        {
             lickey = cu.encrypt(gl.deviceId);
             rutaencrypt = cu.encrypt(gl.ruta);
 
@@ -576,41 +623,49 @@ public class MainActivity extends PBase {
             lic = dt.getString(0);
             licruta = dt.getString(1);
 
-
-            if (mu.emptystr(lic)) {
+            if (mu.emptystr(lic))
+            {
                 toastlong("El dispositivo no tiene licencia válida de handheld");
                 return false;
             }
 
-            if (mu.emptystr(licruta)) {
+            if (mu.emptystr(licruta))
+            {
                 toastlong("El dispositivo no tiene licencia válida de ruta");
                 return false;
             }
 
 
-            if (lic.equalsIgnoreCase(lickey) && licruta.equalsIgnoreCase(rutaencrypt)) {
+            if (lic.equalsIgnoreCase(lickey) && licruta.equalsIgnoreCase(rutaencrypt))
+            {
                return true;
             }
 
-            if (!lic.equalsIgnoreCase(lickey) && !licruta.equalsIgnoreCase(rutaencrypt)) {
+            if (!lic.equalsIgnoreCase(lickey) && !licruta.equalsIgnoreCase(rutaencrypt))
+            {
                 toastlong("El dispositivo no tiene licencia válida de handheld, ni de ruta");
                 return false;
             }
 
-            if (!lic.equalsIgnoreCase(lickey)) {
+            if (!lic.equalsIgnoreCase(lickey))
+            {
                 toastlong("El dispositivo no tiene licencia válida de handheld");
                 return false;
             }
 
-            if (!licruta.equalsIgnoreCase(rutaencrypt)) {
+            if (!licruta.equalsIgnoreCase(rutaencrypt))
+            {
                 toastlong("El dispositivo no tiene licencia válida de ruta");
                 return false;
             }
 
-        } catch (Exception e) {
-            addlog(new Object() {
+        } catch (Exception e)
+        {
+            addlog(new Object()
+            {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-            mu.msgbox(new Object() {
+            mu.msgbox(new Object()
+            {
             }.getClass().getEnclosingMethod().getName() + " : " + e.getMessage());
         }
 
@@ -618,14 +673,16 @@ public class MainActivity extends PBase {
 
     }
 
-    private void msgAskLic(String msg) {
+    private void msgAskLic(String msg)
+    {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         dialog.setTitle(R.string.app_name);
         dialog.setMessage(msg);
         dialog.setIcon(R.drawable.ic_quest);
 
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener()
+        {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
@@ -635,19 +692,23 @@ public class MainActivity extends PBase {
     }
 
     @SuppressLint("MissingPermission")
-    private String androidid() {
+    private String androidid()
+    {
         String uniqueID = "";
         try {
 
             TelephonyManager tm = (TelephonyManager) this.getSystemService(this.TELEPHONY_SERVICE);
             uniqueID = tm.getDeviceId();
 
-            if (uniqueID==null){
+            if (uniqueID==null)
+            {
                 uniqueID = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
             }
 
-        } catch (Exception e) {
-            msgbox(new Object() {
+        } catch (Exception e)
+        {
+            msgbox(new Object()
+            {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             uniqueID = "0000000000";
         }
@@ -655,23 +716,28 @@ public class MainActivity extends PBase {
         return uniqueID;
     }
 
-    public String getLocalBluetoothName() {
+    public String getLocalBluetoothName()
+    {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (mBluetoothAdapter == null) {
+        if (mBluetoothAdapter == null)
+        {
             return "";
-        } else {
+        } else
+        {
             return mBluetoothAdapter.getName();
         }
     }
 
-    public void configBase() {
+    public void configBase()
+    {
         Cursor DT;
 
         gl.tienda="";gl.caja="";
         gl.tiendanom="";gl.cajanom="";
 
-        try {
+        try
+        {
             sql = "SELECT url,sucursal,ruta FROM Params";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
@@ -680,29 +746,37 @@ public class MainActivity extends PBase {
             gl.tienda=DT.getString(1);
             gl.caja=DT.getString(2);
 
-            if (!gl.tienda.isEmpty()) {
-                try {
+            if (!gl.tienda.isEmpty())
+            {
+                try
+                {
                     sql = "SELECT DESCRIPCION FROM P_SUCURSAL WHERE CODIGO='"+gl.tienda+"'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.tiendanom=DT.getString(0);
-                } catch (Exception e) {
+                } catch (Exception e)
+                {
                     gl.tiendanom="";
                 }
             }
 
-            if (!gl.caja.isEmpty()) {
-                try {
+            if (!gl.caja.isEmpty())
+            {
+                try
+                {
                     sql = "SELECT NOMBRE FROM P_RUTA WHERE CODIGO='"+gl.caja+"'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.cajanom=DT.getString(0);
-                } catch (Exception e) {
+
+                } catch (Exception e)
+                {
                     gl.cajanom="";
                 }
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
              gl.tiendanom="";gl.cajanom="";
         }
 
@@ -710,52 +784,70 @@ public class MainActivity extends PBase {
         lblRuta.setText(gl.cajanom);
         lblEmp.setText(gl.empnom);
 
-        try {
+        try
+        {
             String emplogo = Environment.getExternalStorageDirectory() + "/mposlogo.png";
             File file = new File(emplogo);
-            if (file.exists()) {
+            if (file.exists())
+            {
                 Bitmap bmImg = BitmapFactory.decodeFile(emplogo);
                 imgLogo.setImageBitmap(bmImg);
             }
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
+
         }
 
     }
 
-    public boolean tieneTiendaCaja() {
+    public boolean tieneTiendaCaja()
+    {
+
         Cursor DT;
 
-        try {
+        try
+        {
 
             sql = "SELECT DESCRIPCION FROM P_SUCURSAL";
             DT = Con.OpenDT(sql);
-            if (DT.getCount()==0) {
+
+            if (DT.getCount()==0)
+            {
                 msgbox("¡No se puede continuar, no está definida ninguna tienda!");return false;
             }
 
             sql = "SELECT NOMBRE FROM P_RUTA";
             DT = Con.OpenDT(sql);
-            if (DT.getCount()==0) {
+
+            if (DT.getCount()==0)
+            {
                 msgbox("¡No se puede continuar, no está definida ninguna caja!");return false;
             }
 
             return true;
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
             return false;
         }
    }
 
-    public void llenaUsuarios() {
+    public void llenaUsuarios()
+    {
         clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
         clsClasses.clsMenu item;
 
         usr="";pwd="";
 
-        try {
+        try
+        {
+
             mitems.clear();
             VendedoresObj.fill();
 
-            for (int i = 0; i <VendedoresObj.count; i++) {
+            for (int i = 0; i <VendedoresObj.count; i++)
+            {
                 item=clsCls.new clsMenu();
                 item.Cod=VendedoresObj.items.get(i).codigo;
                 item.Name=VendedoresObj.items.get(i).ruta;
@@ -764,32 +856,29 @@ public class MainActivity extends PBase {
 
             adapter=new LA_Login(this,mitems);
             listView.setAdapter(adapter);
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
             mu.msgbox(e.getMessage());
         }
     }
 
-    //endregion
-
-    //region Activity Events
-
-    protected void onResume() {
-        try {
+    protected void onResume()
+    {
+        try
+        {
             super.onResume();
             initSession();
 
-            if (browse==1) {
+            if (browse==1)
+            {
                 browse=0;return;
             }
 
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 
-    //endregion
-
 }
-
-
-
