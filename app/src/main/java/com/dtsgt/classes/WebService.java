@@ -130,7 +130,7 @@ public class WebService {
 
            }if (responsecode==404)
            {
-               throw new Exception("No se obtuvo acceso a: \n" + mUrl.toURI());
+               throw new Exception("Error 404: No se obtuvo acceso a: \n" + mUrl.toURI() + "\n" + "Verifique que el WS Existe y es accesible desde el explorador.");
            }
 
        } catch (Exception e)
