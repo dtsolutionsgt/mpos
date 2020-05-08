@@ -644,6 +644,7 @@ public class Venta extends PBase {
             gl.dval=1;
             gl.limcant=getDisp(prodid);
             tipo=prodTipo(prodid);
+            gl.tipoprodcod=tipo;
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
@@ -847,7 +848,8 @@ public class Venta extends PBase {
 
     private void updateCant() {
 
-        if (gl.retcant<0 || gl.limcant==0) return;
+        //if (gl.retcant<0 || gl.limcant==0) return;
+        if (gl.retcant<0) return;
 
         prodid=uprodid;
         tipo=prodTipo(prodid);
@@ -880,7 +882,7 @@ public class Venta extends PBase {
     }
 
     private void prodPrecio() {
-        try{
+        try {
             if (prodPorPeso(prodid)) {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um);
                 if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
@@ -919,7 +921,9 @@ public class Venta extends PBase {
         }
 
         try {
-            sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO='"+prodid+"') AND (UNIDADSUPERIOR='"+gl.um+"')";
+            int icod=Integer.parseInt(prodid);
+
+            sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO='"+icod+"') AND (UNIDADSUPERIOR='"+gl.um+"')";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
 
@@ -1594,8 +1598,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-
     }
 
     private void msgAskLimit(String msg,boolean updateitem) {
@@ -1662,6 +1664,7 @@ public class Venta extends PBase {
         clsClasses.clsMenu item;
         ArrayList<String> pcodes = new ArrayList<String>();
         String pcode;
+        int pact;
 
         try {
             pitems.clear();pcodes.clear();
@@ -1696,6 +1699,7 @@ public class Venta extends PBase {
 
                 pcode=dt.getString(0);
                 if (!pcodes.contains(pcode)) {
+                    pact=dt.getInt(3);
                     if (dt.getInt(3)==1) {
                         item=clsCls.new clsMenu();
                         item.Cod=dt.getString(0);
@@ -2096,7 +2100,6 @@ public class Venta extends PBase {
 
     }
 
-
     //endregion
 
     //region Aux
@@ -2412,10 +2415,12 @@ public class Venta extends PBase {
         Cursor DT;
         double pr,stot,pprec,tsimp;
         String sprec="";
+        int icod;
 
         try {
+            icod=Integer.parseInt(prid);
 
-            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prid+"') AND (NIVEL="+nivel+") ";
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+") ";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 

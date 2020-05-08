@@ -1,7 +1,5 @@
 package com.dtsgt.base;
 
-import java.net.PortUnreachableException;
-
 public class clsClasses {
 
     public class clsD_factura {
@@ -37,6 +35,11 @@ public class clsClasses {
         public String vehiculo;
         public int  codigoliquidacion;
         public String razon_anulacion;
+        public String feelserie;
+        public String feelnumero;
+        public String feeluuid;
+        public long feelfechaprocesado;
+        public String feelcontingencia;
     }
 
     public class clsD_facturad {
@@ -259,8 +262,7 @@ public class clsClasses {
 		public int activo;
 	}
 
-    public class clsP_linea
-    {
+    public class clsP_linea   {
         public String codigo;
         public String marca;
         public String nombre;
@@ -311,8 +313,9 @@ public class clsClasses {
         public double canttot;
     }
 
-
     public class clsP_prodprecio {
+        public int  codigo_precio;
+        public int  empresa;
         public String codigo;
         public int  nivel;
         public double precio;
@@ -415,7 +418,7 @@ public class clsClasses {
     public class clsP_sucursal {
         public int  codigo_sucursal;
         public String codigo;
-        public String empresa;
+        public int  empresa;
         public int  codigo_nivel_precio;
         public String descripcion;
         public String nombre;
@@ -424,6 +427,13 @@ public class clsClasses {
         public String nit;
         public String texto;
         public int  activo;
+        public String pet_prefijo;
+        public String pet_llave;
+        public String pet_alias_pfx;
+        public String pet_pfx_llave;
+        public int  codigo_escenario_isr;
+        public int  codigo_escenario_iva;
+        public String codigo_municipio;
     }
 
     public class clsP_ruta {

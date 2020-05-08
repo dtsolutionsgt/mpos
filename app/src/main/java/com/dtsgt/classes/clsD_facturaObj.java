@@ -107,6 +107,11 @@ public class clsD_facturaObj {
         ins.add("VEHICULO",item.vehiculo);
         ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         ins.add("RAZON_ANULACION",item.razon_anulacion);
+        ins.add("FEELSERIE",item.feelserie);
+        ins.add("FEELNUMERO",item.feelnumero);
+        ins.add("FEELUUID",item.feeluuid);
+        ins.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
+        ins.add("FEELCONTINGENCIA",item.feelcontingencia);
 
         db.execSQL(ins.sql());
 
@@ -146,6 +151,11 @@ public class clsD_facturaObj {
         upd.add("VEHICULO",item.vehiculo);
         upd.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         upd.add("RAZON_ANULACION",item.razon_anulacion);
+        upd.add("FEELSERIE",item.feelserie);
+        upd.add("FEELNUMERO",item.feelnumero);
+        upd.add("FEELUUID",item.feeluuid);
+        upd.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
+        upd.add("FEELCONTINGENCIA",item.feelcontingencia);
 
         upd.Where("(EMPRESA="+item.empresa+") AND (COREL='"+item.corel+"')");
 
@@ -211,6 +221,11 @@ public class clsD_facturaObj {
             item.vehiculo=dt.getString(29);
             item.codigoliquidacion=dt.getInt(30);
             item.razon_anulacion=dt.getString(31);
+            item.feelserie=dt.getString(32);
+            item.feelnumero=dt.getString(33);
+            item.feeluuid=dt.getString(34);
+            item.feelfechaprocesado=dt.getLong(35);
+            item.feelcontingencia=dt.getString(36);
 
             items.add(item);
 
@@ -274,6 +289,11 @@ public class clsD_facturaObj {
         ins.add("VEHICULO",item.vehiculo);
         ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         ins.add("RAZON_ANULACION",item.razon_anulacion);
+        ins.add("FEELSERIE",item.feelserie);
+        ins.add("FEELNUMERO",item.feelnumero);
+        ins.add("FEELUUID",item.feeluuid);
+        ins.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
+        ins.add("FEELCONTINGENCIA",item.feelcontingencia);
 
         return ins.sql();
 
@@ -313,6 +333,11 @@ public class clsD_facturaObj {
         upd.add("VEHICULO",item.vehiculo);
         upd.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         upd.add("RAZON_ANULACION",item.razon_anulacion);
+        upd.add("FEELSERIE",item.feelserie);
+        upd.add("FEELNUMERO",item.feelnumero);
+        upd.add("FEELUUID",item.feeluuid);
+        upd.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
+        upd.add("FEELCONTINGENCIA",item.feelcontingencia);
 
         upd.Where("(EMPRESA="+item.empresa+") AND (COREL='"+item.corel+"')");
 

@@ -29,6 +29,8 @@ public class VentaEdit extends PBase {
         lbl1.setText(gl.gstr);
         lbl2.setText(""+cant);
         if (lcant>=0) lbl3.setText("Disp : "+lcant);else lbl3.setText("");
+
+        if (gl.tipoprodcod.equalsIgnoreCase("S")) lbl3.setVisibility(View.INVISIBLE);
     }
 
 
@@ -54,12 +56,20 @@ public class VentaEdit extends PBase {
      }
 
     public void doInc(View view) {
-        if (cant<lcant || lcant<0) {
+      if (gl.tipoprodcod.equalsIgnoreCase("P")) {
+            if (cant<lcant || lcant<0) {
+                cant++;
+            } else {
+                msgAskLimit("El producto no tiene suficiente existencia.\n¿Continuar?");
+            }
+        } else if (gl.tipoprodcod.equalsIgnoreCase("S")) {
             cant++;
-            lbl2.setText(""+cant);
-        } else {
-            msgAskLimit("El producto no tiene suficiente existencia.\n¿Continuar?");
+        } else if (gl.tipoprodcod.equalsIgnoreCase("M")) {
+
         }
+
+        lbl2.setText(""+cant);
+
      }
 
     public void doDelete(View view) {

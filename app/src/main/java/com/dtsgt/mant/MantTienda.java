@@ -106,7 +106,7 @@ public class MantTienda extends PBase {
         imgstat.setVisibility(View.INVISIBLE);
 
         item.codigo="";
-        item.empresa="1";
+        item.empresa=1;
         item.descripcion="";
         item.nombre="";
         item.direccion="";

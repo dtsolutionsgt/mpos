@@ -140,6 +140,7 @@ public class WSEnv extends PBase {
         D_facturadObj=new clsD_facturadObj(this,Con,db);
         D_facturapObj=new clsD_facturapObj(this,Con,db);
 
+        prepareSend();
     }
 
 
@@ -199,10 +200,10 @@ public class WSEnv extends PBase {
                     break;
                 case 2:
                     statusFactura();
-                    if (fidx>=ftot) {
-                        //processComplete();
+                    if (fidx>=ftot-1) {
+                        processComplete();
                     } else {
-                        //execws(2);
+                        execws(2);
                     }
                     processComplete();
                     break;
@@ -259,7 +260,12 @@ public class WSEnv extends PBase {
     //region Envío
 
     private void processFactura() {
-        fidx++;corel=fact.get(fidx);
+        if (ftot==0) {
+            fidx++;return;
+        }
+
+        fidx++;
+        corel=fact.get(fidx);
         factsend=false;
 
         clients.clear();
@@ -271,14 +277,18 @@ public class WSEnv extends PBase {
 
             idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
-            CSQL=addFactheader(D_facturaObj.first())+ "*";
+            CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"'*";
+            CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"'*";
+            CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"'*";
+
+            CSQL=CSQL+addFactheader(D_facturaObj.first())+ "*";
 
             for (int i = 0; i <D_facturadObj.count; i++) {
-                CSQL=CSQL +D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + "*";
+                CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + "*";
             }
 
-            for (int i = 0; i <D_facturapObj.count; i++) {
-                CSQL=CSQL +D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + "*";
+            for (int i = 0; i < D_facturapObj.count; i++) {
+                CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + "*";
             }
 
         } catch (Exception e) {
@@ -324,13 +334,17 @@ public class WSEnv extends PBase {
         ins.add("VEHICULO",item.vehiculo);
         ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         ins.add("RAZON_ANULACION",item.razon_anulacion);
+        ins.add("FEELSERIE",item.feelserie);
+        ins.add("FEELNUMERO",item.feelnumero);
+        ins.add("FEELUUID",item.feeluuid);
+        ins.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
+        ins.add("FEELCONTINGENCIA",item.feelcontingencia);
 
         return ins.sql();
 
     }
 
     private void statusFactura() {
-
         try {
             rs =(String) xobj.getSingle("CommitResult",String.class);
             if (!rs.equalsIgnoreCase("#")) {
@@ -339,6 +353,7 @@ public class WSEnv extends PBase {
                 factsend=true;
             }
 
+            fsend++;
             try {
                 sql="UPDATE D_Factura SET STATCOM='S' WHERE COREL='"+corel+"'";
                 db.execSQL(sql);
@@ -403,8 +418,13 @@ public class WSEnv extends PBase {
 
     private void prepareSend() {
         ferr="";
+        int ccant;
 
         try {
+
+            clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
+            P_clienteObj.fill("WHERE ESERVICE='N'");ccant=P_clienteObj.count;
+
             D_facturaObj.fill("WHERE STATCOM='N'");
             ftot=D_facturaObj.count;
             fsend=0;
@@ -414,11 +434,13 @@ public class WSEnv extends PBase {
             for (int i = 0; i <ftot; i++) {
                 fact.add(D_facturaObj.items.get(i).corel);
             }
+
+            lbl1.setText("Pendientes envio : \nFacturas : "+ftot+"\nClientes : "+ccant);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-    
 
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";

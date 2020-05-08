@@ -819,6 +819,12 @@ public class FacturaRes extends PBase {
 			ins.add("CODIGOLIQUIDACION",0);
 			ins.add("RAZON_ANULACION","");
 
+            ins.add("FEELSERIE"," ");
+            ins.add("FEELNUMERO"," ");
+            ins.add("FEELUUID"," ");
+            ins.add("FEELFECHAPROCESADO",0);
+            ins.add("FEELCONTINGENCIA"," ");
+
 			db.execSQL(ins.sql());
 
 			//endregion

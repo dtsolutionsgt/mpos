@@ -37,28 +37,26 @@ import java.util.ArrayList;
 
 public class MainActivity extends PBase {
 
-    private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass,lblKeyDP;
+    private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
     private ImageView imgLogo;
 
     private BaseDatosVersion dbVers;
 
     private ListView listView;
     private LA_Login adapter;
-    private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
+    private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<clsClasses.clsMenu>();
 
     private clsKeybHandler khand;
 
     private boolean rutapos, scanning = false;
-    private String cs1, cs2, cs3, barcode, epresult,usr, pwd;
+    private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
     private String parVer = "2.5.2 / 12-Mar-2020 ";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
 
-        try
-        {
+        try {
 
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
@@ -66,19 +64,18 @@ public class MainActivity extends PBase {
             grantPermissions();
 
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }
 
     // Grant permissions
-    private void grantPermissions()
-    {
+    private void grantPermissions() {
 
         try {
 
-            if (Build.VERSION.SDK_INT >= 20)
-            {
+            if (Build.VERSION.SDK_INT >= 20) {
 
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -107,11 +104,9 @@ public class MainActivity extends PBase {
         }
     }
 
-    private void startApplication()
-    {
+    private void startApplication() {
 
-        try
-        {
+        try {
             super.InitBase();
 
             this.setTitle("MPos");
@@ -135,20 +130,19 @@ public class MainActivity extends PBase {
 
             setHandlers();
 
-            khand=new clsKeybHandler(this,lblPass,lblKeyDP);
+            khand = new clsKeybHandler(this, lblPass, lblKeyDP);
             khand.enable();
 
-            gl.grantaccess=false;
+            gl.grantaccess = false;
 
             initSession();
 
-            try
-            {
+            try {
                 File file1 = new File(Environment.getExternalStorageDirectory(), "/debug.txt");
-                if (file1.exists()) gl.debug=true;else gl.debug=false;
-            } catch (Exception e)
-            {
-                gl.debug=false;
+                if (file1.exists()) gl.debug = true;
+                else gl.debug = false;
+            } catch (Exception e) {
+                gl.debug = false;
             }
 
             /*
@@ -160,10 +154,11 @@ public class MainActivity extends PBase {
                 supervisorRuta();
             } */
 
-        } catch (Exception e)
-        {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }
@@ -200,12 +195,7 @@ public class MainActivity extends PBase {
             Intent intent = new Intent(this, Menu.class);
             startActivity(intent);
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
-
     }
 
     public void doLogin(View view) {
@@ -225,8 +215,9 @@ public class MainActivity extends PBase {
     }
 
     public void doLoginScreen(View view) {
-        usr="1";pwd="1";
-        if (checkUser()) gotoMenu();
+        //usr = "1";
+        //pwd = "1";
+        //if (checkUser()) gotoMenu();
     }
 
     public void doRegister(View view) {
@@ -242,7 +233,7 @@ public class MainActivity extends PBase {
 
     public void doKey(View view) {
         String ss;
-        ss=view.getTag().toString();
+        ss = view.getTag().toString();
 
         khand.handleKey(ss);
         if (khand.isEnter) {
@@ -250,7 +241,7 @@ public class MainActivity extends PBase {
                 toast("Falta contraseña");
             } else {
                 if (khand.isValid) {
-                    pwd=khand.val;
+                    pwd = khand.val;
                     processLogIn();
                 }
             }
@@ -263,30 +254,34 @@ public class MainActivity extends PBase {
 
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                     try {
                         Object lvObj = listView.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+                        clsClasses.clsMenu item = (clsClasses.clsMenu) lvObj;
 
                         adapter.setSelectedIndex(position);
-                        usr=item.Cod;
+                        usr = item.Cod;
 
                     } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox( e.getMessage());
+                        addlog(new Object() {
+                        }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+                        mu.msgbox(e.getMessage());
                     }
-                };
+                }
+
+                ;
             });
 
         } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
 
     }
 
     public void doFPTest(View view) {
-        startActivity(new Intent(this,FingPTest.class));
+        startActivity(new Intent(this, FingPTest.class));
     }
 
     //endregion
@@ -298,14 +293,13 @@ public class MainActivity extends PBase {
         String s, rn = "";
         String vCellCom = "";
 
-        if (dbVacia())
-        {
-            gl.emp="3";
+        if (dbVacia()) {
+            gl.emp = "3";
             gl.modoadmin = true;
             gl.autocom = 0;
             toastcent("¡La base de datos está vacia!");
             Intent intent = new Intent(MainActivity.this, WSRec.class);
-            intent.putExtra("bd_vacia",true);
+            intent.putExtra("bd_vacia", true);
             startActivity(intent);
         }
 
@@ -316,8 +310,7 @@ public class MainActivity extends PBase {
             sql = "SELECT CODIGO,NOMBRE,SUCURSAL FROM P_RUTA";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount() > 0)
-            {
+            if (DT.getCount() > 0) {
                 DT.moveToFirst();
                 gl.ruta = DT.getString(0);
                 gl.rutanom = DT.getString(1);
@@ -327,13 +320,12 @@ public class MainActivity extends PBase {
                 gl.impresora = "";
                 gl.sucur = DT.getString(2);
 
-                vCellCom ="";
+                vCellCom = "";
                 gl.CellCom = false;
 
                 rutapos = true;
 
-            } else
-            {
+            } else {
                 gl.ruta = "";
                 gl.rutanom = "";
                 gl.vend = "0";
@@ -341,10 +333,8 @@ public class MainActivity extends PBase {
                 gl.wsURL = "http://192.168.1.1/wsAndr/wsAndr.asmx";
             }
 
-        } catch (Exception e)
-        {
-            addlog(new Object()
-            {
+        } catch (Exception e) {
+            addlog(new Object() {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
@@ -353,8 +343,7 @@ public class MainActivity extends PBase {
             sql = " SELECT EMPRESA,NOMBRE FROM P_EMPRESA";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount() > 0)
-            {
+            if (DT.getCount() > 0) {
                 DT.moveToFirst();
                 gl.emp = DT.getString(0);
                 gl.empnom = DT.getString(1);
@@ -365,65 +354,53 @@ public class MainActivity extends PBase {
                 gl.incNoLectura = false; //#HS_20181211 Agregue campo incNoLectura para validacion en cliente.
                 gl.depparc = false;
                 gl.lotedf = "";
-            } else
-            {
+            } else {
                 gl.emp = "3";
                 gl.devol = false;
-                msgbox("¡No se pudo cargar configuración de la empresa!");
+                toast("¡No se pudo cargar configuración de la empresa!");
             }
 
-        } catch (Exception e)
-        {
-            msgbox("¡No se pudo cargar configuración de la empresa!");
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+        } catch (Exception e) {
+            toast("¡No se pudo cargar configuración de la empresa!");
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
         gl.vendnom = "Vendedor 1";
 
-        try
-        {
+        try {
             File directory = new File(Environment.getExternalStorageDirectory() + "/SyncFold");
             directory.mkdirs();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
-        try
-        {
+        try {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos");
             directory.mkdirs();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
-        try
-        {
+        try {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia");
             directory.mkdirs();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
-        try
-        {
+        try {
             File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente");
             directory.mkdirs();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
         //Id de Dispositivo
         gl.deviceId = androidid();
         gl.devicename = getLocalBluetoothName();
 
-        try
-        {
+        try {
             AppMethods app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
-        } catch (Exception e)
-        {
-            addlog(new Object()
-            {
+        } catch (Exception e) {
+            addlog(new Object() {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
         }
@@ -433,8 +410,7 @@ public class MainActivity extends PBase {
         llenaUsuarios();
     }
 
-    private void processLogIn()
-    {
+    private void processLogIn() {
 
         /*/
         if (!validaLicencia()) {
@@ -448,68 +424,62 @@ public class MainActivity extends PBase {
 
     }
 
-    private boolean checkUser()
-    {
+    private boolean checkUser() {
         Cursor DT;
         String dpwd;
 
         configBase();
 
-        try
-        {
+        try {
 
-            if (usr.isEmpty())
-            {
-                mu.msgbox("Usuario incorrecto.");return false;
+            if (usr.isEmpty()) {
+                mu.msgbox("Usuario incorrecto.");
+                return false;
             }
-            if (pwd.isEmpty())
-            {
-                mu.msgbox("Contraseña incorrecta.");return false;
+            if (pwd.isEmpty()) {
+                mu.msgbox("Contraseña incorrecta.");
+                return false;
             }
 
             sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount() == 0)
-            {
+            if (DT.getCount() == 0) {
                 mu.msgbox("Usuario incorrecto !");
                 return false;
             }
 
             DT.moveToFirst();
             dpwd = DT.getString(1);
-            if (!pwd.equalsIgnoreCase(dpwd))
-            {
+            if (!pwd.equalsIgnoreCase(dpwd)) {
                 mu.msgbox("Contraseña incorrecta !");
                 return false;
             }
 
-            gl.nivel = DT.getInt(2);gl.rol=gl.nivel;
+            gl.nivel = DT.getInt(2);
+            gl.rol = gl.nivel;
 
-            if (gl.caja.isEmpty() || gl.tienda.isEmpty())
-            {
-                if (gl.nivel==3)
-                {
-                    gl.modoinicial=true;return true;
-                } else
-                {
+            if (gl.caja.isEmpty() || gl.tienda.isEmpty()) {
+                if (gl.nivel == 3) {
+                    gl.modoinicial = true;
+                    return true;
+                } else {
                     toastlong("No está configurada la caja. Informe al gerente.");
-                    acesoAdmin();return false;
+                    acesoAdmin();
+                    return false;
                 }
-            } else
-            {
-               gl.modoinicial=false;
+            } else {
+                gl.modoinicial = false;
             }
 
-            if (gl.nivel!=3)
-            {
+            if (gl.nivel != 3) {
                 sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES " +
-                      "WHERE (CODIGO='" + usr + "') AND (RUTA='"+gl.tienda+"') COLLATE NOCASE";
+                        "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.tienda + "') COLLATE NOCASE";
                 DT = Con.OpenDT(sql);
 
-                if (DT.getCount() == 0)
-                {
-                    mu.msgbox("¡El usuario no tiene permiso de ingreso para "+gl.tiendanom+"!");return false;
+                if (DT.getCount() == 0) {
+                    mu.msgbox("¡El usuario no tiene permiso de ingreso para " + gl.tiendanom + "!");
+                    return false;
                 }
             }
 
@@ -517,25 +487,24 @@ public class MainActivity extends PBase {
             gl.vend = usr;
             gl.vnivprec = DT.getInt(3);
 
-            khand.clear();khand.enable();
+            khand.clear();
+            khand.enable();
 
             return true;
 
-        } catch (Exception e)
-        {
-            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             return false;
         }
 
     }
 
-    private void acesoAdmin()
-    {
+    private void acesoAdmin() {
 
         if (!tieneTiendaCaja()) return;
 
-        try
-        {
+        try {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
             alert.setTitle("Contraseña de administrador");//	alert.setMessage("Serial");
@@ -547,73 +516,61 @@ public class MainActivity extends PBase {
             input.setText("");
             input.requestFocus();
 
-            alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int whichButton)
-                {
-                     try
-                     {
+            alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    try {
                         String s = input.getText().toString();
-                        if (s.equalsIgnoreCase("1965"))
-                        {
+                        if (s.equalsIgnoreCase("1965")) {
                             startActivity(new Intent(MainActivity.this, ConfigCaja.class));
-                        } else
-                        {
-                            mu.msgbox("Contraseña incorrecta");return;
+                        } else {
+                            mu.msgbox("Contraseña incorrecta");
+                            return;
                         }
 
-                    } catch (Exception e)
-                    {
-                        addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+                    } catch (Exception e) {
+                        addlog(new Object() {
+                        }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
                     }
                 }
             });
 
-            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
-            {
-                public void onClick(DialogInterface dialog, int whichButton)
-                {
+            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
 
                 }
             });
 
             alert.show();
 
-        } catch (Exception e)
-        {
-            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 
-    private boolean dbVacia()
-    {
+    private boolean dbVacia() {
         Cursor dt;
 
-        try
-        {
+        try {
             sql = "SELECT CODIGO FROM P_RUTA";
             dt = Con.OpenDT(sql);
 
             return dt.getCount() == 0;
 
-        } catch (Exception e)
-        {
-            addlog(new Object()
-            {
+        } catch (Exception e) {
+            addlog(new Object() {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
             return true;
         }
     }
 
-    private boolean validaLicencia()
-    {
+    private boolean validaLicencia() {
         CryptUtil cu = new CryptUtil();
         Cursor dt;
         String lic, lickey, licruta, rutaencrypt;
         Integer msgLic = 0;
 
-        try
-        {
+        try {
             lickey = cu.encrypt(gl.deviceId);
             rutaencrypt = cu.encrypt(gl.ruta);
 
@@ -623,49 +580,40 @@ public class MainActivity extends PBase {
             lic = dt.getString(0);
             licruta = dt.getString(1);
 
-            if (mu.emptystr(lic))
-            {
+            if (mu.emptystr(lic)) {
                 toastlong("El dispositivo no tiene licencia válida de handheld");
                 return false;
             }
 
-            if (mu.emptystr(licruta))
-            {
+            if (mu.emptystr(licruta)) {
                 toastlong("El dispositivo no tiene licencia válida de ruta");
                 return false;
             }
 
 
-            if (lic.equalsIgnoreCase(lickey) && licruta.equalsIgnoreCase(rutaencrypt))
-            {
-               return true;
+            if (lic.equalsIgnoreCase(lickey) && licruta.equalsIgnoreCase(rutaencrypt)) {
+                return true;
             }
 
-            if (!lic.equalsIgnoreCase(lickey) && !licruta.equalsIgnoreCase(rutaencrypt))
-            {
+            if (!lic.equalsIgnoreCase(lickey) && !licruta.equalsIgnoreCase(rutaencrypt)) {
                 toastlong("El dispositivo no tiene licencia válida de handheld, ni de ruta");
                 return false;
             }
 
-            if (!lic.equalsIgnoreCase(lickey))
-            {
+            if (!lic.equalsIgnoreCase(lickey)) {
                 toastlong("El dispositivo no tiene licencia válida de handheld");
                 return false;
             }
 
-            if (!licruta.equalsIgnoreCase(rutaencrypt))
-            {
+            if (!licruta.equalsIgnoreCase(rutaencrypt)) {
                 toastlong("El dispositivo no tiene licencia válida de ruta");
                 return false;
             }
 
-        } catch (Exception e)
-        {
-            addlog(new Object()
-            {
+        } catch (Exception e) {
+            addlog(new Object() {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-            mu.msgbox(new Object()
-            {
+            mu.msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " : " + e.getMessage());
         }
 
@@ -673,16 +621,14 @@ public class MainActivity extends PBase {
 
     }
 
-    private void msgAskLic(String msg)
-    {
+    private void msgAskLic(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         dialog.setTitle(R.string.app_name);
         dialog.setMessage(msg);
         dialog.setIcon(R.drawable.ic_quest);
 
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener()
-        {
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
@@ -692,23 +638,19 @@ public class MainActivity extends PBase {
     }
 
     @SuppressLint("MissingPermission")
-    private String androidid()
-    {
+    private String androidid() {
         String uniqueID = "";
         try {
 
             TelephonyManager tm = (TelephonyManager) this.getSystemService(this.TELEPHONY_SERVICE);
             uniqueID = tm.getDeviceId();
 
-            if (uniqueID==null)
-            {
-                uniqueID = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
+            if (uniqueID == null) {
+                uniqueID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             }
 
-        } catch (Exception e)
-        {
-            msgbox(new Object()
-            {
+        } catch (Exception e) {
+            msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             uniqueID = "0000000000";
         }
@@ -716,168 +658,148 @@ public class MainActivity extends PBase {
         return uniqueID;
     }
 
-    public String getLocalBluetoothName()
-    {
+    public String getLocalBluetoothName() {
         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if (mBluetoothAdapter == null)
-        {
+        if (mBluetoothAdapter == null) {
             return "";
-        } else
-        {
+        } else {
             return mBluetoothAdapter.getName();
         }
     }
 
-    public void configBase()
-    {
+    public void configBase() {
         Cursor DT;
 
-        gl.tienda="";gl.caja="";
-        gl.tiendanom="";gl.cajanom="";
+        gl.tienda = "";
+        gl.caja = "";
+        gl.tiendanom = "";
+        gl.cajanom = "";
 
-        try
-        {
+        try {
             sql = "SELECT url,sucursal,ruta FROM Params";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
-            gl.urlglob=DT.getString(0);
-            gl.tienda=DT.getString(1);
-            gl.caja=DT.getString(2);
+            gl.urlglob = DT.getString(0);
+            gl.tienda = DT.getString(1);
+            gl.caja = DT.getString(2);
 
-            if (!gl.tienda.isEmpty())
-            {
-                try
-                {
-                    sql = "SELECT DESCRIPCION FROM P_SUCURSAL WHERE CODIGO='"+gl.tienda+"'";
+            if (!gl.tienda.isEmpty()) {
+                try {
+                    sql = "SELECT DESCRIPCION FROM P_SUCURSAL WHERE CODIGO='" + gl.tienda + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
-                    gl.tiendanom=DT.getString(0);
-                } catch (Exception e)
-                {
-                    gl.tiendanom="";
+                    gl.tiendanom = DT.getString(0);
+                } catch (Exception e) {
+                    gl.tiendanom = "";
                 }
             }
 
-            if (!gl.caja.isEmpty())
-            {
-                try
-                {
-                    sql = "SELECT NOMBRE FROM P_RUTA WHERE CODIGO='"+gl.caja+"'";
+            if (!gl.caja.isEmpty()) {
+                try {
+                    sql = "SELECT NOMBRE FROM P_RUTA WHERE CODIGO='" + gl.caja + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
-                    gl.cajanom=DT.getString(0);
+                    gl.cajanom = DT.getString(0);
 
-                } catch (Exception e)
-                {
-                    gl.cajanom="";
+                } catch (Exception e) {
+                    gl.cajanom = "";
                 }
             }
 
-        } catch (Exception e)
-        {
-             gl.tiendanom="";gl.cajanom="";
+        } catch (Exception e) {
+            gl.tiendanom = "";
+            gl.cajanom = "";
         }
 
         lblRTit.setText(gl.tiendanom);
         lblRuta.setText(gl.cajanom);
         lblEmp.setText(gl.empnom);
 
-        try
-        {
+        try {
             String emplogo = Environment.getExternalStorageDirectory() + "/mposlogo.png";
             File file = new File(emplogo);
-            if (file.exists())
-            {
+            if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(emplogo);
                 imgLogo.setImageBitmap(bmImg);
             }
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
 
     }
 
-    public boolean tieneTiendaCaja()
-    {
+    public boolean tieneTiendaCaja() {
 
         Cursor DT;
 
-        try
-        {
+        try {
 
             sql = "SELECT DESCRIPCION FROM P_SUCURSAL";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount()==0)
-            {
-                msgbox("¡No se puede continuar, no está definida ninguna tienda!");return false;
+            if (DT.getCount() == 0) {
+                msgbox("¡No se puede continuar, no está definida ninguna tienda!");
+                return false;
             }
 
             sql = "SELECT NOMBRE FROM P_RUTA";
             DT = Con.OpenDT(sql);
 
-            if (DT.getCount()==0)
-            {
-                msgbox("¡No se puede continuar, no está definida ninguna caja!");return false;
+            if (DT.getCount() == 0) {
+                msgbox("¡No se puede continuar, no está definida ninguna caja!");
+                return false;
             }
 
             return true;
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
-   }
+    }
 
-    public void llenaUsuarios()
-    {
-        clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+    public void llenaUsuarios() {
+        clsVendedoresObj VendedoresObj = new clsVendedoresObj(this, Con, db);
         clsClasses.clsMenu item;
 
-        usr="";pwd="";
+        usr = "";
+        pwd = "";
 
-        try
-        {
+        try {
 
             mitems.clear();
             VendedoresObj.fill();
 
-            for (int i = 0; i <VendedoresObj.count; i++)
-            {
-                item=clsCls.new clsMenu();
-                item.Cod=VendedoresObj.items.get(i).codigo;
-                item.Name=VendedoresObj.items.get(i).ruta;
+            for (int i = 0; i < VendedoresObj.count; i++) {
+                item = clsCls.new clsMenu();
+                item.Cod = VendedoresObj.items.get(i).codigo;
+                item.Name = VendedoresObj.items.get(i).ruta;
                 mitems.add(item);
             }
 
-            adapter=new LA_Login(this,mitems);
+            adapter = new LA_Login(this, mitems);
             listView.setAdapter(adapter);
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             mu.msgbox(e.getMessage());
         }
     }
 
-    protected void onResume()
-    {
-        try
-        {
+    protected void onResume() {
+        try {
             super.onResume();
             initSession();
 
-            if (browse==1)
-            {
-                browse=0;return;
+            if (browse == 1) {
+                browse = 0;
+                return;
             }
 
-        } catch (Exception e)
-        {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 

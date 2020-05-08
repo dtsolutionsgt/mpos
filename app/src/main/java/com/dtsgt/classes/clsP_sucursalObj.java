@@ -86,6 +86,13 @@ public class clsP_sucursalObj {
         ins.add("NIT",item.nit);
         ins.add("TEXTO",item.texto);
         ins.add("ACTIVO",item.activo);
+        ins.add("PET_PREFIJO",item.pet_prefijo);
+        ins.add("PET_LLAVE",item.pet_llave);
+        ins.add("PET_ALIAS_PFX",item.pet_alias_pfx);
+        ins.add("PET_PFX_LLAVE",item.pet_pfx_llave);
+        ins.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
+        ins.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
+        ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
 
         db.execSQL(ins.sql());
 
@@ -105,6 +112,13 @@ public class clsP_sucursalObj {
         upd.add("NIT",item.nit);
         upd.add("TEXTO",item.texto);
         upd.add("ACTIVO",item.activo);
+        upd.add("PET_PREFIJO",item.pet_prefijo);
+        upd.add("PET_LLAVE",item.pet_llave);
+        upd.add("PET_ALIAS_PFX",item.pet_alias_pfx);
+        upd.add("PET_PFX_LLAVE",item.pet_pfx_llave);
+        upd.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
+        upd.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
+        upd.add("CODIGO_MUNICIPIO",item.codigo_municipio);
 
         upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 
@@ -140,7 +154,7 @@ public class clsP_sucursalObj {
 
             item.codigo_sucursal=dt.getInt(0);
             item.codigo=dt.getString(1);
-            item.empresa=dt.getString(2);
+            item.empresa=dt.getInt(2);
             item.codigo_nivel_precio=dt.getInt(3);
             item.descripcion=dt.getString(4);
             item.nombre=dt.getString(5);
@@ -149,6 +163,13 @@ public class clsP_sucursalObj {
             item.nit=dt.getString(8);
             item.texto=dt.getString(9);
             item.activo=dt.getInt(10);
+            item.pet_prefijo=dt.getString(11);
+            item.pet_llave=dt.getString(12);
+            item.pet_alias_pfx=dt.getString(13);
+            item.pet_pfx_llave=dt.getString(14);
+            item.codigo_escenario_isr=dt.getInt(15);
+            item.codigo_escenario_iva=dt.getInt(16);
+            item.codigo_municipio=dt.getString(17);
 
             items.add(item);
 
@@ -191,6 +212,13 @@ public class clsP_sucursalObj {
         ins.add("NIT",item.nit);
         ins.add("TEXTO",item.texto);
         ins.add("ACTIVO",item.activo);
+        ins.add("PET_PREFIJO",item.pet_prefijo);
+        ins.add("PET_LLAVE",item.pet_llave);
+        ins.add("PET_ALIAS_PFX",item.pet_alias_pfx);
+        ins.add("PET_PFX_LLAVE",item.pet_pfx_llave);
+        ins.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
+        ins.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
+        ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
 
         return ins.sql();
 
@@ -210,6 +238,13 @@ public class clsP_sucursalObj {
         upd.add("NIT",item.nit);
         upd.add("TEXTO",item.texto);
         upd.add("ACTIVO",item.activo);
+        upd.add("PET_PREFIJO",item.pet_prefijo);
+        upd.add("PET_LLAVE",item.pet_llave);
+        upd.add("PET_ALIAS_PFX",item.pet_alias_pfx);
+        upd.add("PET_PFX_LLAVE",item.pet_pfx_llave);
+        upd.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
+        upd.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
+        upd.add("CODIGO_MUNICIPIO",item.codigo_municipio);
 
         upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 

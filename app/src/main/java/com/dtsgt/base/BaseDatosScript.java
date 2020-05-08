@@ -200,13 +200,14 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
-            sql="CREATE TABLE [P_PRODPRECIO] ("+
-                    "[CODIGO] TEXT NOT NULL,"+
-                    "[NIVEL] INTEGER NOT NULL,"+
-                    "[PRECIO] REAL NOT NULL,"+
-                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO],[NIVEL],[UNIDADMEDIDA])"+
+            sql="CREATE TABLE [P_prodprecio] ("+
+                    "CODIGO_PRECIO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO TEXT NOT NULL,"+
+                    "NIVEL INTEGER NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "UNIDADMEDIDA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PRECIO])"+
                     ");";
             database.execSQL(sql);
 
@@ -313,7 +314,7 @@ public class BaseDatosScript {
             sql="CREATE TABLE [P_sucursal] ("+
                     "CODIGO_SUCURSAL INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
-                    "EMPRESA TEXT NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
                     "CODIGO_NIVEL_PRECIO INTEGER NOT NULL,"+
                     "DESCRIPCION TEXT NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
@@ -322,9 +323,17 @@ public class BaseDatosScript {
                     "NIT TEXT NOT NULL,"+
                     "TEXTO TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
+                    "PET_PREFIJO TEXT NOT NULL,"+
+                    "PET_LLAVE TEXT NOT NULL,"+
+                    "PET_ALIAS_PFX TEXT NOT NULL,"+
+                    "PET_PFX_LLAVE TEXT NOT NULL,"+
+                    "CODIGO_ESCENARIO_ISR INTEGER NOT NULL,"+
+                    "CODIGO_ESCENARIO_IVA INTEGER NOT NULL,"+
+                    "CODIGO_MUNICIPIO TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_SUCURSAL])"+
                     ");";
             database.execSQL(sql);
+
 
             sql="CREATE TABLE [P_STOCK] ("+
                     "[CODIGO] TEXT NOT NULL,"+
@@ -650,6 +659,11 @@ public class BaseDatosScript {
                     "VEHICULO TEXT NOT NULL,"+
                     "CODIGOLIQUIDACION INTEGER NOT NULL,"+
                     "RAZON_ANULACION TEXT NOT NULL,"+
+                    "FEELSERIE TEXT NOT NULL,"+
+                    "FEELNUMERO TEXT NOT NULL,"+
+                    "FEELUUID TEXT NOT NULL,"+
+                    "FEELFECHAPROCESADO INTEGER NOT NULL,"+
+                    "FEELCONTINGENCIA TEXT NOT NULL,"+
                     "PRIMARY KEY ([EMPRESA],[COREL])"+
                     ");";
             database.execSQL(sql);

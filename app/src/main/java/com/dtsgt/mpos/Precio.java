@@ -82,12 +82,14 @@ public class Precio {
 		Cursor DT;
 		double pr,stot,pprec,tsimp;
 		String sprec="";
+		int icod=Integer.parseInt(prodid);
 	
 		try {
+
 			if (ppeso>0) {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+nivel+") AND (UNIDADMEDIDA='"+umpeso+"') ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+") ";
 			} else {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+nivel+") AND (UNIDADMEDIDA='"+um+"') ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+")  ";
 			}
 
 			DT=Con.OpenDT(sql);
@@ -98,7 +100,7 @@ public class Precio {
 			pr=0;
 
 			try {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+nivel+") AND (UNIDADMEDIDA='"+umventa+"') ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+")  ";
 				DT=Con.OpenDT(sql);
 				DT.moveToFirst();
 				pr=DT.getDouble(0);
@@ -165,14 +167,14 @@ public class Precio {
 	}
 	
 	private void prodPrecioBase() {
-
 		Cursor DT;
 		double pr,stot,pprec,tsimp;
 		String sprec="";
+		int icod=Integer.parseInt(prodid);
 	
 		try {
 
-			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+nivel+") AND (UNIDADMEDIDA='"+um+"') ";
+			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+") ";
            	DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 							  

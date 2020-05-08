@@ -356,7 +356,7 @@ public class AppMethods {
 
             gl.peMMod=val;
         } catch (Exception e) {
-            gl.peMMod="1";
+            gl.peMMod="0";
         }
 
         try {
@@ -461,7 +461,7 @@ public class AppMethods {
 
             return  DT.getString(0);
         } catch (Exception e) {
-            toast(e.getMessage());
+            //toast(e.getMessage());
             return "P";
         }
     }
@@ -476,7 +476,7 @@ public class AppMethods {
 			DT.moveToFirst();
 			return  DT.getInt(0)==1;
 		} catch (Exception e) {
-			toast(e.getMessage());
+			//toast(e.getMessage());
 			return false;
 		}
 	}
@@ -592,7 +592,7 @@ public class AppMethods {
 			umm=DT.getString(0);
 			return  umm;
 		} catch (Exception e) {
-			toast(e.getMessage());
+			//toast(e.getMessage());
 			return "";
 		}
 	}
@@ -610,7 +610,7 @@ public class AppMethods {
 
 			return  umm;
 		} catch (Exception e) {
-			toast(e.getMessage());
+			//toast(e.getMessage());
 			return "";
 		}
 	}
@@ -625,7 +625,7 @@ public class AppMethods {
 
 			return  DT.getDouble(0);
 		} catch (Exception e) {
-			toast(e.getMessage());
+			//toast(e.getMessage());
 			return 0;
 		}
 	}
