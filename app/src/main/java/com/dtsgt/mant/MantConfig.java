@@ -216,7 +216,7 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','"+s102+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (103,'Pos modalidad','"+s103+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','"+s104+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','"+s105+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','"+value105+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','"+s106+"')");
 
             db.setTransactionSuccessful();
