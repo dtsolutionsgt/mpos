@@ -21,16 +21,17 @@ import java.util.ArrayList;
 
 public class MantConfig extends PBase {
 
-    private CheckBox cb100,cb102,cb103,cb104,cb105,cb106;
-    private Spinner spin16;
+    private CheckBox cb100,cb102,cb103,cb104,cb106;
+    private Spinner spin16,spin105;
     private ImageView imgadd;
 
     private clsP_paramextObj holder;
 
     private ArrayList<String> items16= new ArrayList<String>();
+    private ArrayList<String> items105= new ArrayList<String>();
 
-    private boolean value100,value102,value103,value104,value105,value106;
-    private String value16;
+    private boolean value100,value102,value103,value104,value106;
+    private String  value16,value105;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +40,12 @@ public class MantConfig extends PBase {
 
         super.InitBase();
 
+        spin16 = (Spinner) findViewById(R.id.spinner16);
         cb100  = (CheckBox) findViewById(R.id.checkBox8);
         cb102  = (CheckBox) findViewById(R.id.checkBox10);
         cb103  = (CheckBox) findViewById(R.id.checkBox23);
         cb104  = (CheckBox) findViewById(R.id.checkBox22);
-        spin16 = (Spinner) findViewById(R.id.spinner16);
-        cb105  = (CheckBox) findViewById(R.id.checkBox21);
+        spin105 = (Spinner) findViewById(R.id.spinner105);
         cb106  = (CheckBox) findViewById(R.id.checkBox24);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
@@ -84,9 +85,27 @@ public class MantConfig extends PBase {
                     spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                     value16=items16.get(position);
-
                 } catch (Exception e) { }
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+
+        });
+
+        spin105.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                try {
+                    TextView spinlabel = (TextView) parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);
+                    spinlabel.setPadding(5,0,0,0);spinlabel.setTextSize(18);
+                    spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                    value105=items105.get(position);
+                } catch (Exception e) { }
             }
 
             @Override
@@ -151,12 +170,12 @@ public class MantConfig extends PBase {
 
         try {
             holder.fill("WHERE ID="+105);
-            value105=holder.first().valor.equalsIgnoreCase("INFILE");
+            value105=holder.first().valor;
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" .105. "+e.getMessage());
-            value105=false;
+            value105="";
         }
-        cb105.setChecked(value105);
+        fillSpin105();
 
         try {
             holder.fill("WHERE ID="+106);
@@ -178,7 +197,6 @@ public class MantConfig extends PBase {
             if (cb102.isChecked())  s102="S";
             if (cb103.isChecked())  s103="1";else s103="0";
             if (cb104.isChecked())  s104="S";
-            if (cb105.isChecked())  s105="INFILE";
             if (!cb106.isChecked()) s106="N";
 
             db.beginTransaction();
@@ -204,6 +222,8 @@ public class MantConfig extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+            app.parametrosExtra();
+
             finish();
         } catch (Exception e) {
             db.endTransaction();
@@ -219,8 +239,6 @@ public class MantConfig extends PBase {
         int selidx=0;
 
         try {
-
-
             items16.clear();
             items16.add("GUA");if (value16.equalsIgnoreCase("GUA")) selidx=0;
             items16.add("TICKET");if (value16.equalsIgnoreCase("TICKET")) selidx=1;
@@ -233,6 +251,28 @@ public class MantConfig extends PBase {
                 spin16.setSelection(selidx);
             } catch (Exception e) {
                 spin16.setSelection(0);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fillSpin105() {
+        int selidx=0;
+
+        try {
+            items105.clear();
+            items105.add("SIN FEL"); if (value105.equalsIgnoreCase("SIN FEL")) selidx=0;
+            items105.add("INFILE");  if (value105.equalsIgnoreCase("INFILE"))  selidx=1;
+
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, items105);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spin105.setAdapter(dataAdapter);
+
+            try {
+                spin105.setSelection(selidx);
+            } catch (Exception e) {
+                spin105.setSelection(0);
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

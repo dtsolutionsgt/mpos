@@ -451,7 +451,7 @@ public class AppMethods {
         }
     }
 
-    public String prodTipo(String cod) {
+    public String prodTipo(int cod) {
         Cursor DT;
 
         try {

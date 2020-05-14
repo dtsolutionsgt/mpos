@@ -357,12 +357,12 @@ public class DevCliCant extends PBase {
 			}
 
 			if (prodPorPeso(prodid)) {
-				precioventa = prc.precio(prodid, 1, gl.nivel, um, gl.umpeso, gl.dpeso,um);
-				if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
+				precioventa = prc.precio(prodid, 1, gl.nivel, um, gl.umpeso, gl.dpeso,um, gl.prodcod);
+				if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso, gl.dpeso)) {
 					if (prc.precioespecial>0) precioventa=prc.precioespecial;
 				}
 			} else {
-				precioventa = prc.precio(prodid, 1, gl.nivel, um, gl.umpeso, 0,um);
+				precioventa = prc.precio(prodid, 1, gl.nivel, um, gl.umpeso, 0,um,gl.prodcod);
 				if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,0)) {
 					if (prc.precioespecial>0) precioventa=prc.precioespecial;
 				}

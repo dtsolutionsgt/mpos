@@ -425,7 +425,7 @@ public class Lista extends PBase {
             case 15:
                 startActivity(new Intent(this, MantDescuento.class));break;
             case 18:
-                startActivity(new Intent(this, MantOpcion.class));break;
+                //startActivity(new Intent(this, MantOpcion.class));break;
             case 19:
                 startActivity(new Intent(this, MantConceptoPago.class));break;
 

@@ -291,7 +291,7 @@ public class ProdCant extends PBase {
 			mu.msgbox("3-"+ e.getMessage());
 		}
 
-		prec=prc.precio(prodid,1,nivel,um,gl.umpeso,0,um);
+		prec=prc.precio(prodid,1,nivel,um,gl.umpeso,0,um,gl.prodcod);
 		if (prc.existePrecioEspecial(prodid,1,gl.cliente,gl.clitipo,um,gl.umpeso,0)) {
 			if (prc.precioespecial>0) prec=prc.precioespecial;
 		}
@@ -646,14 +646,14 @@ public class ProdCant extends PBase {
 		cant = mu.round(cant, gl.peDecImp);
 		if (porpeso) {
 			if (gl.rutatipo.equalsIgnoreCase("V")){
-				prec = prc.precio(prodid, 0, nivel, um, gl.umpeso, umfactor * cant,um);
+				prec = prc.precio(prodid, 0, nivel, um, gl.umpeso, umfactor * cant,um, gl.prodcod);
 				if (prc.existePrecioEspecial(prodid, 1, gl.cliente, gl.clitipo, um, gl.umpeso, umfactor * cant)) {
 					if (prc.precioespecial > 0) prec = prc.precioespecial;
 				}
 			}
 
 		} else {
-			prec = prc.precio(prodid, 0, nivel, um, gl.umpeso, 0,um);
+			prec = prc.precio(prodid, 0, nivel, um, gl.umpeso, 0,um, gl.prodcod);
 			if (prc.existePrecioEspecial(prodid, 1, gl.cliente, gl.clitipo, um, gl.umpeso, 0)) {
 				if (prc.precioespecial > 0) prec = prc.precioespecial;
 			}

@@ -25,7 +25,7 @@ public class Precio {
 	
 	private String prodid,um,umpeso,umventa;
 	private double cant,desc,prec;
-	private int nivel,ndec;
+	private int nivel,ndec,codprod;
 	private boolean porpeso;
 	
 	public Precio(Context context,MiscUtils mutil,int numdec) {
@@ -47,9 +47,10 @@ public class Precio {
 		
 	}
 
-	public double precio(String prod,double pcant,int nivelprec,String unimedida,String unimedidapeso,double ppeso,String umven) {
+	public double precio(String prod,double pcant,int nivelprec,String unimedida,String unimedidapeso,double ppeso,String umven,int codigoprod) {
 
-		prodid=prod;cant=pcant;nivel=nivelprec;
+		prodid=prod;codprod=codigoprod;
+		cant=pcant;nivel=nivelprec;
 		um=unimedida;umpeso=unimedidapeso;umventa=umven;
 		prec=0;costo=0;descmon=0;imp=0;tot=0;precioespecial=0;
 
@@ -82,14 +83,13 @@ public class Precio {
 		Cursor DT;
 		double pr,stot,pprec,tsimp;
 		String sprec="";
-		int icod=Integer.parseInt(prodid);
-	
+
 		try {
 
 			if (ppeso>0) {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+") ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+") ";
 			} else {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+")  ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+")  ";
 			}
 
 			DT=Con.OpenDT(sql);
@@ -100,7 +100,7 @@ public class Precio {
 			pr=0;
 
 			try {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+")  ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+")  ";
 				DT=Con.OpenDT(sql);
 				DT.moveToFirst();
 				pr=DT.getDouble(0);
@@ -170,11 +170,10 @@ public class Precio {
 		Cursor DT;
 		double pr,stot,pprec,tsimp;
 		String sprec="";
-		int icod=Integer.parseInt(prodid);
-	
+
 		try {
 
-			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+") ";
+			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+") ";
            	DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 							  

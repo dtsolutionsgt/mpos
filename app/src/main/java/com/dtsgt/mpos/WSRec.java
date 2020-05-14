@@ -28,8 +28,7 @@ import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
-import com.dtsgt.classes.clsP_prodopcObj;
-import com.dtsgt.classes.clsP_prodopclistObj;
+import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_proveedorObj;
@@ -70,6 +69,8 @@ import com.dtsgt.classesws.clsBeP_PRODCOMBO;
 import com.dtsgt.classesws.clsBeP_PRODCOMBOList;
 import com.dtsgt.classesws.clsBeP_PRODMENU;
 import com.dtsgt.classesws.clsBeP_PRODMENUList;
+import com.dtsgt.classesws.clsBeP_PRODMENUOPC;
+import com.dtsgt.classesws.clsBeP_PRODMENUOPCList;
 import com.dtsgt.classesws.clsBeP_PRODOPC;
 import com.dtsgt.classesws.clsBeP_PRODOPCLIST;
 import com.dtsgt.classesws.clsBeP_PRODOPCLISTList;
@@ -92,8 +93,6 @@ import com.dtsgt.classesws.clsBeP_USOPCION;
 import com.dtsgt.classesws.clsBeP_USOPCIONList;
 import com.dtsgt.classesws.clsBeVENDEDORES;
 import com.dtsgt.classesws.clsBeVENDEDORESList;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -196,7 +195,7 @@ public class WSRec extends PBase {
                         break;
                     case 10:
                         callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
-                        callEmptyMethod();
+                        //callEmptyMethod();
                         break;
                     case 11:
                         callMethod("GetP_ENCABEZADO_REPORTESHH", "EMPRESA", gl.emp);
@@ -220,10 +219,7 @@ public class WSRec extends PBase {
                         callMethod("GetP_PRODPRECIO", "EMPRESA", gl.emp);
                         break;
                     case 18:
-                        callMethod("GetP_PRODOPC", "EMPRESA", gl.emp);
-                        break;
-                    case 19:
-                        callMethod("GetP_PRODOPCLIST", "EMPRESA", gl.emp);
+                        callMethod("GetP_PRODMENUOPC", "EMPRESA", gl.emp);
                         break;
                     case 20:
                         callMethod("GetP_PROVEEDOR", "EMPRESA", gl.emp);
@@ -390,14 +386,6 @@ public class WSRec extends PBase {
                     break;
                 case 18:
                     processOpciones();
-                    if (ws.errorflag) {
-                        processComplete();
-                        break;
-                    }
-                    execws(19);
-                    break;
-                case 19:
-                    processOpcionesList();
                     if (ws.errorflag) {
                         processComplete();
                         break;
@@ -1239,16 +1227,58 @@ public class WSRec extends PBase {
             }
 
             for (int i = 0; i < items.items.size(); i++) {
+
                 item = items.items.get(i);
+
                 var = clsCls.new clsP_prodmenu();
-                var.codigo = item.CODIGO;
-                var.item = item.ITEM;
-                var.nombre = item.NOMBRE;
-                var.idopcion = item.IDOPCION;
-                var.cant = item.CANT;
-                var.orden = item.ORDEN;
-                var.bandera = item.BANDERA;
-                var.nota = item.NOTA + "";
+
+                var.codigo_menu=item.CODIGO_MENU;
+                var.empresa=item.EMPRESA;
+                var.codigo_producto=item.CODIGO_PRODUCTO;
+                var.opcion_lista=item.OPCION_LISTA;
+                var.opcion_producto=item.OPCION_PRODUCTO;
+                var.orden=item.ORDEN;
+                var.nombre=item.NOMBRE;
+                var.nota=item.NOTA+"";
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processOpciones() {
+        try {
+            clsP_prodmenuopcObj handler = new clsP_prodmenuopcObj(this, Con, db);
+            clsBeP_PRODMENUOPCList items = new clsBeP_PRODMENUOPCList();
+            clsBeP_PRODMENUOPC item = new clsBeP_PRODMENUOPC();
+            clsClasses.clsP_prodmenuopc var;
+
+            script.add("DELETE FROM P_PRODMENUOPC");
+
+            items = xobj.getresult(clsBeP_PRODMENUOPCList.class, "GetP_PRODMENUOPC");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_prodmenuopc();
+
+                var.codigo_menu_opcion=item.CODIGO_MENU_OPCION;
+                var.codigo_opcion=item.CODIGO_OPCION;
+                var.empresa=item.EMPRESA;
+                var.codigo_producto=item.CODIGO_PRODUCTO;
+                var.codigo_receta=item.CODIGO_RECETA;
+
                 script.add(handler.addItemSql(var));
             }
 
@@ -1294,72 +1324,6 @@ public class WSRec extends PBase {
                 var.precio = item.PRECIO;
                 var.unidadmedida = item.UNIDADMEDIDA;
 
-                script.add(handler.addItemSql(var));
-            }
-
-        } catch (Exception e) {
-            ws.error = e.getMessage();
-            ws.errorflag = true;
-        }
-    }
-
-    private void processOpciones() {
-        try {
-            clsP_prodopcObj handler = new clsP_prodopcObj(this, Con, db);
-            clsBeP_PRODOPCListx items = new clsBeP_PRODOPCListx();
-            clsBeP_PRODOPC item = new clsBeP_PRODOPC();
-            clsClasses.clsP_prodopc var;
-
-            script.add("DELETE FROM P_PRODOPC");
-
-            items = xobj.getresult(clsBeP_PRODOPCListx.class, "GetP_PRODOPC");
-
-            try {
-                if (items.items.size() == 0) return;
-            } catch (Exception e) {
-                return;
-            }
-
-            for (int i = 0; i < items.items.size(); i++) {
-                item = items.items.get(i);
-                var = clsCls.new clsP_prodopc();
-                var.id = item.ID;
-                var.nombre = item.NOMBRE;
-                var.activo = item.ACTIVO;
-                script.add(handler.addItemSql(var));
-            }
-
-        } catch (Exception e) {
-            ws.error = e.getMessage();
-            ws.errorflag = true;
-        }
-    }
-
-    private void processOpcionesList() {
-        try {
-            clsP_prodopclistObj handler = new clsP_prodopclistObj(this, Con, db);
-            clsBeP_PRODOPCLISTList items = new clsBeP_PRODOPCLISTList();
-            clsBeP_PRODOPCLIST item = new clsBeP_PRODOPCLIST();
-            clsClasses.clsP_prodopclist var;
-
-            script.add("DELETE FROM P_PRODOPCLIST");
-
-            items = xobj.getresult(clsBeP_PRODOPCLISTList.class, "GetP_PRODOPCLIST");
-
-            try {
-                if (items.items.size() == 0) return;
-            } catch (Exception e) {
-                return;
-            }
-
-            for (int i = 0; i < items.items.size(); i++) {
-
-                item = items.items.get(i);
-                var = clsCls.new clsP_prodopclist();
-                var.id = item.ID;
-                var.producto = item.PRODUCTO;
-                var.cant = item.CANT;
-                var.idreceta = item.IDRECETA;
                 script.add(handler.addItemSql(var));
             }
 

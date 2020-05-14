@@ -342,7 +342,7 @@ public class Venta extends PBase {
                         Object lvObj = listView.getItemAtPosition(position);
                         clsVenta item = (clsVenta)lvObj;
 
-                        prodid=item.Cod;gl.prodmenu=prodid;
+                        prodid=item.Cod;//gl.prodmenu=prodid;
                         uprodid=prodid;
                         uid=item.emp;gl.menuitemid=uid;seluid=uid;
                         adapter.setSelectedIndex(position);
@@ -352,7 +352,7 @@ public class Venta extends PBase {
                         gl.limcant=getDisp(prodid);
                         menuitemadd=false;
 
-                        tipo=prodTipo(prodid);
+                        tipo=prodTipo(gl.prodcod);
                         if (!tipo.equalsIgnoreCase("M")) {
                             browse=6;
                             startActivity(new Intent(Venta.this,VentaEdit.class));
@@ -458,7 +458,8 @@ public class Venta extends PBase {
                     }
 
                     prodid=item.Cod;
-                    gl.gstr=prodid;gl.prodmenu=prodid;
+                    gl.prodcod=item.icod;
+                    gl.gstr=prodid;gl.prodmenu=gl.prodcod;
                     gl.pprodname=item.Name;
                     gl.um=app.umVenta(prodid);
                     menuitemadd=true;
@@ -481,7 +482,7 @@ public class Venta extends PBase {
                     adapterp.setSelectedIndex(position);
 
                     prodid=item.Cod;
-                    gl.gstr=prodid;gl.prodmenu=prodid;
+                    gl.gstr=prodid;//gl.prodmenu=prodid;
                     gl.pprodname=item.Name;
 
                     msgAskAdd(item.Name);
@@ -643,7 +644,7 @@ public class Venta extends PBase {
 
             gl.dval=1;
             gl.limcant=getDisp(prodid);
-            tipo=prodTipo(prodid);
+            tipo=prodTipo(gl.prodcod);
             gl.tipoprodcod=tipo;
 
             if (!tipo.equalsIgnoreCase("M")) {
@@ -806,7 +807,7 @@ public class Venta extends PBase {
 
             //endregion
 
-            tipo=prodTipo(prodid);
+            tipo=prodTipo(gl.prodcod);
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (updateitem) {
@@ -852,7 +853,7 @@ public class Venta extends PBase {
         if (gl.retcant<0) return;
 
         prodid=uprodid;
-        tipo=prodTipo(prodid);
+        tipo=prodTipo(gl.prodcod);
 
         gl.dval=gl.retcant;
         gl.limcant=getDisp(prodid);
@@ -884,12 +885,12 @@ public class Venta extends PBase {
     private void prodPrecio() {
         try {
             if (prodPorPeso(prodid)) {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um);
+                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
                 if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
                     if (prc.precioespecial>0) prec=prc.precioespecial;
                 }
             } else {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um);
+                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
                 if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,0)) {
                     if (prc.precioespecial>0) prec=prc.precioespecial;
                 }
@@ -906,7 +907,7 @@ public class Venta extends PBase {
         double precdoc,fact,cantbas,peso;
         String umb;
 
-        tipo=prodTipo(prodid);
+        tipo=prodTipo(gl.prodcod);
 
         if (!tipo.equalsIgnoreCase("M")) {
             try {
@@ -1669,7 +1670,7 @@ public class Venta extends PBase {
         try {
             pitems.clear();pcodes.clear();
 
-            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA,P_PRODUCTO.ACTIVO " +
+            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
                     "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
                     "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1)";
@@ -1678,7 +1679,7 @@ public class Venta extends PBase {
             }
 
             sql += "UNION ";
-            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,'',P_PRODUCTO.ACTIVO  " +
+            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,'',P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
                     "FROM P_PRODUCTO " +
                     "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M'))";
             if (!mu.emptystr(famid)) {
@@ -1699,11 +1700,12 @@ public class Venta extends PBase {
 
                 pcode=dt.getString(0);
                 if (!pcodes.contains(pcode)) {
-                    pact=dt.getInt(3);
-                    if (dt.getInt(3)==1) {
+                      if (dt.getInt(3)==1) {
                         item=clsCls.new clsMenu();
                         item.Cod=dt.getString(0);
-                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+prodPrecioBase(item.Cod)+" ]";
+                        item.icod=dt.getInt(4);
+                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+prodPrecioBase(item.icod)+" ]";
+
                         pitems.add(item);pcodes.add(pcode);
                     }
                 }
@@ -2360,7 +2362,7 @@ public class Venta extends PBase {
         return ss;
     }
 
-    private String prodTipo(String prodid) {
+    private String prodTipo(int prodid) {
         try {
             return app.prodTipo(prodid);
         } catch (Exception e) {
@@ -2411,16 +2413,14 @@ public class Venta extends PBase {
 
     }
 
-    private String prodPrecioBase(String prid) {
+    private String prodPrecioBase(int prid) {
         Cursor DT;
         double pr,stot,pprec,tsimp;
         String sprec="";
-        int icod;
 
         try {
-            icod=Integer.parseInt(prid);
 
-            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+icod+"') AND (NIVEL="+nivel+") ";
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prid+"') AND (NIVEL="+nivel+") ";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 
@@ -2473,7 +2473,7 @@ public class Venta extends PBase {
 
                     clsVenta item = items.get(i);
 
-                    prodid=item.Cod;gl.prodmenu=prodid;
+                    prodid=item.Cod;//gl.prodmenu=prodid;
                     uprodid=prodid;
                     uid=item.emp;
                     gl.gstr=item.Nombre;

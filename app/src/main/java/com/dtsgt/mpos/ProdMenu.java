@@ -10,7 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_prodmenuObj;
-import com.dtsgt.classes.clsP_prodopclistObj;
+import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_prodmenuObj;
 import com.dtsgt.ladapt.ListAdaptOpcion;
@@ -24,9 +24,9 @@ public class ProdMenu extends PBase {
     private ImageView img1;
 
     private ListAdaptOpcion adapter;
+    private clsP_productoObj P_productoObj;
 
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
-    private ArrayList<clsClasses.clsOpcion> ops= new ArrayList<clsClasses.clsOpcion>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
@@ -46,6 +46,8 @@ public class ProdMenu extends PBase {
         lbl3 = (TextView) findViewById(R.id.textView116);
         img1 = (ImageView) findViewById(R.id.imageView27);
 
+        P_productoObj=new clsP_productoObj(this,Con,db);
+
         setHandlers();
 
         cant=gl.retcant;lcant=gl.limcant;
@@ -56,9 +58,10 @@ public class ProdMenu extends PBase {
         lbl2.setText(""+cant);
 
         if (newitem) {
-            newItem();
-            img1.setVisibility(View.INVISIBLE);
-        } else listItems();
+            newItem();img1.setVisibility(View.INVISIBLE);
+        } else {
+            listItems();
+        }
     }
 
     //region Events
@@ -101,15 +104,14 @@ public class ProdMenu extends PBase {
                         adapter.setSelectedIndex(position);
                         selidx=position;
 
-                        listOptions(item.Descrip,item.listid);
+                        if (item.prodid==0) listOptions(item.Descrip,item.listid);
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                         mu.msgbox( e.getMessage());
                     }
                 };
             });
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
     }
 
     //endregion
@@ -157,17 +159,24 @@ public class ProdMenu extends PBase {
 
         try {
             items.clear();
-            P_menuObj.fill("WHERE Codigo='"+gl.prodmenu+"' ORDER BY ITEM");
+            P_menuObj.fill("WHERE CODIGO_PRODUCTO='"+gl.prodmenu+"' ORDER BY ORDEN,NOMBRE");
 
             for (int i = 0; i <P_menuObj.count; i++) {
                 item=clsCls.new clsOpcion();
 
-                item.ID=P_menuObj.items.get(i).item;
-                item.Cod=P_menuObj.items.get(i).codigo;
+                item.ID=P_menuObj.items.get(i).codigo_menu;
+                item.Cod="";
                 item.Name=P_menuObj.items.get(i).nombre;
                 item.Descrip=P_menuObj.items.get(i).nombre;
-                item.listid=P_menuObj.items.get(i).idopcion;
+                item.listid=P_menuObj.items.get(i).opcion_lista;
+                item.prodid=P_menuObj.items.get(i).opcion_producto;
                 item.bandera=0;
+
+                if (item.prodid!=0) {
+                    item.Cod=""+item.prodid;
+                    item.Name=getProdName(item.Cod);
+                    item.bandera=1;
+                }
 
                 items.add(item);
             }
@@ -220,30 +229,23 @@ public class ProdMenu extends PBase {
         }
     }
 
-    //endregion
-
-    //region Aux
-
     private void listOptions(String title,int idoption) {
         clsP_productoObj prod=new clsP_productoObj(this,Con,db);
-        clsP_prodopclistObj P_listObj=new clsP_prodopclistObj(this,Con,db);
+        clsP_prodmenuopcObj opc=new clsP_prodmenuopcObj(this,Con,db);
         clsClasses.clsOpcion item;
         final AlertDialog Dialog;
-        String cod,name;
+        String cod;
 
         try {
-            ops.clear();lcode.clear();lname.clear();
-            P_listObj.fill("WHERE ID="+idoption);
 
-            for (int i = 0; i <P_listObj.count; i++) {
-                cod=P_listObj.items.get(i).producto;
-                prod.fill("WHERE CODIGO='"+cod+"'");
-                name=prod.first().desclarga;
+            lcode.clear();lname.clear();
+            opc.fill("WHERE CODIGO_OPCION="+idoption);
 
+            for (int i = 0; i <opc.count; i++) {
+                cod=""+opc.items.get(i).codigo_producto;
                 lcode.add(cod);
-                lname.add(name);
+                lname.add(getProdName(cod));
             }
-
 
             final String[] selitems = new String[lname.size()];
             for (int i = 0; i < lname.size(); i++) {
@@ -279,6 +281,10 @@ public class ProdMenu extends PBase {
         }
     }
 
+    //endregion
+
+    //region Aux
+
     private boolean validaData() {
         for (int i = 0; i <items.size(); i++) {
             if (items.get(i).bandera==0) return false;
@@ -297,6 +303,15 @@ public class ProdMenu extends PBase {
 
         gl.retcant=-1;
         finish();
+     }
+
+     private String getProdName(String pid) {
+         try {
+             P_productoObj.fill("WHERE CODIGO_PRODUCTO="+pid);
+             return P_productoObj.first().desclarga;
+         } catch (Exception e) {
+             return "";
+         }
      }
 
     //endregion
@@ -356,6 +371,16 @@ public class ProdMenu extends PBase {
     //endregion
 
     //region Activity Events
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            P_productoObj.reconnect(Con,db);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
 
     @Override
     public void onBackPressed() {

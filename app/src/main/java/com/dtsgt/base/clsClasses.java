@@ -331,27 +331,22 @@ public class clsClasses {
 	}
 
     public class clsP_prodmenu {
-        public String codigo;
-        public int  item;
-        public String nombre;
-        public int  idopcion;
-        public int  cant;
+        public int  codigo_menu;
+        public int  empresa;
+        public int  codigo_producto;
+        public int  opcion_lista;
+        public int  opcion_producto;
         public int  orden;
-        public int  bandera;
+        public String nombre;
         public String nota;
     }
 
-    public class clsP_prodopc {
-        public int  id;
-        public String nombre;
-        public int  activo;
-    }
-
-    public class clsP_prodopclist {
-        public int  id;
-        public String producto,nombre;
-        public double cant;
-        public int  idreceta;
+    public class clsP_prodmenuopc {
+        public int  codigo_menu_opcion;
+        public int  codigo_opcion;
+        public int  empresa;
+        public int  codigo_producto;
+        public int  codigo_receta;
     }
 
     public class clsP_producto {
@@ -544,7 +539,7 @@ public class clsClasses {
 	}
 
 	public class clsMenu {
-		public int ID,Icon;
+		public int ID,Icon,icod;
 		public String Name,Cod;
 	}	
 	
@@ -628,7 +623,7 @@ public class clsClasses {
 	}
 
     public class clsOpcion {
-        public int ID,bandera,listid;
+        public int ID,bandera,listid,prodid;
         public String Name,Cod,Descrip;
     }
 

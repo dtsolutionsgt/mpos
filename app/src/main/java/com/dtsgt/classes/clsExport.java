@@ -740,6 +740,7 @@ public class clsExport {
 
     //region ProdMenu
 
+    /*
     public String prodmenu_ins(clsClasses.clsP_prodmenu item) {
 
         ins.init("P_prodmenu");
@@ -776,10 +777,13 @@ public class clsExport {
 
     }
 
+     */
+
     //endregion
 
     //region ProdOpc
 
+    /*
     public String prodopc_ins(clsClasses.clsP_prodopc item) {
 
         ins.init("P_prodopc");
@@ -807,10 +811,12 @@ public class clsExport {
 
     }
 
+     */
     //endregion
 
     //region ProdOpcList
 
+    /*
     public String prodopclist_ins(clsClasses.clsP_prodopclist item) {
 
         ins.init("P_prodopclist");
@@ -838,6 +844,8 @@ public class clsExport {
         return upd.sql();
 
     }
+
+     */
 
     //endregion
 

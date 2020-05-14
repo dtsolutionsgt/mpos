@@ -51,8 +51,6 @@ import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
-import com.dtsgt.classes.clsP_prodopcObj;
-import com.dtsgt.classes.clsP_prodopclistObj;
 import com.dtsgt.classes.clsP_prodprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_proveedorObj;
@@ -3119,6 +3117,7 @@ public class ComWS extends PBase {
     }
 
     public boolean actProdOpcList() {
+	    /*
         clsP_prodopclistObj holder=new clsP_prodopclistObj(this,Con,db);
 
         actproc="Producto opcion";acterr=actproc;
@@ -3143,9 +3142,13 @@ public class ComWS extends PBase {
         } catch (Exception e) {
             fstr = e.getMessage();return false;
         }
+
+	     */
+	    return true;
     }
 
     public boolean actProdOpc() {
+	    /*
         clsP_prodopcObj holder=new clsP_prodopcObj(this,Con,db);
 
         actproc="Producto opcion";acterr=actproc;
@@ -3170,6 +3173,10 @@ public class ComWS extends PBase {
         } catch (Exception e) {
             fstr = e.getMessage();return false;
         }
+
+	     */
+
+	    return true;
     }
 
     public boolean actProdMenu() {
@@ -3184,10 +3191,13 @@ public class ComWS extends PBase {
             if (holder.count==0) return true;
 
             dbld.clear();
+            /*
             for (int i = 0; i <holder.count; i++) {
                 dbld.add(exp.prodmenu_ins(holder.items.get(i)));
                 dbld.add(exp.prodmenu_upd(holder.items.get(i)));
             }
+
+             */
 
             if (actualize()==0) {
                 fstr=sstr;return false;

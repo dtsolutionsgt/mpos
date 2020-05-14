@@ -1,76 +1,67 @@
 package com.dtsgt.classesws;
 
-
 import org.simpleframework.xml.Element;
 
 public class clsBeP_PRODMENU {
 
-    @Element(required=false) public String CODIGO;
-    @Element(required=false) public String EMPRESA;
-    @Element(required=false) public int ITEM;
-    @Element(required=false) public String NOMBRE;
-    @Element(required=false) public int IDOPCION;
-    @Element(required=false) public int CANT;
+    @Element(required=false) public int CODIGO_MENU;
+    @Element(required=false) public int EMPRESA;
+    @Element(required=false) public int CODIGO_PRODUCTO;
+    @Element(required=false) public int OPCION_LISTA;
+    @Element(required=false) public int OPCION_PRODUCTO;
     @Element(required=false) public int ORDEN;
-    @Element(required=false) public int BANDERA;
+    @Element(required=false) public String NOMBRE;
     @Element(required=false) public String NOTA;
 
 
     public clsBeP_PRODMENU() {
     }
 
-    public clsBeP_PRODMENU(String CODIGO,String EMPRESA,int ITEM,String NOMBRE,
-                           int IDOPCION,int CANT,int ORDEN,int BANDERA,
-                           String NOTA) {
+    public clsBeP_PRODMENU(int CODIGO_MENU,int EMPRESA,int CODIGO_PRODUCTO,int OPCION_LISTA,
+                           int OPCION_PRODUCTO,int ORDEN,String NOMBRE,String NOTA
+    ) {
 
-        this.CODIGO=CODIGO;
+        this.CODIGO_MENU=CODIGO_MENU;
         this.EMPRESA=EMPRESA;
-        this.ITEM=ITEM;
-        this.NOMBRE=NOMBRE;
-        this.IDOPCION=IDOPCION;
-        this.CANT=CANT;
+        this.CODIGO_PRODUCTO=CODIGO_PRODUCTO;
+        this.OPCION_LISTA=OPCION_LISTA;
+        this.OPCION_PRODUCTO=OPCION_PRODUCTO;
         this.ORDEN=ORDEN;
-        this.BANDERA=BANDERA;
+        this.NOMBRE=NOMBRE;
         this.NOTA=NOTA;
 
     }
 
 
-    public String getCODIGO() {
-        return CODIGO;
+    public int getCODIGO_MENU() {
+        return CODIGO_MENU;
     }
-    public void setCODIGO(String value) {
-        CODIGO=value;
+    public void setCODIGO_MENU(int value) {
+        CODIGO_MENU=value;
     }
-    public String getEMPRESA() {
+    public int getEMPRESA() {
         return EMPRESA;
     }
-    public void setEMPRESA(String value) {
+    public void setEMPRESA(int value) {
         EMPRESA=value;
     }
-    public int getITEM() {
-        return ITEM;
+    public int getCODIGO_PRODUCTO() {
+        return CODIGO_PRODUCTO;
     }
-    public void setITEM(int value) {
-        ITEM=value;
+    public void setCODIGO_PRODUCTO(int value) {
+        CODIGO_PRODUCTO=value;
     }
-    public String getNOMBRE() {
-        return NOMBRE;
+    public int getOPCION_LISTA() {
+        return OPCION_LISTA;
     }
-    public void setNOMBRE(String value) {
-        NOMBRE=value;
+    public void setOPCION_LISTA(int value) {
+        OPCION_LISTA=value;
     }
-    public int getIDOPCION() {
-        return IDOPCION;
+    public int getOPCION_PRODUCTO() {
+        return OPCION_PRODUCTO;
     }
-    public void setIDOPCION(int value) {
-        IDOPCION=value;
-    }
-    public int getCANT() {
-        return CANT;
-    }
-    public void setCANT(int value) {
-        CANT=value;
+    public void setOPCION_PRODUCTO(int value) {
+        OPCION_PRODUCTO=value;
     }
     public int getORDEN() {
         return ORDEN;
@@ -78,11 +69,11 @@ public class clsBeP_PRODMENU {
     public void setORDEN(int value) {
         ORDEN=value;
     }
-    public int getBANDERA() {
-        return BANDERA;
+    public String getNOMBRE() {
+        return NOMBRE;
     }
-    public void setBANDERA(int value) {
-        BANDERA=value;
+    public void setNOMBRE(String value) {
+        NOMBRE=value;
     }
     public String getNOTA() {
         return NOTA;

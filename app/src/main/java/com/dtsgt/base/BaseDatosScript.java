@@ -479,6 +479,32 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+
+            sql="CREATE TABLE [P_prodmenu] ("+
+                    "CODIGO_MENU INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "OPCION_LISTA INTEGER NOT NULL,"+
+                    "OPCION_PRODUCTO INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MENU])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [P_prodmenuopc] ("+
+                    "CODIGO_MENU_OPCION INTEGER NOT NULL,"+
+                    "CODIGO_OPCION INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CODIGO_RECETA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MENU_OPCION])"+
+                    ");";
+            database.execSQL(sql);
+
+
             sql="CREATE TABLE [P_proveedor] ("+
                     "CODIGO TEXT NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
@@ -503,35 +529,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_PRODMENU] ("+
-                    "CODIGO TEXT NOT NULL,"+
-                    "ITEM INTEGER NOT NULL,"+
-                    "NOMBRE TEXT NOT NULL,"+
-                    "IDOPCION INTEGER NOT NULL,"+
-                    "CANT INTEGER NOT NULL,"+
-                    "ORDEN INTEGER NOT NULL,"+
-                    "BANDERA INTEGER NOT NULL,"+
-                    "NOTA TEXT NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO],[ITEM])"+
-                    ");";
-            database.execSQL(sql);
-
-            sql="CREATE TABLE [P_PRODOPC] ("+
-                    "ID TEXT NOT NULL,"+
-                    "NOMBRE TEXT NOT NULL,"+
-                    "ACTIVO INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([ID])"+
-                    ");";
-            database.execSQL(sql);
-
-            sql="CREATE TABLE [P_PRODOPCLIST] ("+
-                    "ID TEXT NOT NULL,"+
-                    "PRODUCTO TEXT NOT NULL,"+
-                    "CANT INTEGER NOT NULL,"+
-                    "IDRECETA INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([ID],[PRODUCTO])"+
-                    ");";
-            database.execSQL(sql);
 
             sql="CREATE TABLE [P_cajacierre] ("+
                     "SUCURSAL TEXT NOT NULL,"+

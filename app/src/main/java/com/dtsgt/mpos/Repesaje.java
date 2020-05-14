@@ -340,7 +340,7 @@ public class Repesaje extends PBase {
         double prec,precdoc,tot,peso;
 
         try {
-            prec=prc.precio(prodid,ocant,gl.nivel,gl.um,gl.umpeso,tpeso,gl.um);
+            prec=prc.precio(prodid,ocant,gl.nivel,gl.um,gl.umpeso,tpeso,gl.um,gl.prodcod);
             precdoc=prc.precdoc;
             tot=prec*ocant;
             peso=tpeso;

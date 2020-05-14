@@ -373,7 +373,7 @@ public class Lista2 extends PBase {
             case 15:
                 startActivity(new Intent(this, MantDescuento.class));break;
             case 18:
-                startActivity(new Intent(this, MantOpcion.class));break;
+                //startActivity(new Intent(this, MantOpcion.class));break;
         }
     }
 
