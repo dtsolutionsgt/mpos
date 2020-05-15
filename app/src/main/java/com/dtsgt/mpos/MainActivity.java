@@ -316,7 +316,7 @@ public class MainActivity extends PBase {
                 gl.rutanom = DT.getString(1);
                 gl.vend = "1";
                 gl.rutatipog = "V";
-                gl.wsURL = "";
+                gl.wsurl = "";
                 gl.impresora = "";
                 gl.sucur = DT.getString(2);
 
@@ -330,7 +330,7 @@ public class MainActivity extends PBase {
                 gl.rutanom = "";
                 gl.vend = "0";
                 gl.rutatipog = "V";
-                gl.wsURL = "http://192.168.1.1/wsAndr/wsAndr.asmx";
+                gl.wsurl = "http://192.168.1.1/wsAndr/wsAndr.asmx";
             }
 
         } catch (Exception e) {
