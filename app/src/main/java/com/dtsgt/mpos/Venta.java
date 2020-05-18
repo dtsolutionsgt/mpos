@@ -40,6 +40,7 @@ import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -1729,44 +1730,7 @@ public class Venta extends PBase {
     private void menuItems() {
         clsClasses.clsMenu item;
 
-        try {
-            mitems.clear();
-
-            try {
-
-                item = clsCls.new clsMenu();
-                item.ID=3;item.Name="Reimpresión";item.Icon=3;
-                mitems.add(item);
-
-                if (gl.rol>1) {
-                    item = clsCls.new clsMenu();
-                    item.ID=4;item.Name="Anulación";item.Icon=4;
-                    mitems.add(item);
-                }
-
-                item = clsCls.new clsMenu();
-                item.ID=14;item.Name="Actualizar";item.Icon=14;
-                mitems.add(item);
-
-                /*
-                item = clsCls.new clsMenu();
-                item.ID=7;item.Name="Existencias";item.Icon=7;
-                mitems.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=101;item.Name="Baktún";item.Icon=101;
-                mitems.add(item);
-                */
-
-            } catch (Exception e) {
-                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            }
-
-            adaptergrid=new ListAdaptMenuVenta(this, mitems);
-            gridView.setAdapter(adaptergrid);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
+        menuTools();
 
         try {
             mmitems.clear();
@@ -1814,6 +1778,53 @@ public class Venta extends PBase {
 
     }
 
+    private void menuTools() {
+        clsClasses.clsMenu item;
+
+        mitems.clear();
+
+        try {
+
+            if (!gl.peFEL.isEmpty()) {
+                if (pendienteFEL()>0) {
+                    item = clsCls.new clsMenu();
+                    item.ID=15;item.Name="FEL";item.Icon=15;
+                    mitems.add(item);
+                }
+            }
+
+            item = clsCls.new clsMenu();
+            item.ID=3;item.Name="Reimpresión";item.Icon=3;
+            mitems.add(item);
+
+            if (gl.rol>1) {
+                item = clsCls.new clsMenu();
+                item.ID=4;item.Name="Anulación";item.Icon=4;
+                mitems.add(item);
+            }
+
+            item = clsCls.new clsMenu();
+            item.ID=14;item.Name="Actualizar";item.Icon=14;
+            mitems.add(item);
+
+            /*
+            item = clsCls.new clsMenu();
+            item.ID=7;item.Name="Existencias";item.Icon=7;
+            mitems.add(item);
+
+            item = clsCls.new clsMenu();
+            item.ID=101;item.Name="Baktún";item.Icon=101;
+            mitems.add(item);
+            */
+
+            adaptergrid=new ListAdaptMenuVenta(this, mitems);
+            gridView.setAdapter(adaptergrid);
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
     private void processMenuMenu(int menuid) {
         try {
             switch (menuid) {
@@ -1823,6 +1834,8 @@ public class Venta extends PBase {
                     gl.tipo=3;menuAnulDoc();break;
                 case 14:
                     showQuickRecep();break;
+                case 15:
+                    msgAskFEL("Certificar pendientes facturas ("+pendienteFEL()+") ");break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2031,32 +2044,6 @@ public class Venta extends PBase {
 
     private void borraTodo() {
         msgAskTodo("Borrar toda la venta");
-    }
-
-    private void msgAskTodo(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Venta");
-        dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    sql="DELETE FROM T_VENTA";
-                    db.execSQL(sql);
-                    listItems();
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
-        dialog.show();
-
     }
 
     private void showMenuSwitch() {
@@ -2419,21 +2406,17 @@ public class Venta extends PBase {
         String sprec="";
 
         try {
-
             sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prid+"') AND (NIVEL="+nivel+") ";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 
             pr=DT.getDouble(0);
-
         } catch (Exception e) {
             pr=0;
         }
-
         sprec=mu.frmdec(pr);
 
         return sprec;
-
     }
 
     private int getDisp(String prid) {
@@ -2585,6 +2568,71 @@ public class Venta extends PBase {
         scanning=false;
     }
 
+    private int pendienteFEL() {
+         try {
+            sql="SELECT COREL FROM D_factura WHERE (FEELNUMERO=0) AND (ANULADO='N')";
+            Cursor DT=Con.OpenDT(sql);
+            return DT.getCount();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    //endregion
+
+    //region Dialogs
+
+    private void msgAskTodo(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Venta");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    sql="DELETE FROM T_VENTA";
+                    db.execSQL(sql);
+                    listItems();
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskFEL(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Factura electronica");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    gl.felcorel="";
+                    startActivity(new Intent(Venta.this, FelFactura.class));
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
     //endregion
 
     //region Activity Events
@@ -2600,6 +2648,7 @@ public class Venta extends PBase {
             }
 
             gl.climode=true;
+            menuTools();
 
             try {
                 txtBarra.requestFocus();

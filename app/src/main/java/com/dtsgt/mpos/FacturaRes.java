@@ -36,6 +36,7 @@ import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class FacturaRes extends PBase {
 
 	private long fecha,fechae;
 	private int fcorel,clidia,media;
-	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC;
+	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,stot0,stot,descmon,totimp,totperc,credito;
@@ -74,7 +75,7 @@ public class FacturaRes extends PBase {
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pagocompleto=false;
 
 
-	@SuppressLint("MissingPermission")
+	//@SuppressLint("MissingPermission")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -108,6 +109,7 @@ public class FacturaRes extends PBase {
 		rutapos=gl.rutapos;
 		media=gl.media;
 		credito=gl.credito;
+        idfel=gl.peFEL;
 
 		gl.cobroPendiente = false;
 		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
@@ -209,8 +211,7 @@ public class FacturaRes extends PBase {
 
 		try {
 			db.execSQL("DELETE FROM T_PAGO");
-		} catch (SQLException e) {
-		}
+		} catch (SQLException e) {}
 
 		processFinalPromo();
 
@@ -643,12 +644,21 @@ public class FacturaRes extends PBase {
 		if (!saved) {
 			if (!saveOrder()) return;
 		}
+
         gl.cliposflag=false;
-		impressOrder();
+
+        if (idfel.isEmpty()) {
+            impressOrder();
+        } else {
+            browse=2;
+            gl.felcorel=corel;gl.feluuid="";
+            startActivity(new Intent(this, FelFactura.class));
+        }
 
 	}
 
 	private void impressOrder(){
+
 		try{
 
 			rl_facturares.setVisibility(View.INVISIBLE);
@@ -820,7 +830,7 @@ public class FacturaRes extends PBase {
 			ins.add("RAZON_ANULACION","");
 
             ins.add("FEELSERIE"," ");
-            ins.add("FEELNUMERO"," ");
+            ins.add("FEELNUMERO",0);
             ins.add("FEELUUID"," ");
             ins.add("FEELFECHAPROCESADO",0);
             ins.add("FEELCONTINGENCIA"," ");
@@ -1612,7 +1622,7 @@ public class FacturaRes extends PBase {
             public void onClick(DialogInterface dialog, int which) {
                 applyCash();
                 checkPago();
-                finish();
+                if (idfel.isEmpty()) finish();
             }
         });
 
@@ -1948,7 +1958,7 @@ public class FacturaRes extends PBase {
 
 		s=mu.frmcur(tpago);
 
-        if (gl.dvbrowse!=0){
+        if (gl.dvbrowse==1){
             if (gl.brw>0){
                 lblPago.setText("Pago COMPLETO.\n"+s);
                 pago=true;
@@ -2253,11 +2263,14 @@ public class FacturaRes extends PBase {
 
 	@Override
 	protected void onResume() {
-		try{
+
+		try {
 			super.onResume();
 
-			checkPromo();
-			checkPago();
+            if (browse!=2) {
+                checkPromo();
+                checkPago();
+            }
 
 			if (browse==1) {
 				browse=0;
@@ -2265,9 +2278,22 @@ public class FacturaRes extends PBase {
 				return;
 			}
 
-		}catch (Exception e){
+            if (browse==2) {
+                browse=0;
+
+                if (gl.feluuid.isEmpty()) {
+                    toastlongtop("No se logro certificación FEL");
+                } else {
+                    toastlongtop("Factura certificada : \n"+gl.feluuid);
+                }
+                impressOrder();
+                return;
+            }
+
+		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
+
 	}	
 
 	@Override

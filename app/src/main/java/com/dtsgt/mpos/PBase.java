@@ -116,6 +116,12 @@ public class PBase extends Activity {
 		toast.show();
 	}
 
+    protected void toastlongtop(String msg) {
+        Toast toast= Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP, 0, 0);
+        toast.show();
+    }
+
 	protected void toastcent(String msg) {
 
 		if (mu.emptystr(msg)) return;

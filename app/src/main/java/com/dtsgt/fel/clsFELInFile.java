@@ -41,7 +41,7 @@ public class clsFELInFile {
     public String fel_token ="5b174fb0e23645b65ef88277d654603d";
     public String fel_codigo="0";
     public String fel_alias="DEMO_FEL";
-    public String fel_ident="abc123";
+    public String fel_ident="abc123"; // cambiar por cada documento
     public String fel_nit="1000000000K";
     public String fel_correo="";
 
@@ -64,6 +64,7 @@ public class clsFELInFile {
     private double iva=12;
     private String WSURL="https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml";
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
+                            //https://certificador.feel.com.gt/fel/anulacion/v2/dte
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/dte/";
 
     //private String fileName= Environment.getExternalStorageDirectory() + "/zzxmltest.xml";
@@ -77,10 +78,13 @@ public class clsFELInFile {
     }
 
     public void certificacion() {
-        errlevel=2;
+        errlevel=0;
+
         fact_uuid="";
         fact_serie="";
         fact_numero=0;
+
+        errlevel=0;error="";errorflag=false;
 
         sendJSONFirm();
     }

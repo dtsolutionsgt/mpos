@@ -10,7 +10,7 @@
         <RelativeLayout
             android:id="@+id/relfragment"
             android:layout_width="500dp"
-            android:layout_height="400dp"
+            android:layout_height="320dp"
             android:layout_centerInParent="true"
             android:background="@drawable/frame_rect_edit">
 
@@ -125,7 +125,7 @@
                         android:layout_marginTop="0dp"
                         android:adjustViewBounds="true"
                         android:padding="8dp"
-                        android:src="@drawable/recibir_archivos" />
+                        android:src="@drawable/fel" />
                 </RelativeLayout>
 
                 <TextView
@@ -147,26 +147,9 @@
                     style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true" />
-
-                <TextView
-                    android:id="@+id/textView45"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/relbotpan"
+                    android:layout_above="@+id/textView150"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="40dp"
-                    android:background="@drawable/frame_btn"
-                    android:clickable="true"
-                    android:onClick="doStart"
-                    android:paddingLeft="25dp"
-                    android:paddingTop="15dp"
-                    android:paddingRight="25dp"
-                    android:paddingBottom="15dp"
-                    android:text="RECIBIR"
-                    android:textColor="#000000"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:layout_marginBottom="15dp" />
 
                 <TextView
                     android:id="@+id/textView150"
@@ -177,8 +160,26 @@
                     android:layout_marginStart="0dp"
                     android:layout_marginBottom="3dp"
                     android:gravity="center_horizontal"
+                    android:paddingBottom="10dp"
                     android:text="TextView"
-                    android:textSize="12sp" />
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView152"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView7"
+                    android:layout_alignStart="@+id/textView7"
+                    android:layout_alignEnd="@+id/textView7"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:gravity="center_horizontal"
+                    android:text="TextView"
+                    android:textColor="#000000"
+                    android:textSize="18sp" />
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>

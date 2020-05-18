@@ -240,10 +240,12 @@ public class CliPos extends PBase {
 			}
 
 			int nnit=nitnum(NIT);
-			sql="SELECT Nombre,Direccion FROM P_CLIENTE WHERE CODIGO_CLIENTE="+nnit;
+
+			sql="SELECT Nombre,Direccion FROM P_CLIENTE WHERE CODIGO="+nnit;
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 
+			if (nnit==0) throw new Exception();
 			txtNom.setText(DT.getString(0));
 			txtRef.setText(DT.getString(1));
 		} catch (Exception e){
