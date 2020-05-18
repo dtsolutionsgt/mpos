@@ -144,7 +144,7 @@ public class WSRec extends PBase {
 
         if (pbd_vacia) {
             lblTitulo.setText("B.D. Vacía");
-            lbl2.setText("Conectado a: " + gl.wsURL);
+            lbl2.setText("Conectado a: " + gl.wsurl);
         }
     }
 

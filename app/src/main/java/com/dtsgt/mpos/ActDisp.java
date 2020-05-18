@@ -25,7 +25,7 @@ public class ActDisp extends PBase {
 		
 		pBar = (ProgressBar) findViewById(R.id.pBar);
 		
-		URL = ((appGlobals) vApp).wsURL;
+		URL = ((appGlobals) vApp).wsurl;
 		prodid=((appGlobals) vApp).gstr;
 
 		ws=new clsWebService(this);

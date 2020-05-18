@@ -140,7 +140,7 @@ public class WSEnv extends PBase {
 
     //region Main
 
-    private void execws(int callbackvalue) {
+    private void execws(final int callbackvalue) {
 
         switch (callbackvalue) {
             case 1:
@@ -384,7 +384,7 @@ public class WSEnv extends PBase {
     }
 
     private void updateLabel() {
-        Handler handler = new Handler();
+        final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             public void run() {
                 handler.post(new Runnable(){
