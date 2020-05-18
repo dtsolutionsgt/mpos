@@ -25,8 +25,8 @@ public class RecargaAuto extends PBase {
 
 	private String itemid,prodid;
 	private double cant;
-	private String emp,estado;
-	private int itempos;
+	private String estado;
+	private int itempos,emp;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

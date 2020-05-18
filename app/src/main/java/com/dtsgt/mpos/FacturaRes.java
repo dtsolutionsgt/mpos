@@ -82,7 +82,7 @@ public class FacturaRes extends PBase {
 		setContentView(R.layout.activity_factura_res);
 
 		super.InitBase();
-        addlog("FacturaRes",""+du.getActDateTime(),gl.vend);
+        addlog("FacturaRes",""+du.getActDateTime(),String.valueOf(gl.vend));
 
 		listView = (ListView) findViewById(R.id.listView1);
 		lblPago = (TextView) findViewById(R.id.TextView01);

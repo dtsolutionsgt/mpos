@@ -27,8 +27,8 @@ public class clsDocCanastaBod extends clsDocument {
 
     protected boolean loadHeadData(String corel) {
         Cursor DT;
-        String vend,val;
         int cntimpres;
+        String val, vend;
 
         super.loadHeadData(corel);
 
@@ -56,7 +56,7 @@ public class clsDocCanastaBod extends clsDocument {
 
             tipo=DT.getString(2);
             ref=DT.getString(3);
-            vend=DT.getString(4);
+            vend=DT.getString(4);//#CKFK 20200516 Validar si se guarda el codigo o el codigo_vendedor
 
             ffecha=DT.getInt(5);
             fsfecha=sfecha(ffecha);
@@ -69,7 +69,7 @@ public class clsDocCanastaBod extends clsDocument {
 
         vendcod=vend;
         val=vend;
-        vendedor=val;
+        vendedor=val; //#CKFK 20200516 Validar para que se hace esto
 
         return true;
 

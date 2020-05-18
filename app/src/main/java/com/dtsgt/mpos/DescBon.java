@@ -24,7 +24,7 @@ public class DescBon extends PBase {
 		setContentView(R.layout.activity_desc_bon);
 		
 		super.InitBase();
-		addlog("DescBon",""+du.getActDateTime(),gl.vend);
+		addlog("DescBon",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		lblDesc= (TextView) findViewById(R.id.lblFecha);
 		txtDesc = (EditText) findViewById(R.id.txtDesc);

@@ -554,7 +554,7 @@ public class MantCli extends PBase {
                 String sql = "INSERT INTO FPrint (EMPRESA,CODIGO,DEDO,IMAGE) VALUES(?,?,?,?)";
                 SQLiteStatement insertStmt = db.compileStatement(sql);
 
-                insertStmt.bindString(1,gl.emp);
+                insertStmt.bindString(1,String.valueOf(gl.emp));//#CKFK 20200516 Validar como cambiar esta informacion
                 insertStmt.bindString(2,id);
                 insertStmt.bindLong(3,1);
                 insertStmt.bindBlob(4,fmtByte);

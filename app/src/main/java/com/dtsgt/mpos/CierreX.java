@@ -53,7 +53,7 @@ public class CierreX extends PBase {
         setContentView(R.layout.activity_cierre_x);
 
         super.InitBase();
-        addlog("Cierres",""+du.getActDateTime(),gl.vend);
+        addlog("Cierres",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         lblTit = (TextView) findViewById(R.id.lblTit);
         txtbtn = (TextView) findViewById(R.id.txtBtn);

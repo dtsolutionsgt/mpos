@@ -25,14 +25,14 @@ public class MantRol extends PBase {
     private ListView listView;
     private Spinner spin;
 
-    private ArrayList<String> spincode=new ArrayList<String>();
+    private ArrayList<Integer> spincode=new ArrayList<Integer>();
     private ArrayList<String> spinlist=new ArrayList<String>();
 
     private LA_P_usopcion adapter;
     private clsP_usopcionObj P_usopcionObj;
     private clsP_usgrupoopcObj P_usgrupoopcObj;
 
-    private String idgroup="";
+    private int idgroup=0;
     private int idopt=0;
 
     @Override

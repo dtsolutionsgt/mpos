@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
+import com.zebra.sdk.settings.internal.SettingRangeInteger;
 
 
 public class Caja extends PBase {
@@ -32,7 +33,7 @@ public class Caja extends PBase {
         setContentView(R.layout.activity_caja);
 
         super.InitBase();
-        addlog("Caja",""+du.getActDateTime(),gl.vend);
+        addlog("Caja",""+du.getActDateTime(), String.valueOf(gl.vend));
 
         lblTit = (TextView) findViewById(R.id.lblTit);
         lblMontoIni = (TextView) findViewById(R.id.textView133);
@@ -247,9 +248,9 @@ public class Caja extends PBase {
             }
 
             itemC.sucursal =  gl.tienda;
-            itemC.ruta = gl.caja;
+            itemC.ruta = gl.codigo_ruta;
             itemC.corel = gl.corelZ;
-            itemC.vendedor =  gl.vend;
+            itemC.vendedor =  gl.codigo_vendedor;
             itemC.fondocaja = fondoCaja;
             itemC.statcom = "N";
 

@@ -122,7 +122,7 @@ public class clsP_usgrupoObj {
 
             item = clsCls.new clsP_usgrupo();
 
-            item.codigo=dt.getString(0);
+            item.codigo=dt.getInt(0);
             item.nombre=dt.getString(1);
             item.cuenta=dt.getString(2);
 

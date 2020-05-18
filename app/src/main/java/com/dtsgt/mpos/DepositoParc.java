@@ -53,7 +53,7 @@ public class DepositoParc extends PBase {
 		setContentView(R.layout.activity_deposito_parc);
 		
 		super.InitBase();
-		addlog("DepositoParc",""+du.getActDateTime(),gl.vend);
+		addlog("DepositoParc",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		spinBanco = (Spinner) findViewById(R.id.spinner1);
 		txtBol = (EditText) findViewById(R.id.txtFilter);

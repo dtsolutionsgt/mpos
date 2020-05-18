@@ -21,7 +21,7 @@ public class ActDisp extends PBase {
 		setContentView(R.layout.activity_act_disp);
 		
 		super.InitBase();
-		addlog("ActDisp",""+du.getActDateTime(),gl.vend);
+		addlog("ActDisp",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		pBar = (ProgressBar) findViewById(R.id.pBar);
 		

@@ -75,9 +75,9 @@ public class clsP_prodprecioObj {
 
         ins.init("P_prodprecio");
 
-        ins.add("CODIGO_PRECIO",item.codigo_precio);
+        //ins.add("CODIGO_PRECIO",item.codigo_precio); #CKFK 20200516 Lo convertí en un identity
         ins.add("EMPRESA",item.empresa);
-        ins.add("CODIGO",item.codigo);
+        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
         ins.add("NIVEL",item.nivel);
         ins.add("PRECIO",item.precio);
         ins.add("UNIDADMEDIDA",item.unidadmedida);
@@ -91,7 +91,7 @@ public class clsP_prodprecioObj {
         upd.init("P_prodprecio");
 
         upd.add("EMPRESA",item.empresa);
-        upd.add("CODIGO",item.codigo);
+        upd.add("CODIGO_PRODUCTO",item.codigo_producto);
         upd.add("NIVEL",item.nivel);
         upd.add("PRECIO",item.precio);
         upd.add("UNIDADMEDIDA",item.unidadmedida);
@@ -130,7 +130,7 @@ public class clsP_prodprecioObj {
 
             item.codigo_precio=dt.getInt(0);
             item.empresa=dt.getInt(1);
-            item.codigo=dt.getString(2);
+            item.codigo_producto=dt.getInt(2);
             item.nivel=dt.getInt(3);
             item.precio=dt.getDouble(4);
             item.unidadmedida=dt.getString(5);
@@ -167,7 +167,7 @@ public class clsP_prodprecioObj {
 
         ins.add("CODIGO_PRECIO",item.codigo_precio);
         ins.add("EMPRESA",item.empresa);
-        ins.add("CODIGO",item.codigo);
+        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
         ins.add("NIVEL",item.nivel);
         ins.add("PRECIO",item.precio);
         ins.add("UNIDADMEDIDA",item.unidadmedida);
@@ -181,7 +181,7 @@ public class clsP_prodprecioObj {
         upd.init("P_prodprecio");
 
         upd.add("EMPRESA",item.empresa);
-        upd.add("CODIGO",item.codigo);
+        upd.add("CODIGO_PRODUCTO",item.codigo_producto);
         upd.add("NIVEL",item.nivel);
         upd.add("PRECIO",item.precio);
         upd.add("UNIDADMEDIDA",item.unidadmedida);

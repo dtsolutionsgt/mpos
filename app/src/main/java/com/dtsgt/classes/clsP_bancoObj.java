@@ -77,6 +77,7 @@ public class clsP_bancoObj {
 
         ins.init("P_banco");
 
+        ins.add("CODIGO_BANCO",item.codigo_banco);
         ins.add("CODIGO",item.codigo);
         ins.add("TIPO",item.tipo);
         ins.add("NOMBRE",item.nombre);
@@ -92,13 +93,14 @@ public class clsP_bancoObj {
 
         upd.init("P_banco");
 
+        upd.add("CODIGO",item.codigo);
         upd.add("TIPO",item.tipo);
         upd.add("NOMBRE",item.nombre);
         upd.add("CUENTA",item.cuenta);
         upd.add("EMPRESA",item.empresa);
         upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_BANCO='"+item.codigo_banco+"')");
 
         db.execSQL(upd.sql());
 
@@ -107,7 +109,7 @@ public class clsP_bancoObj {
     }
 
     private void deleteItem(clsClasses.clsP_banco item) {
-        sql="DELETE FROM P_banco WHERE (CODIGO='"+item.codigo+"')";
+        sql="DELETE FROM P_banco WHERE (CODIGO_BANCO='"+item.codigo_banco+"')";
         db.execSQL(sql);
     }
 
@@ -136,8 +138,9 @@ public class clsP_bancoObj {
             item.tipo=dt.getString(1);
             item.nombre=dt.getString(2);
             item.cuenta=dt.getString(3);
-            item.empresa=dt.getString(4);
+            item.empresa=dt.getInt(4);
             item.activo=dt.getInt(5);
+            item.codigo_banco=dt.getInt(6);
 
             items.add(item);
 
@@ -169,6 +172,7 @@ public class clsP_bancoObj {
 
         ins.init("P_banco");
 
+        ins.add("CODIGO_BANCO",item.codigo_banco);
         ins.add("CODIGO",item.codigo);
         ins.add("TIPO",item.tipo);
         ins.add("NOMBRE",item.nombre);
@@ -190,7 +194,7 @@ public class clsP_bancoObj {
         upd.add("EMPRESA",item.empresa);
         upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_BANCO='"+item.codigo_banco+"')");
 
         return upd.sql();
 

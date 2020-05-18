@@ -54,7 +54,7 @@ public class BonList extends PBase {
 		setContentView(R.layout.activity_bon_list);
 		
 		super.InitBase();
-		addlog("BonList",""+du.getActDateTime(),gl.vend);
+		addlog("BonList",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		listView =  (ListView) findViewById(R.id.listView1);
 		relMonto =  (RelativeLayout) findViewById(R.id.relMonto);

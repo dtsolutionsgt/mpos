@@ -98,9 +98,11 @@ public class clsExport {
 
         ins.init("P_ruta");
 
+        ins.add("CODIGO_RUTA", item.codigo_ruta);
         ins.add("CODIGO", item.codigo);
         ins.add("NOMBRE", item.nombre);
         ins.add("SUCURSAL", item.sucursal);
+        ins.add("ACTIVO", item.activo);
 
         return ins.sql();
     }
@@ -599,7 +601,8 @@ public class clsExport {
 
         ins.init("P_prodprecio");
 
-        ins.add("CODIGO", item.codigo);
+        ins.add("CODIGO_PRECIO", item.codigo_precio);
+        ins.add("CODIGO", item.codigo_producto);
         ins.add("NIVEL", item.nivel);
         ins.add("PRECIO", item.precio);
         ins.add("UNIDADMEDIDA", item.unidadmedida);
@@ -616,7 +619,7 @@ public class clsExport {
         upd.add("PRECIO", item.precio);
         upd.add("EMPRESA", emp);
 
-        upd.Where("(CODIGO='" + item.codigo + "') AND (NIVEL=" + item.nivel + ") AND (UNIDADMEDIDA='" + item.unidadmedida + "') AND (EMPRESA='"+emp+"')");
+        upd.Where("(CODIGO_PRECIO=" + item.codigo_precio + ")");
 
         return upd.sql();
 

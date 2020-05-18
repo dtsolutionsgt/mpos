@@ -41,8 +41,8 @@ public class DevolCli extends PBase {
 
 	private String cliid,itemid,prodid;
 	private double cant;
-	private String emp,estado;
-	private int itempos,impres;
+	private String estado;
+	private int itempos,impres,emp;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class DevolCli extends PBase {
 		setContentView(R.layout.activity_devol_cli);
 		
 		super.InitBase();
-		addlog("DevolCli",""+du.getActDateTime(),gl.vend);
+		addlog("DevolCli",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		listView = (ListView) findViewById(R.id.listView1);
         lblCantProds = (TextView) findViewById(R.id.lblCantProds);

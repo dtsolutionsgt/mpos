@@ -48,8 +48,8 @@ public class LicRegis extends PBase {
 	public AsyncCallSend wsStask;
 	
 	private static String sstr,fstr,fprog,finf,ferr,fterr,idbg,dbg;
-	private int scon,running,pflag,stockflag;
-	private String ftext,slsync,senv,gEmpresa,ActRuta;
+	private int scon,running,pflag,stockflag,gEmpresa;
+	private String ftext,slsync,senv,ActRuta;
 	private boolean rutapos;
 	
 	private final String NAMESPACE ="http://tempuri.org/";
@@ -61,7 +61,7 @@ public class LicRegis extends PBase {
 		setContentView(R.layout.activity_lic_regis);
 				
 		super.InitBase();
-		addlog("LicRegis",""+du.getActDateTime(),gl.vend);
+		addlog("LicRegis",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		System.setProperty("line.separator","\r\n");
 		
@@ -568,7 +568,7 @@ public class LicRegis extends PBase {
 			if (mu.emptystr(ss)) {
 				mu.msgbox("La empresa no esta definida.");return false;
 			}
-			gEmpresa=ss;
+			gEmpresa=Integer.valueOf(ss);
 
 			ss=txtWS.getText().toString().trim();
 			if (mu.emptystr(ss) || ss.equalsIgnoreCase("*")) {

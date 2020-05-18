@@ -53,7 +53,9 @@ public class MantProducto extends PBase {
     private clsClasses.clsP_producto item=clsCls.new clsP_producto();
     public  ArrayList<clsClasses.clsP_nivelpreciolist> precios = new ArrayList<clsClasses.clsP_nivelpreciolist>();
 
-    private ArrayList<String> spincode,code1,code2,code3,spinlist,list1,list2,list3,listp;
+    private ArrayList<String> code1,code2,code3,spinlist,list1,list2,list3,listp;
+
+    private ArrayList<Integer> spincode;
 
     private String id;
     private int precpos=0;
@@ -95,10 +97,18 @@ public class MantProducto extends PBase {
 
         holder =new clsP_productoObj(this,Con,db);
 
-        spincode=new ArrayList<String>();spinlist=new ArrayList<String>();
-        code1=new ArrayList<String>();list1=new ArrayList<String>();
-        code2=new ArrayList<String>();list2=new ArrayList<String>();
-        code3=new ArrayList<String>();list3=new ArrayList<String>();
+        spincode=new ArrayList<Integer>();
+        spinlist=new ArrayList<String>();
+
+        code1=new ArrayList<String>();
+        list1=new ArrayList<String>();
+
+        code2=new ArrayList<String>();
+        list2=new ArrayList<String>();
+
+        code3=new ArrayList<String>();
+        list3=new ArrayList<String>();
+
         listp=new ArrayList<String>();
 
         id=gl.gcods;
@@ -161,7 +171,7 @@ public class MantProducto extends PBase {
                     spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
                     spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                    String scod = spincode.get(position);
+                    int scod = Integer.valueOf(spincode.get(position).toString());
                     item.linea = scod;
                  } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -387,7 +397,7 @@ public class MantProducto extends PBase {
 
         item.codigo="";
         item.codigo_tipo="P";
-        item.linea="";
+        item.linea=0;
         item.empresa=gl.emp;
         item.marca="1";
         item.codbarra="";
@@ -446,7 +456,7 @@ public class MantProducto extends PBase {
 
             fact.delete(item.codigo);
 
-            fitem.producto=item.codigo;
+            fitem.producto=item.codigo_producto;
             fitem.unidadsuperior = item.unidbas;
             fitem.factorconversion = 1;
             fitem.unidadminima =item.unidbas;
@@ -586,11 +596,11 @@ public class MantProducto extends PBase {
 
             pitem= clsCls.new clsP_prodprecio();
 
-            pitem.codigo=item.codigo;
+            pitem.empresa=gl.emp;
+            pitem.codigo_producto=item.codigo_producto;
             pitem.nivel=precios.get(i).nivel;
             pitem.unidadmedida=item.unidbas;
             pitem.precio=precios.get(i).precio;
-
             prec.add(pitem);
         }
     }
@@ -689,24 +699,24 @@ public class MantProducto extends PBase {
         }
     }
 
-    private boolean fillSpinner(String selid){
+    private boolean fillSpinner(int selid){
         clsP_lineaObj lineas =new clsP_lineaObj(this,Con,db);
         int selidx=0;
-        String scod;
+        int scod;
 
         spincode.clear();spinlist.clear();
 
         try {
-            lineas.fill(" WHERE (Activo=1) OR (Codigo='"+selid+"') ORDER BY Nombre");
+            lineas.fill(" WHERE (Activo=1) OR (Codigo_Linea='"+selid+"') ORDER BY Nombre");
             if (lineas.count==0) {
                 msgAskReturn("Lista de familias está vacia, no se puede continuar");return false;
             }
 
             for (int i = 0; i <lineas.count; i++) {
-                scod=lineas.items.get(i).codigo;
+                scod=lineas.items.get(i).codigo_linea;
                 spincode.add(scod);
                 spinlist.add(lineas.items.get(i).nombre);
-                if (scod.equalsIgnoreCase(selid)) selidx=i;
+                if (scod ==selid) selidx=i;
                 if (i==0 &&  newitem) item.linea=scod;
             }
         } catch (Exception e) {

@@ -88,10 +88,12 @@ public class Venta extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot;
     private double px,py,cpx,cpy,cdist;
 
-    private String emp,uid,seluid,cliid,prodid,uprodid,famid,um,tiposcan,barcode,imgfold,tipo;
+    private String uid,seluid,prodid,uprodid,famid,um,tiposcan,barcode,imgfold,tipo;
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
+    private int codigo_cliente, emp;
+    private String cliid;
 
     private AppMethods app;
 
@@ -101,7 +103,7 @@ public class Venta extends PBase {
         setContentView(R.layout.activity_venta);
 
         super.InitBase();
-        addlog("Venta",""+du.getActDateTime(),gl.vend);
+        addlog("Venta",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         setControls();
 
@@ -111,7 +113,8 @@ public class Venta extends PBase {
         emp=gl.emp;
         nivel=1;
         gl.nivel=nivel;
-        cliid=gl.cliente;cliid="0";
+        cliid=gl.cliente;
+        //cliid="0"; #CKFK 20200515 puse esto en comentario porque primero se le asigna el Id de cliente
         decimal=false;
 
         gl.atentini=du.getActDateTime();
@@ -887,12 +890,12 @@ public class Venta extends PBase {
         try {
             if (prodPorPeso(prodid)) {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
+                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
                     if (prc.precioespecial>0) prec=prc.precioespecial;
                 }
             } else {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,0)) {
+                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,0)) {
                     if (prc.precioespecial>0) prec=prc.precioespecial;
                 }
             }
@@ -1440,7 +1443,7 @@ public class Venta extends PBase {
             return;
         }
 
-        String cliid=gl.cliente;
+        //int cliid = gl.cliente; #CKFK 2020515
 
         saveAtten(""+cna);
     }
@@ -2280,9 +2283,9 @@ public class Venta extends PBase {
         gl.ref2="";
         gl.ref3="";
 
-        clsDescFiltro clsDFilt=new clsDescFiltro(this,gl.ruta,gl.cliente);
+        clsDescFiltro clsDFilt=new clsDescFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
 
-        clsBonFiltro clsBFilt=new clsBonFiltro(this,gl.ruta,gl.cliente);
+        clsBonFiltro clsBFilt=new clsBonFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
 
         imgfold= Environment.getExternalStorageDirectory()+ "/RoadFotos/";
 
@@ -2482,14 +2485,15 @@ public class Venta extends PBase {
         browse=0;
 
         gl.exitflag=false;
-        if (!gl.scancliente.isEmpty()) gl.cliente=gl.scancliente;
-        gl.scancliente="";
+        if (!gl.scancliente.isEmpty())  gl.cliente=gl.scancliente;
         if (gl.cliente.isEmpty()) {
             toast("Cliente pendiente");return;
         }
 
         try {
-            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO FROM P_CLIENTE WHERE CODIGO='"+gl.cliente+"'";
+            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO FROM P_CLIENTE " +
+                      "WHERE CODIGO='"+gl.cliente+"'";
+
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
@@ -2513,6 +2517,7 @@ public class Venta extends PBase {
             if (disp>0) ss=" [Cred: "+mu.frmcur(disp)+" ]";else ss="";
 
             lblVend.setText(DT.getString(0)+" "+ss);
+
         } catch (Exception e) {
             lblVend.setText("");
         }

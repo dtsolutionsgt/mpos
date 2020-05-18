@@ -137,7 +137,7 @@ public class ComWS extends PBase {
 		setContentView(R.layout.activity_com_ws);
 
 		super.InitBase();
-		addlog("ComWS", "" + du.getActDateTime(), gl.vend);
+		addlog("ComWS", "" + du.getActDateTime(), String.valueOf(gl.vend));
 
 		System.setProperty("line.separator", "\r\n");
         rootdir=Environment.getExternalStorageDirectory()+"/RoadFotos/";
@@ -2012,7 +2012,7 @@ public class ComWS extends PBase {
 		}
 	}
 
-	public int sendFoto(String empresa, String cod, int valid) {
+	public int sendFoto(int empresa, String cod, int valid) {
 		String fname,resstr="";
 
 		if(valid==1){

@@ -74,7 +74,7 @@ public class Clientes extends PBase {
 		setContentView(R.layout.activity_clientes);
 
 		super.InitBase();
-		addlog("Clientes", "" + du.getActDateTime(), gl.vend);
+		addlog("Clientes", "" + du.getActDateTime(), String.valueOf(gl.vend));
 
 		listView = (ListView) findViewById(R.id.listView1);
 		spinList = (Spinner) findViewById(R.id.spinner1);

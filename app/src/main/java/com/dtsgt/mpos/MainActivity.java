@@ -294,10 +294,11 @@ public class MainActivity extends PBase {
         String vCellCom = "";
 
         if (dbVacia()) {
-            gl.emp = "3";
+            gl.emp = 3;
             gl.modoadmin = true;
             gl.autocom = 0;
             toastcent("¡La base de datos está vacia!");
+            browse = 1;
             Intent intent = new Intent(MainActivity.this, WSRec.class);
             intent.putExtra("bd_vacia", true);
             startActivity(intent);
@@ -328,7 +329,7 @@ public class MainActivity extends PBase {
             } else {
                 gl.ruta = "";
                 gl.rutanom = "";
-                gl.vend = "0";
+                gl.vend = "";
                 gl.rutatipog = "V";
                 gl.wsurl = "http://192.168.1.1/wsAndr/wsAndr.asmx";
             }
@@ -345,7 +346,7 @@ public class MainActivity extends PBase {
 
             if (DT.getCount() > 0) {
                 DT.moveToFirst();
-                gl.emp = DT.getString(0);
+                gl.emp = DT.getInt(0);
                 gl.empnom = DT.getString(1);
                 gl.devol = false;
                 gl.usarpeso = false;
@@ -355,7 +356,7 @@ public class MainActivity extends PBase {
                 gl.depparc = false;
                 gl.lotedf = "";
             } else {
-                gl.emp = "3";
+                gl.emp = 3;
                 gl.devol = false;
                 toast("¡No se pudo cargar configuración de la empresa!");
             }
@@ -459,7 +460,8 @@ public class MainActivity extends PBase {
             gl.nivel = DT.getInt(2);
             gl.rol = gl.nivel;
 
-            if (gl.caja.isEmpty() || gl.tienda.isEmpty()) {
+            //#CKFK 20200517 if (gl.caja.isEmpty() || gl.tienda==0) {
+            if (gl.codigo_ruta == 0 || gl.tienda==0) {
                 if (gl.nivel == 3) {
                     gl.modoinicial = true;
                     return true;
@@ -474,7 +476,7 @@ public class MainActivity extends PBase {
 
             if (gl.nivel != 3) {
                 sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES " +
-                        "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.tienda + "') COLLATE NOCASE";
+                        "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
                 DT = Con.OpenDT(sql);
 
                 if (DT.getCount() == 0) {
@@ -671,7 +673,7 @@ public class MainActivity extends PBase {
     public void configBase() {
         Cursor DT;
 
-        gl.tienda = "";
+        gl.tienda = 0;
         gl.caja = "";
         gl.tiendanom = "";
         gl.cajanom = "";
@@ -682,12 +684,12 @@ public class MainActivity extends PBase {
             DT.moveToFirst();
 
             gl.urlglob = DT.getString(0);
-            gl.tienda = DT.getString(1);
-            gl.caja = DT.getString(2);
+            gl.tienda = DT.getInt(1);
+            gl.codigo_ruta = DT.getInt(2);//gl.caja #CKFK 20200516 lo cambié porque debemos trabajar con el codigo_ruta4
 
-            if (!gl.tienda.isEmpty()) {
+            if (gl.tienda!=0) {
                 try {
-                    sql = "SELECT DESCRIPCION FROM P_SUCURSAL WHERE CODIGO='" + gl.tienda + "'";
+                    sql = "SELECT DESCRIPCION FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.tiendanom = DT.getString(0);
@@ -696,9 +698,10 @@ public class MainActivity extends PBase {
                 }
             }
 
-            if (!gl.caja.isEmpty()) {
+            //#CKFK 20200516 if (!gl.caja.isEmpty()) {
+            if (gl.codigo_ruta !=0 ) {
                 try {
-                    sql = "SELECT NOMBRE FROM P_RUTA WHERE CODIGO='" + gl.caja + "'";
+                    sql = "SELECT NOMBRE FROM P_RUTA WHERE CODIGO_RUTA='" + gl.codigo_ruta + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.cajanom = DT.getString(0);
@@ -775,7 +778,7 @@ public class MainActivity extends PBase {
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();
                 item.Cod = VendedoresObj.items.get(i).codigo;
-                item.Name = VendedoresObj.items.get(i).ruta;
+                item.Name = VendedoresObj.items.get(i).nombre;// estaba .ruta #CKFK 20200517
                 mitems.add(item);
             }
 
@@ -790,7 +793,10 @@ public class MainActivity extends PBase {
     protected void onResume() {
         try {
             super.onResume();
-            initSession();
+
+            if (browse !=1){
+                initSession();
+            }
 
             if (browse == 1) {
                 browse = 0;

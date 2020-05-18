@@ -42,7 +42,7 @@ public class DevolBod extends PBase {
 		setContentView(R.layout.activity_devol_bod);
 
 		super.InitBase();
-		addlog("DevolBod",""+du.getActDateTime(),gl.vend);
+		addlog("DevolBod",""+du.getActDateTime(),String.valueOf(gl.vend));
 
 
 		listView = (ListView) findViewById(R.id.listView1);

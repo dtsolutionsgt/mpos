@@ -39,7 +39,7 @@ public class MantVendedores extends PBase {
     private LA_P_sucursal adapter;
     private clsP_sucursalObj P_sucursalObj;
 
-    private ArrayList<String> spincode=new ArrayList<String>();
+    private ArrayList<Integer> spincode=new ArrayList<Integer>();
     private ArrayList<String> spinlist=new ArrayList<String>();
 
     private String id;
@@ -123,11 +123,14 @@ public class MantVendedores extends PBase {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 try {
                     TextView spinlabel = (TextView) parentView.getChildAt(0);
-                    spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                    String scod = spincode.get(position);
-                    item.nivel =Integer.parseInt(scod);
+                    if(spinlabel != null){
+                        spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
+                        spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                    }
+
+                    int scod = spincode.get(position);
+                    item.nivel =scod;
                 } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                     mu.msgbox(e.getMessage());
@@ -262,7 +265,7 @@ public class MantVendedores extends PBase {
         txt3.setText(item.clave);
         txt4.setText(""+item.nivelprecio);
 
-        fillSpinner(""+item.nivel);
+        fillSpinner(item.nivel);
     }
 
     private boolean validaDatos() {
@@ -319,10 +322,10 @@ public class MantVendedores extends PBase {
         }
     }
 
-    private boolean fillSpinner(String selid){
+    private boolean fillSpinner(int selid){
         clsP_usgrupoObj grupos =new clsP_usgrupoObj(this,Con,db);
         int selidx=0;
-        String scod;
+        int scod;
 
         spincode.clear();spinlist.clear();
 
@@ -333,7 +336,7 @@ public class MantVendedores extends PBase {
                 scod=grupos.items.get(i).codigo;
                 spincode.add(scod);
                 spinlist.add(grupos.items.get(i).nombre);
-                if (scod.equalsIgnoreCase(selid)) selidx=i;
+                if (scod==selid) selidx=i;
             }
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

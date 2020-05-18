@@ -303,7 +303,7 @@ public class WSEnv extends PBase {
 
                 ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+ccli+")";
                 CSQL = CSQL + ss + "*";
-                ss=P_clienteObj.addItemSql(P_clienteObj.items.get(i),Integer.parseInt(gl.emp));
+                ss=P_clienteObj.addItemSql(P_clienteObj.items.get(i),gl.emp);
                 CSQL = CSQL + ss + "*";
 
                 clients.add(""+ccli);

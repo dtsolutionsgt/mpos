@@ -10,14 +10,14 @@ public class clsBeP_RUTA {
     @Element(required=false) public int EMPRESA;
     @Element(required=false) public String CODIGO;
     @Element(required=false) public String NOMBRE;
-    @Element(required=false) public boolean ACTIVO;
+    @Element(required=false) public String ACTIVO;
 
 
     public clsBeP_RUTA() {
     }
 
     public clsBeP_RUTA(int CODIGO_RUTA,int SUCURSAL,int EMPRESA,String CODIGO,
-                       String NOMBRE,boolean ACTIVO) {
+                       String NOMBRE,String ACTIVO) {
 
         this.CODIGO_RUTA=CODIGO_RUTA;
         this.SUCURSAL=SUCURSAL;
@@ -59,10 +59,10 @@ public class clsBeP_RUTA {
     public void setNOMBRE(String value) {
         NOMBRE=value;
     }
-    public boolean getACTIVO() {
+    public String getACTIVO() {
         return ACTIVO;
     }
-    public void setACTIVO(boolean value) {
+    public void setACTIVO(String value) {
         ACTIVO=value;
     }
 

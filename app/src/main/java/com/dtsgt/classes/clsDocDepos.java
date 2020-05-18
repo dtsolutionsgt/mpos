@@ -37,9 +37,6 @@ public class clsDocDepos extends clsDocument {
 		ruta=pruta;
 		vendedor=pvend;
 		vendcod=gl.vend;
-
-
-		
 	}
 
 	protected boolean loadHeadData(String corel) {

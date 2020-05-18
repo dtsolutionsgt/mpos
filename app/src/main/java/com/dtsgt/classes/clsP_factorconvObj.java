@@ -124,10 +124,11 @@ public class clsP_factorconvObj {
 
             item = clsCls.new clsP_factorconv();
 
-            item.producto = dt.getString(0);
+            item.producto = dt.getInt(0);
             item.unidadsuperior = dt.getString(1);
             item.factorconversion = dt.getDouble(2);
             item.unidadminima = dt.getString(3);
+            item.codigo_factorconv = dt.getInt(4);
 
             items.add(item);
 
@@ -163,6 +164,7 @@ public class clsP_factorconvObj {
         ins.add("UNIDADSUPERIOR", item.unidadsuperior);
         ins.add("FACTORCONVERSION", item.factorconversion);
         ins.add("UNIDADMINIMA", item.unidadminima);
+        ins.add("CODIGO_FACTORCONV", item.codigo_factorconv);
 
         return ins.sql();
 
@@ -174,7 +176,9 @@ public class clsP_factorconvObj {
 
         upd.add("FACTORCONVERSION", item.factorconversion);
 
-        upd.Where("(PRODUCTO='" + item.producto + "') AND (UNIDADSUPERIOR='" + item.unidadsuperior + "') AND (UNIDADMINIMA='" + item.unidadminima + "')");
+        //#CKFK 20200517 Modifiqué la llave compuesta por una llave única
+        //upd.Where("(PRODUCTO='" + item.producto + "') AND (UNIDADSUPERIOR='" + item.unidadsuperior + "') AND (UNIDADMINIMA='" + item.unidadminima + "')");
+        upd.Where("(CODIGO_FACTORCONV='" + item.codigo_factorconv + "')");
 
         return upd.sql();
 

@@ -40,7 +40,7 @@ public class ConsPrecio extends PBase {
 		setContentView(R.layout.activity_cons_precio);
 		
 		super.InitBase();
-		addlog("ConsPrecio",""+du.getActDateTime(),gl.vend);
+		addlog("ConsPrecio",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		listView = (ListView) findViewById(R.id.listView1);
 		txtFilter = (EditText) findViewById(R.id.txtFilter);

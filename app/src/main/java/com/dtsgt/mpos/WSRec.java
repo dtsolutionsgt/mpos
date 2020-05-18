@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsP_archivoconfObj;
+import com.dtsgt.classes.clsP_bancoObj;
 import com.dtsgt.classes.clsP_bonifObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_corelObj;
@@ -574,6 +575,7 @@ public class WSRec extends PBase {
             msgboxwait(ws.error);
         } else {
             processData();
+            browse = 1;
         }
     }
 
@@ -611,7 +613,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_EMPRESA");
 
             item = xobj.getresult(clsBeP_EMPRESA.class, "GetP_EMPRESA");
-            var.empresa = "" + item.EMPRESA;
+            var.empresa = item.EMPRESA;
             var.nombre = item.NOMBRE;
             var.col_imp = item.COL_IMP;
             var.logo = "";
@@ -637,6 +639,7 @@ public class WSRec extends PBase {
 
     private void processBancos() {
         try {
+            clsP_bancoObj handler = new clsP_bancoObj(this, Con, db);
             clsBeP_BANCOList items = new clsBeP_BANCOList();
             clsBeP_BANCO item = new clsBeP_BANCO();
             clsClasses.clsP_banco var = clsCls.new clsP_banco();
@@ -649,6 +652,19 @@ public class WSRec extends PBase {
                 if (items.items.size() == 0) return;
             } catch (Exception e) {
                 return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_banco();
+                var.codigo_banco = item.getCODIGO_BANCO();
+                var.codigo = item.getCODIGO() + "";
+                var.activo = item.getActivo();
+                var.cuenta = item.getCUENTA() + "";
+                var.empresa = item.getEMPRESA();
+                var.nombre = item.getNOMBRE() + "";
+                var.tipo = item.getTIPO() + "";
+                script.add(handler.addItemSql(var));
             }
 
         } catch (Exception e) {
@@ -769,7 +785,7 @@ public class WSRec extends PBase {
                 item = items.items.get(i);
                 var = clsCls.new clsP_corel();
                 var.resol = item.RESOL;
-                var.serie = item.ACTIVA;
+                var.serie = item.SERIE;
                 var.corelini = item.CORELINI;
                 var.corelfin = item.CORELFIN;
                 var.corelult = item.CORELULT;
@@ -778,6 +794,8 @@ public class WSRec extends PBase {
                 var.fechavig = item.FECHAVIG;
                 var.resguardo = item.RESGUARDO;
                 var.valor1 = item.VALOR1;
+                var.activa = item.ACTIVA;
+                var.codigo_corel=item.CODIGO_COREL;
                 script.add(handler.addItemSql(var));
             }
 
@@ -823,6 +841,7 @@ public class WSRec extends PBase {
                 var.coddesc = item.CODDESC;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
+                var.codigo_descuento = item.CODIGO_DESCUENTO;
                 script.add(handler.addItemSql(var));
             }
 
@@ -856,6 +875,7 @@ public class WSRec extends PBase {
                 var.unidadsuperior = item.UNIDADSUPERIOR;
                 var.factorconversion = item.FACTORCONVERSION;
                 var.unidadminima = item.UNIDADMINIMA;
+                var.codigo_factorconv = item.CODIGO_FACTORCONV;
                 script.add(handler.addItemSql(var));
             }
 
@@ -887,7 +907,8 @@ public class WSRec extends PBase {
                 var = clsCls.new clsP_impuesto();
                 var.codigo = item.CODIGO;
                 var.valor = item.VALOR;
-                var.activo = item.Activo;
+                var.activo = item.ACTIVO;
+                var.codigo_impuesto = item.CODIGO_IMPUESTO;
                 script.add(handler.addItemSql(var));
             }
 
@@ -1199,6 +1220,7 @@ public class WSRec extends PBase {
                 var.tipo = item.TIPO;
                 var.cantmin = item.CANTMIN;
                 var.canttot = item.CANTTOT;
+                var.codigo_combo = item.CODIGO_COMBO;
                 script.add(handler.addItemSql(var));
 
             }
@@ -1318,7 +1340,7 @@ public class WSRec extends PBase {
                 var = clsCls.new clsP_prodprecio();
 
                 var.codigo_precio=item.CODIGO_PRECIO;
-                var.codigo = ""+item.CODIGO_PRODUCTO;
+                var.codigo_producto = item.CODIGO_PRODUCTO;
                 var.empresa=item.EMPRESA;
                 var.nivel = item.NIVEL;
                 var.precio = item.PRECIO;
@@ -1514,6 +1536,7 @@ public class WSRec extends PBase {
                 var.sucursal = "" + item.SUCURSAL;
                 var.nombre = item.NOMBRE;
                 var.codigo_ruta = item.CODIGO_RUTA;
+                var.activo = item.ACTIVO;
                 script.add(handler.addItemSql(var));
             }
 
@@ -1599,7 +1622,7 @@ public class WSRec extends PBase {
 
                 item = items.items.get(i);
                 var = clsCls.new clsP_usgrupo();
-                var.codigo = item.CODIGO + "";
+                var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.cuenta = item.CUENTA;
                 script.add(handler.addItemSql(var));
@@ -1632,7 +1655,7 @@ public class WSRec extends PBase {
 
                 item = items.items.get(i);
                 var = clsCls.new clsP_usgrupoopc();
-                var.grupo = item.GRUPO + "";
+                var.grupo = item.GRUPO ;
                 var.opcion = item.OPCION;
                 script.add(handler.addItemSql(var));
             }
@@ -1772,6 +1795,23 @@ public class WSRec extends PBase {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        try {
+
+            super.onResume();
+
+            if (browse == 1) {
+                browse = 0;
+                finish();
+            }
+
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
     }
 
 }

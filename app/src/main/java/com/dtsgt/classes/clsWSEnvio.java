@@ -29,7 +29,7 @@ public class clsWSEnvio {
 
     protected int active;
 
-    private String ruta;
+    private int ruta;
 
     private SQLiteDatabase db;
     private BaseDatos Con;
@@ -46,8 +46,8 @@ public class clsWSEnvio {
     public static String sstr, ferr,fstr, senv;
 
     private int scon;
-    private String gEmpresa, sql, proceso;
-    private int isOnWifi=0;
+    private String sql, proceso;
+    private int isOnWifi=0,gEmpresa;
 
     private final String NAMESPACE ="http://tempuri.org/";
     private String METHOD_NAME,URL;
@@ -57,7 +57,7 @@ public class clsWSEnvio {
     private int tipoEnvio;
     private Context Cont;
 
-    public clsWSEnvio(Context cont,String gRuta, String gEmp,int vTipoEnvio) {
+    public clsWSEnvio(Context cont,int gRuta, int gEmp,int vTipoEnvio) {
 
         ruta=gRuta;
         gEmpresa=gEmp;

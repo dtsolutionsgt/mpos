@@ -17,14 +17,14 @@ import java.util.ArrayList;
 
 public class clsDocument {
 
-	public String nombre,numero,serie,ruta,vendedor,cliente,nit,tipo,ref;
+	public String nombre,numero,serie,ruta,cliente,nit,tipo,ref,vendedor;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag;
 	public int ffecha,pendiente,diacred,pagoefectivo;
-	
+
 	protected android.database.sqlite.SQLiteDatabase db;
 	protected BaseDatos Con;
 	protected String sql;
@@ -35,7 +35,8 @@ public class clsDocument {
 	protected DateUtils DU;
 	protected DecimalFormat decfrm;
 	
-	protected String clicod,clidir,pemodo,vendcod;
+	protected String clicod,clidir,pemodo;
+	protected String vendcod;
 
 	protected int prw;
 	
@@ -501,7 +502,7 @@ public class clsDocument {
         if (idx>=0) {
         	rep.addc("");
             if (emptystr(vendedor)) return "@@";
-            l=l.replace("@Vendedor",vendedor);return l;
+            l=l.replace("@Vendedor", vendedor);return l;
         }
 
         idx=lu.indexOf("@Ruta");

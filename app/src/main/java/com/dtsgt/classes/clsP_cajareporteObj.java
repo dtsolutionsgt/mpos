@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.INotificationSideChannel;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
@@ -78,12 +79,14 @@ public class clsP_cajareporteObj {
 
         ins.init("P_cajareporte");
 
+        ins.add("EMPRESA",item.empresa);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("RUTA",item.ruta);
         ins.add("COREL",item.corel);
         ins.add("LINEA",item.linea);
         ins.add("TEXTO",item.texto);
         ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJAREPORTE",item.codigo_cajareporte);
 
         db.execSQL(ins.sql());
 
@@ -96,7 +99,9 @@ public class clsP_cajareporteObj {
         upd.add("TEXTO",item.texto);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")");
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")");
+        upd.Where("(CODIGO_CAJAREPORTE'"+item.codigo_cajareporte+"')");
 
         db.execSQL(upd.sql());
 
@@ -105,7 +110,13 @@ public class clsP_cajareporteObj {
     }
 
     private void deleteItem(clsClasses.clsP_cajareporte item) {
-        sql="DELETE FROM P_cajareporte WHERE (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")";
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //sql="DELETE FROM P_cajareporte " +
+        //    "WHERE (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")";
+
+        sql="DELETE FROM P_cajareporte " +
+            "WHERE (CODIGO_CAJAREPORTE'"+item.codigo_cajareporte+"')";
+
         db.execSQL(sql);
     }
 
@@ -128,12 +139,14 @@ public class clsP_cajareporteObj {
 
             item = clsCls.new clsP_cajareporte();
 
-            item.sucursal=dt.getString(0);
-            item.ruta=dt.getString(1);
-            item.corel=dt.getInt(2);
-            item.linea=dt.getInt(3);
-            item.texto=dt.getString(4);
-            item.statcom=dt.getString(5);
+            item.empresa=dt.getInt(0);
+            item.sucursal=dt.getInt(1);
+            item.ruta=dt.getInt(2);
+            item.corel=dt.getInt(3);
+            item.linea=dt.getInt(4);
+            item.texto=dt.getString(5);
+            item.statcom=dt.getString(6);
+            item.codigo_cajareporte=dt.getString(7);
 
             items.add(item);
 
@@ -165,12 +178,14 @@ public class clsP_cajareporteObj {
 
         ins.init("P_cajareporte");
 
+        ins.add("EMPRESA",item.empresa);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("RUTA",item.ruta);
         ins.add("COREL",item.corel);
         ins.add("LINEA",item.linea);
         ins.add("TEXTO",item.texto);
         ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJAREPORTE",item.codigo_cajareporte);
 
         return ins.sql();
 
@@ -183,7 +198,9 @@ public class clsP_cajareporteObj {
         upd.add("TEXTO",item.texto);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")");
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (LINEA="+item.linea+")");
+        upd.Where("(CODIGO_CAJAREPORTE'"+item.codigo_cajareporte+"')");
 
         return upd.sql();
 

@@ -27,7 +27,7 @@ public class BonVenta extends PBase {
 		setContentView(R.layout.activity_bon_venta);
 		
 		super.InitBase();
-		addlog("BonVenta",""+du.getActDateTime(),gl.vend);
+		addlog("BonVenta",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		listView =  (ListView) findViewById(R.id.listView1);
 		lblTipo =  (TextView) findViewById(R.id.textView2);

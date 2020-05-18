@@ -59,7 +59,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
         imgIniciar.setOnClickListener(this);
 
         super.InitBase();
-        addlog("InicioDia",""+du.getActDateTime(),gl.vend);
+        addlog("InicioDia",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         seleccionFecha = false;
         setActDate();

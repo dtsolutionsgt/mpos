@@ -50,7 +50,7 @@ public class DevolBodCan extends PBase {
         setContentView(R.layout.activity_devol_bod_can);
 
         super.InitBase();
-        addlog("DevolBodCan",""+du.getActDateTime(),gl.vend);
+        addlog("DevolBodCan",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         listView = (ListView) findViewById(R.id.listView1);
         lblReg = (TextView) findViewById(R.id.textView61);lblReg.setText("");
@@ -416,7 +416,7 @@ public class DevolBodCan extends PBase {
 
         try{
 
-            vWSEnvio = new clsWSEnvio(this, gl.ruta, gl.emp, 1);
+            vWSEnvio = new clsWSEnvio(this, gl.codigo_ruta, gl.emp, 1);
             vWSEnvio.runExecuteEnvio();
 
         }catch (Exception e){

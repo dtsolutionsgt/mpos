@@ -155,7 +155,7 @@ public class clsDocPedido extends clsDocument {
 	    }	
 
         val=vend;
-	    vendcod=vend;
+	    vendcod=vend; //#CKFK 20200516 Validar para que se usa esto
 		vendedor=val;
 
 		try {

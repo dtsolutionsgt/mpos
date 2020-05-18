@@ -102,6 +102,7 @@ public class MantBanco extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
+        item.codigo_banco = 0;
         item.codigo="";
         item.tipo="1";
         item.nombre="";

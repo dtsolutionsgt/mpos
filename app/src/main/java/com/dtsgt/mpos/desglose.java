@@ -35,7 +35,7 @@ public class desglose extends PBase {
         setContentView(R.layout.activity_desglose);
 
         super.InitBase();
-        addlog("Desglose", "" + du.getActDateTime(), gl.vend);
+        addlog("Desglose", "" + du.getActDateTime(), String.valueOf(gl.vend));
 
         txtcien = (EditText) findViewById(R.id.txtcien);
         txtcint = (EditText) findViewById(R.id.txtcint);

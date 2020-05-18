@@ -54,7 +54,7 @@ public class FinDia extends PBase {
         setContentView(R.layout.activity_fin_dia);
 
         super.InitBase();
-        addlog("FinDia",""+du.getActDateTime(),gl.vend);
+        addlog("FinDia",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         lbl1 = (TextView) findViewById(R.id.textView17);
         img1 = (ImageView) findViewById(R.id.imageView9);

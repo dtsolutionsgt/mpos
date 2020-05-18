@@ -78,7 +78,7 @@ public class MantCorel extends PBase {
         item.corelfin=0;
         item.corelult=0;
         item.fechares=0;
-        item.ruta="";
+        item.ruta=0;
         item.fechavig=0;
         item.resguardo=0;
         item.valor1=0;

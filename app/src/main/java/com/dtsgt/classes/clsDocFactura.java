@@ -62,7 +62,7 @@ public class clsDocFactura extends clsDocument {
 				add1=DT.getString(10);
 				add2=DT.getString(11);
 
-				vendcod=vend;
+				vendcod=vend; //#CKFK 20200516 Validar para que se hace esto
 
 				anulado=DT.getString(13);
 				impres=DT.getInt(12);

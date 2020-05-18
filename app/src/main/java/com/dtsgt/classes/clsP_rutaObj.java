@@ -79,6 +79,7 @@ public class clsP_rutaObj {
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
         ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("ACTIVO",item.activo);
 
         db.execSQL(ins.sql());
 
@@ -91,8 +92,9 @@ public class clsP_rutaObj {
         upd.add("SUCURSAL",item.sucursal);
         upd.add("NOMBRE",item.nombre);
         upd.add("CODIGO_RUTA",item.codigo_ruta);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_RUTA='"+item.codigo_ruta+"')");
 
         db.execSQL(upd.sql());
 
@@ -101,7 +103,7 @@ public class clsP_rutaObj {
     }
 
     private void deleteItem(clsClasses.clsP_ruta item) {
-        sql="DELETE FROM P_ruta WHERE (CODIGO='"+item.codigo+"')";
+        sql="DELETE FROM P_ruta WHERE (codigo='"+item.codigo_ruta+"')";
         db.execSQL(sql);
     }
 
@@ -128,6 +130,7 @@ public class clsP_rutaObj {
             item.sucursal=dt.getString(1);
             item.nombre=dt.getString(2);
             item.codigo_ruta=dt.getInt(3);
+            item.activo = dt.getString(4);
 
             items.add(item);
 
@@ -163,6 +166,7 @@ public class clsP_rutaObj {
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
         ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("activo",item.activo);
 
         return ins.sql();
 
@@ -174,9 +178,10 @@ public class clsP_rutaObj {
 
         upd.add("SUCURSAL",item.sucursal);
         upd.add("NOMBRE",item.nombre);
-        upd.add("CODIGO_RUTA",item.codigo_ruta);
+        upd.add("CODIGO",item.codigo);
+        upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO='"+item.codigo+"')");
+        upd.Where("(CODIGO_RUTA='"+item.codigo_ruta+"')");
 
         return upd.sql();
 

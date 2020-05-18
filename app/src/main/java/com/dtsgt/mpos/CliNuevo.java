@@ -59,7 +59,7 @@ public class CliNuevo extends PBase {
 		setContentView(R.layout.activity_cli_nuevo);
 
 		super.InitBase();
-		addlog("CliNuevo", "" + du.getActDateTime(), gl.vend);
+		addlog("CliNuevo", "" + du.getActDateTime(), String.valueOf(gl.vend));
 
 		spinList = (Spinner) findViewById(R.id.spinner1);
 		txtNom = (EditText) findViewById(R.id.txtCNNom);

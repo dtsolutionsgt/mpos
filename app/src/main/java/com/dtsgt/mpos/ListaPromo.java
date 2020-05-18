@@ -25,7 +25,7 @@ public class ListaPromo extends PBase {
 		setContentView(R.layout.activity_lista_promo);
 		
 		super.InitBase();
-		addlog("ListaPromo",""+du.getActDateTime(),gl.vend);
+		addlog("ListaPromo",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		listView = (ListView) findViewById(R.id.listView1);
 		

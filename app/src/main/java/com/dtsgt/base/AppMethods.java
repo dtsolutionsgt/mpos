@@ -886,17 +886,25 @@ public class AppMethods {
 
     public long getDateRecep() {
         Cursor dt;
+        long resultado = 0;
 
         try {
             sql="SELECT param1 FROM Params";
             dt=Con.OpenDT(sql);
-            dt.moveToFirst();
 
-            return dt.getLong(0);
+            if (dt.getCount()>0){
+
+				dt.moveToFirst();
+
+				resultado = dt.getLong(0);
+			}
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            return 0;
+            resultado= 0;
         }
+
+        return resultado;
     }
 
     public void setDateRecep(long ff) {

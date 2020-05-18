@@ -76,6 +76,7 @@ public class clsP_impuestoObj {
 
         ins.init("P_impuesto");
 
+        ins.add("CODIGO_IMPUESTO",item.codigo_impuesto);
         ins.add("CODIGO",item.codigo);
         ins.add("VALOR",item.valor);
         ins.add("ACTIVO",item.activo);
@@ -91,7 +92,7 @@ public class clsP_impuestoObj {
         upd.add("VALOR",item.valor);
         upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO="+item.codigo+")");
+        upd.Where("(CODIGO_IMPUESTO="+item.codigo_impuesto+")");
 
         db.execSQL(upd.sql());
 
@@ -100,7 +101,7 @@ public class clsP_impuestoObj {
     }
 
     private void deleteItem(clsClasses.clsP_impuesto item) {
-        sql="DELETE FROM P_impuesto WHERE (CODIGO="+item.codigo+")";
+        sql="DELETE FROM P_impuesto WHERE (CODIGO_IMPUESTO="+item.codigo_impuesto+")";
         db.execSQL(sql);
     }
 
@@ -126,6 +127,7 @@ public class clsP_impuestoObj {
             item.codigo=dt.getInt(0);
             item.valor=dt.getDouble(1);
             item.activo=dt.getInt(2);
+            item.codigo_impuesto = dt.getInt(3);
 
             items.add(item);
 
@@ -157,6 +159,7 @@ public class clsP_impuestoObj {
 
         ins.init("P_impuesto");
 
+        ins.add("CODIGO_IMPUESTO",item.codigo_impuesto);
         ins.add("CODIGO",item.codigo);
         ins.add("VALOR",item.valor);
         ins.add("ACTIVO",item.activo);
@@ -172,7 +175,7 @@ public class clsP_impuestoObj {
         upd.add("VALOR",item.valor);
         upd.add("ACTIVO",item.activo);
 
-        upd.Where("(CODIGO="+item.codigo+")");
+        upd.Where("(CODIGO_IMPUESTO="+item.codigo_impuesto+")");
 
         return upd.sql();
 

@@ -52,7 +52,7 @@ public class ComWSPrec extends PBase {
 
     private static String sstr,fstr,fprog,ferr,idbg,dbg;
     private int scon;
-    private String gEmpresa;
+    private int gEmpresa;
 
     private final String NAMESPACE ="http://tempuri.org/";
     private String METHOD_NAME,URL;
@@ -66,7 +66,7 @@ public class ComWSPrec extends PBase {
         setContentView(R.layout.activity_com_wsprec);
 
         super.InitBase();
-        addlog("ComWSPrec",""+du.getActDateTime(),gl.vend);
+        addlog("ComWSPrec",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         System.setProperty("line.separator","\r\n");
 
@@ -739,7 +739,7 @@ public class ComWSPrec extends PBase {
             if (mu.emptystr(ss)) {
                 mu.msgbox("La empresa no está definida.");return false;
             }
-            gEmpresa=ss;
+            gEmpresa=Integer.valueOf(ss);
 
             ss=txtWS.getText().toString().trim();
             if (mu.emptystr(ss) || ss.equalsIgnoreCase("*")) {

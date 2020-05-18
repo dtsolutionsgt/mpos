@@ -120,7 +120,7 @@ public class clsP_usgrupoopcObj {
 
             item = clsCls.new clsP_usgrupoopc();
 
-            item.grupo=dt.getString(0);
+            item.grupo=dt.getInt(0);
             item.opcion=dt.getInt(1);
 
             items.add(item);

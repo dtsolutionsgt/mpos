@@ -33,7 +33,7 @@ public class Aprofam1 extends PBase {
 		setContentView(R.layout.activity_aprofam1);
 		
 		super.InitBase();
-		addlog("Aprofam1",""+du.getActDateTime(),gl.vend);
+		addlog("Aprofam1",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		spin1= (Spinner) findViewById(R.id.spinner1);
 		spin2= (Spinner) findViewById(R.id.Spinner01);

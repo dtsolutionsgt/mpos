@@ -146,7 +146,7 @@ public class clsP_empresaObj {
 
             item = clsCls.new clsP_empresa();
 
-            item.empresa=dt.getString(0);
+            item.empresa=dt.getInt(0);
             item.nombre=dt.getString(1);
             item.col_imp=dt.getInt(2);
             item.logo=dt.getString(3);

@@ -57,7 +57,7 @@ public class DevCliCant extends PBase {
 		setContentView(R.layout.activity_dev_cli_cant);
 		
 		super.InitBase();
-		addlog("DevCliCant",""+du.getActDateTime(),gl.vend);
+		addlog("DevCliCant",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		setControls();
 		
@@ -358,12 +358,12 @@ public class DevCliCant extends PBase {
 
 			if (prodPorPeso(prodid)) {
 				precioventa = prc.precio(prodid, 1, gl.nivel, um, gl.umpeso, gl.dpeso,um, gl.prodcod);
-				if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso, gl.dpeso)) {
+				if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso, gl.dpeso)) {
 					if (prc.precioespecial>0) precioventa=prc.precioespecial;
 				}
 			} else {
 				precioventa = prc.precio(prodid, 1, gl.nivel, um, gl.umpeso, 0,um,gl.prodcod);
-				if (prc.existePrecioEspecial(prodid,cant,gl.cliente,gl.clitipo,um,gl.umpeso,0)) {
+				if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,0)) {
 					if (prc.precioespecial>0) precioventa=prc.precioespecial;
 				}
 			}

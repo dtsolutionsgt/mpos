@@ -73,8 +73,9 @@ public class clsP_prodcomboObj {
 
     private void addItem(clsClasses.clsP_prodcombo item) {
 
-        ins.init("P_prodcombo");
+        ins.init("P_PRODCOMBO");
 
+        ins.add("CODIGO_COMBO",item.codigo_combo);
         ins.add("CODIGO",item.codigo);
         ins.add("PRODUCTO",item.producto);
         ins.add("TIPO",item.tipo);
@@ -87,13 +88,14 @@ public class clsP_prodcomboObj {
 
     private void updateItem(clsClasses.clsP_prodcombo item) {
 
-        upd.init("P_prodcombo");
+        upd.init("P_PRODCOMBO");
 
         upd.add("TIPO",item.tipo);
         upd.add("CANTMIN",item.cantmin);
         upd.add("CANTTOT",item.canttot);
 
-        upd.Where("(CODIGO='"+item.codigo+"') AND (PRODUCTO='"+item.producto+"')");
+        upd.Where("(CODIGO_COMBO='"+item.codigo_combo+"')");
+        //upd.Where("(CODIGO='"+item.codigo+"') AND (PRODUCTO='"+item.producto+"')");
 
         db.execSQL(upd.sql());
 

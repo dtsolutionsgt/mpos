@@ -25,10 +25,10 @@ public class clsBonFiltro {
 	
 	private DateUtils DU;
 	
-	private String cliid,rutaid;
+	private int cliid,rutaid;
 	private long fecha;
 	
-	public clsBonFiltro(Context context,String ruta,String cliente) {
+	public clsBonFiltro(Context context,int ruta,int cliente) {
 		
 		cont=context;
 		

@@ -8,10 +8,13 @@ import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
 
+import java.net.PortUnreachableException;
+
 public class clsBonifSave {
 
-	public String ruta,cliente,emp;
+	public String ruta,cliente;
 	public long fecha;
+	public int emp;
 	
 	private int active;
 	private SQLiteDatabase db;

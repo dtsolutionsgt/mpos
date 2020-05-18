@@ -120,7 +120,8 @@ public class WebService {
                throw new Exception("Error al procesar la solicitud :\n " + parseError());
 
            } if (responsecode==404) {
-               throw new Exception("Error 404: No se obtuvo acceso a: \n" + mUrl.toURI() + "\n" + "Verifique que el WS Existe y es accesible desde el explorador.");
+               throw new Exception("Error 404: No se obtuvo acceso a: \n" + mUrl.toURI() +
+                       "\n" + "Verifique que el WS Existe y es accesible desde el explorador.");
            }
 
        } catch (Exception e) {

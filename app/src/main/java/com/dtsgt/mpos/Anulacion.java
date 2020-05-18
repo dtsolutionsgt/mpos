@@ -63,7 +63,7 @@ public class Anulacion extends PBase {
 		setContentView(R.layout.activity_anulacion);
 		
 		super.InitBase();
-		addlog("Anulacion",""+du.getActDateTime(),gl.vend);
+		addlog("Anulacion",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		listView = (ListView) findViewById(R.id.listView1);
 		lblTipo= (TextView) findViewById(R.id.lblDescrip);

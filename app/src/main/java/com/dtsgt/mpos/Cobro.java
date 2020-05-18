@@ -61,7 +61,7 @@ public class Cobro extends PBase {
 		setContentView(R.layout.activity_cobro);
 
 		super.InitBase();
-		addlog("Cobro",""+du.getActDateTime(),gl.vend);
+		addlog("Cobro",""+du.getActDateTime(),String.valueOf(gl.vend));
 
 		listView = (ListView) findViewById(R.id.listView1);
 		lblSel = (TextView) findViewById(R.id.lblSel);

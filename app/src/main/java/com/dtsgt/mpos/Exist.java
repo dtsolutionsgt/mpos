@@ -61,7 +61,7 @@ public class Exist extends PBase {
 		setContentView(R.layout.activity_exist);
 		
 		super.InitBase();
-		addlog("Exist",""+du.getActDateTime(),gl.vend);
+		addlog("Exist",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		tipo=((appGlobals) vApp).tipo;
 

@@ -78,6 +78,7 @@ public class clsP_descuentoObj {
 
         ins.init("P_descuento");
 
+        ins.add("CODIGO_DESCUENTO", item.codigo_descuento);
         ins.add("CLIENTE", item.cliente);
         ins.add("CTIPO", item.ctipo);
         ins.add("PRODUCTO", item.producto);
@@ -114,7 +115,7 @@ public class clsP_descuentoObj {
         upd.add("NOMBRE", item.nombre);
         upd.add("ACTIVO", item.activo);
 
-        upd.Where("(CLIENTE='" + item.cliente + "') AND (CTIPO=" + item.ctipo + ") AND (PRODUCTO='" + item.producto + "') AND (PTIPO=" + item.ptipo + ") AND (TIPORUTA=" + item.tiporuta + ") AND (RANGOINI=" + item.rangoini + ")");
+        upd.Where("(CODIGO_DESCUENTO=" + item.codigo_descuento + ")");
 
         db.execSQL(upd.sql());
 
@@ -123,7 +124,7 @@ public class clsP_descuentoObj {
     }
 
     private void deleteItem(clsClasses.clsP_descuento item) {
-        sql = "DELETE FROM P_descuento WHERE (CLIENTE='" + item.cliente + "') AND (CTIPO=" + item.ctipo + ") AND (PRODUCTO='" + item.producto + "') AND (PTIPO=" + item.ptipo + ") AND (TIPORUTA=" + item.tiporuta + ") AND (RANGOINI=" + item.rangoini + ")";
+        sql = "DELETE FROM P_descuento WHERE (CODIGO_DESCUENTO=" + item.codigo_descuento + ")";
         db.execSQL(sql);
     }
 
@@ -162,6 +163,7 @@ public class clsP_descuentoObj {
             item.coddesc = dt.getInt(13);
             item.nombre = dt.getString(14);
             item.activo = dt.getInt(15);
+            item.codigo_descuento = dt.getInt(16);
 
             items.add(item);
 

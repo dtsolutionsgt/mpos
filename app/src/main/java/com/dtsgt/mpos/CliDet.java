@@ -68,7 +68,7 @@ public class CliDet extends PBase {
 		setContentView(R.layout.activity_cli_det);
 		
 		super.InitBase();
-		addlog("CliDet",""+du.getActDateTime(),gl.vend);
+		addlog("CliDet",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		lblNom= (TextView) findViewById(R.id.lblNom);
 		lblRep= (TextView) findViewById(R.id.lblPres);

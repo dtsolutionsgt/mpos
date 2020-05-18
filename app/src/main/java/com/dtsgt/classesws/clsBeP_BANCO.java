@@ -9,15 +9,15 @@ public class clsBeP_BANCO {
     @Element(required=false) public String TIPO;
     @Element(required=false) public String NOMBRE;
     @Element(required=false) public String CUENTA;
-    @Element(required=false) public String EMPRESA;
+    @Element(required=false) public int EMPRESA;
     @Element(required=false) public int Activo;
-
+    @Element(required=false) public int CODIGO_BANCO;
 
     public clsBeP_BANCO() {
     }
 
     public clsBeP_BANCO(String CODIGO,String TIPO,String NOMBRE,String CUENTA,
-                        String EMPRESA,int Activo) {
+                        int EMPRESA,int Activo, int CODIGO_BANCO) {
 
         this.CODIGO=CODIGO;
         this.TIPO=TIPO;
@@ -25,6 +25,7 @@ public class clsBeP_BANCO {
         this.CUENTA=CUENTA;
         this.EMPRESA=EMPRESA;
         this.Activo=Activo;
+        this.CODIGO_BANCO=CODIGO_BANCO;
 
     }
 
@@ -53,10 +54,10 @@ public class clsBeP_BANCO {
     public void setCUENTA(String value) {
         CUENTA=value;
     }
-    public String getEMPRESA() {
+    public int getEMPRESA() {
         return EMPRESA;
     }
-    public void setEMPRESA(String value) {
+    public void setEMPRESA(int value) {
         EMPRESA=value;
     }
     public int getActivo() {
@@ -64,6 +65,12 @@ public class clsBeP_BANCO {
     }
     public void setActivo(int value) {
         Activo=value;
+    }
+    public int getCODIGO_BANCO() {
+        return CODIGO_BANCO;
+    }
+    public void setCODIGO_BANCO(int value) {
+        CODIGO_BANCO=value;
     }
 
 }

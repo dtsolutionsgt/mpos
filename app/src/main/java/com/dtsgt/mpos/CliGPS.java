@@ -54,7 +54,7 @@ public class CliGPS extends PBase {
 		setContentView(R.layout.activity_cli_gps);
 
 		super.InitBase();
-		addlog("CliGPS", "" + du.getActDateTime(), gl.vend);
+		addlog("CliGPS", "" + du.getActDateTime(), String.valueOf(gl.vend));
 
 		lblPos = (TextView) findViewById(R.id.textView3);
 		lblGPS = (TextView) findViewById(R.id.textView1);

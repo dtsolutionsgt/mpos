@@ -61,7 +61,7 @@ public class ComWSFotos extends PBase {
 
     private static String sstr,fstr,fprog,ferr,idbg,dbg;
     private int scon;
-    private String gEmpresa;
+    private int gEmpresa;
 
     private final String NAMESPACE ="http://tempuri.org/";
     private String METHOD_NAME,URL;
@@ -75,7 +75,7 @@ public class ComWSFotos extends PBase {
         setContentView(R.layout.activity_com_wsfotos);
 
         super.InitBase();
-        addlog("ComWSFotos",""+du.getActDateTime(),gl.vend);
+        addlog("ComWSFotos",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         System.setProperty("line.separator","\r\n");
 
@@ -561,7 +561,7 @@ public class ComWSFotos extends PBase {
             if (mu.emptystr(ss)) {
                 mu.msgbox("La empresa no está definida.");return false;
             }
-            gEmpresa=ss;
+            gEmpresa=Integer.valueOf(ss);
 
             ss=txtWS.getText().toString().trim();
             if (mu.emptystr(ss) || ss.equalsIgnoreCase("*")) {

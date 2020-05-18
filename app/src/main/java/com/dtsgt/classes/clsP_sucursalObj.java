@@ -18,7 +18,7 @@ public class clsP_sucursalObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM P_sucursal";
+    private String sel="SELECT * FROM P_SUCURSAL";
     private String sql;
     public ArrayList<clsClasses.clsP_sucursal> items= new ArrayList<clsClasses.clsP_sucursal>();
 
@@ -73,7 +73,7 @@ public class clsP_sucursalObj {
 
     private void addItem(clsClasses.clsP_sucursal item) {
 
-        ins.init("P_sucursal");
+        ins.init("P_SUCURSAL");
 
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("CODIGO",item.codigo);

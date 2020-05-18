@@ -85,6 +85,8 @@ public class clsP_corelObj {
         ins.add("FECHAVIG",item.fechavig);
         ins.add("RESGUARDO",item.resguardo);
         ins.add("VALOR1",item.valor1);
+        ins.add("ACTIVA",item.activa);
+        ins.add("CODIGO_COREL",item.codigo_corel);
 
         db.execSQL(ins.sql());
 
@@ -102,14 +104,18 @@ public class clsP_corelObj {
         db.execSQL(upd.sql());
         */
 
+        //#CKFK 20200517 Le agregué WHERE al UPDATE
         String ss="UPDATE P_corel SET  RESOL='"+item.resol+"',SERIE='"+item.serie+"'," +
-                  "CORELINI="+item.corelini+",CORELFIN="+item.corelfin;
+                  "CORELINI="+item.corelini+",CORELFIN="+item.corelfin+
+                  " WHERE CODIGO_COREL='" + item.codigo_corel + "'" ;
         db.execSQL(ss);
 
     }
 
     private void deleteItem(clsClasses.clsP_corel item) {
-        sql="DELETE FROM P_corel WHERE (RESOL='"+item.resol+"') AND (SERIE='"+item.serie+"') AND (CORELINI="+item.corelini+")";
+        sql="DELETE FROM P_corel WHERE (CODIGO_COREL='"+item.codigo_corel+"')";
+        //#CKFK 20200517 Cambié la llave primaria por un codigo unico
+        //sql="DELETE FROM P_corel WHERE (RESOL='"+item.resol+"') AND (SERIE='"+item.serie+"') AND (CORELINI="+item.corelini+")";
         db.execSQL(sql);
     }
 
@@ -138,10 +144,12 @@ public class clsP_corelObj {
             item.corelfin=dt.getInt(3);
             item.corelult=dt.getInt(4);
             item.fechares=dt.getInt(5);
-            item.ruta=dt.getString(6);
+            item.ruta=dt.getInt(6);
             item.fechavig=dt.getInt(7);
             item.resguardo=dt.getInt(8);
             item.valor1=dt.getInt(9);
+            item.activa=dt.getString(9);
+            item.codigo_corel=dt.getInt(10);
 
             items.add(item);
 
@@ -183,6 +191,8 @@ public class clsP_corelObj {
         ins.add("FECHAVIG",item.fechavig);
         ins.add("RESGUARDO",item.resguardo);
         ins.add("VALOR1",item.valor1);
+        ins.add("ACTIVA",item.activa);
+        ins.add("CODIGO_COREL",item.codigo_corel);
 
         return ins.sql();
 
@@ -199,9 +209,11 @@ public class clsP_corelObj {
         upd.add("FECHAVIG",item.fechavig);
         upd.add("RESGUARDO",item.resguardo);
         upd.add("VALOR1",item.valor1);
+        upd.add("ACTIVA",item.activa);
 
-        upd.Where("(RESOL='"+item.resol+"') AND (SERIE='"+item.serie+"') AND (CORELINI="+item.corelini+")");
-
+        //#CKFK Cambie la llave primaria por un correlativo
+       // upd.Where("(RESOL='"+item.resol+"') AND (SERIE='"+item.serie+"') AND (CORELINI="+item.corelini+")");
+        upd.Where("(CODIGO_COREL='"+item.codigo_corel+"')");
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();

@@ -81,6 +81,7 @@ public class clsP_cajacierreObj {
 
         ins.init("P_cajacierre");
 
+        ins.add("EMPRESA",item.empresa);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("RUTA",item.ruta);
         ins.add("COREL",item.corel);
@@ -93,6 +94,7 @@ public class clsP_cajacierreObj {
         ins.add("MONTOFIN",item.montofin);
         ins.add("MONTODIF",item.montodif);
         ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJACIERRE",item.codigo_cajacierre);
 
         db.execSQL(ins.sql());
 
@@ -111,8 +113,9 @@ public class clsP_cajacierreObj {
         upd.add("MONTODIF",item.montodif);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
-
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
+        upd.Where("(CODIGO_CAJACIERRE'"+item.codigo_cajacierre+"')");
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -120,7 +123,9 @@ public class clsP_cajacierreObj {
     }
 
     private void deleteItem(clsClasses.clsP_cajacierre item) {
-        sql="DELETE FROM P_cajacierre WHERE (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+")";
+        //#CKFK 20200518 se cambio la llave compuesta por una llave única
+        //sql="DELETE FROM P_cajacierre WHERE (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+")";
+        sql="DELETE FROM P_cajacierre WHERE (CODIGO_CAJACIERRE'"+item.codigo_cajacierre+"')";
         db.execSQL(sql);
     }
 
@@ -143,18 +148,20 @@ public class clsP_cajacierreObj {
 
             item = clsCls.new clsP_cajacierre();
 
-            item.sucursal=dt.getString(0);
-            item.ruta=dt.getString(1);
-            item.corel=dt.getInt(2);
-            item.estado=dt.getInt(3);
-            item.fecha=dt.getInt(4);
-            item.vendedor=dt.getString(5);
-            item.codpago=dt.getInt(6);
-            item.fondocaja=dt.getDouble(7);
-            item.montoini=dt.getDouble(8);
-            item.montofin=dt.getDouble(9);
-            item.montodif=dt.getDouble(10);
-            item.statcom=dt.getString(11);
+            item.empresa=dt.getInt(0);
+            item.sucursal=dt.getInt(1);
+            item.ruta=dt.getInt(2);
+            item.corel=dt.getInt(3);
+            item.estado=dt.getInt(4);
+            item.fecha=dt.getInt(5);
+            item.vendedor=dt.getInt(6);
+            item.codpago=dt.getInt(7);
+            item.fondocaja=dt.getDouble(8);
+            item.montoini=dt.getDouble(9);
+            item.montofin=dt.getDouble(10);
+            item.montodif=dt.getDouble(11);
+            item.statcom=dt.getString(12);
+            item.codigo_cajacierre=dt.getString(12);
 
             items.add(item);
 
@@ -186,6 +193,7 @@ public class clsP_cajacierreObj {
 
         ins.init("P_cajacierre");
 
+        ins.add("EMPRESA",item.empresa);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("RUTA",item.ruta);
         ins.add("COREL",item.corel);
@@ -198,6 +206,7 @@ public class clsP_cajacierreObj {
         ins.add("MONTOFIN",item.montofin);
         ins.add("MONTODIF",item.montodif);
         ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJACIERRE",item.codigo_cajacierre);
 
         return ins.sql();
 
@@ -216,7 +225,9 @@ public class clsP_cajacierreObj {
         upd.add("MONTODIF",item.montodif);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
+        upd.Where("(CODIGO_CAJACIERRE'"+item.codigo_cajacierre+"')");
 
         return upd.sql();
 

@@ -8,8 +8,8 @@ public class clsBeP_PRODUCTO {
     @Element(required=false) public int CODIGO_PRODUCTO;
     @Element(required=false) public String CODIGO;
     @Element(required=false) public String CODIGO_TIPO;
-    @Element(required=false) public String LINEA;
-    @Element(required=false) public String EMPRESA;
+    @Element(required=false) public int LINEA;
+    @Element(required=false) public int EMPRESA;
     @Element(required=false) public String MARCA;
     @Element(required=false) public String CODBARRA;
     @Element(required=false) public String DESCCORTA;
@@ -61,8 +61,8 @@ public class clsBeP_PRODUCTO {
     public clsBeP_PRODUCTO() {
     }
 
-    public clsBeP_PRODUCTO(int CODIGO_PRODUCTO,String CODIGO,String CODIGO_TIPO,String LINEA,
-                           String SUBLINEA,String EMPRESA,String MARCA,String CODBARRA,
+    public clsBeP_PRODUCTO(int CODIGO_PRODUCTO,String CODIGO,String CODIGO_TIPO,int LINEA,
+                           String SUBLINEA,int EMPRESA,String MARCA,String CODBARRA,
                            String DESCCORTA,String DESCLARGA,double COSTO,double FACTORCONV,
                            String UNIDBAS,String UNIDMED,double UNIMEDFACT,String UNIGRA,
                            double UNIGRAFACT,String DESCUENTO,String BONIFICACION,double IMP1,
@@ -149,16 +149,16 @@ public class clsBeP_PRODUCTO {
     public void setTIPO(String value) {
         CODIGO_TIPO=value;
     }
-    public String getLINEA() {
+    public int getLINEA() {
         return LINEA;
     }
-    public void setLINEA(String value) {
+    public void setLINEA(int value) {
         LINEA=value;
     }
-    public String getEMPRESA() {
+    public int getEMPRESA() {
         return EMPRESA;
     }
-    public void setEMPRESA(String value) {
+    public void setEMPRESA(int value) {
         EMPRESA=value;
     }
     public String getMARCA() {

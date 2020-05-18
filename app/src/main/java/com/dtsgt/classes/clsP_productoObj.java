@@ -221,8 +221,8 @@ public class clsP_productoObj {
             item.codigo_producto=dt.getInt(0);
             item.codigo=dt.getString(1);
             item.codigo_tipo=dt.getString(2);
-            item.linea=dt.getString(3);
-            item.empresa=dt.getString(4);
+            item.linea=dt.getInt(3);
+            item.empresa=dt.getInt(4);
             item.marca=dt.getString(5);
             item.codbarra=dt.getString(6);
             item.desccorta=dt.getString(7);

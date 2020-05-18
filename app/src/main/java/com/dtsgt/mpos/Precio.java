@@ -66,7 +66,13 @@ public class Precio {
 		return prec;
 	}
 
-	public boolean existePrecioEspecial(String prod,double pcant,String cliente,String clitipo,String unimedida,String unimedidapeso,double ppeso) {
+	public boolean existePrecioEspecial(String prod,
+										double pcant,
+										int cliente,
+										String clitipo,
+										String unimedida,
+										String unimedidapeso,
+										double ppeso) {
 		prodid=prod;cant=pcant;um=unimedida;
 		umpeso=unimedidapeso;
 		prec=0;costo=0;descmon=0;imp=0;tot=0;precioespecial=0;

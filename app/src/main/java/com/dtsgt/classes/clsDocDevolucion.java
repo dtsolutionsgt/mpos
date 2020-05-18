@@ -150,7 +150,7 @@ public class clsDocDevolucion extends clsDocument {
 
         try {
             val=vend;
-            vendcod=vend;
+            vendcod=vend;// #CKFK 20200516 Validar para que se hace esto
         } catch (Exception e) {
             val=vend;
         }

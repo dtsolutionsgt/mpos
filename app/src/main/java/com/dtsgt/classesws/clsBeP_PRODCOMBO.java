@@ -11,13 +11,13 @@ public class clsBeP_PRODCOMBO {
     @Element(required=false) public String TIPO;
     @Element(required=false) public double CANTMIN;
     @Element(required=false) public double CANTTOT;
-
+    @Element(required=false) public int CODIGO_COMBO;
 
     public clsBeP_PRODCOMBO() {
     }
 
     public clsBeP_PRODCOMBO(String CODIGO,String PRODUCTO,String EMPRESA,String TIPO,
-                            double CANTMIN,double CANTTOT) {
+                            double CANTMIN,double CANTTOT, int CODIGO_COMBO) {
 
         this.CODIGO=CODIGO;
         this.PRODUCTO=PRODUCTO;
@@ -25,6 +25,7 @@ public class clsBeP_PRODCOMBO {
         this.TIPO=TIPO;
         this.CANTMIN=CANTMIN;
         this.CANTTOT=CANTTOT;
+        this.CODIGO_COMBO=CODIGO_COMBO;
 
     }
 
@@ -64,6 +65,12 @@ public class clsBeP_PRODCOMBO {
     }
     public void setCANTTOT(double value) {
         CANTTOT=value;
+    }
+    public int getCODIGO_COMBO() {
+        return CODIGO_COMBO;
+    }
+    public void setCODIGO_COMBO(int value) {
+        CODIGO_COMBO=value;
     }
 
 }

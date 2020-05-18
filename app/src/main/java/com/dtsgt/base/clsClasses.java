@@ -90,11 +90,12 @@ public class clsClasses {
     }
 
     public class clsP_banco {
+        public int codigo_banco;
 		public String codigo;
 		public String tipo;
 		public String nombre;
 		public String cuenta;
-		public String empresa;
+		public int empresa;
 		public int activo;
 	}
 
@@ -124,24 +125,26 @@ public class clsClasses {
     }
 
     public class clsP_cajacierre {
-        public String sucursal;
-        public String ruta;
+        public int empresa;
+        public int sucursal;
+        public int ruta;
         public int  corel;
         public int  estado;
         public int  fecha;
-        public String vendedor;
+        public int vendedor;
 		public int codpago;
 		public double fondocaja;
         public double montoini;
         public double montofin;
         public double montodif;
         public String statcom;
+        public String codigo_cajacierre;
     }
 
     public class clsP_cajapagos {
-        public String empresa;
-        public String sucursal;
-        public String ruta;
+        public int empresa;
+        public int sucursal;
+        public int ruta;
         public int  corel;
         public int  item;
         public int  anulado;
@@ -152,17 +155,20 @@ public class clsClasses {
         public String nodocumento;
         public String referencia;
         public String observacion;
-        public String vendedor;
+        public int vendedor;
         public String statcom;
+        public String codigo_cajapagos;
     }
 
     public class clsP_cajareporte {
-        public String sucursal;
-        public String ruta;
+        public int empresa;
+        public int sucursal;
+        public int ruta;
         public int  corel;
         public int  linea;
         public String texto;
         public String statcom;
+        public String codigo_cajareporte;
     }
 
     public class clsP_cliente {
@@ -194,19 +200,22 @@ public class clsClasses {
     }
 
     public class clsP_corel {
+        public int codigo_corel ;
         public String resol;
         public String serie;
         public int  corelini;
         public int  corelfin;
         public int  corelult;
         public long  fechares;
-        public String ruta;
+        public int ruta;
         public long  fechavig;
         public int  resguardo;
         public int  valor1;
+        public String activa;
     }
 
     public class clsP_descuento {
+        public int  codigo_descuento;
         public String cliente;
         public int  ctipo;
         public String producto;
@@ -226,7 +235,7 @@ public class clsClasses {
     }
 
     public class clsP_empresa {
-        public String empresa;
+        public int empresa;
         public String nombre;
         public int  col_imp;
         public String  logo;
@@ -250,13 +259,15 @@ public class clsClasses {
     }
 
     public class clsP_factorconv {
-        public String producto;
+        public int producto;
         public String unidadsuperior;
         public double factorconversion;
         public String unidadminima;
+        public int codigo_factorconv;
     }
 
 	public class clsP_impuesto {
+        public  int codigo_impuesto;
 		public int  codigo;
 		public double valor;
 		public int activo;
@@ -306,6 +317,7 @@ public class clsClasses {
     }
 
     public class clsP_prodcombo {
+        public int codigo_combo;
         public String codigo;
         public String producto;
         public String tipo;
@@ -316,7 +328,7 @@ public class clsClasses {
     public class clsP_prodprecio {
         public int  codigo_precio;
         public int  empresa;
-        public String codigo;
+        public int codigo_producto;
         public int  nivel;
         public double precio;
         public String unidadmedida;
@@ -353,8 +365,8 @@ public class clsClasses {
         public int  codigo_producto;
         public String codigo;
         public String codigo_tipo;
-        public String linea;
-        public String empresa;
+        public int linea;
+        public int empresa;
         public String marca;
         public String codbarra;
         public String desccorta;
@@ -436,6 +448,7 @@ public class clsClasses {
         public String sucursal;
         public String nombre;
         public int  codigo_ruta;
+        public String activo;
     }
 
     public class clsP_usuario {
@@ -449,13 +462,13 @@ public class clsClasses {
 	}
 
     public class clsP_usgrupo {
-        public String codigo;
+        public int codigo;
         public String nombre;
         public String cuenta;
     }
 
     public class clsP_usgrupoopc {
-        public String grupo;
+        public int grupo;
         public int  opcion;
     }
 

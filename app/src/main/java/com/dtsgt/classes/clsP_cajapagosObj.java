@@ -91,6 +91,7 @@ public class clsP_cajapagosObj {
         ins.add("OBSERVACION",item.observacion);
         ins.add("VENDEDOR",item.vendedor);
         ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJAPAGOS",item.codigo_cajapagos);
 
         db.execSQL(ins.sql());
 
@@ -111,7 +112,9 @@ public class clsP_cajapagosObj {
         upd.add("VENDEDOR",item.vendedor);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(EMPRESA='"+item.empresa+"') AND (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (ITEM="+item.item+")");
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //upd.Where("(EMPRESA='"+item.empresa+"') AND (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (ITEM="+item.item+")");
+         upd.Where("(CODIGO_CAJAPAGOS'"+item.codigo_cajapagos+"')");
 
         db.execSQL(upd.sql());
 
@@ -120,8 +123,14 @@ public class clsP_cajapagosObj {
     }
 
     private void deleteItem(clsClasses.clsP_cajapagos item) {
-        sql="DELETE FROM P_cajapagos WHERE (EMPRESA='"+item.empresa+"') AND (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (ITEM="+item.item+")";
+
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //sql="DELETE FROM P_cajapagos WHERE (EMPRESA='"+item.empresa+"') AND (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (ITEM="+item.item+")";
+
+        sql="DELETE FROM P_cajapagos " +
+                "WHERE (CODIGO_CAJAPAGOS'"+item.codigo_cajapagos+"')";
         db.execSQL(sql);
+
     }
 
     private void deleteItem(String id) {
@@ -143,9 +152,9 @@ public class clsP_cajapagosObj {
 
             item = clsCls.new clsP_cajapagos();
 
-            item.empresa=dt.getString(0);
-            item.sucursal=dt.getString(1);
-            item.ruta=dt.getString(2);
+            item.empresa=dt.getInt(0);
+            item.sucursal=dt.getInt(1);
+            item.ruta=dt.getInt(2);
             item.corel=dt.getInt(3);
             item.item=dt.getInt(4);
             item.anulado=dt.getInt(5);
@@ -156,8 +165,9 @@ public class clsP_cajapagosObj {
             item.nodocumento=dt.getString(10);
             item.referencia=dt.getString(11);
             item.observacion=dt.getString(12);
-            item.vendedor=dt.getString(13);
+            item.vendedor=dt.getInt(13);
             item.statcom=dt.getString(14);
+            item.codigo_cajapagos=dt.getString(15);
 
             items.add(item);
 
@@ -204,6 +214,7 @@ public class clsP_cajapagosObj {
         ins.add("OBSERVACION",item.observacion);
         ins.add("VENDEDOR",item.vendedor);
         ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJAPAGOS",item.codigo_cajapagos);
 
         return ins.sql();
 
@@ -224,7 +235,9 @@ public class clsP_cajapagosObj {
         upd.add("VENDEDOR",item.vendedor);
         upd.add("STATCOM",item.statcom);
 
-        upd.Where("(EMPRESA='"+item.empresa+"') AND (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (ITEM="+item.item+")");
+        //#CKFK 20200516 se cambio la llave compuesta por una llave única
+        //upd.Where("(EMPRESA='"+item.empresa+"') AND (SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (ITEM="+item.item+")");
+        upd.Where("(CODIGO_CAJAPAGOS'"+item.codigo_cajapagos+"')");
 
         return upd.sql();
 

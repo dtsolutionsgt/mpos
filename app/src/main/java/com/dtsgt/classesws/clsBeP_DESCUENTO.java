@@ -22,6 +22,7 @@ public class clsBeP_DESCUENTO {
     @Element(required=false) public String NOMBRE;
     @Element(required=false) public String EMP;
     @Element(required=false) public int ACTIVO;
+    @Element(required=false) public int CODIGO_DESCUENTO;
 
 
     public clsBeP_DESCUENTO() {
@@ -31,7 +32,7 @@ public class clsBeP_DESCUENTO {
                             int TIPORUTA,double RANGOINI,double RANGOFIN,String DESCTIPO,
                             double VALOR,String GLOBDESC,String PORCANT,int FECHAINI,
                             int FECHAFIN,int CODDESC,String NOMBRE,String EMP,
-                            int ACTIVO) {
+                            int ACTIVO,int CODIGO_DESCUENTO) {
 
         this.CLIENTE=CLIENTE;
         this.CTIPO=CTIPO;
@@ -50,6 +51,7 @@ public class clsBeP_DESCUENTO {
         this.NOMBRE=NOMBRE;
         this.EMP=EMP;
         this.ACTIVO=ACTIVO;
+        this.CODIGO_DESCUENTO=CODIGO_DESCUENTO;
 
     }
 
@@ -156,6 +158,11 @@ public class clsBeP_DESCUENTO {
     public void setACTIVO(int value) {
         ACTIVO=value;
     }
-
+    public int getCODIGO_DESCUENTO() {
+        return CODIGO_DESCUENTO;
+    }
+    public void setCODIGO_DESCUENTO(int value) {
+        CODIGO_DESCUENTO=value;
+    }
 }
 

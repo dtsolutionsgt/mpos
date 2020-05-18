@@ -62,7 +62,7 @@ public class CajaPagos extends PBase {
         lblDesc = (EditText) findViewById(R.id.editText22);
 
         super.InitBase();
-        addlog("CajaPagos",""+du.getActDateTime(),gl.vend);
+        addlog("CajaPagos",""+du.getActDateTime(),String.valueOf(gl.vend));
 
 
         fillSpinner2();
@@ -141,7 +141,7 @@ public class CajaPagos extends PBase {
         try{
             item.empresa=gl.emp;
             item.sucursal=gl.tienda;
-            item.ruta=gl.caja;
+            item.ruta=gl.codigo_ruta;
             item.corel=corel;
             item.item=0;
             item.anulado=0;
@@ -152,7 +152,7 @@ public class CajaPagos extends PBase {
             item.nodocumento=docAsoc;
             item.referencia="";
             item.observacion=desc;
-            item.vendedor=gl.vend;
+            item.vendedor=gl.codigo_vendedor;
             item.statcom="N";
 
             return true;

@@ -1,5 +1,6 @@
 package com.dtsgt.classes;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
@@ -80,6 +81,7 @@ public class clsP_lineaObj {
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
         ins.add("CODIGO_LINEA",item.codigo_linea);
+        ins.add("IMAGEN", item.imagen);
 
         db.execSQL(ins.sql());
 
@@ -93,6 +95,7 @@ public class clsP_lineaObj {
         upd.add("MARCA",item.marca);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
+        upd.add("IMAGEN",item.imagen);
 
         upd.Where("(CODIGO_LINEA="+item.codigo_linea+")");
 
@@ -131,6 +134,7 @@ public class clsP_lineaObj {
             item.nombre=dt.getString(2);
             item.activo=dt.getInt(3);
             item.codigo_linea=dt.getInt(4);
+            item.imagen=dt.getString(5);
 
             items.add(item);
 
@@ -167,6 +171,7 @@ public class clsP_lineaObj {
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
         ins.add("CODIGO_LINEA",item.codigo_linea);
+        ins.add("IMAGEN", (item.imagen==null?"":item.imagen));
 
         return ins.sql();
 
@@ -180,6 +185,7 @@ public class clsP_lineaObj {
         upd.add("MARCA",item.marca);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
+        upd.add("IMAGEN",item.imagen);
 
         upd.Where("(CODIGO_LINEA="+item.codigo_linea+")");
 

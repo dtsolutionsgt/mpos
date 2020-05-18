@@ -28,7 +28,7 @@ public class CliPos extends PBase {
 		setContentView(R.layout.activity_cli_pos);
 
 		super.InitBase();
-		addlog("CliPos",""+du.getActDateTime(),gl.vend);
+		addlog("CliPos",""+du.getActDateTime(),String.valueOf(gl.vend));
 
 		txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.requestFocus();
 		txtNom = (EditText) findViewById(R.id.editText2);

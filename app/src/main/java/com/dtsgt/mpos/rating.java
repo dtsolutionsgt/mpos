@@ -268,7 +268,7 @@ public class rating  extends PBase {
 
         try{
 
-            vWSEnvio = new clsWSEnvio(this, gl.ruta, gl.emp,2);
+            vWSEnvio = new clsWSEnvio(this, gl.codigo_ruta, gl.emp,2);
             vWSEnvio.runExecuteEnvio();
 
         }catch (Exception e){
