@@ -535,7 +535,7 @@ public class clsClasses {
 	
 	public class clsCDB {
 		public String Cod,Desc,Adds,nit,email;
-		public int Bandera,Cobro,ppend;
+		public int Bandera,Cobro,ppend, CodNum;
 		public double valor,coorx,coory;
 		public long Date;
 	}

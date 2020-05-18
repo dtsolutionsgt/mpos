@@ -215,6 +215,7 @@ public class Clientes extends PBase {
 
 					gl.cliente=sitem.Cod;
 					gl.scancliente=sitem.Cod;
+					gl.codigo_cliente = 0;
                     finish();
 
 				};
@@ -347,8 +348,8 @@ public class Clientes extends PBase {
 
 		try {
 
-			sql = "SELECT CODIGO_CLIENTE,NOMBRE,'' AS ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL " +
-					"FROM P_CLIENTE WHERE (1=1) AND ";
+			sql = "SELECT CODIGO,NOMBRE,'' AS ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL, CODIGO_CLIENTE " +
+				  "FROM P_CLIENTE WHERE (1=1) AND ";
 
 			if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
 
@@ -382,6 +383,7 @@ public class Clientes extends PBase {
 					vItem.Adds=DT.getString(6);
 					vItem.Date=DT.getLong(7);
 					vItem.email=DT.getString(8);
+					vItem.CodNum=DT.getInt(9);
 
 					if (cobros.contains(ss)) vItem.Cobro = 1;
 					else vItem.Cobro = 0;
