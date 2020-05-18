@@ -192,13 +192,13 @@ public class Venta extends PBase {
     }
 
     public void finishOrder(View view) {
+
         try{
             clsBonifGlob clsBonG;
             clsDeGlob clsDeG;
             String s,ss;
 
-            if (!hasProducts())
-            {
+            if (!hasProducts())  {
                 mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
             }
 
@@ -1676,7 +1676,7 @@ public class Venta extends PBase {
 
             sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
-                    "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
+                    "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO)  " +
                     "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1)";
             if (!mu.emptystr(famid)) {
                 if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";

@@ -1,5 +1,6 @@
 package com.dtsgt.fel;
 
+
 // InFile FEL Factura
 
 import android.content.Context;
@@ -9,13 +10,14 @@ import android.util.Base64;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.dtsgt.mpos.MainActivity;
 import com.dtsgt.mpos.PBase;
 
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +32,7 @@ public class clsFELInFile {
     public Boolean errorflag;
     public int errlevel;
 
-    public String xml;
+    public String xml,xmlanul;
     public String fact_uuid;
     public String fact_serie;
     public int fact_numero;
@@ -41,7 +43,7 @@ public class clsFELInFile {
     public String fel_token ="5b174fb0e23645b65ef88277d654603d";
     public String fel_codigo="0";
     public String fel_alias="DEMO_FEL";
-    public String fel_ident="abc123"; // cambiar por cada documento
+    public String fel_ident="abc124";
     public String fel_nit="1000000000K";
     public String fel_correo="";
 
@@ -53,6 +55,7 @@ public class clsFELInFile {
 
     private JSONObject jsonf = new JSONObject();
     private JSONObject jsonc = new JSONObject();
+    private JSONObject jsonfa = new JSONObject();
     private JSONObject jsona = new JSONObject();
 
     private String s64, jsfirm,jscert,jsanul,firma;
@@ -63,9 +66,10 @@ public class clsFELInFile {
 
     private double iva=12;
     private String WSURL="https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml";
-    private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
-                            //https://certificador.feel.com.gt/fel/anulacion/v2/dte
-    private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/dte/";
+    private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
+    private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";
+    //private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
+    //private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/dte/";
 
     //private String fileName= Environment.getExternalStorageDirectory() + "/zzxmltest.xml";
     //private String jsonName= Environment.getExternalStorageDirectory() + "/zzxmltest.txt";
@@ -78,15 +82,15 @@ public class clsFELInFile {
     }
 
     public void certificacion() {
-        errlevel=0;
-
-        fact_uuid="";
-        fact_serie="";
-        fact_numero=0;
-
+        fact_uuid="";fact_serie="";fact_numero=0;
         errlevel=0;error="";errorflag=false;
-
         sendJSONFirm();
+    }
+
+    public void anulacion(String fuuid) {
+        fact_uuid=fuuid;
+        errlevel=0;error="";errorflag=false;
+        sendJSONFirmAnul();
     }
 
     //region Firma
@@ -216,7 +220,7 @@ public class clsFELInFile {
 
     //region Certificacion
 
-    private void sendJSONCert() {
+    public void sendJSONCert() {
 
         errlevel=3;
 
@@ -239,7 +243,7 @@ public class clsFELInFile {
         }
     }
 
-    private void executeWSCert() {
+    public void executeWSCert() {
         jscert = jsonc.toString();
         errorflag=false;error="";
 
@@ -247,7 +251,7 @@ public class clsFELInFile {
         wstask.execute();
     }
 
-    private void wsExecuteC(){
+    public void wsExecuteC(){
         URL url;
         HttpURLConnection connection = null;
         JSONObject jObj = null;
@@ -302,9 +306,9 @@ public class clsFELInFile {
         }
     }
 
-    private void wsFinishedC() {
+    public void wsFinishedC() {
         try  {
-             parent.felCallBack();
+            parent.felCallBack();
         } catch (Exception e)  { }
     }
 
@@ -335,6 +339,238 @@ public class clsFELInFile {
 
     //endregion
 
+    //region Firma Anulacion
+
+    private void sendJSONFirmAnul() {
+
+        try {
+            s64=anulToBase64();
+
+            jsonf = new JSONObject();
+
+            jsonf.put("llave", fel_token);
+            jsonf.put("archivo",s64);
+            jsonf.put("codigo",fel_codigo);
+            jsonf.put("alias",fel_alias);
+            jsonf.put("es_anulacion","S");
+
+            executeWSFirmAnul();
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+        }
+    }
+
+    private void executeWSFirmAnul() {
+        jsfirm = jsonf.toString();
+        errorflag=false;error="";
+
+        AsyncCallWSFA wstask = new AsyncCallWSFA();
+        wstask.execute();
+    }
+
+    private void wsExecuteFA(){
+        URL url;
+        HttpURLConnection connection = null;
+        JSONObject jObj = null;
+
+        try {
+            url = new URL(WSURL);
+            connection = (HttpURLConnection)url.openConnection();
+
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
+
+            connection.setUseCaches (false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
+            wr.writeBytes (jsfirm);
+            wr.flush ();
+            wr.close ();
+
+            InputStream is = connection.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            String line;
+            StringBuilder sb = new StringBuilder();
+
+            while((line = rd.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            rd.close();
+
+            String jstr=sb.toString();
+            jObj = new JSONObject(jstr);
+
+            error= jObj.getString("descripcion");
+            if (jObj.getBoolean("resultado")) {
+                errorflag=false;
+                firma=jObj.getString("archivo");
+            } else {
+                errorflag=true;
+                parent.felCallBack();
+            }
+
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+        } finally {
+            if (connection!=null) connection.disconnect();
+        }
+    }
+
+    private void wsFinishedFA() {
+        try  {
+            if (!errorflag) {
+                sendJSONAnul();
+            } else {
+                parent.felCallBack();
+            }
+        } catch (Exception e) {}
+    }
+
+    private class AsyncCallWSFA extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params)  {
+            try  {
+                wsExecuteFA();
+            } catch (Exception e) { }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            try {
+                wsFinishedFA();
+            } catch (Exception e)  {}
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+    }
+
+    //endregion
+
+    //region Anulacion
+
+    public void sendJSONAnul() {
+        try {
+            s64= anulToBase64();
+
+            jsona = new JSONObject();
+
+            jsona.put("nit_emisor","76365204");
+            jsona.put("correo_copia","demo@demo.com.gt");
+            jsona.put("xml_dte",firma);
+
+            executeWSAnul();
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+        }
+    }
+
+    public void executeWSAnul() {
+        jsanul = jsona.toString();
+        errorflag=false;error="";
+
+        AsyncCallWSAnul wstask = new AsyncCallWSAnul();
+        wstask.execute();
+    }
+
+    public void wsExecuteA(){
+        URL url;
+        HttpURLConnection connection = null;
+        JSONObject jObj = null;
+
+        try {
+            //Create connection
+            url = new URL(WSURLAnul);
+            connection = (HttpURLConnection)url.openConnection();
+
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
+            connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));
+            connection.setRequestProperty("usuario",fel_alias);
+            connection.setRequestProperty("llave", fel_llavews);
+            connection.setRequestProperty("identificador",fel_ident);
+
+            connection.setUseCaches (false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            //Send request
+            DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
+            wr.writeBytes (jsanul);
+            wr.flush ();
+            wr.close ();
+
+            //Get Response
+            InputStream is = connection.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            String line;
+            StringBuilder sb = new StringBuilder();
+
+            while((line = rd.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            rd.close();
+
+            String jstr=sb.toString();
+            jObj = new JSONObject(jstr);
+
+            error= jObj.getString("descripcion");
+            if (jObj.getBoolean("resultado")) {
+                errorflag=false;
+            } else {
+                errorflag=true;
+            }
+
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+        } finally {
+            if (connection!=null) connection.disconnect();
+        }
+    }
+
+    public void wsFinishedA() {
+        try  {
+            parent.felCallBack();
+        } catch (Exception e)  { }
+    }
+
+    private class AsyncCallWSAnul extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params)  {
+            try  {
+                wsExecuteA();
+            } catch (Exception e) { }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            try {
+                wsFinishedA();
+            } catch (Exception e)  {}
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+    }
+
+    //endregion
+
+
     //region XML
 
     public void iniciar(long fecha_emision) {
@@ -352,9 +588,10 @@ public class clsFELInFile {
         xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
     }
 
-    public void completar(String serie) {
+    public void completar(String serie,int numero) {
 
         totiva=Math.round(totiva*100);totiva=totiva/100;
+        serie=serie+"-"+numero;
 
         xml+="</dte:Items>";
 
@@ -380,6 +617,15 @@ public class clsFELInFile {
         byte[] bytes= new byte[0];
 
         bytes = xml.getBytes(StandardCharsets.UTF_8);
+        s64= Base64.encodeToString(bytes, Base64.DEFAULT);
+        return s64;
+    }
+
+    public String anulToBase64() {
+        String s64;
+        byte[] bytes= new byte[0];
+
+        bytes = xmlanul.getBytes(StandardCharsets.UTF_8);
         s64= Base64.encodeToString(bytes, Base64.DEFAULT);
         return s64;
     }
@@ -474,31 +720,12 @@ public class clsFELInFile {
         String sf=parseDate(fechaemis);
         String sa=parseDate(fechaanul);
 
-        xml="";
-        xml+="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \">";
-        xml+="<dte:SAT>";
-        xml+="<dte:AnulacionDTE ID=\"DatosCertificados\">";
-        xml+="<dte:DatosGenerales FechaEmisionDocumentoAnular=\""+sf+"\" FechaHoraAnulacion=\""+sa+"\" ID=\"DatosAnulacion\" IDReceptor=\""+Idreceptor+"\" MotivoAnulacion=\"Anulación\" NITEmisor=\""+nit+"\" NumeroDocumentoAAnular=\""+uuid+"\"></dte:DatosGenerales>";
-        xml+="</dte:AnulacionDTE>";
-        xml+="</dte:SAT>";
-        xml+="</dte:GTAnulacionDocumento>";
-
-        xml="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\"" +
-                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \">" +
-                "<dte:SAT>" +
-                "<dte:AnulacionDTE ID=\"DatosCertificados\">" +
-                "<dte:DatosGenerales FechaEmisionDocumentoAnular=\"2019-06-10T08:58:04-06:00\" FechaHoraAnulacion=\"2019-06-10T08:58:04-06:00\" ID=\"DatosAnulacion\" " +
-                "IDReceptor=\"CF\" MotivoAnulacion=\"Anulación\" NITEmisor=\"1000000000K\" NumeroDocumentoAAnular=\"DB93AF6F-87A6-4BA6-A22A-01873CC93776\"></dte:DatosGenerales>" +
-                "</dte:AnulacionDTE>" +
-                "</dte:SAT>" +
-                "</dte:GTAnulacionDocumento>";
-
-        xml="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\"" +
-                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \">" +
+        xmlanul="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" " +
+                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \"> " +
                 "<dte:SAT>" +
                 "<dte:AnulacionDTE ID=\"DatosCertificados\">" +
                 "<dte:DatosGenerales FechaEmisionDocumentoAnular=\""+sf+"\" FechaHoraAnulacion=\""+sa+"\" ID=\"DatosAnulacion\" " +
-                "IDReceptor=\""+Idreceptor+"\" MotivoAnulacion=\"Anulación\" NITEmisor=\""+nit+"\" NumeroDocumentoAAnular=\""+uuid+"\"></dte:DatosGenerales>" +
+                "IDReceptor=\""+Idreceptor+"\" MotivoAnulacion=\"PRUEBA DE ANULACIÓN\" NITEmisor=\""+nit+"\" NumeroDocumentoAAnular=\""+uuid+"\"></dte:DatosGenerales>" +
                 "</dte:AnulacionDTE>" +
                 "</dte:SAT>" +
                 "</dte:GTAnulacionDocumento>";

@@ -11,7 +11,9 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
+import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -28,15 +30,18 @@ public class FelFactura extends PBase {
 
     private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
+    private clsD_facturafObj D_facturafObj;
     private clsD_facturapObj D_facturapObj;
+    private clsP_productoObj prod;
 
     private clsClasses.clsD_factura fact=clsCls.new clsD_factura();
     private clsClasses.clsD_facturad factd=clsCls.new clsD_facturad();
+    private clsClasses.clsD_facturaf factf=clsCls.new clsD_facturaf();
     private clsClasses.clsD_facturap factp=clsCls.new clsD_facturap();
 
     private ArrayList<String> facts = new ArrayList<String>();
 
-    private String felcorel;
+    private String felcorel,corel;
     private boolean multiflag;
     private int ftot,ffail,fidx;
 
@@ -60,14 +65,16 @@ public class FelFactura extends PBase {
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
+        D_facturafObj=new clsD_facturafObj(this,Con,db);
         D_facturapObj=new clsD_facturapObj(this,Con,db);
+        prod=new clsP_productoObj(this,Con,db);
 
         lbl2.setText("Certificador : "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
 
         buildList();
 
-        ftot=0;ffail=0;fidx=0;
+        ffail=0;fidx=0;
 
         if (facts.size()>0) {
             Handler mtimer = new Handler();
@@ -120,7 +127,8 @@ public class FelFactura extends PBase {
     private void contingencia() {
         lbl1.setText("Procesando factura ");
         lbl3.setText("Sin procesar : 0");
-        buildFactXML();
+
+        //buildFactXML();
         procesafactura();
     }
 
@@ -152,6 +160,38 @@ public class FelFactura extends PBase {
     }
 
     private void buildFactXML() {
+
+        corel=facts.get(fidx);
+
+        try {
+            D_facturaObj.fill("WHERE Corel='"+corel+"'");
+            fact=D_facturaObj.first();
+
+            D_facturafObj.fill("WHERE Corel='"+corel+"'");
+            factf=D_facturafObj.first();
+
+            fel.iniciar(fact.fecha);
+            fel.emisor("GEN","1","",fel.fel_nit,fel.fel_alias);
+            fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
+            fel.receptor(factf.nit,factf.nombre,factf.direccion);
+
+            D_facturadObj.fill("WHERE Corel='"+corel+"'");
+
+            for (int i = 0; i <D_facturadObj.count; i++) {
+                factd=D_facturadObj.items.get(i);
+                fel.detalle(prodName(factd.producto),factd.cant,"UNI",
+                        factd.precio,factd.total,factd.desmon);
+             }
+
+            fel.completar(fact.serie,fact.corelativo);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+
+        /*
+
         try {
             fel.iniciar(2005041102);
             fel.emisor("GEN","1","","1000000000K","DEMO");
@@ -162,11 +202,12 @@ public class FelFactura extends PBase {
             //fact.detalle("Producto 2",2,"UNI",15,30,0);
 
             fel.completar("ZR37-46");
-
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+         */
+
     }
 
     //endregion
@@ -204,6 +245,15 @@ public class FelFactura extends PBase {
         new Thread(runnable).start();
     }
 
+    private String prodName(int cod_prod) {
+        try {
+            prod.fill("WHERE codigo_producto="+cod_prod);
+            return prod.first().desclarga;
+        } catch (Exception e) {
+            return ""+cod_prod;
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -238,7 +288,9 @@ public class FelFactura extends PBase {
         try {
             D_facturaObj.reconnect(Con,db);
             D_facturadObj.reconnect(Con,db);
+            D_facturafObj.reconnect(Con,db);
             D_facturapObj.reconnect(Con,db);
+            prod.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

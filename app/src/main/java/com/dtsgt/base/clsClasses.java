@@ -63,6 +63,13 @@ public class clsClasses {
         public String umstock;
     }
 
+    public class clsD_facturaf {
+        public String corel;
+        public String nombre;
+        public String nit;
+        public String direccion;
+    }
+
     public class clsD_facturap {
         public int  empresa;
         public String corel;
