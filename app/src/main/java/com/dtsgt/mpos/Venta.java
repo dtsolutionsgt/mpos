@@ -863,16 +863,18 @@ public class Venta extends PBase {
         gl.limcant=getDisp(prodid);
         processCant(true);
         listItems();
-
     }
 
     private void processCantMenu() {
+        listItems();
+        /*
         gl.dval=gl.retcant;
         if (menuitemadd) {
            processCant(false);
         } else {
            processCant(true);
         }
+        */
     }
 
     private void updDesc(){

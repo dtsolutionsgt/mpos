@@ -659,7 +659,17 @@ public class clsClasses {
 		public int inicial,fin,actual;
 	}
 
-	//endregion
+    public class clsT_combo {
+        public int  codigo_menu;
+        public int  codigo_producto;
+        public int  opcion_lista;
+        public int  opcion_producto;
+        public int  cant;
+        public int  idseleccion;
+        public int  orden;
+    }
+
+    //endregion
 
     public class clsView {
         public int  pk;

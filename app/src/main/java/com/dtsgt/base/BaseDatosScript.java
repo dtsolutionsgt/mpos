@@ -487,7 +487,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [P_PRODMENU] ("+
                     "CODIGO_MENU INTEGER NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
@@ -1533,6 +1532,18 @@ public class BaseDatosScript {
                     "IDLISTA INTEGER NOT NULL,"+
                     "CANT INTEGER NOT NULL,"+
                     "PRIMARY KEY ([ID],[IDSESS],[IDITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [T_combo] ("+
+                    "CODIGO_MENU INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "OPCION_LISTA INTEGER NOT NULL,"+
+                    "OPCION_PRODUCTO INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "IDSELECCION INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MENU],[CODIGO_PRODUCTO],[OPCION_LISTA],[OPCION_PRODUCTO])"+
                     ");";
             database.execSQL(sql);
 

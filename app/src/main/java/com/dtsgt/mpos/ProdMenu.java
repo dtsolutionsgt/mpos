@@ -24,13 +24,14 @@ public class ProdMenu extends PBase {
     private ImageView img1;
 
     private ListAdaptOpcion adapter;
+    private clsT_prodmenuObj T_prodmenuObj;
     private clsP_productoObj P_productoObj;
 
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
-    private int cant,lcant,uid;
+    private int cant,lcant,uid,idmenu;
     private boolean newitem;
 
     @Override
@@ -158,6 +159,9 @@ public class ProdMenu extends PBase {
         clsClasses.clsOpcion item;
 
         try {
+
+            idmenu=
+
             items.clear();
             P_menuObj.fill("WHERE CODIGO_PRODUCTO='"+gl.prodmenu+"' ORDER BY ORDEN,NOMBRE");
 
@@ -199,6 +203,26 @@ public class ProdMenu extends PBase {
         try {
             db.beginTransaction();
 
+            for (int i = 0; i <items.size(); i++) {
+
+                item=clsCls.new clsT_prodmenu();
+
+                item.id = uid;
+                item.idsess = 1;
+                item.iditem = items.get(i).ID;
+                item.codigo = items.get(i).Cod;
+                item.nombre = items.get(i).Name;
+                item.descrip = items.get(i).Descrip;
+                item.nota = "";
+                item.bandera = 1;
+                item.idlista = items.get(i).listid;
+                item.cant = 1;
+
+                T_prodmenuObj.add(item);
+            }
+
+
+            /*
             db.execSQL("DELETE FROM T_PRODMENU WHERE ID="+uid);
 
             for (int i = 0; i <items.size(); i++) {
@@ -218,6 +242,8 @@ public class ProdMenu extends PBase {
 
                 T_prodmenuObj.add(item);
             }
+
+             */
 
             db.setTransactionSuccessful();
             db.endTransaction();
