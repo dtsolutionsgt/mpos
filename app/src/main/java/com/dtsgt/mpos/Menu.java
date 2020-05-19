@@ -1731,8 +1731,10 @@ public class Menu extends PBase {
 	}
 
 	public void VentaDate(){
-		if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
-		//startActivity(new Intent(Menu.this,Venta.class));
+		if (!validaVenta()){
+			return;//Se valida si hay correlativos de factura para la venta
+		}
+		startActivity(new Intent(Menu.this,Venta.class));//#CKFK 20200518 Quité esto porque estaba en comentario
 	}
 
 	public boolean valida(){
@@ -1809,7 +1811,7 @@ public class Menu extends PBase {
 
 		dialog.setTitle("Registro");
 		dialog.setMessage(msg);
-		dialog.setCancelable(true);
+		dialog.setCancelable(false);
 
 		dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {

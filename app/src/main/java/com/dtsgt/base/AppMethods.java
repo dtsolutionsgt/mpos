@@ -423,7 +423,7 @@ public class AppMethods {
         String umm;
 
         try {
-     		String sql = "SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE CODIGO='" + cod + "' AND NIVEL="+gl.nivel;
+     		String sql = "SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE CODIGO_PRODUCTO ='" + cod + "' AND NIVEL="+gl.nivel;
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
 
@@ -585,7 +585,7 @@ public class AppMethods {
 		String umm;
 
 		try {
-			String sql = "SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE CODIGO='" + cod + "' AND NIVEL="+gl.nivel;
+			String sql = "SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE CODIGO_PRODUCTO ='" + cod + "' AND NIVEL="+gl.nivel;
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
 

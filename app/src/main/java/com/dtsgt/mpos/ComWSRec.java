@@ -594,10 +594,12 @@ public class ComWSRec extends PBase {
             if (TN.equalsIgnoreCase("P_FACTORCONV")) {
                 //#EJC20181112
                 //SQL = "SELECT PRODUCTO,UNIDADSUPERIOR,FACTORCONVERSION,UNIDADMINIMA FROM P_FACTORCONV ";
-                SQL = " SELECT * FROM P_FACTORCONV WHERE PRODUCTO IN (SELECT CODIGO " +
+                //#CKFK 20200518 Modifique esta consulta porque el filtro de ruta debe ser con gl.codigo_ruta
+                // y porque el codigo de producto de P_FACTORCONV debe estar en el campo CODIGO_PRODUCTO de P_PRODUCTO
+                SQL = " SELECT * FROM P_FACTORCONV WHERE PRODUCTO IN (SELECT CODIGO_PRODUCTO " +
                       " FROM P_PRODUCTO WHERE LINEA IN (SELECT DISTINCT LINEA FROM P_LINEARUTA " +
-                      " WHERE RUTA = '" + gl.ruta + "')) " +
-                      " OR ((PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "') " +
+                      " WHERE RUTA = '" + gl.codigo_ruta + "')) " +
+                      " OR ((PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.codigo_ruta + "') " +
                       " ))";
 
                 return SQL;
@@ -605,10 +607,12 @@ public class ComWSRec extends PBase {
 
             if (TN.equalsIgnoreCase("P_PRODPRECIO")) {
 
-                SQL = "SELECT CODIGO,NIVEL,PRECIO,UNIDADMEDIDA FROM P_PRODPRECIO " +
-                      " WHERE ( (CODIGO IN ( SELECT CODIGO FROM P_PRODUCTO WHERE " +
-                      "(LINEA IN (SELECT LINEA FROM P_LINEARUTA WHERE RUTA='" + gl.ruta + "')))) " +
-                      "OR  (CODIGO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "'))) " +
+                //#CKFK 20200518 Modifique esta consulta por el cambio en el nombre del campo CODIGO_PRODUCTO
+                //y porque el filtro de ruta debe ser con gl.codigo_ruta
+                SQL = "SELECT CODIGO_PRODUCTO,NIVEL,PRECIO,UNIDADMEDIDA FROM P_PRODPRECIO " +
+                      " WHERE ( (CODIGO_PRODUCTO IN ( SELECT CODIGO_PRODUCTO FROM P_PRODUCTO WHERE " +
+                      "(LINEA IN (SELECT LINEA FROM P_LINEARUTA WHERE RUTA='" + gl.codigo_ruta + "')))) " +
+                      "OR  (CODIGO_PRODUCTO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.codigo_ruta + "'))) " +
                       "AND (NIVEL IN (SELECT DISTINCT NIVELPRECIO FROM P_CLIENTE  )  ) ";
                 return SQL;
             }

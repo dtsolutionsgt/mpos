@@ -603,7 +603,7 @@ public class DevCliCant extends PBase {
 
 		try {
 
-			sql="SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+gl.nivel+")";
+			sql="SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+prodid+"') AND (NIVEL="+gl.nivel+")";
 			dt=Con.OpenDT(sql);
 
 			if (dt.getCount()>0){

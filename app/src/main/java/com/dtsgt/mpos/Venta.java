@@ -1674,9 +1674,10 @@ public class Venta extends PBase {
         try {
             pitems.clear();pcodes.clear();
 
-            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
-                    "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
-                    "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO)  " +
+            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
+                    "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
+                    "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
+                    "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
                     "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1)";
             if (!mu.emptystr(famid)) {
                 if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
@@ -1695,7 +1696,7 @@ public class Venta extends PBase {
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()==0){
-                msgbox("¡Ninguno articulo de la familia tiene existencia disponible!");return;
+                msgbox("¡Ningún artículo de la familia tiene existencia disponible!");return;
             }
 
             dt.moveToFirst();
@@ -2409,7 +2410,7 @@ public class Venta extends PBase {
         String sprec="";
 
         try {
-            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prid+"') AND (NIVEL="+nivel+") ";
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+prid+"') AND (NIVEL="+nivel+") ";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 
@@ -2491,7 +2492,7 @@ public class Venta extends PBase {
         }
 
         try {
-            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO FROM P_CLIENTE " +
+            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO, CODIGO_CLIENTE FROM P_CLIENTE " +
                       "WHERE CODIGO='"+gl.cliente+"'";
 
             DT = Con.OpenDT(sql);
@@ -2500,6 +2501,7 @@ public class Venta extends PBase {
             gl.fnombre=DT.getString(0);
             gl.fnit=DT.getString(2);
             gl.fdir=DT.getString(3);
+            gl.codigo_cliente = DT.getInt(5);
 
             gl.media=DT.getInt(4);
 

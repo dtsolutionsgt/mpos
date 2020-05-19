@@ -92,9 +92,12 @@ public class ListAdaptCliList extends BaseAdapter {
 		if(items.get(position).email.isEmpty()) holder.lblEmail.setText("");
 		if(!items.get(position).email.isEmpty()) holder.lblEmail.setText(items.get(position).email);
 
-		//if(items.get(position).CodNum ) holder.lblCodNum.setText("");
-		//if(!items.get(position).CodNum) holder.lblCodNum.setText(items.get(position).CodNum);
-		//holder.lblCodNum.setVisibility(View.GONE);
+		if(String.valueOf(items.get(position).CodNum).isEmpty()) {
+			holder.lblCodNum.setText("");
+		}else{
+			holder.lblCodNum.setText(String.valueOf(items.get(position).CodNum));
+		}
+		holder.lblCodNum.setVisibility(View.GONE);
 
 		val= items.get(position).Bandera;
 		cobro= items.get(position).Cobro;

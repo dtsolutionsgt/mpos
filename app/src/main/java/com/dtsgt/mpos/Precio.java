@@ -93,9 +93,9 @@ public class Precio {
 		try {
 
 			if (ppeso>0) {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+") ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+") ";
 			} else {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+")  ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+")  ";
 			}
 
 			DT=Con.OpenDT(sql);
@@ -106,7 +106,7 @@ public class Precio {
 			pr=0;
 
 			try {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+")  ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+")  ";
 				DT=Con.OpenDT(sql);
 				DT.moveToFirst();
 				pr=DT.getDouble(0);
@@ -179,7 +179,7 @@ public class Precio {
 
 		try {
 
-			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+codprod+"') AND (NIVEL="+nivel+") ";
+			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+") ";
            	DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 							  
