@@ -140,7 +140,7 @@ public class ComWS extends PBase {
 		addlog("ComWS", "" + du.getActDateTime(), String.valueOf(gl.vend));
 
 		System.setProperty("line.separator", "\r\n");
-        rootdir=Environment.getExternalStorageDirectory()+"/RoadFotos/";
+        rootdir=Environment.getExternalStorageDirectory()+"/mPosFotos/";
 
         ruta=gl.ruta;
         ActRuta = ruta;
@@ -1933,7 +1933,7 @@ public class ComWS extends PBase {
 
 				cod=DT.getString(0);
 
-				File file = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + cod + ".jpg");
+				File file = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + cod + ".jpg");
 				if (file.exists()) {
 					sendFoto(gl.emp,cod,3);
 				}
@@ -1965,7 +1965,7 @@ public class ComWS extends PBase {
 
 				cod=DT.getString(0);
 
-				File file = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Producto/" + cod + ".jpg");
+				File file = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/Producto/" + cod + ".jpg");
 				if (file.exists()) {
 					sendFoto(gl.emp,cod,2);
 				}
@@ -1997,7 +1997,7 @@ public class ComWS extends PBase {
 
 				cod=DT.getString(0);
 
-				File file = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia/" + cod + ".jpg");
+				File file = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/Familia/" + cod + ".jpg");
 				if (file.exists()) {
 					sendFoto(gl.emp,cod,1);
 				}
@@ -2016,13 +2016,13 @@ public class ComWS extends PBase {
 		String fname,resstr="";
 
 		if(valid==1){
-			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/Familia/" + cod + ".jpg";
+			fname=Environment.getExternalStorageDirectory() + "/mPosFotos/Familia/" + cod + ".jpg";
 		}else if(valid==2){
-			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/Producto/" + cod + ".jpg";
+			fname=Environment.getExternalStorageDirectory() + "/mPosFotos/Producto/" + cod + ".jpg";
 		}else if(valid==3){
-			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + cod + ".jpg";
+			fname=Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + cod + ".jpg";
 		}else {
-			fname=Environment.getExternalStorageDirectory() + "/RoadFotos/" + cod + ".jpg";
+			fname=Environment.getExternalStorageDirectory() + "/mPosFotos/" + cod + ".jpg";
 		}
 
 		METHOD_NAME = "saveImage";

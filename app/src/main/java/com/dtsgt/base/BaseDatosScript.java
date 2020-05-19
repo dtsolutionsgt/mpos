@@ -326,13 +326,13 @@ public class BaseDatosScript {
                     "NIT TEXT NOT NULL,"+
                     "TEXTO TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
-                    "PET_PREFIJO TEXT NOT NULL,"+
-                    "PET_LLAVE TEXT NOT NULL,"+
-                    "PET_ALIAS_PFX TEXT NOT NULL,"+
-                    "PET_PFX_LLAVE TEXT NOT NULL,"+
-                    "CODIGO_ESCENARIO_ISR INTEGER NOT NULL,"+
-                    "CODIGO_ESCENARIO_IVA INTEGER NOT NULL,"+
-                    "CODIGO_MUNICIPIO INTEGER NOT NULL"+
+                    "PET_PREFIJO TEXT,"+
+                    "PET_LLAVE TEXT,"+
+                    "PET_ALIAS_PFX TEXT,"+
+                    "PET_PFX_LLAVE TEXT,"+
+                    "CODIGO_ESCENARIO_ISR INTEGER,"+
+                    "CODIGO_ESCENARIO_IVA INTEGER,"+
+                    "CODIGO_MUNICIPIO INTEGER"+
                     ");";
             database.execSQL(sql);
 

@@ -79,7 +79,7 @@ public class ComWSFotos extends PBase {
 
         System.setProperty("line.separator","\r\n");
 
-        rootdir= Environment.getExternalStorageDirectory()+"/RoadFotos/";
+        rootdir= Environment.getExternalStorageDirectory()+"/mPosFotos/";
 
         clsAppM = new AppMethods(this, gl, Con, db);
 
@@ -269,17 +269,17 @@ public class ComWSFotos extends PBase {
                 int bs=imgbytes.length;
 
                 if(valid==1){
-                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/RoadFotos/Producto/" + idprod + ".jpg");
+                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/mPosFotos/Producto/" + idprod + ".jpg");
                     BufferedOutputStream outputStream = new BufferedOutputStream(fos);
                     outputStream.write(imgbytes);
                     outputStream.close();
                 }else if(valid==2){
-                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/RoadFotos/familia/" + idprod + ".jpg");
+                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/mPosFotos/familia/" + idprod + ".jpg");
                     BufferedOutputStream outputStream = new BufferedOutputStream(fos);
                     outputStream.write(imgbytes);
                     outputStream.close();
                 }else if(valid==3){
-                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idprod + ".jpg");
+                    FileOutputStream fos = new FileOutputStream(Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + idprod + ".jpg");
                     BufferedOutputStream outputStream = new BufferedOutputStream(fos);
                     outputStream.write(imgbytes);
                     outputStream.close();

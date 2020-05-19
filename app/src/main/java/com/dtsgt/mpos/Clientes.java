@@ -819,13 +819,13 @@ public class Clientes extends PBase {
         File file;
 
         try {
-            prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selid + ".png";
+            prodimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + selid + ".png";
             file = new File(prodimg);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
                 imgFoto.setImageBitmap(bmImg);
             } else {
-                prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selid + ".jpg";
+                prodimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + selid + ".jpg";
                 file = new File(prodimg);
                 if (file.exists()) {
                     Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
@@ -845,13 +845,13 @@ public class Clientes extends PBase {
         File file;
 
         try {
-            prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selcliid + ".png";
+            prodimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + selcliid + ".png";
             file = new File(prodimg);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
                 imgFoto.setImageBitmap(bmImg);
             } else {
-                prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + selcliid + ".jpg";
+                prodimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + selcliid + ".jpg";
                 file = new File(prodimg);
                 if (file.exists()) {
                     Bitmap bmImg = BitmapFactory.decodeFile(prodimg);

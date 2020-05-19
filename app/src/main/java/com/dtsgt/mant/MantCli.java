@@ -298,7 +298,7 @@ public class MantCli extends PBase {
     private void resizeFoto() {
         try {
 
-            String fname = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg";
+            String fname = Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + idfoto + ".jpg";
             File file = new File(fname);
 
             Bitmap bitmap = BitmapFactory.decodeFile(fname);
@@ -331,11 +331,11 @@ public class MantCli extends PBase {
             StrictMode.setVmPolicy(builder.build());
 
             //=item.codigo;
-            signfile= Environment.getExternalStorageDirectory()+"/RoadFotos/Cliente/"+idfoto+".jpg";
+            signfile= Environment.getExternalStorageDirectory()+"/mPosFotos/Cliente/"+idfoto+".jpg";
             //callback=1;
 
             Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            File URLfoto = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg");
+            File URLfoto = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + idfoto + ".jpg");
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(URLfoto));
             startActivityForResult(cameraIntent,TAKE_PHOTO_CODE);
 
@@ -351,13 +351,13 @@ public class MantCli extends PBase {
         File file;
 
         try {
-            prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".png";
+            prodimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + idfoto + ".png";
             file = new File(prodimg);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
                 img1.setImageBitmap(bmImg);
             } else {
-                prodimg = Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente/" + idfoto + ".jpg";
+                prodimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente/" + idfoto + ".jpg";
                 file = new File(prodimg);
                 if (file.exists()) {
                     Bitmap bmImg = BitmapFactory.decodeFile(prodimg);

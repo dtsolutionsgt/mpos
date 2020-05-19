@@ -376,19 +376,19 @@ public class MainActivity extends PBase {
         }
 
         try {
-            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos");
+            File directory = new File(Environment.getExternalStorageDirectory() + "/mPosFotos");
             directory.mkdirs();
         } catch (Exception e) {
         }
 
         try {
-            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Familia");
+            File directory = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/Familia");
             directory.mkdirs();
         } catch (Exception e) {
         }
 
         try {
-            File directory = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/Cliente");
+            File directory = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/Cliente");
             directory.mkdirs();
         } catch (Exception e) {
         }
@@ -721,8 +721,10 @@ public class MainActivity extends PBase {
         lblEmp.setText(gl.empnom);
 
         try {
-            String emplogo = Environment.getExternalStorageDirectory() + "/mposlogo.png";
+
+            String emplogo = Environment.getExternalStorageDirectory() + "/mPosFotos/" + "/mposlogo.png";
             File file = new File(emplogo);
+
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(emplogo);
                 imgLogo.setImageBitmap(bmImg);

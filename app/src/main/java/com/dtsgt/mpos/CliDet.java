@@ -244,7 +244,7 @@ public class CliDet extends PBase {
 		//	try {
 
 				Intent intento1 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				File URLfoto = new File(Environment.getExternalStorageDirectory() + "/RoadFotos/" + cod + ".jpg");
+				File URLfoto = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/" + cod + ".jpg");
 				intento1.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(URLfoto));
 				startActivityForResult(intento1,codResult);
 
@@ -272,7 +272,7 @@ public class CliDet extends PBase {
 			try {
 
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				String paht = (Environment.getExternalStorageDirectory() + "/RoadFotos/" + cod + ".jpg");
+				String paht = (Environment.getExternalStorageDirectory() + "/mPosFotos/" + cod + ".jpg");
 				Bitmap bitmap1 = BitmapFactory.decodeFile(paht);
 
 				bitmap1 = redimensionarImagen(bitmap1, 640, 360);

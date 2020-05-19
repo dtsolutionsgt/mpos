@@ -2287,7 +2287,7 @@ public class Venta extends PBase {
 
         clsBonFiltro clsBFilt=new clsBonFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
 
-        imgfold= Environment.getExternalStorageDirectory()+ "/RoadFotos/";
+        imgfold= Environment.getExternalStorageDirectory()+ "/mPosFotos/";
 
         dweek=mu.dayofweek();
 

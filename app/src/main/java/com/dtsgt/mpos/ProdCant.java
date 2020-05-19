@@ -270,7 +270,7 @@ public class ProdCant extends PBase {
 			imgProd.setVisibility(View.INVISIBLE);
 			if (!mu.emptystr(prodimg)) {
 				try {
-					prodimg = Environment.getExternalStorageDirectory()+ "/RoadFotos/"+prodimg+".jpg";
+					prodimg = Environment.getExternalStorageDirectory()+ "/mPosFotos/"+prodimg+".jpg";
 					File file = new File(prodimg); 
 					if (file.exists()) {
 						try {

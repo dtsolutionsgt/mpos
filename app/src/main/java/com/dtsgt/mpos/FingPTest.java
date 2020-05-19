@@ -42,7 +42,7 @@ public class FingPTest extends PBase {
         img2 = (ImageView) findViewById(R.id.imageView41);
 
         //db.execSQL("create table FPrint ( ID TEXT, image BLOB)");
-        imgfold= Environment.getExternalStorageDirectory()+ "/RoadFotos/";
+        imgfold= Environment.getExternalStorageDirectory()+ "/mPosFotos/";
 
         //initializeReader();
 

@@ -114,7 +114,7 @@ public class WSRec extends PBase {
     private ArrayList<String> script = new ArrayList<String>();
     private boolean pbd_vacia = false;
     private String plabel, fechasync;
-    private String rootdir = Environment.getExternalStorageDirectory() + "/RoadFotos/";
+    private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -606,7 +606,9 @@ public class WSRec extends PBase {
     }
 
     private void processEmpresas() {
+
         try {
+
             clsBeP_EMPRESA item = new clsBeP_EMPRESA();
             clsClasses.clsP_empresa var = clsCls.new clsP_empresa();
 
@@ -616,7 +618,7 @@ public class WSRec extends PBase {
             var.empresa = item.EMPRESA;
             var.nombre = item.NOMBRE;
             var.col_imp = item.COL_IMP;
-            var.logo = "";
+            var.logo = item.LOGO;
             var.razon_social = item.RAZON_SOCIAL + "";
             var.identificacion_tributaria = item.IDENTIFICACION_TRIBUTARIA + "";
             var.telefono = item.TELEFONO + "";
@@ -631,6 +633,37 @@ public class WSRec extends PBase {
             clsP_empresaObj P_empresaObj = new clsP_empresaObj(this, Con, db);
             script.add(P_empresaObj.addItemSql(var));
 
+            try {
+
+                String img = var.logo;
+
+                if (img != null) {
+
+                    //#EJC20200518: Check if the folder for picturs exists, if not create!
+                    File f = new File(rootdir);
+                    if(!f.isDirectory()) f.mkdir();
+
+                    String filePathImg = rootdir + "mposlogo.png";
+
+                    File file = new File(filePathImg);
+
+                    if (!file.exists()) {
+
+                        byte[] imgbytes = Base64.decode(img, Base64.DEFAULT);
+                        int bs = imgbytes.length;
+
+                        FileOutputStream fos = new FileOutputStream(filePathImg);
+                        BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                        outputStream.write(imgbytes);
+                        outputStream.close();
+                    }
+                }
+
+                } catch (Exception ee)
+                {
+                    Log.e("ImgOp", ee.getMessage());
+                }
+
         } catch (Exception e) {
             ws.error = e.getMessage();
             ws.errorflag = true;
@@ -638,7 +671,9 @@ public class WSRec extends PBase {
     }
 
     private void processBancos() {
+
         try {
+
             clsP_bancoObj handler = new clsP_bancoObj(this, Con, db);
             clsBeP_BANCOList items = new clsBeP_BANCOList();
             clsBeP_BANCO item = new clsBeP_BANCO();
@@ -674,6 +709,7 @@ public class WSRec extends PBase {
     }
 
     private void processConfig() {
+
         try {
 
             clsP_archivoconfObj handler = new clsP_archivoconfObj(this, Con, db);
@@ -713,7 +749,9 @@ public class WSRec extends PBase {
     }
 
     private void processBonif() {
+
         try {
+
             clsP_bonifObj handler = new clsP_bonifObj(this, Con, db);
             clsBeP_BONIFList items = new clsBeP_BONIFList();
             clsBeP_BONIF item = new clsBeP_BONIF();
@@ -764,6 +802,7 @@ public class WSRec extends PBase {
     }
 
     private void processCorel() {
+
         try {
             clsP_corelObj handler = new clsP_corelObj(this, Con, db);
             clsBeP_CORELList items = new clsBeP_CORELList();
@@ -919,7 +958,9 @@ public class WSRec extends PBase {
     }
 
     private void processLinea() {
+
         try {
+
             clsP_lineaObj handler = new clsP_lineaObj(this, Con, db);
             clsBeP_LINEAList items = new clsBeP_LINEAList();
             clsBeP_LINEA item = new clsBeP_LINEA();
@@ -949,7 +990,6 @@ public class WSRec extends PBase {
 
                 script.add(handler.addItemSql(var));
 
-                /*
                 try {
 
                     String img = var.imagen;
@@ -972,7 +1012,6 @@ public class WSRec extends PBase {
                 } catch (Exception ee) {
                     Log.e("ImgOp", ee.getMessage());
                 }
-                */
             }
 
         } catch (Exception e) {
@@ -982,6 +1021,7 @@ public class WSRec extends PBase {
     }
 
     private void processCliente() {
+
         try {
 
             clsP_clienteObj handler = new clsP_clienteObj(this, Con, db);
