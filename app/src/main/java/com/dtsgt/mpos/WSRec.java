@@ -618,7 +618,7 @@ public class WSRec extends PBase {
             var.empresa = item.EMPRESA;
             var.nombre = item.NOMBRE;
             var.col_imp = item.COL_IMP;
-            var.logo = item.LOGO;
+            var.logo = item.LOGO+"";
             var.razon_social = item.RAZON_SOCIAL + "";
             var.identificacion_tributaria = item.IDENTIFICACION_TRIBUTARIA + "";
             var.telefono = item.TELEFONO + "";

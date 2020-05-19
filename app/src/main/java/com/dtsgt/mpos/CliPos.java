@@ -136,6 +136,7 @@ public class CliPos extends PBase {
 			gl.rutatipo="V";
 
 			gl.cliente=""+codigo;
+			gl.cli_cod=codigo;
             gl.nivel=1;
             gl.percepcion=0;
             gl.contrib="";
@@ -257,6 +258,7 @@ public class CliPos extends PBase {
 	private boolean agregaCliente(String NIT,String Nom,String dir) {
 
         int codigo=nitnum(NIT);
+        gl.cli_cod=codigo;
 
 		try {
 			ins.init("P_CLIENTE");

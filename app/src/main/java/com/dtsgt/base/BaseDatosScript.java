@@ -552,13 +552,12 @@ public class BaseDatosScript {
                     "MONTOFIN REAL NOT NULL,"+
                     "MONTODIF REAL NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "CODIGO_CAJACIERRE INTEGER NOT NULL,"+
+                    "CODIGO_CAJACIERRE TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_CAJACIERRE])"+
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE UNIQUE INDEX IX_P_CAJACIERRE "+
-                " on P_CAJACIERRE ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])";
+            sql="CREATE UNIQUE INDEX IX_P_CAJACIERRE on P_CAJACIERRE ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])";
             database.execSQL(sql);
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJACIERRE
@@ -580,7 +579,7 @@ public class BaseDatosScript {
                     "OBSERVACION TEXT NOT NULL,"+
                     "VENDEDOR INTEGER NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "CODIGO_CAJAPAGOS INTEGER NOT NULL,"+
+                    "CODIGO_CAJAPAGOS TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_CAJAPAGOS])"+
                     ");";
             database.execSQL(sql);
@@ -600,7 +599,7 @@ public class BaseDatosScript {
                     "LINEA INTEGER NOT NULL,"+
                     "TEXTO TEXT NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "CODIGO_CAJAREPORTE INTEGER NOT NULL,"+
+                    "CODIGO_CAJAREPORTE TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_CAJAREPORTE])"+
                     ");";
             database.execSQL(sql);

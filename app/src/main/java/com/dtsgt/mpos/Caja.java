@@ -221,7 +221,6 @@ public class Caja extends PBase {
         }
     }
 
-
     public void saveMontoIni(){
         Cursor dt;
         int fecha=0;
@@ -230,23 +229,27 @@ public class Caja extends PBase {
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
 
-
-            if(gl.cajaid==1) {
+            if (gl.cajaid==1) {
                 caja.fill();
 
                 if (caja.count != 0) {
                     gl.corelZ = caja.last().corel + 1;
+                    itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
+                    itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
                 } else {
                     gl.corelZ = 1;
+                    itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
                 }
 
-            }else if(gl.cajaid==3){
+            } else if (gl.cajaid==3){
                 caja.fill(" WHERE ESTADO = 0");
                 gl.corelZ = caja.last().corel;
                 fecha = caja.last().fecha;
                 fondoCaja = caja.last().fondocaja;
+                itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
             }
 
+            itemC.empresa=gl.emp;
             itemC.sucursal =  gl.tienda;
             itemC.ruta = gl.codigo_ruta;
             itemC.corel = gl.corelZ;
@@ -354,7 +357,6 @@ public class Caja extends PBase {
             msgbox("Error saveMontoIni: "+e);return;
         }
     }
-
 
     public void doExit(View view) {
         msgAskExit("¿Salir?");
