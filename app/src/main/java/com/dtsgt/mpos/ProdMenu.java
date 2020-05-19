@@ -160,7 +160,7 @@ public class ProdMenu extends PBase {
 
         try {
 
-            idmenu=
+            //idmenu=
 
             items.clear();
             P_menuObj.fill("WHERE CODIGO_PRODUCTO='"+gl.prodmenu+"' ORDER BY ORDEN,NOMBRE");
