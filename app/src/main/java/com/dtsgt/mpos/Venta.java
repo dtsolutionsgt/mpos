@@ -1636,16 +1636,18 @@ public class Venta extends PBase {
     //region Menu
 
     private void listFamily() {
+
         clsP_lineaObj P_lineaObj=new clsP_lineaObj(this,Con,db);
         clsClasses.clsMenu item;
 
         try {
+
             fitems.clear();
             P_lineaObj.fill("WHERE Activo=1");
 
             for (int i = 0; i <P_lineaObj.count; i++) {
                 item=clsCls.new clsMenu();
-                item.Cod=P_lineaObj.items.get(i).codigo_linea+"";
+                item.Cod=P_lineaObj.items.get(i).codigo+"";
                 item.Name=P_lineaObj.items.get(i).nombre;
                 fitems.add(item);
             }
