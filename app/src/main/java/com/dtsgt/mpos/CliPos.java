@@ -105,8 +105,9 @@ public class CliPos extends PBase {
 	private void procesaCF() {
 
 		try{
+			gl.codigo_cliente = 0;
 			gl.rutatipo="V";
-            gl.cliente="C.F.";
+            gl.cliente="0";
             gl.nivel=1;
             gl.percepcion=0;
             gl.contrib="";
@@ -297,8 +298,10 @@ public class CliPos extends PBase {
 
 				upd.init("P_CLIENTE");
 				upd.add("NOMBRE",Nom);
+				upd.add("NIT",NIT);
                 upd.add("DIRECCION",dir);
-                ins.add("ESERVICE","N");
+                upd.add("ESERVICE","N");
+				upd.add("CODIGO","0");
 				upd.Where("CODIGO_CLIENTE="+codigo);
 
 				db.execSQL(upd.sql());

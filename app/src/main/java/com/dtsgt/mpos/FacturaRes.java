@@ -792,7 +792,7 @@ public class FacturaRes extends PBase {
 			if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
 			ins.add("RUTA",gl.ruta);
 			ins.add("VENDEDOR",gl.vend);
-			ins.add("CLIENTE",gl.cliente);
+			ins.add("CLIENTE",gl.codigo_cliente);
 
 			ins.add("KILOMETRAJE",0);
 			ins.add("FECHAENTR",fechae);

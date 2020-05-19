@@ -2,6 +2,7 @@ package com.dtsgt.classes;
 
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.util.Log;
 
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -98,6 +99,7 @@ public class XMLObject {
         return null;
     }
 
+/*
 
     public String getXMLRegion(String nodename) throws Exception {
         String st,ss,sv,en,sxml;
@@ -141,6 +143,103 @@ public class XMLObject {
             debg = e.getMessage() + "\n "+ ws.xmlresult;
             throw new Exception(" XMLObject getXMLRegion : "+ debg);
         }
+        return "";
+    }
+*/
+
+    private boolean isParsing=false;
+
+    public String getXMLRegion(String nodename) throws Exception {
+
+        String ss ="";
+        String sxml="";
+        Node xmlnode;
+        int cVals=0;
+        double mequedeaqui=0;
+
+        InputStream istream=null;
+        DocumentBuilder docBuilder;
+        DocumentBuilderFactory builderFactory;
+
+        if (!isParsing)
+        {
+            isParsing =true;
+
+            try {
+
+                mequedeaqui=1;
+
+                try{
+
+                    istream = new ByteArrayInputStream( ws.xmlresult.getBytes() );
+
+                }catch (Exception ex){
+                    Log.i("A","B");
+                }
+
+                builderFactory = DocumentBuilderFactory.newInstance();
+                mequedeaqui=-1;
+                docBuilder = builderFactory.newDocumentBuilder();
+                mequedeaqui=-2;
+
+                if(istream.available()==0)
+                {
+                    Log.i("notfound","nimershhere");
+                    mequedeaqui=-2.5;
+                    istream = new ByteArrayInputStream( ws.xmlresult.getBytes());
+                    mequedeaqui=-2.6;
+                }
+
+                if(istream.available()==0)
+                {
+                    Log.i("try2","de todas formas no se pudo asignar el result.. sospecho problema en la memoria *del dispositivo no la m[ia, la mia anda bien");
+                    return  "";
+
+                }
+
+                mequedeaqui=-2.7;
+                Document doc = docBuilder.parse(istream);
+
+                mequedeaqui=2;
+                Element root=doc.getDocumentElement();
+                mequedeaqui=3;
+                NodeList children=root.getChildNodes();
+                Node bodyroot=children.item(0);
+                NodeList body=bodyroot.getChildNodes();
+                Node responseroot=body.item(0);
+                NodeList response=responseroot.getChildNodes();
+                mequedeaqui=4;
+                ss="";
+
+                for(int i =0;i<response.getLength();i++)
+                {
+                    mequedeaqui=5;
+                    ss+=response.item(i).getNodeName()+",\n";
+
+                    if (response.item(i).getNodeName().equalsIgnoreCase(nodename))
+                    {
+                        cVals=response.item(i).getChildNodes().getLength();
+                        mequedeaqui=6;
+                        if (cVals>0)
+                        {
+                            mequedeaqui+=7;
+                            xmlnode=response.item(i);
+                            sxml=nodeToString(xmlnode);
+                            return sxml;
+                        }
+                    }
+                }
+            } catch (Exception e)
+            {
+                debg = e.getMessage() + "\n "+ ws.xmlresult;
+                throw new Exception(" XMLObject getXMLRegion : "+ debg);
+            } finally {
+                isParsing =false;
+            }
+        }else{
+            Log.e("imbussy","telodije");
+        }
+
         return "";
     }
 

@@ -2702,7 +2702,9 @@ public class Venta extends PBase {
             } else {
             }
 
-            if (!gl.scancliente.isEmpty()) cargaCliente();
+            if (!gl.scancliente.isEmpty()) {
+                cargaCliente();
+            }
 
             if (browse==-1)   {
                 browse=0;finish();return;
