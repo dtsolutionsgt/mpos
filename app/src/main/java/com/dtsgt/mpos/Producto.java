@@ -581,7 +581,7 @@ public class Producto extends PBase {
         String sprec="";
 
         try {
-            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO='"+prid+"') AND (NIVEL="+gl.nivel+") ";
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+prid+"') AND (NIVEL="+gl.nivel+") ";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 

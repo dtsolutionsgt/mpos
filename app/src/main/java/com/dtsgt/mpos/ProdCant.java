@@ -216,7 +216,7 @@ public class ProdCant extends PBase {
 		double ippeso=0;
 
 		try {
-			sql="SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+gl.nivel+")";
+			sql="SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+prodid+"') AND (NIVEL="+gl.nivel+")";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();			
 			um=dt.getString(0);ubas=um;umfact=um;
@@ -229,7 +229,7 @@ public class ProdCant extends PBase {
 		try {
 							
 			sql="SELECT UNIDBAS,UNIDMED,UNIMEDFACT,UNIGRA,UNIGRAFACT,DESCCORTA,IMAGEN,DESCLARGA,TIPO,PESO_PROMEDIO,FACTORCONV "+
-				 "FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
+				 "FROM P_PRODUCTO WHERE CODIGO_PRODUCTO='"+prodid+"'";
            	dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 				

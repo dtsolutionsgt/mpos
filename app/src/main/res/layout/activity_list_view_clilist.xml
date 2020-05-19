@@ -125,6 +125,12 @@
                 android:text="Email"
                 android:textSize="18sp" />
 
+            <TextView
+                android:id="@+id/lblCodNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cod Num" />
+
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

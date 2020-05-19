@@ -72,6 +72,7 @@ public class ListAdaptCliList extends BaseAdapter {
 			holder.lblTel = (TextView) convertView.findViewById(R.id.textView140);
 			holder.lblNit  = (TextView) convertView.findViewById(R.id.textView138);
 			holder.lblEmail  = (TextView) convertView.findViewById(R.id.textView139);
+			holder.lblCodNum  = (TextView) convertView.findViewById(R.id.lblCodNum);
 			
 			convertView.setTag(holder);
 		} else {
@@ -90,6 +91,13 @@ public class ListAdaptCliList extends BaseAdapter {
 
 		if(items.get(position).email.isEmpty()) holder.lblEmail.setText("");
 		if(!items.get(position).email.isEmpty()) holder.lblEmail.setText(items.get(position).email);
+
+		if(String.valueOf(items.get(position).CodNum).isEmpty()) {
+			holder.lblCodNum.setText("");
+		}else{
+			holder.lblCodNum.setText(String.valueOf(items.get(position).CodNum));
+		}
+		holder.lblCodNum.setVisibility(View.GONE);
 
 		val= items.get(position).Bandera;
 		cobro= items.get(position).Cobro;
@@ -113,7 +121,7 @@ public class ListAdaptCliList extends BaseAdapter {
 	
 	
 	static class ViewHolder {
-		TextView  lblCod,lblDesc,lblDate,lblTel,lblNit,lblEmail;
+		TextView  lblCod,lblDesc,lblDate,lblTel,lblNit,lblEmail, lblCodNum;
 		ImageView  imgBand,imgCobro,imgPPago;
 	}
 	

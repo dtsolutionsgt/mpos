@@ -631,9 +631,12 @@ public class ComWSExist extends PBase {
 
 		  if (TN.equalsIgnoreCase("P_PRODPRECIO")) {
 
-			  SQL = "SELECT CODIGO,NIVEL,PRECIO,UNIDADMEDIDA FROM P_PRODPRECIO ";
-			  SQL += " WHERE ( (CODIGO IN ( SELECT CODIGO FROM P_PRODUCTO WHERE (LINEA IN (SELECT LINEA FROM P_LINEARUTA WHERE RUTA='" + gl.ruta + "')) ) ) ";
-			  SQL += " OR  (CODIGO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.ruta + "')) ) ";
+			  //#CKFK 20200518 Modifique esta consulta por el cambio en el nombre del campo CODIGO_PRODUCTO
+			  //y porque el filtro de ruta debe ser con gl.codigo_ruta
+			  SQL = "SELECT CODIGO_PRODUCTO,NIVEL,PRECIO,UNIDADMEDIDA FROM P_PRODPRECIO ";
+			  SQL += " WHERE ( (CODIGO_PRODUCTO IN ( SELECT CODIGO FROM P_PRODUCTO WHERE " +
+					  "(LINEA IN (SELECT LINEA FROM P_LINEARUTA WHERE RUTA='" + gl.codigo_ruta + "')) ) ) ";
+			  SQL += " OR  (CODIGO IN (SELECT DISTINCT CODIGO FROM P_STOCK WHERE RUTA='" + gl.codigo_ruta + "')) ) ";
 				  return SQL;
 		  }
 
