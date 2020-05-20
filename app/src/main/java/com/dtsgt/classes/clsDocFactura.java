@@ -205,32 +205,11 @@ public class clsDocFactura extends clsDocument {
 		
 		try {
 
-            sql="SELECT N.COREL, F.COREL, N.TOTAL, N.FACTURA " +
-                "FROM D_FACTURA F INNER JOIN D_NOTACRED N ON F.COREL = N.FACTURA " +
-                "WHERE F.COREL = '"+corel+"'";
-
-            DT=Con.OpenDT(sql);
-            DT.moveToFirst();
-
-            if(DT.getCount() != 0){
-
-				corelNotaC = DT.getString(0);
-				corelF = DT.getString(1);
-				totNotaC = DT.getDouble(2);
-				asignacion = DT.getString(3);
-
-			}else{
-
-            	corelNotaC = "";
-            	asignacion = "*";
-            	totNotaC = 0;
-				corelF = "";
-
-            }
+           //#CKFK 20200520 quité la consulta que buscaba en las notas de crédito porque aquí no existe esa tabla
 
 			sql="SELECT D_FACTURAD.PRODUCTO,P_PRODUCTO.DESCLARGA,D_FACTURAD.CANT,D_FACTURAD.PRECIODOC,D_FACTURAD.IMP, " +
 				"D_FACTURAD.DES,D_FACTURAD.DESMON, D_FACTURAD.TOTAL, D_FACTURAD.UMVENTA, D_FACTURAD.UMPESO, D_FACTURAD.PESO " +
-				"FROM D_FACTURAD INNER JOIN P_PRODUCTO ON D_FACTURAD.PRODUCTO = P_PRODUCTO.CODIGO_CLIENTE " +
+				"FROM D_FACTURAD INNER JOIN P_PRODUCTO ON D_FACTURAD.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
 				"WHERE (D_FACTURAD.COREL='"+corel+"')";	
 			
 			DT=Con.OpenDT(sql);
@@ -262,16 +241,11 @@ public class clsDocFactura extends clsDocument {
 
 
 			try {
+				//#CKFK 20200520 Quité el union con D_BONIFBARRA porque esa tabla no existe en el MPOS
 				sql = "SELECT D_BONIF.PRODUCTO,P_PRODUCTO.DESCLARGA AS NOMBRE,D_BONIF.CANT, D_BONIF.UMVENTA, " +
 					  "D_BONIF.CANT*D_BONIF.FACTOR AS TPESO " +
 					  "FROM D_BONIF INNER JOIN P_PRODUCTO ON D_BONIF.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
 					  "WHERE (D_BONIF.COREL='" + ccorel + "')";
-				sql += "UNION ";
-				sql += "SELECT D_BONIF_BARRA.PRODUCTO,P_PRODUCTO.DESCLARGA AS NOMBRE,COUNT(D_BONIF_BARRA.BARRA) AS CANT, D_BONIF_BARRA.UMSTOCK, SUM(D_BONIF_BARRA.PESO) AS TPESO " +
-						"FROM D_BONIF_BARRA INNER JOIN P_PRODUCTO ON D_BONIF_BARRA.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
-						"WHERE (D_BONIF_BARRA.COREL='" + ccorel + "') " +
-						"GROUP BY D_BONIF_BARRA.PRODUCTO,P_PRODUCTO.DESCLARGA,D_BONIF_BARRA.UMVENTA ";
-				sql += "ORDER BY NOMBRE ";
 
 				DT=Con.OpenDT(sql);
 				if (DT.getCount()>0) DT.moveToFirst();
@@ -295,7 +269,7 @@ public class clsDocFactura extends clsDocument {
 			}
 
 		} catch (Exception e) {
-			//Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
 	    }		
 		
 		return true;
