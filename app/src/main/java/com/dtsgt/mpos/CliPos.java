@@ -111,6 +111,7 @@ public class CliPos extends PBase {
             gl.nivel=1;
             gl.percepcion=0;
             gl.contrib="";
+            gl.scancliente=gl.cliente;
 
             gl.fnombre="Consumidor final";
             gl.fnit="C.F.";
@@ -137,9 +138,10 @@ public class CliPos extends PBase {
 			gl.rutatipo="V";
 
 			gl.cliente=""+codigo;
-	          gl.nivel=1;
+			gl.nivel=1;
             gl.percepcion=0;
             gl.contrib="";
+            gl.scancliente = gl.cliente;
 
             gl.fnombre=sname;
             gl.fnit=snit;

@@ -668,7 +668,6 @@ public class FacturaRes extends PBase {
 			impres=0;
 
 			if (app.impresora()) {
-                //fdoc.buildPrint(corel, 0,gl.peFormatoFactura,gl.peMFact);
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
                 app.doPrint(2);
             }

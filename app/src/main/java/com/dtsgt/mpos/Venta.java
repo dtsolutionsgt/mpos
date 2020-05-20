@@ -2543,7 +2543,7 @@ public class Venta extends PBase {
             sql="SELECT SUM(D_FACTURAP.VALOR) FROM D_FACTURAP  "+
                "INNER JOIN D_FACTURA ON D_FACTURAP.COREL=D_FACTURA.COREL "+
                "WHERE (D_FACTURA.FECHA>="+ff+") AND (D_FACTURA.ANULADO='N') " +
-               "AND (D_FACTURA.CLIENTE='"+gl.cliente+"') AND (D_FACTURAP.TIPO='C')";
+               "AND (D_FACTURA.CLIENTE='"+gl.codigo_cliente+"') AND (D_FACTURAP.TIPO='C')";
             dt = Con.OpenDT(sql);
 
             try {
