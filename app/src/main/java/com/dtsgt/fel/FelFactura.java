@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -135,6 +136,9 @@ public class FelFactura extends PBase {
     @Override
     public void felCallBack()  {
         if (multiflag) {
+
+            //if (!fel.errorflag) marcaFactura();
+
             fidx++;
             //if (fidx<ftot-1) {
             if (fidx<10) {
@@ -143,20 +147,28 @@ public class FelFactura extends PBase {
             } else {
                 toast("Completo");
             }
-        } else {
-            callBackSingle();
-        }
-    }
 
-    private void callBackSingle() {
-        pbar.setVisibility(View.INVISIBLE);
-        if (!fel.errorflag) {
-            gl.feluuid=fel.fact_uuid;
         } else {
-            gl.feluuid="";
-            toastlong("Ocurrio error en FEL :\n\n"+ fel.error);
+            //pbar.setVisibility(View.INVISIBLE);
+
+            //if (!fel.errorflag) marcaFactura();
+
+            if (!fel.errorflag) {
+                gl.feluuid=fel.fact_uuid;
+                finish();
+            } else {
+                gl.feluuid="";
+
+                Handler mtimer = new Handler();
+                Runnable mrunner=new Runnable() {
+                    @Override
+                    public void run() {
+                        msgexit("Ocurrio error en FEL :\n\n"+ fel.error+"\\fecha factura :"+fel.fecha_factura);
+                    }
+                };
+                mtimer.postDelayed(mrunner,500);
+            }
         }
-        finish();
     }
 
     private void buildFactXML() {
@@ -169,6 +181,8 @@ public class FelFactura extends PBase {
 
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
+
+            fel.fel_ident=fact.serie+fact.corelativo;
 
             fel.iniciar(fact.fecha);
             fel.emisor("GEN","1","",fel.fel_nit,fel.fel_alias);
@@ -189,7 +203,6 @@ public class FelFactura extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-
         /*
 
         try {
@@ -207,7 +220,24 @@ public class FelFactura extends PBase {
         }
 
          */
+    }
 
+    private void marcaFactura() {
+/*
+        try {
+            D_facturaObj.fill("WHERE Corel='"+corel+"'");
+            fact=D_facturaObj.first();
+
+            fact.feelserie=fel.fact_serie;
+            fact.feelnumero=""+fel.fact_numero;
+            fact.feeluuid=fel.fact_uuid;
+
+            D_facturaObj.update(fact);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+ */
     }
 
     //endregion
@@ -215,15 +245,24 @@ public class FelFactura extends PBase {
     //region Aux
 
     private void buildList() {
+        String cor;
         ftot=0;
 
         try {
-            D_facturaObj.fill("WHERE (FEELNUMERO=0) AND (ANULADO='N')");
+            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO='N')");
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {
-                facts.add(D_facturaObj.items.get(i).corel);
+                cor=D_facturaObj.items.get(i).corel;
+                if (felcorel.isEmpty()) {
+                    facts.add(cor);
+                } else {
+                    if (cor.equalsIgnoreCase(felcorel)) {
+                        facts.add(cor);
+                    }
+                }
             }
+
             ftot=facts.size();
         } catch (Exception e) {
             msgexit(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -302,6 +341,5 @@ public class FelFactura extends PBase {
     }
 
     //endregion
-
 
 }

@@ -18,11 +18,11 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,cliente,nit,tipo,ref,vendedor;
-	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango;
+	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin,felcert,felnit,feluuid,feldcert;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
-	public boolean docdesglose,pass,facturaflag;
+	public boolean docdesglose,pass,facturaflag,banderafel;
 	public int ffecha,pendiente,diacred,pagoefectivo;
 
 	protected android.database.sqlite.SQLiteDatabase db;
@@ -282,6 +282,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
+                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO ELECTRONICO");
                 rep.add(nombre);
                 s=s.replace("%%%","");
             }
@@ -307,15 +308,19 @@ public class clsDocument {
 
             if (docfactura) {
                 if (!modofact.equalsIgnoreCase("TICKET")) {
+
                     if (i==7){
-                        rep.add("");
-                        if (docfactura) {
-                            rep.add(resol);
-                            rep.add(resfecha);
-                            rep.add(resvence);
-                            rep.add(resrango);
+                        if (!banderafel) {
+                            rep.add("");
+                            if (docfactura) {
+                                rep.add(resol);
+                                rep.add(resfecha);
+                                rep.add(resvence);
+                                rep.add(resrango);
+                            }
                         }
                     }
+
                 }
             }
         }
@@ -589,21 +594,43 @@ public class clsDocument {
 		
 		try {
 
+            //textofin,felcert,felnit
+
 			sql = "SELECT SUCURSAL FROM P_RUTA";
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
 			sucur = DT.getString(0);
 
-			sql="SELECT TEXTO FROM P_ENCABEZADO_REPORTESHH WHERE SUCURSAL='"+sucur+"' ORDER BY CODIGO";
+            sql="SELECT TEXTO FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                DT.moveToFirst();textofin=DT.getString(0);
+            } else textofin="";
+
+            banderafel=false;felcert="";felnit="";
+            try {
+                sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
+                DT=Con.OpenDT(sql);
+                DT.moveToFirst();
+
+                String val=DT.getString(0);
+                if (val.equalsIgnoreCase("INFILE")) {
+                    banderafel=true;
+                    felcert="CERTIFICADOR: INFILE, S.A.";
+                    felnit="NIT: 12521337";
+                }
+           } catch (Exception e) {
+                banderafel=false;felcert="";felnit="";
+            }
+
+            sql="SELECT TEXTO FROM P_ENCABEZADO_REPORTESHH WHERE SUCURSAL='"+sucur+"' ORDER BY CODIGO";
 			DT=Con.OpenDT(sql);
 			if (DT.getCount()==0) return false;
 
 			DT.moveToFirst();
 			while (!DT.isAfterLast()) {
-
 				s=DT.getString(0);	
 				lines.add(s);
-
 				DT.moveToNext();
 			}
 
@@ -623,7 +650,7 @@ public class clsDocument {
 		}
 	}
 	
-	public String sfecha(int f) {
+	public String sfecha(long f) {
 		int vy,vm,vd;
 		String s;
 		
@@ -655,8 +682,8 @@ public class clsDocument {
 		return s;
 	}
 
-	public String shora(int vValue) {
-		int h,m;
+	public String shora(long vValue) {
+		long h,m;
 		String sh,sm;
 
 		h=vValue % 10000;

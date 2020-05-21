@@ -12,7 +12,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsT_prodmenuObj;
+import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.ladapt.ListAdaptOpcion;
 
 import java.util.ArrayList;
@@ -24,15 +24,18 @@ public class ProdMenu extends PBase {
     private ImageView img1;
 
     private ListAdaptOpcion adapter;
-    private clsT_prodmenuObj T_prodmenuObj;
+    private clsT_comboObj T_comboObj;
     private clsP_productoObj P_productoObj;
 
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
-    private int cant,lcant,uid,idmenu;
+    private Precio prc;
+
+    private int cant,lcant, uitemid,idmenu;
     private boolean newitem;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +50,17 @@ public class ProdMenu extends PBase {
         lbl3 = (TextView) findViewById(R.id.textView116);
         img1 = (ImageView) findViewById(R.id.imageView27);
 
-        P_productoObj=new clsP_productoObj(this,Con,db);
+        P_productoObj = new clsP_productoObj(this, Con, db);
+        T_comboObj = new clsT_comboObj(this, Con, db);
+        prc = new Precio(this, mu, 2);
 
         setHandlers();
 
-        cant=gl.retcant;lcant=gl.limcant;
-        uid=Integer.parseInt(gl.menuitemid);
-        newitem=gl.newmenuitem;
+        cant=1;
+        //lcant = gl.limcant;
+
+        uitemid = Integer.parseInt(gl.menuitemid);
+        newitem = gl.newmenuitem;
 
         lbl1.setText(gl.gstr);
         lbl2.setText(""+cant);
@@ -120,47 +127,41 @@ public class ProdMenu extends PBase {
     //region Main
 
     private void listItems() {
-        clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(this,Con,db);
-        clsT_prodmenuObj T_prodmenuObj=new clsT_prodmenuObj(this,Con,db);
-        clsClasses.clsOpcion item;
-        clsClasses.clsT_prodmenu titem;
+        int menuid,selid;
+
+        listMenuItems();
 
         try {
-            items.clear();
-            P_menuObj.fill("WHERE Codigo='"+gl.prodmenu+"' ORDER BY NOMBRE");
+            clsT_comboObj combo=new clsT_comboObj(this,Con,db);
+            combo.fill("WHERE CODIGO_PRODUCTO="+ uitemid);
 
-            T_prodmenuObj.fill("WHERE (ID="+uid+") ORDER BY IDITEM");
+            for (int i = 0; i <items.size(); i++) {
+                items.get(i).bandera=1;
 
-            for (int i = 0; i <T_prodmenuObj.count; i++) {
-
-                titem=T_prodmenuObj.items.get(i);
-
-                item=clsCls.new clsOpcion();
-
-                item.ID=titem.iditem;
-                item.Cod=titem.codigo;
-                item.Name=titem.nombre;
-                item.Descrip=titem.nombre;
-                item.listid=titem.idlista;
-                item.bandera=1;
-
-                items.add(item);
+                menuid=items.get(i).ID;
+                combo.fill("WHERE (CODIGO_PRODUCTO="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
+                selid=combo.first().idseleccion;
+                items.get(i).Name=getProdName(selid);
             }
 
-            adapter=new ListAdaptOpcion(this,items);
-            listView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
         }
     }
 
     private void newItem() {
+        idmenu=T_comboObj.newID("SELECT MAX(CODIGO_MENU) FROM T_COMBO");
+        listMenuItems();
+    }
+
+    private void listMenuItems() {
         clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(this,Con,db);
         clsClasses.clsOpcion item;
 
         try {
 
-            //idmenu=
+            idmenu=T_comboObj.newID("SELECT MAX(CODIGO_MENU) FROM T_COMBO");
 
             items.clear();
             P_menuObj.fill("WHERE CODIGO_PRODUCTO='"+gl.prodmenu+"' ORDER BY ORDEN,NOMBRE");
@@ -169,16 +170,17 @@ public class ProdMenu extends PBase {
                 item=clsCls.new clsOpcion();
 
                 item.ID=P_menuObj.items.get(i).codigo_menu;
-                item.Cod="";
+                item.cod=0;
                 item.Name=P_menuObj.items.get(i).nombre;
                 item.Descrip=P_menuObj.items.get(i).nombre;
                 item.listid=P_menuObj.items.get(i).opcion_lista;
                 item.prodid=P_menuObj.items.get(i).opcion_producto;
                 item.bandera=0;
+                item.orden=P_menuObj.items.get(i).orden;
 
                 if (item.prodid!=0) {
-                    item.Cod=""+item.prodid;
-                    item.Name=getProdName(item.Cod);
+                    item.cod=item.prodid;
+                    item.Name=getProdName(item.cod);
                     item.bandera=1;
                 }
 
@@ -193,60 +195,65 @@ public class ProdMenu extends PBase {
     }
 
     private boolean saveItem() {
-        clsT_prodmenuObj T_prodmenuObj=new clsT_prodmenuObj(this,Con,db);
-        clsClasses.clsT_prodmenu item;
+        clsClasses.clsT_combo item;
 
         if (!validaData()) {
             msgbox("¡Debe definir todas las opciónes!");return false;
         }
 
         try {
+
+            String um=getProdUM(gl.prodmenu);
+            double prec = prc.precio(gl.prodid, cant, gl.nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
+
+            double impval = prc.impval;
+            double desc=prc.desc;
+            double descmon = prc.descmon;
+            double tot = prc.tot;
+
             db.beginTransaction();
 
             for (int i = 0; i <items.size(); i++) {
 
-                item=clsCls.new clsT_prodmenu();
+                item=clsCls.new clsT_combo();
 
-                item.id = uid;
-                item.idsess = 1;
-                item.iditem = items.get(i).ID;
-                item.codigo = items.get(i).Cod;
-                item.nombre = items.get(i).Name;
-                item.descrip = items.get(i).Descrip;
-                item.nota = "";
-                item.bandera = 1;
-                item.idlista = items.get(i).listid;
-                item.cant = 1;
+                item.codigo_menu=items.get(i).ID;
+                item.codigo_producto=idmenu;
+                item.opcion_lista=items.get(i).listid;
+                item.opcion_producto=items.get(i).prodid;
+                item.cant=cant;
+                item.idseleccion=items.get(i).cod;
+                item.orden=items.get(i).orden;
 
-                T_prodmenuObj.add(item);
+                T_comboObj.add(item);
             }
 
+            ins.init("T_VENTA");
 
-            /*
-            db.execSQL("DELETE FROM T_PRODMENU WHERE ID="+uid);
+            ins.add("PRODUCTO",gl.prodid);
+            ins.add("EMPRESA",""+idmenu);
+            ins.add("UM","UNI");
+            ins.add("CANT",cant);
+            ins.add("UMSTOCK","UNI");
+            ins.add("FACTOR",1);
+            ins.add("PRECIO",prec);
+            ins.add("IMP",impval);
+            ins.add("DES",desc);
+            ins.add("DESMON",descmon);
+            ins.add("TOTAL",tot);
+            ins.add("PRECIODOC",prec);
+            ins.add("PESO",0);
+            ins.add("VAL1",0);
+            ins.add("VAL2","");
+            ins.add("VAL3",0);
+            ins.add("VAL4","");
+            ins.add("PERCEP",0);
 
-            for (int i = 0; i <items.size(); i++) {
-
-                item=clsCls.new clsT_prodmenu();
-
-                item.id = uid;
-                item.idsess = 1;
-                item.iditem = items.get(i).ID;
-                item.codigo = items.get(i).Cod;
-                item.nombre = items.get(i).Name;
-                item.descrip = items.get(i).Descrip;
-                item.nota = "";
-                item.bandera = 1;
-                item.idlista = items.get(i).listid;
-                item.cant = 1;
-
-                T_prodmenuObj.add(item);
-            }
-
-             */
+            db.execSQL(ins.sql());
 
             db.setTransactionSuccessful();
             db.endTransaction();
+
             return true;
         } catch (Exception e) {
             db.endTransaction();
@@ -260,7 +267,7 @@ public class ProdMenu extends PBase {
         clsP_prodmenuopcObj opc=new clsP_prodmenuopcObj(this,Con,db);
         clsClasses.clsOpcion item;
         final AlertDialog Dialog;
-        String cod;
+        int cod;
 
         try {
 
@@ -268,8 +275,8 @@ public class ProdMenu extends PBase {
             opc.fill("WHERE CODIGO_OPCION="+idoption);
 
             for (int i = 0; i <opc.count; i++) {
-                cod=""+opc.items.get(i).codigo_producto;
-                lcode.add(cod);
+                cod=opc.items.get(i).codigo_producto;
+                lcode.add(""+cod);
                 lname.add(getProdName(cod));
             }
 
@@ -284,7 +291,7 @@ public class ProdMenu extends PBase {
             mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
                     try {
-                        items.get(selidx).Cod=lcode.get(item);
+                        items.get(selidx).cod=Integer.parseInt(lcode.get(item));
                         items.get(selidx).Name=lname.get(item);
                         items.get(selidx).bandera=1;
                         adapter.notifyDataSetChanged();
@@ -329,16 +336,25 @@ public class ProdMenu extends PBase {
 
         gl.retcant=-1;
         finish();
-     }
+    }
 
-     private String getProdName(String pid) {
-         try {
-             P_productoObj.fill("WHERE CODIGO_PRODUCTO="+pid);
-             return P_productoObj.first().desclarga;
-         } catch (Exception e) {
-             return "";
-         }
-     }
+    private String getProdName(int pid) {
+        try {
+            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+pid);
+            return P_productoObj.first().desclarga;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private String getProdUM(int pid) {
+        try {
+            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+pid);
+            return P_productoObj.first().unidbas;
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
     //endregion
 
@@ -403,6 +419,7 @@ public class ProdMenu extends PBase {
         super.onResume();
         try {
             P_productoObj.reconnect(Con,db);
+            T_comboObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

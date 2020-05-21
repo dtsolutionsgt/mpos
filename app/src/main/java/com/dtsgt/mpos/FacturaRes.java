@@ -647,7 +647,7 @@ public class FacturaRes extends PBase {
 
         gl.cliposflag=false;
 
-        if (idfel.isEmpty()) {
+        if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
             impressOrder();
         } else {
             browse=2;
@@ -829,7 +829,7 @@ public class FacturaRes extends PBase {
 			ins.add("RAZON_ANULACION","");
 
             ins.add("FEELSERIE"," ");
-            ins.add("FEELNUMERO",0);
+            ins.add("FEELNUMERO"," ");
             ins.add("FEELUUID"," ");
             ins.add("FEELFECHAPROCESADO",0);
             ins.add("FEELCONTINGENCIA"," ");
@@ -1382,7 +1382,7 @@ public class FacturaRes extends PBase {
                 ca1=DT.getInt(1);
                 ci=DT.getInt(2);
                 cf=DT.getInt(3);
-            }else  {
+            } else {
                 fcorel=0;fserie="";
                 mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
                 return;
@@ -2266,17 +2266,6 @@ public class FacturaRes extends PBase {
 		try {
 			super.onResume();
 
-            if (browse!=2) {
-                checkPromo();
-                checkPago();
-            }
-
-			if (browse==1) {
-				browse=0;
-				if (gl.promapl) updDesc();
-				return;
-			}
-
             if (browse==2) {
                 browse=0;
 
@@ -2288,6 +2277,17 @@ public class FacturaRes extends PBase {
                 impressOrder();
                 return;
             }
+
+            if (browse!=2) {
+                checkPromo();
+                checkPago();
+            }
+
+			if (browse==1) {
+				browse=0;
+				if (gl.promapl) updDesc();
+				return;
+			}
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

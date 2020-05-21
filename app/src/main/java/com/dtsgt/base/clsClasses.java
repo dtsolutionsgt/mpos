@@ -643,8 +643,8 @@ public class clsClasses {
 	}
 
     public class clsOpcion {
-        public int ID,bandera,listid,prodid;
-        public String Name,Cod,Descrip;
+        public int ID,bandera,listid,prodid,orden,cod;
+        public String Name,Descrip;
     }
 
     public class clsReport{

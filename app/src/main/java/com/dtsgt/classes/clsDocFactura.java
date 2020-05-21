@@ -33,12 +33,12 @@ public class clsDocFactura extends clsDocument {
 		int impres, cantimpres;
 				
 		super.loadHeadData(corel);
-		
-		nombre="FACTURA";
+
+        if (banderafel) nombre = "FACTURA ELECTRONICA"; nombre = "FACTURA";
 		
 		try {
 			sql=" SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,DESMONTO,IMPMONTO,EMPRESA,FECHAENTR,ADD1," +
-				" ADD2,IMPRES, ANULADO " +
+				" ADD2,IMPRES, ANULADO, FEELUUID, FEELFECHAPROCESADO " +
 				" FROM D_FACTURA WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);
 
@@ -69,6 +69,9 @@ public class clsDocFactura extends clsDocument {
 				impres=DT.getInt(12);
 				cantimpres=0;
 
+                feluuid=DT.getString(14);
+                feldcert=sfecha(DT.getLong(15));
+
 				if (anulado.equals("S")?true:false){
 					cantimpres = -1;
 				}else if (cantimpres == 0 && impres > 0){
@@ -97,7 +100,7 @@ public class clsDocFactura extends clsDocument {
 					nombre = "FACTURA PENDIENTE DE PAGO";
 				}else if (cantimpres==0){
 					if (facturaflag) {
-					    nombre = "FACTURA";
+					    if (banderafel) nombre = "FACTURA ELECTRONICA"; nombre = "FACTURA";
                     }else {
 					    nombre = "TICKET";
                     }
@@ -408,7 +411,7 @@ public class clsDocFactura extends clsDocument {
                 return footerBaseGUATicket();
             }
         } else {
-            return footerBase();
+            return footerBaseGUA();
         }
 	}
 
@@ -453,8 +456,21 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
-        rep.add("Sujeto a Pagos Trimestrales");
-        rep.add("");
+        if (!textofin.isEmpty()) {
+            String[] sp = textofin.split(",");
+            for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
+        }
+
+        if (banderafel) {
+            rep.add("");
+            rep.add("Número de autorización :");
+            rep.add(feluuid);
+            rep.add("Fecha de certificación :"+feldcert);
+            rep.add("");
+            rep.add(felcert);
+            rep.add(felnit);
+        }
+
 
         //#HS_20181212 Validación para factura pendiente de pago
         if(pendiente == 4){
@@ -466,7 +482,6 @@ public class clsDocFactura extends clsDocument {
 
         return super.buildFooter();
     }
-
 
     private boolean footerBase() {
 		double totimp,totperc;

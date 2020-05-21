@@ -3,8 +3,10 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -16,10 +18,15 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.fel.FelAnul;
+import com.dtsgt.fel.FelAnulacion;
+import com.dtsgt.fel.FelFactura;
+import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,9 +51,11 @@ public class Anulacion extends PBase {
 
 	private clsClasses.clsCFDV sitem;
 	private AppMethods app;
-	
+
+    private clsFELInFile fel;
+
 	private int tipo,depparc,fcorel;	
-	private String selid,itemid,fserie,fres;
+	private String selid,itemid,fserie,fres,felcorel,uuid;
 	private boolean modoapr=false;
 
 	// impresion nota credito
@@ -84,17 +93,17 @@ public class Anulacion extends PBase {
 		if (tipo==6) lblTipo.setText("Nota de crédito");
 
 		itemid="*";
+
+        fel=new clsFELInFile(this,this);
 				
 		printotrodoc = new Runnable() {
 		    public void run() {
-
 				askPrint();
 		    }
 		};
 		
 		printclose= new Runnable() {
-		    public void run() {
-			}
+		    public void run() {}
 		};
 		
 		prn=new printer(this,printclose,gl.validimp);
@@ -311,8 +320,13 @@ public class Anulacion extends PBase {
 			}
 			
 			if (tipo==3) {
-				if (checkFactDepos()) return;
-				anulFactura(itemid);
+				//if (checkFactDepos()) return;
+                String idfel=gl.peFEL;
+                if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
+                    anulFactura(itemid);
+                } else {
+                    anulacionFEL();return;
+                }
 			}
 			
 			if (tipo==4) anulRecarga(itemid);
@@ -326,6 +340,7 @@ public class Anulacion extends PBase {
 			
 			mu.msgbox("El documento ha sido anulado.");
 
+			/*
 			if(tipo==3) {
 
 				clsDocFactura fdoc;
@@ -342,8 +357,7 @@ public class Anulacion extends PBase {
 					prn.printask(printclose);
 				}
 
-
-			}else if (tipo==6){
+			} else if (tipo==6){
 
 				clsDocDevolucion fdev;
 
@@ -362,6 +376,8 @@ public class Anulacion extends PBase {
 
 			}
 
+			*/
+
 			sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
 			db.execSQL(sql);
 
@@ -375,6 +391,45 @@ public class Anulacion extends PBase {
 	}
 
 	//endregion
+
+    //region FEL
+
+    private void anulacionFEL() {
+        buildAnulXML();
+        fel.anulacion(uuid);
+    }
+
+    @Override
+    public void felCallBack()  {
+        if (!fel.errorflag) {
+
+            anulFactura(itemid);
+            sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
+            db.execSQL(sql);
+
+            listItems();
+        } else {
+            msgbox("Ocurrio error en anulacion FEL :\n\n"+ fel.error);
+        }
+    }
+
+    private void buildAnulXML() {
+        try {
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            clsClasses.clsD_factura fact=clsCls.new clsD_factura();
+
+            D_facturaObj.fill("WHERE Corel='"+itemid+"'");
+            fact=D_facturaObj.first();
+
+            uuid=fact.feeluuid;
+            uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
+            fel.anulfact(uuid,"1000000000K","CF", fact.fecha, fact.fecha);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
 
 	//region Documents
 	
@@ -434,7 +489,10 @@ public class Anulacion extends PBase {
 
 			anulBonif(itemid);
 
-			//ImpresionFactura();
+            sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
+            db.execSQL(sql);
+
+            listItems();
 
 			vAnulFactura=true;
 
@@ -1217,7 +1275,6 @@ public class Anulacion extends PBase {
 		}				
 	}
 
-
 	//endregion
 	
 	//region Aux
@@ -1284,5 +1341,7 @@ public class Anulacion extends PBase {
 	}
 
 	//endregion
+
+
 
 }

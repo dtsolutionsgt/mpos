@@ -362,6 +362,7 @@ public class Venta extends PBase {
                             startActivity(new Intent(Venta.this,VentaEdit.class));
                         } else {
                             gl.newmenuitem=false;
+                            gl.menuitemid=item.emp;
                             browse=7;
                             startActivity(new Intent(Venta.this,ProdMenu.class));
                         }
@@ -461,7 +462,7 @@ public class Venta extends PBase {
                         adapterpl.setSelectedIndex(position);
                     }
 
-                    prodid=item.Cod;
+                    prodid=item.Cod;gl.prodid=prodid;
                     gl.prodcod=item.icod;
                     gl.gstr=prodid;gl.prodmenu=gl.prodcod;
                     gl.pprodname=item.Name;
@@ -2236,11 +2237,15 @@ public class Venta extends PBase {
 		if (contrib.equalsIgnoreCase("C")) sinimp=true;
 		if (contrib.equalsIgnoreCase("F")) sinimp=false;
 		*/
+
         sinimp=false;
         gl.sinimp=sinimp;
 
         try {
             sql="DELETE FROM T_VENTA";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_COMBO";
             db.execSQL(sql);
 
             sql="DELETE FROM T_BARRA";
@@ -2581,7 +2586,7 @@ public class Venta extends PBase {
 
     private int pendienteFEL() {
          try {
-            sql="SELECT COREL FROM D_factura WHERE (FEELNUMERO=0) AND (ANULADO='N')";
+            sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO='N')";
             Cursor DT=Con.OpenDT(sql);
             return DT.getCount();
         } catch (Exception e) {
@@ -2650,7 +2655,9 @@ public class Venta extends PBase {
 
     @Override
     protected void onResume() {
-        try{
+
+        try {
+
             super.onResume();
 
             if (gl.forcedclose) {
@@ -2702,6 +2709,10 @@ public class Venta extends PBase {
             } else {
             }
 
+            if (browse==7) {
+                browse=0;processCantMenu();return;
+            }
+
             if (!gl.scancliente.isEmpty()) {
                 cargaCliente();
             }
@@ -2734,9 +2745,7 @@ public class Venta extends PBase {
                 browse=0;updateCant();return;
             }
 
-            if (browse==7) {
-                browse=0;processCantMenu();return;
-            }
+
 
             if (browse==8) {
                 browse=0;

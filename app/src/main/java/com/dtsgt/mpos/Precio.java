@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
 
 public class Precio {
 
-	public double costo,descmon,imp,impval,tot,precsin,totsin,precdoc,precioespecial;
+	public double costo,descmon,imp,impval,tot,precsin,totsin,precdoc,precioespecial,desc;
 	
 	private int active;
 	private android.database.sqlite.SQLiteDatabase db;
@@ -24,7 +24,7 @@ public class Precio {
 	private MiscUtils mu;
 	
 	private String prodid,um,umpeso,umventa;
-	private double cant,desc,prec;
+	private double cant,prec;
 	private int nivel,ndec,codprod;
 	private boolean porpeso;
 	
