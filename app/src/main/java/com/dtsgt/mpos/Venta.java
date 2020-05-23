@@ -2195,7 +2195,7 @@ public class Venta extends PBase {
 
         tiposcan="*";
 
-        lblTit.setText(gl.cajanom);
+        lblTit.setText(gl.tiendanom+" - "+gl.cajanom);
         lblAlm.setText(gl.tiendanom);
         lblPokl.setText(gl.vendnom);
 

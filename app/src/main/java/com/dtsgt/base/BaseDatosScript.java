@@ -747,6 +747,16 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [D_FACTURAS] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "ID INTEGER NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UMSTOCK TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[ID])"+
+                    ");";
+            database.execSQL(sql);
+
 
             sql="CREATE TABLE [D_BONIF] ("+
                     "[COREL] TEXT NOT NULL,"+

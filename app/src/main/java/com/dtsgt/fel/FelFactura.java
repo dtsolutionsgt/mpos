@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -63,6 +62,23 @@ public class FelFactura extends PBase {
         gl.feluuid="";
 
         fel=new clsFELInFile(this,this);
+/*
+        fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
+        //fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41";
+        fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
+        fel.fel_codigo="PEXPRESS";
+        fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
+        fel.fel_nit="96049340";
+*/
+
+        fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
+        fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
+        fel.fel_codigo ="0";
+        fel.fel_alias="DEMO_FEL";
+        fel.fel_nit="1000000000K";
+
+        fel.fel_correo="";
+        fel.fel_ident="abc124";
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
@@ -163,7 +179,7 @@ public class FelFactura extends PBase {
                 Runnable mrunner=new Runnable() {
                     @Override
                     public void run() {
-                        msgexit("Ocurrio error en FEL :\n\n"+ fel.error+"\\fecha factura :"+fel.fecha_factura);
+                        msgexit("Ocurrio error en FEL :\n\n"+ fel.error);
                     }
                 };
                 mtimer.postDelayed(mrunner,500);
@@ -185,7 +201,7 @@ public class FelFactura extends PBase {
             fel.fel_ident=fact.serie+fact.corelativo;
 
             fel.iniciar(fact.fecha);
-            fel.emisor("GEN","1","",fel.fel_nit,fel.fel_alias);
+            fel.emisor("GEN",fel.fel_codigo,"",fel.fel_nit,fel.fel_alias);
             fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
             fel.receptor(factf.nit,factf.nombre,factf.direccion);
 
@@ -207,7 +223,7 @@ public class FelFactura extends PBase {
 
         try {
             fel.iniciar(2005041102);
-            fel.emisor("GEN","1","","1000000000K","DEMO");
+            fel.emisor("GEN","1","",fel_nit,"DEMO");
             fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
             fel.receptor("CF","Consumidor Final","Ciudad");
 

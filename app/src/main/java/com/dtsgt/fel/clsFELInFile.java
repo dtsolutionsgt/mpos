@@ -37,6 +37,10 @@ public class clsFELInFile {
 
     // Parametrizacion FEL
 
+    public String llave_cert, llave_firma,fel_codigo,fel_alias,fel_ident,fel_nit,fel_correo;
+
+
+    /*
     public String fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
     public String fel_token ="5b174fb0e23645b65ef88277d654603d";
     public String fel_codigo="0";
@@ -44,7 +48,7 @@ public class clsFELInFile {
     public String fel_ident="abc124";
     public String fel_nit="1000000000K";
     public String fel_correo="";
-
+    */
 
     // Private declarations
 
@@ -94,7 +98,7 @@ public class clsFELInFile {
 
             jsonf = new JSONObject();
 
-            jsonf.put("llave", fel_token);
+            jsonf.put("llave", llave_firma);
             jsonf.put("archivo",s64);
             jsonf.put("codigo",fel_codigo);
             jsonf.put("alias",fel_alias);
@@ -248,7 +252,7 @@ public class clsFELInFile {
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jscert.getBytes().length));
             connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", fel_llavews);
+            connection.setRequestProperty("llave", llave_cert);
             connection.setRequestProperty("identificador",fel_ident);
 
             connection.setUseCaches (false);
@@ -332,7 +336,7 @@ public class clsFELInFile {
 
             jsonf = new JSONObject();
 
-            jsonf.put("llave", fel_token);
+            jsonf.put("llave", llave_firma);
             jsonf.put("archivo",s64);
             jsonf.put("codigo",fel_codigo);
             jsonf.put("alias",fel_alias);
@@ -448,7 +452,7 @@ public class clsFELInFile {
 
             jsona = new JSONObject();
 
-            jsona.put("nit_emisor","1000000000K");
+            jsona.put("nit_emisor",fel_nit);
             jsona.put("correo_copia","demo@demo.com.gt");
             jsona.put("xml_dte",firma);
 
@@ -480,7 +484,7 @@ public class clsFELInFile {
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));
             connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", fel_llavews);
+            connection.setRequestProperty("llave", llave_cert);
             connection.setRequestProperty("identificador",fel_ident);
 
             connection.setUseCaches (false);

@@ -3,10 +3,8 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -15,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
-import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_facturaObj;
@@ -23,9 +20,6 @@ import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsRepBuilder;
-import com.dtsgt.fel.FelAnul;
-import com.dtsgt.fel.FelAnulacion;
-import com.dtsgt.fel.FelFactura;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 
