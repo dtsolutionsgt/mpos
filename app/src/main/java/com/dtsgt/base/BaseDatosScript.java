@@ -537,7 +537,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
+            //#EJC20200524: CODIGO_CAJACIERRE Change to Text
             sql="CREATE TABLE [P_CAJACIERRE] ("+
                     "EMPRESA INTEGER NOT NULL,"+
                     "SUCURSAL INTEGER NOT NULL,"+
