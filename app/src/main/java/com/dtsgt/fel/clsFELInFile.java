@@ -10,14 +10,12 @@ import android.util.Base64;
 import android.view.Gravity;
 import android.widget.Toast;
 
-import com.dtsgt.mpos.MainActivity;
 import com.dtsgt.mpos.PBase;
 
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 public class clsFELInFile {
 
-    public String  error;
+    public String  error,fecha_factura;
     public Boolean errorflag;
     public int errlevel;
 
@@ -39,6 +37,10 @@ public class clsFELInFile {
 
     // Parametrizacion FEL
 
+    public String llave_cert, llave_firma,fel_codigo,fel_alias,fel_ident,fel_nit,fel_correo;
+
+
+    /*
     public String fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
     public String fel_token ="5b174fb0e23645b65ef88277d654603d";
     public String fel_codigo="0";
@@ -46,7 +48,7 @@ public class clsFELInFile {
     public String fel_ident="abc124";
     public String fel_nit="1000000000K";
     public String fel_correo="";
-
+    */
 
     // Private declarations
 
@@ -68,12 +70,6 @@ public class clsFELInFile {
     private String WSURL="https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml";
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";
-    //private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
-    //private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/dte/";
-
-    //private String fileName= Environment.getExternalStorageDirectory() + "/zzxmltest.xml";
-    //private String jsonName= Environment.getExternalStorageDirectory() + "/zzxmltest.txt";
-
 
     public clsFELInFile(Context context, PBase Parent) {
         cont=context;
@@ -102,19 +98,11 @@ public class clsFELInFile {
 
             jsonf = new JSONObject();
 
-            jsonf.put("llave", fel_token);
+            jsonf.put("llave", llave_firma);
             jsonf.put("archivo",s64);
             jsonf.put("codigo",fel_codigo);
             jsonf.put("alias",fel_alias);
             jsonf.put("es_anulacion","N");
-
-            /*
-            File file=new File(jsonName);
-            FileWriter fileWritter=new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw=new BufferedWriter(fileWritter);
-            bw.write(jsonf.toString());
-            bw.close();
-            */
 
             executeWSFirm();
         } catch (Exception e) {
@@ -171,13 +159,13 @@ public class clsFELInFile {
                 firma=jObj.getString("archivo");
             } else {
                 errorflag=true;
-                parent.felCallBack();
+                //parent.felCallBack();return;
             }
 
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         } finally {
-            if (connection!=null) connection.disconnect();
+            //if (connection!=null) connection.disconnect();
         }
     }
 
@@ -264,7 +252,7 @@ public class clsFELInFile {
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jscert.getBytes().length));
             connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", fel_llavews);
+            connection.setRequestProperty("llave", llave_cert);
             connection.setRequestProperty("identificador",fel_ident);
 
             connection.setUseCaches (false);
@@ -302,7 +290,7 @@ public class clsFELInFile {
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         } finally {
-            if (connection!=null) connection.disconnect();
+            //if (connection!=null) connection.disconnect();
         }
     }
 
@@ -348,7 +336,7 @@ public class clsFELInFile {
 
             jsonf = new JSONObject();
 
-            jsonf.put("llave", fel_token);
+            jsonf.put("llave", llave_firma);
             jsonf.put("archivo",s64);
             jsonf.put("codigo",fel_codigo);
             jsonf.put("alias",fel_alias);
@@ -409,13 +397,13 @@ public class clsFELInFile {
                 firma=jObj.getString("archivo");
             } else {
                 errorflag=true;
-                parent.felCallBack();
+                //parent.felCallBack();
             }
 
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         } finally {
-            if (connection!=null) connection.disconnect();
+            //if (connection!=null) connection.disconnect();
         }
     }
 
@@ -464,7 +452,7 @@ public class clsFELInFile {
 
             jsona = new JSONObject();
 
-            jsona.put("nit_emisor","76365204");
+            jsona.put("nit_emisor",fel_nit);
             jsona.put("correo_copia","demo@demo.com.gt");
             jsona.put("xml_dte",firma);
 
@@ -496,7 +484,7 @@ public class clsFELInFile {
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));
             connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", fel_llavews);
+            connection.setRequestProperty("llave", llave_cert);
             connection.setRequestProperty("identificador",fel_ident);
 
             connection.setUseCaches (false);
@@ -528,12 +516,13 @@ public class clsFELInFile {
                 errorflag=false;
             } else {
                 errorflag=true;
+                error=jObj.getString("mensaje_error");
             }
 
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         } finally {
-            if (connection!=null) connection.disconnect();
+            //if (connection!=null) connection.disconnect();
         }
     }
 
@@ -570,11 +559,11 @@ public class clsFELInFile {
 
     //endregion
 
-
     //region XML
 
     public void iniciar(long fecha_emision) {
         String sf=parseDate(fecha_emision);
+        fecha_factura=sf;
 
         errlevel=1;
 
@@ -721,7 +710,7 @@ public class clsFELInFile {
         String sa=parseDate(fechaanul);
 
         xmlanul="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" " +
-                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \"> " +
+                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0\">" +
                 "<dte:SAT>" +
                 "<dte:AnulacionDTE ID=\"DatosCertificados\">" +
                 "<dte:DatosGenerales FechaEmisionDocumentoAnular=\""+sf+"\" FechaHoraAnulacion=\""+sa+"\" ID=\"DatosAnulacion\" " +

@@ -62,6 +62,23 @@ public class FelFactura extends PBase {
         gl.feluuid="";
 
         fel=new clsFELInFile(this,this);
+/*
+        fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
+        //fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41";
+        fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
+        fel.fel_codigo="PEXPRESS";
+        fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
+        fel.fel_nit="96049340";
+*/
+
+        fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
+        fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
+        fel.fel_codigo ="0";
+        fel.fel_alias="DEMO_FEL";
+        fel.fel_nit="1000000000K";
+
+        fel.fel_correo="";
+        fel.fel_ident="abc124";
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
@@ -135,6 +152,9 @@ public class FelFactura extends PBase {
     @Override
     public void felCallBack()  {
         if (multiflag) {
+
+            //if (!fel.errorflag) marcaFactura();
+
             fidx++;
             //if (fidx<ftot-1) {
             if (fidx<10) {
@@ -143,20 +163,28 @@ public class FelFactura extends PBase {
             } else {
                 toast("Completo");
             }
-        } else {
-            callBackSingle();
-        }
-    }
 
-    private void callBackSingle() {
-        pbar.setVisibility(View.INVISIBLE);
-        if (!fel.errorflag) {
-            gl.feluuid=fel.fact_uuid;
         } else {
-            gl.feluuid="";
-            toastlong("Ocurrio error en FEL :\n\n"+ fel.error);
+            //pbar.setVisibility(View.INVISIBLE);
+
+            //if (!fel.errorflag) marcaFactura();
+
+            if (!fel.errorflag) {
+                gl.feluuid=fel.fact_uuid;
+                finish();
+            } else {
+                gl.feluuid="";
+
+                Handler mtimer = new Handler();
+                Runnable mrunner=new Runnable() {
+                    @Override
+                    public void run() {
+                        msgexit("Ocurrio error en FEL :\n\n"+ fel.error);
+                    }
+                };
+                mtimer.postDelayed(mrunner,500);
+            }
         }
-        finish();
     }
 
     private void buildFactXML() {
@@ -170,8 +198,10 @@ public class FelFactura extends PBase {
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
 
+            fel.fel_ident=fact.serie+fact.corelativo;
+
             fel.iniciar(fact.fecha);
-            fel.emisor("GEN","1","",fel.fel_nit,fel.fel_alias);
+            fel.emisor("GEN",fel.fel_codigo,"",fel.fel_nit,fel.fel_alias);
             fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
             fel.receptor(factf.nit,factf.nombre,factf.direccion);
 
@@ -189,12 +219,11 @@ public class FelFactura extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-
         /*
 
         try {
             fel.iniciar(2005041102);
-            fel.emisor("GEN","1","","1000000000K","DEMO");
+            fel.emisor("GEN","1","",fel_nit,"DEMO");
             fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
             fel.receptor("CF","Consumidor Final","Ciudad");
 
@@ -207,7 +236,24 @@ public class FelFactura extends PBase {
         }
 
          */
+    }
 
+    private void marcaFactura() {
+/*
+        try {
+            D_facturaObj.fill("WHERE Corel='"+corel+"'");
+            fact=D_facturaObj.first();
+
+            fact.feelserie=fel.fact_serie;
+            fact.feelnumero=""+fel.fact_numero;
+            fact.feeluuid=fel.fact_uuid;
+
+            D_facturaObj.update(fact);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+ */
     }
 
     //endregion
@@ -215,15 +261,24 @@ public class FelFactura extends PBase {
     //region Aux
 
     private void buildList() {
+        String cor;
         ftot=0;
 
         try {
-            D_facturaObj.fill("WHERE (FEELNUMERO=0) AND (ANULADO='N')");
+            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO='N')");
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {
-                facts.add(D_facturaObj.items.get(i).corel);
+                cor=D_facturaObj.items.get(i).corel;
+                if (felcorel.isEmpty()) {
+                    facts.add(cor);
+                } else {
+                    if (cor.equalsIgnoreCase(felcorel)) {
+                        facts.add(cor);
+                    }
+                }
             }
+
             ftot=facts.size();
         } catch (Exception e) {
             msgexit(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -302,6 +357,5 @@ public class FelFactura extends PBase {
     }
 
     //endregion
-
 
 }

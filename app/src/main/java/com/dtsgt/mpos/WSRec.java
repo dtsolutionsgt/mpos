@@ -631,7 +631,7 @@ public class WSRec extends PBase {
             var.empresa = item.EMPRESA;
             var.nombre = item.NOMBRE;
             var.col_imp = item.COL_IMP;
-            var.logo = item.LOGO;
+            var.logo = item.LOGO+"";
             var.razon_social = item.RAZON_SOCIAL + "";
             var.identificacion_tributaria = item.IDENTIFICACION_TRIBUTARIA + "";
             var.telefono = item.TELEFONO + "";
@@ -972,6 +972,8 @@ public class WSRec extends PBase {
 
     private void processLinea() {
 
+        String dirfamilia = rootdir + "/familia/";
+
         try {
 
             clsP_lineaObj handler = new clsP_lineaObj(this, Con, db);
@@ -1008,7 +1010,13 @@ public class WSRec extends PBase {
                     String img = var.imagen;
 
                     if (img != null) {
-                        String filePathImg = rootdir + var.codigo + ".jpg";
+
+                        if (i==0){
+                            File f = new File(dirfamilia);
+                            if(!f.isDirectory()) f.mkdir();
+                        }
+
+                        String filePathImg = dirfamilia + var.codigo + ".png";
                         File file = new File(filePathImg);
 
                         if (!file.exists()) {

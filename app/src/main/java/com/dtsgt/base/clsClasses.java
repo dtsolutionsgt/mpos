@@ -649,8 +649,8 @@ public class clsClasses {
 	}
 
     public class clsOpcion {
-        public int ID,bandera,listid,prodid;
-        public String Name,Cod,Descrip;
+        public int ID,bandera,listid,prodid,orden,cod;
+        public String Name,Descrip;
     }
 
     public class clsReport{
@@ -665,7 +665,17 @@ public class clsClasses {
 		public int inicial,fin,actual;
 	}
 
-	//endregion
+    public class clsT_combo {
+        public int  codigo_menu;
+        public int  codigo_producto;
+        public int  opcion_lista;
+        public int  opcion_producto;
+        public int  cant;
+        public int  idseleccion;
+        public int  orden;
+    }
+
+    //endregion
 
     public class clsView {
         public int  pk;

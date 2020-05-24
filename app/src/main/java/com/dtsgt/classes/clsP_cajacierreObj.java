@@ -115,8 +115,9 @@ public class clsP_cajacierreObj {
 
         //#CKFK 20200516 se cambio la llave compuesta por una llave única
         //upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
-        upd.Where("(CODIGO_CAJACIERRE'"+item.codigo_cajacierre+"')");
-        db.execSQL(upd.sql());
+        upd.Where("(CODIGO_CAJACIERRE='"+item.codigo_cajacierre+"')");
+
+         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
@@ -161,7 +162,7 @@ public class clsP_cajacierreObj {
             item.montofin=dt.getDouble(10);
             item.montodif=dt.getDouble(11);
             item.statcom=dt.getString(12);
-            item.codigo_cajacierre=dt.getString(12);
+            item.codigo_cajacierre=dt.getString(13);
 
             items.add(item);
 

@@ -116,6 +116,7 @@ public class clsP_lineaObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsP_linea item;
 

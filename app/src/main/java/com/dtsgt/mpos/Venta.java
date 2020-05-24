@@ -362,6 +362,7 @@ public class Venta extends PBase {
                             startActivity(new Intent(Venta.this,VentaEdit.class));
                         } else {
                             gl.newmenuitem=false;
+                            gl.menuitemid=item.emp;
                             browse=7;
                             startActivity(new Intent(Venta.this,ProdMenu.class));
                         }
@@ -461,7 +462,7 @@ public class Venta extends PBase {
                         adapterpl.setSelectedIndex(position);
                     }
 
-                    prodid=item.Cod;
+                    prodid=item.Cod;gl.prodid=prodid;
                     gl.prodcod=item.icod;
                     gl.gstr=prodid;gl.prodmenu=gl.prodcod;
                     gl.pprodname=item.Name;
@@ -863,16 +864,18 @@ public class Venta extends PBase {
         gl.limcant=getDisp(prodid);
         processCant(true);
         listItems();
-
     }
 
     private void processCantMenu() {
+        listItems();
+        /*
         gl.dval=gl.retcant;
         if (menuitemadd) {
            processCant(false);
         } else {
            processCant(true);
         }
+        */
     }
 
     private void updDesc(){
@@ -1636,16 +1639,18 @@ public class Venta extends PBase {
     //region Menu
 
     private void listFamily() {
+
         clsP_lineaObj P_lineaObj=new clsP_lineaObj(this,Con,db);
         clsClasses.clsMenu item;
 
         try {
+
             fitems.clear();
             P_lineaObj.fill("WHERE Activo=1");
 
             for (int i = 0; i <P_lineaObj.count; i++) {
                 item=clsCls.new clsMenu();
-                item.Cod=P_lineaObj.items.get(i).codigo_linea+"";
+                item.Cod=P_lineaObj.items.get(i).codigo+"";
                 item.Name=P_lineaObj.items.get(i).nombre;
                 fitems.add(item);
             }
@@ -2190,7 +2195,7 @@ public class Venta extends PBase {
 
         tiposcan="*";
 
-        lblTit.setText(gl.cajanom);
+        lblTit.setText(gl.tiendanom+" - "+gl.cajanom);
         lblAlm.setText(gl.tiendanom);
         lblPokl.setText(gl.vendnom);
 
@@ -2232,11 +2237,15 @@ public class Venta extends PBase {
 		if (contrib.equalsIgnoreCase("C")) sinimp=true;
 		if (contrib.equalsIgnoreCase("F")) sinimp=false;
 		*/
+
         sinimp=false;
         gl.sinimp=sinimp;
 
         try {
             sql="DELETE FROM T_VENTA";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_COMBO";
             db.execSQL(sql);
 
             sql="DELETE FROM T_BARRA";
@@ -2539,7 +2548,7 @@ public class Venta extends PBase {
             sql="SELECT SUM(D_FACTURAP.VALOR) FROM D_FACTURAP  "+
                "INNER JOIN D_FACTURA ON D_FACTURAP.COREL=D_FACTURA.COREL "+
                "WHERE (D_FACTURA.FECHA>="+ff+") AND (D_FACTURA.ANULADO='N') " +
-               "AND (D_FACTURA.CLIENTE='"+gl.cliente+"') AND (D_FACTURAP.TIPO='C')";
+               "AND (D_FACTURA.CLIENTE='"+gl.codigo_cliente+"') AND (D_FACTURAP.TIPO='C')";
             dt = Con.OpenDT(sql);
 
             try {
@@ -2577,7 +2586,7 @@ public class Venta extends PBase {
 
     private int pendienteFEL() {
          try {
-            sql="SELECT COREL FROM D_factura WHERE (FEELNUMERO=0) AND (ANULADO='N')";
+            sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO='N')";
             Cursor DT=Con.OpenDT(sql);
             return DT.getCount();
         } catch (Exception e) {
@@ -2646,7 +2655,9 @@ public class Venta extends PBase {
 
     @Override
     protected void onResume() {
-        try{
+
+        try {
+
             super.onResume();
 
             if (gl.forcedclose) {
@@ -2698,7 +2709,13 @@ public class Venta extends PBase {
             } else {
             }
 
-            if (!gl.scancliente.isEmpty()) cargaCliente();
+            if (browse==7) {
+                browse=0;processCantMenu();return;
+            }
+
+            if (!gl.scancliente.isEmpty()) {
+                cargaCliente();
+            }
 
             if (browse==-1)   {
                 browse=0;finish();return;
@@ -2728,9 +2745,7 @@ public class Venta extends PBase {
                 browse=0;updateCant();return;
             }
 
-            if (browse==7) {
-                browse=0;processCantMenu();return;
-            }
+
 
             if (browse==8) {
                 browse=0;
