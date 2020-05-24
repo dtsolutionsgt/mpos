@@ -30,6 +30,7 @@ import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
+import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_prodprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_proveedorObj;
@@ -72,10 +73,8 @@ import com.dtsgt.classesws.clsBeP_PRODMENU;
 import com.dtsgt.classesws.clsBeP_PRODMENUList;
 import com.dtsgt.classesws.clsBeP_PRODMENUOPC;
 import com.dtsgt.classesws.clsBeP_PRODMENUOPCList;
-import com.dtsgt.classesws.clsBeP_PRODOPC;
-import com.dtsgt.classesws.clsBeP_PRODOPCLIST;
-import com.dtsgt.classesws.clsBeP_PRODOPCLISTList;
-import com.dtsgt.classesws.clsBeP_PRODOPCListx;
+import com.dtsgt.classesws.clsBeP_PRODMENUOPC_DET;
+import com.dtsgt.classesws.clsBeP_PRODMENUOPC_DETList;
 import com.dtsgt.classesws.clsBeP_PRODPRECIO;
 import com.dtsgt.classesws.clsBeP_PRODPRECIOList;
 import com.dtsgt.classesws.clsBeP_PRODUCTO;
@@ -246,6 +245,9 @@ public class WSRec extends PBase {
                     case 27:
                         callMethod("GetVENDEDORES", "EMPRESA", gl.emp);
                         break;
+                    case 28:
+                        callMethod("GetP_PRODMENUOPC_DET", "EMPRESA", gl.emp);
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();
@@ -387,6 +389,14 @@ public class WSRec extends PBase {
                     break;
                 case 18:
                     processOpciones();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
+                    execws(28);
+                    break;
+                case 28:
+                    processOpcionesdet();
                     if (ws.errorflag) {
                         processComplete();
                         break;
@@ -549,6 +559,9 @@ public class WSRec extends PBase {
                 break;
             case 27:
                 plabel = "Cargando usuarios";
+                break;
+            case 28:
+                plabel = "Cargando opciones det";
                 break;
         }
 
@@ -1235,7 +1248,9 @@ public class WSRec extends PBase {
     }
 
     private void processCombo() {
+
         try {
+
             clsP_prodcomboObj handler = new clsP_prodcomboObj(this, Con, db);
             clsBeP_PRODCOMBOList items = new clsBeP_PRODCOMBOList();
             clsBeP_PRODCOMBO item = new clsBeP_PRODCOMBO();
@@ -1272,7 +1287,9 @@ public class WSRec extends PBase {
     }
 
     private void processProdMenu() {
+
         try {
+
             clsP_prodmenuObj handler = new clsP_prodmenuObj(this, Con, db);
             clsBeP_PRODMENUList items = new clsBeP_PRODMENUList();
             clsBeP_PRODMENU item = new clsBeP_PRODMENU();
@@ -1291,18 +1308,12 @@ public class WSRec extends PBase {
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodmenu();
-
                 var.codigo_menu=item.CODIGO_MENU;
                 var.empresa=item.EMPRESA;
                 var.codigo_producto=item.CODIGO_PRODUCTO;
-                var.opcion_lista=item.OPCION_LISTA;
-                var.opcion_producto=item.OPCION_PRODUCTO;
-                var.orden=item.ORDEN;
                 var.nombre=item.NOMBRE;
                 var.nota=item.NOTA+"";
-
                 script.add(handler.addItemSql(var));
             }
 
@@ -1313,7 +1324,9 @@ public class WSRec extends PBase {
     }
 
     private void processOpciones() {
+
         try {
+
             clsP_prodmenuopcObj handler = new clsP_prodmenuopcObj(this, Con, db);
             clsBeP_PRODMENUOPCList items = new clsBeP_PRODMENUOPCList();
             clsBeP_PRODMENUOPC item = new clsBeP_PRODMENUOPC();
@@ -1332,15 +1345,47 @@ public class WSRec extends PBase {
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodmenuopc();
-
                 var.codigo_menu_opcion=item.CODIGO_MENU_OPCION;
-                var.codigo_opcion=item.CODIGO_OPCION;
-                var.empresa=item.EMPRESA;
-                var.codigo_producto=item.CODIGO_PRODUCTO;
-                var.codigo_receta=item.CODIGO_RECETA;
+                var.codigo_menu =item.CODIGO_MENU;
+                var.nombre=item.NOMBRE;
+                var.cant =item.CANT;
+                var.orden =item.ORDEN;
+                script.add(handler.addItemSql(var));
+            }
 
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processOpcionesdet() {
+
+        try {
+
+            clsP_prodmenuopcdetObj handler = new clsP_prodmenuopcdetObj(this, Con, db);
+            clsBeP_PRODMENUOPC_DETList items = new clsBeP_PRODMENUOPC_DETList();
+            clsBeP_PRODMENUOPC_DET item = new clsBeP_PRODMENUOPC_DET();
+            clsClasses.clsp_prodmenuopc_det var;
+
+            script.add("DELETE FROM P_PRODMENUOPC_DET");
+
+            items = xobj.getresult(clsBeP_PRODMENUOPC_DETList.class, "GetP_PRODMENUOPC_DET");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+                var = clsCls.new clsp_prodmenuopc_det();
+                var.codigo_menuopc_det=item.CODIGO_MENUOPC_DET;
+                var.codigo_menu_opcion=item.CODIGO_MENU_OPCION;
+                var.codigo_producto=item.CODIGO_PRODUCTO;
                 script.add(handler.addItemSql(var));
             }
 
@@ -1351,7 +1396,9 @@ public class WSRec extends PBase {
     }
 
     private void processPrecios() {
+
         try {
+
             clsP_prodprecioObj handler = new clsP_prodprecioObj(this, Con, db);
             clsBeP_PRODPRECIOList items = new clsBeP_PRODPRECIOList();
             clsBeP_PRODPRECIO item = new clsBeP_PRODPRECIO();
@@ -1376,17 +1423,15 @@ public class WSRec extends PBase {
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
-
                 var = clsCls.new clsP_prodprecio();
-
                 var.codigo_precio=item.CODIGO_PRECIO;
                 var.codigo_producto = item.CODIGO_PRODUCTO;
                 var.empresa=item.EMPRESA;
                 var.nivel = item.NIVEL;
                 var.precio = item.PRECIO;
                 var.unidadmedida = item.UNIDADMEDIDA;
-
                 script.add(handler.addItemSql(var));
+
             }
 
         } catch (Exception e) {
@@ -1396,7 +1441,9 @@ public class WSRec extends PBase {
     }
 
     private void processProveedores() {
+
         try {
+
             clsP_proveedorObj handler = new clsP_proveedorObj(this, Con, db);
             clsBeP_PROVEEDORList items = new clsBeP_PROVEEDORList();
             clsBeP_PROVEEDOR item = new clsBeP_PROVEEDOR();
@@ -1436,7 +1483,9 @@ public class WSRec extends PBase {
     }
 
     private void processProductos() {
+
         try {
+
             clsP_productoObj handler = new clsP_productoObj(this, Con, db);
             clsBeP_PRODUCTOList items = new clsBeP_PRODUCTOList();
             clsBeP_PRODUCTO item = new clsBeP_PRODUCTO();
@@ -1469,7 +1518,6 @@ public class WSRec extends PBase {
                 var.empresa = item.EMPRESA;
                 var.marca = item.MARCA;
                 var.codbarra = item.CODBARRA + "";
-                ;
                 var.desccorta = item.DESCCORTA;
                 var.desclarga = item.DESCLARGA;
                 var.costo = item.COSTO;
@@ -1522,6 +1570,7 @@ public class WSRec extends PBase {
                     String img = var.imagen;
 
                     if (img != null) {
+
                         String filePathImg = rootdir + var.codigo + ".jpg";
                         File file = new File(filePathImg);
 
@@ -1552,7 +1601,9 @@ public class WSRec extends PBase {
     }
 
     private void processRutas() {
+
         try {
+
             clsP_rutaObj handler = new clsP_rutaObj(this, Con, db);
             clsBeP_RUTAList items = new clsBeP_RUTAList();
             clsBeP_RUTA item = new clsBeP_RUTA();
@@ -1587,7 +1638,9 @@ public class WSRec extends PBase {
     }
 
     private void processSucursales() {
+
         try {
+
             clsP_sucursalObj handler = new clsP_sucursalObj(this, Con, db);
             clsBeP_SUCURSALList items = new clsBeP_SUCURSALList();
             clsBeP_SUCURSAL item = new clsBeP_SUCURSAL();
@@ -1642,7 +1695,9 @@ public class WSRec extends PBase {
     }
 
     private void processUsrGrupos() {
+
         try {
+
             clsP_usgrupoObj handler = new clsP_usgrupoObj(this, Con, db);
             clsBeP_USGRUPOList items = new clsBeP_USGRUPOList();
             clsBeP_USGRUPO item = new clsBeP_USGRUPO();
@@ -1675,7 +1730,9 @@ public class WSRec extends PBase {
     }
 
     private void processUsrGrOpc() {
+
         try {
+
             clsP_usgrupoopcObj handler = new clsP_usgrupoopcObj(this, Con, db);
             clsBeP_USGRUPOOPCList items = new clsBeP_USGRUPOOPCList();
             clsBeP_USGRUPOOPC item = new clsBeP_USGRUPOOPC();
@@ -1708,7 +1765,9 @@ public class WSRec extends PBase {
     }
 
     private void processGrOpciones() {
+
         try {
+
             clsP_usopcionObj handler = new clsP_usopcionObj(this, Con, db);
             clsBeP_USOPCIONList items = new clsBeP_USOPCIONList();
             clsBeP_USOPCION item = new clsBeP_USOPCION();
@@ -1740,7 +1799,9 @@ public class WSRec extends PBase {
     }
 
     private void processVendedores() {
+
         try {
+
             clsVendedoresObj handler = new clsVendedoresObj(this, Con, db);
             clsBeVENDEDORESList items = new clsBeVENDEDORESList();
             clsBeVENDEDORES item = new clsBeVENDEDORES();
@@ -1779,6 +1840,7 @@ public class WSRec extends PBase {
     }
 
     private void getURL() {
+
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
 
         try {
@@ -1817,19 +1879,16 @@ public class WSRec extends PBase {
     }
 
     private void msgboxwait(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Recepción");
         dialog.setMessage(msg);
-
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
         });
-
         dialog.show();
-
     }
 
     @Override
@@ -1853,5 +1912,4 @@ public class WSRec extends PBase {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
-
 }

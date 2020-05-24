@@ -362,10 +362,16 @@ public class clsClasses {
 
     public class clsP_prodmenuopc {
         public int  codigo_menu_opcion;
-        public int  codigo_opcion;
-        public int  empresa;
-        public int  codigo_producto;
-        public int  codigo_receta;
+        public int codigo_menu;
+        public double cant;
+        public int orden;
+        public String nombre;
+    }
+
+    public class clsp_prodmenuopc_det {
+        public int codigo_menuopc_det;
+        public int codigo_menu_opcion;
+        public int codigo_producto;
     }
 
     public class clsP_producto {

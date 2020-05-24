@@ -1,8 +1,8 @@
 package com.dtsgt.classesws;
 
-import org.simpleframework.xml.ElementList;
+        import org.simpleframework.xml.ElementList;
 
-import java.util.List;
+        import java.util.List;
 
 public class clsBeP_PRODMENUOPCList {
     @ElementList(inline=true,required=false)

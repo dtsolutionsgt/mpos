@@ -488,30 +488,36 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
 
+            //'#EJC20200523-COMBOMENUFIX'
             sql="CREATE TABLE [P_PRODMENU] ("+
                     "CODIGO_MENU INTEGER NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
-                    "OPCION_LISTA INTEGER NOT NULL,"+
-                    "OPCION_PRODUCTO INTEGER NOT NULL,"+
-                    "ORDEN INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "NOTA TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_MENU])"+
                     ");";
             database.execSQL(sql);
 
-
+            //'#EJC20200523-COMBOMENUFIX'
             sql="CREATE TABLE [P_PRODMENUOPC] ("+
                     "CODIGO_MENU_OPCION INTEGER NOT NULL,"+
-                    "CODIGO_OPCION INTEGER NOT NULL,"+
-                    "EMPRESA INTEGER NOT NULL,"+
-                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
-                    "CODIGO_RECETA INTEGER NOT NULL,"+
+                    "CODIGO_MENU INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_MENU_OPCION])"+
                     ");";
             database.execSQL(sql);
 
+            //'#EJC20200523-COMBOMENUFIX'
+            sql="CREATE TABLE [P_PRODMENUOPC_DET] ("+
+                    "CODIGO_MENUOPC_DET INTEGER NOT NULL,"+
+                    "CODIGO_MENU_OPCION INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MENUOPC_DET])"+
+                    ");";
+            database.execSQL(sql);
 
             sql="CREATE TABLE [P_PROVEEDOR] ("+
                     "CODIGO_PROVEEDOR INTEGER NOT NULL,"+

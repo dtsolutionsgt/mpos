@@ -242,7 +242,7 @@ public class ProdMenu extends PBase {
             opc.fill("WHERE CODIGO_OPCION="+idoption);
 
             for (int i = 0; i <opc.count; i++) {
-                cod=""+opc.items.get(i).codigo_producto;
+                cod=""+opc.items.get(i).orden;
                 lcode.add(cod);
                 lname.add(getProdName(cod));
             }

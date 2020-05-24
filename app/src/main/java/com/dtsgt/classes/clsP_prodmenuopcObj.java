@@ -18,7 +18,7 @@ public class clsP_prodmenuopcObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM P_prodmenuopc";
+    private String sel="SELECT * FROM p_prodmenuopc";
     private String sql;
     public ArrayList<clsClasses.clsP_prodmenuopc> items= new ArrayList<clsClasses.clsP_prodmenuopc>();
 
@@ -68,39 +68,26 @@ public class clsP_prodmenuopcObj {
         return items.get(0);
     }
 
-
-    // Private
-
     private void addItem(clsClasses.clsP_prodmenuopc item) {
 
-        ins.init("P_prodmenuopc");
-
+        ins.init("P_PRODMENUOPC");
         ins.add("CODIGO_MENU_OPCION",item.codigo_menu_opcion);
-        ins.add("CODIGO_OPCION",item.codigo_opcion);
-        ins.add("EMPRESA",item.empresa);
-        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
-        ins.add("CODIGO_RECETA",item.codigo_receta);
-
-
+        ins.add("CODIGO_MENU",item.codigo_menu);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("CANT",item.cant);
+        ins.add("ORDEN",item.orden);
         db.execSQL(ins.sql());
-
     }
 
     private void updateItem(clsClasses.clsP_prodmenuopc item) {
 
         upd.init("P_prodmenuopc");
-
-        upd.add("CODIGO_OPCION",item.codigo_opcion);
-        upd.add("EMPRESA",item.empresa);
-        upd.add("CODIGO_PRODUCTO",item.codigo_producto);
-        upd.add("CODIGO_RECETA",item.codigo_receta);
-
+        upd.add("CODIGO_OPCION",item.codigo_menu);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("EMPRESA",item.cant);
+        upd.add("CODIGO_PRODUCTO",item.orden);
         upd.Where("(CODIGO_MENU_OPCION="+item.codigo_menu_opcion+")");
-
         db.execSQL(upd.sql());
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
-
     }
 
     private void deleteItem(clsClasses.clsP_prodmenuopc item) {
@@ -114,6 +101,7 @@ public class clsP_prodmenuopcObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsP_prodmenuopc item;
 
@@ -121,20 +109,18 @@ public class clsP_prodmenuopcObj {
 
         dt=Con.OpenDT(sq);
         count =dt.getCount();
+
         if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_prodmenuopc();
-
             item.codigo_menu_opcion=dt.getInt(0);
-            item.codigo_opcion=dt.getInt(1);
-            item.empresa=dt.getInt(2);
-            item.codigo_producto=dt.getInt(3);
-            item.codigo_receta=dt.getInt(4);
-
+            item.codigo_menu =dt.getInt(1);
+            item.nombre =dt.getString(2);
+            item.cant =dt.getInt(3);
+            item.orden =dt.getInt(4);
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -143,6 +129,7 @@ public class clsP_prodmenuopcObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -161,34 +148,24 @@ public class clsP_prodmenuopcObj {
 
     public String addItemSql(clsClasses.clsP_prodmenuopc item) {
 
-        ins.init("P_prodmenuopc");
-
+        ins.init("P_PRODMENUOPC");
         ins.add("CODIGO_MENU_OPCION",item.codigo_menu_opcion);
-        ins.add("CODIGO_OPCION",item.codigo_opcion);
-        ins.add("EMPRESA",item.empresa);
-        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
-        ins.add("CODIGO_RECETA",item.codigo_receta);
-
+        ins.add("CODIGO_MENU",item.codigo_menu);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("CANT",item.cant);
+        ins.add("ORDEN",item.orden);
         return ins.sql();
 
     }
 
     public String updateItemSql(clsClasses.clsP_prodmenuopc item) {
 
-        upd.init("P_prodmenuopc");
-
-        upd.add("CODIGO_OPCION",item.codigo_opcion);
-        upd.add("EMPRESA",item.empresa);
-        upd.add("CODIGO_PRODUCTO",item.codigo_producto);
-        upd.add("CODIGO_RECETA",item.codigo_receta);
-
+        upd.init("P_PRODMENUOPC");
+        upd.add("CODIGO_OPCION",item.codigo_menu);
+        upd.add("CANT",item.cant);
+        upd.add("ORDEN",item.orden);
+        upd.add("NOMBRE",item.nombre);
         upd.Where("(CODIGO_MENU_OPCION="+item.codigo_menu_opcion+")");
-
         return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
-
     }
-
 }
-
