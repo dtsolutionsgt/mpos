@@ -558,7 +558,7 @@ public class BaseDatosScript {
                     "MONTOFIN REAL NOT NULL,"+
                     "MONTODIF REAL NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "CODIGO_CAJACIERRE INTEGER NOT NULL,"+
+                    "CODIGO_CAJACIERRE TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_CAJACIERRE])"+
                     ");";
             database.execSQL(sql);

@@ -79,8 +79,7 @@ public class clsP_cajacierreObj {
 
     private void addItem(clsClasses.clsP_cajacierre item) {
 
-        ins.init("P_cajacierre");
-
+        ins.init("P_CAJACIERRE");
         ins.add("EMPRESA",item.empresa);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("RUTA",item.ruta);
