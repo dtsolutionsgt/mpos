@@ -104,7 +104,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [P_BANCO] ("+
                     "[CODIGO] TEXT NOT NULL,"+
                     "[TIPO] TEXT NOT NULL,"+
@@ -169,9 +168,17 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            //#CKFK 202005201 Esta tabla se había quitado del Script pero es necesaria para hacer los pagos de caja
+            sql="CREATE TABLE [P_CONCEPTOPAGO] ("+
+                    "[CODIGO] INTEGER NOT NULL,"+
+                    "[NOMBRE] TEXT NOT NULL,"+
+                    "[ACTIVO] INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            database.execSQL(sql);
+
             sql="CREATE TABLE [P_LINEA] ("+
                     "CODIGO TEXT NOT NULL,"+
-                    "MARCA TEXT NOT NULL,"+
                     "MARCA TEXT NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
@@ -180,7 +187,6 @@ public class BaseDatosScript {
                     "PRIMARY KEY ([CODIGO_LINEA])"+
                     ");";
             database.execSQL(sql);
-
 
             sql="CREATE INDEX P_LINEA_idx1 ON P_LINEA(NOMBRE)";
             database.execSQL(sql);
@@ -213,11 +219,9 @@ public class BaseDatosScript {
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_PRODPRECIO
             // por un código único "PRIMARY KEY ([RESOL],[SERIE],[CORELINI])"+
-
             sql="CREATE UNIQUE INDEX IX_P_PRODPRECIO "+
                     " on P_PRODPRECIO ([CODIGO_PRODUCTO],[EMPRESA],[UNIDADMEDIDA],[NIVEL])";
             database.execSQL(sql);
-
 
             sql="CREATE TABLE [P_PRODUCTO] ("+
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
@@ -282,7 +286,6 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_PRODUCTO_idx3 ON P_PRODUCTO(DESCCORTA)";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [P_DESCUENTO] ("+
                     "[CLIENTE] TEXT NOT NULL,"+
                     "[CTIPO] INTEGER NOT NULL,"+
@@ -314,7 +317,6 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_DESCUENTO_idx4 ON P_DESCUENTO(FECHAFIN)";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [P_SUCURSAL] ("+
                     "CODIGO_SUCURSAL INTEGER PRIMARY KEY,"+
                     "CODIGO TEXT NOT NULL,"+
@@ -336,7 +338,6 @@ public class BaseDatosScript {
                     "CODIGO_MUNICIPIO INTEGER"+
                     ");";
             database.execSQL(sql);
-
 
             sql="CREATE TABLE [P_STOCK] ("+
                     "[CODIGO] TEXT NOT NULL,"+
@@ -401,7 +402,6 @@ public class BaseDatosScript {
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_COREL
             // por un código único "PRIMARY KEY ([RESOL],[SERIE],[CORELINI])"+
-
             sql="CREATE UNIQUE INDEX IX_P_COREL "+
                 " on P_COREL ([RESOL],[SERIE],[CORELINI])";
             database.execSQL(sql);
@@ -421,7 +421,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [P_ENCABEZADO_REPORTESHH] ("+
                     "[CODIGO] INTEGER NOT NULL,"+
                     "[TEXTO] TEXT NOT NULL,"+
@@ -432,7 +431,6 @@ public class BaseDatosScript {
 
             sql="CREATE INDEX P_ENCABEZADO_REPORTESHH_idx1 ON P_ENCABEZADO_REPORTESHH(SUCURSAL)";
             database.execSQL(sql);
-
 
             sql="CREATE TABLE [P_BONIF] ("+
                     "[CODDESC] INTEGER NOT NULL,"+
@@ -472,11 +470,9 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
             //#CKFK 20200517 Cambié la llave compuesta por una llave simple y creé un indice unico
-
             sql="CREATE UNIQUE INDEX IX_P_FACTORCONV "+
                     " on P_FACTORCONV ([PRODUCTO],[UNIDADSUPERIOR],[UNIDADMINIMA])";
             database.execSQL(sql);
-
 
             sql="CREATE TABLE [P_MONEDA] ("+
                     "CODIGO INTEGER NOT NULL,"+
@@ -501,7 +497,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [P_PRODMENUOPC] ("+
                     "CODIGO_MENU_OPCION INTEGER NOT NULL,"+
                     "CODIGO_OPCION INTEGER NOT NULL,"+
@@ -511,7 +506,6 @@ public class BaseDatosScript {
                     "PRIMARY KEY ([CODIGO_MENU_OPCION])"+
                     ");";
             database.execSQL(sql);
-
 
             sql="CREATE TABLE [P_PROVEEDOR] ("+
                     "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
@@ -562,7 +556,6 @@ public class BaseDatosScript {
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJACIERRE
             // por un correlativo único "PRIMARY KEY ([EMRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])"+
-
             sql="CREATE TABLE [P_CAJAPAGOS] ("+
                     "EMPRESA INTEGER NOT NULL,"+
                     "SUCURSAL INTEGER NOT NULL,"+
@@ -586,7 +579,6 @@ public class BaseDatosScript {
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJAPAGOS
             // por un correlativo único "PRIMARY KEY ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[ITEM])"+
-
             sql="CREATE UNIQUE INDEX IX_P_CAJAPAGOS "+
                     " on P_CAJAPAGOS ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[ITEM])";
             database.execSQL(sql);
@@ -610,7 +602,6 @@ public class BaseDatosScript {
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJAREPORTE
             // por un correlativo único "PRIMARY KEY ([EMRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])"+
-
             sql="CREATE TABLE [FPRINT] ("+
                     "EMPRESA TEXT NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
@@ -744,16 +735,6 @@ public class BaseDatosScript {
                     "[NIT] TEXT NOT NULL,"+
                     "[DIRECCION] TEXT NOT NULL,"+
                     "PRIMARY KEY ([COREL])"+
-                    ");";
-            database.execSQL(sql);
-
-            sql="CREATE TABLE [D_FACTURAS] ("+
-                    "COREL TEXT NOT NULL,"+
-                    "ID INTEGER NOT NULL,"+
-                    "PRODUCTO INTEGER NOT NULL,"+
-                    "CANT REAL NOT NULL,"+
-                    "UMSTOCK TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[ID])"+
                     ");";
             database.execSQL(sql);
 
@@ -1619,6 +1600,8 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','S')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','')");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (107,'Cierre diario','S')");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (108,'Días anulación permitida','3')");
 
         db.execSQL("INSERT INTO P_usgrupo VALUES (1,'Cajero','S')");
         db.execSQL("INSERT INTO P_usgrupo VALUES (2,'Supervisor','S')");
@@ -1676,6 +1659,10 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_usgrupoopc VALUES ('3',12)");
         db.execSQL("INSERT INTO P_usgrupoopc VALUES ('3',13)");
 
+        db.execSQL("INSERT INTO P_CONCEPTOPAGO VALUES(1,'SALVAVIDAS',1)");
+        db.execSQL("INSERT INTO P_CONCEPTOPAGO VALUES(2,'ELECTRICIDAD',1)");
+        db.execSQL("INSERT INTO P_CONCEPTOPAGO VALUES(3,'AGUA',1)");
+        db.execSQL("INSERT INTO P_CONCEPTOPAGO VALUES(4,'CAJA CHICA',1)");
     }
 	
 	private void msgbox(String msg) {

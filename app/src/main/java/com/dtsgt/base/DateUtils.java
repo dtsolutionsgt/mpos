@@ -310,7 +310,42 @@ public class DateUtils {
 
 		return c;
 	}
-	
+
+	public long cfechaRep(int year,int month, int day, boolean inicial) {
+		long c;
+		String d,mes,dia,ano;
+		int siglo;
+
+		if(year<2000){
+			siglo = 0;
+		}else {
+			siglo = 2000;
+		}
+
+		year = year - siglo;
+		ano = Integer.toString(year);
+		mes = Integer.toString(month);
+		dia = Integer.toString(day);
+
+		if (dia.length()<2) {
+			dia = "0" + day;
+		}
+
+		if (mes.length()<2) {
+			mes = "0" + month;
+		}
+
+		if (inicial){
+			d= ano + mes + dia + "0000";
+		}else{
+			d= ano + mes + dia + "2359";
+		}
+
+		c=Long.parseLong(d);
+
+		return c;
+	}
+
 	public long parsedate(int date,int hour,int min) {
 		long f;
 		f=date+100*hour+min;
@@ -438,6 +473,30 @@ public class DateUtils {
 		//#HS_20181120_1725 Campo de fecha sin hora.
 		f=cfechaSinHora(cyear,cmonth,cday);
 		fecha=f*10000;
+
+		return fecha;
+	}
+
+	public long getFechaActualReport(boolean inicial){
+		long f,fecha;
+		int cyear,cmonth,cday,ch,cm;
+
+		final Calendar c = Calendar.getInstance();
+		cyear = c.get(Calendar.YEAR);
+		cmonth = c.get(Calendar.MONTH)+1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+
+		//#HS_20181120_1725 Campo de fecha sin hora.
+		f=cfechaSinHora(cyear,cmonth,cday);
+
+		if (inicial){
+			fecha=f*10000;
+		}else{
+			String sFecha;
+			sFecha=Long.toString(f);
+			sFecha=sFecha+"2359";
+			fecha=Long.parseLong(sFecha);
+		}
 
 		return fecha;
 	}

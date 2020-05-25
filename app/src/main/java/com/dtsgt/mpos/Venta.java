@@ -2437,7 +2437,7 @@ public class Venta extends PBase {
         String tipo;
 
         try {
-            sql = "SELECT TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + prid ;
+            sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + prid ;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
             tipo=DT.getString(0);

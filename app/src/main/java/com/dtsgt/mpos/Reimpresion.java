@@ -1,6 +1,8 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +33,7 @@ import com.dtsgt.ladapt.ListAdaptCFDV;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Reimpresion extends PBase {
 
@@ -62,7 +66,16 @@ public class Reimpresion extends PBase {
 	//Para reimpresión de devolución de canastas y paseante
 	private String  corel,existenciaC,existenciaP;
 
-	// impresion nota credito
+	//Fecha
+	private boolean dateTxt,report;
+	private TextView lblDateini,lblDatefin;
+	public final Calendar c = Calendar.getInstance();
+	private static final String BARRA = "/";
+	final int mes = c.get(Calendar.MONTH);
+	final int dia = c.get(Calendar.DAY_OF_MONTH);
+	final int anio = c.get(Calendar.YEAR);
+	public int cyear, cmonth, cday, validCB=0;
+	private long datefin,dateini;
 
 	private ArrayList<String> lines= new ArrayList<String>();
 	private String pserie,pnumero,pruta,pvend,pcli,presol,presfecha,pfser,pfcor;
@@ -70,6 +83,8 @@ public class Reimpresion extends PBase {
 	private double ptot;
 	private boolean imprimecan=false;
 	private int residx,ncFact;
+
+	public ProgressDialog progress;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +96,8 @@ public class Reimpresion extends PBase {
 		
 		listView = (ListView) findViewById(R.id.listView1);
 		lblTipo= (TextView) findViewById(R.id.lblFecha);
+		lblDateini = (TextView) findViewById(R.id.lblDateini2);
+		lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
 
 		app = new AppMethods(this, gl, Con, db);
 		gl.validimp=app.validaImpresora();
@@ -88,8 +105,13 @@ public class Reimpresion extends PBase {
 
 		tipo=gl.tipo;
 		itemid="*";
-		
+
+		ProgressDialog("Cargando forma...");
+
 		setHandlers();
+
+		setFechaAct();
+
 		listItems();
 
 		prn=new printer(this,printclose,gl.validimp);
@@ -107,13 +129,13 @@ public class Reimpresion extends PBase {
 		fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
 		fcpag.deviceid =gl.deviceId;
 
-		fcanastabod=new clsDocCanastaBod(this,prn_can.prw,gl.peMon,gl.peDecImp, "printdevcan.txt");
+		/*fcanastabod=new clsDocCanastaBod(this,prn_can.prw,gl.peMon,gl.peDecImp, "printdevcan.txt");
 		fcanastabod.deviceid =gl.deviceId;
 		fcanastabod.vTipo="CANASTA";
 
 		fpaseantebod=new clsDocCanastaBod(this,prn_paseante.prw,gl.peMon,gl.peDecImp, "printpaseante.txt");
 		fpaseantebod.deviceid =gl.deviceId;
-		fpaseantebod.vTipo="PASEANTE";
+		fpaseantebod.vTipo="PASEANTE";*/
 
 		printclose = new Runnable() {
 			public void run() {
@@ -161,15 +183,10 @@ public class Reimpresion extends PBase {
 		};
 
 		switch (tipo) {
-		case 0:
-			docPed = new clsDocPedido(this,prn.prw,gl.peMon,gl.peDecImp,"");
-			lblTipo.setText("Pedido");break;
-		case 1:
-			cdoc=new clsDocCobro(this,prn.prw,gl.peMon,gl.peDecImp, gl.deviceId, "");
-			lblTipo.setText("Recibo");break;	
+       //#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
 		case 2:  
 			ddoc=new clsDocDepos(this,prn.prw,gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-			lblTipo.setText("Deposito");break;
+			lblTipo.setText("Depósito");break;
 		case 3:  
 			fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
 			lblTipo.setText((gl.peMFact?"Factura":"Ticket"));break;
@@ -179,22 +196,25 @@ public class Reimpresion extends PBase {
 		case 5:  
 			mdoc=new clsDocMov(this,prn.prw,"Dvolucion a bodega",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
 			lblTipo.setText("Devolución a bodega");break;
-		case 6:  
-			fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
-			fdev.deviceid =gl.deviceId;
-			lblTipo.setText("Nota Crédito");break;
 		case 7:
 			fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
 			fcpag.deviceid =gl.deviceId;
 			lblTipo.setText("Pagos de Caja");break;
-			
 		case 99:  
 			lblTipo.setText("Cierre de día");break;
 		}		
 			
 	}
-	
-	
+
+	public void ProgressDialog(String mensaje){
+		progress=new ProgressDialog(this);
+		progress.setMessage(mensaje);
+		progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progress.setIndeterminate(true);
+		progress.setProgress(0);
+		progress.show();
+	}
+
 	// Events
 	
 	public void printDoc(View view){
@@ -264,124 +284,112 @@ public class Reimpresion extends PBase {
 		}
 	}
 
-
 	// Main
 
 	public void listItems() {
-		Cursor DT;
+		Cursor DT = null;
 		clsClasses.clsCFDV vItem;	
 		int vP,f;
 		double val;
 		String id,sf,sval,tm;
-			
+
 		items.clear();
 		
 		selidx=-1;vP=0;
 		
 		try {
-				
-			if (tipo==0) {
-				sql="SELECT D_PEDIDO.COREL,P_CLIENTE.NOMBRE,D_PEDIDO.FECHA,D_PEDIDO.TOTAL "+
-					 "FROM D_PEDIDO INNER JOIN P_CLIENTE ON D_PEDIDO.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-					 "WHERE (D_PEDIDO.ANULADO='N') AND (D_PEDIDO.STATCOM='N') ORDER BY D_PEDIDO.COREL DESC ";	
-			}
-			
-			if (tipo==1) {
-				sql="SELECT D_COBRO.COREL,P_CLIENTE.NOMBRE,D_COBRO.FECHA,D_COBRO.TOTAL "+
-					 "FROM D_COBRO INNER JOIN P_CLIENTE ON D_COBRO.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-					 "WHERE (D_COBRO.ANULADO='N') AND (D_COBRO.DEPOS<>'S') ORDER BY D_COBRO.COREL DESC ";	
-			}
-			
-			if (tipo==2) {
-				sql="SELECT D_DEPOS.COREL,P_BANCO.NOMBRE,D_DEPOS.FECHA,D_DEPOS.TOTAL,D_DEPOS.CUENTA "+
-					 "FROM D_DEPOS INNER JOIN P_BANCO ON D_DEPOS.BANCO=P_BANCO.CODIGO "+
-					 "WHERE (D_DEPOS.ANULADO='N') ORDER BY D_DEPOS.COREL DESC ";	
-			}
 
-			if (tipo == 3) {
-				if (gl.peModal.equalsIgnoreCase("TOL")) {
-					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO,D_FACTURA.IMPRES " +
-							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE " +
-							"WHERE (D_FACTURA.STATCOM='N') ORDER BY D_FACTURA.COREL DESC";
-				} else {
-					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL," +
-						  "D_FACTURA.CORELATIVO,D_FACTURA.IMPRES " +
+			switch (tipo) {
+				//#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
+				case 2:
+					progress.setMessage("Cargando lista de depósitos...");
+					sql = "SELECT D_DEPOS.COREL,P_BANCO.NOMBRE,D_DEPOS.FECHA,D_DEPOS.TOTAL,D_DEPOS.CUENTA " +
+						  "FROM D_DEPOS INNER JOIN P_BANCO ON D_DEPOS.BANCO=P_BANCO.CODIGO_BANCO " +
+						  "WHERE (D_DEPOS.ANULADO='N') AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"')" +
+						  "ORDER BY D_DEPOS.COREL DESC ";
+					break;
+				case 3:
+					progress.setMessage("Cargando lista de facturas...");
+					progress.show();
+					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO," +
+						  "D_FACTURA.IMPRES " +
 						  "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE " +
-						  "WHERE AND (D_FACTURA.STATCOM='N') ORDER BY D_FACTURA.COREL DESC LIMIT 1";
-				}
-			}
-				
-			if (tipo==4 || tipo==5) {
-				tm="R";if (tipo==5) tm="D";
-				sql="SELECT COREL,COREL,FECHA,0 AS TOTAL "+
-					 "FROM D_MOV WHERE (TIPO='"+tm+"') AND (ANULADO='N')  ORDER BY COREL DESC ";	
-			}
-			
-			if (tipo==6) {
-				sql="SELECT D_NOTACRED.COREL,P_CLIENTE.NOMBRE,D_NOTACRED.SERIE,D_NOTACRED.TOTAL," +
-					"D_NOTACRED.CORELATIVO,D_NOTACRED.IMPRES "+
-					"FROM D_NOTACRED INNER JOIN P_CLIENTE ON D_NOTACRED.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-					"WHERE (D_NOTACRED.STATCOM='N') ORDER BY D_NOTACRED.COREL DESC";
+						  "WHERE (D_FACTURA.STATCOM='N') AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+						  "ORDER BY D_FACTURA.COREL DESC";
+					break;
+				case 4:
+					progress.setMessage("Cargando lista de recargas de inventario...");
+					sql = "SELECT COREL,COREL,FECHA,0 AS TOTAL " +
+						  "FROM D_MOV WHERE (TIPO='R') AND (ANULADO='N')  ORDER BY COREL DESC ";
+					break;
+				case 5:
+					progress.setMessage("Cargando lista de devoluciones de inventario...");
+					sql = "SELECT COREL,COREL,FECHA,0 AS TOTAL " +
+						  "FROM D_MOV WHERE (TIPO='D') AND (ANULADO='N')  ORDER BY COREL DESC ";
+					break;
+				case 7:
+					progress.setMessage("Cargando lista de pagos de caja...");
+					sql = "SELECT COREL,OBSERVACION,'',MONTO,'',0 " +
+							"FROM P_CAJAPAGOS " +
+							"WHERE (STATCOM='N') AND (ANULADO=0) ORDER BY COREL DESC";
+					break;
 			}
 
-			if (tipo==7) {
-				sql="SELECT COREL,OBSERVACION,'',MONTO,'',0 "+
-						"FROM P_CAJAPAGOS "+
-						"WHERE (STATCOM='N') AND (ANULADO=0) ORDER BY COREL DESC";
-			}
-			
 			if (tipo<99) {
 				
 				DT=Con.OpenDT(sql);
-	
-				if (DT.getCount()>0) {
 
-					DT.moveToFirst();
-					while (!DT.isAfterLast()) {
+				if (DT != null){
 
-						id=DT.getString(0);
+					if (DT.getCount()>0) {
 
-						vItem =clsCls.new clsCFDV();
+						DT.moveToFirst();
+						while (!DT.isAfterLast()) {
 
-						vItem.Cod=DT.getString(0);
-						vItem.Desc=DT.getString(1);
-						if (tipo==2) vItem.Desc+=" - "+DT.getString(4);	
+							id=DT.getString(0);
 
-						if (tipo==3) {
-							sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
-						} else if (tipo==1||tipo==6||tipo==7){
-							sf=DT.getString(0);
-						}else {
-							f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
-						}
+							vItem =clsCls.new clsCFDV();
 
-						vItem.Fecha=sf;
+							vItem.Cod=DT.getString(0);
+							vItem.Desc=DT.getString(1);
+							if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 
-						val=DT.getDouble(3);sval=""+val;
-						vItem.Valor=sval;	  
-
-						if (tipo==4 || tipo==5) {
-							vItem.Valor="";
-						} else {
-							vItem.Valor=mu.frmcur(val);
-						}
-
-						if (tipo==3 || tipo==6) {
-							if (gl.peModal.equalsIgnoreCase("TOL")) {
-								items.add(vItem);
-							} else {
-								if (DT.getInt(5)<=1) items.add(vItem);
+							if (tipo==3) {
+								sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+							} else if (tipo==1||tipo==6||tipo==7){
+								sf=DT.getString(0);
+							}else {
+								f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
 							}
-						} else {	
-							items.add(vItem);	
+
+							vItem.Fecha=sf;
+
+							val=DT.getDouble(3);sval=""+val;
+							vItem.Valor=sval;
+
+							if (tipo==4 || tipo==5) {
+								vItem.Valor="";
+							} else {
+								vItem.Valor=mu.frmcur(val);
+							}
+
+							if (tipo==3 || tipo==6) {
+								if (gl.peModal.equalsIgnoreCase("TOL")) {
+									items.add(vItem);
+								} else {
+									if (DT.getInt(5)<=1) items.add(vItem);
+								}
+							} else {
+								items.add(vItem);
+							}
+
+							if (id.equalsIgnoreCase(selid)) selidx=vP;
+							vP+=1;
+
+							DT.moveToNext();
+
 						}
-	
-						if (id.equalsIgnoreCase(selid)) selidx=vP;
-						vP+=1;
-
-						DT.moveToNext();					
-
-					}	
+					}
 				}
 
 			} else {	
@@ -393,13 +401,18 @@ public class Reimpresion extends PBase {
 					vItem.Cod="";
 					vItem.Desc="";
 					vItem.Fecha="Ultimo Cierre de dia";
-					vItem.Valor="";	  
+					vItem.Valor="";
 
-					items.add(vItem);				
-				}		
+					items.add(vItem);
+				}
+			}
+
+			if (DT != null){
+				DT.close();
 			}
 			
 		} catch (Exception e) {
+			progress.cancel();
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   	mu.msgbox("listItems: "+ e.getMessage());
 	    }
@@ -411,17 +424,15 @@ public class Reimpresion extends PBase {
 			adapter.setSelectedIndex(selidx);
 			listView.setSelection(selidx);
 		}
-	    	    
+
+		progress.cancel();
 	}
 	
 	private void printDocument() {
 
 		try{
 			switch (tipo) {
-				case 0:
-					imprPedido();break;
-				case 1:
-					imprRecibo();break;
+				//#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
 				case 2:
 					imprDeposito();break;
 				case 3:
@@ -435,8 +446,6 @@ public class Reimpresion extends PBase {
 					imprRecarga();break;
 				case 5:
 					imprDevol();break;
-				case 6:
-					imprUltNotaCredito();break;
 				case 7:
 					imprPagoCaja();break;
 				case 99:
@@ -447,39 +456,8 @@ public class Reimpresion extends PBase {
 		}
 
 	}
-	
-	private void imprPedido() {
-		try{
 
-			if(prn.isEnabled()){
-				docPed.buildPrint(itemid,1,"");
-				prn.printask(printcallback);
-			}else if(!prn.isEnabled()){
-				docPed.buildPrint(itemid,1,"");
-				toast("Reimpresion pedido");
-			}
-
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-		
-	}
-	
-	private void imprRecibo() {
-		try {
-			if(prn.isEnabled()){
-				cdoc.buildPrint(itemid,1,"");
-				prn.printask(printcallback);
-			}else if(!prn.isEnabled()){
-				cdoc.buildPrint(itemid,1,"");
-				toast("Reimpresion de recibo generada");
-			}
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			mu.msgbox(e.getMessage());
-		}
-	}
+	//#CKFK 20200520 Quité la funciones para reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
 
 	private void imprDeposito() {
 		try {
@@ -670,10 +648,99 @@ public class Reimpresion extends PBase {
 			mu.msgbox(e.getMessage());
 		}
 	}	
-	
-	
-	// Ultima factura + nota credito
-	
+
+	//Fecha
+
+	public void showDateDialog1(View view) {
+		try{
+			obtenerFecha();
+			dateTxt=false;
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+	public void showDateDialog2(View view) {
+		try{
+			obtenerFecha();
+			dateTxt=true;
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+	private void obtenerFecha(){
+		try{
+			DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+				@Override
+				public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+					final int mesActual = month + 1;
+
+					String diaFormateado = (dayOfMonth < 10)? "0" + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+					String mesFormateado = (mesActual < 10)? "0" + String.valueOf(mesActual):String.valueOf(mesActual);
+
+					if(dateTxt) {
+						lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+					}
+
+					if(!dateTxt) {
+						lblDateini.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+					}
+
+					cyear = year;
+					cmonth = Integer.parseInt(mesFormateado);
+					cday = Integer.parseInt(diaFormateado);
+
+					if(dateTxt) {
+						datefin = du.cfechaRep(cyear, cmonth, cday, false);
+					}
+
+					if(!dateTxt){
+						dateini  = du.cfechaRep(cyear, cmonth, cday, true);
+					}
+
+					//listar nuevamente los documentos
+					listItems();
+				}
+			},anio, mes, dia);
+
+			/*itemR.clear();
+			lblFact.setText("");
+			lblImp.setText("GENERAR");*/
+			report=false;
+
+			recogerFecha.show();
+
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+	private void setFechaAct(){
+		Long fecha;
+		String date;
+
+		try{
+			fecha = du.getFechaActualReport();
+
+			date = du.univfechaReport(fecha);
+
+			lblDateini.setText(date);
+			lblDatefin.setText(date);
+
+			datefin = du.getFechaActualReport(false);
+			dateini = du.getFechaActualReport(true);
+
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
+
+	// Ultima factura
 	private void imprUltFactura() {
 		Cursor dt;
 		String id,serie;
@@ -737,65 +804,6 @@ public class Reimpresion extends PBase {
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-
-	}
-	
-	private void imprUltNotaCredito() {
-		Cursor dt;
-		String id,serie;
-		int corel;
-		String corelFactura=getCorelFact(itemid);
-
-		try {
-
-			if(prn.isEnabled()){
-
-				if(ncFact==1){
-					if(tipo==6){
-						fdev.buildPrint(itemid, 3, "TOL");
-						prn_nc.printask(printclose, "printnc.txt");
-
-						toast("Reimpresión de nota de crédito y factura generada");
-					}else {
-						fdev.buildPrint(itemid, 1, "TOL");
-						prn_nc.printask(printclose, "printnc.txt");
-						toast("Reimpresión de nota de crédito y factura generada");
-					}
-
-				}else if(ncFact==2){
-					if(tipo==6){
-						fdev.buildPrint(itemid, 3, "TOL");
-						prn_nc.printask(printclose, "printnc.txt");
-
-						toast("Reimpresion de nota de credito generada");
-					}else{
-						fdev.buildPrint(itemid, 1, "TOL"); prn_nc.printask(printclose, "printnc.txt");
-
-						toast("Reimpresion de nota de credito generada");
-					}
-				}
-
-			} else if(!prn.isEnabled()){
-
-				if(ncFact==1){
-					fdev.buildPrint(itemid, 1, "TOL");
-					fdoc.buildPrint(corelFactura, 1, "TOL");
-
-					toast("Reimpresion de nota de credito y factura generada");
-
-				}else if(ncFact==2){
-					fdev.buildPrint(itemid, 1, "TOL");
-
-					toast("Reimpresion de nota de credito generada");
-				}
-
-			}
-
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox("imprUltNotaCredito: "+new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 
 	}
@@ -864,248 +872,6 @@ public class Reimpresion extends PBase {
 		return vCorelNC;
 	}
 
-
-	// Aprofam
-
-    /*
-	private void aprNotePrn(String corel) {
-		
-		aprLoadHeadData(corel);
-		
-		try {
-			
-			rep=new clsRepBuilder(this,prn.prw,true,gl.peMon,gl.peDecImp, "");
-			
-			buildHeader(corel,1);
-			
-			rep.line();
-			rep.empty();
-			rep.addc("NOTA CREDITO");
-			rep.empty();
-			rep.line();
-			rep.empty();
-				
-			rep.add("Factura serie : "+pfser+" numero : "+pfcor);
-			rep.add("Monto total : "+mu.frmdec(ptot));			
-			rep.empty();
-			rep.line();
-			rep.empty();
-			rep.empty();
-			rep.empty();
-				
-			rep.save();
-			
-			prn.printask();
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-	}
-
-	private boolean aprLoadHeadData(String corel) {
-		Cursor DT;
-		int ff;
-					
-		try {
-			sql="SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,SERIEFACT,CORELFACT FROM D_NOTACRED WHERE COREL='"+corel+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			pserie=DT.getString(0);
-			pnumero=""+DT.getInt(1);
-			pruta=DT.getString(2);
-			
-			pvend=DT.getString(3);
-			pcli=DT.getString(4);		
-			ptot=DT.getDouble(5);
-			
-			pfser=DT.getString(6);
-			pfcor=DT.getString(7);
-	
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox(e.getMessage());return false;
-	    }	
-		
-		try {
-			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			presol="Resolucion No. : "+DT.getString(0);
-			ff=DT.getInt(1);presfecha="De Fecha : "+du.sfecha(ff);
-			ff=DT.getInt(2);presvence="Resolucion vence : "+du.sfecha(ff);		
-			presrango="Serie : "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
-			
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			Toast.makeText(this,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
-	    }	
-		
-			try {
-			sql="SELECT NOMBRE FROM P_VENDEDOR  WHERE CODIGO='"+pvend+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			pvendedor=DT.getString(0);
-		} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			pvendedor=pvend;
-	    }	
-		
-		try {
-			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION FROM P_CLIENTE WHERE CODIGO='"+pcli+"'";
-			DT=Con.OpenDT(sql);	
-			DT.moveToFirst();
-			
-			pcliente=DT.getString(0);       		
-			pclicod=pcli;
-			pclidir=DT.getString(3);
-			
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			pcliente=pcli;
-	    }	
-		
-			
-		return true;
-		
-	}
-
-	private boolean buildHeader(String corel,int reimpres) {
-
-		lines.clear();
-
-		try {	
-			loadHeadLines();
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			msgbox(e.getMessage());return false;
-		}		
-
-		saveHeadLines(reimpres);
-
-		return true;
-	}
-
-	private void saveHeadLines(int reimpres) {
-		String s;
-
-		rep.empty();rep.empty();
-
-		try{
-			for (int i = 0; i <lines.size(); i++) {
-				s=lines.get(i);
-				s=encabezado(s);
-				if (residx==1) {
-					rep.add(presol);
-					rep.add(presfecha);
-					rep.add(presvence);
-					rep.add(presrango);
-					residx=0;
-				}
-				if (!s.equalsIgnoreCase("@@")) rep.add(s);
-			}
-
-			if (!mu.emptystr(pclicod)) rep.add(pclicod);
-			if (!mu.emptystr(pclidir)) rep.add(pclidir);
-
-			if (reimpres==1) rep.add("-------  R E I M P R E S I O N  -------");
-			if (reimpres==2) rep.add("------  C O N T A B I L I D A D  ------");
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-
-	}
-
-	private String encabezado(String l) {
-		String s,lu;
-		int idx;
-
-		residx=0;
-
-		//lu=l.toUpperCase().trim();
-		lu=l.trim();
-
-		try{
-			if (lu.length()==1 && lu.equalsIgnoreCase("N")) {
-				s="NOTA CREDITO";s=rep.ctrim(s);return s;
-			}
-
-			if (l.indexOf("dd-MM-yyyy")>=0) {
-				s=du.sfecha(du.getActDateTime());
-				l=l.replace("dd-MM-yyyy",s);return l;
-			}
-
-			if (l.indexOf("HH:mm:ss")>=0) {
-				s=du.shora(du.getActDateTime());
-				l=l.replace("HH:mm:ss",s);return l;
-			}
-
-			idx=lu.indexOf("SS");
-			if (idx>=0) {
-				if (mu.emptystr(pserie)) return "@@";
-				if (mu.emptystr(pnumero)) return "@@";
-
-				s=lu.substring(0,idx);
-				s="Nota credito serie : ";
-				s=s+pserie+" numero : "+pnumero;
-				residx=1;
-				return s;
-			}
-
-			idx=lu.indexOf("VV");
-			if (idx>=0) {
-				if (mu.emptystr(pvendedor)) return "@@";
-				l=l.replace("VV",pvendedor);return l;
-			}
-
-			idx=lu.indexOf("RR");
-			if (idx>=0) {
-				if (mu.emptystr(pruta)) return "@@";
-				l=l.replace("RR",pruta);return l;
-			}
-
-			idx=lu.indexOf("CC");
-			if (idx>=0) {
-				if (mu.emptystr(pcliente)) return "@@";
-				l=l.replace("CC",pcliente);return l;
-			}
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-
-		return l;
-	}
-	
-	private boolean loadHeadLines() {
-		Cursor DT;	
-		String s;
-		
-		try {
-			sql="SELECT TEXTO FROM P_ENCABEZADO_REPORTESHH ORDER BY CODIGO";
-			DT=Con.OpenDT(sql);
-			if (DT.getCount()==0) return false;
-
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-				s=DT.getString(0);	
-				lines.add(s);	
-				DT.moveToNext();
-			}
-
-			return true;
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			msgbox(e.getMessage());return false;
-		}				
-	}
-    */
-	
-	// Aux
-	
 	private void msgAsk(String msg) {
 		try{
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -1140,10 +906,8 @@ public class Reimpresion extends PBase {
 					try {
 
 						switch (tipo) {
-							case 1:
-								sql = "UPDATE D_COBRO SET IMPRES=IMPRES+1 WHERE COREL='" + itemid + "'";
-								db.execSQL(sql);
-								break;
+							//#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
+
 							case 2:
 								sql = "UPDATE D_DEPOS SET IMPRES=IMPRES+1 WHERE COREL='" + itemid + "'";
 								db.execSQL(sql);

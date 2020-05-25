@@ -124,7 +124,8 @@ public class Menu extends PBase {
 			msgbox(e.getMessage());
 		}
 
-		insertCorrel();
+		//#CKFK20200524_FIX_BY_OPENDT Quité esta función porque la tabla P_CORREL_OTROS ya no existe
+		//insertCorrel();
 	}
 
 	//region  Main
@@ -140,19 +141,7 @@ public class Menu extends PBase {
 
 	}
 
-	public void insertCorrel(){
-		try{
-			Cursor dt;
-			sql="SELECT * FROM P_CORREL_OTROS";
-			dt=Con.OpenDT(sql);
-			if(dt.getCount()==0){
-				db.execSQL("INSERT INTO P_CORREL_OTROS VALUES ("+gl.emp+", "+gl.ruta+",'A','P',1,1000,1,'N')");
-			}
-			if(dt!=null) dt.close();
-		}catch (Exception e){
-			Log.e("Menu insertar corr_otrs", e.getMessage());
-		}
-	}
+	//#CKFK20200524_FIX_BY_OPENDT Quité la función InsertCorrel porque la tabla P_CORREL_OTROS ya no se utiliza
 
 	public void listItems() {
         clsMenu item;
@@ -280,7 +269,17 @@ public class Menu extends PBase {
 						startActivity(new Intent(this, Venta.class));
 					}else {
 						if(gl.cajaid==5) msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
-						if(gl.cajaid==6) msgAskValidUltZ("No se realizó el último cierre de caja, ¿Desea continuar la venta con la fecha: "+du.univfechaReport(gl.lastDate)+", o desea realizar el cierre Z?");
+
+						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
+						if (gl.cierreDiario){
+
+							if(gl.cajaid==6) msgAskValidaCierre("No se realizó el último cierre de caja. ¿Desea realizar el cierre Z?");
+
+						}else{
+
+							if(gl.cajaid==6) msgAskValidUltZ("No se realizó el último cierre de caja, ¿Desea continuar la venta con la fecha: "+du.univfechaReport(gl.lastDate)+", o desea realizar el cierre Z?");
+
+						}
 					}
 
 					break;
@@ -444,7 +443,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega", "Nota crédito"};
-            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
+            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Recarga","Devolución a bodega"};
 
 
 			menudlg = new AlertDialog.Builder(this);
@@ -1390,6 +1389,7 @@ public class Menu extends PBase {
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setTitle("Caja");
+			menudlg.setCancelable(false);
 
 			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
@@ -1822,6 +1822,29 @@ public class Menu extends PBase {
 		dialog.setNegativeButton("Realizar Cierre Z", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				CierreZ();
+			}
+		});
+
+		dialog.show();
+
+	}
+
+	private void msgAskValidaCierre(String msg) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Cierre Diario");
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				CierreZ();
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+
 			}
 		});
 

@@ -1,6 +1,7 @@
 package com.dtsgt.mpos;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
@@ -67,7 +68,7 @@ public class PBase extends Activity {
 
 	    browse=0;
 	}
-	
+
 	// CallBacks
 	
 	protected void wsCallBack(Boolean throwing,String errmsg) throws Exception {

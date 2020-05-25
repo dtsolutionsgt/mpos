@@ -59,19 +59,20 @@ public class clsDescFiltro {
 	private void filtrarDescuentos() {
 		Cursor DT;
 		int i,NivelPrec;
-		String  CTipoNeg,CTipo,CSubTipo,CCanal,CSubCanal,CSucursal;
-		        
+		//String  CTipoNeg,CTipo,CSubTipo,CCanal,CSubCanal,CSucursal;
+
 		try {
-			vSQL="SELECT TIPONEG,TIPO,SUBTIPO,CANAL,SUBCANAL,SUCURSAL,NIVELPRECIO FROM P_CLIENTE WHERE CODIGO='"+cliid+"'";
+			//#CKFK20200524_FIX_BY_OPENDT Quité  TIPO,SUBTIPO,CANAL,SUBCANAL,SUCURSAL,TIPONEGO del select
+			vSQL="SELECT NIVELPRECIO FROM P_CLIENTE WHERE CODIGO='"+cliid+"'";
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
 			
-			CTipoNeg = DT.getString(0);
+			/*CTipoNeg = DT.getString(0);
 			CTipo = DT.getString(1);
 			CSubTipo = DT.getString(2);
 			CCanal = DT.getString(3);
 			CSubCanal = DT.getString(4);
-			CSucursal = DT.getString(5);
+			CSucursal = DT.getString(5);*/
 			NivelPrec = DT.getInt(6);
 			
 		} catch (Exception e) {
@@ -85,12 +86,12 @@ public class clsDescFiltro {
 			vSQL="SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,DESCTIPO,VALOR,GLOBDESC,PORCANT,FECHAINI,FECHAFIN,CODDESC,NOMBRE "+
 				 "FROM P_DESCUENTO WHERE (CTIPO=0) OR "+
 				  "((CTIPO=1) AND (CLIENTE='" + cliid + "')) OR "+
-				  "((CTIPO=2) AND (CLIENTE='" + CTipoNeg + "')) OR "+
+				  /*"((CTIPO=2) AND (CLIENTE='" + CTipoNeg + "')) OR "+
 				  "((CTIPO=3) AND (CLIENTE='" + CTipo + "')) OR "+
 				  "((CTIPO=4) AND (CLIENTE='" + CSubTipo + "')) OR "+
 				  "((CTIPO=5) AND (CLIENTE='" + CCanal + "')) OR "+
 				  "((CTIPO=6) AND (CLIENTE='" + CSubCanal + "')) OR "+
-				  "((CTIPO=8) AND (CLIENTE='" + CSucursal + "')) OR "+
+				  "((CTIPO=8) AND (CLIENTE='" + CSucursal + "')) OR "+*/
 				  "((CTIPO=9) AND (CLIENTE='" + NivelPrec + "')) "+
 				  " AND ((FECHAINI<="+fecha+") AND (FECHAFIN>="+fecha+")) ";
 			

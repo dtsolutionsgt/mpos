@@ -28,7 +28,7 @@ public class appGlobals extends Application {
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
-	            banderaCobro, cliposflag, forcedclose, grantaccess;
+	            banderaCobro, cliposflag, forcedclose, grantaccess, cierreDiario;
 	public int  mpago, corelZ;
 	public int  codigo_cliente,
 			    codigo_ruta,

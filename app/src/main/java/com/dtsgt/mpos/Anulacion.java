@@ -84,7 +84,7 @@ public class Anulacion extends PBase {
 		if (tipo==3) lblTipo.setText((gl.peMFact?"Factura":"Ticket"));
 		if (tipo==4) lblTipo.setText("Recarga");
 		if (tipo==5) lblTipo.setText("Devolución a bodega");
-		if (tipo==6) lblTipo.setText("Nota de crédito");
+		//if (tipo==6) lblTipo.setText("Nota de crédito");
 
 		itemid="*";
 
@@ -212,7 +212,7 @@ public class Anulacion extends PBase {
 			
 			if (tipo==2) {
 				sql="SELECT D_DEPOS.COREL,P_BANCO.NOMBRE,D_DEPOS.FECHA,D_DEPOS.TOTAL,D_DEPOS.CUENTA "+
-					 "FROM D_DEPOS INNER JOIN P_BANCO ON D_DEPOS.BANCO=P_BANCO.CODIGO "+
+					 "FROM D_DEPOS INNER JOIN P_BANCO ON D_DEPOS.BANCO=P_BANCO.CODIGO_BANCO "+
 					 "WHERE (D_DEPOS.ANULADO='N')  AND (D_DEPOS.CODIGOLIQUIDACION=0) ORDER BY D_DEPOS.COREL DESC ";
 			}
 			
@@ -233,11 +233,7 @@ public class Anulacion extends PBase {
 					 "FROM D_MOV WHERE (TIPO='D') AND (ANULADO='N') AND (CODIGOLIQUIDACION=0) ORDER BY FECHA DESC ";
 			}
 
-			if (tipo==6) {
-				sql="SELECT D_NOTACRED.COREL,P_CLIENTE.CODIGO || ' - ' || P_CLIENTE.NOMBRE AS DESC,FECHA,D_NOTACRED.TOTAL "+
-					"FROM D_NOTACRED INNER JOIN P_CLIENTE ON D_NOTACRED.CLIENTE=P_CLIENTE.CODIGO "+
-					"WHERE (D_NOTACRED.ANULADO='N') AND (D_NOTACRED.STATCOM='N') ORDER BY D_NOTACRED.COREL DESC ";
-			}
+			//#CKFK 20200520 Quité la anulación de NC porque aquí no existe la tabla
 			    		
 			DT=Con.OpenDT(sql);
 			
@@ -327,7 +323,7 @@ public class Anulacion extends PBase {
 			
 			if (tipo==5) if (!anulDevol(itemid)) return;
 
-			if (tipo==6) anulNotaCredito(itemid);
+			//#CKFK 20200520 Quité la anulación de NC porque aquí no existe la tabla
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -1321,7 +1317,8 @@ public class Anulacion extends PBase {
 		Cursor DT;
 		
 		try {
-			sql="SELECT TIPO FROM P_PRODUCTO WHERE CODIGO='"+prcodd+"'";
+			//#CKFK20200524_FIX_BY_OPENDT Cambié el campo TIPO por CODIGO_TIPO
+			sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO='"+prcodd+"'";
            	DT=Con.OpenDT(sql);
            	if (DT.getCount()==0) return false;
 

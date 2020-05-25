@@ -189,7 +189,7 @@ public class MantConfig extends PBase {
     }
 
     private void updateItem() {
-        String s100="N",s102="N",s103="N",s104="N",s105="",s106="S";
+        String s100="N",s102="N",s103="N",s104="N",s105="",s106="S", s107="S", s108="3";
 
         try {
 
@@ -198,6 +198,8 @@ public class MantConfig extends PBase {
             if (cb103.isChecked())  s103="1";else s103="0";
             if (cb104.isChecked())  s104="S";
             if (!cb106.isChecked()) s106="N";
+           // if (!cb107.isChecked()) s107="N";
+           // if (!cb107.isChecked()) s107="N";
 
             db.beginTransaction();
 
@@ -209,6 +211,8 @@ public class MantConfig extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=104");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=105");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=106");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=107");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=108");
 
             db.execSQL("INSERT INTO P_PARAMEXT VALUES ( 16,'Formato factura','"+value16+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','"+s100+"')");
@@ -218,6 +222,8 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','"+s104+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','"+value105+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','"+s106+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Cierre diario','"+s107+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Días anulación permitida','"+s108+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();
