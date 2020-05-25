@@ -73,8 +73,7 @@ public class clsT_comboObj {
 
     private void addItem(clsClasses.clsT_combo item) {
 
-        ins.init("T_combo");
-
+        ins.init("T_COMBO");
         ins.add("CODIGO_MENU",item.codigo_menu);
         ins.add("CODIGO_PRODUCTO",item.codigo_producto);
         ins.add("OPCION_LISTA",item.opcion_lista);

@@ -236,14 +236,18 @@ public class ProdMenu extends PBase {
                 item=clsCls.new clsT_combo();
 
                 //#EJC20200524: Revisar
-                //item.codigo_menu=items.get(i).CODIGO_MENU_OPCION;
+                item.codigo_menu=items.get(i).codigo_menu_opcion;
                 item.codigo_producto=uitemid;
-                //item.opcion_lista=items.get(i).listid;
-               // item.opcion_producto=items.get(i).prodid;
                 item.cant=cant;
-                //item.idseleccion=items.get(i).cod;
+                item.idseleccion=items.get(i).cod;
                 item.orden=items.get(i).orden;
 
+                ins.init("T_COMBO");
+                ins.add("CODIGO_MENU",item.codigo_menu);
+                ins.add("CODIGO_PRODUCTO",item.codigo_producto);
+                ins.add("IDSELECCION",item.idseleccion);
+                ins.add("CANT",item.cant);
+                ins.add("ORDEN",item.orden);
                 T_comboObj.add(item);
             }
 

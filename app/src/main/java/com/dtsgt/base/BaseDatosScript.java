@@ -1560,15 +1560,14 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
             sql="CREATE TABLE [T_combo] ("+
-                    "CODIGO_MENU INTEGER NOT NULL,"+
-                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
-                    "OPCION_LISTA INTEGER NOT NULL,"+
-                    "OPCION_PRODUCTO INTEGER NOT NULL,"+
-                    "CANT INTEGER NOT NULL,"+
-                    "IDSELECCION INTEGER NOT NULL,"+
-                    "ORDEN INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO_MENU],[CODIGO_PRODUCTO],[OPCION_LISTA],[OPCION_PRODUCTO])"+
-                    ");";
+                "CODIGO_COMBO INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                "CODIGO_MENU INTEGER NOT NULL,"+
+                "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                "CANT INTEGER NOT NULL,"+
+                "IDSELECCION INTEGER NOT NULL,"+
+                "ORDEN INTEGER NOT NULL"+
+                ");";
+
             database.execSQL(sql);
 
             return 1;
