@@ -76,12 +76,9 @@ public class clsT_comboObj {
         ins.init("T_COMBO");
         ins.add("CODIGO_MENU",item.codigo_menu);
         ins.add("CODIGO_PRODUCTO",item.codigo_producto);
-        ins.add("OPCION_LISTA",item.opcion_lista);
-        ins.add("OPCION_PRODUCTO",item.opcion_producto);
         ins.add("CANT",item.cant);
         ins.add("IDSELECCION",item.idseleccion);
         ins.add("ORDEN",item.orden);
-
         db.execSQL(ins.sql());
 
     }
@@ -89,17 +86,11 @@ public class clsT_comboObj {
     private void updateItem(clsClasses.clsT_combo item) {
 
         upd.init("T_combo");
-
         upd.add("CANT",item.cant);
         upd.add("IDSELECCION",item.idseleccion);
         upd.add("ORDEN",item.orden);
-
-        upd.Where("(CODIGO_MENU="+item.codigo_menu+") AND (CODIGO_PRODUCTO="+item.codigo_producto+") AND (OPCION_LISTA="+item.opcion_lista+") AND (OPCION_PRODUCTO="+item.opcion_producto+")");
-
+        upd.Where("(CODIGO_MENU="+item.codigo_menu+") AND (CODIGO_PRODUCTO="+item.codigo_producto+")");
         db.execSQL(upd.sql());
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
-
     }
 
     private void deleteItem(clsClasses.clsT_combo item) {
@@ -113,6 +104,7 @@ public class clsT_comboObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsT_combo item;
 
@@ -128,11 +120,9 @@ public class clsT_comboObj {
 
             item.codigo_menu=dt.getInt(0);
             item.codigo_producto=dt.getInt(1);
-            item.opcion_lista=dt.getInt(2);
-            item.opcion_producto=dt.getInt(3);
-            item.cant=dt.getInt(4);
-            item.idseleccion=dt.getInt(5);
-            item.orden=dt.getInt(6);
+            item.cant=dt.getInt(2);
+            item.idseleccion=dt.getInt(3);
+            item.orden=dt.getInt(4);
 
             items.add(item);
 
@@ -163,15 +153,11 @@ public class clsT_comboObj {
     public String addItemSql(clsClasses.clsT_combo item) {
 
         ins.init("T_combo");
-
         ins.add("CODIGO_MENU",item.codigo_menu);
         ins.add("CODIGO_PRODUCTO",item.codigo_producto);
-        ins.add("OPCION_LISTA",item.opcion_lista);
-        ins.add("OPCION_PRODUCTO",item.opcion_producto);
         ins.add("CANT",item.cant);
         ins.add("IDSELECCION",item.idseleccion);
         ins.add("ORDEN",item.orden);
-
         return ins.sql();
 
     }
@@ -179,16 +165,11 @@ public class clsT_comboObj {
     public String updateItemSql(clsClasses.clsT_combo item) {
 
         upd.init("T_combo");
-
         upd.add("CANT",item.cant);
         upd.add("IDSELECCION",item.idseleccion);
         upd.add("ORDEN",item.orden);
-
-        upd.Where("(CODIGO_MENU="+item.codigo_menu+") AND (CODIGO_PRODUCTO="+item.codigo_producto+") AND (OPCION_LISTA="+item.opcion_lista+") AND (OPCION_PRODUCTO="+item.opcion_producto+")");
-
+        upd.Where("(CODIGO_MENU="+item.codigo_menu+") AND (CODIGO_PRODUCTO="+item.codigo_producto+")");
         return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 
