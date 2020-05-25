@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
@@ -20,7 +21,7 @@ public class clsP_prodmenuObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM P_prodmenu";
+    private String sel="SELECT * FROM P_prodmenu ";
     private String sql;
     public ArrayList<clsClasses.clsP_prodmenu> items= new ArrayList<clsClasses.clsP_prodmenu>();
 
@@ -60,6 +61,10 @@ public class clsP_prodmenuObj {
 
     public void fill(String specstr) {
         fillItems(sel+ " "+specstr);
+    }
+
+    public void fill_by_idproducto(int IdProducto){
+    fillItems_by_idproducto(IdProducto);
     }
 
     public void fillSelect(String sq) {
@@ -115,24 +120,74 @@ public class clsP_prodmenuObj {
         items.clear();
 
         dt=Con.OpenDT(sq);
-        count =dt.getCount();
 
-        if (dt.getCount()>0) dt.moveToFirst();
+        if (dt!=null){
 
-        while (!dt.isAfterLast()) {
+            count =dt.getCount();
 
-            item = clsCls.new clsP_prodmenu();
-            item.codigo_menu=dt.getInt(0);
-            item.empresa=dt.getInt(1);
-            item.codigo_producto=dt.getInt(2);
-            item.nombre=dt.getString(3);
-            item.nota=dt.getString(4);
-            items.add(item);
-            dt.moveToNext();
+            if (dt.getCount()>0) dt.moveToFirst();
+
+            while (!dt.isAfterLast()) {
+
+                item = clsCls.new clsP_prodmenu();
+                item.codigo_menu=dt.getInt(0);
+                item.empresa=dt.getInt(1);
+                item.codigo_producto=dt.getInt(2);
+                item.nombre=dt.getString(3);
+                item.nota=dt.getString(4);
+                items.add(item);
+                dt.moveToNext();
+            }
+
+            if (dt!=null) dt.close();
+
+        }else{
+            Log.e("NoItems","OnMenu by EJC");
         }
+    }
 
-        if (dt!=null) dt.close();
+    private void fillItems_by_idproducto(int idProducto) {
 
+        Cursor dt;
+        clsClasses.clsP_prodmenu item;
+
+        items.clear();
+
+        String vsql = " SELECT P_PRODMENU.CODIGO_MENU, \n " +
+                      " P_PRODMENU.EMPRESA, P_PRODMENU.CODIGO_PRODUCTO AS CODIGO_PRODUCTO_MENU, \n" +
+                      " P_PRODMENU.NOMBRE, P_PRODMENU.NOTA, \n" +
+                      " P_PRODMENUOPC.CODIGO_MENU_OPCION, P_PRODMENUOPC.CODIGO_MENU AS CODIGO_OPCION, P_PRODMENUOPC.NOMBRE AS NOMBRE_OPCION, P_PRODMENUOPC.CANT, \n" +
+                      " P_PRODMENUOPC.ORDEN\n" +
+                      " FROM P_PRODMENU INNER JOIN\n" +
+                      " P_PRODMENUOPC ON P_PRODMENU.CODIGO_MENU = P_PRODMENUOPC.CODIGO_MENU\n" +
+                      " WHERE P_PRODMENU.CODIGO_PRODUCTO = " + idProducto + "\n" +
+                      " ORDER BY P_PRODMENUOPC.ORDEN, P_PRODMENUOPC.NOMBRE";
+
+        dt=Con.OpenDT(vsql);
+
+        if (dt!=null){
+
+            count =dt.getCount();
+
+            if (dt.getCount()>0) dt.moveToFirst();
+
+            while (!dt.isAfterLast()) {
+
+                item = clsCls.new clsP_prodmenu();
+                item.codigo_menu=dt.getInt(5);
+                item.empresa=dt.getInt(1);
+                item.codigo_producto=dt.getInt(2);
+                item.nombre=dt.getString(7);
+                item.nota=dt.getString(4);
+                items.add(item);
+                dt.moveToNext();
+            }
+
+            if (dt!=null) dt.close();
+
+        }else{
+            Log.e("NoItems","OnMenu by EJC");
+        }
     }
 
     public int newID(String idsql) {

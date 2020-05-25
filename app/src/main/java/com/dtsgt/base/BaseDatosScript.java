@@ -9,75 +9,75 @@ import android.database.sqlite.SQLiteException;
 import com.dtsgt.mpos.R;
 
 public class BaseDatosScript {
-	
-	private Context vcontext;
-	
-	public BaseDatosScript(Context context) {
-		vcontext=context;
-	}
-	
-	public int scriptDatabase(SQLiteDatabase database) {
-		String vSQL;
 
-		try {
+    private Context vcontext;
 
-			vSQL="CREATE TABLE [PARAMS] ("+
-					"ID integer NOT NULL primary key,"+
-					"EMPID     INTEGER  NOT NULL,"+
-					"DBVER     INTEGER  NOT NULL,"+
-					"PARAM1    INTEGER  NOT NULL,"+  //
-					"PARAM2    INTEGER  NOT NULL,"+
-					"PRN       TEXT     NOT NULL,"+
-					"PRNPARAM  TEXT     NOT NULL,"+
-					"PRNSERIE  TEXT     NOT NULL,"+
+    public BaseDatosScript(Context context) {
+        vcontext=context;
+    }
+
+    public int scriptDatabase(SQLiteDatabase database) {
+        String vSQL;
+
+        try {
+
+            vSQL="CREATE TABLE [PARAMS] ("+
+                    "ID integer NOT NULL primary key,"+
+                    "EMPID     INTEGER  NOT NULL,"+
+                    "DBVER     INTEGER  NOT NULL,"+
+                    "PARAM1    INTEGER  NOT NULL,"+  //
+                    "PARAM2    INTEGER  NOT NULL,"+
+                    "PRN       TEXT     NOT NULL,"+
+                    "PRNPARAM  TEXT     NOT NULL,"+
+                    "PRNSERIE  TEXT     NOT NULL,"+
                     "LIC       TEXT     NOT NULL,"+
                     "LICPARAM  TEXT     NOT NULL,"+
-					"URL       TEXT     NOT NULL,"+
+                    "URL       TEXT     NOT NULL,"+
                     "SUCURSAL  INTEGER     NOT NULL,"+
-					"RUTA      INTEGER     NOT NULL);";
-			database.execSQL(vSQL);
+                    "RUTA      INTEGER     NOT NULL);";
+            database.execSQL(vSQL);
 
-			vSQL="CREATE TABLE [FINDIA] ("+
-					"ID integer NOT NULL primary key,"+
-					"COREL INTEGER  NOT NULL,"+
-					"VAL1  INTEGER  NOT NULL,"+  // Día del cierre
-					"VAL2  INTEGER  NOT NULL,"+	 // Comunicacion
-					"VAL3  INTEGER  NOT NULL,"+	 // Impresión Depósito
-					"VAL4  INTEGER  NOT NULL,"+	 // Depósito
-					"VAL5  INTEGER  NOT NULL,"+	 // Devolución bodega y canastas
-					"VAL6  INTEGER  NOT NULL,"+  // Generación Cierre Z
-					"VAL7  INTEGER  NOT NULL,"+  // Impresión de Cierre Z
-					"VAL8  REAL  NOT NULL);";    // GrandTotal
-			database.execSQL(vSQL);
+            vSQL="CREATE TABLE [FINDIA] ("+
+                    "ID integer NOT NULL primary key,"+
+                    "COREL INTEGER  NOT NULL,"+
+                    "VAL1  INTEGER  NOT NULL,"+  // Día del cierre
+                    "VAL2  INTEGER  NOT NULL,"+	 // Comunicacion
+                    "VAL3  INTEGER  NOT NULL,"+	 // Impresión Depósito
+                    "VAL4  INTEGER  NOT NULL,"+	 // Depósito
+                    "VAL5  INTEGER  NOT NULL,"+	 // Devolución bodega y canastas
+                    "VAL6  INTEGER  NOT NULL,"+  // Generación Cierre Z
+                    "VAL7  INTEGER  NOT NULL,"+  // Impresión de Cierre Z
+                    "VAL8  REAL  NOT NULL);";    // GrandTotal
+            database.execSQL(vSQL);
 
-			vSQL="CREATE TABLE [LIC_CLIENTE] ("+
-					"ID      TEXT NOT NULL primary key,"+
-					"LTIPO   TEXT NOT NULL,"+
-					"IDKEY   TEXT NOT NULL,"+
-					"NOMBRE  TEXT NOT NULL,"+
-					"BINKEY  TEXT NOT NULL);"; 
-			database.execSQL(vSQL);
+            vSQL="CREATE TABLE [LIC_CLIENTE] ("+
+                    "ID      TEXT NOT NULL primary key,"+
+                    "LTIPO   TEXT NOT NULL,"+
+                    "IDKEY   TEXT NOT NULL,"+
+                    "NOMBRE  TEXT NOT NULL,"+
+                    "BINKEY  TEXT NOT NULL);";
+            database.execSQL(vSQL);
 
-			vSQL="CREATE TABLE [P_PARAMEXT] ("+
-					"ID integer NOT NULL primary key,"+
-					"NOMBRE TEXT NOT NULL,"+
-					"VALOR  TEXT);";
-			database.execSQL(vSQL);
+            vSQL="CREATE TABLE [P_PARAMEXT] ("+
+                    "ID integer NOT NULL primary key,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "VALOR  TEXT);";
+            database.execSQL(vSQL);
 
 
-			if (scriptTablasD(database)==0) {return 0;}
+            if (scriptTablasD(database)==0) {return 0;}
 
-			if (scriptTablasP(database)==0) {return 0;}
+            if (scriptTablasP(database)==0) {return 0;}
 
-			if (scriptTablasT(database)==0) {return 0;}
+            if (scriptTablasT(database)==0) {return 0;}
 
-			return 1;
-		} catch (SQLiteException e) {
-			msgbox(e.getMessage());
-			return 0;
-		} 
+            return 1;
+        } catch (SQLiteException e) {
+            msgbox(e.getMessage());
+            return 0;
+        }
 
-	}
+    }
 
     private int scriptTablasP(SQLiteDatabase database) {
         String sql;
@@ -172,6 +172,7 @@ public class BaseDatosScript {
             sql="CREATE TABLE [P_LINEA] ("+
                     "CODIGO TEXT NOT NULL,"+
                     "MARCA TEXT NOT NULL,"+
+
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
                     "CODIGO_LINEA INTEGER NOT NULL,"+
@@ -402,7 +403,7 @@ public class BaseDatosScript {
             // por un código único "PRIMARY KEY ([RESOL],[SERIE],[CORELINI])"+
 
             sql="CREATE UNIQUE INDEX IX_P_COREL "+
-                " on P_COREL ([RESOL],[SERIE],[CORELINI])";
+                    " on P_COREL ([RESOL],[SERIE],[CORELINI])";
             database.execSQL(sql);
 
             sql="CREATE TABLE [P_ARCHIVOCONF] ("+
@@ -493,6 +494,9 @@ public class BaseDatosScript {
                     "CODIGO_MENU INTEGER NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+
+
+
                     "NOMBRE TEXT NOT NULL,"+
                     "NOTA TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_MENU])"+
@@ -564,7 +568,7 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
             sql="CREATE UNIQUE INDEX IX_P_CAJACIERRE "+
-                " on P_CAJACIERRE ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])";
+                    " on P_CAJACIERRE ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])";
             database.execSQL(sql);
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJACIERRE
@@ -586,7 +590,7 @@ public class BaseDatosScript {
                     "OBSERVACION TEXT NOT NULL,"+
                     "VENDEDOR INTEGER NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "CODIGO_CAJAPAGOS INTEGER NOT NULL,"+
+                    "CODIGO_CAJAPAGOS TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_CAJAPAGOS])"+
                     ");";
             database.execSQL(sql);
@@ -606,7 +610,7 @@ public class BaseDatosScript {
                     "LINEA INTEGER NOT NULL,"+
                     "TEXTO TEXT NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "CODIGO_CAJAREPORTE INTEGER NOT NULL,"+
+                    "CODIGO_CAJAREPORTE TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_CAJAREPORTE])"+
                     ");";
             database.execSQL(sql);
@@ -659,9 +663,9 @@ public class BaseDatosScript {
     }
 
     private int scriptTablasD(SQLiteDatabase database) {
-		String sql;
-		  
-		try {
+        String sql;
+
+        try {
 
             sql="CREATE TABLE [D_FACTURA] ("+
                     "EMPRESA INTEGER NOT NULL,"+
@@ -754,6 +758,24 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [D_FACTURAS] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "ID INTEGER NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UMSTOCK TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[ID])"+
+                    ");";
+            database.execSQL(sql);
+
+
+
+
+
+
+
+
+
 
             sql="CREATE TABLE [D_BONIF] ("+
                     "[COREL] TEXT NOT NULL,"+
@@ -830,7 +852,6 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
 
-
             /*
 
             sql="CREATE TABLE [D_PEDIDO] ("+
@@ -876,7 +897,7 @@ public class BaseDatosScript {
 			database.execSQL(sql);
 			sql="CREATE INDEX D_PEDIDO_idx5 ON D_PEDIDO(CALCOBJ)";
 			database.execSQL(sql);
-			
+
 			sql="CREATE TABLE [D_PEDIDOD] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[PRODUCTO] TEXT NOT NULL,"+
@@ -896,11 +917,11 @@ public class BaseDatosScript {
 					"[UMVENTA] TEXT NOT NULL,"+
 					"[FACTOR] REAL NOT NULL,"+
 					"[UMSTOCK] TEXT NOT NULL,"+
-					"[UMPESO] TEXT NOT NULL,"+										
+					"[UMPESO] TEXT NOT NULL,"+
 					"PRIMARY KEY ([COREL],[PRODUCTO])"+
 					");";
 			database.execSQL(sql);
-			
+
 			sql="CREATE INDEX D_PEDIDOD_idx1 ON D_PEDIDOD(COREL)";
 			database.execSQL(sql);
 			sql="CREATE INDEX D_PEDIDOD_idx2 ON D_PEDIDOD(ANULADO)";
@@ -931,7 +952,7 @@ public class BaseDatosScript {
 			sql="CREATE INDEX D_CxC_idx1 ON D_CxC(ANULADO)";
 			database.execSQL(sql);
 
-			
+
 			sql="CREATE TABLE [D_CxCD] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[ITEM] INTEGER NOT NULL,"+
@@ -956,7 +977,7 @@ public class BaseDatosScript {
 
 			sql="CREATE INDEX D_CxCD_idx1 ON D_CxCD(COREL)";
 			database.execSQL(sql);
-			
+
 
 			sql="CREATE TABLE [D_DEVOL] ("+
 					"[COREL] TEXT NOT NULL,"+
@@ -1021,8 +1042,8 @@ public class BaseDatosScript {
 
 			sql="CREATE INDEX D_CLINUEVO_idx1 ON D_CLINUEVO(STATCOM)";
 			database.execSQL(sql);
-			
-			
+
+
 			sql="CREATE TABLE [D_CLINUEVO_APR] ("+
 					"[CODIGO] TEXT NOT NULL,"+
 					"[RUTA] TEXT NOT NULL,"+
@@ -1041,7 +1062,7 @@ public class BaseDatosScript {
 					");";
 			database.execSQL(sql);
 
-			
+
 			sql="CREATE TABLE [D_DEPOS] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[EMPRESA] TEXT NOT NULL,"+
@@ -1067,7 +1088,7 @@ public class BaseDatosScript {
 			sql="CREATE INDEX D_DEPOS_idx2 ON D_DEPOS(ANULADO)";
 			database.execSQL(sql);
 
-			
+
 			sql="CREATE TABLE [D_DEPOSD] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[DOCCOREL] TEXT NOT NULL,"+
@@ -1081,7 +1102,7 @@ public class BaseDatosScript {
 					"PRIMARY KEY ([COREL],[DOCCOREL],[ITEM])"+
 					");";
 			database.execSQL(sql);
-			
+
 
 			sql="CREATE TABLE [D_DEPOSB] ("+
 					"[COREL] TEXT NOT NULL,"+
@@ -1210,8 +1231,8 @@ public class BaseDatosScript {
 					"PRIMARY KEY ([COREL],[PRODUCTO],[BONIFICADO])"+
 					");";
 			database.execSQL(sql);
-			
-						
+
+
 			sql="CREATE TABLE [D_CLICOORD] ("+
 					"[CODIGO]  TEXT NOT NULL,"+
 					"[STAMP]   REAL NOT NULL,"+
@@ -1221,17 +1242,17 @@ public class BaseDatosScript {
 					"PRIMARY KEY ([CODIGO],[STAMP])"+
 					");";
 			database.execSQL(sql);
-			
-			
+
+
 			sql="CREATE TABLE [D_REPFINDIA] ("+
 					"[RUTA]  TEXT NOT NULL,"+
 					"[LINEA] INTEGER NOT NULL,"+
-					"[TEXTO] TEXT NOT NULL,"+				
+					"[TEXTO] TEXT NOT NULL,"+
 					"PRIMARY KEY ([RUTA],[LINEA])"+
 					");";
 			database.execSQL(sql);
-			
-			
+
+
 			sql="CREATE TABLE [D_SOLICINV] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[ANULADO] TEXT NOT NULL,"+
@@ -1246,8 +1267,8 @@ public class BaseDatosScript {
 
 			sql="CREATE INDEX D_SOLICINV_idx1 ON D_SOLICINV(STATCOM)";
 			database.execSQL(sql);
-			
-			
+
+
 			sql="CREATE TABLE [D_SOLICINVD] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[PRODUCTO] TEXT NOT NULL,"+
@@ -1258,8 +1279,8 @@ public class BaseDatosScript {
 					"PRIMARY KEY ([COREL],[PRODUCTO])"+
 					");";
 			database.execSQL(sql);
-                
-			
+
+
 			sql="CREATE TABLE [D_NOTACRED] ("+
 					"[COREL] TEXT NOT NULL,"+
 					"[ANULADO] TEXT NOT NULL,"+
@@ -1317,208 +1338,208 @@ public class BaseDatosScript {
              */
 
             return 1;
-		} catch (SQLiteException e) {
-		   	msgbox(e.getMessage());
-		   	return 0;
-		} 
-	}
+        } catch (SQLiteException e) {
+            msgbox(e.getMessage());
+            return 0;
+        }
+    }
 
-	private int scriptTablasT(SQLiteDatabase database) {
-		String sql;
+    private int scriptTablasT(SQLiteDatabase database) {
+        String sql;
 
-		try {
+        try {
 
-			sql="CREATE TABLE [T_VENTA] ("+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[EMPRESA] TEXT NOT NULL,"+
-					"[UM] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[UMSTOCK] TEXT NOT NULL,"+
-					"[FACTOR] REAL NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[IMP] REAL NOT NULL,"+
-					"[DES] REAL NOT NULL,"+
-					"[DESMON] REAL NOT NULL,"+
-					"[TOTAL] REAL NOT NULL,"+
-					"[PRECIODOC] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[VAL1] REAL NOT NULL,"+
-					"[VAL2] TEXT NOT NULL,"+
-					"[VAL3] REAL NOT NULL,"+
-					"[VAL4] TEXT NOT NULL,"+					
-					"[PERCEP] REAL NOT NULL,"+
-					"PRIMARY KEY ([PRODUCTO],[UM],[EMPRESA])"+
-					");";
-			database.execSQL(sql);
+            sql="CREATE TABLE [T_VENTA] ("+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[EMPRESA] TEXT NOT NULL,"+
+                    "[UM] TEXT NOT NULL,"+
+                    "[CANT] REAL NOT NULL,"+
+                    "[UMSTOCK] TEXT NOT NULL,"+
+                    "[FACTOR] REAL NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL,"+
+                    "[IMP] REAL NOT NULL,"+
+                    "[DES] REAL NOT NULL,"+
+                    "[DESMON] REAL NOT NULL,"+
+                    "[TOTAL] REAL NOT NULL,"+
+                    "[PRECIODOC] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[VAL1] REAL NOT NULL,"+
+                    "[VAL2] TEXT NOT NULL,"+
+                    "[VAL3] REAL NOT NULL,"+
+                    "[VAL4] TEXT NOT NULL,"+
+                    "[PERCEP] REAL NOT NULL,"+
+                    "PRIMARY KEY ([PRODUCTO],[UM],[EMPRESA])"+
+                    ");";
+            database.execSQL(sql);
 
-			sql="CREATE INDEX T_VENTA_idx1 ON T_VENTA(PRODUCTO)";
-			database.execSQL(sql);
-
-			
-			sql="CREATE TABLE [T_DESC] ("+
-					"[ID] INTEGER NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[PTIPO] INTEGER NOT NULL,"+
-					"[RANGOINI] REAL NOT NULL,"+
-					"[RANGOFIN] REAL NOT NULL,"+
-					"[DESCTIPO] TEXT NOT NULL,"+
-					"[VALOR] REAL NOT NULL,"+
-					"[GLOBDESC] TEXT NOT NULL,"+
-					"[PORCANT] TEXT NOT NULL,"+
-					"[NOMBRE] TEXT NOT NULL,"+
-					"PRIMARY KEY ([ID])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE INDEX T_DESC_idx1 ON T_DESC(PRODUCTO)";
-			database.execSQL(sql);
-			sql="CREATE INDEX T_DESC_idx2 ON T_DESC(PTIPO)";
-			database.execSQL(sql);
-			sql="CREATE INDEX T_DESC_idx3 ON T_DESC(RANGOINI)";
-			database.execSQL(sql);
-			sql="CREATE INDEX T_DESC_idx4 ON T_DESC(RANGOFIN)";
-			database.execSQL(sql);
-			
-			sql="CREATE TABLE [T_BONIF] ("+
-					"[ID] INTEGER NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[PTIPO] INTEGER NOT NULL,"+
-					"[TIPOBON] TEXT NOT NULL,"+
-					"[RANGOINI] REAL NOT NULL,"+
-					"[RANGOFIN] REAL NOT NULL,"+
-					"[TIPOLISTA] INTEGER NOT NULL,"+
-					"[TIPOCANT] TEXT NOT NULL,"+
-					"[VALOR] REAL NOT NULL,"+
-					"[LISTA] TEXT NOT NULL,"+
-					"[CANTEXACT] TEXT NOT NULL,"+
-					"[GLOBBON] TEXT NOT NULL,"+
-					"[PORCANT] TEXT NOT NULL,"+
-					"[NOMBRE] TEXT NOT NULL,"+
-					"[EMP] TEXT NOT NULL,"+
-					"[UMPRODUCTO] TEXT NOT NULL,"+
-					"[UMBONIFICACION] TEXT NOT NULL,"+
-					"PRIMARY KEY ([ID])"+
-					");";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [T_CxCD] ("+
-					"[Item] INTEGER NOT NULL,"+
-					"[CODIGO] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[CODDEV] TEXT NOT NULL,"+
-					"[TOTAL] REAL NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[PRECLISTA] REAL NOT NULL,"+
-					"[REF] TEXT NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[FECHA_CAD] INTEGER NOT NULL,"+
-					"[LOTE] TEXT NOT NULL,"+
-					"[UMVENTA] TEXT NOT NULL,"+
-					"[UMSTOCK] TEXT NOT NULL,"+
-					"[UMPESO] TEXT NOT NULL,"+
-					"[FACTOR] REAL NOT NULL,"+
-					"[POR_PESO] TEXT NOT NULL,"+
-					"[TIENE_LOTE] INTEGER,"+
-					"PRIMARY KEY ([Item])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE INDEX T_CxCD_idx1 ON T_CxCD(CODIGO)";
-			database.execSQL(sql);
-			sql="CREATE INDEX T_CxCD_idx2 ON T_CxCD(CANT)";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [T_DEVOL] ("+
-					"[CODIGO] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[CANTM] REAL NOT NULL,"+
-					"PRIMARY KEY ([CODIGO])"+
-					");";
-			database.execSQL(sql);
-			
-
-			sql="CREATE TABLE [T_PAGO] ("+
-					"[ITEM] INTEGER NOT NULL,"+
-					"[CODPAGO] INTEGER NOT NULL,"+
-					"[TIPO] TEXT NOT NULL,"+
-					"[VALOR] REAL NOT NULL,"+
-					"[DESC1] TEXT NOT NULL,"+
-					"[DESC2] TEXT NOT NULL,"+
-					"[DESC3] TEXT NOT NULL,"+
-					"PRIMARY KEY ([ITEM])"+
-					");";
-			database.execSQL(sql);
-
-			sql="CREATE TABLE [T_DEPOSB] ("+
-					"[DENOMINACION] REAL NOT NULL,"+
-					"[CANTIDAD] INTEGER NOT NULL,"+
-					"[TIPO] TEXT NOT NULL,"+
-					"[MONEDA] INTEGER NOT NULL,"+
-					"PRIMARY KEY ([DENOMINACION],[TIPO],[MONEDA])"+
-					");";
-			database.execSQL(sql);
+            sql="CREATE INDEX T_VENTA_idx1 ON T_VENTA(PRODUCTO)";
+            database.execSQL(sql);
 
 
-			sql="CREATE TABLE [T_PAGOD] ("+
-					"[ITEM] INTEGER NOT NULL,"+
-					"[DOCUMENTO] TEXT NOT NULL,"+
-					"[TIPODOC] TEXT NOT NULL,"+
-					"[MONTO] REAL NOT NULL,"+
-					"[PAGO] REAL NOT NULL,"+
-					"PRIMARY KEY ([ITEM])"+
-					");";
-			database.execSQL(sql);
-			
-		
-			sql="CREATE TABLE [T_LOTES] ("+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"[LOTE] TEXT NOT NULL,"+
-					"[CANTIDAD] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"PRIMARY KEY ([PRODUCTO],[LOTE])"+
-					");";
-			database.execSQL(sql);
+            sql="CREATE TABLE [T_DESC] ("+
+                    "[ID] INTEGER NOT NULL,"+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[PTIPO] INTEGER NOT NULL,"+
+                    "[RANGOINI] REAL NOT NULL,"+
+                    "[RANGOFIN] REAL NOT NULL,"+
+                    "[DESCTIPO] TEXT NOT NULL,"+
+                    "[VALOR] REAL NOT NULL,"+
+                    "[GLOBDESC] TEXT NOT NULL,"+
+                    "[PORCANT] TEXT NOT NULL,"+
+                    "[NOMBRE] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            database.execSQL(sql);
 
-			sql="CREATE TABLE [T_BONITEM] ("+
-					"[ITEM] INTEGER NOT NULL,"+
-					"[PRODID] TEXT NOT NULL,"+
-					"[BONIID] TEXT NOT NULL,"+
-					"[CANT] REAL NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[COSTO] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[UMVENTA] TEXT NOT NULL,"+
-					"[UMSTOCK] TEXT NOT NULL,"+
-					"[UMPESO] TEXT NOT NULL,"+
-					"[FACTOR] REAL NOT NULL,"+
-					"[POR_PESO] TEXT NOT NULL,"+
-					"PRIMARY KEY ([ITEM])"+
-					");";
-			database.execSQL(sql);
+            sql="CREATE INDEX T_DESC_idx1 ON T_DESC(PRODUCTO)";
+            database.execSQL(sql);
+            sql="CREATE INDEX T_DESC_idx2 ON T_DESC(PTIPO)";
+            database.execSQL(sql);
+            sql="CREATE INDEX T_DESC_idx3 ON T_DESC(RANGOINI)";
+            database.execSQL(sql);
+            sql="CREATE INDEX T_DESC_idx4 ON T_DESC(RANGOFIN)";
+            database.execSQL(sql);
 
-			sql="CREATE TABLE [T_BARRA] ("+
-					"[BARRA] TEXT NOT NULL,"+
-					"[CODIGO] TEXT NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[PESOORIG] REAL NOT NULL,"+
+            sql="CREATE TABLE [T_BONIF] ("+
+                    "[ID] INTEGER NOT NULL,"+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[PTIPO] INTEGER NOT NULL,"+
+                    "[TIPOBON] TEXT NOT NULL,"+
+                    "[RANGOINI] REAL NOT NULL,"+
+                    "[RANGOFIN] REAL NOT NULL,"+
+                    "[TIPOLISTA] INTEGER NOT NULL,"+
+                    "[TIPOCANT] TEXT NOT NULL,"+
+                    "[VALOR] REAL NOT NULL,"+
+                    "[LISTA] TEXT NOT NULL,"+
+                    "[CANTEXACT] TEXT NOT NULL,"+
+                    "[GLOBBON] TEXT NOT NULL,"+
+                    "[PORCANT] TEXT NOT NULL,"+
+                    "[NOMBRE] TEXT NOT NULL,"+
+                    "[EMP] TEXT NOT NULL,"+
+                    "[UMPRODUCTO] TEXT NOT NULL,"+
+                    "[UMBONIFICACION] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [T_CxCD] ("+
+                    "[Item] INTEGER NOT NULL,"+
+                    "[CODIGO] TEXT NOT NULL,"+
+                    "[CANT] REAL NOT NULL,"+
+                    "[CODDEV] TEXT NOT NULL,"+
+                    "[TOTAL] REAL NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL,"+
+                    "[PRECLISTA] REAL NOT NULL,"+
+                    "[REF] TEXT NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[FECHA_CAD] INTEGER NOT NULL,"+
+                    "[LOTE] TEXT NOT NULL,"+
+                    "[UMVENTA] TEXT NOT NULL,"+
+                    "[UMSTOCK] TEXT NOT NULL,"+
+                    "[UMPESO] TEXT NOT NULL,"+
+                    "[FACTOR] REAL NOT NULL,"+
+                    "[POR_PESO] TEXT NOT NULL,"+
+                    "[TIENE_LOTE] INTEGER,"+
+                    "PRIMARY KEY ([Item])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE INDEX T_CxCD_idx1 ON T_CxCD(CODIGO)";
+            database.execSQL(sql);
+            sql="CREATE INDEX T_CxCD_idx2 ON T_CxCD(CANT)";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [T_DEVOL] ("+
+                    "[CODIGO] TEXT NOT NULL,"+
+                    "[CANT] REAL NOT NULL,"+
+                    "[CANTM] REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [T_PAGO] ("+
+                    "[ITEM] INTEGER NOT NULL,"+
+                    "[CODPAGO] INTEGER NOT NULL,"+
+                    "[TIPO] TEXT NOT NULL,"+
+                    "[VALOR] REAL NOT NULL,"+
+                    "[DESC1] TEXT NOT NULL,"+
+                    "[DESC2] TEXT NOT NULL,"+
+                    "[DESC3] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [T_DEPOSB] ("+
+                    "[DENOMINACION] REAL NOT NULL,"+
+                    "[CANTIDAD] INTEGER NOT NULL,"+
+                    "[TIPO] TEXT NOT NULL,"+
+                    "[MONEDA] INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([DENOMINACION],[TIPO],[MONEDA])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [T_PAGOD] ("+
+                    "[ITEM] INTEGER NOT NULL,"+
+                    "[DOCUMENTO] TEXT NOT NULL,"+
+                    "[TIPODOC] TEXT NOT NULL,"+
+                    "[MONTO] REAL NOT NULL,"+
+                    "[PAGO] REAL NOT NULL,"+
+                    "PRIMARY KEY ([ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+
+            sql="CREATE TABLE [T_LOTES] ("+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[LOTE] TEXT NOT NULL,"+
+                    "[CANTIDAD] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "PRIMARY KEY ([PRODUCTO],[LOTE])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [T_BONITEM] ("+
+                    "[ITEM] INTEGER NOT NULL,"+
+                    "[PRODID] TEXT NOT NULL,"+
+                    "[BONIID] TEXT NOT NULL,"+
+                    "[CANT] REAL NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL,"+
+                    "[COSTO] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[UMVENTA] TEXT NOT NULL,"+
+                    "[UMSTOCK] TEXT NOT NULL,"+
+                    "[UMPESO] TEXT NOT NULL,"+
+                    "[FACTOR] REAL NOT NULL,"+
+                    "[POR_PESO] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ITEM])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [T_BARRA] ("+
+                    "[BARRA] TEXT NOT NULL,"+
+                    "[CODIGO] TEXT NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[PESOORIG] REAL NOT NULL,"+
                     "[CANTIDAD] REAL NOT NULL,"+
                     "PRIMARY KEY ([BARRA],[CODIGO])"+
-					");";
-			database.execSQL(sql);
+                    ");";
+            database.execSQL(sql);
 
-			sql="CREATE TABLE [T_BARRA_BONIF] ("+
-					"[BARRA] TEXT NOT NULL,"+
-					"[CODIGO] TEXT NOT NULL,"+
-					"[PRECIO] REAL NOT NULL,"+
-					"[PESO] REAL NOT NULL,"+
-					"[PESOORIG] REAL NOT NULL,"+
-					"[PRODUCTO] TEXT NOT NULL,"+
-					"PRIMARY KEY ([BARRA],[CODIGO])"+
-					");";
-			database.execSQL(sql);
+            sql="CREATE TABLE [T_BARRA_BONIF] ("+
+                    "[BARRA] TEXT NOT NULL,"+
+                    "[CODIGO] TEXT NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL,"+
+                    "[PESO] REAL NOT NULL,"+
+                    "[PESOORIG] REAL NOT NULL,"+
+                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([BARRA],[CODIGO])"+
+                    ");";
+            database.execSQL(sql);
 
             sql="CREATE TABLE [T_BONIFFALT] ("+
                     "[PRODID]   TEXT NOT NULL,"+
@@ -1543,14 +1564,36 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [T_combo] ("+
+                    "CODIGO_MENU INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "OPCION_LISTA INTEGER NOT NULL,"+
+                    "OPCION_PRODUCTO INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "IDSELECCION INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MENU],[CODIGO_PRODUCTO],[OPCION_LISTA],[OPCION_PRODUCTO])"+
+                    ");";
+            database.execSQL(sql);
+
+
+
+
+
+
+
+
+
+
+
             return 1;
 
-		} catch (SQLiteException e) {
-			msgbox(e.getMessage());return 0;
-		} 
-	}
+        } catch (SQLiteException e) {
+            msgbox(e.getMessage());return 0;
+        }
+    }
 
-	public int scriptData(SQLiteDatabase db) {
+    public int scriptData(SQLiteDatabase db) {
 
         try {
             db.execSQL("INSERT INTO Params VALUES (0,0,0,0,0, '','','','',''," +
@@ -1562,15 +1605,15 @@ public class BaseDatosScript {
             //db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre Negocio','Nombre Negocio','', '','','',1);");
             //db.execSQL("INSERT INTO VENDEDORES VALUES ('1','Gerente','1','1', 3,1,'','',1);");
 
-           datosIniciales(db);
+            datosIniciales(db);
 
             return 1;
         } catch (Exception e) {
             msgbox(e.getMessage());return 0;
         }
-	}
+    }
 
-	private void datosIniciales(SQLiteDatabase db) {
+    private void datosIniciales(SQLiteDatabase db) {
 
         db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('1','EFECTIVO','S',1,'N');");
         db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('2','CHEQUE','N',2,'N');");
@@ -1662,22 +1705,22 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_usgrupoopc VALUES ('3',13)");
 
     }
-	
-	private void msgbox(String msg) {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);
-    	
-		dialog.setTitle(R.string.app_name);
-		dialog.setMessage(msg);
-		
-		dialog.setIcon(R.drawable.ic_error);
-				
-		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-    	    public void onClick(DialogInterface dialog, int which) {			      	
-    	    	//Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
-    	    }
-    	});
-		dialog.show();
-	
-	}   	
-	
+
+    private void msgbox(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);
+
+        dialog.setTitle(R.string.app_name);
+        dialog.setMessage(msg);
+
+        dialog.setIcon(R.drawable.ic_error);
+
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.show();
+
+    }
+
 }

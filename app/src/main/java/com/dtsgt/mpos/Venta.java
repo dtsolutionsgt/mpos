@@ -633,6 +633,7 @@ public class Venta extends PBase {
     }
 
     private void processItem(boolean updateitem){
+
         try{
 
             String pid=gl.gstr;

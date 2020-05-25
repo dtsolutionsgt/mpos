@@ -649,8 +649,8 @@ public class clsClasses {
 	}
 
     public class clsOpcion {
-        public int ID,bandera,listid,prodid,orden,cod;
-        public String Name,Descrip;
+        public int codigo_menu_opcion,bandera,orden,cod;
+        public String Name;
     }
 
     public class clsReport{

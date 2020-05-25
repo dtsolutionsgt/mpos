@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_prodmenuObj;
-import com.dtsgt.classes.clsP_prodmenuopcObj;
+import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.ladapt.ListAdaptOpcion;
@@ -104,25 +104,34 @@ public class ProdMenu extends PBase {
     }
 
     private void setHandlers(){
+
         try{
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                     try {
+
                         Object lvObj = listView.getItemAtPosition(position);
                         clsClasses.clsOpcion item = (clsClasses.clsOpcion)lvObj;
 
                         adapter.setSelectedIndex(position);
                         selidx=position;
 
-                        if (item.prodid==0) listOptions(item.Descrip,item.listid);
+                        //#EJC20200524: listar items de la opcion de menu
+                        listOptions(item.Name,item.codigo_menu_opcion);
+
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                         mu.msgbox( e.getMessage());
                     }
                 };
             });
-        } catch (Exception e) { }
+
+        } catch (Exception e) {
+            mu.msgbox( e.getMessage());
+        }
     }
 
     //endregion
@@ -130,21 +139,23 @@ public class ProdMenu extends PBase {
     //region Main
 
     private void listItems() {
+
         int menuid,selid;
 
         listMenuItems();
 
         try {
+
             clsT_comboObj combo=new clsT_comboObj(this,Con,db);
             combo.fill("WHERE CODIGO_PRODUCTO="+ uitemid);
             cant=combo.first().cant; lbl2.setText(""+cant);
 
             for (int i = 0; i <items.size(); i++) {
 
-
-                menuid=items.get(i).ID;
+                menuid=items.get(i).codigo_menu_opcion;
                 combo.fill("WHERE (CODIGO_PRODUCTO="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
                 selid=combo.first().idseleccion;
+
                 if (selid>0) {
                     items.get(i).cod=selid;
                     items.get(i).Name=getProdName(selid);
@@ -169,45 +180,37 @@ public class ProdMenu extends PBase {
     }
 
     private void listMenuItems() {
+
         clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(this,Con,db);
         clsClasses.clsOpcion item;
 
         try {
 
             items.clear();
-            P_menuObj.fill("WHERE CODIGO_PRODUCTO='"+gl.prodmenu+"' ORDER BY ORDEN,NOMBRE");
+            //P_menuObj.fill("WHERE CODIGO_PRODUCTO='"+gl.prodmenu+"' ORDER BY ORDEN,NOMBRE");
+            P_menuObj.fill_by_idproducto(gl.prodmenu);
 
             for (int i = 0; i <P_menuObj.count; i++) {
-                item=clsCls.new clsOpcion();
 
-                item.ID=P_menuObj.items.get(i).codigo_menu;
-                item.cod=0;
+                item=clsCls.new clsOpcion();
+                item.codigo_menu_opcion =P_menuObj.items.get(i).codigo_menu;
                 item.Name=P_menuObj.items.get(i).nombre;
-                item.Descrip=P_menuObj.items.get(i).nombre;
-                item.listid=P_menuObj.items.get(i).opcion_lista;
-                item.prodid=P_menuObj.items.get(i).opcion_producto;
                 item.bandera=0;
                 item.orden=P_menuObj.items.get(i).orden;
-
-                if (item.prodid!=0) {
-                    item.cod=item.prodid;
-                    item.Name=getProdName(item.cod);
-                    item.bandera=1;
-                }
-
                 items.add(item);
             }
 
             adapter=new ListAdaptOpcion(this,items);
             listView.setAdapter(adapter);
+
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
         }
     }
 
     private boolean saveItem() {
-        clsClasses.clsT_combo item;
 
+        clsClasses.clsT_combo item;
 
         if (!validaStock()) return false;
 
@@ -232,19 +235,19 @@ public class ProdMenu extends PBase {
 
                 item=clsCls.new clsT_combo();
 
-                item.codigo_menu=items.get(i).ID;
+                //#EJC20200524: Revisar
+                //item.codigo_menu=items.get(i).CODIGO_MENU_OPCION;
                 item.codigo_producto=uitemid;
-                item.opcion_lista=items.get(i).listid;
-                item.opcion_producto=items.get(i).prodid;
+                //item.opcion_lista=items.get(i).listid;
+               // item.opcion_producto=items.get(i).prodid;
                 item.cant=cant;
-                item.idseleccion=items.get(i).cod;
+                //item.idseleccion=items.get(i).cod;
                 item.orden=items.get(i).orden;
 
                 T_comboObj.add(item);
             }
 
             ins.init("T_VENTA");
-
             ins.add("PRODUCTO",gl.prodid);
             ins.add("EMPRESA",""+uitemid);
             ins.add("UM","UNI");
@@ -281,25 +284,29 @@ public class ProdMenu extends PBase {
     }
 
     private void listOptions(String title,int idoption) {
+
         clsP_productoObj prod=new clsP_productoObj(this,Con,db);
-        clsP_prodmenuopcObj opc=new clsP_prodmenuopcObj(this,Con,db);
+        clsP_prodmenuopcdetObj opc=new clsP_prodmenuopcdetObj(this,Con,db);
         clsClasses.clsOpcion item;
+
         final AlertDialog Dialog;
         int cod;
 
         try {
 
             lcode.clear();lname.clear();
-            opc.fill("WHERE CODIGO_OPCION="+idoption);
+
+            opc.fill("WHERE CODIGO_MENU_OPCION="+idoption);
 
             for (int i = 0; i <opc.count; i++) {
                 //#EJC20200524: Buscar aquí los productos de cada menu_opcion.
-                cod=opc.items.get(i).codigo_menu_opcion;
+                cod=opc.items.get(i).codigo_producto;
                 lcode.add(""+cod);
                 lname.add(getProdName(cod));
             }
 
             final String[] selitems = new String[lname.size()];
+
             for (int i = 0; i < lname.size(); i++) {
                 selitems[i] = lname.get(i);
             }
