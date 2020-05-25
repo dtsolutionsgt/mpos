@@ -152,8 +152,9 @@ public class printer {
 		} catch (Exception e) {
 			prw=32;
 		}		
-		
-		try {
+
+		//#CKFK20200524_FIX_BY_OPENDT Puse esto en comentario porque la tabla P_IMPRESORA no existe en MPos
+		/*try {
 			prtipo=app.impresTipo();
 			prpar=app.impresParam();
 			
@@ -168,7 +169,7 @@ public class printer {
 			prid=0;prpar="";
 			//Toast.makeText(cont, "Printer 2222 : "+e.getMessage(), Toast.LENGTH_SHORT).show();
 			Toast.makeText(cont, "Falta definir impresora ", Toast.LENGTH_SHORT).show();
-	    }
+	    }*/
 				
 	}
 	

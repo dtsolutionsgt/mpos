@@ -1027,8 +1027,8 @@ public class CierreX extends PBase {
                             }
 
                             rep.empty();
-                            if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICION POR PRODUCTO");
-                            if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICION POR FAMILIA");
+                            if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICIO POR PRODUCTO");
+                            if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICIO POR FAMILIA");
                             rep.add("Codigo     Nombre");
                             rep.add("Venta      Costo    Beneficio    %");
                             rep.line();

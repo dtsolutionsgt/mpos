@@ -398,6 +398,19 @@ public class AppMethods {
             gl.peFotoBio=true;
         }
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=107";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.cierreDiario=val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.cierreDiario=true;
+		}
+
 
 	}
 
@@ -657,7 +670,8 @@ public class AppMethods {
 		return true;
 	}
 
-	public String impresTipo() {
+	//#CKFK20200524_FIX_BY_OPENDT Puse esta función en comentario porque la tabla P_IMPRESORA no existe en MPos
+	/*public String impresTipo() {
 		Cursor dt;
 		String prnid;
 
@@ -679,9 +693,10 @@ public class AppMethods {
 			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			return "SIN IMPRESORA";
 		}
-	}
+	}*/
 
-	public String impresParam() {
+	//#CKFK20200524_FIX_BY_OPENDT Puse esta función en comentario porque la tabla P_IMPRESORA no existe en MPos
+	/*public String impresParam() {
 		CryptUtil cu=new CryptUtil();
 		Cursor dt;
 		String prnid;
@@ -704,7 +719,7 @@ public class AppMethods {
 			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			return " #### ";
 		}
-	}
+	}*/
 
     //endregion
 

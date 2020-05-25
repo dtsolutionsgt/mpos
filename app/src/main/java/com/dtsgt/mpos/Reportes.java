@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -101,7 +102,6 @@ public class Reportes extends PBase {
 
     private AppMethods app;
     private int SumaCant = 0;
-
 
     public final Calendar c = Calendar.getInstance();
     private static final String BARRA = "/";
@@ -341,11 +341,11 @@ public class Reportes extends PBase {
         try{
 
             if(dateini <= 0){
-                msgbox("Fecha inicial erronea");return;
+                msgbox("Fecha inicial errónea");return;
             }
 
             if(datefin <= 0){
-                msgbox("Fecha final erronea");return;
+                msgbox("Fecha final errónea");return;
             }
 
             if(dateini>datefin){
@@ -426,7 +426,7 @@ public class Reportes extends PBase {
             switch (gl.reportid){
                 case 1:
                     sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
-                            "FROM D_FACTURA WHERE FECHA>='"+dateini+"' AND FECHA<='"+datefin+"' " +
+                            "FROM D_FACTURA WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                             "AND ANULADO='N' " +
                             "GROUP BY SERIE, IMPMONTO, FECHA " +
                             "ORDER BY FECHA";
@@ -434,8 +434,7 @@ public class Reportes extends PBase {
                 case 2:
                     sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
                             "SUM(TOTAL), FECHA " +
-                            "FROM D_FACTURA WHERE FECHA=FECHA AND " +
-                            "FECHA>="+ dateini +" AND FECHA<="+datefin+" " +
+                            "FROM D_FACTURA WHERE (FECHA BETWEEN "+ dateini +" AND "+datefin+") " +
                             "AND ANULADO='N' " +
                             "GROUP BY FECHA, SERIE";
                     break;
@@ -448,10 +447,10 @@ public class Reportes extends PBase {
 
                     sql="SELECT '', '', 0, D.PRODUCTO, P.DESCCORTA, D.UMVENTA, " +
                             " SUM(D.CANT), 0,SUM(D.TOTAL), F.FECHA " +
-                            " FROM P_LINEA L INNER JOIN P_PRODUCTO P ON L.CODIGO = P.LINEA " +
-                            " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO  " +
+                            " FROM P_LINEA L INNER JOIN P_PRODUCTO P ON L.CODIGO_LINEA = P.LINEA " +
+                            " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO  " +
                             " INNER JOIN D_FACTURA F ON F.COREL = D.COREL  " +
-                            " WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
+                            " WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
                             "AND F.ANULADO='N' " +
                             " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                             " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
@@ -463,12 +462,13 @@ public class Reportes extends PBase {
                         condition = " AND M.CODIGO = '"+ id_item +"' ";
                     }
 
-                    sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 FROM P_MEDIAPAGO M " +
-                            "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                            "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
-                            "WHERE F.ANULADO='N' AND F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
-                            "AND F.ANULADO='N' " +
-                            "GROUP BY M.NOMBRE";
+                    sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 " +
+                        "FROM P_MEDIAPAGO M " +
+                        "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                        "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
+                        "WHERE F.ANULADO='N' AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO='N' " +
+                        "GROUP BY M.NOMBRE";
                     break;
 
                 case 5:
@@ -477,18 +477,19 @@ public class Reportes extends PBase {
                             "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO " +
                             "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
                             "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
-                            "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
+                            "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+
                             " AND F.ANULADO='N' " +
                             "GROUP BY L.NOMBRE";
                     break;
 
                 case 6:
 
-                    sql="SELECT V.CODIGO, '', 0, '', V.NOMBRE, '', COUNT(COREL), V.NIVELPRECIO, SUM(F.TOTAL), 0 FROM VENDEDORES V " +
-                            "INNER JOIN D_FACTURA F ON F.VENDEDOR = V.CODIGO " +
-                            "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+
-                            " AND F.ANULADO='N' " +
-                            "GROUP BY V.CODIGO, V.NOMBRE, V.NIVELPRECIO";
+                    sql="SELECT V.CODIGO, '', 0, '', V.NOMBRE, '', COUNT(COREL), V.NIVELPRECIO, SUM(F.TOTAL), 0 " +
+                        "FROM VENDEDORES V " +
+                        "INNER JOIN D_FACTURA F ON F.VENDEDOR = V.CODIGO_VENDEDOR " +
+                        "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+
+                        " AND F.ANULADO='N' " +
+                        "GROUP BY V.CODIGO, V.NOMBRE, V.NIVELPRECIO";
                     break;
 
                 case 7:
@@ -499,11 +500,11 @@ public class Reportes extends PBase {
                     }
 
                     sql="SELECT D.PRODUCTO, '', 0, '',  P.DESCCORTA, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM D_FACTURAD D " +
-                            "INNER JOIN P_PRODUCTO P ON D.PRODUCTO = P.CODIGO " +
-                            "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
-                            "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
-                            "AND F.ANULADO='N' " +
-                            "GROUP BY D.PRODUCTO, P.DESCCORTA, P.COSTO, D.PRECIO";
+                        "INNER JOIN P_PRODUCTO P ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
+                        "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
+                        "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO='N' " +
+                        "GROUP BY D.PRODUCTO, P.DESCCORTA, P.COSTO, D.PRECIO";
                     break;
 
                 case 8:
@@ -513,13 +514,14 @@ public class Reportes extends PBase {
                         condition = " AND L.CODIGO = '"+ id_item +"' ";
                     }
 
-                    sql="SELECT L.CODIGO, '', 0, '', L.NOMBRE, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM P_LINEA L " +
-                            "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO " +
-                            "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
-                            "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
-                            "WHERE P.LINEA=L.CODIGO AND F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
-                            "AND F.ANULADO='N' " +
-                            "GROUP BY L.NOMBRE";
+                    sql="SELECT L.CODIGO, '', 0, '', L.NOMBRE, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 " +
+                        "FROM P_LINEA L " +
+                        "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO_LINEA " +
+                        "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
+                        "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
+                        "WHERE P.LINEA=L.CODIGO AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO='N' " +
+                        "GROUP BY L.NOMBRE";
                     break;
 
                 case 11:
@@ -532,12 +534,12 @@ public class Reportes extends PBase {
                     }
 
                     sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
-                            "FROM P_CLIENTE C " +
-                            "INNER JOIN D_FACTURA F ON C.CODIGO = F.CLIENTE " +
-                            "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
-                            "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
-                            "AND F.ANULADO='N' " +
-                            "GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
+                        "FROM P_CLIENTE C " +
+                        "INNER JOIN D_FACTURA F ON C.CODIGO_CLIENTE = F.CLIENTE " +
+                        "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
+                        "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO='N' " +
+                        "GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
                     break;
 
                 case 12:
@@ -547,23 +549,24 @@ public class Reportes extends PBase {
                         condition = " AND C.CODIGO = '"+ id_item +"' ";
                     }
 
-                    sql="SELECT F.COREL, C.CODIGO, 0, P.CODIGO, P.DESCCORTA, C.NOMBRE, D.CANT, D.PRECIO, D.PRECIO*D.CANT, F.FECHA, 0 " +
-                            "FROM D_FACTURA F " +
-                            "INNER JOIN P_CLIENTE C ON C.CODIGO = F.CLIENTE "+
-                            "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
-                            "INNER JOIN P_PRODUCTO P ON P.CODIGO = D.PRODUCTO " +
-                            "WHERE F.FECHA>="+ dateini +" AND F.FECHA<="+datefin+condition+
-                            "AND F.ANULADO='N' " +
-                            "GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, D.CANT, D.PRECIO, F.TOTAL";
+                    sql="SELECT F.COREL, C.CODIGO, 0, P.CODIGO, P.DESCCORTA, C.NOMBRE, SUM(D.CANT) AS CANT, " +
+                        "MAX(D.PRECIO) AS PRECIO, SUM(D.PRECIO*D.CANT) AS TOTAL, F.FECHA, 0 " +
+                        "FROM D_FACTURA F " +
+                        "INNER JOIN P_CLIENTE C ON C.CODIGO_CLIENTE = F.CLIENTE "+
+                        "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
+                        "INNER JOIN P_PRODUCTO P ON P.CODIGO_PRODUCTO = D.PRODUCTO " +
+                        "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO='N' " +
+                        "GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, C.CODIGO_CLIENTE, P.CODIGO";
                     break;
 
                 default:
-                    msgbox("Error, al identificar el tipo de reporte, cierre la ventana e intentelo de nuevo");return false;
+                    msgbox("Error, al identificar el tipo de reporte, cierre la ventana e inténtelo de nuevo");return false;
             }
 
             dt = Con.OpenDT(sql);
             if(dt==null) {
-                msgbox("Ocurrío un error, vuelva a intentarlo");return false;
+                msgbox("Ocurrió un error, vuelva a intentarlo");return false;
             }
 
             if(dt.getCount()==0){
@@ -669,7 +672,6 @@ public class Reportes extends PBase {
                 }
             });
 
-
             cbDet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     report = false;
@@ -695,7 +697,18 @@ public class Reportes extends PBase {
                 }
             });
 
-            txtFill.addTextChangedListener(new TextWatcher() {
+            txtFill.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if ((event.getAction()==KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                        listItems();
+                    }
+
+                    return false;
+                }
+            });
+
+            /*txtFill.addTextChangedListener(new TextWatcher() {
 
                 public void afterTextChanged(Editable s) {}
 
@@ -704,7 +717,7 @@ public class Reportes extends PBase {
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     listItems();
                 }
-            });
+            });*/
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -718,16 +731,29 @@ public class Reportes extends PBase {
             DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
                     final int mesActual = month + 1;
+
                     String diaFormateado = (dayOfMonth < 10)? CERO + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
                     String mesFormateado = (mesActual < 10)? CERO + String.valueOf(mesActual):String.valueOf(mesActual);
-                    if(dateTxt) lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
-                    if(!dateTxt) lblDateini.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+
+                    if(dateTxt){
+                        lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+                    }
+                    if(!dateTxt){
+                        lblDateini.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+                    }
+
                     cyear = year;
                     cmonth = Integer.parseInt(mesFormateado);
                     cday = Integer.parseInt(diaFormateado);
-                    if(dateTxt) datefin = du.cfechaDesc(cyear, cmonth, cday);
-                    if(!dateTxt) dateini  = du.cfechaDesc(cyear, cmonth, cday);
+
+                    if(dateTxt){
+                        datefin = du.cfechaRep(cyear, cmonth, cday, false);
+                    }
+                    if(!dateTxt){
+                        dateini  = du.cfechaRep(cyear, cmonth, cday,true);
+                    }
                 }
             },anio, mes, dia);
 
@@ -755,8 +781,8 @@ public class Reportes extends PBase {
             lblDateini.setText(date);
             lblDatefin.setText(date);
 
-            datefin = fecha;
-            dateini = fecha;
+            datefin = du.getFechaActualReport(false);
+            dateini = du.getFechaActualReport(true);
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -784,6 +810,7 @@ public class Reportes extends PBase {
             if(gl.reportid==4) nombre="REPORTE POR FORMA DE PAGO";
             if(gl.reportid==5) nombre="REPORTE VENTA POR FAMILIA";
             if(gl.reportid==6) nombre="REPORTE VENTAS POR VENDEDOR";
+
             numero="";
             serie="";
             ruta=gl.ruta;
@@ -1014,8 +1041,8 @@ public class Reportes extends PBase {
                                 impF += itemR.get(a).imp;
                             }
 
-                            if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICION POR PRODUCTO");
-                            if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICION POR FAMILIA");
+                            if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICIO POR PRODUCTO");
+                            if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICIO POR FAMILIA");
                             rep.add("Codigo     Nombre");
                             rep.add("Venta      Costo    Beneficio    %");
                             rep.line();
@@ -1058,8 +1085,9 @@ public class Reportes extends PBase {
                         if(acc==1){
 
                             rep.add("REPORTE VENTAS POR CLIENTE DETALLE");
-                            rep.add("Codigo Cliente: "+itemR.get(0).serie);
-                            rep.add("Nombre Cliente: "+itemR.get(0).um);
+                           // rep.add("Codigo Cliente: "+itemR.get(i).serie);
+                           // rep.add("Nombre Cliente: "+itemR.get(i).um);
+                            rep.empty();
 
                             rep.add("Fecha        Corelativo");
                             rep.add("Producto   Cant    Precio    Total");
@@ -1071,30 +1099,64 @@ public class Reportes extends PBase {
                         if(acc==2){
                             rep.empty();
                             rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
-                            rep.empty();
+                            rep.line();
                             acc=3;
-                        }else if(i+1!=itemR.size() && !itemR.get(i).serie.equals(itemR.get(i+1).serie)){
-                            rep.empty();
-                            rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
-                            rep.empty();
                         }
 
-                        if(!fechaR.equals(du.univfechaReport(itemR.get(i).fecha))){
+                        if (i==0){
 
-                            if(i!=0){
+                            //Datos de factura
+                            fechaR = du.univfechaReport(itemR.get(i).fecha);
+                            rep.addtwo(fechaR, itemR.get(i).corel);
+                            rep.line();
+
+                            //Datos de producto
+                            rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
+
+                        }else{
+                            if(!itemR.get(i).corel.equals(itemR.get(i-1).corel)) {
+
+                                //Coloco totales de la factura anterior
                                 rep.line();
                                 rep.add4lrrT("", ""+cantF, 0.0,tot);
                                 rep.empty();
                                 cantF = 0;
                                 tot = 0;
 
+                                //Valido cambio de cliente
+                                if(i-1!=itemR.size() && !itemR.get(i).serie.equals(itemR.get(i-1).serie)){
+                                    rep.empty();
+                                    rep.addtwo(itemR.get(i).serie, itemR.get(i).um);
+                                    rep.line();
+                                }
+
+                                //Datos de nueva factura
+                                fechaR = du.univfechaReport(itemR.get(i).fecha);
+                                rep.addtwo(fechaR, itemR.get(i).corel);
+                                rep.line();
+
+                                //Datos de producto
+                                rep.add4lrrT(itemR.get(i).descrip, "" + itemR.get(i).cant, itemR.get(i).imp, itemR.get(i).total);
+
+                            }else{
+                                //Datos de producto
+                                rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
                             }
+                        }
 
-                            fechaR = du.univfechaReport(itemR.get(i).fecha);
-                            rep.addtwo(fechaR, itemR.get(i).corel);
-                            rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
 
-                        }else if(i+1==itemR.size()){
+
+                       if(!fechaR.equals(du.univfechaReport(itemR.get(i).fecha))){
+                            /*if(i!=0){
+                                rep.line();
+                                rep.add4lrrT("", ""+cantF, 0.0,tot);
+                                rep.empty();
+                                cantF = 0;
+                                tot = 0;
+
+                            }*/
+                        }
+                        /*else if(i+1==itemR.size()){
 
                             rep.line();
                             rep.add4lrrT("", ""+cantF, 0.0,tot);
@@ -1102,9 +1164,10 @@ public class Reportes extends PBase {
                             cantF = 0;
                             tot = 0;
 
-                        }else {
+                        }*/
+                        else {
 
-                            rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
+                           // rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
 
                         }
 
@@ -1112,6 +1175,15 @@ public class Reportes extends PBase {
                         tot += itemR.get(i).total;
                         SumaCant += itemR.get(i).cant;
                         totF += itemR.get(i).total;
+
+                        if(i==itemR.size()-1){
+                            //Coloco totales de la ultima factura
+                            rep.line();
+                            rep.add4lrrT("", ""+cantF, 0.0,tot);
+                            rep.empty();
+                            cantF = 0;
+                            tot = 0;
+                        }
                     }
                 }
                 rep.line();
@@ -1149,7 +1221,9 @@ public class Reportes extends PBase {
                 }
                 if(gl.reportid==7 || gl.reportid==8) rep.add4(totF, impF, totSinImpF, 0.0);
                 if(gl.reportid==11) rep.add3lrrTot("", ""+SumaCant, totF);
-                if(gl.reportid==12) rep.add4lrrT("Total: ", ""+SumaCant, 0.0,totF);
+                if(gl.reportid==12) {
+                    rep.add4lrrT("Total: ", ""+SumaCant, 0.0,totF);
+                }
                 rep.empty();
 
                 return true;
