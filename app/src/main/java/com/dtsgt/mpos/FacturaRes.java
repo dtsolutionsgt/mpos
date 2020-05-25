@@ -32,10 +32,12 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonifSave;
+import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 
@@ -752,11 +754,16 @@ public class FacturaRes extends PBase {
  	}
 
 	private boolean saveOrder(){
+        clsP_productoObj P_productoObj= new clsP_productoObj(this, Con, db);
+        clsD_facturasObj D_facturas= new clsD_facturasObj(this, Con, db);
+        clsClasses.clsD_facturas fsitem;
+
 		Cursor dt;
 		String vprod,vumstock,vumventa,vbarra;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
-		int mitem,bitem;
-		int dev_ins=1;
+		int mitem,bitem,prid,prcant,dev_ins=1;
+		boolean flag;
+
 		corel=gl.ruta+"_"+mu.getCorelBase();
 
         sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
@@ -944,6 +951,47 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
+            //region D_FACTURAS
+
+            /*
+
+            sql="SELECT SUM(UNID*CANT),IDSELECCION FROM T_COMBO GROUP BY IDSELECCION";
+            dt=Con.OpenDT(sql);
+
+            int fsid=1;
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    prid=dt.getInt(0);prcant=dt.getInt(0);
+
+                    try {
+                        P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prid);
+                        flag=P_productoObj.first().codigo_tipo.equalsIgnoreCase("P");
+                    } catch (Exception e) {
+                        flag=false;
+                    }
+
+                    if (flag) {
+                        fsitem=clsCls.new clsD_facturas();
+
+                        fsitem.corel=corel;
+                        fsitem.id=fsid;
+                        fsitem.producto=prid;
+                        fsitem.cant=prcant;
+                        fsitem.umstock="";
+
+                        fsid++;
+                    }
+
+                    dt.moveToNext();
+                }
+            }
+
+            */
+
+            //endregion
+
 			//region Bonificaciones
 
             //region D_BONIF
@@ -1018,6 +1066,7 @@ public class FacturaRes extends PBase {
 			db.execSQL(ins.sql());
 
 			//endregion
+
 			db.setTransactionSuccessful();
 			db.endTransaction();
 

@@ -79,7 +79,11 @@ public class ProdMenu extends PBase {
         if (!validaData()) {
             msgAskApply("Aplicar sin definir todas las opciónes");
         } else {
-            saveItem();
+            if (validaStock()) {
+                saveItem();
+            } else {
+                msgAskSave("Agregar a venta sin existencias");
+            }
         }
     }
 
@@ -147,13 +151,13 @@ public class ProdMenu extends PBase {
         try {
 
             clsT_comboObj combo=new clsT_comboObj(this,Con,db);
-            combo.fill("WHERE CODIGO_PRODUCTO="+ uitemid);
+            combo.fill("WHERE IdCombo="+ uitemid);
             cant=combo.first().cant; lbl2.setText(""+cant);
 
             for (int i = 0; i <items.size(); i++) {
 
                 menuid=items.get(i).codigo_menu_opcion;
-                combo.fill("WHERE (CODIGO_PRODUCTO="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
+                combo.fill("WHERE (IdCombo="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
                 selid=combo.first().idseleccion;
 
                 if (selid>0) {
@@ -175,7 +179,7 @@ public class ProdMenu extends PBase {
     }
 
     private void newItem() {
-        uitemid=T_comboObj.newID("SELECT MAX(CODIGO_MENU) FROM T_COMBO");
+        uitemid=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_COMBO");
         listMenuItems();
     }
 
@@ -193,10 +197,14 @@ public class ProdMenu extends PBase {
             for (int i = 0; i <P_menuObj.count; i++) {
 
                 item=clsCls.new clsOpcion();
+
                 item.codigo_menu_opcion =P_menuObj.items.get(i).codigo_menu;
                 item.Name=P_menuObj.items.get(i).nombre;
                 item.bandera=0;
                 item.orden=P_menuObj.items.get(i).orden;
+                item.cod=0;
+                item.unid=P_menuObj.items.get(i).unid;
+
                 items.add(item);
             }
 
@@ -212,8 +220,6 @@ public class ProdMenu extends PBase {
 
         clsClasses.clsT_combo item;
 
-        if (!validaStock()) return false;
-
         try {
 
             String um=getProdUM(gl.prodmenu);
@@ -227,7 +233,7 @@ public class ProdMenu extends PBase {
             db.beginTransaction();
 
             if (!newitem){
-                db.execSQL("DELETE FROM T_COMBO WHERE CODIGO_PRODUCTO="+uitemid);
+                db.execSQL("DELETE FROM T_COMBO WHERE IdCombo="+uitemid);
                 db.execSQL("DELETE FROM T_VENTA WHERE (PRODUCTO='"+gl.prodid+"') AND (EMPRESA='"+uitemid+"')");
             }
 
@@ -237,17 +243,12 @@ public class ProdMenu extends PBase {
 
                 //#EJC20200524: Revisar
                 item.codigo_menu=items.get(i).codigo_menu_opcion;
-                item.codigo_producto=uitemid;
+                item.idcombo=uitemid;
                 item.cant=cant;
+                item.unid=items.get(i).unid;
                 item.idseleccion=items.get(i).cod;
                 item.orden=items.get(i).orden;
 
-                ins.init("T_COMBO");
-                ins.add("CODIGO_MENU",item.codigo_menu);
-                ins.add("CODIGO_PRODUCTO",item.codigo_producto);
-                ins.add("IDSELECCION",item.idseleccion);
-                ins.add("CANT",item.cant);
-                ins.add("ORDEN",item.orden);
                 T_comboObj.add(item);
             }
 
@@ -355,18 +356,17 @@ public class ProdMenu extends PBase {
 
         for (int i = 0; i <items.size(); i++) {
             if (isProdStock(items.get(i).cod)) {
-                if (!stockProducto(items.get(i).cod,cant)) {
+                if (!stockProducto(items.get(i).cod,cant,items.get(i).unid)) {
                     flag=false;
                 }
             }
         }
 
-        //if (!flag)
-        msgbox(ststr);
+        if (!flag) msgbox(ststr);
         return flag;
     }
 
-    private boolean stockProducto(int prodid,int prcant){
+    private boolean stockProducto(int prodid,int prcant,int unid){
         int ctot, cstock, cvent, cbcombo, cavent=0;
 
         prodname=""+prcant;
@@ -376,7 +376,7 @@ public class ProdMenu extends PBase {
         cbcombo=cantProdCombo(prodid);
         cavent=cantProdItems(prodid);
 
-        ctot=cvent+cbcombo+cavent;
+        ctot=cvent+unid*(cbcombo+cavent);
 
         if (cstock<ctot) {
             ststr+=" Falta - "+prodname+" : "+(ctot-cstock)+"\n";
@@ -426,7 +426,7 @@ public class ProdMenu extends PBase {
         Cursor dt;
 
         try {
-            sql="SELECT SUM(CANT) FROM T_COMBO WHERE (CODIGO_PRODUCTO="+ uitemid+") AND (IDSELECTION="+prodid+")";
+            sql="SELECT SUM(CANT) FROM T_COMBO WHERE (IdCombo="+ uitemid+") AND (IDSELECCION="+prodid+")";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {
@@ -580,6 +580,25 @@ public class ProdMenu extends PBase {
 
     }
 
+    private void msgAskSave(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Title");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                saveItem();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
 
     //endregion
 

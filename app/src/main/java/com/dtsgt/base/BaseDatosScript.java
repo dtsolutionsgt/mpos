@@ -492,9 +492,6 @@ public class BaseDatosScript {
                     "CODIGO_MENU INTEGER NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
-
-
-
                     "NOMBRE TEXT NOT NULL,"+
                     "NOTA TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_MENU])"+
@@ -753,7 +750,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [D_FACTURAS] ("+
+            sql="CREATE TABLE [D_facturas] ("+
                     "COREL TEXT NOT NULL,"+
                     "ID INTEGER NOT NULL,"+
                     "PRODUCTO INTEGER NOT NULL,"+
@@ -762,15 +759,6 @@ public class BaseDatosScript {
                     "PRIMARY KEY ([COREL],[ID])"+
                     ");";
             database.execSQL(sql);
-
-
-
-
-
-
-
-
-
 
             sql="CREATE TABLE [D_BONIF] ("+
                     "[COREL] TEXT NOT NULL,"+
@@ -1560,14 +1548,14 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
             sql="CREATE TABLE [T_combo] ("+
-                "CODIGO_COMBO INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                "CODIGO_MENU INTEGER NOT NULL,"+
-                "CODIGO_PRODUCTO INTEGER NOT NULL,"+
-                "CANT INTEGER NOT NULL,"+
-                "IDSELECCION INTEGER NOT NULL,"+
-                "ORDEN INTEGER NOT NULL"+
-                ");";
-
+                    "CODIGO_MENU INTEGER NOT NULL,"+
+                    "IDCOMBO INTEGER NOT NULL,"+
+                    "UNID INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "IDSELECCION INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MENU],[IDCOMBO])"+
+                    ");";
             database.execSQL(sql);
 
             return 1;

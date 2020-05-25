@@ -64,7 +64,7 @@ public class clsP_prodmenuObj {
     }
 
     public void fill_by_idproducto(int IdProducto){
-    fillItems_by_idproducto(IdProducto);
+        fillItems_by_idproducto(IdProducto);
     }
 
     public void fillSelect(String sq) {
@@ -153,14 +153,14 @@ public class clsP_prodmenuObj {
 
         items.clear();
 
-        String vsql = " SELECT P_PRODMENU.CODIGO_MENU, \n " +
-                      " P_PRODMENU.EMPRESA, P_PRODMENU.CODIGO_PRODUCTO AS CODIGO_PRODUCTO_MENU, \n" +
-                      " P_PRODMENU.NOMBRE, P_PRODMENU.NOTA, \n" +
-                      " P_PRODMENUOPC.CODIGO_MENU_OPCION, P_PRODMENUOPC.CODIGO_MENU AS CODIGO_OPCION, P_PRODMENUOPC.NOMBRE AS NOMBRE_OPCION, P_PRODMENUOPC.CANT, \n" +
-                      " P_PRODMENUOPC.ORDEN\n" +
-                      " FROM P_PRODMENU INNER JOIN\n" +
-                      " P_PRODMENUOPC ON P_PRODMENU.CODIGO_MENU = P_PRODMENUOPC.CODIGO_MENU\n" +
-                      " WHERE P_PRODMENU.CODIGO_PRODUCTO = " + idProducto + "\n" +
+        String vsql = " SELECT P_PRODMENU.CODIGO_MENU,  " +
+                      " P_PRODMENU.EMPRESA, P_PRODMENU.CODIGO_PRODUCTO AS CODIGO_PRODUCTO_MENU, " +
+                      " P_PRODMENU.NOMBRE, P_PRODMENU.NOTA, " +
+                      " P_PRODMENUOPC.CODIGO_MENU_OPCION, P_PRODMENUOPC.CODIGO_MENU AS CODIGO_OPCION, P_PRODMENUOPC.NOMBRE AS NOMBRE_OPCION, P_PRODMENUOPC.CANT, " +
+                      " P_PRODMENUOPC.ORDEN " +
+                      " FROM P_PRODMENU INNER JOIN " +
+                      " P_PRODMENUOPC ON P_PRODMENU.CODIGO_MENU = P_PRODMENUOPC.CODIGO_MENU " +
+                      " WHERE P_PRODMENU.CODIGO_PRODUCTO = " + idProducto + " " +
                       " ORDER BY P_PRODMENUOPC.ORDEN, P_PRODMENUOPC.NOMBRE";
 
         dt=Con.OpenDT(vsql);
@@ -174,12 +174,16 @@ public class clsP_prodmenuObj {
             while (!dt.isAfterLast()) {
 
                 item = clsCls.new clsP_prodmenu();
+
                 item.codigo_menu=dt.getInt(5);
                 item.empresa=dt.getInt(1);
                 item.codigo_producto=dt.getInt(2);
                 item.nombre=dt.getString(7);
                 item.nota=dt.getString(4);
+                item.unid=dt.getInt(8);
+
                 items.add(item);
+
                 dt.moveToNext();
             }
 

@@ -7,8 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
 
-
-public class clsT_comboObj {
+public class clsD_facturasObj {
 
     public int count;
 
@@ -19,11 +18,11 @@ public class clsT_comboObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM T_combo";
+    private String sel="SELECT * FROM D_facturas";
     private String sql;
-    public ArrayList<clsClasses.clsT_combo> items= new ArrayList<clsClasses.clsT_combo>();
+    public ArrayList<clsClasses.clsD_facturas> items= new ArrayList<clsClasses.clsD_facturas>();
 
-    public clsT_comboObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
+    public clsD_facturasObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
         cont=context;
         Con=dbconnection;
         ins=Con.Ins;upd=Con.Upd;
@@ -37,19 +36,19 @@ public class clsT_comboObj {
         db = dbase;
     }
 
-    public void add(clsClasses.clsT_combo item) {
+    public void add(clsClasses.clsD_facturas item) {
         addItem(item);
     }
 
-    public void update(clsClasses.clsT_combo item) {
+    public void update(clsClasses.clsD_facturas item) {
         updateItem(item);
     }
 
-    public void delete(clsClasses.clsT_combo item) {
+    public void delete(clsClasses.clsD_facturas item) {
         deleteItem(item);
     }
 
-    public void delete(int id) {
+    public void delete(String id) {
         deleteItem(id);
     }
 
@@ -65,38 +64,36 @@ public class clsT_comboObj {
         fillItems(sq);
     }
 
-    public clsClasses.clsT_combo first() {
+    public clsClasses.clsD_facturas first() {
         return items.get(0);
     }
 
 
     // Private
 
-    private void addItem(clsClasses.clsT_combo item) {
+    private void addItem(clsClasses.clsD_facturas item) {
 
-        ins.init("T_combo");
+        ins.init("D_facturas");
 
-        ins.add("CODIGO_MENU",item.codigo_menu);
-        ins.add("IDCOMBO",item.idcombo);
-        ins.add("UNID",item.unid);
+        ins.add("COREL",item.corel);
+        ins.add("ID",item.id);
+        ins.add("PRODUCTO",item.producto);
         ins.add("CANT",item.cant);
-        ins.add("IDSELECCION",item.idseleccion);
-        ins.add("ORDEN",item.orden);
+        ins.add("UMSTOCK",item.umstock);
 
         db.execSQL(ins.sql());
 
     }
 
-    private void updateItem(clsClasses.clsT_combo item) {
+    private void updateItem(clsClasses.clsD_facturas item) {
 
-        upd.init("T_combo");
+        upd.init("D_facturas");
 
-        upd.add("UNID",item.unid);
+        upd.add("PRODUCTO",item.producto);
         upd.add("CANT",item.cant);
-        upd.add("IDSELECCION",item.idseleccion);
-        upd.add("ORDEN",item.orden);
+        upd.add("UMSTOCK",item.umstock);
 
-        upd.Where("(CODIGO_MENU="+item.codigo_menu+") AND (IDCOMBO="+item.idcombo+")");
+        upd.Where("(COREL='"+item.corel+"') AND (ID="+item.id+")");
 
         db.execSQL(upd.sql());
 
@@ -104,19 +101,19 @@ public class clsT_comboObj {
 
     }
 
-    private void deleteItem(clsClasses.clsT_combo item) {
-        sql="DELETE FROM T_combo WHERE (CODIGO_MENU="+item.codigo_menu+") AND (IDCOMBO="+item.idcombo+")";
+    private void deleteItem(clsClasses.clsD_facturas item) {
+        sql="DELETE FROM D_facturas WHERE (COREL='"+item.corel+"') AND (ID="+item.id+")";
         db.execSQL(sql);
     }
 
-    private void deleteItem(int id) {
-        sql="DELETE FROM T_combo WHERE id=" + id;
+    private void deleteItem(String id) {
+        sql="DELETE FROM D_facturas WHERE id='" + id+"'";
         db.execSQL(sql);
     }
 
     private void fillItems(String sq) {
         Cursor dt;
-        clsClasses.clsT_combo item;
+        clsClasses.clsD_facturas item;
 
         items.clear();
 
@@ -126,14 +123,13 @@ public class clsT_comboObj {
 
         while (!dt.isAfterLast()) {
 
-            item = clsCls.new clsT_combo();
+            item = clsCls.new clsD_facturas();
 
-            item.codigo_menu=dt.getInt(0);
-            item.idcombo=dt.getInt(1);
-            item.unid=dt.getInt(2);
-            item.cant=dt.getInt(3);
-            item.idseleccion=dt.getInt(4);
-            item.orden=dt.getInt(5);
+            item.corel=dt.getString(0);
+            item.id=dt.getInt(1);
+            item.producto=dt.getInt(2);
+            item.cant=dt.getDouble(3);
+            item.umstock=dt.getString(4);
 
             items.add(item);
 
@@ -161,31 +157,29 @@ public class clsT_comboObj {
         return nid;
     }
 
-    public String addItemSql(clsClasses.clsT_combo item) {
+    public String addItemSql(clsClasses.clsD_facturas item) {
 
-        ins.init("T_combo");
+        ins.init("D_facturas");
 
-        ins.add("CODIGO_MENU",item.codigo_menu);
-        ins.add("IDCOMBO",item.idcombo);
-        ins.add("UNID",item.unid);
+        ins.add("COREL",item.corel);
+        ins.add("ID",item.id);
+        ins.add("PRODUCTO",item.producto);
         ins.add("CANT",item.cant);
-        ins.add("IDSELECCION",item.idseleccion);
-        ins.add("ORDEN",item.orden);
+        ins.add("UMSTOCK",item.umstock);
 
         return ins.sql();
 
     }
 
-    public String updateItemSql(clsClasses.clsT_combo item) {
+    public String updateItemSql(clsClasses.clsD_facturas item) {
 
-        upd.init("T_combo");
+        upd.init("D_facturas");
 
-        upd.add("UNID",item.unid);
+        upd.add("PRODUCTO",item.producto);
         upd.add("CANT",item.cant);
-        upd.add("IDSELECCION",item.idseleccion);
-        upd.add("ORDEN",item.orden);
+        upd.add("UMSTOCK",item.umstock);
 
-        upd.Where("(CODIGO_MENU="+item.codigo_menu+") AND (IDCOMBO="+item.idcombo+")");
+        upd.Where("(COREL='"+item.corel+"') AND (ID="+item.id+")");
 
         return upd.sql();
 

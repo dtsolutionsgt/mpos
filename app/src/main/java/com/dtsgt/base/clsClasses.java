@@ -84,6 +84,14 @@ public class clsClasses {
         public String depos;
     }
 
+    public class clsD_facturas {
+        public String corel;
+        public int  id;
+        public int  producto;
+        public double cant;
+        public String umstock;
+    }
+
     public class clsP_archivoconf {
         public String ruta;
         public String tipo_hh;
@@ -358,6 +366,7 @@ public class clsClasses {
         public int  orden;
         public String nombre;
         public String nota;
+        public int unid;
     }
 
     public class clsP_prodmenuopc {
@@ -649,7 +658,7 @@ public class clsClasses {
 	}
 
     public class clsOpcion {
-        public int codigo_menu_opcion,bandera,orden,cod;
+        public int codigo_menu_opcion,bandera,orden,cod,unid;
         public String Name;
     }
 
@@ -667,13 +676,13 @@ public class clsClasses {
 
     public class clsT_combo {
         public int  codigo_menu;
-        public int  codigo_producto;
-        public int  opcion_lista;
-        public int  opcion_producto;
+        public int  idcombo;
+        public int  unid;
         public int  cant;
         public int  idseleccion;
         public int  orden;
     }
+
 
     //endregion
 
