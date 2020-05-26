@@ -204,7 +204,7 @@ public class WSEnv extends PBase {
             CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
 
-            CSQL=CSQL+addFactheader(D_facturaObj.first())+ " \n";
+            CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
             for (int i = 0; i <D_facturadObj.count; i++) {
                 CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
