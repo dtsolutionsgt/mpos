@@ -187,7 +187,7 @@ public class MainActivity extends PBase {
     //region Events
 
     public void comMan(View view) {
-        acesoAdmin();
+        accesoAdmin();
     }
 
     public void gotoMenu() {
@@ -467,7 +467,8 @@ public class MainActivity extends PBase {
                     return true;
                 } else {
                     toastlong("No está configurada la caja. Informe al gerente.");
-                    acesoAdmin();
+                    browse=2;
+                    accesoAdmin();
                     return false;
                 }
             } else {
@@ -502,7 +503,7 @@ public class MainActivity extends PBase {
 
     }
 
-    private void acesoAdmin() {
+    private void accesoAdmin() {
 
         if (!tieneTiendaCaja()) return;
 
@@ -795,6 +796,12 @@ public class MainActivity extends PBase {
     protected void onResume() {
         try {
             super.onResume();
+
+            if (browse ==2 && gl.configCajaSuc){
+                browse=0;
+                processLogIn();
+                return;
+            }
 
             if (browse !=1){
                 initSession();

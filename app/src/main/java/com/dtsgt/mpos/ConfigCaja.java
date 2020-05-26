@@ -44,6 +44,8 @@ public class ConfigCaja extends PBase {
         spincode=new ArrayList<String>();spinlist=new ArrayList<String>();
         cajacode=new ArrayList<String>();cajalist=new ArrayList<String>();
 
+        gl.configCajaSuc = false;
+
         setHandlers();
 
         loadItem();
@@ -52,7 +54,7 @@ public class ConfigCaja extends PBase {
     //region Events
 
     public void doSave(View view) {
-        if (validaDatos()) msgAskAdd("Aplicar asignacion");
+        if (validaDatos()) msgAskAdd("Aplicar asignación");
     }
 
     public void doExit(View view) {
@@ -124,6 +126,10 @@ public class ConfigCaja extends PBase {
             fillSpinner(idsuc);
             fillSpinner2(idcaja);
 
+            if (spinlist.size()==2 && cajalist.size()==2){
+                if (validaDatos()) msgAskAdd("Aplicar asignación");
+            }
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -133,6 +139,8 @@ public class ConfigCaja extends PBase {
         try {
             sql = "UPDATE Params SET SUCURSAL='"+idsuc+"',RUTA='"+idcaja+"'";
             db.execSQL(sql);
+
+            gl.configCajaSuc = true;
 
             finish();
         } catch (Exception e) {
@@ -181,6 +189,7 @@ public class ConfigCaja extends PBase {
                 spinlist.add(sucur.items.get(i).descripcion);
                 if (scod.equalsIgnoreCase(selid)) selidx=i+1;
             }
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             mu.msgbox( e.getMessage());
@@ -191,8 +200,17 @@ public class ConfigCaja extends PBase {
 
         spin.setAdapter(dataAdapter);
 
+        if (spinlist.size()==2){
+            selidx=1;
+        }
+
         try {
             spin.setSelection(selidx);
+
+            if(selidx==1){
+                idsuc = spincode.get(1);
+            }
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -232,8 +250,17 @@ public class ConfigCaja extends PBase {
 
         spin2.setAdapter(dataAdapter);
 
+        if (cajalist.size()==2){
+            selidx=1;
+        }
+
         try {
             spin2.setSelection(selidx);
+
+            if (selidx==1){
+                idcaja = cajacode.get(1);
+            }
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }

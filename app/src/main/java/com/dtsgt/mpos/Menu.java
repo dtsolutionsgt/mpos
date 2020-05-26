@@ -45,12 +45,13 @@ public class Menu extends PBase {
 	private ArrayList<clsMenu> items= new ArrayList<clsMenu>();
 
 	//#HS_20181207 Controles para seleccionar el ayudante y vehiculo.
-	private Spinner Ayudante,Vehiculo;
+    //#CKFK 20200525 Puse esto en comentario lo del vehículo y el vendedor porque en MPos no se utiliza
+	/*private Spinner Ayudante,Vehiculo;
 	private TextView lblAyudante,lblVehiculo;
 	private ArrayList<String> listIDAyudante = new ArrayList<String>();
 	private ArrayList<String> listAyudante = new ArrayList<String>();
 	private ArrayList<String> listIDVehiculo = new ArrayList<String>();
-	private ArrayList<String> listVehiculo = new ArrayList<String>();
+	private ArrayList<String> listVehiculo = new ArrayList<String>();*/
 
 	private ListAdaptMenuGrid adaptergrid;
 	private AlertDialog.Builder menudlg;
@@ -80,12 +81,13 @@ public class Menu extends PBase {
 			lblVendedor = (TextView) findViewById(R.id.lblVendedor);
 			lblRuta = (TextView) findViewById(R.id.textView9);
 
-			Ayudante = new Spinner(this);
+            //#CKFK 20200525 Puse esto en comentario lo del vehículo y el vendedor porque en MPos no se utiliza
+            /*Ayudante = new Spinner(this);
 			Vehiculo = new Spinner(this);
 			lblAyudante = new TextView(this);
 			lblAyudante.setText("Ayudante:");
 			lblVehiculo = new TextView(this);
-			lblVehiculo.setText("Vehículo:");
+			lblVehiculo.setText("Vehículo:");*/
 			///
 
 			gl.validDate=false;
@@ -114,11 +116,14 @@ public class Menu extends PBase {
 			this.setTitle("ROAD");
 			listItems();
 
-			if (gl.peVehAyud) {
+			cajaCerrada();
+
+			//#CKFK 20200525  Puse esto en comentario porque en el MPos no se utiliza el ayudante ni el vehículo
+			/*if (gl.peVehAyud) {
 				AyudanteVehiculo();
 			} else {
 				gl.ayudanteID="";gl.vehiculoID="";
-			}
+			}*/
 
 		} catch (Exception e) {
 			msgbox(e.getMessage());
@@ -1506,17 +1511,18 @@ public class Menu extends PBase {
 
 	//#HS_20181207 Mensaje que muestra los ayudantes y vehiculos disponibles.
 
-	private void AyudanteVehiculo() {
+
+	//#CKFK 20200525 Puse esto en comentario lo del vehículo y el vendedor porque en MPos no se utiliza
+	/*private void AyudanteVehiculo() {
 
 		try{
 
-			/*inputAyudanteVehiculo();
+			inputAyudanteVehiculo();
 
 			getlistAyudante();
 			getlistVehiculo();
 			getAyudante();
 			getVehiculo();
-            */
 
             startActivity(new Intent(this,ayudante_vehiculo.class));
 
@@ -1526,7 +1532,7 @@ public class Menu extends PBase {
 
 	}
 
-	private void inputAyudanteVehiculo() {
+    private void inputAyudanteVehiculo() {
 
 		try{
 
@@ -1537,8 +1543,7 @@ public class Menu extends PBase {
 			final LinearLayout layout = new LinearLayout(this);
 			layout.setOrientation(LinearLayout.VERTICAL);
 
-
-		//layout.addView(new TextView(this));
+            //layout.addView(new TextView(this));
 			layout.addView(lblAyudante);
 			layout.addView(Ayudante);
 			//layout.addView(new TextView(this));
@@ -1566,10 +1571,10 @@ public class Menu extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
-	}
+	}*/
 
-
-
+    //#CKFK 20200525 Puse esto en comentario lo del vehículo y el vendedor porque en MPos no se utiliza
+    /*
 	private void getAyudante(){
 
 		try{
@@ -1641,9 +1646,10 @@ public class Menu extends PBase {
 
 
 	}
+*/
 
 	//#HS_20181207 Obtiene el ayudante y vehiculo asignado a la ruta.
-	private void getAyudanteVehiculo(){
+	/*private void getAyudanteVehiculo(){
 
 		try
 		{
@@ -1719,7 +1725,7 @@ public class Menu extends PBase {
 		}
 
 
-	}
+	}*/
 
 	//endregion
 
@@ -1805,6 +1811,38 @@ public class Menu extends PBase {
 
 	}
 
+	private void msgAskIniciarCaja(String msg) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Registro");
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+
+				if(gl.cajaid==5){
+
+					gl.cajaid=1;
+
+					if (valida()){
+
+						if (gl.cajaid!=2){
+							startActivity(new Intent(Menu.this,Caja.class));
+						}
+
+					}
+				}
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
 
 	private void msgAskValidUltZ(String msg) {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -1911,6 +1949,28 @@ public class Menu extends PBase {
 		}
 
 		return true;
+	}
+
+	private boolean cajaCerrada(){
+
+		boolean resultado=false;
+
+		try{
+
+			gl.cajaid=5;
+
+			if(!valida()){
+				if (gl.cajaid==5){
+					msgAskIniciarCaja("La caja está cerrada. ¿Quiere realizar el inicio de caja?");
+				}
+			}
+
+		}catch (Exception ex){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
+			msgbox("Ocurrió error (valida) "+ex);
+		}
+
+		return resultado;
 	}
 
 	private void setPrintWidth() {

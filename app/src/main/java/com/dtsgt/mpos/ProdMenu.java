@@ -197,14 +197,12 @@ public class ProdMenu extends PBase {
             for (int i = 0; i <P_menuObj.count; i++) {
 
                 item=clsCls.new clsOpcion();
-
                 item.codigo_menu_opcion =P_menuObj.items.get(i).codigo_menu;
                 item.Name=P_menuObj.items.get(i).nombre;
                 item.bandera=0;
                 item.orden=P_menuObj.items.get(i).orden;
                 item.cod=0;
                 item.unid=P_menuObj.items.get(i).unid;
-
                 items.add(item);
             }
 
