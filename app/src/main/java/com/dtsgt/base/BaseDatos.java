@@ -140,6 +140,11 @@ public class BaseDatos extends SQLiteOpenHelper {
 				  if (pField == "") return;
 				  
 				  pValue=pValue.replace("'", "");
+
+				  if (pValue.equals("null")){
+				  	pValue="";
+				  }
+
 				  SV="'" + pValue + "'";
 				  				  
 				  clFList.add(pField);

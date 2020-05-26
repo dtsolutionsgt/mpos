@@ -130,7 +130,7 @@ public class clsP_rutaObj {
             item.sucursal=dt.getString(1);
             item.nombre=dt.getString(2);
             item.codigo_ruta=dt.getInt(3);
-            item.activo = dt.getString(4);
+            item.activo = dt.getInt(4);
 
             items.add(item);
 

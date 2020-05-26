@@ -19,6 +19,9 @@ public class clsP_empresaObj {
     private clsClasses clsCls = new clsClasses();
 
     private String sel="SELECT * FROM P_empresa";
+    private String sel_sin_imagen="SELECT EMPRESA, NOMBRE, COL_IMP, '' AS LOGO, RAZON_SOCIAL, IDENTIFICACION_TRIBUTARIA, TELEFONO, " +
+                                  "COD_PAIS, NOMBRE_CONTACTO, APELLIDO_CONTACTO, DIRECCION, CORREO, CODIGO_ACTIVACION, " +
+                                  "COD_CANT_EMP, CANTIDAD_PUNTOS_VENTA FROM P_empresa";
     private String sql;
     public ArrayList<clsClasses.clsP_empresa> items= new ArrayList<clsClasses.clsP_empresa>();
 
@@ -54,6 +57,10 @@ public class clsP_empresaObj {
 
     public void fill() {
         fillItems(sel);
+    }
+
+    public void fill_sin_imagen() {
+        fillItems(sel_sin_imagen);
     }
 
     public void fill(String specstr) {
@@ -139,32 +146,38 @@ public class clsP_empresaObj {
         items.clear();
 
         dt=Con.OpenDT(sq);
-        count =dt.getCount();
-        if (dt.getCount()>0) dt.moveToFirst();
 
-        while (!dt.isAfterLast()) {
+        if(dt != null){
+            count =dt.getCount();
+            if (dt.getCount()>0)
 
-            item = clsCls.new clsP_empresa();
+           dt.moveToFirst();
 
-            item.empresa=dt.getInt(0);
-            item.nombre=dt.getString(1);
-            item.col_imp=dt.getInt(2);
-            item.logo=dt.getString(3);
-            item.razon_social=dt.getString(4);
-            item.identificacion_tributaria=dt.getString(5);
-            item.telefono=dt.getString(6);
-            item.cod_pais=dt.getString(7);
-            item.nombre_contacto=dt.getString(8);
-            item.apellido_contacto=dt.getString(9);
-            item.direccion=dt.getString(10);
-            item.correo=dt.getString(11);
-            item.codigo_activacion=dt.getString(12);
-            item.cod_cant_emp=dt.getInt(13);
-            item.cantidad_puntos_venta=dt.getInt(14);
+            while (!dt.isAfterLast()) {
 
-            items.add(item);
+                item = clsCls.new clsP_empresa();
 
-            dt.moveToNext();
+                item.empresa=dt.getInt(0);
+                item.nombre=dt.getString(1);
+                item.col_imp=dt.getInt(2);
+                item.logo=dt.getString(3);
+                item.razon_social=dt.getString(4);
+                item.identificacion_tributaria=dt.getString(5);
+                item.telefono=dt.getString(6);
+                item.cod_pais=dt.getString(7);
+                item.nombre_contacto=dt.getString(8);
+                item.apellido_contacto=dt.getString(9);
+                item.direccion=dt.getString(10);
+                item.correo=dt.getString(11);
+                item.codigo_activacion=dt.getString(12);
+                item.cod_cant_emp=dt.getInt(13);
+                item.cantidad_puntos_venta=dt.getInt(14);
+
+                items.add(item);
+
+                dt.moveToNext();
+            }
+
         }
 
         if (dt!=null) dt.close();

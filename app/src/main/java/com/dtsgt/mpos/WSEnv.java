@@ -198,18 +198,18 @@ public class WSEnv extends PBase {
 
             idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
-            CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"'*";
-            CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"'*";
-            CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"'*";
+            CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"' \n";
+            CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"' \n";
+            CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"' \n";
 
-            CSQL=CSQL+addFactheader(D_facturaObj.first())+ "*";
+            CSQL=CSQL+addFactheader(D_facturaObj.first())+ " \n";
 
             for (int i = 0; i <D_facturadObj.count; i++) {
-                CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + "*";
+                CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + " \n";
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
-                CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + "*";
+                CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + " \n";
             }
 
         } catch (Exception e) {
@@ -302,9 +302,9 @@ public class WSEnv extends PBase {
                 P_clienteObj.items.get(i).eservice="S";
 
                 ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+ccli+")";
-                CSQL = CSQL + ss + "*";
+                CSQL = CSQL + ss + "\n";
                 ss=P_clienteObj.addItemSql(P_clienteObj.items.get(i),gl.emp);
-                CSQL = CSQL + ss + "*";
+                CSQL = CSQL + ss + "\n";
 
                 clients.add(""+ccli);
             }
