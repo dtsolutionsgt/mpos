@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 public class clsFELInFile {
 
     public String  error,fecha_factura;
-    public Boolean errorflag;
+    public Boolean errorflag,constat;
     public int errlevel;
 
     public String xml,xmlanul;
@@ -79,13 +80,13 @@ public class clsFELInFile {
 
     public void certificacion() {
         fact_uuid="";fact_serie="";fact_numero=0;
-        errlevel=0;error="";errorflag=false;
+        errlevel=0;error="";errorflag=false;constat=true;
         sendJSONFirm();
     }
 
     public void anulacion(String fuuid) {
         fact_uuid=fuuid;
-        errlevel=0;error="";errorflag=false;
+        errlevel=0;error="";errorflag=false;constat=true;
         sendJSONFirmAnul();
     }
 
@@ -135,31 +136,43 @@ public class clsFELInFile {
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
-            DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
+            DataOutputStream wr = null;
+            try {
+                wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (IOException e) {
+                error="No hay conexión al internet";errorflag=true;constat=false;return;
+            }
+
             wr.writeBytes (jsfirm);
             wr.flush ();
             wr.close ();
 
             InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuilder sb = new StringBuilder();
 
-            while((line = rd.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            rd.close();
+            int response=connection.getResponseCode();
+            if (response==200) {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder sb = new StringBuilder();
 
-            String jstr=sb.toString();
-            jObj = new JSONObject(jstr);
+                while((line = rd.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                rd.close();
 
-            error= jObj.getString("descripcion");
-            if (jObj.getBoolean("resultado")) {
-                errorflag=false;
-                firma=jObj.getString("archivo");
+                String jstr=sb.toString();
+                jObj = new JSONObject(jstr);
+
+                error= jObj.getString("descripcion");
+                if (jObj.getBoolean("resultado")) {
+                    errorflag=false;
+                    firma=jObj.getString("archivo");
+                } else {
+                    errorflag=true;
+                    //parent.felCallBack();return;
+                }
             } else {
-                errorflag=true;
-                //parent.felCallBack();return;
+                error=""+response;errorflag=true;return;
             }
 
         } catch (Exception e) {
@@ -259,34 +272,47 @@ public class clsFELInFile {
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
-            DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
+            DataOutputStream wr = null;
+            try {
+                wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (IOException e) {
+                error="No hay conexión al internet";errorflag=true;constat=false;return;
+            }
+
             wr.writeBytes (jscert);
             wr.flush ();
             wr.close ();
 
             InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuilder sb = new StringBuilder();
 
-            while((line = rd.readLine()) != null) {
-                sb.append(line + "\n");
+            int response=connection.getResponseCode();
+            if (response==200) {
+
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder sb = new StringBuilder();
+
+                while((line = rd.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                rd.close();
+
+                String jstr=sb.toString();
+                jObj = new JSONObject(jstr);
+
+                error= jObj.getString("descripcion");
+                if (!jObj.getBoolean("resultado")) {
+                    errorflag=true;return;
+                }
+
+                fact_uuid =jObj.getString("uuid");
+                fact_serie =jObj.getString("serie");
+                fact_numero =jObj.getInt("numero");
+
+                errorflag=false;
+            } else {
+                error=""+response;errorflag=true;return;
             }
-            rd.close();
-
-            String jstr=sb.toString();
-            jObj = new JSONObject(jstr);
-
-            error= jObj.getString("descripcion");
-            if (!jObj.getBoolean("resultado")) {
-                errorflag=true;return;
-            }
-
-            fact_uuid =jObj.getString("uuid");
-            fact_serie =jObj.getString("serie");
-            fact_numero =jObj.getInt("numero");
-
-            errorflag=false;
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         } finally {
@@ -373,31 +399,44 @@ public class clsFELInFile {
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
-            DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
+            DataOutputStream wr = null;
+            try {
+                wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (IOException e) {
+                error="No hay conexión al internet";errorflag=true;constat=false;return;
+            }
+
             wr.writeBytes (jsfirm);
             wr.flush ();
             wr.close ();
 
             InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuilder sb = new StringBuilder();
 
-            while((line = rd.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            rd.close();
+            int response=connection.getResponseCode();
+            if (response==200) {
 
-            String jstr=sb.toString();
-            jObj = new JSONObject(jstr);
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder sb = new StringBuilder();
 
-            error= jObj.getString("descripcion");
-            if (jObj.getBoolean("resultado")) {
-                errorflag=false;
-                firma=jObj.getString("archivo");
+                while((line = rd.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                rd.close();
+
+                String jstr=sb.toString();
+                jObj = new JSONObject(jstr);
+
+                error= jObj.getString("descripcion");
+                if (jObj.getBoolean("resultado")) {
+                    errorflag=false;
+                    firma=jObj.getString("archivo");
+                } else {
+                    errorflag=true;
+                    //parent.felCallBack();
+                }
             } else {
-                errorflag=true;
-                //parent.felCallBack();
+                error=""+response;errorflag=true;return;
             }
 
         } catch (Exception e) {
@@ -491,32 +530,44 @@ public class clsFELInFile {
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
-            //Send request
-            DataOutputStream wr = new DataOutputStream (connection.getOutputStream ());
+            DataOutputStream wr = null;
+            try {
+                wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (IOException e) {
+                error="No hay conexión al internet";errorflag=true;constat=false;return;
+            }
+
             wr.writeBytes (jsanul);
             wr.flush ();
             wr.close ();
 
-            //Get Response
             InputStream is = connection.getInputStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            String line;
-            StringBuilder sb = new StringBuilder();
 
-            while((line = rd.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            rd.close();
+            int response=connection.getResponseCode();
+            if (response==200) {
 
-            String jstr=sb.toString();
-            jObj = new JSONObject(jstr);
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder sb = new StringBuilder();
 
-            error= jObj.getString("descripcion");
-            if (jObj.getBoolean("resultado")) {
-                errorflag=false;
+                while((line = rd.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                rd.close();
+
+                String jstr=sb.toString();
+                jObj = new JSONObject(jstr);
+
+                error= jObj.getString("descripcion");
+                if (jObj.getBoolean("resultado")) {
+                    errorflag=false;
+                } else {
+                    errorflag=true;
+                    error=jObj.getString("mensaje_error");
+                }
+
             } else {
-                errorflag=true;
-                error=jObj.getString("mensaje_error");
+                error=""+response;errorflag=true;return;
             }
 
         } catch (Exception e) {

@@ -42,7 +42,7 @@ public class FelFactura extends PBase {
     private ArrayList<String> facts = new ArrayList<String>();
 
     private String felcorel,corel;
-    private boolean multiflag;
+    private boolean demomode,multiflag;
     private int ftot,ffail,fidx;
 
     @Override
@@ -62,23 +62,29 @@ public class FelFactura extends PBase {
         gl.feluuid="";
 
         fel=new clsFELInFile(this,this);
-/*
-        fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
-        //fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41";
-        fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
-        fel.fel_codigo="PEXPRESS";
-        fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
-        fel.fel_nit="96049340";
-*/
 
-        fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
-        fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
-        fel.fel_codigo ="0";
-        fel.fel_alias="DEMO_FEL";
-        fel.fel_nit="1000000000K";
+        demomode=true;
 
-        fel.fel_correo="";
-        fel.fel_ident="abc124";
+        if (demomode) {
+
+            fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
+            fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
+            fel.fel_codigo ="0";
+            fel.fel_alias="DEMO_FEL";
+            fel.fel_nit="1000000000K";
+            fel.fel_correo="";
+
+        } else {
+
+            fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
+            fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41";
+            fel.fel_codigo="PEXPRESS";
+            fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
+            fel.fel_nit="96049340";
+
+        }
+
+
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
@@ -167,7 +173,7 @@ public class FelFactura extends PBase {
         } else {
             //pbar.setVisibility(View.INVISIBLE);
 
-            //if (!fel.errorflag) marcaFactura();
+            if (!fel.errorflag) marcaFactura();
 
             if (!fel.errorflag) {
                 gl.feluuid=fel.fact_uuid;
@@ -198,7 +204,11 @@ public class FelFactura extends PBase {
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
 
-            fel.fel_ident=fact.serie+fact.corelativo;
+            if (demomode) {
+                fel.fel_ident="abc123";
+            } else {
+                fel.fel_ident=fact.serie+fact.corelativo;
+            }
 
             fel.iniciar(fact.fecha);
             fel.emisor("GEN",fel.fel_codigo,"",fel.fel_nit,fel.fel_alias);
@@ -239,11 +249,13 @@ public class FelFactura extends PBase {
     }
 
     private void marcaFactura() {
-/*
+
         try {
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
+            fact.serie=fel.fact_serie;
+            fact.corelativo=fel.fact_numero;
             fact.feelserie=fel.fact_serie;
             fact.feelnumero=""+fel.fact_numero;
             fact.feeluuid=fel.fact_uuid;
@@ -253,7 +265,6 @@ public class FelFactura extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
- */
     }
 
     //endregion

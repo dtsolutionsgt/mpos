@@ -32,6 +32,7 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonifSave;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocDevolucion;
@@ -112,6 +113,8 @@ public class FacturaRes extends PBase {
 		media=gl.media;
 		credito=gl.credito;
         idfel=gl.peFEL;
+
+        idfel="INFILE";
 
 		gl.cobroPendiente = false;
 		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
@@ -953,8 +956,6 @@ public class FacturaRes extends PBase {
 
             //region D_FACTURAS
 
-            /*
-
             sql="SELECT SUM(UNID*CANT),IDSELECCION FROM T_COMBO GROUP BY IDSELECCION";
             dt=Con.OpenDT(sql);
 
@@ -963,7 +964,7 @@ public class FacturaRes extends PBase {
                 dt.moveToFirst();
                 while (!dt.isAfterLast()) {
 
-                    prid=dt.getInt(0);prcant=dt.getInt(0);
+                    prcant=dt.getInt(0);prid=dt.getInt(1);
 
                     try {
                         P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prid);
@@ -981,14 +982,14 @@ public class FacturaRes extends PBase {
                         fsitem.cant=prcant;
                         fsitem.umstock="";
 
+                        D_facturas.add(fsitem);
+
                         fsid++;
                     }
 
                     dt.moveToNext();
                 }
             }
-
-            */
 
             //endregion
 
@@ -1433,7 +1434,7 @@ public class FacturaRes extends PBase {
                 cf=DT.getInt(3);
             } else {
                 fcorel=0;fserie="";
-                mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+                //mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
                 return;
             }
 
