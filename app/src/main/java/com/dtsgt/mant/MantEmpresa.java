@@ -59,7 +59,7 @@ public class MantEmpresa extends PBase {
 
     private void loadItem() {
         try {
-            holder.fill();
+            holder.fill_sin_imagen();
             item=holder.first();
 
             showItem();

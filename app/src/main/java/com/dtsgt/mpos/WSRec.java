@@ -17,6 +17,7 @@ import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
 import com.dtsgt.classes.clsP_bonifObj;
 import com.dtsgt.classes.clsP_clienteObj;
+import com.dtsgt.classes.clsP_conceptopagoObj;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
@@ -48,6 +49,8 @@ import com.dtsgt.classesws.clsBeP_BONIF;
 import com.dtsgt.classesws.clsBeP_BONIFList;
 import com.dtsgt.classesws.clsBeP_CLIENTE;
 import com.dtsgt.classesws.clsBeP_CLIENTEList;
+import com.dtsgt.classesws.clsBeP_CONCEPTOPAGO;
+import com.dtsgt.classesws.clsBeP_CONCEPTOPAGOList;
 import com.dtsgt.classesws.clsBeP_COREL;
 import com.dtsgt.classesws.clsBeP_CORELList;
 import com.dtsgt.classesws.clsBeP_DESCUENTO;
@@ -244,6 +247,9 @@ public class WSRec extends PBase {
                         break;
                     case 27:
                         callMethod("GetVENDEDORES", "EMPRESA", gl.emp);
+                        break;
+                    case 28:
+                        callMethod("GetCONCEPTOPAGO", "EMPRESA", gl.emp);
                         break;
                     case 28:
                         callMethod("GetP_PRODMENUOPC_DET", "EMPRESA", gl.emp);
@@ -461,6 +467,14 @@ public class WSRec extends PBase {
                     break;
                 case 27:
                     processVendedores();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
+                    execws(28);
+                    break;
+                case 28:
+                    processConceptoPago();
                     if (ws.errorflag) {
                         processComplete();
                         break;
@@ -1838,6 +1852,38 @@ public class WSRec extends PBase {
                 var.subbodega = item.SUBBODEGA + "";
                 var.activo = mu.bool(item.ACTIVO);
                 var.codigo_vendedor = item.CODIGO_VENDEDOR;
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processConceptoPago() {
+        try {
+            clsP_conceptopagoObj handler = new clsP_conceptopagoObj(this, Con, db);
+            clsBeP_CONCEPTOPAGOList items = new clsBeP_CONCEPTOPAGOList();
+            clsBeP_CONCEPTOPAGO item = new clsBeP_CONCEPTOPAGO();
+            clsClasses.clsP_conceptopago var;
+
+            script.add("DELETE FROM P_CONCEPTOPAGO");
+
+            items = xobj.getresult(clsBeP_CONCEPTOPAGOList.class, "GetCONCEPTOPAGO");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_conceptopago();
+                var.codigo = item.CODIGO;
+                var.nombre = item.NOMBRE;
+                var.activo = mu.bool(item.ACTIVO);
                 script.add(handler.addItemSql(var));
             }
 

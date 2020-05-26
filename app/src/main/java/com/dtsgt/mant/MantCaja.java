@@ -2,6 +2,7 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -79,14 +80,11 @@ public class MantCaja extends PBase {
     }
 
     public void doStatus(View view) {
-        /*
-        if (item.activo.equalsIgnoreCase("S")) {
+        if (item.activo==1) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
         }
-
-         */
     }
 
     public void doExit(View view) {
@@ -154,9 +152,11 @@ public class MantCaja extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
+        item.codigo_ruta = maxId();
         item.codigo="";
         item.nombre="";
         item.sucursal="1";
+        item.activo=0;
 
         showItem();
     }
@@ -266,6 +266,28 @@ public class MantCaja extends PBase {
 
     }
 
+    private int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_RUTA";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
+
     //endregion
 
     //region Dialogs
@@ -316,14 +338,12 @@ public class MantCaja extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                /*
-                if (item.activo.equalsIgnoreCase("S")) {
-                    item.activo="N";
+                if (item.activo==1) {
+                    item.activo=0;
                 } else {
-                    item.activo="N";
+                    item.activo=1;
                 };
 
-                 */
                 updateItem();
                 finish();
             }
