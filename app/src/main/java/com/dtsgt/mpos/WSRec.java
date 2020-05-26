@@ -253,7 +253,7 @@ public class WSRec extends PBase {
                         callMethod("GetP_PRODMENUOPC_DET", "EMPRESA", gl.emp);
                         break;
                     case 29:
-                        callMethod("GetCONCEPTOPAGO", "EMPRESA", gl.emp);
+                        callMethod("GetP_CONCEPTOPAGO", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -472,10 +472,10 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
-                    processComplete();
-                    break;
-//                    execws(29);
-//                    break;
+                   /* processComplete();
+                    break;*/
+                   execws(29);
+                   break;
                 case 29:
                     processConceptoPago();
                     if (ws.errorflag) {
@@ -1881,7 +1881,7 @@ public class WSRec extends PBase {
 
             script.add("DELETE FROM P_CONCEPTOPAGO");
 
-            items = xobj.getresult(clsBeP_CONCEPTOPAGOList.class, "GetCONCEPTOPAGO");
+            items = xobj.getresult(clsBeP_CONCEPTOPAGOList.class, "GetP_CONCEPTOPAGO");
 
             try {
                 if (items.items.size() == 0) return;
