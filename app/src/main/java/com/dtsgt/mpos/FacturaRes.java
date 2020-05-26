@@ -114,8 +114,6 @@ public class FacturaRes extends PBase {
 		credito=gl.credito;
         idfel=gl.peFEL;
 
-        idfel="INFILE";
-
 		gl.cobroPendiente = false;
 		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
 		notaC = gl.tiponcredito;

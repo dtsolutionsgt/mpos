@@ -85,7 +85,6 @@ public class FelFactura extends PBase {
         }
 
 
-
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
         D_facturafObj=new clsD_facturafObj(this,Con,db);

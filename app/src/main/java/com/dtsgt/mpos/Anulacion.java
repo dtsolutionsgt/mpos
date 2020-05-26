@@ -50,7 +50,7 @@ public class Anulacion extends PBase {
 
 	private int tipo,depparc,fcorel;	
 	private String selid,itemid,fserie,fres,felcorel,uuid;
-	private boolean modoapr=false;
+	private boolean modoapr=false,demomode;
 
 	// impresion nota credito
 	
@@ -89,8 +89,30 @@ public class Anulacion extends PBase {
 		itemid="*";
 
         fel=new clsFELInFile(this,this);
-				
-		printotrodoc = new Runnable() {
+
+        demomode=true;
+
+        if (demomode) {
+
+            fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
+            fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
+            fel.fel_codigo ="0";
+            fel.fel_alias="DEMO_FEL";
+            fel.fel_nit="1000000000K";
+            fel.fel_correo="";
+
+        } else {
+
+            fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
+            fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41";
+            fel.fel_codigo="PEXPRESS";
+            fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
+            fel.fel_nit="96049340";
+
+        }
+
+
+        printotrodoc = new Runnable() {
 		    public void run() {
 				askPrint();
 		    }
@@ -385,6 +407,10 @@ public class Anulacion extends PBase {
     //region FEL
 
     private void anulacionFEL() {
+
+
+
+
         buildAnulXML();
         fel.anulacion(uuid);
     }
@@ -412,8 +438,11 @@ public class Anulacion extends PBase {
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
-            uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
-            fel.anulfact(uuid,"1000000000K","CF", fact.fecha, fact.fecha);
+            //uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
+            //fel.anulfact(uuid,"1000000000K","CF", fact.fecha, fact.fecha);
+            //fel.anulfact(uuid,"1000000000K","1", fact.fecha, fact.fecha);
+            fel.anulfact(uuid,"1000000000K","47941162", fact.fecha, fact.fecha);
+            //fel.anulfact(uuid,"1000000000K","76365204", fact.fecha, fact.fecha);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -501,35 +530,11 @@ public class Anulacion extends PBase {
 
 		try{
 
-			sql = "SELECT CODIGO,UNIDADMEDIDA FROM D_BONIF_STOCK WHERE Corel='" + itemid + "'";
-			DT = Con.OpenDT(sql);
-
-			if (DT.getCount() > 0) {
-
-				DT.moveToFirst();
-				while (!DT.isAfterLast()) {
-
-					prod = DT.getString(0);
-					um = DT.getString(1);
-
-					revertStockBonif(itemid, prod, um);
-
-					DT.moveToNext();
-				}
-
-			}
-
 			sql = "UPDATE D_BONIF SET Anulado='S' WHERE COREL='" + itemid + "'";
 			db.execSQL(sql);
 
-			sql = "UPDATE D_BONIFFALT SET Anulado='S' WHERE COREL='" + itemid + "'";
-			db.execSQL(sql);
-
-			sql="DELETE FROM D_BONIF_STOCK WHERE COREL='"+itemid+"'";
-			db.execSQL(sql);
-
-			sql="DELETE FROM D_BONIF_LOTES WHERE COREL='"+itemid+"'";
-			db.execSQL(sql);
+			//sql = "UPDATE D_BONIFFALT SET Anulado='S' WHERE COREL='" + itemid + "'";
+			//db.execSQL(sql);
 
 			//sql="DELETE FROM D_REL_PROD_BON WHERE COREL='"+itemid+"'";
 			//db.execSQL(sql);

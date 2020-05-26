@@ -406,7 +406,7 @@ public class clsFELInFile {
                 error="No hay conexión al internet";errorflag=true;constat=false;return;
             }
 
-            wr.writeBytes (jsfirm);
+            wr.writeBytes(jsfirm);
             wr.flush ();
             wr.close ();
 

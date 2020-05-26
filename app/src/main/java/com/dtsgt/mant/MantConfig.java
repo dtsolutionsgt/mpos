@@ -222,8 +222,8 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','"+s104+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','"+value105+"')");
             db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','"+s106+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Cierre diario','"+s107+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Días anulación permitida','"+s108+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (107,'Cierre diario','"+s107+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (108,'Días anulación permitida','"+s108+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();
