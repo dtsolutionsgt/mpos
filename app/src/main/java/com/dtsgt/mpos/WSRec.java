@@ -249,10 +249,10 @@ public class WSRec extends PBase {
                         callMethod("GetVENDEDORES", "EMPRESA", gl.emp);
                         break;
                     case 28:
-                        callMethod("GetCONCEPTOPAGO", "EMPRESA", gl.emp);
-                        break;
-                    case 28:
                         callMethod("GetP_PRODMENUOPC_DET", "EMPRESA", gl.emp);
+                        break;
+                    case 29:
+                        callMethod("GetCONCEPTOPAGO", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -471,9 +471,9 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
-                    execws(28);
+                    execws(29);
                     break;
-                case 28:
+                case 29:
                     processConceptoPago();
                     if (ws.errorflag) {
                         processComplete();
