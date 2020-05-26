@@ -470,7 +470,7 @@ public class clsClasses {
         public String sucursal;
         public String nombre;
         public int  codigo_ruta;
-        public int activo;
+        public boolean activo;
     }
 
     public class clsP_usuario {

@@ -79,8 +79,7 @@ public class clsP_rutaObj {
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
         ins.add("CODIGO_RUTA",item.codigo_ruta);
-        ins.add("ACTIVO",item.activo);
-
+        ins.add("ACTIVO",(item.activo?1:0));
         db.execSQL(ins.sql());
 
     }
@@ -88,14 +87,11 @@ public class clsP_rutaObj {
     private void updateItem(clsClasses.clsP_ruta item) {
 
         upd.init("P_ruta");
-
         upd.add("SUCURSAL",item.sucursal);
         upd.add("NOMBRE",item.nombre);
         upd.add("CODIGO_RUTA",item.codigo_ruta);
-        upd.add("ACTIVO",item.activo);
-
+        upd.add("ACTIVO",(item.activo?1:0));
         upd.Where("(CODIGO_RUTA='"+item.codigo_ruta+"')");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -130,8 +126,7 @@ public class clsP_rutaObj {
             item.sucursal=dt.getString(1);
             item.nombre=dt.getString(2);
             item.codigo_ruta=dt.getInt(3);
-            item.activo = dt.getInt(4);
-
+            item.activo = (dt.getInt(4)==1?true:false);
             items.add(item);
 
             dt.moveToNext();
@@ -166,8 +161,7 @@ public class clsP_rutaObj {
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
         ins.add("CODIGO_RUTA",item.codigo_ruta);
-        ins.add("activo",item.activo);
-
+        ins.add("ACTIVO",(item.activo?1:0));
         return ins.sql();
 
     }
@@ -179,10 +173,8 @@ public class clsP_rutaObj {
         upd.add("SUCURSAL",item.sucursal);
         upd.add("NOMBRE",item.nombre);
         upd.add("CODIGO",item.codigo);
-        upd.add("ACTIVO",item.activo);
-
+        upd.add("ACTIVO",(item.activo?1:0));
         upd.Where("(CODIGO_RUTA='"+item.codigo_ruta+"')");
-
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();

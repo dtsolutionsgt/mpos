@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -471,8 +472,10 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
-                    execws(29);
+                    processComplete();
                     break;
+//                    execws(29);
+//                    break;
                 case 29:
                     processConceptoPago();
                     if (ws.errorflag) {
@@ -577,6 +580,9 @@ public class WSRec extends PBase {
             case 28:
                 plabel = "Cargando opciones det";
                 break;
+            case 29:
+                plabel = "Cargando conceptos de pago";
+                break;
         }
 
         updateLabel();
@@ -606,14 +612,19 @@ public class WSRec extends PBase {
         }
     }
 
-    private boolean processData() {
+        private boolean processData() {
+
         try {
 
             db.beginTransaction();
 
             for (int i = 0; i < script.size(); i++) {
                 sql = script.get(i);
-                db.execSQL(sql);
+                try {
+                    db.execSQL(sql);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
             db.setTransactionSuccessful();

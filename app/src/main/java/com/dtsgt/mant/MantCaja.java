@@ -80,7 +80,7 @@ public class MantCaja extends PBase {
     }
 
     public void doStatus(View view) {
-        if (item.activo==1) {
+        if (item.activo) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
@@ -156,7 +156,7 @@ public class MantCaja extends PBase {
         item.codigo="";
         item.nombre="";
         item.sucursal="1";
-        item.activo=0;
+        item.activo=false;
 
         showItem();
     }
@@ -338,12 +338,11 @@ public class MantCaja extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                if (item.activo==1) {
-                    item.activo=0;
+                if (item.activo) {
+                    item.activo=false;
                 } else {
-                    item.activo=1;
+                    item.activo=true;
                 };
-
                 updateItem();
                 finish();
             }
