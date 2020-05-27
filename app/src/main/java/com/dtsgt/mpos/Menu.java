@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.StatFs;
 import android.text.InputType;
 import android.util.Log;
@@ -59,6 +60,8 @@ public class Menu extends PBase {
 	private int selId,selIdx,menuid,iicon;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje;
+	// JP 20200527
+	private boolean listo=true;
 	
 	private final int mRequestCode = 1001;
 	private Exist Existencia = new Exist();
@@ -224,14 +227,26 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
-			
 	}
 
 	private void showMenuItem() {
 		int prtype;
 		boolean epssetflag = false;
 		Float cantidad;
+
+		//JP 20200527
+		if (!listo) return;
+
+		listo=false;
+        Handler mtimer = new Handler();
+        Runnable mrunner=new Runnable() {
+            @Override
+            public void run() {
+                listo=true;
+            }
+        };
+        mtimer.postDelayed(mrunner,1000);
+        //JP fin del cambio
 
         app.parametrosExtra();
 
