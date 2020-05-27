@@ -127,7 +127,7 @@ public class clsD_facturasObj {
 
             item.corel=dt.getString(0);
             item.id=dt.getInt(1);
-            item.producto=dt.getInt(2);
+            item.producto=dt.getString(2);
             item.cant=dt.getDouble(3);
             item.umstock=dt.getString(4);
 

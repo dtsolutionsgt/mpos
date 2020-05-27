@@ -389,7 +389,7 @@ public class ProdMenu extends PBase {
         try {
             P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prodid);
 
-            sql="SELECT CANT FROM P_STOCK WHERE CODIGO='"+P_productoObj.first().codigo+"'";
+            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+P_productoObj.first().codigo+"') AND (UNIDADMEDIDA='"+P_productoObj.first().unidbas+"')";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {

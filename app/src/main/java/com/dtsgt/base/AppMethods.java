@@ -615,7 +615,41 @@ public class AppMethods {
 		}
 	}
 
-	public String umStock(String cod) {
+    public String umVenta2(String cod) {
+        Cursor DT;
+        String umm;
+
+        try {
+            String sql = "SELECT UNIDBAS FROM P_PRODUCTO WHERE CODIGO='" + cod+"'";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getString(0);
+            return  umm;
+        } catch (Exception e) {
+            //toast(e.getMessage());
+            return "";
+        }
+    }
+
+    public String umVenta3(int cod) {
+        Cursor DT;
+        String umm;
+
+        try {
+            String sql = "SELECT UNIDBAS FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getString(0);
+            return  umm;
+        } catch (Exception e) {
+            //toast(e.getMessage());
+            return "";
+        }
+    }
+
+    public String umStock(String cod) {
 		Cursor DT;
 		String umm,sql;
 
@@ -633,7 +667,41 @@ public class AppMethods {
 		}
 	}
 
-	public double factorPeso(String cod) {
+    public int codigoProducto(String cod) {
+        Cursor DT;
+        int umm;
+
+        try {
+            String sql = "SELECT CODIGO_PRODUCTO FROM P_PRODUCTO WHERE CODIGO='" + cod+"'";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getInt(0);
+            return  umm;
+        } catch (Exception e) {
+            //toast(e.getMessage());
+            return 0;
+        }
+    }
+
+    public String prodCod(int cod) {
+        Cursor DT;
+        String umm;
+
+        try {
+            String sql = "SELECT CODIGO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getString(0);
+            return  umm;
+        } catch (Exception e) {
+            //toast(e.getMessage());
+            return "";
+        }
+    }
+
+    public double factorPeso(String cod) {
 		Cursor DT;
 
 		try {

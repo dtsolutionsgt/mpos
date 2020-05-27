@@ -754,7 +754,7 @@ public class BaseDatosScript {
             sql="CREATE TABLE [D_facturas] ("+
                     "COREL TEXT NOT NULL,"+
                     "ID INTEGER NOT NULL,"+
-                    "PRODUCTO INTEGER NOT NULL,"+
+                    "PRODUCTO TEXT NOT NULL,"+
                     "CANT REAL NOT NULL,"+
                     "UMSTOCK TEXT NOT NULL,"+
                     "PRIMARY KEY ([COREL],[ID])"+

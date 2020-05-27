@@ -352,7 +352,7 @@ public class Recarga extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("Error : " + e.getMessage());
 		}
-		
+
 		listItems();
 				
 	}
@@ -403,7 +403,7 @@ public class Recarga extends PBase {
 				ins.add("LOTE",pcod);
 				ins.add("CODIGOLIQUIDACION",0);
 			
-			    db.execSQL(ins.sql());
+			    //db.execSQL(ins.sql());
 			    
 			    updateStock(corel,pcod,pcant);
 			    	
@@ -434,47 +434,38 @@ public class Recarga extends PBase {
 	
 	private void updateStock(String corel,String pcod,double pcant) {
 		Cursor DT;
+		int icod=Integer.parseInt(pcod);
+		String scod=app.prodCod(icod);
 		
 	    try {
 	      	
 	     	ins.init("P_STOCK");
 		  	
-			ins.add("CODIGO",pcod);
+			ins.add("CODIGO",icod);
 			ins.add("CANT",0);
 			ins.add("CANTM",0);
 			ins.add("PESO",0);
 			ins.add("plibra",0);
-			ins.add("LOTE",pcod);
-			ins.add("DOCUMENTO","1");
+			ins.add("LOTE","");
+			ins.add("DOCUMENTO","");
 						
-			ins.add("FECHA",fecha);
+			ins.add("FECHA",0);
 			ins.add("ANULADO",0);
 			ins.add("CENTRO","");
-			ins.add("STATUS","A");
-			ins.add("ENVIADO",0);
+			ins.add("STATUS","");
+			ins.add("ENVIADO",1);
 			ins.add("CODIGOLIQUIDACION",0);
-			ins.add("COREL_D_MOV",corel);
-			ins.add("UNIDADMEDIDA","UNI");
+			ins.add("COREL_D_MOV","");
+			ins.add("UNIDADMEDIDA",app.umVenta3(icod));
 
-			//msgbox(ins.sql());
+			String sp=ins.sql();
 	    	
 	    	db.execSQL(ins.sql());
-	    	
-	    	sql="SELECT * FROM P_STOCK  WHERE CODIGO='"+pcod+"' ";	
-			DT=Con.OpenDT(sql);
-			//msgbox(""+DT.getCount());
-	    	
 	    } catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-	    	//mu.msgbox(e.getMessage());
 	    }
-	    
-	    //vSQL="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO='"+pcod+"' AND LOTE='"+pcod+"' AND DOCUMENTO='1'";	
-	    //db.execSQL(vSQL);	
-	    
-	    sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO='"+pcod+"' ";	
+
+	    sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO='"+icod+"' ";
 	    db.execSQL(sql);
-	    
 	}
 	
 	

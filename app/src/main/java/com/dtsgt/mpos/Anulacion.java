@@ -415,10 +415,6 @@ public class Anulacion extends PBase {
     //region FEL
 
     private void anulacionFEL() {
-
-
-
-
         buildAnulXML();
         fel.anulacion(uuid);
     }
@@ -479,32 +475,44 @@ public class Anulacion extends PBase {
 	
 	private boolean anulFactura(String itemid) {
 		Cursor DT;
-		String prod,um,ncred;
+		String um;
+		int prcant,prod;
 
 		boolean vAnulFactura=false;
 
 		try{
 
-			sql="SELECT PRODUCTO,UMSTOCK FROM D_FACTURAD WHERE Corel='"+itemid+"'";
+			sql="SELECT PRODUCTO,UMSTOCK,CANT FROM D_FACTURAD WHERE Corel='"+itemid+"'";
 			DT=Con.OpenDT(sql);
 
-			if (DT.getCount()>0){
-
+			if (DT.getCount()>0) {
 				DT.moveToFirst();
-
 				while (!DT.isAfterLast()) {
-
-					prod=DT.getString(0);
+					prod=DT.getInt(0);
 					um=DT.getString(1);
-
-					if (valexist(prod)) {
-						revertStock(itemid,prod,um);
-					}
+                    prcant=DT.getInt(2);
+					if (valexist2(prod)) revertProd(prod,um,prcant);
 
 					DT.moveToNext();
 				}
-
 			}
+
+            sql="SELECT PRODUCTO,UMSTOCK,CANT FROM D_FACTURAS WHERE Corel='"+itemid+"'";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+
+                DT.moveToFirst();
+
+                while (!DT.isAfterLast()) {
+                    prod=DT.getInt(0);
+                    um=DT.getString(1);
+                    prcant=DT.getInt(2);
+                    revertProd(prod,um,prcant);
+
+                    DT.moveToNext();
+                }
+            }
 
 			sql="UPDATE D_FACTURA  SET Anulado='S' WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
@@ -581,7 +589,7 @@ public class Anulacion extends PBase {
 
 				try {
 
-					ins.init("P_STOCK");
+                    ins.init("P_STOCK");
 
 					ins.add("CODIGO", pcod);
 					ins.add("CANT", 0);
@@ -608,7 +616,7 @@ public class Anulacion extends PBase {
 					//mu.msgbox(e.getMessage());
 				}
 
-				sql = "UPDATE P_STOCK SET CANT=CANT+"+cant+",PESO=PESO+"+ppeso+"  WHERE (CODIGO='" + pcod + "') AND (UNIDADMEDIDA='" + um + "') AND (LOTE='" + lot + "') AND (DOCUMENTO='" + doc + "') AND (STATUS='" + stat + "')";
+				sql = "UPDATE P_STOCK SET CANT=CANT+"+cant+",PESO=PESO+"+ppeso+"  WHERE (CODIGO='" + pcod + "') AND (UNIDADMEDIDA='" + um + "') ";
 				db.execSQL(sql);
 
 				dt.moveToNext();
@@ -618,6 +626,42 @@ public class Anulacion extends PBase {
 		}
 
 	}
+
+    private void revertProd(int pcod,String um,int pcant) {
+
+        try {
+
+            ins.init("P_STOCK");
+
+            ins.add("CODIGO",""+pcod);
+            ins.add("CANT",0);
+            ins.add("CANTM",0);
+            ins.add("PESO",0);
+            ins.add("plibra",0);
+            ins.add("LOTE","");
+            ins.add("DOCUMENTO","");
+
+            ins.add("FECHA",0);
+            ins.add("ANULADO",0);
+            ins.add("CENTRO","");
+            ins.add("STATUS","");
+            ins.add("ENVIADO",1);
+            ins.add("CODIGOLIQUIDACION",0);
+            ins.add("COREL_D_MOV", "");
+            ins.add("UNIDADMEDIDA", um);
+
+            db.execSQL(ins.sql());
+
+        } catch (Exception e){
+            try {
+                sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO='"+pcod+"') AND (UNIDADMEDIDA='"+um+"')";
+                db.execSQL(sql);
+            } catch (Exception ee){
+                msgbox(ee.getMessage());
+            }
+        }
+
+    }
 
 	private void revertStockBonif(String corel,String pcod,String um) {
 		Cursor dt;
@@ -1105,7 +1149,6 @@ public class Anulacion extends PBase {
 	//endregion
 	
 	//region Aprofam
-	
 
 	private boolean aprLoadHeadData(String corel) {
 		Cursor DT;
@@ -1347,8 +1390,25 @@ public class Anulacion extends PBase {
 	    }
 	}
 
-	//endregion
+    private boolean valexist2(int prcodd) {
+        Cursor DT;
 
+        try {
+            sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prcodd;
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()==0) return false;
+
+            DT.moveToFirst();
+
+            return DT.getString(0).equalsIgnoreCase("P");
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            return false;
+        }
+    }
+
+
+    //endregion
 
 
 }

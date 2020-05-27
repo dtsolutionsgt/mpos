@@ -754,7 +754,7 @@ public class FacturaRes extends PBase {
 
  	}
 
-	private boolean saveOrder(){
+	private boolean saveOrder() {
         clsP_productoObj P_productoObj= new clsP_productoObj(this, Con, db);
         clsD_facturasObj D_facturas= new clsD_facturasObj(this, Con, db);
         clsClasses.clsD_facturas fsitem;
@@ -875,7 +875,7 @@ public class FacturaRes extends PBase {
 
 			  	ins.init("D_FACTURAD");
 				ins.add("COREL",corel);
-				ins.add("PRODUCTO",dt.getString(0));
+				ins.add("PRODUCTO",app.codigoProducto(dt.getString(0)));
 				ins.add("EMPRESA",gl.emp);
 				ins.add("ANULADO","N");
 				ins.add("CANT",dt.getDouble(1));
@@ -890,6 +890,7 @@ public class FacturaRes extends PBase {
 				ins.add("VAL2",dt.getString(10));
 				ins.add("UMVENTA",dt.getString(11));
 				ins.add("FACTOR",dt.getDouble(12));
+                vumstock=app.umVenta2(dt.getString(0));
 				ins.add("UMSTOCK",vumstock);
 				ins.add("UMPESO",dt.getString(13));
 
@@ -903,7 +904,8 @@ public class FacturaRes extends PBase {
 				vumventa=dt.getString(11);
 
 				if (esProductoConStock(dt.getString(0))) {
-					rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
+					//rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
+                    rebajaStockUM(vprod,vumstock,vcant);
 				}
 
 			    dt.moveToNext();
@@ -957,7 +959,8 @@ public class FacturaRes extends PBase {
             sql="SELECT SUM(UNID*CANT),IDSELECCION FROM T_COMBO GROUP BY IDSELECCION";
             dt=Con.OpenDT(sql);
 
-            int fsid=1;
+            int fsid=1;String prcod="";
+
             if (dt.getCount()>0) {
                 dt.moveToFirst();
                 while (!dt.isAfterLast()) {
@@ -967,20 +970,24 @@ public class FacturaRes extends PBase {
                     try {
                         P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prid);
                         flag=P_productoObj.first().codigo_tipo.equalsIgnoreCase("P");
+                        prcod=P_productoObj.first().codigo;
                     } catch (Exception e) {
                         flag=false;
                     }
 
                     if (flag) {
+
                         fsitem=clsCls.new clsD_facturas();
 
                         fsitem.corel=corel;
                         fsitem.id=fsid;
-                        fsitem.producto=prid;
+                        fsitem.producto=""+prid;
                         fsitem.cant=prcant;
-                        fsitem.umstock="";
+                        fsitem.umstock=app.umVenta2(prcod);
 
                         D_facturas.add(fsitem);
+
+                        rebajaStockUM(prcod,fsitem.umstock,fsitem.cant);
 
                         fsid++;
                     }
@@ -1211,6 +1218,33 @@ public class FacturaRes extends PBase {
 			mu.msgbox("rebajaStockUM: "+e.getMessage());
 		}
 	}
+
+    private void rebajaStockUM(String prid,String umstock,double cantapl) {
+        Cursor dt;
+        double dispcant,actcant;
+
+        try {
+
+            sql="SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV " +
+                    "FROM P_STOCK WHERE (CANT>0) AND (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"') ORDER BY CANT";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()==0) return;
+
+            dispcant=dt.getDouble(0);
+            actcant=dispcant-cantapl;
+
+            sql="UPDATE P_STOCK SET CANT="+actcant+",PESO=0 WHERE (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"')";
+            db.execSQL(sql);
+
+            sql="DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0)";
+            db.execSQL(sql);
+
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("rebajaStockUM: "+e.getMessage());
+        }
+    }
 
 	private void rebajaStockBonif(String prid,String umstock,double cant,double factor, String umventa,double factpres,double ppeso) {
 		Cursor dt;

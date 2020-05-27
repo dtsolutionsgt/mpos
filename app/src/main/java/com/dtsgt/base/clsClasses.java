@@ -87,7 +87,7 @@ public class clsClasses {
     public class clsD_facturas {
         public String corel;
         public int  id;
-        public int  producto;
+        public String  producto;
         public double cant;
         public String umstock;
     }
