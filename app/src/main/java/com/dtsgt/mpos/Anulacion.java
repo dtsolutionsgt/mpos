@@ -217,10 +217,11 @@ public class Anulacion extends PBase {
 			}
 			
 			if (tipo==3) {
-				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO "+
-					 "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO "+
-					 "WHERE (D_FACTURA.ANULADO='N') AND (D_FACTURA.KILOMETRAJE=0) " +
-					 "ORDER BY D_FACTURA.COREL DESC ";
+				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
+					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
+					"WHERE (D_FACTURA.ANULADO='N') AND (D_FACTURA.KILOMETRAJE=0) " +
+					"ORDER BY D_FACTURA.COREL DESC ";
 			}
 			
 			if (tipo==4) {
@@ -251,7 +252,9 @@ public class Anulacion extends PBase {
 					if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 					
 					if (tipo==3) {
-						sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+						sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
+						vItem.UUID=DT.getString(5);
+						vItem.FechaFactura=du.univfechalong(DT.getLong(6));
 					}else if(tipo==1||tipo==6){
 						sf=DT.getString(0);
 					}else{
@@ -412,7 +415,7 @@ public class Anulacion extends PBase {
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
-            uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
+            //uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
             fel.anulfact(uuid,"1000000000K","CF", fact.fecha, fact.fecha);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -477,7 +480,8 @@ public class Anulacion extends PBase {
 			sql="UPDATE D_FACTURAP SET Anulado='S' WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
-			anulBonif(itemid);
+			//#CKFK 20200526 Puse esto en comentario porque esa tabla no se usa en MPos
+			//anulBonif(itemid);
 
             sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
             db.execSQL(sql);

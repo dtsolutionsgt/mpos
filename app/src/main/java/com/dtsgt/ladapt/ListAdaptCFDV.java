@@ -50,6 +50,7 @@ public class ListAdaptCFDV extends BaseAdapter {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
+
 		ViewHolder holder;
 
 		if (convertView == null) {
@@ -60,6 +61,8 @@ public class ListAdaptCFDV extends BaseAdapter {
 			holder.lblFecha  = (TextView) convertView.findViewById(R.id.lblETipo);
 			holder.lblDesc = (TextView) convertView.findViewById(R.id.lblPNum);
 			holder.lblValor = (TextView) convertView.findViewById(R.id.lblPValor);
+			holder.lblUUID = (TextView) convertView.findViewById(R.id.lblUUID);
+			holder.lblFechaFactura = (TextView) convertView.findViewById(R.id.lblFechaFactura);
 
 			convertView.setTag(holder);
 		} else {
@@ -69,6 +72,16 @@ public class ListAdaptCFDV extends BaseAdapter {
 		holder.lblFecha.setText(itemDetailsrrayList.get(position).Fecha);
 		holder.lblDesc.setText(itemDetailsrrayList.get(position).Desc);
 		holder.lblValor.setText(itemDetailsrrayList.get(position).Valor);
+		holder.lblFechaFactura.setText(itemDetailsrrayList.get(position).FechaFactura);
+		holder.lblUUID.setText(itemDetailsrrayList.get(position).UUID);
+
+		if (itemDetailsrrayList.get(position).UUID.isEmpty()){
+			holder.lblUUID.setVisibility(View.GONE);
+			holder.lblFechaFactura.setVisibility(View.GONE);
+		}else{
+			holder.lblUUID.setVisibility(View.VISIBLE);
+			holder.lblFechaFactura.setVisibility(View.VISIBLE);
+		}
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -81,7 +94,7 @@ public class ListAdaptCFDV extends BaseAdapter {
 
 
 	static class ViewHolder {
-		TextView  lblFecha,lblDesc,lblValor;
+		TextView  lblFecha,lblDesc,lblValor, lblUUID,lblFechaFactura;
 	}
 
 }

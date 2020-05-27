@@ -11,6 +11,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
+import com.dtsgt.classes.clsD_MovDObj;
+import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturapObj;
@@ -34,12 +36,16 @@ public class WSEnv extends PBase {
     private clsD_facturadObj D_facturadObj;
     private clsD_facturapObj D_facturapObj;
 
+    private clsD_MovObj D_MovObj;
+    private clsD_MovDObj D_MovDObj;
+
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> fact = new ArrayList<String>();
+    private ArrayList<String> mov = new ArrayList<String>();
 
-    private String CSQL,plabel,rs,corel,ferr,idfact;
-    private int ftot,fsend,fidx;
-    private boolean factsend;
+    private String CSQL,plabel,rs,corel,ferr,idfact, movErr, corelMov, idMov;
+    private int ftot,fsend,fidx, fTotMov,fIdxMov, mSend;
+    private boolean factsend, movSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,9 @@ public class WSEnv extends PBase {
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
         D_facturapObj=new clsD_facturapObj(this,Con,db);
+
+        D_MovObj=new clsD_MovObj(this,Con,db);
+        D_MovDObj=new clsD_MovDObj(this,Con,db);
 
         prepareSend();
     }
@@ -97,6 +106,12 @@ public class WSEnv extends PBase {
                             callMethod("Commit", "SQL", CSQL);
                         }
                         break;
+                    case 3:
+                        processMov();
+                        if (fTotMov>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();errorflag=true;
@@ -127,6 +142,16 @@ public class WSEnv extends PBase {
                         execws(2);
                     }
                     processComplete();
+                    execws(3);
+                    break;
+                case 3:
+                    statusMov();
+                    if (fIdxMov>=fTotMov-1) {
+                        processCompleteMov();
+                    } else {
+                        execws(3);
+                    }
+                    processCompleteMov();
                     break;
         }
 
@@ -145,6 +170,10 @@ public class WSEnv extends PBase {
         switch (callbackvalue) {
             case 1:
                 plabel = "Enviando Clientes";break;
+            case 2:
+                plabel = "Enviando Facturas";break;
+            case 3:
+                plabel = "Enviando Movimientos de inventario";break;
         }
 
         updateLabel();
@@ -175,7 +204,21 @@ public class WSEnv extends PBase {
             if (!ferr.isEmpty()) msgbox("Factura : "+idfact+"\n"+ferr);
         }
     }
+    private void processCompleteMov() {
+        pbar.setVisibility(View.INVISIBLE);
+        plabel = "";
+        updateLabel();
 
+        if (ws.errorflag) {
+            msgboxwait(ws.error);
+        } else {
+            ss ="Envío completo\n";
+            ss+="Movimientos total : "+fTotMov+"\n";
+            ss+="Movimientos sin envio : "+(fTotMov-mSend);
+            msgboxwait(ss);
+            if (!movErr.isEmpty()) msgbox("Movimientos : "+idMov+"\n"+movErr);
+        }
+    }
     //endregion
 
     //region Envío
@@ -327,6 +370,91 @@ public class WSEnv extends PBase {
                     db.execSQL(sql);
                 } catch (SQLException e) {
                 }
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    private void processMov() {
+
+        if (fTotMov==0) {
+            fIdxMov++;
+            return;
+        }
+
+        fIdxMov++;
+        corelMov=mov.get(fIdxMov);
+        movSend=false;
+
+        mov.clear();
+
+        try {
+
+            D_MovObj.fill("WHERE COREL='"+corelMov+"'");
+            D_MovDObj.fill("WHERE COREL='"+corelMov+"'");
+
+            idMov=D_MovObj.first().COREL;
+
+            CSQL="DELETE FROM D_MOV WHERE COREL='"+corelMov+"';";
+            CSQL=CSQL+"DELETE FROM D_MOVD WHERE COREL='"+corelMov+"';";
+
+            CSQL=CSQL+addMovheader(D_MovObj.first())+ ";";
+
+            for (int i = 0; i <D_MovDObj.count; i++) {
+                CSQL=CSQL+D_MovDObj.addItemSql(D_MovDObj.items.get(i)) + ";";
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public String addMovheader(clsClasses.clsD_Mov item) {
+
+        ins.init("D_MOV");
+
+        ins.add("COREL",item.COREL);
+        ins.add("RUTA",item.RUTA);
+        ins.add("ANULADO",item.ANULADO);
+        ins.add("FECHA",item.FECHA);
+        ins.add("TIPO",item.TIPO);
+        ins.add("USUARIO",item.USUARIO);
+        ins.add("REFERENCIA",item.REFERENCIA);
+        ins.add("STATCOM",item.STATCOM);
+        ins.add("IMPRES",item.IMPRES);
+        ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
+
+        return ins.sql();
+
+    }
+
+    private void statusMov() {
+        try {
+
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+
+            if (!rs.equalsIgnoreCase("#")) {
+
+                movErr=rs;
+                movSend=true;
+
+                return;
+
+            } else {
+                movSend=true;
+            }
+
+            mSend++;
+
+            try {
+
+                sql="UPDATE D_MOV SET STATCOM='S' WHERE COREL='"+corelMov+"'";
+                db.execSQL(sql);
+
+            } catch (SQLException e) {
+                msgbox(e.getMessage());
             }
 
         } catch (Exception e) {

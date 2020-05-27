@@ -799,11 +799,11 @@ public class BaseDatosScript {
 
             sql="CREATE TABLE [D_MOV] ("+
                     "[COREL] TEXT NOT NULL,"+
-                    "[RUTA] TEXT NOT NULL,"+
-                    "[ANULADO] TEXT NOT NULL,"+
+                    "[RUTA] INTEGER NOT NULL,"+
+                    "[ANULADO] INTEGER NOT NULL,"+
                     "[FECHA] INTEGER NOT NULL,"+
                     "[TIPO] TEXT NOT NULL,"+
-                    "[USUARIO] TEXT NOT NULL,"+
+                    "[USUARIO] INTEGER NOT NULL,"+
                     "[REFERENCIA] TEXT NOT NULL,"+
                     "[STATCOM] TEXT NOT NULL,"+
                     "[IMPRES] INTEGER NOT NULL,"+
@@ -819,19 +819,24 @@ public class BaseDatosScript {
             sql="CREATE INDEX D_MOV_idx3 ON D_MOV(STATCOM)";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [D_MOVD] ("+
+                    "[CORELDET] INTEGER PRIMARY KEY AUTOINCREMENT,"+
                     "[COREL] TEXT NOT NULL,"+
-                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[PRODUCTO] INTEGER NOT NULL,"+
                     "[CANT] REAL NOT NULL,"+
                     "[CANTM] REAL NOT NULL,"+
                     "[PESO] REAL NOT NULL,"+
                     "[PESOM] REAL NOT NULL,"+
                     "[LOTE] TEXT NOT NULL,"+
                     "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE],[UNIDADMEDIDA])"+
+                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL"+
                     ");";
+            database.execSQL(sql);
+
+            //#CKFK 20200526 Modifiqué la llave primaria de la tabla D_MOVD
+            // por un código único "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE])"+
+            sql="CREATE UNIQUE INDEX IX_D_MOVD "+
+                    " on P_PRODPRECIO ([COREL],[PRODUCTO],[LOTE])";
             database.execSQL(sql);
 
 
