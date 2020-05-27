@@ -355,6 +355,7 @@ public class clsClasses {
         public int  id;
         public String nombre;
         public String valor;
+        public String ruta;
     }
 
     public class clsP_prodcombo {

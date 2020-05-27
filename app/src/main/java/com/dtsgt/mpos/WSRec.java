@@ -29,6 +29,7 @@ import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
@@ -71,6 +72,8 @@ import com.dtsgt.classesws.clsBeP_MONEDA;
 import com.dtsgt.classesws.clsBeP_MONEDAList;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIO;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIOList;
+import com.dtsgt.classesws.clsBeP_PARAMEXT;
+import com.dtsgt.classesws.clsBeP_PARAMEXTList;
 import com.dtsgt.classesws.clsBeP_PRODCOMBO;
 import com.dtsgt.classesws.clsBeP_PRODCOMBOList;
 import com.dtsgt.classesws.clsBeP_PRODMENU;
@@ -254,6 +257,9 @@ public class WSRec extends PBase {
                         break;
                     case 29:
                         callMethod("GetP_CONCEPTOPAGO", "EMPRESA", gl.emp);
+                        break;
+                    case 30:
+                        callMethod("GetP_PARAMEXT", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -472,12 +478,18 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
-                   /* processComplete();
-                    break;*/
                    execws(29);
                    break;
                 case 29:
                     processConceptoPago();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
+                    execws(30);
+                    break;
+                case 30:
+                    processParametrosExtra();
                     if (ws.errorflag) {
                         processComplete();
                         break;
@@ -582,6 +594,9 @@ public class WSRec extends PBase {
                 break;
             case 29:
                 plabel = "Cargando conceptos de pago";
+                break;
+            case 30:
+                plabel = "Cargando parámetros extras";
                 break;
         }
 
@@ -1895,6 +1910,39 @@ public class WSRec extends PBase {
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.activo = mu.bool(item.ACTIVO);
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processParametrosExtra() {
+        try {
+            clsP_paramextObj handler = new clsP_paramextObj(this, Con, db);
+            clsBeP_PARAMEXTList items = new clsBeP_PARAMEXTList();
+            clsBeP_PARAMEXT item = new clsBeP_PARAMEXT();
+            clsClasses.clsP_paramext var;
+
+            script.add("DELETE FROM P_PARAMEXT");
+
+            items = xobj.getresult(clsBeP_PARAMEXTList.class, "GetP_PARAMEXT");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_paramext();
+                var.id = item.ID;
+                var.nombre = item.Nombre;
+                var.valor = item.Valor;
+                var.ruta  = item.IdRuta;
                 script.add(handler.addItemSql(var));
             }
 

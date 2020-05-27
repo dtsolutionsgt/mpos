@@ -1974,7 +1974,7 @@ public class Venta extends PBase {
                     gl.autocom = 0;
                     gl.modoadmin = false;
                     gl.comquickrec = true;
-                    startActivity(new Intent(Venta.this, ComWS.class));
+                    startActivity(new Intent(Venta.this, WSRec.class));
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

@@ -61,7 +61,8 @@ public class BaseDatosScript {
             vSQL="CREATE TABLE [P_PARAMEXT] ("+
                     "ID integer NOT NULL primary key,"+
                     "NOMBRE TEXT NOT NULL,"+
-                    "VALOR  TEXT);";
+                    "VALOR  TEXT, " +
+                    "RUTA INT);";
             database.execSQL(vSQL);
 
 
@@ -836,7 +837,7 @@ public class BaseDatosScript {
             //#CKFK 20200526 Modifiqué la llave primaria de la tabla D_MOVD
             // por un código único "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE])"+
             sql="CREATE UNIQUE INDEX IX_D_MOVD "+
-                    " on P_PRODPRECIO ([COREL],[PRODUCTO],[LOTE])";
+                    " on D_MOVD ([COREL],[PRODUCTO],[LOTE])";
             database.execSQL(sql);
 
 
@@ -1582,7 +1583,7 @@ public class BaseDatosScript {
             //db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre Negocio','Nombre Negocio','', '','','',1);");
             //db.execSQL("INSERT INTO VENDEDORES VALUES ('1','Gerente','1','1', 3,1,'','',1);");
 
-            datosIniciales(db);
+            //datosIniciales(db);
 
             return 1;
         } catch (Exception e) {
