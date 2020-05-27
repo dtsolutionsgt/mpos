@@ -92,6 +92,32 @@ public class clsClasses {
         public String umstock;
     }
 
+    public class clsD_Mov {
+        public String COREL;
+        public int RUTA;
+        public int ANULADO;
+        public long FECHA;
+        public String TIPO;
+        public int USUARIO;
+        public String REFERENCIA;
+        public String STATCOM;
+        public int IMPRES;
+        public int CODIGOLIQUIDACION;
+    }
+
+    public class clsD_MovD {
+        public int CORELDET;
+        public String COREL;
+        public int PRODUCTO;
+        public double CANT;
+        public double CANTM;
+        public double PESO;
+        public double PESOM;
+        public String LOTE;
+        public int CODIGOLIQUIDACION;
+        public String UNIDADMEDIDA;
+    }
+
     public class clsP_archivoconf {
         public String ruta;
         public String tipo_hh;
@@ -329,6 +355,7 @@ public class clsClasses {
         public int  id;
         public String nombre;
         public String valor;
+        public String ruta;
     }
 
     public class clsP_prodcombo {
@@ -470,7 +497,7 @@ public class clsClasses {
         public String sucursal;
         public String nombre;
         public int  codigo_ruta;
-        public String activo;
+        public boolean activo;
     }
 
     public class clsP_usuario {
@@ -546,6 +573,7 @@ public class clsClasses {
 
 	public class clsCD {
 		public String Cod,Desc,Text,um,prec;
+		public int codInt;
 	}
 	
 	public class clsCDB {
@@ -557,7 +585,7 @@ public class clsClasses {
 	
 	public class clsCFDV {
 		public int id;
-		public String Cod,Desc,Fecha,Valor,Sid;
+		public String Cod,Desc,Fecha,Valor,Sid, UUID, FechaFactura;
 		public double val;
 	}
 	

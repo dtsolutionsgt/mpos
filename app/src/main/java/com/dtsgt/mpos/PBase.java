@@ -44,6 +44,8 @@ public class PBase extends Activity {
 	protected long fecha;
 	protected String s,ss;
 
+	public ProgressDialog progress;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,6 +69,15 @@ public class PBase extends Activity {
 		keyboard = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
 
 	    browse=0;
+	}
+
+	public void ProgressDialog(String mensaje){
+		progress=new ProgressDialog(this);
+		progress.setMessage(mensaje);
+		progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progress.setIndeterminate(true);
+		progress.setProgress(0);
+		progress.show();
 	}
 
 	// CallBacks

@@ -570,7 +570,7 @@ public class CierreX extends PBase {
             if(!report) {
                 if(fillItems()){
                     if (itemR.size() == 0) {
-                        msgbox("No se ha realizado ninguna venta desde el ultimo cierre Z.");
+                        toastlong("No ha realizado ninguna venta desde el último cierre Z.");
                         //return;
                     }
                     doc.buildPrint("0", 0);

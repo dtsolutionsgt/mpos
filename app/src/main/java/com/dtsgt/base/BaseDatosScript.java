@@ -61,7 +61,8 @@ public class BaseDatosScript {
             vSQL="CREATE TABLE [P_PARAMEXT] ("+
                     "ID integer NOT NULL primary key,"+
                     "NOMBRE TEXT NOT NULL,"+
-                    "VALOR  TEXT);";
+                    "VALOR  TEXT, " +
+                    "RUTA INT);";
             database.execSQL(vSQL);
 
 
@@ -342,7 +343,7 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
             sql="CREATE TABLE [P_STOCK] ("+
-                    "[CODIGO] TEXT NOT NULL,"+
+                    "[CODIGO] INT NOT NULL,"+
                     "[CANT] REAL NOT NULL,"+
                     "[CANTM] REAL NOT NULL,"+
                     "[PESO] REAL NOT NULL,"+
@@ -799,11 +800,11 @@ public class BaseDatosScript {
 
             sql="CREATE TABLE [D_MOV] ("+
                     "[COREL] TEXT NOT NULL,"+
-                    "[RUTA] TEXT NOT NULL,"+
-                    "[ANULADO] TEXT NOT NULL,"+
+                    "[RUTA] INTEGER NOT NULL,"+
+                    "[ANULADO] INTEGER NOT NULL,"+
                     "[FECHA] INTEGER NOT NULL,"+
                     "[TIPO] TEXT NOT NULL,"+
-                    "[USUARIO] TEXT NOT NULL,"+
+                    "[USUARIO] INTEGER NOT NULL,"+
                     "[REFERENCIA] TEXT NOT NULL,"+
                     "[STATCOM] TEXT NOT NULL,"+
                     "[IMPRES] INTEGER NOT NULL,"+
@@ -819,19 +820,24 @@ public class BaseDatosScript {
             sql="CREATE INDEX D_MOV_idx3 ON D_MOV(STATCOM)";
             database.execSQL(sql);
 
-
             sql="CREATE TABLE [D_MOVD] ("+
+                    "[CORELDET] INTEGER PRIMARY KEY AUTOINCREMENT,"+
                     "[COREL] TEXT NOT NULL,"+
-                    "[PRODUCTO] TEXT NOT NULL,"+
+                    "[PRODUCTO] INTEGER NOT NULL,"+
                     "[CANT] REAL NOT NULL,"+
                     "[CANTM] REAL NOT NULL,"+
                     "[PESO] REAL NOT NULL,"+
                     "[PESOM] REAL NOT NULL,"+
                     "[LOTE] TEXT NOT NULL,"+
                     "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE],[UNIDADMEDIDA])"+
+                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL"+
                     ");";
+            database.execSQL(sql);
+
+            //#CKFK 20200526 Modifiqué la llave primaria de la tabla D_MOVD
+            // por un código único "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE])"+
+            sql="CREATE UNIQUE INDEX IX_D_MOVD "+
+                    " on D_MOVD ([COREL],[PRODUCTO],[LOTE])";
             database.execSQL(sql);
 
 
@@ -1577,7 +1583,7 @@ public class BaseDatosScript {
             //db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre Negocio','Nombre Negocio','', '','','',1);");
             //db.execSQL("INSERT INTO VENDEDORES VALUES ('1','Gerente','1','1', 3,1,'','',1);");
 
-            datosIniciales(db);
+            //datosIniciales(db);
 
             return 1;
         } catch (Exception e) {

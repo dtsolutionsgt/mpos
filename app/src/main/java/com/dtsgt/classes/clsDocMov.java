@@ -46,7 +46,7 @@ public class clsDocMov extends clsDocument {
             fsfecha=DU.sfecha(ff)+" "+DU.shora(ff);
 
 			sql="SELECT D_MOVD.PRODUCTO,P_PRODUCTO.DESCLARGA,D_MOVD.CANT,D_MOVD.CANTM,D_MOVD.PESO,D_MOVD.PESOM " +
-				"FROM D_MOVD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO = D_MOVD.PRODUCTO " +
+				"FROM D_MOVD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO = D_MOVD.PRODUCTO " +
 				"WHERE (D_MOVD.COREL='"+corel+"')";	
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();

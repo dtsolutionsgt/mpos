@@ -273,12 +273,13 @@ public class Menu extends PBase {
 						gl.forcedclose=false;
 						startActivity(new Intent(this, Venta.class));
 					}else {
-						if(gl.cajaid==5) msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
+						if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Quiere realizar el inicio de caja?");
+						//msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
 
 						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
 						if (gl.cierreDiario){
 
-							if(gl.cajaid==6) msgAskValidaCierre("No se realizó el último cierre de caja. ¿Desea realizar el cierre Z?");
+							if(gl.cajaid==6) msgAskValidaCierre("No realizó el cierre de caja del día " + du.sfecha(gl.lastDate) + ". ¿Realizar cierre Z?");
 
 						}else{
 
@@ -507,8 +508,9 @@ public class Menu extends PBase {
     //region Comunicacion
 
     private void showMenuCom() {
+
         final AlertDialog Dialog;
-        final String[] selitems = {"Envio de datos","Recepcion de parametros","Envio de huellas"};
+        final String[] selitems = {"Envío de datos","Recepción de parámetros","Envío de huellas"};
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Comunicación");
@@ -700,7 +702,7 @@ public class Menu extends PBase {
 			final String[] selitems = new String[itemcnt];
 
 			selitems[itempos]="Existencias";itempos++;
-			selitems[itempos]="Devolucion a bodega";itempos++;
+			selitems[itempos]="Devolución a bodega";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
 
 			menudlg = new AlertDialog.Builder(this);
@@ -712,7 +714,7 @@ public class Menu extends PBase {
 					String mt=selitems[item];
 
 					if (mt.equalsIgnoreCase("Existencias")) menuExist();
-					if (mt.equalsIgnoreCase("Devolucion a bodega")) menuDevBod();
+					if (mt.equalsIgnoreCase("Devolución a bodega")) menuDevBod();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
 
 					dialog.cancel();

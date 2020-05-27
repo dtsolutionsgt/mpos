@@ -133,7 +133,6 @@ public class Anulacion extends PBase {
 		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"");
 	}
 
-	
 	//region Events
 	
 	public void anulDoc(View view){
@@ -239,10 +238,11 @@ public class Anulacion extends PBase {
 			}
 			
 			if (tipo==3) {
-				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO "+
-					 "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO "+
-					 "WHERE (D_FACTURA.ANULADO='N') AND (D_FACTURA.KILOMETRAJE=0) " +
-					 "ORDER BY D_FACTURA.COREL DESC ";
+				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
+					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
+					"WHERE (D_FACTURA.ANULADO='N') AND (D_FACTURA.KILOMETRAJE=0) " +
+					"ORDER BY D_FACTURA.COREL DESC ";
 			}
 			
 			if (tipo==4) {
@@ -273,7 +273,7 @@ public class Anulacion extends PBase {
 					if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 					
 					if (tipo==3) {
-						sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+						sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
 					}else if(tipo==1||tipo==6){
 						sf=DT.getString(0);
 					}else{
@@ -296,7 +296,15 @@ public class Anulacion extends PBase {
 			 
 					if (id.equalsIgnoreCase(selid)) selidx=vP;
 					vP+=1;
-			  
+
+					if (tipo==3) {
+						vItem.UUID=DT.getString(5);
+						vItem.FechaFactura=du.univfechalong(DT.getLong(6));
+					}else{
+						vItem.UUID="";
+						vItem.FechaFactura="";
+					}
+
 					DT.moveToNext();
 				}	
 			}
@@ -430,6 +438,7 @@ public class Anulacion extends PBase {
     }
 
     private void buildAnulXML() {
+
         try {
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             clsClasses.clsD_factura fact=clsCls.new clsD_factura();
@@ -506,7 +515,8 @@ public class Anulacion extends PBase {
 			sql="UPDATE D_FACTURAP SET Anulado='S' WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
-			anulBonif(itemid);
+			//#CKFK 20200526 Puse esto en comentario porque esa tabla no se usa en MPos
+			//anulBonif(itemid);
 
             sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
             db.execSQL(sql);
@@ -765,6 +775,7 @@ public class Anulacion extends PBase {
 
 				DT.moveToNext();
 			}
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}

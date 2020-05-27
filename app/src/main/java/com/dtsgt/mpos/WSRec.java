@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
 import com.dtsgt.classes.clsP_bonifObj;
 import com.dtsgt.classes.clsP_clienteObj;
+import com.dtsgt.classes.clsP_conceptopagoObj;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
@@ -27,6 +29,7 @@ import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
@@ -48,6 +51,8 @@ import com.dtsgt.classesws.clsBeP_BONIF;
 import com.dtsgt.classesws.clsBeP_BONIFList;
 import com.dtsgt.classesws.clsBeP_CLIENTE;
 import com.dtsgt.classesws.clsBeP_CLIENTEList;
+import com.dtsgt.classesws.clsBeP_CONCEPTOPAGO;
+import com.dtsgt.classesws.clsBeP_CONCEPTOPAGOList;
 import com.dtsgt.classesws.clsBeP_COREL;
 import com.dtsgt.classesws.clsBeP_CORELList;
 import com.dtsgt.classesws.clsBeP_DESCUENTO;
@@ -67,6 +72,8 @@ import com.dtsgt.classesws.clsBeP_MONEDA;
 import com.dtsgt.classesws.clsBeP_MONEDAList;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIO;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIOList;
+import com.dtsgt.classesws.clsBeP_PARAMEXT;
+import com.dtsgt.classesws.clsBeP_PARAMEXTList;
 import com.dtsgt.classesws.clsBeP_PRODCOMBO;
 import com.dtsgt.classesws.clsBeP_PRODCOMBOList;
 import com.dtsgt.classesws.clsBeP_PRODMENU;
@@ -247,6 +254,12 @@ public class WSRec extends PBase {
                         break;
                     case 28:
                         callMethod("GetP_PRODMENUOPC_DET", "EMPRESA", gl.emp);
+                        break;
+                    case 29:
+                        callMethod("GetP_CONCEPTOPAGO", "EMPRESA", gl.emp);
+                        break;
+                    case 30:
+                        callMethod("GetP_PARAMEXT", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -465,6 +478,22 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
+                   execws(29);
+                   break;
+                case 29:
+                    processConceptoPago();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
+                    execws(30);
+                    break;
+                case 30:
+                    processParametrosExtra();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
                     processComplete();
                     break;
             }
@@ -563,6 +592,12 @@ public class WSRec extends PBase {
             case 28:
                 plabel = "Cargando opciones det";
                 break;
+            case 29:
+                plabel = "Cargando conceptos de pago";
+                break;
+            case 30:
+                plabel = "Cargando parámetros extras";
+                break;
         }
 
         updateLabel();
@@ -592,14 +627,19 @@ public class WSRec extends PBase {
         }
     }
 
-    private boolean processData() {
+        private boolean processData() {
+
         try {
 
             db.beginTransaction();
 
             for (int i = 0; i < script.size(); i++) {
                 sql = script.get(i);
-                db.execSQL(sql);
+                try {
+                    db.execSQL(sql);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
             db.setTransactionSuccessful();
@@ -1838,6 +1878,71 @@ public class WSRec extends PBase {
                 var.subbodega = item.SUBBODEGA + "";
                 var.activo = mu.bool(item.ACTIVO);
                 var.codigo_vendedor = item.CODIGO_VENDEDOR;
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processConceptoPago() {
+        try {
+            clsP_conceptopagoObj handler = new clsP_conceptopagoObj(this, Con, db);
+            clsBeP_CONCEPTOPAGOList items = new clsBeP_CONCEPTOPAGOList();
+            clsBeP_CONCEPTOPAGO item = new clsBeP_CONCEPTOPAGO();
+            clsClasses.clsP_conceptopago var;
+
+            script.add("DELETE FROM P_CONCEPTOPAGO");
+
+            items = xobj.getresult(clsBeP_CONCEPTOPAGOList.class, "GetP_CONCEPTOPAGO");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_conceptopago();
+                var.codigo = item.CODIGO;
+                var.nombre = item.NOMBRE;
+                var.activo = mu.bool(item.ACTIVO);
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processParametrosExtra() {
+        try {
+            clsP_paramextObj handler = new clsP_paramextObj(this, Con, db);
+            clsBeP_PARAMEXTList items = new clsBeP_PARAMEXTList();
+            clsBeP_PARAMEXT item = new clsBeP_PARAMEXT();
+            clsClasses.clsP_paramext var;
+
+            script.add("DELETE FROM P_PARAMEXT");
+
+            items = xobj.getresult(clsBeP_PARAMEXTList.class, "GetP_PARAMEXT");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_paramext();
+                var.id = item.ID;
+                var.nombre = item.Nombre;
+                var.valor = item.Valor;
+                var.ruta  = item.IdRuta;
                 script.add(handler.addItemSql(var));
             }
 

@@ -128,6 +128,7 @@ public class Producto extends PBase {
 						prname = item.Desc;
 						gl.um = item.um;
 						gl.pprodname = prname;
+						gl.prodcod = item.codInt;
 
 						appProd();
 					} catch (Exception e) {
@@ -158,6 +159,7 @@ public class Producto extends PBase {
 						prname = item.Desc;
 						gl.um = item.um;
 						gl.pprodname = prname;
+						gl.prodcod = item.codInt;
 
 						appProd();
 					} catch (Exception e) {
@@ -283,7 +285,7 @@ public class Producto extends PBase {
 					break;	
 					
 				case 2: // Recarga
-				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS,CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_TIPO='P' ";
+				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS,CODIGO_TIPO, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE CODIGO_TIPO='P' ";
                     if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
                     if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
 
@@ -311,7 +313,10 @@ public class Producto extends PBase {
                 vItem.Cod = cod;
                 vItem.prec="Precio : "+gl.peMon+prodPrecioBase(cod);if (prodtipo==2) vItem.prec="";
                 vItem.Desc = name;
+                vItem.codInt=DT.getInt(4);
+
                 if (disp>0) exist="Exist : "+mu.frmdecno(disp)+" "+um; else exist="";
+
                 vItem.Text=exist;if (prodtipo==2) vItem.Text="";
 
                 items.add(vItem);vitems.add(vItem);

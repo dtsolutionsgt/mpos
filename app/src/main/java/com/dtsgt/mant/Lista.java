@@ -57,6 +57,8 @@ public class Lista extends PBase {
 
         ViewObj=new clsListaObj(this,Con,db);
 
+        ProgressDialog("Cargando listado...");
+
         setMantID();
         setHandlers();
         //listItems();
@@ -93,6 +95,9 @@ public class Lista extends PBase {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object lvObj = listView.getItemAtPosition(position);
                 clsClasses.clsLista item = (clsClasses.clsLista) lvObj;
+
+                progress.setMessage("Cargando detalle...");
+                progress.show();
 
                 if(gl.mantid==15){
                     adapt.setSelectedIndex(position);
@@ -161,7 +166,11 @@ public class Lista extends PBase {
             }
 
             lblReg.setText("Registros : "+ViewObj.count);
+
+            progress.cancel();
+
         } catch (Exception e) {
+            progress.cancel();
             mu.msgbox(e.getMessage());
         }
 
@@ -202,6 +211,7 @@ public class Lista extends PBase {
                    break;
 
             case 1: //Banco
+                progress.setMessage("Cargando bancos");
                 sql="SELECT 0,CODIGO,NOMBRE,CUENTA,'', '','','','' FROM P_BANCO WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
@@ -211,6 +221,7 @@ public class Lista extends PBase {
                 break;
 
             case 2: // Clientes
+                progress.setMessage("Cargando clientes");
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_CLIENTE WHERE ";
                 if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
@@ -218,10 +229,12 @@ public class Lista extends PBase {
                 break;
 
             case 3: // Empresa
+                progress.setMessage("Cargando empresa");
                 sql="SELECT 0,EMPRESA,NOMBRE,'','', '','','','' FROM P_EMPRESA ";
                 break;
 
             case 4: // Familia
+                progress.setMessage("Cargando familias");
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_LINEA WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
@@ -430,6 +443,9 @@ public class Lista extends PBase {
                 startActivity(new Intent(this, MantConceptoPago.class));break;
 
         }
+
+        progress.cancel();
+
     }
 
     private void listFPrints() {

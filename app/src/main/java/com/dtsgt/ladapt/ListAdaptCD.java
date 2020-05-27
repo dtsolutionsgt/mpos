@@ -59,6 +59,7 @@ public class ListAdaptCD extends BaseAdapter {
 			holder.lblCod  = (TextView) convertView.findViewById(R.id.lblETipo);
 			holder.lblDesc = (TextView) convertView.findViewById(R.id.lblPNum);
 			holder.lblAdd = (TextView) convertView.findViewById(R.id.textView1);
+			holder.lblCodInt = (TextView) convertView.findViewById(R.id.textView142);
 
 			convertView.setTag(holder);
 		} else {
@@ -68,6 +69,7 @@ public class ListAdaptCD extends BaseAdapter {
 		holder.lblCod.setText(items.get(position).Cod);
 		holder.lblDesc.setText(items.get(position).Desc);
 		holder.lblAdd.setText(items.get(position).Text);
+		holder.lblCodInt.setText(String.valueOf(items.get(position).codInt));
 		
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -80,7 +82,7 @@ public class ListAdaptCD extends BaseAdapter {
 	
 	
 	static class ViewHolder {
-		TextView  lblCod,lblDesc,lblAdd;
+		TextView  lblCod,lblDesc,lblAdd, lblCodInt;
 	}
 	
 }

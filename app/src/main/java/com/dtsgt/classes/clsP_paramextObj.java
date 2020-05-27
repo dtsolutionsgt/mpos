@@ -82,6 +82,7 @@ public class clsP_paramextObj {
         ins.add("ID", item.id);
         ins.add("Nombre", item.nombre);
         ins.add("Valor", item.valor);
+        ins.add("Ruta", item.ruta);
 
         db.execSQL(ins.sql());
 
@@ -93,6 +94,7 @@ public class clsP_paramextObj {
 
         upd.add("Nombre", item.nombre);
         upd.add("Valor", item.valor);
+        upd.add("Ruta", item.ruta);
 
         upd.Where("(ID=" + item.id + ")");
 
@@ -129,6 +131,7 @@ public class clsP_paramextObj {
             item.id = dt.getInt(0);
             item.nombre = dt.getString(1);
             item.valor = dt.getString(2);
+            item.ruta = dt.getString(3);
 
             items.add(item);
 
@@ -163,6 +166,7 @@ public class clsP_paramextObj {
         ins.add("ID", item.id);
         ins.add("Nombre", item.nombre);
         ins.add("Valor", item.valor);
+        ins.add("Ruta", item.ruta);
 
         return ins.sql();
 
@@ -174,6 +178,7 @@ public class clsP_paramextObj {
 
         upd.add("Nombre", item.nombre);
         upd.add("Valor", item.valor);
+        upd.add("Ruta", item.ruta);
 
         upd.Where("(ID=" + item.id + ")");
 

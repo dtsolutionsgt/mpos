@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -40,8 +41,16 @@ public class RecargCant extends PBase {
 		
 		showkeyb();
 	
-		showData();		
-		
+		showData();
+
+		if (gl.peDecCant==0) {
+			txtCant.setInputType(InputType.TYPE_CLASS_NUMBER );
+		} else {
+			txtCant.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+		}
+
+		txtCant.requestFocus();
+
 		//txtCant.setText(((appGlobals) vApp).gstr2);
 	}
 	
@@ -49,8 +58,12 @@ public class RecargCant extends PBase {
 	// Events
 	
 	public void sendCant(View view) {
+		aplicaCant();
+	}
 
+	private void aplicaCant(){
 		try{
+
 			setCant();
 
 			if (cant<0){
@@ -65,20 +78,26 @@ public class RecargCant extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
-			
 	}
-	
+
 	// Main
 	
 	private void setHandlers(){
 
 		try{
-			if (gl.peDecCant==0) {
-				txtCant.setInputType(InputType.TYPE_CLASS_NUMBER );
-			} else {
-				txtCant.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-			}
+
+			txtCant.setOnKeyListener(new View.OnKeyListener() {
+				@Override
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+							(keyCode == KeyEvent.KEYCODE_ENTER)) {
+						aplicaCant();
+						return true;
+					}
+					return false;
+				}
+			});
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}

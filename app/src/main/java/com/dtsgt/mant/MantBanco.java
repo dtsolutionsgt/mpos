@@ -2,6 +2,7 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -102,7 +103,7 @@ public class MantBanco extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo_banco = 0;
+        item.codigo_banco = maxId();
         item.codigo="";
         item.tipo="1";
         item.nombre="";
@@ -159,6 +160,7 @@ public class MantBanco extends PBase {
                 }
 
                 item.codigo=ss;
+
             }
 
             ss=txt2.getText().toString();
@@ -184,6 +186,27 @@ public class MantBanco extends PBase {
         }
     }
 
+    private int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_BANCO";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
     //endregion
 
     //region Dialogs

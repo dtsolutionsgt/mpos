@@ -84,8 +84,6 @@ public class Reimpresion extends PBase {
 	private boolean imprimecan=false;
 	private int residx,ncFact;
 
-	public ProgressDialog progress;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -204,15 +202,6 @@ public class Reimpresion extends PBase {
 			lblTipo.setText("Cierre de día");break;
 		}		
 			
-	}
-
-	public void ProgressDialog(String mensaje){
-		progress=new ProgressDialog(this);
-		progress.setMessage(mensaje);
-		progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progress.setIndeterminate(true);
-		progress.setProgress(0);
-		progress.show();
 	}
 
 	// Events

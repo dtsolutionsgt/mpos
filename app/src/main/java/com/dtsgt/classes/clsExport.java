@@ -102,8 +102,7 @@ public class clsExport {
         ins.add("CODIGO", item.codigo);
         ins.add("NOMBRE", item.nombre);
         ins.add("SUCURSAL", item.sucursal);
-        ins.add("ACTIVO", item.activo);
-
+        ins.add("ACTIVO", (item.activo?1:0));
         return ins.sql();
     }
 
