@@ -360,6 +360,7 @@ public class AppMethods {
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=104";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -368,11 +369,13 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
 
             gl.peMFact=val.equalsIgnoreCase("S");
+
         } catch (Exception e) {
             gl.peMFact=false;
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -381,11 +384,13 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
 
             gl.peFEL=val;
+
         } catch (Exception e) {
             gl.peFEL="";
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=106";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
