@@ -72,13 +72,13 @@ public class ListAdaptCFDV extends BaseAdapter {
 		holder.lblFecha.setText(itemDetailsrrayList.get(position).Fecha);
 		holder.lblDesc.setText(itemDetailsrrayList.get(position).Desc);
 		holder.lblValor.setText(itemDetailsrrayList.get(position).Valor);
-		holder.lblFechaFactura.setText(itemDetailsrrayList.get(position).FechaFactura);
-		holder.lblUUID.setText(itemDetailsrrayList.get(position).UUID);
 
 		if (itemDetailsrrayList.get(position).UUID.isEmpty()){
 			holder.lblUUID.setVisibility(View.GONE);
 			holder.lblFechaFactura.setVisibility(View.GONE);
 		}else{
+			holder.lblFechaFactura.setText(itemDetailsrrayList.get(position).FechaFactura);
+			holder.lblUUID.setText(itemDetailsrrayList.get(position).UUID);
 			holder.lblUUID.setVisibility(View.VISIBLE);
 			holder.lblFechaFactura.setVisibility(View.VISIBLE);
 		}

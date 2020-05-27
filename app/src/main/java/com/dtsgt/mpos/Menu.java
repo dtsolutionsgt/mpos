@@ -702,7 +702,7 @@ public class Menu extends PBase {
 			final String[] selitems = new String[itemcnt];
 
 			selitems[itempos]="Existencias";itempos++;
-			selitems[itempos]="Devolucion a bodega";itempos++;
+			selitems[itempos]="Devolución a bodega";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
 
 			menudlg = new AlertDialog.Builder(this);
@@ -714,7 +714,7 @@ public class Menu extends PBase {
 					String mt=selitems[item];
 
 					if (mt.equalsIgnoreCase("Existencias")) menuExist();
-					if (mt.equalsIgnoreCase("Devolucion a bodega")) menuDevBod();
+					if (mt.equalsIgnoreCase("Devolución a bodega")) menuDevBod();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
 
 					dialog.cancel();

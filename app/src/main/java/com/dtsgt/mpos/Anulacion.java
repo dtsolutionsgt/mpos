@@ -111,7 +111,6 @@ public class Anulacion extends PBase {
 		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"");
 	}
 
-	
 	//region Events
 	
 	public void anulDoc(View view){
@@ -253,8 +252,6 @@ public class Anulacion extends PBase {
 					
 					if (tipo==3) {
 						sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
-						vItem.UUID=DT.getString(5);
-						vItem.FechaFactura=du.univfechalong(DT.getLong(6));
 					}else if(tipo==1||tipo==6){
 						sf=DT.getString(0);
 					}else{
@@ -277,7 +274,15 @@ public class Anulacion extends PBase {
 			 
 					if (id.equalsIgnoreCase(selid)) selidx=vP;
 					vP+=1;
-			  
+
+					if (tipo==3) {
+						vItem.UUID=DT.getString(5);
+						vItem.FechaFactura=du.univfechalong(DT.getLong(6));
+					}else{
+						vItem.UUID="";
+						vItem.FechaFactura="";
+					}
+
 					DT.moveToNext();
 				}	
 			}
@@ -766,6 +771,7 @@ public class Anulacion extends PBase {
 
 				DT.moveToNext();
 			}
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}

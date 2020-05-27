@@ -573,6 +573,7 @@ public class clsClasses {
 
 	public class clsCD {
 		public String Cod,Desc,Text,um,prec;
+		public int codInt;
 	}
 	
 	public class clsCDB {

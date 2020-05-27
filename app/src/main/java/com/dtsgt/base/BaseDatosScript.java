@@ -343,7 +343,7 @@ public class BaseDatosScript {
             database.execSQL(sql);
 
             sql="CREATE TABLE [P_STOCK] ("+
-                    "[CODIGO] TEXT NOT NULL,"+
+                    "[CODIGO] INT NOT NULL,"+
                     "[CANT] REAL NOT NULL,"+
                     "[CANTM] REAL NOT NULL,"+
                     "[PESO] REAL NOT NULL,"+

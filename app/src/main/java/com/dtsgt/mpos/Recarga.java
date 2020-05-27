@@ -138,7 +138,7 @@ public class Recarga extends PBase {
 		try {
 			
 			sql="SELECT T_CxCD.CODIGO, T_CxCD.CANT, ' ', P_PRODUCTO.DESCCORTA, T_CxCD.ITEM "+
-			     "FROM T_CxCD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_CxCD.CODIGO "+
+			     "FROM T_CxCD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=T_CxCD.CODIGO "+
 				 "ORDER BY P_PRODUCTO.DESCCORTA";
 			
 			DT=Con.OpenDT(sql);
@@ -321,7 +321,7 @@ public class Recarga extends PBase {
 			ins.init("T_CxCD");
 			
 			ins.add("Item",id);
-			ins.add("CODIGO",prodid);
+			ins.add("CODIGO",gl.prodcod);
 			ins.add("CANT",cant);
 			ins.add("CODDEV",raz);
 			ins.add("TOTAL",0);
