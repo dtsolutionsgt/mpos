@@ -2493,7 +2493,7 @@ public class Venta extends PBase {
         String ss;
         double lcred,cred,disp;
 
-        browse=0;
+        //browse=0;
 
         gl.exitflag=false;
         if (!gl.scancliente.isEmpty())  gl.cliente=gl.scancliente;
@@ -2745,8 +2745,6 @@ public class Venta extends PBase {
             if (browse==6) {
                 browse=0;updateCant();return;
             }
-
-
 
             if (browse==8) {
                 browse=0;

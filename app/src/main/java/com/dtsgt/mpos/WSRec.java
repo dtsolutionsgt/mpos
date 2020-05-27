@@ -478,8 +478,7 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
-                   //execws(29);
-                    processComplete();
+                   execws(29);
                    break;
                 case 29:
                     processConceptoPago();
@@ -1890,8 +1889,6 @@ public class WSRec extends PBase {
 
     private void processConceptoPago() {
 
-        return;
-        /*
         try {
             clsP_conceptopagoObj handler = new clsP_conceptopagoObj(this, Con, db);
             clsBeP_CONCEPTOPAGOList items = new clsBeP_CONCEPTOPAGOList();
@@ -1922,7 +1919,6 @@ public class WSRec extends PBase {
             ws.errorflag = true;
         }
 
-         */
     }
 
     private void processParametrosExtra() {

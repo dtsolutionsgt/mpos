@@ -100,7 +100,7 @@ public class Anulacion extends PBase {
             fel.fel_alias="DEMO_FEL";
             fel.fel_nit="1000000000K";
             fel.fel_correo="";
-
+            fel.fel_ident="abc123";
         } else {
 
             fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
@@ -108,7 +108,7 @@ public class Anulacion extends PBase {
             fel.fel_codigo="PEXPRESS";
             fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
             fel.fel_nit="96049340";
-
+            //fel.fel_ident=fact.serie+fact.corelativo;;
         }
 
 
