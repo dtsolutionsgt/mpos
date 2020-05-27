@@ -407,6 +407,7 @@ public class Anulacion extends PBase {
     }
 
     private void buildAnulXML() {
+
         try {
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             clsClasses.clsD_factura fact=clsCls.new clsD_factura();
@@ -415,8 +416,9 @@ public class Anulacion extends PBase {
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
-            //uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
+            uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
             fel.anulfact(uuid,"1000000000K","CF", fact.fecha, fact.fecha);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
