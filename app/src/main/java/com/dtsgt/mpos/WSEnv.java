@@ -142,7 +142,7 @@ public class WSEnv extends PBase {
                         execws(2);
                     }
                     processComplete();
-                    execws(3);
+                   // execws(3);
                     break;
                 case 3:
                     statusMov();

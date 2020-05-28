@@ -20,7 +20,7 @@ public class CliPos extends PBase {
 	private EditText txtNIT,txtNom,txtRef;
 
 	private String snit,sname,sdir;
-
+	private boolean consFinal=false;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,7 @@ public class CliPos extends PBase {
 	//region  Events
 
 	public void consFinal(View view) {
+    	consFinal=true;
 		if (agregaCliente("C.F.","Consumidor final","Ciudad")) procesaCF() ;
 	}
 
@@ -149,6 +150,7 @@ public class CliPos extends PBase {
 			//Intent intent = new Intent(this,Venta.class);
 			//startActivity(intent);
 
+			consFinal=false;
 			limpiaCampos();
 
             finish();
@@ -351,9 +353,11 @@ public class CliPos extends PBase {
 
 		try {
 
-			if (codigo==0){
-				toast("NIT no es válido");
-				return false;
+			if (!consFinal) {
+				if (codigo==0){
+					toast("NIT no es válido");
+					return false;
+				}
 			}
 
 			ins.init("P_CLIENTE");
