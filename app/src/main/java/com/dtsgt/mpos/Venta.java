@@ -1684,15 +1684,16 @@ public class Venta extends PBase {
                     "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
                     "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
-                    "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1)";
+                    "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
             if (!mu.emptystr(famid)) {
                 if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
 
             sql += "UNION ";
-            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,'',P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
-                    "FROM P_PRODUCTO " +
-                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M'))";
+            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA,P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
+                    "FROM P_PRODUCTO  INNER JOIN " +
+                    "P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
+                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) AND (P_PRODUCTO.ACTIVO=1)";
             if (!mu.emptystr(famid)) {
                 if (!famid.equalsIgnoreCase("0"))
                     sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";

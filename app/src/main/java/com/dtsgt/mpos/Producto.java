@@ -76,9 +76,7 @@ public class Producto extends PBase {
 
 	}
 
-
     // Events
-
 	public void porCodigo(View view) {
 		try{
 			ordPorNombre=false;
@@ -191,7 +189,7 @@ public class Producto extends PBase {
 				@Override
 				public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 					TextView spinlabel;
-					String scod, idposition;
+					String scod;
 
 					try {
 						spinlabel = (TextView) parentView.getChildAt(0);
@@ -256,22 +254,29 @@ public class Producto extends PBase {
 					
 				case 1:  // Venta
 
-					sql="SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS " +
-						"FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
-						"P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
-						"WHERE (P_PRODPRECIO.NIVEL = " + gl.nivel +")";
-					if (!mu.emptystr(famid)){
-						if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA='"+famid+"') ";
+					sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
+							"P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
+							"FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
+							"P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
+							"WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
+
+					if (!mu.emptystr(famid)) {
+						if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
 					}
+
 					if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
 
-					sql+="UNION ";
-					sql+="SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS  " +
-							"FROM P_PRODUCTO "  +
-							"WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M') OR (P_PRODUCTO.TIPO ='P')) ";
-					if (!mu.emptystr(famid)){
-						if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA='"+famid+"') ";
+					sql += "UNION ";
+					sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA,P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
+							"FROM P_PRODUCTO  INNER JOIN " +
+							"P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
+							"WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) AND (P_PRODUCTO.ACTIVO=1)";
+
+					if (!mu.emptystr(famid)) {
+						if (!famid.equalsIgnoreCase("0"))
+							sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
 					}
+
 					if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
 
 					if (ordPorNombre) {
@@ -488,8 +493,6 @@ public class Producto extends PBase {
             spincode.clear();
             spinlist.clear();
 
-            spincode.add("0");
-            //spinlist.add("< TODAS >"); // Toast index 0
         } catch (Exception e) {
 
         }
@@ -498,12 +501,18 @@ public class Producto extends PBase {
 
             switch (prodtipo) {
                 case 0: // Preventa
-                    sql="SELECT CODIGO_LINEA,Nombre FROM P_LINEA ORDER BY Nombre";break;
+                    sql="SELECT CODIGO_LINEA,NOMBRE FROM P_LINEA ORDER BY NOMBRE";
+                    break;
                 case 1:  // Venta
                     sql="SELECT DISTINCT P_PRODUCTO.LINEA,P_LINEA.NOMBRE "+
-                            "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO " +
-                            "INNER JOIN P_LINEA ON P_PRODUCTO.LINEA=P_LINEA.CODIGO_LINEA " +
-                            "WHERE (P_STOCK.CANT > 0) ORDER BY P_LINEA.NOMBRE";
+						"FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO " +
+						"INNER JOIN P_LINEA ON P_PRODUCTO.LINEA=P_LINEA.CODIGO_LINEA " +
+						"WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.CODIGO_TIPO = 'P') " +
+						"UNION "+
+						"SELECT DISTINCT P_PRODUCTO.LINEA,P_LINEA.NOMBRE "+
+						"FROM P_PRODUCTO INNER JOIN P_LINEA ON P_PRODUCTO.LINEA=P_LINEA.CODIGO_LINEA " +
+						"WHERE (P_PRODUCTO.CODIGO_TIPO = 'S' OR P_PRODUCTO.CODIGO_TIPO = 'M') " +
+						"ORDER BY P_LINEA.NOMBRE";
                     break;
                 case 2: // Mercadeo propio
                     sql="SELECT CODIGO_LINEA,Nombre FROM P_LINEA ORDER BY Nombre";break;
@@ -539,6 +548,8 @@ public class Producto extends PBase {
 
 		try {
 			spinFam.setSelection(0);
+			String scod = spincode.get(0);
+			famid = scod;
 		} catch (Exception e) {
 			spinFam.setSelection(0);
 	    }

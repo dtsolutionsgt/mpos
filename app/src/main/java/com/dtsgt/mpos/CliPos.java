@@ -52,18 +52,27 @@ public class CliPos extends PBase {
 	public void clienteNIT(View view) {
 
 		try{
-			snit=txtNIT.getText().toString();
-			sname=txtNom.getText().toString();
-			sdir=txtRef.getText().toString();
 
-			if (!validaNIT(snit)) {
-				toast("NIT incorrecto");return;
-			}
-			if (mu.emptystr(sname)) {
-				toast("Nombre incorrecto");return;
+			if (!existeCliente()){
+
+				snit=txtNIT.getText().toString();
+				sname=txtNom.getText().toString();
+				sdir=txtRef.getText().toString();
+
+				if (!validaNIT(snit)) {
+					toast("NIT incorrecto");return;
+				}
+
+				if (mu.emptystr(sname)) {
+					toast("Nombre incorrecto");return;
+				}
+
+				if (agregaCliente(snit,sname,sdir)){
+					procesaNIT(snit) ;
+				}
+
 			}
 
-			if (agregaCliente(snit,sname,sdir)) procesaNIT(snit) ;
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -80,7 +89,7 @@ public class CliPos extends PBase {
 
 		try{
 
-            txtNIT.addTextChangedListener(new TextWatcher() {
+            /*txtNIT.addTextChangedListener(new TextWatcher() {
 
                 public void afterTextChanged(Editable s) {}
 
@@ -89,7 +98,25 @@ public class CliPos extends PBase {
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                      buscaCliente();
                 }
-            });
+            });*/
+
+			txtNIT.setOnKeyListener(new View.OnKeyListener() {
+				@Override
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+					if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
+							(event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+						if (!existeCliente()){
+							txtNom.requestFocus();
+						}
+
+						return true;
+					} else {
+						return false;
+					}
+				}
+			});
 
 
 		}catch (Exception e){
@@ -105,6 +132,7 @@ public class CliPos extends PBase {
 	private void procesaCF() {
 
 		try{
+
 			gl.codigo_cliente = 0;
 			gl.rutatipo="V";
             gl.cliente="0";
@@ -175,9 +203,6 @@ public class CliPos extends PBase {
 			N=N.trim();
 			N=N.replaceAll(" ","");
 			if (mu.emptystr(N)) return false;
-
-
-
 		/*
 		N=N.toUpperCase();
 		if (N.equalsIgnoreCase("CF")) N="C.F.";
@@ -237,24 +262,87 @@ public class CliPos extends PBase {
 		Cursor DT;
 
 		try{
+
 			String NIT=txtNIT.getText().toString();
+
 			if (mu.emptystr(NIT)) {
 				txtNIT.requestFocus();return;
 			}
 
 			int nnit=nitnum(NIT);
 
-			sql="SELECT Nombre,Direccion FROM P_CLIENTE WHERE CODIGO="+nnit;
+			sql="SELECT Nombre,Direccion FROM P_CLIENTE " +
+				"WHERE  NIT = '"+NIT+"'";
+
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 
-			if (nnit==0) throw new Exception();
+			if (nnit==0) {
+				throw new Exception("NIT no es válido");
+			}
+
 			txtNom.setText(DT.getString(0));
 			txtRef.setText(DT.getString(1));
+
+			procesaNIT(NIT);
+
 		} catch (Exception e){
 		    txtNom.setText("");txtRef.setText("");
 		}
 
+	}
+
+	private boolean existeCliente() {
+		Cursor DT;
+        boolean resultado=false;
+
+		try{
+
+			String NIT=txtNIT.getText().toString();
+
+			if (mu.emptystr(NIT)) {
+				txtNIT.requestFocus();
+				resultado=false;
+			}else{
+
+				sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE FROM P_CLIENTE " +
+					"WHERE NIT = '" + NIT + "'";
+				DT=Con.OpenDT(sql);
+
+				if (DT != null){
+
+					if (DT.getCount()>0){
+						DT.moveToFirst();
+
+						txtNom.setText(DT.getString(1));
+						txtRef.setText(DT.getString(2));
+
+						gl.rutatipo="V";
+                        gl.cliente=DT.getString(0);
+						gl.nivel=DT.getInt(3);
+						gl.percepcion=0;
+						gl.contrib=DT.getString(6);;
+						gl.scancliente = gl.cliente;
+						gl.fnombre=txtNom.getText().toString();
+						gl.fnit=NIT;
+						gl.fdir=DT.getString(4);
+
+						gl.media=DT.getInt(5);
+						gl.codigo_cliente=DT.getInt(5);
+
+						limpiaCampos();
+						finish();
+
+						resultado=true;
+					}
+				}
+			}
+
+		} catch (Exception e){
+			mu.toast("Ocurrió un error buscando al cliente");
+			resultado=false;
+		}
+		return resultado;
 	}
 
 	private boolean agregaCliente(String NIT,String Nom,String dir) {
@@ -262,6 +350,12 @@ public class CliPos extends PBase {
         int codigo=nitnum(NIT);
 
 		try {
+
+			if (codigo==0){
+				toast("NIT no es válido");
+				return false;
+			}
+
 			ins.init("P_CLIENTE");
 
             ins.add("CODIGO_CLIENTE",codigo);
