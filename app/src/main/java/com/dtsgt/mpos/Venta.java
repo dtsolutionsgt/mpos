@@ -359,6 +359,7 @@ public class Venta extends PBase {
                         tipo=prodTipo(gl.prodcod);
                         if (!tipo.equalsIgnoreCase("M")) {
                             browse=6;
+                            gl.menuitemid=prodid;
                             startActivity(new Intent(Venta.this,VentaEdit.class));
                         } else {
                             gl.newmenuitem=false;
@@ -467,6 +468,7 @@ public class Venta extends PBase {
                     gl.gstr=prodid;gl.prodmenu=gl.prodcod;
                     gl.pprodname=item.Name;
                     gl.um=app.umVenta(prodid);
+                    gl.menuitemid=prodid;
                     menuitemadd=true;
 
                     processItem(false);
@@ -655,7 +657,7 @@ public class Venta extends PBase {
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
-                    if (gl.limcant!=0) {
+                    if (gl.limcant>0) {
                         processCant(updateitem);
                     } else {
                         msgAskLimit("El producto no está disponible.\n¿Continuar con la venta?",updateitem);
@@ -1799,9 +1801,10 @@ public class Venta extends PBase {
         try {
 
             if (!gl.peFEL.isEmpty()) {
-                if (pendienteFEL()>0) {
+                int pendfel=pendienteFEL();
+                if (pendfel>0) {
                     item = clsCls.new clsMenu();
-                    item.ID=15;item.Name="FEL";item.Icon=15;
+                    item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
                     mitems.add(item);
                 }
             }
@@ -2437,25 +2440,47 @@ public class Venta extends PBase {
     }
 
     private int getDisp(String prid) {
-        Cursor DT;
-        String tipo;
+        int cdisp, cstock, cbcombo;
+        int vprodid=app.codigoProducto(prid);
+        String vum = app.umVenta3(vprodid);
+
+        cstock=cantStock(vprodid,vum);
+        cbcombo=cantProdCombo(vprodid);
+        cdisp=cstock-cbcombo;if (cdisp<0) cdisp=0;
+
+        return cdisp;
+
+    }
+
+    private int cantStock(int prodid,String vum) {
+        Cursor dt;
 
         try {
-            sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + prid ;
-            DT = Con.OpenDT(sql);
-            DT.moveToFirst();
-            tipo=DT.getString(0);
 
-            if (tipo.equalsIgnoreCase("S")) return -1;
-            if (tipo.equalsIgnoreCase("M")) return -1;
+            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+vum+"')";
+            dt=Con.OpenDT(sql);
 
-            sql = " SELECT SUM(CANT) FROM P_STOCK S WHERE CODIGO='"+prid+"'";
-            DT=Con.OpenDT(sql);
-            if (DT.getCount()==0) return 0;else DT.moveToFirst();
-
-            return DT.getInt(0);
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                return dt.getInt(0);
+            } return 0;
         } catch (Exception e) {
-            //toast(e.getMessage());
+            return 0;
+        }
+    }
+
+    private int cantProdCombo(int prodid) {
+        Cursor dt;
+
+        try {
+            sql="SELECT SUM(CANT*UNID) FROM T_COMBO WHERE (IDSELECCION="+prodid+")";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                return dt.getInt(0);
+            } return 0;
+        } catch (Exception e) {
             return 0;
         }
     }

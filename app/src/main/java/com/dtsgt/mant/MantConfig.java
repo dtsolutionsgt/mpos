@@ -214,16 +214,16 @@ public class MantConfig extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=107");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=108");
 
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES ( 16,'Formato factura','"+value16+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','"+s100+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','N')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','"+s102+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (103,'Pos modalidad','"+s103+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','"+s104+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','"+value105+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','"+s106+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (107,'Cierre diario','"+s107+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (108,'Días anulación permitida','"+s108+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES ( 16,'Formato factura','"+value16+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','"+s100+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','N',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','"+s102+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (103,'Pos modalidad','"+s103+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','"+s104+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','"+value105+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','"+s106+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (107,'Cierre diario','"+s107+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT VALUES (108,'Días anulación permitida','"+s108+"',0)");
 
             db.setTransactionSuccessful();
             db.endTransaction();

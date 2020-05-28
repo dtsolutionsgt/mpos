@@ -58,13 +58,21 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 			
 			holder.imgEst = (ImageView) convertView.findViewById(R.id.imgNext);
 			holder.lblName = (TextView) convertView.findViewById(R.id.lblTrat);
-		
+            holder.lblCant = (TextView) convertView.findViewById(R.id.textView153);
+
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
+
+		if (items.get(position).cant>0) {
+            holder.lblCant.setVisibility(View.VISIBLE);
+            holder.lblCant.setText(""+items.get(position).cant);
+        } else {
+            holder.lblCant.setVisibility(View.INVISIBLE);
+        }
 			
 		holder.imgEst.setImageResource(R.drawable.blank256);
 		
@@ -84,7 +92,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		if (items.get(position).Icon==12) holder.imgEst.setImageResource(R.drawable.venta_add);
 		if (items.get(position).Icon==13) holder.imgEst.setImageResource(R.drawable.venta_switch);
         if (items.get(position).Icon==14) holder.imgEst.setImageResource(R.drawable.recibir_rapido);
-        if (items.get(position).Icon==15) holder.imgEst.setImageResource(R.drawable.fel_warn);
+        if (items.get(position).Icon==15) holder.imgEst.setImageResource(R.drawable.fel);
 
         if (items.get(position).Icon==50) holder.imgEst.setImageResource(R.drawable.btn_search);
         if (items.get(position).Icon==51) holder.imgEst.setImageResource(R.drawable.barcode_btn);
@@ -96,20 +104,18 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 
         if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 
-
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
         }
-		
-		
+
 		return convertView;
 	}
 
 	static class ViewHolder {
 		ImageView imgEst;
-		TextView  lblName;
+		TextView  lblName,lblCant;
 	}
 	
 }

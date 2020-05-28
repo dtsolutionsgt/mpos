@@ -602,7 +602,7 @@ public class clsClasses {
 	}
 
 	public class clsMenu {
-		public int ID,Icon,icod;
+		public int ID,Icon,icod,cant;
 		public String Name,Cod;
 	}	
 	

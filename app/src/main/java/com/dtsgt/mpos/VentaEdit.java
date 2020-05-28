@@ -2,16 +2,23 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsT_comboObj;
+
 public class VentaEdit extends PBase {
 
-    private TextView lbl1,lbl2,lbl3;
+    private TextView lbl1, lbl2, lbl3;
 
-    private int cant,lcant;
+    private clsT_comboObj T_comboObj;
+    private clsP_productoObj P_productoObj;
+
+    private int cant, lcant, prodid, disp, dif;
+    private String um;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,56 +31,65 @@ public class VentaEdit extends PBase {
         lbl2 = (TextView) findViewById(R.id.textView117);
         lbl3 = (TextView) findViewById(R.id.textView116);
 
-        cant=gl.retcant;lcant=gl.limcant;
+        cant = gl.retcant;
+        lcant = gl.limcant;
+        prodid = app.codigoProducto(gl.menuitemid);
+        um = app.umVenta3(prodid);
+
+        P_productoObj = new clsP_productoObj(this, Con, db);
+        T_comboObj = new clsT_comboObj(this, Con, db);
+
+        disp = dispProducto();
 
         lbl1.setText(gl.gstr);
-        lbl2.setText(""+cant);
-        if (lcant>=0) lbl3.setText("Disp : "+lcant);else lbl3.setText("");
+        lbl2.setText("" + cant);
+        lbl3.setText("Disponible : " + disp);
 
-        if (gl.tipoprodcod.equalsIgnoreCase("S")) lbl3.setVisibility(View.INVISIBLE);
+        if (!isProdStock(prodid)) lbl3.setVisibility(View.INVISIBLE);
     }
 
 
     //region Events
 
     public void doClose(View view) {
-        gl.retcant=-1;
+        gl.retcant = -1;
         finish();
     }
 
     public void doApply(View view) {
-        gl.retcant=cant;
-        finish();
+        dif = disp-cant;
+        if (dif >= 0) {
+            gl.retcant = cant;
+            finish();
+        } else {
+            msgAskApply("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+        }
     }
 
     public void doDec(View view) {
-        if (cant>0) cant--;
-        lbl2.setText(""+cant);
-        if (cant==0) {
-            gl.retcant=0;
+        if (cant > 0) cant--;
+        lbl2.setText("" + cant);
+        if (cant == 0) {
+            gl.retcant = 0;
             finish();
         }
-     }
+    }
 
     public void doInc(View view) {
-      if (gl.tipoprodcod.equalsIgnoreCase("P")) {
-            if (cant<lcant || lcant<0) {
-                cant++;
+        if (gl.tipoprodcod.equalsIgnoreCase("P")) {
+            dif = disp - cant - 1;
+            if (dif < 0) {
+                msgAskLimit("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
             } else {
-                msgAskLimit("El producto no tiene suficiente existencia.\n¿Continuar?");
+                cant++;
             }
-        } else if (gl.tipoprodcod.equalsIgnoreCase("S")) {
+        } else {
             cant++;
-        } else if (gl.tipoprodcod.equalsIgnoreCase("M")) {
-
         }
-
         lbl2.setText(""+cant);
-
-     }
+    }
 
     public void doDelete(View view) {
-        //msgAskDelete("Eliminar articulo de la venta");
         gl.retcant=0;
         finish();
     }
@@ -85,6 +101,67 @@ public class VentaEdit extends PBase {
 
     //endregion
 
+    //region Disponible
+
+
+
+    private int dispProducto() {
+        int cdisp, cstock, cbcombo;
+
+        cstock=cantStock(prodid);
+        cbcombo=cantProdCombo(prodid);
+        cdisp=cstock-cbcombo;if (cdisp<0) cdisp=0;
+
+        return cdisp;
+    }
+
+    private int cantStock(int prodid) {
+        Cursor dt;
+
+        try {
+            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prodid);
+
+            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+P_productoObj.first().codigo+"') AND (UNIDADMEDIDA='"+P_productoObj.first().unidbas+"')";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                return dt.getInt(0);
+            } return 0;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private int cantProdCombo(int prodid) {
+        Cursor dt;
+
+        try {
+            sql="SELECT SUM(CANT*UNID) FROM T_COMBO WHERE (IDSELECCION="+prodid+")";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                return dt.getInt(0);
+            } return 0;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private boolean isProdStock(int pid) {
+        if (pid==0) return false;
+
+        try {
+            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+pid);
+            return P_productoObj.first().codigo_tipo.equalsIgnoreCase("P");
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    //endregion
+
     //region Aux
 
 
@@ -92,18 +169,18 @@ public class VentaEdit extends PBase {
 
     //region Dialogs
 
-    private void msgAskDelete(String msg) {
+    private void msgAskApply(String msg) {
         try{
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Borrar");
+            dialog.setTitle("Aplicar");
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setNegativeButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    gl.retcant=0;
-                    finish();
+                    gl.retcant=cant;
+                     finish();
                 }
             });
 
@@ -127,7 +204,7 @@ public class VentaEdit extends PBase {
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    cant--;
+                    cant++;
                     lbl2.setText(""+cant);
                 }
             });
@@ -146,6 +223,16 @@ public class VentaEdit extends PBase {
 
     //region Activity Events
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            P_productoObj.reconnect(Con,db);
+            T_comboObj.reconnect(Con,db);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
 
     //endregion
 

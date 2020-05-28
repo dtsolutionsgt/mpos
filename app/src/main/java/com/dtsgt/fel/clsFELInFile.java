@@ -101,16 +101,16 @@ public class clsFELInFile {
     private void sendJSONFirm() {
 
         try {
-
             s64=toBase64();
+
             jsonf = new JSONObject();
             jsonf.put("llave", llave_firma);
             jsonf.put("archivo",s64);
             jsonf.put("codigo",fel_codigo);
             jsonf.put("alias",fel_alias);
             jsonf.put("es_anulacion","N");
-            executeWSFirm();
 
+            executeWSFirm();
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         }
