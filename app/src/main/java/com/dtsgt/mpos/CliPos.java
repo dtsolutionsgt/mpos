@@ -142,7 +142,7 @@ public class CliPos extends PBase {
             gl.scancliente=gl.cliente;
 
             gl.fnombre="Consumidor final";
-            gl.fnit="C.F.";
+            gl.fnit="CF";
             gl.fdir="Ciudad";
             gl.media=1;
 

@@ -446,14 +446,16 @@ public class Anulacion extends PBase {
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
-//            uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
 
 			String NITReceptor = Get_NIT_Cliente(fact.cliente);
+
 			if(NITReceptor.isEmpty()){
-				NITReceptor="C.F";
+				NITReceptor="CF";
 			}
 
+			//#EJC20200527: Quitar estos caracteres del NIT.
 			NITReceptor = NITReceptor.replace("-","");
+			NITReceptor = NITReceptor.replace(".","");
 
             fel.anulfact(uuid,"1000000000K",NITReceptor, fact.fecha, fact.fecha);
 

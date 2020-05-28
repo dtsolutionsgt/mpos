@@ -216,6 +216,7 @@ public class FelFactura extends PBase {
 
             //#EJC20200527: Quitar "-" del nit
             factf.nit =factf.nit.replace("-","");
+            factf.nit =factf.nit.replace(".","");
 
             fel.receptor(factf.nit,factf.nombre,factf.direccion);
 
