@@ -678,6 +678,7 @@ public class Venta extends PBase {
         txtBarra.requestFocus();
 
         try {
+
             sql="SELECT CODIGO,DESCLARGA FROM P_PRODUCTO WHERE (CODBARRA='"+barra+"') OR (CODIGO='"+barra+"')";
             DT=Con.OpenDT(sql);
             if (DT.getCount()==0) {
@@ -1671,6 +1672,7 @@ public class Venta extends PBase {
     }
 
     private void listProduct() {
+
         Cursor dt;
         clsClasses.clsMenu item;
         ArrayList<String> pcodes = new ArrayList<String>();

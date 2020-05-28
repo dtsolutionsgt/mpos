@@ -96,7 +96,7 @@ public class Anulacion extends PBase {
 
             fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
             fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
-            fel.fel_codigo ="0";
+            fel.fel_codigo ="1";
             fel.fel_alias="DEMO_FEL";
             fel.fel_nit="1000000000K";
             fel.fel_correo="";
@@ -421,6 +421,7 @@ public class Anulacion extends PBase {
 
     @Override
     public void felCallBack()  {
+
         if (!fel.errorflag) {
 
             anulFactura(itemid);
@@ -428,6 +429,7 @@ public class Anulacion extends PBase {
             db.execSQL(sql);
 
             listItems();
+
         } else {
             msgbox("Ocurrio error en anulacion FEL :\n\n"+ fel.error);
         }
@@ -436,6 +438,7 @@ public class Anulacion extends PBase {
     private void buildAnulXML() {
 
         try {
+
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             clsClasses.clsD_factura fact=clsCls.new clsD_factura();
 
@@ -443,16 +446,44 @@ public class Anulacion extends PBase {
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
-            //uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
-            //fel.anulfact(uuid,"1000000000K","CF", fact.fecha, fact.fecha);
-            //fel.anulfact(uuid,"1000000000K","1", fact.fecha, fact.fecha);
-            fel.anulfact(uuid,"1000000000K","47941162", fact.fecha, fact.fecha);
-            //fel.anulfact(uuid,"1000000000K","76365204", fact.fecha, fact.fecha);
+//            uuid="A16B83DB-5FA0-4C31-8F49-BC0465BD05DE";
+
+			String NITReceptor = Get_NIT_Cliente(fact.cliente);
+			if(NITReceptor.isEmpty()){
+				NITReceptor="C.F";
+			}
+
+			NITReceptor = NITReceptor.replace("-","");
+
+            fel.anulfact(uuid,"1000000000K",NITReceptor, fact.fecha, fact.fecha);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
+    private String Get_NIT_Cliente(int Codigo_Cliente)
+	{
+		Cursor dt;
+
+		String NIT="";
+
+		try {
+			sql="SELECT NIT FROM P_CLIENTE WHERE CODIGO='"+Codigo_Cliente+"'";
+			dt=Con.OpenDT(sql);
+
+			if(dt!=null){
+				if (dt.getCount()>0){
+					dt.moveToFirst();
+					NIT = dt.getString(0);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return  NIT;
+	}
     //endregion
 
 	//region Documents
@@ -460,6 +491,7 @@ public class Anulacion extends PBase {
 	private void anulPedido(String itemid) {
 
 		try{
+
 			sql="UPDATE D_PEDIDO SET Anulado='S' WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
@@ -474,6 +506,7 @@ public class Anulacion extends PBase {
 	}	
 	
 	private boolean anulFactura(String itemid) {
+
 		Cursor DT;
 		String um;
 		int prcant,prod;

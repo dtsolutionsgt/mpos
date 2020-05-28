@@ -219,6 +219,7 @@ public class FacturaRes extends PBase {
 		processFinalPromo();
 
 		printcallback= new Runnable() {
+
 		    public void run() {
 
 				if (notaC==2){
@@ -1759,7 +1760,9 @@ public class FacturaRes extends PBase {
 	}
 
 	public void vuelto(String msg) {
+
 		try{
+
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
 			dialog.setTitle(R.string.app_name);
@@ -2346,13 +2349,15 @@ public class FacturaRes extends PBase {
 	protected void onResume() {
 
 		try {
+
 			super.onResume();
 
             if (browse==2) {
+
                 browse=0;
 
                 if (gl.feluuid.isEmpty()) {
-                    toastlongtop("No se logro certificación FEL");
+                    toastlongtop("No se logró certificación FEL");
                 } else {
                     toastlongtop("Factura certificada : \n"+gl.feluuid);
                 }

@@ -25,6 +25,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class clsFELInFile {
 
     public String  error,fecha_factura;
@@ -72,6 +74,10 @@ public class clsFELInFile {
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";
 
+    //#EJC20200527:Versión ant (1)
+    //private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
+    //private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/dte/";
+
     public clsFELInFile(Context context, PBase Parent) {
         cont=context;
         parent=Parent;
@@ -95,23 +101,23 @@ public class clsFELInFile {
     private void sendJSONFirm() {
 
         try {
+
             s64=toBase64();
-
             jsonf = new JSONObject();
-
             jsonf.put("llave", llave_firma);
             jsonf.put("archivo",s64);
             jsonf.put("codigo",fel_codigo);
             jsonf.put("alias",fel_alias);
             jsonf.put("es_anulacion","N");
-
             executeWSFirm();
+
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         }
     }
 
     private void executeWSFirm() {
+
         jsfirm = jsonf.toString();
         errorflag=false;error="";
 
@@ -120,23 +126,29 @@ public class clsFELInFile {
     }
 
     private void wsExecuteF(){
+
         URL url;
         HttpURLConnection connection = null;
         JSONObject jObj = null;
 
         try {
+
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
 
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
+            connection.setRequestProperty("usuario",fel_alias);
+            connection.setRequestProperty("llave", llave_cert);
+            connection.setRequestProperty("identificador",fel_ident);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
             DataOutputStream wr = null;
+
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
@@ -150,6 +162,7 @@ public class clsFELInFile {
             InputStream is = connection.getInputStream();
 
             int response=connection.getResponseCode();
+
             if (response==200) {
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
@@ -226,19 +239,23 @@ public class clsFELInFile {
         errlevel=3;
 
         try {
+
             jsonc = new JSONObject();
             jsonc.put("nit_emisor",fel_nit);
             jsonc.put("correo_copia",fel_correo);
             jsonc.put("xml_dte",firma);
 
             Handler mtimer = new Handler();
+
             Runnable mrunner=new Runnable() {
                 @Override
                 public void run() {
                     executeWSCert();
                 }
             };
+
             mtimer.postDelayed(mrunner,1000);
+
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         }
@@ -253,17 +270,18 @@ public class clsFELInFile {
     }
 
     public void wsExecuteC(){
+
         URL url;
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         JSONObject jObj = null;
 
         try {
-            url = new URL(WSURLCert);
-            connection = (HttpURLConnection)url.openConnection();
 
+            url = new URL(WSURLCert);
+            connection = (HttpsURLConnection)url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
-            connection.setRequestProperty("Content-Length",""+Integer.toString(jscert.getBytes().length));
+            //connection.setRequestProperty("Content-Length",""+Integer.toString(jscert.getBytes().length));
             connection.setRequestProperty("usuario",fel_alias);
             connection.setRequestProperty("llave", llave_cert);
             connection.setRequestProperty("identificador",fel_ident);
@@ -310,6 +328,7 @@ public class clsFELInFile {
                 fact_numero =jObj.getInt("numero");
 
                 errorflag=false;
+
             } else {
                 error=""+response;errorflag=true;return;
             }
@@ -358,10 +377,10 @@ public class clsFELInFile {
     private void sendJSONFirmAnul() {
 
         try {
+
             s64=anulToBase64();
 
             jsonf = new JSONObject();
-
             jsonf.put("llave", llave_firma);
             jsonf.put("archivo",s64);
             jsonf.put("codigo",fel_codigo);
@@ -369,6 +388,7 @@ public class clsFELInFile {
             jsonf.put("es_anulacion","S");
 
             executeWSFirmAnul();
+
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         }
@@ -383,23 +403,29 @@ public class clsFELInFile {
     }
 
     private void wsExecuteFA(){
+
         URL url;
         HttpURLConnection connection = null;
         JSONObject jObj = null;
 
         try {
+
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
 
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
+            connection.setRequestProperty("usuario",fel_alias);
+            connection.setRequestProperty("llave", llave_cert);
+            connection.setRequestProperty("identificador",fel_ident);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
             DataOutputStream wr = null;
+
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
@@ -486,22 +512,25 @@ public class clsFELInFile {
     //region Anulacion
 
     public void sendJSONAnul() {
+
         try {
+
             s64= anulToBase64();
 
             jsona = new JSONObject();
-
             jsona.put("nit_emisor",fel_nit);
             jsona.put("correo_copia","demo@demo.com.gt");
             jsona.put("xml_dte",firma);
 
             executeWSAnul();
+
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         }
     }
 
     public void executeWSAnul() {
+
         jsanul = jsona.toString();
         errorflag=false;error="";
 
@@ -510,15 +539,17 @@ public class clsFELInFile {
     }
 
     public void wsExecuteA(){
+
         URL url;
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         JSONObject jObj = null;
 
         try {
+
             //Create connection
             url = new URL(WSURLAnul);
-            connection = (HttpURLConnection)url.openConnection();
 
+            connection = (HttpsURLConnection)url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));
@@ -613,6 +644,7 @@ public class clsFELInFile {
     //region XML
 
     public void iniciar(long fecha_emision) {
+
         String sf=parseDate(fecha_emision);
         fecha_factura=sf;
 
@@ -620,8 +652,17 @@ public class clsFELInFile {
 
         imp=0;linea=0;totmonto=0;totiva=0;
 
+        //#EJC20200527: Funciona para la versión 1 de fel con el url https://certificador.feel.com.gt/fel/certificacion/dte/
+//        xml="";
+//        xml+="<dte:GTDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.4\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \">";
+//        xml+="<dte:SAT ClaseDocumento=\"dte\">";
+//        xml+="<dte:DTE ID=\"DatosCertificados\">";
+//        xml+="<dte:DatosEmision ID=\"DatosEmision\">";
+//        xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+
+        //#EJC20200527: Versión 1.5.3 de FEL
         xml="";
-        xml+="<dte:GTDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.4\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \">";
+        xml+="<dte:GTDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.2.0 \">";
         xml+="<dte:SAT ClaseDocumento=\"dte\">";
         xml+="<dte:DTE ID=\"DatosCertificados\">";
         xml+="<dte:DatosEmision ID=\"DatosEmision\">";
@@ -717,10 +758,15 @@ public class clsFELInFile {
 
         linea++;
 
-        impbase=total/(1+0.01*iva);
-        impbase=Math.floor(impbase*100);impbase=impbase/100;
-        imp=total-impbase;
-        imp=Math.round(imp*100);imp=imp/100;
+//        impbase=total/(1+0.01*iva);
+//        impbase=Math.floor(impbase*100);impbase=impbase/100;
+//        imp=total-impbase;
+//        imp=Math.round(imp*100);imp=imp/100;
+
+        double parametroiva1 =(iva/100);
+        double parametroiva2 = (1+parametroiva1);
+        impbase=total/parametroiva2;
+        imp=impbase* parametroiva1;
 
         totmonto+=total;totiva+=imp;
 
@@ -732,12 +778,15 @@ public class clsFELInFile {
         xml+="<dte:Precio>"+total+"</dte:Precio>";
         xml+="<dte:Descuento>"+desc+"</dte:Descuento>";
 
+        String impbasestr = String.format("%.2f", impbase);
+        String impstr = String.format("%.2f", imp);
+
         xml+="<dte:Impuestos>";
         xml+="<dte:Impuesto>";
         xml+="<dte:NombreCorto>IVA</dte:NombreCorto>";
         xml+="<dte:CodigoUnidadGravable>1</dte:CodigoUnidadGravable>";
-        xml+="<dte:MontoGravable>"+impbase+"</dte:MontoGravable>";
-        xml+="<dte:MontoImpuesto>"+imp+"</dte:MontoImpuesto>";
+        xml+="<dte:MontoGravable>"+impbasestr+"</dte:MontoGravable>";
+        xml+="<dte:MontoImpuesto>"+impstr+"</dte:MontoImpuesto>";
         xml+="</dte:Impuesto>";
         xml+="</dte:Impuestos>";
 
@@ -756,20 +805,20 @@ public class clsFELInFile {
         writer.close();
     }
 
-    public void anulfact(String uuid,String nit,String Idreceptor,long fechaemis,long fechaanul) {
+    public void anulfact(String uuid,String NITEmisor,String Idreceptor,long fechaemis,long fechaanul) {
+
         String sf=parseDate(fechaemis);
         String sa=parseDate(fechaanul);
 
         xmlanul="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" " +
-                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0\">" +
-                "<dte:SAT>" +
-                "<dte:AnulacionDTE ID=\"DatosCertificados\">" +
-                "<dte:DatosGenerales FechaEmisionDocumentoAnular=\""+sf+"\" FechaHoraAnulacion=\""+sa+"\" ID=\"DatosAnulacion\" " +
-                "IDReceptor=\""+Idreceptor+"\" MotivoAnulacion=\"PRUEBA DE ANULACIÓN\" NITEmisor=\""+nit+"\" NumeroDocumentoAAnular=\""+uuid+"\"></dte:DatosGenerales>" +
-                "</dte:AnulacionDTE>" +
-                "</dte:SAT>" +
-                "</dte:GTAnulacionDocumento>";
-
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0\">" +
+        "<dte:SAT>" +
+        "<dte:AnulacionDTE ID=\"DatosCertificados\">" +
+        "<dte:DatosGenerales FechaEmisionDocumentoAnular=\""+sf+"\" FechaHoraAnulacion=\""+sa+"\" ID=\"DatosAnulacion\" " +
+        "IDReceptor=\""+Idreceptor+"\" MotivoAnulacion=\"PRUEBA DE ANULACIÓN\" NITEmisor=\""+NITEmisor+"\" NumeroDocumentoAAnular=\""+uuid+"\"></dte:DatosGenerales>" +
+        "</dte:AnulacionDTE>" +
+        "</dte:SAT>" +
+        "</dte:GTAnulacionDocumento>";
     }
 
     //endregion

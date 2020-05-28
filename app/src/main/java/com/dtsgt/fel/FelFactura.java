@@ -69,10 +69,10 @@ public class FelFactura extends PBase {
 
             fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
             fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
-            fel.fel_codigo ="0";
+            fel.fel_codigo ="1";
             fel.fel_alias="DEMO_FEL";
             fel.fel_nit="1000000000K";
-            fel.fel_correo="";
+            fel.fel_correo="ejcalderon@dts.com.gt";
 
         } else {
 
@@ -83,8 +83,6 @@ public class FelFactura extends PBase {
             fel.fel_nit="96049340";
 
         }
-
-
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
@@ -198,6 +196,7 @@ public class FelFactura extends PBase {
         corel=facts.get(fidx);
 
         try {
+
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
@@ -205,7 +204,8 @@ public class FelFactura extends PBase {
             factf=D_facturafObj.first();
 
             if (demomode) {
-                fel.fel_ident="abc123";
+                //fel.fel_ident="abc123";
+                fel.fel_ident=fact.serie+fact.corelativo;
             } else {
                 fel.fel_ident=fact.serie+fact.corelativo;
             }
@@ -213,6 +213,10 @@ public class FelFactura extends PBase {
             fel.iniciar(fact.fecha);
             fel.emisor("GEN",fel.fel_codigo,"",fel.fel_nit,fel.fel_alias);
             fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
+
+            //#EJC20200527: Quitar "-" del nit
+            factf.nit =factf.nit.replace("-","");
+
             fel.receptor(factf.nit,factf.nombre,factf.direccion);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
@@ -228,29 +232,12 @@ public class FelFactura extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        /*
-
-        try {
-            fel.iniciar(2005041102);
-            fel.emisor("GEN","1","",fel_nit,"DEMO");
-            fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
-            fel.receptor("CF","Consumidor Final","Ciudad");
-
-            fel.detalle("Producto 1",1,"UNI",10,10,0);
-            //fact.detalle("Producto 2",2,"UNI",15,30,0);
-
-            fel.completar("ZR37-46");
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-         */
     }
 
     private void marcaFactura() {
 
         try {
+
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
@@ -261,6 +248,7 @@ public class FelFactura extends PBase {
             fact.feeluuid=fel.fact_uuid;
 
             D_facturaObj.update(fact);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
