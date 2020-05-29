@@ -9,8 +9,8 @@ public class clsP_prodprecioBL {
         parent = parent_class;
     }
 
-    public void delete(String cod)     {
-        //parent..db.execSQL("DELETE FROM P_PRODPRECIO WHERE CODIGO='"+cod+"'");
+    public void delete(int cod)     {
+        parent.db.execSQL("DELETE FROM P_PRODPRECIO WHERE CODIGO_PRODUCTO="+cod+"");
     }
 
 }

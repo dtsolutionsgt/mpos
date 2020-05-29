@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsP_bancoObj {
@@ -19,6 +20,7 @@ public class clsP_bancoObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private MiscUtils mu;
 
     private String sel="SELECT * FROM P_banco";
     private String sql;
@@ -30,6 +32,8 @@ public class clsP_bancoObj {
         ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
+
+        mu = new MiscUtils(context);
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -77,7 +81,7 @@ public class clsP_bancoObj {
 
         ins.init("P_banco");
 
-        ins.add("CODIGO_BANCO",item.codigo_banco);
+        ins.add("CODIGO_BANCO",maxId());
         ins.add("CODIGO",item.codigo);
         ins.add("TIPO",item.tipo);
         ins.add("NOMBRE",item.nombre);
@@ -172,7 +176,7 @@ public class clsP_bancoObj {
 
         ins.init("P_banco");
 
-        ins.add("CODIGO_BANCO",item.codigo_banco);
+        ins.add("CODIGO_BANCO",maxId());
         ins.add("CODIGO",item.codigo);
         ins.add("TIPO",item.tipo);
         ins.add("NOMBRE",item.nombre);
@@ -202,5 +206,26 @@ public class clsP_bancoObj {
 
     }
 
+    private int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_BANCO";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            mu.msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
 }
 

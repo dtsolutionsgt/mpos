@@ -428,10 +428,12 @@ public class Anulacion extends PBase {
             sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
             db.execSQL(sql);
 
+			toast(String.format("Se anuló la factura %d correctamente",itemid));
+
             listItems();
 
         } else {
-            msgbox("Ocurrio error en anulacion FEL :\n\n"+ fel.error);
+            msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
         }
     }
 
@@ -565,6 +567,8 @@ public class Anulacion extends PBase {
             db.execSQL(sql);
 
             listItems();
+
+            toast(String.format("Se anuló la factura %d correctamente",itemid));
 
 			vAnulFactura=true;
 

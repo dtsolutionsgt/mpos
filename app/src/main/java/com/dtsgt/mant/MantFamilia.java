@@ -165,6 +165,7 @@ public class MantFamilia extends PBase {
         item.marca="1";
         item.nombre="";
         item.activo=1;
+        item.imagen="";
 
         showItem();
     }

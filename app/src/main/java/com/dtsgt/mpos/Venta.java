@@ -88,12 +88,13 @@ public class Venta extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot;
     private double px,py,cpx,cpy,cdist;
 
-    private String uid,seluid,prodid,uprodid,famid,um,tiposcan,barcode,imgfold,tipo;
+    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo;
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
     private int codigo_cliente, emp;
     private String cliid;
+    private int famid = -1;
 
     private AppMethods app;
 
@@ -435,7 +436,7 @@ public class Venta extends PBase {
                 try {
                     Object lvObj = grdfam.getItemAtPosition(position);
                     clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-                    famid=item.Cod;
+                    famid=item.icod;
 
                     if (imgflag) {
                         adapterf.setSelectedIndex(position);
@@ -1656,6 +1657,7 @@ public class Venta extends PBase {
                 item=clsCls.new clsMenu();
                 item.Cod=P_lineaObj.items.get(i).codigo+"";
                 item.Name=P_lineaObj.items.get(i).nombre;
+                item.icod=P_lineaObj.items.get(i).codigo_linea;
                 fitems.add(item);
             }
 
@@ -1689,8 +1691,8 @@ public class Venta extends PBase {
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
                     "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
                     "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
-            if (!mu.emptystr(famid)) {
-                if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
+            if (famid !=-1) {
+                if (famid!=0) sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
 
             sql += "UNION ";
@@ -1698,8 +1700,8 @@ public class Venta extends PBase {
                     "FROM P_PRODUCTO  INNER JOIN " +
                     "P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
                     "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) AND (P_PRODUCTO.ACTIVO=1)";
-            if (!mu.emptystr(famid)) {
-                if (!famid.equalsIgnoreCase("0"))
+            if (famid !=-1) {
+                if (famid!=0)
                     sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
 

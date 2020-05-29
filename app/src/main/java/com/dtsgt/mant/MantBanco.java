@@ -103,7 +103,6 @@ public class MantBanco extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo_banco = maxId();
         item.codigo="";
         item.tipo="1";
         item.nombre="";
@@ -186,27 +185,6 @@ public class MantBanco extends PBase {
         }
     }
 
-    private int maxId(){
-
-        Cursor DT = null;
-        int resultado = 0;
-
-        try{
-            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_BANCO";
-            DT = Con.OpenDT(sql);
-
-            if (DT != null){
-                DT.moveToFirst();
-
-                resultado=DT.getInt(0);
-            }
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-        return resultado;
-    }
     //endregion
 
     //region Dialogs

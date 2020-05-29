@@ -152,7 +152,6 @@ public class MantCaja extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo_ruta = maxId();
         item.codigo="";
         item.nombre="";
         item.sucursal="1";
@@ -264,28 +263,6 @@ public class MantCaja extends PBase {
 
         return true;
 
-    }
-
-    private int maxId(){
-
-        Cursor DT = null;
-        int resultado = 0;
-
-        try{
-            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_RUTA";
-            DT = Con.OpenDT(sql);
-
-            if (DT != null){
-                DT.moveToFirst();
-
-                resultado=DT.getInt(0);
-            }
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-        return resultado;
     }
 
     //endregion

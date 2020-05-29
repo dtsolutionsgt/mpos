@@ -194,7 +194,6 @@ public class MantVendedores extends PBase {
 
     private void addItem() {
         try {
-            //holder.add(item);
             saveItems();
             gl.gcods=""+item.codigo;
             finish();
@@ -205,7 +204,6 @@ public class MantVendedores extends PBase {
 
     private void updateItem() {
         try {
-            //holder.update(item);
             saveItems();
             finish();
         } catch (Exception e) {
@@ -219,12 +217,17 @@ public class MantVendedores extends PBase {
         try {
             db.beginTransaction();
 
-            vends.delete(item.codigo);
+            //vends.delete(item.codigo);
 
             for (int i = 0; i <P_sucursalObj.count; i++) {
                 if (P_sucursalObj.items.get(i).activo==1) {
-                    item.ruta=P_sucursalObj.items.get(i).codigo;
-                    holder.add(item);
+                    if (holder.existVendSuc(item.codigo, P_sucursalObj.items.get(i).codigo_sucursal) == 0){
+                        item.ruta=P_sucursalObj.items.get(i).codigo;
+                        holder.add(item);
+                    }
+                }else{
+                    item.activo=0;
+                    holder.update(item);
                 }
             }
 

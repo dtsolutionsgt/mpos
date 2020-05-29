@@ -241,7 +241,7 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
-            android:inputType="number"
+            android:inputType="textCapSentences"
             android:maxLength="15"
             android:maxLines="1"
             android:singleLine="true"

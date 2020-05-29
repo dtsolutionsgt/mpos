@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsVendedoresObj {
@@ -13,10 +14,11 @@ public class clsVendedoresObj {
 
     private Context cont;
     private BaseDatos Con;
-    private SQLiteDatabase db;
+    public SQLiteDatabase db;
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private MiscUtils mu;
 
     private String sel="SELECT * FROM Vendedores";
     private String sql;
@@ -28,6 +30,8 @@ public class clsVendedoresObj {
         ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
+
+        mu = new MiscUtils(context);
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -84,7 +88,7 @@ public class clsVendedoresObj {
         ins.add("BODEGA",item.bodega);
         ins.add("SUBBODEGA",item.subbodega);
         ins.add("ACTIVO",item.activo);
-        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
+        ins.add("CODIGO_VENDEDOR",maxId());
 
         db.execSQL(ins.sql());
 
@@ -186,7 +190,7 @@ public class clsVendedoresObj {
         ins.add("BODEGA",item.bodega);
         ins.add("SUBBODEGA",item.subbodega);
         ins.add("ACTIVO",item.activo);
-        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
+        ins.add("CODIGO_VENDEDOR",maxId());
 
         return ins.sql();
 
@@ -214,5 +218,48 @@ public class clsVendedoresObj {
 
     }
 
+    private int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM VENDEDORES";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            mu.msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
+
+    public int existVendSuc(String codvend, int codcaja){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT CODIGO_VENDEDOR FROM VENDEDORES WHERE CODIGO = '" + codvend + "' AND RUTA = " + codcaja ;
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            mu.msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
 }
 

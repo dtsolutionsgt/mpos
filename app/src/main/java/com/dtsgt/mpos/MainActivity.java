@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class MainActivity extends PBase {
 
     private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
-    private ImageView imgLogo;
+    private ImageView imgLogo, imgFel;
 
     private BaseDatosVersion dbVers;
 
@@ -51,7 +51,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "2.5.2 / 12-Mar-2020 ";
+    private String parVer = "2.5.3 / 28-May-2020 ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +119,7 @@ public class MainActivity extends PBase {
             lblPass = (TextView) findViewById(R.id.lblPass);
             lblKeyDP = (TextView) findViewById(R.id.textView110);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
+            imgFel = (ImageView) findViewById(R.id.imgFel);
 
             listView = (ListView) findViewById(R.id.listView1);
 
@@ -404,6 +405,12 @@ public class MainActivity extends PBase {
             addlog(new Object() {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
+        }
+
+        if (!gl.peFEL.equals("SIN FEL") && !gl.peFEL.isEmpty()) {
+            imgFel.setVisibility(View.VISIBLE);
+        }else{
+            imgFel.setVisibility(View.GONE);
         }
 
         configBase();

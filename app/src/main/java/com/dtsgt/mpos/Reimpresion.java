@@ -86,56 +86,49 @@ public class Reimpresion extends PBase {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_reimpresion);
-	
-		super.InitBase();
-		addlog("Reimpresion",""+du.getActDateTime(),gl.vend);
-		
-		listView = (ListView) findViewById(R.id.listView1);
-		lblTipo= (TextView) findViewById(R.id.lblFecha);
-		lblDateini = (TextView) findViewById(R.id.lblDateini2);
-		lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
+		try{
+			super.onCreate(savedInstanceState);
+			setContentView(R.layout.activity_reimpresion);
 
-		app = new AppMethods(this, gl, Con, db);
-		gl.validimp=app.validaImpresora();
-		if (!gl.validimp) msgbox("¡La impresora no está autorizada!");
+			super.InitBase();
+			addlog("Reimpresion",""+du.getActDateTime(),gl.vend);
 
-		tipo=gl.tipo;
-		itemid="*";
+			listView = (ListView) findViewById(R.id.listView1);
+			lblTipo= (TextView) findViewById(R.id.lblFecha);
+			lblDateini = (TextView) findViewById(R.id.lblDateini2);
+			lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
 
-		ProgressDialog("Cargando forma...");
+			app = new AppMethods(this, gl, Con, db);
+			gl.validimp=app.validaImpresora();
+			if (!gl.validimp) msgbox("¡La impresora no está autorizada!");
 
-		setHandlers();
+			tipo=gl.tipo;
+			itemid="*";
 
-		setFechaAct();
+			ProgressDialog("Cargando forma...");
 
-		listItems();
+			setHandlers();
 
-		prn=new printer(this,printclose,gl.validimp);
-		prn_nc=new printer(this,printclose,gl.validimp);
+			setFechaAct();
 
-		prn_can=new printer(this,printclose,gl.validimp);
-		prn_paseante=new printer(this,printclose,gl.validimp);
+			listItems();
 
-		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
-		fdoc.deviceid =gl.deviceId;
+						prn=new printer(this,printclose,gl.validimp);
+			prn_nc=new printer(this,printclose,gl.validimp);
 
-		fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
-		fdev.deviceid =gl.deviceId;
+			prn_can=new printer(this,printclose,gl.validimp);
+			prn_paseante=new printer(this,printclose,gl.validimp);
 
-		fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-		fcpag.deviceid =gl.deviceId;
+			fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
+			fdoc.deviceid =gl.deviceId;
 
-		/*fcanastabod=new clsDocCanastaBod(this,prn_can.prw,gl.peMon,gl.peDecImp, "printdevcan.txt");
-		fcanastabod.deviceid =gl.deviceId;
-		fcanastabod.vTipo="CANASTA";
+			fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
+			fdev.deviceid =gl.deviceId;
 
-		fpaseantebod=new clsDocCanastaBod(this,prn_paseante.prw,gl.peMon,gl.peDecImp, "printpaseante.txt");
-		fpaseantebod.deviceid =gl.deviceId;
-		fpaseantebod.vTipo="PASEANTE";*/
+			fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+			fcpag.deviceid =gl.deviceId;
 
-		printclose = new Runnable() {
+			printclose = new Runnable() {
 			public void run() {
 				int ii=1;
 				try {
@@ -181,27 +174,31 @@ public class Reimpresion extends PBase {
 		};
 
 		switch (tipo) {
-       //#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
-		case 2:  
-			ddoc=new clsDocDepos(this,prn.prw,gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-			lblTipo.setText("Depósito");break;
-		case 3:  
-			fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
-			lblTipo.setText((gl.peMFact?"Factura":"Ticket"));break;
-		case 4:  
-			mdoc=new clsDocMov(this,prn.prw,"Recarga",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-			lblTipo.setText("Recarga");break;
-		case 5:  
-			mdoc=new clsDocMov(this,prn.prw,"Dvolucion a bodega",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-			lblTipo.setText("Devolución a bodega");break;
-		case 7:
-			fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
-			fcpag.deviceid =gl.deviceId;
-			lblTipo.setText("Pagos de Caja");break;
-		case 99:  
-			lblTipo.setText("Cierre de día");break;
-		}		
-			
+			//#CKFK 20200520 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
+			case 2:
+				ddoc=new clsDocDepos(this,prn.prw,gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+				lblTipo.setText("Depósito");break;
+			case 3:
+				fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
+				lblTipo.setText((gl.peMFact?"Factura":"Ticket"));break;
+			case 4:
+				mdoc=new clsDocMov(this,prn.prw,"Recarga",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+				lblTipo.setText("Recarga");break;
+			case 5:
+				mdoc=new clsDocMov(this,prn.prw,"Dvolucion a bodega",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+				lblTipo.setText("Devolución a bodega");break;
+			case 7:
+				fcpag=new clsDocCajaPagos(this,prn.prw,"Pago de caja",gl.ruta,gl.vendnom,gl.peMon,gl.peDecImp, "");
+				fcpag.deviceid =gl.deviceId;
+				lblTipo.setText("Pagos de Caja");break;
+			case 99:
+				lblTipo.setText("Cierre de día");break;
+		}
+
+		}catch (Exception ex){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName() + " " + ex.getMessage());
+		}
 	}
 
 	// Events
@@ -301,7 +298,7 @@ public class Reimpresion extends PBase {
 					progress.setMessage("Cargando lista de facturas...");
 					progress.show();
 					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO," +
-						  "D_FACTURA.IMPRES " +
+						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR " +
 						  "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE " +
 						  "WHERE (D_FACTURA.STATCOM='N') AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 						  "ORDER BY D_FACTURA.COREL DESC";
@@ -370,6 +367,14 @@ public class Reimpresion extends PBase {
 								}
 							} else {
 								items.add(vItem);
+							}
+
+							if (tipo==3) {
+								vItem.UUID=DT.getString(6);
+								vItem.FechaFactura=du.univfechalong(DT.getLong(7));
+							}else{
+								vItem.UUID="";
+								vItem.FechaFactura="";
 							}
 
 							if (id.equalsIgnoreCase(selid)) selidx=vP;

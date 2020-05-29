@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -21,8 +22,9 @@ import java.util.ArrayList;
 
 public class MantConfig extends PBase {
 
-    private CheckBox cb100,cb102,cb103,cb104,cb106;
+    private CheckBox cb100,cb102,cb103,cb104,cb106,cb107;
     private Spinner spin16,spin105;
+    private TextView txtDiasAnul;
     private ImageView imgadd;
 
     private clsP_paramextObj holder;
@@ -30,8 +32,8 @@ public class MantConfig extends PBase {
     private ArrayList<String> items16= new ArrayList<String>();
     private ArrayList<String> items105= new ArrayList<String>();
 
-    private boolean value100,value102,value103,value104,value106;
-    private String  value16,value105;
+    private boolean value100,value102,value103,value104,value106, value107;
+    private String  value16,value105, diasAnul;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,9 @@ public class MantConfig extends PBase {
         cb104  = (CheckBox) findViewById(R.id.checkBox22);
         spin105 = (Spinner) findViewById(R.id.spinner105);
         cb106  = (CheckBox) findViewById(R.id.checkBox24);
+        cb107  = (CheckBox) findViewById(R.id.chkCierreDiario);
+
+        txtDiasAnul  = (EditText) findViewById(R.id.txtDiasAnul);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -186,6 +191,23 @@ public class MantConfig extends PBase {
         }
         cb106.setChecked(value106);
 
+        try {
+            holder.fill("WHERE ID="+107);
+            value107=holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" .105. "+e.getMessage());
+            value107=true;
+        }
+        cb107.setChecked(value107);
+
+        try {
+            holder.fill("WHERE ID="+108);
+            diasAnul=holder.first().valor;
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" .105. "+e.getMessage());
+            diasAnul="";
+        }
+        txtDiasAnul.setText(diasAnul);
     }
 
     private void updateItem() {
@@ -198,8 +220,9 @@ public class MantConfig extends PBase {
             if (cb103.isChecked())  s103="1";else s103="0";
             if (cb104.isChecked())  s104="S";
             if (!cb106.isChecked()) s106="N";
-           // if (!cb107.isChecked()) s107="N";
-           // if (!cb107.isChecked()) s107="N";
+            if (!cb107.isChecked()) s107="N";
+
+            s108 = txtDiasAnul.getText().toString();
 
             db.beginTransaction();
 
@@ -214,16 +237,16 @@ public class MantConfig extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=107");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=108");
 
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES ( 16,'Formato factura','"+value16+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','"+s100+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','N',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','"+s102+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (103,'Pos modalidad','"+s103+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','"+s104+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (105,'FEL','"+value105+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','"+s106+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (107,'Cierre diario','"+s107+"',0)");
-            db.execSQL("INSERT INTO P_PARAMEXT VALUES (108,'Días anulación permitida','"+s108+"',0)");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES ( 16,'Formato factura','"+value16+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (100,'Configuración centralizada','"+s100+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (101,'Imprimir orden para cosina','N')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (102,'Lista con imagenes','"+s102+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (103,'Pos modalidad','"+s103+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (104,'Imprimir factura','"+s104+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (105,'FEL','"+value105+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (106,'Mostrar foto de cliente para biometrico','"+s106+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (107,'Cierre diario','"+s107+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (108,'Días anulación permitida','"+s108+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();

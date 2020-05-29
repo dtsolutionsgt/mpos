@@ -74,16 +74,54 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="310dp"
+        android:layout_width="605dp"
+        android:layout_height="400dp"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="33dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="45dp"
+        android:layout_marginEnd="37dp"
         android:layout_marginRight="10dp"
         android:layout_toStartOf="@+id/imgImg2"
         android:layout_toEndOf="@+id/imageView30"
         android:background="@drawable/frame_rect">
+
+        <TextView
+            android:id="@+id/lblCFact31"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_below="@id/lblCFact26"
+            android:layout_alignStart="@id/lblCFact26"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignParentLeft="false"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Cierre diario"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/lblCFact32"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_below="@id/lblCFact31"
+            android:layout_alignStart="@id/lblCFact31"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Días anulación permitida"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
 
         <Spinner
             android:id="@+id/spinner105"
@@ -108,13 +146,38 @@
             android:layout_alignStart="@+id/spinner105"
             android:layout_alignEnd="@id/spinner105"
             android:layout_alignParentBottom="false"
-            android:layout_marginStart="-10dp"
-            android:layout_marginLeft="0dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
             android:layout_toRightOf="@id/textView2"
             android:clickable="true"
             android:enabled="true" />
+
+        <CheckBox
+            android:id="@+id/chkCierreDiario"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/checkBox24"
+            android:layout_alignStart="@id/checkBox24"
+            android:layout_alignEnd="@id/checkBox24"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/textView2"
+            android:clickable="true"
+            android:enabled="true" />
+
+        <EditText
+            android:id="@+id/txtDiasAnul"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/chkCierreDiario"
+            android:layout_alignStart="@id/chkCierreDiario"
+            android:layout_alignEnd="@id/chkCierreDiario"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/textView2"
+            android:clickable="true"
+            android:enabled="true"
+            android:inputType="number" />
 
         <TextView
             android:id="@+id/lblCFact25"

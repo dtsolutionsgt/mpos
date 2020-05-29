@@ -440,6 +440,11 @@ public class MantProducto extends PBase {
         item.unigrasap=0; // 1 -permite decimales en cantidad
         item.um_salida="UNI";
         item.activo=1;
+        item.iva = "IVA";
+        item.codbarra2="";
+        item.cbconv=0;
+        item.bodega="";
+        item.subbodega="";
 
         showItem();
 
@@ -532,7 +537,7 @@ public class MantProducto extends PBase {
             clsClasses.clsP_prodprecio pitem;
 
             for (int i = 0; i <precios.size(); i++) {
-                prec.fill("WHERE CODIGO='"+item.codigo+"' AND NIVEL="+precios.get(i).nivel);
+                prec.fill("WHERE CODIGO_PRODUCTO="+item.codigo_producto+" AND NIVEL="+precios.get(i).nivel);
                 if (prec.count>0) precios.get(i).precio=prec.first().precio;
              }
         } catch (Exception e) {
@@ -590,7 +595,7 @@ public class MantProducto extends PBase {
         clsP_prodprecioBL prodprec = new clsP_prodprecioBL(prec);
         clsClasses.clsP_prodprecio pitem;
 
-        prodprec.delete(item.codigo);
+        prodprec.delete(item.codigo_producto);
 
         for (int i = 0; i <precios.size(); i++) {
 

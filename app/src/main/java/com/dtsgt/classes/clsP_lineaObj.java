@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsP_lineaObj {
@@ -18,6 +19,7 @@ public class clsP_lineaObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private MiscUtils mu;
 
     private String sel="SELECT * FROM P_linea";
     private String sql;
@@ -29,6 +31,9 @@ public class clsP_lineaObj {
         ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
+
+        mu = new MiscUtils(context);
+
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -80,7 +85,7 @@ public class clsP_lineaObj {
         ins.add("MARCA",item.marca);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
-        ins.add("CODIGO_LINEA",item.codigo_linea);
+        ins.add("CODIGO_LINEA",maxId());
         ins.add("IMAGEN", item.imagen);
 
         db.execSQL(ins.sql());
@@ -171,7 +176,7 @@ public class clsP_lineaObj {
         ins.add("MARCA",item.marca);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
-        ins.add("CODIGO_LINEA",item.codigo_linea);
+        ins.add("CODIGO_LINEA",maxId());
         ins.add("IMAGEN", (item.imagen==null?"":item.imagen));
 
         return ins.sql();
@@ -196,5 +201,26 @@ public class clsP_lineaObj {
 
     }
 
+    private int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(Max(CODIGO_LINEA),1)+1 AS MAX FROM P_LINEA";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            mu.msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
 }
 

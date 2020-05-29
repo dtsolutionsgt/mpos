@@ -13,7 +13,7 @@ public class clsP_prodprecioObj {
 
     private Context cont;
     private BaseDatos Con;
-    private SQLiteDatabase db;
+    public SQLiteDatabase db;
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();

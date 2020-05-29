@@ -454,13 +454,17 @@ public class clsFELInFile {
                 jObj = new JSONObject(jstr);
 
                 error= jObj.getString("descripcion");
+
                 if (jObj.getBoolean("resultado")) {
+
                     errorflag=false;
                     firma=jObj.getString("archivo");
+
                 } else {
                     errorflag=true;
                     //parent.felCallBack();
                 }
+
             } else {
                 error=""+response;errorflag=true;return;
             }

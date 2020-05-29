@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsP_rutaObj {
@@ -17,6 +18,7 @@ public class clsP_rutaObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private MiscUtils mu;
 
     private String sel="SELECT * FROM P_ruta";
     private String sql;
@@ -28,6 +30,9 @@ public class clsP_rutaObj {
         ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
+
+        mu = new MiscUtils(context);
+
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -78,7 +83,7 @@ public class clsP_rutaObj {
         ins.add("CODIGO",item.codigo);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
-        ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("CODIGO_RUTA",maxId());
         ins.add("ACTIVO",(item.activo?1:0));
         db.execSQL(ins.sql());
 
@@ -160,7 +165,7 @@ public class clsP_rutaObj {
         ins.add("CODIGO",item.codigo);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
-        ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("CODIGO_RUTA",maxId());
         ins.add("ACTIVO",(item.activo?1:0));
         return ins.sql();
 
@@ -179,6 +184,28 @@ public class clsP_rutaObj {
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
+    }
+
+    private int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_RUTA";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+           mu.msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
     }
 
 }

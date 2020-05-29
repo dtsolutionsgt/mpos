@@ -119,6 +119,23 @@ public class CliPos extends PBase {
 				}
 			});
 
+			txtNIT.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+				public void onFocusChange(View v, boolean hasFocus) {
+
+					if(!hasFocus)
+					{
+
+						if (!txtNIT.getText().toString().isEmpty()){
+							if (!existeCliente()){
+								txtNom.requestFocus();
+							}
+						}
+
+					}
+				}
+			});
+
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

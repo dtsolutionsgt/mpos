@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsP_proveedorObj {
@@ -17,6 +18,7 @@ public class clsP_proveedorObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private MiscUtils mu;
 
     private String sel="SELECT * FROM P_proveedor";
     private String sql;
@@ -28,6 +30,9 @@ public class clsP_proveedorObj {
         ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
+
+        mu = new MiscUtils(context);
+
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -75,7 +80,7 @@ public class clsP_proveedorObj {
 
         ins.init("P_proveedor");
 
-        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("CODIGO_PROVEEDOR",maxId());
         ins.add("CODIGO",item.codigo);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
@@ -159,7 +164,7 @@ public class clsP_proveedorObj {
 
         ins.init("P_proveedor");
 
-        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("CODIGO_PROVEEDOR",maxId());
         ins.add("CODIGO",item.codigo);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
@@ -184,5 +189,26 @@ public class clsP_proveedorObj {
 
     }
 
+    private int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_PROVEEDOR";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            mu.msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
 }
 

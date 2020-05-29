@@ -182,11 +182,10 @@ public class BaseDatosScript {
             sql="CREATE TABLE [P_LINEA] ("+
                     "CODIGO TEXT NOT NULL,"+
                     "MARCA TEXT NOT NULL,"+
-
                     "NOMBRE TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
                     "CODIGO_LINEA INTEGER NOT NULL,"+
-                    "IMAGEN TEXT NOT NULL,"+
+                    "IMAGEN TEXT,"+
                     "PRIMARY KEY ([CODIGO_LINEA])"+
                     ");";
             database.execSQL(sql);
