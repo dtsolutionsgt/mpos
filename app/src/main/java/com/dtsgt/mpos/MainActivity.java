@@ -464,7 +464,7 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            gl.nivel = DT.getInt(2);
+            gl.nivel = gl.nivel_sucursal;
             gl.rol = gl.nivel;
 
             //#CKFK 20200517 if (gl.caja.isEmpty() || gl.tienda==0) {

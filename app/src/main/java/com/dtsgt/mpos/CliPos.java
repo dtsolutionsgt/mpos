@@ -154,7 +154,7 @@ public class CliPos extends PBase {
 			gl.codigo_cliente = 0;
 			gl.rutatipo="V";
             gl.cliente="0";
-            gl.nivel=1;
+            gl.nivel=gl.nivel_sucursal;
             gl.percepcion=0;
             gl.contrib="";
             gl.scancliente=gl.cliente;
@@ -185,7 +185,7 @@ public class CliPos extends PBase {
 			gl.rutatipo="V";
 
 			gl.cliente=""+codigo;
-			gl.nivel=1;
+			gl.nivel=gl.nivel_sucursal;
             gl.percepcion=0;
             gl.contrib="";
             gl.scancliente = gl.cliente;
@@ -322,7 +322,7 @@ public class CliPos extends PBase {
 			if (mu.emptystr(NIT)) {
 				txtNIT.requestFocus();
 				resultado=false;
-			}else{
+			} else {
 
 				sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE FROM P_CLIENTE " +
 					"WHERE NIT = '" + NIT + "'";
@@ -338,7 +338,7 @@ public class CliPos extends PBase {
 
 						gl.rutatipo="V";
                         gl.cliente=DT.getString(0);
-						gl.nivel=DT.getInt(3);
+						gl.nivel=gl.nivel_sucursal;
 						gl.percepcion=0;
 						gl.contrib=DT.getString(6);;
 						gl.scancliente = gl.cliente;

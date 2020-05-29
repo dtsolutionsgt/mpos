@@ -16,7 +16,7 @@ public class appGlobals extends Application {
 	public String ubas, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante,
 			ayudanteID, vehiculo, vehiculoID;
 	public String bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel,CodDev,tipoprodcod;
-	public int prodcod,prodmenu,itemid,gint,tipo,nivel,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
+	public int prodcod,prodmenu,itemid,gint,tipo,nivel,nivel_sucursal,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
 	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid;
 	public long nuevaFecha,atentini,lastDate;
 	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp,fondoCaja,FinMonto;

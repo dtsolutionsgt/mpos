@@ -179,7 +179,7 @@ public class ProdMenu extends PBase {
     }
 
     private void newItem() {
-        uitemid=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_COMBO");
+        uitemid=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_COMBO");gl.menuitemid=""+uitemid;
         listMenuItems();
     }
 
@@ -265,9 +265,9 @@ public class ProdMenu extends PBase {
             ins.add("PRECIODOC",prec);
             ins.add("PESO",0);
             ins.add("VAL1",0);
-            ins.add("VAL2","");
+            ins.add("VAL2",1);
             ins.add("VAL3",0);
-            ins.add("VAL4","");
+            ins.add("VAL4",""+uitemid);
             ins.add("PERCEP",0);
 
             db.execSQL(ins.sql());

@@ -972,9 +972,9 @@ public class Venta extends PBase {
             if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
             ins.add("PESO",peso);
             ins.add("VAL1",0);
-            ins.add("VAL2","");
+            ins.add("VAL2","0");
             ins.add("VAL3",0);
-            ins.add("VAL4","");
+            ins.add("VAL4","0");
             ins.add("PERCEP",percep);
 
             db.execSQL(ins.sql());
@@ -2664,7 +2664,7 @@ public class Venta extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    gl.felcorel="";
+                    gl.felcorel="";gl.feluuid="";
                     startActivity(new Intent(Venta.this, FelFactura.class));
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

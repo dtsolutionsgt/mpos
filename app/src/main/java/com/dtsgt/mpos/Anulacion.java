@@ -451,9 +451,7 @@ public class Anulacion extends PBase {
 
 			String NITReceptor = Get_NIT_Cliente(fact.cliente);
 
-			if(NITReceptor.isEmpty()){
-				NITReceptor="CF";
-			}
+			if(NITReceptor.isEmpty()) NITReceptor="CF";
 
 			//#EJC20200527: Quitar estos caracteres del NIT.
 			NITReceptor = NITReceptor.replace("-","");
@@ -466,8 +464,7 @@ public class Anulacion extends PBase {
         }
     }
 
-    private String Get_NIT_Cliente(int Codigo_Cliente)
-	{
+    private String Get_NIT_Cliente(int Codigo_Cliente) {
 		Cursor dt;
 
 		String NIT="";
@@ -545,7 +542,10 @@ public class Anulacion extends PBase {
                     prod=DT.getInt(0);
                     um=DT.getString(1);
                     prcant=DT.getInt(2);
-                    revertProd(prod,um,prcant);
+
+                    if (app.prodTipo(prod).equalsIgnoreCase("P")) {
+                        revertProd(prod,um,prcant);
+                    }
 
                     DT.moveToNext();
                 }

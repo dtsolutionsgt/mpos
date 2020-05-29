@@ -720,7 +720,7 @@ public class BaseDatosScript {
                     "UMVENTA TEXT NOT NULL,"+
                     "FACTOR REAL NOT NULL,"+
                     "UMSTOCK TEXT NOT NULL,"+
-                    "PRIMARY KEY ([EMPRESA],[COREL],[PRODUCTO],[UMPESO])"+
+                    "PRIMARY KEY ([EMPRESA],[COREL],[PRODUCTO],[VAL2])"+
                     ");";
             database.execSQL(sql);
 
@@ -756,7 +756,7 @@ public class BaseDatosScript {
                     "PRODUCTO TEXT NOT NULL,"+
                     "CANT REAL NOT NULL,"+
                     "UMSTOCK TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL],[ID])"+
+                    "PRIMARY KEY ([COREL],[ID],[PRODUCTO])"+
                     ");";
             database.execSQL(sql);
 

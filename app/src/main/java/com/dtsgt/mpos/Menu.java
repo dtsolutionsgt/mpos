@@ -13,17 +13,13 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses.clsMenu;
@@ -274,6 +270,7 @@ public class Menu extends PBase {
 
 					if(valida()){
 
+					    gl.nivel_sucursal=app.nivelSucursal();
 						gl.cliente="C.F.";
 						gl.fnombre="Consumidor final";
 						gl.fnit="C.F.";

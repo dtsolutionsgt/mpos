@@ -361,7 +361,7 @@ public class CliDet extends PBase {
 			uvis=DT.getInt(3);
 			
 			nivel=DT.getInt(6);
-			gl.nivel=nivel;
+			gl.nivel=gl.nivel_sucursal;
 			gl.percepcion=DT.getDouble(7);
 			
 			contr=""+DT.getString(8);

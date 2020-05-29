@@ -42,7 +42,7 @@ public class FelFactura extends PBase {
     private ArrayList<String> facts = new ArrayList<String>();
 
     private String felcorel,corel;
-    private boolean demomode,multiflag;
+    private boolean demomode,multiflag,contmode;
     private int ftot,ffail,fidx;
 
     @Override
@@ -58,7 +58,8 @@ public class FelFactura extends PBase {
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
-        felcorel=gl.felcorel;multiflag=felcorel.isEmpty();
+        felcorel=gl.felcorel;
+        multiflag=felcorel.isEmpty();
         gl.feluuid="";
 
         fel=new clsFELInFile(this,this);
@@ -130,17 +131,22 @@ public class FelFactura extends PBase {
         Runnable mrunner = new Runnable() {
             @Override
             public void run() {
-                buildFactXML();
-                fel.certificacion();
+                contingenciaFactura();
             }
         };
         mtimer.postDelayed(mrunner, 200);
     }
 
-    private void  certificacion() {
+    private void contingenciaFactura() {
+        buildFactXML();
+        fel.certificacion();
+    }
+
+    private void certificacion() {
         lbl1.setText("Procesando factura electronica");
         lbl3.setText("Espere, por favor . . .");
 
+        contmode=false;
         buildFactXML();
         fel.certificacion();
     }
@@ -149,7 +155,7 @@ public class FelFactura extends PBase {
         lbl1.setText("Procesando factura ");
         lbl3.setText("Sin procesar : 0");
 
-        //buildFactXML();
+        contmode=true;
         procesafactura();
     }
 
@@ -157,17 +163,17 @@ public class FelFactura extends PBase {
     public void felCallBack()  {
         if (multiflag) {
 
-            //if (!fel.errorflag) marcaFactura();
+            if (!fel.errorflag) {
+                marcaFactura();
+            }
 
             fidx++;
-            //if (fidx<ftot-1) {
-            if (fidx<10) {
+            if (fidx<ftot-1) {
                 if (fel.errorflag) ffail++;
                 procesafactura();
             } else {
                 toast("Completo");
             }
-
         } else {
             //pbar.setVisibility(View.INVISIBLE);
 

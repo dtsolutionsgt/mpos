@@ -763,7 +763,7 @@ public class FacturaRes extends PBase {
 		Cursor dt;
 		String vprod,vumstock,vumventa,vbarra;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
-		int mitem,bitem,prid,prcant,dev_ins=1;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid;
 		boolean flag;
 
 		corel=gl.ruta+"_"+mu.getCorelBase();
@@ -863,7 +863,7 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAD
 
-			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL1,VAL2,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
+			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
 			dt=Con.OpenDT(sql);
 
 			dt.moveToFirst();
@@ -957,41 +957,36 @@ public class FacturaRes extends PBase {
 
             //region D_FACTURAS
 
-            sql="SELECT SUM(UNID*CANT),IDSELECCION FROM T_COMBO GROUP BY IDSELECCION";
+            //sql="SELECT SUM(UNID*CANT),IDSELECCION,IDCOMBO FROM T_COMBO GROUP BY IDSELECCION";
+            sql="SELECT UNID,CANT,IDSELECCION,IDCOMBO FROM T_COMBO ";
             dt=Con.OpenDT(sql);
 
-            int fsid=1;String prcod="";
+            String prcod="";
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
                 while (!dt.isAfterLast()) {
 
-                    prcant=dt.getInt(0);prid=dt.getInt(1);
+                    prcant=dt.getInt(0);
+                    unid=dt.getInt(1);
+                    unipr=prcant*unid;
+                    prid=dt.getInt(2);
+                    fsid=dt.getInt(3);
 
-                    try {
-                        P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prid);
-                        flag=P_productoObj.first().codigo_tipo.equalsIgnoreCase("P");
-                        prcod=P_productoObj.first().codigo;
-                    } catch (Exception e) {
-                        flag=false;
-                    }
+                    P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prid);
+                    prcod=P_productoObj.first().codigo;
 
-                    if (flag) {
+                    fsitem=clsCls.new clsD_facturas();
 
-                        fsitem=clsCls.new clsD_facturas();
+                    fsitem.corel=corel;
+                    fsitem.id=fsid;
+                    fsitem.producto=""+prid;
+                    fsitem.cant=unipr;
+                    fsitem.umstock=app.umVenta2(prcod);
 
-                        fsitem.corel=corel;
-                        fsitem.id=fsid;
-                        fsitem.producto=""+prid;
-                        fsitem.cant=prcant;
-                        fsitem.umstock=app.umVenta2(prcod);
+                    D_facturas.add(fsitem);
 
-                        D_facturas.add(fsitem);
-
-                        rebajaStockUM(prcod,fsitem.umstock,fsitem.cant);
-
-                        fsid++;
-                    }
+                    rebajaStockUM(prcod,fsitem.umstock,fsitem.cant);
 
                     dt.moveToNext();
                 }

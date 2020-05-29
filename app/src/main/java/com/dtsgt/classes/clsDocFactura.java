@@ -197,7 +197,7 @@ public class clsDocFactura extends clsDocument {
 	protected boolean loadDocData(String corel) {
 		Cursor DT;
 		itemData item,bon;
-		String serie,corNota;
+		String serie,corNota,idcombo;
 		int corrl;
 
 		ccorel=corel;
@@ -211,7 +211,7 @@ public class clsDocFactura extends clsDocument {
            //#CKFK 20200520 quité la consulta que buscaba en las notas de crédito porque aquí no existe esa tabla
 
 			sql="SELECT D_FACTURAD.PRODUCTO,P_PRODUCTO.DESCLARGA,D_FACTURAD.CANT,D_FACTURAD.PRECIODOC,D_FACTURAD.IMP, " +
-				"D_FACTURAD.DES,D_FACTURAD.DESMON, D_FACTURAD.TOTAL, D_FACTURAD.UMVENTA, D_FACTURAD.UMPESO, D_FACTURAD.PESO " +
+				"D_FACTURAD.DES,D_FACTURAD.DESMON, D_FACTURAD.TOTAL, D_FACTURAD.UMVENTA, D_FACTURAD.UMPESO, D_FACTURAD.PESO, D_FACTURAD.VAL1, D_FACTURAD.VAL2 " +
 				"FROM D_FACTURAD INNER JOIN P_PRODUCTO ON D_FACTURAD.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
 				"WHERE (D_FACTURAD.COREL='"+corel+"')";	
 			
@@ -235,13 +235,15 @@ public class clsDocFactura extends clsDocument {
                 item.um = DT.getString(8);
                 item.ump = DT.getString(9);
                 item.peso = DT.getDouble(10);
-
                 if (sinimp) item.tot = item.tot - item.imp;
+                item.flag=false;
 
                 items.add(item);
+
+                if (DT.getDouble(11)==1) detalleCombo(DT.getString(12));
+
                 DT.moveToNext();
             }
-
 
 			try {
 				//#CKFK 20200520 Quité el union con D_BONIFBARRA porque esa tabla no existe en el MPOS
@@ -278,14 +280,51 @@ public class clsDocFactura extends clsDocument {
 		return true;
 	}
 
+	private void detalleCombo(String idcombo ) {
+        clsD_facturasObj D_facturasObj=new clsD_facturasObj(cont,Con,db);
+        clsP_productoObj P_productoObj=new clsP_productoObj(cont,Con,db);
+        String prid,nombre;
+        itemData item;
+
+        D_facturasObj.fill("WHERE (COREL='"+ccorel+"') AND (ID="+idcombo+")");
+
+        for (int i = 0; i <D_facturasObj.count; i++) {
+
+            prid=D_facturasObj.items.get(i).producto;
+            P_productoObj.fill("WHERE (CODIGO_PRODUCTO="+prid+")");
+            nombre=P_productoObj.first().desclarga;
+
+            item = new itemData();
+
+            item.cod = prid;
+            item.nombre = nombre;
+            item.cant = 1;
+            item.prec =0;
+            item.imp = 0;
+            item.descper = 0;
+            item.desc = 0;
+            item.tot = 0;
+            item.um ="";
+            item.ump ="";
+            item.peso =0 ;
+            item.flag=true;
+
+            items.add(item);
+        }
+
+    }
+
 	//region Detalle por empresa
 
 	protected boolean buildDetail() {
+	    /*
 	    if (modofact.equalsIgnoreCase("GUA")) {
             return detailBaseGUA();
         } else {
             return detailBase();
         }
+        */
+        return detailBaseGUA();
 	}
 
     protected boolean detailBaseGUA() {
@@ -298,10 +337,12 @@ public class clsDocFactura extends clsDocument {
 
         for (int i = 0; i <items.size(); i++) {
             item=items.get(i);
-            rep.add(item.nombre);
-            rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
-            //cu=frmdecimal(item.cant,decimp)+" ";
-            //rep.add3lrr(cu,item.prec,item.tot);
+            if (!item.flag) {
+                rep.add(item.nombre);
+                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+            } else {
+                rep.add("   - "+item.nombre);
+            }
         }
 
         rep.line();
@@ -607,6 +648,7 @@ public class clsDocFactura extends clsDocument {
 	private class itemData {
 		public String cod,nombre,um,ump;
 		public double cant,peso,prec,imp,descper,desc,tot;
+		public boolean flag;
 	}
 
     private boolean esPendientePago(String corel){
