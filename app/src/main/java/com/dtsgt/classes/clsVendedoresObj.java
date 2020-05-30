@@ -21,6 +21,8 @@ public class clsVendedoresObj {
     private MiscUtils mu;
 
     private String sel="SELECT * FROM Vendedores";
+    private String selDistinct="SELECT DISTINCT 0,CODIGO, EMPRESA, RUTA, NOMBRE, CLAVE, NIVEL, NIVELPRECIO, BODEGA, " +
+                               "SUBBODEGA, ACTIVO FROM Vendedores";
     private String sql;
     public ArrayList<clsClasses.clsVendedores> items= new ArrayList<clsClasses.clsVendedores>();
 
@@ -56,12 +58,20 @@ public class clsVendedoresObj {
         deleteItem(id);
     }
 
+    public void updateCajaVend(clsClasses.clsVendedores item) {
+        actualizaCajaVend(item);
+    }
+
     public void fill() {
         fillItems(sel);
     }
 
     public void fill(String specstr) {
         fillItems(sel+ " "+specstr);
+    }
+
+    public void fillDistinct(String specstr) {
+        fillItems(selDistinct+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -140,16 +150,16 @@ public class clsVendedoresObj {
 
             item = clsCls.new clsVendedores();
 
-            item.codigo=dt.getString(0);
-            item.ruta=dt.getString(1);
+            item.codigo_vendedor=dt.getInt(0);
+            item.codigo=dt.getString(1);
             item.nombre=dt.getString(2);
             item.clave=dt.getString(3);
-            item.nivel=dt.getInt(4);
-            item.nivelprecio=dt.getDouble(5);
-            item.bodega=dt.getString(6);
-            item.subbodega=dt.getString(7);
-            item.activo=dt.getInt(8);
-            item.codigo_vendedor=dt.getInt(9);
+            item.ruta=dt.getInt(4);
+            item.nivel=dt.getInt(5);
+            item.nivelprecio=dt.getDouble(6);
+            item.bodega=dt.getString(7);
+            item.subbodega=dt.getString(8);
+            item.activo=dt.getInt(9);
 
             items.add(item);
 
@@ -190,7 +200,7 @@ public class clsVendedoresObj {
         ins.add("BODEGA",item.bodega);
         ins.add("SUBBODEGA",item.subbodega);
         ins.add("ACTIVO",item.activo);
-        ins.add("CODIGO_VENDEDOR",maxId());
+        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
 
         return ins.sql();
 
@@ -218,13 +228,31 @@ public class clsVendedoresObj {
 
     }
 
+    public void actualizaCajaVend(clsClasses.clsVendedores item) {
+
+        upd.init("Vendedores");
+
+        upd.add("RUTA",item.ruta);
+        upd.add("ACTIVO",item.activo);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("CLAVE",item.clave);
+        upd.add("NIVELPRECIO",item.nivelprecio);
+
+        upd.Where("(CODIGO_VENDEDOR="+item.codigo_vendedor+")");
+
+        db.execSQL(upd.sql());
+
+        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
+
+    }
+
     private int maxId(){
 
         Cursor DT = null;
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM VENDEDORES";
+            String sql = "SELECT IFNULL(MAX(CODIGO_VENDEDOR),1)+1 AS MAX FROM VENDEDORES";
             DT = Con.OpenDT(sql);
 
             if (DT != null){
@@ -240,7 +268,7 @@ public class clsVendedoresObj {
         return resultado;
     }
 
-    public int existVendSuc(String codvend, int codcaja){
+    public int existVendCaja(String codvend, int codcaja){
 
         Cursor DT = null;
         int resultado = 0;

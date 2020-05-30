@@ -176,7 +176,7 @@ public class clsP_bancoObj {
 
         ins.init("P_banco");
 
-        ins.add("CODIGO_BANCO",maxId());
+        ins.add("CODIGO_BANCO",item.codigo_banco);
         ins.add("CODIGO",item.codigo);
         ins.add("TIPO",item.tipo);
         ins.add("NOMBRE",item.nombre);
@@ -212,7 +212,7 @@ public class clsP_bancoObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_BANCO";
+            String sql = "SELECT IFNULL(MAX(CODIGO_BANCO),1)+1 AS MAX FROM P_BANCO";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

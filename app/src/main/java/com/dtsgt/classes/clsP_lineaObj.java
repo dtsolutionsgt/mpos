@@ -176,8 +176,8 @@ public class clsP_lineaObj {
         ins.add("MARCA",item.marca);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
-        ins.add("CODIGO_LINEA",maxId());
-        ins.add("IMAGEN", (item.imagen==null?"":item.imagen));
+        ins.add("CODIGO_LINEA",item.codigo_linea);
+        ins.add("IMAGEN", item.imagen);
 
         return ins.sql();
 

@@ -193,8 +193,12 @@ public class BaseDatos extends SQLiteOpenHelper {
 			  try 
 			  {
 
-				  SV="";SF="";S="INSERT INTO " + clTable + " (";
+				  SV="";
+				  SF="";
+				  S="INSERT INTO " + clTable + " (";
+
 				  for(int I = 0; I < clFList.size() ; I = I+1) {
+
 					  sVal=clFList.get(I);
 					  SF=SF + sVal; 
 					  if (I < clFList.size()-1) {SF=SF + ",";}

@@ -783,7 +783,7 @@ public class MainActivity extends PBase {
         try {
 
             mitems.clear();
-            VendedoresObj.fill();
+            VendedoresObj.fill("WHERE RUTA = " + gl.ruta);
 
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();

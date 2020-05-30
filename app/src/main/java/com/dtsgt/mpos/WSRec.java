@@ -1042,6 +1042,9 @@ public class WSRec extends PBase {
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
                 var.imagen = item.IMAGEN;
+                /*if(item.IMAGEN!=null){
+                    var.imagen = item.IMAGEN;
+                }*/
 
                 script.add(handler.addItemSql(var));
 
@@ -1869,7 +1872,7 @@ public class WSRec extends PBase {
                 item = items.items.get(i);
                 var = clsCls.new clsVendedores();
                 var.codigo = item.CODIGO;
-                var.ruta = item.RUTA + "";
+                var.ruta = item.RUTA;
                 var.nombre = item.NOMBRE;
                 var.clave = item.CLAVE + "";
                 var.nivel = item.NIVEL;

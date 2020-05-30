@@ -532,7 +532,7 @@ public class clsClasses {
         public String codigo;
         public String nombre;
         public String clave;
-        public String ruta;
+        public int ruta;
         public int  nivel;
         public double nivelprecio;
         public String bodega;

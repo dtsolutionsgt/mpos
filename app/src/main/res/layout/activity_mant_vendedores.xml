@@ -146,7 +146,7 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_horizontal|center_vertical"
             android:paddingLeft="10dp"
-            android:text="Acceso a sucursal"
+            android:text="Acceso a cajas"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
@@ -335,17 +335,6 @@
         android:clickable="true"
         android:onClick="doExit"
         android:src="@drawable/prev48" />
-
-    <ImageView
-        android:id="@+id/imageView31"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/relRoad"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:onClick="doStatus"
-        android:src="@drawable/delete_64" />
 
 
 </RelativeLayout>

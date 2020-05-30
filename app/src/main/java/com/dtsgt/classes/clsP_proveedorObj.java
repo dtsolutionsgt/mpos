@@ -164,7 +164,7 @@ public class clsP_proveedorObj {
 
         ins.init("P_proveedor");
 
-        ins.add("CODIGO_PROVEEDOR",maxId());
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
         ins.add("CODIGO",item.codigo);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
@@ -195,7 +195,7 @@ public class clsP_proveedorObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_PROVEEDOR";
+            String sql = "SELECT IFNULL(MAX(CODIGO_PROVEEDOR),1)+1 AS MAX FROM P_PROVEEDOR";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

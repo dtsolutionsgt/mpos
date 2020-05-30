@@ -381,6 +381,7 @@ public class Lista extends PBase {
             case 9:
                 lblTit.setText("Proveedores");break;
             case 11:
+                swact.setText("Mostrar desactivados");
                 lblTit.setText("Usuarios");break;
             case 12:
                 lblTit.setText("Tiendas");break;

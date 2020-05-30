@@ -165,7 +165,7 @@ public class clsP_rutaObj {
         ins.add("CODIGO",item.codigo);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
-        ins.add("CODIGO_RUTA",maxId());
+        ins.add("CODIGO_RUTA",item.codigo_ruta);
         ins.add("ACTIVO",(item.activo?1:0));
         return ins.sql();
 
@@ -192,7 +192,7 @@ public class clsP_rutaObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(Max(CODIGO),1)+1 AS MAX FROM P_RUTA";
+            String sql = "SELECT IFNULL(Max(CODIGO_RUTA),1)+1 AS MAX FROM P_RUTA";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

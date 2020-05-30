@@ -9,14 +9,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
+
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.clsP_lineaObj;
-import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_usgrupoObj;
 import com.dtsgt.classes.clsVendedoresBL;
 import com.dtsgt.classes.clsVendedoresObj;
-import com.dtsgt.ladapt.LA_P_sucursal;
+import com.dtsgt.ladapt.LA_P_ruta;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import android.widget.AdapterView;
@@ -29,15 +28,15 @@ import java.util.ArrayList;
 
 public class MantVendedores extends PBase {
 
-    private ImageView imgstat,imgadd;
+    private ImageView imgadd;
     private EditText txt1,txt2,txt3,txt4;
     private ListView listView;
     private Spinner spin;
 
     private clsVendedoresObj holder;
     private clsClasses.clsVendedores item=clsCls.new clsVendedores();
-    private LA_P_sucursal adapter;
-    private clsP_sucursalObj P_sucursalObj;
+    private LA_P_ruta adapter;
+    private clsP_rutaObj P_rutaObj;
 
     private ArrayList<Integer> spincode=new ArrayList<Integer>();
     private ArrayList<String> spinlist=new ArrayList<String>();
@@ -53,10 +52,9 @@ public class MantVendedores extends PBase {
         super.InitBase();
 
         txt1 = (EditText) findViewById(R.id.txt1);
-        txt2 = (EditText) findViewById(R.id.txt2);
-        txt3 = (EditText) findViewById(R.id.editText12);
-        txt4 = (EditText) findViewById(R.id.editText14);
-        imgstat = (ImageView) findViewById(R.id.imageView31);
+        txt2 = (EditText) findViewById(R.id.txt2);//Nombre
+        txt3 = (EditText) findViewById(R.id.editText12);//contraseña
+        txt4 = (EditText) findViewById(R.id.editText14);//comisión
         imgadd = (ImageView) findViewById(R.id.imgImg2);
         listView = (ListView) findViewById(R.id.listView1);
         spin = (Spinner) findViewById(R.id.spinner18);
@@ -64,7 +62,7 @@ public class MantVendedores extends PBase {
         id=gl.gcods;
 
         holder =new clsVendedoresObj(this,Con,db);
-        P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+        P_rutaObj=new clsP_rutaObj(this,Con,db);
 
         if (id.isEmpty()) newItem(); else loadItem();
 
@@ -74,7 +72,7 @@ public class MantVendedores extends PBase {
         if (gl.grantaccess) {
             if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
-                imgstat.setVisibility(View.INVISIBLE);
+               // imgstat.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -108,11 +106,12 @@ public class MantVendedores extends PBase {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                 Object lvObj = listView.getItemAtPosition(position);
-                clsClasses.clsP_sucursal item = (clsClasses.clsP_sucursal)lvObj;
+                clsClasses.clsP_ruta item = (clsClasses.clsP_ruta)lvObj;
 
                 adapter.setSelectedIndex(position);
 
-                if (item.activo==1) item.activo=0;else item.activo=1;
+                if (item.activo) item.activo=false;else item.activo=true;
+
                 adapter.notifyDataSetChanged();
 
             };
@@ -162,12 +161,7 @@ public class MantVendedores extends PBase {
 
             txt1.setEnabled(false);
             txt2.requestFocus();
-            imgstat.setVisibility(View.VISIBLE);
-            if (item.activo==1) {
-                imgstat.setImageResource(R.drawable.delete_64);
-            } else {
-                imgstat.setImageResource(R.drawable.mas);
-            }
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -177,17 +171,16 @@ public class MantVendedores extends PBase {
         newitem=true;
         txt1.requestFocus();
 
-        imgstat.setVisibility(View.INVISIBLE);
-
         item.codigo="";
         item.nombre="";
         item.clave="";
-        item.ruta="";
+        item.ruta=0;
         item.nivel=1;
         item.nivelprecio=0;
         item.bodega="";
         item.subbodega="";
         item.activo=1;
+        item.codigo_vendedor=0;
 
         showItem();
     }
@@ -217,17 +210,30 @@ public class MantVendedores extends PBase {
         try {
             db.beginTransaction();
 
-            //vends.delete(item.codigo);
+            for (int i = 0; i <P_rutaObj.count; i++) {
 
-            for (int i = 0; i <P_sucursalObj.count; i++) {
-                if (P_sucursalObj.items.get(i).activo==1) {
-                    if (holder.existVendSuc(item.codigo, P_sucursalObj.items.get(i).codigo_sucursal) == 0){
-                        item.ruta=P_sucursalObj.items.get(i).codigo;
+                int codVend=holder.existVendCaja(item.codigo, P_rutaObj.items.get(i).codigo_ruta);
+                item.ruta=P_rutaObj.items.get(i).codigo_ruta;
+                item.activo=(P_rutaObj.items.get(i).activo?1:0);
+
+                if (item.activo==1) {
+
+                    if (codVend == 0){
+
+                        item.ruta=P_rutaObj.items.get(i).codigo_ruta;
                         holder.add(item);
+
+                    }else{
+
+                        item.codigo_vendedor=codVend;
+                        holder.update(item);
                     }
                 }else{
-                    item.activo=0;
-                    holder.update(item);
+                    if (codVend != 0){
+                        item.codigo_vendedor=codVend;
+                        holder.update(item);
+                    }
+
                 }
             }
 
@@ -240,18 +246,18 @@ public class MantVendedores extends PBase {
     }
 
     private void listItems() {
-        int act;
+        boolean act;
 
         try {
-            P_sucursalObj.fill();
+            P_rutaObj.fill();
 
-            for (int i = 0; i <P_sucursalObj.count; i++) {
-                holder.fill("WHERE (CODIGO='"+item.codigo+"') AND (RUTA='"+P_sucursalObj.items.get(i).codigo+"')");
-                if (holder.count>0) act=1;else act=0;
-                P_sucursalObj.items.get(i).activo=act;
+            for (int i = 0; i <P_rutaObj.count; i++) {
+                holder.fill("WHERE (CODIGO='"+item.codigo+"') AND (RUTA='"+P_rutaObj.items.get(i).codigo_ruta+"' AND ACTIVO = 1 )");
+                act=(holder.count>0?true:false);
+                P_rutaObj.items.get(i).activo=act;
             }
 
-            adapter=new LA_P_sucursal(this,this,P_sucursalObj.items);
+            adapter=new LA_P_ruta(this,this,P_rutaObj.items);
             listView.setAdapter(adapter);
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
@@ -461,7 +467,7 @@ public class MantVendedores extends PBase {
         super.onResume();
         try {
             holder.reconnect(Con,db);
-            P_sucursalObj.reconnect(Con,db);
+            P_rutaObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

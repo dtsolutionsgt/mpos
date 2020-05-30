@@ -18,17 +18,17 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class LA_P_sucursal extends BaseAdapter {
+public class LA_P_ruta extends BaseAdapter {
 
     private MiscUtils mu;
     private DateUtils du;
     private AppMethods app;
 
-    private ArrayList<clsClasses.clsP_sucursal> items = new ArrayList<clsClasses.clsP_sucursal>();
+    private ArrayList<clsClasses.clsP_ruta> items = new ArrayList<clsClasses.clsP_ruta>();
     private int selectedIndex;
     private LayoutInflater l_Inflater;
 
-    public LA_P_sucursal(Context context, PBase owner, ArrayList<clsClasses.clsP_sucursal> results) {
+    public LA_P_ruta(Context context, PBase owner, ArrayList<clsClasses.clsP_ruta> results) {
         items = results;
         l_Inflater = LayoutInflater.from(context);
         selectedIndex = -1;
@@ -75,9 +75,9 @@ public class LA_P_sucursal extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl3.setText("" + items.get(position).descripcion);
+        holder.lbl3.setText("" + items.get(position).nombre);
 
-        if (items.get(position).activo==1) {
+        if (items.get(position).activo) {
             holder.img1.setImageResource(R.drawable.check_round_on);
         } else {
             holder.img1.setImageResource(R.drawable.check_round_off);
