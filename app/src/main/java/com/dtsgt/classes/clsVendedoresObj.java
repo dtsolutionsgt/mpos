@@ -58,20 +58,12 @@ public class clsVendedoresObj {
         deleteItem(id);
     }
 
-    public void updateCajaVend(clsClasses.clsVendedores item) {
-        actualizaCajaVend(item);
-    }
-
     public void fill() {
         fillItems(sel);
     }
 
     public void fill(String specstr) {
         fillItems(sel+ " "+specstr);
-    }
-
-    public void fillDistinct(String specstr) {
-        fillItems(selDistinct+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -99,6 +91,9 @@ public class clsVendedoresObj {
         ins.add("SUBBODEGA",item.subbodega);
         ins.add("ACTIVO",item.activo);
         ins.add("CODIGO_VENDEDOR",maxId());
+        ins.add("IMAGEN",item.imagen);
+        ins.add("FECHA_INICIO_LABORES",item.fecha_inicio_labores);
+        ins.add("FECHA_FIN_LABORES",item.fecha_fin_labores);
 
         db.execSQL(ins.sql());
 
@@ -117,6 +112,9 @@ public class clsVendedoresObj {
         upd.add("BODEGA",item.bodega);
         upd.add("SUBBODEGA",item.subbodega);
         upd.add("ACTIVO",item.activo);
+        upd.add("IMAGEN",item.imagen);
+        upd.add("FECHA_INICIO_LABORES",item.fecha_inicio_labores);
+        upd.add("FECHA_FIN_LABORES",item.fecha_fin_labores);
 
         upd.Where("(CODIGO_VENDEDOR="+item.codigo_vendedor+")");
 
@@ -160,6 +158,9 @@ public class clsVendedoresObj {
             item.bodega=dt.getString(7);
             item.subbodega=dt.getString(8);
             item.activo=dt.getInt(9);
+            item.imagen=dt.getString(10);
+            item.fecha_inicio_labores=dt.getInt(11);
+            item.fecha_fin_labores=dt.getInt(12);
 
             items.add(item);
 
@@ -201,6 +202,9 @@ public class clsVendedoresObj {
         ins.add("SUBBODEGA",item.subbodega);
         ins.add("ACTIVO",item.activo);
         ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
+        ins.add("IMAGEN",item.imagen);
+        ins.add("FECHA_INICIO_LABORES",item.fecha_inicio_labores);
+        ins.add("FECHA_FIN_LABORES",item.fecha_fin_labores);
 
         return ins.sql();
 
@@ -219,28 +223,13 @@ public class clsVendedoresObj {
         upd.add("BODEGA",item.bodega);
         upd.add("SUBBODEGA",item.subbodega);
         upd.add("ACTIVO",item.activo);
+        upd.add("IMAGEN",item.imagen);
+        upd.add("FECHA_INICIO_LABORES",item.fecha_inicio_labores);
+        upd.add("FECHA_FIN_LABORES",item.fecha_fin_labores);
 
         upd.Where("(CODIGO_VENDEDOR="+item.codigo_vendedor+")");
 
         return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
-
-    }
-
-    public void actualizaCajaVend(clsClasses.clsVendedores item) {
-
-        upd.init("Vendedores");
-
-        upd.add("RUTA",item.ruta);
-        upd.add("ACTIVO",item.activo);
-        upd.add("NOMBRE",item.nombre);
-        upd.add("CLAVE",item.clave);
-        upd.add("NIVELPRECIO",item.nivelprecio);
-
-        upd.Where("(CODIGO_VENDEDOR="+item.codigo_vendedor+")");
-
-        db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 

@@ -1042,9 +1042,6 @@ public class WSRec extends PBase {
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
                 var.imagen = item.IMAGEN;
-                /*if(item.IMAGEN!=null){
-                    var.imagen = item.IMAGEN;
-                }*/
 
                 script.add(handler.addItemSql(var));
 
@@ -1851,6 +1848,8 @@ public class WSRec extends PBase {
 
     private void processVendedores() {
 
+        String dirvendedores = rootdir + "/Vendedor/";
+
         try {
 
             clsVendedoresObj handler = new clsVendedoresObj(this, Con, db);
@@ -1881,7 +1880,41 @@ public class WSRec extends PBase {
                 var.subbodega = item.SUBBODEGA + "";
                 var.activo = mu.bool(item.ACTIVO);
                 var.codigo_vendedor = item.CODIGO_VENDEDOR;
+                var.imagen=item.IMAGEN;
+                var.fecha_inicio_labores=item.FECHA_INICIO_LABORES;
+                var.fecha_fin_labores=item.FECHA_FIN_LABORES;
+
                 script.add(handler.addItemSql(var));
+
+                try {
+
+                    String img = var.imagen;
+
+                    if (img != null) {
+
+                        if (i==0){
+                            File f = new File(dirvendedores);
+                            if(!f.isDirectory()) f.mkdir();
+                        }
+
+                        String filePathImg = dirvendedores + var.codigo + ".png";
+                        File file = new File(filePathImg);
+
+                        if (!file.exists()) {
+                            byte[] imgbytes = Base64.decode(img, Base64.DEFAULT);
+                            int bs = imgbytes.length;
+
+                            FileOutputStream fos = new FileOutputStream(filePathImg);
+                            BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                            outputStream.write(imgbytes);
+                            outputStream.close();
+                        }
+                    }
+
+                } catch (Exception ee) {
+                    Log.e("ImgOp", ee.getMessage());
+                }
+
             }
 
         } catch (Exception e) {

@@ -1,12 +1,22 @@
 package com.dtsgt.mant;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -23,15 +33,20 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MantVendedores extends PBase {
 
-    private ImageView imgadd;
+    private ImageView imgstat,img1,imgadd,imgfotoadd,imgfotodel;
     private EditText txt1,txt2,txt3,txt4;
     private ListView listView;
     private Spinner spin;
+    private TextView lblfoto;
 
     private clsVendedoresObj holder;
     private clsClasses.clsVendedores item=clsCls.new clsVendedores();
@@ -41,8 +56,20 @@ public class MantVendedores extends PBase {
     private ArrayList<Integer> spincode=new ArrayList<Integer>();
     private ArrayList<String> spinlist=new ArrayList<String>();
 
-    private String id;
+    private String id,idfoto,signfile;
     private boolean newitem=false;
+    private int TAKE_PHOTO_CODE = 0;
+
+    //Fecha
+    private boolean dateTxt,report;
+    private TextView lblDateini,lblDatefin;
+    public final Calendar c = Calendar.getInstance();
+    private static final String BARRA = "/";
+    final int mes = c.get(Calendar.MONTH);
+    final int dia = c.get(Calendar.DAY_OF_MONTH);
+    final int anio = c.get(Calendar.YEAR);
+    public int cyear, cmonth, cday, validCB=0;
+    private long datefin,dateini;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +85,21 @@ public class MantVendedores extends PBase {
         imgadd = (ImageView) findViewById(R.id.imgImg2);
         listView = (ListView) findViewById(R.id.listView1);
         spin = (Spinner) findViewById(R.id.spinner18);
+        lblfoto = (TextView) findViewById(R.id.lblBU);
+        imgfotoadd  = (ImageView) findViewById(R.id.imgCamVend);
+        imgfotodel = (ImageView) findViewById(R.id.imgFotoVend);
+        img1 = (ImageView) findViewById(R.id.imgFotoVend);
+        lblDateini = (TextView) findViewById(R.id.lblFechaIniV);
+        lblDatefin = (TextView) findViewById(R.id.lblFechaFinV);
 
         id=gl.gcods;
 
         holder =new clsVendedoresObj(this,Con,db);
         P_rutaObj=new clsP_rutaObj(this,Con,db);
 
+        idfoto=id;
         if (id.isEmpty()) newItem(); else loadItem();
+        showImage();
 
         setHandlers();
         listItems();
@@ -72,7 +107,9 @@ public class MantVendedores extends PBase {
         if (gl.grantaccess) {
             if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
-               // imgstat.setVisibility(View.INVISIBLE);
+                lblfoto.setVisibility(View.INVISIBLE);
+                imgfotoadd.setVisibility(View.INVISIBLE);
+                imgfotodel.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -181,6 +218,9 @@ public class MantVendedores extends PBase {
         item.subbodega="";
         item.activo=1;
         item.codigo_vendedor=0;
+        item.imagen="";
+        item.fecha_inicio_labores= du.getFechaActual();
+        item.fecha_fin_labores= du.getFechaActual();
 
         showItem();
     }
@@ -273,6 +313,8 @@ public class MantVendedores extends PBase {
         txt2.setText(item.nombre);
         txt3.setText(item.clave);
         txt4.setText(""+item.nivelprecio);
+        lblDateini.setText(du.sfecha(item.fecha_inicio_labores));
+        lblDatefin.setText(du.sfecha(item.fecha_fin_labores));
 
         fillSpinner(item.nivel);
     }
@@ -324,6 +366,18 @@ public class MantVendedores extends PBase {
                 }
             }
 
+            try {
+                item.fecha_inicio_labores=(dateini==0?du.getFechaActual():dateini);
+            } catch (Exception e) {
+                msgbox("¡Fecha inicial incorrecta!");return false;
+            }
+
+            try {
+                item.fecha_fin_labores=(datefin==0?du.getFechaActual():datefin);
+            } catch (Exception e) {
+                msgbox("¡Fecha final incorrecta!");return false;
+            }
+
             return true;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -368,6 +422,146 @@ public class MantVendedores extends PBase {
     }
 
 
+    //endregion
+
+    //region Imagen
+
+    private void resizeFoto() {
+        try {
+
+            String fname = Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + idfoto + ".jpg";
+            File file = new File(fname);
+
+            Bitmap bitmap = BitmapFactory.decodeFile(fname);
+            bitmap=mu.scaleBitmap(bitmap,640,360);
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,80,out);
+
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            msgbox("No se logró procesar la foto. Por favor tómela de nuevo.");
+        }
+    }
+
+    public void camera(View view){
+        try{
+            if (!this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+                msgbox("El dispositivo no soporta toma de foto");return;
+            }
+
+            if(item.codigo.isEmpty()){
+                msgbox("Debe agregar un codigo de producto para tomar la foto");return;
+            }
+
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            signfile= Environment.getExternalStorageDirectory()+"/mPosFotos/Vendedor/"+idfoto+".jpg";
+
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File URLfoto = new File(Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + idfoto + ".jpg");
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(URLfoto));
+            startActivityForResult(cameraIntent,TAKE_PHOTO_CODE);
+
+
+        }catch (Exception e){
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+            mu.msgbox("Error en camera: "+e.getMessage());
+        }
+    }
+
+    public void showImage(){
+        String vendimg;
+        File file;
+
+        try {
+            vendimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + idfoto + ".png";
+            file = new File(vendimg);
+            if (file.exists()) {
+                Bitmap bmImg = BitmapFactory.decodeFile(vendimg);
+                img1.setImageBitmap(bmImg);
+            } else {
+                vendimg = Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + idfoto + ".jpg";
+                file = new File(vendimg);
+                if (file.exists()) {
+                    Bitmap bmImg = BitmapFactory.decodeFile(vendimg);
+                    img1.setImageBitmap(bmImg);
+                }
+            }
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+
+    }
+
+    //endregion
+
+    //region Fecha
+
+    public void showDateDialog1(View view) {
+        try{
+            obtenerFecha();
+            dateTxt=false;
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+    public void showDateDialog2(View view) {
+        try{
+            obtenerFecha();
+            dateTxt=true;
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+    private void obtenerFecha(){
+        try{
+            DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                    final int mesActual = month + 1;
+
+                    String diaFormateado = (dayOfMonth < 10)? "0" + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+                    String mesFormateado = (mesActual < 10)? "0" + String.valueOf(mesActual):String.valueOf(mesActual);
+
+                    if(dateTxt) {
+                        lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+                    }
+
+                    if(!dateTxt) {
+                        lblDateini.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+                    }
+
+                    cyear = year;
+                    cmonth = Integer.parseInt(mesFormateado);
+                    cday = Integer.parseInt(diaFormateado);
+
+                    if(dateTxt) {
+                        datefin = du.cfecha(cyear, cmonth, cday);
+                    }
+
+                    if(!dateTxt){
+                        dateini  = du.cfecha(cyear, cmonth, cday);
+                    }
+
+                }
+            },anio, mes, dia);
+
+            report=false;
+
+            recogerFecha.show();
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
     //endregion
 
     //region Dialogs
@@ -461,6 +655,24 @@ public class MantVendedores extends PBase {
     //endregion
 
     //region Activity Events
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        try {
+            if (requestCode == TAKE_PHOTO_CODE) {
+                if (resultCode == RESULT_OK) {
+                    toast("Foto OK.");
+                    resizeFoto();
+                    showImage();
+                } else {
+                    Toast.makeText(this,"SIN FOTO.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e){
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+        }
+    }
 
     @Override
     protected void onResume() {

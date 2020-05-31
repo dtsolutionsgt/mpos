@@ -86,6 +86,45 @@
         android:layout_marginBottom="5dp"
         android:background="@drawable/frame_rect">
 
+        <ImageView
+            android:id="@+id/imgFotoVend"
+            android:layout_width="121dp"
+            android:layout_height="86dp"
+            android:layout_alignBottom="@+id/lblBU"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="-2dp"
+            android:layout_toEndOf="@id/imgCamVend"
+            android:src="@drawable/blank24"
+            tools:src="@drawable/erase"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/imgCamVend"
+            android:layout_width="130dp"
+            android:layout_height="62dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="19dp"
+            android:onClick="camera"
+            android:src="@drawable/camara" />
+
+        <TextView
+            android:id="@+id/lblBU4"
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgCamVend"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="1dp"
+            android:gravity="center"
+            android:text="Agregar Foto"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="18sp"
+            android:visibility="visible" />
+
         <Spinner
             android:id="@+id/spinner18"
             android:layout_width="match_parent"
@@ -173,6 +212,48 @@
             android:textStyle="normal" />
 
         <TextView
+            android:id="@+id/lblCFact35"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/lblCFact10"
+            android:layout_alignStart="@id/lblCFact10"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="-9dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Fecha inicio :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/lblCFact36"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/lblCFact35"
+            android:layout_alignStart="@id/lblCFact35"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="-3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Fecha fin :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
+        <TextView
             android:id="@+id/lblCFact9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -199,9 +280,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView2"
             android:layout_alignParentEnd="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="1dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="39dp"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:maxLength="50"
@@ -236,9 +317,9 @@
             android:id="@+id/txt1"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="false"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_below="@id/imgFotoVend"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="20dp"
             android:layout_toRightOf="@id/textView2"
             android:ems="10"
             android:inputType="textCapSentences"
@@ -250,12 +331,11 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/txt1"
+            android:layout_width="139dp"
+            android:layout_height="35dp"
             android:layout_alignBottom="@+id/txt1"
-            android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
+            android:layout_marginBottom="-2dp"
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
@@ -270,11 +350,47 @@
             android:layout_below="@+id/txt2"
             android:layout_alignStart="@+id/txt2"
             android:layout_alignEnd="@+id/txt1"
-            android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
             android:ems="10"
             android:inputType="number"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblFechaIniV"
+            android:layout_width="293dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/spinner18"
+            android:layout_alignStart="@+id/txt2"
+            android:layout_alignEnd="@+id/txt1"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/frame_btn"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:onClick="showDateDialog1"
+            android:text="00/00/0000"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblFechaFinV"
+            android:layout_width="293dp"
+            android:layout_height="40dp"
+            android:layout_below="@id/lblFechaIniV"
+            android:layout_alignStart="@+id/txt2"
+            android:layout_alignEnd="@+id/txt1"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/frame_btn"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:onClick="showDateDialog2"
+            android:text="00/00/0000"
             android:textSize="21sp"
             android:textStyle="bold" />
 

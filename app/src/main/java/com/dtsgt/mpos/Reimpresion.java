@@ -113,7 +113,7 @@ public class Reimpresion extends PBase {
 
 			listItems();
 
-						prn=new printer(this,printclose,gl.validimp);
+			prn=new printer(this,printclose,gl.validimp);
 			prn_nc=new printer(this,printclose,gl.validimp);
 
 			prn_can=new printer(this,printclose,gl.validimp);
@@ -306,18 +306,21 @@ public class Reimpresion extends PBase {
 				case 4:
 					progress.setMessage("Cargando lista de recargas de inventario...");
 					sql = "SELECT COREL,COREL,FECHA,0 AS TOTAL " +
-						  "FROM D_MOV WHERE (TIPO='R') AND (ANULADO='N')  ORDER BY COREL DESC ";
+						  "FROM D_MOV WHERE (TIPO='R') AND (ANULADO='N') AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+						  "ORDER BY COREL DESC ";
 					break;
 				case 5:
 					progress.setMessage("Cargando lista de devoluciones de inventario...");
 					sql = "SELECT COREL,COREL,FECHA,0 AS TOTAL " +
-						  "FROM D_MOV WHERE (TIPO='D') AND (ANULADO='N')  ORDER BY COREL DESC ";
+						  "FROM D_MOV WHERE (TIPO='D') AND (ANULADO='N') AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+						  "ORDER BY COREL DESC ";
 					break;
 				case 7:
 					progress.setMessage("Cargando lista de pagos de caja...");
 					sql = "SELECT COREL,OBSERVACION,'',MONTO,'',0 " +
-							"FROM P_CAJAPAGOS " +
-							"WHERE (STATCOM='N') AND (ANULADO=0) ORDER BY COREL DESC";
+						  "FROM P_CAJAPAGOS " +
+						  "WHERE (STATCOM='N') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+						  "ORDER BY COREL DESC";
 					break;
 			}
 

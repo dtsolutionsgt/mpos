@@ -85,6 +85,7 @@ public class clsD_MovObj {
         ins.add("STATCOM",item.STATCOM);
         ins.add("IMPRES",item.IMPRES);
         ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
+        ins.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
 
         db.execSQL(ins.sql());
 
@@ -103,6 +104,7 @@ public class clsD_MovObj {
         upd.add("STATCOM",item.STATCOM);
         upd.add("IMPRES",item.IMPRES);
         upd.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
+        upd.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
 
         upd.Where("(COREL="+item.COREL+")");
         db.execSQL(upd.sql());
@@ -145,6 +147,7 @@ public class clsD_MovObj {
             item.STATCOM=dt.getString(7);
             item.IMPRES=dt.getInt(8);
             item.CODIGOLIQUIDACION=dt.getInt(9);
+            item.CODIGO_PROVEEDOR=dt.getInt(10);
 
             items.add(item);
 
@@ -186,6 +189,7 @@ public class clsD_MovObj {
         ins.add("STATCOM",item.STATCOM);
         ins.add("IMPRES",item.IMPRES);
         ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
+        ins.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
 
         return ins.sql();
 
@@ -204,6 +208,7 @@ public class clsD_MovObj {
         upd.add("STATCOM",item.STATCOM);
         upd.add("IMPRES",item.IMPRES);
         upd.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
+        upd.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
 
         upd.Where("(COREL="+item.COREL+")");
 

@@ -34,7 +34,8 @@ public class appGlobals extends Application {
 			    codigo_ruta,
 	            codigo_vendedor,
 			    emp,
-			    tienda;
+			    tienda,
+	            dias_anul;
 	public String  cliente,
 			       ruta,
 			       vend,

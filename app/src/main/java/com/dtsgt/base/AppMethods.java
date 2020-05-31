@@ -416,6 +416,19 @@ public class AppMethods {
 			gl.cierreDiario=true;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=108";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.dias_anul=Integer.valueOf(val);
+
+		} catch (Exception e) {
+			gl.cierreDiario=true;
+		}
 
 	}
 

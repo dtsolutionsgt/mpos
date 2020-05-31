@@ -57,8 +57,7 @@
     <LinearLayout
         android:id="@+id/llFechas"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_above="@id/listView1"
+        android:layout_height="wrap_content"
         android:layout_below="@id/lblDescrip"
         android:orientation="vertical">
 
@@ -148,15 +147,14 @@
 
     <ListView
         android:id="@+id/listView1"
-        android:layout_width="760dp"
-        android:layout_height="916dp"
+        android:layout_width="769dp"
+        android:layout_height="931dp"
         android:layout_above="@+id/relbotpan"
         android:layout_below="@+id/imgImg"
         android:layout_centerHorizontal="true"
-        android:layout_margin="5dp"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="153dp"
+        android:layout_marginTop="138dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp">

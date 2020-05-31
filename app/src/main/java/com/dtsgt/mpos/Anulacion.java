@@ -1,6 +1,7 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,6 +28,8 @@ import com.dtsgt.ladapt.ListAdaptCFDV;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Anulacion extends PBase {
 
@@ -59,7 +63,18 @@ public class Anulacion extends PBase {
 	private String presvence,presrango,pvendedor,pcliente,pclicod,pclidir;
 	private double ptot;
 	private int residx;
-			
+
+	//Fecha
+	private boolean dateTxt,report;
+	private TextView lblDateini,lblDatefin;
+	public final Calendar c = Calendar.getInstance();
+	private static final String BARRA = "/";
+	final int mes = c.get(Calendar.MONTH);
+	final int dia = c.get(Calendar.DAY_OF_MONTH);
+	final int anio = c.get(Calendar.YEAR);
+	public int cyear, cmonth, cday, validCB=0;
+	private long datefin,dateini;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,6 +85,8 @@ public class Anulacion extends PBase {
 		
 		listView = (ListView) findViewById(R.id.listView1);
 		lblTipo= (TextView) findViewById(R.id.lblDescrip);
+		lblDateini = (TextView) findViewById(R.id.lblDateini2);
+		lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
 
 		app = new AppMethods(this, gl, Con, db);
 		gl.validimp=app.validaImpresora();
@@ -127,7 +144,8 @@ public class Anulacion extends PBase {
 
 		setHandlers();
 		listItems();
-				
+		setFechaAct();
+
 		doc=new clsDocAnul(this,prn.prw,"");
 
 		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"");
@@ -218,41 +236,33 @@ public class Anulacion extends PBase {
 		selidx=-1;vP=0;
 		
 		try {
-			
-			if (tipo==0) {
-				sql="SELECT D_PEDIDO.COREL,P_CLIENTE.NOMBRE,D_PEDIDO.FECHA,D_PEDIDO.TOTAL "+
-					 "FROM D_PEDIDO INNER JOIN P_CLIENTE ON D_PEDIDO.CLIENTE=P_CLIENTE.CODIGO "+
-					 "WHERE (D_PEDIDO.ANULADO='N') AND (D_PEDIDO.STATCOM='N') ORDER BY D_PEDIDO.COREL DESC ";	
-			}
-			
-			if (tipo==1) {
-				sql="SELECT D_COBRO.COREL,P_CLIENTE.NOMBRE,D_COBRO.FECHA,D_COBRO.TOTAL "+
-					 "FROM D_COBRO INNER JOIN P_CLIENTE ON D_COBRO.CLIENTE=P_CLIENTE.CODIGO "+
-					 "WHERE (D_COBRO.ANULADO='N') AND (D_COBRO.DEPOS<>'S') ORDER BY D_COBRO.COREL DESC ";	
-			}
+			//#CKFK 20200530 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
 			
 			if (tipo==2) {
 				sql="SELECT D_DEPOS.COREL,P_BANCO.NOMBRE,D_DEPOS.FECHA,D_DEPOS.TOTAL,D_DEPOS.CUENTA "+
 					 "FROM D_DEPOS INNER JOIN P_BANCO ON D_DEPOS.BANCO=P_BANCO.CODIGO_BANCO "+
-					 "WHERE (D_DEPOS.ANULADO='N')  AND (D_DEPOS.CODIGOLIQUIDACION=0) ORDER BY D_DEPOS.COREL DESC ";
+					 "WHERE (D_DEPOS.ANULADO='N')  AND (D_DEPOS.CODIGOLIQUIDACION=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+					 "ORDER BY D_DEPOS.COREL DESC ";
 			}
 			
 			if (tipo==3) {
 				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
 					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-					"WHERE (D_FACTURA.ANULADO='N') AND (D_FACTURA.KILOMETRAJE=0) " +
+					"WHERE (D_FACTURA.ANULADO='N') AND (D_FACTURA.KILOMETRAJE=0)  AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					"ORDER BY D_FACTURA.COREL DESC ";
 			}
 			
 			if (tipo==4) {
 				sql="SELECT COREL,REFERENCIA,FECHA,0 "+
-					 "FROM D_MOV WHERE (TIPO='R') AND (ANULADO='N') AND (CODIGOLIQUIDACION=0) ORDER BY FECHA DESC ";
+					"FROM D_MOV WHERE (TIPO='R') AND (ANULADO='N') AND (CODIGOLIQUIDACION=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+					"ORDER BY FECHA DESC ";
 			}
 			
 			if (tipo==5) {
 				sql="SELECT COREL,REFERENCIA,FECHA,0 "+
-					 "FROM D_MOV WHERE (TIPO='D') AND (ANULADO='N') AND (CODIGOLIQUIDACION=0) ORDER BY FECHA DESC ";
+					"FROM D_MOV WHERE (TIPO='D') AND (ANULADO='N') AND (CODIGOLIQUIDACION=0)  AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+					"ORDER BY FECHA DESC ";
 			}
 
 			//#CKFK 20200520 Quité la anulación de NC porque aquí no existe la tabla
@@ -1186,7 +1196,111 @@ public class Anulacion extends PBase {
 	}
 
 	//endregion
-	
+
+	//region Fecha
+
+	public void showDateDialog1(View view) {
+		try{
+			obtenerFecha();
+			dateTxt=false;
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+	public void showDateDialog2(View view) {
+		try{
+			obtenerFecha();
+			dateTxt=true;
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+	private void obtenerFecha(){
+		try{
+			DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+				@Override
+				public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+					final int mesActual = month + 1;
+
+					String diaFormateado = (dayOfMonth < 10)? "0" + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+					String mesFormateado = (mesActual < 10)? "0" + String.valueOf(mesActual):String.valueOf(mesActual);
+
+					if(dateTxt) {
+						lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+					}
+
+					if(!dateTxt) {
+						lblDateini.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+					}
+
+					cyear = year;
+					cmonth = Integer.parseInt(mesFormateado);
+					cday = Integer.parseInt(diaFormateado);
+
+					if(dateTxt) {
+						datefin = du.cfechaRep(cyear, cmonth, cday, false);
+					}
+
+					if(!dateTxt){
+						dateini  = du.cfechaRep(cyear, cmonth, cday, true);
+					}
+
+					long fechaSel=du.cfechaSinHora(cyear, cmonth, cday)*10000;
+
+					if (tipo==3){
+						long fecha_menor=du.addDays(du.getActDate(),-gl.dias_anul);
+
+						if (fechaSel<fecha_menor){
+							msgbox("La fecha de anulación debe ser mayor a la seleccionada");
+							return;
+						}
+					}
+
+					//listar nuevamente los documentos
+					listItems();
+				}
+			},anio, mes, dia);
+
+			/*itemR.clear();
+			lblFact.setText("");
+			lblImp.setText("GENERAR");*/
+			report=false;
+
+			recogerFecha.show();
+
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
+
+	private void setFechaAct(){
+		Long fecha;
+		String date;
+
+		try{
+			fecha = du.getFechaActualReport();
+
+			date = du.univfechaReport(fecha);
+
+			lblDateini.setText(date);
+			lblDatefin.setText(date);
+
+			datefin = du.getFechaActualReport(false);
+			dateini = du.getFechaActualReport(true);
+
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
+
+	//endregion
+
 	//region Aprofam
 
 	private boolean aprLoadHeadData(String corel) {

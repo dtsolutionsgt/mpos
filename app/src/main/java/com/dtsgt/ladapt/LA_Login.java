@@ -1,7 +1,10 @@
 package com.dtsgt.ladapt;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.mpos.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class LA_Login extends BaseAdapter {
@@ -57,6 +61,7 @@ public class LA_Login extends BaseAdapter {
 			holder = new ViewHolder();
 			
 			holder.lblName = (TextView) convertView.findViewById(R.id.lblTrat);
+			holder.imgVend = (ImageView) convertView.findViewById(R.id.imageView36);
 		
 			convertView.setTag(holder);
 		} else {
@@ -64,6 +69,23 @@ public class LA_Login extends BaseAdapter {
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
+		String fotoVend = Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + items.get(position).Cod + ".jpg";
+
+		File file = new File(fotoVend);
+
+		if (file.exists()) {
+			Bitmap bmImg = BitmapFactory.decodeFile(fotoVend);
+			holder.imgVend.setImageBitmap(bmImg);
+		}else{
+			fotoVend = Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + items.get(position).Cod + ".png";
+
+			file = new File(fotoVend);
+
+			if (file.exists()) {
+				Bitmap bmImg = BitmapFactory.decodeFile(fotoVend);
+				holder.imgVend.setImageBitmap(bmImg);
+			}
+		}
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -76,6 +98,7 @@ public class LA_Login extends BaseAdapter {
 
 	static class ViewHolder {
 		TextView  lblName;
+		ImageView imgVend;
 	}
 	
 }

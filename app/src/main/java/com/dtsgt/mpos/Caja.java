@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -83,11 +84,34 @@ public class Caja extends PBase {
         }
 
         itemC = clsCls.new clsP_cajacierre();
+
+        setHandlers();
     }
 
     //region Main
+    private void setHandlers(){
+
+        try{
+            MontoIni.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        guardar();
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
     public void save(View view){
+        guardar();
+    }
+
+    public void guardar(){
 
         try{
             if(gl.cajaid==1 && !MontoIni.getText().toString().trim().isEmpty()){
@@ -158,11 +182,10 @@ public class Caja extends PBase {
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("Error en save: "+e);return;
+            msgbox("Error al guardar el inicio de caja: "+e);return;
         }
 
     }
-
     public void montoDif(){
         Cursor dt;
         double tot,totCred,pago;

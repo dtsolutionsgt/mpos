@@ -1,31 +1,32 @@
 package com.dtsgt.classesws;
 
-
 import org.simpleframework.xml.Element;
 
 public class clsBeVENDEDORES {
 
-    @Element(required=false) public int CODIGO_VENDEDOR;
-    @Element(required=false) public String CODIGO;
-    @Element(required=false) public String EMPRESA;
-    @Element(required=false) public int RUTA;
-    @Element(required=false) public String NOMBRE;
-    @Element(required=false) public String CLAVE;
-    @Element(required=false) public int NIVEL;
-    @Element(required=false) public double NIVELPRECIO;
-    @Element(required=false) public String BODEGA;
-    @Element(required=false) public String SUBBODEGA;
-    @Element(required=false) public String IMAGEN;
-    @Element(required=false) public boolean ACTIVO;
+    @Element(required=false) public int CODIGO_VENDEDOR=0;
+    @Element(required=false) public String CODIGO="";
+    @Element(required=false) public int EMPRESA=0;
+    @Element(required=false) public int RUTA=0;
+    @Element(required=false) public String NOMBRE="";
+    @Element(required=false) public String CLAVE="";
+    @Element(required=false) public int NIVEL=0;
+    @Element(required=false) public double NIVELPRECIO=0;
+    @Element(required=false) public String BODEGA="";
+    @Element(required=false) public String SUBBODEGA="";
+    @Element(required=false) public String IMAGEN="";
+    @Element(required=false) public boolean ACTIVO=false;
+    @Element(required=false) public long FECHA_INICIO_LABORES=0;
+    @Element(required=false) public long FECHA_FIN_LABORES=0;
 
 
     public clsBeVENDEDORES() {
     }
 
-    public clsBeVENDEDORES(int CODIGO_VENDEDOR,String CODIGO,String EMPRESA,int RUTA,
+    public clsBeVENDEDORES(int CODIGO_VENDEDOR,String CODIGO,int EMPRESA,int RUTA,
                            String NOMBRE,String CLAVE,int NIVEL,double NIVELPRECIO,
-                           String BODEGA,String SUBBODEGA,String IMAGEN,boolean ACTIVO
-    ) {
+                           String BODEGA,String SUBBODEGA,String IMAGEN,boolean ACTIVO,
+                           long FECHA_INICIO_LABORES,long FECHA_FIN_LABORES) {
 
         this.CODIGO_VENDEDOR=CODIGO_VENDEDOR;
         this.CODIGO=CODIGO;
@@ -39,6 +40,8 @@ public class clsBeVENDEDORES {
         this.SUBBODEGA=SUBBODEGA;
         this.IMAGEN=IMAGEN;
         this.ACTIVO=ACTIVO;
+        this.FECHA_INICIO_LABORES=FECHA_INICIO_LABORES;
+        this.FECHA_FIN_LABORES=FECHA_FIN_LABORES;
 
     }
 
@@ -55,10 +58,10 @@ public class clsBeVENDEDORES {
     public void setCODIGO(String value) {
         CODIGO=value;
     }
-    public String getEMPRESA() {
+    public int getEMPRESA() {
         return EMPRESA;
     }
-    public void setEMPRESA(String value) {
+    public void setEMPRESA(int value) {
         EMPRESA=value;
     }
     public int getRUTA() {
@@ -114,6 +117,18 @@ public class clsBeVENDEDORES {
     }
     public void setACTIVO(boolean value) {
         ACTIVO=value;
+    }
+    public long getFECHA_INICIO_LABORES() {
+        return FECHA_INICIO_LABORES;
+    }
+    public void setFECHA_INICIO_LABORES(long value) {
+        FECHA_INICIO_LABORES=value;
+    }
+    public long getFECHA_FIN_LABORES() {
+        return FECHA_FIN_LABORES;
+    }
+    public void setFECHA_FIN_LABORES(long value) {
+        FECHA_FIN_LABORES=value;
     }
 
 }

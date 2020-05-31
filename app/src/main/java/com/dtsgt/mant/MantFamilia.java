@@ -58,7 +58,6 @@ public class MantFamilia extends PBase {
 
         holder =new clsP_lineaObj(this,Con,db);
 
-
         id=gl.gcods;
         idfoto=id;
         if (id.isEmpty()) newItem(); else loadItem();
@@ -131,7 +130,7 @@ public class MantFamilia extends PBase {
             out.flush();
             out.close();
         } catch (Exception e) {
-            msgbox("No se logro procesar la foto. Por favor tome la de nuevo.");
+            msgbox("No se logró procesar la foto. Por favor tómela de nuevo.");
         }
     }
 
@@ -404,8 +403,6 @@ public class MantFamilia extends PBase {
                 if (resultCode == RESULT_OK) {
                     toast("Foto OK.");
                     resizeFoto();
-                    /*codCamera =  2;
-                    showCamera();*/
                     showImage();
                 } else {
                     Toast.makeText(this,"SIN FOTO.", Toast.LENGTH_SHORT).show();

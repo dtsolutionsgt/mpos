@@ -538,6 +538,9 @@ public class BaseDatosScript {
                     "BODEGA TEXT NOT NULL,"+
                     "SUBBODEGA TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
+                    "IMAGEN TEXT,"+
+                    "FECHA_INICIO_LABORES INTEGER,"+
+                    "FECHA_FIN_LABORES INTEGER, "+
                     "PRIMARY KEY ([CODIGO],[RUTA])"+
                     ");";
             database.execSQL(sql);
@@ -808,6 +811,7 @@ public class BaseDatosScript {
                     "[STATCOM] TEXT NOT NULL,"+
                     "[IMPRES] INTEGER NOT NULL,"+
                     "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
+                    "[CODIGO_PROVEEDOR] INTEGER NOT NULL,"+
                     "PRIMARY KEY ([COREL])"+
                     ");";
             database.execSQL(sql);

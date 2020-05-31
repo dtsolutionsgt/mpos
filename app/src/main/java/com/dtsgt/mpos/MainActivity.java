@@ -51,7 +51,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "2.5.3 / 28-May-2020 ";
+    private String parVer = "2.5.4 / 30-May-2020 ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -449,7 +449,7 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
+            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO_VENDEDOR='" + usr + "'  COLLATE NOCASE";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() == 0) {
@@ -464,14 +464,16 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            gl.nivel = gl.nivel_sucursal;
-            gl.rol = gl.nivel;
+            gl.nivel = gl.nivel_sucursal;//#CKFK 20200530 Consultarle a Jaros porque hizo este cambio
+            gl.rol = DT.getInt(2);
 
             //#CKFK 20200517 if (gl.caja.isEmpty() || gl.tienda==0) {
             if (gl.codigo_ruta == 0 || gl.tienda==0) {
-                if (gl.nivel == 3) {
-                    gl.modoinicial = true;
-                    return true;
+                if (gl.rol == 3) {
+                    //gl.modoinicial = true;
+                    browse=2;
+                    startActivity(new Intent(MainActivity.this, ConfigCaja.class));
+                    return false;
                 } else {
                     toastlong("No está configurada la caja. Informe al gerente.");
                     browse=2;
@@ -783,7 +785,12 @@ public class MainActivity extends PBase {
         try {
 
             mitems.clear();
-            VendedoresObj.fill("WHERE RUTA = " + gl.ruta);
+
+            if (gl.codigo_ruta ==0){
+                VendedoresObj.fill();
+            }else{
+                VendedoresObj.fill("WHERE RUTA = " + gl.codigo_ruta);
+            }
 
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();

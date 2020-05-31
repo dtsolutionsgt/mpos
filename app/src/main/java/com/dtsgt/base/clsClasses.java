@@ -103,6 +103,7 @@ public class clsClasses {
         public String STATCOM;
         public int IMPRES;
         public int CODIGOLIQUIDACION;
+        public int CODIGO_PROVEEDOR;
     }
 
     public class clsD_MovD {
@@ -539,6 +540,9 @@ public class clsClasses {
         public String subbodega;
         public int  activo;
         public int  codigo_vendedor;
+        public String imagen;
+        public long fecha_inicio_labores;
+        public long fecha_fin_labores;
     }
 
     public class clsT_prodmenu {
