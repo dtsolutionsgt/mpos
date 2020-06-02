@@ -23,6 +23,7 @@
     <string name="title_activity_anulacion">Anulación</string>
     <string name="title_activity_deposito">Deposito</string>
     <string name="title_activity_lista_promo">Promociónes</string>
+    <string name="title_activity_lista_proveedores">Proveedores</string>
     <string name="title_activity_depos_doc">DeposDoc</string>
     <string name="title_activity_desc_bon">Promocion aplicada</string>
     <string name="title_activity_pic_view">PicView</string>

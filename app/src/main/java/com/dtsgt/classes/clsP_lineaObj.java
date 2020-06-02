@@ -207,7 +207,7 @@ public class clsP_lineaObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(Max(CODIGO_LINEA),1)+1 AS MAX FROM P_LINEA";
+            String sql = "SELECT IFNULL(Max(CODIGO_LINEA),0)+1 AS MAX FROM P_LINEA";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

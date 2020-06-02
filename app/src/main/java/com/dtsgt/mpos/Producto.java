@@ -127,6 +127,7 @@ public class Producto extends PBase {
 						gl.um = item.um;
 						gl.pprodname = prname;
 						gl.prodcod = item.codInt;
+						gl.costo = item.costo;
 
 						appProd();
 					} catch (Exception e) {
@@ -158,6 +159,7 @@ public class Producto extends PBase {
 						gl.um = item.um;
 						gl.pprodname = prname;
 						gl.prodcod = item.codInt;
+						gl.costo = item.costo;
 
 						appProd();
 					} catch (Exception e) {
@@ -245,7 +247,7 @@ public class Producto extends PBase {
 			switch (prodtipo) {
 
 				case 0: // Preventa
-					sql="SELECT CODIGO,DESCCORTA,UNIDBAS,TIPO FROM P_PRODUCTO WHERE 1=1 ";
+					sql="SELECT CODIGO,DESCCORTA,UNIDBAS,ACTIVO, CODIGO_PRODUCTO, COSTO FROM P_PRODUCTO WHERE 1=1 ";
 					if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
 					if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
 
@@ -255,7 +257,7 @@ public class Producto extends PBase {
 				case 1:  // Venta
 
 					sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
-							"P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
+							"P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO, COSTO  " +
 							"FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
 							"P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
 							"WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
@@ -267,7 +269,8 @@ public class Producto extends PBase {
 					if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
 
 					sql += "UNION ";
-					sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA,P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
+					sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA," +
+							"P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO, COSTO " +
 							"FROM P_PRODUCTO  INNER JOIN " +
 							"P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
 							"WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) AND (P_PRODUCTO.ACTIVO=1)";
@@ -290,7 +293,7 @@ public class Producto extends PBase {
 					break;	
 					
 				case 2: // Recarga
-				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS,CODIGO_TIPO, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE CODIGO_TIPO='P' ";
+				    sql="SELECT CODIGO,DESCCORTA,UNIDBAS,CODIGO_TIPO, CODIGO_PRODUCTO, COSTO FROM P_PRODUCTO WHERE CODIGO_TIPO='P' ";
                     if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
                     if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
 
@@ -319,6 +322,7 @@ public class Producto extends PBase {
                 vItem.prec="Precio : "+gl.peMon+prodPrecioBase(cod);if (prodtipo==2) vItem.prec="";
                 vItem.Desc = name;
                 vItem.codInt=DT.getInt(4);
+                vItem.costo = DT.getDouble(5);
 
                 if (disp>0) exist="Exist : "+mu.frmdecno(disp)+" "+um; else exist="";
 

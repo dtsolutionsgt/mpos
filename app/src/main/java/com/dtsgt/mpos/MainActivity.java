@@ -464,13 +464,12 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            gl.nivel = gl.nivel_sucursal;//#CKFK 20200530 Consultarle a Jaros porque hizo este cambio
+            gl.nivel = gl.nivel_sucursal;
             gl.rol = DT.getInt(2);
 
             //#CKFK 20200517 if (gl.caja.isEmpty() || gl.tienda==0) {
             if (gl.codigo_ruta == 0 || gl.tienda==0) {
                 if (gl.rol == 3) {
-                    //gl.modoinicial = true;
                     browse=2;
                     startActivity(new Intent(MainActivity.this, ConfigCaja.class));
                     return false;
@@ -484,7 +483,7 @@ public class MainActivity extends PBase {
                 gl.modoinicial = false;
             }
 
-            if (gl.nivel != 3) {
+            if (gl.rol != 3) {
                 sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES " +
                         "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
                 DT = Con.OpenDT(sql);

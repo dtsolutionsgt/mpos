@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsDocCanastaBod;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.ladapt.ListAdaptDevBod;
@@ -132,7 +133,8 @@ public class DevolBod extends PBase {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
 					try {
-						/*Object lvObj = listView.getItemAtPosition(position);
+
+						Object lvObj = listView.getItemAtPosition(position);
 						clsClasses.clsExist vItem = (clsClasses.clsExist)lvObj;
 
 						prodid=vItem.Cod;
@@ -140,7 +142,8 @@ public class DevolBod extends PBase {
 						adapter.setSelectedIndex(position);
 
 						savecant="";
-						setCant();*/
+						setCant();
+
 					} catch (Exception e) {
 						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 						mu.msgbox( e.getMessage());
@@ -355,6 +358,7 @@ public class DevolBod extends PBase {
 		String pcod;
 		Double pcant,pcantm;
 		int i;
+		clsD_MovDObj movd = new clsD_MovDObj(DevolBod.this, Con, db);
 
 		corel=((appGlobals) vApp).ruta+"_"+mu.getCorelBase();
 
@@ -374,6 +378,7 @@ public class DevolBod extends PBase {
 			ins.add("STATCOM","N");
 			ins.add("IMPRES",0);
 			ins.add("CODIGOLIQUIDACION",0);
+			ins.add("TOTAL",0);
 
 			db.execSQL(ins.sql());
 
@@ -390,6 +395,7 @@ public class DevolBod extends PBase {
 
 				ins.init("D_MOVD");
 
+				ins.add("CORELDET",movd.maxId());
 				ins.add("COREL",corel);
 				ins.add("PRODUCTO",pcod);
 				ins.add("CANT",pcant);
@@ -398,6 +404,7 @@ public class DevolBod extends PBase {
 				ins.add("PESOM",0);
 				ins.add("LOTE",pcod);
 				ins.add("CODIGOLIQUIDACION",0);
+				ins.add("PRECIO",0);
 
 				db.execSQL(ins.sql());
 

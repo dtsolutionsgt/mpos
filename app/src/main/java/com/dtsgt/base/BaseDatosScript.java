@@ -812,6 +812,7 @@ public class BaseDatosScript {
                     "[IMPRES] INTEGER NOT NULL,"+
                     "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
                     "[CODIGO_PROVEEDOR] INTEGER NOT NULL,"+
+                    "[TOTAL] REAL NOT NULL,"+
                     "PRIMARY KEY ([COREL])"+
                     ");";
             database.execSQL(sql);
@@ -833,7 +834,8 @@ public class BaseDatosScript {
                     "[PESOM] REAL NOT NULL,"+
                     "[LOTE] TEXT NOT NULL,"+
                     "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL"+
+                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
+                    "[PRECIO] REAL NOT NULL"+
                     ");";
             database.execSQL(sql);
 
@@ -843,6 +845,63 @@ public class BaseDatosScript {
                     " on D_MOVD ([COREL],[PRODUCTO],[LOTE])";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [D_DEPOS] ("+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[EMPRESA] INTEGER NOT NULL,"+
+                    "[FECHA] INTEGER NOT NULL,"+
+                    "[RUTA] INTEGER NOT NULL,"+
+                    "[BANCO] INTEGER NOT NULL,"+
+                    "[CUENTA] TEXT NOT NULL,"+
+                    "[REFERENCIA] TEXT NOT NULL,"+
+                    "[TOTAL] REAL NOT NULL,"+
+                    "[TOTEFEC] REAL NOT NULL,"+
+                    "[TOTCHEQ] REAL NOT NULL,"+
+                    "[NUMCHEQ] INTEGER NOT NULL,"+
+                    "[IMPRES] INTEGER NOT NULL,"+
+                    "[STATCOM] TEXT NOT NULL,"+
+                    "[ANULADO] INTEGER NOT NULL,"+
+                    "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE INDEX D_DEPOS_idx1 ON D_DEPOS(STATCOM)";
+            database.execSQL(sql);
+            sql="CREATE INDEX D_DEPOS_idx2 ON D_DEPOS(ANULADO)";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [D_DEPOSD] ("+
+                    "[COREL_DET] INTEGER NOT NULL,"+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[DOCCOREL] TEXT NOT NULL,"+
+                    "[TIPODOC] TEXT NOT NULL,"+
+                    "[CODPAGO] INTEGER NOT NULL,"+
+                    "[CHEQUE] TEXT NOT NULL,"+
+                    "[MONTO] REAL NOT NULL,"+
+                    "[BANCO]   NOT NULL,"+
+                    "[NUMERO] TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL_DET])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE UNIQUE INDEX IX_D_DEPOSD "+
+                    " on D_DEPOSD ([COREL],[DOCCOREL],[CODPAGO])";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [D_DEPOSB] ("+
+                    "[COREL_DET] INTEGER NOT NULL,"+
+                    "[COREL] TEXT NOT NULL,"+
+                    "[DENOMINACION] REAL NOT NULL,"+
+                    "[CANTIDAD] INTEGER NOT NULL,"+
+                    "[TIPO] TEXT NOT NULL,"+
+                    "[MONEDA] INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL_DET])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE UNIQUE INDEX IX_D_DEPOSB "+
+                    " on D_DEPOSB ([COREL],[DENOMINACION],[TIPO],[MONEDA])";
+            database.execSQL(sql);
 
             /*
 

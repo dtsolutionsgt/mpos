@@ -241,7 +241,7 @@ public class clsVendedoresObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(MAX(CODIGO_VENDEDOR),1)+1 AS MAX FROM VENDEDORES";
+            String sql = "SELECT IFNULL(MAX(CODIGO_VENDEDOR),0)+1 AS MAX FROM VENDEDORES";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

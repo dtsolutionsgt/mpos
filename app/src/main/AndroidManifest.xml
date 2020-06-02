@@ -161,6 +161,11 @@
             android:label="@string/title_activity_lista_promo"
             android:screenOrientation="landscape" />
         <activity
+            android:name=".ListaProveedores"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_lista_proveedores"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".DeposDoc"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_depos_doc"

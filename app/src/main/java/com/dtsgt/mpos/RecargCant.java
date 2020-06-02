@@ -14,12 +14,12 @@ import com.dtsgt.base.appGlobals;
 
 public class RecargCant extends PBase {
 
-	private EditText txtCant;
+	private EditText txtCant, txtPrecio;
 	private RelativeLayout rlCant;
 	private TextView lblDesc,lblPrec,lblBU;
 		
 	private String prodid,estado,raz;
-	private double cant,icant;	
+	private double cant,icant, precio, iprecio;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,7 @@ public class RecargCant extends PBase {
 			txtCant.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 		}
 
+		txtPrecio.setText(mu.frmdec(gl.costo));
 		txtCant.requestFocus();
 
 		//txtCant.setText(((appGlobals) vApp).gstr2);
@@ -67,10 +68,23 @@ public class RecargCant extends PBase {
 			setCant();
 
 			if (cant<0){
-				mu.msgbox("Cantidad incorrecta");return;
+				mu.msgbox("Cantidad incorrecta");
+				showkeyb();
+				txtCant.requestFocus();
+				return;
+			}
+
+			setPrecio();
+
+			if (precio<=0){
+				mu.msgbox("Precio incorrecto");
+				showkeyb();
+				txtPrecio.requestFocus();
+				return;
 			}
 
 			((appGlobals) vApp).dval=cant;
+			((appGlobals) vApp).precio_recarga=precio;
 			((appGlobals) vApp).devrazon="0";
 
 			hidekeyb();
@@ -87,6 +101,20 @@ public class RecargCant extends PBase {
 		try{
 
 			txtCant.setOnKeyListener(new View.OnKeyListener() {
+				@Override
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+							(keyCode == KeyEvent.KEYCODE_ENTER)) {
+						showkeyb();
+						txtPrecio.requestFocus();
+						txtPrecio.selectAll();
+						return true;
+					}
+					return false;
+				}
+			});
+
+			txtPrecio.setOnKeyListener(new View.OnKeyListener() {
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
@@ -153,6 +181,16 @@ public class RecargCant extends PBase {
 			cant=-1; 
 		}
 	}
+
+	private void setPrecio(){
+		try {
+			precio=Double.parseDouble(txtPrecio.getText().toString());
+			precio=mu.round(precio,gl.peDecCant);
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			precio=0;
+		}
+	}
 	
 	private void parseCant(double c) {
 		try{
@@ -173,6 +211,7 @@ public class RecargCant extends PBase {
 	private void setControls() {
 		try{
 			txtCant= (EditText) findViewById(R.id.txtFilter);
+			txtPrecio= (EditText) findViewById(R.id.txtFilterPrec);
 			rlCant= (RelativeLayout) findViewById(R.id.rlCant);
 			lblDesc=(TextView) findViewById(R.id.lblFecha);
 			lblPrec=(TextView) findViewById(R.id.lblPNum);

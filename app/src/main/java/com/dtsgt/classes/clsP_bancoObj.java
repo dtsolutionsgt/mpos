@@ -212,7 +212,7 @@ public class clsP_bancoObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(MAX(CODIGO_BANCO),1)+1 AS MAX FROM P_BANCO";
+            String sql = "SELECT IFNULL(MAX(CODIGO_BANCO),0)+1 AS MAX FROM P_BANCO";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

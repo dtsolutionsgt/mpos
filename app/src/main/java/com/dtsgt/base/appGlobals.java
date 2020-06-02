@@ -35,12 +35,13 @@ public class appGlobals extends Application {
 	            codigo_vendedor,
 			    emp,
 			    tienda,
-	            dias_anul;
+	            dias_anul,
+	            cod_prov_recarga;
 	public String  cliente,
 			       ruta,
 			       vend,
 				   caja;
-
+	public double precio_recarga;
 	public boolean configCajaSuc = false;
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false

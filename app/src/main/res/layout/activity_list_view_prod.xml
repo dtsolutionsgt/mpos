@@ -61,4 +61,11 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textSize="18sp" />
 
+    <TextView
+        android:id="@+id/lblCosto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.00"
+        tools:visibility="gone" />
+
 </RelativeLayout>

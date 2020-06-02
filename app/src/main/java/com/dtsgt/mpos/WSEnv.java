@@ -137,23 +137,20 @@ public class WSEnv extends PBase {
                 case 2:
                     statusFactura();
                     if (fidx>=ftot-1) {
-                        processComplete();
+                        execws(3);
                     } else {
                         execws(2);
                     }
-                    processComplete();
-                   // execws(3);
                     break;
                 case 3:
                     statusMov();
                     if (fIdxMov>=fTotMov-1) {
-                        processCompleteMov();
+                        processComplete();
                     } else {
                         execws(3);
                     }
-                    processCompleteMov();
                     break;
-        }
+            }
 
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -197,28 +194,22 @@ public class WSEnv extends PBase {
         if (ws.errorflag) {
             msgboxwait(ws.error);
         } else {
+
             ss ="Envío completo\n";
+
             ss+="Facturas total : "+ftot+"\n";
             ss+="Facturas sin envio : "+(ftot-fsend);
-            msgboxwait(ss);
-            if (!ferr.isEmpty()) msgbox("Factura : "+idfact+"\n"+ferr);
-        }
-    }
-    private void processCompleteMov() {
-        pbar.setVisibility(View.INVISIBLE);
-        plabel = "";
-        updateLabel();
 
-        if (ws.errorflag) {
-            msgboxwait(ws.error);
-        } else {
-            ss ="Envío completo\n";
             ss+="Movimientos total : "+fTotMov+"\n";
             ss+="Movimientos sin envio : "+(fTotMov-mSend);
+
             msgboxwait(ss);
+
+            if (!ferr.isEmpty()) msgbox("Factura : "+idfact+"\n"+ferr);
             if (!movErr.isEmpty()) msgbox("Movimientos : "+idMov+"\n"+movErr);
         }
     }
+
     //endregion
 
     //region Envío

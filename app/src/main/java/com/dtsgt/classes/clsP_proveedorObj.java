@@ -195,7 +195,7 @@ public class clsP_proveedorObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(MAX(CODIGO_PROVEEDOR),1)+1 AS MAX FROM P_PROVEEDOR";
+            String sql = "SELECT IFNULL(MAX(CODIGO_PROVEEDOR),0)+1 AS MAX FROM P_PROVEEDOR";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

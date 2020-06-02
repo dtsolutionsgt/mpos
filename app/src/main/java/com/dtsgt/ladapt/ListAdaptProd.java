@@ -7,6 +7,7 @@ import com.dtsgt.mpos.R;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ public class ListAdaptProd extends BaseAdapter {
 			holder.lblDesc = (TextView) convertView.findViewById(R.id.lblPNum);
 			holder.lblExtra = (TextView) convertView.findViewById(R.id.textView1);
 			holder.lblExist = (TextView) convertView.findViewById(R.id.textView142);
+			holder.lblCosto = (TextView) convertView.findViewById(R.id.lblCosto);
 			
 			convertView.setTag(holder);
 		} else {
@@ -70,7 +72,13 @@ public class ListAdaptProd extends BaseAdapter {
 		holder.lblDesc.setText(items.get(position).Desc);
 		holder.lblExtra.setText(items.get(position).prec);
 		holder.lblExist.setText(items.get(position).Text);
-		
+
+		try{
+			holder.lblCosto.setText(items.get(position).Text);
+		}catch (Exception ex){
+			Log.e("No existe el costo", ex.getMessage());
+		}
+
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
         } else {
@@ -82,7 +90,7 @@ public class ListAdaptProd extends BaseAdapter {
 	
 	
 	static class ViewHolder {
-		TextView  lblCod,lblDesc,lblExtra,lblExist;
+		TextView  lblCod,lblDesc,lblExtra,lblExist,lblCosto;
 	}
 	
 }

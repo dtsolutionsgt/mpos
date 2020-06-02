@@ -3,8 +3,10 @@ package com.dtsgt.classes;
 import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsD_MovDObj {
@@ -17,6 +19,7 @@ public class clsD_MovDObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private MiscUtils mu;
 
     private String sel="SELECT * FROM D_MOVD";
     private String sql;
@@ -28,6 +31,8 @@ public class clsD_MovDObj {
         ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
+
+        mu = new MiscUtils(cont);
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
@@ -75,6 +80,7 @@ public class clsD_MovDObj {
 
         ins.init("D_MOVD");
 
+        ins.add("CORELDET",maxId());
         ins.add("COREL",item.COREL);
         ins.add("PRODUCTO",item.PRODUCTO);
         ins.add("CANT",item.CANT);
@@ -84,6 +90,7 @@ public class clsD_MovDObj {
         ins.add("LOTE",item.LOTE);
         ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
         ins.add("UNIDADMEDIDA",item.UNIDADMEDIDA);
+        ins.add("PRECIO",item.PRECIO);
 
         db.execSQL(ins.sql());
 
@@ -102,6 +109,7 @@ public class clsD_MovDObj {
         upd.add("LOTE",item.LOTE);
         upd.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
         upd.add("UNIDADMEDIDA",item.UNIDADMEDIDA);
+        upd.add("PRECIO",item.PRECIO);
 
         upd.Where("(CORELDET="+item.CORELDET+")");
 
@@ -135,15 +143,17 @@ public class clsD_MovDObj {
 
             item = clsCls.new clsD_MovD();
 
-            item.COREL=dt.getString(0);
-            item.PRODUCTO=dt.getInt(1);
-            item.CANT=dt.getDouble(2);
-            item.CANTM=dt.getDouble(3);
-            item.PESO=dt.getDouble(4);
-            item.PESOM=dt.getDouble(5);
-            item.LOTE=dt.getString(6);
-            item.CODIGOLIQUIDACION=dt.getInt(7);
-            item.UNIDADMEDIDA=dt.getString(8);
+            item.CORELDET=dt.getInt(0);
+            item.COREL=dt.getString(1);
+            item.PRODUCTO=dt.getInt(2);
+            item.CANT=dt.getDouble(3);
+            item.CANTM=dt.getDouble(4);
+            item.PESO=dt.getDouble(5);
+            item.PESOM=dt.getDouble(6);
+            item.LOTE=dt.getString(7);
+            item.CODIGOLIQUIDACION=dt.getInt(8);
+            item.UNIDADMEDIDA=dt.getString(9);
+            item.PRECIO=dt.getDouble(10);
 
             items.add(item);
 
@@ -175,6 +185,7 @@ public class clsD_MovDObj {
 
         ins.init("D_MOVDD");
 
+        ins.add("CORELDET",item.CORELDET);
         ins.add("COREL",item.COREL);
         ins.add("PRODUCTO",item.PRODUCTO);
         ins.add("CANT",item.CANT);
@@ -184,6 +195,7 @@ public class clsD_MovDObj {
         ins.add("LOTE",item.LOTE);
         ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
         ins.add("UNIDADMEDIDA",item.UNIDADMEDIDA);
+        ins.add("PRECIO",item.PRECIO);
 
         return ins.sql();
 
@@ -202,6 +214,7 @@ public class clsD_MovDObj {
         upd.add("LOTE",item.LOTE);
         upd.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
         upd.add("UNIDADMEDIDA",item.UNIDADMEDIDA);
+        upd.add("PRECIO",item.PRECIO);
 
         upd.Where("(CORELDET="+item.CORELDET+")");
 
@@ -211,5 +224,26 @@ public class clsD_MovDObj {
 
     }
 
+    public int maxId(){
+
+        Cursor DT = null;
+        int resultado = 0;
+
+        try{
+            String sql = "SELECT IFNULL(MAX(CORELDET),0)+1 AS MAX FROM D_MOVD";
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                DT.moveToFirst();
+
+                resultado=DT.getInt(0);
+            }
+
+        } catch (Exception e) {
+            mu.msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return resultado;
+    }
 }
 

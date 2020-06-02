@@ -86,6 +86,7 @@ public class clsD_MovObj {
         ins.add("IMPRES",item.IMPRES);
         ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
         ins.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
+        ins.add("TOTAL",item.TOTAL);
 
         db.execSQL(ins.sql());
 

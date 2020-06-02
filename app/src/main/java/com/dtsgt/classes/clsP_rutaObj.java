@@ -192,7 +192,7 @@ public class clsP_rutaObj {
         int resultado = 0;
 
         try{
-            String sql = "SELECT IFNULL(Max(CODIGO_RUTA),1)+1 AS MAX FROM P_RUTA";
+            String sql = "SELECT IFNULL(Max(CODIGO_RUTA),0)+1 AS MAX FROM P_RUTA";
             DT = Con.OpenDT(sql);
 
             if (DT != null){

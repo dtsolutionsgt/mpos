@@ -104,6 +104,7 @@ public class clsClasses {
         public int IMPRES;
         public int CODIGOLIQUIDACION;
         public int CODIGO_PROVEEDOR;
+        public double TOTAL;
     }
 
     public class clsD_MovD {
@@ -117,6 +118,7 @@ public class clsClasses {
         public String LOTE;
         public int CODIGOLIQUIDACION;
         public String UNIDADMEDIDA;
+        public double PRECIO;
     }
 
     public class clsP_archivoconf {
@@ -578,6 +580,7 @@ public class clsClasses {
 	public class clsCD {
 		public String Cod,Desc,Text,um,prec;
 		public int codInt;
+		public double costo;
 	}
 	
 	public class clsCDB {
@@ -590,7 +593,7 @@ public class clsClasses {
 	public class clsCFDV {
 		public int id;
 		public String Cod,Desc,Fecha,Valor,Sid, UUID, FechaFactura;
-		public double val;
+		public double val, precio;
 	}
 	
 	public class clsExist {

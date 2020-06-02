@@ -10,9 +10,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsDocMov;
 import com.dtsgt.ladapt.ListAdaptDevCli;
 
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 public class Recarga extends PBase {
 
 	private ListView listView;
+	private TextView lblTotal;
 	
 	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
 	private ListAdaptDevCli adapter;
@@ -31,7 +34,7 @@ public class Recarga extends PBase {
 	private clsDocMov mdoc;
 	
 	private String itemid,prodid;
-	private double cant;
+	private double cant, precio, totCant, total;
 	private String estado;
 	private int itempos,emp;
 	
@@ -44,6 +47,7 @@ public class Recarga extends PBase {
 		addlog("Recarga",""+du.getActDateTime(),gl.vend);
 
 		listView = (ListView) findViewById(R.id.listView1);
+		lblTotal = (TextView) findViewById(R.id.lblTotal);
 
 		emp=((appGlobals) vApp).emp;
 		estado="R";
@@ -53,6 +57,8 @@ public class Recarga extends PBase {
 		browse=0;
 		fecha=du.getActDateTime();
 		((appGlobals) vApp).devrazon="0";
+
+		gl.cod_prov_recarga = 0;
 		
 		clearData();
 		
@@ -72,12 +78,21 @@ public class Recarga extends PBase {
 	
 	public void showProd(View view) {
 		try{
+
 			((appGlobals) vApp).gstr="";
+
 			browse=1;
 			itempos=-1;
 			gl.prodtipo=2;
-			Intent intent = new Intent(this,Producto.class);
-			startActivity(intent);
+
+			if (gl.cod_prov_recarga ==0){
+				Intent intent = new Intent(this,ListaProveedores.class);
+				startActivity(intent);
+			}else{
+				Intent intent = new Intent(this,Producto.class);
+				startActivity(intent);
+			}
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -113,7 +128,6 @@ public class Recarga extends PBase {
 
 						adapter.setSelectedIndex(position);
 
-						//updCant(vItem.id);
 						updCantCod(vItem.Cod);
 
 					} catch (Exception e) {
@@ -137,9 +151,10 @@ public class Recarga extends PBase {
 		
 		try {
 			
-			sql="SELECT T_CxCD.CODIGO, T_CxCD.CANT, ' ', P_PRODUCTO.DESCCORTA, T_CxCD.ITEM "+
-			     "FROM T_CxCD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=T_CxCD.CODIGO "+
-				 "ORDER BY P_PRODUCTO.DESCCORTA";
+			sql="SELECT T_CxCD.CODIGO, T_CxCD.CANT, (T_CxCD.CANT * T_CxCD.PRECIO) AS TOTAL, " +
+				"P_PRODUCTO.DESCCORTA, T_CxCD.ITEM, T_CxCD.PRECIO "+
+			    "FROM T_CxCD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=T_CxCD.CODIGO "+
+				"ORDER BY P_PRODUCTO.DESCCORTA";
 			
 			DT=Con.OpenDT(sql);
 			if (DT.getCount()==0) {return;}
@@ -155,6 +170,7 @@ public class Recarga extends PBase {
 			  s=mu.frmdec(DT.getDouble(1));
 			  vItem.Fecha=s;
 			  vItem.id=DT.getInt(4);
+			  vItem.precio=DT.getDouble(5);
 			  
 			  items.add(vItem);	
 			 
@@ -190,11 +206,14 @@ public class Recarga extends PBase {
 			browse=2;
 
 			itempos=-1;
+
 			((appGlobals) vApp).prod=prodid;
 			((appGlobals) vApp).gstr="";
 			((appGlobals) vApp).gstr2="";
+
 			Intent intent = new Intent(this,RecargCant.class);
 			startActivity(intent);
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -257,9 +276,10 @@ public class Recarga extends PBase {
 			((appGlobals) vApp).prod=item;
 			((appGlobals) vApp).gstr="";
 			((appGlobals) vApp).gstr2=""+pcant;
-			Intent intent = new Intent(this,RecargCant.class);
 
+			Intent intent = new Intent(this,RecargCant.class);
 			startActivity(intent);
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -267,15 +287,19 @@ public class Recarga extends PBase {
 	}
 	
 	private void processCant(){
-		double cnt;
+		double cnt, vPrecio;
 		String raz;
 
 		try{
 			cnt=((appGlobals) vApp).dval;
+			vPrecio=((appGlobals) vApp).precio_recarga;
+
 			if (cnt<0) return;
+			if (vPrecio<=0) return;
 
 			raz=((appGlobals) vApp).devrazon;
 			cant=cnt;
+			precio=vPrecio;
 
 			addItem(raz);
 		}catch (Exception e){
@@ -287,16 +311,7 @@ public class Recarga extends PBase {
 	private void addItem(String raz){
 		Cursor DT;
 		int id;
-		
-		/*
-		try {
-			vSQL="DELETE FROM T_CxCD WHERE item="+itempos;
-			db.execSQL(vSQL);
-		} catch (SQLException e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}
-		*/
-		
+
 		try {
 			sql="DELETE FROM T_CxCD WHERE CODIGO='"+prodid+"'";
 			db.execSQL(sql);
@@ -325,7 +340,7 @@ public class Recarga extends PBase {
 			ins.add("CANT",cant);
 			ins.add("CODDEV",raz);
 			ins.add("TOTAL",0);
-			ins.add("PRECIO",0);
+			ins.add("PRECIO",precio);
 			ins.add("PRECLISTA",0);
 			ins.add("REF","");
 			ins.add("PESO",0);
@@ -354,18 +369,25 @@ public class Recarga extends PBase {
 		}
 
 		listItems();
-				
+		String totales= getTotals();
+		lblTotal.setText(totales);
+
 	}
 	
 	private void saveDevol(){
 		Cursor DT;
-		String corel,pcod;
-		Double pcant;
+		String corel,pCod;
+		Double pCant, pPrecio;
+		clsD_MovDObj movd = new clsD_MovDObj(Recarga.this, Con, db);
 		
 		corel=((appGlobals) vApp).ruta+"_"+mu.getCorelBase();
 		
 		try {
-			
+
+			if (!validaDatos()){
+				return;
+			}
+
 			db.beginTransaction();
 			
 			ins.init("D_MOV");
@@ -380,32 +402,37 @@ public class Recarga extends PBase {
 			ins.add("STATCOM","N");
 			ins.add("IMPRES",0);
 			ins.add("CODIGOLIQUIDACION",0);
+			ins.add("CODIGO_PROVEEDOR",gl.cod_prov_recarga);
+			ins.add("TOTAL",total);
 		
 			db.execSQL(ins.sql());
 			
-			sql="SELECT Item,CODIGO,CANT,CODDEV FROM T_CxCD WHERE CANT>0";
+			sql="SELECT Item,CODIGO,CANT,CODDEV, PRECIO FROM T_CxCD WHERE CANT>0";
 			DT=Con.OpenDT(sql);
 	
 			DT.moveToFirst();
 			while (!DT.isAfterLast()) {
 			
-				pcod=DT.getString(1);
-				pcant=DT.getDouble(2);
+				pCod=DT.getString(1);
+				pCant=DT.getDouble(2);
+				pPrecio=DT.getDouble(4);
 				
 			  	ins.init("D_MOVD");
-			  	
+
+				ins.add("CORELDET",movd.maxId());
 				ins.add("COREL",corel);
-				ins.add("PRODUCTO",pcod);
-				ins.add("CANT",pcant);
+				ins.add("PRODUCTO",pCod);
+				ins.add("CANT",pCant);
 				ins.add("CANTM",0);
 				ins.add("PESO",0);
 				ins.add("PESOM",0);
-				ins.add("LOTE",pcod);
+				ins.add("LOTE",pCod);
 				ins.add("CODIGOLIQUIDACION",0);
+				ins.add("PRECIO",pPrecio);
 			
-			    //db.execSQL(ins.sql());
+			    db.execSQL(ins.sql());
 			    
-			    updateStock(corel,pcod,pcant);
+			    updateStock(corel,pCod,pCant);
 			    	
 			    DT.moveToNext();
 			}
@@ -431,7 +458,30 @@ public class Recarga extends PBase {
 		}	
 		
 	}
-	
+
+	private boolean validaDatos(){
+
+		boolean resultado=true;
+
+		try{
+
+			if (gl.cod_prov_recarga ==0){
+				msgbox("Debe ingresar el proveedor de ingreso de mercancía");
+				resultado=false;
+			}
+
+			if (!hasProducts()){
+				msgbox("Debe ingresar productos al ingreso de mercancía");
+				resultado=false;
+			}
+
+		}catch (Exception ex){
+			msgbox("Ocurrió un error validando datos " + ex.getMessage());
+		}
+
+		return resultado;
+	}
+
 	private void updateStock(String corel,String pcod,double pcant) {
 		Cursor DT;
 		int icod=Integer.parseInt(pcod);
@@ -551,7 +601,37 @@ public class Recarga extends PBase {
 			return false;
 		}	
 	}
-		
+
+	private String getTotals(){
+		Cursor DT;
+
+		String resultado = "";
+
+		try {
+
+			sql="SELECT SUM(CANT), SUM(PRECIO*CANT) AS TOTAL FROM T_CxCD";
+			DT=Con.OpenDT(sql);
+
+			if(DT != null){
+				if (DT.getCount()>0){
+
+					DT.moveToFirst();
+
+					total=DT.getDouble(1);
+					totCant=DT.getDouble(0);
+
+					resultado = String.format("Cantidad: %s                  Total: %s", mu.frmdec(totCant),  mu.frmdec(total));
+
+				}
+			}
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+		}
+
+		return resultado;
+	}
+
 	private void doExit(){
 		try{
 			super.finish();

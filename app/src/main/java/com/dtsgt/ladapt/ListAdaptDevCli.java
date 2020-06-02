@@ -60,6 +60,7 @@ public class ListAdaptDevCli extends BaseAdapter {
 			holder.lblDesc = (TextView) convertView.findViewById(R.id.lblPValor);
 			holder.lblValor = (TextView) convertView.findViewById(R.id.lblPNum);
 			holder.lblCant = (TextView) convertView.findViewById(R.id.lblCant);
+			holder.lblPrecio = (TextView) convertView.findViewById(R.id.lblPrecio);
 			
 			convertView.setTag(holder);
 		} else {
@@ -70,6 +71,7 @@ public class ListAdaptDevCli extends BaseAdapter {
 		holder.lblDesc.setText(itemDetailsrrayList.get(position).Desc);
 		holder.lblValor.setText(itemDetailsrrayList.get(position).Valor);
 		holder.lblCant.setText(itemDetailsrrayList.get(position).Fecha);
+		holder.lblPrecio.setText(String.valueOf(itemDetailsrrayList.get(position).precio));
 		
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -82,7 +84,7 @@ public class ListAdaptDevCli extends BaseAdapter {
 	
 	
 	static class ViewHolder {
-		TextView  lblCod,lblDesc,lblCant,lblValor;
+		TextView  lblCod,lblDesc,lblCant,lblValor,lblPrecio;
 	}
 	
 }
