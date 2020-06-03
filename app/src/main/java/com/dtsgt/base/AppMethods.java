@@ -758,17 +758,19 @@ public class AppMethods {
 
 	public int nivelSucursal() {
         Cursor DT;
+        int niv;
 
         try {
-            String sql = "SELECT CODIGO_NIVEL_PRECIO FROM P_SUCURSAL WHERE CODIGO='" + gl.tienda + "'";
+            String sql = "SELECT CODIGO_NIVEL_PRECIO, FROM P_SUCURSAL WHERE CODIGO='" + gl.tienda + "'";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
-            return  DT.getInt(0);
+            niv=DT.getInt(0);
         } catch (Exception e) {
-            return 1;
+            niv=1;
         }
 
+        return niv;
     }
 
 	//#CKFK20200524_FIX_BY_OPENDT Puse esta función en comentario porque la tabla P_IMPRESORA no existe en MPos

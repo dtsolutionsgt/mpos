@@ -2208,6 +2208,8 @@ public class Venta extends PBase {
         lblAlm.setText(gl.tiendanom);
         lblPokl.setText(gl.vendnom);
 
+
+
         try {
             sql="SELECT TIPO_HH FROM P_ARCHIVOCONF WHERE RUTA='"+gl.ruta+"'";
             DT=Con.OpenDT(sql);
@@ -2708,6 +2710,8 @@ public class Venta extends PBase {
 
                 browse=0;
                 lblVend.setText(" ");
+
+                gl.nivel=gl.nivel_sucursal;
 
                 try  {
                     db.execSQL("DELETE FROM T_VENTA");

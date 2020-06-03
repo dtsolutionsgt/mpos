@@ -183,6 +183,15 @@ public class BaseDatos extends SQLiteOpenHelper {
 			  } catch (Exception e) { }
 			  
 		  }
+
+          public void add(String pField, boolean pValue) {
+              String SV;
+
+              try  {
+                  clFList.add(pField);
+                  if (pValue) clVList.add("1");else clVList.add("0");
+              } catch (Exception e) { }
+          }
 		   
 		  public String sql() {
 			  String sVal, S, SF, SV;
@@ -190,8 +199,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 			  if (clTable == "") {return "";}
 			  if (clFList.isEmpty()) {return "";}
 			  
-			  try 
-			  {
+			  try  {
 
 				  SV="";
 				  SF="";
@@ -272,16 +280,27 @@ public class BaseDatos extends SQLiteOpenHelper {
 			  
 		  }
 
-		  public void add(String pField, int pValue ) {
-			  String SV;
-			  
-			  try  {
-				  if (pField == "") return;
-				  SV= String.valueOf(pValue);
-				  clFList.add(pField + " = "+ SV);
-			  } catch (Exception e) { }
-			  
-		  }
+		  public void add(String pField, boolean pValue ) {
+              String SV;
+
+              try  {
+                  if (pField == "") return;
+                  if (pValue) SV="1";else SV="0";
+                  clFList.add(pField + " = "+ SV);
+              } catch (Exception e) { }
+
+          }
+
+          public void add(String pField, int pValue ) {
+              String SV;
+
+              try  {
+                  if (pField == "") return;
+                  SV= String.valueOf(pValue);
+                  clFList.add(pField + " = "+ SV);
+              } catch (Exception e) { }
+
+          }
 		  
 		  public void add(String pField, double pValue ) {
 			  String SV;

@@ -30,6 +30,7 @@ import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.fel.FelService;
 import com.dtsgt.ladapt.LA_Login;
 
 import java.io.File;
@@ -200,16 +201,10 @@ public class MainActivity extends PBase {
     }
 
     public void doLogin(View view) {
-
-        /*
-        if (!validaLicencia()) {
-            startActivity(new Intent(this, comWSLic.class));
-            return;
-        }
-        */
-
         try {
-            processLogIn();
+            //Intent intent = new Intent(this, FelService.class);
+            //intent.putExtra("URL","https://www.vogella.com/index.html");
+            //startService(intent);
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }

@@ -35,6 +35,11 @@
         android:usesCleartextTraffic="true"
         tools:ignore="LockedOrientationActivity">
 
+        <service
+            android:name="com.dtsgt.fel.FelService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -235,8 +240,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_recarg_cant"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateAlwaysVisible"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".FacturaRes"
             android:configChanges="keyboardHidden|orientation|screenSize"

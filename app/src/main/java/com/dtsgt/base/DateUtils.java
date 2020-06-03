@@ -251,7 +251,7 @@ public class DateUtils {
 		return sd+"/"+sm+"/"+sy;
 	}
 
-   public long ffecha00(long f) {
+    public long ffecha00(long f) {
 		f=(long) f/10000;
 		f=f*10000;
 		return f;
@@ -577,6 +577,30 @@ public class DateUtils {
 
 		return s;
 	}
+
+    public String getCorelBaseLong() {
+        long vy,vm,vd,m,h,sec;
+        String s;
+
+        //yyyyMMddhhmmss
+        final Calendar c = Calendar.getInstance();
+
+        vy = c.get(Calendar.YEAR);
+        vm = c.get(Calendar.MONTH)+1;
+        vd = c.get(Calendar.DAY_OF_MONTH);
+        h=c.get(Calendar.HOUR_OF_DAY);
+        m=c.get(Calendar.MINUTE);
+        sec=c.get(Calendar.SECOND);
+
+        s=""+vy;
+        if (vm>9) s=s+vm; else s=s+"0"+vm;
+        if (vd>9) s=s+vd; else s=s+"0"+vd;
+        if (h>9)  s=s+h;  else s=s+"0"+h;
+        if (m>9)  s=s+m;  else s=s+"0"+m;
+        if (sec>9)  s=s+sec;  else s=s+"0"+sec;
+
+        return s;
+    }
 
 	//region Fecha larga
 

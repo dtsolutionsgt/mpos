@@ -198,7 +198,7 @@ public class WSEnv extends PBase {
             ss ="Envío completo\n";
 
             ss+="Facturas total : "+ftot+"\n";
-            ss+="Facturas sin envio : "+(ftot-fsend);
+            ss+="Facturas sin envio : "+(ftot-fsend)+"\n";
 
             ss+="Movimientos total : "+fTotMov+"\n";
             ss+="Movimientos sin envio : "+(fTotMov-mSend);

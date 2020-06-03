@@ -2,11 +2,14 @@ package com.dtsgt.mpos;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -654,9 +657,14 @@ public class FacturaRes extends PBase {
         if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
             impressOrder();
         } else {
-            browse=2;
-            gl.felcorel=corel;gl.feluuid="";
-            startActivity(new Intent(this, FelFactura.class));
+            if (isNetworkAvailable()) {
+                browse=2;
+                gl.felcorel=corel;gl.feluuid="";
+                startActivity(new Intent(this, FelFactura.class));
+            } else {
+                toast("No hay conexion a internet");
+                impressOrder();
+            }
         }
 
 	}
@@ -2335,6 +2343,13 @@ public class FacturaRes extends PBase {
 		}
 
 	}
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 	//endregion
 	
