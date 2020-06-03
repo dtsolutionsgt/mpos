@@ -53,7 +53,7 @@ public class FelFactura extends PBase {
         super.InitBase();
 
         lbl1 = (TextView) findViewById(R.id.textView7);lbl1.setText("");
-        lbl2 = (TextView) findViewById(R.id.textView150);lbl2.setText("");
+        lbl2 = (TextView) findViewById(R.id.lblWS);lbl2.setText("");
         lbl3 = (TextView) findViewById(R.id.textView152);lbl3.setText("");
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);

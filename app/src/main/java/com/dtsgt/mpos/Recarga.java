@@ -274,7 +274,7 @@ public class Recarga extends PBase {
 			prodid=item;
 
 			((appGlobals) vApp).prod=item;
-			((appGlobals) vApp).gstr="";
+			((appGlobals) vApp).gstr="0";
 			((appGlobals) vApp).gstr2=""+pcant;
 
 			Intent intent = new Intent(this,RecargCant.class);
