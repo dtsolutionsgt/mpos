@@ -8,7 +8,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -111,8 +113,9 @@ import java.util.ArrayList;
 
 public class WSRec extends PBase {
 
-    private TextView lbl1, lbl2;
+    private TextView lbl1, lbl2, lblIdDispositivo;
     private TextView lblTitulo;
+    EditText txtEmpresa, txtClave, txtURLWS;
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
@@ -132,13 +135,20 @@ public class WSRec extends PBase {
         lbl1 = (TextView) findViewById(R.id.textView7);
         lbl1.setText("");
         lblTitulo = (TextView) findViewById(R.id.lblTit6);
-        lbl2 = (TextView) findViewById(R.id.textView150);
-        lbl2.setText("");
+        //lbl2 = (TextView) findViewById(R.id.lblWS);
+        //lbl2.setText("");
+
+        txtClave = (EditText) findViewById(R.id.txtClave);
+        txtEmpresa = (EditText) findViewById(R.id.txtEmpresa);
+        txtURLWS = (EditText) findViewById(R.id.txtURLWS);
+
+        lblIdDispositivo = (TextView) findViewById(R.id.lblIdDispositivo);
 
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
         getURL();
+        setHandlers();
 
         ws = new WebServiceHandler(WSRec.this, gl.wsurl);
         xobj = new XMLObject(ws);
@@ -149,13 +159,40 @@ public class WSRec extends PBase {
 
         pbd_vacia = getIntent().getBooleanExtra("bd_vacia", false);
 
+        lblIdDispositivo.setText("ID - " + gl.deviceId);
+
         if (pbd_vacia) {
             lblTitulo.setText("B.D. Vacía");
-            lbl2.setText("Conectado a: " + gl.wsurl);
+
+            txtURLWS.setEnabled(true);
+            txtClave.setEnabled(true);
+            txtEmpresa.setEnabled(true);
+
+            txtURLWS.setText(gl.wsurl);
+            txtClave.setText("");
+            txtEmpresa.setText("");
+
+            showkeyb();
+            txtEmpresa.requestFocus();
+
+        }else{
+
+            txtURLWS.setEnabled(false);
+            txtClave.setEnabled(false);
+            txtEmpresa.setEnabled(false);
+
+            txtURLWS.setText(gl.wsurl);
+            txtClave.setText("1");
+            txtEmpresa.setText(gl.emp);
         }
+
     }
 
     public void doStart(View view) {
+       Recibir();
+    }
+
+    public void Recibir(){
         script.clear();
         pbar.setVisibility(View.VISIBLE);
         execws(1);
@@ -613,6 +650,67 @@ public class WSRec extends PBase {
         mtimer.postDelayed(mrunner, 200);
     }
 
+    private void setHandlers() {
+
+        try{
+
+            txtEmpresa.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
+                            (event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                        showkeyb();
+                        txtClave.requestFocus();
+
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
+
+            txtClave.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
+                            (event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                        showkeyb();
+                        txtURLWS.requestFocus();
+
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
+
+            txtURLWS.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
+                            (event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                        showkeyb();
+                        Recibir();
+
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            });
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
     private void processComplete() {
         pbar.setVisibility(View.INVISIBLE);
         plabel = "";
@@ -627,7 +725,7 @@ public class WSRec extends PBase {
         }
     }
 
-        private boolean processData() {
+    private boolean processData() {
 
         try {
 
@@ -2010,8 +2108,8 @@ public class WSRec extends PBase {
             gl.wsurl = "";
         }
 
-        if (!gl.wsurl.isEmpty()) lbl2.setText(gl.wsurl);
-        else lbl2.setText("Falta archivo con URL");
+        if (!gl.wsurl.isEmpty()) txtURLWS.setText(gl.wsurl);
+        else txtURLWS.setText("Falta archivo con URL");
 
     }
 

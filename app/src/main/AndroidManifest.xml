@@ -235,6 +235,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_recarg_cant"
             android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateAlwaysVisible"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".FacturaRes"

@@ -34,13 +34,12 @@ public class RecargCant extends PBase {
 		prodid=((appGlobals) vApp).prod;
 		estado=((appGlobals) vApp).devtipo;
 		raz=((appGlobals) vApp).gstr;
+		precio = gl.precio_recarga;
 	
 		setHandlers();
 		
 		((appGlobals) vApp).dval=-1;
-		
-		showkeyb();
-	
+
 		showData();
 
 		if (gl.peDecCant==0) {
@@ -49,7 +48,6 @@ public class RecargCant extends PBase {
 			txtCant.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 		}
 
-		txtPrecio.setText(mu.frmdec(gl.costo));
 		txtCant.requestFocus();
 
 		//txtCant.setText(((appGlobals) vApp).gstr2);
@@ -69,7 +67,6 @@ public class RecargCant extends PBase {
 
 			if (cant<0){
 				mu.msgbox("Cantidad incorrecta");
-				showkeyb();
 				txtCant.requestFocus();
 				return;
 			}
@@ -78,7 +75,6 @@ public class RecargCant extends PBase {
 
 			if (precio<=0){
 				mu.msgbox("Precio incorrecto");
-				showkeyb();
 				txtPrecio.requestFocus();
 				return;
 			}
@@ -87,7 +83,6 @@ public class RecargCant extends PBase {
 			((appGlobals) vApp).precio_recarga=precio;
 			((appGlobals) vApp).devrazon="0";
 
-			hidekeyb();
 			super.finish();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -105,9 +100,9 @@ public class RecargCant extends PBase {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
 							(keyCode == KeyEvent.KEYCODE_ENTER)) {
-						showkeyb();
 						txtPrecio.requestFocus();
-						txtPrecio.selectAll();
+						txtPrecio.setText("");
+
 						return true;
 					}
 					return false;
@@ -152,24 +147,34 @@ public class RecargCant extends PBase {
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   mu.msgbox("1-"+ e.getMessage());costo=0;
-	    }	
-		
-		lblPrec.setText(mu.frmdec(costo));gl.costo=costo;
-		
+	    }
+
+		gl.costo=costo;
+		lblPrec.setText(mu.frmdec(costo));
+		txtPrecio.setText(mu.frmdec(costo));
+
 		try {
-			sql="SELECT CANT FROM T_CxCD WHERE CODIGO='"+prodid+"' AND CODDEV='"+raz+"'";
+			sql="SELECT CANT, PRECIO FROM T_CxCD WHERE CODIGO='"+prodid+"' AND CODDEV='"+raz+"'";
            	DT=Con.OpenDT(sql);
-           	
-       		DT.moveToFirst();
-  			icant=DT.getDouble(0);
-  				
+
+			if (DT != null) {
+				if(DT.getCount()>0){
+					DT.moveToFirst();
+					icant=DT.getDouble(0);
+					iprecio=DT.getDouble(1);
+
+					if (icant>0) parseCant(icant);
+					if (iprecio>0) parsePrecio(icant);
+
+				}
+			}
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			icant=0;
+			iprecio=0;
 	    }	
 
-		if (icant>0) parseCant(icant);
-		
 	}
 	
 	private void setCant(){
@@ -204,7 +209,18 @@ public class RecargCant extends PBase {
 		}
 
 	}
+	private void parsePrecio(double c) {
+		try{
+			DecimalFormat frmdec = new DecimalFormat("#.####");
+			double ub;
 
+			ub=c;
+			if (ub>0) txtPrecio.setText(frmdec.format(ub));
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+
+	}
 	
 	// Aux
 
