@@ -466,7 +466,7 @@ public class WSEnv extends PBase {
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
             P_clienteObj.fill("WHERE ESERVICE='N'");ccant=P_clienteObj.count;
 
-            D_facturaObj.fill("WHERE STATCOM='N'");
+            D_facturaObj.fill("WHERE (STATCOM='N') AND (FEELUUID<>' ') ");
             ftot=D_facturaObj.count;
             fsend=0;
             if (ftot>0) fidx=-1;else fidx=0;

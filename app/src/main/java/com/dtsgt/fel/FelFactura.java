@@ -14,6 +14,7 @@ import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -42,7 +43,7 @@ public class FelFactura extends PBase {
     private ArrayList<String> facts = new ArrayList<String>();
 
     private String felcorel,corel;
-    private boolean demomode,multiflag,contmode;
+    private boolean ddemomode,multiflag,contmode;
     private int ftot,ffail,fidx;
 
     @Override
@@ -64,26 +65,39 @@ public class FelFactura extends PBase {
 
         fel=new clsFELInFile(this,this);
 
+        clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
+        sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+        clsClasses.clsP_sucursal suc=sucursal.first();
+
+        fel.llave_cert =suc.pet_llave; // PET_LLAVE
+        fel.llave_firma=suc.pet_pfx_llave; // PET_PFX_LLAVE
+        fel.fel_codigo=suc.pet_prefijo;  // PET_PREFIJO
+        fel.fel_alias=suc.pet_alias_pfx; // PET_ALIAS
+        fel.fel_nit=suc.nit; // NIT
+        fel.fel_correo=suc.correo;  // CORREO
+
+        /*
         demomode=true;
 
         if (demomode) {
 
-            fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
-            fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
-            fel.fel_codigo ="1";
-            fel.fel_alias="DEMO_FEL";
-            fel.fel_nit="1000000000K";
-            fel.fel_correo="ejcalderon@dts.com.gt";
+            fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D"; // PET_LLAVE
+            fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc"; // PET_PFX_LLAVE
+            fel.fel_codigo ="1";  // PET_PREFIJO
+            fel.fel_alias="DEMO_FEL"; // PET_ALIAS
+            fel.fel_nit="1000000000K"; // NIT
+            fel.fel_correo="ejcalderon@dts.com.gt";  // CORREO
 
         } else {
 
-            fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
-            fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41";
-            fel.fel_codigo="PEXPRESS";
-            fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
-            fel.fel_nit="96049340";
-
+            fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED"; // PET_LLAVE
+            fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41"; // PET_PFX_LLAVE
+            fel.fel_codigo="PEXPRESS"; // PET_PREFIJO
+            fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA"; // PET_ALIAS
+            fel.fel_nit="96049340"; // NIT
+            fel.fel_correo="";  // CORREO
         }
+        */
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
@@ -163,6 +177,10 @@ public class FelFactura extends PBase {
     public void felCallBack()  {
         if (multiflag) {
 
+            if (fel.errorcon) {
+                msgexit(fel.error);return;
+            }
+
             if (!fel.errorflag) {
                 marcaFactura();
             }
@@ -209,12 +227,16 @@ public class FelFactura extends PBase {
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
 
+            /*
             if (demomode) {
                 //fel.fel_ident="abc123";
                 fel.fel_ident=fact.serie+fact.corelativo;
             } else {
                 fel.fel_ident=fact.serie+fact.corelativo;
             }
+            */
+
+            fel.fel_ident=fact.serie+fact.corelativo;
 
             fel.iniciar(fact.fecha);
             fel.emisor("GEN",fel.fel_codigo,"",fel.fel_nit,fel.fel_alias);

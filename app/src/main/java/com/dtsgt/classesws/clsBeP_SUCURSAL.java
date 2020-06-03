@@ -1,5 +1,6 @@
 package com.dtsgt.classesws;
 
+
 import org.simpleframework.xml.Element;
 
 public class clsBeP_SUCURSAL {
@@ -12,6 +13,7 @@ public class clsBeP_SUCURSAL {
     @Element(required=false) public String NOMBRE;
     @Element(required=false) public String DIRECCION;
     @Element(required=false) public String TELEFONO;
+    @Element(required=false) public String CORREO;
     @Element(required=false) public String NIT;
     @Element(required=false) public String TEXTO;
     @Element(required=false) public boolean ACTIVO;
@@ -29,9 +31,9 @@ public class clsBeP_SUCURSAL {
 
     public clsBeP_SUCURSAL(int CODIGO_SUCURSAL,String CODIGO,int EMPRESA,int CODIGO_NIVEL_PRECIO,
                            String DESCRIPCION,String NOMBRE,String DIRECCION,String TELEFONO,
-                           String NIT,String TEXTO,boolean ACTIVO,String PET_PREFIJO,
-                           String PET_LLAVE,String PET_ALIAS_PFX,String PET_PFX_LLAVE,int CODIGO_ESCENARIO_ISR,
-                           int CODIGO_ESCENARIO_IVA,String CODIGO_MUNICIPIO) {
+                           String CORREO,String NIT,String TEXTO,boolean ACTIVO,
+                           String PET_PREFIJO,String PET_LLAVE,String PET_ALIAS_PFX,String PET_PFX_LLAVE,
+                           int CODIGO_ESCENARIO_ISR,int CODIGO_ESCENARIO_IVA,String CODIGO_MUNICIPIO) {
 
         this.CODIGO_SUCURSAL=CODIGO_SUCURSAL;
         this.CODIGO=CODIGO;
@@ -41,6 +43,7 @@ public class clsBeP_SUCURSAL {
         this.NOMBRE=NOMBRE;
         this.DIRECCION=DIRECCION;
         this.TELEFONO=TELEFONO;
+        this.CORREO=CORREO;
         this.NIT=NIT;
         this.TEXTO=TEXTO;
         this.ACTIVO=ACTIVO;
@@ -102,6 +105,12 @@ public class clsBeP_SUCURSAL {
     }
     public void setTELEFONO(String value) {
         TELEFONO=value;
+    }
+    public String getCORREO() {
+        return CORREO;
+    }
+    public void setCORREO(String value) {
+        CORREO=value;
     }
     public String getNIT() {
         return NIT;

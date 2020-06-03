@@ -522,7 +522,8 @@ public class Menu extends PBase {
     private void showMenuCom() {
 
         final AlertDialog Dialog;
-        final String[] selitems = {"Envío de datos","Recepción de parámetros","Envío de huellas"};
+        final String[] selitems = {"Envío de datos","Recepción de parámetros"};
+        //final String[] selitems = {"Envío de datos","Recepción de parámetros","Envío de huellas"};
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Comunicación");

@@ -137,7 +137,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 			  String SV;
 			  
 			  try  {
-				  if (pField == "") return;
+				  //if (pField == "") return;
 				  
 				  pValue=pValue.replace("'", "");
 

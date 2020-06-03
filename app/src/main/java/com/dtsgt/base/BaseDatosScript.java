@@ -319,8 +319,8 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_DESCUENTO_idx4 ON P_DESCUENTO(FECHAFIN)";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_SUCURSAL] ("+
-                    "CODIGO_SUCURSAL INTEGER PRIMARY KEY,"+
+            sql="CREATE TABLE [P_sucursal] ("+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
                     "CODIGO_NIVEL_PRECIO INTEGER NOT NULL,"+
@@ -328,18 +328,20 @@ public class BaseDatosScript {
                     "NOMBRE TEXT NOT NULL,"+
                     "DIRECCION TEXT NOT NULL,"+
                     "TELEFONO TEXT NOT NULL,"+
+                    "CORREO TEXT NOT NULL,"+
                     "NIT TEXT NOT NULL,"+
                     "TEXTO TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
-                    "PET_PREFIJO TEXT,"+
-                    "PET_LLAVE TEXT,"+
-                    "PET_ALIAS_PFX TEXT,"+
-                    "PET_PFX_LLAVE TEXT,"+
-                    "CODIGO_ESCENARIO_ISR INTEGER,"+
-                    "CODIGO_ESCENARIO_IVA INTEGER,"+
-                    "CODIGO_MUNICIPIO INTEGER"+
+                    "PET_PREFIJO TEXT NOT NULL,"+
+                    "PET_LLAVE TEXT NOT NULL,"+
+                    "PET_ALIAS_PFX TEXT NOT NULL,"+
+                    "PET_PFX_LLAVE TEXT NOT NULL,"+
+                    "CODIGO_ESCENARIO_ISR INTEGER NOT NULL,"+
+                    "CODIGO_ESCENARIO_IVA INTEGER NOT NULL,"+
+                    "CODIGO_MUNICIPIO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_SUCURSAL])"+
                     ");";
-            database.execSQL(sql);
+             database.execSQL(sql);
 
             sql="CREATE TABLE [P_STOCK] ("+
                     "[CODIGO] INT NOT NULL,"+

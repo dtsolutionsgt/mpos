@@ -483,6 +483,7 @@ public class clsClasses {
         public String nombre;
         public String direccion;
         public String telefono;
+        public String correo;
         public String nit;
         public String texto;
         public int  activo;
@@ -494,6 +495,7 @@ public class clsClasses {
         public int  codigo_escenario_iva;
         public String codigo_municipio;
     }
+
 
     public class clsP_ruta {
         public String codigo;

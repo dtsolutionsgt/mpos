@@ -30,7 +30,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class clsFELInFile {
 
     public String  error,fecha_factura;
-    public Boolean errorflag,constat;
+    public Boolean errorflag,errorcon,constat;
     public int errlevel;
 
     public String xml,xmlanul;
@@ -81,12 +81,12 @@ public class clsFELInFile {
     public clsFELInFile(Context context, PBase Parent) {
         cont=context;
         parent=Parent;
-        errlevel=0;error="";errorflag=false;
+        errlevel=0;error="";errorflag=false;errorcon=false;
     }
 
     public void certificacion() {
         fact_uuid="";fact_serie="";fact_numero=0;
-        errlevel=0;error="";errorflag=false;constat=true;
+        errlevel=0;error="";errorflag=false;constat=true;errorcon=false;
         sendJSONFirm();
     }
 
@@ -152,7 +152,8 @@ public class clsFELInFile {
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
-                error="No hay conexión al internet";errorflag=true;constat=false;return;
+                error="No hay conexión al internet";
+                errorcon=true;errorflag=true;constat=false;return;
             }
 
             wr.writeBytes (jsfirm);
@@ -294,7 +295,8 @@ public class clsFELInFile {
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
-                error="No hay conexión al internet";errorflag=true;constat=false;return;
+                error="No hay conexión al internet";
+                errorcon=true;errorflag=true;constat=false;return;
             }
 
             wr.writeBytes (jscert);
@@ -429,7 +431,8 @@ public class clsFELInFile {
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
-                error="No hay conexión al internet";errorflag=true;constat=false;return;
+                error="No hay conexión al internet";
+                errorcon=true;errorflag=true;constat=false;return;
             }
 
             wr.writeBytes(jsfirm);
@@ -569,7 +572,8 @@ public class clsFELInFile {
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
-                error="No hay conexión al internet";errorflag=true;constat=false;return;
+                error="No hay conexión al internet";
+                errorcon=true;errorflag=true;constat=false;return;
             }
 
             wr.writeBytes (jsanul);

@@ -18,7 +18,7 @@ public class clsP_sucursalObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM P_SUCURSAL";
+    private String sel="SELECT * FROM P_sucursal";
     private String sql;
     public ArrayList<clsClasses.clsP_sucursal> items= new ArrayList<clsClasses.clsP_sucursal>();
 
@@ -73,7 +73,7 @@ public class clsP_sucursalObj {
 
     private void addItem(clsClasses.clsP_sucursal item) {
 
-        ins.init("P_SUCURSAL");
+        ins.init("P_sucursal");
 
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("CODIGO",item.codigo);
@@ -83,6 +83,7 @@ public class clsP_sucursalObj {
         ins.add("NOMBRE",item.nombre);
         ins.add("DIRECCION",item.direccion);
         ins.add("TELEFONO",item.telefono);
+        ins.add("CORREO",item.correo);
         ins.add("NIT",item.nit);
         ins.add("TEXTO",item.texto);
         ins.add("ACTIVO",item.activo);
@@ -109,6 +110,7 @@ public class clsP_sucursalObj {
         upd.add("NOMBRE",item.nombre);
         upd.add("DIRECCION",item.direccion);
         upd.add("TELEFONO",item.telefono);
+        upd.add("CORREO",item.correo);
         upd.add("NIT",item.nit);
         upd.add("TEXTO",item.texto);
         upd.add("ACTIVO",item.activo);
@@ -160,16 +162,17 @@ public class clsP_sucursalObj {
             item.nombre=dt.getString(5);
             item.direccion=dt.getString(6);
             item.telefono=dt.getString(7);
-            item.nit=dt.getString(8);
-            item.texto=dt.getString(9);
-            item.activo=dt.getInt(10);
-            item.pet_prefijo=dt.getString(11);
-            item.pet_llave=dt.getString(12);
-            item.pet_alias_pfx=dt.getString(13);
-            item.pet_pfx_llave=dt.getString(14);
-            item.codigo_escenario_isr=dt.getInt(15);
-            item.codigo_escenario_iva=dt.getInt(16);
-            item.codigo_municipio=dt.getString(17);
+            item.correo=dt.getString(8);
+            item.nit=dt.getString(9);
+            item.texto=dt.getString(10);
+            item.activo=dt.getInt(11);
+            item.pet_prefijo=dt.getString(12);
+            item.pet_llave=dt.getString(13);
+            item.pet_alias_pfx=dt.getString(14);
+            item.pet_pfx_llave=dt.getString(15);
+            item.codigo_escenario_isr=dt.getInt(16);
+            item.codigo_escenario_iva=dt.getInt(17);
+            item.codigo_municipio=dt.getString(18);
 
             items.add(item);
 
@@ -205,17 +208,18 @@ public class clsP_sucursalObj {
         ins.add("CODIGO",item.codigo);
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_NIVEL_PRECIO",item.codigo_nivel_precio);
-        ins.add("DESCRIPCION",item.descripcion);
-        ins.add("NOMBRE",item.nombre);
-        ins.add("DIRECCION",item.direccion);
-        ins.add("TELEFONO",item.telefono);
-        ins.add("NIT",item.nit);
-        ins.add("TEXTO",item.texto);
+        ins.add("DESCRIPCION",item.descripcion+"");
+        ins.add("NOMBRE",item.nombre+"");
+        ins.add("DIRECCION",item.direccion+"");
+        ins.add("TELEFONO",item.telefono+"");
+        ins.add("CORREO",item.correo+"");
+        ins.add("NIT",item.nit+"");
+        ins.add("TEXTO",item.texto+"");
         ins.add("ACTIVO",item.activo);
-        ins.add("PET_PREFIJO",item.pet_prefijo);
-        ins.add("PET_LLAVE",item.pet_llave);
-        ins.add("PET_ALIAS_PFX",item.pet_alias_pfx);
-        ins.add("PET_PFX_LLAVE",item.pet_pfx_llave);
+        ins.add("PET_PREFIJO",item.pet_prefijo+"");
+        ins.add("PET_LLAVE",item.pet_llave+"");
+        ins.add("PET_ALIAS_PFX",item.pet_alias_pfx+"");
+        ins.add("PET_PFX_LLAVE",item.pet_pfx_llave+"");
         ins.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
         ins.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
@@ -235,6 +239,7 @@ public class clsP_sucursalObj {
         upd.add("NOMBRE",item.nombre);
         upd.add("DIRECCION",item.direccion);
         upd.add("TELEFONO",item.telefono);
+        upd.add("CORREO",item.correo);
         upd.add("NIT",item.nit);
         upd.add("TEXTO",item.texto);
         upd.add("ACTIVO",item.activo);

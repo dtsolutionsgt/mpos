@@ -425,8 +425,7 @@ public class Anulacion extends PBase {
     //region FEL
 
     private void anulacionFEL() {
-        buildAnulXML();
-        fel.anulacion(uuid);
+        if (buildAnulXML())  fel.anulacion(uuid);
     }
 
     @Override
@@ -447,7 +446,7 @@ public class Anulacion extends PBase {
         }
     }
 
-    private void buildAnulXML() {
+    private boolean buildAnulXML() {
 
         try {
 
@@ -458,6 +457,10 @@ public class Anulacion extends PBase {
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
+            if (uuid.equalsIgnoreCase(" ")) {
+                anulFactura(itemid);
+                return false;
+            }
 
 			String NITReceptor = Get_NIT_Cliente(fact.cliente);
 
@@ -469,8 +472,10 @@ public class Anulacion extends PBase {
 
             fel.anulfact(uuid,"1000000000K",NITReceptor, fact.fecha, fact.fecha);
 
+            return true;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
         }
     }
 

@@ -1723,6 +1723,7 @@ public class WSRec extends PBase {
                 var.direccion = item.DIRECCION;
                 var.telefono = item.TELEFONO;
                 var.nit = item.NIT;
+                var.correo = item.CORREO;
                 var.texto = item.TEXTO;
                 var.activo = mu.bool(item.ACTIVO);
                 var.pet_prefijo=item.PET_PREFIJO;
