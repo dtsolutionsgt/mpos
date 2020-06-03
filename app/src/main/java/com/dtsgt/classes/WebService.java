@@ -37,12 +37,14 @@ public class WebService {
     private PBase parent;
 
     private URL mUrl;
+    private int mTimeOut;
     private String mMethodName,mResult,argstr;
 
-    public WebService(PBase Parent,String Url) {
+    public WebService(PBase Parent,String Url, int TimeOut) {
         parent=Parent;
         try {
             mUrl = new URL(Url);
+            mTimeOut =TimeOut;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -80,8 +82,8 @@ public class WebService {
            conn.addRequestProperty("SOAPAction", "http://tempuri.org/" + methodName);
 
            //#EJC 20200601: Set Timeout
-           conn.setConnectTimeout(6000);
-           conn.setReadTimeout(6000);
+           conn.setConnectTimeout(mTimeOut);
+           conn.setReadTimeout(mTimeOut);
 
            conn.setDoOutput(true);
 

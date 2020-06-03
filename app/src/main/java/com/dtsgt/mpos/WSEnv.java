@@ -60,7 +60,7 @@ public class WSEnv extends PBase {
         pbar.setVisibility(View.INVISIBLE);
 
         getURL();
-        ws = new WebServiceHandler(WSEnv.this, gl.wsurl);
+        ws = new WebServiceHandler(WSEnv.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
@@ -88,8 +88,8 @@ public class WSEnv extends PBase {
 
     public class WebServiceHandler extends com.dtsgt.classes.WebService {
 
-        public WebServiceHandler(PBase Parent, String Url) {
-            super(Parent, Url);
+        public WebServiceHandler(PBase Parent, String Url, int TimeOut) {
+            super(Parent, Url, TimeOut);
         }
 
         @Override
@@ -487,11 +487,24 @@ public class WSEnv extends PBase {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
             if (file1.exists()) {
+
                 FileInputStream fIn = new FileInputStream(file1);
                 BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
                 gl.wsurl = myReader.readLine();
+
+                String line = myReader.readLine();
+
+                if(line.isEmpty()){
+                    gl.timeout = 6000;
+                }else{
+                    gl.timeout = Integer.valueOf(line);
+                }
+
                 myReader.close();
             }
 

@@ -150,7 +150,7 @@ public class WSRec extends PBase {
         getURL();
         setHandlers();
 
-        ws = new WebServiceHandler(WSRec.this, gl.wsurl);
+        ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
         long fs = app.getDateRecep();
@@ -200,8 +200,8 @@ public class WSRec extends PBase {
 
     public class WebServiceHandler extends com.dtsgt.classes.WebService {
 
-        public WebServiceHandler(PBase Parent, String Url) {
-            super(Parent, Url);
+        public WebServiceHandler(PBase Parent, String Url, int TimeOut) {
+            super(Parent, Url, TimeOut);
         }
 
         @Override
@@ -297,6 +297,9 @@ public class WSRec extends PBase {
                         break;
                     case 30:
                         callMethod("GetP_PARAMEXT", "EMPRESA", gl.emp);
+                        break;
+                    case 31:
+                        callMethod("GetP_BANCO", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -531,6 +534,14 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
+                    execws(31);
+                    break;
+                case 31:
+                    processBancos();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
                     processComplete();
                     break;
             }
@@ -635,6 +646,9 @@ public class WSRec extends PBase {
             case 30:
                 plabel = "Cargando parámetros extras";
                 break;
+            case 31:
+                plabel = "Cargando bancos";
+                break;
         }
 
         updateLabel();
@@ -661,7 +675,10 @@ public class WSRec extends PBase {
                     if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
                             (event.getAction() == KeyEvent.ACTION_DOWN)) {
 
+                        gl.emp = Integer.valueOf(txtEmpresa.getText().toString());
+
                         showkeyb();
+
                         txtClave.requestFocus();
 
                         return true;
@@ -679,6 +696,7 @@ public class WSRec extends PBase {
                             (event.getAction() == KeyEvent.ACTION_DOWN)) {
 
                         showkeyb();
+
                         txtURLWS.requestFocus();
 
                         return true;
@@ -695,7 +713,10 @@ public class WSRec extends PBase {
                     if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
                             (event.getAction() == KeyEvent.ACTION_DOWN)) {
 
-                        showkeyb();
+                        gl.wsurl = txtURLWS.getText().toString();
+
+                        hidekeyb();
+
                         Recibir();
 
                         return true;
@@ -2098,9 +2119,20 @@ public class WSRec extends PBase {
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
 
             if (file1.exists()) {
+
                 FileInputStream fIn = new FileInputStream(file1);
                 BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
                 gl.wsurl = myReader.readLine();
+
+                String line = myReader.readLine();
+
+                if(line.isEmpty()){
+                    gl.timeout = 6000;
+                }else{
+                    gl.timeout = Integer.valueOf(line);
+                }
+
                 myReader.close();
             }
 

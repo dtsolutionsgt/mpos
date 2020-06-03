@@ -36,7 +36,8 @@ public class appGlobals extends Application {
 			    emp,
 			    tienda,
 	            dias_anul,
-	            cod_prov_recarga;
+	            cod_prov_recarga,
+				timeout;
 	public String  cliente,
 			       ruta,
 			       vend,
