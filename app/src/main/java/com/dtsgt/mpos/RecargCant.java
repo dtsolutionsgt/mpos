@@ -131,19 +131,34 @@ public class RecargCant extends PBase {
 	private void showData() {
 		Cursor DT;
 		String ubas;
-		double costo;
+		int codigo_producto=0;
+		double costo=0;
 		
 		try {
-			sql="SELECT UNIDBAS,UNIDMED,UNIMEDFACT,UNIGRA,UNIGRAFACT,DESCCORTA,IMAGEN,DESCLARGA,COSTO "+
-				 "FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
+
+			sql="SELECT UNIDBAS,UNIDMED,UNIMEDFACT,UNIGRA,UNIGRAFACT,DESCCORTA,IMAGEN,DESCLARGA,COSTO, CODIGO_PRODUCTO "+
+				 "FROM P_PRODUCTO WHERE CODIGO ='"+prodid+"'";
+
            	DT=Con.OpenDT(sql);
-			DT.moveToFirst();
-							  
-			ubas=DT.getString(0);
-			
-			lblBU.setText(ubas);((appGlobals) vApp).ubas=ubas;
-			lblDesc.setText(DT.getString(7));
-			costo=DT.getDouble(8);
+
+           	if(DT != null){
+
+           		if(DT.getCount()>0){
+
+					DT.moveToFirst();
+
+					ubas=DT.getString(0);
+
+					lblBU.setText(ubas);
+					((appGlobals) vApp).ubas=ubas;
+					lblDesc.setText(DT.getString(7));
+					costo=DT.getDouble(8);
+					codigo_producto = DT.getInt(9);
+
+				}
+
+			}
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   mu.msgbox("1-"+ e.getMessage());costo=0;
@@ -154,17 +169,19 @@ public class RecargCant extends PBase {
 		txtPrecio.setText(mu.frmdec(costo));
 
 		try {
-			sql="SELECT CANT, PRECIO FROM T_CxCD WHERE CODIGO='"+prodid+"' AND CODDEV='"+raz+"'";
+			sql="SELECT CANT, PRECIO FROM T_CxCD WHERE CODIGO="+codigo_producto+" AND CODDEV='"+raz+"'";
            	DT=Con.OpenDT(sql);
 
 			if (DT != null) {
+
 				if(DT.getCount()>0){
+
 					DT.moveToFirst();
 					icant=DT.getDouble(0);
 					iprecio=DT.getDouble(1);
 
 					if (icant>0) parseCant(icant);
-					if (iprecio>0) parsePrecio(icant);
+					if (iprecio>0) parsePrecio(iprecio);
 
 				}
 			}

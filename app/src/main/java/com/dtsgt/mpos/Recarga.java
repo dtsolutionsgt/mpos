@@ -151,7 +151,7 @@ public class Recarga extends PBase {
 		
 		try {
 			
-			sql="SELECT T_CxCD.CODIGO, T_CxCD.CANT, (T_CxCD.CANT * T_CxCD.PRECIO) AS TOTAL, " +
+			sql="SELECT P_PRODUCTO.CODIGO, T_CxCD.CANT, (T_CxCD.CANT * T_CxCD.PRECIO) AS TOTAL, " +
 				"P_PRODUCTO.DESCCORTA, T_CxCD.ITEM, T_CxCD.PRECIO "+
 			    "FROM T_CxCD INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=T_CxCD.CODIGO "+
 				"ORDER BY P_PRODUCTO.DESCCORTA";
@@ -313,7 +313,8 @@ public class Recarga extends PBase {
 		int id;
 
 		try {
-			sql="DELETE FROM T_CxCD WHERE CODIGO='"+prodid+"'";
+
+			sql="DELETE FROM T_CxCD WHERE CODIGO='"+gl.prodcod+"'";
 			db.execSQL(sql);
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);

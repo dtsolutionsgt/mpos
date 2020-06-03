@@ -78,6 +78,11 @@ public class WebService {
            URLConnection conn = mUrl.openConnection();
            conn.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
            conn.addRequestProperty("SOAPAction", "http://tempuri.org/" + methodName);
+
+           //#EJC 20200601: Set Timeout
+           conn.setConnectTimeout(6000);
+           conn.setReadTimeout(6000);
+
            conn.setDoOutput(true);
 
            OutputStream ostream = conn.getOutputStream();
