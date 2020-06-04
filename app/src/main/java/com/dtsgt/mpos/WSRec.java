@@ -183,7 +183,7 @@ public class WSRec extends PBase {
 
             txtURLWS.setText(gl.wsurl);
             txtClave.setText("1");
-            txtEmpresa.setText(gl.emp);
+            txtEmpresa.setText(String.valueOf(gl.emp));
         }
 
     }

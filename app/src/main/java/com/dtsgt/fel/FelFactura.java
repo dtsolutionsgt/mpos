@@ -69,11 +69,11 @@ public class FelFactura extends PBase {
         sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
         clsClasses.clsP_sucursal suc=sucursal.first();
 
-        fel.llave_cert =suc.pet_llave; // PET_LLAVE
-        fel.llave_firma=suc.pet_pfx_llave; // PET_PFX_LLAVE
-        fel.fel_codigo=suc.pet_prefijo;  // PET_PREFIJO
-        fel.fel_alias=suc.pet_alias_pfx; // PET_ALIAS
-        fel.fel_nit=suc.nit; // NIT
+        fel.llave_cert =suc.pet_llave; // fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
+        fel.llave_firma=suc.pet_pfx_llave; // fel_token ="5b174fb0e23645b65ef88277d654603d";
+        fel.fel_codigo=suc.pet_prefijo;  //  fel_codigo="0";
+        fel.fel_alias=suc.pet_alias_pfx; // fel_alias="DEMO_FEL";
+        fel.fel_nit=suc.nit; // NIT  "1000000000K";
         fel.fel_correo=suc.correo;  // CORREO
 
         /*
@@ -293,7 +293,7 @@ public class FelFactura extends PBase {
         ftot=0;
 
         try {
-            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO='N')");
+            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0)");
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {

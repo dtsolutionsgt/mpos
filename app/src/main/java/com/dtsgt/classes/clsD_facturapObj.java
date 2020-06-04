@@ -139,14 +139,14 @@ public class clsD_facturapObj {
             item.empresa=dt.getInt(0);
             item.corel=dt.getString(1);
             item.item=dt.getInt(2);
-            item.anulado=dt.getString(3);
+            item.anulado= (dt.getInt(3)==1?true:false);
             item.codpago=dt.getInt(4);
             item.tipo=dt.getString(5);
             item.valor=dt.getDouble(6);
             item.desc1=dt.getString(7);
             item.desc2=dt.getString(8);
             item.desc3=dt.getString(9);
-            item.depos=dt.getString(10);
+            item.depos= (dt.getInt(10)==1?true:false);
 
             items.add(item);
 

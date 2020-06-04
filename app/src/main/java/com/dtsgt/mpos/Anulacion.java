@@ -241,7 +241,7 @@ public class Anulacion extends PBase {
 			if (tipo==2) {
 				sql="SELECT D_DEPOS.COREL,P_BANCO.NOMBRE,D_DEPOS.FECHA,D_DEPOS.TOTAL,D_DEPOS.CUENTA "+
 					 "FROM D_DEPOS INNER JOIN P_BANCO ON D_DEPOS.BANCO=P_BANCO.CODIGO_BANCO "+
-					 "WHERE (D_DEPOS.ANULADO='N')  AND (D_DEPOS.CODIGOLIQUIDACION=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+					 "WHERE (D_DEPOS.ANULADO=0)  AND (D_DEPOS.CODIGOLIQUIDACION=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					 "ORDER BY D_DEPOS.COREL DESC ";
 			}
 			
@@ -249,7 +249,7 @@ public class Anulacion extends PBase {
 				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
 					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-					"WHERE (D_FACTURA.ANULADO='N') AND (D_FACTURA.KILOMETRAJE=0)  AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+					"WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.KILOMETRAJE=0)  AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					"ORDER BY D_FACTURA.COREL DESC ";
 			}
 			
@@ -566,13 +566,13 @@ public class Anulacion extends PBase {
                 }
             }
 
-			sql="UPDATE D_FACTURA  SET Anulado='S' WHERE COREL='"+itemid+"'";
+			sql="UPDATE D_FACTURA  SET Anulado=1 WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
-			sql="UPDATE D_FACTURAD SET Anulado='S' WHERE COREL='"+itemid+"'";
+			sql="UPDATE D_FACTURAD SET Anulado=1 WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
-			sql="UPDATE D_FACTURAP SET Anulado='S' WHERE COREL='"+itemid+"'";
+			sql="UPDATE D_FACTURAP SET Anulado=1 WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
 			//#CKFK 20200526 Puse esto en comentario porque esa tabla no se usa en MPos
@@ -602,7 +602,7 @@ public class Anulacion extends PBase {
 
 		try{
 
-			sql = "UPDATE D_BONIF SET Anulado='S' WHERE COREL='" + itemid + "'";
+			sql = "UPDATE D_BONIF SET Anulado=1 WHERE COREL='" + itemid + "'";
 			db.execSQL(sql);
 
 			//sql = "UPDATE D_BONIFFALT SET Anulado='S' WHERE COREL='" + itemid + "'";
@@ -802,7 +802,7 @@ public class Anulacion extends PBase {
 				tdoc=DT.getString(1);
 
 				if (tdoc.equalsIgnoreCase("F")) {
-					sql="UPDATE D_FACTURA SET DEPOS='N' WHERE (COREL='"+DT.getString(0)+"')";
+					sql="UPDATE D_FACTURA SET DEPOS=0 WHERE (COREL='"+DT.getString(0)+"')";
 				} else {
 					sql="UPDATE D_COBRO SET DEPOS='N' WHERE (COREL='"+DT.getString(0)+"')";
 				}
@@ -1516,7 +1516,7 @@ public class Anulacion extends PBase {
 
 			sql="SELECT D_DEPOSD.DOCCOREL,D_DEPOS.ANULADO "+
 				"FROM D_DEPOS INNER JOIN D_DEPOSD ON D_DEPOS.COREL=D_DEPOSD.COREL " +
-				"WHERE D_DEPOSD.DOCCOREL='"+itemid+"' AND D_DEPOS.ANULADO='N'";
+				"WHERE D_DEPOSD.DOCCOREL='"+itemid+"' AND D_DEPOS.ANULADO=0";
 			dt=Con.OpenDT(sql);
 
 			if (dt.getCount()==0) return false;

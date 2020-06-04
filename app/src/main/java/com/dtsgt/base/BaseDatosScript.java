@@ -319,7 +319,7 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_DESCUENTO_idx4 ON P_DESCUENTO(FECHAFIN)";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_sucursal] ("+
+            sql="CREATE TABLE [P_SUCURSAL] ("+
                     "CODIGO_SUCURSAL INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+

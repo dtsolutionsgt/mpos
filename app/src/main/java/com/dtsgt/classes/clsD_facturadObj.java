@@ -153,7 +153,7 @@ public class clsD_facturadObj {
             item.corel=dt.getString(1);
             item.producto=dt.getInt(2);
             item.umpeso=dt.getString(3);
-            item.anulado=dt.getString(4);
+            item.anulado= (dt.getInt(4)==1?true:false);
             item.cant=dt.getDouble(5);
             item.precio=dt.getDouble(6);
             item.imp=dt.getDouble(7);

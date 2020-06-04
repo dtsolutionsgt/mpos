@@ -191,7 +191,7 @@ public class clsD_facturaObj {
 
             item.empresa=dt.getInt(0);
             item.corel=dt.getString(1);
-            item.anulado=dt.getString(2);
+            item.anulado= (dt.getInt(2)==1?true:false);
             item.fecha=dt.getLong(3);
             item.ruta=dt.getInt(4);
             item.vendedor=dt.getInt(5);
@@ -205,14 +205,14 @@ public class clsD_facturaObj {
             item.peso=dt.getDouble(13);
             item.bandera=dt.getString(14);
             item.statcom=dt.getString(15);
-            item.calcobj=dt.getString(16);
+            item.calcobj= (dt.getInt(16)==1?true:false);
             item.serie=dt.getString(17);
             item.corelativo=dt.getInt(18);
             item.impres=dt.getInt(19);
             item.add1=dt.getString(20);
             item.add2=dt.getString(21);
             item.add3=dt.getString(22);
-            item.depos=dt.getString(23);
+            item.depos= (dt.getInt(23)==1?true:false);
             item.pedcorel=dt.getString(24);
             item.referencia=dt.getString(25);
             item.asignacion=dt.getString(26);

@@ -804,7 +804,7 @@ public class FacturaRes extends PBase {
 
             ins.add("EMPRESA",gl.emp);
          	ins.add("COREL",corel);
-			ins.add("ANULADO","N");
+			ins.add("ANULADO",false);
 			if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
 			ins.add("RUTA",gl.ruta);
 			ins.add("VENDEDOR",gl.vend);
@@ -820,7 +820,7 @@ public class FacturaRes extends PBase {
 
 			ins.add("BANDERA","N");
 			ins.add("STATCOM","N");
-			ins.add("CALCOBJ","N");
+			ins.add("CALCOBJ",false);
 			ins.add("SERIE",fserie);
 			ins.add("CORELATIVO",fcorel);
 			ins.add("IMPRES",0);
@@ -829,7 +829,7 @@ public class FacturaRes extends PBase {
 			ins.add("ADD2",gl.ref2);
 			ins.add("ADD3",gl.ref3);
 
-			ins.add("DEPOS","N");
+			ins.add("DEPOS",false);
 			ins.add("PEDCOREL","");
 			ins.add("REFERENCIA","");
 
@@ -886,7 +886,7 @@ public class FacturaRes extends PBase {
 				ins.add("COREL",corel);
 				ins.add("PRODUCTO",app.codigoProducto(dt.getString(0)));
 				ins.add("EMPRESA",gl.emp);
-				ins.add("ANULADO","N");
+				ins.add("ANULADO",false);
 				ins.add("CANT",dt.getDouble(1));
 				ins.add("PRECIO",dt.getDouble(2));
 				ins.add("IMP",dt.getDouble(3));
@@ -933,7 +933,7 @@ public class FacturaRes extends PBase {
                 ins.init("D_FACTURAP");
                 ins.add("COREL", corel);
                 ins.add("ITEM", dt.getInt(0));
-                ins.add("ANULADO", "N");
+                ins.add("ANULADO", false);
                 ins.add("EMPRESA", gl.emp);
                 ins.add("CODPAGO", dt.getInt(1));
                 ins.add("TIPO", dt.getString(2));
@@ -941,7 +941,7 @@ public class FacturaRes extends PBase {
                 ins.add("DESC1", dt.getString(4));
                 ins.add("DESC2", dt.getString(5));
                 ins.add("DESC3", dt.getString(6));
-                ins.add("DEPOS", "N");
+                ins.add("DEPOS", false);
 
                 db.execSQL(ins.sql());
 
