@@ -223,7 +223,7 @@ public class Lista extends PBase {
             case 2: // Clientes
                 progress.setMessage("Cargando clientes");
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_CLIENTE WHERE ";
-                if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
+                if (act) sql+="(BLOQUEADO=0) ";else sql+="(BLOQUEADO=1) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;

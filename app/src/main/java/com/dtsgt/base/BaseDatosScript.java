@@ -121,16 +121,18 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_BANCO_idx1 ON P_BANCO(NOMBRE)";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_CLIENTE] ("+
+            sql="CREATE TABLE [P_cliente] ("+
+                    "CODIGO_CLIENTE INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
-                    "BLOQUEADO TEXT NOT NULL,"+
+                    "BLOQUEADO INTEGER NOT NULL,"+
                     "NIVELPRECIO INTEGER NOT NULL,"+
                     "MEDIAPAGO INTEGER NOT NULL,"+
                     "LIMITECREDITO REAL NOT NULL,"+
                     "DIACREDITO INTEGER NOT NULL,"+
-                    "DESCUENTO TEXT NOT NULL,"+
-                    "BONIFICACION TEXT NOT NULL,"+
+                    "DESCUENTO INTEGER NOT NULL,"+
+                    "BONIFICACION INTEGER NOT NULL,"+
                     "ULTVISITA INTEGER NOT NULL,"+
                     "IMPSPEC REAL NOT NULL,"+
                     "NIT TEXT NOT NULL,"+
@@ -145,7 +147,7 @@ public class BaseDatosScript {
                     "CODBARRA TEXT NOT NULL,"+
                     "PERCEPCION REAL NOT NULL,"+
                     "TIPO_CONTRIBUYENTE TEXT NOT NULL,"+
-                    "CODIGO_CLIENTE INTEGER NOT NULL,"+
+                    "IMAGEN INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_CLIENTE])"+
                     ");";
             database.execSQL(sql);
@@ -225,7 +227,7 @@ public class BaseDatosScript {
                     " on P_PRODPRECIO ([CODIGO_PRODUCTO],[EMPRESA],[UNIDADMEDIDA],[NIVEL])";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_PRODUCTO] ("+
+            sql="CREATE TABLE [P_producto] ("+
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
                     "CODIGO_TIPO TEXT NOT NULL,"+
@@ -242,16 +244,16 @@ public class BaseDatosScript {
                     "UNIMEDFACT REAL NOT NULL,"+
                     "UNIGRA TEXT NOT NULL,"+
                     "UNIGRAFACT REAL NOT NULL,"+
-                    "DESCUENTO TEXT NOT NULL,"+
-                    "BONIFICACION TEXT NOT NULL,"+
+                    "DESCUENTO INTEGER NOT NULL,"+
+                    "BONIFICACION INTEGER NOT NULL,"+
                     "IMP1 REAL NOT NULL,"+
                     "IMP2 REAL NOT NULL,"+
                     "IMP3 REAL NOT NULL,"+
                     "VENCOMP TEXT NOT NULL,"+
-                    "DEVOL TEXT NOT NULL,"+
-                    "OFRECER TEXT NOT NULL,"+
-                    "RENTAB TEXT NOT NULL,"+
-                    "DESCMAX TEXT NOT NULL,"+
+                    "DEVOL INTEGER NOT NULL,"+
+                    "OFRECER INTEGER NOT NULL,"+
+                    "RENTAB INTEGER NOT NULL,"+
+                    "DESCMAX INTEGER NOT NULL,"+
                     "IVA TEXT NOT NULL,"+
                     "CODBARRA2 TEXT NOT NULL,"+
                     "CBCONV INTEGER NOT NULL,"+
@@ -259,7 +261,6 @@ public class BaseDatosScript {
                     "SUBBODEGA TEXT NOT NULL,"+
                     "PESO_PROMEDIO REAL NOT NULL,"+
                     "MODIF_PRECIO INTEGER NOT NULL,"+
-                    "IMAGEN TEXT NOT NULL,"+
                     "VIDEO TEXT NOT NULL,"+
                     "VENTA_POR_PESO INTEGER NOT NULL,"+
                     "ES_PROD_BARRA INTEGER NOT NULL,"+
@@ -268,7 +269,7 @@ public class BaseDatosScript {
                     "VENTA_POR_FACTOR_CONV INTEGER NOT NULL,"+
                     "ES_SERIALIZADO INTEGER NOT NULL,"+
                     "PARAM_CADUCIDAD INTEGER NOT NULL,"+
-                    "PRODUCTO_PADRE TEXT NOT NULL,"+
+                    "PRODUCTO_PADRE INTEGER NOT NULL,"+
                     "FACTOR_PADRE REAL NOT NULL,"+
                     "TIENE_INV INTEGER NOT NULL,"+
                     "TIENE_VINETA_O_TUBO INTEGER NOT NULL,"+
@@ -277,6 +278,7 @@ public class BaseDatosScript {
                     "UNIGRASAP REAL NOT NULL,"+
                     "UM_SALIDA TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
+                    "IMAGEN TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_PRODUCTO])"+
                     ");";
             database.execSQL(sql);
@@ -363,12 +365,13 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_MEDIAPAGO] ("+
-                    "[CODIGO] INTEGER NOT NULL,"+
-                    "[NOMBRE] TEXT NOT NULL,"+
-                    "[ACTIVO] TEXT NOT NULL,"+
-                    "[NIVEL] INTEGER NOT NULL,"+
-                    "[PORCOBRO] TEXT NOT NULL,"+
+            sql="CREATE TABLE [P_mediapago] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "NIVEL INTEGER NOT NULL,"+
+                    "PORCOBRO INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO])"+
                     ");";
             database.execSQL(sql);
@@ -388,7 +391,9 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_COREL] ("+
+            sql="CREATE TABLE [P_corel] ("+
+                    "CODIGO_COREL INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
                     "RESOL TEXT NOT NULL,"+
                     "SERIE TEXT NOT NULL,"+
                     "CORELINI INTEGER NOT NULL,"+
@@ -396,11 +401,12 @@ public class BaseDatosScript {
                     "CORELULT INTEGER NOT NULL,"+
                     "FECHARES INTEGER NOT NULL,"+
                     "RUTA INTEGER NOT NULL,"+
+                    "ACTIVA INTEGER NOT NULL,"+
+                    "HANDHELD TEXT NOT NULL,"+
                     "FECHAVIG INTEGER NOT NULL,"+
                     "RESGUARDO INTEGER NOT NULL,"+
                     "VALOR1 INTEGER NOT NULL,"+
-                    "ACTIVA TEXT NOT NULL,"+
-                    "CODIGO_COREL INTEGER PRIMARY KEY"+
+                    "PRIMARY KEY ([CODIGO_COREL])"+
                     ");";
             database.execSQL(sql);
 

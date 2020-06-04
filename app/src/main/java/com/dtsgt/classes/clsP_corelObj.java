@@ -48,7 +48,7 @@ public class clsP_corelObj {
         deleteItem(item);
     }
 
-    public void delete(String id) {
+    public void delete(int id) {
         deleteItem(id);
     }
 
@@ -75,6 +75,8 @@ public class clsP_corelObj {
 
         ins.init("P_corel");
 
+        ins.add("CODIGO_COREL",item.codigo_corel);
+        ins.add("EMPRESA",item.empresa);
         ins.add("RESOL",item.resol);
         ins.add("SERIE",item.serie);
         ins.add("CORELINI",item.corelini);
@@ -82,45 +84,49 @@ public class clsP_corelObj {
         ins.add("CORELULT",item.corelult);
         ins.add("FECHARES",item.fechares);
         ins.add("RUTA",item.ruta);
+        ins.add("ACTIVA",item.activa);
+        ins.add("HANDHELD",item.handheld);
         ins.add("FECHAVIG",item.fechavig);
         ins.add("RESGUARDO",item.resguardo);
         ins.add("VALOR1",item.valor1);
-        ins.add("ACTIVA",item.activa);
-        ins.add("CODIGO_COREL",item.codigo_corel);
 
         db.execSQL(ins.sql());
 
     }
 
     private void updateItem(clsClasses.clsP_corel item) {
-        /*
+
         upd.init("P_corel");
 
+        upd.add("EMPRESA",item.empresa);
         upd.add("RESOL",item.resol);
         upd.add("SERIE",item.serie);
         upd.add("CORELINI",item.corelini);
         upd.add("CORELFIN",item.corelfin);
+        upd.add("CORELULT",item.corelult);
+        upd.add("FECHARES",item.fechares);
+        upd.add("RUTA",item.ruta);
+        upd.add("ACTIVA",item.activa);
+        upd.add("HANDHELD",item.handheld);
+        upd.add("FECHAVIG",item.fechavig);
+        upd.add("RESGUARDO",item.resguardo);
+        upd.add("VALOR1",item.valor1);
+
+        upd.Where("(CODIGO_COREL="+item.codigo_corel+")");
 
         db.execSQL(upd.sql());
-        */
 
-        //#CKFK 20200517 Le agregué WHERE al UPDATE
-        String ss="UPDATE P_corel SET  RESOL='"+item.resol+"',SERIE='"+item.serie+"'," +
-                  "CORELINI="+item.corelini+",CORELFIN="+item.corelfin+
-                  " WHERE CODIGO_COREL='" + item.codigo_corel + "'" ;
-        db.execSQL(ss);
+        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 
     private void deleteItem(clsClasses.clsP_corel item) {
-        sql="DELETE FROM P_corel WHERE (CODIGO_COREL='"+item.codigo_corel+"')";
-        //#CKFK 20200517 Cambié la llave primaria por un codigo unico
-        //sql="DELETE FROM P_corel WHERE (RESOL='"+item.resol+"') AND (SERIE='"+item.serie+"') AND (CORELINI="+item.corelini+")";
+        sql="DELETE FROM P_corel WHERE (CODIGO_COREL="+item.codigo_corel+")";
         db.execSQL(sql);
     }
 
-    private void deleteItem(String id) {
-        sql="DELETE FROM P_corel WHERE id='" + id+"'";
+    private void deleteItem(int id) {
+        sql="DELETE FROM P_corel WHERE id=" + id;
         db.execSQL(sql);
     }
 
@@ -138,18 +144,20 @@ public class clsP_corelObj {
 
             item = clsCls.new clsP_corel();
 
-            item.resol=dt.getString(0);
-            item.serie=dt.getString(1);
-            item.corelini=dt.getInt(2);
-            item.corelfin=dt.getInt(3);
-            item.corelult=dt.getInt(4);
-            item.fechares=dt.getInt(5);
-            item.ruta=dt.getInt(6);
-            item.fechavig=dt.getInt(7);
-            item.resguardo=dt.getInt(8);
-            item.valor1=dt.getInt(9);
-            item.activa=dt.getString(9);
-            item.codigo_corel=dt.getInt(10);
+            item.codigo_corel=dt.getInt(0);
+            item.empresa=dt.getInt(1);
+            item.resol=dt.getString(2);
+            item.serie=dt.getString(3);
+            item.corelini=dt.getInt(4);
+            item.corelfin=dt.getInt(5);
+            item.corelult=dt.getInt(6);
+            item.fechares=dt.getLong(7);
+            item.ruta=dt.getInt(8);
+            item.activa=dt.getInt(9);
+            item.handheld=dt.getString(10);
+            item.fechavig=dt.getLong(11);
+            item.resguardo=dt.getInt(12);
+            item.valor1=dt.getInt(13);
 
             items.add(item);
 
@@ -181,6 +189,8 @@ public class clsP_corelObj {
 
         ins.init("P_corel");
 
+        ins.add("CODIGO_COREL",item.codigo_corel);
+        ins.add("EMPRESA",item.empresa);
         ins.add("RESOL",item.resol);
         ins.add("SERIE",item.serie);
         ins.add("CORELINI",item.corelini);
@@ -188,11 +198,11 @@ public class clsP_corelObj {
         ins.add("CORELULT",item.corelult);
         ins.add("FECHARES",item.fechares);
         ins.add("RUTA",item.ruta);
+        ins.add("ACTIVA",item.activa);
+        ins.add("HANDHELD",item.handheld);
         ins.add("FECHAVIG",item.fechavig);
         ins.add("RESGUARDO",item.resguardo);
         ins.add("VALOR1",item.valor1);
-        ins.add("ACTIVA",item.activa);
-        ins.add("CODIGO_COREL",item.codigo_corel);
 
         return ins.sql();
 
@@ -202,18 +212,22 @@ public class clsP_corelObj {
 
         upd.init("P_corel");
 
+        upd.add("EMPRESA",item.empresa);
+        upd.add("RESOL",item.resol);
+        upd.add("SERIE",item.serie);
+        upd.add("CORELINI",item.corelini);
         upd.add("CORELFIN",item.corelfin);
         upd.add("CORELULT",item.corelult);
         upd.add("FECHARES",item.fechares);
         upd.add("RUTA",item.ruta);
+        upd.add("ACTIVA",item.activa);
+        upd.add("HANDHELD",item.handheld);
         upd.add("FECHAVIG",item.fechavig);
         upd.add("RESGUARDO",item.resguardo);
         upd.add("VALOR1",item.valor1);
-        upd.add("ACTIVA",item.activa);
 
-        //#CKFK Cambie la llave primaria por un correlativo
-       // upd.Where("(RESOL='"+item.resol+"') AND (SERIE='"+item.serie+"') AND (CORELINI="+item.corelini+")");
-        upd.Where("(CODIGO_COREL='"+item.codigo_corel+"')");
+        upd.Where("(CODIGO_COREL="+item.codigo_corel+")");
+
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();

@@ -222,7 +222,7 @@ public class clsBonFiltro {
 			vSQL="SELECT BONIFICACION FROM P_CLIENTE WHERE CODIGO='"+cliid+"'";
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
-			if (DT.getString(0).equalsIgnoreCase("N")) return false;
+			if (DT.getInt(0)==0) return false;
 		} catch (Exception e) {
 		   	return false;
 	    }		

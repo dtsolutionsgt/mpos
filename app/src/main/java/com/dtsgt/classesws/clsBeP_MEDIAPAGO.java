@@ -1,5 +1,7 @@
 package com.dtsgt.classesws;
 
+import org.simpleframework.xml.Element;
+
 
 import org.simpleframework.xml.Element;
 
@@ -10,14 +12,14 @@ public class clsBeP_MEDIAPAGO {
     @Element(required=false) public String NOMBRE;
     @Element(required=false) public boolean ACTIVO;
     @Element(required=false) public int NIVEL;
-    @Element(required=false) public String PORCOBRO;
+    @Element(required=false) public boolean PORCOBRO;
 
 
     public clsBeP_MEDIAPAGO() {
     }
 
     public clsBeP_MEDIAPAGO(int CODIGO,String EMPRESA,String NOMBRE,boolean ACTIVO,
-                            int NIVEL,String PORCOBRO) {
+                            int NIVEL,boolean PORCOBRO) {
 
         this.CODIGO=CODIGO;
         this.EMPRESA=EMPRESA;
@@ -59,10 +61,10 @@ public class clsBeP_MEDIAPAGO {
     public void setNIVEL(int value) {
         NIVEL=value;
     }
-    public String getPORCOBRO() {
+    public boolean getPORCOBRO() {
         return PORCOBRO;
     }
-    public void setPORCOBRO(String value) {
+    public void setPORCOBRO(boolean value) {
         PORCOBRO=value;
     }
 

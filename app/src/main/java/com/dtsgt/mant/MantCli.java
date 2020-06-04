@@ -173,7 +173,7 @@ public class MantCli extends PBase {
     }
 
     public void doStatus(View view) {
-        if (item.bloqueado.equalsIgnoreCase("N")) {
+        if (item.bloqueado==0) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
@@ -252,7 +252,7 @@ public class MantCli extends PBase {
 
             txt1.requestFocus();
             imgstat.setVisibility(View.VISIBLE);
-            if (item.bloqueado.equalsIgnoreCase("N")) {
+            if (item.bloqueado==0) {
                 imgstat.setImageResource(R.drawable.delete_64);
             } else {
                 imgstat.setImageResource(R.drawable.mas);
@@ -270,13 +270,13 @@ public class MantCli extends PBase {
 
         item.codigo= String.valueOf(holder.maxID());
         item.nombre="";
-        item.bloqueado ="N";
+        item.bloqueado =0;
         item.nivelprecio = 1;
         item.mediapago = 1;
         item.limitecredito = 0;
         item.diacredito = 0;
-        item.descuento = "S";
-        item.bonificacion = "S";
+        item.descuento = 1;
+        item.bonificacion = 1;
         item.ultvisita = 0;
         item.impspec = 0;
         item.nit = " ";
@@ -671,10 +671,10 @@ public class MantCli extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                if (item.bloqueado.equalsIgnoreCase("N")) {
-                    item.bloqueado="S";
+                if (item.bloqueado==0) {
+                    item.bloqueado=1;
                 } else {
-                    item.bloqueado="N";
+                    item.bloqueado=0;
                 };
                 updateItem();
                 finish();

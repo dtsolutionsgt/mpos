@@ -383,13 +383,13 @@ public class CliPos extends PBase {
 
             ins.add("CODIGO",""+codigo);
             ins.add("NOMBRE",Nom);
-            ins.add("BLOQUEADO","N");
+            ins.add("BLOQUEADO",0);
             ins.add("NIVELPRECIO",1);
             ins.add("MEDIAPAGO","1");
             ins.add("LIMITECREDITO",0);
             ins.add("DIACREDITO",0);
-            ins.add("DESCUENTO","S");
-            ins.add("BONIFICACION","S");
+            ins.add("DESCUENTO",1);
+            ins.add("BONIFICACION",1);
             ins.add("ULTVISITA",du.getActDate());
             ins.add("IMPSPEC",0);
             ins.add("NIT",NIT.toUpperCase());

@@ -168,14 +168,14 @@ public class WSRec extends PBase {
             txtClave.setEnabled(true);
             txtEmpresa.setEnabled(true);
 
-            txtURLWS.setText(gl.wsurl);
+            txtURLWS.setText(gl.wsurl);if (gl.wsurl.isEmpty()) txtURLWS.setText("http://192.168.0.12/mposws/mposws.asmx");
             txtClave.setText("");
             txtEmpresa.setText("");
 
             showkeyb();
             txtEmpresa.requestFocus();
 
-        }else{
+        } else {
 
             txtURLWS.setEnabled(false);
             txtClave.setEnabled(false);
@@ -547,8 +547,7 @@ public class WSRec extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
         }
     }
@@ -754,11 +753,7 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < script.size(); i++) {
                 sql = script.get(i);
-                try {
-                    db.execSQL(sql);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                db.execSQL(sql);
             }
 
             db.setTransactionSuccessful();
@@ -1004,9 +999,11 @@ public class WSRec extends PBase {
                 var.ruta = item.RUTA;
                 var.fechavig = item.FECHAVIG;
                 var.resguardo = item.RESGUARDO;
+                var.handheld = item.HANDHELD;
                 var.valor1 = item.VALOR1;
-                var.activa = item.ACTIVA;
+                var.activa = mu.bool(item.ACTIVA);
                 var.codigo_corel=item.CODIGO_COREL;
+
                 script.add(handler.addItemSql(var));
             }
 
@@ -1222,13 +1219,13 @@ public class WSRec extends PBase {
                 var = clsCls.new clsP_cliente();
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
-                var.bloqueado = item.BLOQUEADO;
+                var.bloqueado = mu.bool(item.BLOQUEADO);
                 var.nivelprecio = item.NIVELPRECIO;
                 var.mediapago = item.MEDIAPAGO;
                 var.limitecredito = item.LIMITECREDITO;
                 var.diacredito = item.DIACREDITO;
-                var.descuento = item.DESCUENTO;
-                var.bonificacion = item.BONIFICACION;
+                var.descuento = mu.bool(item.DESCUENTO);
+                var.bonificacion = mu.bool(item.BONIFICACION);
                 var.ultvisita = item.ULTVISITA;
                 var.impspec = item.IMPSPEC;
                 var.nit = item.NIT;
@@ -1244,7 +1241,8 @@ public class WSRec extends PBase {
                 var.percepcion = item.PERCEPCION;
                 var.tipo_contribuyente = item.TIPO_CONTRIBUYENTE + "";
                 var.codigo_cliente = item.CODIGO_CLIENTE;
-                var.imagen = item.IMAGEN;
+                var.imagen = item.IMAGEN+"";
+
                 ss = handler.addItemSql(var);
 
                 script.add("DELETE FROM P_CLIENTE WHERE CODIGO_CLIENTE=" + var.codigo_cliente);
@@ -1334,10 +1332,9 @@ public class WSRec extends PBase {
                 var = clsCls.new clsP_mediapago();
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
-                if (item.ACTIVO) var.activo = "S";
-                else var.activo = "N";
+                var.activo = mu.bool(item.ACTIVO);
                 var.nivel = item.NIVEL;
-                var.porcobro = item.PORCOBRO;
+                var.porcobro = mu.bool(item.PORCOBRO);
                 script.add(handler.addItemSql(var));
             }
 
@@ -1694,16 +1691,16 @@ public class WSRec extends PBase {
                 var.unimedfact = item.UNIMEDFACT;
                 var.unigra = item.UNIGRA + "";
                 var.unigrafact = item.UNIGRAFACT;
-                var.descuento = item.DESCUENTO;
-                var.bonificacion = item.BONIFICACION;
+                var.descuento = mu.bool(item.DESCUENTO);
+                var.bonificacion = mu.bool(item.BONIFICACION);
                 var.imp1 = item.IMP1;
                 var.imp2 = item.IMP2;
                 var.imp3 = item.IMP3;
                 var.vencomp = item.VENCOMP + "";
-                var.devol = item.DEVOL;
-                var.ofrecer = item.OFRECER;
-                var.rentab = item.RENTAB;
-                var.descmax = item.DESCMAX;
+                var.devol = mu.bool(item.DEVOL);
+                var.ofrecer = mu.bool(item.OFRECER);
+                var.rentab = mu.bool(item.RENTAB);
+                var.descmax = mu.bool(item.DESCMAX);
                 var.iva = item.IVA;
                 var.codbarra2 = item.CODBARRA2 + "";
                 var.cbconv = item.CBCONV;
@@ -1720,7 +1717,7 @@ public class WSRec extends PBase {
                 var.venta_por_factor_conv = mu.bool(item.VENTA_POR_FACTOR_CONV);
                 var.es_serializado = mu.bool(item.ES_SERIALIZADO);
                 var.param_caducidad = item.PARAM_CADUCIDAD;
-                var.producto_padre = item.PRODUCTO_PADRE + "";
+                var.producto_padre = 0;
                 var.factor_padre = item.FACTOR_PADRE;
                 var.tiene_inv = mu.bool(item.TIENE_INV);
                 var.tiene_vineta_o_tubo = mu.bool(item.TIENE_VINETA_O_TUBO);
@@ -2113,6 +2110,7 @@ public class WSRec extends PBase {
     private void getURL() {
 
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+        gl.timeout = 6000;
 
         try {
 
@@ -2127,7 +2125,7 @@ public class WSRec extends PBase {
 
                 String line = myReader.readLine();
 
-                if(line.isEmpty()){
+                if (line.isEmpty()){
                     gl.timeout = 6000;
                 }else{
                     gl.timeout = Integer.valueOf(line);
@@ -2137,7 +2135,7 @@ public class WSRec extends PBase {
             }
 
         } catch (Exception e) {
-            gl.wsurl = "";
+
         }
 
         if (!gl.wsurl.isEmpty()) txtURLWS.setText(gl.wsurl);

@@ -64,7 +64,7 @@ public class MantMediaPago extends PBase {
     }
 
     public void doStatus(View view) {
-        if (item.activo.equals("S")) {
+        if (item.activo==1) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
@@ -87,7 +87,7 @@ public class MantMediaPago extends PBase {
             showItem();
 
             imgstat.setVisibility(View.VISIBLE);
-            if (item.activo.equals("S")) {
+            if (item.activo==1) {
                 imgstat.setImageResource(R.drawable.delete_64);
             } else {
                 imgstat.setImageResource(R.drawable.mas);
@@ -105,7 +105,7 @@ public class MantMediaPago extends PBase {
 
         item.codigo=0;
         item.nombre="";
-        item.activo="";
+        item.activo=0;
 
         showItem();
     }
@@ -225,10 +225,10 @@ public class MantMediaPago extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                if (item.activo.equals("S")) {
-                    item.activo="N";
+                if (item.activo==1) {
+                    item.activo=0;
                 } else {
-                    item.activo="S";
+                    item.activo=1;
                 };
                 updateItem();
                 finish();

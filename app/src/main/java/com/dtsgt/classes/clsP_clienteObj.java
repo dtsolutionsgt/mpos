@@ -48,7 +48,7 @@ public class clsP_clienteObj {
         deleteItem(item);
     }
 
-    public void delete(String id) {
+    public void delete(int id) {
         deleteItem(id);
     }
 
@@ -95,7 +95,9 @@ public class clsP_clienteObj {
 
         ins.init("P_cliente");
 
+        ins.add("CODIGO_CLIENTE",item.codigo_cliente);
         ins.add("CODIGO",item.codigo);
+        ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("BLOQUEADO",item.bloqueado);
         ins.add("NIVELPRECIO",item.nivelprecio);
@@ -118,7 +120,7 @@ public class clsP_clienteObj {
         ins.add("CODBARRA",item.codbarra);
         ins.add("PERCEPCION",item.percepcion);
         ins.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
-        ins.add("CODIGO_CLIENTE",item.codigo_cliente);
+        ins.add("IMAGEN",item.imagen);
 
         db.execSQL(ins.sql());
 
@@ -129,6 +131,7 @@ public class clsP_clienteObj {
         upd.init("P_cliente");
 
         upd.add("CODIGO",item.codigo);
+        upd.add("EMPRESA",item.empresa);
         upd.add("NOMBRE",item.nombre);
         upd.add("BLOQUEADO",item.bloqueado);
         upd.add("NIVELPRECIO",item.nivelprecio);
@@ -151,6 +154,7 @@ public class clsP_clienteObj {
         upd.add("CODBARRA",item.codbarra);
         upd.add("PERCEPCION",item.percepcion);
         upd.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
+        upd.add("IMAGEN",item.imagen);
 
         upd.Where("(CODIGO_CLIENTE="+item.codigo_cliente+")");
 
@@ -165,8 +169,8 @@ public class clsP_clienteObj {
         db.execSQL(sql);
     }
 
-    private void deleteItem(String id) {
-        sql="DELETE FROM P_cliente WHERE id='" + id+"'";
+    private void deleteItem(int id) {
+        sql="DELETE FROM P_cliente WHERE id=" + id;
         db.execSQL(sql);
     }
 
@@ -184,30 +188,32 @@ public class clsP_clienteObj {
 
             item = clsCls.new clsP_cliente();
 
-                 item.codigo=dt.getString(0);
-            item.nombre=dt.getString(1);
-            item.bloqueado=dt.getString(2);
-            item.nivelprecio=dt.getInt(3);
-            item.mediapago=dt.getInt(4);
-            item.limitecredito=dt.getDouble(5);
-            item.diacredito=dt.getInt(6);
-            item.descuento=dt.getString(7);
-            item.bonificacion=dt.getString(8);
-            item.ultvisita=dt.getInt(9);
-            item.impspec=dt.getDouble(10);
-            item.nit=dt.getString(11);
-            item.email=dt.getString(12);
-            item.eservice=dt.getString(13);
-            item.telefono=dt.getString(14);
-            item.direccion=dt.getString(15);
-            item.coorx=dt.getDouble(16);
-            item.coory=dt.getDouble(17);
-            item.bodega=dt.getString(18);
-            item.cod_pais=dt.getString(19);
-            item.codbarra=dt.getString(20);
-            item.percepcion=dt.getDouble(21);
-            item.tipo_contribuyente=dt.getString(22);
-            item.codigo_cliente=dt.getInt(23);
+            item.codigo_cliente=dt.getInt(0);
+            item.codigo=dt.getString(1);
+            item.empresa=dt.getInt(2);
+            item.nombre=dt.getString(3);
+            item.bloqueado=dt.getInt(4);
+            item.nivelprecio=dt.getInt(5);
+            item.mediapago=dt.getInt(6);
+            item.limitecredito=dt.getDouble(7);
+            item.diacredito=dt.getInt(8);
+            item.descuento=dt.getInt(9);
+            item.bonificacion=dt.getInt(10);
+            item.ultvisita=dt.getLong(11);
+            item.impspec=dt.getDouble(12);
+            item.nit=dt.getString(13);
+            item.email=dt.getString(14);
+            item.eservice=dt.getString(15);
+            item.telefono=dt.getString(16);
+            item.direccion=dt.getString(17);
+            item.coorx=dt.getDouble(18);
+            item.coory=dt.getDouble(19);
+            item.bodega=dt.getString(20);
+            item.cod_pais=dt.getString(21);
+            item.codbarra=dt.getString(22);
+            item.percepcion=dt.getDouble(23);
+            item.tipo_contribuyente=dt.getString(24);
+            item.imagen=dt.getString(25);
 
             items.add(item);
 
@@ -239,7 +245,9 @@ public class clsP_clienteObj {
 
         ins.init("P_cliente");
 
+        ins.add("CODIGO_CLIENTE",item.codigo_cliente);
         ins.add("CODIGO",item.codigo);
+        ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("BLOQUEADO",item.bloqueado);
         ins.add("NIVELPRECIO",item.nivelprecio);
@@ -262,12 +270,49 @@ public class clsP_clienteObj {
         ins.add("CODBARRA",item.codbarra);
         ins.add("PERCEPCION",item.percepcion);
         ins.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
-        ins.add("CODIGO_CLIENTE",item.codigo_cliente);
+        ins.add("IMAGEN",item.imagen);
 
         return ins.sql();
 
     }
 
+    public String updateItemSql(clsClasses.clsP_cliente item) {
+
+        upd.init("P_cliente");
+
+        upd.add("CODIGO",item.codigo);
+        upd.add("EMPRESA",item.empresa);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("BLOQUEADO",item.bloqueado);
+        upd.add("NIVELPRECIO",item.nivelprecio);
+        upd.add("MEDIAPAGO",item.mediapago);
+        upd.add("LIMITECREDITO",item.limitecredito);
+        upd.add("DIACREDITO",item.diacredito);
+        upd.add("DESCUENTO",item.descuento);
+        upd.add("BONIFICACION",item.bonificacion);
+        upd.add("ULTVISITA",item.ultvisita);
+        upd.add("IMPSPEC",item.impspec);
+        upd.add("NIT",item.nit);
+        upd.add("EMAIL",item.email);
+        upd.add("ESERVICE",item.eservice);
+        upd.add("TELEFONO",item.telefono);
+        upd.add("DIRECCION",item.direccion);
+        upd.add("COORX",item.coorx);
+        upd.add("COORY",item.coory);
+        upd.add("BODEGA",item.bodega);
+        upd.add("COD_PAIS",item.cod_pais);
+        upd.add("CODBARRA",item.codbarra);
+        upd.add("PERCEPCION",item.percepcion);
+        upd.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
+        upd.add("IMAGEN",item.imagen);
+
+        upd.Where("(CODIGO_CLIENTE="+item.codigo_cliente+")");
+
+        return upd.sql();
+
+        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
+
+    }
     public String addItemSql(clsClasses.clsP_cliente item,int idemp) {
 
         ins.init("P_cliente");
@@ -302,41 +347,6 @@ public class clsP_clienteObj {
 
     }
 
-    public String updateItemSql(clsClasses.clsP_cliente item) {
-
-        upd.init("P_cliente");
-
-        upd.add("CODIGO",item.codigo);
-        upd.add("NOMBRE",item.nombre);
-        upd.add("BLOQUEADO",item.bloqueado);
-        upd.add("NIVELPRECIO",item.nivelprecio);
-        upd.add("MEDIAPAGO",item.mediapago);
-        upd.add("LIMITECREDITO",item.limitecredito);
-        upd.add("DIACREDITO",item.diacredito);
-        upd.add("DESCUENTO",item.descuento);
-        upd.add("BONIFICACION",item.bonificacion);
-        upd.add("ULTVISITA",item.ultvisita);
-        upd.add("IMPSPEC",item.impspec);
-        upd.add("NIT",item.nit);
-        upd.add("EMAIL",item.email);
-        upd.add("ESERVICE",item.eservice);
-        upd.add("TELEFONO",item.telefono);
-        upd.add("DIRECCION",item.direccion);
-        upd.add("COORX",item.coorx);
-        upd.add("COORY",item.coory);
-        upd.add("BODEGA",item.bodega);
-        upd.add("COD_PAIS",item.cod_pais);
-        upd.add("CODBARRA",item.codbarra);
-        upd.add("PERCEPCION",item.percepcion);
-        upd.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
-
-        upd.Where("(CODIGO_CLIENTE="+item.codigo_cliente+")");
-
-        return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
-
-    }
 
 }
 

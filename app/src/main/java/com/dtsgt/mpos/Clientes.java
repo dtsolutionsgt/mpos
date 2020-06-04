@@ -352,7 +352,7 @@ public class Clientes extends PBase {
 			sql = "SELECT CODIGO,NOMBRE,'' AS ZONA,COORX,COORY,NIT,TELEFONO,ULTVISITA,EMAIL, CODIGO_CLIENTE " +
 				  "FROM P_CLIENTE WHERE (1=1) AND ";
 
-			if (act) sql+="(BLOQUEADO='N') ";else sql+="(BLOQUEADO='S') ";
+			if (act) sql+="(BLOQUEADO=0) ";else sql+="(BLOQUEADO=1) ";
 
 			if (!filt.isEmpty()) {
 				sql += "AND ((NIT LIKE '%" + filt + "%') OR (NOMBRE LIKE '%" + filt + "%')) ";
@@ -502,8 +502,8 @@ public class Clientes extends PBase {
 
                     if (dt.getCount()>0) {
                         dt.moveToFirst();
-                        String blq=dt.getString(0);
-                        if (blq.equalsIgnoreCase("N")) flag=true;
+                        int blq=dt.getInt(0);
+                        if (blq==0) flag=true;
                     }
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

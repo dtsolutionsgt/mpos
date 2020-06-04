@@ -237,7 +237,7 @@ public class clsDescuento {
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
 			
-			if (DT.getString(0).equalsIgnoreCase("N")) return false;
+			if (DT.getInt(0)==0) return false;
 			
 			lineaid=DT.getString(1);
 			slineaid=DT.getString(2);

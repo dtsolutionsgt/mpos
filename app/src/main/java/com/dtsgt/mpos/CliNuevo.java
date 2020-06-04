@@ -212,7 +212,7 @@ public class CliNuevo extends PBase {
 
 			ins.add("CODIGO", corel);
 			ins.add("NOMBRE", txtNom.getText().toString());
-			ins.add("BLOQUEADO", "N");
+			ins.add("BLOQUEADO", 0);
 			ins.add("TIPONEG", "");
 			ins.add("TIPO", "");
 			ins.add("SUBTIPO", "");
@@ -223,8 +223,8 @@ public class CliNuevo extends PBase {
 			ins.add("MEDIAPAGO", "1");
 			ins.add("LIMITECREDITO", 0);
 			ins.add("DIACREDITO", 0);
-			ins.add("DESCUENTO", "N");
-			ins.add("BONIFICACION", "N");
+			ins.add("DESCUENTO", 1);
+			ins.add("BONIFICACION", 1);
 			ins.add("ULTVISITA", fecha);
 
 			ins.add("IMPSPEC", 0);

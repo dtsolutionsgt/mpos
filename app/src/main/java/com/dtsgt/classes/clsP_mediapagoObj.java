@@ -18,23 +18,21 @@ public class clsP_mediapagoObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel = "SELECT * FROM P_mediapago";
+    private String sel="SELECT * FROM P_mediapago";
     private String sql;
-    public ArrayList<clsClasses.clsP_mediapago> items = new ArrayList<clsClasses.clsP_mediapago>();
+    public ArrayList<clsClasses.clsP_mediapago> items= new ArrayList<clsClasses.clsP_mediapago>();
 
     public clsP_mediapagoObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
-        cont = context;
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        cont=context;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
         count = 0;
     }
 
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
-        Con = dbconnection;
-        ins = Con.Ins;
-        upd = Con.Upd;
+        Con=dbconnection;
+        ins=Con.Ins;upd=Con.Upd;
         db = dbase;
     }
 
@@ -59,7 +57,7 @@ public class clsP_mediapagoObj {
     }
 
     public void fill(String specstr) {
-        fillItems(sel + " " + specstr);
+        fillItems(sel+ " "+specstr);
     }
 
     public void fillSelect(String sq) {
@@ -77,11 +75,12 @@ public class clsP_mediapagoObj {
 
         ins.init("P_mediapago");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("ACTIVO", item.activo);
-        ins.add("NIVEL", item.nivel);
-        ins.add("PORCOBRO", item.porcobro);
+        ins.add("CODIGO",item.codigo);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("ACTIVO",item.activo);
+        ins.add("NIVEL",item.nivel);
+        ins.add("PORCOBRO",item.porcobro);
 
         db.execSQL(ins.sql());
 
@@ -91,12 +90,13 @@ public class clsP_mediapagoObj {
 
         upd.init("P_mediapago");
 
-        upd.add("NOMBRE", item.nombre);
-        upd.add("ACTIVO", item.activo);
-        upd.add("NIVEL", item.nivel);
-        upd.add("PORCOBRO", item.porcobro);
+        upd.add("EMPRESA",item.empresa);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("ACTIVO",item.activo);
+        upd.add("NIVEL",item.nivel);
+        upd.add("PORCOBRO",item.porcobro);
 
-        upd.Where("(CODIGO=" + item.codigo + ")");
+        upd.Where("(CODIGO="+item.codigo+")");
 
         db.execSQL(upd.sql());
 
@@ -105,12 +105,12 @@ public class clsP_mediapagoObj {
     }
 
     private void deleteItem(clsClasses.clsP_mediapago item) {
-        sql = "DELETE FROM P_mediapago WHERE (CODIGO=" + item.codigo + ")";
+        sql="DELETE FROM P_mediapago WHERE (CODIGO="+item.codigo+")";
         db.execSQL(sql);
     }
 
     private void deleteItem(int id) {
-        sql = "DELETE FROM P_mediapago WHERE id=" + id;
+        sql="DELETE FROM P_mediapago WHERE id=" + id;
         db.execSQL(sql);
     }
 
@@ -120,38 +120,43 @@ public class clsP_mediapagoObj {
 
         items.clear();
 
-        dt = Con.OpenDT(sq);
-        count = dt.getCount();
-        if (dt.getCount() > 0) dt.moveToFirst();
+        dt=Con.OpenDT(sq);
+        count =dt.getCount();
+        if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_mediapago();
 
-            item.codigo = dt.getInt(0);
-            item.nombre = dt.getString(1);
-            item.activo = dt.getString(2);
-            item.nivel = dt.getInt(3);
-            item.porcobro = dt.getString(4);
+            item.codigo=dt.getInt(0);
+            item.empresa=dt.getInt(1);
+            item.nombre=dt.getString(2);
+            item.activo=dt.getInt(3);
+            item.nivel=dt.getInt(4);
+            item.porcobro=dt.getInt(5);
 
             items.add(item);
 
             dt.moveToNext();
         }
 
+        if (dt!=null) dt.close();
+
     }
 
     public int newID(String idsql) {
-        Cursor dt;
+        Cursor dt=null;
         int nid;
 
         try {
-            dt = Con.OpenDT(idsql);
+            dt=Con.OpenDT(idsql);
             dt.moveToFirst();
-            nid = dt.getInt(0) + 1;
+            nid=dt.getInt(0)+1;
         } catch (Exception e) {
-            nid = 1;
+            nid=1;
         }
+
+        if (dt!=null) dt.close();
 
         return nid;
     }
@@ -160,11 +165,12 @@ public class clsP_mediapagoObj {
 
         ins.init("P_mediapago");
 
-        ins.add("CODIGO", item.codigo);
-        ins.add("NOMBRE", item.nombre);
-        ins.add("ACTIVO", item.activo);
-        ins.add("NIVEL", item.nivel);
-        ins.add("PORCOBRO", item.porcobro);
+        ins.add("CODIGO",item.codigo);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("ACTIVO",item.activo);
+        ins.add("NIVEL",item.nivel);
+        ins.add("PORCOBRO",item.porcobro);
 
         return ins.sql();
 
@@ -174,16 +180,19 @@ public class clsP_mediapagoObj {
 
         upd.init("P_mediapago");
 
-        upd.add("NOMBRE", item.nombre);
-        upd.add("ACTIVO", item.activo);
-        upd.add("NIVEL", item.nivel);
-        upd.add("PORCOBRO", item.porcobro);
+        upd.add("EMPRESA",item.empresa);
+        upd.add("NOMBRE",item.nombre);
+        upd.add("ACTIVO",item.activo);
+        upd.add("NIVEL",item.nivel);
+        upd.add("PORCOBRO",item.porcobro);
 
-        upd.Where("(CODIGO=" + item.codigo + ")");
+        upd.Where("(CODIGO="+item.codigo+")");
 
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
+
 }
+

@@ -12,21 +12,22 @@ public class clsBeP_COREL {
     @Element(required=false) public int CORELULT;
     @Element(required=false) public Long FECHARES;
     @Element(required=false) public int RUTA;
-    @Element(required=false) public int EMPRESA;
-    @Element(required=false) public String ACTIVA;
+    @Element(required=false) public String EMPRESA;
+    @Element(required=false) public boolean ACTIVA;
     @Element(required=false) public String HANDHELD;
     @Element(required=false) public Long FECHAVIG;
     @Element(required=false) public int RESGUARDO;
     @Element(required=false) public int VALOR1;
     @Element(required=false) public int CODIGO_COREL;
 
+
     public clsBeP_COREL() {
     }
 
     public clsBeP_COREL(String RESOL,String SERIE,int CORELINI,int CORELFIN,
-                        int CORELULT,Long FECHARES,int RUTA,int EMPRESA,
-                        String ACTIVA,String HANDHELD,Long FECHAVIG,int RESGUARDO,
-                        int VALOR1, int CODIGO_COREL) {
+                        int CORELULT,Long FECHARES,int RUTA,String EMPRESA,
+                        boolean ACTIVA,String HANDHELD,Long FECHAVIG,int RESGUARDO,
+                        int VALOR1,int CODIGO_COREL) {
 
         this.RESOL=RESOL;
         this.SERIE=SERIE;
@@ -88,16 +89,16 @@ public class clsBeP_COREL {
     public void setRUTA(int value) {
         RUTA=value;
     }
-    public int getEMP() {
+    public String getEMPRESA() {
         return EMPRESA;
     }
-    public void setEMP(int value) {
+    public void setEMPRESA(String value) {
         EMPRESA=value;
     }
-    public String getACTIVA() {
+    public boolean getACTIVA() {
         return ACTIVA;
     }
-    public void setACTIVA(String value) {
+    public void setACTIVA(boolean value) {
         ACTIVA=value;
     }
     public String getHANDHELD() {

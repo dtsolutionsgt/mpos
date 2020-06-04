@@ -9,13 +9,13 @@ public class clsBeP_CLIENTE {
     @Element(required=false) public String CODIGO;
     @Element(required=false) public String EMPRESA;
     @Element(required=false) public String NOMBRE;
-    @Element(required=false) public String BLOQUEADO;
+    @Element(required=false) public boolean BLOQUEADO;
     @Element(required=false) public int NIVELPRECIO;
     @Element(required=false) public int MEDIAPAGO;
     @Element(required=false) public double LIMITECREDITO;
     @Element(required=false) public int DIACREDITO;
-    @Element(required=false) public String DESCUENTO;
-    @Element(required=false) public String BONIFICACION;
+    @Element(required=false) public boolean DESCUENTO;
+    @Element(required=false) public boolean BONIFICACION;
     @Element(required=false) public int ULTVISITA;
     @Element(required=false) public double IMPSPEC;
     @Element(required=false) public String NIT;
@@ -32,17 +32,17 @@ public class clsBeP_CLIENTE {
     @Element(required=false) public String TIPO_CONTRIBUYENTE;
     @Element(required=false) public String IMAGEN;
 
+
     public clsBeP_CLIENTE() {
     }
 
     public clsBeP_CLIENTE(int CODIGO_CLIENTE,String CODIGO,String EMPRESA,String NOMBRE,
-                          String BLOQUEADO,int NIVELPRECIO,int MEDIAPAGO,double LIMITECREDITO,
-                          int DIACREDITO,String DESCUENTO,String BONIFICACION,int ULTVISITA,
+                          boolean BLOQUEADO,int NIVELPRECIO,int MEDIAPAGO,double LIMITECREDITO,
+                          int DIACREDITO,boolean DESCUENTO,boolean BONIFICACION,int ULTVISITA,
                           double IMPSPEC,String NIT,String EMAIL,String ESERVICE,
                           String TELEFONO,String DIRECCION,double COORX,double COORY,
                           String BODEGA,String COD_PAIS,String CODBARRA,double PERCEPCION,
-                          String TIPO_CONTRIBUYENTE,
-                          String IMAGEN) {
+                          String TIPO_CONTRIBUYENTE,String IMAGEN) {
 
         this.CODIGO_CLIENTE=CODIGO_CLIENTE;
         this.CODIGO=CODIGO;
@@ -69,7 +69,8 @@ public class clsBeP_CLIENTE {
         this.CODBARRA=CODBARRA;
         this.PERCEPCION=PERCEPCION;
         this.TIPO_CONTRIBUYENTE=TIPO_CONTRIBUYENTE;
-        this.IMAGEN = IMAGEN;
+        this.IMAGEN=IMAGEN;
+
     }
 
 
@@ -97,10 +98,10 @@ public class clsBeP_CLIENTE {
     public void setNOMBRE(String value) {
         NOMBRE=value;
     }
-    public String getBLOQUEADO() {
+    public boolean getBLOQUEADO() {
         return BLOQUEADO;
     }
-    public void setBLOQUEADO(String value) {
+    public void setBLOQUEADO(boolean value) {
         BLOQUEADO=value;
     }
     public int getNIVELPRECIO() {
@@ -127,16 +128,16 @@ public class clsBeP_CLIENTE {
     public void setDIACREDITO(int value) {
         DIACREDITO=value;
     }
-    public String getDESCUENTO() {
+    public boolean getDESCUENTO() {
         return DESCUENTO;
     }
-    public void setDESCUENTO(String value) {
+    public void setDESCUENTO(boolean value) {
         DESCUENTO=value;
     }
-    public String getBONIFICACION() {
+    public boolean getBONIFICACION() {
         return BONIFICACION;
     }
-    public void setBONIFICACION(String value) {
+    public void setBONIFICACION(boolean value) {
         BONIFICACION=value;
     }
     public int getULTVISITA() {

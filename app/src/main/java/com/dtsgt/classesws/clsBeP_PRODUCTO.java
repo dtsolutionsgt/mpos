@@ -21,16 +21,16 @@ public class clsBeP_PRODUCTO {
     @Element(required=false) public double UNIMEDFACT;
     @Element(required=false) public String UNIGRA;
     @Element(required=false) public double UNIGRAFACT;
-    @Element(required=false) public String DESCUENTO;
-    @Element(required=false) public String BONIFICACION;
+    @Element(required=false) public boolean DESCUENTO;
+    @Element(required=false) public boolean BONIFICACION;
     @Element(required=false) public double IMP1;
     @Element(required=false) public double IMP2;
     @Element(required=false) public double IMP3;
     @Element(required=false) public String VENCOMP;
-    @Element(required=false) public String DEVOL;
-    @Element(required=false) public String OFRECER;
-    @Element(required=false) public String RENTAB;
-    @Element(required=false) public String DESCMAX;
+    @Element(required=false) public boolean DEVOL;
+    @Element(required=false) public boolean OFRECER;
+    @Element(required=false) public boolean RENTAB;
+    @Element(required=false) public boolean DESCMAX;
     @Element(required=false) public String IVA;
     @Element(required=false) public String CODBARRA2;
     @Element(required=false) public int CBCONV;
@@ -62,19 +62,18 @@ public class clsBeP_PRODUCTO {
     }
 
     public clsBeP_PRODUCTO(int CODIGO_PRODUCTO,String CODIGO,String CODIGO_TIPO,int LINEA,
-                           String SUBLINEA,int EMPRESA,String MARCA,String CODBARRA,
-                           String DESCCORTA,String DESCLARGA,double COSTO,double FACTORCONV,
-                           String UNIDBAS,String UNIDMED,double UNIMEDFACT,String UNIGRA,
-                           double UNIGRAFACT,String DESCUENTO,String BONIFICACION,double IMP1,
-                           double IMP2,double IMP3,String VENCOMP,String DEVOL,
-                           String OFRECER,String RENTAB,String DESCMAX,String IVA,
-                           String CODBARRA2,int CBCONV,String BODEGA,String SUBBODEGA,
-                           double PESO_PROMEDIO,boolean MODIF_PRECIO,String IMAGEN,String VIDEO,
-                           boolean VENTA_POR_PESO,boolean ES_PROD_BARRA,String UNID_INV,boolean VENTA_POR_PAQUETE,
-                           boolean VENTA_POR_FACTOR_CONV,boolean ES_SERIALIZADO,int PARAM_CADUCIDAD,String PRODUCTO_PADRE,
-                           double FACTOR_PADRE,boolean TIENE_INV,boolean TIENE_VINETA_O_TUBO,double PRECIO_VINETA_O_TUBO,
-                           boolean ES_VENDIBLE,double UNIGRASAP,String UM_SALIDA,int Activo
-    ) {
+                           int EMPRESA,String MARCA,String CODBARRA,String DESCCORTA,
+                           String DESCLARGA,double COSTO,double FACTORCONV,String UNIDBAS,
+                           String UNIDMED,double UNIMEDFACT,String UNIGRA,double UNIGRAFACT,
+                           boolean DESCUENTO,boolean BONIFICACION,double IMP1,double IMP2,
+                           double IMP3,String VENCOMP,boolean DEVOL,boolean OFRECER,
+                           boolean RENTAB,boolean DESCMAX,String IVA,String CODBARRA2,
+                           int CBCONV,String BODEGA,String SUBBODEGA,double PESO_PROMEDIO,
+                           boolean MODIF_PRECIO,String IMAGEN,String VIDEO,boolean VENTA_POR_PESO,
+                           boolean ES_PROD_BARRA,String UNID_INV,boolean VENTA_POR_PAQUETE,boolean VENTA_POR_FACTOR_CONV,
+                           boolean ES_SERIALIZADO,int PARAM_CADUCIDAD,String PRODUCTO_PADRE,double FACTOR_PADRE,
+                           boolean TIENE_INV,boolean TIENE_VINETA_O_TUBO,double PRECIO_VINETA_O_TUBO,boolean ES_VENDIBLE,
+                           double UNIGRASAP,String UM_SALIDA,int Activo) {
 
         this.CODIGO_PRODUCTO=CODIGO_PRODUCTO;
         this.CODIGO=CODIGO;
@@ -146,7 +145,7 @@ public class clsBeP_PRODUCTO {
     public String getCODIGO_TIPO() {
         return CODIGO_TIPO;
     }
-    public void setTIPO(String value) {
+    public void setCODIGO_TIPO(String value) {
         CODIGO_TIPO=value;
     }
     public int getLINEA() {
@@ -227,16 +226,16 @@ public class clsBeP_PRODUCTO {
     public void setUNIGRAFACT(double value) {
         UNIGRAFACT=value;
     }
-    public String getDESCUENTO() {
+    public boolean getDESCUENTO() {
         return DESCUENTO;
     }
-    public void setDESCUENTO(String value) {
+    public void setDESCUENTO(boolean value) {
         DESCUENTO=value;
     }
-    public String getBONIFICACION() {
+    public boolean getBONIFICACION() {
         return BONIFICACION;
     }
-    public void setBONIFICACION(String value) {
+    public void setBONIFICACION(boolean value) {
         BONIFICACION=value;
     }
     public double getIMP1() {
@@ -263,28 +262,28 @@ public class clsBeP_PRODUCTO {
     public void setVENCOMP(String value) {
         VENCOMP=value;
     }
-    public String getDEVOL() {
+    public boolean getDEVOL() {
         return DEVOL;
     }
-    public void setDEVOL(String value) {
+    public void setDEVOL(boolean value) {
         DEVOL=value;
     }
-    public String getOFRECER() {
+    public boolean getOFRECER() {
         return OFRECER;
     }
-    public void setOFRECER(String value) {
+    public void setOFRECER(boolean value) {
         OFRECER=value;
     }
-    public String getRENTAB() {
+    public boolean getRENTAB() {
         return RENTAB;
     }
-    public void setRENTAB(String value) {
+    public void setRENTAB(boolean value) {
         RENTAB=value;
     }
-    public String getDESCMAX() {
+    public boolean getDESCMAX() {
         return DESCMAX;
     }
-    public void setDESCMAX(String value) {
+    public void setDESCMAX(boolean value) {
         DESCMAX=value;
     }
     public String getIVA() {
