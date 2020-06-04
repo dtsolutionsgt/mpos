@@ -667,7 +667,7 @@ public class BaseDatosScript {
             sql="CREATE TABLE [D_FACTURA] ("+
                     "EMPRESA INTEGER NOT NULL,"+
                     "COREL TEXT NOT NULL,"+
-                    "ANULADO TEXT NOT NULL,"+
+                    "ANULADO BOOLEAN NOT NULL,"+
                     "FECHA INTEGER NOT NULL,"+
                     "RUTA INTEGER NOT NULL,"+
                     "VENDEDOR INTEGER NOT NULL,"+
@@ -681,14 +681,14 @@ public class BaseDatosScript {
                     "PESO REAL NOT NULL,"+
                     "BANDERA TEXT NOT NULL,"+
                     "STATCOM TEXT NOT NULL,"+
-                    "CALCOBJ TEXT NOT NULL,"+
+                    "CALCOBJ BOOLEAN NOT NULL,"+
                     "SERIE TEXT NOT NULL,"+
                     "CORELATIVO INTEGER NOT NULL,"+
                     "IMPRES INTEGER NOT NULL,"+
                     "ADD1 TEXT NOT NULL,"+
                     "ADD2 TEXT NOT NULL,"+
                     "ADD3 TEXT NOT NULL,"+
-                    "DEPOS TEXT NOT NULL,"+
+                    "DEPOS BOOLEAN NOT NULL,"+
                     "PEDCOREL TEXT NOT NULL,"+
                     "REFERENCIA TEXT NOT NULL,"+
                     "ASIGNACION TEXT NOT NULL,"+
@@ -711,7 +711,7 @@ public class BaseDatosScript {
                     "COREL TEXT NOT NULL,"+
                     "PRODUCTO INTEGER NOT NULL,"+
                     "UMPESO TEXT NOT NULL,"+
-                    "ANULADO TEXT NOT NULL,"+
+                    "ANULADO BOOLEAN NOT NULL,"+
                     "CANT REAL NOT NULL,"+
                     "PRECIO REAL NOT NULL,"+
                     "IMP REAL NOT NULL,"+
@@ -733,14 +733,14 @@ public class BaseDatosScript {
                     "EMPRESA INTEGER NOT NULL,"+
                     "COREL TEXT NOT NULL,"+
                     "ITEM INTEGER NOT NULL,"+
-                    "ANULADO TEXT NOT NULL,"+
+                    "ANULADO BOOLEAN NOT NULL,"+
                     "CODPAGO INTEGER NOT NULL,"+
                     "TIPO TEXT NOT NULL,"+
                     "VALOR REAL NOT NULL,"+
                     "DESC1 TEXT NOT NULL,"+
                     "DESC2 TEXT NOT NULL,"+
                     "DESC3 TEXT NOT NULL,"+
-                    "DEPOS TEXT NOT NULL,"+
+                    "DEPOS BOOLEAN NOT NULL,"+
                     "PRIMARY KEY ([EMPRESA],[COREL],[ITEM])"+
                     ");";
             database.execSQL(sql);
@@ -769,7 +769,7 @@ public class BaseDatosScript {
                     "[COREL] TEXT NOT NULL,"+
                     "[ITEM] INTEGER NOT NULL,"+
                     "[FECHA] INTEGER NOT NULL,"+
-                    "[ANULADO] TEXT NOT NULL,"+
+                    "[ANULADO] BOOLEAN NOT NULL,"+
                     "[EMPRESA] TEXT NOT NULL,"+
                     "[RUTA] TEXT NOT NULL,"+
                     "[CLIENTE] TEXT NOT NULL,"+
@@ -861,7 +861,7 @@ public class BaseDatosScript {
                     "[NUMCHEQ] INTEGER NOT NULL,"+
                     "[IMPRES] INTEGER NOT NULL,"+
                     "[STATCOM] TEXT NOT NULL,"+
-                    "[ANULADO] INTEGER NOT NULL,"+
+                    "[ANULADO] BOOLEAN NOT NULL,"+
                     "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
                     "PRIMARY KEY ([COREL])"+
                     ");";
@@ -878,7 +878,7 @@ public class BaseDatosScript {
                     "[DOCCOREL] TEXT NOT NULL,"+
                     "[TIPODOC] TEXT NOT NULL,"+
                     "[CODPAGO] INTEGER NOT NULL,"+
-                    "[CHEQUE] TEXT NOT NULL,"+
+                    "[CHEQUE] BOOLEAN NOT NULL,"+
                     "[MONTO] REAL NOT NULL,"+
                     "[BANCO]   NOT NULL,"+
                     "[NUMERO] TEXT NOT NULL,"+
@@ -1505,7 +1505,7 @@ public class BaseDatosScript {
 
 
             sql="CREATE TABLE [T_DEVOL] ("+
-                    "[CODIGO] TEXT NOT NULL,"+
+                    "[CODIGO] INTEGER NOT NULL,"+
                     "[CANT] REAL NOT NULL,"+
                     "[CANTM] REAL NOT NULL,"+
                     "PRIMARY KEY ([CODIGO])"+

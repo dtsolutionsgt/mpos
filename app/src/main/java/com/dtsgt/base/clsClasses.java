@@ -5,7 +5,7 @@ public class clsClasses {
     public class clsD_factura {
         public int  empresa;
         public String corel;
-        public String anulado;
+        public boolean anulado;
         public long fecha;
         public int  ruta;
         public int  vendedor;
@@ -19,14 +19,14 @@ public class clsClasses {
         public double peso;
         public String bandera;
         public String statcom;
-        public String calcobj;
+        public boolean calcobj;
         public String serie;
         public int  corelativo;
         public int  impres;
         public String add1;
         public String add2;
         public String add3;
-        public String depos;
+        public boolean depos;
         public String pedcorel;
         public String referencia;
         public String asignacion;
@@ -47,7 +47,7 @@ public class clsClasses {
         public String corel;
         public int  producto;
         public String umpeso;
-        public String anulado;
+        public boolean anulado;
         public double cant;
         public double precio;
         public double imp;
@@ -74,14 +74,14 @@ public class clsClasses {
         public int  empresa;
         public String corel;
         public int  item;
-        public String anulado;
+        public boolean anulado;
         public int  codpago;
         public String tipo;
         public double valor;
         public String desc1;
         public String desc2;
         public String desc3;
-        public String depos;
+        public boolean depos;
     }
 
     public class clsD_facturas {
