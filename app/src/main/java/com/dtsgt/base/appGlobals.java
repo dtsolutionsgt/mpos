@@ -41,7 +41,8 @@ public class appGlobals extends Application {
 	public String  cliente,
 			       ruta,
 			       vend,
-				   caja;
+				   caja,
+	               clave;
 	public double precio_recarga;
 	public boolean configCajaSuc = false;
 

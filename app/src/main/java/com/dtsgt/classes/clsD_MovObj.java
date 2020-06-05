@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsD_MovObj {
@@ -17,6 +18,7 @@ public class clsD_MovObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private DateUtils du = new DateUtils();
 
     private String sel="SELECT * FROM D_MOV";
     private String sql;
@@ -174,6 +176,28 @@ public class clsD_MovObj {
         if (dt!=null) dt.close();
 
         return nid;
+    }
+
+    public String addMovHeader(clsClasses.clsD_Mov item) {
+
+        String fs=""+du.univfechalong(item.FECHA);
+
+        ins.init("D_MOV");
+
+        ins.add("COREL",item.COREL);
+        ins.add("RUTA",item.RUTA);
+        ins.add("ANULADO",item.ANULADO);
+        ins.add("FECHA",fs);
+        ins.add("TIPO",item.TIPO);
+        ins.add("USUARIO",item.USUARIO);
+        ins.add("REFERENCIA",item.REFERENCIA);
+        ins.add("STATCOM",item.STATCOM);
+        ins.add("IMPRES",item.IMPRES);
+        ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
+        ins.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
+
+        return ins.sql();
+
     }
 
     public String addItemSql(clsClasses.clsD_Mov item) {

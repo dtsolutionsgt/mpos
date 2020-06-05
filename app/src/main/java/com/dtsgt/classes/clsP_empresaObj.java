@@ -21,7 +21,7 @@ public class clsP_empresaObj {
     private String sel="SELECT * FROM P_empresa";
     private String sel_sin_imagen="SELECT EMPRESA, NOMBRE, COL_IMP, '' AS LOGO, RAZON_SOCIAL, IDENTIFICACION_TRIBUTARIA, TELEFONO, " +
                                   "COD_PAIS, NOMBRE_CONTACTO, APELLIDO_CONTACTO, DIRECCION, CORREO, CODIGO_ACTIVACION, " +
-                                  "COD_CANT_EMP, CANTIDAD_PUNTOS_VENTA FROM P_empresa";
+                                  "COD_CANT_EMP, CANTIDAD_PUNTOS_VENTA, CLAVE FROM P_empresa";
     private String sql;
     public ArrayList<clsClasses.clsP_empresa> items= new ArrayList<clsClasses.clsP_empresa>();
 
@@ -97,6 +97,7 @@ public class clsP_empresaObj {
         ins.add("CODIGO_ACTIVACION",item.codigo_activacion);
         ins.add("COD_CANT_EMP",item.cod_cant_emp);
         ins.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
+        ins.add("CLAVE",item.clave);
 
         db.execSQL(ins.sql());
 
@@ -120,6 +121,7 @@ public class clsP_empresaObj {
         upd.add("CODIGO_ACTIVACION",item.codigo_activacion);
         upd.add("COD_CANT_EMP",item.cod_cant_emp);
         upd.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
+        upd.add("CLAVE",item.clave);
 
         upd.Where("(EMPRESA="+item.empresa+")");
 
@@ -172,6 +174,7 @@ public class clsP_empresaObj {
                 item.codigo_activacion=dt.getString(12);
                 item.cod_cant_emp=dt.getInt(13);
                 item.cantidad_puntos_venta=dt.getInt(14);
+                item.clave=dt.getString(15);
 
                 items.add(item);
 
@@ -220,6 +223,7 @@ public class clsP_empresaObj {
         ins.add("CODIGO_ACTIVACION",item.codigo_activacion);
         ins.add("COD_CANT_EMP",item.cod_cant_emp);
         ins.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
+        ins.add("CLAVE",item.clave);
 
         return ins.sql();
 
@@ -243,6 +247,7 @@ public class clsP_empresaObj {
         upd.add("CODIGO_ACTIVACION",item.codigo_activacion);
         upd.add("COD_CANT_EMP",item.cod_cant_emp);
         upd.add("CANTIDAD_PUNTOS_VENTA",item.cantidad_puntos_venta);
+        upd.add("CLAVE",item.clave);
 
         upd.Where("(EMPRESA="+item.empresa+")");
 

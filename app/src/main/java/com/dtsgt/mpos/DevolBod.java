@@ -378,6 +378,7 @@ public class DevolBod extends PBase {
 			ins.add("STATCOM","N");
 			ins.add("IMPRES",0);
 			ins.add("CODIGOLIQUIDACION",0);
+			ins.add("CODIGO_PROVEEDOR",1);
 			ins.add("TOTAL",0);
 
 			db.execSQL(ins.sql());

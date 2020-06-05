@@ -101,6 +101,7 @@ public class BaseDatosScript {
                     "CODIGO_ACTIVACION TEXT NOT NULL,"+
                     "COD_CANT_EMP INTEGER NOT NULL,"+
                     "CANTIDAD_PUNTOS_VENTA INTEGER NOT NULL,"+
+                    "CLAVE TEXT NOT NULL,"+
                     "PRIMARY KEY ([EMPRESA])"+
                     ");";
             database.execSQL(sql);
@@ -341,6 +342,7 @@ public class BaseDatosScript {
                     "CODIGO_ESCENARIO_ISR INTEGER NOT NULL,"+
                     "CODIGO_ESCENARIO_IVA INTEGER NOT NULL,"+
                     "CODIGO_MUNICIPIO TEXT NOT NULL,"+
+                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_SUCURSAL])"+
                     ");";
              database.execSQL(sql);

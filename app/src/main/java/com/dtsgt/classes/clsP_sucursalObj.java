@@ -94,6 +94,7 @@ public class clsP_sucursalObj {
         ins.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
         ins.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
 
         db.execSQL(ins.sql());
 
@@ -121,6 +122,7 @@ public class clsP_sucursalObj {
         upd.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
         upd.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         upd.add("CODIGO_MUNICIPIO",item.codigo_municipio);
+        upd.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
 
         upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 
@@ -173,6 +175,7 @@ public class clsP_sucursalObj {
             item.codigo_escenario_isr=dt.getInt(16);
             item.codigo_escenario_iva=dt.getInt(17);
             item.codigo_municipio=dt.getString(18);
+            item.codigo_proveedor=dt.getInt(19);
 
             items.add(item);
 
@@ -223,6 +226,7 @@ public class clsP_sucursalObj {
         ins.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
         ins.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         ins.add("CODIGO_MUNICIPIO",item.codigo_municipio);
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
 
         return ins.sql();
 
@@ -250,6 +254,7 @@ public class clsP_sucursalObj {
         upd.add("CODIGO_ESCENARIO_ISR",item.codigo_escenario_isr);
         upd.add("CODIGO_ESCENARIO_IVA",item.codigo_escenario_iva);
         upd.add("CODIGO_MUNICIPIO",item.codigo_municipio);
+        upd.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
 
         upd.Where("(CODIGO_SUCURSAL="+item.codigo_sucursal+")");
 

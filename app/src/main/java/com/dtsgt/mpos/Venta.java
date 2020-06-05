@@ -1225,11 +1225,11 @@ public class Venta extends PBase {
 
             sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
-                    "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO)  " +
+                    "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO)  " +
                     "WHERE (P_STOCK.CANT > 0) AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"')) ";
             sql += "UNION ";
             sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA FROM P_PRODUCTO " +
-                    "WHERE ((P_PRODUCTO.TIPO ='S') OR (P_PRODUCTO.TIPO ='M')) " +
+                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) " +
                     "AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"'))  COLLATE NOCASE";
 
             dt=Con.OpenDT(sql);
@@ -2580,7 +2580,7 @@ public class Venta extends PBase {
 
             sql="SELECT SUM(D_FACTURAP.VALOR) FROM D_FACTURAP  "+
                "INNER JOIN D_FACTURA ON D_FACTURAP.COREL=D_FACTURA.COREL "+
-               "WHERE (D_FACTURA.FECHA>="+ff+") AND (D_FACTURA.ANULADO='N') " +
+               "WHERE (D_FACTURA.FECHA>="+ff+") AND (D_FACTURA.ANULADO=0) " +
                "AND (D_FACTURA.CLIENTE='"+gl.codigo_cliente+"') AND (D_FACTURAP.TIPO='C')";
             dt = Con.OpenDT(sql);
 
@@ -2619,7 +2619,7 @@ public class Venta extends PBase {
 
     private int pendienteFEL() {
          try {
-            sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO='N')";
+            sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
             Cursor DT=Con.OpenDT(sql);
             return DT.getCount();
         } catch (Exception e) {

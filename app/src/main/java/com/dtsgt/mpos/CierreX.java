@@ -300,9 +300,9 @@ public class CierreX extends PBase {
 
                     case 1:
                         if(gl.reportid==9){
-                            condition =" WHERE ANULADO='N' AND KILOMETRAJE = 0 ";
+                            condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE ANULADO='N' AND KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
@@ -313,9 +313,9 @@ public class CierreX extends PBase {
                         break;
                     case 2:
                         if(gl.reportid==9){
-                            condition =" WHERE ANULADO='N' AND KILOMETRAJE = 0 ";
+                            condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE ANULADO='N' AND KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
@@ -327,9 +327,9 @@ public class CierreX extends PBase {
                         break;
                     case 3:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', '', 0, D.PRODUCTO, P.DESCCORTA, D.UMVENTA, " +
@@ -343,24 +343,24 @@ public class CierreX extends PBase {
                         break;
                     case 4:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 FROM P_MEDIAPAGO M " +
                                 "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                                 "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+
                                 condition+
-                                "AND F.ANULADO='N' "+
+                                "AND F.ANULADO=0 "+
                                 " GROUP BY M.NOMBRE";
                         break;
 
                     case 5:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT '', '', 0, '', L.NOMBRE, '', SUM(D.CANT), 0, SUM(D.TOTAL), 0 FROM P_LINEA L " +
@@ -373,9 +373,9 @@ public class CierreX extends PBase {
 
                     case 6:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT V.CODIGO, '', 0, '', V.NOMBRE, '', COUNT(COREL), V.NIVELPRECIO, SUM(F.TOTAL), 0 FROM VENDEDORES V " +
@@ -386,9 +386,9 @@ public class CierreX extends PBase {
 
                     case 7:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT D.PRODUCTO, '', 0, '',  P.DESCCORTA, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM D_FACTURAD D " +
@@ -400,9 +400,9 @@ public class CierreX extends PBase {
 
                     case 8:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT L.CODIGO, '', 0, '', L.NOMBRE, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM P_LINEA L " +
@@ -416,9 +416,9 @@ public class CierreX extends PBase {
 
                     case 9:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
@@ -431,9 +431,9 @@ public class CierreX extends PBase {
 
                     case 10:
                         if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO='N' AND F.KILOMETRAJE = 0 ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO='N' AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT F.COREL, C.CODIGO, 0, P.CODIGO, P.DESCCORTA, C.NOMBRE, SUM(D.CANT), D.PRECIO, D.PRECIO*D.CANT, F.FECHA, 0 " +

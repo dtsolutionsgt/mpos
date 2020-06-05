@@ -523,7 +523,7 @@ public class clsFinDia extends PBase {
             pend = 0;
 
             sql = " SELECT E.COREL FROM D_FACTURA E INNER JOIN D_FACTURAP P ON E.COREL = P.COREL " +
-                  " WHERE E.ANULADO='N' AND E.DEPOS<>'S' AND P.TIPO <>'K'";
+                  " WHERE E.ANULADO=0 AND E.DEPOS<>1 AND P.TIPO <>'K'";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount()>0){

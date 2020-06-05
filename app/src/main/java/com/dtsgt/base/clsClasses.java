@@ -297,6 +297,7 @@ public class clsClasses {
         public String codigo_activacion;
         public int  cod_cant_emp;
         public int  cantidad_puntos_venta;
+        public String  clave;
     }
 
     public class clsP_encabezado_reporteshh {
@@ -475,7 +476,7 @@ public class clsClasses {
         public int  codigo_proveedor;
         public String codigo;
         public String nombre;
-        public int  activo;
+        public Boolean  activo;
     }
 
     public class clsP_sucursal {
@@ -498,8 +499,8 @@ public class clsClasses {
         public int  codigo_escenario_isr;
         public int  codigo_escenario_iva;
         public String codigo_municipio;
+        public int codigo_proveedor;
     }
-
 
     public class clsP_ruta {
         public String codigo;
@@ -536,7 +537,6 @@ public class clsClasses {
         public String nombre;
     }
 
-
     public class clsVendedores {
         public String codigo;
         public String nombre;
@@ -565,7 +565,6 @@ public class clsClasses {
         public int  idlista;
         public int  cant;
     }
-
 
     //
 

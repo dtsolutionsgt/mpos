@@ -94,23 +94,34 @@ public class WSEnv extends PBase {
 
         @Override
         public void wsExecute() {
+
             try {
+
                 switch (ws.callback) {
+
                     case 1:
                         processClients();
-                        if (clients.size()>0) callMethod("Commit", "SQL", CSQL);
+
+                        if (clients.size()>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+
                         break;
                     case 2:
                         processFactura();
+
                         if (ftot>0) {
                             callMethod("Commit", "SQL", CSQL);
                         }
+
                         break;
                     case 3:
                         processMov();
+
                         if (fTotMov>0) {
                             callMethod("Commit", "SQL", CSQL);
                         }
+
                         break;
                 }
             } catch (Exception e) {
@@ -135,7 +146,7 @@ public class WSEnv extends PBase {
                     execws(2);
                     break;
                 case 2:
-                    statusFactura();
+                    if (ftot>0) statusFactura();
                     if (fidx>=ftot-1) {
                         execws(3);
                     } else {
@@ -143,7 +154,7 @@ public class WSEnv extends PBase {
                     }
                     break;
                 case 3:
-                    statusMov();
+                    if (fTotMov>0) statusMov();
                     if (fIdxMov>=fTotMov-1) {
                         processComplete();
                     } else {
@@ -370,18 +381,18 @@ public class WSEnv extends PBase {
 
     private void processMov() {
 
-        if (fTotMov==0) {
-            fIdxMov++;
-            return;
-        }
-
-        fIdxMov++;
-        corelMov=mov.get(fIdxMov);
-        movSend=false;
-
-        mov.clear();
-
         try {
+
+            if (fTotMov==0) {
+                fIdxMov++;
+                return;
+            }
+
+            fIdxMov++;
+            corelMov=mov.get(fIdxMov);
+            movSend=false;
+
+            mov.clear();
 
             D_MovObj.fill("WHERE COREL='"+corelMov+"'");
             D_MovDObj.fill("WHERE COREL='"+corelMov+"'");
@@ -391,34 +402,15 @@ public class WSEnv extends PBase {
             CSQL="DELETE FROM D_MOV WHERE COREL='"+corelMov+"';";
             CSQL=CSQL+"DELETE FROM D_MOVD WHERE COREL='"+corelMov+"';";
 
-            CSQL=CSQL+addMovheader(D_MovObj.first())+ ";";
+            CSQL=CSQL+D_MovObj.addMovHeader(D_MovObj.first())+ ";";
 
             for (int i = 0; i <D_MovDObj.count; i++) {
-                CSQL=CSQL+D_MovDObj.addItemSql(D_MovDObj.items.get(i)) + ";";
+                CSQL=CSQL+D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i)) + ";";
             }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-    }
-
-    public String addMovheader(clsClasses.clsD_Mov item) {
-
-        ins.init("D_MOV");
-
-        ins.add("COREL",item.COREL);
-        ins.add("RUTA",item.RUTA);
-        ins.add("ANULADO",item.ANULADO);
-        ins.add("FECHA",item.FECHA);
-        ins.add("TIPO",item.TIPO);
-        ins.add("USUARIO",item.USUARIO);
-        ins.add("REFERENCIA",item.REFERENCIA);
-        ins.add("STATCOM",item.STATCOM);
-        ins.add("IMPRES",item.IMPRES);
-        ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
-
-        return ins.sql();
-
     }
 
     private void statusMov() {
@@ -466,7 +458,14 @@ public class WSEnv extends PBase {
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
             P_clienteObj.fill("WHERE ESERVICE='N'");ccant=P_clienteObj.count;
 
-            D_facturaObj.fill("WHERE (STATCOM='N') AND (FEELUUID<>' ') ");
+            String idfel=gl.peFEL;
+
+            if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
+                D_facturaObj.fill("WHERE (STATCOM='N') ");
+            } else {
+                D_facturaObj.fill("WHERE (STATCOM='N')  AND (FEELUUID<>' ') ");
+            }
+
             ftot=D_facturaObj.count;
             fsend=0;
             if (ftot>0) fidx=-1;else fidx=0;
@@ -476,7 +475,20 @@ public class WSEnv extends PBase {
                 fact.add(D_facturaObj.items.get(i).corel);
             }
 
-            lbl1.setText("Pendientes envio : \nFacturas : "+ftot+"\nClientes : "+ccant);
+            clsD_MovObj D_MovObj = new clsD_MovObj(this,Con,db);
+            D_MovObj.fill("WHERE STATCOM = 'N'");
+            fTotMov=D_MovObj.count;
+
+            mSend=0;
+
+            fIdxMov=(fTotMov>0?-1:0);
+
+            mov.clear();
+            for (int i = 0; i <fTotMov; i++) {
+                mov.add(D_MovObj.items.get(i).COREL);
+            }
+
+            lbl1.setText("Pendientes envio : \nFacturas : "+ftot+"\nClientes : "+ccant+"\nMovimientos inventario : "+fTotMov);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

@@ -67,7 +67,7 @@ public class ObjRuta extends PBase {
 			
 			sql="SELECT SUM(D_FACTURAD.TOTAL),SUM(D_FACTURAD.CANT) "+
 			     "FROM D_FACTURAD INNER JOIN D_FACTURA ON D_FACTURA.COREL=D_FACTURAD.COREL "+
-				 "WHERE (D_FACTURA.ANULADO='N')  AND (D_FACTURA.STATCOM='N') AND (D_FACTURA.RUTA='"+((appGlobals) vApp).ruta+"') ";
+				 "WHERE (D_FACTURA.ANULADO=0)  AND (D_FACTURA.STATCOM='N') AND (D_FACTURA.RUTA='"+((appGlobals) vApp).ruta+"') ";
 			DT=Con.OpenDT(sql);
 			
 			if (DT.getCount()>0) {

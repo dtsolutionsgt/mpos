@@ -105,9 +105,11 @@ import com.dtsgt.classesws.clsBeVENDEDORESList;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -124,6 +126,8 @@ public class WSRec extends PBase {
     private boolean pbd_vacia = false;
     private String plabel, fechasync;
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
+
+    private String clave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +186,7 @@ public class WSRec extends PBase {
             txtEmpresa.setEnabled(false);
 
             txtURLWS.setText(gl.wsurl);
-            txtClave.setText("1");
+            txtClave.setText(gl.clave);
             txtEmpresa.setText(String.valueOf(gl.emp));
         }
 
@@ -192,10 +196,116 @@ public class WSRec extends PBase {
        Recibir();
     }
 
+    protected void guardaDatosConexion() {
+
+        BufferedWriter writer = null;
+        FileWriter wfile;
+
+        try {
+
+            String fname = Environment.getExternalStorageDirectory()+"/mposws.txt";
+            File archivo= new File(fname);
+
+            if (archivo.exists()){
+                archivo.delete();
+            }
+
+            wfile=new FileWriter(fname,true);
+            writer = new BufferedWriter(wfile);
+
+            writer.write(gl.wsurl + "\n");
+            writer.write("7000");
+
+            writer.close();
+
+    } catch (Exception e) {
+       msgbox("Error " + e.getMessage());
+    }
+}
     public void Recibir(){
+
         script.clear();
+
         pbar.setVisibility(View.VISIBLE);
+
+        if (!validaDatos()){
+            return;
+        }
+
+        gl.emp=Integer.valueOf(txtEmpresa.getText().toString());
+        gl.clave=txtClave.getText().toString();
+        gl.wsurl=txtURLWS.getText().toString();
+
+        guardaDatosConexion();
+
+        getURL();
+        ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
+        xobj = new XMLObject(ws);
+
         execws(1);
+    }
+
+    private boolean validaDatos(){
+
+        boolean resultado=true;
+
+        try{
+            if (txtEmpresa.getText().toString().isEmpty()){
+
+                msgbox("Debe ingresar la empresa para recibir los datos");
+
+                showkeyb();
+
+                final Handler cbhandler = new Handler();
+                cbhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtEmpresa.requestFocus();
+                    }
+                }, 500);
+
+                resultado = false;
+
+            }else if (txtClave.getText().toString().isEmpty()){
+
+                msgbox("Debe ingresar la clave para recibir los datos");
+
+                showkeyb();
+
+                final Handler cbhandler = new Handler();
+                cbhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtClave.requestFocus();
+                    }
+                }, 500);
+
+                resultado = false;
+
+            }if (txtURLWS.getText().toString().isEmpty()){
+
+                msgbox("Debe ingresar la URL para recibir los datos");
+
+                showkeyb();
+
+                final Handler cbhandler = new Handler();
+                cbhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtURLWS.requestFocus();
+                    }
+                }, 500);
+
+                resultado = false;
+
+            }
+
+        }catch (Exception ex){
+            msgbox("Ocurrió un error validando los datos " + ex.getMessage());
+            resultado = false;
+        }
+
+        return resultado;
     }
 
     public class WebServiceHandler extends com.dtsgt.classes.WebService {
@@ -209,7 +319,7 @@ public class WSRec extends PBase {
             try {
                 switch (ws.callback) {
                     case 1:
-                        callMethod("GetP_EMPRESA", "EMPRESA", gl.emp);
+                        callMethod("GetP_EMPRESA", "EMPRESA", gl.emp, "CLAVE", clave);
                         break;
                     case 2:
                         callMethod("GetP_BANCO", "EMPRESA", gl.emp);
@@ -694,13 +804,53 @@ public class WSRec extends PBase {
                     if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
                             (event.getAction() == KeyEvent.ACTION_DOWN)) {
 
-                        showkeyb();
+                        if (txtClave.getText().toString().isEmpty()){
 
-                        txtURLWS.requestFocus();
+                            msgbox("Debe ingresar la clave para recibir los datos");
+
+                            showkeyb();
+
+                            txtClave.requestFocus();
+
+                        }else{
+
+                            clave = txtClave.getText().toString();
+
+                            showkeyb();
+
+                            txtURLWS.requestFocus();
+
+                        }
 
                         return true;
                     } else {
                         return false;
+                    }
+                }
+            });
+
+            txtClave.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+                public void onFocusChange(View v, boolean hasFocus) {
+
+                    if(!hasFocus)
+                    {
+
+                        if (txtClave.getText().toString().isEmpty()){
+
+                            msgbox("Debe ingresar la clave para recibir los datos");
+
+                            showkeyb();
+
+                            final Handler cbhandler = new Handler();
+                            cbhandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    txtClave.requestFocus();
+                                }
+                            }, 500);
+                        }
+
                     }
                 }
             });
@@ -782,6 +932,11 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_EMPRESA");
 
             item = xobj.getresult(clsBeP_EMPRESA.class, "GetP_EMPRESA");
+
+            if(item==null){
+                throw new Exception("No se obtuvieron datos de la Empresa el código o la clave son incorrectos");
+            }
+
             var.empresa = item.EMPRESA;
             var.nombre = item.NOMBRE;
             var.col_imp = item.COL_IMP;
@@ -797,6 +952,8 @@ public class WSRec extends PBase {
             var.codigo_activacion = item.CODIGO_ACTIVACION + "";
             var.cod_cant_emp = item.COD_CANT_EMP;
             var.cantidad_puntos_venta = item.CANTIDAD_PUNTOS_VENTA;
+            var.clave = item.CLAVE;
+
             clsP_empresaObj P_empresaObj = new clsP_empresaObj(this, Con, db);
             script.add(P_empresaObj.addItemSql(var));
 
@@ -1632,11 +1789,13 @@ public class WSRec extends PBase {
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
+
                 var = clsCls.new clsP_proveedor();
                 var.codigo_proveedor = item.CODIGO_PROVEEDOR;
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
+
                 script.add(handler.addItemSql(var));
             }
 
@@ -1849,6 +2008,7 @@ public class WSRec extends PBase {
                 var.codigo_escenario_isr=item.CODIGO_ESCENARIO_ISR;
                 var.codigo_escenario_iva=item.CODIGO_ESCENARIO_IVA;
                 var.codigo_municipio=item.CODIGO_MUNICIPIO;
+                var.codigo_proveedor=item.CODIGO_PROVEEDOR;
 
                 script.add(handler.addItemSql(var));
             }

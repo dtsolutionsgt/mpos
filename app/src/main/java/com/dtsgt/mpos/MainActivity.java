@@ -337,7 +337,7 @@ public class MainActivity extends PBase {
 
         try {
             //#HS_20181120_1616 Se agrego el campo UNIDAD_MEDIDA_PESO.//campo INCIDENCIA_NO_LECTURA
-            sql = " SELECT EMPRESA,NOMBRE FROM P_EMPRESA";
+            sql = " SELECT EMPRESA,NOMBRE,CLAVE FROM P_EMPRESA";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {
@@ -351,6 +351,7 @@ public class MainActivity extends PBase {
                 gl.incNoLectura = false; //#HS_20181211 Agregue campo incNoLectura para validacion en cliente.
                 gl.depparc = false;
                 gl.lotedf = "";
+                gl.clave=DT.getString(2);
             } else {
                 gl.emp = 3;
                 gl.devol = false;

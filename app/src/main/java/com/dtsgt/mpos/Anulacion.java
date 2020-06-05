@@ -143,8 +143,10 @@ public class Anulacion extends PBase {
         prn_nc=new printer(this,printclose,gl.validimp);
 
 		setHandlers();
-		listItems();
+
 		setFechaAct();
+
+		listItems();
 
 		doc=new clsDocAnul(this,prn.prw,"");
 
@@ -255,7 +257,7 @@ public class Anulacion extends PBase {
 			
 			if (tipo==4) {
 				sql="SELECT COREL,REFERENCIA,FECHA,0 "+
-					"FROM D_MOV WHERE (TIPO='R') AND (ANULADO='N') AND (CODIGOLIQUIDACION=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+					"FROM D_MOV WHERE (TIPO='R') AND (ANULADO=0) AND (CODIGOLIQUIDACION=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					"ORDER BY FECHA DESC ";
 			}
 			
@@ -789,7 +791,7 @@ public class Anulacion extends PBase {
 			db.beginTransaction();
 
 			if (gl.depparc){
-				sql="UPDATE D_DEPOS SET Anulado='S' WHERE COREL='"+itemid+"'";
+				sql="UPDATE D_DEPOS SET Anulado=1 WHERE COREL='"+itemid+"'";
 				db.execSQL(sql);
 			}
 
@@ -836,7 +838,7 @@ public class Anulacion extends PBase {
 	
 	private void anulDeposParc(String itemid) {
 		try{
-			sql="UPDATE D_DEPOS SET Anulado='S' WHERE COREL='"+itemid+"'";
+			sql="UPDATE D_DEPOS SET Anulado=1 WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -850,7 +852,7 @@ public class Anulacion extends PBase {
 		double cant,cantm;
 
 		try{
-			sql="UPDATE D_MOV SET Anulado='S' WHERE COREL='"+itemid+"'";
+			sql="UPDATE D_MOV SET Anulado=1 WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
 			sql="SELECT PRODUCTO,CANT,CANTM FROM D_MOVD WHERE (COREL='"+itemid+"')";
@@ -890,7 +892,7 @@ public class Anulacion extends PBase {
 
 			db.beginTransaction();
 
-			sql="UPDATE D_MOV SET Anulado='S' WHERE COREL='"+itemid+"'";
+			sql="UPDATE D_MOV SET Anulado=1 WHERE COREL='"+itemid+"'";
 			db.execSQL(sql);
 
 			sql="SELECT PRODUCTO,CANT,CANTM, UNIDADMEDIDA FROM D_MOVD WHERE (COREL='"+itemid+"')";

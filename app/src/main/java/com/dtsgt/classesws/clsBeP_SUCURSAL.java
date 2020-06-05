@@ -24,7 +24,7 @@ public class clsBeP_SUCURSAL {
     @Element(required=false) public int CODIGO_ESCENARIO_ISR;
     @Element(required=false) public int CODIGO_ESCENARIO_IVA;
     @Element(required=false) public String CODIGO_MUNICIPIO;
-
+    @Element(required=false) public int CODIGO_PROVEEDOR;
 
     public clsBeP_SUCURSAL() {
     }
@@ -33,7 +33,7 @@ public class clsBeP_SUCURSAL {
                            String DESCRIPCION,String NOMBRE,String DIRECCION,String TELEFONO,
                            String CORREO,String NIT,String TEXTO,boolean ACTIVO,
                            String PET_PREFIJO,String PET_LLAVE,String PET_ALIAS_PFX,String PET_PFX_LLAVE,
-                           int CODIGO_ESCENARIO_ISR,int CODIGO_ESCENARIO_IVA,String CODIGO_MUNICIPIO) {
+                           int CODIGO_ESCENARIO_ISR,int CODIGO_ESCENARIO_IVA,String CODIGO_MUNICIPIO, int CODIGO_PROVEEDOR) {
 
         this.CODIGO_SUCURSAL=CODIGO_SUCURSAL;
         this.CODIGO=CODIGO;
@@ -54,6 +54,7 @@ public class clsBeP_SUCURSAL {
         this.CODIGO_ESCENARIO_ISR=CODIGO_ESCENARIO_ISR;
         this.CODIGO_ESCENARIO_IVA=CODIGO_ESCENARIO_IVA;
         this.CODIGO_MUNICIPIO=CODIGO_MUNICIPIO;
+        this.CODIGO_PROVEEDOR = CODIGO_PROVEEDOR;
 
     }
 
@@ -171,6 +172,12 @@ public class clsBeP_SUCURSAL {
     }
     public void setCODIGO_MUNICIPIO(String value) {
         CODIGO_MUNICIPIO=value;
+    }
+    public int getCODIGO_PROVEEDOR() {
+        return CODIGO_PROVEEDOR;
+    }
+    public void setCODIGO_PROVEEDOR(int value) {
+        CODIGO_PROVEEDOR=value;
     }
 
 }

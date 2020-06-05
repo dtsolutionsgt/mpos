@@ -183,9 +183,28 @@ public class clsD_MovDObj {
 
     public String addItemSql(clsClasses.clsD_MovD item) {
 
-        ins.init("D_MOVDD");
+        ins.init("D_MOVD");
 
         ins.add("CORELDET",item.CORELDET);
+        ins.add("COREL",item.COREL);
+        ins.add("PRODUCTO",item.PRODUCTO);
+        ins.add("CANT",item.CANT);
+        ins.add("CANTM",item.CANTM);
+        ins.add("PESO",item.PESO);
+        ins.add("PESOM",item.PESOM);
+        ins.add("LOTE",item.LOTE);
+        ins.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
+        ins.add("UNIDADMEDIDA",item.UNIDADMEDIDA);
+        ins.add("PRECIO",item.PRECIO);
+
+        return ins.sql();
+
+    }
+
+    public String addItemSqlWS(clsClasses.clsD_MovD item) {
+
+        ins.init("D_MOVD");
+
         ins.add("COREL",item.COREL);
         ins.add("PRODUCTO",item.PRODUCTO);
         ins.add("CANT",item.CANT);

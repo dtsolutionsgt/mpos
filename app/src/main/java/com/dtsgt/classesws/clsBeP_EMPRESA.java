@@ -20,7 +20,7 @@ public class clsBeP_EMPRESA {
     @Element(required=false) public String CODIGO_ACTIVACION;
     @Element(required=false) public int COD_CANT_EMP;
     @Element(required=false) public int CANTIDAD_PUNTOS_VENTA;
-
+    @Element(required=false) public String CLAVE;
 
     public clsBeP_EMPRESA() {
     }
@@ -28,7 +28,7 @@ public class clsBeP_EMPRESA {
     public clsBeP_EMPRESA(int EMPRESA,String NOMBRE,int COL_IMP,String LOGO,
                           String RAZON_SOCIAL,String IDENTIFICACION_TRIBUTARIA,String TELEFONO,String COD_PAIS,
                           String NOMBRE_CONTACTO,String APELLIDO_CONTACTO,String DIRECCION,String CORREO,
-                          String CODIGO_ACTIVACION,int COD_CANT_EMP,int CANTIDAD_PUNTOS_VENTA) {
+                          String CODIGO_ACTIVACION,int COD_CANT_EMP,int CANTIDAD_PUNTOS_VENTA, String CLAVE) {
 
         this.EMPRESA=EMPRESA;
         this.NOMBRE=NOMBRE;
@@ -45,6 +45,7 @@ public class clsBeP_EMPRESA {
         this.CODIGO_ACTIVACION=CODIGO_ACTIVACION;
         this.COD_CANT_EMP=COD_CANT_EMP;
         this.CANTIDAD_PUNTOS_VENTA=CANTIDAD_PUNTOS_VENTA;
+        this.CLAVE=CLAVE;
 
     }
 
@@ -139,6 +140,11 @@ public class clsBeP_EMPRESA {
     public void setCANTIDAD_PUNTOS_VENTA(int value) {
         CANTIDAD_PUNTOS_VENTA=value;
     }
-
+    public String getCLAVE() {
+        return CLAVE;
+    }
+    public void setCLAVE(String value) {
+        CLAVE=value;
+    }
 }
 
