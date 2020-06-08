@@ -88,6 +88,19 @@
         android:layout_toEndOf="@+id/imageView30"
         android:background="@drawable/frame_rect">
 
+        <CheckBox
+            android:id="@+id/chkEnvio"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtDiasAnul"
+            android:layout_alignStart="@id/checkBox24"
+            android:layout_alignEnd="@id/checkBox24"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@id/textView2"
+            android:clickable="true"
+            android:enabled="true" />
+
         <TextView
             android:id="@+id/lblCFact33"
             android:layout_width="wrap_content"
@@ -102,7 +115,7 @@
             android:background="@drawable/blue_strip"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
-            android:text="Envío de facturas automatico"
+            android:text="Envío automatico de las facturas "
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textSize="18sp"

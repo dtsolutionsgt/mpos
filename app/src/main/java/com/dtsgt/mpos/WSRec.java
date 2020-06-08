@@ -222,15 +222,14 @@ public class WSRec extends PBase {
        msgbox("Error " + e.getMessage());
     }
 }
+
     public void Recibir(){
 
         script.clear();
 
         pbar.setVisibility(View.VISIBLE);
 
-        if (!validaDatos()){
-            return;
-        }
+        if (!validaDatos()) return;
 
         gl.emp=Integer.valueOf(txtEmpresa.getText().toString());
         gl.clave=txtClave.getText().toString();
@@ -319,7 +318,7 @@ public class WSRec extends PBase {
             try {
                 switch (ws.callback) {
                     case 1:
-                        callMethod("GetP_EMPRESA", "EMPRESA", gl.emp, "CLAVE", clave);
+                        callMethod("GetP_EMPRESA", "EMPRESA", gl.emp, "CLAVE", gl.clave);
                         break;
                     case 2:
                         callMethod("GetP_BANCO", "EMPRESA", gl.emp);
@@ -2284,19 +2283,12 @@ public class WSRec extends PBase {
                 gl.wsurl = myReader.readLine();
 
                 String line = myReader.readLine();
-
-                if (line.isEmpty()){
-                    gl.timeout = 6000;
-                }else{
-                    gl.timeout = Integer.valueOf(line);
-                }
+                if (line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
 
                 myReader.close();
             }
 
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) {}
 
         if (!gl.wsurl.isEmpty()) txtURLWS.setText(gl.wsurl);
         else txtURLWS.setText("Falta archivo con URL");

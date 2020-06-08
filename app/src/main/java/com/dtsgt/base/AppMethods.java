@@ -430,6 +430,19 @@ public class AppMethods {
 			gl.cierreDiario=true;
 		}
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=109";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peEnvio=val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peEnvio=true;
+        }
+
 	}
 
 	public boolean grant(int menuopt,int rol) {
@@ -444,6 +457,14 @@ public class AppMethods {
 
         return false;
     }
+
+    public boolean usaFEL() {
+        if (gl.peFEL.isEmpty()| gl.peFEL.equalsIgnoreCase(" ") | gl.peFEL.equalsIgnoreCase("SIN FEL")) {
+            return false;
+        } else {
+            return true;
+        }
+	}
 
     //endregion
 

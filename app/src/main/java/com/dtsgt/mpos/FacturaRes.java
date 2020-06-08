@@ -654,8 +654,10 @@ public class FacturaRes extends PBase {
 
         gl.cliposflag=false;
 
-        if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
+        if (!app.usaFEL()) {
+
             impressOrder();
+
         } else {
             if (isNetworkAvailable()) {
                 browse=2;

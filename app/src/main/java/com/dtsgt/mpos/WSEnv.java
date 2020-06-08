@@ -460,10 +460,10 @@ public class WSEnv extends PBase {
 
             String idfel=gl.peFEL;
 
-            if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
-                D_facturaObj.fill("WHERE (STATCOM='N') ");
-            } else {
+            if (app.usaFEL()) {
                 D_facturaObj.fill("WHERE (STATCOM='N')  AND (FEELUUID<>' ') ");
+            } else {
+                D_facturaObj.fill("WHERE (STATCOM='N') ");
             }
 
             ftot=D_facturaObj.count;
@@ -497,6 +497,7 @@ public class WSEnv extends PBase {
 
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+        gl.timeout = 6000;
 
         try {
 
@@ -511,21 +512,13 @@ public class WSEnv extends PBase {
 
                 String line = myReader.readLine();
 
-                if(line.isEmpty()){
-                    gl.timeout = 6000;
-                }else{
-                    gl.timeout = Integer.valueOf(line);
-                }
+                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
 
                 myReader.close();
             }
-
-        } catch (Exception e) {
-            gl.wsurl ="";
-        }
+        } catch (Exception e) {}
 
         if (!gl.wsurl.isEmpty()) lbl2.setText(gl.wsurl);else lbl2.setText("Falta archivo con URL");
-
     }
 
     private void updateLabel() {

@@ -1802,7 +1802,7 @@ public class Venta extends PBase {
 
         try {
 
-            if (!gl.peFEL.isEmpty()) {
+            if (app.usaFEL()) {
                 int pendfel=pendienteFEL();
                 if (pendfel>0) {
                     item = clsCls.new clsMenu();
