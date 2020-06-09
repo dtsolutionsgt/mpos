@@ -64,5 +64,10 @@
     <string name="title_activity_repesaje_lista">RepesajeLista</string>
     <string name="title_activity_prueba_swipe">prueba_swipe</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="textview">TextView</string>
+    <string name="recepci_n">Recepción</string>
+    <string name="recibir">RECIBIR</string>
+    <string name="dtsolutions">DTSolutions</string>
+    <string name="todo">TODO</string>
 
 </resources>

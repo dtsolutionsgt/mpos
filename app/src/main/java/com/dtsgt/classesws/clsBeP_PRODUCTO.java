@@ -55,25 +55,25 @@ public class clsBeP_PRODUCTO {
     @Element(required=false) public boolean ES_VENDIBLE;
     @Element(required=false) public double UNIGRASAP;
     @Element(required=false) public String UM_SALIDA;
-    @Element(required=false) public int Activo;
-
+    @Element(required=false) public boolean ACTIVO;
+    @Element(required=false) public float TIEMPO_PREPARACION;
 
     public clsBeP_PRODUCTO() {
     }
 
-    public clsBeP_PRODUCTO(int CODIGO_PRODUCTO,String CODIGO,String CODIGO_TIPO,int LINEA,
-                           int EMPRESA,String MARCA,String CODBARRA,String DESCCORTA,
-                           String DESCLARGA,double COSTO,double FACTORCONV,String UNIDBAS,
-                           String UNIDMED,double UNIMEDFACT,String UNIGRA,double UNIGRAFACT,
-                           boolean DESCUENTO,boolean BONIFICACION,double IMP1,double IMP2,
-                           double IMP3,String VENCOMP,boolean DEVOL,boolean OFRECER,
-                           boolean RENTAB,boolean DESCMAX,String IVA,String CODBARRA2,
-                           int CBCONV,String BODEGA,String SUBBODEGA,double PESO_PROMEDIO,
-                           boolean MODIF_PRECIO,String IMAGEN,String VIDEO,boolean VENTA_POR_PESO,
-                           boolean ES_PROD_BARRA,String UNID_INV,boolean VENTA_POR_PAQUETE,boolean VENTA_POR_FACTOR_CONV,
-                           boolean ES_SERIALIZADO,int PARAM_CADUCIDAD,String PRODUCTO_PADRE,double FACTOR_PADRE,
-                           boolean TIENE_INV,boolean TIENE_VINETA_O_TUBO,double PRECIO_VINETA_O_TUBO,boolean ES_VENDIBLE,
-                           double UNIGRASAP,String UM_SALIDA,int Activo) {
+    public clsBeP_PRODUCTO(int CODIGO_PRODUCTO, String CODIGO, String CODIGO_TIPO, int LINEA,
+                           int EMPRESA, String MARCA, String CODBARRA, String DESCCORTA,
+                           String DESCLARGA, double COSTO, double FACTORCONV, String UNIDBAS,
+                           String UNIDMED, double UNIMEDFACT, String UNIGRA, double UNIGRAFACT,
+                           boolean DESCUENTO, boolean BONIFICACION, double IMP1, double IMP2,
+                           double IMP3, String VENCOMP, boolean DEVOL, boolean OFRECER,
+                           boolean RENTAB, boolean DESCMAX, String IVA, String CODBARRA2,
+                           int CBCONV, String BODEGA, String SUBBODEGA, double PESO_PROMEDIO,
+                           boolean MODIF_PRECIO, String IMAGEN, String VIDEO, boolean VENTA_POR_PESO,
+                           boolean ES_PROD_BARRA, String UNID_INV, boolean VENTA_POR_PAQUETE, boolean VENTA_POR_FACTOR_CONV,
+                           boolean ES_SERIALIZADO, int PARAM_CADUCIDAD, String PRODUCTO_PADRE, double FACTOR_PADRE,
+                           boolean TIENE_INV, boolean TIENE_VINETA_O_TUBO, double PRECIO_VINETA_O_TUBO, boolean ES_VENDIBLE,
+                           double UNIGRASAP, String UM_SALIDA, boolean ACTIVO, float TIEMPO_PREPARACION) {
 
         this.CODIGO_PRODUCTO=CODIGO_PRODUCTO;
         this.CODIGO=CODIGO;
@@ -125,7 +125,8 @@ public class clsBeP_PRODUCTO {
         this.ES_VENDIBLE=ES_VENDIBLE;
         this.UNIGRASAP=UNIGRASAP;
         this.UM_SALIDA=UM_SALIDA;
-        this.Activo=Activo;
+        this.ACTIVO = ACTIVO;
+        this.TIEMPO_PREPARACION = TIEMPO_PREPARACION;
 
     }
 
@@ -430,11 +431,17 @@ public class clsBeP_PRODUCTO {
     public void setUM_SALIDA(String value) {
         UM_SALIDA=value;
     }
-    public int getActivo() {
-        return Activo;
+    public boolean getACTIVO() {
+        return ACTIVO;
     }
-    public void setActivo(int value) {
-        Activo=value;
+    public void setACTIVO(boolean value) {
+        ACTIVO =value;
+    }
+    public float getTIEMPO_PREPARACION() {
+        return TIEMPO_PREPARACION;
+    }
+    public void setTIEMPO_PREPARACION(float value) {
+        TIEMPO_PREPARACION=value;
     }
 
 }

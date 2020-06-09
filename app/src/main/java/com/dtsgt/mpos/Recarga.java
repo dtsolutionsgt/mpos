@@ -395,7 +395,7 @@ public class Recarga extends PBase {
 			
 	 		ins.add("COREL",corel);
 			ins.add("RUTA",((appGlobals) vApp).ruta);
-			ins.add("ANULADO","N");
+			ins.add("ANULADO",0);
 			ins.add("FECHA",fecha);
 			ins.add("TIPO","R");
 			ins.add("USUARIO",((appGlobals) vApp).vend);

@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -127,6 +128,7 @@ public class ComWS extends PBase {
 
 	private final String NAMESPACE = "http://tempuri.org/";
 	private String METHOD_NAME, URL;
+	private int TIME_OUT_WS =6000;
 
 	protected PowerManager.WakeLock wakelock;
 
@@ -209,11 +211,7 @@ public class ComWS extends PBase {
 
 		setHandlers();
 
-        //URL = gl.urlglob;
-        //URL="http://192.168.1.52/wsmpos/wsAndr.asmx";
-        //URL="http://192.168.1.94/mpos/wsMpos.asmx";
-
-        URL=getWSUrl();
+        getWSUrl();
 
         txtWS.setText(URL);txtEmp.setText(emp);
         if (gl.debug) {
@@ -4278,22 +4276,26 @@ public class ComWS extends PBase {
         return vPuedeCom;
     }
 
-    private String getWSUrl() {
-	    //String defurl="http://192.168.1.94/mpos/wsMpos.asmx";
+    private void getWSUrl() {
+
 		String defurl="http://192.168.1.52/wsmpos/wsAndr.asmx";
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
-            if (!file1.exists()) return defurl;
+            if (!file1.exists()) URL = defurl;
 
             FileInputStream fIn = new FileInputStream(file1);
             BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
             String wsurl = myReader.readLine();
+            String timeout = myReader.readLine();
             myReader.close();
 
-            return wsurl;
+            if(!wsurl.isEmpty()) URL = wsurl;
+			if(!timeout.isEmpty()) TIME_OUT_WS = Integer.parseInt(wsurl);
+
         } catch (Exception e) {
-            return  defurl;
+			Log.e("getWS: ", e.getMessage());
         }
 
     }

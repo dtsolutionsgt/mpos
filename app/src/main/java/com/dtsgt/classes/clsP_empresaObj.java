@@ -81,7 +81,6 @@ public class clsP_empresaObj {
     private void addItem(clsClasses.clsP_empresa item) {
 
         ins.init("P_empresa");
-
         ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("COL_IMP",item.col_imp);
@@ -207,7 +206,6 @@ public class clsP_empresaObj {
     public String addItemSql(clsClasses.clsP_empresa item) {
 
         ins.init("P_empresa");
-
         ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("COL_IMP",item.col_imp);

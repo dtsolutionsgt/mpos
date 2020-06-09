@@ -56,14 +56,14 @@ public class WSEnv extends PBase {
     private String CSQL,plabel,rs,
             corel,ferr,idfact,
             corelMov, movErr, idMov,
-            corelCjCierre, cjCierreError,idCjCierre,
-            corelCjReporte, cjReporteError,idCjReporte,
-            corelCjPagos, cjPagosError, idCjPagos;
+            corelCjCierre, cjCierreError,
+            corelCjReporte, cjReporteError,
+            corelCjPagos, cjPagosError;
     private int ftot,fsend,fidx,
                 fTotMov,fIdxMov, mSend,
-                cjCierreTot, idxCjCierre, cjCierreSend,
-            cjReporteTot, idxCjReporte, cjReporteSend,
-            cjPagosTot, idxCjPagos, cjPagosSend ;
+                cjCierreTot, cjCierreSend,
+                cjReporteTot, cjReporteSend,
+                cjPagosTot, cjPagosSend ;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB;
 
     @Override
@@ -73,7 +73,7 @@ public class WSEnv extends PBase {
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);lbl1.setText("");
+        lbl1 = (TextView) findViewById(R.id.msgHeader);lbl1.setText("");
         lbl2 = (TextView) findViewById(R.id.textView151);lbl2.setText("");
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);

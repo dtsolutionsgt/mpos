@@ -129,7 +129,7 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/textView7"
+                    android:id="@+id/msgHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/relrectop"
@@ -171,9 +171,9 @@
                     android:id="@+id/textView152"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView7"
-                    android:layout_alignStart="@+id/textView7"
-                    android:layout_alignEnd="@+id/textView7"
+                    android:layout_below="@+id/msgHeader"
+                    android:layout_alignStart="@+id/msgHeader"
+                    android:layout_alignEnd="@+id/msgHeader"
                     android:layout_marginStart="0dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="0dp"

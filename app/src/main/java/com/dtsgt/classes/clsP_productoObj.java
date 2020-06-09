@@ -126,6 +126,7 @@ public class clsP_productoObj {
         ins.add("UM_SALIDA",item.um_salida);
         ins.add("ACTIVO",item.activo);
         ins.add("IMAGEN",item.imagen);
+        ins.add("TIEMPO_PREPARACION",item.tiempo_preparacion);
 
         db.execSQL(ins.sql());
 
@@ -185,7 +186,7 @@ public class clsP_productoObj {
         upd.add("UM_SALIDA",item.um_salida);
         upd.add("ACTIVO",item.activo);
         upd.add("IMAGEN",item.imagen);
-
+        upd.add("TIEMPO_PREPARACION",item.tiempo_preparacion);
         upd.Where("(CODIGO_PRODUCTO="+item.codigo_producto+")");
 
         db.execSQL(upd.sql());
@@ -217,7 +218,6 @@ public class clsP_productoObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_producto();
-
             item.codigo_producto=dt.getInt(0);
             item.codigo=dt.getString(1);
             item.codigo_tipo=dt.getString(2);
@@ -269,6 +269,7 @@ public class clsP_productoObj {
             item.um_salida=dt.getString(48);
             item.activo=dt.getInt(49);
             item.imagen=dt.getString(50);
+            item.tiempo_preparacion = dt.getFloat(51);
 
             items.add(item);
 
@@ -351,7 +352,7 @@ public class clsP_productoObj {
         ins.add("UM_SALIDA",item.um_salida);
         ins.add("ACTIVO",item.activo);
         ins.add("IMAGEN",item.imagen);
-
+        ins.add("TIEMPO_PREPARACION",item.tiempo_preparacion);
         return ins.sql();
 
     }
@@ -410,7 +411,7 @@ public class clsP_productoObj {
         upd.add("UM_SALIDA",item.um_salida);
         upd.add("ACTIVO",item.activo);
         upd.add("IMAGEN",item.imagen);
-
+        upd.add("TIEMPO_PREPARACION",item.tiempo_preparacion);
         upd.Where("(CODIGO_PRODUCTO="+item.codigo_producto+")");
 
         return upd.sql();

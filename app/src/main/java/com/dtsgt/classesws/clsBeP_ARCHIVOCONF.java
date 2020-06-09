@@ -15,14 +15,14 @@ public class clsBeP_ARCHIVOCONF {
     @Element(required=false) public String LBS_O_KGS;
     @Element(required=false) public boolean NOTA_CREDITO;
     @Element(required=false) public String EMPRESA;
-
+    @Element(required=false) public int CODIGO_ARCHIVOCONF;
 
     public clsBeP_ARCHIVOCONF() {
     }
 
     public clsBeP_ARCHIVOCONF(String RUTA,String TIPO_HH,String IDIOMA,String TIPO_IMPRESORA,
                               String SERIAL_HH,String MODIF_PESO,String PUERTO_IMPRESION,String LBS_O_KGS,
-                              boolean NOTA_CREDITO,String EMPRESA) {
+                              boolean NOTA_CREDITO,String EMPRESA, int CODIGO_ARCHIVOCONF) {
 
         this.RUTA=RUTA;
         this.TIPO_HH=TIPO_HH;
@@ -34,6 +34,7 @@ public class clsBeP_ARCHIVOCONF {
         this.LBS_O_KGS=LBS_O_KGS;
         this.NOTA_CREDITO=NOTA_CREDITO;
         this.EMPRESA=EMPRESA;
+        this.CODIGO_ARCHIVOCONF = CODIGO_ARCHIVOCONF;
 
     }
 
@@ -97,6 +98,12 @@ public class clsBeP_ARCHIVOCONF {
     }
     public void setEMPRESA(String value) {
         EMPRESA=value;
+    }
+    public int getCODIGO_ARCHIVOCONF() {
+        return CODIGO_ARCHIVOCONF;
+    }
+    public void setCODIGO_ARCHIVOCONF(int value) {
+        CODIGO_ARCHIVOCONF=value;
     }
 
 }

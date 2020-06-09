@@ -111,6 +111,7 @@ public class clsP_impuestoObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsP_impuesto item;
 
@@ -126,7 +127,7 @@ public class clsP_impuestoObj {
 
             item.codigo=dt.getInt(0);
             item.valor=dt.getDouble(1);
-            item.activo=dt.getInt(2);
+            item.activo=dt.getInt (2)> 0;
             item.codigo_impuesto = dt.getInt(3);
 
             items.add(item);

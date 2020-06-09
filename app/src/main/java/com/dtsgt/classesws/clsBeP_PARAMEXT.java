@@ -9,19 +9,22 @@ public class clsBeP_PARAMEXT {
     @Element(required=false) public String Nombre="";
     @Element(required=false) public String Valor="";
     @Element(required=false) public String EMPRESA="";
-
+    @Element(required=false) public int CODIGO_PARAMEXT=0;
+    @Element(required=false) public int IDRUTA=0;
 
     public clsBeP_PARAMEXT() {
     }
 
     public clsBeP_PARAMEXT(int ID,String IdRuta,String Nombre,String Valor,
-                           String EMPRESA) {
+                           String EMPRESA, int CODIGO_PARAMEXT, int IDRUTA) {
 
         this.ID=ID;
         this.IdRuta=IdRuta;
         this.Nombre=Nombre;
         this.Valor=Valor;
         this.EMPRESA=EMPRESA;
+        this.CODIGO_PARAMEXT = CODIGO_PARAMEXT;
+        this.IDRUTA = IDRUTA;
 
     }
 
@@ -55,6 +58,20 @@ public class clsBeP_PARAMEXT {
     }
     public void setEMPRESA(String value) {
         EMPRESA=value;
+    }
+
+    public int getCODIGO_PARAMEXT() {
+        return CODIGO_PARAMEXT;
+    }
+    public void setCODIGO_PARAMEXT(int value) {
+        CODIGO_PARAMEXT=value;
+    }
+
+    public int getIDRUTA() {
+        return IDRUTA;
+    }
+    public void setIDRUTA(int value) {
+        IDRUTA=value;
     }
 
 }
