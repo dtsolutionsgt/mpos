@@ -217,8 +217,7 @@ public class InvInicial extends PBase {
 
             listItems();
 
-            prodid=0;
-            txtCant.setText("");txtCosto.setText("");
+            prodid=0;txtCant.setText("");txtCosto.setText("");
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
