@@ -649,6 +649,7 @@ public class AppMethods {
 		}
 	}
 
+
     public String umVenta2(String cod) {
         Cursor DT;
         String umm;

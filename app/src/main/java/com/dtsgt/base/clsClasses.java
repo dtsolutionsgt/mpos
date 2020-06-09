@@ -723,6 +723,20 @@ public class clsClasses {
         public int  orden;
     }
 
+    public class clsT_movd {
+        public int  coreldet;
+        public String corel;
+        public int  producto;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public String lote;
+        public int  codigoliquidacion;
+        public String unidadmedida;
+        public double precio;
+    }
+
 
     //endregion
 

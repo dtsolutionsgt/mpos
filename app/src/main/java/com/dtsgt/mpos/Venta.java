@@ -328,82 +328,82 @@ public class Venta extends PBase {
         txtBarra.requestFocus();
     }
 
-    private void setHandlers(){
-        try{
+           private void setHandlers(){
+            try{
 
-            listView.setOnTouchListener(new SwipeListener(this) {
-                public void onSwipeRight() {
-                    onBackPressed();
-                }
-                public void onSwipeLeft() {
-                    finishOrder(null);
-                }
-            });
-
-            listView.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        Object lvObj = listView.getItemAtPosition(position);
-                        clsVenta item = (clsVenta)lvObj;
-
-                        prodid=item.Cod;//gl.prodmenu=prodid;
-                        uprodid=prodid;
-                        uid=item.emp;gl.menuitemid=uid;seluid=uid;
-                        adapter.setSelectedIndex(position);
-
-                        gl.gstr=item.Nombre;
-                        gl.retcant=(int) item.Cant;
-                        gl.limcant=getDisp(prodid);
-                        menuitemadd=false;
-
-                        tipo=prodTipo(gl.prodcod);
-                        if (!tipo.equalsIgnoreCase("M")) {
-                            browse=6;
-                            gl.menuitemid=prodid;
-                            startActivity(new Intent(Venta.this,VentaEdit.class));
-                        } else {
-                            gl.newmenuitem=false;
-                            gl.menuitemid=item.emp;
-                            browse=7;
-                            startActivity(new Intent(Venta.this,ProdMenu.class));
-                        }
-
-                    } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox( e.getMessage());
+                listView.setOnTouchListener(new SwipeListener(this) {
+                    public void onSwipeRight() {
+                        onBackPressed();
                     }
-                };
-            });
-
-            listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    try {
-                        Object lvObj = listView.getItemAtPosition(position);
-                        clsVenta vItem = (clsVenta)lvObj;
-
-                        prodid=vItem.Cod;
-                        adapter.setSelectedIndex(position);
-
-                        if (prodRepesaje(prodid) && gl.rutatipo.equalsIgnoreCase("V")) {
-                            gl.gstr=prodid;
-                            gl.gstr2=vItem.Nombre;
-                            showItemMenu();
-                        } else {
-                            msgAskDel("Borrar producto");
-                        }
-                    } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox( e.getMessage());
+                    public void onSwipeLeft() {
+                        finishOrder(null);
                     }
-                    return true;
-                }
-            });
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
+                });
+
+                listView.setOnItemClickListener(new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                        try {
+                            Object lvObj = listView.getItemAtPosition(position);
+                            clsVenta item = (clsVenta)lvObj;
+
+                            prodid=item.Cod;//gl.prodmenu=prodid;
+                            uprodid=prodid;
+                            uid=item.emp;gl.menuitemid=uid;seluid=uid;
+                            adapter.setSelectedIndex(position);
+
+                            gl.gstr=item.Nombre;
+                            gl.retcant=(int) item.Cant;
+                            gl.limcant=getDisp(prodid);
+                            menuitemadd=false;
+
+                            tipo=prodTipo(gl.prodcod);
+                            if (!tipo.equalsIgnoreCase("M")) {
+                                browse=6;
+                                gl.menuitemid=prodid;
+                                startActivity(new Intent(Venta.this,VentaEdit.class));
+                            } else {
+                                gl.newmenuitem=false;
+                                gl.menuitemid=item.emp;
+                                browse=7;
+                                startActivity(new Intent(Venta.this,ProdMenu.class));
+                            }
+
+                        } catch (Exception e) {
+                            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                            mu.msgbox( e.getMessage());
+                        }
+                    };
+                });
+
+                listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        try {
+                            Object lvObj = listView.getItemAtPosition(position);
+                            clsVenta vItem = (clsVenta)lvObj;
+
+                            prodid=vItem.Cod;
+                            adapter.setSelectedIndex(position);
+
+                            if (prodRepesaje(prodid) && gl.rutatipo.equalsIgnoreCase("V")) {
+                                gl.gstr=prodid;
+                                gl.gstr2=vItem.Nombre;
+                                showItemMenu();
+                            } else {
+                                msgAskDel("Borrar producto");
+                            }
+                        } catch (Exception e) {
+                            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                            mu.msgbox( e.getMessage());
+                        }
+                        return true;
+                    }
+                });
+            }catch (Exception e){
+                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            }
 
 
         txtBarra.addTextChangedListener(new TextWatcher() {

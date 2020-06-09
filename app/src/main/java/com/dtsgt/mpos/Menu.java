@@ -710,6 +710,7 @@ public class Menu extends PBase {
 				}
 
 			}
+            itemcnt++;
 			if (gl.peSolicInv) itemcnt++;
 
 			final String[] selitems = new String[itemcnt];
@@ -717,6 +718,7 @@ public class Menu extends PBase {
 			selitems[itempos]="Existencias";itempos++;
 			selitems[itempos]="Devolución a bodega";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
+            selitems[itempos]="Inventario inicial";itempos++;
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.inventario48);
@@ -729,8 +731,9 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Existencias")) menuExist();
 					if (mt.equalsIgnoreCase("Devolución a bodega")) menuDevBod();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
+                    if (mt.equalsIgnoreCase("Inventario inicial")) startActivity(new Intent(Menu.this,InvInicial.class));
 
-					dialog.cancel();
+                    dialog.cancel();
 				}
 			});
 
@@ -854,7 +857,6 @@ public class Menu extends PBase {
 	}
 	
 	private void menuRecarga() {
-
 		try{
 
 			gl.tipo = 0;
