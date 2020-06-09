@@ -508,7 +508,7 @@ public class CierreX extends PBase {
             dt = Con.OpenDT(sql);
 
             if(dt==null) {
-                msgbox("Ocurrío un error en reporte Z, vuelva a intentarlo");
+                msgbox("Ocurrió un error en reporte Z, vuelva a intentarlo");
             }
 
             itemRZ.clear();

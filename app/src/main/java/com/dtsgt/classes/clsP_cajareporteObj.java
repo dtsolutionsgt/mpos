@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.INotificationSideChannel;
 
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses;
 
 
@@ -21,6 +22,7 @@ public class clsP_cajareporteObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private DateUtils du = new DateUtils();
 
     private String sel="SELECT * FROM P_cajareporte";
     private String sql;

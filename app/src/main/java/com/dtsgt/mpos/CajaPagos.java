@@ -159,6 +159,7 @@ public class CajaPagos extends PBase {
             item.observacion=desc;
             item.vendedor=gl.codigo_vendedor;
             item.statcom="N";
+            item.codigo_cajapagos=gl.ruta+"_"+mu.getCorelBase();
 
             return true;
 

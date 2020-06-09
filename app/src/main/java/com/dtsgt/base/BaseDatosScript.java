@@ -496,7 +496,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
             //'#EJC20200523-COMBOMENUFIX'
             sql="CREATE TABLE [P_PRODMENU] ("+
                     "CODIGO_MENU INTEGER NOT NULL,"+
@@ -621,12 +620,12 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJAREPORTE
+            // por un correlativo único "PRIMARY KEY ([EMRESA],[SUCURSAL],[RUTA],[COREL],[LINEA])"
             sql="CREATE UNIQUE INDEX IX_P_CAJAREPORTE "+
                     " on P_CAJAREPORTE ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[LINEA])";
             database.execSQL(sql);
 
-            //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJAREPORTE
-            // por un correlativo único "PRIMARY KEY ([EMRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])"+
             sql="CREATE TABLE [FPRINT] ("+
                     "EMPRESA TEXT NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
@@ -656,6 +655,15 @@ public class BaseDatosScript {
                     "MENUGROUP TEXT NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
                     "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_MOTIVO_AJUSTE]("+
+                    "CODIGO_MOTIVO_AJUSTE INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "NOMBRE TEXT,"+
+                    "ACTIVO BOOLEAN NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MOTIVO_AJUSTE])"+
                     ");";
             database.execSQL(sql);
 

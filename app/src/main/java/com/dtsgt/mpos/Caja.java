@@ -259,7 +259,8 @@ public class Caja extends PBase {
 
                 if (caja.count != 0) {
                     gl.corelZ = caja.last().corel + 1;
-                    itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
+                    //#CKFK 20200608 Puse esto en comentario para dejar solo el Corel único
+                   // itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
                     itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
                 } else {
                     gl.corelZ = 1;
@@ -271,7 +272,9 @@ public class Caja extends PBase {
                 gl.corelZ = caja.last().corel;
                 fecha = caja.last().fecha;
                 fondoCaja = caja.last().fondocaja;
-                itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
+                //#CKFK 20200608 Puse esto en comentario para dejar solo el Corel único
+                //itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
+                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
             }
 
             itemC.empresa=gl.emp;

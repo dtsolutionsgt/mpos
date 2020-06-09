@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsP_cajacierreObj {
@@ -19,8 +20,9 @@ public class clsP_cajacierreObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private DateUtils du = new DateUtils();
 
-    private String sel="SELECT * FROM P_cajacierre";
+    private String sel="SELECT * FROM P_CAJACIERRE";
     private String sql;
     public ArrayList<clsClasses.clsP_cajacierre> items= new ArrayList<clsClasses.clsP_cajacierre>();
 
@@ -199,6 +201,31 @@ public class clsP_cajacierreObj {
         ins.add("COREL",item.corel);
         ins.add("ESTADO",item.estado);
         ins.add("FECHA",item.fecha);
+        ins.add("VENDEDOR",item.vendedor);
+        ins.add("CODPAGO",item.codpago);
+        ins.add("FONDOCAJA",item.fondocaja);
+        ins.add("MONTOINI",item.montoini);
+        ins.add("MONTOFIN",item.montofin);
+        ins.add("MONTODIF",item.montodif);
+        ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJACIERRE",item.codigo_cajacierre);
+
+        return ins.sql();
+
+    }
+
+    public String addItemSqlFecha(clsClasses.clsP_cajacierre item) {
+
+        String fs=""+du.univfechalong(item.fecha);
+
+        ins.init("P_cajacierre");
+
+        ins.add("EMPRESA",item.empresa);
+        ins.add("SUCURSAL",item.sucursal);
+        ins.add("RUTA",item.ruta);
+        ins.add("COREL",item.corel);
+        ins.add("ESTADO",item.estado);
+        ins.add("FECHA",fs);
         ins.add("VENDEDOR",item.vendedor);
         ins.add("CODPAGO",item.codpago);
         ins.add("FONDOCAJA",item.fondocaja);

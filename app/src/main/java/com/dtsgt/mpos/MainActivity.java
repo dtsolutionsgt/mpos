@@ -480,7 +480,7 @@ public class MainActivity extends PBase {
             }
 
             if (gl.rol != 3) {
-                sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES " +
+                sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO, CODIGO_VENDEDOR FROM VENDEDORES " +
                         "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
                 DT = Con.OpenDT(sql);
 
@@ -492,6 +492,7 @@ public class MainActivity extends PBase {
 
             gl.vendnom = DT.getString(0);
             gl.vend = usr;
+            gl.codigo_vendedor = DT.getInt(4);;
             gl.vnivprec = DT.getInt(3);
 
             khand.clear();

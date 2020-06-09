@@ -17,6 +17,9 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsP_clienteObj;
+import com.dtsgt.classes.clsP_cajapagosObj;
+import com.dtsgt.classes.clsP_cajareporteObj;
+import com.dtsgt.classes.clsP_cajacierreObj;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,13 +42,29 @@ public class WSEnv extends PBase {
     private clsD_MovObj D_MovObj;
     private clsD_MovDObj D_MovDObj;
 
+    private clsP_cajacierreObj P_cjCierreObj;
+    private clsP_cajapagosObj P_cjPagosObj;
+    private clsP_cajareporteObj P_cjReporteObj;
+
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> fact = new ArrayList<String>();
     private ArrayList<String> mov = new ArrayList<String>();
+    private ArrayList<String> cjCierre = new ArrayList<String>();
+    private ArrayList<String> cjReporte = new ArrayList<String>();
+    private ArrayList<String> cjPagos = new ArrayList<String>();
 
-    private String CSQL,plabel,rs,corel,ferr,idfact, movErr, corelMov, idMov;
-    private int ftot,fsend,fidx, fTotMov,fIdxMov, mSend;
-    private boolean factsend, movSend;
+    private String CSQL,plabel,rs,
+            corel,ferr,idfact,
+            corelMov, movErr, idMov,
+            corelCjCierre, cjCierreError,idCjCierre,
+            corelCjReporte, cjReporteError,idCjReporte,
+            corelCjPagos, cjPagosError, idCjPagos;
+    private int ftot,fsend,fidx,
+                fTotMov,fIdxMov, mSend,
+                cjCierreTot, idxCjCierre, cjCierreSend,
+            cjReporteTot, idxCjReporte, cjReporteSend,
+            cjPagosTot, idxCjPagos, cjPagosSend ;
+    private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +88,10 @@ public class WSEnv extends PBase {
 
         D_MovObj=new clsD_MovObj(this,Con,db);
         D_MovDObj=new clsD_MovDObj(this,Con,db);
+
+        P_cjCierreObj = new clsP_cajacierreObj(this,Con,db);
+        P_cjPagosObj = new clsP_cajapagosObj(this,Con,db);
+        P_cjReporteObj = new clsP_cajareporteObj(this,Con,db);
 
         prepareSend();
     }
@@ -123,6 +146,36 @@ public class WSEnv extends PBase {
                         }
 
                         break;
+                    case 4:
+                        processCajaCierre();
+
+                        cjCierreTot=cjCierre.size();
+
+                        if (cjCierreTot>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+
+                        break;
+                    case 5:
+                        processCajaPagos();
+
+                        cjPagosTot=cjPagos.size();
+
+                        if (cjPagosTot>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+
+                        break;
+                    case 6:
+                        processCajaReporte();
+
+                        cjReporteTot=cjReporte.size();
+
+                        if (cjReporteTot>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();errorflag=true;
@@ -156,10 +209,22 @@ public class WSEnv extends PBase {
                 case 3:
                     if (fTotMov>0) statusMov();
                     if (fIdxMov>=fTotMov-1) {
-                        processComplete();
+                        execws(4);
                     } else {
                         execws(3);
                     }
+                    break;
+                case 4:
+                    if (cjCierreTot>0) statusCajaCierre();
+                    execws(5);
+                    break;
+                case 5:
+                    if (cjPagosTot>0) statusCajaPagos();
+                    execws(6);
+                    break;
+                case 6:
+                    if (cjReporteTot>0) statusCajaReporte();
+                    processComplete();
                     break;
             }
 
@@ -182,6 +247,12 @@ public class WSEnv extends PBase {
                 plabel = "Enviando Facturas";break;
             case 3:
                 plabel = "Enviando Movimientos de inventario";break;
+            case 4:
+                plabel = "Enviando Caja Cierre";break;
+            case 5:
+                plabel = "Enviando Caja Pagos";break;
+            case 6:
+                plabel = "Enviando Caja Reporte";break;
         }
 
         updateLabel();
@@ -208,11 +279,20 @@ public class WSEnv extends PBase {
 
             ss ="Envío completo\n";
 
-            ss+="Facturas total : "+ftot+"\n";
-            ss+="Facturas sin envio : "+(ftot-fsend)+"\n";
+            ss+="Facturas tota: "+ftot+"\n";
+            ss+="Facturas sin envio: "+(ftot-fsend)+"\n";
 
-            ss+="Movimientos total : "+fTotMov+"\n";
-            ss+="Movimientos sin envio : "+(fTotMov-mSend);
+            ss+="Movimientos total: "+fTotMov+"\n";
+            ss+="Movimientos sin envio: "+(fTotMov-mSend);
+
+            ss+="Caja cierre total: "+cjCierreTot+"\n";
+            ss+="Caja cierre sin envio: "+(cjCierreTot-cjCierreSend);
+
+            ss+="Caja pagos total: "+cjPagosTot+"\n";
+            ss+="Caja pagos sin envio: "+(cjPagosTot-cjPagosSend);
+
+            ss+="Caja reporte total: "+cjReporteTot+"\n";
+            ss+="Caja reporte sin envio: "+(cjReporteTot-cjReporteSend);
 
             msgboxwait(ss);
 
@@ -445,6 +525,186 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processCajaCierre() {
+        String cCjCierre;
+
+        cjCierre.clear();
+
+        try {
+
+            clsP_cajacierreObj P_cajacierreObj=new clsP_cajacierreObj(this,Con,db);
+            P_cajacierreObj.fill("WHERE STATCOM='N'");
+
+            CSQL="";
+
+            for (int i = 0; i <P_cajacierreObj.count; i++) {
+
+                cCjCierre=P_cajacierreObj.items.get(i).codigo_cajacierre;
+                P_cajacierreObj.items.get(i).statcom="S";
+
+                ss="DELETE FROM P_CAJACIERRE WHERE (CODIGO_CAJACIERRE='"+cCjCierre+"')";
+                CSQL = CSQL + ss + "\n";
+                ss=P_cajacierreObj.addItemSql(P_cajacierreObj.items.get(i));
+                CSQL = CSQL + ss + "\n";
+
+                cjCierre.add(""+cCjCierre);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void statusCajaCierre() {
+        try {
+
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+
+            if (!rs.equalsIgnoreCase("#")) {
+
+                cjCierreError=rs;
+                cjCierreSendB=true;
+
+                return;
+
+            } else {
+                cjCierreSendB=true;
+            }
+
+            cjCierreSend++;
+
+            try {
+
+                sql="UPDATE P_CAJACIERRE SET STATCOM='S' WHERE CODIGO_CAJACIERRE='"+corelCjCierre+"'";
+                db.execSQL(sql);
+
+            } catch (SQLException e) {
+                msgbox(e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    private void processCajaPagos() {
+        String cCjPago;
+
+        cjPagos.clear();
+
+        try {
+            clsP_cajapagosObj P_cajapagosObj=new clsP_cajapagosObj(this,Con,db);
+            P_cajapagosObj.fill("WHERE STATCOM='N'");
+
+            CSQL="";
+            for (int i = 0; i <P_cajapagosObj.count; i++) {
+
+                cCjPago=P_cajapagosObj.items.get(i).codigo_cajapagos;
+                P_cajapagosObj.items.get(i).statcom="S";
+
+                ss="DELETE FROM P_CAJAPAGOS WHERE (CODIGO_CAJAPAGOS='"+cCjPago+"')";
+                CSQL = CSQL + ss + "\n";
+                ss=P_cajapagosObj.addItemSql(P_cajapagosObj.items.get(i));
+                CSQL = CSQL + ss + "\n";
+
+                cjPagos.add(""+cCjPago);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void statusCajaPagos() {
+        try {
+
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+
+            if (!rs.equalsIgnoreCase("#")) {
+
+                cjPagosError=rs;
+                cjPagosSendB=true;
+
+                return;
+
+            } else {
+                cjPagosSendB=true;
+            }
+
+            cjPagosSend++;
+
+            try {
+
+                sql="UPDATE P_CAJAPAGOS SET STATCOM='S' WHERE CODIGO_CAJAPAGOS='"+corelCjPagos+"'";
+                db.execSQL(sql);
+
+            } catch (SQLException e) {
+                msgbox(e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    private void processCajaReporte() {
+        String cCjReporte;
+
+        cjReporte.clear();
+
+        try {
+            clsP_cajareporteObj P_cajareporteObj=new clsP_cajareporteObj(this,Con,db);
+            P_cajareporteObj.fill("WHERE STATCOM='N'");
+
+            CSQL="";
+            for (int i = 0; i <P_cajareporteObj.count; i++) {
+
+                cCjReporte=P_cajareporteObj.items.get(i).codigo_cajareporte;
+                P_cajareporteObj.items.get(i).statcom="S";
+
+                ss="DELETE FROM P_CAJAREPORTE WHERE (CODIGO_CAJAPAGOS='"+cCjReporte+"')";
+                CSQL = CSQL + ss + "\n";
+                ss=P_cajareporteObj.addItemSql(P_cajareporteObj.items.get(i));
+                CSQL = CSQL + ss + "\n";
+
+                cjReporte.add(""+cCjReporte);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void statusCajaReporte() {
+        try {
+
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+
+            if (!rs.equalsIgnoreCase("#")) {
+
+                cjReporteError=rs;
+                cjReporteSendB=true;
+
+                return;
+
+            } else {
+                cjReporteSendB=true;
+            }
+
+            cjReporteSend++;
+
+            try {
+
+                sql="UPDATE P_CAJAREPORTE SET STATCOM='S' WHERE CODIGO_CAJAREPORTE='"+corelCjReporte+"'";
+                db.execSQL(sql);
+
+            } catch (SQLException e) {
+                msgbox(e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Aux
@@ -456,7 +716,8 @@ public class WSEnv extends PBase {
         try {
 
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
-            P_clienteObj.fill("WHERE ESERVICE='N'");ccant=P_clienteObj.count;
+            P_clienteObj.fill("WHERE ESERVICE='N'");
+            ccant=P_clienteObj.count;
 
             String idfel=gl.peFEL;
 
@@ -488,7 +749,25 @@ public class WSEnv extends PBase {
                 mov.add(D_MovObj.items.get(i).COREL);
             }
 
-            lbl1.setText("Pendientes envio : \nFacturas : "+ftot+"\nClientes : "+ccant+"\nMovimientos inventario : "+fTotMov);
+            clsP_cajacierreObj P_cjCierreObj=new clsP_cajacierreObj(this,Con,db);
+            P_cjCierreObj.fill("WHERE STATCOM='N'");
+            cjCierreTot=P_cjCierreObj.count;
+
+            clsP_cajapagosObj P_cjPagoObj=new clsP_cajapagosObj(this,Con,db);
+            P_cjPagoObj.fill("WHERE STATCOM='N'");
+            cjPagosTot=P_cjPagoObj.count;
+
+            clsP_cajareporteObj P_cjReporteObj=new clsP_cajareporteObj(this,Con,db);
+            P_cjReporteObj.fill("WHERE STATCOM='N'");
+            cjReporteTot=P_cjReporteObj.count;
+
+
+            lbl1.setText("Pendientes envio : \nFacturas: "+ftot+
+                                            "\nClientes: "+ccant+
+                                            "\nMovimientos inventario: "+fTotMov+
+                                            "\nCierres de caja: "+cjCierreTot+
+                                            "\nPagos de caja: "+cjPagosTot+
+                                            "\nReportes caja: "+cjReporteTot);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

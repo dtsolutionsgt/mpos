@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsP_cajapagosObj {
@@ -18,6 +19,7 @@ public class clsP_cajapagosObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private DateUtils du = new DateUtils();
 
     private String sel="SELECT * FROM P_cajapagos";
     private String sql;
@@ -206,6 +208,33 @@ public class clsP_cajapagosObj {
         ins.add("ITEM",item.item);
         ins.add("ANULADO",item.anulado);
         ins.add("FECHA",item.fecha);
+        ins.add("TIPO",item.tipo);
+        ins.add("PROVEEDOR",item.proveedor);
+        ins.add("MONTO",item.monto);
+        ins.add("NODOCUMENTO",item.nodocumento);
+        ins.add("REFERENCIA",item.referencia);
+        ins.add("OBSERVACION",item.observacion);
+        ins.add("VENDEDOR",item.vendedor);
+        ins.add("STATCOM",item.statcom);
+        ins.add("CODIGO_CAJAPAGOS",item.codigo_cajapagos);
+
+        return ins.sql();
+
+    }
+
+    public String addItemSqlFecha(clsClasses.clsP_cajapagos item) {
+
+        String fs=""+du.univfechalong(item.fecha);
+
+        ins.init("P_cajapagos");
+
+        ins.add("EMPRESA",item.empresa);
+        ins.add("SUCURSAL",item.sucursal);
+        ins.add("RUTA",item.ruta);
+        ins.add("COREL",item.corel);
+        ins.add("ITEM",item.item);
+        ins.add("ANULADO",item.anulado);
+        ins.add("FECHA",fs);
         ins.add("TIPO",item.tipo);
         ins.add("PROVEEDOR",item.proveedor);
         ins.add("MONTO",item.monto);
