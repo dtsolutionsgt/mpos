@@ -283,13 +283,13 @@ public class WSEnv extends PBase {
             ss+="Facturas sin envio: "+(ftot-fsend)+"\n";
 
             ss+="Movimientos total: "+fTotMov+"\n";
-            ss+="Movimientos sin envio: "+(fTotMov-mSend);
+            ss+="Movimientos sin envio: "+(fTotMov-mSend)+"\n";
 
             ss+="Caja cierre total: "+cjCierreTot+"\n";
-            ss+="Caja cierre sin envio: "+(cjCierreTot-cjCierreSend);
+            ss+="Caja cierre sin envio: "+(cjCierreTot-cjCierreSend)+"\n";
 
             ss+="Caja pagos total: "+cjPagosTot+"\n";
-            ss+="Caja pagos sin envio: "+(cjPagosTot-cjPagosSend);
+            ss+="Caja pagos sin envio: "+(cjPagosTot-cjPagosSend)+"\n";
 
             ss+="Caja reporte total: "+cjReporteTot+"\n";
             ss+="Caja reporte sin envio: "+(cjReporteTot-cjReporteSend);
@@ -544,7 +544,7 @@ public class WSEnv extends PBase {
 
                 ss="DELETE FROM P_CAJACIERRE WHERE (CODIGO_CAJACIERRE='"+cCjCierre+"')";
                 CSQL = CSQL + ss + "\n";
-                ss=P_cajacierreObj.addItemSql(P_cajacierreObj.items.get(i));
+                ss=P_cajacierreObj.addItemSqlFecha(P_cajacierreObj.items.get(i));
                 CSQL = CSQL + ss + "\n";
 
                 cjCierre.add(""+cCjCierre);
@@ -604,7 +604,7 @@ public class WSEnv extends PBase {
 
                 ss="DELETE FROM P_CAJAPAGOS WHERE (CODIGO_CAJAPAGOS='"+cCjPago+"')";
                 CSQL = CSQL + ss + "\n";
-                ss=P_cajapagosObj.addItemSql(P_cajapagosObj.items.get(i));
+                ss=P_cajapagosObj.addItemSqlFecha(P_cajapagosObj.items.get(i));
                 CSQL = CSQL + ss + "\n";
 
                 cjPagos.add(""+cCjPago);

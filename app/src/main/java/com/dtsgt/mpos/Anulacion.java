@@ -1273,9 +1273,6 @@ public class Anulacion extends PBase {
 				}
 			},anio, mes, dia);
 
-			/*itemR.clear();
-			lblFact.setText("");
-			lblImp.setText("GENERAR");*/
 			report=false;
 
 			recogerFecha.show();

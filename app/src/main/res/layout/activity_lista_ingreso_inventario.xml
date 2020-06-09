@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@layout/back"
-    tools:context=".Reimpresion" >
+    tools:context=".lista_ingreso_inventario">
 
     <RelativeLayout
         android:id="@+id/relRoad"
@@ -39,7 +40,7 @@
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
             android:padding="5dp"
-            android:src="@drawable/anulacion_gris" />
+            android:src="@drawable/existencias" />
 
         <TextView
             android:id="@+id/lblTit"
@@ -49,7 +50,7 @@
             android:layout_toRightOf="@+id/imgRoadTit"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:text="Anulación"
+            android:text="Movimientos de inventario"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6" />
     </RelativeLayout>
@@ -58,7 +59,8 @@
         android:id="@+id/llFechas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lblDescrip"
+        android:layout_below="@id/lblDescrip2"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -67,15 +69,10 @@
             android:layout_height="64dp"
             android:orientation="horizontal">
 
-            <Space
-                android:layout_width="230dp"
-                android:layout_height="26dp" />
-
             <TextView
                 android:id="@+id/lblCFact30"
                 android:layout_width="150dp"
                 android:layout_height="48dp"
-                android:layout_gravity="center"
                 android:layout_marginStart="180dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
@@ -85,7 +82,7 @@
                 android:text="Fecha inicio :"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="21sp"
                 android:textStyle="normal" />
 
             <TextView
@@ -102,23 +99,12 @@
                 android:text="00/00/0000"
                 android:textSize="21dp"
                 android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llFechaFin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="233dp"
-                android:layout_height="22dp" />
 
             <TextView
                 android:id="@+id/lblCFact29"
                 android:layout_width="150dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="180dp"
+                android:layout_marginStart="100dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:background="@drawable/blue_strip"
@@ -126,7 +112,7 @@
                 android:text="Fecha fin :    "
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="21sp"
                 android:textStyle="normal" />
 
             <TextView
@@ -143,47 +129,43 @@
                 android:textSize="21dp"
                 android:textStyle="bold" />
         </LinearLayout>
+
     </LinearLayout>
 
     <ListView
         android:id="@+id/listView1"
-        android:layout_width="769dp"
-        android:layout_height="931dp"
+        android:layout_width="792dp"
+        android:layout_height="553dp"
         android:layout_above="@+id/relbotpan"
         android:layout_below="@+id/imgImg"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="138dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_centerHorizontal="true">
 
     </ListView>
 
     <ImageView
-        android:id="@+id/imgImg"
+        android:id="@+id/imgImg5"
         android:layout_width="144dp"
         android:layout_height="108dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentTop="false"
         android:layout_alignParentRight="true"
         android:clickable="true"
-        android:onClick="anulDoc"
+        android:onClick="nuevo"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
-        android:src="@drawable/anulacion48" />
+        android:src="@drawable/mas" />
 
     <TextView
-        android:id="@+id/lblDescrip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/lblDescrip2"
+        android:layout_width="1281dp"
+        android:layout_height="46dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignLeft="@+id/listView1"
         android:layout_alignBottom="@+id/imgImg"
         android:layout_alignParentTop="false"
+        android:layout_marginLeft="-250dp"
         android:layout_toLeftOf="@+id/imgImg"
         android:gravity="center_vertical|center_horizontal"
         android:paddingTop="5dp"
@@ -196,12 +178,12 @@
         android:id="@+id/relbotpan"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="1dp"
-        android:background="@layout/blue_strip" >
+        android:background="@layout/blue_strip">
 
         <TextView
             android:id="@+id/textView9"
@@ -217,5 +199,4 @@
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
     </RelativeLayout>
-
 </RelativeLayout>

@@ -856,8 +856,11 @@ public class Menu extends PBase {
 	private void menuRecarga() {
 
 		try{
-			Intent intent = new Intent(this,Recarga.class);
+
+			gl.tipo = 0;
+			Intent intent = new Intent(this,lista_ingreso_inventario.class);
 			startActivity(intent);
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -876,8 +879,11 @@ public class Menu extends PBase {
 	
 	private void menuDevBod() {
 		try {
-			gl.closeDevBod=false;
-			startActivity(new Intent(this,DevolBod.class));
+
+			gl.tipo = 1;
+			Intent intent = new Intent(this,lista_ingreso_inventario.class);
+			startActivity(intent);
+
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
