@@ -8,13 +8,13 @@ public class clsBeP_IMPUESTO {
     @Element(required=false) public int CODIGO_IMPUESTO;
     @Element(required=false) public int CODIGO;
     @Element(required=false) public double VALOR;
-    @Element(required=false) public int ACTIVO;
+    @Element(required=false) public boolean ACTIVO;
     @Element(required=false) public String EMPRESA;
 
     public clsBeP_IMPUESTO() {
     }
 
-    public clsBeP_IMPUESTO(int CODIGO_IMPUESTO,int CODIGO,double VALOR,int ACTIVO,String EMPRESA
+    public clsBeP_IMPUESTO(int CODIGO_IMPUESTO,int CODIGO,double VALOR,boolean ACTIVO,String EMPRESA
     ) {
 
         this.CODIGO_IMPUESTO=CODIGO_IMPUESTO;
@@ -43,10 +43,10 @@ public class clsBeP_IMPUESTO {
     public void setVALOR(double value) {
         VALOR=value;
     }
-    public int getActivo() {
+    public boolean getActivo() {
         return ACTIVO;
     }
-    public void setActivo(int value) {
+    public void setActivo(boolean value) {
         ACTIVO=value;
     }
     public String getEMPRESA() {

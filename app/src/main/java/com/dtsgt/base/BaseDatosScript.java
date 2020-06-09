@@ -280,6 +280,7 @@ public class BaseDatosScript {
                     "UM_SALIDA TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
                     "IMAGEN TEXT NOT NULL,"+
+                    "TIEMPO_PREPARACION REAL NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_PRODUCTO])"+
                     ");";
             database.execSQL(sql);

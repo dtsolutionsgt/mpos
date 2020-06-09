@@ -63,7 +63,7 @@ public class MantImpuesto extends PBase {
     }
 
     public void doStatus(View view) {
-        if (item.activo==1) {
+        if (item.activo) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
@@ -88,7 +88,7 @@ public class MantImpuesto extends PBase {
             txt1.setEnabled(false);
             txt2.requestFocus();
             imgstat.setVisibility(View.VISIBLE);
-            if (item.activo==1) {
+            if (item.activo) {
                 imgstat.setImageResource(R.drawable.delete_64);
             } else {
                 imgstat.setImageResource(R.drawable.mas);
@@ -106,7 +106,7 @@ public class MantImpuesto extends PBase {
 
         item.codigo=0;
         item.valor=0;
-        item.activo=1;
+        item.activo=true;
 
         showItem();
     }
@@ -235,10 +235,10 @@ public class MantImpuesto extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                if (item.activo==1) {
-                    item.activo=0;
+                if (item.activo) {
+                    item.activo=false;
                 } else {
-                    item.activo=1;
+                    item.activo=true;
                 };
                 updateItem();
                 finish();

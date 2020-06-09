@@ -2,7 +2,6 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -1017,7 +1016,7 @@ public class WSRec extends PBase {
                 var = clsCls.new clsP_banco();
                 var.codigo_banco = item.getCODIGO_BANCO();
                 var.codigo = item.getCODIGO() + "";
-                var.activo = item.getActivo();
+                var.activo = item.getACTIVO();
                 var.cuenta = item.getCUENTA() + "";
                 var.empresa = item.getEMPRESA();
                 var.nombre = item.getNOMBRE() + "";
@@ -1884,6 +1883,7 @@ public class WSRec extends PBase {
                 var.unigrasap = item.UNIGRASAP;
                 var.um_salida = item.UM_SALIDA + "";
                 var.activo = 1;
+                var.tiempo_preparacion = item.TIEMPO_PREPARACION;
                 script.add(handler.addItemSql(var));
 
 

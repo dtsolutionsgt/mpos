@@ -131,6 +131,7 @@ public class clsClasses {
         public String puerto_impresion;
         public String lbs_o_kgs;
         public int  nota_credito;
+        public int codigo_archivoconf;
     }
 
     public class clsP_banco {
@@ -318,7 +319,7 @@ public class clsClasses {
         public  int codigo_impuesto;
 		public int  codigo;
 		public double valor;
-		public int activo;
+		public boolean activo;
 	}
 
     public class clsP_linea   {
@@ -470,6 +471,7 @@ public class clsClasses {
         public String um_salida;
         public int  activo;
         public String imagen;
+        public float tiempo_preparacion;
     }
 
     public class clsP_proveedor {

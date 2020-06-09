@@ -73,7 +73,7 @@ public class WSEnv extends PBase {
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);lbl1.setText("");
+        lbl1 = (TextView) findViewById(R.id.msgHeader);lbl1.setText("");
         lbl2 = (TextView) findViewById(R.id.textView151);lbl2.setText("");
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
