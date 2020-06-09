@@ -445,7 +445,7 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO FROM VENDEDORES WHERE CODIGO_VENDEDOR='" + usr + "'  COLLATE NOCASE";
+            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO,CODIGO_VENDEDOR FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() == 0) {
