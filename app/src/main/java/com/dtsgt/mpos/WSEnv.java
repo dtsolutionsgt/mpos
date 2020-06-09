@@ -56,14 +56,14 @@ public class WSEnv extends PBase {
     private String CSQL,plabel,rs,
             corel,ferr,idfact,
             corelMov, movErr, idMov,
-            corelCjCierre, cjCierreError,idCjCierre,
-            corelCjReporte, cjReporteError,idCjReporte,
-            corelCjPagos, cjPagosError, idCjPagos;
+            corelCjCierre, cjCierreError,
+            corelCjReporte, cjReporteError,
+            corelCjPagos, cjPagosError;
     private int ftot,fsend,fidx,
                 fTotMov,fIdxMov, mSend,
-                cjCierreTot, idxCjCierre, cjCierreSend,
-            cjReporteTot, idxCjReporte, cjReporteSend,
-            cjPagosTot, idxCjPagos, cjPagosSend ;
+                cjCierreTot, cjCierreSend,
+                cjReporteTot, cjReporteSend,
+                cjPagosTot, cjPagosSend ;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB;
 
     @Override

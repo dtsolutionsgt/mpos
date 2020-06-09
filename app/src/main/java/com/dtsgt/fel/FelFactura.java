@@ -67,7 +67,7 @@ public class FelFactura extends PBase {
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);lbl1.setText("");
+        lbl1 = (TextView) findViewById(R.id.msgHeader);lbl1.setText("");
         lbl2 = (TextView) findViewById(R.id.lblWS);lbl2.setText("");
         lbl3 = (TextView) findViewById(R.id.textView152);lbl3.setText("");
         pbar = (ProgressBar) findViewById(R.id.progressBar);
@@ -658,7 +658,13 @@ public class FelFactura extends PBase {
 
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
-                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
+
+                if(line.isEmpty()) {
+                    gl.timeout = 6000;
+                }
+                else {
+                    gl.timeout = Integer.valueOf(line);
+                }
 
                 myReader.close();
             }

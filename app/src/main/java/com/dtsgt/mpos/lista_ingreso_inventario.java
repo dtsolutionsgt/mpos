@@ -180,11 +180,13 @@ public class lista_ingreso_inventario extends PBase {
                         "FROM D_MOV WHERE (TIPO='R' OR TIPO='I') AND (ANULADO=0) AND (CODIGOLIQUIDACION=0) " +
                         "AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                         "ORDER BY FECHA DESC ";
+                    break;
                 case 1:
                     sql="SELECT COREL,REFERENCIA,FECHA,0 "+
                         "FROM D_MOV WHERE (TIPO='D') AND (ANULADO='N') AND (CODIGOLIQUIDACION=0)  " +
                         "AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                         "ORDER BY FECHA DESC ";
+                    break;
             }
 
             DT=Con.OpenDT(sql);
