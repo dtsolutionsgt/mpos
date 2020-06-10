@@ -122,7 +122,7 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_BANCO_idx1 ON P_BANCO(NOMBRE)";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_cliente] ("+
+            sql="CREATE TABLE [P_CLIENTE] ("+
                     "CODIGO_CLIENTE INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
@@ -228,7 +228,7 @@ public class BaseDatosScript {
                     " on P_PRODPRECIO ([CODIGO_PRODUCTO],[EMPRESA],[UNIDADMEDIDA],[NIVEL])";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_producto] ("+
+            sql="CREATE TABLE [P_PRODUCTO] ("+
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
                     "CODIGO_TIPO TEXT NOT NULL,"+
@@ -368,7 +368,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_mediapago] ("+
+            sql="CREATE TABLE [P_MEDIAPAGO] ("+
                     "CODIGO INTEGER NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
@@ -394,7 +394,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_corel] ("+
+            sql="CREATE TABLE [P_COREL] ("+
                     "CODIGO_COREL INTEGER NOT NULL,"+
                     "EMPRESA INTEGER NOT NULL,"+
                     "RESOL TEXT NOT NULL,"+
@@ -772,7 +772,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [D_facturas] ("+
+            sql="CREATE TABLE [D_FACTURAS] ("+
                     "COREL TEXT NOT NULL,"+
                     "ID INTEGER NOT NULL,"+
                     "PRODUCTO TEXT NOT NULL,"+
