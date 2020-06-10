@@ -269,35 +269,51 @@ public class WSEnv extends PBase {
     }
 
     private void processComplete() {
-        pbar.setVisibility(View.INVISIBLE);
-        plabel = "";
-        updateLabel();
+        try{
+            pbar.setVisibility(View.INVISIBLE);
+            plabel = "";
+            updateLabel();
 
-        if (ws.errorflag) {
-            msgboxwait(ws.error);
-        } else {
+            if (ws.errorflag) {
+                msgboxwait(ws.error);
+            } else {
 
-            ss ="Envío completo\n";
+                ss ="Envío completo\n";
 
-            ss+="Facturas tota: "+ftot+"\n";
-            ss+="Facturas sin envio: "+(ftot-fsend)+"\n";
+                ss+="Facturas tota: "+ftot+"\n";
+                ss+="Facturas sin envio: "+(ftot-fsend)+"\n";
 
-            ss+="Movimientos total: "+fTotMov+"\n";
-            ss+="Movimientos sin envio: "+(fTotMov-mSend)+"\n";
+                ss+="Movimientos total: "+fTotMov+"\n";
+                ss+="Movimientos sin envio: "+(fTotMov-mSend)+"\n";
 
-            ss+="Caja cierre total: "+cjCierreTot+"\n";
-            ss+="Caja cierre sin envio: "+(cjCierreTot-cjCierreSend)+"\n";
+                ss+="Caja cierre total: "+cjCierreTot+"\n";
+                ss+="Caja cierre sin envio: "+(cjCierreTot-cjCierreSend)+"\n";
 
-            ss+="Caja pagos total: "+cjPagosTot+"\n";
-            ss+="Caja pagos sin envio: "+(cjPagosTot-cjPagosSend)+"\n";
+                ss+="Caja pagos total: "+cjPagosTot+"\n";
+                ss+="Caja pagos sin envio: "+(cjPagosTot-cjPagosSend)+"\n";
 
-            ss+="Caja reporte total: "+cjReporteTot+"\n";
-            ss+="Caja reporte sin envio: "+(cjReporteTot-cjReporteSend);
+                ss+="Caja reporte total: "+cjReporteTot+"\n";
+                ss+="Caja reporte sin envio: "+(cjReporteTot-cjReporteSend);
 
-            msgboxwait(ss);
+                msgboxwait(ss);
 
-            if (!ferr.isEmpty()) msgbox("Factura : "+idfact+"\n"+ferr);
-            if (!movErr.isEmpty()) msgbox("Movimientos : "+idMov+"\n"+movErr);
+                if (!ferr.isEmpty()) {
+
+                    if (!idfact.isEmpty()){
+                        msgbox("Factura : "+idfact+"\n"+ferr);
+                    }
+                }
+
+                if (!movErr.isEmpty()) {
+
+                    if(!idMov.isEmpty()){
+                        msgbox("Movimientos : "+idMov+"\n"+movErr);
+                    }
+                }
+            }
+
+        }catch (Exception ex){
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ex.getMessage());
         }
     }
 
@@ -575,7 +591,7 @@ public class WSEnv extends PBase {
 
             try {
 
-                sql="UPDATE P_CAJACIERRE SET STATCOM='S' WHERE CODIGO_CAJACIERRE='"+corelCjCierre+"'";
+                sql="UPDATE P_CAJACIERRE SET STATCOM='S' WHERE STATCOM='N'";
                 db.execSQL(sql);
 
             } catch (SQLException e) {
@@ -634,7 +650,7 @@ public class WSEnv extends PBase {
 
             try {
 
-                sql="UPDATE P_CAJAPAGOS SET STATCOM='S' WHERE CODIGO_CAJAPAGOS='"+corelCjPagos+"'";
+                sql="UPDATE P_CAJAPAGOS SET STATCOM='S' WHERE STATCOM='N'";
                 db.execSQL(sql);
 
             } catch (SQLException e) {
@@ -693,7 +709,7 @@ public class WSEnv extends PBase {
 
             try {
 
-                sql="UPDATE P_CAJAREPORTE SET STATCOM='S' WHERE CODIGO_CAJAREPORTE='"+corelCjReporte+"'";
+                sql="UPDATE P_CAJAREPORTE SET STATCOM='S' WHERE STATCOM='N'";
                 db.execSQL(sql);
 
             } catch (SQLException e) {
@@ -711,13 +727,16 @@ public class WSEnv extends PBase {
 
     private void prepareSend() {
         ferr="";
+        movErr="";
         int ccant;
+        int total_enviar=0;
 
         try {
 
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
             P_clienteObj.fill("WHERE ESERVICE='N'");
             ccant=P_clienteObj.count;
+            total_enviar+=ccant;
 
             String idfel=gl.peFEL;
 
@@ -735,10 +754,12 @@ public class WSEnv extends PBase {
             for (int i = 0; i <ftot; i++) {
                 fact.add(D_facturaObj.items.get(i).corel);
             }
+            total_enviar+=ftot;
 
             clsD_MovObj D_MovObj = new clsD_MovObj(this,Con,db);
             D_MovObj.fill("WHERE STATCOM = 'N'");
             fTotMov=D_MovObj.count;
+            total_enviar+=fTotMov;
 
             mSend=0;
 
@@ -753,21 +774,33 @@ public class WSEnv extends PBase {
             P_cjCierreObj.fill("WHERE STATCOM='N'");
             cjCierreTot=P_cjCierreObj.count;
 
+            total_enviar+=cjCierreTot;
+
             clsP_cajapagosObj P_cjPagoObj=new clsP_cajapagosObj(this,Con,db);
             P_cjPagoObj.fill("WHERE STATCOM='N'");
             cjPagosTot=P_cjPagoObj.count;
+
+            total_enviar+=cjPagosTot;
 
             clsP_cajareporteObj P_cjReporteObj=new clsP_cajareporteObj(this,Con,db);
             P_cjReporteObj.fill("WHERE STATCOM='N'");
             cjReporteTot=P_cjReporteObj.count;
 
+            total_enviar+=cjReporteTot;
 
-            lbl1.setText("Pendientes envio : \nFacturas: "+ftot+
-                                            "\nClientes: "+ccant+
-                                            "\nMovimientos inventario: "+fTotMov+
-                                            "\nCierres de caja: "+cjCierreTot+
-                                            "\nPagos de caja: "+cjPagosTot+
-                                            "\nReportes caja: "+cjReporteTot);
+            if(total_enviar>0){
+
+                lbl1.setText("Pendientes envio : \nFacturas: "+ftot+
+                            "\nClientes: "+ccant+
+                            "\nMovimientos inventario: "+fTotMov+
+                            "\nCierres de caja: "+cjCierreTot+
+                            "\nPagos de caja: "+cjPagosTot+
+                            "\nReportes caja: "+cjReporteTot);
+
+            }else{
+                msgboxwait("No hay datos pendientes de envío");
+            }
+
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -821,7 +854,7 @@ public class WSEnv extends PBase {
     private void msgboxwait(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Recepción");
+        dialog.setTitle("Envío");
         dialog.setMessage(msg);
 
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

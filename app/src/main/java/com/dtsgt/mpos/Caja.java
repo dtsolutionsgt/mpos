@@ -142,7 +142,7 @@ public class Caja extends PBase {
 
                     if(montoDif!=0){
                         if(acc==1){
-                            msgboxValidaMonto("El monto de efectvio no cuadra, ¿Está seguro de continuar?");
+                            msgboxValidaMonto("El monto de efectivo no cuadra, ¿Está seguro de continuar?");
                             acc=0;
                         }else {
                             saveMontoIni();
