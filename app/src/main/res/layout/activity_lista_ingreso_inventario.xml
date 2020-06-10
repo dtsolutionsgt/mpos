@@ -144,11 +144,12 @@
 
     <ImageView
         android:id="@+id/imgImg5"
-        android:layout_width="144dp"
-        android:layout_height="108dp"
+        android:layout_width="117dp"
+        android:layout_height="93dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentTop="false"
         android:layout_alignParentRight="true"
+        android:layout_marginTop="15dp"
         android:clickable="true"
         android:onClick="nuevo"
         android:paddingLeft="10dp"

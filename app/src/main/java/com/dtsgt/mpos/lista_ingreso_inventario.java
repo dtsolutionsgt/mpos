@@ -91,7 +91,8 @@ public class lista_ingreso_inventario extends PBase {
 
             switch (tipo){
                 case 0:
-                    intent = new Intent(this,Recarga.class);
+                    //intent = new Intent(this,Recarga.class);
+                    intent = new Intent(this,InvInicial.class);
                     startActivity(intent);
                     break;
                 case 1:
