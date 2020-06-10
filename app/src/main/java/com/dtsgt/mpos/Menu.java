@@ -1693,7 +1693,7 @@ public class Menu extends PBase {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
 			dialog.setTitle("Road");
-			dialog.setMessage("¿Esta seguro de continuar sin asignar un ayudante?");
+			dialog.setMessage("¿Continuar sin asignar un ayudante?");
 
 			dialog.setIcon(R.drawable.ic_quest);
 
@@ -1724,7 +1724,7 @@ public class Menu extends PBase {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
 			dialog.setTitle("Road");
-			dialog.setMessage("¿Esta seguro de continuar sin asignar un vehículo?");
+			dialog.setMessage("¿Continuar sin asignar un vehículo?");
 
 			dialog.setIcon(R.drawable.ic_quest);
 
