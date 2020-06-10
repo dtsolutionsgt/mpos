@@ -398,7 +398,7 @@ public class Recarga extends PBase {
 			ins.add("ANULADO",0);
 			ins.add("FECHA",fecha);
 			ins.add("TIPO","R");
-			ins.add("USUARIO",((appGlobals) vApp).vend);
+			ins.add("USUARIO",gl.codigo_vendedor);
 			ins.add("REFERENCIA","");
 			ins.add("STATCOM","N");
 			ins.add("IMPRES",0);

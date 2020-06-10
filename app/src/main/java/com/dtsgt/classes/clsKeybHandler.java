@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 
+import com.dtsgt.mpos.R;
+
 import java.text.DecimalFormat;
 
 public class clsKeybHandler {
@@ -28,8 +30,9 @@ public class clsKeybHandler {
     }
 
     public void setLabel(TextView actlabel,Boolean decpoint) {
+        label.setBackgroundResource(R.drawable.frame_label_unfocus);
         label=actlabel;
-        clear(decpoint);
+        focus(decpoint);
     }
 
     public void clear() {
@@ -38,7 +41,7 @@ public class clsKeybHandler {
         idle=true;
         value=-1;val="";
         label.setText("");
-      }
+    }
 
     public void clear(Boolean decpoint) {
         isValid=false;
@@ -51,7 +54,17 @@ public class clsKeybHandler {
         } else {
             declabel.setVisibility(View.INVISIBLE);
         }
-        //label.setBackgroundColor(Color.TRANSPARENT);
+        label.setBackgroundResource(R.drawable.frame_label_focus);
+    }
+
+    public void focus(Boolean decpoint) {
+        if (decpoint) {
+            declabel.setVisibility(View.VISIBLE);
+        } else {
+            declabel.setVisibility(View.INVISIBLE);
+        }
+        val=label.getText().toString();
+        label.setBackgroundResource(R.drawable.frame_label_focus);
     }
 
     public void handleKey(String keychar) {
@@ -101,7 +114,7 @@ public class clsKeybHandler {
         isValid=value>=0;
         label.setText(val);
 
-        //label.setBackgroundColor(Color.TRANSPARENT);
+
     }
 
     public void enable() {
@@ -113,7 +126,7 @@ public class clsKeybHandler {
     }
 
     public void focus() {
-        //label.setBackgroundColor(Color.parseColor("#02D42E"));
+        label.setBackgroundResource(R.drawable.frame_label_focus);
     }
 
     public void setValue(double val) {
