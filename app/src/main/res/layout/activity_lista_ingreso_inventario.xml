@@ -137,8 +137,9 @@
         android:layout_width="792dp"
         android:layout_height="553dp"
         android:layout_above="@+id/relbotpan"
-        android:layout_below="@+id/imgImg"
-        android:layout_centerHorizontal="true">
+        android:layout_below="@id/llFechas"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp">
 
     </ListView>
 

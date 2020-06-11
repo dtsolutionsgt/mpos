@@ -195,33 +195,6 @@ public class WSRec extends PBase {
        Recibir();
     }
 
-    protected void guardaDatosConexion() {
-
-        BufferedWriter writer = null;
-        FileWriter wfile;
-
-        try {
-
-            String fname = Environment.getExternalStorageDirectory()+"/mposws.txt";
-            File archivo= new File(fname);
-
-            if (archivo.exists()){
-                archivo.delete();
-            }
-
-            wfile=new FileWriter(fname,true);
-            writer = new BufferedWriter(wfile);
-
-            writer.write(gl.wsurl + "\n");
-            writer.write("7000");
-
-            writer.close();
-
-    } catch (Exception e) {
-       msgbox("Error " + e.getMessage());
-    }
-}
-
     public void Recibir(){
 
         script.clear();
@@ -304,6 +277,34 @@ public class WSRec extends PBase {
         }
 
         return resultado;
+    }
+
+    protected void guardaDatosConexion() {
+
+        BufferedWriter writer = null;
+        FileWriter wfile;
+
+        try {
+
+            String fname = Environment.getExternalStorageDirectory()+"/mposws.txt";
+            File archivo= new File(fname);
+
+            if (archivo.exists()){
+                archivo.delete();
+            }
+
+            wfile=new FileWriter(fname,true);
+            writer = new BufferedWriter(wfile);
+
+            writer.write(gl.wsurl + "\n");
+            writer.write("7000");
+
+            writer.close();
+
+        } catch (Exception e) {
+            msgbox("Error " + e.getMessage());
+        }
+
     }
 
     public class WebServiceHandler extends com.dtsgt.classes.WebService {

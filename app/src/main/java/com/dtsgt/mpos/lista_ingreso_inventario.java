@@ -269,7 +269,7 @@ public class lista_ingreso_inventario extends PBase {
     public void showDateDialog1(View view) {
         try{
             obtenerFecha();
-            dateTxt=false;
+            dateTxt = false;
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -279,7 +279,7 @@ public class lista_ingreso_inventario extends PBase {
     public void showDateDialog2(View view) {
         try{
             obtenerFecha();
-            dateTxt=true;
+            dateTxt = true;
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
