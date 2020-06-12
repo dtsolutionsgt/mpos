@@ -93,6 +93,9 @@ public class FelFactura extends PBase {
         fel.fel_alias=suc.pet_alias_pfx; // fel_alias="DEMO_FEL";
         fel.fel_nit=suc.nit; // NIT  "1000000000K";
         fel.fel_correo=suc.correo;  // CORREO
+        fel.fraseIVA=suc.codigo_escenario_iva;
+        fel.fraseISR=suc.codigo_escenario_isr;
+
 
         /*
         demomode=true;

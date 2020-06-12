@@ -41,7 +41,7 @@ public class clsFELInFile {
     // Parametrizacion FEL
 
     public String llave_cert, llave_firma,fel_codigo,fel_alias,fel_ident,fel_nit,fel_correo;
-
+    public int fraseIVA,fraseISR;
 
     /*
     public String fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
@@ -753,8 +753,8 @@ public class clsFELInFile {
         xml+="</dte:Receptor>";
 
         xml+="<dte:Frases>";
-        xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
-        xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"2\"></dte:Frase>";
+        if (fraseIVA!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseIVA+"\" TipoFrase=\"1\"></dte:Frase>";
+        if (fraseISR!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseISR+"\" TipoFrase=\"2\"></dte:Frase>";
         xml+="</dte:Frases>";
 
         xml+="<dte:Items>";
