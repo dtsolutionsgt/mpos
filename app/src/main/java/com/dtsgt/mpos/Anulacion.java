@@ -21,6 +21,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
@@ -107,26 +108,18 @@ public class Anulacion extends PBase {
 
         fel=new clsFELInFile(this,this);
 
-        demomode=true;
+        clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
+        sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+        clsClasses.clsP_sucursal suc=sucursal.first();
 
-        if (demomode) {
-
-            fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
-            fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc";
-            fel.fel_codigo ="1";
-            fel.fel_alias="DEMO_FEL";
-            fel.fel_nit="1000000000K";
-            fel.fel_correo="";
-            fel.fel_ident="abc123";
-        } else {
-
-            fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED";
-            fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41";
-            fel.fel_codigo="PEXPRESS";
-            fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA";
-            fel.fel_nit="96049340";
-            //fel.fel_ident=fact.serie+fact.corelativo;;
-        }
+        fel.llave_cert =suc.pet_llave; // fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
+        fel.llave_firma=suc.pet_pfx_llave; // fel_token ="5b174fb0e23645b65ef88277d654603d";
+        fel.fel_codigo=suc.pet_prefijo;  //  fel_codigo="0";
+        fel.fel_alias=suc.pet_alias_pfx; // fel_alias="DEMO_FEL";
+        fel.fel_nit=suc.nit; // NIT  "1000000000K";
+        fel.fel_correo=suc.correo;  // CORREO
+        fel.fraseIVA=suc.codigo_escenario_iva;
+        fel.fraseISR=suc.codigo_escenario_isr;
 
 
         printotrodoc = new Runnable() {
