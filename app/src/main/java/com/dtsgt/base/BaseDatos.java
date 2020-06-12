@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseDatos extends SQLiteOpenHelper {
-	
+
+      //SQLiteDatabase.enableWriteAheadLogging()
+
 	  public SQLiteDatabase vDatabase;	
 	  public Context vcontext;
 	  public int Created;
@@ -345,7 +347,6 @@ public class BaseDatos extends SQLiteOpenHelper {
 	      
 	} 
 
-	  
 	  private void msgbox(String msg) {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);
 	    	
@@ -361,8 +362,8 @@ public class BaseDatos extends SQLiteOpenHelper {
 			dialog.show();
 		
 		}   
-	  
-	    private void dbCreated() {
+
+	  private void dbCreated() {
 			AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);
 	    	
 			dialog.setTitle(R.string.app_name);

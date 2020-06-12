@@ -1661,6 +1661,21 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [T_movr] ("+
+                    "CORELDET INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "CANTM REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "PESOM REAL NOT NULL,"+
+                    "LOTE TEXT NOT NULL,"+
+                    "CODIGOLIQUIDACION INTEGER NOT NULL,"+
+                    "UNIDADMEDIDA TEXT NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "PRIMARY KEY ([CORELDET])"+
+                    ");";
+            database.execSQL(sql);
 
             return 1;
 

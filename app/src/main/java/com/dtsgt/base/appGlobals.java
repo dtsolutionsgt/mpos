@@ -28,21 +28,10 @@ public class appGlobals extends Application {
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
-	            banderaCobro, cliposflag, forcedclose, grantaccess, cierreDiario;
-	public int  mpago, corelZ;
-	public int  codigo_cliente,
-			    codigo_ruta,
-	            codigo_vendedor,
-			    emp,
-			    tienda,
-	            dias_anul,
-	            cod_prov_recarga,
-				timeout;
-	public String  cliente,
-			       ruta,
-			       vend,
-				   caja,
-	               clave;
+	            banderaCobro, cliposflag, forcedclose, grantaccess, cierreDiario,invregular;
+	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
+			    emp, tienda,dias_anul,cod_prov_recarga,	timeout;
+	public String  cliente,ruta,vend, caja, clave,nombre_proveedor;
 	public double precio_recarga;
 	public boolean configCajaSuc = false;
 

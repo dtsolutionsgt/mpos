@@ -739,6 +739,20 @@ public class clsClasses {
         public double precio;
     }
 
+    public class clsT_movr {
+        public int  coreldet;
+        public String corel;
+        public int  producto;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public String lote;
+        public int  codigoliquidacion;
+        public String unidadmedida;
+        public double precio;
+    }
+
 
     //endregion
 

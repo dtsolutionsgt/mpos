@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -710,7 +711,7 @@ public class Menu extends PBase {
 				}
 
 			}
-            //itemcnt++;
+            itemcnt++;
 			if (gl.peSolicInv) itemcnt++;
 
 			final String[] selitems = new String[itemcnt];
@@ -718,6 +719,7 @@ public class Menu extends PBase {
 			selitems[itempos]="Existencias";itempos++;
 			selitems[itempos]="Devolución a bodega";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
+            selitems[itempos]="Inventario inicial";itempos++;
 
 			menudlg = new AlertDialog.Builder(this);
 			menudlg.setIcon(R.drawable.inventario48);
@@ -730,6 +732,7 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Existencias")) menuExist();
 					if (mt.equalsIgnoreCase("Devolución a bodega")) menuDevBod();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
+                    if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
 
                     dialog.cancel();
 				}
@@ -752,97 +755,8 @@ public class Menu extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
-	}	
-	
-	public void showInvMenuPreventa() {
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Existencias","Devolucion a bodega"};
-
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.inventario48);
-			menudlg.setTitle("Inventario");
-
-			menudlg.setItems(selitems,	new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							menuExist();break;
-						case 1:
-							menuDevBod();break;
-					}
-
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch	(Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}	
-	
-	public void showInvMenuPos() {
-
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Existencias","Devolucion","Recarga"};
-
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.inventario48);
-			menudlg.setTitle("Inventario");
-
-			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					//mu.msgbox(item);
-
-					switch (item) {
-						case 0:
-							menuExist();break;
-						case 1:
-							menuDevBod();break;
-						case 2:
-							menuRecarga();break;
-					}
-
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
 	}
-	
+
 	private void menuExist() {
 		try{
 			gl.tipo=0;
@@ -856,7 +770,7 @@ public class Menu extends PBase {
 	
 	private void menuRecarga() {
 		try{
-
+            gl.invregular=true;
 			gl.tipo = 0;
 			Intent intent = new Intent(this,lista_ingreso_inventario.class);
 			startActivity(intent);
@@ -866,17 +780,7 @@ public class Menu extends PBase {
 		}
 
 	}
-	
-	private void menuRecargaAuto() {
-		try{
-			Intent intent = new Intent(this,RecargaAuto.class);
-			startActivity(intent);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
 
-	}
-	
 	private void menuDevBod() {
 		try {
 
@@ -888,71 +792,22 @@ public class Menu extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
-	
-	private void menuSolicInv() {
-		Cursor dt;
-		boolean newflag=false;
-		String flag,corel;
-		try{
-			try {
 
-				sql="SELECT STATCOM FROM D_SOLICINV";
-				dt=Con.OpenDT(sql);
+    private void menuInvIni() {
+        try {
+            clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
+            suc.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            gl.codigo_proveedor=suc.first().codigo_proveedor;
+            gl.nombre_proveedor="Inventario inicial";
 
-				if (dt.getCount()>0) {
-					dt.moveToFirst();
+            gl.invregular=false;
+            startActivity(new Intent(Menu.this,InvInicial.class));
 
-					flag=dt.getString(0);
-					if (flag.equalsIgnoreCase("S")) {
-						msgbox("Falta enviar solicitud actual y realizar cierre del día antes de crear una nueva.");return;
-					}
-				} else {
-					newflag=true;
-				}
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
-			} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-			}
-
-			if (newflag) {
-
-				try {
-					db.beginTransaction();
-
-					sql="DELETE FROM D_SOLICINVD";
-					db.execSQL(sql);
-
-					corel=gl.ruta+"_"+mu.getCorelBase();
-
-					ins.init("D_SOLICINV");
-
-					ins.add("COREL",corel);
-					ins.add("ANULADO","N");
-					ins.add("RUTA",gl.ruta);
-					ins.add("FECHA",fecha);
-					ins.add("USUARIO",gl.vend);
-					ins.add("REFERENCIA","");
-					ins.add("STATCOM","P");
-
-					db.execSQL(ins.sql());
-
-					db.setTransactionSuccessful();
-					db.endTransaction();
-				} catch (Exception e) {
-					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-					db.endTransaction();msgbox("No se puede crear una nueva solicitud.\n"+e.getMessage());return;
-				}
-
-			}
-
-			Intent intent = new Intent(this,SolicInv.class);
-			startActivity(intent);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}
-
-	}
 
 	//endregion
 

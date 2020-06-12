@@ -222,6 +222,7 @@ public class PBase extends Activity {
 			db = Con.getWritableDatabase();
 			if (db!= null) {
 				Con.vDatabase=db;
+                //Con.vDatabase.enableWriteAheadLogging();
 				active=1;
 			} else {
 				active = 0;

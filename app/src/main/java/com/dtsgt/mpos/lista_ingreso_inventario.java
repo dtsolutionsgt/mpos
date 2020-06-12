@@ -23,6 +23,7 @@ import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
+import com.dtsgt.mant.Lista;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -84,16 +85,16 @@ public class lista_ingreso_inventario extends PBase {
     //region Events
 
     public void nuevo(View view){
-
         Intent intent;
 
         try{
 
             switch (tipo){
                 case 0:
-                    //intent = new Intent(this,Recarga.class);
-                    intent = new Intent(this,InvInicial.class);
-                    startActivity(intent);
+                    browse=1;
+                    gl.listaedit=false;
+                    gl.mantid = 9;
+                    startActivity(new Intent(this, Lista.class));
                     break;
                 case 1:
                     gl.closeDevBod=false;
@@ -364,5 +365,31 @@ public class lista_ingreso_inventario extends PBase {
     }
 
     //endregion
+
+    //region Activity Events
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (browse==1) {
+            browse=0;
+            if (!gl.pickcode.isEmpty()) {
+                try {
+                    gl.codigo_proveedor=Integer.parseInt(gl.pickcode);
+                    gl.nombre_proveedor=gl.pickname;
+                    startActivity(new Intent(this,InvInicial.class));
+                } catch (NumberFormatException e) {
+                    msgbox("Codigo de proveedor incorrecto : "+gl.pickcode);
+                }
+            }
+            return;
+        }
+
+        listItems();
+    }
+
+    //endregion
+
 
 }

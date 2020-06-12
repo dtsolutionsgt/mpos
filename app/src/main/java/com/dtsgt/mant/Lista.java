@@ -270,7 +270,7 @@ public class Lista extends PBase {
                 break;
 
             case 9: // Proveedores
-                sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_PROVEEDOR WHERE ";
+                sql="SELECT 0,CODIGO_PROVEEDOR,NOMBRE,'','', '','','','' FROM P_PROVEEDOR WHERE ";
                 if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";

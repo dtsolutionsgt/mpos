@@ -232,12 +232,6 @@
             android:label="@string/title_activity_cli_nuevo"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".Recarga"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_recarga"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
-        <activity
             android:name=".RecargCant"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_recarg_cant"
