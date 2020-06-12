@@ -1043,7 +1043,10 @@ public class Menu extends PBase {
         try {
             final AlertDialog Dialog;
 
-            final String[] selitems = {"Banco", "Caja", "Cliente", "Empresa", "Familia", "Forma pago", "Impuesto", "Concepto pago", "Nivel precio", "Producto", "Proveedor", "Tienda", "Usuario","Roles", "Resolución de facturas", "Configuración"};
+            final String[] selitems = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
+					                   "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
+					                   "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
+					                   "Resolución de facturas", "Configuración"};
 
             menudlg = new AlertDialog.Builder(this);
             menudlg.setTitle("Mantenimientos");
@@ -1067,6 +1070,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Moneda")) gl.mantid = 7;
                     if (ss.equalsIgnoreCase("Concepto pago")) gl.mantid = 19;
                     if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid = 14;
+					if (ss.equalsIgnoreCase("Motivo ajuste")) gl.mantid = 22;
                     if (ss.equalsIgnoreCase("Producto")) gl.mantid = 8;
                     if (ss.equalsIgnoreCase("Proveedor")) gl.mantid = 9;
                     if (ss.equalsIgnoreCase("Tienda")) gl.mantid = 12;
@@ -1150,6 +1154,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
                     if (ss.equalsIgnoreCase("Concepto Pago")) gl.mantid=19;
                     if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
+					if (ss.equalsIgnoreCase("Motivo ajuste")) gl.mantid = 22;
                     if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
                     if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
                     if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
@@ -1654,10 +1659,14 @@ public class Menu extends PBase {
 				if(caja.last().estado==1){
 					return false;
 				}else if(gl.cajaid==5) {
-					if(caja.last().fecha!=du.getFechaActual()){
-						gl.validDate=true;
-						gl.lastDate=caja.last().fecha;
-						gl.cajaid=6; return false;
+
+					if (gl.lastDate!=0){
+
+						if(caja.last().fecha!=gl.lastDate){
+							gl.validDate=true;
+							gl.lastDate=caja.last().fecha;
+							gl.cajaid=6; return false;
+						}
 					}
 				}
 

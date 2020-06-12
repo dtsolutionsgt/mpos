@@ -346,6 +346,13 @@ public class clsClasses {
         public int activo;
     }
 
+    public class clsP_motivoajuste {
+        public int codigo_motivo_ajuste;
+        public int empresa;
+        public String nombre;
+        public boolean activo;
+    }
+
 	public class clsP_conceptopago {
 		public int codigo;
 		public String nombre;

@@ -34,7 +34,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="LockedOrientationActivity">
-        <activity android:name="com.dtsgt.mant.mant_motivo_ajuste"></activity>
+        <activity android:name="com.dtsgt.mant.MantMotivoAjuste"></activity>
         <activity android:name=".lista_ingreso_inventario" />
 
         <service

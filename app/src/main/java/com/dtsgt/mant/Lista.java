@@ -347,6 +347,12 @@ public class Lista extends PBase {
                 if (flag) sql+="WHERE ((SERIE='"+ft+"') ";
                 sql+="ORDER BY SERIE";
                 break;
+            case 22: // Motivo ajuste
+                sql="SELECT EMPRESA,CODIGO_MOTIVO_AJUSTE,NOMBRE,'','', '','','','' FROM P_MOTIVO_AJUSTE WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO_MOTIVO_AJUSTE='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
         }
     }
 
@@ -399,6 +405,8 @@ public class Lista extends PBase {
                 lblTit.setText("Concepto Pago");break;
             case 20:
                 lblTit.setText("Correlativos");break;
+            case 22:
+                lblTit.setText("Motivos de ajuste");break;
         }
     }
 
@@ -442,6 +450,8 @@ public class Lista extends PBase {
                 //startActivity(new Intent(this, MantOpcion.class));break;
             case 19:
                 startActivity(new Intent(this, MantConceptoPago.class));break;
+            case 22:
+                startActivity(new Intent(this, MantMotivoAjuste.class));break;
 
         }
 

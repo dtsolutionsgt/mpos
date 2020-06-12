@@ -29,6 +29,7 @@ import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_monedaObj;
+import com.dtsgt.classes.clsP_motivoajusteObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
@@ -71,6 +72,8 @@ import com.dtsgt.classesws.clsBeP_MEDIAPAGO;
 import com.dtsgt.classesws.clsBeP_MEDIAPAGOList;
 import com.dtsgt.classesws.clsBeP_MONEDA;
 import com.dtsgt.classesws.clsBeP_MONEDAList;
+import com.dtsgt.classesws.clsBeP_MOTIVO_AJUSTE;
+import com.dtsgt.classesws.clsBeP_MOTIVO_AJUSTEList;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIO;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIOList;
 import com.dtsgt.classesws.clsBeP_PARAMEXT;
@@ -410,6 +413,9 @@ public class WSRec extends PBase {
                     case 31:
                         callMethod("GetP_BANCO", "EMPRESA", gl.emp);
                         break;
+                    case 32:
+                        callMethod("GetP_MOTIVO_AJUSTE", "EMPRESA", gl.emp);
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();
@@ -651,6 +657,14 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
+                    execws(32);
+                    break;
+                case 32:
+                    processMotivoAjustes();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
                     processComplete();
                     break;
             }
@@ -756,6 +770,9 @@ public class WSRec extends PBase {
                 break;
             case 31:
                 plabel = "Cargando bancos";
+                break;
+            case 32:
+                plabel = "Cargando motivos de ajuste";
                 break;
         }
 
@@ -1022,6 +1039,41 @@ public class WSRec extends PBase {
                 var.empresa = item.getEMPRESA();
                 var.nombre = item.getNOMBRE() + "";
                 var.tipo = item.getTIPO() + "";
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processMotivoAjustes() {
+
+        try {
+
+            clsP_motivoajusteObj handler = new clsP_motivoajusteObj(this, Con, db);
+            clsBeP_MOTIVO_AJUSTEList items = new clsBeP_MOTIVO_AJUSTEList();
+            clsBeP_MOTIVO_AJUSTE item = new clsBeP_MOTIVO_AJUSTE();
+            clsClasses.clsP_motivoajuste var = clsCls.new clsP_motivoajuste();
+
+            script.add("DELETE FROM P_MOTIVO_AJUSTE");
+
+            items = xobj.getresult(clsBeP_MOTIVO_AJUSTEList.class, "GetP_MOTIVO_AJUSTE");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_motivoajuste();
+                var.codigo_motivo_ajuste = item.getCODIGO_MOTIVO_AJUSTE();
+                var.activo = item.getACTIVO();
+                var.empresa = item.getEMPRESA();
+                var.nombre = item.getNOMBRE() + "";
                 script.add(handler.addItemSql(var));
             }
 
