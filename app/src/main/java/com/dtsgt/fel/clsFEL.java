@@ -35,17 +35,6 @@ public class clsFEL {
     public String fact_serie;
     public int fact_numero;
 
-    // Parametrizacion FEL
-
-    public String fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
-    public String fel_token ="5b174fb0e23645b65ef88277d654603d";
-    public String fel_codigo="0";
-    public String fel_alias="DEMO_FEL";
-    public String fel_ident="abc123";
-    public String fel_nit="1000000000K";
-    public String fel_correo="";
-
-
     // Private declarations
 
     private Context cont;

@@ -43,16 +43,6 @@ public class clsFELInFile {
     public String llave_cert, llave_firma,fel_codigo,fel_alias,fel_ident,fel_nit,fel_correo;
     public int fraseIVA,fraseISR;
 
-    /*
-    public String fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D";
-    public String fel_token ="5b174fb0e23645b65ef88277d654603d";
-    public String fel_codigo="0";
-    public String fel_alias="DEMO_FEL";
-    public String fel_ident="abc124";
-    public String fel_nit="1000000000K";
-    public String fel_correo="";
-    */
-
     // Private declarations
 
     private Context cont;
@@ -753,6 +743,8 @@ public class clsFELInFile {
         xml+="</dte:Receptor>";
 
         xml+="<dte:Frases>";
+        //xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
+        //xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"2\"></dte:Frase>";
         if (fraseIVA!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseIVA+"\" TipoFrase=\"1\"></dte:Frase>";
         if (fraseISR!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseISR+"\" TipoFrase=\"2\"></dte:Frase>";
         xml+="</dte:Frases>";
