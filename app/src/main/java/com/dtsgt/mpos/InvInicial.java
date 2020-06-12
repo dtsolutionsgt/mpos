@@ -451,7 +451,7 @@ public class InvInicial extends PBase {
             if (P_productoObj.first().costo>0) {
                 lblCosto.setText(""+P_productoObj.first().costo);
             } else {
-                if (ingreso) lblCosto.setText("");else lblCosto.setText("0");
+                lblCosto.setText("0");
             }
 
             return true;
@@ -480,8 +480,7 @@ public class InvInicial extends PBase {
 
             lblCant.setText(mu.frmint(selitem.cant));
             khand.setLabel(lblCant,false);
-
-            if (selitem.precio>0) lblCosto.setText(""+selitem.precio);
+            lblCosto.setText(""+selitem.precio);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

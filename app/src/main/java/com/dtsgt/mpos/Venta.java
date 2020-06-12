@@ -405,7 +405,6 @@ public class Venta extends PBase {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             }
 
-
         txtBarra.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {}
@@ -606,6 +605,7 @@ public class Venta extends PBase {
                 }
             }
 
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
@@ -1676,7 +1676,6 @@ public class Venta extends PBase {
     }
 
     private void listProduct() {
-
         Cursor dt;
         clsClasses.clsMenu item;
         ArrayList<String> pcodes = new ArrayList<String>();
@@ -1730,6 +1729,7 @@ public class Venta extends PBase {
 
                 dt.moveToNext();
             }
+            if (dt!=null) dt.close();
         } catch (Exception e) 		{
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }

@@ -96,7 +96,6 @@ public class FelFactura extends PBase {
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
 
-
         /*
         demomode=true;
 

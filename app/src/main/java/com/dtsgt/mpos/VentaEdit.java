@@ -19,6 +19,7 @@ public class VentaEdit extends PBase {
 
     private int cant, lcant, prodid, disp, dif;
     private String um;
+    private boolean pstock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,8 @@ public class VentaEdit extends PBase {
         lbl2.setText("" + cant);
         lbl3.setText("Disponible : " + disp);
 
-        if (!isProdStock(prodid)) lbl3.setVisibility(View.INVISIBLE);
+        pstock=isProdStock(prodid);
+        if (!pstock) lbl3.setVisibility(View.INVISIBLE);
     }
 
 
@@ -62,7 +64,12 @@ public class VentaEdit extends PBase {
             gl.retcant = cant;
             finish();
         } else {
-            msgAskApply("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+            if (pstock) {
+                msgAskApply("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+            } else {
+                gl.retcant = cant;
+                finish();
+            }
         }
     }
 
@@ -79,7 +86,9 @@ public class VentaEdit extends PBase {
         if (gl.tipoprodcod.equalsIgnoreCase("P")) {
             dif = disp - cant - 1;
             if (dif < 0) {
-                msgAskLimit("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+                if (pstock) {
+                    msgAskLimit("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+                } else cant++;
             } else {
                 cant++;
             }
@@ -126,8 +135,13 @@ public class VentaEdit extends PBase {
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
-                return dt.getInt(0);
-            } return 0;
+                int val=dt.getInt(0);
+                if (dt!=null) dt.close();
+                return val;
+            } else {
+                if (dt!=null) dt.close();
+                return 0;
+            }
         } catch (Exception e) {
             return 0;
         }
@@ -142,8 +156,13 @@ public class VentaEdit extends PBase {
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
-                return dt.getInt(0);
-            } return 0;
+                int val=dt.getInt(0);
+                if (dt!=null) dt.close();
+                return val;
+            } else {
+                if (dt!=null) dt.close();
+                return 0;
+            }
         } catch (Exception e) {
             return 0;
         }
