@@ -108,17 +108,18 @@ public class clsClasses {
     }
 
     public class clsD_MovD {
-        public int CORELDET;
-        public String COREL;
-        public int PRODUCTO;
-        public double CANT;
-        public double CANTM;
-        public double PESO;
-        public double PESOM;
-        public String LOTE;
-        public int CODIGOLIQUIDACION;
-        public String UNIDADMEDIDA;
-        public double PRECIO;
+        public String corel;
+        public int  producto;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public String lote;
+        public int  codigoliquidacion;
+        public String unidadmedida;
+        public int  coreldet;
+        public double precio;
+        public int  motivo_ajuste;
     }
 
     public class clsP_archivoconf {
@@ -488,6 +489,25 @@ public class clsClasses {
         public Boolean  activo;
     }
 
+    public class clsP_stock {
+        public int  codigo;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double plibra;
+        public String lote;
+        public String documento;
+        public int  fecha;
+        public int  anulado;
+        public String centro;
+        public String status;
+        public int  enviado;
+        public int  codigoliquidacion;
+        public String corel_d_mov;
+        public String unidadmedida;
+    }
+
+
     public class clsP_sucursal {
         public int  codigo_sucursal;
         public String codigo;
@@ -744,6 +764,7 @@ public class clsClasses {
         public int  codigoliquidacion;
         public String unidadmedida;
         public double precio;
+        public int  razon;
     }
 
     public class clsT_movr {
@@ -758,6 +779,7 @@ public class clsClasses {
         public int  codigoliquidacion;
         public String unidadmedida;
         public double precio;
+        public int  razon;
     }
 
 

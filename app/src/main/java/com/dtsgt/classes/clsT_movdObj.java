@@ -86,6 +86,7 @@ public class clsT_movdObj {
         ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         ins.add("UNIDADMEDIDA",item.unidadmedida);
         ins.add("PRECIO",item.precio);
+        ins.add("RAZON",item.razon);
 
         db.execSQL(ins.sql());
 
@@ -105,6 +106,7 @@ public class clsT_movdObj {
         upd.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         upd.add("UNIDADMEDIDA",item.unidadmedida);
         upd.add("PRECIO",item.precio);
+        upd.add("RAZON",item.razon);
 
         upd.Where("(CORELDET="+item.coreldet+")");
 
@@ -149,6 +151,7 @@ public class clsT_movdObj {
             item.codigoliquidacion=dt.getInt(8);
             item.unidadmedida=dt.getString(9);
             item.precio=dt.getDouble(10);
+            item.razon=dt.getInt(11);
 
             items.add(item);
 
@@ -191,6 +194,7 @@ public class clsT_movdObj {
         ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         ins.add("UNIDADMEDIDA",item.unidadmedida);
         ins.add("PRECIO",item.precio);
+        ins.add("RAZON",item.razon);
 
         return ins.sql();
 
@@ -210,6 +214,7 @@ public class clsT_movdObj {
         upd.add("CODIGOLIQUIDACION",item.codigoliquidacion);
         upd.add("UNIDADMEDIDA",item.unidadmedida);
         upd.add("PRECIO",item.precio);
+        upd.add("MOTIVO_AJUSTE",item.razon);
 
         upd.Where("(CORELDET="+item.coreldet+")");
 

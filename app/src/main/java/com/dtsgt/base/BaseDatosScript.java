@@ -843,26 +843,30 @@ public class BaseDatosScript {
             sql="CREATE INDEX D_MOV_idx3 ON D_MOV(STATCOM)";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [D_MOVD] ("+
-                    "[CORELDET] INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                    "[COREL] TEXT NOT NULL,"+
-                    "[PRODUCTO] INTEGER NOT NULL,"+
-                    "[CANT] REAL NOT NULL,"+
-                    "[CANTM] REAL NOT NULL,"+
-                    "[PESO] REAL NOT NULL,"+
-                    "[PESOM] REAL NOT NULL,"+
-                    "[LOTE] TEXT NOT NULL,"+
-                    "[CODIGOLIQUIDACION] INTEGER NOT NULL,"+
-                    "[UNIDADMEDIDA] TEXT DEFAULT 'UN' NOT NULL,"+
-                    "[PRECIO] REAL NOT NULL"+
+            sql="CREATE TABLE [D_movd] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "CANTM REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "PESOM REAL NOT NULL,"+
+                    "LOTE TEXT NOT NULL,"+
+                    "CODIGOLIQUIDACION INTEGER NOT NULL,"+
+                    "UNIDADMEDIDA TEXT NOT NULL,"+
+                    "CORELDET INTEGER NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "MOTIVO_AJUSTE INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CORELDET])"+
                     ");";
             database.execSQL(sql);
 
             //#CKFK 20200526 Modifiqué la llave primaria de la tabla D_MOVD
             // por un código único "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE])"+
-            sql="CREATE UNIQUE INDEX IX_D_MOVD "+
-                    " on D_MOVD ([COREL],[PRODUCTO],[LOTE])";
-            database.execSQL(sql);
+
+
+            // JP 20200615 - UIDX no aplica por razon de ajustes de inventario donde ouede ingresar mismo codigo con diferente motivo de ajuste
+            //sql="CREATE UNIQUE INDEX IX_D_MOVD on D_MOVD ([COREL],[PRODUCTO],[LOTE])";
+            //database.execSQL(sql);
 
             sql="CREATE TABLE [D_DEPOS] ("+
                     "[COREL] TEXT NOT NULL,"+
@@ -1657,6 +1661,7 @@ public class BaseDatosScript {
                     "CODIGOLIQUIDACION INTEGER NOT NULL,"+
                     "UNIDADMEDIDA TEXT NOT NULL,"+
                     "PRECIO REAL NOT NULL,"+
+                    "RAZON INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CORELDET])"+
                     ");";
             database.execSQL(sql);
@@ -1673,6 +1678,7 @@ public class BaseDatosScript {
                     "CODIGOLIQUIDACION INTEGER NOT NULL,"+
                     "UNIDADMEDIDA TEXT NOT NULL,"+
                     "PRECIO REAL NOT NULL,"+
+                    "RAZON INTEGER NOT NULL,"+
                     "PRIMARY KEY ([CORELDET])"+
                     ");";
             database.execSQL(sql);

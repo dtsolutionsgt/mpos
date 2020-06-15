@@ -94,11 +94,11 @@ public class lista_ingreso_inventario extends PBase {
                     browse=1;
                     gl.listaedit=false;
                     gl.mantid = 9;
-                    startActivity(new Intent(this, Lista.class));
+                    startActivity(new Intent(this,Lista.class));
                     break;
                 case 1:
                     gl.closeDevBod=false;
-                    intent = new Intent(this,DevolBod.class);
+                    intent = new Intent(this,InvSalida.class);
                     startActivity(intent);
                     break;
             }

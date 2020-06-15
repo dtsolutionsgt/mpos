@@ -194,121 +194,15 @@ public class WSRec extends PBase {
 
     }
 
+    //region  Events
+
     public void doStart(View view) {
-       Recibir();
+        Recibir();
     }
 
-    public void Recibir(){
+    //endregion
 
-        script.clear();
-
-        pbar.setVisibility(View.VISIBLE);
-
-        if (!validaDatos()) return;
-
-        gl.emp=Integer.valueOf(txtEmpresa.getText().toString());
-        gl.clave=txtClave.getText().toString();
-        gl.wsurl=txtURLWS.getText().toString();
-
-        guardaDatosConexion();
-
-        getURL();
-        ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
-        xobj = new XMLObject(ws);
-
-        execws(1);
-    }
-
-    private boolean validaDatos(){
-
-        boolean resultado=true;
-
-        try{
-            if (txtEmpresa.getText().toString().isEmpty()){
-
-                msgbox("Debe ingresar la empresa para recibir los datos");
-
-                showkeyb();
-
-                final Handler cbhandler = new Handler();
-                cbhandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        txtEmpresa.requestFocus();
-                    }
-                }, 500);
-
-                resultado = false;
-
-            }else if (txtClave.getText().toString().isEmpty()){
-
-                msgbox("Debe ingresar la clave para recibir los datos");
-
-                showkeyb();
-
-                final Handler cbhandler = new Handler();
-                cbhandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        txtClave.requestFocus();
-                    }
-                }, 500);
-
-                resultado = false;
-
-            }if (txtURLWS.getText().toString().isEmpty()){
-
-                msgbox("Debe ingresar la URL para recibir los datos");
-
-                showkeyb();
-
-                final Handler cbhandler = new Handler();
-                cbhandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        txtURLWS.requestFocus();
-                    }
-                }, 500);
-
-                resultado = false;
-
-            }
-
-        }catch (Exception ex){
-            msgbox("Ocurrió un error validando los datos " + ex.getMessage());
-            resultado = false;
-        }
-
-        return resultado;
-    }
-
-    protected void guardaDatosConexion() {
-
-        BufferedWriter writer = null;
-        FileWriter wfile;
-
-        try {
-
-            String fname = Environment.getExternalStorageDirectory()+"/mposws.txt";
-            File archivo= new File(fname);
-
-            if (archivo.exists()){
-                archivo.delete();
-            }
-
-            wfile=new FileWriter(fname,true);
-            writer = new BufferedWriter(wfile);
-
-            writer.write(gl.wsurl + "\n");
-            writer.write("7000");
-
-            writer.close();
-
-        } catch (Exception e) {
-            msgbox("Error " + e.getMessage());
-        }
-
-    }
+    //region Web Service
 
     public class WebServiceHandler extends com.dtsgt.classes.WebService {
 
@@ -897,6 +791,31 @@ public class WSRec extends PBase {
 
     }
 
+    //endregion
+
+    //region Main
+
+    public void Recibir(){
+
+        script.clear();
+
+        pbar.setVisibility(View.VISIBLE);
+
+        if (!validaDatos()) return;
+
+        gl.emp=Integer.valueOf(txtEmpresa.getText().toString());
+        gl.clave=txtClave.getText().toString();
+        gl.wsurl=txtURLWS.getText().toString();
+
+        guardaDatosConexion();
+
+        getURL();
+        ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
+        xobj = new XMLObject(ws);
+
+        execws(1);
+    }
+
     private void processComplete() {
         pbar.setVisibility(View.INVISIBLE);
         plabel = "";
@@ -1068,8 +987,11 @@ public class WSRec extends PBase {
             }
 
             for (int i = 0; i < items.items.size(); i++) {
+
                 item = items.items.get(i);
+
                 var = clsCls.new clsP_motivoajuste();
+
                 var.codigo_motivo_ajuste = item.getCODIGO_MOTIVO_AJUSTE();
                 var.activo = item.getACTIVO();
                 var.empresa = item.getEMPRESA();
@@ -2319,6 +2241,10 @@ public class WSRec extends PBase {
         }
     }
 
+    //endregion
+
+    //region Aux
+
     private void getURL() {
 
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
@@ -2376,6 +2302,101 @@ public class WSRec extends PBase {
         dialog.show();
     }
 
+    private boolean validaDatos(){
+
+        boolean resultado=true;
+
+        try{
+            if (txtEmpresa.getText().toString().isEmpty()){
+
+                msgbox("Debe ingresar la empresa para recibir los datos");
+
+                showkeyb();
+
+                final Handler cbhandler = new Handler();
+                cbhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtEmpresa.requestFocus();
+                    }
+                }, 500);
+
+                resultado = false;
+
+            }else if (txtClave.getText().toString().isEmpty()){
+
+                msgbox("Debe ingresar la clave para recibir los datos");
+
+                showkeyb();
+
+                final Handler cbhandler = new Handler();
+                cbhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtClave.requestFocus();
+                    }
+                }, 500);
+
+                resultado = false;
+
+            }if (txtURLWS.getText().toString().isEmpty()){
+
+                msgbox("Debe ingresar la URL para recibir los datos");
+
+                showkeyb();
+
+                final Handler cbhandler = new Handler();
+                cbhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        txtURLWS.requestFocus();
+                    }
+                }, 500);
+
+                resultado = false;
+
+            }
+
+        }catch (Exception ex){
+            msgbox("Ocurrió un error validando los datos " + ex.getMessage());
+            resultado = false;
+        }
+
+        return resultado;
+    }
+
+    protected void guardaDatosConexion() {
+
+        BufferedWriter writer = null;
+        FileWriter wfile;
+
+        try {
+
+            String fname = Environment.getExternalStorageDirectory()+"/mposws.txt";
+            File archivo= new File(fname);
+
+            if (archivo.exists()){
+                archivo.delete();
+            }
+
+            wfile=new FileWriter(fname,true);
+            writer = new BufferedWriter(wfile);
+
+            writer.write(gl.wsurl + "\n");
+            writer.write("7000");
+
+            writer.close();
+
+        } catch (Exception e) {
+            msgbox("Error " + e.getMessage());
+        }
+
+    }
+
+    //endregion
+
+    //region Activity Events
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -2397,4 +2418,6 @@ public class WSRec extends PBase {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
+
+    //endregion
 }

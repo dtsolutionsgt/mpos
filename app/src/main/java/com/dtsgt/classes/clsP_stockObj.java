@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
 
-public class clsT_movrObj {
+public class clsP_stockObj {
 
     public int count;
 
@@ -18,11 +18,11 @@ public class clsT_movrObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM T_movr";
+    private String sel="SELECT * FROM P_stock";
     private String sql;
-    public ArrayList<clsClasses.clsT_movr> items= new ArrayList<clsClasses.clsT_movr>();
+    public ArrayList<clsClasses.clsP_stock> items= new ArrayList<clsClasses.clsP_stock>();
 
-    public clsT_movrObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
+    public clsP_stockObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
         cont=context;
         Con=dbconnection;
         ins=Con.Ins;upd=Con.Upd;
@@ -36,16 +36,12 @@ public class clsT_movrObj {
         db = dbase;
     }
 
-    public void add(clsClasses.clsT_movr item) {
+    public void add(clsClasses.clsP_stock item) {
         addItem(item);
     }
 
-    public void update(clsClasses.clsT_movr item) {
+    public void update(clsClasses.clsP_stock item) {
         updateItem(item);
-    }
-
-    public void delete(clsClasses.clsT_movr item) {
-        deleteItem(item);
     }
 
     public void delete(int id) {
@@ -64,51 +60,58 @@ public class clsT_movrObj {
         fillItems(sq);
     }
 
-    public clsClasses.clsT_movr first() {
+    public clsClasses.clsP_stock first() {
         return items.get(0);
     }
 
 
     // Private
 
-    private void addItem(clsClasses.clsT_movr item) {
+    private void addItem(clsClasses.clsP_stock item) {
 
-        ins.init("T_movr");
+        ins.init("P_stock");
 
-        ins.add("CORELDET",item.coreldet);
-        ins.add("COREL",item.corel);
-        ins.add("PRODUCTO",item.producto);
+        ins.add("CODIGO",item.codigo);
         ins.add("CANT",item.cant);
         ins.add("CANTM",item.cantm);
         ins.add("PESO",item.peso);
-        ins.add("PESOM",item.pesom);
+        ins.add("PLIBRA",item.plibra);
         ins.add("LOTE",item.lote);
+        ins.add("DOCUMENTO",item.documento);
+        ins.add("FECHA",item.fecha);
+        ins.add("ANULADO",item.anulado);
+        ins.add("CENTRO",item.centro);
+        ins.add("STATUS",item.status);
+        ins.add("ENVIADO",item.enviado);
         ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
+        ins.add("COREL_D_MOV",item.corel_d_mov);
         ins.add("UNIDADMEDIDA",item.unidadmedida);
-        ins.add("PRECIO",item.precio);
-        ins.add("RAZON",item.razon);
 
         db.execSQL(ins.sql());
 
     }
 
-    private void updateItem(clsClasses.clsT_movr item) {
+    private void updateItem(clsClasses.clsP_stock item) {
 
-        upd.init("T_movr");
+        upd.init("P_stock");
 
-        upd.add("COREL",item.corel);
-        upd.add("PRODUCTO",item.producto);
+        upd.add("CODIGO",item.codigo);
         upd.add("CANT",item.cant);
         upd.add("CANTM",item.cantm);
         upd.add("PESO",item.peso);
-        upd.add("PESOM",item.pesom);
+        upd.add("PLIBRA",item.plibra);
         upd.add("LOTE",item.lote);
+        upd.add("DOCUMENTO",item.documento);
+        upd.add("FECHA",item.fecha);
+        upd.add("ANULADO",item.anulado);
+        upd.add("CENTRO",item.centro);
+        upd.add("STATUS",item.status);
+        upd.add("ENVIADO",item.enviado);
         upd.add("CODIGOLIQUIDACION",item.codigoliquidacion);
+        upd.add("COREL_D_MOV",item.corel_d_mov);
         upd.add("UNIDADMEDIDA",item.unidadmedida);
-        upd.add("PRECIO",item.precio);
-        upd.add("RAZON",item.razon);
 
-        upd.Where("(CORELDET="+item.coreldet+")");
+        upd.Where("");
 
         db.execSQL(upd.sql());
 
@@ -116,19 +119,15 @@ public class clsT_movrObj {
 
     }
 
-    private void deleteItem(clsClasses.clsT_movr item) {
-        sql="DELETE FROM T_movr WHERE (CORELDET="+item.coreldet+")";
-        db.execSQL(sql);
-    }
 
     private void deleteItem(int id) {
-        sql="DELETE FROM T_movr WHERE id=" + id;
+        sql="DELETE FROM P_stock WHERE id=" + id;
         db.execSQL(sql);
     }
 
     private void fillItems(String sq) {
         Cursor dt;
-        clsClasses.clsT_movr item;
+        clsClasses.clsP_stock item;
 
         items.clear();
 
@@ -138,20 +137,23 @@ public class clsT_movrObj {
 
         while (!dt.isAfterLast()) {
 
-            item = clsCls.new clsT_movr();
+            item = clsCls.new clsP_stock();
 
-            item.coreldet=dt.getInt(0);
-            item.corel=dt.getString(1);
-            item.producto=dt.getInt(2);
-            item.cant=dt.getDouble(3);
-            item.cantm=dt.getDouble(4);
-            item.peso=dt.getDouble(5);
-            item.pesom=dt.getDouble(6);
-            item.lote=dt.getString(7);
-            item.codigoliquidacion=dt.getInt(8);
-            item.unidadmedida=dt.getString(9);
-            item.precio=dt.getDouble(10);
-            item.razon=dt.getInt(11);
+            item.codigo=dt.getInt(0);
+            item.cant=dt.getDouble(1);
+            item.cantm=dt.getDouble(2);
+            item.peso=dt.getDouble(3);
+            item.plibra=dt.getDouble(4);
+            item.lote=dt.getString(5);
+            item.documento=dt.getString(6);
+            item.fecha=dt.getInt(7);
+            item.anulado=dt.getInt(8);
+            item.centro=dt.getString(9);
+            item.status=dt.getString(10);
+            item.enviado=dt.getInt(11);
+            item.codigoliquidacion=dt.getInt(12);
+            item.corel_d_mov=dt.getString(13);
+            item.unidadmedida=dt.getString(14);
 
             items.add(item);
 
@@ -179,44 +181,51 @@ public class clsT_movrObj {
         return nid;
     }
 
-    public String addItemSql(clsClasses.clsT_movr item) {
+    public String addItemSql(clsClasses.clsP_stock item) {
 
-        ins.init("T_movr");
+        ins.init("P_stock");
 
-        ins.add("CORELDET",item.coreldet);
-        ins.add("COREL",item.corel);
-        ins.add("PRODUCTO",item.producto);
+        ins.add("CODIGO",item.codigo);
         ins.add("CANT",item.cant);
         ins.add("CANTM",item.cantm);
         ins.add("PESO",item.peso);
-        ins.add("PESOM",item.pesom);
+        ins.add("PLIBRA",item.plibra);
         ins.add("LOTE",item.lote);
+        ins.add("DOCUMENTO",item.documento);
+        ins.add("FECHA",item.fecha);
+        ins.add("ANULADO",item.anulado);
+        ins.add("CENTRO",item.centro);
+        ins.add("STATUS",item.status);
+        ins.add("ENVIADO",item.enviado);
         ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
+        ins.add("COREL_D_MOV",item.corel_d_mov);
         ins.add("UNIDADMEDIDA",item.unidadmedida);
-        ins.add("PRECIO",item.precio);
-        ins.add("RAZON",item.razon);
 
         return ins.sql();
 
     }
 
-    public String updateItemSql(clsClasses.clsT_movr item) {
+    public String updateItemSql(clsClasses.clsP_stock item) {
 
-        upd.init("T_movr");
+        upd.init("P_stock");
 
-        upd.add("COREL",item.corel);
-        upd.add("PRODUCTO",item.producto);
+        upd.add("CODIGO",item.codigo);
         upd.add("CANT",item.cant);
         upd.add("CANTM",item.cantm);
         upd.add("PESO",item.peso);
-        upd.add("PESOM",item.pesom);
+        upd.add("PLIBRA",item.plibra);
         upd.add("LOTE",item.lote);
+        upd.add("DOCUMENTO",item.documento);
+        upd.add("FECHA",item.fecha);
+        upd.add("ANULADO",item.anulado);
+        upd.add("CENTRO",item.centro);
+        upd.add("STATUS",item.status);
+        upd.add("ENVIADO",item.enviado);
         upd.add("CODIGOLIQUIDACION",item.codigoliquidacion);
+        upd.add("COREL_D_MOV",item.corel_d_mov);
         upd.add("UNIDADMEDIDA",item.unidadmedida);
-        upd.add("PRECIO",item.precio);
-        upd.add("RAZON",item.razon);
 
-        upd.Where("(CORELDET="+item.coreldet+")");
+        upd.Where("");
 
         return upd.sql();
 

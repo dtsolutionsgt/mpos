@@ -717,7 +717,7 @@ public class Menu extends PBase {
 			final String[] selitems = new String[itemcnt];
 
 			selitems[itempos]="Existencias";itempos++;
-			selitems[itempos]="Devolución a bodega";itempos++;
+			selitems[itempos]="Ajuste de inventario";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
             selitems[itempos]="Inventario inicial";itempos++;
 
@@ -730,7 +730,7 @@ public class Menu extends PBase {
 					String mt=selitems[item];
 
 					if (mt.equalsIgnoreCase("Existencias")) menuExist();
-					if (mt.equalsIgnoreCase("Devolución a bodega")) menuDevBod();
+					if (mt.equalsIgnoreCase("Ajuste de inventario")) menuDevBod();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
                     if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
 
@@ -778,16 +778,13 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 
 	private void menuDevBod() {
 		try {
-
 			gl.tipo = 1;
 			Intent intent = new Intent(this,lista_ingreso_inventario.class);
 			startActivity(intent);
-
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
