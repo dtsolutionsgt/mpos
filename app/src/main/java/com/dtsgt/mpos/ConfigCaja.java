@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.zebra.sdk.settings.internal.SettingRangeInteger;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,7 @@ public class ConfigCaja extends PBase {
 
     private ArrayList<String> spincode,spinlist,cajalist,cajacode;
 
-    private String idsuc,idcaja;
+    private int idsuc,idcaja;
     private int precpos=0;
     private boolean newitem=false;
 
@@ -71,7 +72,7 @@ public class ConfigCaja extends PBase {
                     spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
                     spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                    idsuc = spincode.get(position);
+                    idsuc = Integer.valueOf(spincode.get(position));
                  } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                     mu.msgbox(e.getMessage());
@@ -93,7 +94,7 @@ public class ConfigCaja extends PBase {
                     spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
                     spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                    idcaja = cajacode.get(position);
+                    idcaja = Integer.valueOf(cajacode.get(position));
                 } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                     mu.msgbox(e.getMessage());
@@ -120,11 +121,11 @@ public class ConfigCaja extends PBase {
             sql = "SELECT SUCURSAL,RUTA FROM Params";
             DT = Con.OpenDT(sql);
 
-            idsuc=DT.getString(0);
-            idcaja=DT.getString(1);
+            idsuc=DT.getInt(0);
+            idcaja=DT.getInt(1);
 
-            fillSpinner(idsuc);
-            fillSpinner2(idcaja);
+            fillSpinner(String.valueOf(idsuc));
+            fillSpinner2(String.valueOf(idcaja));
 
             if (spinlist.size()==2 && cajalist.size()==2){
                 if (validaDatos()) msgAskAdd("Aplicar asignación");
@@ -154,11 +155,11 @@ public class ConfigCaja extends PBase {
 
     private boolean validaDatos() {
         try {
-            if (idsuc.isEmpty()) {
+            if (idsuc==0) {
                 msgbox("Falta definir tienda");return false;
             }
 
-            if (idcaja.isEmpty()) {
+            if (idcaja==0) {
                 msgbox("Falta definir caja");return false;
             }
 
@@ -175,7 +176,7 @@ public class ConfigCaja extends PBase {
         String scod;
 
         spincode.clear();spinlist.clear();
-        spincode.add("");spinlist.add("");
+        spincode.add("0");spinlist.add("");
 
         try {
             sucur.fill(" WHERE (Activo=1) OR (Codigo='"+selid+"') ORDER BY Nombre");
@@ -208,7 +209,7 @@ public class ConfigCaja extends PBase {
             spin.setSelection(selidx);
 
             if(selidx==1){
-                idsuc = spincode.get(1);
+                idsuc =Integer.valueOf(spincode.get(1));
             }
 
         } catch (Exception e) {
@@ -222,10 +223,10 @@ public class ConfigCaja extends PBase {
     private boolean fillSpinner2(String selid){
         clsP_rutaObj ruta =new clsP_rutaObj(this,Con,db);
         int selidx=0;
-        String scod;
+        int scod;
 
         cajacode.clear();cajalist.clear();
-        cajacode.add("");cajalist.add("");
+        cajacode.add("0");cajalist.add("");
 
         try {
             //ruta.fill(" WHERE (Activo='S') OR (Codigo='"+selid+"') ORDER BY Nombre");
@@ -235,10 +236,10 @@ public class ConfigCaja extends PBase {
             }
 
             for (int i = 0; i <ruta.count; i++) {
-                scod=ruta.items.get(i).codigo;
-                cajacode.add(scod);
+                scod=ruta.items.get(i).codigo_ruta;
+                cajacode.add(String.valueOf(scod));
                 cajalist.add(ruta.items.get(i).nombre);
-                if (scod.equalsIgnoreCase(selid)) selidx=i+1;
+                if (String.valueOf(scod).equalsIgnoreCase(selid)) selidx=i+1;
             }
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -258,7 +259,7 @@ public class ConfigCaja extends PBase {
             spin2.setSelection(selidx);
 
             if (selidx==1){
-                idcaja = cajacode.get(1);
+                idcaja =Integer.valueOf(cajacode.get(1));
             }
 
         } catch (Exception e) {
