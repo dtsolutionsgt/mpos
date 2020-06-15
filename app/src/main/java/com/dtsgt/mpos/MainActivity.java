@@ -53,7 +53,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "2.5.6 / 12-Jun-2020 ";
+    private String parVer = "2.5.7 / 15-Jun-2020 ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -305,7 +305,7 @@ public class MainActivity extends PBase {
 
         try {
             //#HS_20181122_1505 Se agrego el campo Impresion.
-            sql = "SELECT CODIGO,NOMBRE,SUCURSAL FROM P_RUTA";
+            sql = "SELECT CODIGO,NOMBRE,SUCURSAL, CODIGO_RUTA FROM P_RUTA";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {
@@ -317,6 +317,7 @@ public class MainActivity extends PBase {
                 gl.wsurl = "";
                 gl.impresora = "";
                 gl.sucur = DT.getString(2);
+                gl.codigo_ruta = DT.getInt(3);
 
                 vCellCom = "";
                 gl.CellCom = false;
