@@ -278,7 +278,8 @@ public class MantMediaPago extends PBase {
 
     @Override
     public void onBackPressed() {
-        msgAskExit("Salir");
+        //msgAskExit("Salir");
+        finish();
     }
 
     //endregion

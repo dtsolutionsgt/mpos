@@ -243,7 +243,7 @@ public class Lista extends PBase {
 
             case 5: //Forma de pago
                 sql="SELECT 0,CODIGO,NOMBRE,'','', '','','','' FROM P_MEDIAPAGO WHERE ";
-                if (act) sql+="(ACTIVO='S') ";else sql+="(ACTIVO='N') ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
                 if (flag) sql+="AND ((CODIGO="+ft+") OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;

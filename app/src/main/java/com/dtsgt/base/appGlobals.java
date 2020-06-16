@@ -32,7 +32,7 @@ public class appGlobals extends Application {
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor;
-	public double precio_recarga;
+	public double precio_recarga,total_pago;
 	public boolean configCajaSuc = false;
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false

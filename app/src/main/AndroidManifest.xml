@@ -34,8 +34,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="LockedOrientationActivity">
-        <activity android:name="com.dtsgt.mant.MantMotivoAjuste"></activity>
-        <activity android:name=".lista_ingreso_inventario" />
+         <activity android:name=".lista_ingreso_inventario" />
 
         <service
             android:name="com.dtsgt.fel.FelService"
@@ -521,6 +520,11 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name="com.dtsgt.mant.MantMotivoAjuste"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
             android:name=".CierreX"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
@@ -555,20 +559,21 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".InvSalida"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-         <activity
+        <activity
             android:name=".InvInicial"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-
+       <activity
+            android:name=".PagoTarjeta"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysVisible" />
     </application>
 
 </manifest>

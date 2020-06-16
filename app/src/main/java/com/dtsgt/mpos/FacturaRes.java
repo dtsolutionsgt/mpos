@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,25 +21,22 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
-import com.dtsgt.classes.clsBonifSave;
-import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
@@ -51,8 +47,8 @@ import java.util.List;
 public class FacturaRes extends PBase {
 
 	private ListView listView;
-	private TextView lblPago,lblFact,lblMPago,lblCred,lblCash,lblMonto,lblKeyDP,lblTotal;
-	private ImageView imgBon,imgMPago,imgCred, imgCash;
+	private TextView lblPago,lblFact,lblMPago,lblCred, lblCard,lblMonto,lblKeyDP,lblTotal;
+	private ImageView imgBon,imgMPago,imgCred, imgCard;
 	private TextView lblVuelto;
 	private EditText txtVuelto;
 	private RelativeLayout rl_facturares;
@@ -76,7 +72,7 @@ public class FacturaRes extends PBase {
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres;
 
-	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,stot0,stot,descmon,totimp,totperc,credito;
+	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,pend,stot0,stot,descmon,totimp,totperc,credito;
 	private double dispventa,falt;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pagocompleto=false;
 
@@ -95,7 +91,7 @@ public class FacturaRes extends PBase {
 		lblFact = (TextView) findViewById(R.id.lblFact);
 		lblMPago = (TextView) findViewById(R.id.lblCVence);
 		lblCred = (TextView) findViewById(R.id.lblPend);
-		lblCash = (TextView) findViewById(R.id.textView4);
+		lblCard = (TextView) findViewById(R.id.textView4);
         lblMonto = (TextView) findViewById(R.id.lblCant2);lblMonto.setText("");
         lblKeyDP = (TextView) findViewById(R.id.textView110);
         lblTotal = (TextView) findViewById(R.id.lblFact3);
@@ -103,7 +99,7 @@ public class FacturaRes extends PBase {
 		imgBon = (ImageView) findViewById(R.id.imageView6);
 		imgMPago = (ImageView) findViewById(R.id.btnImp);
 		imgCred = (ImageView) findViewById(R.id.imageView3);
-		imgCash = (ImageView) findViewById(R.id.imageView2);
+		imgCard = (ImageView) findViewById(R.id.imageView2);
 
 		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
 		rl_facturares.setVisibility(View.VISIBLE);
@@ -124,8 +120,7 @@ public class FacturaRes extends PBase {
 		app = new AppMethods(this, gl, Con, db);
         khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
 
-        //region Botones visibilidad
-
+        /*
         if (rutapos) {
 			lblMPago.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.INVISIBLE);
@@ -138,11 +133,9 @@ public class FacturaRes extends PBase {
 			imgCred.setImageResource(R.drawable.credit);
 		}
 
-		if (media==1) {
+        if (media==1) {
 			imgCred.setVisibility(View.INVISIBLE);
 			lblCred.setVisibility(View.INVISIBLE);
-			lblCash.setVisibility(View.VISIBLE);
-			imgCash.setVisibility(View.VISIBLE);
 			imgMPago.setVisibility(View.VISIBLE);
 			lblMPago.setVisibility(View.VISIBLE);
 		}
@@ -152,8 +145,6 @@ public class FacturaRes extends PBase {
 			lblMPago.setVisibility(View.VISIBLE);
 			imgCred.setVisibility(View.INVISIBLE);
 			lblCred.setVisibility(View.INVISIBLE);
-			lblCash.setVisibility(View.VISIBLE);
-			imgCash.setVisibility(View.VISIBLE);
 		}
 
 		if (media==4) {
@@ -161,24 +152,18 @@ public class FacturaRes extends PBase {
 			if (gl.vcredito) {
 
 				if (credito<=0 || gl.facturaVen != 0) {
-					lblCash.setVisibility(View.VISIBLE);
-					imgCash.setVisibility(View.VISIBLE);
 					imgCred.setVisibility(View.INVISIBLE);
 					lblCred.setVisibility(View.INVISIBLE);
 					imgMPago.setVisibility(View.VISIBLE);
 					lblMPago.setVisibility(View.VISIBLE);
 				}else if(credito > 0){
-					lblCash.setVisibility(View.INVISIBLE);
-					imgCash.setVisibility(View.INVISIBLE);
 					imgCred.setVisibility(View.VISIBLE);
 					lblCred.setVisibility(View.VISIBLE);
 					imgMPago.setVisibility(View.INVISIBLE);
 					lblMPago.setVisibility(View.INVISIBLE);
 				}
 			} else {
-				lblCash.setVisibility(View.INVISIBLE);
-				imgCash.setVisibility(View.INVISIBLE);
-				imgCred.setVisibility(View.VISIBLE);
+			    imgCred.setVisibility(View.VISIBLE);
 				lblCred.setVisibility(View.VISIBLE);
 				imgMPago.setVisibility(View.INVISIBLE);
 				lblMPago.setVisibility(View.INVISIBLE);
@@ -187,21 +172,12 @@ public class FacturaRes extends PBase {
 		}
 
 		if (gl.dvbrowse!=0){
-			lblCash.setVisibility(View.VISIBLE);
-			imgCash.setVisibility(View.VISIBLE);
-			imgCred.setVisibility(View.INVISIBLE);
+		    imgCred.setVisibility(View.INVISIBLE);
 			lblCred.setVisibility(View.INVISIBLE);
 			imgMPago.setVisibility(View.VISIBLE);
 			lblMPago.setVisibility(View.VISIBLE);
 		}
-
-        lblCash.setVisibility(View.INVISIBLE);
-        imgCash.setVisibility(View.INVISIBLE);
-
-        lblMPago.setVisibility(View.VISIBLE);
-        imgMPago.setVisibility(View.VISIBLE);
-
-        //endregion
+        */
 
         fecha=du.getActDateTime();
 		fechae=fecha;
@@ -270,23 +246,28 @@ public class FacturaRes extends PBase {
 
         txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER  | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
+        pend=tot;
         if (tot>credito) credito=0;
-
-        lblCash.setVisibility(View.INVISIBLE);
-        imgCash.setVisibility(View.INVISIBLE);
 
         if (credito<=0) {
             imgCred.setVisibility(View.INVISIBLE);
             lblCred.setVisibility(View.INVISIBLE);
-            imgMPago.setVisibility(View.INVISIBLE);
-            lblMPago.setVisibility(View.INVISIBLE);
-        }else if(credito > 0){
+         } else if(credito > 0){
             imgCred.setVisibility(View.VISIBLE);
             lblCred.setVisibility(View.VISIBLE);
-       }
+        }
 
-        imgMPago.setVisibility(View.INVISIBLE);
+        if (permiteTarjeta()) {
+            lblCard.setVisibility(View.VISIBLE);
+            imgCard.setVisibility(View.VISIBLE);
+        } else {
+            lblCard.setVisibility(View.INVISIBLE);
+            imgCard.setVisibility(View.INVISIBLE);
+        }
+
         lblMPago.setVisibility(View.INVISIBLE);
+        imgMPago.setVisibility(View.INVISIBLE);
+
 
         /*
         if (tot>credito) {
@@ -350,7 +331,26 @@ public class FacturaRes extends PBase {
 
 	}
 
-	public void payCred(View view) {
+    public void payCard(View view) {
+        try{
+            if (fcorel==0) {
+                msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
+            }
+
+            pagoPendiente();
+            if (gl.total_pago>0) {
+                browse=3;
+                startActivity(new Intent(this,PagoTarjeta.class));
+            } else {
+                checkPago();
+            }
+         } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox("payCard: " + e.getMessage());
+        }
+    }
+
+    public void payCred(View view) {
 
 		try{
 
@@ -386,7 +386,7 @@ public class FacturaRes extends PBase {
 					prevScreen(null);
 				}
 				public void onSwipeLeft() {
-					if (imgCash.getVisibility()==View.VISIBLE) {
+					if (imgCard.getVisibility()==View.VISIBLE) {
 						payCash(null);
 					}
 				}
@@ -744,7 +744,7 @@ public class FacturaRes extends PBase {
 
             super.finish();
 
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("impressOrder: "  + e.getMessage());
 
@@ -1518,10 +1518,10 @@ public class FacturaRes extends PBase {
 			sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prcodd;
            	DT=Con.OpenDT(sql);
 
-           	if(DT.getCount()>0){
+           	if (DT.getCount()>0){
                 DT.moveToFirst();
                 return DT.getString(0).equalsIgnoreCase("P");
-            }else {
+            } else {
            	    return false;
             }
 
@@ -1713,6 +1713,11 @@ public class FacturaRes extends PBase {
             }
         });
 
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
         dialog.show();
 
     }
@@ -1786,29 +1791,61 @@ public class FacturaRes extends PBase {
 
 	}
 
-	private void applyCash() {
+    private void validaPagoEfectivo() {
+
+        svuelt= khand.val;
+
+        if (!svuelt.equalsIgnoreCase("")){
+            double vuel=Double.parseDouble(svuelt);
+            vuel=vuel-tot;
+
+            if (vuel<0.00) {
+                toast("Pago insuficiente, falta "+mu.frmcur(-vuel));
+                sefect=svuelt;
+                applyCash();
+                checkPago();
+                return;
+            }
+
+            if (vuel==0.0){
+                msgAskVuelto("Monto ingresado no genera vuelto");
+            } else {
+                msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
+            }
+        }
+
+        svuelt=""+tot;
+        sefect=""+tot;
+
+    }
+
+    private void applyCash() {
+	    Cursor dt;
 		double epago;
 
 		try {
 			epago=Double.parseDouble(sefect);
+
 			if (epago==0) return;
 
 			if (epago<0) throw new Exception();
 
-			//if (epago>plim) {
-			//	MU.msgbox("Total de pago mayor que total de saldos.");return;
-			//}
-
-			//if (epago>tsel) {
-			//	msgAskOverPayd("Total de pago mayor que saldo\nContinuar");return;
-			//}
-
-			sql="DELETE FROM T_PAGO";
+			sql="DELETE FROM T_PAGO WHERE CODPAGO=1";
 			db.execSQL(sql);
+
+            int item=1;
+
+            sql="SELECT MAX(ITEM) FROM T_PAGO";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                item=dt.getInt(0)+1;
+            }
 
 			ins.init("T_PAGO");
 
-			ins.add("ITEM",1);
+			ins.add("ITEM",item);
 			ins.add("CODPAGO",1);
 			ins.add("TIPO","E");
 
@@ -1825,11 +1862,8 @@ public class FacturaRes extends PBase {
 
 		    db.execSQL(ins.sql());
 
-			//msgAskSave("Aplicar pago y crear un recibo");
-
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			inputEfectivo();
 			mu.msgbox("Pago incorrecto"+e.getMessage());
 	    }
 
@@ -2028,75 +2062,73 @@ public class FacturaRes extends PBase {
 		Cursor DT;
 		double tpago;
 
-		//if (pagocompleto) return;
+        //if (pagocompleto) return;
 
-		try {
+        try {
 
-			sql="SELECT SUM(VALOR) FROM T_PAGO";
-			DT=Con.OpenDT(sql);
+            sql="SELECT SUM(VALOR) FROM T_PAGO";
+            DT=Con.OpenDT(sql);
 
-			if(DT.getCount()>0){
-
+            if(DT.getCount()>0){
                 DT.moveToFirst();
-
                 tpago=DT.getDouble(0);
-
-            }else  {
-			    tpago=0;
-            }
-
-		s=mu.frmcur(tpago);
-
-        if (gl.dvbrowse==1){
-            if (gl.brw>0){
-                lblPago.setText("Pago COMPLETO.\n"+s);
-                pago=true;
-				pagocompleto=true;
-                //if (rutapos) askSavePos(); else askSave();
-                finishOrder();
-            }
-        }	else{
-            if (tpago<tot) {
-                lblPago.setText("Pago incompleto."+s);
-                pago=false;
             } else {
-                lblPago.setText("Pago COMPLETO."+s);
-                pago=true;
-				pagocompleto=true;
-                //if (rutapos) askSavePos(); else askSave();
-                finishOrder();
+                tpago=0;
             }
-        }
+
+            s=mu.frmcur(tpago);
+            pend=tot-tpago;if (pend<0) pend=0;
+            lblTotal.setText(mu.frmcur(pend));
+
+            if (gl.dvbrowse==1){
+                if (gl.brw>0){
+                    lblPago.setText("Pago COMPLETO.\n"+s);
+                    pago=true;
+                    pagocompleto=true;
+                    //if (rutapos) askSavePos(); else askSave();
+                    finishOrder();
+                }
+            }	else{
+                if (tpago<tot) {
+                    lblPago.setText("Pago incompleto."+s);
+                    pago=false;
+                } else {
+                    lblPago.setText("Pago COMPLETO."+s);
+                    pago=true;
+                    pagocompleto=true;
+                    //if (rutapos) askSavePos(); else askSave();
+                    finishOrder();
+                }
+            }
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
         }
 
-	}
+    }
 
-	private void validaPagoEfectivo() {
+    private void pagoPendiente() {
+        Cursor DT;
+        double tpago;
 
-        svuelt= khand.val;
+        try {
 
-        if (!svuelt.equalsIgnoreCase("")){
-            double vuel=Double.parseDouble(svuelt);
-            vuel=vuel-tot;
+            sql="SELECT SUM(VALOR) FROM T_PAGO";
+            DT=Con.OpenDT(sql);
 
-            if (vuel<0.00) {
-                msgbox("Pago insuficiente , falta "+mu.frmcur(-vuel));return;
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                tpago=DT.getDouble(0);
+            } else  {
+                tpago=0;
             }
 
-            if (vuel==0.0){
-                msgAskVuelto("Monto ingresado no genera vuelto");
-            } else {
-                msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
-            }
+            gl.total_pago=tot-tpago;if (gl.total_pago<0) gl.total_pago=0;
+
+        } catch (Exception e) {
+            gl.total_pago=-1; mu.msgbox( e.getMessage());
         }
-
-        svuelt=""+tot;
-        sefect=""+tot;
-
     }
 
 	private String androidid() {
@@ -2353,6 +2385,19 @@ public class FacturaRes extends PBase {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    private boolean permiteTarjeta() {
+        try {
+
+            clsP_mediapagoObj P_mediapagoObj=new clsP_mediapagoObj(this,Con,db);
+            P_mediapagoObj.fill("WHERE CODIGO=5");
+            if (P_mediapagoObj.count==0) return false;
+
+            return P_mediapagoObj.first().activo==1;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
 	//endregion
 	
 	//region Activity Events
@@ -2364,10 +2409,15 @@ public class FacturaRes extends PBase {
 
 			super.onResume();
 
-            if (browse==2) {
 
+            if (browse==3) {
                 browse=0;
+                checkPago();
+                return;
+            }
 
+            if (browse==2) {
+                browse=0;
                 if (gl.feluuid.isEmpty()) {
                     toastlongtop("No se logró certificación FEL");
                 } else {
@@ -2376,6 +2426,7 @@ public class FacturaRes extends PBase {
                 impressOrder();
                 return;
             }
+
 
             if (browse!=2) {
                 checkPromo();
@@ -2391,7 +2442,6 @@ public class FacturaRes extends PBase {
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}	
 
 	@Override
