@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,17 +20,15 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
-import android.content.Intent;
+
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -117,7 +114,7 @@ public class MantCli extends PBase {
             imgdel.setVisibility(View.INVISIBLE);
         }
 
-        if (gl.grantaccess) {
+        if (gl.peMCent) {
             if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);

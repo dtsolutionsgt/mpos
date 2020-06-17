@@ -1859,41 +1859,43 @@ public class WSRec extends PBase {
                 var.um_salida = item.UM_SALIDA + "";
                 var.activo = 1;
                 var.tiempo_preparacion = item.TIEMPO_PREPARACION;
+
                 script.add(handler.addItemSql(var));
 
+                String img = var.imagen;
 
-                try {
+                if (img != null) {
 
-                    String img = var.imagen;
+                    String filePathImg = rootdir + var.codigo + ".jpg";
+                    try {
 
-                    if (img != null) {
-
-                        String filePathImg = rootdir + var.codigo + ".jpg";
                         File file = new File(filePathImg);
 
                         if (!file.exists()) {
+
                             byte[] imgbytes = Base64.decode(img, Base64.DEFAULT);
                             int bs = imgbytes.length;
 
-                            FileOutputStream fos = new FileOutputStream(filePathImg);
-                            BufferedOutputStream outputStream = new BufferedOutputStream(fos);
-                            outputStream.write(imgbytes);
-                            outputStream.close();
-                            imgbytes = null;
+                            try {
 
+                                FileOutputStream fos = new FileOutputStream(filePathImg);
+                                BufferedOutputStream outputStream = new BufferedOutputStream(fos);
+                                outputStream.write(imgbytes);
+                                outputStream.close();
+                                imgbytes = null;
+
+                            } catch (Exception ex) {
+                                file.delete();
+                                ws.error = ex.getMessage();ws.errorflag = true;
+                            }
                         }
-
+                    } catch (Exception e) {
+                        ws.error = e.getMessage();ws.errorflag = true;
                     }
-
-                } catch (Exception ee) {
-                    Log.e("ImgOp", ee.getMessage());
                 }
-
             }
-
         } catch (Exception e) {
-            ws.error = e.getMessage();
-            ws.errorflag = true;
+            ws.error = e.getMessage();ws.errorflag = true;
         }
     }
 

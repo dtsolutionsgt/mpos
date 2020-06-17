@@ -2,7 +2,6 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -42,11 +41,11 @@ public class MantBanco extends PBase {
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
 
-        if (gl.grantaccess) {
-           if (!app.grant(13,gl.rol)) {
+        if (gl.peMCent) {
+           //if (!app.grant(13,gl.rol)) {
                imgadd.setVisibility(View.INVISIBLE);
                imgstat.setVisibility(View.INVISIBLE);
-           }
+           //}
         }
     }
 

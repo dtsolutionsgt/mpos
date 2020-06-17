@@ -1,14 +1,12 @@
 package com.dtsgt.mpos;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,21 +17,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsListaObj;
 import com.dtsgt.ladapt.LA_Lista;
 import com.dtsgt.ladapt.listAdapt_desc;
-import com.dtsgt.mant.MantBanco;
-import com.dtsgt.mant.MantCaja;
-import com.dtsgt.mant.MantCli;
-import com.dtsgt.mant.MantConceptoPago;
-import com.dtsgt.mant.MantDescuento;
-import com.dtsgt.mant.MantEmpresa;
-import com.dtsgt.mant.MantFamilia;
-import com.dtsgt.mant.MantImpuesto;
-import com.dtsgt.mant.MantMediaPago;
-import com.dtsgt.mant.MantMoneda;
-import com.dtsgt.mant.MantNivelPrecio;
-import com.dtsgt.mant.MantProducto;
 import com.dtsgt.mant.MantProveedor;
-import com.dtsgt.mant.MantTienda;
-import com.dtsgt.mant.MantVendedores;
 
 import java.util.ArrayList;
 
@@ -76,8 +60,10 @@ public class ListaProveedores extends PBase {
         setHandlers();
         listItems();
 
-        if (gl.grantaccess) {
-            if (!app.grant(10,gl.rol)) imgadd.setVisibility(View.INVISIBLE);
+        if (gl.peMCent) {
+            //if (!app.grant(10,gl.rol))  {
+                imgadd.setVisibility(View.INVISIBLE);
+            //}
         } else {
             if (gl.mantid==2) {
                 if (gl.rol==1) imgadd.setVisibility(View.INVISIBLE);

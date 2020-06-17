@@ -42,10 +42,10 @@ public class MantCorel extends PBase {
 
         loadItem();
 
-        if (gl.grantaccess) {
-            if (!app.grant(13,gl.rol)) {
+        if (gl.peMCent) {
+            //if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
-            }
+            //}
         }
     }
 

@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
@@ -31,7 +30,6 @@ import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
-import com.dtsgt.fel.FelService;
 import com.dtsgt.ladapt.LA_Login;
 
 import java.io.File;
@@ -136,7 +134,7 @@ public class MainActivity extends PBase {
             khand = new clsKeybHandler(this, lblPass, lblKeyDP);
             khand.enable();
 
-            gl.grantaccess = false;
+            gl.peMCent = false;
 
             initSession();
 

@@ -168,7 +168,7 @@ public class Menu extends PBase {
 
             } else {
 
-                if (gl.grantaccess) {
+                if (gl.peMCent) {
 
                     if (app.grant(1,gl.rol)) addMenuItem(1,"Venta");
                     if (app.grant(2,gl.rol)) addMenuItem(6,"Caja");
@@ -367,7 +367,7 @@ public class Menu extends PBase {
 					break;
 
 				case 11:
-				    if (gl.grantaccess) {
+				    if (gl.peMCent) {
                         if (app.grant(11,gl.rol)) {
                             showMantMenu();
                         } else {
@@ -1927,8 +1927,9 @@ public class Menu extends PBase {
  	protected void onResume() {
 		try{
 			super.onResume();
+
 			setPrintWidth();
-		}catch (Exception e){
+ 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 

@@ -42,11 +42,11 @@ public class MantMoneda extends PBase {
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
 
-        if (gl.grantaccess) {
-            if (!app.grant(13,gl.rol)) {
+        if (gl.peMCent) {
+            //if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);
-            }
+            //}
         }
     }
 

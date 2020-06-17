@@ -2,7 +2,6 @@ package com.dtsgt.mant;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -10,7 +9,6 @@ import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsP_impuestoObj;
-import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -42,11 +40,11 @@ public class MantImpuesto extends PBase {
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
 
-        if (gl.grantaccess) {
-            if (!app.grant(13,gl.rol)) {
+        if (gl.peMCent) {
+            //if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);
-            }
+            //}
         }
     }
 

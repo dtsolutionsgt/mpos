@@ -104,13 +104,13 @@ public class MantVendedores extends PBase {
         setHandlers();
         listItems();
 
-        if (gl.grantaccess) {
-            if (!app.grant(13,gl.rol)) {
+        if (gl.peMCent) {
+            //if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
                 lblfoto.setVisibility(View.INVISIBLE);
                 imgfotoadd.setVisibility(View.INVISIBLE);
                 imgfotodel.setVisibility(View.INVISIBLE);
-            }
+            //}
         }
     }
 

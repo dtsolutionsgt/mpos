@@ -121,15 +121,15 @@ public class MantProducto extends PBase {
         if (id.isEmpty()) newItem(); else loadItem();
         showPrices();
 
-        if (gl.grantaccess) {
-            if (!app.grant(13,gl.rol)) {
+        if (gl.peMCent) {
+            //if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);
                 imgfotoadd.setVisibility(View.INVISIBLE);
                 imgfotodel.setVisibility(View.INVISIBLE);
                 lblfotoadd.setVisibility(View.INVISIBLE);
                 btnprec.setVisibility(View.INVISIBLE);
-            }
+            //}
         }
 
     }
