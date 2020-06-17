@@ -109,6 +109,18 @@ public class PagoTarjeta extends PBase {
         }
 
         try {
+            int codpago=0;
+
+            sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 4";
+            dt = Con.OpenDT(sql);
+            if(dt!=null) {
+                if(dt.getCount()>0){
+                    dt.moveToFirst();
+                    codpago=dt.getInt(0);
+                }
+                dt.close();
+            }
+
             int item=1;
 
             sql="SELECT MAX(ITEM) FROM T_PAGO";
@@ -122,7 +134,7 @@ public class PagoTarjeta extends PBase {
             ins.init("T_PAGO");
 
             ins.add("ITEM",item);
-            ins.add("CODPAGO",5);
+            ins.add("CODPAGO",codpago);
             ins.add("TIPO","K");
             ins.add("VALOR",mto);
             ins.add("DESC1",txtAut.getText().toString());

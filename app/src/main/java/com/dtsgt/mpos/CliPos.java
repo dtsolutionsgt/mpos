@@ -54,13 +54,13 @@ public class CliPos extends PBase {
 
 		try{
 
+            snit=txtNIT.getText().toString();
+            sname=txtNom.getText().toString();
+            sdir=txtRef.getText().toString();
+
 			if (!existeCliente()){
 
-				snit=txtNIT.getText().toString();
-				sname=txtNom.getText().toString();
-				sdir=txtRef.getText().toString();
-
-				if (!validaNIT(snit)) {
+			    if (!validaNIT(snit)) {
 					toast("NIT incorrecto");return;
 				}
 
@@ -68,13 +68,14 @@ public class CliPos extends PBase {
 					toast("Nombre incorrecto");return;
 				}
 
-				if (agregaCliente(snit,sname,sdir)){
-					procesaNIT(snit) ;
-				}
+				if (agregaCliente(snit,sname,sdir)) procesaNIT(snit);
 
-			}
+			} else {
+                actualizaCliente(snit,sname,sdir);
+                procesaNIT(snit);
+            }
 
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
@@ -104,40 +105,26 @@ public class CliPos extends PBase {
 			txtNIT.setOnKeyListener(new View.OnKeyListener() {
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-					if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
-							(event.getAction() == KeyEvent.ACTION_DOWN)) {
-
-						if (!existeCliente()){
-							txtNom.requestFocus();
-						}
-
+					if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+						if (!existeCliente()) txtNom.requestFocus();
 						return true;
 					} else {
-						return false;
+                        existeCliente();
+   					    return false;
 					}
 				}
 			});
 
 			txtNIT.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
 				public void onFocusChange(View v, boolean hasFocus) {
-
-					if(!hasFocus)
-					{
-
+					if(hasFocus) return;
 						if (!txtNIT.getText().toString().isEmpty()){
-							if (!existeCliente()){
-								txtNom.requestFocus();
-							}
+							if (!existeCliente()) 	txtNom.requestFocus();
 						}
-
-					}
 				}
 			});
 
-
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
@@ -349,8 +336,8 @@ public class CliPos extends PBase {
 						gl.media=DT.getInt(5);
 						gl.codigo_cliente=DT.getInt(5);
 
-						limpiaCampos();
-						finish();
+						//limpiaCampos();
+						//finish();
 
 						resultado=true;
 					}
@@ -435,6 +422,25 @@ public class CliPos extends PBase {
 
 	}
 
+    private boolean actualizaCliente(String NIT,String Nom,String dir) {
+
+        int codigo=nitnum(NIT);
+
+        try {
+            upd.init("P_CLIENTE");
+            upd.add("NOMBRE",Nom);
+            upd.add("DIRECCION",dir);
+            upd.Where("CODIGO_CLIENTE="+codigo);
+
+            db.execSQL(upd.sql());
+
+            return true;
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());return false;
+        }
+
+    }
+
 	private int nitnum(String nit) {
         int pp;
 
@@ -454,14 +460,13 @@ public class CliPos extends PBase {
     }
 
 	private void limpiaCampos() {
-		try{
+		try {
 			txtNIT.setText("");
 			txtNom.setText("");
 			txtNIT.requestFocus();
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 
     //endregion
