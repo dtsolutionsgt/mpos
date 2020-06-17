@@ -554,7 +554,7 @@ public class MantProducto extends PBase {
 
         try {
             if (precios.size()==0) {
-                msgAskReturn("Lista de precios está vacia, no se puede continuar");return false;
+                msgAskReturn("No está definida ninguna lista de precios. No se puede continuar");return false;
             }
 
             for (int i = 0; i <precios.size(); i++) {
@@ -929,8 +929,8 @@ public class MantProducto extends PBase {
     private void msgAskReturn(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Familias");
-        dialog.setMessage("¿" + msg + "?");
+        dialog.setTitle("Productos");
+        dialog.setMessage( msg );
 
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
