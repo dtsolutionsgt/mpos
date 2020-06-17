@@ -55,9 +55,7 @@ public class MantRol extends PBase {
         listItems();
 
         listView.setEnabled(true);
-        //if (gl.peMCent) {
-            if (!app.grant(13, gl.rol)) listView.setEnabled(false);
-        //}
+        if (gl.peMCent) listView.setEnabled(false);
 
     }
 

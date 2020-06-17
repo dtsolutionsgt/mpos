@@ -280,8 +280,10 @@ public class Anulacion extends PBase {
 					if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 					
 					if (tipo==3) {
-						sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
-					}else if(tipo==1||tipo==6){
+						//sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
+                        sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+
+                    }else if(tipo==1||tipo==6){
 						sf=DT.getString(0);
 					}else{
 						f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
