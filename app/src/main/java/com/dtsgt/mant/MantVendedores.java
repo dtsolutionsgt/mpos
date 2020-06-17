@@ -85,7 +85,7 @@ public class MantVendedores extends PBase {
         imgadd = (ImageView) findViewById(R.id.imgImg2);
         listView = (ListView) findViewById(R.id.listView1);
         spin = (Spinner) findViewById(R.id.spinner18);
-        lblfoto = (TextView) findViewById(R.id.lblBU);
+        lblfoto = (TextView) findViewById(R.id.lblBU4);
         imgfotoadd  = (ImageView) findViewById(R.id.imgCamVend);
         imgfotodel = (ImageView) findViewById(R.id.imgFotoVend);
         img1 = (ImageView) findViewById(R.id.imgFotoVend);
