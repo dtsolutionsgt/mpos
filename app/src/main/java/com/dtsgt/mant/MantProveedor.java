@@ -77,7 +77,7 @@ public class MantProveedor extends PBase {
 
     private void loadItem() {
         try {
-            holder.fill("WHERE CODIGO='"+id+"'");
+            holder.fill("WHERE CODIGO_PROVEEDOR="+id);
             item=holder.first();
 
             showItem();
