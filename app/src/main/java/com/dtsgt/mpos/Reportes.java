@@ -367,7 +367,7 @@ public class Reportes extends PBase {
             if(!report) {
                 if(fillItems()){
                     if (itemR.size() == 0) {
-                        msgbox("No se ha realizado ninguna venta entre los parámetros impuestos.");
+                        msgbox("No se ha realizado ninguna venta con los parámetros indicados.");
                         return;
                     }
                     doc.buildPrint("0", 0);
@@ -427,7 +427,7 @@ public class Reportes extends PBase {
                 case 1:
                     sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
                             "FROM D_FACTURA WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
-                            "AND ANULADO='N' " +
+                            "AND ANULADO=0 " +
                             "GROUP BY SERIE, IMPMONTO, FECHA " +
                             "ORDER BY FECHA";
                     break;
@@ -435,7 +435,7 @@ public class Reportes extends PBase {
                     sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
                             "SUM(TOTAL), FECHA " +
                             "FROM D_FACTURA WHERE (FECHA BETWEEN "+ dateini +" AND "+datefin+") " +
-                            "AND ANULADO='N' " +
+                            "AND ANULADO=0 " +
                             "GROUP BY FECHA, SERIE";
                     break;
                 case 3:
@@ -451,7 +451,7 @@ public class Reportes extends PBase {
                             " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO  " +
                             " INNER JOIN D_FACTURA F ON F.COREL = D.COREL  " +
                             " WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
-                            "AND F.ANULADO='N' " +
+                            "AND F.ANULADO=0 " +
                             " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                             " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
                     break;
@@ -466,19 +466,19 @@ public class Reportes extends PBase {
                         "FROM P_MEDIAPAGO M " +
                         "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                         "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
-                        "WHERE F.ANULADO='N' AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
-                        "AND F.ANULADO='N' " +
+                        "WHERE F.ANULADO=0 AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO=0 " +
                         "GROUP BY M.NOMBRE";
                     break;
 
                 case 5:
 
                     sql="SELECT '', '', 0, '', L.NOMBRE, '', SUM(D.CANT), 0, SUM(D.TOTAL), 0 FROM P_LINEA L " +
-                            "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO " +
-                            "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
+                            "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO_LINEA " +
+                            "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
                             "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                             "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+
-                            " AND F.ANULADO='N' " +
+                            " AND F.ANULADO=0 " +
                             "GROUP BY L.NOMBRE";
                     break;
 
@@ -488,7 +488,7 @@ public class Reportes extends PBase {
                         "FROM VENDEDORES V " +
                         "INNER JOIN D_FACTURA F ON F.VENDEDOR = V.CODIGO_VENDEDOR " +
                         "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+
-                        " AND F.ANULADO='N' " +
+                        " AND F.ANULADO=0 " +
                         "GROUP BY V.CODIGO, V.NOMBRE, V.NIVELPRECIO";
                     break;
 
@@ -503,7 +503,7 @@ public class Reportes extends PBase {
                         "INNER JOIN P_PRODUCTO P ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
                         "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                         "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
-                        "AND F.ANULADO='N' " +
+                        "AND F.ANULADO=0 " +
                         "GROUP BY D.PRODUCTO, P.DESCCORTA, P.COSTO, D.PRECIO";
                     break;
 
@@ -519,8 +519,8 @@ public class Reportes extends PBase {
                         "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO_LINEA " +
                         "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
                         "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
-                        "WHERE P.LINEA=L.CODIGO AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
-                        "AND F.ANULADO='N' " +
+                        "WHERE P.LINEA=L.CODIGO_LINEA AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO=0 " +
                         "GROUP BY L.NOMBRE";
                     break;
 
@@ -538,7 +538,7 @@ public class Reportes extends PBase {
                         "INNER JOIN D_FACTURA F ON C.CODIGO_CLIENTE = F.CLIENTE " +
                         "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
                         "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
-                        "AND F.ANULADO='N' " +
+                        "AND F.ANULADO=0 " +
                         "GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
                     break;
 
@@ -556,7 +556,7 @@ public class Reportes extends PBase {
                         "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
                         "INNER JOIN P_PRODUCTO P ON P.CODIGO_PRODUCTO = D.PRODUCTO " +
                         "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
-                        "AND F.ANULADO='N' " +
+                        "AND F.ANULADO=0 " +
                         "GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, C.CODIGO_CLIENTE, P.CODIGO";
                     break;
 

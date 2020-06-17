@@ -809,7 +809,7 @@ public class FacturaRes extends PBase {
 			ins.add("ANULADO",false);
 			if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
 			ins.add("RUTA",gl.ruta);
-			ins.add("VENDEDOR",gl.vend);
+			ins.add("VENDEDOR",gl.codigo_vendedor);
 			ins.add("CLIENTE",gl.codigo_cliente);
 
 			ins.add("KILOMETRAJE",0);
@@ -1515,7 +1515,7 @@ public class FacturaRes extends PBase {
 		Cursor DT;
 
 		try {
-			sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prcodd;
+			sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO='"+prcodd+"'";
            	DT=Con.OpenDT(sql);
 
            	if (DT.getCount()>0){
@@ -1822,6 +1822,7 @@ public class FacturaRes extends PBase {
     private void applyCash() {
 	    Cursor dt;
 		double epago;
+        int codpago=0;
 
 		try {
 			epago=Double.parseDouble(sefect);
@@ -1830,7 +1831,28 @@ public class FacturaRes extends PBase {
 
 			if (epago<0) throw new Exception();
 
-			sql="DELETE FROM T_PAGO WHERE CODPAGO=1";
+			//if (epago>plim) {
+			//	MU.msgbox("Total de pago mayor que total de saldos.");return;
+			//}
+
+			//if (epago>tsel) {
+			//	msgAskOverPayd("Total de pago mayor que saldo\nContinuar");return;
+			//}
+
+			sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 1";
+
+			dt = Con.OpenDT(sql);
+			if(dt!=null) {
+
+				if(dt.getCount()>0){
+					dt.moveToFirst();
+					codpago=dt.getInt(0);
+				}
+
+				dt.close();
+			}
+
+			sql="DELETE FROM T_PAGO";
 			db.execSQL(sql);
 
             int item=1;
@@ -1846,7 +1868,7 @@ public class FacturaRes extends PBase {
 			ins.init("T_PAGO");
 
 			ins.add("ITEM",item);
-			ins.add("CODPAGO",1);
+			ins.add("CODPAGO",codpago);
 			ins.add("TIPO","E");
 
 			if(gl.dvbrowse!=0){

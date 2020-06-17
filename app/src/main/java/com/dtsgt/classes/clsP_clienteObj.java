@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.fel.FelService;
 
 public class clsP_clienteObj {
 
@@ -89,40 +90,64 @@ public class clsP_clienteObj {
     }
 
 
+    private int nitnum(String nit) {
+        int pp;
+
+        try {
+            nit=nit.toUpperCase();
+            pp=nit.indexOf("-");
+            if (pp<0) return 0;
+
+            int A=(int) nit.charAt(pp+1);
+            String snit=nit.substring(0,pp)+A;
+            int nnit=Integer.parseInt(snit);
+
+            return nnit;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     // Private
 
     private void addItem(clsClasses.clsP_cliente item) {
 
-        ins.init("P_cliente");
+        int codigo=nitnum(item.nit);
 
-        ins.add("CODIGO_CLIENTE",item.codigo_cliente);
-        ins.add("CODIGO",item.codigo);
-        ins.add("EMPRESA",item.empresa);
-        ins.add("NOMBRE",item.nombre);
-        ins.add("BLOQUEADO",item.bloqueado);
-        ins.add("NIVELPRECIO",item.nivelprecio);
-        ins.add("MEDIAPAGO",item.mediapago);
-        ins.add("LIMITECREDITO",item.limitecredito);
-        ins.add("DIACREDITO",item.diacredito);
-        ins.add("DESCUENTO",item.descuento);
-        ins.add("BONIFICACION",item.bonificacion);
-        ins.add("ULTVISITA",item.ultvisita);
-        ins.add("IMPSPEC",item.impspec);
-        ins.add("NIT",item.nit);
-        ins.add("EMAIL",item.email);
-        ins.add("ESERVICE",item.eservice);
-        ins.add("TELEFONO",item.telefono);
-        ins.add("DIRECCION",item.direccion);
-        ins.add("COORX",item.coorx);
-        ins.add("COORY",item.coory);
-        ins.add("BODEGA",item.bodega);
-        ins.add("COD_PAIS",item.cod_pais);
-        ins.add("CODBARRA",item.codbarra);
-        ins.add("PERCEPCION",item.percepcion);
-        ins.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
-        ins.add("IMAGEN",item.imagen);
+        if (codigo!=0){
 
-        db.execSQL(ins.sql());
+            ins.init("P_cliente");
+
+            ins.add("CODIGO_CLIENTE",codigo);
+            ins.add("CODIGO",item.codigo);
+            ins.add("EMPRESA",item.empresa);
+            ins.add("NOMBRE",item.nombre);
+            ins.add("BLOQUEADO",item.bloqueado);
+            ins.add("NIVELPRECIO",item.nivelprecio);
+            ins.add("MEDIAPAGO",item.mediapago);
+            ins.add("LIMITECREDITO",item.limitecredito);
+            ins.add("DIACREDITO",item.diacredito);
+            ins.add("DESCUENTO",item.descuento);
+            ins.add("BONIFICACION",item.bonificacion);
+            ins.add("ULTVISITA",item.ultvisita);
+            ins.add("IMPSPEC",item.impspec);
+            ins.add("NIT",item.nit);
+            ins.add("EMAIL",item.email);
+            ins.add("ESERVICE",item.eservice);
+            ins.add("TELEFONO",item.telefono);
+            ins.add("DIRECCION",item.direccion);
+            ins.add("COORX",item.coorx);
+            ins.add("COORY",item.coory);
+            ins.add("BODEGA",item.bodega);
+            ins.add("COD_PAIS",item.cod_pais);
+            ins.add("CODBARRA",item.codbarra);
+            ins.add("PERCEPCION",item.percepcion);
+            ins.add("TIPO_CONTRIBUYENTE",item.tipo_contribuyente);
+            ins.add("IMAGEN",item.imagen);
+
+            db.execSQL(ins.sql());
+
+        }
 
     }
 

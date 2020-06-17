@@ -291,6 +291,8 @@ public class MantCli extends PBase {
         item.codbarra =  " ";
         item.percepcion = 0;
         item.tipo_contribuyente = " ";
+        item.empresa = gl.emp;
+        item.imagen="";
 
         showItem();
     }

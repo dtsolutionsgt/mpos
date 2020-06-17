@@ -843,7 +843,7 @@ public class BaseDatosScript {
             sql="CREATE INDEX D_MOV_idx3 ON D_MOV(STATCOM)";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [D_movd] ("+
+            sql="CREATE TABLE [D_MOVD] ("+
                     "COREL TEXT NOT NULL,"+
                     "PRODUCTO INTEGER NOT NULL,"+
                     "CANT REAL NOT NULL,"+
@@ -1638,7 +1638,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [T_combo] ("+
+            sql="CREATE TABLE [T_COMBO] ("+
                     "CODIGO_MENU INTEGER NOT NULL,"+
                     "IDCOMBO INTEGER NOT NULL,"+
                     "UNID INTEGER NOT NULL,"+
@@ -1649,7 +1649,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [T_movd] ("+
+            sql="CREATE TABLE [T_MOVD] ("+
                     "CORELDET INTEGER NOT NULL,"+
                     "COREL TEXT NOT NULL,"+
                     "PRODUCTO INTEGER NOT NULL,"+
@@ -1666,7 +1666,7 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [T_movr] ("+
+            sql="CREATE TABLE [T_MOVR] ("+
                     "CORELDET INTEGER NOT NULL,"+
                     "COREL TEXT NOT NULL,"+
                     "PRODUCTO INTEGER NOT NULL,"+

@@ -371,10 +371,16 @@ public class Menu extends PBase {
                         if (app.grant(11,gl.rol)) {
                             showMantMenu();
                         } else {
-                            if (app.grant(12,gl.rol)) showMantCliente();
+                            if (app.grant(12,gl.rol)) {
+                            	showMantCliente();
+							}
                         }
                     } else {
-                        if (gl.rol>2) showMantMenu(); else showMantCliente();
+                        if (gl.rol>2) {
+                        	showMantMenu();
+                        } else {
+                        	showMantCliente();
+						}
                     }
 					break;
 

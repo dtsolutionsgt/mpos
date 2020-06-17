@@ -404,6 +404,8 @@ public class CliPos extends PBase {
             ins.add("CODBARRA","");
   			ins.add("PERCEPCION",0);
 			ins.add("TIPO_CONTRIBUYENTE","");
+			ins.add("EMPRESA",gl.emp);
+			ins.add("IMAGEN","");
 
 			db.execSQL(ins.sql());
 
