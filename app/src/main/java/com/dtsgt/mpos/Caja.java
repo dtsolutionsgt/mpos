@@ -370,7 +370,7 @@ public class Caja extends PBase {
                         dt.moveToNext();
                     }
 
-                }else if(dt.getCount()==0){
+                } else if(dt.getCount()==0){
 
                     itemC.codpago=1;
                     itemC.fecha = fecha;

@@ -290,8 +290,11 @@ public class CliPos extends PBase {
 			txtNom.setText(DT.getString(0));
 			txtRef.setText(DT.getString(1));
 
+            if (DT!=null) DT.close();
+
 			procesaNIT(NIT);
 
+            if (DT!=null) DT.close();
 		} catch (Exception e){
 		    txtNom.setText("");txtRef.setText("");
 		}
@@ -342,6 +345,7 @@ public class CliPos extends PBase {
 						resultado=true;
 					}
 				}
+                if (DT!=null) DT.close();
 			}
 
 		} catch (Exception e){

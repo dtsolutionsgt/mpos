@@ -723,6 +723,7 @@ public class Venta extends PBase {
             DT.moveToFirst();
             gl.gstr=DT.getString(0);
             gl.pprodname=DT.getString(1);
+            if (DT!=null) DT.close();
 
             processItem(false);
 
@@ -749,6 +750,8 @@ public class Venta extends PBase {
             } else {
                 icant =0;
             }
+
+            if (dt!=null) dt.close();
         } catch (Exception e) {
             icant=0;
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -961,8 +964,10 @@ public class Venta extends PBase {
                 sql="SELECT Empresa,Cant FROM T_VENTA WHERE (PRODUCTO='"+prodid+"')";
                 dt=Con.OpenDT(sql);
                 if (dt.getCount()>0) {
+                    if (dt!=null) dt.close();
                     openItem();return true;
                 }
+                if (dt!=null) dt.close();
             } catch (SQLException e) {
                 mu.msgbox("Error : " + e.getMessage());return false;
             }
@@ -977,6 +982,7 @@ public class Venta extends PBase {
 
             umb=dt.getString(0);
             fact=dt.getDouble(1);
+            if (dt!=null) dt.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             umb=um;fact=1;
@@ -1015,6 +1021,7 @@ public class Venta extends PBase {
             db.execSQL(ins.sql());
 
             counter++;
+
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());return false;
@@ -1046,6 +1053,7 @@ public class Venta extends PBase {
 
             umb=dt.getString(0);
             fact=dt.getDouble(1);
+            if (dt!=null) dt.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             umb=um;fact=1;
@@ -1239,6 +1247,7 @@ public class Venta extends PBase {
                 ccant=dt.getInt(0);
                 ppeso=dt.getDouble(1);
                 pprecio=dt.getDouble(2);
+                if (dt!=null) dt.close();
             }
 
             sql="UPDATE T_VENTA SET Cant="+ccant+",Peso="+ppeso+",Total="+pprecio+" WHERE PRODUCTO='"+prodid+"'";
@@ -1275,6 +1284,7 @@ public class Venta extends PBase {
 
                 gl.gstr=dt.getString(0);gl.um="UN";
                 gl.pprodname=dt.getString(1);
+                if (dt!=null) dt.close();
 
                 processItem(false);
                 return true;
@@ -1323,25 +1333,15 @@ public class Venta extends PBase {
         }
     }
 
-    private boolean barraBonif() {
-        Cursor dt;
-
-        try {
-            sql="SELECT PRODUCTO FROM T_BARRA_BONIF WHERE (BARRA='"+barcode+"')";
-            dt=Con.OpenDT(sql);
-            return dt.getCount()>0;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-        return true;
-    }
-
 
     private int cantBolsa() {
         try {
             sql="SELECT BARRA FROM T_BARRA WHERE CODIGO='"+prodid+"'";
             Cursor dt=Con.OpenDT(sql);
-            return dt.getCount();
+
+            int i=dt.getCount();
+            if (dt!=null) dt.close();
+            return i;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return 0;
@@ -1352,7 +1352,9 @@ public class Venta extends PBase {
         try {
             sql="SELECT BARRA FROM T_BARRA_BONIF WHERE PRODUCTO='"+prodid+"'";
             Cursor dt=Con.OpenDT(sql);
-            return dt.getCount();
+            int i=dt.getCount();
+            if (dt!=null) dt.close();
+            return i;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1364,7 +1366,9 @@ public class Venta extends PBase {
         try {
             sql="SELECT PRODID FROM T_BONIFFALT WHERE PRODUCTO='"+prodid+"'";
             Cursor dt=Con.OpenDT(sql);
-            return dt.getCount();
+            int i=dt.getCount();
+            if (dt!=null) dt.close();
+            return i;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1405,6 +1409,8 @@ public class Venta extends PBase {
                         db.execSQL(sql);
                     }
                 }
+
+                if (dt!=null) dt.close();
             }
 
             reportBonif();
@@ -2243,14 +2249,13 @@ public class Venta extends PBase {
         lblAlm.setText(gl.tiendanom);
         lblPokl.setText(gl.vendnom);
 
-
-
         try {
             sql="SELECT TIPO_HH FROM P_ARCHIVOCONF WHERE RUTA='"+gl.ruta+"'";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 
             tiposcan=DT.getString(0);
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             tiposcan="*";
@@ -2354,14 +2359,16 @@ public class Venta extends PBase {
     }
 
     private boolean hasProducts(){
-        Cursor DT;
+        Cursor dt;
 
         try {
             sql="SELECT PRODUCTO FROM T_VENTA";
-            DT=Con.OpenDT(sql);
+            dt=Con.OpenDT(sql);
 
-            return DT.getCount()>0;
-        } catch (Exception e) {
+            int i=dt.getCount();
+            if (dt!=null) dt.close();
+            return i>0;
+         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             return false;
         }
@@ -2470,6 +2477,8 @@ public class Venta extends PBase {
             DT.moveToFirst();
 
             pr=DT.getDouble(0);
+
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             pr=0;
         }
@@ -2501,7 +2510,10 @@ public class Venta extends PBase {
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
-                return dt.getInt(0);
+
+                int i=dt.getInt(0);
+                if (dt!=null) dt.close();
+                return i;
             } return 0;
         } catch (Exception e) {
             return 0;
@@ -2517,7 +2529,10 @@ public class Venta extends PBase {
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
-                return dt.getInt(0);
+
+                int i=dt.getInt(0);
+                if (dt!=null) dt.close();
+                return i;
             } return 0;
         } catch (Exception e) {
             return 0;
@@ -2597,6 +2612,8 @@ public class Venta extends PBase {
 
             lblVend.setText(DT.getString(0)+" "+ss);
 
+            if (DT!=null) DT.close();
+
         } catch (Exception e) {
             lblVend.setText("");
         }
@@ -2621,6 +2638,7 @@ public class Venta extends PBase {
 
             try {
                 cred=dt.getDouble(0);
+                if (dt!=null) dt.close();
             } catch (Exception e) {
                 cred=0;
             }
@@ -2654,9 +2672,12 @@ public class Venta extends PBase {
 
     private int pendienteFEL() {
          try {
-            sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
-            Cursor DT=Con.OpenDT(sql);
-            return DT.getCount();
+             sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
+             Cursor DT=Con.OpenDT(sql);
+             int i=DT.getCount();
+             if (DT!=null) DT.close();
+             return i;
+
         } catch (Exception e) {
             return 0;
         }

@@ -410,6 +410,7 @@ public class Clientes extends PBase {
 				}
 			}
 
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			//addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
 			//mu.msgbox(e.getMessage());
@@ -462,6 +463,8 @@ public class Clientes extends PBase {
 
 			txtFiltro.setText("");
 			txtFiltro.requestFocus();
+
+            if (dt!=null) dt.close();
 		} catch (Exception e) {
 			msgbox(new Object() {
 			}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -504,6 +507,7 @@ public class Clientes extends PBase {
                         dt.moveToFirst();
                         int blq=dt.getInt(0);
                         if (blq==0) flag=true;
+                        if (dt!=null) dt.close();
                     }
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -886,6 +890,7 @@ public class Clientes extends PBase {
                 }
             }
 
+            if (dt!=null) dt.close();
         } catch (Exception e) {
             //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

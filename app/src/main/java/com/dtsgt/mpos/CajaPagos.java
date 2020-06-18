@@ -251,6 +251,7 @@ public class CajaPagos extends PBase {
                 DT.moveToNext();
             }
 
+            if (DT!=null) DT.close();
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox(e.getMessage());
@@ -301,6 +302,7 @@ public class CajaPagos extends PBase {
                 DT.moveToNext();
             }
 
+            if (DT!=null) DT.close();
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox(e.getMessage());

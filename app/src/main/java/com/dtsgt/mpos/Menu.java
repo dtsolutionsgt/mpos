@@ -871,6 +871,8 @@ public class Menu extends PBase {
 				DT=Con.OpenDT(sql);
 				DT.moveToFirst();
 				coract=DT.getInt(0);
+
+                if (DT!=null) DT.close();
 			} catch (Exception e) {
 				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 				mu.msgbox(e.getMessage());
@@ -914,9 +916,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
-
-
-		
 	}
 	
 	private void askApplyCor(int ncor) {
@@ -1556,6 +1555,9 @@ public class Menu extends PBase {
 				porcentaje = true;
 			}
 
+
+            if (DT!=null) DT.close();
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n"); //+e.getMessage());
@@ -1596,6 +1598,8 @@ public class Menu extends PBase {
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 			prwd=DT.getInt(0);
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			prwd=32;
@@ -1622,7 +1626,8 @@ public class Menu extends PBase {
 				
 			if (prtipo.equalsIgnoreCase("DATAMAX")) prid=1;
 			if (prtipo.equalsIgnoreCase("EPSON")) prid=2;
-			
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			prid=0;

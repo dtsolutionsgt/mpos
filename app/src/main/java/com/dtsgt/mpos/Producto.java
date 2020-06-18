@@ -332,6 +332,8 @@ public class Producto extends PBase {
 
                 DT.moveToNext();
 			}
+
+            if (DT!=null) DT.close();
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			Log.d("prods",e.getMessage());
@@ -383,7 +385,7 @@ public class Producto extends PBase {
 				ubas=dt.getString(0);
 			}
 
-			dt.close();
+            if (dt!=null) dt.close();
 
 		} catch (Exception e) {
 			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -403,7 +405,7 @@ public class Producto extends PBase {
 				disp_peso =dt.getDouble(1);
 			}
 
-			dt.close();
+            if (dt!=null) dt.close();
 
 			if (disp_und ==0) {
 
@@ -419,7 +421,7 @@ public class Producto extends PBase {
 				}
 			}
 
-			dt.close();
+            if (dt!=null) dt.close();
 
 			if (disp_und >0) return disp_und;
 
@@ -437,7 +439,7 @@ public class Producto extends PBase {
 				umstock=dt.getString(0);
 			}
 
-			dt.close();
+            if (dt!=null) dt.close();
 
 			sql="SELECT FACTORCONVERSION FROM P_FACTORCONV " +
 				"WHERE (PRODUCTO='"+prodid+"') AND (UNIDADSUPERIOR='"+um+"') AND (UNIDADMINIMA='"+ubas+"')";
@@ -450,7 +452,7 @@ public class Producto extends PBase {
 				return 0;
 			}
 
-			dt.close();
+            if (dt!=null) dt.close();
 
 			sql="SELECT FACTORCONVERSION FROM P_FACTORCONV " +
 				"WHERE (PRODUCTO='"+prodid+"') AND (UNIDADSUPERIOR='"+umstock+"') AND (UNIDADMINIMA='"+ubas+"')";
@@ -463,7 +465,7 @@ public class Producto extends PBase {
 				return 0;
 			}
 
-			dt.close();
+            if (dt!=null) dt.close();
 
 			umfactor=umf1/umf2;
 
@@ -477,7 +479,7 @@ public class Producto extends PBase {
 				disp_peso =dt.getDouble(1);
 			}
 
-			dt.close();
+            if (dt!=null) dt.close();
 
 			return disp_und;
 		} catch (Exception e) {
@@ -540,10 +542,10 @@ public class Producto extends PBase {
                 }
             }
 
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             mu.msgbox( e.getMessage());
         }
-
 
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
 		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -606,6 +608,7 @@ public class Producto extends PBase {
             DT.moveToFirst();
 
             pr=DT.getDouble(0);
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             pr=0;
         }

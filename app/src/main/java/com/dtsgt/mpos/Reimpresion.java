@@ -404,10 +404,8 @@ public class Reimpresion extends PBase {
 				}
 			}
 
-			if (DT != null){
-				DT.close();
-			}
-			
+			if (DT != null)	DT.close();
+
 		} catch (Exception e) {
 			progress.cancel();
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -494,6 +492,7 @@ public class Reimpresion extends PBase {
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 			impr=dt.getInt(0);
+            if (dt!=null) dt.close();
 		} catch (Exception e) {
 			impr=1;
 		}
@@ -601,6 +600,8 @@ public class Reimpresion extends PBase {
 			if (DT.getCount()>0){
 				DT.moveToFirst();
 				vtieneCanasta = DT.getString(0);
+
+                if (DT!=null) DT.close();
 			}
 
 		}catch (Exception ex){
@@ -623,6 +624,8 @@ public class Reimpresion extends PBase {
 			if (DT.getCount()>0){
 				DT.moveToFirst();
 				vtienePaseante = DT.getString(0);
+
+                if (DT!=null) DT.close();
 			}
 
 		}catch (Exception ex){
@@ -798,6 +801,7 @@ public class Reimpresion extends PBase {
 				}
 			}
 
+            if (dt!=null) dt.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -838,7 +842,7 @@ public class Reimpresion extends PBase {
 				ncFact=1;
 			}
 
-
+            if (DT!=null) DT.close();
 		}catch (Exception ex){
 			mu.msgbox("tieneFacturaNC ocurrió un error: "+ex.getMessage());
 		}
@@ -860,6 +864,7 @@ public class Reimpresion extends PBase {
 			if (DT.getCount()>0){
 				DT.moveToFirst();
 				vCorelNC = DT.getString(0);
+                if (DT!=null) DT.close();
 			}
 
 		}catch (Exception ex){

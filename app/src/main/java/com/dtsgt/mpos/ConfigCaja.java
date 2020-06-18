@@ -131,6 +131,7 @@ public class ConfigCaja extends PBase {
                 if (validaDatos()) msgAskAdd("Aplicar asignación");
             }
 
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

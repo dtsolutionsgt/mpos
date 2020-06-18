@@ -397,6 +397,7 @@ public class FinDia extends PBase {
                 }
             }
 
+            if (DT!=null) DT.close();
 
             sql = "DELETE FROM D_ATENCION";
             db.execSQL(sql);
@@ -779,6 +780,7 @@ public class FinDia extends PBase {
                 DT.moveToNext();
             }
 
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Productos : " + e.getMessage());
@@ -832,6 +834,7 @@ public class FinDia extends PBase {
 
             }
 
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Facturas : " + e.getMessage());
@@ -892,6 +895,8 @@ public class FinDia extends PBase {
 
             }
 
+            if (DT!=null) DT.close();
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Facturas credito : " + e.getMessage());
@@ -946,6 +951,7 @@ public class FinDia extends PBase {
 
             }
 
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Pedidos : " + e.getMessage());
@@ -1096,6 +1102,8 @@ public class FinDia extends PBase {
                 DT.moveToNext();
             }
 
+            if (DT!=null) DT.close();
+
             rep.line();
             rep.empty();
 
@@ -1186,6 +1194,7 @@ public class FinDia extends PBase {
                 DT.moveToNext();
             }
 
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Inventario dañado : " + e.getMessage());
@@ -1399,6 +1408,8 @@ public class FinDia extends PBase {
                     DT.moveToNext();
                 }
 
+                if (DT!=null) DT.close();
+
                 rep.line();
 
                 sumados = totgrav + totnograv + TotItbm;
@@ -1547,6 +1558,8 @@ public class FinDia extends PBase {
                     DT.moveToNext();
                 }
 
+                if (DT!=null) DT.close();
+
                 rep.line();
 
                 sumados = totgrav + totnograv + TotItbm;
@@ -1614,12 +1627,14 @@ public class FinDia extends PBase {
 
             }
 
+            if (DT!=null) DT.close();
+
             rep.line();
             vCadena = "Total:  " + StringUtils.leftPad(mu.frmcur_sm(TotalRecibos), 27);
             rep.add(vCadena);
             rep.empty();
 
-        }catch (Exception ex){
+        } catch (Exception ex){
             mu.msgbox("Cobros: " + ex.getMessage());
             fail = true;
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),sql);
@@ -1710,6 +1725,8 @@ public class FinDia extends PBase {
                     DT.moveToNext();
                 }
             }
+
+            if (DT!=null) DT.close();
 
             rep.line();
             vCadena = "Total NC Credito:  " + StringUtils.leftPad( mu.frmcur_sm(TotalNotaCredCred), 16);
@@ -1879,7 +1896,9 @@ public class FinDia extends PBase {
 
                 vFacturasCredito = DT.getInt(0);
             }
-        }catch (Exception ex){
+
+            if (DT!=null) DT.close();
+        } catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
         }
@@ -1905,6 +1924,8 @@ public class FinDia extends PBase {
 
                 vFacturasContado = DT.getInt(0);
             }
+
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -1955,6 +1976,7 @@ public class FinDia extends PBase {
 
                 vTotalFacturas = DT.getInt(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -1980,6 +2002,7 @@ public class FinDia extends PBase {
 
                 vTotRecibos = DT.getInt(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2005,6 +2028,7 @@ public class FinDia extends PBase {
 
                 vTotRecibosAnulados = DT.getInt(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2030,6 +2054,7 @@ public class FinDia extends PBase {
 
                 vTotNotasCredito = DT.getInt(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2055,6 +2080,7 @@ public class FinDia extends PBase {
 
                 vTotNotasCredAnul = DT.getInt(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2082,6 +2108,7 @@ public class FinDia extends PBase {
 
                 vTotNotaC_Credito = DT.getDouble(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2108,6 +2135,7 @@ public class FinDia extends PBase {
 
                 vTotNotaC_Contado = DT.getDouble(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2134,6 +2162,7 @@ public class FinDia extends PBase {
 
                 vTotCredito2 = DT.getDouble(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),sql);
             msgbox(new Object() {
@@ -2159,6 +2188,7 @@ public class FinDia extends PBase {
 
                 vTotEfectivo2 = DT.getDouble(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2183,6 +2213,7 @@ public class FinDia extends PBase {
 
                 vTotalRecibos = DT.getDouble(0);
             }
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
@@ -2530,8 +2561,7 @@ public class FinDia extends PBase {
 
             DT=Con.OpenDT(sql);
 
-            if (DT.getCount()!=0)
-            {
+            if (DT.getCount()!=0)             {
                 DT.moveToFirst();
 
                 vTotalLbsB =   DT.getDouble(0);
@@ -2541,13 +2571,14 @@ public class FinDia extends PBase {
 
             DT=Con.OpenDT(sql);
 
-            if (DT.getCount()!=0)
-            {
+            if (DT.getCount()!=0)            {
                 DT.moveToFirst();
 
                 vTotalLbsB +=   DT.getDouble(0);
                 vTotalUB += DT.getDouble(1);
             }
+
+            if (DT!=null) DT.close();
 
             TieneInvDevol = (vTotalUB > 0);
 
@@ -2594,6 +2625,7 @@ public class FinDia extends PBase {
                 claseFinDia.updateDevBodega(5);
             }
 
+            if (DT!=null) DT.close();
         }catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             Log.e("TieneInvDevol",e.getMessage());
@@ -2619,7 +2651,7 @@ public class FinDia extends PBase {
                 vInicio=((DT.getInt(0)==5));
 
             }
-
+            if (DT!=null) DT.close();
         }catch (Exception ex){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),sql);
             mu.msgbox(ex.getMessage());
@@ -2648,7 +2680,7 @@ public class FinDia extends PBase {
 
                 DT.moveToNext();
             }
-
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Recibos : " + e.getMessage());
@@ -2670,6 +2702,8 @@ public class FinDia extends PBase {
 
             depe = DT.getDouble(0);
             depc = DT.getDouble(1);
+
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Depositos : " + e.getMessage());
@@ -2721,7 +2755,7 @@ public class FinDia extends PBase {
 
                 DT.moveToNext();
             }
-
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Det. ventas : " + e.getMessage());
@@ -2766,7 +2800,7 @@ public class FinDia extends PBase {
 
                 DT.moveToNext();
             }
-
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Det. ventas : " + e.getMessage());
@@ -2789,7 +2823,7 @@ public class FinDia extends PBase {
 
             fserie = DT.getString(0);
             fcorel = DT.getInt(1) + 1;
-
+            if (DT!=null) DT.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             fcorel = 0;

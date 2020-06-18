@@ -215,7 +215,8 @@ public class Pago extends PBase {
 			 
 				DT.moveToNext();
 			}
-			
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   	mu.msgbox( e.getMessage());
@@ -234,6 +235,8 @@ public class Pago extends PBase {
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();	
 			id=DT.getInt(0);
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			id=0;
@@ -409,6 +412,8 @@ public class Pago extends PBase {
 			  }
 			  DT.moveToNext();
 			}
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   	mu.msgbox( e.getMessage());return;
@@ -490,6 +495,8 @@ public class Pago extends PBase {
 			  }
 			  DT.moveToNext();
 			}
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   	mu.msgbox( e.getMessage());return;
@@ -668,6 +675,8 @@ public class Pago extends PBase {
 			DT.moveToFirst();
 			s=DT.getString(0).trim();
 			nivel=Integer.parseInt(s);
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			nivel=1;

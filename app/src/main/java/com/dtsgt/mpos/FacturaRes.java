@@ -1087,6 +1087,8 @@ public class FacturaRes extends PBase {
 
 			saved=true;
 
+            if (dt!=null) dt.close();
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             db.endTransaction();
@@ -1217,6 +1219,7 @@ public class FacturaRes extends PBase {
 
             db.execSQL("DELETE FROM D_FACTURAD_LOTES WHERE CANTIDAD<=0");
 
+            if (dt!=null) dt.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("rebajaStockUM: "+e.getMessage());
@@ -1244,6 +1247,7 @@ public class FacturaRes extends PBase {
             sql="DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0)";
             db.execSQL(sql);
 
+            if (dt!=null) dt.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("rebajaStockUM: "+e.getMessage());
@@ -1361,6 +1365,8 @@ public class FacturaRes extends PBase {
 				dt.moveToNext();
 			}
 
+            if (dt!=null) dt.close();
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("rebajaStockUM: "+e.getMessage());
@@ -1436,7 +1442,9 @@ public class FacturaRes extends PBase {
 
                 totimp=DT.getDouble(2);
 
-                return DT.getDouble(0);
+                double d=DT.getDouble(0);
+                if (DT!=null) DT.close();
+                return d;
             }else {
 			    return 0;
             }
@@ -1450,18 +1458,18 @@ public class FacturaRes extends PBase {
 
 	}
 
-	private void assignCorel(){
-		Cursor DT;
-		int ca,ci,cf,ca1,ca2;
+    private void assignCorel(){
+        Cursor DT;
+        int ca,ci,cf,ca1,ca2;
 
-		fcorel=0;fserie="";
+        fcorel=0;fserie="";
 
-		try {
+        try {
 
-			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE RUTA="+gl.codigo_ruta;
-			DT=Con.OpenDT(sql);
+            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE RUTA="+gl.codigo_ruta;
+            DT=Con.OpenDT(sql);
 
-			if(DT.getCount()>0){
+            if(DT.getCount()>0){
                 DT.moveToFirst();
 
                 fserie=DT.getString(0);
@@ -1475,32 +1483,31 @@ public class FacturaRes extends PBase {
             }
 
 
-			sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
-			DT=Con.OpenDT(sql);
+            sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
+            DT=Con.OpenDT(sql);
 
-			if (DT.getCount()>0){
+            if (DT.getCount()>0){
                 DT.moveToFirst();
                 ca2=DT.getInt(0);
             }else {
                 ca2=0;
             }
 
-		ca=ca1;if (ca2>ca) ca=ca2;
-		fcorel=ca+1;
+            ca=ca1;if (ca2>ca) ca=ca2;
+            fcorel=ca+1;
 
-		if (fcorel>cf) {
-			mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");
-			fcorel=0;return;
-		}
+            if (fcorel>cf) {
+                mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");
+                fcorel=0;return;
+            }
 
-		//#HS_20181128_1602 Cambie el texto del mensaje.
-		if (fcorel==cf) mu.msgbox("Esta es la última factura disponible.");
+            //#HS_20181128_1602 Cambie el texto del mensaje.
+            if (fcorel==cf) mu.msgbox("Esta es la última factura disponible.");
 
-		if (gl.peMFact) s="Factura : ";else s="Ticket : ";
-		lblFact.setText(s+fserie+" - "+fcorel+" , Talonario : "+fcorel+" / "+cf);
+            if (gl.peMFact) s="Factura : ";else s="Ticket : ";
+            lblFact.setText(s+fserie+" - "+fcorel+" , Talonario : "+fcorel+" / "+cf);
 
-		//s="Talonario : "+fcorel+" / "+cf+" - Disponible : "+(cf-fcorel);
-		//lblTalon.setText(s);
+            if (DT!=null) DT.close();
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1849,7 +1856,8 @@ public class FacturaRes extends PBase {
 					dt.moveToFirst();
 					codpago=dt.getInt(0);
 				}
-				dt.close();
+
+                if (dt!=null) dt.close();
 			}
 
 			//sql="DELETE FROM T_PAGO";
@@ -2094,6 +2102,7 @@ public class FacturaRes extends PBase {
             if(DT.getCount()>0){
                 DT.moveToFirst();
                 tpago=DT.getDouble(0);
+                if (DT!=null) DT.close();
             } else {
                 tpago=0;
             }
@@ -2175,6 +2184,8 @@ public class FacturaRes extends PBase {
             } else  {
                 tpago=0;
             }
+
+            if (DT!=null) DT.close();
 
             gl.total_pago=tot-tpago;if (gl.total_pago<0) gl.total_pago=0;
 

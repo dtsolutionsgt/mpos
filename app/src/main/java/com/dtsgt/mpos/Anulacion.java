@@ -317,7 +317,8 @@ public class Anulacion extends PBase {
 					DT.moveToNext();
 				}	
 			}
-			
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   	mu.msgbox(e.getMessage());
@@ -491,6 +492,7 @@ public class Anulacion extends PBase {
 				if (dt.getCount()>0){
 					dt.moveToFirst();
 					NIT = dt.getString(0);
+                    if (dt!=null) dt.close();
 				}
 			}
 		} catch (Exception e) {
@@ -586,6 +588,8 @@ public class Anulacion extends PBase {
 
 			vAnulFactura=true;
 
+            if (DT!=null) DT.close();
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			vAnulFactura=false;
@@ -674,7 +678,9 @@ public class Anulacion extends PBase {
 
 				dt.moveToNext();
 			}
-		}catch (Exception e){
+
+            if (dt!=null) dt.close();
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
 
@@ -773,6 +779,8 @@ public class Anulacion extends PBase {
 
 				dt.moveToNext();
 			}
+
+            if (dt!=null) dt.close();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
@@ -873,7 +881,8 @@ public class Anulacion extends PBase {
 				DT.moveToNext();
 			}
 
-		}catch (Exception e){
+            if (DT!=null) DT.close();
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
 	}
@@ -995,6 +1004,7 @@ public class Anulacion extends PBase {
 			if (DT.getCount()>0){
 				DT.moveToFirst();
 				vtieneFacturaNC = DT.getString(0);
+                if (DT!=null) DT.close();
 			}
 
 		}catch (Exception ex){
@@ -1017,6 +1027,7 @@ public class Anulacion extends PBase {
 		if (DT.getCount()>0){
 			DT.moveToFirst();
 			vtieneNotaCredFactura = DT.getString(0);
+            if (DT!=null) DT.close();
 		}
 
 	}catch (Exception ex){
@@ -1037,9 +1048,8 @@ public class Anulacion extends PBase {
             DT=Con.OpenDT(sql);
 
             vExisteFactura = (DT.getCount()>0?true:false);
-
-        }catch (Exception ex){
-
+            if (DT!=null) DT.close();
+        } catch (Exception ex){
         }
 
         return vExisteFactura;
@@ -1470,6 +1480,8 @@ public class Anulacion extends PBase {
 				lines.add(s);	
 				DT.moveToNext();
 			}
+
+            if (DT!=null) DT.close();
 
 			return true;
 		} catch (Exception e) {

@@ -352,6 +352,8 @@ public class MainActivity extends PBase {
                 gl.depparc = false;
                 gl.lotedf = "";
                 gl.clave=DT.getString(2);
+
+                if (DT!=null) DT.close();
             } else {
                 gl.emp = 3;
                 gl.devol = false;
@@ -412,6 +414,8 @@ public class MainActivity extends PBase {
         configBase();
 
         llenaUsuarios();
+
+
     }
 
     private void processLogIn() {
@@ -497,6 +501,8 @@ public class MainActivity extends PBase {
 
             khand.clear();
             khand.enable();
+
+            if (DT!=null) DT.close();
 
             return true;
 
@@ -588,6 +594,9 @@ public class MainActivity extends PBase {
             dt.moveToFirst();
             lic = dt.getString(0);
             licruta = dt.getString(1);
+
+
+            if (dt!=null) dt.close();
 
             if (mu.emptystr(lic)) {
                 toastlong("El dispositivo no tiene licencia válida de handheld");

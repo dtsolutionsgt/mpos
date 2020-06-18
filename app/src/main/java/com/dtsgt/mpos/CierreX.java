@@ -482,6 +482,7 @@ public class CierreX extends PBase {
                         }
                     }
 
+                    if (dt!=null) dt.close();
                 }
 
             }
