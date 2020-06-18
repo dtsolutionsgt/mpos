@@ -91,7 +91,7 @@ public class Venta extends PBase {
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo;
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
-    private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
+    private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private int codigo_cliente, emp;
     private String cliid;
     private int famid = -1;
@@ -328,205 +328,232 @@ public class Venta extends PBase {
         txtBarra.requestFocus();
     }
 
-           private void setHandlers(){
-            try{
+    private void setHandlers(){
 
-                listView.setOnTouchListener(new SwipeListener(this) {
-                    public void onSwipeRight() {
-                        onBackPressed();
-                    }
-                    public void onSwipeLeft() {
-                        finishOrder(null);
-                    }
-                });
+        try{
 
-                listView.setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                        try {
-                            Object lvObj = listView.getItemAtPosition(position);
-                            clsVenta item = (clsVenta)lvObj;
+            listView.setOnTouchListener(new SwipeListener(this) {
+                public void onSwipeRight() {
+                    onBackPressed();
+                }
+                public void onSwipeLeft() {
+                    finishOrder(null);
+                }
+            });
 
-                            prodid=item.Cod;//gl.prodmenu=prodid;
-                            uprodid=prodid;
-                            uid=item.emp;gl.menuitemid=uid;seluid=uid;
-                            adapter.setSelectedIndex(position);
+            listView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
 
-                            gl.gstr=item.Nombre;
-                            gl.retcant=(int) item.Cant;
-                            gl.limcant=getDisp(prodid);
-                            menuitemadd=false;
+                    if (listflag) listflag=false;else return;
 
-                            tipo=prodTipo(gl.prodcod);
-                            if (!tipo.equalsIgnoreCase("M")) {
-                                browse=6;
-                                gl.menuitemid=prodid;
-                                startActivity(new Intent(Venta.this,VentaEdit.class));
-                            } else {
-                                gl.newmenuitem=false;
-                                gl.menuitemid=item.emp;
-                                browse=7;
-                                startActivity(new Intent(Venta.this,ProdMenu.class));
-                            }
-
-                        } catch (Exception e) {
-                            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                            mu.msgbox( e.getMessage());
+                    Handler mtimer = new Handler();
+                    Runnable mrunner=new Runnable() {
+                        @Override
+                        public void run() {
+                            listflag=true;
                         }
                     };
-                });
+                    mtimer.postDelayed(mrunner,2000);
 
-                listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    try {
+                        Object lvObj = listView.getItemAtPosition(position);
+                        clsVenta item = (clsVenta)lvObj;
 
-                        try {
-                            Object lvObj = listView.getItemAtPosition(position);
-                            clsVenta vItem = (clsVenta)lvObj;
+                        prodid=item.Cod;//gl.prodmenu=prodid;
+                        uprodid=prodid;
+                        uid=item.emp;gl.menuitemid=uid;seluid=uid;
+                        adapter.setSelectedIndex(position);
 
-                            prodid=vItem.Cod;
-                            adapter.setSelectedIndex(position);
+                        gl.gstr=item.Nombre;
+                        gl.retcant=(int) item.Cant;
+                        gl.limcant=getDisp(prodid);
+                        menuitemadd=false;
 
-                            if (prodRepesaje(prodid) && gl.rutatipo.equalsIgnoreCase("V")) {
-                                gl.gstr=prodid;
-                                gl.gstr2=vItem.Nombre;
-                                showItemMenu();
-                            } else {
-                                msgAskDel("Borrar producto");
-                            }
-                        } catch (Exception e) {
-                            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                            mu.msgbox( e.getMessage());
+                        tipo=prodTipo(gl.prodcod);
+                        if (!tipo.equalsIgnoreCase("M")) {
+                            browse=6;
+                            gl.menuitemid=prodid;
+                            startActivity(new Intent(Venta.this,VentaEdit.class));
+                        } else {
+                            gl.newmenuitem=false;
+                            gl.menuitemid=item.emp;
+                            browse=7;
+                            startActivity(new Intent(Venta.this,ProdMenu.class));
                         }
-                        return true;
+
+                    } catch (Exception e) {
+                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                        mu.msgbox( e.getMessage());
                     }
-                });
-            }catch (Exception e){
-                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            }
+                };
+            });
 
-        txtBarra.addTextChangedListener(new TextWatcher() {
+            listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-            public void afterTextChanged(Editable s) {}
+                    try {
+                        Object lvObj = listView.getItemAtPosition(position);
+                        clsVenta vItem = (clsVenta)lvObj;
 
-            public void beforeTextChanged(CharSequence s, int start,int count, int after) { }
+                        prodid=vItem.Cod;
+                        adapter.setSelectedIndex(position);
 
-            public void onTextChanged(CharSequence s, int start,int before, int count) {
-                //mu.msgbox("start "+start+" before "+before+" count "+count);
+                        if (prodRepesaje(prodid) && gl.rutatipo.equalsIgnoreCase("V")) {
+                            gl.gstr=prodid;
+                            gl.gstr2=vItem.Nombre;
+                            showItemMenu();
+                        } else {
+                            msgAskDel("Borrar producto");
+                        }
+                    } catch (Exception e) {
+                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                        mu.msgbox( e.getMessage());
+                    }
+                    return true;
+                }
+            });
 
-                final CharSequence ss=s;
+            txtBarra.addTextChangedListener(new TextWatcher() {
 
-                if (!scanning) {
-                    scanning=true;
-                    Handler handlerTimer = new Handler();
-                    handlerTimer.postDelayed(new Runnable(){
+                public void afterTextChanged(Editable s) {}
+
+                public void beforeTextChanged(CharSequence s, int start,int count, int after) { }
+
+                public void onTextChanged(CharSequence s, int start,int before, int count) {
+                    //mu.msgbox("start "+start+" before "+before+" count "+count);
+
+                    final CharSequence ss=s;
+
+                    if (!scanning) {
+                        scanning=true;
+                        Handler handlerTimer = new Handler();
+                        handlerTimer.postDelayed(new Runnable(){
+                            public void run() {
+                                compareSC(ss);
+                            }}, 500);
+                    }
+
+
+                }
+            });
+
+            grdfam.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        Object lvObj = grdfam.getItemAtPosition(position);
+                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+                        famid=item.icod;
+
+                        if (imgflag) {
+                            adapterf.setSelectedIndex(position);
+                        } else {
+                            adapterfl.setSelectedIndex(position);
+                        }
+
+                        listProduct();
+                    } catch (Exception e) {
+                        String ss=e.getMessage();
+                    }
+                };
+            });
+
+            grdprod.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+
+                    if (prodflag) prodflag=false;else return;
+
+                    Handler mtimer = new Handler();
+                    Runnable mrunner=new Runnable() {
+                        @Override
                         public void run() {
-                            compareSC(ss);
-                        }}, 500);
-                }
+                            prodflag=true;
+                        }
+                    };
+                    mtimer.postDelayed(mrunner,2000);
 
 
-            }
-        });
+                    try {
+                        Object lvObj = grdprod.getItemAtPosition(position);
+                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
-        grdfam.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                try {
-                    Object lvObj = grdfam.getItemAtPosition(position);
-                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-                    famid=item.icod;
+                        if (imgflag) {
+                            adapterp.setSelectedIndex(position);
+                        } else {
+                            adapterpl.setSelectedIndex(position);
+                        }
 
-                    if (imgflag) {
-                        adapterf.setSelectedIndex(position);
-                    } else {
-                        adapterfl.setSelectedIndex(position);
+                        prodid=item.Cod;gl.prodid=prodid;
+                        gl.prodcod=item.icod;
+                        gl.gstr=prodid;gl.prodmenu=gl.prodcod;
+                        gl.pprodname=item.Name;
+                        gl.um=app.umVenta(prodid);
+                        gl.menuitemid=prodid;
+                        menuitemadd=true;
+
+                        processItem(false);
+
+                    } catch (Exception e) {
+                        String ss=e.getMessage();
                     }
+                };
+            });
 
-                    listProduct();
-                } catch (Exception e) {
-                    String ss=e.getMessage();
-                }
-            };
-        });
+            grdprod.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    try {
+                        Object lvObj = grdprod.getItemAtPosition(position);
+                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
-        grdprod.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                try {
-                    Object lvObj = grdprod.getItemAtPosition(position);
-                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                    if (imgflag) {
                         adapterp.setSelectedIndex(position);
-                    } else {
-                        adapterpl.setSelectedIndex(position);
+
+                        prodid=item.Cod;
+                        gl.gstr=prodid;//gl.prodmenu=prodid;
+                        gl.pprodname=item.Name;
+
+                        msgAskAdd(item.Name);
+                    } catch (Exception e) {}
+                    return true;
+                }
+            });
+
+            gridView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        Object lvObj = gridView.getItemAtPosition(position);
+                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+
+                        adaptergrid.setSelectedIndex(position);
+                        processMenuMenu(item.ID);
+                    } catch (Exception e) {
+                        String ss=e.getMessage();
                     }
+                };
+            });
 
-                    prodid=item.Cod;gl.prodid=prodid;
-                    gl.prodcod=item.icod;
-                    gl.gstr=prodid;gl.prodmenu=gl.prodcod;
-                    gl.pprodname=item.Name;
-                    gl.um=app.umVenta(prodid);
-                    gl.menuitemid=prodid;
-                    menuitemadd=true;
+            grdbtn.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        Object lvObj = grdbtn.getItemAtPosition(position);
+                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
-                    processItem(false);
+                        adapterb.setSelectedIndex(position);
+                        processMenuBtn(item.ID);
+                    } catch (Exception e) {
+                        String ss=e.getMessage();
+                    }
+                };
+            });
 
-                } catch (Exception e) {
-                    String ss=e.getMessage();
-                }
-            };
-        });
-
-        grdprod.setOnItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    Object lvObj = grdprod.getItemAtPosition(position);
-                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                    adapterp.setSelectedIndex(position);
-
-                    prodid=item.Cod;
-                    gl.gstr=prodid;//gl.prodmenu=prodid;
-                    gl.pprodname=item.Name;
-
-                    msgAskAdd(item.Name);
-                } catch (Exception e) {}
-                return true;
-            }
-        });
-
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                try {
-                    Object lvObj = gridView.getItemAtPosition(position);
-                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                    adaptergrid.setSelectedIndex(position);
-                    processMenuMenu(item.ID);
-                } catch (Exception e) {
-                    String ss=e.getMessage();
-                }
-            };
-        });
-
-        grdbtn.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                try {
-                    Object lvObj = grdbtn.getItemAtPosition(position);
-                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                    adapterb.setSelectedIndex(position);
-                    processMenuBtn(item.ID);
-                } catch (Exception e) {
-                    String ss=e.getMessage();
-                }
-            };
-        });
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
 
     }
 
