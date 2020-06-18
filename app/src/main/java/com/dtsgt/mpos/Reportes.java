@@ -425,18 +425,18 @@ public class Reportes extends PBase {
 
             switch (gl.reportid){
                 case 1:
-                    sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
+                    sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
                             "FROM D_FACTURA WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                             "AND ANULADO=0 " +
-                            "GROUP BY SERIE, IMPMONTO, FECHA " +
-                            "ORDER BY FECHA";
+                            "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
+                            "ORDER BY CAST(FECHA/10000 AS INTEGER)";
                     break;
                 case 2:
                     sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
-                            "SUM(TOTAL), FECHA " +
+                            "SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
                             "FROM D_FACTURA WHERE (FECHA BETWEEN "+ dateini +" AND "+datefin+") " +
                             "AND ANULADO=0 " +
-                            "GROUP BY FECHA, SERIE";
+                            "GROUP BY CAST(FECHA/10000 AS INTEGER), SERIE";
                     break;
                 case 3:
                     if(id_item.equals("Todos")){
@@ -462,7 +462,7 @@ public class Reportes extends PBase {
                         condition = " AND M.CODIGO = '"+ id_item +"' ";
                     }
 
-                    sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 " +
+                    sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(P.VALOR), 0 " +
                         "FROM P_MEDIAPAGO M " +
                         "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                         "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
@@ -533,13 +533,13 @@ public class Reportes extends PBase {
                         validCli=2;
                     }
 
-                    sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
+                    sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT),  F.FECHA " +
                         "FROM P_CLIENTE C " +
                         "INNER JOIN D_FACTURA F ON C.CODIGO_CLIENTE = F.CLIENTE " +
                         "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
                         "WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
                         "AND F.ANULADO=0 " +
-                        "GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
+                        "GROUP BY C.CODIGO, C.NOMBRE, F.FECHA ";
                     break;
 
                 case 12:
@@ -846,11 +846,11 @@ public class Reportes extends PBase {
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
                             rep.empty();
-                            rep.add("             "+du.sfecha(itemR.get(i).fecha));
+                            rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc = 2;
                         }
 
-                        if(series!=itemR.get(i).serie){
+                        if(!series.equals(itemR.get(i).serie)){
                             rep.add("--------(    Serie "+itemR.get(i).serie+"    )------------");
                         }
 
@@ -872,7 +872,11 @@ public class Reportes extends PBase {
                             totSinImpF += sinImp;
 
                         }else {
-                            if (itemR.get(i).fecha != itemR.get(i + 1).fecha) {
+
+                            String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
+                            String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
+
+                            if (!fecha1.equals(fecha2)) {
                                 rep.line();
                                 rep.add3Tot(cantF, sinImp, impF, tot);
                                 totF += tot;
@@ -891,7 +895,7 @@ public class Reportes extends PBase {
                     //Reporte 2
                     } else if(gl.reportid==2){
 
-                        fecha = du.sfecha(itemR.get(i).fecha);
+                        fecha = du.sfecha(itemR.get(i).fecha*10000);
                         if(acc==1){
                             rep.add("      REPORTE DE VENTAS POR DIA");
                             rep.add("Fecha      Serie   Cant.Fact   Total");

@@ -51,7 +51,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "3.1.1 / 17-Jun-2020 12:32";
+    private String parVer = "3.1.2 / 17-Jun-2020 12:32";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -523,6 +523,7 @@ public class MainActivity extends PBase {
             input.setInputType(InputType.TYPE_CLASS_NUMBER);
             input.setText("");
             input.requestFocus();
+            showkeyb();
 
             alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {

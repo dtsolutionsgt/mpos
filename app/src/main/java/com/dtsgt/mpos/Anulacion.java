@@ -281,9 +281,9 @@ public class Anulacion extends PBase {
 					
 					if (tipo==3) {
 						//sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
-                        sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
-
-                    }else if(tipo==1||tipo==6){
+						//#CKFK 20200617 Modifique el formato en el que muestra el documento
+						sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+					}else if(tipo==1||tipo==6){
 						sf=DT.getString(0);
 					}else{
 						f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
