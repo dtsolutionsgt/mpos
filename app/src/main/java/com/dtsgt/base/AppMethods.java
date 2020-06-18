@@ -530,17 +530,21 @@ public class AppMethods {
 
     public String prodTipo(int cod) {
         Cursor DT;
+        String result="";
 
         try {
             String sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
-            return  DT.getString(0);
+            result = DT.getString(0);
+
         } catch (Exception e) {
-            //toast(e.getMessage());
-            return "P";
+            throw e;
         }
+
+		return result;
+
     }
 
     public boolean ventaRepesaje(String cod) {
@@ -659,14 +663,26 @@ public class AppMethods {
 
 	public String umVenta(String cod) {
 		Cursor DT;
-		String umm;
+		String umm="";
 
 		try {
-			String sql = "SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE CODIGO_PRODUCTO ='" + cod + "' AND NIVEL="+gl.nivel;
+			String sql = "SELECT P_PRODPRECIO.UNIDADMEDIDA " +
+					     "FROM P_PRODPRECIO INNER JOIN P_PRODUCTO ON P_PRODPRECIO.CODIGO_PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
+					     "WHERE P_PRODUCTO.CODIGO ='" + cod + "' AND P_PRODPRECIO.NIVEL="+gl.nivel;
 			DT = Con.OpenDT(sql);
-			DT.moveToFirst();
 
-			umm=DT.getString(0);
+			if (DT != null){
+
+				if(DT.getCount()>0){
+
+					DT.moveToFirst();
+
+					umm=DT.getString(0);
+				}
+
+				DT.close();
+			}
+
 			return  umm;
 		} catch (Exception e) {
 			//toast(e.getMessage());

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
 import java.util.ArrayList;
@@ -83,8 +84,18 @@ public class BaseDatos extends SQLiteOpenHelper {
         String vError="";
 
 		  try {
+
+		  	  if (!vDatabase.isOpen()){
+				  vDatabase = getWritableDatabase();
+			  }
+
 			  vCursor = vDatabase.rawQuery(pSQL, null);
-			  vCursor.moveToLast();
+			  if (vCursor != null){
+				  vCursor.moveToLast();
+			  }else{
+			  	throw new Exception("No se obtuvo el registro " + pSQL);
+			  }
+
 		  } catch(Exception ex){
 		  	 msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
 			  vError = ex.getMessage();

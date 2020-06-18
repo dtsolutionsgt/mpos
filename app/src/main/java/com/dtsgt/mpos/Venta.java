@@ -373,11 +373,11 @@ public class Venta extends PBase {
                         menuitemadd=false;
 
                         tipo=prodTipo(gl.prodcod);
-                        if (!tipo.equalsIgnoreCase("M")) {
+                        if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
                             browse=6;
                             gl.menuitemid=prodid;
                             startActivity(new Intent(Venta.this,VentaEdit.class));
-                        } else {
+                        } else if (tipo.equalsIgnoreCase("M")) {
                             gl.newmenuitem=false;
                             gl.menuitemid=item.emp;
                             browse=7;
@@ -489,11 +489,13 @@ public class Venta extends PBase {
                             adapterpl.setSelectedIndex(position);
                         }
 
-                        prodid=item.Cod;gl.prodid=prodid;
+                        prodid=item.Cod;
+                        gl.prodid=prodid;
                         gl.prodcod=item.icod;
-                        gl.gstr=prodid;gl.prodmenu=gl.prodcod;
+                        gl.gstr=prodid;
+                        gl.prodmenu=gl.prodcod;
                         gl.pprodname=item.Name;
-                        gl.um=app.umVenta(prodid);
+                        gl.um=app.umVenta(gl.prodid);
                         gl.menuitemid=prodid;
                         menuitemadd=true;
 
@@ -693,10 +695,10 @@ public class Venta extends PBase {
                     } else {
                         msgAskLimit("El producto no está disponible.\n¿Continuar con la venta?",updateitem);
                     }
-                } else {
+                } else if (tipo.equalsIgnoreCase("S")) {
                     processCant(updateitem);
                 }
-            } else {
+            } else if (tipo.equalsIgnoreCase("M")){
                 processMenuItem();
             }
        } catch (Exception e){
@@ -849,13 +851,13 @@ public class Venta extends PBase {
 
             tipo=prodTipo(gl.prodcod);
 
-            if (!tipo.equalsIgnoreCase("M")) {
+            if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
                 if (updateitem) {
                     if (updateItemUID()) clearItem();
                 } else {
                     if (addItem()) clearItem();
                 }
-            } else {
+            } else if (tipo.equalsIgnoreCase("M")){
                 if (updateitem) {
                     if (updateMenuItemUID()) clearItem();
                 } else {
@@ -895,10 +897,13 @@ public class Venta extends PBase {
         prodid=uprodid;
         tipo=prodTipo(gl.prodcod);
 
-        gl.dval=gl.retcant;
-        gl.limcant=getDisp(prodid);
-        processCant(true);
-        listItems();
+        if (!tipo.isEmpty()){
+            gl.dval=gl.retcant;
+            gl.limcant=getDisp(prodid);
+            processCant(true);
+            listItems();
+        }
+
     }
 
     private void processCantMenu() {
@@ -951,7 +956,7 @@ public class Venta extends PBase {
 
         tipo=prodTipo(gl.prodcod);
 
-        if (!tipo.equalsIgnoreCase("M")) {
+        if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
             try {
                 sql="SELECT Empresa,Cant FROM T_VENTA WHERE (PRODUCTO='"+prodid+"')";
                 dt=Con.OpenDT(sql);
@@ -2408,7 +2413,7 @@ public class Venta extends PBase {
             return app.prodTipo(prodid);
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            return "P";
+            throw e;
         }
     }
 
