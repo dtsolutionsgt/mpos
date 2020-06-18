@@ -1365,7 +1365,7 @@ public class Menu extends PBase {
 					if(caja.count==0) return true;
 
 					if(caja.last().estado==0){
-						//return false;  JP20200618 cambia valor a true, porque no dejaba hacer segundo inicio en mismo dia
+						//return false;  JP20200618 cambie valor a true, porque no dejaba hacer segundo inicio caja en mismo dia
                         return true;
 					}
 				}
