@@ -1,9 +1,12 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.zebra.sdk.settings.internal.SettingRangeInteger;
@@ -70,14 +74,19 @@ public class Caja extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
 
-        if(gl.cajaid==1){
+        if (gl.cajaid==1){ //Inicio de Caja
+
             lblMontoFin.setVisibility(View.INVISIBLE);
             MontoFin.setVisibility(View.INVISIBLE);
             MontoIni.requestFocus();
-        }else if(gl.cajaid==3){
+
+            validacionesInicio();
+        } else if(gl.cajaid==3) { // Cierre de Caja
+
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
             caja.fill(" WHERE ESTADO=0");
             gl.fondoCaja = caja.last().fondocaja;
+
             MontoIni.setEnabled(false);
             MontoIni.setText(""+gl.fondoCaja);
             MontoFin.setText("0");MontoFin.requestFocus();
@@ -88,7 +97,20 @@ public class Caja extends PBase {
         setHandlers();
     }
 
+    //region Events
+
+    public void save(View view){
+        guardar();
+    }
+
+    public void doExit(View view) {
+        msgAskExit("¿Salir?");
+    }
+
+    //endregion
+
     //region Main
+
     private void setHandlers(){
 
         try{
@@ -105,10 +127,6 @@ public class Caja extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-    }
-
-    public void save(View view){
-        guardar();
     }
 
     public void guardar(){
@@ -186,6 +204,7 @@ public class Caja extends PBase {
         }
 
     }
+
     public void montoDif(){
         Cursor dt;
         double tot,totCred,pago;
@@ -391,13 +410,40 @@ public class Caja extends PBase {
         }
     }
 
-    public void doExit(View view) {
-        msgAskExit("¿Salir?");
+    private void validacionesInicio() {
+        String ms="";
+
+        try {
+
+            if (app.usaFEL()) {
+                if (gl.peAvizoFEL>0) {
+                    long lf=du.getActDate();
+                    lf=du.addDays(lf,-gl.peAvizoFEL);lf=du.ffecha24(lf);
+
+                    clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+                    D_facturaObj.fill("WHERE (ANULADO=0) AND (FECHA<="+lf+") AND (FEELUUID=' ') ");
+                    if (D_facturaObj.count>0) ms="Existen facturas proximas a expirar certificacion FEL";
+                }
+            }
+
+            if (gl.peCajaRec) {
+                if (isNetworkAvailable()) {
+                    startActivity(new Intent(Caja.this,WSRec.class));
+                } else {
+                    if (!ms.isEmpty()) ms+="\n\n";
+                    ms+="No hay conexion a internet";
+                }
+            }
+
+            if (!ms.isEmpty()) msgbox(ms);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion
 
-    //region msgbox
+    //region Dialogs
 
     private void msgAskExit(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -456,6 +502,17 @@ public class Caja extends PBase {
         } catch (Exception ex) {
             msgbox("Error msgboxValidaMonto: "+ex);return;
         }
+    }
+
+    //endregion
+
+    //region Aux
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     //endregion
