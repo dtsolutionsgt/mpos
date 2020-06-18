@@ -344,7 +344,7 @@ public class Venta extends PBase {
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-
+                    /*
                     if (listflag) listflag=false;else return;
 
                     Handler mtimer = new Handler();
@@ -354,7 +354,9 @@ public class Venta extends PBase {
                             listflag=true;
                         }
                     };
-                    mtimer.postDelayed(mrunner,2000);
+                    mtimer.postDelayed(mrunner,1000);
+                    */
+
 
                     try {
                         Object lvObj = listView.getItemAtPosition(position);
@@ -464,6 +466,7 @@ public class Venta extends PBase {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
 
+                    /*
                     if (prodflag) prodflag=false;else return;
 
                     Handler mtimer = new Handler();
@@ -473,8 +476,8 @@ public class Venta extends PBase {
                             prodflag=true;
                         }
                     };
-                    mtimer.postDelayed(mrunner,2000);
-
+                    mtimer.postDelayed(mrunner,1000);
+                    */
 
                     try {
                         Object lvObj = grdprod.getItemAtPosition(position);
