@@ -408,7 +408,7 @@ public class InvInicial extends PBase {
 
             }
 
-            db.execSQL("DELETE FROM T_MOVR");
+            db.execSQL("DELETE FROM T_MOVD");
 
             db.setTransactionSuccessful();
             db.endTransaction();

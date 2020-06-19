@@ -90,9 +90,9 @@ public class Venta extends PBase {
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo;
     private int nivel,dweek,clidia,counter;
-    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private int codigo_cliente, emp;
+    private int codigo_cliente, emp,pedidoscant;
     private String cliid;
     private int famid = -1;
 
@@ -121,6 +121,8 @@ public class Venta extends PBase {
         gl.atentini=du.getActDateTime();
         gl.ateninistr=du.geActTimeStr();
         gl.climode=true;
+
+        pedidos=true;
 
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
@@ -1850,6 +1852,12 @@ public class Venta extends PBase {
                     item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
                     mitems.add(item);
                 }
+            }
+
+            if (pedidos) {
+                item = clsCls.new clsMenu();
+                item.ID=16;item.Name="Pedidos";item.Icon=16;item.cant=pedidoscant+1;
+                mitems.add(item);
             }
 
             item = clsCls.new clsMenu();
