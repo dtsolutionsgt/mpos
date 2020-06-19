@@ -221,6 +221,8 @@ public class InvInicial extends PBase {
                 mu.msgbox(e.getMessage());
             }
 
+            if (T_movdObj.count==0) creaEncabezadoInicial();
+
         }
 
         lblTCant.setText("Articulos : "+mu.frmint(cantt));
@@ -406,9 +408,12 @@ public class InvInicial extends PBase {
                     updateStock(imov.producto,imov.cant,imov.unidadmedida);
                 }
 
+                borraEncabezadoInicial();
+                db.execSQL("DELETE FROM T_MOVD");
+
             }
 
-            db.execSQL("DELETE FROM T_MOVD");
+            db.execSQL("DELETE FROM T_MOVR");
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -620,6 +625,42 @@ public class InvInicial extends PBase {
 
     //region Aux
 
+    private void creaEncabezadoInicial() {
+        clsClasses.clsD_Mov header;
+        String corel=gl.ruta+"_"+mu.getCorelBase();
+
+        try {
+
+            clsD_MovObj mov=new clsD_MovObj(this,Con,db);
+
+            header =clsCls.new clsD_Mov();
+
+            header.COREL=corel;
+            header.RUTA=gl.codigo_ruta;
+            header.ANULADO=0;
+            header.FECHA=du.getActDateTime();
+            header.TIPO="I";
+            header.USUARIO=gl.codigo_vendedor;
+            header.REFERENCIA="ACTIVO";
+            header.STATCOM="X";
+            header.IMPRES=0;
+            header.CODIGOLIQUIDACION=0;
+            header.CODIGO_PROVEEDOR= gl.codigo_proveedor;
+
+            mov.add(header);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void borraEncabezadoInicial() {
+        try {
+            db.execSQL("DELETE FROM D_MOV WHERE STATCOM='X'");
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 

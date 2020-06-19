@@ -21,6 +21,9 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
+import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 import com.dtsgt.mant.Lista;
@@ -73,6 +76,7 @@ public class lista_ingreso_inventario extends PBase {
 
         if (tipo==0) lblTipo.setText("Ingresos");
         if (tipo==1) lblTipo.setText("Salidas");
+        if (tipo==2) lblTipo.setText("Inventario Inicial");
 
         setHandlers();
 
@@ -101,9 +105,11 @@ public class lista_ingreso_inventario extends PBase {
                     intent = new Intent(this,InvSalida.class);
                     startActivity(intent);
                     break;
+                case 2:
+                    validaInicial();break;
             }
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
@@ -179,13 +185,18 @@ public class lista_ingreso_inventario extends PBase {
 
                 case 0:
                     sql="SELECT COREL,REFERENCIA,FECHA,0 "+
-                        "FROM D_MOV WHERE (TIPO='R' OR TIPO='I') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                        "FROM D_MOV WHERE (TIPO='R') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                         "ORDER BY FECHA DESC ";
                     break;
                 case 1:
                     sql="SELECT COREL,REFERENCIA,FECHA,0 "+
                         "FROM D_MOV WHERE (TIPO='D') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                         "ORDER BY FECHA DESC ";
+                    break;
+                case 2:
+                    sql="SELECT COREL,REFERENCIA,FECHA,0 "+
+                            "FROM D_MOV WHERE (TIPO='I') AND (ANULADO<>1) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                            "ORDER BY FECHA DESC ";
                     break;
             }
 
@@ -243,22 +254,17 @@ public class lista_ingreso_inventario extends PBase {
     //region Documents
 
     private void cargaDocumento(String itemid) {
-        Cursor DT;
 
-        try{
-
-            sql="SELECT PRODUCTO,CANT,CANTM, UNIDADMEDIDA " +
-                "FROM D_MOVD " +
-                "WHERE (COREL='"+itemid+"')";
-            DT=Con.OpenDT(sql);
-
-
-        }catch (Exception e){
-
-            db.endTransaction();
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+        if (tipo==2 && sitem.Desc.equalsIgnoreCase("ACTIVO")) {
+            abrirInicial();return;
         }
 
+        try {
+            gl.idmov=itemid;
+            startActivity(new Intent(this,InvVista.class));
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+        }
     }
 
     //endregion
@@ -361,6 +367,53 @@ public class lista_ingreso_inventario extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
+
+    //endregion
+
+    //region Aux
+
+    private void validaInicial() {
+        try {
+            clsT_movdObj T_movdObj=new clsT_movdObj(this,Con,db);
+            T_movdObj.fill();
+            if (T_movdObj.count>0) {
+                msgbox("No se puede crear inventario inicial, ya existe uno activo");return;
+            }
+
+
+            clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+            P_stockObj.fill();
+
+            if (P_stockObj.count>0) {
+                for (int i = 0; i <P_stockObj.count; i++) {
+                    if (P_stockObj.items.get(i).cant>0) {
+                        msgbox("No se puede crear inventario inicial, hay productos con existencia");return;
+                    }
+                }
+            }
+
+            abrirInicial();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void abrirInicial() {
+        try {
+            clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
+            suc.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            gl.codigo_proveedor=suc.first().codigo_proveedor;
+            gl.nombre_proveedor="Completo";
+
+            gl.invregular=false;
+            startActivity(new Intent(this,InvInicial.class));
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
 
     //endregion
 

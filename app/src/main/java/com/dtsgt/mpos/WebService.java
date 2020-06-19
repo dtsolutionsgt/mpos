@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -16,6 +17,7 @@ public class WebService {
 
     public Cursor openDTCursor;
     public String openDTResult;
+    public int intresult;
 
     public String  error="";
     public Boolean status;
@@ -27,7 +29,7 @@ public class WebService {
     private ArrayList<String> results=new ArrayList<String>();
 
     private String URL,sql;
-    private int mode;
+    private int mode,empresa;
     private boolean errflag;
 
     // OpenDT
@@ -45,6 +47,12 @@ public class WebService {
     public void openDT(String SQL) {
         mode=1;
         sql=SQL;
+        execute();
+    }
+
+    public void pedidosNuevos(int empid) {
+        mode=2;
+        empresa=empid;
         execute();
     }
 
@@ -156,6 +164,51 @@ public class WebService {
 
     //endregion
 
+    //region pedidosNuevos
+
+    private void pedidos_Nuevos() {
+
+        errflag = false;
+
+        METHOD_NAME = "Pedidos_Nuevos";
+        results.clear();
+
+        try {
+
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            envelope.dotNet = true;
+
+            PropertyInfo param = new PropertyInfo();
+            param.setType(String.class);
+            param.setName("EMPRESA");param.setValue(empresa);
+
+            request.addProperty(param);
+            envelope.setOutputSoapObject(request);
+
+            HttpTransportSE transport = new HttpTransportSE(URL);
+            transport.call(NAMESPACE+METHOD_NAME, envelope);
+
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+
+            String resp = response.toString();
+
+            try {
+                intresult=Integer.parseInt(resp);
+            } catch (Exception ee) {
+                intresult=-1;
+                errflag=true;error=resp;return;
+            }
+
+        } catch (Exception e) {
+            errflag=true;
+            error=e.getMessage();
+        }
+
+    }
+
+    //endregion
+
     //region WebService Core
 
     private void execute() {
@@ -171,6 +224,8 @@ public class WebService {
             switch (mode) {
                 case 1:
                     processOpenDT();break;
+                case 2:
+                    pedidos_Nuevos();break;
             }
 
             status=errflag;

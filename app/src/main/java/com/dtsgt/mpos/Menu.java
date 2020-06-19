@@ -798,19 +798,13 @@ public class Menu extends PBase {
 
     private void menuInvIni() {
         try {
-            clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
-            suc.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
-            gl.codigo_proveedor=suc.first().codigo_proveedor;
-            gl.nombre_proveedor="Inventario inicial";
-
-            gl.invregular=false;
-            startActivity(new Intent(Menu.this,InvInicial.class));
-
+            gl.tipo = 2;
+            Intent intent = new Intent(this,lista_ingreso_inventario.class);
+            startActivity(intent);
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
-
 
 	//endregion
 

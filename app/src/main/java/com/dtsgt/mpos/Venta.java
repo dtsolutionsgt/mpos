@@ -48,6 +48,10 @@ import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Venta extends PBase {
@@ -82,6 +86,9 @@ public class Venta extends PBase {
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
+    private WebService ws;
+    private AppMethods app;
+
     private int browse;
 
     private double cant,desc,mdesc,prec,precsin,imp,impval;
@@ -95,8 +102,6 @@ public class Venta extends PBase {
     private int codigo_cliente, emp,pedidoscant;
     private String cliid;
     private int famid = -1;
-
-    private AppMethods app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +127,10 @@ public class Venta extends PBase {
         gl.ateninistr=du.geActTimeStr();
         gl.climode=true;
 
+        getURL();
+
         pedidos=true;
+        ws=new WebService(Venta.this,gl.wsurl);
 
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
@@ -2158,6 +2166,27 @@ public class Venta extends PBase {
 
     //endregion
 
+    //region Pedidos
+
+    private void estadoPedidos() {
+        try {
+            //ws.pedidosNuevos(gl.emp);
+        } catch (Exception e) {
+           // msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    @Override
+    protected void wsCallBack(Boolean throwing,String errmsg) throws Exception {
+        if (!throwing) {
+            //toast("WS Result : "+ws.intresult);
+        } else {
+            //toast("WS Error : "+errmsg);
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void showItemMenu() {
@@ -2691,6 +2720,26 @@ public class Venta extends PBase {
         }
     }
 
+    private void getURL() {
+        gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+        gl.timeout = 6000;
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
+            if (file1.exists()) {
+                FileInputStream fIn = new FileInputStream(file1);
+                BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
+                gl.wsurl = myReader.readLine();
+                String line = myReader.readLine();
+                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
+                myReader.close();
+            }
+        } catch (Exception e) {}
+
+    }
+
     //endregion
 
     //region Dialogs
@@ -2764,6 +2813,10 @@ public class Venta extends PBase {
 
             gl.climode=true;
             menuTools();
+
+            if (pedidos) {
+                //estadoPedidos();
+            }
 
             try {
                 txtBarra.requestFocus();
