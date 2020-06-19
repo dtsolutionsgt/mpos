@@ -102,6 +102,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
         if (items.get(position).Icon==54) holder.imgEst.setImageResource(R.drawable.btn_del_line);
         if (items.get(position).Icon==55) holder.imgEst.setImageResource(R.drawable.btn_del_all);
         if (items.get(position).Icon==56) holder.imgEst.setImageResource(R.drawable.btn_switch);
+        if (items.get(position).Icon==57) holder.imgEst.setImageResource(R.drawable.btn_exit);
 
         if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 

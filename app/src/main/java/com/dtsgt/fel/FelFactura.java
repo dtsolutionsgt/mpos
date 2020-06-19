@@ -2,6 +2,7 @@ package com.dtsgt.fel;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
@@ -58,7 +59,7 @@ public class FelFactura extends PBase {
 
     private String felcorel,corel,scorel,CSQL,endstr,idfact;
     private boolean ddemomode,multiflag,factsend,contmode;
-    private int ftot,ffail,fidx;
+    private int ftot,ffail,fidx,cliid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -238,8 +239,12 @@ public class FelFactura extends PBase {
                 finish();
             }
         } else {
+
             gl.feluuid="";
-            msgexit("Ocurrio error en FEL :\n\n"+ fel.error);
+            gl.FELmsg="Ocurrio error en FEL :\n\n"+ fel.error;
+            startActivity(new Intent(this,FELmsgbox.class));
+            finish();
+            //msgexit("Ocurrio error en FEL :\n\n"+ fel.error);
         }
     }
 
@@ -251,6 +256,8 @@ public class FelFactura extends PBase {
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
+
+            cliid=fact.cliente;
 
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
@@ -338,6 +345,9 @@ public class FelFactura extends PBase {
             D_facturaObj.fill("WHERE COREL='"+scorel+"'");
             D_facturadObj.fill("WHERE COREL='"+scorel+"'");
             D_facturapObj.fill("WHERE COREL='"+scorel+"'");
+            clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
+
+            cliid=D_facturaObj.first().cliente;
 
             //idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
@@ -354,6 +364,13 @@ public class FelFactura extends PBase {
             for (int i = 0; i < D_facturapObj.count; i++) {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
+
+            P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
+
+            ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
+            CSQL = CSQL + ss + "\n";
+            ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
+            CSQL = CSQL + ss + "\n";
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -480,6 +497,9 @@ public class FelFactura extends PBase {
             D_facturaObj.fill("WHERE COREL='"+corel+"'");
             D_facturadObj.fill("WHERE COREL='"+corel+"'");
             D_facturapObj.fill("WHERE COREL='"+corel+"'");
+            clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
+
+            cliid=D_facturaObj.first().cliente;
 
             idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
@@ -496,6 +516,13 @@ public class FelFactura extends PBase {
             for (int i = 0; i < D_facturapObj.count; i++) {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
+
+            P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
+
+            ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
+            CSQL = CSQL + ss + "\n";
+            ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
+            CSQL = CSQL + ss + "\n";
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

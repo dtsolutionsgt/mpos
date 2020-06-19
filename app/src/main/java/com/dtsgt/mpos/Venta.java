@@ -129,7 +129,8 @@ public class Venta extends PBase {
 
         getURL();
 
-        pedidos=true;
+        //pedidos=true;
+        pedidos=false;
         ws=new WebService(Venta.this,gl.wsurl);
 
         app = new AppMethods(this, gl, Con, db);
@@ -1825,6 +1826,11 @@ public class Venta extends PBase {
                 item.ID=56;item.Name="Ventas";item.Icon=56;
                 mmitems.add(item);
 
+                item = clsCls.new clsMenu();
+                item.ID=57;item.Name="Salir";item.Icon=57;
+                mmitems.add(item);
+
+
 
                 //item = clsCls.new clsMenu();
                 //item.ID=51;item.Name="Barra";item.Icon=51;
@@ -2099,6 +2105,9 @@ public class Venta extends PBase {
                 case 56:
                     showMenuSwitch();
                     break;
+                case 57:
+                    exitBtn();
+                    break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2164,24 +2173,41 @@ public class Venta extends PBase {
 
     }
 
+    private void exitBtn() {
+        Cursor dt;
+
+        try {
+            sql="SELECT * FROM T_VENTA";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                msgAskExit("Regresar al menu principal sin terminar venta");
+            } else {
+                finish();
+            }
+
+        } catch (Exception e) {
+        }
+    }
+
     //endregion
 
     //region Pedidos
 
     private void estadoPedidos() {
         try {
-            //ws.pedidosNuevos(gl.emp);
+            ws.pedidosNuevos(gl.emp);
         } catch (Exception e) {
-           // msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     @Override
     protected void wsCallBack(Boolean throwing,String errmsg) throws Exception {
         if (!throwing) {
-            //toast("WS Result : "+ws.intresult);
+            toast("WS Result : "+ws.intresult);
         } else {
-            //toast("WS Error : "+errmsg);
+            toast("WS Error : "+errmsg);
         }
     }
 
@@ -2815,7 +2841,7 @@ public class Venta extends PBase {
             menuTools();
 
             if (pedidos) {
-                //estadoPedidos();
+                estadoPedidos();
             }
 
             try {
@@ -2906,7 +2932,7 @@ public class Venta extends PBase {
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
