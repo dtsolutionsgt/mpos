@@ -819,7 +819,7 @@
                 android:text="0.00"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#1B76B9"
-                android:textSize="48sp"
+                android:textSize="42sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 

@@ -669,14 +669,19 @@ public class clsFELInFile {
 
     public void completar(String serie,int numero) {
 
-        totiva=Math.round(totiva*100);totiva=totiva/100;
+        //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
+        //totiva=Math.round(totiva*100);
+        //totiva=totiva/100;
+
+        String totIvaStr = String.format("%.2f", totiva);
+
         serie=serie+"-"+numero;
 
         xml+="</dte:Items>";
 
         xml+="<dte:Totales>";
         xml+="<dte:TotalImpuestos>";
-        xml+="<dte:TotalImpuesto NombreCorto=\"IVA\" TotalMontoImpuesto=\""+totiva+"\"></dte:TotalImpuesto>";
+        xml+="<dte:TotalImpuesto NombreCorto=\"IVA\" TotalMontoImpuesto=\""+totIvaStr+"\"></dte:TotalImpuesto>";
         xml+="</dte:TotalImpuestos>";
         xml+="<dte:GranTotal>"+totmonto+"</dte:GranTotal>";
         xml+="</dte:Totales>";
@@ -768,7 +773,8 @@ public class clsFELInFile {
         impbase=total/parametroiva2;
         imp=impbase* parametroiva1;
 
-        totmonto+=total;totiva+=imp;
+        totmonto+=total;
+        //totiva+=imp;
 
         xml+="<dte:Item BienOServicio=\"S\" NumeroLinea=\""+linea+"\">";
         xml+="<dte:Cantidad>"+cant+"</dte:Cantidad>";
@@ -792,6 +798,8 @@ public class clsFELInFile {
 
         xml+="<dte:Total>"+total+"</dte:Total>";
         xml+="</dte:Item>";
+
+        totiva+=Double.valueOf(impstr);
 
     }
 
