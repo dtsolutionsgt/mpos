@@ -1977,10 +1977,13 @@ public class WSRec extends PBase {
                 var.correo = item.CORREO;
                 var.texto = item.TEXTO;
                 var.activo = mu.bool(item.ACTIVO);
-                var.pet_prefijo=item.PET_PREFIJO;
-                var.pet_llave=item.PET_LLAVE;
-                var.pet_alias_pfx=item.PET_ALIAS_PFX;
-                var.pet_pfx_llave=item.PET_PFX_LLAVE;
+                var.fel_codigo_establecimiento=item.FEL_CODIGO_ESTABLECIMIENTO;
+                var.fel_usuario_firma=item.FEL_USUARIO_FIRMA;
+                var.fel_usuario_certificacion=item.FEL_USUARIO_CERTIFICACION;
+                var.fel_llave_firma=item.FEL_LLAVE_FIRMA;
+                var.fel_llave_certificacion =item.FEL_LLAVE_CERTIFICACION;
+                var.fel_afiliacion_iva=item.FEL_AFILIACION_IVA;
+                var.codigo_postal=item.CODIGO_POSTAL;
                 var.codigo_escenario_isr=item.CODIGO_ESCENARIO_ISR;
                 var.codigo_escenario_iva=item.CODIGO_ESCENARIO_IVA;
                 var.codigo_municipio=item.CODIGO_MUNICIPIO;

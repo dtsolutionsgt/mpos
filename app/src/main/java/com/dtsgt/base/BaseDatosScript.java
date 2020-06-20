@@ -336,10 +336,13 @@ public class BaseDatosScript {
                     "NIT TEXT NOT NULL,"+
                     "TEXTO TEXT NOT NULL,"+
                     "ACTIVO INTEGER NOT NULL,"+
-                    "PET_PREFIJO TEXT NOT NULL,"+
-                    "PET_LLAVE TEXT NOT NULL,"+
-                    "PET_ALIAS_PFX TEXT NOT NULL,"+
-                    "PET_PFX_LLAVE TEXT NOT NULL,"+
+                    "FEL_CODIGO_ESTABLECIMIENTO  TEXT NOT NULL,"+
+                    "FEL_USUARIO_FIRMA TEXT NOT NULL,"+
+                    "FEL_LLAVE_CERTIFICACION TEXT NOT NULL,"+
+                    "FEL_LLAVE_FIRMA TEXT NOT NULL,"+
+                    "FEL_AFILIACION_IVA TEXT NOT NULL,"+
+                    "FEL_USUARIO_CERTIFICACION TEXT NOT NULL,"+
+                    "CODIGO_POSTAL TEXT NOT NULL,"+
                     "CODIGO_ESCENARIO_ISR INTEGER NOT NULL,"+
                     "CODIGO_ESCENARIO_IVA INTEGER NOT NULL,"+
                     "CODIGO_MUNICIPIO TEXT NOT NULL,"+
