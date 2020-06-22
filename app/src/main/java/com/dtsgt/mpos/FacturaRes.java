@@ -1568,6 +1568,7 @@ public class FacturaRes extends PBase {
 
 			alert.setMessage("Pagado con billete : ");
 
+
 			final LinearLayout layout   = new LinearLayout(this);
 			layout.setOrientation(LinearLayout.VERTICAL);
 
