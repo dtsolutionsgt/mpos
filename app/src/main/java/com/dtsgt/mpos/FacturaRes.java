@@ -352,9 +352,8 @@ public class FacturaRes extends PBase {
 				msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
 			}
 
-			//inputCredito();
-
             msgAskCredito();
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("payCred: " + e.getMessage());
@@ -1644,37 +1643,6 @@ public class FacturaRes extends PBase {
 			showkeyb();
 			alert.setCancelable(false);
 			alert.create();
-
-			/*alert.setPositiveButton("Vuelto", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					double pg,vuel;
-
-					peexit=false;
-					svuelt=input.getText().toString();
-					sefect=""+tot;
-
-					try {
-						pg=Double.parseDouble(svuelt);
-						if (pg<tot) {
-							msgbox("Monto menor que total");return;
-						}
-
-						vuel=pg-tot;
-					} catch (NumberFormatException e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-						msgbox("Monto incorrecto");return;
-					}
-
-					applyCash();
-					if (vuel==0) {
-						checkPago();
-					} else {
-						vuelto("Vuelto : "+mu.frmcur(vuel));
-						//dialog.dismiss();
-					}
-
-				}
-			});*/
 
 			alert.setPositiveButton("Pagar", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {

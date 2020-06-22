@@ -99,29 +99,6 @@ public class FelFactura extends PBase {
         fel.fraseISR=suc.codigo_escenario_isr;
         fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
 
-        /*
-        demomode=true;
-
-        if (demomode) {
-
-            fel.llave_cert ="E5DC9FFBA5F3653E27DF2FC1DCAC824D"; // PET_LLAVE
-            fel.llave_firma ="b21b063dec8367a4d15f4fa6dc0975bc"; // PET_PFX_LLAVE
-            fel.fel_codigo ="1";  // PET_PREFIJO
-            fel.fel_alias="DEMO_FEL"; // PET_ALIAS
-            fel.fel_nit="1000000000K"; // NIT
-            fel.fel_correo="ejcalderon@dts.com.gt";  // CORREO
-
-        } else {
-
-            fel.llave_cert ="7493B422E3CE97FFAB537CD6291787ED"; // PET_LLAVE
-            fel.llave_firma ="5d1d699b6a2bef08d9960cbf7d265f41"; // PET_PFX_LLAVE
-            fel.fel_codigo="PEXPRESS"; // PET_PREFIJO
-            fel.fel_alias="COMERCIALIZADORA EXPRESS DE ORIENTE, SOCIEDAD ANONIMA"; // PET_ALIAS
-            fel.fel_nit="96049340"; // NIT
-            fel.fel_correo="";  // CORREO
-        }
-        */
-
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
         D_facturafObj=new clsD_facturafObj(this,Con,db);
@@ -189,8 +166,8 @@ public class FelFactura extends PBase {
     }
 
     private void contingencia() {
-        lbl1.setText("Certificando factura  . . ."); lbl3.setText("");ffail=0;
 
+        lbl1.setText("Certificando factura  . . ."); lbl3.setText("");ffail=0;
         contmode=true;
         procesafactura();
     }
@@ -210,11 +187,13 @@ public class FelFactura extends PBase {
     }
 
     private void callBackMulti() {
+
         fidx++;
 
         if (fidx<ftot) {
 
             if (fel.errorflag) ffail++;
+
             procesafactura();
 
         } else {
@@ -232,6 +211,7 @@ public class FelFactura extends PBase {
     }
 
     private void callBackSingle() {
+
         if (!fel.errorflag) {
             gl.feluuid=fel.fact_uuid;
 
