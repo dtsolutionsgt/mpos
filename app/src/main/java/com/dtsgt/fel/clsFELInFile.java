@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -40,7 +39,17 @@ public class clsFELInFile {
 
     // Parametrizacion FEL
 
-    public String llave_cert, llave_firma,fel_codigo,fel_alias,fel_ident,fel_nit,fel_correo;
+    public String fel_codigo_establecimiento,
+            fel_usuario_firma,
+            fel_usuario_certificacion,
+            fel_llave_firma,
+            fel_llave_certificacion,
+            fel_afiliacion_iva,
+            codigo_postal,
+            mpos_identificador_fact,
+            fel_nit,
+            fel_correo,
+            fel_nombre_comercial;
     public int fraseIVA,fraseISR;
 
     // Private declarations
@@ -94,10 +103,10 @@ public class clsFELInFile {
             s64=toBase64();
 
             jsonf = new JSONObject();
-            jsonf.put("llave", llave_firma);
+            jsonf.put("llave", fel_llave_firma);
             jsonf.put("archivo",s64);
-            jsonf.put("codigo",fel_codigo);
-            jsonf.put("alias",fel_alias);
+            jsonf.put("codigo",fel_codigo_establecimiento);
+            jsonf.put("alias",fel_usuario_certificacion);
             jsonf.put("es_anulacion","N");
 
             executeWSFirm();
@@ -129,9 +138,9 @@ public class clsFELInFile {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
-            connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", llave_cert);
-            connection.setRequestProperty("identificador",fel_ident);
+            connection.setRequestProperty("usuario",fel_usuario_certificacion);
+            connection.setRequestProperty("llave", fel_llave_certificacion);
+            connection.setRequestProperty("identificador", mpos_identificador_fact);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -273,9 +282,9 @@ public class clsFELInFile {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             //connection.setRequestProperty("Content-Length",""+Integer.toString(jscert.getBytes().length));
-            connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", llave_cert);
-            connection.setRequestProperty("identificador",fel_ident);
+            connection.setRequestProperty("usuario",fel_usuario_certificacion);
+            connection.setRequestProperty("llave", fel_llave_certificacion);
+            connection.setRequestProperty("identificador", mpos_identificador_fact);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -373,10 +382,10 @@ public class clsFELInFile {
             s64=anulToBase64();
 
             jsonf = new JSONObject();
-            jsonf.put("llave", llave_firma);
+            jsonf.put("llave", fel_llave_firma);
             jsonf.put("archivo",s64);
-            jsonf.put("codigo",fel_codigo);
-            jsonf.put("alias",fel_alias);
+            jsonf.put("codigo",fel_codigo_establecimiento);
+            jsonf.put("alias",fel_usuario_certificacion);
             jsonf.put("es_anulacion","S");
 
             executeWSFirmAnul();
@@ -408,9 +417,9 @@ public class clsFELInFile {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
-            connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", llave_cert);
-            connection.setRequestProperty("identificador",fel_ident);
+            connection.setRequestProperty("usuario",fel_usuario_certificacion);
+            connection.setRequestProperty("llave", fel_llave_certificacion);
+            connection.setRequestProperty("identificador", mpos_identificador_fact);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -550,9 +559,9 @@ public class clsFELInFile {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));
-            connection.setRequestProperty("usuario",fel_alias);
-            connection.setRequestProperty("llave", llave_cert);
-            connection.setRequestProperty("identificador",fel_ident);
+            connection.setRequestProperty("usuario",fel_usuario_certificacion);
+            connection.setRequestProperty("llave", fel_llave_certificacion);
+            connection.setRequestProperty("identificador", mpos_identificador_fact);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -670,6 +679,7 @@ public class clsFELInFile {
     public void completar(String serie,int numero) {
 
         //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
+        //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
         //totiva=Math.round(totiva*100);
         //totiva=totiva/100;
 
@@ -714,22 +724,31 @@ public class clsFELInFile {
         return s64;
     }
 
-    public void emisor(String p1,String p2,String p3,String p4,String p5) {
-        xml+="<dte:Emisor AfiliacionIVA=\""+p1+"\" " +
-                "CodigoEstablecimiento=\""+p2+"\" " +
-                "CorreoEmisor=\""+p3+"\" " +
-                "NITEmisor=\""+p4+"\" " +
-                "NombreComercial=\""+p5+"\" " +
-                "NombreEmisor=\""+p5+"\">";
+    public void emisor(String afiliacionIVA,
+                       String codigoEstablecimiento,
+                       String correoEmisor,
+                       String nitEmisor,
+                       String nombreComercial,
+                       String nombreEmisor) {
+        xml+="<dte:Emisor AfiliacionIVA=\""+afiliacionIVA+"\" " +
+                "CodigoEstablecimiento=\""+codigoEstablecimiento+"\" " +
+                "CorreoEmisor=\""+correoEmisor+"\" " +
+                "NITEmisor=\""+nitEmisor+"\" " +
+                "NombreComercial=\""+nombreComercial+"\" " +
+                "NombreEmisor=\""+nombreEmisor+"\">";
     }
 
-    public void emisorDireccion(String p1,String p2,String p3,String p4) {
+    public void emisorDireccion(String direccion,
+                                String codigoPostal,
+                                String municipio,
+                                String departamento,
+                                String pais) {
         xml+="<dte:DireccionEmisor>";
-        xml+="<dte:Direccion>"+p1+"</dte:Direccion>";
-        xml+="<dte:CodigoPostal>01064</dte:CodigoPostal>";
-        xml+="<dte:Municipio>"+p2+"</dte:Municipio>";
-        xml+="<dte:Departamento>"+p3+"</dte:Departamento>";
-        xml+="<dte:Pais>"+p4+"</dte:Pais>";
+        xml+="<dte:Direccion>"+direccion+"</dte:Direccion>";
+        xml+="<dte:CodigoPostal>+codigoPostal+</dte:CodigoPostal>";
+        xml+="<dte:Municipio>"+municipio+"</dte:Municipio>";
+        xml+="<dte:Departamento>"+departamento+"</dte:Departamento>";
+        xml+="<dte:Pais>"+pais+"</dte:Pais>";
         xml+="</dte:DireccionEmisor>";
 
         xml+="</dte:Emisor>";

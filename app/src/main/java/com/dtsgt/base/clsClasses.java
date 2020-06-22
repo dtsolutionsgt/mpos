@@ -521,10 +521,13 @@ public class clsClasses {
         public String nit;
         public String texto;
         public int  activo;
-        public String pet_prefijo;
-        public String pet_llave;
-        public String pet_alias_pfx;
-        public String pet_pfx_llave;
+        public String fel_codigo_establecimiento;
+        public String fel_usuario_firma;
+        public String fel_llave_certificacion;
+        public String fel_llave_firma;
+        public String fel_afiliacion_iva;
+        public String fel_usuario_certificacion;
+        public String codigo_postal;
         public int  codigo_escenario_isr;
         public int  codigo_escenario_iva;
         public String codigo_municipio;

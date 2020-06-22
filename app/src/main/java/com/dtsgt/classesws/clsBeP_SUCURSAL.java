@@ -1,30 +1,33 @@
 package com.dtsgt.classesws;
 
-
 import org.simpleframework.xml.Element;
 
 public class clsBeP_SUCURSAL {
 
-    @Element(required=false) public int CODIGO_SUCURSAL;
-    @Element(required=false) public String CODIGO;
-    @Element(required=false) public int EMPRESA;
-    @Element(required=false) public int CODIGO_NIVEL_PRECIO;
-    @Element(required=false) public String DESCRIPCION;
-    @Element(required=false) public String NOMBRE;
-    @Element(required=false) public String DIRECCION;
-    @Element(required=false) public String TELEFONO;
-    @Element(required=false) public String CORREO;
-    @Element(required=false) public String NIT;
-    @Element(required=false) public String TEXTO;
-    @Element(required=false) public boolean ACTIVO;
-    @Element(required=false) public String PET_PREFIJO;
-    @Element(required=false) public String PET_LLAVE;
-    @Element(required=false) public String PET_ALIAS_PFX;
-    @Element(required=false) public String PET_PFX_LLAVE;
-    @Element(required=false) public int CODIGO_ESCENARIO_ISR;
-    @Element(required=false) public int CODIGO_ESCENARIO_IVA;
-    @Element(required=false) public String CODIGO_MUNICIPIO;
-    @Element(required=false) public int CODIGO_PROVEEDOR;
+    @Element(required=false) public int CODIGO_SUCURSAL=0;
+    @Element(required=false) public String CODIGO="";
+    @Element(required=false) public int EMPRESA=0;
+    @Element(required=false) public int CODIGO_NIVEL_PRECIO=0;
+    @Element(required=false) public String DESCRIPCION="";
+    @Element(required=false) public String NOMBRE="";
+    @Element(required=false) public String DIRECCION="";
+    @Element(required=false) public String TELEFONO="";
+    @Element(required=false) public String CORREO="";
+    @Element(required=false) public String NIT="";
+    @Element(required=false) public String TEXTO="";
+    @Element(required=false) public boolean ACTIVO=false;
+    @Element(required=false) public String FEL_CODIGO_ESTABLECIMIENTO="";
+    @Element(required=false) public String FEL_USUARIO_FIRMA="";
+    @Element(required=false) public String FEL_USUARIO_CERTIFICACION ="";
+    @Element(required=false) public String FEL_LLAVE_FIRMA="";
+    @Element(required=false) public String FEL_LLAVE_CERTIFICACION="";
+    @Element(required=false) public String FEL_AFILIACION_IVA="";
+    @Element(required=false) public String CODIGO_POSTAL="";
+    @Element(required=false) public int CODIGO_ESCENARIO_ISR=0;
+    @Element(required=false) public int CODIGO_ESCENARIO_IVA=0;
+    @Element(required=false) public String CODIGO_MUNICIPIO="";
+    @Element(required=false) public int CODIGO_PROVEEDOR=0;
+
 
     public clsBeP_SUCURSAL() {
     }
@@ -32,8 +35,10 @@ public class clsBeP_SUCURSAL {
     public clsBeP_SUCURSAL(int CODIGO_SUCURSAL,String CODIGO,int EMPRESA,int CODIGO_NIVEL_PRECIO,
                            String DESCRIPCION,String NOMBRE,String DIRECCION,String TELEFONO,
                            String CORREO,String NIT,String TEXTO,boolean ACTIVO,
-                           String PET_PREFIJO,String PET_LLAVE,String PET_ALIAS_PFX,String PET_PFX_LLAVE,
-                           int CODIGO_ESCENARIO_ISR,int CODIGO_ESCENARIO_IVA,String CODIGO_MUNICIPIO, int CODIGO_PROVEEDOR) {
+                           String FEL_CODIGO_ESTABLECIMIENTO,String FEL_USUARIO_CERTIFICACION,String FEL_LLAVE_FIRMA,
+                           String FEL_LLAVE_CERTIFICACION,String FEL_AFILIACION_IVA,String FEL_USUARIO_FIRMA,
+                           String CODIGO_POSTAL,int CODIGO_ESCENARIO_ISR,int CODIGO_ESCENARIO_IVA,String CODIGO_MUNICIPIO,
+                           int CODIGO_PROVEEDOR) {
 
         this.CODIGO_SUCURSAL=CODIGO_SUCURSAL;
         this.CODIGO=CODIGO;
@@ -47,14 +52,17 @@ public class clsBeP_SUCURSAL {
         this.NIT=NIT;
         this.TEXTO=TEXTO;
         this.ACTIVO=ACTIVO;
-        this.PET_PREFIJO=PET_PREFIJO;
-        this.PET_LLAVE=PET_LLAVE;
-        this.PET_ALIAS_PFX=PET_ALIAS_PFX;
-        this.PET_PFX_LLAVE=PET_PFX_LLAVE;
+        this.FEL_CODIGO_ESTABLECIMIENTO=FEL_CODIGO_ESTABLECIMIENTO;
+        this.FEL_USUARIO_CERTIFICACION =FEL_USUARIO_CERTIFICACION;
+        this.FEL_USUARIO_FIRMA =FEL_USUARIO_FIRMA;
+        this.FEL_LLAVE_FIRMA=FEL_LLAVE_FIRMA;
+        this.FEL_LLAVE_CERTIFICACION=FEL_LLAVE_CERTIFICACION;
+        this.FEL_AFILIACION_IVA=FEL_AFILIACION_IVA;
+        this.CODIGO_POSTAL=CODIGO_POSTAL;
         this.CODIGO_ESCENARIO_ISR=CODIGO_ESCENARIO_ISR;
         this.CODIGO_ESCENARIO_IVA=CODIGO_ESCENARIO_IVA;
         this.CODIGO_MUNICIPIO=CODIGO_MUNICIPIO;
-        this.CODIGO_PROVEEDOR = CODIGO_PROVEEDOR;
+        this.CODIGO_PROVEEDOR=CODIGO_PROVEEDOR;
 
     }
 
@@ -131,29 +139,47 @@ public class clsBeP_SUCURSAL {
     public void setACTIVO(boolean value) {
         ACTIVO=value;
     }
-    public String getPET_PREFIJO() {
-        return PET_PREFIJO;
+    public String getFEL_CODIGO_ESTABLECIMIENTO() {
+        return FEL_CODIGO_ESTABLECIMIENTO;
     }
-    public void setPET_PREFIJO(String value) {
-        PET_PREFIJO=value;
+    public void setFEL_CODIGO_ESTABLECIMIENTO(String value) {
+        FEL_CODIGO_ESTABLECIMIENTO=value;
     }
-    public String getPET_LLAVE() {
-        return PET_LLAVE;
+    public String getFEL_USUARIO_CERTIFICACION() {
+        return FEL_USUARIO_CERTIFICACION;
     }
-    public void setPET_LLAVE(String value) {
-        PET_LLAVE=value;
+    public void setFEL_USUARIO_CERTIFICACION(String value) {
+        FEL_USUARIO_CERTIFICACION =value;
     }
-    public String getPET_ALIAS_PFX() {
-        return PET_ALIAS_PFX;
+    public String getFEL_USUARIO_FIRMA() {
+        return FEL_USUARIO_FIRMA;
     }
-    public void setPET_ALIAS_PFX(String value) {
-        PET_ALIAS_PFX=value;
+    public void setFEL_USUARIO_FIRMA(String value) {
+        FEL_USUARIO_FIRMA =value;
     }
-    public String getPET_PFX_LLAVE() {
-        return PET_PFX_LLAVE;
+    public String getFEL_LLAVE_FIRMA() {
+        return FEL_LLAVE_FIRMA;
     }
-    public void setPET_PFX_LLAVE(String value) {
-        PET_PFX_LLAVE=value;
+    public void setFEL_LLAVE_FIRMA(String value) {
+        FEL_LLAVE_FIRMA=value;
+    }
+    public String getFEL_LLAVE_CERTIFICACION() {
+        return FEL_LLAVE_CERTIFICACION;
+    }
+    public void setFEL_LLAVE_CERTIFICACION(String value) {
+        FEL_LLAVE_CERTIFICACION=value;
+    }
+    public String getFEL_AFILIACION_IVA() {
+        return FEL_AFILIACION_IVA;
+    }
+    public void setFEL_AFILIACION_IVA(String value) {
+        FEL_AFILIACION_IVA=value;
+    }
+    public String getCODIGO_POSTAL() {
+        return CODIGO_POSTAL;
+    }
+    public void setCODIGO_POSTAL(String value) {
+        CODIGO_POSTAL=value;
     }
     public int getCODIGO_ESCENARIO_ISR() {
         return CODIGO_ESCENARIO_ISR;

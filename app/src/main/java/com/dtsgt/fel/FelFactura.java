@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
-import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
@@ -24,7 +23,6 @@ import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
-import com.dtsgt.mpos.WSEnv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -89,14 +87,17 @@ public class FelFactura extends PBase {
         sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
         clsClasses.clsP_sucursal suc=sucursal.first();
 
-        fel.llave_cert =suc.pet_llave; // fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D"
-        fel.llave_firma=suc.pet_pfx_llave; // fel_token ="5b174fb0e23645b65ef88277d654603d"
-        fel.fel_codigo=suc.pet_prefijo;  //  1
-        fel.fel_alias=suc.pet_alias_pfx; // COMERGUA
+        fel.fel_llave_certificacion =suc.fel_llave_certificacion; // fel_llavews ="E5DC9FFBA5F3653E27DF2FC1DCAC824D"
+        fel.fel_llave_firma=suc.fel_llave_firma; // fel_token ="5b174fb0e23645b65ef88277d654603d"
+        fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;  //  1
+        fel.fel_usuario_certificacion=suc.fel_usuario_certificacion; // COMERGUA
+        fel.fel_usuario_firma=suc.fel_usuario_firma; // COMERGUA
         fel.fel_nit=suc.nit; // NIT  96038888
         fel.fel_correo=suc.correo;  //
+        fel.fel_nombre_comercial = gl.tiendanom;
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
+        fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
 
         /*
         demomode=true;
@@ -272,11 +273,12 @@ public class FelFactura extends PBase {
             }
             */
 
-            fel.fel_ident=fact.serie+fact.corelativo;
+            fel.mpos_identificador_fact =fact.serie+fact.corelativo;
 
             fel.iniciar(fact.fecha);
-            fel.emisor("GEN",fel.fel_codigo,"",fel.fel_nit,fel.fel_alias);
-            fel.emisorDireccion("Direccion","GUATEMALA","GUATEMALA","GT");
+            fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
+                      fel.fel_nit,fel.fel_nombre_comercial, fel.fel_usuario_firma);
+            fel.emisorDireccion("Direccion",fel.codigo_postal,"GUATEMALA","GUATEMALA","GT");
 
             //#EJC20200527: Quitar "-" del nit
             factf.nit =factf.nit.replace("-","");
