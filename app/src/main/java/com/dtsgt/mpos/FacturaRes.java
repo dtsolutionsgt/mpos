@@ -1733,6 +1733,7 @@ public class FacturaRes extends PBase {
     private void validaPagoEfectivo() {
 
         svuelt= khand.val;
+        sefect = "0";
 
         if (!svuelt.equalsIgnoreCase("")){
 

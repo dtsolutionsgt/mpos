@@ -121,6 +121,7 @@ public class FelFactura extends PBase {
                     if (multiflag) {
                         contingencia();
                     } else {
+                        //#EJC20200622: Inicial FEL
                         certificacion();
                     }
                 }
@@ -564,6 +565,7 @@ public class FelFactura extends PBase {
                 case 1:
                     statusFactura();
                     processComplete();
+                    //#EJC20200622: Fin single FEL
                     break;
                 case 2:
                     if (ftot>0) statusFactura();
