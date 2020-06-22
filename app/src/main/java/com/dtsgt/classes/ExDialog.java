@@ -3,10 +3,12 @@ package com.dtsgt.classes;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.dtsgt.mpos.R;
@@ -22,6 +24,19 @@ public class ExDialog extends  AlertDialog.Builder {
 
     }
 
+    @Override
+    public AlertDialog show() {
 
+        AlertDialog adg=super.show();
+
+        TextView textView = (TextView) adg.getWindow().findViewById(android.R.id.message);
+        textView.setTextColor(Color.BLACK);
+        textView.setTextSize(24);
+        textView.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+        textView.setGravity(Gravity.CENTER);
+
+
+        return adg;
+    }
 
 }

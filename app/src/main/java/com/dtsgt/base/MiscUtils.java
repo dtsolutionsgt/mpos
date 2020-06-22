@@ -189,79 +189,19 @@ public class MiscUtils {
 
             AlertDialog adg=dialog.show();
 
-            TextView textView = (TextView) adg.getWindow().findViewById(android.R.id.message);
-            textView.setTextColor(Color.BLACK);
-            textView.setTextSize(24);
-            textView.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
-            textView.setGravity(Gravity.CENTER);
-
-
         } catch (Exception ex) {
             toast(ex.getMessage());
         }
 	}   
 	
 	public void msgbox(int v) {
-
-		try{
-
-            ExDialog dialog = new ExDialog(cCont);
-			dialog.setMessage(String.valueOf(v));
-
-			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-				}
-			});
-			dialog.show();
-
-		}catch (Exception ex)
-		{
-			pB = new PBase();
-			pB.addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"msgbox(int v)");}
-	
+	    msgbox(String.valueOf(v));
 	}   
 	
 	public void msgbox(double v) {
-		try {
-            ExDialog dialog = new ExDialog(cCont);
-			dialog.setMessage(String.valueOf(v));
-
-			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-				}
-			});
-			dialog.show();
-
-		}catch (Exception ex)
-		{
-			pB = new PBase();
-			pB.addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"msgbox(double v)");
-		}
+        msgbox(String.valueOf(v));
 	}   
-	
-	/*
-	public void msgbox(String msgType,String msg) {
-		
-		if (msg==null || msg.isEmpty()) {return;}
-		
-		AlertDialog.Builder dialog = new AlertDialog.Builder(cCont);
-    	
-		dialog.setTitle(R.string.app_name);
-		dialog.setMessage(msg);
-		
-		//dialog.setIcon(R.drawable.ic_info);
-		//if (msgType=="E") {dialog.setIcon(R.drawable.ic_error);}
-		//if (msgType=="W") {dialog.setIcon(R.drawable.ic_warn);}
-		
-		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-    	    public void onClick(DialogInterface dialog, int which) {			      	
-    	    }
-    	});
-		dialog.show();
-	
-	}   
-	*/
-	
+
 	public void toast(String msg) {
 		Toast.makeText(cCont,msg, Toast.LENGTH_SHORT).show();
 	}

@@ -413,7 +413,9 @@ public class FacturaRes extends PBase {
 
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
-        if (khand.isEnter) validaPagoEfectivo();
+        if (khand.isEnter) {
+            validaPagoEfectivo();
+        }
     }
 
 	//endregion
@@ -1653,9 +1655,7 @@ public class FacturaRes extends PBase {
             public void onClick(DialogInterface dialog, int which) {
                 applyCash();
                 checkPago();
-                if (idfel.isEmpty()) {
-                    finish();
-                }
+                if (!app.usaFEL()) finish();
             }
         });
 
@@ -1738,7 +1738,6 @@ public class FacturaRes extends PBase {
         svuelt= khand.val;
         sefect="0";
 
-
         if (!svuelt.equalsIgnoreCase("")){
 
             double vuel=Double.parseDouble(svuelt);
@@ -1756,9 +1755,10 @@ public class FacturaRes extends PBase {
 
             if (vuel==0.0){
                 //msgAskVuelto("Monto ingresado no genera vuelto");
+                sefect=""+aplcash;
                 applyCash();
                 checkPago();
-                if (idfel.isEmpty()) finish();
+                if (!app.usaFEL()) finish();
             } else {
                 aplcash=aplcash-vuel;
                 sefect=""+aplcash;
