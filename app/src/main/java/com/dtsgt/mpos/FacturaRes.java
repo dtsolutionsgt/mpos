@@ -1562,12 +1562,11 @@ public class FacturaRes extends PBase {
                     totdv = mu.round(tot-dispventa,2);
                     alert.setTitle("A pagar : "+mu.frmcur(totdv));
                 }
-            }else{
+            } else {
                 alert.setTitle("A pagar : "+mu.frmcur(tot));
             }
 
 			alert.setMessage("Pagado con billete : ");
-
 
 			final LinearLayout layout   = new LinearLayout(this);
 			layout.setOrientation(LinearLayout.VERTICAL);
@@ -1648,7 +1647,6 @@ public class FacturaRes extends PBase {
     private void msgAskVuelto(String msg) {
         ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle("Vuelto");
         dialog.setMessage(msg);
 
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

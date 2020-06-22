@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.view.Gravity;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
@@ -182,32 +186,19 @@ public class MiscUtils {
             dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {}
             });
-            dialog.show();
+
+            AlertDialog adg=dialog.show();
+
+            TextView textView = (TextView) adg.getWindow().findViewById(android.R.id.message);
+            textView.setTextColor(Color.BLACK);
+            textView.setTextSize(24);
+            textView.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+            textView.setGravity(Gravity.CENTER);
+
+
         } catch (Exception ex) {
             toast(ex.getMessage());
         }
-
-
-	    /*
-		try {
-			if (!emptystr(msg)){
-				AlertDialog.Builder dialog = new AlertDialog.Builder(cCont);
-
-				dialog.setTitle(R.string.app_name);
-				dialog.setMessage(msg);
-				dialog.setCancelable(false);
-
-				dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						//Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
-					}
-				});
-				dialog.show();
-			}
-		} catch (Exception ex) {
-		}
-
-	     */
 	}   
 	
 	public void msgbox(int v) {

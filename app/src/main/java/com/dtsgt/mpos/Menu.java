@@ -530,7 +530,7 @@ public class Menu extends PBase {
         final String[] selitems = {"Envío de datos","Recepción de parámetros"};
         //final String[] selitems = {"Envío de datos","Recepción de parámetros","Envío de huellas"};
 
-        ExDialog dialog = new ExDialog(this);
+        ExDialog menudlg = new ExDialog(this);
 
         menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
