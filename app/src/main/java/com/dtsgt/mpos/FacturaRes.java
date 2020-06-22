@@ -7,12 +7,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -1647,6 +1649,7 @@ public class FacturaRes extends PBase {
 	}
 
     private void msgAskVuelto(String msg) {
+
         ExDialog dialog = new ExDialog(this);
 
         dialog.setMessage(msg);
@@ -1659,7 +1662,16 @@ public class FacturaRes extends PBase {
             }
         });
 
-        dialog.show();
+        //dialog.show();
+
+		AlertDialog adg=dialog.show();
+
+		TextView textView = (TextView) adg.getWindow().findViewById(android.R.id.message);
+		textView.setTextColor(Color.BLACK);
+		textView.setTextSize(50);
+		Typeface tf = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
+		textView.setTypeface(tf, Typeface.NORMAL);
+		textView.setGravity(Gravity.CENTER);
 
     }
 

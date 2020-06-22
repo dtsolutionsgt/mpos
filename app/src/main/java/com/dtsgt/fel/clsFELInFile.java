@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -23,6 +24,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -109,7 +112,11 @@ public class clsFELInFile {
             jsonf.put("alias",fel_usuario_certificacion);
             jsonf.put("es_anulacion","N");
 
+            Date currentTime = Calendar.getInstance().getTime();
+            Log.i("FEL_FIRM: ", currentTime.toString());
+
             executeWSFirm();
+
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         }
@@ -198,6 +205,8 @@ public class clsFELInFile {
     private void wsFinishedF() {
         try  {
             if (!errorflag) {
+                Date currentTime = Calendar.getInstance().getTime();
+                Log.i("FEL_CERT: ", currentTime.toString());
                 sendJSONCert();
             } else {
                 parent.felCallBack();
