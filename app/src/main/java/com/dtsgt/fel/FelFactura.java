@@ -226,7 +226,6 @@ public class FelFactura extends PBase {
             gl.FELmsg="Ocurrio error en FEL :\n\n"+ fel.error;
             startActivity(new Intent(this,FELmsgbox.class));
             finish();
-            //msgexit("Ocurrio error en FEL :\n\n"+ fel.error);
         }
     }
 
@@ -243,15 +242,6 @@ public class FelFactura extends PBase {
 
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
-
-            /*
-            if (demomode) {
-                //fel.fel_ident="abc123";
-                fel.fel_ident=fact.serie+fact.corelativo;
-            } else {
-                fel.fel_ident=fact.serie+fact.corelativo;
-            }
-            */
 
             fel.mpos_identificador_fact =fact.serie+fact.corelativo;
 

@@ -134,6 +134,7 @@ public class WSRec extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wsrec);
 
@@ -142,8 +143,6 @@ public class WSRec extends PBase {
         lbl1 = (TextView) findViewById(R.id.textView7);
         lbl1.setText("");
         lblTitulo = (TextView) findViewById(R.id.lblTit6);
-        //lbl2 = (TextView) findViewById(R.id.lblWS);
-        //lbl2.setText("");
 
         txtClave = (EditText) findViewById(R.id.txtClave);
         txtEmpresa = (EditText) findViewById(R.id.txtEmpresa);
@@ -169,6 +168,7 @@ public class WSRec extends PBase {
         lblIdDispositivo.setText("ID - " + gl.deviceId);
 
         if (pbd_vacia) {
+
             lblTitulo.setText("B.D. Vacía");
 
             txtURLWS.setEnabled(true);
