@@ -128,61 +128,6 @@ public class FacturaRes extends PBase {
         imgMPago.setVisibility(View.INVISIBLE);
         lblMPago.setVisibility(View.INVISIBLE);
 
-        /*
-        if (rutapos) {
-			lblMPago.setVisibility(View.INVISIBLE);
-			imgMPago.setVisibility(View.INVISIBLE);
-			lblCred.setText("Pago\nTarjeta");
-			imgCred.setImageResource(R.drawable.card_credit);
-		} else {
-			lblMPago.setVisibility(View.VISIBLE);
-			imgMPago.setVisibility(View.VISIBLE);
-			lblCred.setText("Pago\nCrédito");
-			imgCred.setImageResource(R.drawable.credit);
-		}
-
-        if (media==1) {
-			imgCred.setVisibility(View.INVISIBLE);
-			lblCred.setVisibility(View.INVISIBLE);
-			imgMPago.setVisibility(View.VISIBLE);
-			lblMPago.setVisibility(View.VISIBLE);
-		}
-
-		if (media <= 3){
-			imgMPago.setVisibility(View.VISIBLE);
-			lblMPago.setVisibility(View.VISIBLE);
-			imgCred.setVisibility(View.INVISIBLE);
-			lblCred.setVisibility(View.INVISIBLE);
-		}
-
-		if (media==4) {
-			if (gl.vcredito) {
-				if (credito<=0 || gl.facturaVen != 0) {
-					imgCred.setVisibility(View.INVISIBLE);
-					lblCred.setVisibility(View.INVISIBLE);
-				} else if(credito > 0){
-					imgCred.setVisibility(View.VISIBLE);
-					lblCred.setVisibility(View.VISIBLE);
-					imgMPago.setVisibility(View.INVISIBLE);
-					lblMPago.setVisibility(View.INVISIBLE);
-				}
-			} else {
-			    imgCred.setVisibility(View.VISIBLE);
-				lblCred.setVisibility(View.VISIBLE);
-				imgMPago.setVisibility(View.INVISIBLE);
-				lblMPago.setVisibility(View.INVISIBLE);
-			}
-		}
-
-		if (gl.dvbrowse!=0){
-		    imgCred.setVisibility(View.INVISIBLE);
-			lblCred.setVisibility(View.INVISIBLE);
-			imgMPago.setVisibility(View.VISIBLE);
-			lblMPago.setVisibility(View.VISIBLE);
-		}
-
-		*/
-
         if (media==4) {
             if (credito<=0 || gl.facturaVen != 0) {
                 imgCred.setVisibility(View.INVISIBLE);
