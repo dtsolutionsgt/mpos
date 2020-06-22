@@ -129,9 +129,9 @@ public class CierreX extends PBase {
     @Override
     public void onBackPressed() {
         if(gl.reportid==5){
-            msgAskExit("Está seguro de salir");
+            msgAskExit("Salir");
         }else if(report){
-            msgAskExit("Está seguro de salir");
+            msgAskExit("Salir");
         }else {
             msgbox("No es posible salir sin generar el reporte antes");
         }

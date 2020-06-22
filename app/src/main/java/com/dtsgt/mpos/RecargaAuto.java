@@ -199,7 +199,7 @@ public class RecargaAuto extends PBase {
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					msgAskSave("¿Está seguro?");
+					msgAskSave("¿Continuar?");
 				}
 			});
 

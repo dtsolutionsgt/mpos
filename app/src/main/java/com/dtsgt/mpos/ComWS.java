@@ -4340,7 +4340,7 @@ public class ComWS extends PBase {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
             dialog.setTitle("Envio");
-            dialog.setMessage("¿Está seguro de que la comunicacion NO fue correcta?");
+            dialog.setMessage("¿Confirma que la comunicacion NO fue correcta?");
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -4400,7 +4400,7 @@ public class ComWS extends PBase {
             final TextView input = new TextView(this);
             alert.setView(input);
 
-            input.setText("Está seguro de que la comunicación fue correcta");
+            input.setText("La comunicación fue correcta");
             input.requestFocus();
 
             alert.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -4479,7 +4479,7 @@ public class ComWS extends PBase {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
             dialog.setTitle(R.string.app_name);
-            dialog.setMessage("Está seguro de salir de la aplicación?");
+            dialog.setMessage("Salir de la aplicación?");
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {

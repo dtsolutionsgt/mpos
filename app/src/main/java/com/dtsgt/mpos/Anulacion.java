@@ -4,9 +4,14 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -17,17 +22,24 @@ import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
+import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.fel.FELmsgbox;
+import com.dtsgt.fel.FelFactura;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,6 +64,11 @@ public class Anulacion extends PBase {
 	private AppMethods app;
 
     private clsFELInFile fel;
+	private Anulacion.WebServiceHandler ws;
+	private XMLObject xobj;
+
+	private String CSQL;
+	private boolean factsend;
 
 	private int tipo,depparc,fcorel;	
 	private String selid,itemid,fserie,fres,felcorel,uuid;
@@ -107,6 +124,9 @@ public class Anulacion extends PBase {
 		itemid="*";
 
         fel=new clsFELInFile(this,this);
+		getURL();
+		ws = new Anulacion.WebServiceHandler(Anulacion.this, gl.wsurl, gl.timeout);
+		xobj = new XMLObject(ws);
 
         clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
         sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
@@ -120,7 +140,6 @@ public class Anulacion extends PBase {
         fel.fel_correo=suc.correo;
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
-
 
         printotrodoc = new Runnable() {
 		    public void run() {
@@ -147,7 +166,36 @@ public class Anulacion extends PBase {
 	}
 
 	//region Events
-	
+
+	private void getURL() {
+		gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+		gl.timeout = 6000;
+
+		try {
+			File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+			if (file1.exists()) {
+
+				FileInputStream fIn = new FileInputStream(file1);
+				BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
+				gl.wsurl = myReader.readLine();
+				String line = myReader.readLine();
+
+				if(line.isEmpty()) {
+					gl.timeout = 6000;
+				}
+				else {
+					gl.timeout = Integer.valueOf(line);
+				}
+
+				myReader.close();
+			}
+
+		} catch (Exception e) {}
+
+		if (gl.wsurl.isEmpty()) toast("Falta archivo con URL");
+	}
+
 	public void anulDoc(View view){
 		try{
 			if (itemid.equalsIgnoreCase("*")) {
@@ -428,7 +476,7 @@ public class Anulacion extends PBase {
         if (buildAnulXML())  fel.anulacion(uuid);
     }
 
-    @Override
+	@Override
     public void felCallBack()  {
 
         if (!fel.errorflag) {
@@ -437,9 +485,11 @@ public class Anulacion extends PBase {
             sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
             db.execSQL(sql);
 
+			envioFactura();
+
 			toast(String.format("Se anuló la factura %d correctamente",itemid));
 
-            listItems();
+			listItems();
 
         } else {
             msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
@@ -502,6 +552,102 @@ public class Anulacion extends PBase {
 		return  NIT;
 	}
     //endregion
+
+	//region WebService handler
+
+
+	private void envioFactura() {
+
+		Handler mtimer = new Handler();
+		Runnable mrunner = new Runnable() {
+			@Override
+			public void run() {
+				ws.callback = 1;
+				ws.execute();
+			}
+		};
+		mtimer.postDelayed(mrunner, 200);
+	}
+
+	public class WebServiceHandler extends com.dtsgt.classes.WebService {
+
+		public WebServiceHandler(PBase Parent, String Url, int TimeOut) {
+			super(Parent, Url, TimeOut);
+		}
+
+		@Override
+		public void wsExecute() {
+			try {
+				switch (ws.callback) {
+					case 1:
+
+						CSQL="UPDATE D_FACTURA SET ANULADO = 1 WHERE COREL='"+itemid+"';";
+						CSQL+="UPDATE D_FACTURAD SET ANULADO = 1 WHERE COREL='"+itemid+"';";
+						CSQL+="UPDATE D_FACTURAP SET ANULADO = 1 WHERE COREL='"+itemid+"';";
+
+						callMethod("Commit", "SQL", CSQL);
+						break;
+				}
+			} catch (Exception e) {
+				error = e.getMessage();errorflag=true;
+			}
+		}
+	}
+
+	@Override
+	public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
+		try {
+			if (throwing) throw new Exception(errmsg);
+
+			if (ws.errorflag) {
+				processComplete();
+				return;
+			}
+
+			switch (ws.callback) {
+				case 1:
+					statusFactura();
+					processComplete();
+					break;
+			}
+
+		} catch (Exception e) {
+			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+			processComplete();
+		}
+	}
+
+	private void processComplete() {
+
+		if (ws.errorflag) {
+			toast("Error de envío");
+		} else {
+			toast("Envío completo");
+		}
+		finish();
+	}
+
+	private void statusFactura() {
+		try {
+
+			String rs =(String) xobj.getSingle("CommitResult",String.class);
+
+			if (!rs.equalsIgnoreCase("#")) {
+
+				sql="UPDATE D_Factura SET STATCOM='P' WHERE COREL='"+itemid+"'";
+				db.execSQL(sql);
+
+				factsend=false;
+			} else {
+				factsend=true;
+			}
+
+		} catch (Exception e) {
+			msgbox(e.getMessage());
+		}
+	}
+
+	//endregion
 
 	//region Documents
 	

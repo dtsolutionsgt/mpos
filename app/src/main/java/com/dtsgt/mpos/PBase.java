@@ -2,6 +2,9 @@ package com.dtsgt.mpos;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
@@ -192,6 +195,12 @@ public class PBase extends Activity {
 		if (condition) return valtrue;else return valfalse;
 	}
 
+	public boolean isNetworkAvailable() {
+		ConnectivityManager connectivityManager
+				= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
 
 	// Activity Events
 	

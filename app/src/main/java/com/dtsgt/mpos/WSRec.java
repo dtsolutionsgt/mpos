@@ -119,7 +119,7 @@ import java.util.ArrayList;
 public class WSRec extends PBase {
 
     private TextView lbl1, lbl2, lblIdDispositivo;
-    private TextView lblTitulo;
+    private TextView lblTitulo,cmdRecibir;
     EditText txtEmpresa, txtClave, txtURLWS;
     private ProgressBar pbar;
 
@@ -131,6 +131,8 @@ public class WSRec extends PBase {
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
 
     private String clave;
+
+    public boolean automatico;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +149,8 @@ public class WSRec extends PBase {
         txtClave = (EditText) findViewById(R.id.txtClave);
         txtEmpresa = (EditText) findViewById(R.id.txtEmpresa);
         txtURLWS = (EditText) findViewById(R.id.txtURLWS);
+
+        cmdRecibir = (TextView) findViewById(R.id.textView45);
 
         lblIdDispositivo = (TextView) findViewById(R.id.lblIdDispositivo);
 
@@ -191,6 +195,13 @@ public class WSRec extends PBase {
             txtURLWS.setText(gl.wsurl);
             txtClave.setText(gl.clave);
             txtEmpresa.setText(String.valueOf(gl.emp));
+        }
+
+        if (gl.recibir_automatico){
+           cmdRecibir.setVisibility(View.INVISIBLE);
+           browse=2;
+        }else{
+            cmdRecibir.setVisibility(View.VISIBLE);
         }
 
     }
@@ -2415,6 +2426,11 @@ public class WSRec extends PBase {
             if (browse == 1) {
                 browse = 0;
                 finish();
+            }
+
+            if(browse==2){
+                browse=0;
+                Recibir();
             }
 
         } catch (Exception e) {

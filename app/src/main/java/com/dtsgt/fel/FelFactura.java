@@ -229,7 +229,7 @@ public class FelFactura extends PBase {
         } else {
 
             gl.feluuid="";
-            gl.FELmsg="Ocurrio error en FEL :\n\n"+ fel.error;
+            gl.FELmsg="Ocurrió error en FEL :\n\n"+ fel.error;
             startActivity(new Intent(this,FELmsgbox.class));
             finish();
         }
@@ -422,7 +422,6 @@ public class FelFactura extends PBase {
             msgbox(e.getMessage());
         }
     }
-
 
     private void processComplete() {
 

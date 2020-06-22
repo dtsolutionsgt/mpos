@@ -25,7 +25,6 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_cajacierreObj;
-import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -808,7 +807,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuracion de impresora","Tablas","Información de sistema"};
+			final String[] selitems = {"Configuración de impresora","Tablas","Información de sistema"};
 
 			menudlg = new ExDialog (this);
 
@@ -1035,7 +1034,7 @@ public class Menu extends PBase {
 
                     ss = selitems[item];
 
-                    if (ss.equalsIgnoreCase("Almacen")) gl.mantid = 0;
+                    if (ss.equalsIgnoreCase("Almacén")) gl.mantid = 0;
                     if (ss.equalsIgnoreCase("Banco")) gl.mantid = 1;
                     if (ss.equalsIgnoreCase("Caja")) gl.mantid = 13;
                     if (ss.equalsIgnoreCase("Cliente")) gl.mantid = 2;
@@ -1250,7 +1249,7 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depositos","Cierre de Caja"};
+			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depoósitos","Cierre de Caja"};
 
 			menudlg = new ExDialog(this);
 			menudlg.setTitle("Caja");
@@ -1263,7 +1262,7 @@ public class Menu extends PBase {
 
 					if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
 					if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
-					if (ss.equalsIgnoreCase("Depositos")) gl.cajaid=4;
+					if (ss.equalsIgnoreCase("Depósitos")) gl.cajaid=4;
 					if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
 
 					gl.titReport = ss;
@@ -1271,7 +1270,13 @@ public class Menu extends PBase {
 					if(valida()){
 
 						if(gl.cajaid!=2){
+
+							gl.inicio_caja_correcto =false;
+
+							browse=1;
+
 							startActivity(new Intent(Menu.this,Caja.class));
+
 						}else {
 							startActivity(new Intent(Menu.this,CajaPagos.class));
 						}
@@ -1414,7 +1419,11 @@ public class Menu extends PBase {
 					if (valida()){
 
 						if (gl.cajaid!=2){
+
+							gl.inicio_caja_correcto =false;
+
 							startActivity(new Intent(Menu.this,Caja.class));
+
 						}
 
 					}
@@ -1625,10 +1634,30 @@ public class Menu extends PBase {
 	
 	@Override
  	protected void onResume() {
+
+		String ms="";
+
 		try{
 			super.onResume();
 
 			setPrintWidth();
+
+			if(browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
+				gl.recibir_automatico = false;
+				if (gl.peCajaRec) {
+
+					if (isNetworkAvailable()) {
+						gl.recibir_automatico = true;
+						startActivity(new Intent(Menu.this,WSRec.class));
+					} else {
+						if (!ms.isEmpty()) ms+="\n\n";
+						ms+="No hay conexion a internet";
+					}
+				}
+
+				browse=0;
+			}
+
  		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}

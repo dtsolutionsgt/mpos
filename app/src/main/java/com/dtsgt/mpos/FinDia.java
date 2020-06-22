@@ -2422,7 +2422,7 @@ public class FinDia extends PBase {
 
         try{
             ExDialog dialog = new ExDialog(this);
-            dialog.setMessage("¿Está seguro de continuar?");
+            dialog.setMessage("¿Continuar?");
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

@@ -532,7 +532,7 @@ public class ComDrop extends Activity {
 	public void askSendOK2() {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		    	
-		dialog.setTitle("¿Está seguro?");
+		dialog.setTitle("¿Continuar?");
 					
 		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 		    public void onClick(DialogInterface dialog, int which) {			      	
