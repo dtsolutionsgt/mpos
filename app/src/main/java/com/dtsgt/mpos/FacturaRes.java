@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
@@ -1731,7 +1732,7 @@ public class FacturaRes extends PBase {
 	}
 
     private void msgAskVuelto(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
         dialog.setTitle("Vuelto");
         dialog.setMessage(msg);
@@ -1740,7 +1741,9 @@ public class FacturaRes extends PBase {
             public void onClick(DialogInterface dialog, int which) {
                 applyCash();
                 checkPago();
-                if (idfel.isEmpty()) finish();
+                if (idfel.isEmpty()) {
+                    finish();
+                }
             }
         });
 
@@ -1818,13 +1821,15 @@ public class FacturaRes extends PBase {
 	}
 
     private void validaPagoEfectivo() {
+        double aplcash;
 
         svuelt= khand.val;
+        sefect="0";
 
         if (!svuelt.equalsIgnoreCase("")){
 
             double vuel=Double.parseDouble(svuelt);
-            //vuel=vuel-tot;
+            aplcash=vuel;
             vuel=vuel-gl.total_pago;
             lblMonto.setText("");khand.val="";
 
@@ -1842,7 +1847,9 @@ public class FacturaRes extends PBase {
                 checkPago();
                 if (idfel.isEmpty()) finish();
             } else {
-                applyCash();
+                aplcash=aplcash-vuel;
+                sefect=""+aplcash;
+                //applyCash();
                 checkPagoNF();
                 msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
             }
@@ -1859,6 +1866,8 @@ public class FacturaRes extends PBase {
         int codpago=0;
 
 		try {
+
+
 			epago=Double.parseDouble(sefect);
 
 			if (epago==0) return;

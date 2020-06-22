@@ -104,7 +104,7 @@
             android:layout_below="@id/txt1"
             android:layout_alignStart="@+id/txt1"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
