@@ -10,11 +10,13 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.view.View;
@@ -55,6 +57,8 @@ public class MainActivity extends PBase {
 
     private String parVer = "3.1.4 / 18-Jun-2020";
 
+    Typeface typeface;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -64,6 +68,8 @@ public class MainActivity extends PBase {
             setContentView(R.layout.activity_main);
 
             grantPermissions();
+
+            //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
 
         } catch (Exception e) {
             msgbox(new Object() {
@@ -435,6 +441,7 @@ public class MainActivity extends PBase {
     }
 
     private boolean checkUser() {
+
         Cursor DT;
         String dpwd;
 
@@ -443,6 +450,7 @@ public class MainActivity extends PBase {
         try {
 
             if (usr.isEmpty()) {
+
                 mu.msgbox("Usuario incorrecto.");
                 return false;
             }
@@ -462,7 +470,7 @@ public class MainActivity extends PBase {
             DT.moveToFirst();
             dpwd = DT.getString(1);
             if (!pwd.equalsIgnoreCase(dpwd)) {
-                mu.msgbox("Contraseña incorrecta !");
+                mu.msgbox("Contraseña incorrecta!");
                 return false;
             }
 

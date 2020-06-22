@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,6 +30,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class FelFactura extends PBase {
 
@@ -121,6 +124,8 @@ public class FelFactura extends PBase {
                     if (multiflag) {
                         contingencia();
                     } else {
+                        Date currentTime = Calendar.getInstance().getTime();
+                        Log.i("FEL_INI: ", currentTime.toString());
                         //#EJC20200622: Inicial FEL
                         certificacion();
                     }
@@ -420,6 +425,9 @@ public class FelFactura extends PBase {
 
 
     private void processComplete() {
+
+        Date currentTime = Calendar.getInstance().getTime();
+        Log.i("FEL_FINISH: ", currentTime.toString());
 
         if (ws.errorflag) {
             toast("Error de envio");
