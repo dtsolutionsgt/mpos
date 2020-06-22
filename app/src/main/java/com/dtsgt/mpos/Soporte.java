@@ -9,6 +9,8 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.view.View;
 
+import com.dtsgt.classes.ExDialog;
+
 import java.io.File;
 
 public class Soporte extends PBase {
@@ -131,9 +133,7 @@ public class Soporte extends PBase {
     //region Aux
 
     private void msgAsk(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Road Soporte");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.dtsgt.base.appGlobals;
+import com.dtsgt.classes.ExDialog;
 
 public class CliNuevo extends PBase {
 
@@ -473,9 +474,7 @@ public class CliNuevo extends PBase {
 	
 	private void msgAskSave(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿" + msg  + "?");
 
 			dialog.setIcon(R.drawable.ic_quest);
@@ -508,9 +507,7 @@ public class CliNuevo extends PBase {
 	
 	private void msgAskExit(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿" + msg + "?");
 
 			dialog.setIcon(R.drawable.ic_quest);

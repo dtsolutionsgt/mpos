@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
@@ -852,9 +853,8 @@ public class WSEnv extends PBase {
     //region Dialogs
 
     private void msgboxwait(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Envío");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
 
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

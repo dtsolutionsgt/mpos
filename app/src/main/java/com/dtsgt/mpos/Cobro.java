@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocCobro;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.ladapt.ListAdaptCobro;
@@ -481,9 +482,7 @@ public class Cobro extends PBase {
 	private void  msgAskFact() {
 		try{
 
-			final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setTitle("Road");
+			final ExDialog alert = new ExDialog(this);
 
 			final LinearLayout layout   = new LinearLayout(this);
 			layout.setOrientation(LinearLayout.VERTICAL);

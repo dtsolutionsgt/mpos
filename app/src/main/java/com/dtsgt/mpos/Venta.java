@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
@@ -77,7 +78,7 @@ public class Venta extends PBase {
     private ListAdaptGridProd adapterp;
     private ListAdaptGridProdList adapterpl;
 
-    private AlertDialog.Builder mMenuDlg;
+    private ExDialog mMenuDlg;
 
     private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
@@ -1462,8 +1463,7 @@ public class Venta extends PBase {
                 selitems[i] = lname.get(i);
             }
 
-            mMenuDlg = new AlertDialog.Builder(this);
-            mMenuDlg.setTitle("Razón de no atencion");
+            mMenuDlg = new ExDialog(this);
 
             mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -1564,9 +1564,8 @@ public class Venta extends PBase {
 
     private void msgAskExit(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg  + " ?");
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -1592,9 +1591,8 @@ public class Venta extends PBase {
 
     private void msgAskDel(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg  + " ?");
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -1617,9 +1615,8 @@ public class Venta extends PBase {
 
     private void msgAskBarra(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg  + " ?");
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -1643,9 +1640,8 @@ public class Venta extends PBase {
 
     private void msgAskAdd(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Agregar a la venta");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -1668,9 +1664,8 @@ public class Venta extends PBase {
     private void msgAskLimit(String msg,boolean updateitem) {
         final boolean updatem=updateitem;
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -1930,9 +1925,8 @@ public class Venta extends PBase {
             //final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
             final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
 
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setIcon(R.drawable.reimpresion48);
-            menudlg.setTitle("Reimpresión");
+
+            ExDialog menudlg = new ExDialog(this);
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -1989,9 +1983,8 @@ public class Venta extends PBase {
             final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
 
 
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setIcon(R.drawable.anulacion48);
-            menudlg.setTitle("Anulación");
+
+            ExDialog menudlg = new ExDialog(this);
 
             menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -2032,9 +2025,8 @@ public class Venta extends PBase {
 
     public void showQuickRecep() {
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Actualización de parametros");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿Actualizar parametros de venta?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -2136,9 +2128,8 @@ public class Venta extends PBase {
             final AlertDialog Dialog;
             final String[] selitems = {"Iniciar nueva venta","Cambiar venta"};
 
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setIcon(R.drawable.reimpresion48);
-            menudlg.setTitle("Ventas");
+
+            ExDialog menudlg = new ExDialog(this);
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -2220,8 +2211,8 @@ public class Venta extends PBase {
             final AlertDialog Dialog;
             final String[] selitems = {"Repesaje","Borrar"};
 
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Producto venta");
+
+            ExDialog menudlg = new ExDialog(this);
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -2771,9 +2762,8 @@ public class Venta extends PBase {
     //region Dialogs
 
     private void msgAskTodo(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Venta");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -2797,9 +2787,7 @@ public class Venta extends PBase {
     }
 
     private void msgAskFEL(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Factura electronica");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

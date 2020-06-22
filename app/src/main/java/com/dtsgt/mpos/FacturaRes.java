@@ -441,6 +441,31 @@ public class FacturaRes extends PBase {
 
 	}
 
+    public void pago100(View view){
+        khand.val="100";
+        validaPagoEfectivo();
+    }
+
+    public void pago50(View view){
+        khand.val="50";
+        validaPagoEfectivo();
+    }
+
+    public void pago20(View view){
+        khand.val="20";
+        validaPagoEfectivo();
+    }
+
+    public void pago10(View view){
+        khand.val="10";
+        validaPagoEfectivo();
+    }
+
+    public void pago5(View view){
+        khand.val="5";
+        validaPagoEfectivo();
+    }
+
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) validaPagoEfectivo();
@@ -1719,11 +1744,6 @@ public class FacturaRes extends PBase {
             }
         });
 
-        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
         dialog.show();
 
     }
@@ -1802,6 +1822,7 @@ public class FacturaRes extends PBase {
         svuelt= khand.val;
 
         if (!svuelt.equalsIgnoreCase("")){
+
             double vuel=Double.parseDouble(svuelt);
             //vuel=vuel-tot;
             vuel=vuel-gl.total_pago;
@@ -1816,14 +1837,19 @@ public class FacturaRes extends PBase {
             }
 
             if (vuel==0.0){
-                msgAskVuelto("Monto ingresado no genera vuelto");
+                //msgAskVuelto("Monto ingresado no genera vuelto");
+                applyCash();
+                checkPago();
+                if (idfel.isEmpty()) finish();
             } else {
+                applyCash();
+                checkPagoNF();
                 msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
             }
         }
 
         svuelt=""+tot;
-        sefect=""+tot;
+        //sefect=""+tot;
 
     }
 
@@ -2129,6 +2155,55 @@ public class FacturaRes extends PBase {
                     pagocompleto=true;
                     //if (rutapos) askSavePos(); else askSave();
                     finishOrder();
+                }
+            }
+
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox( e.getMessage());
+        }
+
+    }
+
+    private void checkPagoNF() {
+        Cursor DT;
+        double tpago;
+
+        pagoPendiente();
+
+        try {
+
+            sql="SELECT SUM(VALOR) FROM T_PAGO";
+            DT=Con.OpenDT(sql);
+
+            if(DT.getCount()>0){
+                DT.moveToFirst();
+                tpago=DT.getDouble(0);
+                if (DT!=null) DT.close();
+            } else {
+                tpago=0;
+            }
+
+            s=mu.frmcur(tpago);
+            pend=tot-tpago;if (pend<0) pend=0;
+            lblTotal.setText(mu.frmcur(pend));
+
+            if (gl.dvbrowse==1){
+                if (gl.brw>0){
+                    lblPago.setText("Pago COMPLETO.\n"+s);
+                    pago=true;
+                    pagocompleto=true;
+                    //if (rutapos) askSavePos(); else askSave();
+                }
+            }	else{
+                if (tpago<tot) {
+                    lblPago.setText("Pago incompleto."+s);
+                    pago=false;
+                } else {
+                    lblPago.setText("Pago COMPLETO."+s);
+                    pago=true;
+                    pagocompleto=true;
+                    //if (rutapos) askSavePos(); else askSave();
                 }
             }
 

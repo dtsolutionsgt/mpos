@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
@@ -185,9 +186,7 @@ public class MantCorel extends PBase {
     //region msg
 
     private void msgAskExit(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Registro");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -205,9 +204,7 @@ public class MantCorel extends PBase {
     }
 
     private void msgAskAdd(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Registro");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -224,9 +221,7 @@ public class MantCorel extends PBase {
     }
 
     private void msgAskUpdate(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Registro");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

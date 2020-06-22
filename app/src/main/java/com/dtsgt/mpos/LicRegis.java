@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsDataBuilder;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.ladapt.ListAdaptEnvio;
 
 public class LicRegis extends PBase {
@@ -501,9 +502,7 @@ public class LicRegis extends PBase {
 		
 	public void askSend(View view) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Registro");
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("Enviar registro ?");
 
 			dialog.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {

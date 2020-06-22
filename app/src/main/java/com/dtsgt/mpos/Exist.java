@@ -23,6 +23,7 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsExist;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.ladapt.ListAdaptExist;
@@ -221,7 +222,8 @@ public class Exist extends PBase {
 	private void setCant(){
 
 		try{
-			final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+            ExDialog alert = new ExDialog(this);
 
 			getDisp();
 			alert.setTitle("Ingrese la cantidad a devolver");
@@ -653,9 +655,8 @@ public class Exist extends PBase {
 			ss+="Centro : "+item.Centro+"\n";
 			ss+="Estado : "+item.Stat+"\n";
 
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-			dialog.setTitle(item.Desc);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(ss);
 
 			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {

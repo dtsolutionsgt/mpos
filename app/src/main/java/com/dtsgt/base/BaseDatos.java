@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.widget.Toast;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -359,12 +360,9 @@ public class BaseDatos extends SQLiteOpenHelper {
 	} 
 
 	  private void msgbox(String msg) {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);
-	    	
-			dialog.setTitle(R.string.app_name);
-			dialog.setMessage(msg);
-			dialog.setIcon(R.drawable.ic_error);
-			
+		    ExDialog dialog = new ExDialog(vcontext);
+		    dialog.setMessage(msg);
+
 			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 	    	    public void onClick(DialogInterface dialog, int which) {			      	
 	    	    	//Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
@@ -375,12 +373,9 @@ public class BaseDatos extends SQLiteOpenHelper {
 		}   
 
 	  private void dbCreated() {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);
-	    	
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(vcontext);
 			dialog.setMessage("La base de datos ha sido creada.");
-			dialog.setIcon(R.drawable.ic_info);
-			
+
 			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 	    	    public void onClick(DialogInterface dialog, int which) {
 	    	    }

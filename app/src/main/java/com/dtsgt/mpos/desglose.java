@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDesglose;
 
 public class desglose extends PBase {
@@ -1647,9 +1648,7 @@ public class desglose extends PBase {
 
     private void askPrint() {
         try {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("¿Impresión correcta?");
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

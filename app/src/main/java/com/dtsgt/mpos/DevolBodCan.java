@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocCanastaBod;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsWSEnvio;
@@ -576,9 +577,7 @@ public class DevolBodCan extends PBase {
 
     private void msgAskSave(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Devolución a bodega");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("¿" + msg + "?");
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -601,9 +600,7 @@ public class DevolBodCan extends PBase {
 
     private void askPrint() {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("¿Impresión correcta?");
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

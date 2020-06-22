@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.mpos.R;
 
 public class BaseDatosVersion {
@@ -160,9 +161,7 @@ public class BaseDatosVersion {
 	//region Aux
 	
  	private void msgbox(String msg) {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(cont);
-    	
-		dialog.setTitle(R.string.app_name);
+        ExDialog dialog = new ExDialog(cont);
 		dialog.setMessage(msg);
 					
 		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {

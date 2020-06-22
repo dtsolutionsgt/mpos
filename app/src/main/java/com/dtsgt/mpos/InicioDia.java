@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsExist;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsRepBuilder;
 
@@ -141,9 +142,8 @@ public class InicioDia extends PBase implements View.OnClickListener{
 
     private void askFinalizar() {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("¿Esta seguro de cambiar la fecha de las factura e imprimir el invetario disponible?");
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

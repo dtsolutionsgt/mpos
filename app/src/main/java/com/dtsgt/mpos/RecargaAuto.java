@@ -13,6 +13,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.ladapt.ListAdaptDevCli;
 
 public class RecargaAuto extends PBase {
@@ -191,9 +192,7 @@ public class RecargaAuto extends PBase {
 
 	private void msgAskComplete(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg  + " ?");
 
 			dialog.setIcon(R.drawable.ic_quest);
@@ -220,9 +219,7 @@ public class RecargaAuto extends PBase {
 	
 	private void msgAskSave(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg  + " ?");
 
 			dialog.setIcon(R.drawable.ic_quest);
@@ -250,9 +247,7 @@ public class RecargaAuto extends PBase {
 	private void msgExit(String msg) {
 
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg);
 
 			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {

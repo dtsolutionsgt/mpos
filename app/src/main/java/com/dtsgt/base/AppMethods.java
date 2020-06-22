@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.mpos.CryptUtil;
 import com.dtsgt.mpos.R;
@@ -1121,9 +1122,7 @@ public class AppMethods {
 
 			if (!emptystr(msg)){
 
-				AlertDialog.Builder dialog = new AlertDialog.Builder(cont);
-
-				dialog.setTitle(R.string.app_name);
+                ExDialog dialog = new ExDialog(cont);
 				dialog.setMessage(msg);
 
 				dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {

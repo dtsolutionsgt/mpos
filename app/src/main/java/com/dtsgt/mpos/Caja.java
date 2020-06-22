@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
@@ -446,9 +447,7 @@ public class Caja extends PBase {
     //region Dialogs
 
     private void msgAskExit(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Registro");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
 
         if(msgAcc==0){
@@ -479,9 +478,7 @@ public class Caja extends PBase {
 
         try{
 
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setCancelable(false);
 

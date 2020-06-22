@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.classes.ExDialog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -546,8 +547,7 @@ public class CliDet extends PBase {
 	public void inputFachada(){
 
 		try{
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
+            ExDialog alert = new ExDialog(this);
 			final ImageView imgFachada = new ImageView(this);
 			imgFachada.setScaleType(CENTER_CROP);
 
@@ -659,9 +659,7 @@ public class CliDet extends PBase {
 	private void inputCliente() {
 
 		try{
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setTitle("Editar Cliente");
+            ExDialog alert = new ExDialog(this);
 
 			final LinearLayout layout = new LinearLayout(this);
 			layout.setOrientation(LinearLayout.VERTICAL);
@@ -883,7 +881,7 @@ public class CliDet extends PBase {
 
 	private void msgAskGPSVenta() {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            ExDialog dialog = new ExDialog(this);
 
 			dialog.setTitle(R.string.app_name);
 			dialog.setMessage("¡Distancia del cliente "+ sgp1 +" es mayor que la permitida "+ sgp2 + "!\n¿Está seguro de continuar?");
@@ -918,9 +916,7 @@ public class CliDet extends PBase {
 
 	private void msgAskExit(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿" + msg + "?");
 
 			dialog.setIcon(R.drawable.ic_quest);
@@ -947,9 +943,7 @@ public class CliDet extends PBase {
 
 	private void msgAskTipoEstadoDev(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg);
 
 			dialog.setIcon(R.drawable.ic_quest);
@@ -980,9 +974,7 @@ public class CliDet extends PBase {
 
 		try{
 
-			final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setTitle("Devolución");
+            ExDialog alert = new ExDialog(this);
 
 			final LinearLayout layout   = new LinearLayout(this);
 			layout.setOrientation(LinearLayout.VERTICAL);
@@ -1040,9 +1032,7 @@ public class CliDet extends PBase {
 	private void msgAskVenta() {
 
 		try{
-			AlertDialog.Builder dialog1 = new  AlertDialog.Builder(this);
-
-			dialog1.setTitle("Road");
+            ExDialog dialog1 = new ExDialog(this);
 			dialog1.setMessage("Quedan menos del 25% de correlativos disponibles.");
 
 			dialog1.setIcon(R.drawable.ic_quest);
@@ -1062,9 +1052,7 @@ public class CliDet extends PBase {
 
 	private void msgAskEditCliente() {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿Quiere editar datos del cliente?");
 
 			dialog.setIcon(R.drawable.ic_quest);

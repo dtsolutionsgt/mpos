@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses.clsMenu;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
@@ -52,7 +53,7 @@ public class Menu extends PBase {
 	private ArrayList<String> listVehiculo = new ArrayList<String>();*/
 
 	private ListAdaptMenuGrid adaptergrid;
-	private AlertDialog.Builder menudlg;
+	private ExDialog menudlg;
 	
 	private int selId,selIdx,menuid,iicon;
 	private String rutatipo,sdoc;
@@ -405,9 +406,8 @@ public class Menu extends PBase {
 			final AlertDialog Dialog;
 			final String[] selitems  = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Pagos","Recarga","Devolución a bodega"};;
 
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.reimpresion48);
-			menudlg.setTitle("Reimpresión");
+			menudlg = new ExDialog(this);
+
 
 			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
@@ -471,9 +471,7 @@ public class Menu extends PBase {
             final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Recarga","Devolución a bodega"};
 
 
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.anulacion48);
-			menudlg.setTitle("Anulación");
+			menudlg = new ExDialog(this);
 
 			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
@@ -532,8 +530,7 @@ public class Menu extends PBase {
         final String[] selitems = {"Envío de datos","Recepción de parámetros"};
         //final String[] selitems = {"Envío de datos","Recepción de parámetros","Envío de huellas"};
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Comunicación");
+        ExDialog dialog = new ExDialog(this);
 
         menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
@@ -587,8 +584,7 @@ public class Menu extends PBase {
 			final AlertDialog Dialog;
 			final String[] selitems = {"Objetivos por producto","Objetivos por familia","Objetivo por ruta","Objetivo por cobro","Inventario bodega","Consulta de precios"};
 
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setTitle("Consultas");
+			menudlg = new ExDialog(this);
 
 			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
@@ -727,9 +723,7 @@ public class Menu extends PBase {
 			selitems[itempos]="Ingreso de mercancía";itempos++;
             selitems[itempos]="Inventario inicial";itempos++;
 
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.inventario48);
-			menudlg.setTitle("Inventario");
+			menudlg = new ExDialog (this);
 
 			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
@@ -816,9 +810,7 @@ public class Menu extends PBase {
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
 			final String[] selitems = {"Configuracion de impresora","Tablas","Información de sistema"};
 
-			menudlg = new AlertDialog.Builder(this);
-			menudlg.setIcon(R.drawable.utils48);
-			menudlg.setTitle("Utilerias");
+			menudlg = new ExDialog (this);
 
 			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
@@ -873,9 +865,7 @@ public class Menu extends PBase {
 				coract=0;
 			}
 
-			AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-			alert.setTitle("Nuevo correlativo");
+            ExDialog alert = new ExDialog(this);
 			alert.setMessage("Actual : "+coract);
 
 			final EditText input = new EditText(this);
@@ -914,9 +904,7 @@ public class Menu extends PBase {
 	
 	private void askApplyCor(int ncor) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("Aplicar nuevo correlativo ?");
 
 			final int fncor=ncor;
@@ -947,9 +935,7 @@ public class Menu extends PBase {
 
 	private void askCambUsuario() {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿Cambiar usuario?");
 
 			dialog.setPositiveButton("Cambiar", new DialogInterface.OnClickListener() {
@@ -1013,9 +999,7 @@ public class Menu extends PBase {
 
 		ss=sb+"\n"+sm+"\n"+sd;
 
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-		dialog.setTitle("Información de sistema");
+        ExDialog dialog = new ExDialog(this);
 		dialog.setMessage(ss);
 		dialog.setCancelable(false);
 
@@ -1044,8 +1028,7 @@ public class Menu extends PBase {
 					                   "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
 					                   "Resolución de facturas", "Configuración"};
 
-            menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Mantenimientos");
+            menudlg = new ExDialog(this);
 
             menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -1128,7 +1111,7 @@ public class Menu extends PBase {
             //final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración","Formato de impresión"};
             final String[] selitems = {"Cliente","Proveedor","Familia","Producto"};
 
-            menudlg = new AlertDialog.Builder(this);
+            menudlg = new ExDialog(this);
             menudlg.setTitle("Mantenimientos");
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
@@ -1205,7 +1188,7 @@ public class Menu extends PBase {
 
 			final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
 
-            menudlg = new AlertDialog.Builder(this);
+            menudlg = new ExDialog(this);
             menudlg.setTitle("Reportes");
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
@@ -1269,7 +1252,7 @@ public class Menu extends PBase {
 
 			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depositos","Cierre de Caja"};
 
-			menudlg = new AlertDialog.Builder(this);
+			menudlg = new ExDialog(this);
 			menudlg.setTitle("Caja");
 			menudlg.setCancelable(false);
 
@@ -1404,9 +1387,7 @@ public class Menu extends PBase {
 	}
 
 	private void msgAskValid(String msg) {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-		dialog.setTitle("Registro");
+        ExDialog dialog = new ExDialog(this);
 		dialog.setMessage(msg);
 		dialog.setCancelable(false);
 
@@ -1419,9 +1400,7 @@ public class Menu extends PBase {
 	}
 
 	private void msgAskIniciarCaja(String msg) {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-		dialog.setTitle("Registro");
+        ExDialog dialog = new ExDialog(this);
 		dialog.setMessage(msg);
 		dialog.setCancelable(false);
 
@@ -1452,9 +1431,7 @@ public class Menu extends PBase {
 	}
 
 	private void msgAskValidUltZ(String msg) {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-		dialog.setTitle("Registro");
+        ExDialog dialog = new ExDialog(this);
 		dialog.setMessage(msg);
 		dialog.setCancelable(false);
 
@@ -1475,9 +1452,7 @@ public class Menu extends PBase {
 	}
 
 	private void msgAskValidaCierre(String msg) {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-		dialog.setTitle("Cierre Diario");
+        ExDialog dialog = new ExDialog(this);
 		dialog.setMessage(msg);
 		dialog.setCancelable(false);
 

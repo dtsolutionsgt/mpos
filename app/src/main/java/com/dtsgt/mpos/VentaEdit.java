@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_comboObj;
 
@@ -190,9 +191,7 @@ public class VentaEdit extends PBase {
 
     private void msgAskApply(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Aplicar");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -215,9 +214,7 @@ public class VentaEdit extends PBase {
 
     private void msgAskLimit(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 

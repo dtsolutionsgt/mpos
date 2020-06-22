@@ -149,7 +149,8 @@
             android:paddingTop="2dp"
             android:paddingRight="10dp"
             android:paddingBottom="2dp"
-            android:src="@drawable/lic_icon" />
+            android:src="@drawable/lic_icon"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/textView9"

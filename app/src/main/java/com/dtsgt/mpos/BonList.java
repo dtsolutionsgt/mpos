@@ -23,6 +23,7 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsBonifItem;
 import com.dtsgt.base.clsClasses.clsBonifProd;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.ladapt.ListAdaptBonif;
 
 import java.util.ArrayList;
@@ -456,8 +457,8 @@ public class BonList extends PBase {
 	private void setVarCant() {
 		double val,ffalt,ppr,valmx,valmi;
 		final double cmin,cmax;
-		
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        ExDialog alert = new ExDialog(this);
 
 		valmi=selitem.cantmin;
 		val=selitem.disp;
@@ -536,8 +537,8 @@ public class BonList extends PBase {
 	private void setVarAllCant() {
 		double val,ffalt,ppr,valmx,valmi;
 		final double cmin,cmax;
-		
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        ExDialog alert = new ExDialog(this);
 
 		try{
 			valmi=selitem.cantmin;
@@ -687,9 +688,7 @@ public class BonList extends PBase {
 	private void msgAskDel(String msg) {
 
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg);
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

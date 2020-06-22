@@ -24,6 +24,7 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocDepos;
 import com.dtsgt.classes.clsFinDia;
 import com.dtsgt.ladapt.ListAdaptDepos;
@@ -696,9 +697,7 @@ public class Deposito extends PBase {
 	
 	private void msgAskSave(String msg) {
 		try {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿" + msg + "?");
 
 			dialog.setIcon(R.drawable.ic_quest);
@@ -726,9 +725,8 @@ public class Deposito extends PBase {
 	private void msgAskExit(String msg) {
 
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿" + msg + "?");
 
 			dialog.setIcon(R.drawable.ic_quest);

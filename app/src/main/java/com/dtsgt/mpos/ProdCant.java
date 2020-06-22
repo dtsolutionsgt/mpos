@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.classes.ExDialog;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -122,9 +123,7 @@ public class ProdCant extends PBase {
 	public void askExist(View view) {
 
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Existencias bodega");
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("Actualizar existencias ?");
 
 			dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
@@ -806,9 +805,7 @@ public class ProdCant extends PBase {
 
 	private void msgSinPrecio(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg);
 
 			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -827,9 +824,7 @@ public class ProdCant extends PBase {
 	public void msgAskUpd(View view) {
 
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("Actualizar disponible ?");
 
 			dialog.setIcon(R.drawable.ic_quest);
@@ -854,9 +849,7 @@ public class ProdCant extends PBase {
 	
 	private void msgAskDel(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg  + " ?");
 			dialog.setIcon(R.drawable.ic_quest);
 
@@ -878,9 +871,7 @@ public class ProdCant extends PBase {
 
 	private void msgAskAjust(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage(msg);
 			dialog.setIcon(R.drawable.ic_quest);
 
@@ -904,9 +895,7 @@ public class ProdCant extends PBase {
 
 	private void msgFactor(String msg) {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Advertencia");
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¡" + msg + "!");
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

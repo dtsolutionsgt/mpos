@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.appGlobals;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsFinDia;
 import com.dtsgt.classes.clsRepBuilder;
 
@@ -2229,9 +2230,7 @@ public class FinDia extends PBase {
     private void msgAskDeposito() {
 
         try{
-            AlertDialog.Builder dialog1 = new AlertDialog.Builder(this);
-
-            dialog1.setTitle("Road");
+            ExDialog dialog1 = new ExDialog(this);
             dialog1.setMessage("No se ha realizado el depósito. ¿Quiere realizar el depósito?");
 
             dialog1.setIcon(R.drawable.ic_quest);
@@ -2258,9 +2257,7 @@ public class FinDia extends PBase {
     private void msgAskImpresionDeposito() {
 
         try{
-            AlertDialog.Builder dialog1 = new AlertDialog.Builder(this);
-
-            dialog1.setTitle("Road");
+            ExDialog dialog1 = new ExDialog(this);
             dialog1.setMessage("Debe imprimir el recibo de depósito. ¿Imprimir depósito?");
 
             dialog1.setIcon(R.drawable.ic_quest);
@@ -2285,9 +2282,7 @@ public class FinDia extends PBase {
     private void msgAskComunicacion() {
 
         try{
-            AlertDialog.Builder dialog1 = new AlertDialog.Builder(this);
-
-            dialog1.setTitle("Road");
+            ExDialog dialog1 = new ExDialog(this);
             dialog1.setMessage("No ha comunicado los datos.¿Quiere comunicar los datos?");
 
             dialog1.setIcon(R.drawable.ic_quest);
@@ -2312,9 +2307,7 @@ public class FinDia extends PBase {
     private void msgAskGeneraCierreZ() {
 
         try {
-            AlertDialog.Builder dialog1 = new AlertDialog.Builder(this);
-
-            dialog1.setTitle("Road");
+            ExDialog dialog1 = new ExDialog(this);
             dialog1.setMessage("No ha generado el Cierre Z. ¿Quiere generarlo ahora?");
 
             dialog1.setIcon(R.drawable.ic_quest);
@@ -2352,9 +2345,7 @@ public class FinDia extends PBase {
     private void msgAskCierreIncompleto(String mensaje) {
 
         try {
-            AlertDialog.Builder dialog1 = new AlertDialog.Builder(this);
-
-            dialog1.setTitle("Road");
+            ExDialog dialog1 = new ExDialog(this);
             dialog1.setMessage(mensaje + "¿Quiere volver a intentarlo?");
 
             dialog1.setIcon(R.drawable.ic_quest);
@@ -2381,9 +2372,7 @@ public class FinDia extends PBase {
     private void msgAsk() {
 
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("Este proceso prepara el sistema para el siguiente día de venta. Continuar ?");
 
             dialog.setIcon(R.drawable.ic_quest);
@@ -2409,9 +2398,7 @@ public class FinDia extends PBase {
 
 	private void msgAskFinDiaTrue()	{
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("Este proceso prepara el sistema para el siguiente día de venta. Continuar?");
             dialog.setIcon(R.drawable.ic_quest);
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -2434,9 +2421,7 @@ public class FinDia extends PBase {
 	private void msgAsk2()	{
 
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("¿Está seguro de continuar?");
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -2471,9 +2456,7 @@ public class FinDia extends PBase {
 
     private void msgExit(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
 
             dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -2491,9 +2474,7 @@ public class FinDia extends PBase {
 
     private void msgPendPago(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
 
             dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -2512,9 +2493,7 @@ public class FinDia extends PBase {
 
 	private void msgAskFlag(View view) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage("Limpiar bandera cierre del día?");
 
             dialog.setIcon(R.drawable.ic_quest);

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
@@ -353,9 +354,7 @@ public class MantConfig extends PBase {
     //region Dialogs
 
     private void msgAskExit(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Configuración");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -373,9 +372,7 @@ public class MantConfig extends PBase {
     }
 
     private void msgAskUpdate(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Configuración");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

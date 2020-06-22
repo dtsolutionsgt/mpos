@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsBonifSave;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocPedido;
@@ -600,10 +601,8 @@ public class PedidoRes extends PBase {
 	public void askSave(View view) {
 
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Road");
-			dialog.setMessage("Guardar pedido ?");
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage("Guardar pedido ?");
 
 			dialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
@@ -641,9 +640,7 @@ public class PedidoRes extends PBase {
 	
 	private void askPrint() {
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("Impresion correcta ?");
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

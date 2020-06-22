@@ -26,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dtsgt.classes.ExDialog;
+
 @SuppressWarnings("deprecation")
 public class CliGPS extends PBase {
 
@@ -336,9 +338,7 @@ public class CliGPS extends PBase {
 	private void askApply() {
 
 		try{
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿Borrar la posición?");
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

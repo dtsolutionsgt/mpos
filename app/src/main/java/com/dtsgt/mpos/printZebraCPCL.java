@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.dtsgt.classes.ExDialog;
 import com.zebra.sdk.comm.BluetoothConnection;
 import com.zebra.sdk.comm.Connection;
 import com.zebra.sdk.comm.ConnectionException;
@@ -331,9 +332,7 @@ public class printZebraCPCL extends printBase {
 	// Aux
 
 	private void msgAskPrint() {
-		AlertDialog.Builder dialog = new AlertDialog.Builder(cont);
-
-		dialog.setTitle(R.string.app_name);
+        ExDialog dialog = new ExDialog(cont);
 		dialog.setMessage("Impresora está lista ?");
 
 		dialog.setCancelable(false);

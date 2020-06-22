@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
@@ -216,6 +218,7 @@ public class MainActivity extends PBase {
     }
 
     public void doRegister(View view) {
+        /*
         try {
             startActivity(new Intent(this, comWSLic.class));
         } catch (Exception e) {
@@ -224,6 +227,7 @@ public class MainActivity extends PBase {
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
+        */
     }
 
     public void doKey(View view) {
@@ -280,8 +284,6 @@ public class MainActivity extends PBase {
     }
 
     //endregion
-
-    //region Main
 
     private void initSession() {
         Cursor DT;

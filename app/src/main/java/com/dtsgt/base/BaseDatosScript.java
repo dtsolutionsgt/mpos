@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.mpos.R;
 
 public class BaseDatosScript {
@@ -1810,9 +1811,7 @@ public class BaseDatosScript {
     }
 
     private void msgbox(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(vcontext);
-
-        dialog.setTitle(R.string.app_name);
+        ExDialog dialog = new ExDialog(vcontext);
         dialog.setMessage(msg);
 
         dialog.setIcon(R.drawable.ic_error);

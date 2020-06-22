@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.widget.Toast;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -170,11 +171,26 @@ public class MiscUtils {
 	}
 	
 	public void msgbox(String msg) {
+	    if (msg.isEmpty()) return;
 
-		try{
+        try {
+            ExDialog dialog = new ExDialog(cCont);
 
+            dialog.setMessage(msg);
+            dialog.setCancelable(false);
+
+            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+            dialog.show();
+        } catch (Exception ex) {
+            toast(ex.getMessage());
+        }
+
+
+	    /*
+		try {
 			if (!emptystr(msg)){
-
 				AlertDialog.Builder dialog = new AlertDialog.Builder(cCont);
 
 				dialog.setTitle(R.string.app_name);
@@ -187,20 +203,18 @@ public class MiscUtils {
 					}
 				});
 				dialog.show();
-
 			}
-
 		} catch (Exception ex) {
 		}
+
+	     */
 	}   
 	
 	public void msgbox(int v) {
 
 		try{
 
-			AlertDialog.Builder dialog = new AlertDialog.Builder(cCont);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(cCont);
 			dialog.setMessage(String.valueOf(v));
 
 			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
@@ -218,9 +232,7 @@ public class MiscUtils {
 	
 	public void msgbox(double v) {
 		try {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(cCont);
-
-			dialog.setTitle(R.string.app_name);
+            ExDialog dialog = new ExDialog(cCont);
 			dialog.setMessage(String.valueOf(v));
 
 			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {

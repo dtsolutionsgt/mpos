@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
@@ -314,8 +315,7 @@ public class ProdMenu extends PBase {
                 selitems[i] = lname.get(i);
             }
 
-            AlertDialog.Builder mMenuDlg = new AlertDialog.Builder(this);
-            mMenuDlg.setTitle(title);
+            ExDialog mMenuDlg = new ExDialog(this);
 
             mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -510,9 +510,7 @@ public class ProdMenu extends PBase {
 
     private void msgAskDelete(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Borrar");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -535,9 +533,7 @@ public class ProdMenu extends PBase {
 
     private void msgAskExit(String msg) {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Borrar");
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -559,9 +555,7 @@ public class ProdMenu extends PBase {
     }
 
     private void msgAskApply(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Title");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -579,9 +573,7 @@ public class ProdMenu extends PBase {
     }
 
     private void msgAskSave(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Title");
+        ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

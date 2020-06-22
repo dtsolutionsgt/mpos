@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import com.dtsgt.classes.ExDialog;
+
 public class PrintDialog extends PBase {
 
 	private printer prn;
@@ -61,8 +63,7 @@ public class PrintDialog extends PBase {
 
 		try {
 
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-			dialog.setTitle("Road");
+            ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("Impresion correcta ?");
 			dialog.setNegativeButton("Si", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
