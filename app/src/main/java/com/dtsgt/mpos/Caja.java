@@ -412,6 +412,7 @@ public class Caja extends PBase {
     }
 
     private void validacionesInicio() {
+
         String ms="";
 
         try {
@@ -437,6 +438,7 @@ public class Caja extends PBase {
             }
 
             if (!ms.isEmpty()) msgbox(ms);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

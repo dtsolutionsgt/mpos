@@ -6,6 +6,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.TimingLogger;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -124,6 +125,7 @@ public class WSEnv extends PBase {
                 switch (ws.callback) {
 
                     case 1:
+
                         processClients();
 
                         if (clients.size()>0) {
@@ -131,7 +133,9 @@ public class WSEnv extends PBase {
                         }
 
                         break;
+
                     case 2:
+
                         processFactura();
 
                         if (ftot>0) {
@@ -139,7 +143,9 @@ public class WSEnv extends PBase {
                         }
 
                         break;
+
                     case 3:
+
                         processMov();
 
                         if (fTotMov>0) {
@@ -147,7 +153,9 @@ public class WSEnv extends PBase {
                         }
 
                         break;
+
                     case 4:
+
                         processCajaCierre();
 
                         cjCierreTot=cjCierre.size();
@@ -157,7 +165,9 @@ public class WSEnv extends PBase {
                         }
 
                         break;
+
                     case 5:
+
                         processCajaPagos();
 
                         cjPagosTot=cjPagos.size();
@@ -167,7 +177,9 @@ public class WSEnv extends PBase {
                         }
 
                         break;
+
                     case 6:
+
                         processCajaReporte();
 
                         cjReporteTot=cjReporte.size();
