@@ -26,6 +26,7 @@ public class ExDialog extends  AlertDialog.Builder {
 
     @Override
     public AlertDialog show() {
+        Button btnPos,btnNeg,btnNeut;
 
         AlertDialog adg=super.show();
 
@@ -35,6 +36,30 @@ public class ExDialog extends  AlertDialog.Builder {
         textView.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
         textView.setGravity(Gravity.CENTER);
 
+        int btntextsize=24;
+        int btnbackcolor=Color.parseColor("#63CE60");
+
+
+        try {
+            btnPos=adg.getButton(DialogInterface.BUTTON_POSITIVE);
+            btnPos.setTextSize(btntextsize);
+            btnPos.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+            btnPos.setBackgroundColor(btnbackcolor);
+        } catch (Exception e) {}
+
+        try {
+            btnNeg=adg.getButton(DialogInterface.BUTTON_NEGATIVE);
+            btnNeg.setTextSize(btntextsize);
+            btnNeg.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+            btnNeg.setBackgroundColor(btnbackcolor);
+        } catch (Exception e) {}
+
+        try {
+            btnNeut=adg.getButton(DialogInterface.BUTTON_NEUTRAL);
+            btnNeut.setTextSize(btntextsize);
+            btnNeut.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
+            btnNeut.setBackgroundColor(btnbackcolor);
+        } catch (Exception e) {}
 
         return adg;
     }
