@@ -144,7 +144,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
         try{
 
             ExDialog dialog = new ExDialog(this);
-            dialog.setMessage("¿Esta seguro de cambiar la fecha de las factura e imprimir el invetario disponible?");
+            dialog.setMessage("¿Cambiar la fecha de las factura e imprimir el inventario disponible?");
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {

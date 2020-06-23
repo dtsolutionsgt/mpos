@@ -1,12 +1,8 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,8 +14,6 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
-import com.dtsgt.classes.clsP_cajapagosObj;
-import com.zebra.sdk.settings.internal.SettingRangeInteger;
 
 
 public class Caja extends PBase {
@@ -161,7 +155,7 @@ public class Caja extends PBase {
 
                     if(montoDif!=0){
                         if(acc==1){
-                            msgboxValidaMonto("El monto de efectivo no cuadra, ¿Está seguro de continuar?");
+                            msgboxValidaMonto("El monto de efectivo no cuadra, ¿Continuar?");
                             acc=0;
                         }else {
                             saveMontoIni();
@@ -173,7 +167,7 @@ public class Caja extends PBase {
 
                             if(montoDifCred!=0){
                                 if(acc==1){
-                                    msgboxValidaMonto("El monto de credito no cuadra, ¿Está seguro de continuar?");
+                                    msgboxValidaMonto("El monto de crédito no cuadra, ¿Continuar?");
                                     acc=0;
                                 }else {
                                     saveMontoIni();
@@ -279,11 +273,13 @@ public class Caja extends PBase {
 
                 if (caja.count != 0) {
                     gl.corelZ = caja.last().corel + 1;
+                    gl.inicia_caja_primera_vez = false;
                     //#CKFK 20200608 Puse esto en comentario para dejar solo el Corel único
                    // itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
                     itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
                 } else {
                     gl.corelZ = 1;
+                    gl.inicia_caja_primera_vez = true;
                     itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
                 }
 
@@ -318,6 +314,9 @@ public class Caja extends PBase {
                 caja.add(itemC);
 
                 msgAcc=1;
+
+                gl.inicio_caja_correcto = true;
+
                 msgAskExit("Inicio de caja correcto");
 
             }else if(gl.cajaid==3){
@@ -424,16 +423,7 @@ public class Caja extends PBase {
 
                     clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
                     D_facturaObj.fill("WHERE (ANULADO=0) AND (FECHA<="+lf+") AND (FEELUUID=' ') ");
-                    if (D_facturaObj.count>0) ms="Existen facturas proximas a expirar certificacion FEL";
-                }
-            }
-
-            if (gl.peCajaRec) {
-                if (isNetworkAvailable()) {
-                    startActivity(new Intent(Caja.this,WSRec.class));
-                } else {
-                    if (!ms.isEmpty()) ms+="\n\n";
-                    ms+="No hay conexion a internet";
+                    if (D_facturaObj.count>0) ms="Existen facturas no certificadas por FEL próximas a expirar";
                 }
             }
 
@@ -506,13 +496,6 @@ public class Caja extends PBase {
     //endregion
 
     //region Aux
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
     //endregion
 

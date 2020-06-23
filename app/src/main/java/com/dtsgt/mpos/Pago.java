@@ -770,7 +770,7 @@ public class Pago extends PBase {
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					msgAskExit2("Está seguro");
+					msgAskExit2("Continuar");
 				}
 			});
 

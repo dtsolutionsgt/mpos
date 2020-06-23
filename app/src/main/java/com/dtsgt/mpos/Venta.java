@@ -1821,12 +1821,6 @@ public class Venta extends PBase {
                 item.ID=56;item.Name="Ventas";item.Icon=56;
                 mmitems.add(item);
 
-                item = clsCls.new clsMenu();
-                item.ID=57;item.Name="Salir";item.Icon=57;
-                mmitems.add(item);
-
-
-
                 //item = clsCls.new clsMenu();
                 //item.ID=51;item.Name="Barra";item.Icon=51;
                 //mmitems.add(item);
@@ -1883,6 +1877,10 @@ public class Venta extends PBase {
             item.ID=14;item.Name="Actualizar";item.Icon=14;
             mitems.add(item);
 
+            item = clsCls.new clsMenu();
+            item.ID=24;item.Name="Salir";item.Icon=57;
+            mitems.add(item);
+
             /*
             item = clsCls.new clsMenu();
             item.ID=7;item.Name="Existencias";item.Icon=7;
@@ -1912,6 +1910,9 @@ public class Venta extends PBase {
                     showQuickRecep();break;
                 case 15:
                     msgAskFEL("Certificar pendientes facturas ("+pendienteFEL()+") ");break;
+                case 24:
+                    exitBtn();
+                    break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2097,9 +2098,6 @@ public class Venta extends PBase {
                 case 56:
                     showMenuSwitch();
                     break;
-                case 57:
-                    exitBtn();
-                    break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2172,7 +2170,7 @@ public class Venta extends PBase {
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {
-                msgAskExit("Regresar al menu principal sin terminar venta");
+                msgAskExit("Regresar al menú principal sin terminar la venta");
             } else {
                 finish();
             }

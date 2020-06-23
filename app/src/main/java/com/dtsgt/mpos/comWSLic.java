@@ -963,7 +963,7 @@ public class comWSLic extends PBase {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
             dialog.setTitle(R.string.app_name);
-            dialog.setMessage("Está seguro de salir de la aplicación?");
+            dialog.setMessage("Salir de la aplicación?");
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {

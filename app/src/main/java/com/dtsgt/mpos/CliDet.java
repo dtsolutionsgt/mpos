@@ -884,7 +884,7 @@ public class CliDet extends PBase {
             ExDialog dialog = new ExDialog(this);
 
 			dialog.setTitle(R.string.app_name);
-			dialog.setMessage("¡Distancia del cliente "+ sgp1 +" es mayor que la permitida "+ sgp2 + "!\n¿Está seguro de continuar?");
+			dialog.setMessage("¡Distancia del cliente "+ sgp1 +" es mayor que la permitida "+ sgp2 + "!\n¿Continuar?");
 			dialog.setIcon(R.drawable.ic_quest);
 			dialog.setCancelable(false);
 

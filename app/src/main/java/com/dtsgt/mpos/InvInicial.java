@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsKeybHandler;
@@ -28,7 +29,7 @@ public class InvInicial extends PBase {
 
     private ListView listView;
     private GridView grdbtn;
-    private TextView lblBar,lblKeyDP,lblProd,lblCant,lblCosto,lblTCant,lblTCosto,lblTit;
+    private TextView lblBar,lblKeyDP,lblProd,lblCant,lblCosto,lblTCant,lblTCosto,lblTit,lblDocumento;
 
     private clsKeybHandler khand;
     private LA_T_movd adapter;
@@ -58,6 +59,7 @@ public class InvInicial extends PBase {
         listView = (ListView) findViewById(R.id.listView1);
         grdbtn = (GridView) findViewById(R.id.grdbtn);
         lblTit = (TextView) findViewById(R.id.lblTit3);
+        lblDocumento = (TextView) findViewById(R.id.lblDocumento);
         lblBar = (TextView) findViewById(R.id.lblCant);lblBar.setText("");
         lblKeyDP = (TextView) findViewById(R.id.textView110);
         lblProd = (TextView) findViewById(R.id.textView156);lblProd.setText("");
@@ -68,7 +70,12 @@ public class InvInicial extends PBase {
 
         prodid=0;
         ingreso=gl.invregular;
-        if (ingreso) invtext="Ingreso de mercancía";else invtext="Inventario inicial";
+        if (ingreso) {
+            invtext="Ingreso de mercancía "+ gl.codigo_proveedor + "-" + gl.nombre_proveedor;
+        } else {
+            invtext="Inventario inicial";
+        }
+
         lblTit.setText(invtext);
 
         khand=new clsKeybHandler(this, lblBar,lblKeyDP);
@@ -83,19 +90,32 @@ public class InvInicial extends PBase {
         iniciaProceso();
 
         listItems();
+
+        lblDocumento.requestFocus();
     }
 
     //region Events
 
     public void doSave(View view) {
+
         if (ingreso) {
+
+            if (lblDocumento.getText().toString().isEmpty()){
+                msgbox("Ingrese el número de documento");
+                lblDocumento.requestFocus();
+                return;
+            }
+
             if (T_movrObj.count==0) {
-                msgbox("No se puede guardar un inventario vacio");return;
+                msgbox("No se puede guardar un inventario vacío");return;
             }
+
         } else {
+
             if (T_movdObj.count==0) {
-                msgbox("No se puede guardar un inventario vacio");return;
+                msgbox("No se puede guardar un inventario vacío");return;
             }
+
         }
 
         if (ingreso) {
@@ -125,6 +145,11 @@ public class InvInicial extends PBase {
                 if (!barcode.isEmpty()) addBarcode();
             } else if (khand.label==lblCant) {
                 if (gl.invregular) {
+
+                    if (lblCosto.getText().toString().equals("0")){
+                        khand.val="0";
+                        lblCosto.setText("");
+                    }
                     khand.setLabel(lblCosto,true);
                 } else {
                     addItem();
@@ -167,6 +192,19 @@ public class InvInicial extends PBase {
                     processMenuBtn(item.ID);
 
                 };
+            });
+
+            lblCosto.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(hasFocus) {
+
+                        if (lblCosto.getText().toString().equals("0")){
+                            lblCosto.setText("");
+                        }
+
+                    }
+                }
             });
 
         } catch (Exception e) {
@@ -225,8 +263,8 @@ public class InvInicial extends PBase {
 
         }
 
-        lblTCant.setText("Articulos : "+mu.frmint(cantt));
-        lblTCosto.setText("Costo : "+mu.frmcur(costot));
+        lblTCant.setText("Artículos : "+mu.frmint(cantt));
+        lblTCosto.setText("Total : "+mu.frmcur(costot));
     }
 
     private void addItem() {
@@ -346,7 +384,7 @@ public class InvInicial extends PBase {
             header.FECHA=du.getActDateTime();
             if (ingreso) header.TIPO="R";else header.TIPO="I";
             header.USUARIO=gl.codigo_vendedor;
-            header.REFERENCIA=gl.nombre_proveedor;
+            header.REFERENCIA=lblDocumento.getText().toString();//gl.nombre_proveedor;
             header.STATCOM="N";
             header.IMPRES=0;
             header.CODIGOLIQUIDACION=0;
@@ -444,11 +482,12 @@ public class InvInicial extends PBase {
             khand.clear(true);khand.enable();khand.focus();
             selidx=-1;
 
-            sql ="WHERE (CODBARRA='"+barcode+"') OR (CODIGO='"+barcode+"') " +
-                 "OR (CODIGO_PRODUCTO="+barcode+")  COLLATE NOCASE";
+            sql =" WHERE (CODBARRA='"+barcode+"') OR (CODIGO='"+barcode+"') " +
+                 " COLLATE NOCASE  ";
             P_productoObj.fill(sql);
-            if (P_productoObj.count==0) return false;
-
+            if (P_productoObj.count==0) {
+                return false;
+            }
 
             prodid=P_productoObj.first().codigo_producto;
             prodname=P_productoObj.first().codigo+" - "+P_productoObj.first().desclarga;
@@ -701,7 +740,7 @@ public class InvInicial extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    if (ingreso) save();else msgAskSave2("Está seguro");
+                    if (ingreso) save();else msgAskSave2("Continuar");
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
@@ -741,7 +780,9 @@ public class InvInicial extends PBase {
     }
 
     private void msgAskExit(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        ExDialog dialog = new ExDialog(this);
+        //AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         dialog.setTitle("Title");
         dialog.setMessage("¿" + msg + "?");

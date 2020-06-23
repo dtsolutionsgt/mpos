@@ -73,6 +73,9 @@ public class ConfigCaja extends PBase {
                     spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                     idsuc = Integer.valueOf(spincode.get(position));
+
+                    fillSpinner2("");
+
                  } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                     mu.msgbox(e.getMessage());
@@ -231,7 +234,13 @@ public class ConfigCaja extends PBase {
 
         try {
             //ruta.fill(" WHERE (Activo='S') OR (Codigo='"+selid+"') ORDER BY Nombre");
-            ruta.fill("  ORDER BY Nombre");
+
+            if (idsuc==0) {
+                ruta.fill("  ORDER BY Nombre");
+            }else{
+                ruta.fill(" WHERE SUCURSAL = " + idsuc + " ORDER BY Nombre");
+            }
+
             if (ruta.count==0) {
                 msgAskReturn("Lista de rutas está vacia, no se puede continuar");return false;
             }

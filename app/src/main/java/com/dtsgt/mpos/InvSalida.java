@@ -629,7 +629,7 @@ public class InvSalida extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    if (ingreso) save();else msgAskSave2("Está seguro");
+                    if (ingreso) save();else msgAskSave2("Continuar");
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

@@ -577,7 +577,7 @@
             android:name=".InvInicial"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".InvVista"
             android:screenOrientation="landscape"
