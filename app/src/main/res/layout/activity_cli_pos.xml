@@ -8,13 +8,13 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="315dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="false"
         android:layout_centerVertical="false"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="2dp"
         android:background="#DBF5F3"
         android:paddingBottom="1dp">
 
@@ -57,6 +57,39 @@
                 android:padding="5dp"
                 android:src="@drawable/cli_white" />
 
+            <RelativeLayout
+                android:id="@+id/relPed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="5dp">
+
+                <TextView
+                    android:id="@+id/textView177"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/imageView68"
+                    android:background="#FF2020"
+                    android:gravity="center"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imageView68"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="false"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/dom" />
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/lblTit"
                 android:layout_width="wrap_content"
@@ -75,8 +108,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="38dp"
+            android:layout_alignStart="@+id/textView1"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="30dp"
             android:paddingBottom="3dp"
             android:text="Nombre"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -88,9 +122,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textView2"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="7dp"
-            android:layout_marginTop="28dp"
+            android:layout_alignStart="@+id/textView2"
+            android:layout_alignParentLeft="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="32dp"
             android:paddingBottom="3dp"
             android:text="Dirección"
             android:textAppearance="?android:attr/textAppearanceSmall"
@@ -181,9 +216,8 @@
             android:layout_below="@+id/relRoad"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="false"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="5dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="24dp"
             android:text="NIT"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#000000"
@@ -194,10 +228,10 @@
             android:layout_width="659dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/relRoad"
-            android:layout_alignTop="@+id/textView1"
             android:layout_alignRight="@id/textView4"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="111dp"
+            android:layout_marginLeft="150dp"
+            android:layout_marginTop="10dp"
             android:ems="10"
             android:singleLine="true" />
 
@@ -259,6 +293,38 @@
             android:onClick="buscarCliente"
             android:padding="8dp"
             android:src="@drawable/consultasblanco_gris" />
+
+        <ImageView
+            android:id="@+id/imageView65"
+            android:layout_width="32dp"
+            android:layout_height="30dp"
+            android:layout_alignTop="@+id/textView1"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="-6dp"
+            android:src="@drawable/cli_nit" />
+
+        <ImageView
+            android:id="@+id/imageView66"
+            android:layout_width="28dp"
+            android:layout_height="36dp"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="false"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="-3dp"
+            android:layout_marginBottom="1071dp"
+            android:src="@drawable/cli_name" />
+
+        <ImageView
+            android:id="@+id/imageView67"
+            android:layout_width="29dp"
+            android:layout_height="28dp"
+            android:layout_alignTop="@+id/textView154"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="-1dp"
+            android:src="@drawable/cli_dir" />
 
     </RelativeLayout>
 

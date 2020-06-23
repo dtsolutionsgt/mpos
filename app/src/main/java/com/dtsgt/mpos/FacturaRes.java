@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
@@ -44,6 +45,7 @@ import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -627,9 +629,7 @@ public class FacturaRes extends PBase {
         gl.cliposflag=false;
 
         if (!app.usaFEL()) {
-
             impressOrder();
-
         } else {
             if (isNetworkAvailable()) {
                 browse=2;
@@ -644,6 +644,7 @@ public class FacturaRes extends PBase {
 	}
 
 	private void impressOrder(){
+        String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
 		try{
 
@@ -658,55 +659,18 @@ public class FacturaRes extends PBase {
                 app.doPrint(2);
             }
 
-			/*
-			if (prn.isEnabled()) {
+            try {
+                File file1 = new File(fname);
+                File ffile = new File(file1.getPath());
 
-				if (gl.peModal.equalsIgnoreCase("APR")) {
-					fdoc.buildPrintExt(corel,2,"APR");
-				} else if (gl.peModal.equalsIgnoreCase("...")) {
-					//
-				} else if (gl.peModal.equalsIgnoreCase("TOL")) {
+                for (int i = 0; i <90; i++) {
+                    SystemClock.sleep(1000);
+                    if (!ffile.exists()) break;
+                 }
 
-					if (!gl.cobroPendiente) {
-						if (impres==0) {
-							fdoc.buildPrint(corel, 0,gl.peFormatoFactura);
-						} else {
-							fdoc.buildPrint(corel, 10,gl.peFormatoFactura);
-						}
-					}else{
-						fdoc.buildPrint(corel,4,gl.peFormatoFactura);
-					}
-				}
-
-				if (gl.peImprFactCorrecta) {
-					prn.printask(printcallback);
-				} else {
-					singlePrint();
-				}
-
-			}else if(!prn.isEnabled()){
-				if (gl.peModal.equalsIgnoreCase("APR")) {
-					fdoc.buildPrintExt(corel,2,"APR");
-				} else if (gl.peModal.equalsIgnoreCase("...")) {
-					//
-				} else if (gl.peModal.equalsIgnoreCase("TOL")) {
-
-					if (!gl.cobroPendiente) {
-						if (impres==0) {
-							fdoc.buildPrint(corel, 0,gl.peFormatoFactura);
-						} else {
-							fdoc.buildPrint(corel, 10,gl.peFormatoFactura);
-						}
-					}else{
-						fdoc.buildPrint(corel,4,gl.peFormatoFactura);
-					}
-				}
-
-				if (notaC==2){
-					fdev.buildPrint(gl.dvcorrelnc,0);
-				}
-			}
-			*/
+            } catch (Exception e) {
+                toastlong("Impresion Factura : "+e.getMessage());
+            }
 
 			//gl.closeCliDet=true;
 			//gl.closeVenta=true;

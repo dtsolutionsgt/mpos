@@ -284,7 +284,7 @@
             android:name=".CliPos"
             android:label="@string/title_activity_cli_pos"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".CliGPS"

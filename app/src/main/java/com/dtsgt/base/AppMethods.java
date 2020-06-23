@@ -467,7 +467,7 @@ public class AppMethods {
 
             gl.peCajaRec=val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peCajaRec=true;
+            gl.peCajaRec=false;
         }
     }
 

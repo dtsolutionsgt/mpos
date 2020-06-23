@@ -4,23 +4,32 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.dtsgt.base.appGlobals;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef;
+	private RelativeLayout relped;
+
+    private WebService ws;
 
 	private String snit,sname,sdir;
-	private boolean consFinal=false;
+	private boolean consFinal=false,pedidos;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +39,23 @@ public class CliPos extends PBase {
 		super.InitBase();
 		addlog("CliPos",""+du.getActDateTime(),String.valueOf(gl.vend));
 
-		txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.requestFocus();
-		txtNom = (EditText) findViewById(R.id.editText2);
-		txtRef = (EditText) findViewById(R.id.editText1);
+		txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.setText("");txtNIT.requestFocus();
+		txtNom = (EditText) findViewById(R.id.editText2);txtNom.setText("");
+		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("");
+        relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
 
 		setHandlers();	
 
-		txtNIT.setText("");
-		txtNom.setText("");
-		txtRef.setText("");
+		pedidos=false;
 
-        //gl.cliposflag=true;
+        getURL();
+        ws=new WebService(CliPos.this,gl.wsurl);
+
+		if (pedidos) {
+		    relped.setVisibility(View.VISIBLE);
+            estadoPedidos();
+        }
+
 	}
 	
 	//region  Events
@@ -196,7 +211,32 @@ public class CliPos extends PBase {
 	}
 
     //endregion
-	
+
+    //region Webservice
+
+    private void estadoPedidos() {
+        try {
+            ws.pedidosNuevos(gl.emp,gl.tienda);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    @Override
+    protected void wsCallBack(Boolean throwing,String errmsg) throws Exception {
+        if (!throwing) {
+            toast("WS Result : "+ws.strresult);
+            switch (ws.mode) {
+                case 2:
+                    ;break;
+             }
+        } else {
+            toast("WS Error : "+errmsg);
+        }
+    }
+
+    //endregion
+
 	//region Aux
 
 	private boolean validaNIT(String N)  {
@@ -472,6 +512,26 @@ public class CliPos extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
+
+    private void getURL() {
+        gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+        gl.timeout = 6000;
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
+            if (file1.exists()) {
+                FileInputStream fIn = new FileInputStream(file1);
+                BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
+                gl.wsurl = myReader.readLine();
+                String line = myReader.readLine();
+                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
+                myReader.close();
+            }
+        } catch (Exception e) {}
+
+    }
 
     //endregion
 

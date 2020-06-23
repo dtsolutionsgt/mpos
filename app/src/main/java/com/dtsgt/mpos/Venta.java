@@ -2187,7 +2187,7 @@ public class Venta extends PBase {
 
     private void estadoPedidos() {
         try {
-            ws.pedidosNuevos(gl.emp);
+            ws.pedidosNuevos(gl.emp,0);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

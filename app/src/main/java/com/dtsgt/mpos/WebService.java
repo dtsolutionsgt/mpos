@@ -18,9 +18,11 @@ public class WebService {
     public Cursor openDTCursor;
     public String openDTResult;
     public int intresult;
+    public String strresult;
 
     public String  error="";
     public Boolean status;
+    public int mode;
 
     // private
 
@@ -29,7 +31,7 @@ public class WebService {
     private ArrayList<String> results=new ArrayList<String>();
 
     private String URL,sql;
-    private int mode,empresa;
+    private int empresa,sucursal;
     private boolean errflag;
 
     // OpenDT
@@ -50,9 +52,10 @@ public class WebService {
         execute();
     }
 
-    public void pedidosNuevos(int empid) {
+    public void pedidosNuevos(int empid,int sucid) {
         mode=2;
         empresa=empid;
+        sucursal=sucid;
         execute();
     }
 
@@ -182,8 +185,13 @@ public class WebService {
             PropertyInfo param = new PropertyInfo();
             param.setType(String.class);
             param.setName("EMPRESA");param.setValue(empresa);
-
             request.addProperty(param);
+
+            PropertyInfo param2 = new PropertyInfo();
+            param2.setType(String.class);
+            param2.setName("SUCURSAL");param2.setValue(sucursal);
+            request.addProperty(param2);
+
             envelope.setOutputSoapObject(request);
 
             HttpTransportSE transport = new HttpTransportSE(URL);
@@ -192,15 +200,14 @@ public class WebService {
             SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
 
             String resp = response.toString();
-
-            try {
-                intresult=Integer.parseInt(resp);
-            } catch (Exception ee) {
-                intresult=-1;
-                errflag=true;error=resp;return;
+            if (resp.substring(0,1).equalsIgnoreCase("#")) {
+                strresult=resp;
+            } else {
+                throw new Exception(resp);
             }
 
         } catch (Exception e) {
+            strresult="";
             errflag=true;
             error=e.getMessage();
         }
