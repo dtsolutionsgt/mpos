@@ -1651,7 +1651,7 @@ public class Menu extends PBase {
 						startActivity(new Intent(Menu.this,WSRec.class));
 					} else {
 						if (!ms.isEmpty()) ms+="\n\n";
-						ms+="No hay conexion a internet";
+						ms+="No hay conexión a internet";
 					}
 				}
 

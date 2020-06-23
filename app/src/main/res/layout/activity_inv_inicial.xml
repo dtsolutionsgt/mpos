@@ -100,8 +100,7 @@
             android:layout_marginRight="3dp"
             android:layout_marginBottom="0dp"
             android:background="#FFFFFF"
-            android:clickable="false"
-            android:onClick="doFocus">
+            android:clickable="false">
 
             <EditText
                 android:id="@+id/editText10"
@@ -157,7 +156,7 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:clickable="true"
-                    android:onClick="doFocusScan"
+                    android:onClick="doFocusBar"
                     android:scaleType="fitXY"
                     android:src="@drawable/barcode" />
             </RelativeLayout>
@@ -596,7 +595,6 @@
                 android:id="@+id/relwrap"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_below="@id/rellaytot"
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@id/relKeyb">
 
@@ -620,7 +618,6 @@
                     android:background="@drawable/frame_rect"
                     android:clickable="true"
                     android:focusableInTouchMode="false"
-                    android:onClick="doClickScan"
                     android:visibility="invisible">
 
                     <ImageView
@@ -632,7 +629,6 @@
                         android:layout_marginTop="1dp"
                         android:alpha="0.75"
                         android:clickable="true"
-                        android:onClick="doClickScan"
                         android:src="@drawable/barcode" />
 
                     <TextView
@@ -644,10 +640,8 @@
                         android:layout_marginStart="-11dp"
                         android:layout_marginTop="7dp"
                         android:layout_marginEnd="21dp"
-                        android:layout_toEndOf="@+id/editText10"
                         android:background="@drawable/frame_rect"
                         android:clickable="true"
-                        android:onClick="doClickScan"
                         android:paddingLeft="5dp"
                         android:paddingTop="1dp"
                         android:paddingRight="5dp"
@@ -829,13 +823,12 @@
 
     <ListView
         android:id="@+id/listView1"
-        android:layout_width="1241dp"
-        android:layout_height="312dp"
+        android:layout_width="635dp"
+        android:layout_height="542dp"
         android:layout_above="@+id/textView150"
-        android:layout_below="@+id/relRoad"
+        android:layout_below="@+id/lblDocumento"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="5dp"
         android:layout_toStartOf="@+id/relVenta"
@@ -856,4 +849,28 @@
         android:textColor="#1B76B9"
         android:textSize="30sp"
         android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/lblDocumento"
+        android:layout_width="478dp"
+        android:layout_height="42dp"
+        android:layout_below="@id/relRoad"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@+id/relVenta"
+        android:background="#F4B39C"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:hint="Ingreso el número de documento"
+        android:paddingLeft="10dp"
+        android:paddingTop="3dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="3dp"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000000"
+        android:textSize="30sp"
+        android:visibility="visible" />
+
 </RelativeLayout>
