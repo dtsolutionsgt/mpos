@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.zebra.sdk.settings.internal.SettingRangeInteger;
@@ -285,7 +286,7 @@ public class ConfigCaja extends PBase {
     //region Dialogs
 
     private void msgAskAdd(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
         dialog.setTitle("Registro");
         dialog.setMessage("¿" + msg + "?");

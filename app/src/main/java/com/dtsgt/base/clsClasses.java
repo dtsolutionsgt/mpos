@@ -342,6 +342,18 @@ public class clsClasses {
         public int  codigo_linea;
     }
 
+    public class clsP_departamento   {
+        public String codigo;
+        public String codigo_area;
+        public String nombre;
+    }
+
+    public class clsP_municipio   {
+        public String codigo;
+        public String codigo_departamento;
+        public String nombre;
+    }
+
     public class clsP_mediapago {
         public int  codigo;
         public int  empresa;

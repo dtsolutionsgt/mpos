@@ -105,7 +105,7 @@
         android:gravity="center"
         android:text="VENDEDOR"
         android:textColor="#FFFFFFFF"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/textView133"
@@ -119,7 +119,7 @@
         android:gravity="center"
         android:text="MONTO INICIAL"
         android:textColor="#FFFFFFFF"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
     <EditText
         android:id="@+id/editText19"
@@ -162,12 +162,12 @@
         android:gravity="center"
         android:text="FECHA"
         android:textColor="#FFFFFFFF"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/textView134"
         android:layout_width="291dp"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/textView133"
         android:layout_alignStart="@+id/textView133"
         android:layout_marginStart="2dp"
@@ -176,12 +176,12 @@
         android:gravity="center"
         android:text="MONTO EFECTIVO"
         android:textColor="#FFFFFFFF"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/textView130"
         android:layout_width="291dp"
-        android:layout_height="44dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/textView134"
         android:layout_alignStart="@+id/textView133"
         android:layout_marginStart="2dp"
@@ -190,7 +190,7 @@
         android:gravity="center"
         android:text="MONTO CREDITO"
         android:textColor="#FFFFFFFF"
-        android:textSize="30sp" />
+        android:textSize="25sp" />
 
     <EditText
         android:id="@+id/editText20"

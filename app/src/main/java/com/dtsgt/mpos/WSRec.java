@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
@@ -22,6 +21,7 @@ import com.dtsgt.classes.clsP_bonifObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_conceptopagoObj;
 import com.dtsgt.classes.clsP_corelObj;
+import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_motivoajusteObj;
+import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
@@ -58,6 +59,8 @@ import com.dtsgt.classesws.clsBeP_CONCEPTOPAGO;
 import com.dtsgt.classesws.clsBeP_CONCEPTOPAGOList;
 import com.dtsgt.classesws.clsBeP_COREL;
 import com.dtsgt.classesws.clsBeP_CORELList;
+import com.dtsgt.classesws.clsBeP_DEPARTAMENTO;
+import com.dtsgt.classesws.clsBeP_DEPARTAMENTOList;
 import com.dtsgt.classesws.clsBeP_DESCUENTO;
 import com.dtsgt.classesws.clsBeP_DESCUENTOList;
 import com.dtsgt.classesws.clsBeP_EMPRESA;
@@ -75,6 +78,8 @@ import com.dtsgt.classesws.clsBeP_MONEDA;
 import com.dtsgt.classesws.clsBeP_MONEDAList;
 import com.dtsgt.classesws.clsBeP_MOTIVO_AJUSTE;
 import com.dtsgt.classesws.clsBeP_MOTIVO_AJUSTEList;
+import com.dtsgt.classesws.clsBeP_MUNICIPIO;
+import com.dtsgt.classesws.clsBeP_MUNICIPIOList;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIO;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIOList;
 import com.dtsgt.classesws.clsBeP_PARAMEXT;
@@ -321,6 +326,12 @@ public class WSRec extends PBase {
                         break;
                     case 32:
                         callMethod("GetP_MOTIVO_AJUSTE", "EMPRESA", gl.emp);
+                        break;
+                    case 33:
+                        callMethod("GetP_DEPARTAMENTO");
+                        break;
+                    case 34:
+                        callMethod("GetP_MUNICIPIO");
                         break;
                 }
             } catch (Exception e) {
@@ -571,6 +582,22 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
+                    execws(33);
+                    break;
+                case 33:
+                    processDepartamentos();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
+                    execws(34);
+                    break;
+                case 34:
+                    processMunicipios();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
                     processComplete();
                     break;
             }
@@ -679,6 +706,12 @@ public class WSRec extends PBase {
                 break;
             case 32:
                 plabel = "Cargando motivos de ajuste";
+                break;
+            case 33:
+                plabel = "Cargando departamentos";
+                break;
+            case 34:
+                plabel = "Cargando municipios";
                 break;
         }
 
@@ -1007,6 +1040,80 @@ public class WSRec extends PBase {
                 var.codigo_motivo_ajuste = item.getCODIGO_MOTIVO_AJUSTE();
                 var.activo = item.getACTIVO();
                 var.empresa = item.getEMPRESA();
+                var.nombre = item.getNOMBRE() + "";
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processDepartamentos() {
+
+        try {
+
+            clsP_departamentoObj handler = new clsP_departamentoObj(this, Con, db);
+            clsBeP_DEPARTAMENTOList items = new clsBeP_DEPARTAMENTOList();
+            clsBeP_DEPARTAMENTO item = new clsBeP_DEPARTAMENTO();
+            clsClasses.clsP_departamento var = clsCls.new clsP_departamento();
+
+            script.add("DELETE FROM P_DEPARTAMENTO");
+
+            items = xobj.getresult(clsBeP_DEPARTAMENTOList.class, "GetP_DEPARTAMENTO");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_departamento();
+
+                var.codigo = item.getCODIGO();
+                var.codigo_area = item.getCODIGO_AREA();
+                var.nombre = item.getNOMBRE() + "";
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processMunicipios() {
+
+        try {
+
+            clsP_municipioObj handler = new clsP_municipioObj(this, Con, db);
+            clsBeP_MUNICIPIOList items = new clsBeP_MUNICIPIOList();
+            clsBeP_MUNICIPIO item = new clsBeP_MUNICIPIO();
+            clsClasses.clsP_municipio var = clsCls.new clsP_municipio();
+
+            script.add("DELETE FROM P_MOTIVO_AJUSTE");
+
+            items = xobj.getresult(clsBeP_MUNICIPIOList.class, "GetP_MUNICIPIO");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_municipio();
+
+                var.codigo = item.getCODIGO();
+                var.codigo_departamento = item.getCODIGO_DEPARTAMENTO();
                 var.nombre = item.getNOMBRE() + "";
                 script.add(handler.addItemSql(var));
             }
@@ -2307,7 +2414,9 @@ public class WSRec extends PBase {
     }
 
     private void msgboxwait(String msg) {
-        ExDialog dialog = new ExDialog(this);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
         dialog.setMessage(msg);
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

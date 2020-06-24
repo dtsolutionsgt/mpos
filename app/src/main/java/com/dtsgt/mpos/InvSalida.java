@@ -71,9 +71,10 @@ public class InvSalida extends PBase {
         lblTCosto = (TextView) findViewById(R.id.textView150);
 
         prodid=0;
-        ingreso=gl.invregular;
+
+        /*ingreso=gl.invregular;
         if (ingreso) invtext="Ingreso de mercancía";else invtext="Inventario inicial";
-        lblTit.setText(invtext);
+        lblTit.setText(invtext);*/
 
         khand=new clsKeybHandler(this, lblBar,lblKeyDP);
         khand.clear(true);khand.enable();
@@ -194,7 +195,7 @@ public class InvSalida extends PBase {
         }
 
         lblTCant.setText("Articulos : "+mu.frmint(cantt));
-        lblTCosto.setText("Costo : "+mu.frmcur(costot));
+        lblTCosto.setText("Total : "+mu.frmcur(costot));
     }
 
     private void addItem() {
@@ -361,9 +362,10 @@ public class InvSalida extends PBase {
             khand.clear(true);khand.enable();khand.focus();
             selidx=-1;
 
-            sql ="WHERE (CODBARRA='"+barcode+"') OR (CODIGO='"+barcode+"') " +
-                    "OR (CODIGO_PRODUCTO="+barcode+")  COLLATE NOCASE";
+            sql ="WHERE (CODBARRA='"+barcode+"') OR (CODIGO='"+barcode+"') COLLATE NOCASE";
+
             P_productoObj.fill(sql);
+
             if (P_productoObj.count==0) {
                 toast("¡El producto "+barcode+" no existe!");return false;
             }
@@ -373,14 +375,19 @@ public class InvSalida extends PBase {
             um=P_productoObj.first().unidbas;
 
             P_stockObj.fill("WHERE codigo="+prodid);
+
             if (P_stockObj.count==0) {
                 toast("¡El producto "+barcode+" no tiene existencia!");return false;
             }
+
             exist=(int) P_stockObj.first().cant;
 
             tdisp=0;
+
             T_movrObj.fill("WHERE PRODUCTO="+prodid);
+
             if (T_movrObj.count>0) {
+
                 for (int i = 0; i <T_movrObj.count; i++) {
                     tdisp+=(int) T_movrObj.items.get(i).cant;
                 }
@@ -490,8 +497,15 @@ public class InvSalida extends PBase {
 
             switch (menuid) {
                 case 50:
-                    gl.gstr = "";browse = 1;gl.gstr="";
+
+                    gl.gstr = "";
+                    browse = 1;
+                    gl.gstr="";
+
+                    gl.prodtipo = 2;
+
                     startActivity(new Intent(this, Producto.class));break;
+
                 case 54:
                     borraLinea();break;
                 case 55:

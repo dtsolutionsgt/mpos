@@ -631,8 +631,15 @@ public class InvInicial extends PBase {
 
             switch (menuid) {
                 case 50:
-                    gl.gstr = "";browse = 1;gl.gstr="";
+
+                    gl.gstr = "";
+                    browse = 1;
+                    gl.gstr="";
+
+                    gl.prodtipo = 2;
+
                     startActivity(new Intent(this, Producto.class));break;
+
                 case 54:
                     borraLinea();break;
                 case 55:
