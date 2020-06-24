@@ -866,7 +866,8 @@ public class WSEnv extends PBase {
 
     private void msgboxwait(String msg) {
 
-        ExDialog dialog = new ExDialog(this);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
         dialog.setMessage(msg);
 
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {

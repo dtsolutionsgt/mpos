@@ -344,12 +344,14 @@ public class FelFactura extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
+           // CSQL = CSQL + "UPDATE P_COREL SET CORELULT =   WHERE SERIE = " + ";";
+
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 
             ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
-            CSQL = CSQL + ss + "\n";
+            CSQL = CSQL + ss + ";";
             ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
-            CSQL = CSQL + ss + "\n";
+            CSQL = CSQL + ss + ";";
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

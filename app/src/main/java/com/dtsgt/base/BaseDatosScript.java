@@ -409,7 +409,7 @@ public class BaseDatosScript {
                     "FECHARES INTEGER NOT NULL,"+
                     "RUTA INTEGER NOT NULL,"+
                     "ACTIVA INTEGER NOT NULL,"+
-                    "HANDHELD TEXT NOT NULL,"+
+                    "HANDHELD TEXT,"+
                     "FECHAVIG INTEGER NOT NULL,"+
                     "RESGUARDO INTEGER NOT NULL,"+
                     "VALOR1 INTEGER NOT NULL,"+
@@ -669,6 +669,22 @@ public class BaseDatosScript {
                     "NOMBRE TEXT,"+
                     "ACTIVO BOOLEAN NOT NULL,"+
                     "PRIMARY KEY ([CODIGO_MOTIVO_AJUSTE])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_DEPARTAMENTO] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "CODIGO_AREA TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE TABLE [P_MUNICIPIO] ("+
+                    "CODIGO TEXT NOT NULL,"+
+                    "CODIGO_DEPARTAMENTO TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
                     ");";
             database.execSQL(sql);
 

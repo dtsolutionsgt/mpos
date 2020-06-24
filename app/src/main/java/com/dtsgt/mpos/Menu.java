@@ -286,7 +286,8 @@ public class Menu extends PBase {
 						gl.forcedclose=false;
 						startActivity(new Intent(this, Venta.class));
 					}else {
-						if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Quiere realizar el inicio de caja?");
+
+						if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
 						//msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
 
 						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
@@ -1249,7 +1250,7 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depoósitos","Cierre de Caja"};
+			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depósitos","Cierre de Caja"};
 
 			menudlg = new ExDialog(this);
 			menudlg.setTitle("Caja");
@@ -1346,8 +1347,8 @@ public class Menu extends PBase {
 					if(caja.count==0) return true;
 
 					if(caja.last().estado==0){
-						//return false;  JP20200618 cambie valor a true, porque no dejaba hacer segundo inicio caja en mismo dia
-                        return true;
+						return false;  //JP20200618 cambie valor a true, porque no dejaba hacer segundo inicio caja en mismo dia
+                        //return true;
 					}
 				}
 

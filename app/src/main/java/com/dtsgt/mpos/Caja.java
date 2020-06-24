@@ -52,20 +52,26 @@ public class Caja extends PBase {
         try{
             Cursor dt;
 
-            sql="SELECT * FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL WHERE F.KILOMETRAJE=0 AND P.CODPAGO!=1";
+            sql="SELECT * " +
+                "FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO "+
+                "WHERE F.KILOMETRAJE=0 AND M.NIVEL <> 1";
+
             dt=Con.OpenDT(sql);
 
             if(dt.getCount()>0){
                 lblMontoCred.setVisibility(View.VISIBLE);
-                MontoCred.setVisibility(View.VISIBLE);cred=1;
+                MontoCred.setVisibility(View.VISIBLE);
+                cred=1;
             }else {
                 lblMontoCred.setVisibility(View.INVISIBLE);
-                MontoCred.setVisibility(View.INVISIBLE);cred=0;
+                MontoCred.setVisibility(View.INVISIBLE);
+                cred=0;
             }
 
             if(dt!=null) dt.close();
         }catch (Exception e){
-            msgbox("Error en consulta 'onCreate Caja': "+e);
+            msgbox("Error en consulta 'onCreate Caja': "+e.getMessage());
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
 
@@ -260,8 +266,8 @@ public class Caja extends PBase {
 
     public void saveMontoIni(){
 
-        Cursor dt;
-        int fecha=0;
+        Cursor dt, dt2;
+        int fecha=0, codpago=0;
 
         try{
 
@@ -288,9 +294,7 @@ public class Caja extends PBase {
                 gl.corelZ = caja.last().corel;
                 fecha = caja.last().fecha;
                 fondoCaja = caja.last().fondocaja;
-                //#CKFK 20200608 Puse esto en comentario para dejar solo el Corel único
-                //itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
-                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
+                itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
             }
 
             itemC.empresa=gl.emp;
@@ -321,11 +325,12 @@ public class Caja extends PBase {
 
             }else if(gl.cajaid==3){
 
-                sql="SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR) " +
+                sql="SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +
                         "FROM D_FACTURAP P " +
                         "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                        "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO "+
                         "WHERE F.KILOMETRAJE=0 " +
-                        "GROUP BY P.CODPAGO";
+                        "GROUP BY P.CODPAGO, P.TIPO, M.NIVEL";
 
                 dt=Con.OpenDT(sql);
 
@@ -341,7 +346,7 @@ public class Caja extends PBase {
                         itemC.fecha = fecha;
                         itemC.estado = 1;
 
-                        if(dt.getInt(0)==1){
+                        if(dt.getInt(3)==1){ //#CKFK 20200623 Cuando la forma de pago es Contado
 
                             montoIni = fondoCaja+dt.getDouble(2);
                             itemC.montoini = montoIni;
@@ -356,7 +361,7 @@ public class Caja extends PBase {
 
                         if(cred==1){
 
-                            if(dt.getInt(0)==5){
+                            if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
 
                                 montoIni = dt.getDouble(2);
                                 itemC.montoini = montoIni;
@@ -372,7 +377,19 @@ public class Caja extends PBase {
 
                 } else if(dt.getCount()==0){
 
-                    itemC.codpago=1;
+                    sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 1";
+                    dt2=Con.OpenDT(sql);
+
+                    if(dt2!=null) {
+                        if(dt2.getCount()>0){
+                            dt2.moveToFirst();
+                            codpago=dt2.getInt(0);
+                        }
+
+                        dt2.close();
+                    }
+
+                    itemC.codpago=codpago;
                     itemC.fecha = fecha;
                     itemC.estado = 1;
                     montoIni = fondoCaja;
