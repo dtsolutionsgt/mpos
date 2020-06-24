@@ -88,13 +88,13 @@ public class clsFELInFile {
 
     public void certificacion() {
         fact_uuid="";fact_serie="";fact_numero=0;
-        errlevel=0;error="";errorflag=false;constat=true;errorcon=false;
+        errlevel=1;error="";errorflag=false;constat=true;errorcon=false;
         sendJSONFirm();
     }
 
     public void anulacion(String fuuid) {
         fact_uuid=fuuid;
-        errlevel=0;error="";errorflag=false;constat=true;
+        errlevel=3;error="";errorflag=false;constat=true;
         sendJSONFirmAnul();
     }
 
@@ -245,7 +245,7 @@ public class clsFELInFile {
 
     public void sendJSONCert() {
 
-        errlevel=3;
+        errlevel=2;
 
         try {
 

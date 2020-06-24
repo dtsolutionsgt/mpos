@@ -110,8 +110,7 @@ public class AppMethods {
 			val=dt.getString(0);
 		} catch (Exception e) {
 			val="N";
-		}	
-
+		}
 		if (val.equalsIgnoreCase("S"))gl.peSolicInv=true; else gl.peSolicInv=false;
 
 

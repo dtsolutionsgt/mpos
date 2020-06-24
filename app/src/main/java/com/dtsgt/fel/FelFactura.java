@@ -19,6 +19,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
+import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
@@ -58,10 +59,9 @@ public class FelFactura extends PBase {
     private ArrayList<String> facts = new ArrayList<String>();
     private ArrayList<String> factlist = new ArrayList<String>();
 
-
-    private String felcorel,corel,scorel,CSQL,endstr,idfact;
+    private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact;
     private boolean ddemomode,multiflag,factsend,contmode;
-    private int ftot,ffail,fidx,cliid;
+    private int ftot,ffail,fidx,cliid,felnivel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +76,7 @@ public class FelFactura extends PBase {
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
-        felcorel=gl.felcorel;
+        felcorel=gl.felcorel;ffcorel=felcorel;
         multiflag=felcorel.isEmpty();
         gl.feluuid="";
 
@@ -181,12 +181,21 @@ public class FelFactura extends PBase {
     @Override
     public void felCallBack()  {
         if (multiflag) {
-            if (fel.errorcon) {msgexit(fel.error);return;}
-            if (fel.errorflag) ffail++; else marcaFactura();
+            if (fel.errorcon) {
+                msgexit(fel.error);return;
+            }
+            if (fel.errorflag) {
+                ffail++;
+                guardaError();
+            } else marcaFactura();
 
             callBackMulti();
          } else {
-            if (!fel.errorflag) marcaFactura();
+            if (!fel.errorflag) {
+                marcaFactura();
+            } else {
+                guardaError();
+            }
 
             callBackSingle();
         }
@@ -530,7 +539,7 @@ public class FelFactura extends PBase {
         }
     }
 
-    //
+    //endregion
 
     //region WebService handler
 
@@ -604,7 +613,7 @@ public class FelFactura extends PBase {
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {
-                cor=D_facturaObj.items.get(i).corel;
+                cor=D_facturaObj.items.get(i).corel;ffcorel=cor;
                 if (felcorel.isEmpty()) {
                     facts.add(cor);
                 } else {
@@ -684,6 +693,32 @@ public class FelFactura extends PBase {
         } catch (Exception e) {}
 
         if (gl.wsurl.isEmpty()) lbl2.setText("Falta archivo con URL");
+    }
+
+    private void guardaError() {
+        clsD_fel_errorObj D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
+        clsClasses.clsD_fel_error item=clsCls.new clsD_fel_error();
+
+        String err=fel.error;
+        String cor=ffcorel;
+        int nivel=fel.errlevel; // nivel=1 - firma  , 2 - certificacion
+
+        try {
+            int iditem=D_fel_errorObj.newID("SELECT MAX(Item) FROM D_fel_error");
+
+            item.empresa=gl.emp;
+            item.corel=cor;
+            item.item=iditem;
+            item.fecha=du.getActDateTime();
+            item.nivel=nivel;
+            item.error=err;
+            item.enviado=0;
+
+            D_fel_errorObj.add(item);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     //endregion

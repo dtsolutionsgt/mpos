@@ -124,6 +124,8 @@ public class FacturaRes extends PBase {
 		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
 		notaC = gl.tiponcredito;
 
+        mu.currsymb(gl.peMon);
+
 		app = new AppMethods(this, gl, Con, db);
         khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
 

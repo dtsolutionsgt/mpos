@@ -127,6 +127,7 @@ public class Venta extends PBase {
         gl.atentini=du.getActDateTime();
         gl.ateninistr=du.geActTimeStr();
         gl.climode=true;
+        mu.currsymb(gl.peMon);
 
         getURL();
 

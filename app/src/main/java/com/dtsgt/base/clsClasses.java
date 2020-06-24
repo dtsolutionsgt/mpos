@@ -92,6 +92,16 @@ public class clsClasses {
         public String umstock;
     }
 
+    public class clsD_fel_error {
+        public int  empresa;
+        public String corel;
+        public int  item;
+        public long  fecha;
+        public int  nivel;
+        public String error;
+        public int  enviado;
+    }
+
     public class clsD_Mov {
         public String COREL;
         public int RUTA;

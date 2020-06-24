@@ -49,6 +49,10 @@ public class MiscUtils {
 		ffrmdec2 = new DecimalFormat("#,##0.##"); 
 		ffrmgps = new DecimalFormat("##0.0000000");
 	}
+
+    public void currsymb(String currsym) {
+        curr=currsym;
+    }
 	
 	public int CInt(String s) {
 		return Integer.parseInt(s);
