@@ -577,9 +577,7 @@ public class WSEnv extends PBase {
                         vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
                         vsql +=" WHERE (EMPRESA="+gl.emp+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
                                 " AND (UMPESO='"+item.unidadmedida+"')" + "AND (SUCURSAL='"+gl.tienda+"')";
-
                         CSQL=CSQL+ vsql;
-
                     }
                 }
             }
