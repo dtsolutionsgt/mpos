@@ -39,7 +39,6 @@ public class ExDialog extends  AlertDialog.Builder {
         int btntextsize=24;
         int btnbackcolor=Color.parseColor("#63CE60");
 
-
         try {
             btnPos=adg.getButton(DialogInterface.BUTTON_POSITIVE);
             btnPos.setTextSize(btntextsize);

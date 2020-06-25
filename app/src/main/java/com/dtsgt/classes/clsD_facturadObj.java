@@ -136,6 +136,7 @@ public class clsD_facturadObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsD_facturad item;
 
@@ -148,7 +149,6 @@ public class clsD_facturadObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_facturad();
-
             item.empresa=dt.getInt(0);
             item.corel=dt.getString(1);
             item.producto=dt.getInt(2);
@@ -197,7 +197,6 @@ public class clsD_facturadObj {
     public String addItemSql(clsClasses.clsD_facturad item) {
 
         ins.init("D_facturad");
-
         ins.add("EMPRESA",item.empresa);
         ins.add("COREL",item.corel);
         ins.add("PRODUCTO",item.producto);
@@ -216,15 +215,24 @@ public class clsD_facturadObj {
         ins.add("UMVENTA",item.umventa);
         ins.add("FACTOR",item.factor);
         ins.add("UMSTOCK",item.umstock);
-
         return ins.sql();
 
+    }
+
+    public String addItemUpdateStockSql(clsClasses.clsD_facturad item, int Codigo_Sucursal) {
+
+        String vsql ="";
+
+        vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
+        vsql +="WHERE (EMPRESA="+item.empresa+")  AND (PRODUCTO="+item.producto+") " +
+                "AND (UMPESO='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
+
+        return vsql;
     }
 
     public String updateItemSql(clsClasses.clsD_facturad item) {
 
         upd.init("D_facturad");
-
         upd.add("ANULADO",item.anulado);
         upd.add("CANT",item.cant);
         upd.add("PRECIO",item.precio);

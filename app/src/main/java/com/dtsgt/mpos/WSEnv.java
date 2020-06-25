@@ -198,7 +198,9 @@ public class WSEnv extends PBase {
 
     @Override
     public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
+
         try {
+
             if (throwing) throw new Exception(errmsg);
 
             if (ws.errorflag) {
@@ -362,6 +364,7 @@ public class WSEnv extends PBase {
 
             for (int i = 0; i <D_facturadObj.count; i++) {
                 CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
+                CSQL=CSQL+D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
@@ -507,6 +510,10 @@ public class WSEnv extends PBase {
             D_MovDObj.fill("WHERE COREL='"+corelMov+"'");
 
             idMov=D_MovObj.first().COREL;
+
+            if (D_MovObj.first().TIPO.equalsIgnoreCase("R")){
+                //...
+            }
 
             CSQL="DELETE FROM D_MOV WHERE COREL='"+corelMov+"';";
             CSQL=CSQL+"DELETE FROM D_MOVD WHERE COREL='"+corelMov+"';";
@@ -739,6 +746,7 @@ public class WSEnv extends PBase {
     //region Aux
 
     private void prepareSend() {
+
         ferr="";
         movErr="";
         int ccant;
@@ -821,6 +829,7 @@ public class WSEnv extends PBase {
     }
 
     private void getURL() {
+
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
         gl.timeout = 6000;
 
