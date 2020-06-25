@@ -659,20 +659,22 @@ public class FacturaRes extends PBase {
 			if (app.impresora()) {
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
                 app.doPrint(2);
+
+                try {
+                    File file1 = new File(fname);
+                    File ffile = new File(file1.getPath());
+
+                    for (int i = 0; i <90; i++) {
+                        SystemClock.sleep(1000);
+                        if (!ffile.exists()) break;
+                    }
+
+                } catch (Exception e) {
+                    toastlong("Impresion Factura : "+e.getMessage());
+                }
+
             }
 
-            try {
-                File file1 = new File(fname);
-                File ffile = new File(file1.getPath());
-
-                for (int i = 0; i <90; i++) {
-                    SystemClock.sleep(1000);
-                    if (!ffile.exists()) break;
-                 }
-
-            } catch (Exception e) {
-                toastlong("Impresion Factura : "+e.getMessage());
-            }
 
 			//gl.closeCliDet=true;
 			//gl.closeVenta=true;
@@ -2059,7 +2061,7 @@ public class FacturaRes extends PBase {
             }
 
         } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+           addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
         }
 
