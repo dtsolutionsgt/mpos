@@ -556,7 +556,11 @@ public class WSEnv extends PBase {
 
             CSQL=CSQL+D_MovObj.addMovHeader(D_MovObj.first())+ ";";
 
+            clsClasses.clsD_MovD item;
+
             for (int i = 0; i <D_MovDObj.count; i++) {
+
+                item =D_MovDObj.items.get(i);
 
                 CSQL=CSQL+D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i)) + ";";
 
@@ -565,16 +569,18 @@ public class WSEnv extends PBase {
                     String vsql ="";
 
                     AppMethods f = new AppMethods(this,null,Con,db);
-//                    String tipo_producto = f.prodTipo(item.producto);
-//
-//                    if (tipo_producto.equalsIgnoreCase("S")){
-//
-//                        vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
-//                        vsql +=" WHERE (EMPRESA="+item.empresa+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
-//                                " AND (UMPESO='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
-//                    }
-//
-//                    return vsql;
+
+                    String tipo_producto = f.prodTipo(item.producto);
+
+                    if (tipo_producto.equalsIgnoreCase("S")){
+
+                        vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
+                        vsql +=" WHERE (EMPRESA="+gl.emp+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
+                                " AND (UMPESO='"+item.unidadmedida+"')" + "AND (SUCURSAL='"+gl.tienda+"')";
+
+                        CSQL=CSQL+ vsql;
+
+                    }
                 }
             }
 
