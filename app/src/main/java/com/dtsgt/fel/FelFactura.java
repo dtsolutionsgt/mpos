@@ -345,8 +345,13 @@ public class FelFactura extends PBase {
 
             CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
+            String UpdateToStock = "";
+
             for (int i = 0; i <D_facturadObj.count; i++) {
                 CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
+                UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                if (!UpdateToStock.isEmpty())
+                    CSQL=CSQL+ UpdateToStock;
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {

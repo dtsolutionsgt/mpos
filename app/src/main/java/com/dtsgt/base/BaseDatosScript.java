@@ -293,6 +293,15 @@ public class BaseDatosScript {
             sql="CREATE INDEX P_PRODUCTO_idx3 ON P_PRODUCTO(DESCCORTA)";
             database.execSQL(sql);
 
+            //#EJC2020_06_24
+            sql="CREATE TABLE [P_PRODUCTO_TIPO] ("+
+                    "[CODIGO_TIPO_PRODUCTO] TEXT NOT NULL,"+
+                    "[NOMBRE] TEXT,"+
+                    "[UTILIZA_STOCK] INTEGER,"+
+                    "PRIMARY KEY ([CODIGO_TIPO_PRODUCTO])"+
+                    ");";
+            database.execSQL(sql);
+
             sql="CREATE TABLE [P_DESCUENTO] ("+
                     "[CLIENTE] TEXT NOT NULL,"+
                     "[CTIPO] INTEGER NOT NULL,"+

@@ -10,6 +10,8 @@ import android.util.TimingLogger;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
@@ -388,9 +390,14 @@ public class WSEnv extends PBase {
 
             CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
+            String UpdateToStock = "";
+            
             for (int i = 0; i <D_facturadObj.count; i++) {
+                
                 CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
-                CSQL=CSQL+D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                if (!UpdateToStock.isEmpty())
+                CSQL=CSQL+ UpdateToStock;
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
@@ -537,8 +544,11 @@ public class WSEnv extends PBase {
 
             idMov=D_MovObj.first().COREL;
 
+            boolean Send_Stocks_Updates =false;
+
             if (D_MovObj.first().TIPO.equalsIgnoreCase("R")){
                 //...
+                Send_Stocks_Updates=true;
             }
 
             CSQL="DELETE FROM D_MOV WHERE COREL='"+corelMov+"';";
@@ -547,7 +557,25 @@ public class WSEnv extends PBase {
             CSQL=CSQL+D_MovObj.addMovHeader(D_MovObj.first())+ ";";
 
             for (int i = 0; i <D_MovDObj.count; i++) {
+
                 CSQL=CSQL+D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i)) + ";";
+
+                if(Send_Stocks_Updates){
+
+                    String vsql ="";
+
+                    AppMethods f = new AppMethods(this,null,Con,db);
+//                    String tipo_producto = f.prodTipo(item.producto);
+//
+//                    if (tipo_producto.equalsIgnoreCase("S")){
+//
+//                        vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
+//                        vsql +=" WHERE (EMPRESA="+item.empresa+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
+//                                " AND (UMPESO='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
+//                    }
+//
+//                    return vsql;
+                }
             }
 
         } catch (Exception e) {

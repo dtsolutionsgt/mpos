@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
 
@@ -167,7 +169,6 @@ public class clsD_facturadObj {
             item.umventa=dt.getString(15);
             item.factor=dt.getDouble(16);
             item.umstock=dt.getString(17);
-
             items.add(item);
 
             dt.moveToNext();
@@ -223,9 +224,15 @@ public class clsD_facturadObj {
 
         String vsql ="";
 
-        vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
-        vsql +="WHERE (EMPRESA="+item.empresa+")  AND (PRODUCTO="+item.producto+") " +
-                "AND (UMPESO='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
+        AppMethods f = new AppMethods(cont,null,Con,db);
+        String tipo_producto = f.prodTipo(item.producto);
+
+        if (tipo_producto.equalsIgnoreCase("S")){
+
+            vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
+            vsql +=" WHERE (EMPRESA="+item.empresa+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
+                   " AND (UMPESO='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
+        }
 
         return vsql;
     }

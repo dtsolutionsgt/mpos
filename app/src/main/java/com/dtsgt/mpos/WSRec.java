@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
+import com.dtsgt.classes.clsP_Producto_TipoObj;
 import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
 import com.dtsgt.classes.clsP_bonifObj;
@@ -96,6 +97,8 @@ import com.dtsgt.classesws.clsBeP_PRODPRECIO;
 import com.dtsgt.classesws.clsBeP_PRODPRECIOList;
 import com.dtsgt.classesws.clsBeP_PRODUCTO;
 import com.dtsgt.classesws.clsBeP_PRODUCTOList;
+import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPO;
+import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPOList;
 import com.dtsgt.classesws.clsBeP_PROVEEDOR;
 import com.dtsgt.classesws.clsBeP_PROVEEDORList;
 import com.dtsgt.classesws.clsBeP_RUTA;
@@ -332,6 +335,9 @@ public class WSRec extends PBase {
                         break;
                     case 34:
                         callMethod("GetP_MUNICIPIO");
+                        break;
+                    case 35:
+                        callMethod("GetP_PRODUCTO_TIPO");
                         break;
                 }
             } catch (Exception e) {
@@ -598,6 +604,14 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
+                    execws(35);
+                    break;
+                case 35:
+                    processProductoTipo();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
                     processComplete();
                     break;
             }
@@ -712,6 +726,9 @@ public class WSRec extends PBase {
                 break;
             case 34:
                 plabel = "Cargando municipios";
+                break;
+            case 35:
+                plabel = "Cargando tipos de producto";
                 break;
         }
 
@@ -1123,6 +1140,42 @@ public class WSRec extends PBase {
             ws.errorflag = true;
         }
     }
+
+    private void processProductoTipo() {
+
+        try {
+
+            clsP_Producto_TipoObj handler = new clsP_Producto_TipoObj(this, Con, db);
+            clsBeP_PRODUCTO_TIPOList items = new clsBeP_PRODUCTO_TIPOList();
+            clsBeP_PRODUCTO_TIPO item = new clsBeP_PRODUCTO_TIPO();
+            clsClasses.clsP_Producto_Tipo var = clsCls.new clsP_Producto_Tipo();
+
+            script.add("DELETE FROM P_PRODUCTO_TIPO");
+
+            items = xobj.getresult(clsBeP_PRODUCTO_TIPOList.class, "GetP_PRODUCTO_TIPO");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+                var = clsCls.new clsP_Producto_Tipo();
+                var.codigo_tipo_producto = item.getCODIGO_TIPO_PRODUCTO();
+                var.nombre = item.getNOMBRE() + "";
+                var.utiliza_stock = item.getUTILIZA_STOCK();
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
 
     private void processConfig() {
 

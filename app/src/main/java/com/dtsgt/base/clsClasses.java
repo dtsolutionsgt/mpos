@@ -342,6 +342,12 @@ public class clsClasses {
         public int  codigo_linea;
     }
 
+    public class clsP_Producto_Tipo   {
+        public String codigo_tipo_producto;
+        public String nombre;
+        public boolean  utiliza_stock;
+    }
+
     public class clsP_departamento   {
         public String codigo;
         public String codigo_area;

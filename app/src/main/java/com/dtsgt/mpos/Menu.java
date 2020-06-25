@@ -1556,7 +1556,7 @@ public class Menu extends PBase {
 
 			if(!valida()){
 				if (gl.cajaid==5){
-					msgAskIniciarCaja("La caja está cerrada. ¿Quiere realizar el inicio de caja?");
+					msgAskIniciarCaja("Caja cerrada. ¿Inicializar?");
 				}
 			}
 

@@ -212,7 +212,6 @@ public class clsD_MovDObj {
     public String addItemSqlWS(clsClasses.clsD_MovD item) {
 
         ins.init("D_MOVD");
-
         ins.add("COREL",item.corel);
         ins.add("PRODUCTO",item.producto);
         ins.add("CANT",item.cant);

@@ -529,10 +529,12 @@ public class AppMethods {
     }
 
     public String prodTipo(int cod) {
+
         Cursor DT;
         String result="";
 
         try {
+
             String sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
