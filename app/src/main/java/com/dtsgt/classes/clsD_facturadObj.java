@@ -231,7 +231,7 @@ public class clsD_facturadObj {
 
             vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
             vsql +=" WHERE (EMPRESA="+item.empresa+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
-                   " AND (UMPESO='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
+                   " AND (UNIDADMEDIDA='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
         }
 
         return vsql;
