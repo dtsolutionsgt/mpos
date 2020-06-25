@@ -118,7 +118,7 @@ public class Venta extends PBase {
         //gl.iniciaVenta=false;
         gl.scancliente="";
         emp=gl.emp;
-        nivel=1;
+        nivel=gl.nivel_sucursal;
         gl.nivel=nivel;
         cliid=gl.cliente;
         //cliid="0"; #CKFK 20200515 puse esto en comentario porque primero se le asigna el Id de cliente

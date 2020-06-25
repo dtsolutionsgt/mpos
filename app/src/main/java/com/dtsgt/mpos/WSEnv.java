@@ -140,6 +140,7 @@ public class WSEnv extends PBase {
 
                     case 2:
 
+
                         processFactura();
 
                         if (ftot>0) {

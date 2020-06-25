@@ -690,7 +690,6 @@ public class AppMethods {
 		}
 	}
 
-
     public String umVenta2(String cod) {
         Cursor DT;
         String umm;
@@ -824,7 +823,7 @@ public class AppMethods {
         int niv;
 
         try {
-            String sql = "SELECT CODIGO_NIVEL_PRECIO FROM P_SUCURSAL WHERE CODIGO='" + gl.tienda + "'";
+            String sql = "SELECT CODIGO_NIVEL_PRECIO FROM P_SUCURSAL WHERE CODIGO_SUCURSAL=" + gl.tienda ;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
