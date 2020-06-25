@@ -190,11 +190,11 @@ public class FelFactura extends PBase {
             } else marcaFactura();
 
             callBackMulti();
-         } else {
+        } else {
             if (!fel.errorflag) {
                 marcaFactura();
             } else {
-                guardaError();
+               guardaError();
             }
 
             callBackSingle();
@@ -298,6 +298,7 @@ public class FelFactura extends PBase {
             fact.feelserie=fel.fact_serie;
             fact.feelnumero=""+fel.fact_numero;
             fact.feeluuid=fel.fact_uuid;
+            fact.feelfechaprocesado=du.getActDateTime();
 
             D_facturaObj.update(fact);
 

@@ -185,9 +185,10 @@ public class clsDocFactura extends clsDocument {
           	clidir=DT.getString(2);
 					
 		} catch (Exception e) {
-	    }	
-		
-		add1=add1+" - ";
+	    }
+
+
+        add1=add1+" - ";
 		add2=add2+" - ";
 		
 		return true;
@@ -507,6 +508,10 @@ public class clsDocFactura extends clsDocument {
             rep.add("Número de autorización :");
             rep.add(feluuid);
             rep.add("Fecha de certificación :"+feldcert);
+
+            if (!felIVA.isEmpty()) rep.add(felIVA);
+            if (!felISR.isEmpty()) rep.add(felISR);
+
             rep.add("");
             rep.add(felcert);
             rep.add(felnit);

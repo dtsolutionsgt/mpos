@@ -18,7 +18,8 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,cliente,nit,tipo,ref,vendedor;
-	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin,felcert,felnit,feluuid,feldcert;
+	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
+	public String felcert,felnit,feluuid,feldcert,felIVA,felISR;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
@@ -601,11 +602,20 @@ public class clsDocument {
 			DT.moveToFirst();
 			sucur = DT.getString(0);
 
-            sql="SELECT TEXTO FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
+            sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
             DT=Con.OpenDT(sql);
             if (DT.getCount()>0) {
-                DT.moveToFirst();textofin=DT.getString(0);
-            } else textofin="";
+                DT.moveToFirst();
+                textofin=DT.getString(0);
+                if (DT.getInt(1)==1) {
+                    felIVA="Sujeto a pago directo de IVA";
+                } else felIVA="";
+                if (DT.getInt(2)==1) {
+                    felISR="Sujeto a pago directo de ISR";
+                } else felISR="";
+            } else {
+                textofin="";
+            }
 
             banderafel=false;felcert="";felnit="";
             try {
