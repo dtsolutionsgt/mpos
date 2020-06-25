@@ -897,7 +897,7 @@ public class WSRec extends PBase {
 
         } catch (Exception e) {
             db.endTransaction();
-            msgbox("DB Commit Error\n" + e.getMessage() + "\n" + sql);
+            msgboxwait("DB Commit Error\n" + e.getMessage() + "\n" + sql);
             return false;
         }
     }
@@ -1096,7 +1096,7 @@ public class WSRec extends PBase {
             clsBeP_MUNICIPIO item = new clsBeP_MUNICIPIO();
             clsClasses.clsP_municipio var = clsCls.new clsP_municipio();
 
-            script.add("DELETE FROM P_MOTIVO_AJUSTE");
+            script.add("DELETE FROM P_MUNICIPIO");
 
             items = xobj.getresult(clsBeP_MUNICIPIOList.class, "GetP_MUNICIPIO");
 

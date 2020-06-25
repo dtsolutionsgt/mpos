@@ -69,7 +69,7 @@ public class clsP_stockObj {
 
     private void addItem(clsClasses.clsP_stock item) {
 
-        ins.init("P_stock");
+        ins.init("P_STOCK");
 
         ins.add("CODIGO",item.codigo);
         ins.add("CANT",item.cant);

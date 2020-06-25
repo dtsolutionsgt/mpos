@@ -22,6 +22,7 @@ import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_stockObj;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -54,19 +55,22 @@ public class WSEnv extends PBase {
     private ArrayList<String> cjCierre = new ArrayList<String>();
     private ArrayList<String> cjReporte = new ArrayList<String>();
     private ArrayList<String> cjPagos = new ArrayList<String>();
+    private ArrayList<String> cStock= new ArrayList<String>();
 
     private String CSQL,plabel,rs,
             corel,ferr,idfact,
             corelMov, movErr, idMov,
             corelCjCierre, cjCierreError,
             corelCjReporte, cjReporteError,
-            corelCjPagos, cjPagosError;
+            corelCjPagos, cjPagosError,
+            cStockError;
     private int ftot,fsend,fidx,
                 fTotMov,fIdxMov, mSend,
                 cjCierreTot, cjCierreSend,
                 cjReporteTot, cjReporteSend,
-                cjPagosTot, cjPagosSend ;
-    private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB;
+                cjPagosTot, cjPagosSend,
+                cStockTot, cStockSend;
+    private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,6 +193,18 @@ public class WSEnv extends PBase {
                         }
 
                         break;
+
+                    case 7:
+
+                        processStock();
+
+                        cStockTot=cStock.size();
+
+                        if (cStockTot>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();errorflag=true;
@@ -239,6 +255,10 @@ public class WSEnv extends PBase {
                     break;
                 case 6:
                     if (cjReporteTot>0) statusCajaReporte();
+                    execws(7);
+                    break;
+                case 7:
+                    if (cStockTot>0) statusStock();
                     processComplete();
                     break;
             }
@@ -268,6 +288,8 @@ public class WSEnv extends PBase {
                 plabel = "Enviando Caja Pagos";break;
             case 6:
                 plabel = "Enviando Caja Reporte";break;
+            case 7:
+                plabel = "Enviando Stock";break;
         }
 
         updateLabel();
@@ -309,6 +331,9 @@ public class WSEnv extends PBase {
 
                 ss+="Caja reporte total: "+cjReporteTot+"\n";
                 ss+="Caja reporte sin envio: "+(cjReporteTot-cjReporteSend);
+
+                ss+="Stock total: "+cStockTot+"\n";
+                ss+="Stock sin envio: "+(cStockTot-cStockSend);
 
                 msgboxwait(ss);
 
@@ -460,9 +485,9 @@ public class WSEnv extends PBase {
                 P_clienteObj.items.get(i).eservice="S";
 
                 ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+ccli+")";
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
                 ss=P_clienteObj.addItemSql(P_clienteObj.items.get(i),gl.emp);
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
 
                 clients.add(""+ccli);
             }
@@ -579,9 +604,9 @@ public class WSEnv extends PBase {
                 P_cajacierreObj.items.get(i).statcom="S";
 
                 ss="DELETE FROM P_CAJACIERRE WHERE (CODIGO_CAJACIERRE='"+cCjCierre+"')";
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
                 ss=P_cajacierreObj.addItemSqlFecha(P_cajacierreObj.items.get(i));
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
 
                 cjCierre.add(""+cCjCierre);
             }
@@ -639,9 +664,9 @@ public class WSEnv extends PBase {
                 P_cajapagosObj.items.get(i).statcom="S";
 
                 ss="DELETE FROM P_CAJAPAGOS WHERE (CODIGO_CAJAPAGOS='"+cCjPago+"')";
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
                 ss=P_cajapagosObj.addItemSqlFecha(P_cajapagosObj.items.get(i));
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
 
                 cjPagos.add(""+cCjPago);
             }
@@ -698,9 +723,9 @@ public class WSEnv extends PBase {
                 P_cajareporteObj.items.get(i).statcom="S";
 
                 ss="DELETE FROM P_CAJAREPORTE WHERE (CODIGO_CAJAPAGOS='"+cCjReporte+"')";
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
                 ss=P_cajareporteObj.addItemSql(P_cajareporteObj.items.get(i));
-                CSQL = CSQL + ss + "\n";
+                CSQL = CSQL + ss + ";";
 
                 cjReporte.add(""+cCjReporte);
             }
@@ -730,6 +755,64 @@ public class WSEnv extends PBase {
             try {
 
                 sql="UPDATE P_CAJAREPORTE SET STATCOM='S' WHERE STATCOM='N'";
+                db.execSQL(sql);
+
+            } catch (SQLException e) {
+                msgbox(e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    private void processStock() {
+        String codStock;
+
+        cjReporte.clear();
+
+        try {
+            clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+            P_stockObj.fill("WHERE enviado=1");
+
+            CSQL="";
+
+            for (int i = 0; i <P_stockObj.count; i++) {
+
+                P_stockObj.items.get(i).enviado=1;
+                codStock = P_stockObj.items.get(i).documento;
+                ss=P_stockObj.addItemSql(P_stockObj.items.get(i));
+                CSQL = CSQL + ss + ";";
+
+                cStock.add(""+codStock);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void statusStock() {
+        try {
+
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+
+            if (!rs.equalsIgnoreCase("#")) {
+
+                cStockError=rs;
+                cStockSendB=true;
+
+                return;
+
+            } else {
+                cStockSendB=true;
+            }
+
+            cStockSend++;
+
+            try {
+
+                sql="UPDATE P_STOCK SET ENVIADO=1 WHERE ENVIADO=0";
                 db.execSQL(sql);
 
             } catch (SQLException e) {
@@ -809,6 +892,13 @@ public class WSEnv extends PBase {
 
             total_enviar+=cjReporteTot;
 
+            clsP_stockObj P_cStockObj=new clsP_stockObj(this,Con,db);
+            P_cStockObj.fill("WHERE ENVIADO=0");
+
+            cStockTot=P_cStockObj.count;
+
+            total_enviar+=cStockTot;
+
             if(total_enviar>0){
 
                 lbl1.setText("Pendientes envio : \nFacturas: "+ftot+
@@ -816,7 +906,8 @@ public class WSEnv extends PBase {
                             "\nMovimientos inventario: "+fTotMov+
                             "\nCierres de caja: "+cjCierreTot+
                             "\nPagos de caja: "+cjPagosTot+
-                            "\nReportes caja: "+cjReporteTot);
+                            "\nReportes caja: "+cjReporteTot+
+                            "\nStock: "+cStockTot);
 
             }else{
                 msgboxwait("No hay datos pendientes de envío");

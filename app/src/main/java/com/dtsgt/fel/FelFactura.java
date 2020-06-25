@@ -353,7 +353,8 @@ public class FelFactura extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
-           // CSQL = CSQL + "UPDATE P_COREL SET CORELULT =   WHERE SERIE = " + ";";
+           CSQL = CSQL + "UPDATE P_COREL SET CORELULT = " + D_facturaObj.first().corelativo + "  " +
+                   "WHERE SERIE = '" + D_facturaObj.first().serie + "' AND ACTIVA = 1 AND RUTA = " + gl.codigo_ruta + ";";
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 
@@ -509,6 +510,9 @@ public class FelFactura extends PBase {
             for (int i = 0; i < D_facturapObj.count; i++) {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
+
+            CSQL = CSQL + "UPDATE P_COREL SET CORELULT = " + D_facturaObj.first().corelativo + "  " +
+                    "WHERE SERIE = '" + D_facturaObj.first().serie + "' AND ACTIVA = 1 AND RUTA = " + gl.codigo_ruta + ";";
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 

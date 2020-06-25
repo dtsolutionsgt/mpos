@@ -529,7 +529,9 @@ public class MainActivity extends PBase {
         if (!tieneTiendaCaja()) return;
 
         try {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            //AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+            ExDialog alert = new ExDialog(this);
 
             alert.setTitle("Contraseña de administrador");//	alert.setMessage("Serial");
 

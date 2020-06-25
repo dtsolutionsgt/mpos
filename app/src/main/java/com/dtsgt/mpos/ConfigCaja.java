@@ -190,7 +190,7 @@ public class ConfigCaja extends PBase {
             }
 
             for (int i = 0; i <sucur.count; i++) {
-                scod=sucur.items.get(i).codigo;
+                scod=String.valueOf(sucur.items.get(i).codigo_sucursal);
                 spincode.add(scod);
                 spinlist.add(sucur.items.get(i).descripcion);
                 if (scod.equalsIgnoreCase(selid)) selidx=i+1;
@@ -227,6 +227,7 @@ public class ConfigCaja extends PBase {
 
     private boolean fillSpinner2(String selid){
         clsP_rutaObj ruta =new clsP_rutaObj(this,Con,db);
+
         int selidx=0;
         int scod;
 
@@ -239,6 +240,7 @@ public class ConfigCaja extends PBase {
             if (idsuc==0) {
                 ruta.fill("  ORDER BY Nombre");
             }else{
+
                 ruta.fill(" WHERE SUCURSAL = " + idsuc + " ORDER BY Nombre");
             }
 
