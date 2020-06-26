@@ -187,14 +187,18 @@ public class FelFactura extends PBase {
             if (fel.errorflag) {
                 ffail++;
                 guardaError();
-            } else marcaFactura();
+                marcaFacturaContingencia();
+            } else {
+                marcaFactura();
+            }
 
             callBackMulti();
         } else {
             if (!fel.errorflag) {
                 marcaFactura();
             } else {
-               guardaError();
+                marcaFacturaContingencia();
+                guardaError();
             }
 
             callBackSingle();
@@ -204,15 +208,10 @@ public class FelFactura extends PBase {
     private void callBackMulti() {
 
         fidx++;
-
         if (fidx<ftot) {
-
             if (fel.errorflag) ffail++;
-
             procesafactura();
-
         } else {
-
             if (ffail==0) {
                 endstr="Certificados : "+ftot;
                 if (gl.peEnvio) envioFacturas();else {toast(endstr); finish();}
@@ -220,9 +219,7 @@ public class FelFactura extends PBase {
                 endstr="Certificados : "+(ftot-ffail)+"\nSin certificacion : "+ffail;
                 if (gl.peEnvio) envioFacturas(); else msgexit(endstr);
             }
-
         }
-
     }
 
     private void callBackSingle() {
@@ -293,8 +290,8 @@ public class FelFactura extends PBase {
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
-            fact.serie=fel.fact_serie;
-            fact.corelativo=fel.fact_numero;
+            //fact.serie=fel.fact_serie;
+            //fact.corelativo=fel.fact_numero;
             fact.feelserie=fel.fact_serie;
             fact.feelnumero=""+fel.fact_numero;
             fact.feeluuid=fel.fact_uuid;
@@ -307,6 +304,24 @@ public class FelFactura extends PBase {
         }
 
     }
+
+    private void marcaFacturaContingencia() {
+        try {
+
+            D_facturaObj.fill("WHERE Corel='"+corel+"'");
+            fact=D_facturaObj.first();
+
+            fact.serie=fel.fact_serie;
+            fact.corelativo=fel.fact_numero;
+            fact.feelcontingencia=fel.fact_serie+"-"+fel.fact_numero;
+
+            D_facturaObj.update(fact);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -376,7 +391,8 @@ public class FelFactura extends PBase {
 
     public String addFactheader(clsClasses.clsD_factura item) {
 
-        String fs=""+du.univfechalong(item.fecha);
+        //String fs=""+du.univfechalong(item.fecha);
+        String fs=""+du.univfecha(item.fecha);
 
         ins.init("D_factura");
         ins.add("EMPRESA",item.empresa);
@@ -414,7 +430,7 @@ public class FelFactura extends PBase {
         ins.add("FEELSERIE",item.feelserie);
         ins.add("FEELNUMERO",item.feelnumero);
         ins.add("FEELUUID",item.feeluuid);
-        ins.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
+        ins.add("FEELFECHAPROCESADO",""+du.univfecha(item.feelfechaprocesado));
         ins.add("FEELCONTINGENCIA",item.feelcontingencia);
 
         return ins.sql();
@@ -442,7 +458,6 @@ public class FelFactura extends PBase {
     }
 
     private void processComplete() {
-
         Date currentTime = Calendar.getInstance().getTime();
         Log.i("FEL_FINISH: ", currentTime.toString());
 

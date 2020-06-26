@@ -19,7 +19,7 @@ public class clsDocument {
 
 	public String nombre,numero,serie,ruta,cliente,nit,tipo,ref,vendedor;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
-	public String felcert,felnit,feluuid,feldcert,felIVA,felISR;
+	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
@@ -37,7 +37,7 @@ public class clsDocument {
 	protected DecimalFormat decfrm;
 	
 	protected String clicod,clidir,pemodo;
-	protected String vendcod;
+	protected String vendcod,vendnom;
 
 	protected int prw;
 	
@@ -507,8 +507,8 @@ public class clsDocument {
         idx=lu.indexOf("@Vendedor");
         if (idx>=0) {
         	rep.addc("");
-            if (emptystr(vendedor)) return "@@";
-            l=l.replace("@Vendedor", vendedor);return l;
+            if (emptystr(vendnom)) return "@@";
+            l=l.replace("@Vendedor", vendnom);return l;
         }
 
         idx=lu.indexOf("@Ruta");
@@ -608,10 +608,10 @@ public class clsDocument {
                 DT.moveToFirst();
                 textofin=DT.getString(0);
                 if (DT.getInt(1)==1) {
-                    felIVA="Sujeto a pago directo de IVA";
+                    felIVA="Sujeto a pago de IVA";
                 } else felIVA="";
                 if (DT.getInt(2)==1) {
-                    felISR="Sujeto a pago directo de ISR";
+                    felISR="Sujeto a pago de ISR";
                 } else felISR="";
             } else {
                 textofin="";

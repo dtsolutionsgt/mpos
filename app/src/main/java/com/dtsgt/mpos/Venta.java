@@ -663,12 +663,12 @@ public class Venta extends PBase {
         if (sinimp) {
             ttsin=tot-ttimp-ttperc;
             ttsin=mu.round(ttsin,2);
-            lblTot.setText(gl.peMon+mu.frmcur(ttsin));
+            lblTot.setText(mu.frmcur(ttsin));
         } else {
             tot=mu.round(tot,2);
             tdesc=mu.round(tdesc,2);
             stot=tot-tdesc;
-            lblTot.setText(gl.peMon+mu.frmcur(tot));
+            lblTot.setText(mu.frmcur(tot));
             lblDesc.setText("Desc : "+mu.frmcur(tdesc));
             lblStot.setText("Subt : "+mu.frmcur(stot));
         }
@@ -2405,7 +2405,7 @@ public class Venta extends PBase {
 
         dweek=mu.dayofweek();
 
-        lblTot.setText("Total : "+gl.peMon+mu.frmdec(0));
+        lblTot.setText("Total : "+mu.frmcur(0));
         lblVend.setText("");
 
         khand.clear(true);khand.enable();
