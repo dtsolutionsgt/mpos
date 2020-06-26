@@ -133,7 +133,9 @@ public class Caja extends PBase {
     public void guardar(){
 
         try{
+
             if(gl.cajaid==1 && !MontoIni.getText().toString().trim().isEmpty()){
+
                 fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
 
                 if(fondoCaja>0){

@@ -83,6 +83,7 @@ public class FelFactura extends PBase {
         fel=new clsFELInFile(this,this);
 
         getURL();
+
         ws = new WebServiceHandler(FelFactura.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
@@ -679,11 +680,14 @@ public class FelFactura extends PBase {
     }
 
     private void getURL() {
+
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
         gl.timeout = 6000;
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
             if (file1.exists()) {
 
                 FileInputStream fIn = new FileInputStream(file1);

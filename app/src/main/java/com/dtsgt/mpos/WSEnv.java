@@ -87,6 +87,7 @@ public class WSEnv extends PBase {
         pbar.setVisibility(View.INVISIBLE);
 
         getURL();
+
         ws = new WebServiceHandler(WSEnv.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
@@ -741,6 +742,7 @@ public class WSEnv extends PBase {
     }
 
     private void processCajaReporte() {
+
         String cCjReporte;
 
         cjReporte.clear();
