@@ -28,7 +28,7 @@ public class clsDocFactura extends clsDocument {
 
 	protected boolean loadHeadData(String corel) {
 		Cursor DT;
-		String cli="",vend="",val,empp="", anulado;
+		String cli="",vend="",val,empp="", anulado,s1,s2;
 		long ff;
 		int impres, cantimpres;
 				
@@ -38,7 +38,7 @@ public class clsDocFactura extends clsDocument {
 		
 		try {
 			sql=" SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,DESMONTO,IMPMONTO,EMPRESA,FECHAENTR,ADD1," +
-				" ADD2,IMPRES, ANULADO, FEELUUID, FEELFECHAPROCESADO " +
+				" ADD2,IMPRES, ANULADO, FEELUUID, FEELFECHAPROCESADO, FEELSERIE, FEELNUMERO, FEELCONTINGENCIA " +
 				" FROM D_FACTURA WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);
 
@@ -71,8 +71,12 @@ public class clsDocFactura extends clsDocument {
 
                 feluuid=DT.getString(14);
                 feldcert=sfecha(DT.getLong(15));
+                s1=DT.getString(16);if (!s1.isEmpty()) serie=s1;
+                s2=DT.getString(17);if (!s2.isEmpty()) numero=s2;
+                felcont=DT.getString(18);
 
-				if (anulado.equals("S")?true:false){
+
+                if (anulado.equals("S")?true:false){
 					cantimpres = -1;
 				}else if (cantimpres == 0 && impres > 0){
                     if (esPendientePago(corel)){
@@ -110,9 +114,18 @@ public class clsDocFactura extends clsDocument {
 
 		} catch (Exception e) {
 			//Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
-	    }	
-		
-		try {
+	    }
+
+        try {
+            sql="SELECT NOMBRE FROM VENDEDORES WHERE CODIGO_VENDEDOR="+vend;
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+            vendnom=DT.getString(0);
+        } catch (Exception e) {
+            vendnom=""+vend;
+        }
+
+        try {
 			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL";
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
@@ -140,8 +153,7 @@ public class clsDocFactura extends clsDocument {
 		
 		try {
 			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO " +
-				"FROM P_CLIENTE " +
-				"WHERE CODIGO_CLIENTE ='"+cli+"'";
+				"FROM P_CLIENTE WHERE CODIGO_CLIENTE ='"+cli+"'";
 
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
@@ -503,11 +515,20 @@ public class clsDocFactura extends clsDocument {
             for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
         }
 
-        if (banderafel) {
+        String asd=feluuid;
+
+        if (feluuid.equalsIgnoreCase(" ")) {
             rep.add("");
-            rep.add("Número de autorización :");
-            rep.add(feluuid);
-            rep.add("Fecha de certificación :"+feldcert);
+            rep.add("Factura generada en modo de contingencia");
+        }
+
+        if (banderafel) {
+            if (!feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Número de autorización :");
+                rep.add(feluuid);
+                rep.add("Fecha de certificación :"+feldcert);
+            }
 
             if (!felIVA.isEmpty()) rep.add(felIVA);
             if (!felISR.isEmpty()) rep.add(felISR);
