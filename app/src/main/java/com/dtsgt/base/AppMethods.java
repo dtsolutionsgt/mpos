@@ -921,7 +921,9 @@ public class AppMethods {
     }
 
     private void printEpsonTMBT(int copies) {
+
         try {
+
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
 
             intent.putExtra("mac","BT:"+gl.prpar);
@@ -930,8 +932,9 @@ public class AppMethods {
             intent.putExtra("copies",copies);
 
             cont.startActivity(intent);
+
         } catch (Exception e) {
-            msgbox("El controlador de impresión de Epson TM BT no está instalado");
+            msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
             //msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
         }
     }
@@ -941,7 +944,8 @@ public class AppMethods {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
             cont.startActivity(intent);
         } catch (Exception e) {
-            msgbox("El controlador de impresión de HP Engage USB no está instalado");
+			//#EJC20200627: Modifique mensaje, menos especifico.
+            msgbox("El controlador de impresiónUSB no está instalado (Ref -> HPEngage?) ");
             //msgbox("El controlador de HP Engage USB no está instalado\n"+e.getMessage());
         }
     }
