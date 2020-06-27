@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.mpos.CryptUtil;
 import com.dtsgt.mpos.R;
 
+import java.io.File;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -897,6 +899,7 @@ public class AppMethods {
     }
 
     public void doPrint(int copies) {
+
 	    if (copies<1) copies=1;
 
         loadPrintConfig();
@@ -910,27 +913,53 @@ public class AppMethods {
         }
 
         if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
-            printEpsonTMBT(copies);
+
+        	try {
+
+        		//#EJC20200627: Validar que el driver esta disponible antes de mandar a imprimir...
+				Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
+				intent.putExtra("mac","BT:"+gl.prpar);
+				printEpsonTMBT(copies);
+
+			} catch (Exception e) {
+
+				String fname = Environment.getExternalStorageDirectory()+"/print.txt";
+				String fnamenew = Environment.getExternalStorageDirectory()+"/not_printed.txt";
+
+				File currentFile = new File(fname);
+				File newFile = new File(fnamenew);
+
+				if (rename(currentFile, newFile)) {
+					//Success
+					Log.i("TAG", "Success");
+				} else {
+					//Fail
+					Log.i("TAG", "Fail");
+				}
+				msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
+				//msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
+			}
         }
 
-        //#EJC20200627: Agregué gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")
-        if (gl.prtipo.equalsIgnoreCase("HP Engage USB") || gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
+        if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
             HPEngageUSB(copies);
         }
 
     }
+
+	private boolean rename(File from, File to) {
+		return from.getParentFile().exists() && from.exists() && from.renameTo(to);
+	}
 
     private void printEpsonTMBT(int copies) {
 
         try {
 
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
-
             intent.putExtra("mac","BT:"+gl.prpar);
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
             intent.putExtra("askprint",1);
             intent.putExtra("copies",copies);
-
             cont.startActivity(intent);
 
         } catch (Exception e) {

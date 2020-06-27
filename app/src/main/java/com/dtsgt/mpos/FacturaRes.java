@@ -646,6 +646,7 @@ public class FacturaRes extends PBase {
 	}
 
 	private void impressOrder(){
+
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
 		try{
@@ -657,10 +658,12 @@ public class FacturaRes extends PBase {
 			impres=0;
 
 			if (app.impresora()) {
+
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
                 app.doPrint(2);
 
                 try {
+
                     File file1 = new File(fname);
                     File ffile = new File(file1.getPath());
 
