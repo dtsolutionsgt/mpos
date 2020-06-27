@@ -245,7 +245,7 @@ public class ConfigCaja extends PBase {
             }
 
             if (ruta.count==0) {
-                msgAskReturn("Lista de rutas está vacia, no se puede continuar");return false;
+                msgAskReturn("Lista de cajas está vacia, no se puede continuar");return false;
             }
 
             for (int i = 0; i <ruta.count; i++) {

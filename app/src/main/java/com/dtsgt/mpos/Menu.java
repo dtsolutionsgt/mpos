@@ -114,6 +114,7 @@ public class Menu extends PBase {
 			}
 
 			this.setTitle("ROAD");
+
 			listItems();
 
 			cajaCerrada();
@@ -147,7 +148,6 @@ public class Menu extends PBase {
 	}
 
 	//#CKFK20200524_FIX_BY_OPENDT Quité la función InsertCorrel porque la tabla P_CORREL_OTROS ya no se utiliza
-
 	public void listItems() {
         clsMenu item;
 
