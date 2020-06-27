@@ -913,7 +913,8 @@ public class AppMethods {
             printEpsonTMBT(copies);
         }
 
-        if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
+        //#EJC20200627: Agregué gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")
+        if (gl.prtipo.equalsIgnoreCase("HP Engage USB") || gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
             HPEngageUSB(copies);
         }
 
