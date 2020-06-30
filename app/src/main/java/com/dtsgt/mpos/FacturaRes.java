@@ -1,15 +1,12 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -622,7 +619,7 @@ public class FacturaRes extends PBase {
         lblTotal.setText(mu.frmcur(tot));
 	}
 
- 	private void finishOrder(){
+ 	private void finishOrder() {
 
 		if (!saved) {
 			if (!saveOrder()) return;
@@ -631,7 +628,7 @@ public class FacturaRes extends PBase {
         gl.cliposflag=false;
 
         if (!app.usaFEL()) {
-            impressOrder();
+            impresionDocumento();
         } else {
             if (isNetworkAvailable()) {
                 browse=2;
@@ -639,13 +636,13 @@ public class FacturaRes extends PBase {
                 startActivity(new Intent(this, FelFactura.class));
             } else {
                 toast("No hay conexion a internet");
-                impressOrder();
+                impresionDocumento();
             }
         }
 
 	}
 
-	private void impressOrder(){
+	private void impresionDocumento(){
 
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
@@ -678,7 +675,6 @@ public class FacturaRes extends PBase {
 
             }
 
-
 			//gl.closeCliDet=true;
 			//gl.closeVenta=true;
             gl.iniciaVenta=true;
@@ -689,7 +685,7 @@ public class FacturaRes extends PBase {
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			mu.msgbox("impressOrder: "  + e.getMessage());
+			mu.msgbox("impresionDocumento : "  + e.getMessage());
 
 			//gl.closeCliDet = true;
 			//gl.closeVenta = true;
@@ -2467,7 +2463,6 @@ public class FacturaRes extends PBase {
 
     }
 
-
     //endregion
 	
 	//region Activity Events
@@ -2492,7 +2487,7 @@ public class FacturaRes extends PBase {
                 } else {
                     toastlongtop("Factura certificada : \n"+gl.feluuid);
                 }
-                impressOrder();
+                impresionDocumento();
                 return;
             }
 

@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -269,7 +271,7 @@ public class Menu extends PBase {
 
 					gl.cajaid=5;
 
-					if(valida()){
+					if (valida()) {
 
 					    gl.nivel_sucursal=app.nivelSucursal();
 						gl.cliente="C.F.";
@@ -284,21 +286,22 @@ public class Menu extends PBase {
 						gl.iniciaVenta=true;
 						gl.exitflag=false;
 						gl.forcedclose=false;
-						startActivity(new Intent(this, Venta.class));
-					}else {
+
+						if (impresoraInstalada()) {
+                            startActivity(new Intent(this, Venta.class));
+                        } else {
+                            msgAskImpresora();
+                        }
+
+					} else {
 
 						if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
 						//msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
-
 						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
 						if (gl.cierreDiario){
-
 							if(gl.cajaid==6) msgAskValidaCierre("No realizó el cierre de caja del día " + du.sfecha(gl.lastDate) + ". ¿Realizar cierre Z?");
-
-						}else{
-
+						} else {
 							if(gl.cajaid==6) msgAskValidUltZ("No se realizó el último cierre de caja, ¿Desea continuar la venta con la fecha: "+du.univfechaReport(gl.lastDate)+", o desea realizar el cierre Z?");
-
 						}
 					}
 
@@ -318,7 +321,7 @@ public class Menu extends PBase {
 					//#HS_20181206 Verifica el usuario si es DTS.
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
 						mu.msgbox("No puede realizar esta acción");
-					}else {
+					} else {
 						showConsMenu();
 					}
 					break;
@@ -1392,96 +1395,6 @@ public class Menu extends PBase {
 		return true;
 	}
 
-	private void msgAskValid(String msg) {
-        ExDialog dialog = new ExDialog(this);
-		dialog.setMessage(msg);
-		dialog.setCancelable(false);
-
-		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-
-		dialog.show();
-
-	}
-
-	private void msgAskIniciarCaja(String msg) {
-        ExDialog dialog = new ExDialog(this);
-		dialog.setMessage(msg);
-		dialog.setCancelable(false);
-
-		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-
-				if(gl.cajaid==5){
-
-					gl.cajaid=1;
-
-					if (valida()){
-
-						if (gl.cajaid!=2){
-
-							gl.inicio_caja_correcto =false;
-
-							startActivity(new Intent(Menu.this,Caja.class));
-
-						}
-
-					}
-				}
-			}
-		});
-
-		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-
-		dialog.show();
-
-	}
-
-	private void msgAskValidUltZ(String msg) {
-        ExDialog dialog = new ExDialog(this);
-		dialog.setMessage(msg);
-		dialog.setCancelable(false);
-
-		dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				VentaDate();
-			}
-		});
-
-		dialog.setNegativeButton("Realizar Cierre Z", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				CierreZ();
-			}
-		});
-
-		dialog.show();
-
-	}
-
-	private void msgAskValidaCierre(String msg) {
-        ExDialog dialog = new ExDialog(this);
-		dialog.setMessage(msg);
-		dialog.setCancelable(false);
-
-		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				CierreZ();
-			}
-		});
-
-		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-
-			}
-		});
-
-		dialog.show();
-
-	}
-
 	private boolean validaVenta() {
 		Cursor DT;
 		int ci,cf,ca1,ca2;
@@ -1587,9 +1500,7 @@ public class Menu extends PBase {
 		gl.prw=prwd;
 		
 	}
-	
 
-		
 	private int getPrinterType() {
 		Cursor DT;
 		String prtipo;
@@ -1628,8 +1539,169 @@ public class Menu extends PBase {
         items.add(item);
     }
 
+    private boolean impresoraInstalada() {
+        app.loadPrintConfig();
+
+        if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
+            return true;
+        }
+
+        if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
+            try {
+                if (isPackageInstalled("com.dts.epsonprint")) {
+                    return true;
+                } else {
+                    gl.prndrvmsg="El controlador de Epson TM BT no está instalado\nNo se va a poder imprimir.";
+                    return false;
+                }
+            } catch (Exception e) {
+                msgbox("impresoraInstalada : "+e.getMessage());
+            }
+        }
+
+        if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
+            try {
+                if (isPackageInstalled("com.hp.retail.test")) {
+                    return true;
+                } else {
+                    gl.prndrvmsg="El controlador de HP Engage USB no está instalado\nNo se va a poder imprimir.";
+                    return false;
+                }
+            } catch (Exception e) {
+                msgbox("impresoraInstalada : "+e.getMessage());
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isPackageInstalled(String packageName) {
+         try {
+            PackageManager packageManager= this.getPackageManager();
+            packageManager.getPackageInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
 
 	//endregion
+
+    //region Dialogs
+
+    private void msgAskValid(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskIniciarCaja(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+                if(gl.cajaid==5){
+
+                    gl.cajaid=1;
+
+                    if (valida()){
+
+                        if (gl.cajaid!=2){
+
+                            gl.inicio_caja_correcto =false;
+
+                            startActivity(new Intent(Menu.this,Caja.class));
+
+                        }
+
+                    }
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskValidUltZ(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                VentaDate();
+            }
+        });
+
+        dialog.setNegativeButton("Realizar Cierre Z", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                CierreZ();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskValidaCierre(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                CierreZ();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskImpresora() {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(gl.prndrvmsg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(Menu.this, Venta.class));
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+
+
+
+    //endregion
 
 	//region Activity Events
 	

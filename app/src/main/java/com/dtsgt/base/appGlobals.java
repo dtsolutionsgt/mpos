@@ -31,7 +31,7 @@ public class appGlobals extends Application {
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout;
-	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg;
+	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg;
 	public double precio_recarga,total_pago;
 	public boolean configCajaSuc = false,
 	               inicio_caja_correcto = false,
@@ -53,7 +53,7 @@ public class appGlobals extends Application {
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL;
 	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,endPrint;
-	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio;
+	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio, beInvCompart;
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL;
     public boolean peImprFactCorrecta,peMCent,peMPrOrdCos,peMImg,peMFact,peEnvio,peCajaRec;
 

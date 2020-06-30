@@ -1,6 +1,5 @@
 package com.dtsgt.base;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,8 +17,6 @@ import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
-import com.dtsgt.mpos.CryptUtil;
-import com.dtsgt.mpos.R;
 
 import java.io.File;
 import java.util.Currency;
@@ -470,6 +467,19 @@ public class AppMethods {
         } catch (Exception e) {
             gl.peCajaRec=false;
         }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=112";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.beInvCompart =val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.beInvCompart =false;
+        }
     }
 
 	public boolean grant(int menuopt,int rol) {
@@ -913,32 +923,7 @@ public class AppMethods {
         }
 
         if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
-
-        	try {
-
-        		//#EJC20200627: Validar que el driver esta disponible antes de mandar a imprimir...
-				Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
-				intent.putExtra("mac","BT:"+gl.prpar);
-				printEpsonTMBT(copies);
-
-			} catch (Exception e) {
-
-				String fname = Environment.getExternalStorageDirectory()+"/print.txt";
-				String fnamenew = Environment.getExternalStorageDirectory()+"/not_printed.txt";
-
-				File currentFile = new File(fname);
-				File newFile = new File(fnamenew);
-
-				if (rename(currentFile, newFile)) {
-					//Success
-					Log.i("TAG", "Success");
-				} else {
-					//Fail
-					Log.i("TAG", "Fail");
-				}
-				msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
-				//msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
-			}
+            printEpsonTMBT(copies);
         }
 
         if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
@@ -963,7 +948,23 @@ public class AppMethods {
             cont.startActivity(intent);
 
         } catch (Exception e) {
-            msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
+            toastlong("El controlador de Epson TM BT no está instalado");
+
+            String fname = Environment.getExternalStorageDirectory()+"/print.txt";
+            String fnamenew = Environment.getExternalStorageDirectory()+"/not_printed.txt";
+
+            File currentFile = new File(fname);
+            File newFile = new File(fnamenew);
+
+            if (rename(currentFile, newFile)) {
+                //Success
+                Log.i("TAG", "Success");
+            } else {
+                //Fail
+                Log.i("TAG", "Fail");
+            }
+
+            //msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
             //msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
         }
     }
@@ -979,7 +980,7 @@ public class AppMethods {
         }
     }
 
-    private void loadPrintConfig() {
+    public void loadPrintConfig() {
         Cursor DT;
 
         //00:01:90:85:0D:8C
@@ -1142,7 +1143,13 @@ public class AppMethods {
 		toast.show();
 	}
 
-	private boolean emptystr(String s){
+    protected void toastlong(String msg) {
+        Toast toast= Toast.makeText(cont,msg, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
+    private boolean emptystr(String s){
 		if (s==null || s.isEmpty()) {
 			return true;
 		} else{

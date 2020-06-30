@@ -1,7 +1,11 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -604,7 +608,8 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
-                    execws(35);
+                    //execws(35);
+                    processComplete();
                     break;
                 case 35:
                     processProductoTipo();
@@ -906,9 +911,13 @@ public class WSRec extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            app.setDateRecep(du.getActDate());
-
-            msgboxwait("Recepción completa");
+            if (validaParametros()) {
+                app.setDateRecep(du.getActDate());
+                msgboxwait("Recepción completa");
+            } else {
+                msgboxexit("Configuración de tiendas y cajas incorrecta");
+                finish();
+            }
 
             return true;
 
@@ -1175,7 +1184,6 @@ public class WSRec extends PBase {
             ws.errorflag = true;
         }
     }
-
 
     private void processConfig() {
 
@@ -2479,6 +2487,19 @@ public class WSRec extends PBase {
         dialog.show();
     }
 
+    private void msgboxexit(String msg) {
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setMessage(msg);
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                restartApp();
+            }
+        });
+        dialog.show();
+    }
+
     private boolean validaDatos(){
 
         boolean resultado=true;
@@ -2542,6 +2563,29 @@ public class WSRec extends PBase {
         return resultado;
     }
 
+    private boolean validaParametros() {
+        Cursor dt;
+
+        try {
+
+            sql="SELECT * FROM P_SUCURSAL";
+            dt=Con.OpenDT(sql);
+            if (dt.getCount()==0) {
+                db.execSQL("DELETE FROM P_RUTA");return false;
+            }
+
+            sql="SELECT * FROM P_RUTA";
+            dt=Con.OpenDT(sql);
+            if (dt.getCount()==0) return false;
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
     protected void guardaDatosConexion() {
 
         BufferedWriter writer = null;
@@ -2566,6 +2610,21 @@ public class WSRec extends PBase {
 
         } catch (Exception e) {
             msgbox("Error " + e.getMessage());
+        }
+
+    }
+
+    private void restartApp(){
+        try{
+            PackageManager packageManager = this.getPackageManager();
+            Intent intent = packageManager.getLaunchIntentForPackage(this.getPackageName());
+            ComponentName componentName = intent.getComponent();
+            Intent mainIntent =Intent.makeRestartActivityTask(componentName);
+            //Intent mainIntent = IntentCompat..makeRestartActivityTask(componentName);
+            this.startActivity(mainIntent);
+            System.exit(0);
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
     }
