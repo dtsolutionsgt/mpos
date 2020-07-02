@@ -1,12 +1,9 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Handler;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,17 +13,12 @@ import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.SwipeListener;
-import com.dtsgt.classes.clsD_facturaObj;
-import com.dtsgt.classes.clsDocDevolucion;
-import com.dtsgt.classes.clsDocFactura;
-import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_movdObj;
-import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 import com.dtsgt.mant.Lista;
+import com.dtsgt.webservice.wsInvActual;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,9 +31,11 @@ public class lista_ingreso_inventario extends PBase {
     private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
     private ListAdaptCFDV adapter;
     private clsClasses.clsCFDV selitem;
-
     private clsClasses.clsCFDV sitem;
+
     private AppMethods app;
+    private wsInvActual wsi;
+    private Runnable recibeInventario;
 
     private int tipo;
     private String itemid;
@@ -83,6 +77,24 @@ public class lista_ingreso_inventario extends PBase {
         setFechaAct();
 
         listItems();
+
+        app.getURL();
+        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+
+        recibeInventario = new Runnable() {
+            public void run() {if (wsi.errflag) msgbox(wsi.error); }
+        };
+
+        if (gl.peInvCompart) {
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    wsi.actualizaInventario(recibeInventario);
+                }
+            };
+            mtimer.postDelayed(mrunner,200);
+        }
 
     }
 

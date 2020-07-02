@@ -589,7 +589,7 @@ public class InvInicial extends PBase {
         } catch (Exception e) {
         }
 
-        sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO='"+pcod+"' ";
+        sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
         db.execSQL(sql);
     }
 

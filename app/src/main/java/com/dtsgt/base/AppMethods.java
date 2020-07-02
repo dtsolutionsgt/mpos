@@ -18,7 +18,10 @@ import android.widget.Toast;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -476,10 +479,24 @@ public class AppMethods {
             val=dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.beInvCompart =val.equalsIgnoreCase("S");
+            gl.peInvCompart =val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.beInvCompart =false;
+            gl.peInvCompart =false;
         }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=113";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pePedidos =val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pePedidos =false;
+        }
+
     }
 
 	public boolean grant(int menuopt,int rol) {
@@ -502,6 +519,25 @@ public class AppMethods {
             return true;
         }
 	}
+
+    public void getURL() {
+        gl.wsurl = "http://192.168.1.10/mposws/mposws.asmx";
+        gl.timeout = 6000;
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
+            if (file1.exists()) {
+                FileInputStream fIn = new FileInputStream(file1);
+                BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
+                gl.wsurl = myReader.readLine();
+                String line = myReader.readLine();
+                if(line.isEmpty()) gl.timeout = 6000;else gl.timeout = Integer.valueOf(line);
+                myReader.close();
+            }
+        } catch (Exception e) {}
+    }
 
     //endregion
 

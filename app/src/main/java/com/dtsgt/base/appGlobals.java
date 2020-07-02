@@ -46,14 +46,14 @@ public class appGlobals extends Application {
 	public String devtipo,devrazon,dvumventa,dvumstock,dvumpeso,dvlote,scancliente;
 	public double dvfactor,dvpeso,dvprec,dvpreclista,dvtotal;
 	public int dvbrowse=0,tienelote,facturaVen,brw=0;
-    public boolean dvporpeso,devfindia,devprncierre,gpspass,climode;
+    public boolean dvporpeso,devfindia,devprncierre,gpspass,climode,endPrint;
     public double dvdispventa;
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL;
-	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,endPrint;
-	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio, beInvCompart;
+	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
+	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio, peInvCompart;
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL;
     public boolean peImprFactCorrecta,peMCent,peMPrOrdCos,peMImg,peMFact,peEnvio,peCajaRec;
 

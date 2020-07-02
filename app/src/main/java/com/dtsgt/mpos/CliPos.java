@@ -5,31 +5,33 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnKeyListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.dtsgt.base.appGlobals;
+import com.dtsgt.webservice.wsPedNuevos;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.text.DecimalFormat;
 
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef;
+	private TextView lblPed;
+    private ImageView imgPed;
 	private RelativeLayout relped;
 
-    private WebService ws;
+    private wsPedNuevos wspn;
+    private Runnable validaPedNuevos;
 
-	private String snit,sname,sdir;
-	private boolean consFinal=false,pedidos;
+	private String snit,sname,sdir,wspnerror;
+	private boolean consFinal=false;
+	private int pedidos;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +44,22 @@ public class CliPos extends PBase {
 		txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.setText("");txtNIT.requestFocus();
 		txtNom = (EditText) findViewById(R.id.editText2);txtNom.setText("");
 		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("");
+        lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
+        imgPed = (ImageView) findViewById(R.id.imageView68);
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
 
 		setHandlers();	
 
-		pedidos=false;
-
         getURL();
-        ws=new WebService(CliPos.this,gl.wsurl);
+        wspn=new wsPedNuevos(gl.wsurl,gl.emp,gl.tienda);
 
-		if (pedidos) {
+        validaPedNuevos = new Runnable() {
+            public void run() {estadoPedidos(); }
+        };
+
+		if (gl.pePedidos) {
 		    relped.setVisibility(View.VISIBLE);
-            estadoPedidos();
+            wspn.pedidosNuevos(validaPedNuevos);
         }
 
 	}
@@ -100,6 +106,10 @@ public class CliPos extends PBase {
         gl.cliente="";
         browse=1;
         startActivity(new Intent(this,Clientes.class));
+    }
+
+    public void doWspnError(View view) {
+        toast(wspnerror);
     }
 
 	private void setHandlers() {
@@ -212,26 +222,26 @@ public class CliPos extends PBase {
 
     //endregion
 
-    //region Webservice
+    //region Pedidos
 
     private void estadoPedidos() {
         try {
-            ws.pedidosNuevos(gl.emp,gl.tienda);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
+            lblPed.setVisibility(View.INVISIBLE);
+            imgPed.setVisibility(View.INVISIBLE);
 
-    @Override
-    protected void wsCallBack(Boolean throwing,String errmsg) throws Exception {
-        if (!throwing) {
-            toast("WS Result : "+ws.strresult);
-            switch (ws.mode) {
-                case 2:
-                    ;break;
-             }
-        } else {
-            toast("WS Error : "+errmsg);
+            if (!wspn.errflag) {
+                pedidos=wspn.pedidos.size();
+                if (pedidos>0) {
+                    lblPed.setVisibility(View.VISIBLE);
+                    lblPed.setText("" + pedidos);
+                }
+                wspnerror="";
+            } else {
+                imgPed.setVisibility(View.VISIBLE);
+                wspnerror=wspn.error;
+                toastcent(wspnerror);
+            }
+        } catch (Exception e) {
         }
     }
 

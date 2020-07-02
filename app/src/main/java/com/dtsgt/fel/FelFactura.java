@@ -312,8 +312,8 @@ public class FelFactura extends PBase {
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
-            fact.serie=fel.fact_serie;
-            fact.corelativo=fel.fact_numero;
+            //fact.serie=fel.fact_serie;
+            //fact.corelativo=fel.fact_numero;
             fact.feelcontingencia=fel.fact_serie+"-"+fel.fact_numero;
 
             D_facturaObj.update(fact);
@@ -713,8 +713,7 @@ public class FelFactura extends PBase {
 
                 if(line.isEmpty()) {
                     gl.timeout = 6000;
-                }
-                else {
+                }  else {
                     gl.timeout = Integer.valueOf(line);
                 }
 

@@ -46,7 +46,7 @@ public class clsDocFactura extends clsDocument {
 				DT.moveToFirst();
 
 				serie=DT.getString(0);
-				numero=""+DT.getInt(1);
+				numero=""+DT.getInt(1);contacc=serie+"-"+numero;
 				ruta=DT.getString(2);
 
 				vend=DT.getString(3);
@@ -520,14 +520,15 @@ public class clsDocFactura extends clsDocument {
         if (feluuid.equalsIgnoreCase(" ")) {
             rep.add("");
             rep.add("Factura generada en modo de contingencia");
+            rep.add("Numero de Acceso : "+contacc);
         }
 
         if (banderafel) {
             if (!feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
-                rep.add("Número de autorización :");
+                rep.add("Numero de autorizacion :");
                 rep.add(feluuid);
-                rep.add("Fecha de certificación :"+feldcert);
+                rep.add("Fecha de certificacion :"+feldcert);
             }
 
             if (!felIVA.isEmpty()) rep.add(felIVA);

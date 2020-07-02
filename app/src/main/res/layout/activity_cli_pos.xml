@@ -87,6 +87,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="false"
                     android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:onClick="doWspnError"
                     android:src="@drawable/dom" />
             </RelativeLayout>
 

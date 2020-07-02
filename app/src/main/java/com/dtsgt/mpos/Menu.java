@@ -471,7 +471,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega", "Nota crédito"};
-            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Recarga","Devolución a bodega"};
+            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Ingreso de mercancía","Ajuste de inventario"};
 
 
 			menudlg = new ExDialog(this);
