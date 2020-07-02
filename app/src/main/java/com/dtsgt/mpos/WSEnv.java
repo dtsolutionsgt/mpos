@@ -412,7 +412,9 @@ public class WSEnv extends PBase {
 
     public String addFactheader(clsClasses.clsD_factura item) {
 
-        String fs=""+du.univfechalong(item.fecha);
+        //String fs=""+du.univfechalong(item.fecha);
+        //#EJC20200702: Formato fecha corregido.
+        String fs=""+du.univfecha(item.fecha);
 
         ins.init("D_factura");
         ins.add("EMPRESA",item.empresa);
