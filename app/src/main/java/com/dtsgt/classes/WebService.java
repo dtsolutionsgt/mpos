@@ -107,7 +107,12 @@ public class WebService {
 
            int responsecode = ((HttpURLConnection) conn).getResponseCode();
 
-           if (responsecode!=299 && responsecode!=404) {
+           //#EJC20200702:Capturar excepcion de SQL (No se sabe el error pero sabemos que no se proceso)
+           if (responsecode==500) {
+               throw new Exception("Error 500: Esto es poco usual pero algún problema ocurrió del lado del motor de BD al ejecutar sentencia SQL: \n" +
+                       "\n" + args[1].toString());
+           }else if (responsecode!=299 && responsecode!=404) {
+
                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                while ((line = rd.readLine()) != null) mResult += line;
                rd.close();rd.close();
