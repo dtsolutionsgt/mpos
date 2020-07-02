@@ -51,7 +51,7 @@ public class WebService {
     }
 
     public void execute() {
-        errorflag =false;error="";
+        errorflag=false;error="";
         AsyncCallWS wstask = new AsyncCallWS();
         wstask.execute();
     }
@@ -132,7 +132,8 @@ public class WebService {
            }
 
        } catch (Exception e) {
-           throw new Exception(e.getMessage());
+           errorflag=true;error=e.getMessage();
+           throw new Exception(error);
        }
     }
 

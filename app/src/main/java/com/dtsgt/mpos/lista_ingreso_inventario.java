@@ -426,7 +426,6 @@ public class lista_ingreso_inventario extends PBase {
         }
     }
 
-
     //endregion
 
     //region Activity Events

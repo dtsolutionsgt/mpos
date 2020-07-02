@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dtsgt.webservice.wsInvActual;
 import com.dtsgt.webservice.wsPedNuevos;
 
 import java.io.BufferedReader;
@@ -25,6 +26,9 @@ public class CliPos extends PBase {
 	private TextView lblPed;
     private ImageView imgPed;
 	private RelativeLayout relped;
+
+    private wsInvActual wsi;
+    private Runnable recibeInventario;
 
     private wsPedNuevos wspn;
     private Runnable validaPedNuevos;
@@ -50,17 +54,22 @@ public class CliPos extends PBase {
 
 		setHandlers();	
 
+		/*
         getURL();
-        wspn=new wsPedNuevos(gl.wsurl,gl.emp,gl.tienda);
+
+        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
         validaPedNuevos = new Runnable() {
             public void run() {estadoPedidos(); }
         };
 
 		if (gl.pePedidos) {
+            wspn=new wsPedNuevos(gl.wsurl,gl.emp,gl.tienda);
 		    relped.setVisibility(View.VISIBLE);
             wspn.pedidosNuevos(validaPedNuevos);
         }
+
+		 */
 
 	}
 	
@@ -244,6 +253,11 @@ public class CliPos extends PBase {
         } catch (Exception e) {
         }
     }
+
+    //endregion
+
+    //region Inventario Compartido
+
 
     //endregion
 

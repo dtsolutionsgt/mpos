@@ -130,84 +130,37 @@ public class WSEnv extends PBase {
             try {
 
                 switch (ws.callback) {
-
                     case 1:
-
                         processClients();
-
-                        if (clients.size()>0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
-
+                        if (clients.size()>0) callMethod("Commit", "SQL", CSQL);
                         break;
-
                     case 2:
-
-
                         processFactura();
-
-                        if (ftot>0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
-
-                        break;
-
+                        if (ftot>0) callMethod("Commit", "SQL", CSQL);
+                         break;
                     case 3:
-
                         processMov();
-
-                        if (fTotMov>0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
-
+                        if (fTotMov>0) callMethod("Commit", "SQL", CSQL);
                         break;
-
                     case 4:
-
                         processCajaCierre();
-
                         cjCierreTot=cjCierre.size();
-
-                        if (cjCierreTot>0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
-
+                        if (cjCierreTot>0) callMethod("Commit", "SQL", CSQL);
                         break;
-
                     case 5:
-
                         processCajaPagos();
-
                         cjPagosTot=cjPagos.size();
-
-                        if (cjPagosTot>0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
-
+                        if (cjPagosTot>0) callMethod("Commit", "SQL", CSQL);
                         break;
-
                     case 6:
-
                         processCajaReporte();
-
                         cjReporteTot=cjReporte.size();
-
-                        if (cjReporteTot>0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
-
+                        if (cjReporteTot>0) callMethod("Commit", "SQL", CSQL);
                         break;
-
                     case 7:
-
                         processStock();
-
                         cStockTot=cStock.size();
-
-                        if (cStockTot>0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
-
+                        if (cStockTot>0) callMethod("Commit", "SQL", CSQL);
                         break;
                 }
             } catch (Exception e) {
@@ -334,10 +287,10 @@ public class WSEnv extends PBase {
                 ss+="Caja pagos sin envio: "+(cjPagosTot-cjPagosSend)+"\n";
 
                 ss+="Caja reporte total: "+cjReporteTot+"\n";
-                ss+="Caja reporte sin envio: "+(cjReporteTot-cjReporteSend);
+                ss+="Caja reporte sin envio: "+(cjReporteTot-cjReporteSend)+"\n";
 
                 ss+="Stock total: "+cStockTot+"\n";
-                ss+="Stock sin envio: "+(cStockTot-cStockSend);
+                ss+="Stock sin envio: "+(cStockTot-cStockSend)+"\n";
 
                 msgboxwait(ss);
 
@@ -404,6 +357,10 @@ public class WSEnv extends PBase {
             for (int i = 0; i < D_facturapObj.count; i++) {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
+
+            CSQL = CSQL + "UPDATE P_COREL SET CORELULT = " + D_facturaObj.first().corelativo + "  " +
+                    "WHERE SERIE = '" + D_facturaObj.first().serie + "' AND ACTIVA = 1 AND RUTA = " + gl.codigo_ruta + ";";
+
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

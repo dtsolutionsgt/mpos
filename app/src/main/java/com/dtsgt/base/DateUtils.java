@@ -115,11 +115,12 @@ public class DateUtils {
 		if (vy>9) s=s+vy; else s=s+"0"+vy; 
 		if (vm>9) s=s+vm; else s=s+"0"+vm;
 		if (vd>9) s=s+vd; else s=s+"0"+vd;  
-		s=s+" ";  
-		if (h>9)  s=s+h;  else s=s+"0"+h;
-		s=s+":";
-		if (m>9)  s=s+m;  else s=s+"0"+m;
-		s=s+":00";
+		s=s+" ";
+		s=s+"00:00:00";
+		//if (h>9)  s=s+h;  else s=s+"0"+h;
+		//s=s+":";
+		//if (m>9)  s=s+m;  else s=s+"0"+m;
+		//s=s+":00";
 		
 		return s;
 	}

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -27,6 +28,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.ladapt.ListAdaptExist;
+import com.dtsgt.webservice.wsInvActual;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -43,6 +45,9 @@ public class Exist extends PBase {
 	private ArrayList<clsClasses.clsExist> items= new ArrayList<clsClasses.clsExist>();
 	private ListAdaptExist adapter;
 	private clsClasses.clsExist selitem;
+
+    private wsInvActual wsi;
+    private Runnable recibeInventario;
 
 	private double cantT,disp,dispm,dispT;
 	private clsRepBuilder rep;
@@ -98,6 +103,26 @@ public class Exist extends PBase {
 
 		/*int cant = CantExistencias();
 		Toast.makeText(this, "Cantidad." + cant, Toast.LENGTH_SHORT).show();*/
+
+        app.getURL();
+        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+
+        recibeInventario = new Runnable() {
+            public void run() {
+                if (wsi.errflag) msgbox(wsi.error); else listItems();
+            }
+        };
+
+        if (gl.peInvCompart) {
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    wsi.actualizaInventario(recibeInventario);
+                }
+            };
+            mtimer.postDelayed(mrunner,200);
+        }
 
 	}
 

@@ -33,6 +33,7 @@ import com.dtsgt.fel.FELmsgbox;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
+import com.dtsgt.webservice.wsInvActual;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -52,11 +53,14 @@ public class Anulacion extends PBase {
 	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
 	private ListAdaptCFDV adapter;
 	private clsClasses.clsCFDV selitem;
-	
-	private Runnable printotrodoc,printclose;
+
+    private wsInvActual wsi;
+    private Runnable recibeInventario;
+
+    private Runnable printotrodoc,printclose;
 	private printer prn;
     private printer prn_nc;
-	public clsRepBuilder rep;
+    private  clsRepBuilder rep;
 	private clsDocAnul doc;
 	private clsDocFactura fdoc;
 
@@ -163,6 +167,24 @@ public class Anulacion extends PBase {
 		doc=new clsDocAnul(this,prn.prw,"");
 
 		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"");
+
+        app.getURL();
+        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+
+        recibeInventario = new Runnable() {
+            public void run() {if (wsi.errflag) msgbox(wsi.error); }
+        };
+
+        if (gl.peInvCompart) {
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    wsi.actualizaInventario(recibeInventario);
+                }
+            };
+            mtimer.postDelayed(mrunner,200);
+        }
 	}
 
 	//region Events
