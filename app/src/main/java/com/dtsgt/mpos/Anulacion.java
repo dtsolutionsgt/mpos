@@ -520,7 +520,7 @@ public class Anulacion extends PBase {
 			NITReceptor = NITReceptor.replace("-","");
 			NITReceptor = NITReceptor.replace(".","");
 
-            fel.anulfact(uuid, fel.fel_nit,NITReceptor, fact.fecha, fact.fecha);
+            fel.anulfact(uuid, fel.fel_nit,NITReceptor, fact.fechaentr, fact.fecha);
 
             return true;
         } catch (Exception e) {

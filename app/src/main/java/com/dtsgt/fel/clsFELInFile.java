@@ -103,6 +103,7 @@ public class clsFELInFile {
     private void sendJSONFirm() {
 
         try {
+
             s64=toBase64();
 
             jsonf = new JSONObject();

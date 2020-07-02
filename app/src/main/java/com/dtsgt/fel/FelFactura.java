@@ -165,6 +165,7 @@ public class FelFactura extends PBase {
     }
 
     private void certificacion() {
+
         lbl1.setText("Certificando factura . . .");lbl3.setText("");
 
         contmode=false;
@@ -181,6 +182,7 @@ public class FelFactura extends PBase {
 
     @Override
     public void felCallBack()  {
+
         if (multiflag) {
             if (fel.errorcon) {
                 msgexit(fel.error);return;
@@ -194,6 +196,7 @@ public class FelFactura extends PBase {
             }
 
             callBackMulti();
+
         } else {
             if (!fel.errorflag) {
                 marcaFactura();
@@ -475,6 +478,7 @@ public class FelFactura extends PBase {
     //region Envio facturas multiplo
 
     private void envioFacturas() {
+
         prepareSend();
 
         if (ftot==0) {
@@ -549,6 +553,7 @@ public class FelFactura extends PBase {
     }
 
     private void prepareSend() {
+
         try {
 
             D_facturaObj.fill("WHERE (STATCOM='N')  AND (FEELUUID<>' ') ");
@@ -562,6 +567,7 @@ public class FelFactura extends PBase {
             }
 
             lbl1.setText("Pendientes envio : "+ftot);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

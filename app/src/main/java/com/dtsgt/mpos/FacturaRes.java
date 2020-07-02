@@ -238,6 +238,7 @@ public class FacturaRes extends PBase {
 	public void paySelect(View view) {
 
 		try{
+
 			if (fcorel==0) {
 				msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
 			}
@@ -249,6 +250,7 @@ public class FacturaRes extends PBase {
 
 			Intent intent = new Intent(this,Pago.class);
 			startActivity(intent);
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("paySelect: " + e.getMessage());
@@ -275,18 +277,22 @@ public class FacturaRes extends PBase {
 	}
 
     public void payCard(View view) {
+
         try{
+
             if (fcorel==0) {
                 msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
             }
 
             pagoPendiente();
+
             if (gl.total_pago>0) {
                 browse=3;
                 startActivity(new Intent(this,PagoTarjeta.class));
             } else {
                 checkPago();
             }
+
          } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             mu.msgbox("payCard: " + e.getMessage());
@@ -353,17 +359,20 @@ public class FacturaRes extends PBase {
 			txtVuelto.setOnKeyListener(new View.OnKeyListener() {
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
+
 					if ((keyCode == KeyEvent.KEYCODE_ENTER)) {
 
 						DaVuelto(v);
 
 						return true;
+
 					}else if ((keyCode == KeyEvent.KEYCODE_DEL)){
 						lblVuelto.setText("");
 					}
 
 					return false;
 				}
+
 			});
 
 		}catch (Exception e){
@@ -488,11 +497,13 @@ public class FacturaRes extends PBase {
 	}
 
 	private void totalOrder(){
+
 		double dmaxmon;
 
 		cleandprod=false;
 
 		try{
+
 			if (acum) {
 				dfinmon=descpmon+descgmon;
 				cleandprod=false;
@@ -515,6 +526,7 @@ public class FacturaRes extends PBase {
 			stot=mu.round2(stot0);
 
 			fillTotals();
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("totalOrder: " + e.getMessage());
@@ -524,6 +536,7 @@ public class FacturaRes extends PBase {
 	}
 
 	private void fillTotals() {
+
 		clsClasses.clsCDB item;
 
 		items.clear();
@@ -705,6 +718,7 @@ public class FacturaRes extends PBase {
  	}
 
 	private boolean saveOrder() {
+
         clsP_productoObj P_productoObj= new clsP_productoObj(this, Con, db);
         clsD_facturasObj D_facturas= new clsD_facturasObj(this, Con, db);
         clsClasses.clsD_facturas fsitem;
@@ -816,6 +830,7 @@ public class FacturaRes extends PBase {
 			dt=Con.OpenDT(sql);
 
 			dt.moveToFirst();
+
 			while (!dt.isAfterLast()) {
 
 				porpeso=false;
@@ -869,6 +884,7 @@ public class FacturaRes extends PBase {
             dt = Con.OpenDT(sql);
 
             dt.moveToFirst();
+
             while (!dt.isAfterLast()) {
 
                 ins.init("D_FACTURAP");
@@ -883,7 +899,6 @@ public class FacturaRes extends PBase {
                 ins.add("DESC2", dt.getString(5));
                 ins.add("DESC3", dt.getString(6));
                 ins.add("DEPOS", false);
-
                 db.execSQL(ins.sql());
 
                 dt.moveToNext();
@@ -894,12 +909,10 @@ public class FacturaRes extends PBase {
 			//region D_FACTURAF
 
 			ins.init("D_FACTURAF");
-
 			ins.add("COREL",corel);
 			ins.add("NOMBRE",gl.fnombre);
 			ins.add("NIT",gl.fnit);
 			ins.add("DIRECCION",gl.fdir);
-
 			db.execSQL(ins.sql());
 
 			//endregion
@@ -913,7 +926,9 @@ public class FacturaRes extends PBase {
             String prcod="";
 
             if (dt.getCount()>0) {
+
                 dt.moveToFirst();
+
                 while (!dt.isAfterLast()) {
 
                     prcant=dt.getInt(0);
@@ -926,13 +941,11 @@ public class FacturaRes extends PBase {
                     prcod=P_productoObj.first().codigo;
 
                     fsitem=clsCls.new clsD_facturas();
-
                     fsitem.corel=corel;
                     fsitem.id=fsid;
                     fsitem.producto=""+prid;
                     fsitem.cant=unipr;
                     fsitem.umstock=app.umVenta2(prcod);
-
                     D_facturas.add(fsitem);
 
                     rebajaStockUM(prcod,fsitem.umstock,fsitem.cant);
@@ -1040,6 +1053,7 @@ public class FacturaRes extends PBase {
 	}
 
 	private void rebajaStockUM(String prid,String umstock,double cant,double factor, String umventa,double factpres,double ppeso) {
+
 		Cursor dt;
 		double cantapl,dispcant,actcant,pesoapl,disppeso,actpeso,speso,factlote;
 		String lote,doc,stat;
