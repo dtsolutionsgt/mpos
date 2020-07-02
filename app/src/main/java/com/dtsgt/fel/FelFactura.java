@@ -395,8 +395,9 @@ public class FelFactura extends PBase {
 
     public String addFactheader(clsClasses.clsD_factura item) {
 
-        //String fs=""+du.univfechalong(item.fecha);
+        //#EJC20200702:Correccion formato de fechas
         String fs=""+du.univfecha(item.fecha);
+        String fst=""+du.univfecha(item.feelfechaprocesado);
 
         ins.init("D_factura");
         ins.add("EMPRESA",item.empresa);
@@ -434,7 +435,7 @@ public class FelFactura extends PBase {
         ins.add("FEELSERIE",item.feelserie);
         ins.add("FEELNUMERO",item.feelnumero);
         ins.add("FEELUUID",item.feeluuid);
-        ins.add("FEELFECHAPROCESADO",""+du.univfecha(item.feelfechaprocesado));
+        ins.add("FEELFECHAPROCESADO",fst);
         ins.add("FEELCONTINGENCIA",item.feelcontingencia);
 
         return ins.sql();
