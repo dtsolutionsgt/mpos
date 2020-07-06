@@ -712,9 +712,12 @@ public class clsFELInFile {
 
         xml+="</dte:DatosEmision>";
         xml+="</dte:DTE>";
+
+        //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
         xml+="<dte:Adenda>";
         xml+="<Documento>"+serie+"</Documento>";
         xml+="</dte:Adenda>";
+
         xml+="</dte:SAT>";
         xml+="</dte:GTDocumento>";
 
