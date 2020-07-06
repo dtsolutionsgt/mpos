@@ -319,6 +319,7 @@ public class WSEnv extends PBase {
     //region Envío
 
     private void processFactura() {
+        int contingencia;
 
         if (ftot==0) {
             fidx++;return;
@@ -338,6 +339,13 @@ public class WSEnv extends PBase {
 
             idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
+            try {
+                contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
+                if (contingencia<1) contingencia=0;
+            } catch (Exception e) {
+                contingencia=0;
+            }
+
             CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
@@ -347,7 +355,6 @@ public class WSEnv extends PBase {
             String UpdateToStock = "";
             
             for (int i = 0; i <D_facturadObj.count; i++) {
-                
                 CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
                 UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
                 if (!UpdateToStock.isEmpty())
@@ -358,9 +365,13 @@ public class WSEnv extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
-            CSQL = CSQL + "UPDATE P_COREL SET CORELULT = " + D_facturaObj.first().corelativo + "  " +
-                    "WHERE SERIE = '" + D_facturaObj.first().serie + "' AND ACTIVA = 1 AND RUTA = " + gl.codigo_ruta + ";";
-
+            if (contingencia==0) {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
+            } else {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
+                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
+            }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

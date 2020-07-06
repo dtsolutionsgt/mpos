@@ -1,6 +1,5 @@
 package com.dtsgt.fel;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.SQLException;
@@ -21,6 +20,7 @@ import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsP_clienteObj;
+import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
@@ -252,6 +252,7 @@ public class FelFactura extends PBase {
 
     private void buildFactXML() {
         String dir,muni,dep,iddep,idmuni;
+        int idcont;
 
         corel=facts.get(fidx);
 
@@ -260,13 +261,24 @@ public class FelFactura extends PBase {
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
+            fel.idcontingencia=0;
+            try {
+                idcont=Integer.parseInt(D_facturaObj.first().feelcontingencia);
+                if (idcont>0) fel.idcontingencia=idcont;
+            } catch (Exception e) {
+            }
+
             cliid=fact.cliente;
 
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
 
             //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
-            fel.mpos_identificador_fact =fact.serie+fact.corelativo;
+            if (fel.idcontingencia==0) {
+                fel.mpos_identificador_fact =fact.serie+fact.corelativo;
+            } else {
+                fel.mpos_identificador_fact =""+fel.idcontingencia;
+            }
 
             fel.iniciar(fact.fecha);
             fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
@@ -337,18 +349,33 @@ public class FelFactura extends PBase {
     }
 
     private void marcaFacturaContingencia() {
+        clsClasses.clsP_corel citem;
+        int corcont;
+
         try {
+            db.beginTransaction();
+
+            clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
+            P_corelObj.fill("WHERE RUTA="+gl.codigo_ruta);
+            citem=P_corelObj.first();
+            corcont=citem.resguardo+1;
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
-            //fact.serie=fel.fact_serie;
-            //fact.corelativo=fel.fact_numero;
-            fact.feelcontingencia=fel.fact_serie+"-"+fel.fact_numero;
+            //fact.feelcontingencia=fel.fact_serie+"-"+fel.fact_numero;
+            fact.feelcontingencia=""+corcont;
 
             D_facturaObj.update(fact);
 
+            citem.resguardo++;
+            P_corelObj.update(citem);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
         } catch (Exception e) {
+            db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
@@ -374,6 +401,7 @@ public class FelFactura extends PBase {
     }
 
     private void processFactura() {
+        int contingencia;
 
         try {
 
@@ -383,6 +411,12 @@ public class FelFactura extends PBase {
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
 
             cliid=D_facturaObj.first().cliente;
+            try {
+                contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
+                if (contingencia<1) contingencia=0;
+            } catch (Exception e) {
+                contingencia=0;
+            }
 
             //idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
@@ -405,8 +439,13 @@ public class FelFactura extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
-            CSQL = CSQL + "UPDATE P_COREL SET CORELULT = " + D_facturaObj.first().corelativo + "  " +
-                   "WHERE SERIE = '" + D_facturaObj.first().serie + "' AND ACTIVA = 1 AND RUTA = " + gl.codigo_ruta + ";";
+            if (contingencia==0) {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
+            } else {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
+                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
+            }
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 
@@ -536,6 +575,8 @@ public class FelFactura extends PBase {
     }
 
     private void processMultiFactura() {
+        int contingencia;
+
         fidx++;
         corel=factlist.get(fidx);
         factsend=false;
@@ -548,6 +589,12 @@ public class FelFactura extends PBase {
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
 
             cliid=D_facturaObj.first().cliente;
+            try {
+                contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
+                if (contingencia<1) contingencia=0;
+            } catch (Exception e) {
+                contingencia=0;
+            }
 
             idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
@@ -565,8 +612,13 @@ public class FelFactura extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
-            CSQL = CSQL + "UPDATE P_COREL SET CORELULT = " + D_facturaObj.first().corelativo + "  " +
-                    "WHERE SERIE = '" + D_facturaObj.first().serie + "' AND ACTIVA = 1 AND RUTA = " + gl.codigo_ruta + ";";
+            if (contingencia==0) {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
+            } else {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
+                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
+            }
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 

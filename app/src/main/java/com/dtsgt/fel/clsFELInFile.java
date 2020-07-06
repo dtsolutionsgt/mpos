@@ -31,9 +31,9 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class clsFELInFile {
 
-    public String  error,fecha_factura;
+    public String  error, fecha_factura;
     public Boolean errorflag,errorcon,constat,duplicado;
-    public int errlevel;
+    public int errlevel, idcontingencia;
 
     public String xml,xmlanul;
     public String fact_uuid;
@@ -715,7 +715,11 @@ public class clsFELInFile {
 
         //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
         xml+="<dte:Adenda>";
-        xml+="<Documento>"+serie+"</Documento>";
+        if (idcontingencia==0) {
+            xml+="<Documento>"+serie+"</Documento>";
+        } else {
+            xml+="<Documento>"+idcontingencia+"</Documento>";
+        }
         xml+="</dte:Adenda>";
 
         xml+="</dte:SAT>";

@@ -32,11 +32,13 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.fel.FelFactura;
@@ -648,6 +650,7 @@ public class FacturaRes extends PBase {
                 gl.felcorel=corel;gl.feluuid="";
                 startActivity(new Intent(this, FelFactura.class));
             } else {
+                marcaFacturaContingencia();
                 toast("No hay conexion a internet");
                 impresionDocumento();
             }
@@ -2267,7 +2270,40 @@ public class FacturaRes extends PBase {
         }
     }
 
-	//endregion
+    private void marcaFacturaContingencia() {
+        clsClasses.clsP_corel citem;
+        clsClasses.clsD_factura fact=clsCls.new clsD_factura();
+        int corcont;
+
+        try {
+            db.beginTransaction();
+
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
+
+            P_corelObj.fill("WHERE RUTA="+gl.codigo_ruta);
+            citem=P_corelObj.first();
+            corcont=citem.resguardo+1;
+
+            D_facturaObj.fill("WHERE Corel='"+corel+"'");
+            fact=D_facturaObj.first();
+            fact.feelcontingencia=""+corcont;
+            D_facturaObj.update(fact);
+
+            citem.resguardo++;
+            P_corelObj.update(citem);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
+    //endregion
 
     //region Dialogs
 
