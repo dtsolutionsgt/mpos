@@ -261,6 +261,7 @@ public class FelFactura extends PBase {
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
 
+            //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
             fel.mpos_identificador_fact =fact.serie+fact.corelativo;
 
             fel.iniciar(fact.fecha);
