@@ -222,7 +222,7 @@ public class MantConfig extends PBase {
             holder.fill("WHERE ID="+109);
             value109=holder.first().valor.equalsIgnoreCase("S");
         } catch (Exception e) {
-            value109=false;
+            value109=true;
         }
         cb109.setChecked(value109);
 

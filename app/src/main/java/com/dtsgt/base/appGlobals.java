@@ -31,7 +31,7 @@ public class appGlobals extends Application {
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout;
-	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg;
+	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,codigo_pais;
 	public double precio_recarga,total_pago;
 	public boolean configCajaSuc = false,
 	               inicio_caja_correcto = false,

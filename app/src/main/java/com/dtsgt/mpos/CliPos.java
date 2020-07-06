@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -12,13 +13,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.webservice.wsInvActual;
-import com.dtsgt.webservice.wsPedNuevos;
+import com.dtsgt.webservice.wsPedidosEstado;
+import com.dtsgt.webservice.wsPedidosNuevos;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CliPos extends PBase {
 
@@ -29,13 +35,21 @@ public class CliPos extends PBase {
 
     private wsInvActual wsi;
     private Runnable recibeInventario;
-
-    private wsPedNuevos wspn;
+    private wsPedidosNuevos wspn;
     private Runnable validaPedNuevos;
+    private wsPedidosEstado wspe;
+
+    private ArrayList<String> pedidos =new ArrayList<String>();
 
 	private String snit,sname,sdir,wspnerror;
 	private boolean consFinal=false;
-	private int pedidos;
+	private boolean inicio_pedidos=true,bandera_pedidos=false;
+	private int cantped;
+
+    private Timer ptimer;
+    private TimerTask ptask;
+    private int delay = 5000;
+    private int period = 5000;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,24 +66,36 @@ public class CliPos extends PBase {
         imgPed = (ImageView) findViewById(R.id.imageView68);
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
 
-		setHandlers();	
+		setHandlers();
 
-		/*
         getURL();
-
+        wspn=new wsPedidosNuevos(gl.wsurl,gl.emp,gl.tienda);
         wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+        wspe=new wsPedidosEstado(gl.wsurl,null);
 
         validaPedNuevos = new Runnable() {
-            public void run() {estadoPedidos(); }
+            public void run() {
+                estadoPedidos();
+                if (inicio_pedidos) iniciaPedidos();
+            }
         };
 
-		if (gl.pePedidos) {
-            wspn=new wsPedNuevos(gl.wsurl,gl.emp,gl.tienda);
-		    relped.setVisibility(View.VISIBLE);
-            wspn.pedidosNuevos(validaPedNuevos);
-        }
+        recibeInventario = new Runnable() {
+            public void run() {
+                if (wsi.errflag) msgbox(wsi.error);
+                try {
+                    wspn.execute(validaPedNuevos);
+                } catch (Exception e) {}
+            }
+        };
 
-		 */
+        if (gl.peInvCompart) {
+            actualizaInventario();
+        } else {
+            try {
+                if (gl.pePedidos) wspn.execute(validaPedNuevos);
+            } catch (Exception e) {}
+        }
 
 	}
 	
@@ -233,31 +259,81 @@ public class CliPos extends PBase {
 
     //region Pedidos
 
+    private void iniciaPedidos() {
+        inicio_pedidos=false;
+
+        if (gl.pePedidos) {
+            relped.setVisibility(View.VISIBLE);
+
+            ptimer = new Timer();
+            ptimer.scheduleAtFixedRate(ptask = new TimerTask(){
+                public void run() {
+                    try {
+                        wspn.execute(validaPedNuevos);
+                    } catch (Exception e) {}
+                }
+            }, delay, period);
+
+        }
+    }
+
+    private void cancelaPedidos() {
+        if (gl.pePedidos) {
+            bandera_pedidos=true;
+            ptask.cancel();
+        }
+    }
+
     private void estadoPedidos() {
         try {
             lblPed.setVisibility(View.INVISIBLE);
             imgPed.setVisibility(View.INVISIBLE);
+            pedidos.clear();wspnerror="";
 
             if (!wspn.errflag) {
-                pedidos=wspn.pedidos.size();
-                if (pedidos>0) {
+                cantped=wspn.items.size();
+                if (cantped >0) {
+
+                    wspn.pause();
+
+                    for (int i = 0; i <cantped; i++) pedidos.add(wspn.items.get(i));
+
                     lblPed.setVisibility(View.VISIBLE);
-                    lblPed.setText("" + pedidos);
+                    lblPed.setText(""+cantped);
+
+                    //procesaPedidos();
+                    
+                    wspn.resume();
                 }
-                wspnerror="";
             } else {
                 imgPed.setVisibility(View.VISIBLE);
-                wspnerror=wspn.error;
-                toastcent(wspnerror);
+                wspnerror="Pedidos nuevos : "+wspn.error;toastcent(wspnerror);
             }
         } catch (Exception e) {
+            wspnerror="Pedidos nuevos : "+e.getMessage();toastcent(wspnerror);
         }
     }
 
-    //endregion
+    private void procesaPedidos() {
+        Cursor dt;
+        String corel;
 
-    //region Inventario Compartido
+        try {
+            for (int i = 0; i <pedidos.size(); i++) {
+                corel=pedidos.get(i);
 
+                sql="SELECT Corel FROM D_PEDIDIO WHERE Corel='"+corel+"'";
+                dt=Con.OpenDT(sql);
+                if (dt.getCount()==0) {
+
+                } else {
+                    wspe.execute(corel,1,0);
+                }
+            }
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 
@@ -557,23 +633,43 @@ public class CliPos extends PBase {
 
     }
 
+    private void actualizaInventario() {
+        Handler mtimer = new Handler();
+        Runnable mrunner=new Runnable() {
+            @Override
+            public void run() {
+                wsi.actualizaInventario(recibeInventario);
+            }
+        };
+        mtimer.postDelayed(mrunner,200);
+    }
+
     //endregion
 
     //region Activity Events
 
+    @Override
     protected void onResume() {
         try{
             super.onResume();
 
+            if (bandera_pedidos) iniciaPedidos();
+
             if (browse==1) {
                 browse=0;
-                if (! gl.cliente.isEmpty()) finish();
+                if (!gl.cliente.isEmpty()) finish();
                 return;
             }
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
+    }
+
+    @Override
+    protected void onPause() {
+        cancelaPedidos();
+        super.onPause();
     }
 
     //endregion

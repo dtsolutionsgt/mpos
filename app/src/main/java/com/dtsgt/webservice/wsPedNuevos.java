@@ -1,22 +1,13 @@
 package com.dtsgt.webservice;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.SystemClock;
-
-import com.dtsgt.base.BaseDatos;
-
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class wsPedNuevos {
 

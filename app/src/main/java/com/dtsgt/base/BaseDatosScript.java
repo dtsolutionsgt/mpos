@@ -967,6 +967,62 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [D_pedido] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "FECHA_SISTEMA INTEGER NOT NULL,"+
+                    "FECHA_PEDIDO INTEGER NOT NULL,"+
+                    "FECHA_RECEPCION_SUC INTEGER NOT NULL,"+
+                    "FECHA_SALIDA_SUC INTEGER NOT NULL,"+
+                    "FECHA_ENTREGA INTEGER NOT NULL,"+
+                    "CODIGO_CLIENTE INTEGER NOT NULL,"+
+                    "FIRMA_CLIENTE INTEGER NOT NULL,"+
+                    "CODIGO_DIRECCION INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "CODIGO_ESTADO INTEGER NOT NULL,"+
+                    "CODIGO_USUARIO_CREO INTEGER NOT NULL,"+
+                    "CODIGO_USUARIO_PROCESO INTEGER NOT NULL,"+
+                    "CODIGO_USUARIO_ENTREGO INTEGER NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE INDEX D_pedido_idx1 ON D_pedido(FECHA_RECEPCION_SUC)";database.execSQL(sql);
+            sql="CREATE INDEX D_pedido_idx2 ON D_pedido(CODIGO_ESTADO)";database.execSQL(sql);
+
+
+            sql="CREATE TABLE [D_pedidod] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "COREL_DET INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "UMVENTA TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "CODIGO_TIPO_PRODUCTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL_DET])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE INDEX D_pedidod_idx1 ON D_pedidod(COREL)";database.execSQL(sql);
+
+
+            sql="CREATE TABLE [D_pedidocombo] ("+
+                    "COREL_DET INTEGER NOT NULL,"+
+                    "COREL_COMBO INTEGER NOT NULL,"+
+                    "SELECCION INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL_COMBO])"+
+                    ");";
+            database.execSQL(sql);
+
+            sql="CREATE INDEX D_pedidocombo_idx1 ON D_pedidocombo(COREL_DET)";database.execSQL(sql);
+
+
             return 1;
         } catch (SQLiteException e) {
             msgbox(e.getMessage());

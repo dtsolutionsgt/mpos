@@ -55,7 +55,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.1.9 / 02-Jul-2020 ";
+    private String parVer = " 3.1.11 / 06-Jul-2020 ";
 
     Typeface typeface;
 
@@ -345,7 +345,7 @@ public class MainActivity extends PBase {
 
         try {
             //#HS_20181120_1616 Se agrego el campo UNIDAD_MEDIDA_PESO.//campo INCIDENCIA_NO_LECTURA
-            sql = " SELECT EMPRESA,NOMBRE,CLAVE FROM P_EMPRESA";
+            sql = " SELECT EMPRESA,NOMBRE,CLAVE,COD_PAIS FROM P_EMPRESA";
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {
@@ -360,6 +360,7 @@ public class MainActivity extends PBase {
                 gl.depparc = false;
                 gl.lotedf = "";
                 gl.clave=DT.getString(2);
+                gl.codigo_pais=DT.getString(3);
 
                 if (DT!=null) DT.close();
             } else {

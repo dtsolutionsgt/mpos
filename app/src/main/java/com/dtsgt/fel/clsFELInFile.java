@@ -32,7 +32,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class clsFELInFile {
 
     public String  error,fecha_factura;
-    public Boolean errorflag,errorcon,constat;
+    public Boolean errorflag,errorcon,constat,duplicado;
     public int errlevel;
 
     public String xml,xmlanul;
@@ -88,7 +88,7 @@ public class clsFELInFile {
 
     public void certificacion() {
         fact_uuid="";fact_serie="";fact_numero=0;
-        errlevel=1;error="";errorflag=false;constat=true;errorcon=false;
+        errlevel=1;error="";errorflag=false;constat=true;errorcon=false;duplicado=false;
         sendJSONFirm();
     }
 
@@ -327,6 +327,10 @@ public class clsFELInFile {
                 rd.close();
 
                 String jstr=sb.toString();
+
+                int duplidx=jstr.indexOf("Documento enviado previamente.");
+                if (duplidx>1) duplicado=true;
+
                 jObj = new JSONObject(jstr);
 
                 error= jObj.getString("descripcion");
@@ -767,7 +771,9 @@ public class clsFELInFile {
 
     public void receptor(String p1,String p2,String p3) {
 
-        xml+="<dte:Receptor CorreoReceptor=\"\" IDReceptor=\""+p1+"\" NombreReceptor=\""+p2+"\">";
+        String p4="correo@gmail.com";
+
+        xml+="<dte:Receptor CorreoReceptor=\""+p4+"\" IDReceptor=\""+p1+"\" NombreReceptor=\""+p2+"\">";
         xml+="<dte:DireccionReceptor>";
         xml+="<dte:Direccion>"+p3+"</dte:Direccion>";
         xml+="<dte:CodigoPostal>0</dte:CodigoPostal>";

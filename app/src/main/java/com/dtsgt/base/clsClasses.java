@@ -132,6 +132,48 @@ public class clsClasses {
         public int  motivo_ajuste;
     }
 
+    public class clsD_pedido {
+        public int  empresa;
+        public String corel;
+        public int  fecha_sistema;
+        public int  fecha_pedido;
+        public int  fecha_recepcion_suc;
+        public int  fecha_salida_suc;
+        public int  fecha_entrega;
+        public int  codigo_cliente;
+        public int  firma_cliente;
+        public int  codigo_direccion;
+        public int  codigo_sucursal;
+        public double total;
+        public int  codigo_estado;
+        public int  codigo_usuario_creo;
+        public int  codigo_usuario_proceso;
+        public int  codigo_usuario_entrego;
+        public int  anulado;
+    }
+
+    public class clsD_pedidod {
+        public String corel;
+        public int  corel_det;
+        public int  codigo_producto;
+        public String umventa;
+        public double cant;
+        public double total;
+        public String nota;
+        public String codigo_tipo_producto;
+    }
+
+    public class clsD_pedidocombo {
+        public int  corel_det;
+        public int  corel_combo;
+        public int  seleccion;
+        public int  codigo_producto;
+        public int  cant;
+        public String nota;
+    }
+
+
+
     public class clsP_archivoconf {
         public String ruta;
         public String tipo_hh;

@@ -21,6 +21,8 @@ import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsP_clienteObj;
+import com.dtsgt.classes.clsP_departamentoObj;
+import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
@@ -200,6 +202,7 @@ public class FelFactura extends PBase {
             callBackMulti();
 
         } else {
+            if (fel.duplicado) toastlong("Documento enviado previamente.");
             if (!fel.errorflag) {
                 marcaFactura();
             } else {
@@ -248,6 +251,7 @@ public class FelFactura extends PBase {
     }
 
     private void buildFactXML() {
+        String dir,muni,dep,iddep,idmuni;
 
         corel=facts.get(fidx);
 
@@ -266,7 +270,27 @@ public class FelFactura extends PBase {
             fel.iniciar(fact.fecha);
             fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
                       fel.fel_nit,fel.fel_nombre_comercial, fel.fel_usuario_firma);
-            fel.emisorDireccion("Direccion",fel.codigo_postal,"GUATEMALA","GUATEMALA","GT");
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            fel.codigo_postal=P_sucursalObj.first().codigo_postal;
+            dir=P_sucursalObj.first().direccion;
+            idmuni=P_sucursalObj.first().codigo_municipio;
+
+            clsP_municipioObj P_municipioObj=new clsP_municipioObj(this,Con,db);
+            P_municipioObj.fill("WHERE CODIGO='"+idmuni+"'");
+            if (P_municipioObj.count>0) {
+                muni=P_municipioObj.first().nombre;
+                iddep=P_municipioObj.first().codigo_departamento;
+
+                clsP_departamentoObj P_departamentoObj=new clsP_departamentoObj(this,Con,db);
+                P_departamentoObj.fill("WHERE CODIGO='"+iddep+"'");
+                if (P_departamentoObj.count>0) dep=P_departamentoObj.first().nombre;else dep=" ";
+            } else {
+                muni=" ";dep=" ";
+            }
+
+            fel.emisorDireccion(dir,fel.codigo_postal,muni,dep,gl.codigo_pais);
 
             //#EJC20200527: Quitar "-" del nit
             factf.nit =factf.nit.replace("-","");

@@ -670,7 +670,7 @@ public class FacturaRes extends PBase {
 			if (app.impresora()) {
 
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
-                app.doPrint(2);
+                app.doPrint(1);
 
                 try {
 
@@ -1018,7 +1018,7 @@ public class FacturaRes extends PBase {
 
 			//region Actualizacion de ultimo correlativo
 
-			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  WHERE RUTA='"+gl.ruta+"'";
+			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  WHERE RUTA="+gl.codigo_ruta;
 			db.execSQL(sql);
 
 			ins.init("D_FACT_LOG");
@@ -1436,7 +1436,6 @@ public class FacturaRes extends PBase {
                 //mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
                 return;
             }
-
 
             sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
             DT=Con.OpenDT(sql);
