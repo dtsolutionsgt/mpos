@@ -764,7 +764,7 @@ public class FacturaRes extends PBase {
          	ins.add("COREL",corel);
 			ins.add("ANULADO",false);
 			if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
-			ins.add("RUTA",gl.ruta);
+			ins.add("RUTA",gl.codigo_ruta);
 			ins.add("VENDEDOR",gl.codigo_vendedor);
 			ins.add("CLIENTE",gl.codigo_cliente);
 
@@ -2301,7 +2301,6 @@ public class FacturaRes extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     //endregion
 

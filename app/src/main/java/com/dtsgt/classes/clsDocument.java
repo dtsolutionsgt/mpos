@@ -597,7 +597,7 @@ public class clsDocument {
 
             //textofin,felcert,felnit
 
-			sql = "SELECT SUCURSAL FROM P_RUTA";
+			sql = "SELECT SUCURSAL FROM P_RUTA WHERE CODIGO_RUTA="+ruta;
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
 			sucur = DT.getString(0);
