@@ -99,6 +99,7 @@ public class Anulacion extends PBase {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_anulacion);
 		
@@ -291,6 +292,7 @@ public class Anulacion extends PBase {
 	//region Main
 
 	public void listItems() {
+
 		Cursor DT;
 		clsClasses.clsCFDV vItem;	
 		int vP,f;
@@ -301,9 +303,11 @@ public class Anulacion extends PBase {
 		selidx=-1;vP=0;
 		
 		try {
+
 			//#CKFK 20200530 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
 			
 			if (tipo==2) {
+
 				sql="SELECT D_DEPOS.COREL,P_BANCO.NOMBRE,D_DEPOS.FECHA,D_DEPOS.TOTAL,D_DEPOS.CUENTA "+
 					 "FROM D_DEPOS INNER JOIN P_BANCO ON D_DEPOS.BANCO=P_BANCO.CODIGO_BANCO "+
 					 "WHERE (D_DEPOS.ANULADO=0)  AND (D_DEPOS.CODIGOLIQUIDACION=0) " +
@@ -312,6 +316,7 @@ public class Anulacion extends PBase {
 			}
 			
 			if (tipo==3) {
+
 				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
 					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
@@ -339,6 +344,7 @@ public class Anulacion extends PBase {
 			if (DT.getCount()>0) {
 			
 				DT.moveToFirst();
+
 				while (!DT.isAfterLast()) {
 				  
 					id=DT.getString(0);
@@ -389,6 +395,7 @@ public class Anulacion extends PBase {
 			}
 
             if (DT!=null) DT.close();
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		   	mu.msgbox(e.getMessage());
@@ -425,7 +432,8 @@ public class Anulacion extends PBase {
                 if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
                     anulFactura(itemid);
                 } else {
-                    anulacionFEL();return;
+                    anulacionFEL();
+                    return;
                 }
 			}
 			
@@ -434,11 +442,10 @@ public class Anulacion extends PBase {
 			if (tipo==5) if (!anulDevol(itemid)) return;
 
 			//#CKFK 20200520 Quité la anulación de NC porque aquí no existe la tabla
-
 			db.setTransactionSuccessful();
 			db.endTransaction();
 			
-			mu.msgbox("El documento ha sido anulado.");
+			mu.msgbox("Documento anulado.");
 
 			/*
 			if(tipo==3) {
@@ -503,17 +510,31 @@ public class Anulacion extends PBase {
 
         if (!fel.errorflag) {
 
-            anulFactura(itemid);
-            sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
-            db.execSQL(sql);
+			try {
 
-			envioFactura();
+				anulFactura(itemid);
 
-			toast(String.format("Se anuló la factura %d correctamente",itemid));
+				sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
+				db.execSQL(sql);
 
-			listItems();
+				//#EJC20200706: Commit transaction from Anuldocument.
+				db.setTransactionSuccessful();
+				db.endTransaction();
 
-        } else {
+				envioFactura();
+
+				toast(String.format("Se anuló la factura %d correctamente",itemid));
+
+				listItems();
+
+			} catch (SQLException e) {
+				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+				db.endTransaction();
+				mu.msgbox(e.getMessage());
+				e.printStackTrace();
+			}
+
+		} else {
             msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
         }
     }

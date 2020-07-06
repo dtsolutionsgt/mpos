@@ -1724,6 +1724,7 @@ public class Venta extends PBase {
     }
 
     private void listProduct() {
+
         Cursor dt;
         clsClasses.clsMenu item;
         ArrayList<String> pcodes = new ArrayList<String>();
@@ -1793,6 +1794,7 @@ public class Venta extends PBase {
     }
 
     private void menuItems() {
+
         clsClasses.clsMenu item;
 
         menuTools();
@@ -1843,6 +1845,7 @@ public class Venta extends PBase {
     }
 
     private void menuTools() {
+
         clsClasses.clsMenu item;
 
         mitems.clear();
@@ -1910,7 +1913,7 @@ public class Venta extends PBase {
                 case 14:
                     showQuickRecep();break;
                 case 15:
-                    msgAskFEL("Certificar pendientes facturas ("+pendienteFEL()+") ");break;
+                    msgAskFEL("Certificar ("+pendienteFEL()+") factura(s) pendiente(s)");break;
                 case 24:
                     exitBtn();
                     break;
