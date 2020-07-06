@@ -753,6 +753,7 @@ public class clsFELInFile {
                                 String municipio,
                                 String departamento,
                                 String pais) {
+
         xml+="<dte:DireccionEmisor>";
         xml+="<dte:Direccion>"+direccion+"</dte:Direccion>";
         xml+="<dte:CodigoPostal>"+codigoPostal+"</dte:CodigoPostal>";

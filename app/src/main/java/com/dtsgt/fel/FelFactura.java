@@ -96,6 +96,8 @@ public class FelFactura extends PBase {
         fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;  //  1
         fel.fel_usuario_certificacion=suc.fel_usuario_certificacion; // COMERGUA
         fel.fel_usuario_firma=suc.fel_usuario_firma; // COMERGUA
+        //#EJC20200706: Código postal missing Added.
+        fel.codigo_postal =suc.codigo_postal;
         fel.fel_nit=suc.nit; // NIT  96038888
         fel.fel_correo=suc.correo;  //
         fel.fel_nombre_comercial = gl.tiendanom;
