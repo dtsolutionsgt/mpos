@@ -7,13 +7,14 @@ import java.util.ArrayList;
 
 public class wsBase {
 
+    public Runnable callBack=null;
     public String error="";
     public boolean errflag;
     public ArrayList<String> items=new ArrayList<String>();
 
     protected String URL, NAMESPACE ="http://tempuri.org/";
 
-    private Runnable callBack=null;
+
     private boolean idle=true;
 
     public wsBase(String Url) {

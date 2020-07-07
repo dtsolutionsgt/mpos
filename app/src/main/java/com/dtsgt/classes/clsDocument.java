@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class clsDocument {
 
-	public String nombre,numero,serie,ruta,cliente,nit,tipo,ref,vendedor;
+	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
@@ -429,8 +429,8 @@ public class clsDocument {
 
         idx=lu.indexOf("@Ruta");
         if (idx>=0) {
-            if (emptystr(ruta)) return "@@";
-            l=l.replace("@Ruta",ruta);return l;
+            if (emptystr(rutanombre)) return "@@";
+            l=l.replace("@Ruta",rutanombre);return l;
         }
 
         idx=lu.indexOf("@Cliente");

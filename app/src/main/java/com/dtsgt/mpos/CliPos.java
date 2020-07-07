@@ -13,8 +13,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.webservice.wsInvActual;
+import com.dtsgt.webservice.wsPedidoDatos;
 import com.dtsgt.webservice.wsPedidosEstado;
 import com.dtsgt.webservice.wsPedidosNuevos;
 
@@ -34,10 +34,12 @@ public class CliPos extends PBase {
 	private RelativeLayout relped;
 
     private wsInvActual wsi;
-    private Runnable recibeInventario;
     private wsPedidosNuevos wspn;
-    private Runnable validaPedNuevos;
     private wsPedidosEstado wspe;
+    private wsPedidoDatos   wspd;
+
+    private Runnable rnRecibeInventario, rnValidaPedNuevos;
+    private ExtRunnable rnPedDatosEstado;
 
     private ArrayList<String> pedidos =new ArrayList<String>();
 
@@ -66,39 +68,28 @@ public class CliPos extends PBase {
         imgPed = (ImageView) findViewById(R.id.imageView68);
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
 
-		setHandlers();
+        setHandlers();
 
         getURL();
         wspn=new wsPedidosNuevos(gl.wsurl,gl.emp,gl.tienda);
         wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
         wspe=new wsPedidosEstado(gl.wsurl,null);
-
-        validaPedNuevos = new Runnable() {
-            public void run() {
-                estadoPedidos();
-                if (inicio_pedidos) iniciaPedidos();
-            }
-        };
-
-        recibeInventario = new Runnable() {
-            public void run() {
-                if (wsi.errflag) msgbox(wsi.error);
-                try {
-                    wspn.execute(validaPedNuevos);
-                } catch (Exception e) {}
-            }
-        };
+        wspd=new wsPedidoDatos(gl.wsurl,rnPedDatosEstado);
 
         if (gl.peInvCompart) {
             actualizaInventario();
         } else {
             try {
-                if (gl.pePedidos) wspn.execute(validaPedNuevos);
+                if (gl.pePedidos) wspn.execute(rnValidaPedNuevos);
             } catch (Exception e) {}
         }
 
 	}
-	
+
+    public interface ExtRunnable extends Runnable {
+        public void run(String data);
+    }
+
 	//region  Events
 
 	public void consFinal(View view) {
@@ -148,6 +139,34 @@ public class CliPos extends PBase {
     }
 
 	private void setHandlers() {
+
+        rnValidaPedNuevos = new Runnable() {
+            public void run() {
+                estadoPedidos();
+                if (inicio_pedidos) iniciaPedidos();
+            }
+        };
+
+        rnRecibeInventario = new Runnable() {
+            public void run() {
+                if (wsi.errflag) {
+                    toast("rnRecibeInventario");
+                    msgbox("wsi"+wsi.error);
+                }
+                try {
+                    wspn.execute(rnValidaPedNuevos);
+                } catch (Exception e) {}
+            }
+        };
+
+        rnPedDatosEstado = new ExtRunnable() {
+            @Override
+            public void run(String data) {
+                if (agregaPedido()) wspe.execute(data,1,0);
+            }
+
+            public void run() {}
+        };
 
 		try{
 
@@ -269,7 +288,7 @@ public class CliPos extends PBase {
             ptimer.scheduleAtFixedRate(ptask = new TimerTask(){
                 public void run() {
                     try {
-                        wspn.execute(validaPedNuevos);
+                        wspn.execute(rnValidaPedNuevos);
                     } catch (Exception e) {}
                 }
             }, delay, period);
@@ -301,7 +320,7 @@ public class CliPos extends PBase {
                     lblPed.setVisibility(View.VISIBLE);
                     lblPed.setText(""+cantped);
 
-                    //procesaPedidos();
+                    procesaPedidos();
                     
                     wspn.resume();
                 }
@@ -322,16 +341,38 @@ public class CliPos extends PBase {
             for (int i = 0; i <pedidos.size(); i++) {
                 corel=pedidos.get(i);
 
-                sql="SELECT Corel FROM D_PEDIDIO WHERE Corel='"+corel+"'";
+                sql="SELECT Corel FROM D_PEDIDO WHERE Corel='"+corel+"'";
                 dt=Con.OpenDT(sql);
                 if (dt.getCount()==0) {
-
+                    wspd.execute(corel);return;
                 } else {
                     wspe.execute(corel,1,0);
                 }
             }
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private boolean agregaPedido() {
+        String ss;
+
+        try {
+            db.beginTransaction();
+
+            for (int i = 0; i <wspd.items.size(); i++) {
+                ss=wspd.items.get(i);
+                db.execSQL(ss);
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            return true;
+        } catch (Exception e) {
+            db.endTransaction();
+            toast("agregaPedido "+e.getMessage());
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
         }
     }
 
@@ -638,7 +679,7 @@ public class CliPos extends PBase {
         Runnable mrunner=new Runnable() {
             @Override
             public void run() {
-                wsi.actualizaInventario(recibeInventario);
+                wsi.actualizaInventario(rnRecibeInventario);
             }
         };
         mtimer.postDelayed(mrunner,200);

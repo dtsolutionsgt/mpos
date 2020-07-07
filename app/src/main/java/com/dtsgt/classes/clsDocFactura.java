@@ -42,7 +42,7 @@ public class clsDocFactura extends clsDocument {
 				" FROM D_FACTURA WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);
 
-			if(DT.getCount()>0){
+			if (DT.getCount()>0) {
 				DT.moveToFirst();
 
 				serie=DT.getString(0);
@@ -115,6 +115,15 @@ public class clsDocFactura extends clsDocument {
 		} catch (Exception e) {
 			//Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
 	    }
+
+        try {
+            sql="SELECT NOMBRE FROM P_RUTA WHERE CODIGO_RUTA="+ruta;
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+            rutanombre=DT.getString(0);
+        } catch (Exception e) {
+            rutanombre=ruta;
+        }
 
         try {
             sql="SELECT NOMBRE FROM VENDEDORES WHERE CODIGO_VENDEDOR="+vend;
@@ -510,10 +519,13 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
-        if (!textofin.isEmpty()) {
-            String[] sp = textofin.split(",");
-            for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
-        }
+
+        try {
+            if (!textofin.isEmpty()) {
+                String[] sp = textofin.split(",");
+                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
+            }
+        } catch (Exception e) {}
 
         if (banderafel) {
 

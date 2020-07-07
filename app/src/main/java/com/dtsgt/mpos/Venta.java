@@ -36,6 +36,7 @@ import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsBonifGlob;
+import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
@@ -87,11 +88,11 @@ public class Venta extends PBase {
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
-    private WebService ws;
     private AppMethods app;
 
-    private int browse;
+    private clsD_pedidoObj D_pedidoObj;
 
+    private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot;
     private double px,py,cpx,cpy,cdist;
@@ -131,9 +132,8 @@ public class Venta extends PBase {
 
         getURL();
 
-        //pedidos=true;
-        pedidos=false;
-        ws=new WebService(Venta.this,gl.wsurl);
+        pedidos=gl.pePedidos;
+        D_pedidoObj=new clsD_pedidoObj(this,Con,db);
 
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
@@ -2188,20 +2188,16 @@ public class Venta extends PBase {
     //region Pedidos
 
     private void estadoPedidos() {
-        try {
-            ws.pedidosNuevos(gl.emp,0);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+/*
+        if (pedidos) {
+            item = clsCls.new clsMenu();
+            item.ID=16;item.Name="Pedidos";item.Icon=16;item.cant=pedidoscant+1;
+            mitems.add(item);
         }
-    }
 
-    @Override
-    protected void wsCallBack(Boolean throwing,String errmsg) throws Exception {
-        if (!throwing) {
-            toast("WS Result : "+ws.intresult);
-        } else {
-            toast("WS Error : "+errmsg);
-        }
+
+ */
+
     }
 
     //endregion
@@ -2819,8 +2815,8 @@ public class Venta extends PBase {
     protected void onResume() {
 
         try {
-
             super.onResume();
+            D_pedidoObj.reconnect(Con,db);
 
             if (gl.forcedclose) {
                 super.finish();
@@ -2830,14 +2826,11 @@ public class Venta extends PBase {
             gl.climode=true;
             menuTools();
 
-            if (pedidos) {
-                estadoPedidos();
-            }
+            if (pedidos) estadoPedidos();
 
             try {
                 txtBarra.requestFocus();
-            } catch (Exception e) {
-            }
+            } catch (Exception e) {}
 
             if (gl.iniciaVenta) {
 
