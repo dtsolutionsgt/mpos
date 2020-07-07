@@ -146,16 +146,13 @@ public class clsFELInFile {
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
             connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
-
-            //#EJC20200707: Set Timeout
-            //connection.setConnectTimeout(mTimeOut);
-            //connection.setReadTimeout(mTimeOut);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -179,6 +176,7 @@ public class clsFELInFile {
             int response=connection.getResponseCode();
 
             if (response==200) {
+
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
                 StringBuilder sb = new StringBuilder();
@@ -192,13 +190,25 @@ public class clsFELInFile {
                 jObj = new JSONObject(jstr);
 
                 error= jObj.getString("descripcion");
+
                 if (jObj.getBoolean("resultado")) {
                     errorflag=false;
                     firma=jObj.getString("archivo");
                 } else {
+
                     errorflag=true;
-                    //parent.felCallBack();return;
+
+                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                    for (int i=0; i<ArrayError.length(); i++) {
+                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                        String name = theJsonObject.getString("mensaje_error");
+                        error = name;
+                    }
+
                 }
+
             } else {
                 error=""+response;errorflag=true;return;
             }
@@ -297,16 +307,12 @@ public class clsFELInFile {
             url = new URL(WSURLCert);
             connection = (HttpsURLConnection)url.openConnection();
             connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
-            //connection.setRequestProperty("Content-Length",""+Integer.toString(jscert.getBytes().length));
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
-
-            //#EJC20200707: Set Timeout
-            //connection.setConnectTimeout(mTimeOut);
-            //connection.setReadTimeout(mTimeOut);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -346,8 +352,21 @@ public class clsFELInFile {
                 jObj = new JSONObject(jstr);
 
                 error= jObj.getString("descripcion");
+
                 if (!jObj.getBoolean("resultado")) {
-                    errorflag=true;return;
+
+                    errorflag=true;
+
+                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                    for (int i=0; i<ArrayError.length(); i++) {
+                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                        String name = theJsonObject.getString("mensaje_error");
+                        error = name;
+                    }
+
+                    return;
                 }
 
                 fact_uuid =jObj.getString("uuid");
@@ -440,6 +459,7 @@ public class clsFELInFile {
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
             connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
@@ -493,8 +513,18 @@ public class clsFELInFile {
                     firma=jObj.getString("archivo");
 
                 } else {
+
                     errorflag=true;
-                    //parent.felCallBack();
+
+                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                    for (int i=0; i<ArrayError.length(); i++) {
+                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                        String name = theJsonObject.getString("mensaje_error");
+                        error = name;
+                    }
+
                 }
 
             } else {
@@ -587,6 +617,7 @@ public class clsFELInFile {
 
             connection = (HttpsURLConnection)url.openConnection();
             connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));
@@ -594,15 +625,12 @@ public class clsFELInFile {
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
 
-            //#EJC20200707: Set Timeout
-            //connection.setConnectTimeout(mTimeOut);
-            //connection.setReadTimeout(mTimeOut);
-
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
             DataOutputStream wr = null;
+
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
@@ -617,6 +645,7 @@ public class clsFELInFile {
             InputStream is = connection.getInputStream();
 
             int response=connection.getResponseCode();
+
             if (response==200) {
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
@@ -632,6 +661,7 @@ public class clsFELInFile {
                 jObj = new JSONObject(jstr);
 
                 error= jObj.getString("descripcion");
+
                 if (jObj.getBoolean("resultado")) {
                     errorflag=false;
                 } else {
