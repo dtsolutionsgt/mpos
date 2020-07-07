@@ -150,6 +150,10 @@ public class clsFELInFile {
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
 
+            //#EJC20200707: Set Timeout
+            //connection.setConnectTimeout(mTimeOut);
+            //connection.setReadTimeout(mTimeOut);
+
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -296,6 +300,10 @@ public class clsFELInFile {
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
 
+            //#EJC20200707: Set Timeout
+            //connection.setConnectTimeout(mTimeOut);
+            //connection.setReadTimeout(mTimeOut);
+
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -434,6 +442,10 @@ public class clsFELInFile {
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
+
+            //#EJC20200707: Set Timeout
+            //connection.setConnectTimeout(mTimeOut);
+            //connection.setReadTimeout(mTimeOut);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -576,6 +588,10 @@ public class clsFELInFile {
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
+
+            //#EJC20200707: Set Timeout
+            //connection.setConnectTimeout(mTimeOut);
+            //connection.setReadTimeout(mTimeOut);
 
             connection.setUseCaches (false);
             connection.setDoInput(true);
@@ -751,6 +767,7 @@ public class clsFELInFile {
                        String nitEmisor,
                        String nombreComercial,
                        String nombreEmisor) {
+
         xml+="<dte:Emisor AfiliacionIVA=\""+afiliacionIVA+"\" " +
                 "CodigoEstablecimiento=\""+codigoEstablecimiento+"\" " +
                 "CorreoEmisor=\""+correoEmisor+"\" " +

@@ -20,11 +20,12 @@ public class clsP_rutaObj {
     private clsClasses clsCls = new clsClasses();
     private MiscUtils mu;
 
-    private String sel="SELECT * FROM P_ruta";
+    private String sel="SELECT * FROM P_RUTA";
     private String sql;
     public ArrayList<clsClasses.clsP_ruta> items= new ArrayList<clsClasses.clsP_ruta>();
 
     public clsP_rutaObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
+
         cont=context;
         Con=dbconnection;
         ins=Con.Ins;upd=Con.Upd;
@@ -78,8 +79,7 @@ public class clsP_rutaObj {
 
     private void addItem(clsClasses.clsP_ruta item) {
 
-        ins.init("P_ruta");
-
+        ins.init("P_RUTA");
         ins.add("CODIGO",item.codigo);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
@@ -91,7 +91,7 @@ public class clsP_rutaObj {
 
     private void updateItem(clsClasses.clsP_ruta item) {
 
-        upd.init("P_ruta");
+        upd.init("P_RUTA");
         upd.add("SUCURSAL",item.sucursal);
         upd.add("NOMBRE",item.nombre);
         upd.add("CODIGO_RUTA",item.codigo_ruta);
@@ -114,6 +114,7 @@ public class clsP_rutaObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsP_ruta item;
 
@@ -126,14 +127,12 @@ public class clsP_rutaObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_ruta();
-
             item.codigo=dt.getString(0);
             item.sucursal=dt.getString(1);
             item.nombre=dt.getString(2);
             item.codigo_ruta=dt.getInt(3);
             item.activo = (dt.getInt(4)==1?true:false);
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -142,6 +141,7 @@ public class clsP_rutaObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -160,8 +160,7 @@ public class clsP_rutaObj {
 
     public String addItemSql(clsClasses.clsP_ruta item) {
 
-        ins.init("P_ruta");
-
+        ins.init("P_RUTA");
         ins.add("CODIGO",item.codigo);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("NOMBRE",item.nombre);
@@ -173,8 +172,7 @@ public class clsP_rutaObj {
 
     public String updateItemSql(clsClasses.clsP_ruta item) {
 
-        upd.init("P_ruta");
-
+        upd.init("P_RUTA");
         upd.add("SUCURSAL",item.sucursal);
         upd.add("NOMBRE",item.nombre);
         upd.add("CODIGO",item.codigo);
