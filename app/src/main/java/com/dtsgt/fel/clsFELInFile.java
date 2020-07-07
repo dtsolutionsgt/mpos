@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.dtsgt.mpos.PBase;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -634,8 +635,17 @@ public class clsFELInFile {
                 if (jObj.getBoolean("resultado")) {
                     errorflag=false;
                 } else {
+
                     errorflag=true;
-                    error=jObj.getString("mensaje_error");
+
+                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                    for (int i=0; i<ArrayError.length(); i++) {
+                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                        String name = theJsonObject.getString("mensaje_error");
+                        error = name;
+                    }
                 }
 
             } else {
