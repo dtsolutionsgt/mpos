@@ -82,9 +82,8 @@ public class FelFactura extends PBase {
         multiflag=felcorel.isEmpty();
         gl.feluuid="";
 
-        fel=new clsFELInFile(this,this);
-
         getURL();
+        fel=new clsFELInFile(this,this,gl.timeout);
 
         ws = new WebServiceHandler(FelFactura.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);

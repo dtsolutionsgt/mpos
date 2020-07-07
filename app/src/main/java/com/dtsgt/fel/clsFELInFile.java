@@ -72,6 +72,7 @@ public class clsFELInFile {
     // Configuracion
 
     private double iva=12;
+    private int timeout=6000;
     private String WSURL="https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml";
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";
@@ -80,9 +81,10 @@ public class clsFELInFile {
     //private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
     //private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/dte/";
 
-    public clsFELInFile(Context context, PBase Parent) {
+    public clsFELInFile(Context context, PBase Parent,int conTimeout) {
         cont=context;
         parent=Parent;
+        timeout=conTimeout;
         errlevel=0;error="";errorflag=false;errorcon=false;
     }
 
@@ -142,7 +144,7 @@ public class clsFELInFile {
 
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
-
+            connection.setConnectTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
@@ -293,6 +295,7 @@ public class clsFELInFile {
 
             url = new URL(WSURLCert);
             connection = (HttpsURLConnection)url.openConnection();
+            connection.setConnectTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             //connection.setRequestProperty("Content-Length",""+Integer.toString(jscert.getBytes().length));
@@ -435,7 +438,7 @@ public class clsFELInFile {
 
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
-
+            connection.setConnectTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
@@ -582,6 +585,7 @@ public class clsFELInFile {
             url = new URL(WSURLAnul);
 
             connection = (HttpsURLConnection)url.openConnection();
+            connection.setConnectTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));

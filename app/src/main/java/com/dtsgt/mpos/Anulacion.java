@@ -128,8 +128,10 @@ public class Anulacion extends PBase {
 
 		itemid="*";
 
-        fel=new clsFELInFile(this,this);
-		getURL();
+        getURL();
+
+        fel=new clsFELInFile(this,this,gl.timeout);
+
 		ws = new Anulacion.WebServiceHandler(Anulacion.this, gl.wsurl, gl.timeout);
 		xobj = new XMLObject(ws);
 

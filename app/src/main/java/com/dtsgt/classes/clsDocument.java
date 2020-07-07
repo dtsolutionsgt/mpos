@@ -297,15 +297,18 @@ public class clsDocument {
 				s=s.replace("Factura","Recibo");
             }
 
-            if(docdevolucion){
+            if (docdevolucion) {
 				s=s.replace("Factura","Recibo");
 			}
 
-			if(doccanastabod){
+			if (doccanastabod){
 				s=s.replace("Factura","Recibo");
 			}
 
-			if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) rep.add(s);
+			if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
+			    s=rep.ctrim(s);
+			    rep.add(s);
+            }
 
             if (docfactura) {
                 if (!modofact.equalsIgnoreCase("TICKET")) {
@@ -378,7 +381,7 @@ public class clsDocument {
         String s,lu,a;
         int idx;
 
-    	if (l.isEmpty()) return " ";
+        if (l.isEmpty()) return " ";
         lu=l.trim();
 
         if (lu.length()==1 && lu.equalsIgnoreCase("N")) {
@@ -398,6 +401,76 @@ public class clsDocument {
             return "##";
         }
 
+        idx=l.indexOf("@Serie");
+        if (idx>=0) {
+            if (docfactura) {
+                /*
+                if (l.length() > idx + serie.length()) {
+                    l = l.substring(0, idx) + serie + l.substring(idx + 6, idx + l.length() - idx - 6);
+                } else {
+                    l = l.substring(0, idx) + serie;
+                }
+                */
+                int nn=1000000+Integer.parseInt(numero);
+                l=""+nn;l=l.substring(1,7);
+
+                l="%%%Serie : "+serie +" No.: "+l;
+            } else {
+                l="##";
+            }
+        }
+
+        idx=lu.indexOf("@Vendedor");
+        if (idx>=0) {
+            rep.addc("");
+            if (emptystr(vendnom)) return "@@";
+            l=l.replace("@Vendedor", vendnom);return l;
+        }
+
+        idx=lu.indexOf("@Ruta");
+        if (idx>=0) {
+            if (emptystr(ruta)) return "@@";
+            l=l.replace("@Ruta",ruta);return l;
+        }
+
+        idx=lu.indexOf("@Cliente");
+        if (idx>=0) {
+            if (emptystr(cliente)) return "@@";
+            if(l.length()>20){
+                l=l.replace("@Cliente",clicod+" - "+cliente);
+                return l;
+            }
+            l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
+        }
+
+        return l;
+    }
+
+    protected String encabezadoOrig(String l) {
+        String s,lu,a;
+        int idx;
+
+        if (l.isEmpty()) return " ";
+        lu=l.trim();
+
+        if (lu.length()==1 && lu.equalsIgnoreCase("N")) {
+            //s=nombre;s=rep.ctrim(s);return s;
+            return "##";
+        }
+
+        if (l.indexOf("dd-MM-yyyy")>=0) {
+            //s=DU.sfecha(DU.getActDateTime());
+            //l=l.replace("dd-MM-yyyy",s);return l;
+            return DU.sfecha(DU.getActDateTime())+" "+DU.shora(DU.getActDateTime());
+        }
+
+        if (l.indexOf("HH:mm:ss")>=0) {
+            //s=DU.shora(DU.getActDateTime());
+            //l=l.replace("HH:mm:ss",s);return l;
+            return "##";
+        }
+
+        /*
 		if (l.indexOf("@Numero") >=0) {
 		    if (docfactura) {
                 int index = l.indexOf("@Numero");
@@ -411,18 +484,16 @@ public class clsDocument {
 
                 if (!serie.isEmpty()) {
                     numero = StringUtils.right(str + numero, Integer.parseInt(temp));
-
                     if (!numero.isEmpty()){
                         int ctemp1= Integer.parseInt(numero);
                         if (ctemp1==0) numero = StringUtils.leftPad("", ctemp);
                     }
-
                 }
 
                 try {
                     if (l.length() > index + numero.length() ){
                         l = l.substring(0, index) + numero + l.substring(index + 10);
-                    }else{
+                    } else {
                         l = l.substring(0, index) + numero;
                     }
                 } catch (Exception e) {
@@ -477,24 +548,26 @@ public class clsDocument {
                 l="##";
             }
 		}
+        */
 
-		idx=l.indexOf("@Serie");
+        idx=l.indexOf("@Serie");
         if (idx>=0) {
             if (docfactura) {
                 if (l.length() > idx + serie.length()) {
                     l = l.substring(0, idx) + serie + l.substring(idx + 6, idx + l.length() - idx - 6);
-                }else{
+                } else {
                     l = l.substring(0, idx) + serie;
                 }
                 if (l.indexOf("@Serie")>=0) {
                     l = StringUtils.replace(l,"@Serie","");
                 }
-                l="%%%Serie :"+serie +" No. :"+numero;
+                l="%%%Serie : "+serie +" No.: "+numero;
             } else {
                 l="##";
             }
         }
 
+        /*
 		if ((l.indexOf("No.:")>=0) && (l.trim().length()==4)) {
             if (docfactura) {
                 l = StringUtils.replace(l,"No.:","@@");
@@ -503,10 +576,11 @@ public class clsDocument {
                 l="##";
             }
 		}
+        */
 
         idx=lu.indexOf("@Vendedor");
         if (idx>=0) {
-        	rep.addc("");
+            rep.addc("");
             if (emptystr(vendnom)) return "@@";
             l=l.replace("@Vendedor", vendnom);return l;
         }
@@ -521,9 +595,9 @@ public class clsDocument {
         if (idx>=0) {
             if (emptystr(cliente)) return "@@";
             if(l.length()>20){
-				l=l.replace("@Cliente",clicod+" - "+cliente);
-				return l;
-			}
+                l=l.replace("@Cliente",clicod+" - "+cliente);
+                return l;
+            }
             l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
         }
 
@@ -586,7 +660,6 @@ public class clsDocument {
 		return true;
 	}
 
-	
 	// Aux
 	
 	private boolean loadHeadLines() {

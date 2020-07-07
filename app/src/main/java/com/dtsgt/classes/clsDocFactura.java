@@ -46,7 +46,7 @@ public class clsDocFactura extends clsDocument {
 				DT.moveToFirst();
 
 				serie=DT.getString(0);
-				numero=""+DT.getInt(1);contacc=serie+"-"+numero;
+				numero=""+DT.getInt(1);
 				ruta=DT.getString(2);
 
 				vend=DT.getString(3);
@@ -71,20 +71,20 @@ public class clsDocFactura extends clsDocument {
 
                 feluuid=DT.getString(14);
                 feldcert=sfecha(DT.getLong(15));
-                s1=DT.getString(16);if (!s1.isEmpty()) serie=s1;
-                s2=DT.getString(17);if (!s2.isEmpty()) numero=s2;
+                s1=DT.getString(16);if (!s1.isEmpty() && !s1.equalsIgnoreCase(" ")) serie=s1;
+                s2=DT.getString(17);if (!s2.isEmpty() && !s2.equalsIgnoreCase(" ")) numero=s2;
                 felcont=DT.getString(18);
-
+                contacc=felcont;
 
                 if (anulado.equals("S")?true:false){
 					cantimpres = -1;
-				}else if (cantimpres == 0 && impres > 0){
+				} else if (cantimpres == 0 && impres > 0){
                     if (esPendientePago(corel)){
                         cantimpres = -2;
                     }else{
                         cantimpres = 1;
                     }
-				}else if (esPendientePago(corel)){
+				} else if (esPendientePago(corel)){
 					cantimpres = -2;
 				}
 
@@ -210,7 +210,7 @@ public class clsDocFactura extends clsDocument {
 	protected boolean loadDocData(String corel) {
 		Cursor DT;
 		itemData item,bon;
-		String serie,corNota,idcombo;
+		String corNota,idcombo;
 		int corrl;
 
 		ccorel=corel;
@@ -515,15 +515,14 @@ public class clsDocFactura extends clsDocument {
             for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
         }
 
-        String asd=feluuid;
-
-        if (feluuid.equalsIgnoreCase(" ")) {
-            rep.add("");
-            rep.add("Factura generada en modo de contingencia");
-            rep.add("Numero de Acceso : "+contacc);
-        }
-
         if (banderafel) {
+
+            if (feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Factura generada en modo de contingencia");
+                rep.add("Numero de Acceso : "+contacc);
+            }
+
             if (!feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
                 rep.add("Numero de autorizacion :");
@@ -538,7 +537,6 @@ public class clsDocFactura extends clsDocument {
             rep.add(felcert);
             rep.add(felnit);
         }
-
 
         //#HS_20181212 Validación para factura pendiente de pago
         if(pendiente == 4){
