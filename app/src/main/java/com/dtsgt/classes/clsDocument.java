@@ -19,7 +19,7 @@ public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
-	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc;
+	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
@@ -269,6 +269,7 @@ public class clsDocument {
     protected void saveHeadLines(int reimpres) {
         String s,ss,ss2;
 		String mPago,dPago;
+		int nidx;
 
         rep.empty();rep.empty();
 
@@ -278,6 +279,9 @@ public class clsDocument {
 
             try {
                 s=encabezado(s);
+                ss=s.toUpperCase();
+                nidx=ss.indexOf("NIT");
+                if (nidx>=0) s="NIT : "+nitsuc;
             } catch (Exception e) {
                 s="##";
             }
@@ -675,7 +679,7 @@ public class clsDocument {
 			DT.moveToFirst();
 			sucur = DT.getString(0);
 
-            sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
+            sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR,NIT FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
             DT=Con.OpenDT(sql);
             if (DT.getCount()>0) {
                 DT.moveToFirst();
@@ -689,6 +693,8 @@ public class clsDocument {
             } else {
                 textofin="";
             }
+
+            nitsuc=DT.getString(3);
 
             banderafel=false;felcert="";felnit="";
             try {

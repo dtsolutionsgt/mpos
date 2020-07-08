@@ -1914,6 +1914,8 @@ public class Venta extends PBase {
                     showQuickRecep();break;
                 case 15:
                     msgAskFEL("Certificar ("+pendienteFEL()+") factura(s) pendiente(s)");break;
+                case 16:
+                    menuPedidos();break;
                 case 24:
                     exitBtn();
                     break;
@@ -1976,18 +1978,24 @@ public class Venta extends PBase {
 
             Intent intent = new Intent(this,Reimpresion.class);
             startActivity(intent);
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
+    }
 
+    public void menuPedidos() {
+        try{
+            Intent intent = new Intent(this,Pedidos.class);
+            startActivity(intent);
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
     }
 
     public void showVoidMenuTodo() {
         try{
             final AlertDialog Dialog;
             final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
-
-
 
             ExDialog menudlg = new ExDialog(this);
 
@@ -2029,9 +2037,7 @@ public class Venta extends PBase {
     }
 
     public void showQuickRecep() {
-
-
-        ExDialog dialog = new ExDialog(this);
+       ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿Actualizar parametros de venta?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -2130,7 +2136,6 @@ public class Venta extends PBase {
             final AlertDialog Dialog;
             final String[] selitems = {"Iniciar nueva venta","Cambiar venta"};
 
-
             ExDialog menudlg = new ExDialog(this);
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
@@ -2188,16 +2193,21 @@ public class Venta extends PBase {
     //region Pedidos
 
     private void estadoPedidos() {
-/*
-        if (pedidos) {
-            item = clsCls.new clsMenu();
-            item.ID=16;item.Name="Pedidos";item.Icon=16;item.cant=pedidoscant+1;
-            mitems.add(item);
+
+        try {
+            D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_ENTREGO=0) ");
+            int peds=D_pedidoObj.count;
+
+            for (int i = 0; i <mitems.size(); i++) {
+                if (mitems.get(i).ID==16) {
+                    mitems.get(i).cant=peds;
+                    adaptergrid.notifyDataSetChanged();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-
- */
-
     }
 
     //endregion

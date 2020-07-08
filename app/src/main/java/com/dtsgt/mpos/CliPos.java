@@ -38,13 +38,13 @@ public class CliPos extends PBase {
     private wsPedidosEstado wspe;
     private wsPedidoDatos   wspd;
 
-    private Runnable rnRecibeInventario, rnValidaPedNuevos;
+    private Runnable rnRecibeInventario, rnValidaPedNuevos,rnPedidosEstado;
     private ExtRunnable rnPedDatosEstado;
 
     private ArrayList<String> pedidos =new ArrayList<String>();
 
 	private String snit,sname,sdir,wspnerror;
-	private boolean consFinal=false;
+	private boolean consFinal=false,idleped=true;
 	private boolean inicio_pedidos=true,bandera_pedidos=false;
 	private int cantped;
 
@@ -93,8 +93,18 @@ public class CliPos extends PBase {
 	//region  Events
 
 	public void consFinal(View view) {
-    	consFinal=true;
-		if (agregaCliente("C.F.","Consumidor final","Ciudad")) procesaCF() ;
+        if (gl.pePedidos) {
+            if (!idleped) {
+                //toast("Actualizando pedidos, espere por favor ....");return;
+            }
+        }
+
+        try {
+            consFinal=true;
+            if (agregaCliente("C.F.","Consumidor final","Ciudad")) procesaCF() ;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 	}
 
 	public void clienteNIT(View view) {
@@ -147,6 +157,12 @@ public class CliPos extends PBase {
             }
         };
 
+        rnPedidosEstado = new Runnable() {
+            public void run() {
+                idleped=true;
+            }
+        };
+
         rnRecibeInventario = new Runnable() {
             public void run() {
                 if (wsi.errflag) {
@@ -162,7 +178,11 @@ public class CliPos extends PBase {
         rnPedDatosEstado = new ExtRunnable() {
             @Override
             public void run(String data) {
-                if (agregaPedido()) wspe.execute(data,1,0);
+                if (agregaPedido(data)) {
+                    wspe.execute(data,1,0);
+                } else {
+                    idleped=true;
+                }
             }
 
             public void run() {}
@@ -288,6 +308,7 @@ public class CliPos extends PBase {
             ptimer.scheduleAtFixedRate(ptask = new TimerTask(){
                 public void run() {
                     try {
+                        idleped=false;
                         wspn.execute(rnValidaPedNuevos);
                     } catch (Exception e) {}
                 }
@@ -297,6 +318,7 @@ public class CliPos extends PBase {
     }
 
     private void cancelaPedidos() {
+        idleped=true;
         if (gl.pePedidos) {
             bandera_pedidos=true;
             ptask.cancel();
@@ -347,6 +369,7 @@ public class CliPos extends PBase {
                     wspd.execute(corel);return;
                 } else {
                     wspe.execute(corel,1,0);
+
                 }
             }
         } catch (Exception e) {
@@ -354,7 +377,7 @@ public class CliPos extends PBase {
         }
     }
 
-    private boolean agregaPedido() {
+    private boolean agregaPedido(String corel) {
         String ss;
 
         try {
@@ -364,6 +387,9 @@ public class CliPos extends PBase {
                 ss=wspd.items.get(i);
                 db.execSQL(ss);
             }
+
+            ss="UPDATE D_Pedido SET FECHA_RECEPCION_SUC="+du.getActDateTime()+" WHERE Corel='"+corel+"'";
+            db.execSQL(ss);
 
             db.setTransactionSuccessful();
             db.endTransaction();
