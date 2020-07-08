@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.dtsgt.mpos.PBase;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -198,13 +199,19 @@ public class clsFELInFile {
 
                     errorflag=true;
 
-                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
-                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+                    try {
 
-                    for (int i=0; i<ArrayError.length(); i++) {
-                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
-                        String name = theJsonObject.getString("mensaje_error");
-                        error = name;
+                        //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                        JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                        for (int i=0; i<ArrayError.length(); i++) {
+                            JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                            String name = theJsonObject.getString("mensaje_error");
+                            error = name;
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
                 }
@@ -357,13 +364,18 @@ public class clsFELInFile {
 
                     errorflag=true;
 
-                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
-                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+                    try {
 
-                    for (int i=0; i<ArrayError.length(); i++) {
-                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
-                        String name = theJsonObject.getString("mensaje_error");
-                        error = name;
+                        //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                        JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                        for (int i=0; i<ArrayError.length(); i++) {
+                            JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                            String name = theJsonObject.getString("mensaje_error");
+                            error = name;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
                     return;
@@ -516,13 +528,17 @@ public class clsFELInFile {
 
                     errorflag=true;
 
-                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
-                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+                    try {
+                        //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                        JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
 
-                    for (int i=0; i<ArrayError.length(); i++) {
-                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
-                        String name = theJsonObject.getString("mensaje_error");
-                        error = name;
+                        for (int i=0; i<ArrayError.length(); i++) {
+                            JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                            String name = theJsonObject.getString("mensaje_error");
+                            error = name;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
                 }
@@ -668,13 +684,17 @@ public class clsFELInFile {
 
                     errorflag=true;
 
-                    //#EJC20200707: Obtener mensaje de error específico en respuesta.
-                    JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+                    try {
+                        //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                        JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
 
-                    for (int i=0; i<ArrayError.length(); i++) {
-                        JSONObject theJsonObject = ArrayError.getJSONObject(i);
-                        String name = theJsonObject.getString("mensaje_error");
-                        error = name;
+                        for (int i=0; i<ArrayError.length(); i++) {
+                            JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                            String name = theJsonObject.getString("mensaje_error");
+                            error = name;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
 
@@ -812,6 +832,9 @@ public class clsFELInFile {
                        String nombreComercial,
                        String nombreEmisor) {
 
+        //#EJC20200708: Quitar guión de NIT emisor.
+        nitEmisor= nitEmisor.replace("-","");
+
         xml+="<dte:Emisor AfiliacionIVA=\""+afiliacionIVA+"\" " +
                 "CodigoEstablecimiento=\""+codigoEstablecimiento+"\" " +
                 "CorreoEmisor=\""+correoEmisor+"\" " +
@@ -921,6 +944,9 @@ public class clsFELInFile {
 
         String sf=parseDate(fechaemis);
         String sa=parseDate(fechaanul);
+
+        //#EJC20200708: Quitar guion a NIT.
+        NITEmisor = NITEmisor.replace("-","");
 
         xmlanul="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" " +
         "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0\">" +

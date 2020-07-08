@@ -161,7 +161,6 @@ public class clsP_sucursalObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_sucursal();
-
             item.codigo_sucursal=dt.getInt(0);
             item.codigo=dt.getString(1);
             item.empresa=dt.getInt(2);
