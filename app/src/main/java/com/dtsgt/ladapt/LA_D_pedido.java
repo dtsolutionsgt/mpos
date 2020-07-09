@@ -28,11 +28,13 @@ public class LA_D_pedido  extends BaseAdapter {
     private ArrayList<clsClasses.clsD_pedido> items= new ArrayList<clsClasses.clsD_pedido>();
     private int selectedIndex;
     private LayoutInflater l_Inflater;
+    private boolean idlargo;
 
-    public LA_D_pedido(Context context, PBase owner, ArrayList<clsClasses.clsD_pedido> results) {
+    public LA_D_pedido(Context context, PBase owner, ArrayList<clsClasses.clsD_pedido> results,boolean corellargo) {
         items = results;
         l_Inflater = LayoutInflater.from(context);
         selectedIndex = -1;
+        idlargo =corellargo;
 
         mu=owner.mu;
         du=owner.du;
@@ -81,7 +83,11 @@ public class LA_D_pedido  extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        corel=items.get(position).fecha_sistema % 1000;
+        if (idlargo) {
+            corel=(int) items.get(position).fecha_sistema;
+        } else {
+            corel=(int) items.get(position).fecha_sistema % 1000;
+        }
 
         holder.lbl1.setText(""+corel);
         holder.lbl2.setText(du.sfechash(items.get(position).fecha_recepcion_suc));
@@ -95,6 +101,12 @@ public class LA_D_pedido  extends BaseAdapter {
         }
         if (items.get(position).codigo_usuario_proceso>0)  {
             color=Color.parseColor("#8DDF8F");resid=R.drawable.ped_3;
+        }
+        if (items.get(position).codigo_usuario_entrego>0)  {
+            color=Color.parseColor("#57CAD7");resid=R.drawable.ped_4;
+        }
+        if (items.get(position).anulado==1)  {
+            color=Color.parseColor("#ED9475");resid=R.drawable.ped_5;
         }
         
         holder.rel1.setBackgroundColor(color);

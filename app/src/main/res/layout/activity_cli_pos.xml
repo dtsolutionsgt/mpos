@@ -7,6 +7,7 @@
     tools:context=".CliPos" >
 
     <RelativeLayout
+        android:id="@+id/relclipos"
         android:layout_width="match_parent"
         android:layout_height="315dp"
         android:layout_alignParentTop="true"
@@ -89,7 +90,7 @@
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:onClick="doWspnError"
-                    android:src="@drawable/dom" />
+                    android:src="@drawable/disconnect" />
             </RelativeLayout>
 
             <TextView
@@ -327,6 +328,13 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="-1dp"
             android:src="@drawable/cli_dir" />
+
+        <ProgressBar
+            android:id="@+id/progressBar4"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
 
     </RelativeLayout>
 

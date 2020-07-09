@@ -1,5 +1,7 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.ladapt.LA_D_pedido;
 
@@ -20,6 +23,12 @@ public class Pedidos extends PBase {
     private clsD_pedidoObj D_pedidoObj;
 
     private int cnue,cpen,ccomp;
+    private String sql;
+    private boolean modo=false;
+
+    private String sql1="WHERE (ANULADO=0) AND (CODIGO_USUARIO_ENTREGO=0) ORDER BY FECHA_RECEPCION_SUC,FECHA_SISTEMA ";
+    private String sql2="WHERE (ANULADO=0) AND (FECHA_SALIDA_SUC>0) ORDER BY FECHA_SALIDA_SUC DESC ";
+    private String sql3="WHERE (ANULADO=1) ORDER BY FECHA_RECEPCION_SUC DESC";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +46,15 @@ public class Pedidos extends PBase {
 
         setHandlers();
 
+        sql=sql1;modo=false;
         listItems();
     }
 
     //region Events
+
+    public void doMenu(View view) {
+        showItemMenu();
+    }
 
     public void doExit(View view) {
         finish();
@@ -74,7 +88,7 @@ public class Pedidos extends PBase {
 
             cnue=0;cpen=0;ccomp=0;
 
-            D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_ENTREGO=0) ORDER BY FECHA_RECEPCION_SUC,FECHA_SISTEMA ");
+            D_pedidoObj.fill(sql);
 
             for (int i = 0; i <D_pedidoObj.count; i++) {
                 item=D_pedidoObj.items.get(i);
@@ -86,7 +100,7 @@ public class Pedidos extends PBase {
             }
 
             lblNue.setText(""+cnue);lblPen.setText(""+cpen);lblComp.setText(""+ccomp);
-            adapter=new LA_D_pedido(this,this,D_pedidoObj.items);
+            adapter=new LA_D_pedido(this,this,D_pedidoObj.items,modo);
             gridView.setAdapter(adapter);
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
@@ -101,6 +115,40 @@ public class Pedidos extends PBase {
     //endregion
 
     //region Dialogs
+
+
+    private void showItemMenu() {
+        final AlertDialog Dialog;
+        final String[] selitems = {"Pedidos activos","Pedidos Entregados","Pedidos Anulados"};
+
+        ExDialog menudlg = new ExDialog(this);
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        sql=sql1;modo=false;break;
+                    case 1:
+                        sql=sql2;modo=true;break;
+                    case 2:
+                        sql=sql3;modo=true;break;
+                }
+
+                listItems();
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
 
 
     //endregion

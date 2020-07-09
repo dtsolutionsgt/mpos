@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
 import com.dtsgt.classes.clsP_factorconvObj;
+import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
@@ -73,6 +74,8 @@ import com.dtsgt.classesws.clsBeP_ENCABEZADO_REPORTESHH;
 import com.dtsgt.classesws.clsBeP_ENCABEZADO_REPORTESHHList;
 import com.dtsgt.classesws.clsBeP_FACTORCONV;
 import com.dtsgt.classesws.clsBeP_FACTORCONVList;
+import com.dtsgt.classesws.clsBeP_FRASE;
+import com.dtsgt.classesws.clsBeP_FRASEList;
 import com.dtsgt.classesws.clsBeP_IMPUESTO;
 import com.dtsgt.classesws.clsBeP_IMPUESTOList;
 import com.dtsgt.classesws.clsBeP_LINEA;
@@ -343,6 +346,9 @@ public class WSRec extends PBase {
                     case 35:
                         callMethod("GetP_PRODUCTO_TIPO");
                         break;
+                    case 36:
+                        callMethod("GetP_FRASE");
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();
@@ -608,11 +614,19 @@ public class WSRec extends PBase {
                         processComplete();
                         break;
                     }
-                    //execws(35);
-                    processComplete();
+                    execws(36);
+                    //processComplete();
                     break;
                 case 35:
                     processProductoTipo();
+                    if (ws.errorflag) {
+                        processComplete();
+                        break;
+                    }
+                    execws(36);
+                    break;
+                case 36:
+                    processFrases();
                     if (ws.errorflag) {
                         processComplete();
                         break;
@@ -734,6 +748,9 @@ public class WSRec extends PBase {
                 break;
             case 35:
                 plabel = "Cargando tipos de producto";
+                break;
+            case 36:
+                plabel = "Frases";
                 break;
         }
 
@@ -1402,6 +1419,38 @@ public class WSRec extends PBase {
             ws.errorflag = true;
         }
     }
+
+    private void processFrases() {
+        try {
+            clsP_fraseObj handler = new clsP_fraseObj(this, Con, db);
+            clsBeP_FRASEList items = new clsBeP_FRASEList();
+            clsBeP_FRASE item = new clsBeP_FRASE();
+            clsClasses.clsP_frase var;
+
+            script.add("DELETE FROM P_FRASE");
+
+            items = xobj.getresult(clsBeP_FRASEList.class, "GetP_FRASE");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_frase();
+                var.codigo_frase = item.CODIGO_FRASE;
+                var.texto = item.TEXTO;
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
 
     private void processImpuesto() {
         try {

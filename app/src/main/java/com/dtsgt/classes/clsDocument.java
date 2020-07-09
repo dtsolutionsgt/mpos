@@ -667,7 +667,7 @@ public class clsDocument {
 	// Aux
 	
 	private boolean loadHeadLines() {
-
+        clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
 		Cursor DT;	
 		String s,sucur;
 		
@@ -686,12 +686,21 @@ public class clsDocument {
             if (DT.getCount()>0) {
                 DT.moveToFirst();
                 textofin=DT.getString(0);
-                if (DT.getInt(1)==1) {
-                    felIVA="Sujeto a pago de IVA";
+
+                if (DT.getInt(1)>0) {
+                    P_fraseObj.fill("WHERE Codigo_Frase="+DT.getInt(1));
+                    if (P_fraseObj.count>0) {
+                        felIVA=P_fraseObj.first().texto;
+                    } else felIVA="";
                 } else felIVA="";
-                if (DT.getInt(2)==1) {
-                    felISR="Sujeto a pagos trimestrales ISR";
-                } else felISR="";
+
+                if (DT.getInt(2)>0) {
+                    P_fraseObj.fill("WHERE Codigo_Frase="+DT.getInt(2));
+                    if (P_fraseObj.count>0) {
+                        felISR=P_fraseObj.first().texto;
+                    } else felISR="";
+                 } else felISR="";
+
             } else {
                 textofin="";
             }

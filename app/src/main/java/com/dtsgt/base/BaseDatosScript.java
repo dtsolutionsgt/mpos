@@ -697,6 +697,14 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [P_frase] ("+
+                    "CODIGO_FRASE INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_FRASE])"+
+                    ");";
+            database.execSQL(sql);
+
+
             return 1;
 
         } catch (SQLiteException e) {

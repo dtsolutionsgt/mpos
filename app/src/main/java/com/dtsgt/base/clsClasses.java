@@ -135,11 +135,11 @@ public class clsClasses {
     public class clsD_pedido {
         public int  empresa;
         public String corel;
-        public int  fecha_sistema;
-        public int  fecha_pedido;
-        public int  fecha_recepcion_suc;
-        public int  fecha_salida_suc;
-        public int  fecha_entrega;
+        public long  fecha_sistema;
+        public long  fecha_pedido;
+        public long  fecha_recepcion_suc;
+        public long  fecha_salida_suc;
+        public long  fecha_entrega;
         public int  codigo_cliente;
         public int  firma_cliente;
         public int  codigo_direccion;
@@ -368,7 +368,12 @@ public class clsClasses {
         public int codigo_factorconv;
     }
 
-	public class clsP_impuesto {
+    public class clsP_frase {
+        public int  codigo_frase;
+        public String texto;
+    }
+
+    public class clsP_impuesto {
         public  int codigo_impuesto;
 		public int  codigo;
 		public double valor;

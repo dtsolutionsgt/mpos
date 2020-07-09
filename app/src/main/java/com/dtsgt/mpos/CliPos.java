@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,7 +32,8 @@ public class CliPos extends PBase {
 	private EditText txtNIT,txtNom,txtRef;
 	private TextView lblPed;
     private ImageView imgPed;
-	private RelativeLayout relped;
+	private RelativeLayout relped,relcli;
+	private ProgressBar pbar;
 
     private wsInvActual wsi;
     private wsPedidosNuevos wspn;
@@ -50,7 +52,7 @@ public class CliPos extends PBase {
 
     private Timer ptimer;
     private TimerTask ptask;
-    private int tick=0,period = 5000,delay = 500,frequency=5;
+    private int tick=0,period=1000,delay=50,frequency=15;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,8 @@ public class CliPos extends PBase {
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
         imgPed = (ImageView) findViewById(R.id.imageView68);
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
+        relcli = (RelativeLayout) findViewById(R.id.relclipos);
+        pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
 
         setHandlers();
 
@@ -153,21 +157,21 @@ public class CliPos extends PBase {
             public void run() {
                 estadoPedidos();
                 if (inicio_pedidos) iniciaPedidos();
-                toast("nuevos");
+                showPanel();
             }
         };
 
         rnPedidosEstado = new Runnable() {
             public void run() {
                 idleped=true;
-                toast("Done estado");
+                showPanel();
             }
         };
 
         rnRecibeInventario = new Runnable() {
             public void run() {
                 if (wsi.errflag) {
-                    toast("rnRecibeInventario");
+                    showPanel();
                     msgbox("wsi"+wsi.error);
                 }
                 try {
@@ -183,7 +187,7 @@ public class CliPos extends PBase {
                     wspe.execute(data,1,0);
                 } else {
                     idleped=true;
-                    toast("Done datos");
+                    showPanel();
                 }
             }
 
@@ -314,6 +318,7 @@ public class CliPos extends PBase {
                         tick=tick % frequency;
                         if (tick==0) {
                             idleped=false;
+                            hidePanel();
                             wspn.execute(rnValidaPedNuevos);
                         }
                         tick++;
@@ -355,10 +360,11 @@ public class CliPos extends PBase {
             } else {
                 imgPed.setVisibility(View.VISIBLE);
                 wspnerror="Pedidos nuevos : "+wspn.error;toastcent(wspnerror);
-                toast("Done check");
+                showPanel();
             }
         } catch (Exception e) {
             wspnerror="Pedidos nuevos : "+e.getMessage();toastcent(wspnerror);
+            showPanel();
         }
     }
 
@@ -395,6 +401,7 @@ public class CliPos extends PBase {
             //}
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            showPanel();
         }
     }
 
@@ -420,8 +427,29 @@ public class CliPos extends PBase {
             db.endTransaction();
             toast("agregaPedido "+e.getMessage());
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            showPanel();
             return false;
         }
+    }
+
+    private void hidePanel() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                pbar.setVisibility(View.VISIBLE);
+                relcli.setEnabled(false);
+            }
+        });
+    }
+
+    private void showPanel() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public synchronized void run() {
+                pbar.setVisibility(View.INVISIBLE);
+                relcli.setEnabled(true);
+            }
+        });
     }
 
     //endregion
