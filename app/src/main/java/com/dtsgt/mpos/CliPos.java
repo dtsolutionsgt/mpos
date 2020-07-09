@@ -46,12 +46,11 @@ public class CliPos extends PBase {
 	private String snit,sname,sdir,wspnerror;
 	private boolean consFinal=false,idleped=true;
 	private boolean inicio_pedidos=true,bandera_pedidos=false;
-	private int cantped;
+	private int cantped,corelped;
 
     private Timer ptimer;
     private TimerTask ptask;
-    private int delay = 5000;
-    private int period = 5000;
+    private int tick=0,period = 5000,delay = 500,frequency=5;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -154,12 +153,14 @@ public class CliPos extends PBase {
             public void run() {
                 estadoPedidos();
                 if (inicio_pedidos) iniciaPedidos();
+                toast("nuevos");
             }
         };
 
         rnPedidosEstado = new Runnable() {
             public void run() {
                 idleped=true;
+                toast("Done estado");
             }
         };
 
@@ -182,6 +183,7 @@ public class CliPos extends PBase {
                     wspe.execute(data,1,0);
                 } else {
                     idleped=true;
+                    toast("Done datos");
                 }
             }
 
@@ -300,6 +302,7 @@ public class CliPos extends PBase {
 
     private void iniciaPedidos() {
         inicio_pedidos=false;
+        tick=0;
 
         if (gl.pePedidos) {
             relped.setVisibility(View.VISIBLE);
@@ -308,12 +311,15 @@ public class CliPos extends PBase {
             ptimer.scheduleAtFixedRate(ptask = new TimerTask(){
                 public void run() {
                     try {
-                        idleped=false;
-                        wspn.execute(rnValidaPedNuevos);
+                        tick=tick % frequency;
+                        if (tick==0) {
+                            idleped=false;
+                            wspn.execute(rnValidaPedNuevos);
+                        }
+                        tick++;
                     } catch (Exception e) {}
                 }
             }, delay, period);
-
         }
     }
 
@@ -335,7 +341,7 @@ public class CliPos extends PBase {
                 cantped=wspn.items.size();
                 if (cantped >0) {
 
-                    wspn.pause();
+                    //wspn.pause();
 
                     for (int i = 0; i <cantped; i++) pedidos.add(wspn.items.get(i));
 
@@ -344,11 +350,12 @@ public class CliPos extends PBase {
 
                     procesaPedidos();
                     
-                    wspn.resume();
+                    //wspn.resume();
                 }
             } else {
                 imgPed.setVisibility(View.VISIBLE);
                 wspnerror="Pedidos nuevos : "+wspn.error;toastcent(wspnerror);
+                toast("Done check");
             }
         } catch (Exception e) {
             wspnerror="Pedidos nuevos : "+e.getMessage();toastcent(wspnerror);
@@ -358,20 +365,34 @@ public class CliPos extends PBase {
     private void procesaPedidos() {
         Cursor dt;
         String corel;
+        int cnt;
+
+        if (pedidos.size()==0) return;
 
         try {
-            for (int i = 0; i <pedidos.size(); i++) {
-                corel=pedidos.get(i);
 
-                sql="SELECT Corel FROM D_PEDIDO WHERE Corel='"+corel+"'";
-                dt=Con.OpenDT(sql);
-                if (dt.getCount()==0) {
-                    wspd.execute(corel);return;
-                } else {
-                    wspe.execute(corel,1,0);
+            sql="SELECT MAX(FECHA_SISTEMA) FROM D_PEDIDO ";
+            dt=Con.OpenDT(sql);
+            if (dt.getCount()>=0) {
+                dt.moveToFirst();
+                corelped=dt.getInt(0);
+            } else corelped=0;
 
-                }
+            //for (int i = 0; i <pedidos.size(); i++) {
+            int i=0;
+            corel=pedidos.get(i);
+
+            sql="SELECT Corel FROM D_PEDIDO WHERE Corel='"+corel+"'";
+            dt=Con.OpenDT(sql);
+            cnt=dt.getCount();
+            if (dt!=null) dt.close();
+
+            if (cnt==0) {
+                wspd.execute(corel);return;
+            } else {
+                wspe.execute(corel,1,0);
             }
+            //}
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -388,7 +409,8 @@ public class CliPos extends PBase {
                 db.execSQL(ss);
             }
 
-            ss="UPDATE D_Pedido SET FECHA_RECEPCION_SUC="+du.getActDateTime()+" WHERE Corel='"+corel+"'";
+            corelped++;
+            ss="UPDATE D_Pedido SET FECHA_RECEPCION_SUC="+du.getActDateTime()+", FECHA_SISTEMA="+corelped+" WHERE Corel='"+corel+"'";
             db.execSQL(ss);
 
             db.setTransactionSuccessful();

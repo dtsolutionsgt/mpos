@@ -135,7 +135,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         try {
-			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL";
+			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+ruta+") AND (RESGUARDO=0)";
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
 			

@@ -355,9 +355,9 @@ public class FelFactura extends PBase {
             db.beginTransaction();
 
             clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
-            P_corelObj.fill("WHERE RUTA="+gl.codigo_ruta);
+            P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
             citem=P_corelObj.first();
-            corcont=citem.resguardo+1;
+            corcont=citem.corelult+1;
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
@@ -367,7 +367,7 @@ public class FelFactura extends PBase {
 
             D_facturaObj.update(fact);
 
-            citem.resguardo++;
+            citem.corelult=corcont;
             P_corelObj.update(citem);
 
             db.setTransactionSuccessful();
@@ -378,7 +378,6 @@ public class FelFactura extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     //endregion
 
@@ -438,6 +437,15 @@ public class FelFactura extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
+            CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                    "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
+
+            if (contingencia>0) {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
+                        "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
+            }
+
+            /*
             if (contingencia==0) {
                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
                         "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
@@ -445,6 +453,7 @@ public class FelFactura extends PBase {
                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
                         "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
             }
+            */
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 
@@ -459,10 +468,11 @@ public class FelFactura extends PBase {
     }
 
     public String addFactheader(clsClasses.clsD_factura item) {
+        String fst;
 
         //#EJC20200702:Correccion formato de fechas
         String fs=""+du.univfecha(item.fecha);
-        String fst=""+du.univfecha(item.feelfechaprocesado);
+        if (item.feelfechaprocesado>0) fst=du.univfecha(item.feelfechaprocesado);else fst="20000101 00:00:00";
 
         ins.init("D_factura");
         ins.add("EMPRESA",item.empresa);
@@ -611,6 +621,15 @@ public class FelFactura extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
+            CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                    "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
+
+            if (contingencia>0) {
+                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
+                        "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
+            }
+
+            /*
             if (contingencia==0) {
                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
                         "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
@@ -618,6 +637,7 @@ public class FelFactura extends PBase {
                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
                         "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
             }
+            */
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 

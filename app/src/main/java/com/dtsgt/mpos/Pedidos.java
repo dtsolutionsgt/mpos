@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,6 +55,10 @@ public class Pedidos extends PBase {
                 clsClasses.clsD_pedido item = (clsClasses.clsD_pedido)lvObj;
 
                 adapter.setSelectedIndex(position);
+                gl.pedid=item.corel;
+
+                browse=1;
+                startActivity(new Intent(Pedidos.this,PedidoDet.class));
             };
         });
 
@@ -69,7 +74,7 @@ public class Pedidos extends PBase {
 
             cnue=0;cpen=0;ccomp=0;
 
-            D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_ENTREGO=0) ");
+            D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_ENTREGO=0) ORDER BY FECHA_RECEPCION_SUC,FECHA_SISTEMA ");
 
             for (int i = 0; i <D_pedidoObj.count; i++) {
                 item=D_pedidoObj.items.get(i);
@@ -102,6 +107,15 @@ public class Pedidos extends PBase {
 
     //region Activity Events
 
+    @Override
+    protected void onResume() {
+          super.onResume();
+
+          if (browse==1) {
+              browse=0;
+              listItems();return;
+          }
+    }
 
     //endregion
 

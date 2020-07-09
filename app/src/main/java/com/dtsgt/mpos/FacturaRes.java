@@ -1021,7 +1021,7 @@ public class FacturaRes extends PBase {
 
 			//region Actualizacion de ultimo correlativo
 
-			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  WHERE RUTA="+gl.codigo_ruta;
+			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
 			db.execSQL(sql);
 
 			ins.init("D_FACT_LOG");
@@ -1424,7 +1424,7 @@ public class FacturaRes extends PBase {
 
         try {
 
-            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE RUTA="+gl.codigo_ruta;
+            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
             DT=Con.OpenDT(sql);
 
             if(DT.getCount()>0){
@@ -2281,16 +2281,16 @@ public class FacturaRes extends PBase {
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
 
-            P_corelObj.fill("WHERE RUTA="+gl.codigo_ruta);
+            P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
             citem=P_corelObj.first();
-            corcont=citem.resguardo+1;
+            corcont=citem.corelult+1;
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
             fact.feelcontingencia=""+corcont;
             D_facturaObj.update(fact);
 
-            citem.resguardo++;
+            citem.corelult=corcont;
             P_corelObj.update(citem);
 
             db.setTransactionSuccessful();

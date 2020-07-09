@@ -2795,7 +2795,7 @@ public class FinDia extends PBase {
         fserie = "";
 
         try {
-            sql = "SELECT SERIE,CORELULT FROM P_COREL WHERE RUTA='" + gl.ruta + "'";
+            sql = "SELECT SERIE,CORELULT FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)";
             DT = Con.OpenDT(sql);
 
             DT.moveToFirst();

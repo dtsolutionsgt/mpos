@@ -473,7 +473,7 @@ public class CliDet extends PBase {
 
 		
 		try {
-			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL ";
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)";
 			DT=Con.OpenDT(sql);
 				
 			DT.moveToFirst();

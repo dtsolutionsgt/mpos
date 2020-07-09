@@ -365,12 +365,12 @@ public class WSEnv extends PBase {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
 
-            if (contingencia==0) {
-                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
-                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
-            } else {
-                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
-                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
+            CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                    "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
+
+            if (contingencia>0) {
+                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
+                    "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
             }
 
         } catch (Exception e) {
@@ -379,11 +379,12 @@ public class WSEnv extends PBase {
     }
 
     public String addFactheader(clsClasses.clsD_factura item) {
+        String fst;
 
         //String fs=""+du.univfechalong(item.fecha);
         //#EJC20200702: Formato fecha corregido.
         String fs=""+du.univfecha(item.fecha);
-        String fst=""+du.univfecha(item.feelfechaprocesado);
+        if (item.feelfechaprocesado>0) fst=du.univfecha(item.feelfechaprocesado);else fst="20000101 00:00:00";
 
         ins.init("D_factura");
         ins.add("EMPRESA",item.empresa);

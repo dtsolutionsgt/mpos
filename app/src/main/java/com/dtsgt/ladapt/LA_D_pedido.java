@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
@@ -60,6 +62,7 @@ public class LA_D_pedido  extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
+        int corel,color,resid;
 
         if (convertView == null) {
 
@@ -70,42 +73,32 @@ public class LA_D_pedido  extends BaseAdapter {
             holder.lbl2 = (TextView) convertView.findViewById(R.id.lblV2);
             holder.lbl3 = (TextView) convertView.findViewById(R.id.lblV3);
             holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
-            holder.lbl5 = (TextView) convertView.findViewById(R.id.lblV5);
-            holder.lbl6 = (TextView) convertView.findViewById(R.id.lblV6);
-            holder.lbl7 = (TextView) convertView.findViewById(R.id.lblV7);
-            holder.lbl8 = (TextView) convertView.findViewById(R.id.lblV8);
-            holder.lbl9 = (TextView) convertView.findViewById(R.id.lblV9);
-            holder.lbl10 = (TextView) convertView.findViewById(R.id.lblV10);
-            holder.lbl11 = (TextView) convertView.findViewById(R.id.lblV11);
-            holder.lbl12 = (TextView) convertView.findViewById(R.id.lblV12);
-            holder.lbl13 = (TextView) convertView.findViewById(R.id.lblV13);
-            holder.lbl14 = (TextView) convertView.findViewById(R.id.lblV14);
-            holder.lbl15 = (TextView) convertView.findViewById(R.id.lblV15);
-            holder.lbl16 = (TextView) convertView.findViewById(R.id.lblV16);
-            holder.lbl17 = (TextView) convertView.findViewById(R.id.lblV17);
+            holder.img1 = (ImageView) convertView.findViewById(R.id.imageView72);
+            holder.rel1 = (RelativeLayout) convertView.findViewById(R.id.relfill);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl1.setText(""+items.get(position).empresa);
-        holder.lbl2.setText(""+items.get(position).corel);
-        holder.lbl3.setText(""+items.get(position).fecha_sistema);
-        holder.lbl4.setText(""+items.get(position).fecha_pedido);
-        holder.lbl5.setText(""+items.get(position).fecha_recepcion_suc);
-        holder.lbl6.setText(""+items.get(position).fecha_salida_suc);
-        holder.lbl7.setText(""+items.get(position).fecha_entrega);
-        holder.lbl8.setText(""+items.get(position).codigo_cliente);
-        holder.lbl9.setText(""+items.get(position).firma_cliente);
-        holder.lbl10.setText(""+items.get(position).codigo_direccion);
-        holder.lbl11.setText(""+items.get(position).codigo_sucursal);
-        holder.lbl12.setText(""+items.get(position).total);
-        holder.lbl13.setText(""+items.get(position).codigo_estado);
-        holder.lbl14.setText(""+items.get(position).codigo_usuario_creo);
-        holder.lbl15.setText(""+items.get(position).codigo_usuario_proceso);
-        holder.lbl16.setText(""+items.get(position).codigo_usuario_entrego);
-        holder.lbl17.setText(""+items.get(position).anulado);
+        corel=items.get(position).fecha_sistema % 1000;
+
+        holder.lbl1.setText(""+corel);
+        holder.lbl2.setText(du.sfechash(items.get(position).fecha_recepcion_suc));
+        holder.lbl3.setText(du.shora(items.get(position).fecha_recepcion_suc));
+        holder.lbl4.setText("");
+
+        color=Color.parseColor("#FFFFFF");resid=R.drawable.ped_1;
+
+        if (items.get(position).codigo_usuario_creo>0) {
+            color=Color.parseColor("#E2D176");resid=R.drawable.ped_2;
+        }
+        if (items.get(position).codigo_usuario_proceso>0)  {
+            color=Color.parseColor("#8DDF8F");resid=R.drawable.ped_3;
+        }
+        
+        holder.rel1.setBackgroundColor(color);
+        holder.img1.setImageResource(resid);
 
         if(selectedIndex!= -1 && position == selectedIndex) {
             convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -117,7 +110,9 @@ public class LA_D_pedido  extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl1,lbl2,lbl3,lbl4,lbl5,lbl6,lbl7,lbl8,lbl9,lbl10,lbl11,lbl12,lbl13,lbl14,lbl15,lbl16,lbl17;
+        TextView lbl1,lbl2,lbl3,lbl4;
+        ImageView img1;
+        RelativeLayout rel1;
     }
 
 }

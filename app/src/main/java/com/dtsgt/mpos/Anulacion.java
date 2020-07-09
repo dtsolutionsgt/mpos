@@ -1522,7 +1522,7 @@ public class Anulacion extends PBase {
 			pcli=DT.getString(4);		
 			ptot=DT.getDouble(5);
 
-			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL";
+			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)";
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
 			
