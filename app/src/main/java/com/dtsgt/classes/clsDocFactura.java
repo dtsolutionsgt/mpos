@@ -350,10 +350,10 @@ public class clsDocFactura extends clsDocument {
 	}
 
     protected boolean detailBaseGUA() {
+
         itemData item;
         String cu,cp;
 
-        //rep.add("Cantidad ","Precio   ","Total");
         rep.add3sss("Cantidad ","Precio","Total");
         rep.line();
 

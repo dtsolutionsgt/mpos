@@ -877,8 +877,12 @@ public class clsFELInFile {
         xml+="<dte:Frases>";
         //xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
         //xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"2\"></dte:Frase>";
-        if (fraseIVA!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseIVA+"\" TipoFrase=\"1\"></dte:Frase>";
-        if (fraseISR!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseISR+"\" TipoFrase=\"2\"></dte:Frase>";
+
+        if (fraseISR!=0) xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"" + fraseISR +"\"></dte:Frase>";
+        if (fraseIVA!=0) xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"" + fraseIVA +"\"></dte:Frase>";
+
+//        if (fraseIVA!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseIVA+"\" TipoFrase=\"1\"></dte:Frase>";
+//        if (fraseISR!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseISR+"\" TipoFrase=\"2\"></dte:Frase>";
         xml+="</dte:Frases>";
 
         xml+="<dte:Items>";

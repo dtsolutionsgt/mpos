@@ -667,6 +667,7 @@ public class clsDocument {
 	// Aux
 	
 	private boolean loadHeadLines() {
+
 		Cursor DT;	
 		String s,sucur;
 		
@@ -681,6 +682,7 @@ public class clsDocument {
 
             sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR,NIT FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
             DT=Con.OpenDT(sql);
+
             if (DT.getCount()>0) {
                 DT.moveToFirst();
                 textofin=DT.getString(0);
@@ -688,7 +690,7 @@ public class clsDocument {
                     felIVA="Sujeto a pago de IVA";
                 } else felIVA="";
                 if (DT.getInt(2)==1) {
-                    felISR="Sujeto a pago de ISR";
+                    felISR="Sujeto a pagos trimestrales ISR";
                 } else felISR="";
             } else {
                 textofin="";
@@ -697,17 +699,21 @@ public class clsDocument {
             nitsuc=DT.getString(3);
 
             banderafel=false;felcert="";felnit="";
+
             try {
+
                 sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
                 DT=Con.OpenDT(sql);
                 DT.moveToFirst();
 
                 String val=DT.getString(0);
+
                 if (val.equalsIgnoreCase("INFILE")) {
                     banderafel=true;
                     felcert="CERTIFICADOR: INFILE, S.A.";
                     felnit="NIT: 12521337";
                 }
+
            } catch (Exception e) {
                 banderafel=false;felcert="";felnit="";
             }
