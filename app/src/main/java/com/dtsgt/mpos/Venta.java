@@ -911,6 +911,8 @@ public class Venta extends PBase {
         if (gl.retcant<0) return;
 
         prodid=uprodid;
+        //#EJC20200710: Corrección al eliminar y adicionar cantidad en producto.
+        gl.prodcod = app.codigoProducto(prodid);
         tipo=prodTipo(gl.prodcod);
 
         if (!tipo.isEmpty()){
