@@ -33,7 +33,7 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:ignore="LockedOrientationActivity">
+        tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
 
         <service
             android:name="com.dtsgt.fel.FelService"
