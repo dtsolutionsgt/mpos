@@ -122,6 +122,8 @@ public class Menu extends PBase {
 
 			cajaCerrada();
 
+
+
 			//#CKFK 20200525  Puse esto en comentario porque en el MPos no se utiliza el ayudante ni el vehículo
 			/*if (gl.peVehAyud) {
 				AyudanteVehiculo();

@@ -1451,7 +1451,6 @@ public class WSRec extends PBase {
         }
     }
 
-
     private void processImpuesto() {
         try {
             clsP_impuestoObj handler = new clsP_impuestoObj(this, Con, db);
@@ -2468,6 +2467,8 @@ public class WSRec extends PBase {
                 var.ruta  = item.IdRuta;
                 script.add(handler.addItemSql(var));
             }
+
+            script.add("UPDATE P_PARAMEXT SET VALOR='S' WHERE ID=109");
 
         } catch (Exception e) {
             ws.error = e.getMessage();

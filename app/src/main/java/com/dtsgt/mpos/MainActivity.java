@@ -55,7 +55,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.1.23 / 10-Jul-2020 ";
+    private String parVer = " 3.1.24 / 10-Jul-2020 ";
 
     Typeface typeface;
 
@@ -814,7 +814,7 @@ public class MainActivity extends PBase {
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();
                 item.Cod = VendedoresObj.items.get(i).codigo;
-                item.Name = VendedoresObj.items.get(i).nombre;// estaba .ruta #CKFK 20200517
+                item.Name = item.Cod+" - "+VendedoresObj.items.get(i).nombre;// estaba .ruta #CKFK 20200517
                 mitems.add(item);
             }
 
