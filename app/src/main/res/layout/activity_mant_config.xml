@@ -87,6 +87,25 @@
         android:layout_toEndOf="@+id/imageView30"
         android:background="@drawable/frame_rect">
 
+        <TextView
+            android:id="@+id/lblCFact40"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_below="@+id/lblCFact20"
+            android:layout_alignEnd="@+id/textView2"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="Numero de impresiones de factura"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="normal" />
+
         <CheckBox
             android:id="@+id/chkEnvio4"
             android:layout_width="150dp"
@@ -430,7 +449,7 @@
             android:id="@+id/lblCFact22"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_below="@+id/lblCFact20"
+            android:layout_below="@+id/lblCFact40"
             android:layout_alignStart="@+id/lblCFact"
             android:layout_alignEnd="@+id/textView2"
             android:layout_alignParentLeft="true"
@@ -551,6 +570,18 @@
             android:background="@drawable/spinner_style"
             android:focusable="true"
             android:focusableInTouchMode="true" />
+
+        <EditText
+            android:id="@+id/editTextNumber2"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/checkBox22"
+            android:layout_alignStart="@+id/checkBox23"
+            android:layout_alignParentEnd="false"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:inputType="number" />
 
     </RelativeLayout>
 

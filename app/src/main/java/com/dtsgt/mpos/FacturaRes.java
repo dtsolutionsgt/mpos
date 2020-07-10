@@ -673,7 +673,7 @@ public class FacturaRes extends PBase {
 			if (app.impresora()) {
 
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
-                app.doPrint(1);
+                app.doPrint(gl.peNumImp);
 
                 try {
 

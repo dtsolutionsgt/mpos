@@ -497,6 +497,21 @@ public class AppMethods {
             gl.pePedidos =false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=114";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            ival=Integer.parseInt(val);
+            if (ival<1 | ival>5) ival=1;
+
+            gl.peNumImp =ival;
+        } catch (Exception e) {
+            gl.peNumImp=1;
+        }
+
+
     }
 
 	public boolean grant(int menuopt,int rol) {

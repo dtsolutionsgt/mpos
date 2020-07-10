@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
+import android.provider.Settings;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -135,6 +136,11 @@ public class Menu extends PBase {
 		//#CKFK20200524_FIX_BY_OPENDT Quité esta función porque la tabla P_CORREL_OTROS ya no existe
 		//insertCorrel();
 	}
+
+	//region Events
+
+
+    //endregion
 
 	//region  Main
 	
