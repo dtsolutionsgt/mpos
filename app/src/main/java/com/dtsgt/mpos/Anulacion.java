@@ -537,7 +537,15 @@ public class Anulacion extends PBase {
 			}
 
 		} else {
-            msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
+
+			try {
+				//#EJC20200706: Commit transaction from Anuldocument.
+				db.setTransactionSuccessful();
+				db.endTransaction();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
         }
     }
 
@@ -565,7 +573,7 @@ public class Anulacion extends PBase {
 			NITReceptor = NITReceptor.replace("-","");
 			NITReceptor = NITReceptor.replace(".","");
 
-            fel.anulfact(uuid, fel.fel_nit,NITReceptor, fact.fechaentr, fact.fecha);
+            fel.anulfact(uuid, fel.fel_nit,NITReceptor, fact.fechaentr, fact.fechaentr);
 
             return true;
         } catch (Exception e) {
