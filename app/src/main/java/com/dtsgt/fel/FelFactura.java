@@ -105,7 +105,7 @@ public class FelFactura extends PBase {
         fel.fel_correo=suc.correo;  //
 
         //fel.fel_nombre_comercial = gl.tiendanom;  //JP2020071
-        fel.fel_nombre_comercial = suc.descripcion;
+        fel.fel_nombre_comercial = suc.nombre;
 
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
