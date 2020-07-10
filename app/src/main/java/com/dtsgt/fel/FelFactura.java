@@ -96,12 +96,17 @@ public class FelFactura extends PBase {
         fel.fel_llave_firma=suc.fel_llave_firma; // fel_token ="5b174fb0e23645b65ef88277d654603d"
         fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;  //  1
         fel.fel_usuario_certificacion=suc.fel_usuario_certificacion; // COMERGUA
-        fel.fel_usuario_firma=suc.fel_usuario_firma; // COMERGUA
-        //#EJC20200706: Código postal missing Added.
+
+        //fel.fel_usuario_firma=suc.fel_usuario_firma; //JP2020071
+        fel.fel_usuario_firma=suc.texto;
+
         fel.codigo_postal =suc.codigo_postal;
         fel.fel_nit=suc.nit; // NIT  96038888
         fel.fel_correo=suc.correo;  //
-        fel.fel_nombre_comercial = gl.tiendanom;
+
+        //fel.fel_nombre_comercial = gl.tiendanom;  //JP2020071
+        fel.fel_nombre_comercial = suc.descripcion;
+
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
         fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
