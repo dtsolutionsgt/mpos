@@ -67,6 +67,7 @@ public class FelFactura extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fel_factura);
 
@@ -191,30 +192,102 @@ public class FelFactura extends PBase {
     @Override
     public void felCallBack()  {
 
-        if (multiflag) {
-            if (fel.errorcon) {
-                msgexit(fel.error);return;
-            }
-            if (fel.errorflag) {
-                ffail++;
-                guardaError();
-                marcaFacturaContingencia();
+        try {
+
+            if (multiflag) {
+
+                if (fel.errorcon) {
+                    msgexit(fel.error);return;
+                }
+                if (fel.errorflag && !fel.duplicado) {
+                    ffail++;
+                    guardaError();
+                    marcaFacturaContingencia();
+                } if (fel.errorflag && fel.duplicado) {
+
+                    //Hacer algo con la factura y su identificador interno...
+                    //#EJC20200710: Incremente en 1 nuestro correlativo interno para alcanzar el de infile.
+
+                    clsClasses.clsP_corel citem;
+                    int corcont;
+                    clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
+
+                    if (fel.idcontingencia ==0){
+                        P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)");
+                    }else{
+                        P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
+                    }
+
+                    citem=P_corelObj.first();
+                    corcont=citem.corelult+1;
+                    citem.corelult=corcont;
+                    P_corelObj.update(citem);
+
+                    if (fel.idcontingencia ==0){
+                        fact.corelativo = corcont;
+                        D_facturaObj.update(fact);
+                    }else{
+                        fact.feelcontingencia = ""+corcont;
+                        D_facturaObj.update(fact);
+                    }
+
+                    toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
+                }
+                else {
+                    marcaFactura();
+                }
+
+                callBackMulti();
+
             } else {
-                marcaFactura();
+
+                if (fel.duplicado) toastcent("Documento enviado previamente." + fel.mpos_identificador_fact);
+
+                if (!fel.errorflag && !fel.duplicado) {
+                    marcaFactura();
+                    callBackSingle();
+                } else {
+                    if (!fel.duplicado){
+                        marcaFacturaContingencia();
+                        guardaError();
+                        callBackSingle();
+                    }else{
+
+                        //Hacer algo con la factura y su identificador interno...
+                        //#EJC20200710: Incremente en 1 nuestro correlativo interno para alcanzar el de infile.
+
+                        clsClasses.clsP_corel citem;
+                        int corcont;
+                        clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
+
+                        if (fel.idcontingencia ==0){
+                            P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)");
+                        }else{
+                            P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
+                        }
+
+                        citem=P_corelObj.first();
+                        corcont=citem.corelult+1;
+                        citem.corelult=corcont;
+                        P_corelObj.update(citem);
+
+                        if (fel.idcontingencia ==0){
+                            fact.corelativo = corcont;
+                            D_facturaObj.update(fact);
+                        }else{
+                            fact.feelcontingencia = ""+corcont;
+                            D_facturaObj.update(fact);
+                        }
+
+                        toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
+
+                        callBackSingle();
+                    }
+                }
             }
 
-            callBackMulti();
-
-        } else {
-            if (fel.duplicado) toastlong("Documento enviado previamente." + fel.mpos_identificador_fact);
-            if (!fel.errorflag) {
-                marcaFactura();
-            } else {
-                marcaFacturaContingencia();
-                guardaError();
-            }
-
-            callBackSingle();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -353,10 +426,12 @@ public class FelFactura extends PBase {
     }
 
     private void marcaFacturaContingencia() {
+
         clsClasses.clsP_corel citem;
         int corcont;
 
         try {
+
             db.beginTransaction();
 
             clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
@@ -549,7 +624,7 @@ public class FelFactura extends PBase {
         if (ws.errorflag) {
             toast("Error de envio");
         } else {
-            toast("Envio completo");
+            toast("Envio completo "+ gl.feluuid);
         }
         finish();
     }

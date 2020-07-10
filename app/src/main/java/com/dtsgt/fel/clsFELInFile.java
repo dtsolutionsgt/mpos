@@ -354,7 +354,14 @@ public class clsFELInFile {
                 String jstr=sb.toString();
 
                 int duplidx=jstr.indexOf("Documento enviado previamente.");
-                if (duplidx>1) duplicado=true;
+
+                if (duplidx>1) {
+                    //#EJC20200710: No firmar factura con un identificador previamente enviado...
+                    duplicado=true;
+                    errorflag =true;
+                    error ="El identificador interno: "+ mpos_identificador_fact + " fue enviado previamente.";
+                    return;
+                }
 
                 jObj = new JSONObject(jstr);
 

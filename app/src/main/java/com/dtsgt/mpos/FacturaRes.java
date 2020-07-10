@@ -1450,7 +1450,10 @@ public class FacturaRes extends PBase {
                 ca2=0;
             }
 
-            ca=ca1;if (ca2>ca) ca=ca2;
+            ca=ca1;
+
+            if (ca2>ca) ca=ca2;
+
             fcorel=ca+1;
 
             if (fcorel>cf) {
@@ -2271,11 +2274,13 @@ public class FacturaRes extends PBase {
     }
 
     private void marcaFacturaContingencia() {
+
         clsClasses.clsP_corel citem;
         clsClasses.clsD_factura fact=clsCls.new clsD_factura();
         int corcont;
 
         try {
+
             db.beginTransaction();
 
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);

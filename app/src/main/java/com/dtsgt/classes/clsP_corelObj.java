@@ -96,8 +96,7 @@ public class clsP_corelObj {
 
     private void updateItem(clsClasses.clsP_corel item) {
 
-        upd.init("P_corel");
-
+        upd.init("P_COREL");
         upd.add("EMPRESA",item.empresa);
         upd.add("RESOL",item.resol);
         upd.add("SERIE",item.serie);

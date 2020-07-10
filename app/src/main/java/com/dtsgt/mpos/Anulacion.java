@@ -540,7 +540,6 @@ public class Anulacion extends PBase {
 
 			try {
 				//#EJC20200706: Commit transaction from Anuldocument.
-				db.setTransactionSuccessful();
 				db.endTransaction();
 			} catch (Exception e) {
 				e.printStackTrace();
