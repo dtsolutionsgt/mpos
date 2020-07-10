@@ -206,7 +206,7 @@ public class FelFactura extends PBase {
             callBackMulti();
 
         } else {
-            if (fel.duplicado) toastlong("Documento enviado previamente.");
+            if (fel.duplicado) toastlong("Documento enviado previamente." + fel.mpos_identificador_fact);
             if (!fel.errorflag) {
                 marcaFactura();
             } else {

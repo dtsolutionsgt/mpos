@@ -82,6 +82,7 @@ public class Caja extends PBase {
             MontoIni.requestFocus();
 
             validacionesInicio();
+
         } else if(gl.cajaid==3) { // Cierre de Caja
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
@@ -90,7 +91,9 @@ public class Caja extends PBase {
 
             MontoIni.setEnabled(false);
             MontoIni.setText(""+gl.fondoCaja);
-            MontoFin.setText("0");MontoFin.requestFocus();
+            //#EJC20200710: No colocar valor por defecto.
+            //MontoFin.setText("0");
+            MontoFin.requestFocus();
         }
 
         itemC = clsCls.new clsP_cajacierre();
