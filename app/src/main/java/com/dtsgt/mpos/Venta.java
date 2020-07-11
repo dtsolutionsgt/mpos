@@ -1932,7 +1932,7 @@ public class Venta extends PBase {
                 case 15:
                     msgAskFEL("Certificar ("+pendienteFEL()+") factura(s) pendiente(s)");break;
                 case 25:
-                    msgAskCierreCaja("Está seguro de hacer el cierre de caja");break;
+                    msgAskCierreCaja("¿Realizar cierre de caja?");break;
                 case 16:
                     menuPedidos();break;
                 case 24:
