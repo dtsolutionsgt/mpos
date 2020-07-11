@@ -455,7 +455,7 @@ public class CierreX extends PBase {
                     dt = Con.OpenDT(sql);
 
                     if(dt==null) {
-                        msgbox("Ocurrío un error, vuelva a intentarlo");return false;
+                        msgbox("Ocurrió un error, vuelva a intentarlo");return false;
                     }
 
                     if(dt.getCount()!=0){
@@ -749,16 +749,17 @@ public class CierreX extends PBase {
                             totSinImpF=0;
                             impF=0;
                             SumaCant=0;
+                            cantF=0;
 
                             rep.empty();
                             rep.add("     REPORTE DOCUMENTOS POR DIA");
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
-                            rep.add("             "+du.sfecha(itemR.get(i).fecha));
+                            rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc1 = 2;
                         }
 
-                        if(series!=itemR.get(i).serie){
+                        if(!series.equals(itemR.get(i).serie)){
                             rep.add("--------(    Serie "+itemR.get(i).serie+"    )------------");
                         }
 
@@ -772,16 +773,21 @@ public class CierreX extends PBase {
                         impF += itemR.get(i).imp;
                         cantF += itemR.get(i).cant;
 
-                        if(i+1==count1){
+                        if(i+1==itemR.size()){
+
+                            rep.line();
+                            rep.add3Tot(SumaCant, totSinImpF, impF, totF);
 
                             totF += tot;
                             SumaCant += cantF;
                             totSinImpF += sinImp;
-                            rep.line();
-                            rep.add3Tot(SumaCant, totSinImpF, impF, totF);
 
                         }else {
-                            if (itemR.get(i).fecha != itemR.get(i + 1).fecha) {
+
+                            String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
+                            String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
+
+                            if (!fecha1.equals(fecha2)) {
                                 rep.line();
                                 rep.add3Tot(cantF, sinImp, impF, tot);
                                 totF += tot;
@@ -793,7 +799,7 @@ public class CierreX extends PBase {
                                 sinImp = 0;
 
                                 rep.empty();
-                                rep.add("             " + du.sfecha(itemR.get(i+1).fecha));
+                                rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
                             }
                         }
 

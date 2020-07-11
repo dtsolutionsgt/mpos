@@ -832,6 +832,7 @@ public class Reportes extends PBase {
                 totSinImpF=0;
                 impF=0;
                 SumaCant=0;
+                cantF=0;
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
                 rep.add(fecharango);
                 rep.empty();
@@ -888,7 +889,7 @@ public class Reportes extends PBase {
                                 sinImp = 0;
 
                                 rep.empty();
-                                rep.add("             " + du.sfecha(itemR.get(i+1).fecha));
+                                rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
                             }
                         }
 

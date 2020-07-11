@@ -15,7 +15,7 @@
         android:layout_below="@id/relRoad"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="110dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="5dp"
         android:numColumns="1" />
 
@@ -965,7 +965,8 @@
         android:layout_alignParentBottom="false"
         android:layout_marginTop="53dp"
         android:layout_marginRight="5dp"
-        android:background="@drawable/frame_rect">
+        android:background="@drawable/frame_rect"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView35"
@@ -979,6 +980,8 @@
             android:clickable="true"
             android:onClick="finishOrder"
             android:padding="15dp"
-            android:src="@drawable/payment" />
+            android:src="@drawable/money2"
+            android:visibility="gone" />
+
     </RelativeLayout>
 </RelativeLayout>

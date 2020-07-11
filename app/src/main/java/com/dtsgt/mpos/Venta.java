@@ -41,6 +41,7 @@ import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptGridFam;
@@ -206,6 +207,10 @@ public class Venta extends PBase {
     }
 
     public void finishOrder(View view) {
+        finalizarOrden();
+    }
+
+    public void finalizarOrden(){
 
         try{
             clsBonifGlob clsBonG;
@@ -1854,6 +1859,10 @@ public class Venta extends PBase {
 
         try {
 
+            item = clsCls.new clsMenu();
+            item.ID=1;item.Name="Pago";item.Icon=58;
+            mitems.add(item);
+
             if (app.usaFEL()) {
                 int pendfel=pendienteFEL();
                 if (pendfel>0) {
@@ -1884,6 +1893,10 @@ public class Venta extends PBase {
             mitems.add(item);
 
             item = clsCls.new clsMenu();
+            item.ID=25;item.Name="Cierra Caja";item.Icon=59;
+            mitems.add(item);
+
+            item = clsCls.new clsMenu();
             item.ID=24;item.Name="Salir";item.Icon=57;
             mitems.add(item);
 
@@ -1908,6 +1921,8 @@ public class Venta extends PBase {
     private void processMenuMenu(int menuid) {
         try {
             switch (menuid) {
+                case 1:
+                    finalizarOrden();break;
                 case 3:
                     menuImprDoc(3);break;
                 case 4:
@@ -1916,6 +1931,8 @@ public class Venta extends PBase {
                     showQuickRecep();break;
                 case 15:
                     msgAskFEL("Certificar ("+pendienteFEL()+") factura(s) pendiente(s)");break;
+                case 25:
+                    msgAskCierreCaja("Está seguro de hacer el cierre de caja");break;
                 case 16:
                     menuPedidos();break;
                 case 24:
@@ -1925,6 +1942,110 @@ public class Venta extends PBase {
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
+    }
+
+    public void cierreCaja(){
+        try{
+            if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
+
+            gl.titReport = ss;
+
+            if(valida()){
+
+                if(gl.cajaid!=2){
+
+                    gl.inicio_caja_correcto =false;
+
+                    browse=1;
+
+                    startActivity(new Intent(Venta.this,Caja.class));
+                    finish();
+
+                }
+
+            } else {
+                String txt="";
+
+                if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
+                msgAskValid(txt);
+
+            }
+
+        }catch (Exception ex){
+
+        }
+    }
+
+    public boolean valida(){
+        try{
+
+            clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
+
+            caja.fill();
+
+           if(gl.cajaid==3){
+
+                if(caja.count==0) {
+                    if(gl.cajaid==3) gl.cajaid=0;
+                    return false;
+                }
+
+                if(caja.last().estado==1){
+                    return false;
+                }else if(gl.cajaid==5) {
+
+                    if (gl.lastDate!=0){
+
+                        if(caja.last().fecha!=gl.lastDate){
+                            gl.validDate=true;
+                            gl.lastDate=caja.last().fecha;
+                            gl.cajaid=6; return false;
+                        }
+                    }
+                }
+
+            }
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox("Ocurrió error (valida) "+e);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void msgAskValid(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskCierreCaja(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                ss="Cierre de Caja";
+                cierreCaja();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
     }
 
     public void showPrintMenuTodo() {
@@ -2674,7 +2795,7 @@ public class Venta extends PBase {
             gl.credito=disp;
             if (disp>0) ss=" [Cred: "+mu.frmcur(disp)+" ]";else ss="";
 
-            lblVend.setText(DT.getString(0)+" "+ss);
+            lblVend.setText(DT.getString(0)+" "+gl.fnit+" "+ss);
 
             if (DT!=null) DT.close();
 
