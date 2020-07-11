@@ -330,11 +330,12 @@ public class Caja extends PBase {
 
             }else if(gl.cajaid==3){
 
+                //#CKFK 20200711 Agregué la condicion de que sume las que no están anuladas AND F.ANULADO = 0
                 sql="SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +
                         "FROM D_FACTURAP P " +
                         "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                         "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO "+
-                        "WHERE F.KILOMETRAJE=0 " +
+                        "WHERE F.KILOMETRAJE=0 AND F.ANULADO = 0  " +
                         "GROUP BY P.CODPAGO, P.TIPO, M.NIVEL";
 
                 dt=Con.OpenDT(sql);

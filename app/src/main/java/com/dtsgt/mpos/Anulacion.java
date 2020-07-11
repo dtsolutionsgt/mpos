@@ -431,11 +431,13 @@ public class Anulacion extends PBase {
 			if (tipo==3) {
 				//if (checkFactDepos()) return;
                 String idfel=gl.peFEL;
-                if (idfel.isEmpty() | idfel.equalsIgnoreCase("SIN FEL")) {
+                if (idfel.isEmpty() || idfel.equalsIgnoreCase("SIN FEL")) {
                     anulFactura(itemid);
                 } else {
                     anulacionFEL();
-                    return;
+					/*db.setTransactionSuccessful();
+					db.endTransaction();
+                    return;*/
                 }
 			}
 			

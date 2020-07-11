@@ -40,6 +40,7 @@ public class CierreX extends PBase {
     private clsClasses.clsBonifProd itemZ;
 
     private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
+    private ArrayList<clsClasses.clsReport> itemA= new ArrayList<clsClasses.clsReport>();
     private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<clsClasses.clsBonifProd>();
 
     private Long dateini, datefin;
@@ -445,7 +446,6 @@ public class CierreX extends PBase {
                                 condition+
                                 " GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, D.PRECIO";
                         break;
-
                     default:
                         msgbox("Error, al identificar el tipo de reporte, cierre la ventana e intentelo de nuevo");return false;
                 }
@@ -620,6 +620,7 @@ public class CierreX extends PBase {
 
     }
 
+
     //endregion
 
     //region clase clsDocExist
@@ -755,7 +756,7 @@ public class CierreX extends PBase {
                             rep.add("     REPORTE DOCUMENTOS POR DIA");
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
-                            rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
+                           // rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc1 = 2;
                         }
 
@@ -799,12 +800,84 @@ public class CierreX extends PBase {
                                 sinImp = 0;
 
                                 rep.empty();
-                                rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
+                               // rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
                             }
                         }
 
-                        //Reporte 2
                     } else if(itemR.get(i).tipo==2){
+
+                        //Agregar las facturas anuladas
+
+                        generaDTAnuladas();
+                        acc1=1;
+
+                        for (int j = 0; j <itemA.size(); j++){
+
+                            if(acc1==1){
+
+                                tot=0;
+                                totF=0;
+                                sinImp=0;
+                                totSinImpF=0;
+                                impF=0;
+                                SumaCant=0;
+                                cantF=0;
+
+                                rep.empty();
+                                rep.line();
+                                rep.empty();
+
+                                rep.add("     Facturas Anuladas por día ");
+                                rep.add("Cant.Fact   Costo  Impuesto    Total");
+                                rep.line();
+                               // rep.add("             "+du.sfecha(itemA.get(j).fecha*10000));
+                                acc1 = 2;
+                            }
+
+                            if(!series.equals(itemA.get(j).serie)){
+                                rep.add("--------(    Serie "+itemA.get(j).serie+"    )------------");
+                            }
+
+                            series=itemA.get(j).serie;
+
+                            totSinImp = itemA.get(j).total - itemA.get(j).imp;
+                            rep.add3Tot(itemA.get(j).cant,totSinImp,itemA.get(j).imp, itemA.get(j).total);
+
+                            tot += itemA.get(j).total;
+                            sinImp += totSinImp;
+                            impF += itemA.get(j).imp;
+                            cantF += itemA.get(j).cant;
+
+                            if(j+1==itemA.size()){
+
+                                rep.line();
+                                rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+
+                                totF += tot;
+                                SumaCant += cantF;
+                                totSinImpF += sinImp;
+
+                            }else {
+
+                                String fecha1=String.valueOf(itemA.get(j).fecha).substring(0,6);
+                                String fecha2=String.valueOf(itemA.get(j + 1).fecha).substring(0,6);
+
+                                if (!fecha1.equals(fecha2)) {
+                                    rep.line();
+                                    rep.add3Tot(cantF, sinImp, impF, tot);
+                                    totF += tot;
+                                    SumaCant += cantF;
+                                    totSinImpF += sinImp;
+
+                                    cantF = 0;
+                                    tot = 0;
+                                    sinImp = 0;
+
+                                    rep.empty();
+                                    //rep.add("             " + du.sfecha(itemA.get(j+1).fecha*10000));
+                                }
+                            }
+                        }
 
                         test = "Reporte 2";
                         fecha = du.sfecha(itemR.get(i).fecha);
@@ -1159,7 +1232,6 @@ public class CierreX extends PBase {
                         }
                     }
                 }
-
                 return true;
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1184,6 +1256,64 @@ public class CierreX extends PBase {
 
         }
 
+        private void generaDTAnuladas(){
+            Cursor dt=null;
+
+            try{
+
+                if(gl.reportid==9){
+                    condition =" WHERE ANULADO=1 AND KILOMETRAJE = 0 ";
+                }else if(gl.reportid==10){
+                    condition=" WHERE ANULADO=1 AND KILOMETRAJE = "+gl.corelZ+" ";
+                }
+
+                sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
+                        "FROM D_FACTURA "+
+                        condition+
+                        "GROUP BY SERIE, IMPMONTO, FECHA " +
+                        "ORDER BY FECHA";
+
+                if(!sql.equals("00")){
+
+                    dt = Con.OpenDT(sql);
+
+                    if(dt==null) {
+                        msgbox("Ocurrió un error, vuelva a intentarlo");
+                        return;
+                    }
+
+                    if(dt.getCount()!=0){
+                        dt.moveToFirst();
+
+                        while(!dt.isAfterLast()){
+
+                            item = clsCls.new clsReport();
+
+                            item.corel = dt.getString(0);
+                            item.serie = dt.getString(1);
+                            item.correl = dt.getInt(2);
+                            item.codProd = dt.getString(3);
+                            item.descrip = dt.getString(4);
+                            item.um = dt.getString(5);
+                            item.cant = dt.getInt(6);
+                            item.imp = dt.getDouble(7);
+                            item.total = dt.getDouble(8);
+                            item.fecha = dt.getLong(9);
+                            item.tipo = sw;
+
+                            itemA.add(item);
+
+                            dt.moveToNext();
+                        }
+                    }
+
+                    if (dt!=null) dt.close();
+                }
+
+            }catch (Exception ex){
+
+            }
+        }
     }
 
     //endregion

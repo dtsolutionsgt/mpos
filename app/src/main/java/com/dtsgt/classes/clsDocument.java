@@ -61,7 +61,7 @@ public class clsDocument {
 		if (!buildDetail()) return false;
 		if (!buildFooter()) return false;
 		
-		if (!rep.save()) return false;
+ 		if (!rep.save()) return false;
 		
 		return true;
 	}
@@ -444,7 +444,9 @@ public class clsDocument {
                 l=l.replace("@Cliente",clicod+" - "+cliente);
                 return l;
             }
-            l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
+            //l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
+			l=l.replace("@Cliente",rep.ltrim(cliente, 20));
+            return l;
         }
 
         return l;
