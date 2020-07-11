@@ -441,7 +441,8 @@ public class clsDocument {
         if (idx>=0) {
             if (emptystr(cliente)) return "@@";
             if(l.length()>20){
-                l=l.replace("@Cliente",clicod+" - "+cliente);
+                //l=l.replace("@Cliente",clicod+" - "+cliente);
+				l=l.replace("@Cliente",cliente);
                 return l;
             }
             //l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
