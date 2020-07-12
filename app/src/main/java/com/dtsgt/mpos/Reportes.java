@@ -309,6 +309,7 @@ public class Reportes extends PBase {
 
                 DT.moveToNext();
             }
+
         } catch (Exception e) 		{
             mu.msgbox( e.getMessage());
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -958,7 +959,7 @@ public class Reportes extends PBase {
                         porcentaje = (100 /totF) * itemR.get(i).total;
 
                         if(validCB==0){
-                            rep.addtot(itemR.get(i).codProd,itemR.get(i).descrip);
+                            rep.addtot2(itemR.get(i).codProd,itemR.get(i).descrip);
                             rep.add4lrrTotPorc(Integer.toString(itemR.get(i).cant), itemR.get(i).um,itemR.get(i).total,porcentaje);
                         }else {
                             rep.addtot3(itemR.get(i).codProd,itemR.get(i).descrip,itemR.get(i).total);

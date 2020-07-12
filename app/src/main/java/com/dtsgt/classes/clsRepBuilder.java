@@ -458,7 +458,12 @@ public class clsRepBuilder {
 		items.add(ts);
 	}
 
-	public void addtwo(String s1,String val) {
+    public void addtot2(String s1,String val) {
+	    ts=ltrim(s1,4)+" "+ltrim(val,prw-5);
+        items.add(ts);
+    }
+
+    public void addtwo(String s1,String val) {
 		ts=ltrim(s1,prw-23)+" "+ltrim(val,25);
 		items.add(ts);
 	}
