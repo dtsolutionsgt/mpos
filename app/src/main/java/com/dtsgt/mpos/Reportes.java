@@ -1044,26 +1044,27 @@ public class Reportes extends PBase {
 
                             for (int a = 0; a <itemR.size(); a++) {
 
-                                totF += itemR.get(a).total;
+                                totF += itemR.get(a).total- itemR.get(a).imp;
                                 impF += itemR.get(a).imp;
                             }
 
                             if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICIO POR PRODUCTO");
                             if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICIO POR FAMILIA");
                             rep.add("Codigo     Nombre");
-                            rep.add("Venta      Costo    Beneficio    %");
+                            rep.add("Venta      Costo        Beneficio  %");
                             rep.line();
                             acc = 2;
                         }
 
                         tot = itemR.get(i).total - itemR.get(i).imp;
-                        porcentaje = (100/itemR.get(i).total) * tot;
+                        //porcentaje = (100/itemR.get(i).total) * tot;
+                        porcentaje = (100/totF) * tot;
                         totSinImpF+=tot;
 
-                        rep.addtot(itemR.get(i).corel, "    "+itemR.get(i).descrip);
+                        rep.addtot2(itemR.get(i).corel, itemR.get(i).descrip);
                         rep.add4(itemR.get(i).total, itemR.get(i).imp, tot, porcentaje);
 
-                    }else if(gl.reportid==11){
+                    } else if(gl.reportid==11){
 
                         if(acc==1){
 

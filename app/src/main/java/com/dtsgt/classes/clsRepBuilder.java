@@ -600,9 +600,7 @@ public class clsRepBuilder {
 
 	public String aproxDec(double pc){
 	    String val;
-
 	    val = Long.toString(Math.round(pc));
-
 	    return val+"%";
     }
 	
