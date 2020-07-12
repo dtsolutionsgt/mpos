@@ -182,6 +182,7 @@
             android:layout_alignEnd="@+id/editText1"
             android:layout_alignRight="@id/editText1"
             android:layout_marginTop="5dp"
+            android:inputType="textEmailAddress"
             android:ems="10" />
 
         <TextView
