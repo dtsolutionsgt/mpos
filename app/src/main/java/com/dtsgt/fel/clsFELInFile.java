@@ -164,7 +164,7 @@ public class clsFELInFile {
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
-                error="No hay conexión al internet";
+                error=e.getMessage();
                 errorcon=true;errorflag=true;constat=false;return;
             }
 

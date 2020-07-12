@@ -349,13 +349,21 @@ public class clsDocument {
 				cadena = "Dir : "+clidir;
 				vMod = (cadena.length() / 40)+1;
 
-				for (int i = 0; i <vMod; i++) {
-					if (cadena.length()>=40*(i+1)){
-						nuevaCadena += cadena.substring((i*40),40) + "\n";
-					}else{
-						nuevaCadena += cadena.substring((i*40)-1,cadena.length());
+				if (cadena.length() > 39){
+
+					for (int i = 0; i <vMod; i++) {
+
+						if (cadena.length()>=40*(i+1)){
+							nuevaCadena += cadena.substring((i*40),40) + "\n";
+						}else{
+							nuevaCadena += cadena.substring((i*40)-1,cadena.length());
+						}
+
 					}
+				}else{
+					nuevaCadena = cadena;
 				}
+
 
             	rep.add(nuevaCadena);
 			}

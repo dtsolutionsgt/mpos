@@ -1,5 +1,6 @@
 package com.dtsgt.fel;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.SQLException;
@@ -962,7 +963,7 @@ public class FelFactura extends PBase {
 
     public void showMsgExit(String msg) {
         try {
-            ExDialog dialog = new ExDialog(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage(msg);
             dialog.setCancelable(false);
 
