@@ -730,7 +730,7 @@ public class CierreX extends PBase {
                     rep.line();
                     rep.add4lrrTotZ(tot,totF,totSinImp);
 
-                    rep.add("Totales sumados con el fondo de caja");
+                    rep.add("Totales sumados con el fondo de caja (" + Fondo + ")");
 
                     tot=0;totF=0;totSinImp=0;
                     rep.empty();
@@ -805,79 +805,6 @@ public class CierreX extends PBase {
                         }
 
                     } else if(itemR.get(i).tipo==2){
-
-                        //Agregar las facturas anuladas
-
-                        generaDTAnuladas();
-                        acc1=1;
-
-                        for (int j = 0; j <itemA.size(); j++){
-
-                            if(acc1==1){
-
-                                tot=0;
-                                totF=0;
-                                sinImp=0;
-                                totSinImpF=0;
-                                impF=0;
-                                SumaCant=0;
-                                cantF=0;
-
-                                rep.empty();
-                                rep.line();
-                                rep.empty();
-
-                                rep.add("     Facturas Anuladas por día ");
-                                rep.add("Cant.Fact   Costo  Impuesto    Total");
-                                rep.line();
-                               // rep.add("             "+du.sfecha(itemA.get(j).fecha*10000));
-                                acc1 = 2;
-                            }
-
-                            if(!series.equals(itemA.get(j).serie)){
-                                rep.add("--------(    Serie "+itemA.get(j).serie+"    )------------");
-                            }
-
-                            series=itemA.get(j).serie;
-
-                            totSinImp = itemA.get(j).total - itemA.get(j).imp;
-                            rep.add3Tot(itemA.get(j).cant,totSinImp,itemA.get(j).imp, itemA.get(j).total);
-
-                            tot += itemA.get(j).total;
-                            sinImp += totSinImp;
-                            impF += itemA.get(j).imp;
-                            cantF += itemA.get(j).cant;
-
-                            if(j+1==itemA.size()){
-
-                                rep.line();
-                                rep.add3Tot(SumaCant, totSinImpF, impF, totF);
-
-                                totF += tot;
-                                SumaCant += cantF;
-                                totSinImpF += sinImp;
-
-                            }else {
-
-                                String fecha1=String.valueOf(itemA.get(j).fecha).substring(0,6);
-                                String fecha2=String.valueOf(itemA.get(j + 1).fecha).substring(0,6);
-
-                                if (!fecha1.equals(fecha2)) {
-                                    rep.line();
-                                    rep.add3Tot(cantF, sinImp, impF, tot);
-                                    totF += tot;
-                                    SumaCant += cantF;
-                                    totSinImpF += sinImp;
-
-                                    cantF = 0;
-                                    tot = 0;
-                                    sinImp = 0;
-
-                                    rep.empty();
-                                    //rep.add("             " + du.sfecha(itemA.get(j+1).fecha*10000));
-                                }
-                            }
-                        }
 
                         test = "Reporte 2";
                         fecha = du.sfecha(itemR.get(i).fecha);
@@ -1232,7 +1159,9 @@ public class CierreX extends PBase {
                         }
                     }
                 }
+
                 return true;
+
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                 msgbox(test+e.getMessage());
