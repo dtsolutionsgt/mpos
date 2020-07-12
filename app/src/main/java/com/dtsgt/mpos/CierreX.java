@@ -33,7 +33,8 @@ public class CierreX extends PBase {
 
     private TextView txtbtn,lblFact,lblTit;
     private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet;
-    private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8, bClienteCon=9, bClienteDet=10, sw=0,counter=0;
+    private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8,
+            bClienteCon=9, bClienteDet=10,bFactAnuxDia=11, sw=0,counter=0;
     private boolean report, enc=true;
 
     private clsClasses.clsReport item;
@@ -294,6 +295,7 @@ public class CierreX extends PBase {
                 if(i==7) sw=bMBxFam;
                 if(i==8) sw=bClienteCon;
                 if(i==9) sw=bClienteDet;
+                if(i==11) sw=bFactAnuxDia;
 
                 switch (sw){
                     case 0:
@@ -445,6 +447,19 @@ public class CierreX extends PBase {
                                 "INNER JOIN P_PRODUCTO P ON P.CODIGO = D.PRODUCTO " +
                                 condition+
                                 " GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, D.PRECIO";
+                        break;
+                    case 11:
+                        if(gl.reportid==9){
+                            condition =" WHERE ANULADO=1 AND KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE ANULADO=1 AND KILOMETRAJE = "+gl.corelZ+" ";
+                        }
+
+                        sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
+                                "FROM D_FACTURA "+
+                                condition+
+                                "GROUP BY SERIE, IMPMONTO, FECHA " +
+                                "ORDER BY FECHA";
                         break;
                     default:
                         msgbox("Error, al identificar el tipo de reporte, cierre la ventana e intentelo de nuevo");return false;
@@ -629,7 +644,7 @@ public class CierreX extends PBase {
         String fechaR="";
         String test;
         int cantF,cantfF,SumaCant;
-        int count1, count2, count3, count4, count5, count6, count7, count8, count9, count10;
+        int count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11;
         double tot,totF;
         double porcentaje=0.0, comision;
         double totSinImp, sinImp,totSinImpF, impF;
@@ -654,7 +669,7 @@ public class CierreX extends PBase {
         }
 
         protected boolean buildDetail() {
-            int acc1=1, acc2=1, acc3=1, acc4=1, acc5=1, acc6=1, acc7=1, acc9=1, acc10=1;
+            int acc1=1, acc2=1, acc3=1, acc4=1, acc5=1, acc6=1, acc7=1, acc9=1, acc10=1, acc11=1;
             String series="", fecha="";
 
             try {
@@ -672,6 +687,7 @@ public class CierreX extends PBase {
                 count8 = 0;
                 count9 = 0;
                 count10 = 0;
+                count11 = 0;
 
                 for(int j = 0; j<itemR.size(); j++){
                     if(itemR.get(j).tipo==1) count1 +=1;
@@ -684,6 +700,7 @@ public class CierreX extends PBase {
                     if(itemR.get(j).tipo==8) count8 +=1;
                     if(itemR.get(j).tipo==9) count9 +=1;
                     if(itemR.get(j).tipo==10) count10 +=1;
+                    if(itemR.get(j).tipo==11) count11 +=1;
                 }
 
                 count2 += count1;
@@ -695,6 +712,7 @@ public class CierreX extends PBase {
                 count8 += count7;
                 count9 += count8;
                 count10 += count9;
+                count11 += count10;
 
                 if(gl.reportid==10){
                     rep.add("FONDO CAJA:        Q."+Fondo);
@@ -804,6 +822,72 @@ public class CierreX extends PBase {
                             }
                         }
 
+                    }else if(itemR.get(i).tipo==11){
+
+                        if(acc11==1){
+
+                            tot=0;
+                            totF=0;
+                            sinImp=0;
+                            totSinImpF=0;
+                            impF=0;
+                            SumaCant=0;
+                            cantF=0;
+
+                            rep.empty();
+                            rep.line();
+                            rep.empty();
+
+                            rep.add("     FACTURAS ANULADAS POR DÍA ");
+                            rep.add("Cant.Fact   Costo  Impuesto    Total");
+                            rep.line();
+                            // rep.add("             "+du.sfecha(itemA.get(j).fecha*10000));
+                            acc11 = 2;
+                        }
+
+                        if(!series.equals(itemR.get(i).serie)){
+                            rep.add("--------(    Serie "+itemR.get(i).serie+"    )------------");
+                        }
+
+                        series=itemR.get(i).serie;
+
+                        totSinImp = itemR.get(i).total - itemR.get(i).imp;
+                        rep.add3Tot(itemR.get(i).cant,totSinImp,itemR.get(i).imp, itemR.get(i).total);
+
+                        tot += itemR.get(i).total;
+                        sinImp += totSinImp;
+                        impF += itemR.get(i).imp;
+                        cantF += itemR.get(i).cant;
+
+                        if(i+1==itemR.size()){
+
+                            rep.line();
+                            rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+
+                            totF += tot;
+                            SumaCant += cantF;
+                            totSinImpF += sinImp;
+
+                        }else {
+
+                            String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
+                            String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
+
+                            if (!fecha1.equals(fecha2)) {
+                                rep.line();
+                                rep.add3Tot(cantF, sinImp, impF, tot);
+                                totF += tot;
+                                SumaCant += cantF;
+                                totSinImpF += sinImp;
+
+                                cantF = 0;
+                                tot = 0;
+                                sinImp = 0;
+
+                                rep.empty();
+                                //rep.add("             " + du.sfecha(itemA.get(j+1).fecha*10000));
+                            }
+                        }
                     } else if(itemR.get(i).tipo==2){
 
                         test = "Reporte 2";
@@ -1101,7 +1185,6 @@ public class CierreX extends PBase {
                             rep.add3lrrTot("", ""+SumaCant, totF);
                             cantF = 0;
                             tot = 0;
-
 
                         }
 

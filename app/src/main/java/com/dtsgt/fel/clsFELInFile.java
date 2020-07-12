@@ -40,7 +40,7 @@ public class clsFELInFile {
     public String xml,xmlanul;
     public String fact_uuid;
     public String fact_serie;
-    public int fact_numero;
+    public String fact_numero;
 
     // Parametrizacion FEL
 
@@ -91,7 +91,7 @@ public class clsFELInFile {
     }
 
     public void certificacion() {
-        fact_uuid="";fact_serie="";fact_numero=0;
+        fact_uuid="";fact_serie="";fact_numero="";
         errlevel=1;error="";errorflag=false;constat=true;errorcon=false;duplicado=false;
         sendJSONFirm();
     }
@@ -390,7 +390,7 @@ public class clsFELInFile {
 
                 fact_uuid =jObj.getString("uuid");
                 fact_serie =jObj.getString("serie");
-                fact_numero =jObj.getInt("numero");
+                fact_numero =jObj.getString("numero");
 
                 errorflag=false;
 

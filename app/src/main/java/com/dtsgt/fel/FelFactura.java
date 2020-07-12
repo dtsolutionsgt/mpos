@@ -708,7 +708,8 @@ public class FelFactura extends PBase {
             }
 
             CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
-                    "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
+                    " WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ")" +
+                    " AND CORELULT < "+D_facturaObj.first().corelativo+" ;";
 
             if (contingencia>0) {
                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +

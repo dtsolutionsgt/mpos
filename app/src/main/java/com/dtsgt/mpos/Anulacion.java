@@ -435,9 +435,6 @@ public class Anulacion extends PBase {
                     anulFactura(itemid);
                 } else {
                     anulacionFEL();
-					/*db.setTransactionSuccessful();
-					db.endTransaction();
-                    return;*/
                 }
 			}
 			
