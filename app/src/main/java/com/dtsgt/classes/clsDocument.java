@@ -317,6 +317,7 @@ public class clsDocument {
                         rep.add(ss2);
                     }
                 } else {
+			        s=rep.ctrim(s);
                     rep.add(s);
                 }
             }
