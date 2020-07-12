@@ -432,8 +432,11 @@ public class WSEnv extends PBase {
     }
 
     private void statusFactura() {
+
         try {
+
             rs =(String) xobj.getSingle("CommitResult",String.class);
+
             if (!rs.equalsIgnoreCase("#")) {
                 ferr=rs;factsend=true;return;
             } else {
@@ -441,6 +444,7 @@ public class WSEnv extends PBase {
             }
 
             fsend++;
+
             try {
                 sql="UPDATE D_Factura SET STATCOM='S' WHERE COREL='"+corel+"'";
                 db.execSQL(sql);
@@ -453,15 +457,18 @@ public class WSEnv extends PBase {
     }
 
     private void processClients() {
+
         int ccli;
 
         clients.clear();
 
         try {
+
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
             P_clienteObj.fill("WHERE ESERVICE='N'");
 
             CSQL="";
+
             for (int i = 0; i <P_clienteObj.count; i++) {
 
                 ccli=P_clienteObj.items.get(i).codigo_cliente;
@@ -474,13 +481,16 @@ public class WSEnv extends PBase {
 
                 clients.add(""+ccli);
             }
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private void statusClients() {
+
         try {
+
             rs =(String) xobj.getSingle("CommitResult",String.class);
             if (!rs.equalsIgnoreCase("#")) {
                 ws.error=rs;ws.errorflag=true;return;

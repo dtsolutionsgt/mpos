@@ -297,10 +297,11 @@ public class Reimpresion extends PBase {
 				case 3:
 					progress.setMessage("Cargando lista de facturas...");
 					progress.show();
+					//(D_FACTURA.STATCOM='N') AND
 					sql = "SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO," +
 						  "D_FACTURA.IMPRES, D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR " +
 						  "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE " +
-						  "WHERE (D_FACTURA.STATCOM='N') AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+						  "WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 						  "ORDER BY D_FACTURA.COREL DESC";
 					break;
 				case 4:

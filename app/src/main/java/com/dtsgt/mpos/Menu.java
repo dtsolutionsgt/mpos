@@ -413,6 +413,7 @@ public class Menu extends PBase {
 	public void showPrintMenuTodo() {
 
 		try {
+
 			final AlertDialog Dialog;
 			final String[] selitems  = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Pagos","Recarga","Devolución a bodega"};;
 
@@ -420,6 +421,7 @@ public class Menu extends PBase {
 
 
 			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+
 				public void onClick(DialogInterface dialog, int item) {
 
 					switch (item) {

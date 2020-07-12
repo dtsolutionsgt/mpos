@@ -1103,6 +1103,7 @@ public class AppMethods {
         try {
 
             switch(tipo) {
+
                 case "Facturas":
 
                     sql="SELECT IFNULL(COUNT(COREL),0) AS CANT FROM D_FACTURA";

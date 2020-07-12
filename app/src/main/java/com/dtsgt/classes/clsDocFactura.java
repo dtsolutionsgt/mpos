@@ -27,6 +27,7 @@ public class clsDocFactura extends clsDocument {
 	}
 
 	protected boolean loadHeadData(String corel) {
+
 		Cursor DT;
 		String cli="",vend="",val,empp="", anulado,s1,s2;
 		long ff;
@@ -37,12 +38,14 @@ public class clsDocFactura extends clsDocument {
         if (banderafel) nombre = "FACTURA ELECTRONICA"; nombre = "FACTURA";
 		
 		try {
+
 			sql=" SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,DESMONTO,IMPMONTO,EMPRESA,FECHAENTR,ADD1," +
 				" ADD2,IMPRES, ANULADO, FEELUUID, FEELFECHAPROCESADO, FEELSERIE, FEELNUMERO, FEELCONTINGENCIA " +
 				" FROM D_FACTURA WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);
 
 			if (DT.getCount()>0) {
+
 				DT.moveToFirst();
 
 				serie=DT.getString(0);

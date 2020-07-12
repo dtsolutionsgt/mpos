@@ -434,7 +434,14 @@ public class Anulacion extends PBase {
                 if (idfel.isEmpty() || idfel.equalsIgnoreCase("SIN FEL")) {
                     anulFactura(itemid);
                 } else {
-                    anulacionFEL();
+                	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
+                	if (uuid!=null){
+						anulacionFEL();
+					}else
+					{
+						anulFactura(itemid);
+					}
+
                 }
 			}
 			
@@ -558,6 +565,7 @@ public class Anulacion extends PBase {
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
+
             if (uuid.equalsIgnoreCase(" ")) {
                 anulFactura(itemid);
                 return false;
@@ -574,6 +582,7 @@ public class Anulacion extends PBase {
             fel.anulfact(uuid, fel.fel_nit,NITReceptor, fact.fechaentr, fact.fechaentr);
 
             return true;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return false;
@@ -581,11 +590,13 @@ public class Anulacion extends PBase {
     }
 
     private String Get_NIT_Cliente(int Codigo_Cliente) {
+
 		Cursor dt;
 
 		String NIT="";
 
 		try {
+
 			sql="SELECT NIT FROM P_CLIENTE WHERE CODIGO='"+Codigo_Cliente+"'";
 			dt=Con.OpenDT(sql);
 
@@ -596,6 +607,7 @@ public class Anulacion extends PBase {
                     if (dt!=null) dt.close();
 				}
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -752,6 +764,7 @@ public class Anulacion extends PBase {
                 DT.moveToFirst();
 
                 while (!DT.isAfterLast()) {
+
                     prod=DT.getInt(0);
                     um=DT.getString(1);
                     prcant=DT.getInt(2);
