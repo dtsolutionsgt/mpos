@@ -338,7 +338,25 @@ public class clsDocument {
         if (docfactura){
 
             if (!emptystr(nit)) rep.add("NIT : "+nit);
-            if (!emptystr(clidir)) rep.add("Dir : "+clidir);
+            if (!emptystr(clidir)) {
+
+				String nuevaCadena="", cadena="";
+				int vMod=0;
+				double division =0.0;
+
+				cadena = "Dir : "+clidir;
+				vMod = (cadena.length() / 40)+1;
+
+				for (int i = 0; i <vMod; i++) {
+					if (cadena.length()>=40*(i+1)){
+						nuevaCadena += cadena.substring((i*40),40) + "\n";
+					}else{
+						nuevaCadena += cadena.substring((i*40)-1,cadena.length());
+					}
+				}
+
+            	rep.add(nuevaCadena);
+			}
 
 			if (pagoefectivo==1){
                 rep.add("Condiciones de pago: Efectivo");
@@ -443,10 +461,30 @@ public class clsDocument {
             if(l.length()>20){
                 //l=l.replace("@Cliente",clicod+" - "+cliente);
 				l=l.replace("@Cliente",cliente);
+
+				String nuevaCadena="", cadena="";
+				int vMod=0;
+				double division =0.0;
+
+				cadena = l;
+				vMod = (cadena.length() / 40)+1;
+
+				for (int i = 0; i <vMod; i++) {
+					if (cadena.length()>=40*(i+1)){
+						nuevaCadena += cadena.substring((i*40),40) + "\n";
+					}else{
+						nuevaCadena += cadena.substring((i*40)-1,cadena.length());
+					}
+
+				}
+
+				l=nuevaCadena;
+
                 return l;
             }
             //l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
 			l=l.replace("@Cliente",rep.ltrim(cliente, 20));
+
             return l;
         }
 
