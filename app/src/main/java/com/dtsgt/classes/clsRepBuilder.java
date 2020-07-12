@@ -316,7 +316,7 @@ public class clsRepBuilder {
 
 		tot=sval.length();
 
-		ts=ltrim(s1,prwt)+ltrim(s2,prwt-2)+ltrim(stot,prwt-tot)+ltrim(sval,prwt);
+		ts=ltrim(s1,prwt-4)+ltrim(s2,prwt-2)+ltrim(stot,prwt-tot)+ltrim(sval,prwt);
 		items.add(ts);
 	}
 
@@ -367,19 +367,14 @@ public class clsRepBuilder {
 		try{
 
 			if(s1.length()>=12){
-
 				rest=s1.length()-11;
 				str = s1.substring(0, s1.length()-rest);
 				str = str+" ";
 				s1 = str;
-
-			}else if(s1.length()<12 && !s1.isEmpty()){
-
-				str = s1.substring(0, s1.length()-1);
+			} else if(s1.length()<12 && !s1.isEmpty()){
+				str = s1.substring(0, s1.length());
 				s1 = str;
-
 			}
-
 
 			scom=cursym+decfrm.format(v3);
 			stot=cursym+decfrm.format(s3);
@@ -389,7 +384,7 @@ public class clsRepBuilder {
 			ts=ltrim(s1,prwt+1)+ltrim(s2,prwt-6)+ltrim(stot,prwt-tot-1)+ltrim(scom,prwt);
 			items.add(ts);
 
-		}catch (Exception e){
+		} catch (Exception e){
 			error=e+"";
 			error1=error;
 		}

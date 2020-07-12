@@ -999,7 +999,7 @@ public class CierreX extends PBase {
 
                         porcentaje = (100 /totF) * itemR.get(i).total;
 
-                        rep.addtot(itemR.get(i).codProd,itemR.get(i).descrip);
+                        rep.addtot2(itemR.get(i).codProd,itemR.get(i).descrip);
                         rep.add4lrrTotPorc(Integer.toString(itemR.get(i).cant), itemR.get(i).um,itemR.get(i).total,porcentaje);
 
                         SumaCant = SumaCant + itemR.get(i).cant;
@@ -1154,10 +1154,11 @@ public class CierreX extends PBase {
                         }
 
                         tot = itemR.get(i).total - itemR.get(i).imp;
-                        porcentaje = (100/itemR.get(i).total) * tot;
+                        //porcentaje = (100/itemR.get(i).total) * tot;
+                        porcentaje = (100/totF) * tot;
                         totSinImpF+=tot;
 
-                        rep.addtot(itemR.get(i).corel, "    "+itemR.get(i).descrip);
+                        rep.addtot2(itemR.get(i).corel,itemR.get(i).descrip);
                         rep.add4(itemR.get(i).total, itemR.get(i).imp, tot, porcentaje);
 
                         if(itemR.get(i).tipo==7){
@@ -1214,7 +1215,7 @@ public class CierreX extends PBase {
 
                         }
 
-                    }else if(itemR.get(i).tipo==10){
+                    } else if(itemR.get(i).tipo==10){
 
                         test = "Reporte 10";
                         if(acc10==1){

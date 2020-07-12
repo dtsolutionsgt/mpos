@@ -267,9 +267,8 @@ public class clsDocument {
 	}
 
     protected void saveHeadLines(int reimpres) {
-
         String s,ss,ss2;
-		String mPago,dPago;
+        String[] s2;
 		int nidx;
 
         rep.empty();rep.empty();
@@ -311,8 +310,15 @@ public class clsDocument {
 			}
 
 			if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
-			    s=rep.ctrim(s);
-			    rep.add(s);
+			    if (s.contains("CLIENTE")) {
+                    s2=s.split("<<");
+                    for (int j = 1; j <s2.length; j++) {
+                        ss2=s2[j];
+                        rep.add(ss2);
+                    }
+                } else {
+                    rep.add(s);
+                }
             }
 
             if (docfactura) {
@@ -352,18 +358,15 @@ public class clsDocument {
 				if (cadena.length() > 39){
 
 					for (int i = 0; i <vMod; i++) {
-
 						if (cadena.length()>=40*(i+1)){
 							nuevaCadena += cadena.substring((i*40),40) + "\n";
 						}else{
 							nuevaCadena += cadena.substring((i*40)-1,cadena.length());
 						}
-
 					}
-				}else{
+				} else {
 					nuevaCadena = cadena;
 				}
-
 
             	rep.add(nuevaCadena);
 			}
@@ -469,33 +472,38 @@ public class clsDocument {
         idx=lu.indexOf("@Cliente");
         if (idx>=0) {
             if (emptystr(cliente)) return "@@";
-            if(l.length()>20){
+
+            l=l.replace("@Cliente",cliente);l=l.trim();
+
+            if (l.length()>prw) {
                 //l=l.replace("@Cliente",clicod+" - "+cliente);
-				l=l.replace("@Cliente",cliente);
 
-				String nuevaCadena="", cadena="";
+				String nuevaCadena="",cadena="";
 				int vMod=0;
-				double division =0.0;
 
-				cadena = l;
-				vMod = (cadena.length() / 40)+1;
+				cadena=l;
+                nuevaCadena=cadena.substring(0,prw);cadena=cadena.substring(prw);
+				if (cadena.length()>prw) {
+                    nuevaCadena=nuevaCadena+"<<"+cadena.substring(0,prw);cadena=cadena.substring(prw);
+                    if (cadena.length()>prw) {
+                        nuevaCadena=nuevaCadena+"<<"+cadena.substring(0,prw);
+                    }
+                }
+				/*
+				vMod = (cadena.length()/prw)+1;
 
 				for (int i = 0; i <vMod; i++) {
-					if (cadena.length()>=40*(i+1)){
-						nuevaCadena += cadena.substring((i*40),40) + "\n";
+					if (cadena.length()>=prw*(i+1)){
+						nuevaCadena += cadena.substring((i*prw),prw) + "\n";
 					}else{
-						nuevaCadena += cadena.substring((i*40)-1,cadena.length());
+						nuevaCadena += cadena.substring((i*prw)-1,cadena.length());
 					}
-
 				}
 
-				l=nuevaCadena;
-
+				 */
+				l="CLIENTE<<"+nuevaCadena;
                 return l;
             }
-            //l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
-			l=l.replace("@Cliente",rep.ltrim(cliente, 20));
-
             return l;
         }
 
