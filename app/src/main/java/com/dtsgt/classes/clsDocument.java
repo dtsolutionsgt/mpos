@@ -348,6 +348,27 @@ public class clsDocument {
             if (!emptystr(nit)) rep.add("NIT : "+nit);
             if (!emptystr(clidir)) {
 
+                clidir="Dir:"+clidir;
+                if (clidir.length()>prw) {
+
+                    String nuevaCadena = "", cadena = "";
+
+                    cadena = clidir;
+                    nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                    cadena = cadena.substring(prw);
+                    if (cadena.length() > prw) {
+                        nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                        cadena = cadena.substring(prw);
+                        if (cadena.length() > prw) {
+                            nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                        } if (cadena.length()>0) rep.add(cadena);
+                    } else {
+                        if (cadena.length()>0) rep.add(cadena);
+                    }
+                } else rep.add(clidir);
+
+
+                /*
 				String nuevaCadena="", cadena="";
 				int vMod=0;
 				double division =0.0;
@@ -369,6 +390,8 @@ public class clsDocument {
 				}
 
             	rep.add(nuevaCadena);
+            	*/
+
 			}
 
 			if (pagoefectivo==1){
@@ -487,8 +510,9 @@ public class clsDocument {
                     nuevaCadena=nuevaCadena+"<<"+cadena.substring(0,prw);cadena=cadena.substring(prw);
                     if (cadena.length()>prw) {
                         nuevaCadena=nuevaCadena+"<<"+cadena.substring(0,prw);
-                    }
-                }
+                    } else nuevaCadena=nuevaCadena+"<<"+cadena;
+                } else nuevaCadena=nuevaCadena+"<<"+cadena;
+
 				/*
 				vMod = (cadena.length()/prw)+1;
 

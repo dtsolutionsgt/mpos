@@ -364,8 +364,7 @@ public class clsRepBuilder {
 		String stot,scom,str,error,error1;
 		int tot,rest;
 
-		try{
-
+		try {
 			if(s1.length()>=12){
 				rest=s1.length()-11;
 				str = s1.substring(0, s1.length()-rest);
@@ -385,8 +384,7 @@ public class clsRepBuilder {
 			items.add(ts);
 
 		} catch (Exception e){
-			error=e+"";
-			error1=error;
+			error=e+"";error1=error;
 		}
 
 	}
