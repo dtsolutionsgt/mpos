@@ -478,7 +478,7 @@ public class Venta extends PBase {
             grdprod.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-
+                    int kcant;
                     /*
                     if (prodflag) prodflag=false;else return;
 
@@ -512,7 +512,15 @@ public class Venta extends PBase {
                         gl.menuitemid=prodid;
                         menuitemadd=true;
 
-                        processItem(false);
+                        if (khand.val.isEmpty()) {
+                            processItem(false);
+                        } else {
+                            try {
+                                kcant=Integer.parseInt(khand.val);
+                                if (kcant>0) processItem(kcant);
+                            } catch (Exception e) { }
+                            khand.clear();
+                        }
 
                     } catch (Exception e) {
                         String ss=e.getMessage();
@@ -715,6 +723,45 @@ public class Venta extends PBase {
                 processMenuItem();
             }
        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void processItem(int prcant){
+
+        try{
+
+            String pid=gl.gstr;
+            if (mu.emptystr(pid)) return;
+
+            prodid=pid;
+
+            gl.um=app.umVenta(prodid); um=gl.um;
+            gl.bonprodid=prodid;
+
+            khand.enable();khand.focus();
+
+            prodPrecio();
+
+            gl.dval=prcant;
+            gl.limcant=getDisp(prodid);
+            tipo=prodTipo(gl.prodcod);
+            gl.tipoprodcod=tipo;
+
+            if (!tipo.equalsIgnoreCase("M")) {
+                if (tipo.equalsIgnoreCase("P")) {
+                    if (gl.limcant>0) {
+                        processCant(false);
+                    } else {
+                        msgAskLimit("El producto no está disponible.\n¿Continuar con la venta?",false);
+                    }
+                } else if (tipo.equalsIgnoreCase("S")) {
+                    processCant(false);
+                }
+            } else if (tipo.equalsIgnoreCase("M")){
+                processMenuItem();
+            }
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }

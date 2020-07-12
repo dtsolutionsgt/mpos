@@ -159,23 +159,19 @@ public class PBase extends Activity {
 				setAddlog(vmethodname,vmsg, vinfo);
 			}
 		}, 500);
-
 	}
 
 	protected void setAddlog(String methodname,String msg,String info) {
-
 		BufferedWriter writer = null;
 		FileWriter wfile;
 
 		try {
-
 			String fname = Environment.getExternalStorageDirectory()+"/roadlog.txt";
 			wfile=new FileWriter(fname,true);
 			writer = new BufferedWriter(wfile);
 
 			writer.write("Método: " + methodname + " Mensaje: " +msg + " Info: "+ info );
 			writer.write("\r\n");
-
 			writer.close();
 
 		} catch (Exception e) {

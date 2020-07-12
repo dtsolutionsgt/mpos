@@ -1319,6 +1319,7 @@ public class WSRec extends PBase {
                 var = clsCls.new clsP_corel();
                 var.resol = item.RESOL;
                 var.serie = item.SERIE;
+                var.empresa= Integer.parseInt(item.EMPRESA);
                 var.empresa = Integer.parseInt(item.EMPRESA);
                 var.corelini = item.CORELINI;
                 var.corelfin = item.CORELFIN;
