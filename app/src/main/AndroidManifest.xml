@@ -24,6 +24,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="Android.permission.REBOOT" />
+    <uses-permission android:name="Android.permission.SHUTDOWN" />
+    <uses-permission android:name="Android.permission.DEVICE_POWER" />
 
     <application
         android:name="com.dtsgt.base.appGlobals"
@@ -598,7 +601,11 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
+        <receiver android:name=".PedidoDet">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

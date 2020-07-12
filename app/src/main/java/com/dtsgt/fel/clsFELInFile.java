@@ -867,17 +867,24 @@ public class clsFELInFile {
         xml+="</dte:Emisor>";
     }
 
-    public void receptor(String p1,String p2,String p3) {
+    public void receptor(String pNITCliente,
+                         String pNombreCliente,
+                         String pDireccionCliente,
+                         String pCorreo,
+                         String codigoPostal,
+                         String municipio,
+                         String departamento,
+                         String pais) {
 
-        String p4="correo@gmail.com";
+        if (pCorreo.isEmpty()) pCorreo ="dtsolutionsgt@gmail.com";
 
-        xml+="<dte:Receptor CorreoReceptor=\""+p4+"\" IDReceptor=\""+p1+"\" NombreReceptor=\""+p2+"\">";
+        xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
         xml+="<dte:DireccionReceptor>";
-        xml+="<dte:Direccion>"+p3+"</dte:Direccion>";
-        xml+="<dte:CodigoPostal>0</dte:CodigoPostal>";
-        xml+="<dte:Municipio>Guatemala</dte:Municipio>";
-        xml+="<dte:Departamento>Guatemala</dte:Departamento>";
-        xml+="<dte:Pais>GT</dte:Pais>";
+        xml+="<dte:Direccion>"+pDireccionCliente+"</dte:Direccion>";
+        xml+="<dte:CodigoPostal>"+codigoPostal+"</dte:CodigoPostal>";
+        xml+="<dte:Municipio>"+municipio+"</dte:Municipio>";
+        xml+="<dte:Departamento>"+departamento+"</dte:Departamento>";
+        xml+="<dte:Pais>"+pais+"</dte:Pais>";
         xml+="</dte:DireccionReceptor>";
         xml+="</dte:Receptor>";
 

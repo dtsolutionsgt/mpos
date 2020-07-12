@@ -3,12 +3,10 @@ package com.dtsgt.mpos;
 import java.util.ArrayList;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,9 +36,9 @@ public class Aprofam1 extends PBase {
 		spin1= (Spinner) findViewById(R.id.spinner1);
 		spin2= (Spinner) findViewById(R.id.Spinner01);
 		lblFecha= (TextView) findViewById(R.id.textView2);
-		txtNit= (EditText) findViewById(R.id.editText1);txtNit.setText(gl.fnit);
-		txtNom= (EditText) findViewById(R.id.editText2);txtNom.setText(gl.fnombre);
-		txtDir= (EditText) findViewById(R.id.editText3);txtDir.setText(gl.fdir);
+		txtNit= (EditText) findViewById(R.id.editText1);txtNit.setText(gl.gNITCliente);
+		txtNom= (EditText) findViewById(R.id.editText2);txtNom.setText(gl.gNombreCliente);
+		txtDir= (EditText) findViewById(R.id.editText3);txtDir.setText(gl.gDirCliente);
 		
 		gl.ref1="";gl.ref2="";gl.ref3="";ref1="*";ref2="*";
 		
@@ -71,9 +69,9 @@ public class Aprofam1 extends PBase {
 			}
 
 			gl.ref1=ref1;gl.ref2=ref2;
-			gl.fnit=txtNit.getText().toString();
-			gl.fnombre=txtNom.getText().toString();
-			gl.fdir=txtDir.getText().toString();
+			gl.gNITCliente =txtNit.getText().toString();
+			gl.gNombreCliente =txtNom.getText().toString();
+			gl.gDirCliente =txtDir.getText().toString();
 
 			startActivity(new Intent(this,Venta.class));
 			super.finish();

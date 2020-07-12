@@ -967,6 +967,7 @@ public class FinDia extends PBase {
     private void repTotales() {
 
         try{
+
             rep.line();
             rep.empty();
             rep.add("LIQUIDACION");

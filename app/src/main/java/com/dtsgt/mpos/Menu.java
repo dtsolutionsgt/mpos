@@ -13,9 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
-import android.provider.Settings;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -80,18 +78,8 @@ public class Menu extends PBase {
 			gridView = (GridView) findViewById(R.id.gridView1);
 			relbotpan = (RelativeLayout) findViewById(R.id.relbotpan);
 
-			//#HS_20181206_0945 Agregue lblVendedor que se muestra en el menú.
 			lblVendedor = (TextView) findViewById(R.id.lblVendedor);
 			lblRuta = (TextView) findViewById(R.id.textView9);
-
-            //#CKFK 20200525 Puse esto en comentario lo del vehículo y el vendedor porque en MPos no se utiliza
-            /*Ayudante = new Spinner(this);
-			Vehiculo = new Spinner(this);
-			lblAyudante = new TextView(this);
-			lblAyudante.setText("Ayudante:");
-			lblVehiculo = new TextView(this);
-			lblVehiculo.setText("Vehículo:");*/
-			///
 
 			gl.validDate=false;
 			gl.lastDate=0;
@@ -122,15 +110,6 @@ public class Menu extends PBase {
 
 			cajaCerrada();
 
-
-
-			//#CKFK 20200525  Puse esto en comentario porque en el MPos no se utiliza el ayudante ni el vehículo
-			/*if (gl.peVehAyud) {
-				AyudanteVehiculo();
-			} else {
-				gl.ayudanteID="";gl.vehiculoID="";
-			}*/
-
 		} catch (Exception e) {
 			msgbox(e.getMessage());
 		}
@@ -159,6 +138,7 @@ public class Menu extends PBase {
 
 	//#CKFK20200524_FIX_BY_OPENDT Quité la función InsertCorrel porque la tabla P_CORREL_OTROS ya no se utiliza
 	public void listItems() {
+
         clsMenu item;
 
         lblVendedor.setText(gl.vendnom);
@@ -205,6 +185,7 @@ public class Menu extends PBase {
                 }
 
                 addMenuItem(10,"Cambio usuario");
+				//addMenuItem(13,"Apagar");
 
             }
 
@@ -215,6 +196,19 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
+	}
+
+	private void apagar(){
+
+		try {
+			Intent i = new Intent("com.android.internal.intent.action.REQUEST_SHUTDOWN");
+			i.putExtra("android.intent.extra.KEY_CONFIRM", false);
+			i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(i);
+			//Needs root
+			//Process proc = Runtime.getRuntime() .exec(new String[]{ "su", "-c", "reboot -p" }); proc.waitFor();
+		}catch (Exception ex)
+		{ ex.printStackTrace(); }
 	}
 		
 	public void setHandlers(){
@@ -237,6 +231,7 @@ public class Menu extends PBase {
 	}
 
 	private void showMenuItem() {
+
 		int prtype;
 		boolean epssetflag = false;
 		Float cantidad;
@@ -258,6 +253,7 @@ public class Menu extends PBase {
         app.parametrosExtra();
 
 		try{
+
 			prtype = getPrinterType();
 			if (prtype == 2) {
 				if (gl.mPrinterSet) epssetflag = false;
@@ -283,9 +279,9 @@ public class Menu extends PBase {
 
 					    gl.nivel_sucursal=app.nivelSucursal();
 						gl.cliente="C.F.";
-						gl.fnombre="Consumidor final";
-						gl.fnit="C.F.";
-						gl.fdir="Ciudad";
+						gl.gNombreCliente ="Consumidor final";
+						gl.gNITCliente ="C.F.";
+						gl.gDirCliente ="Ciudad";
 
                         gl.cliposflag=false;
 						gl.rutatipo="V";gl.rutatipog="V";
@@ -399,6 +395,9 @@ public class Menu extends PBase {
 				case 12:
 					showReportMenu();
 					break;
+
+				case 13:
+					apagar();
 
 			}
 		}catch (Exception e){
@@ -1509,12 +1508,13 @@ public class Menu extends PBase {
 	}
 
 	private int getPrinterType() {
+
 		Cursor DT;
 		String prtipo;
 		int prid=0;
-		
-		
+
 		try {
+
 			sql="SELECT TIPO_IMPRESORA FROM P_ARCHIVOCONF";
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();
@@ -1547,6 +1547,7 @@ public class Menu extends PBase {
     }
 
     private boolean impresoraInstalada() {
+
         app.loadPrintConfig();
 
         if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
@@ -1705,9 +1706,6 @@ public class Menu extends PBase {
 
     }
 
-
-
-
     //endregion
 
 	//region Activity Events
@@ -1751,6 +1749,5 @@ public class Menu extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
-
 	//endregion
 }

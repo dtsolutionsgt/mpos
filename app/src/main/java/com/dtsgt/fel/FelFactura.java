@@ -328,6 +328,7 @@ public class FelFactura extends PBase {
     }
 
     private void buildFactXML() {
+
         String dir,muni,dep,iddep,idmuni;
         int idcont;
 
@@ -369,13 +370,17 @@ public class FelFactura extends PBase {
 
             clsP_municipioObj P_municipioObj=new clsP_municipioObj(this,Con,db);
             P_municipioObj.fill("WHERE CODIGO='"+idmuni+"'");
+
             if (P_municipioObj.count>0) {
+
                 muni=P_municipioObj.first().nombre;
                 iddep=P_municipioObj.first().codigo_departamento;
 
                 clsP_departamentoObj P_departamentoObj=new clsP_departamentoObj(this,Con,db);
                 P_departamentoObj.fill("WHERE CODIGO='"+iddep+"'");
+
                 if (P_departamentoObj.count>0) dep=P_departamentoObj.first().nombre;else dep=" ";
+
             } else {
                 muni=" ";dep=" ";
             }
@@ -386,7 +391,7 @@ public class FelFactura extends PBase {
             factf.nit =factf.nit.replace("-","");
             factf.nit =factf.nit.replace(".","");
 
-            fel.receptor(factf.nit,factf.nombre,factf.direccion);
+            fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 

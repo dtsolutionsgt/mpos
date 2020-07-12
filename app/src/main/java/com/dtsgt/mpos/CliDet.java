@@ -1,7 +1,6 @@
 package com.dtsgt.mpos;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -387,9 +386,9 @@ public class CliDet extends PBase {
 
 			clim=DT.getDouble(5);
 						
-			gl.fnombre=DT.getString(0);
-			gl.fnit=DT.getString(12);
-			gl.fdir=DT.getString(2);
+			gl.gNombreCliente =DT.getString(0);
+			gl.gNITCliente =DT.getString(12);
+			gl.gDirCliente =DT.getString(2);
 			gl.vcredito = DT.getString(13).equalsIgnoreCase("S");
 			gl.vcheque = DT.getString(14).equalsIgnoreCase("S");
 			gl.vchequepost = DT.getString(15).equalsIgnoreCase("S");
@@ -690,9 +689,9 @@ public class CliDet extends PBase {
 			alert.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					String corel=mu.getCorelBase();
-					gl.fnombre = editNombre.getText().toString();
-					gl.fnit = editNit.getText().toString();
-					ActualizarCliente(corel,gl.fnombre, gl.fnit);
+					gl.gNombreCliente = editNombre.getText().toString();
+					gl.gNITCliente = editNit.getText().toString();
+					ActualizarCliente(corel,gl.gNombreCliente, gl.gNITCliente);
 				}
 			});
 

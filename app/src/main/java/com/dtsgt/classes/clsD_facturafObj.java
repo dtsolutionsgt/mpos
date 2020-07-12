@@ -18,7 +18,7 @@ public class clsD_facturafObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM D_facturaf";
+    private String sel="SELECT * FROM D_FACTURAF";
     private String sql;
     public ArrayList<clsClasses.clsD_facturaf> items= new ArrayList<clsClasses.clsD_facturaf>();
 
@@ -73,30 +73,25 @@ public class clsD_facturafObj {
 
     private void addItem(clsClasses.clsD_facturaf item) {
 
-        ins.init("D_facturaf");
-
+        ins.init("D_FACTURAF");
         ins.add("COREL",item.corel);
         ins.add("NOMBRE",item.nombre);
         ins.add("NIT",item.nit);
         ins.add("DIRECCION",item.direccion);
-
+        ins.add("CORREO",item.correo);
         db.execSQL(ins.sql());
 
     }
 
     private void updateItem(clsClasses.clsD_facturaf item) {
 
-        upd.init("D_facturaf");
-
+        upd.init("D_FACTURAF");
         upd.add("NOMBRE",item.nombre);
         upd.add("NIT",item.nit);
         upd.add("DIRECCION",item.direccion);
-
+        upd.add("CORREO",item.correo);
         upd.Where("(COREL='"+item.corel+"')");
-
         db.execSQL(upd.sql());
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 
@@ -111,6 +106,7 @@ public class clsD_facturafObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsD_facturaf item;
 
@@ -123,14 +119,12 @@ public class clsD_facturafObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_facturaf();
-
             item.corel=dt.getString(0);
             item.nombre=dt.getString(1);
             item.nit=dt.getString(2);
             item.direccion=dt.getString(3);
-
+            item.correo = dt.getString(4);
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -139,6 +133,7 @@ public class clsD_facturafObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -157,13 +152,12 @@ public class clsD_facturafObj {
 
     public String addItemSql(clsClasses.clsD_facturaf item) {
 
-        ins.init("D_facturaf");
-
+        ins.init("D_FACTURAF");
         ins.add("COREL",item.corel);
         ins.add("NOMBRE",item.nombre);
         ins.add("NIT",item.nit);
         ins.add("DIRECCION",item.direccion);
-
+        ins.add("CORREO",item.correo);
         return ins.sql();
 
     }
@@ -171,18 +165,13 @@ public class clsD_facturafObj {
     public String updateItemSql(clsClasses.clsD_facturaf item) {
 
         upd.init("D_facturaf");
-
         upd.add("NOMBRE",item.nombre);
         upd.add("NIT",item.nit);
         upd.add("DIRECCION",item.direccion);
-
+        upd.add("CORREO",item.correo);
         upd.Where("(COREL='"+item.corel+"')");
-
         return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 
 }
-

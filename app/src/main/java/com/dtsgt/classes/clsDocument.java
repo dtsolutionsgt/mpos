@@ -267,6 +267,7 @@ public class clsDocument {
 	}
 
     protected void saveHeadLines(int reimpres) {
+
         String s,ss,ss2;
 		String mPago,dPago;
 		int nidx;
@@ -287,7 +288,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO ELECTRONICO");
+                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO FEL ELECTRONICO");
                 rep.add(nombre);
                 s=s.replace("%%%","");
             }
@@ -315,6 +316,7 @@ public class clsDocument {
             }
 
             if (docfactura) {
+
                 if (!modofact.equalsIgnoreCase("TICKET")) {
 
                     if (i==7){
@@ -343,15 +345,15 @@ public class clsDocument {
 			if (pagoefectivo==1){
                 rep.add("Condiciones de pago: Efectivo");
 			} else {
-                rep.add("Condiciones de pago: Credito");
+                rep.add("Condiciones de pago: Crédito");
 			}
 		}
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
 			rep.add("");
-			if (docfactura && (reimpres==1)) rep.add("-------  R E I M P R E S I O N  -------");
-			if (docfactura && (reimpres==10)) rep.add("-------  R E I M P R E S I O N  -------");
+			if (docfactura && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
+			if (docfactura && (reimpres==10)) rep.add("-------  R E I M P R E S I Ó N  -------");
 			if (docfactura && (reimpres==2)) rep.add("------  C O P I A  ------");
 			if (docfactura && (reimpres==3)) rep.add("------       A N U L A D O      ------");
 			//#HS_20181212 condición para factura pendiente de pago
@@ -382,6 +384,7 @@ public class clsDocument {
     }
 
     protected String encabezado(String l) {
+
         String s,lu,a;
         int idx;
 

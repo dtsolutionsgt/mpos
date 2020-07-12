@@ -68,6 +68,7 @@ public class clsClasses {
         public String nombre;
         public String nit;
         public String direccion;
+        public String correo;
     }
 
     public class clsD_facturap {

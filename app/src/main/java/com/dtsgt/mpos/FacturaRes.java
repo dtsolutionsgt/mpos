@@ -913,9 +913,10 @@ public class FacturaRes extends PBase {
 
 			ins.init("D_FACTURAF");
 			ins.add("COREL",corel);
-			ins.add("NOMBRE",gl.fnombre);
-			ins.add("NIT",gl.fnit);
-			ins.add("DIRECCION",gl.fdir);
+			ins.add("NOMBRE",gl.gNombreCliente);
+			ins.add("NIT",gl.gNITCliente);
+			ins.add("DIRECCION",gl.gDirCliente);
+			ins.add("CORREO",gl.gCorreoCliente);
 			db.execSQL(ins.sql());
 
 			//endregion

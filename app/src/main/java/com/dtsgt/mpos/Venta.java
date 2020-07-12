@@ -7,17 +7,12 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Display;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -2756,6 +2751,7 @@ public class Venta extends PBase {
     }
 
     private void cargaCliente() {
+
         Cursor DT;
         String ss;
         double lcred,cred,disp;
@@ -2769,20 +2765,21 @@ public class Venta extends PBase {
         }
 
         try {
-            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO, CODIGO_CLIENTE FROM P_CLIENTE " +
+
+            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO, CODIGO_CLIENTE, EMAIL FROM P_CLIENTE " +
                       "WHERE CODIGO='"+gl.cliente+"'";
 
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
-            gl.fnombre=DT.getString(0);
-            gl.fnit=DT.getString(2);
-            gl.fdir=DT.getString(3);
-            gl.codigo_cliente = DT.getInt(5);
-
-            gl.media=DT.getInt(4);
-
+            gl.gNombreCliente =DT.getString(0);
             lcred=DT.getDouble(1);
+            gl.gNITCliente =DT.getString(2);
+            gl.gDirCliente =DT.getString(3);
+            gl.media=DT.getInt(4);
+            gl.codigo_cliente = DT.getInt(5);
+            gl.gCorreoCliente =  DT.getString(6);
+
             if (lcred>0) {
                 cred=totalCredito();
                 if (cred>=0) {
@@ -2795,7 +2792,7 @@ public class Venta extends PBase {
             gl.credito=disp;
             if (disp>0) ss=" [Cred: "+mu.frmcur(disp)+" ]";else ss="";
 
-            lblVend.setText(DT.getString(0)+" "+gl.fnit+" "+ss);
+            lblVend.setText(DT.getString(0)+" "+gl.gNITCliente +" "+ss);
 
             if (DT!=null) DT.close();
 

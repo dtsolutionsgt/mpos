@@ -448,6 +448,7 @@ public class clsRepBuilder {
 	}
 	
 	public void addtot(String s1,String val) {
+
 		String str;
 
 		str = val.substring(0, val.length()-1);

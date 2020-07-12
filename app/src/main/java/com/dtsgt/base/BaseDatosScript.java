@@ -805,6 +805,7 @@ public class BaseDatosScript {
                     "[NOMBRE] TEXT NOT NULL,"+
                     "[NIT] TEXT NOT NULL,"+
                     "[DIRECCION] TEXT NOT NULL,"+
+                    "[CORREO] TEXT NOT NULL,"+
                     "PRIMARY KEY ([COREL])"+
                     ");";
             database.execSQL(sql);
