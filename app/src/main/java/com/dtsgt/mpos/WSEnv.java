@@ -319,6 +319,7 @@ public class WSEnv extends PBase {
     //region Envío
 
     private void processFactura() {
+
         int contingencia;
 
         if (ftot==0) {
@@ -379,6 +380,7 @@ public class WSEnv extends PBase {
     }
 
     public String addFactheader(clsClasses.clsD_factura item) {
+
         String fst;
 
         //String fs=""+du.univfechalong(item.fecha);

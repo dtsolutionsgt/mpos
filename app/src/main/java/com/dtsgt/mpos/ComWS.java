@@ -3949,10 +3949,12 @@ public class ComWS extends PBase {
 	}
 	
 	private int ultCorel() {
+
 		Cursor DT;
 		int crl = 0;
 		
 		try {
+
 			sql="SELECT CORELULT FROM P_COREL";
 			DT=Con.OpenDT(sql);
 
@@ -3969,10 +3971,12 @@ public class ComWS extends PBase {
 	}
 
 	private String ultSerie(){
+
 		Cursor DT;
 		String serie="";
 
 		try{
+
 			sql="SELECT SERIE FROM P_COREL";
 			DT=Con.OpenDT(sql);
 

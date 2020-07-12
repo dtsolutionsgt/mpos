@@ -260,6 +260,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
     }
 
     private void obtenerCorel(){
+
         Cursor DT;
 
         try{
@@ -269,6 +270,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
             DT = Con.OpenDT(sql);
 
             if(DT.getCount() > 0) {
+
                 DT.moveToFirst();
 
                 impserie = DT.getString(0);
@@ -282,6 +284,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
     }
 
     private void listItems() {
+
         Cursor DT;
         clsClasses.clsExist item;
         String vF, cod, name, um, ump, sc, scm, sct, sp, spm, spt;

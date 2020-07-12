@@ -204,6 +204,7 @@ public class FacturaRes extends PBase {
 		fdev.deviceid =gl.deviceId;
 
 		saved=false;
+
 		assignCorel();
 
 		cliPorDia();
@@ -759,7 +760,6 @@ public class FacturaRes extends PBase {
 			peso=dt.getDouble(3);
 
 			ins.init("D_FACTURA");
-
             ins.add("EMPRESA",gl.emp);
          	ins.add("COREL",corel);
 			ins.add("ANULADO",false);
@@ -1418,6 +1418,7 @@ public class FacturaRes extends PBase {
 	}
 
     private void assignCorel(){
+
         Cursor DT;
         int ca,ci,cf,ca1,ca2;
 
@@ -1429,12 +1430,14 @@ public class FacturaRes extends PBase {
             DT=Con.OpenDT(sql);
 
             if(DT.getCount()>0){
+
                 DT.moveToFirst();
 
                 fserie=DT.getString(0);
                 ca1=DT.getInt(1);
                 ci=DT.getInt(2);
                 cf=DT.getInt(3);
+
             } else {
                 fcorel=0;fserie="";
                 //mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");

@@ -212,7 +212,6 @@ public class clsP_clienteObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_cliente();
-
             item.codigo_cliente=dt.getInt(0);
             item.codigo=dt.getString(1);
             item.empresa=dt.getInt(2);
@@ -239,7 +238,6 @@ public class clsP_clienteObj {
             item.percepcion=dt.getDouble(23);
             item.tipo_contribuyente=dt.getString(24);
             item.imagen=dt.getString(25);
-
             items.add(item);
 
             dt.moveToNext();

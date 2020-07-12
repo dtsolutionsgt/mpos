@@ -669,6 +669,7 @@ public class FelFactura extends PBase {
     }
 
     private void processMultiFactura() {
+
         int contingencia;
 
         fidx++;
