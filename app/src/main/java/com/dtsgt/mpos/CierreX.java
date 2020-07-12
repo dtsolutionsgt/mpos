@@ -32,7 +32,7 @@ public class CierreX extends PBase {
     private CierreX.clsDocExist doc;
 
     private TextView txtbtn,lblFact,lblTit;
-    private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet;
+    private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet, FactAnuladas;
     private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8,
             bClienteCon=9, bClienteDet=10,bFactAnuxDia=11, sw=0,counter=0;
     private boolean report, enc=true;
@@ -41,7 +41,6 @@ public class CierreX extends PBase {
     private clsClasses.clsBonifProd itemZ;
 
     private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
-    private ArrayList<clsClasses.clsReport> itemA= new ArrayList<clsClasses.clsReport>();
     private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<clsClasses.clsBonifProd>();
 
     private Long dateini, datefin;
@@ -70,6 +69,7 @@ public class CierreX extends PBase {
         MBxFam = (CheckBox) findViewById(R.id.checkBox18); MBxFam.setChecked(true);
         ClienteCon = (CheckBox) findViewById(R.id.checkBox19); ClienteCon.setChecked(true);
         ClienteDet = (CheckBox) findViewById(R.id.checkBox20); ClienteDet.setChecked(true);
+        FactAnuladas = (CheckBox)findViewById(R.id.checkBox25); FactAnuladas.setChecked(true);
         lblFact = (TextView) findViewById(R.id.txtFact2);
 
         datefin = du.getActDateTime();
@@ -274,6 +274,19 @@ public class CierreX extends PBase {
                 lblFact.setText("");
             }
         });
+
+        FactAnuladas.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(FactAnuladas.isChecked()){
+                    bFactAnuxDia = 11;
+                } else{
+                    bFactAnuxDia = 0;
+                }
+                report = false;
+                txtbtn.setText("GENERAR");
+                lblFact.setText("");
+            }
+        });
     }
 
     private boolean fillItems(){
@@ -284,7 +297,7 @@ public class CierreX extends PBase {
 
             if(gl.reportid==10) reporteZ();
 
-            for(int i=0; i<10; i++){
+            for(int i=0; i<12; i++){
                 if(i==0) sw=bFactxDia;
                 if(i==1) sw=bVentaxDia;
                 if(i==2) sw=bVentaxProd;
@@ -295,6 +308,7 @@ public class CierreX extends PBase {
                 if(i==7) sw=bMBxFam;
                 if(i==8) sw=bClienteCon;
                 if(i==9) sw=bClienteDet;
+                if(i==10) sw=0;
                 if(i==11) sw=bFactAnuxDia;
 
                 switch (sw){
@@ -309,11 +323,11 @@ public class CierreX extends PBase {
                             condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
+                        sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
                                 "FROM D_FACTURA "+
                                 condition+
-                                "GROUP BY SERIE, IMPMONTO, FECHA " +
-                                "ORDER BY FECHA";
+                                "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
+                                "ORDER BY CAST(FECHA/10000 AS INTEGER)";
                         break;
                     case 2:
                         if(gl.reportid==9){
@@ -323,11 +337,11 @@ public class CierreX extends PBase {
                         }
 
                         sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
-                                "SUM(TOTAL), FECHA " +
+                                "SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
                                 "FROM D_FACTURA "+
                                 condition+
                                 //"FECHA>="+ dateini +" AND FECHA<="+datefin+" " +
-                                "GROUP BY FECHA, SERIE";
+                                "GROUP BY CAST(FECHA/10000 AS INTEGER), SERIE";
                         break;
                     case 3:
                         if(gl.reportid==9){
@@ -338,8 +352,8 @@ public class CierreX extends PBase {
 
                         sql="SELECT '', '', 0, D.PRODUCTO, P.DESCCORTA, D.UMVENTA, " +
                                 " SUM(D.CANT), 0,SUM(D.TOTAL), F.FECHA " +
-                                " FROM P_LINEA L INNER JOIN P_PRODUCTO P ON L.CODIGO = P.LINEA " +
-                                " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO  " +
+                                " FROM P_LINEA L INNER JOIN P_PRODUCTO P ON L.CODIGO_LINEA = P.LINEA " +
+                                " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO  " +
                                 " INNER JOIN D_FACTURA F ON F.COREL = D.COREL  " +
                                 condition+
                                 " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
@@ -368,8 +382,8 @@ public class CierreX extends PBase {
                         }
 
                         sql="SELECT '', '', 0, '', L.NOMBRE, '', SUM(D.CANT), 0, SUM(D.TOTAL), 0 FROM P_LINEA L " +
-                                "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO " +
-                                "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
+                                "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO_LINEA " +
+                                "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
                                 "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                                 condition +
                                 " GROUP BY L.NOMBRE";
@@ -396,7 +410,7 @@ public class CierreX extends PBase {
                         }
 
                         sql="SELECT D.PRODUCTO, '', 0, '',  P.DESCCORTA, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM D_FACTURAD D " +
-                                "INNER JOIN P_PRODUCTO P ON D.PRODUCTO = P.CODIGO " +
+                                "INNER JOIN P_PRODUCTO P ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
                                 "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                                 condition+
                                 " GROUP BY D.PRODUCTO, P.DESCCORTA, P.COSTO, D.PRECIO";
@@ -410,8 +424,8 @@ public class CierreX extends PBase {
                         }
 
                         sql="SELECT L.CODIGO, '', 0, '', L.NOMBRE, '', 0, SUM(P.COSTO), SUM(D.PRECIO), 0 FROM P_LINEA L " +
-                                "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO " +
-                                "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO " +
+                                "INNER JOIN P_PRODUCTO P ON P.LINEA = L.CODIGO_LINEA " +
+                                "INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO " +
                                 "INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
                                 condition+
                                 "AND P.LINEA=L.CODIGO "+
@@ -425,12 +439,12 @@ public class CierreX extends PBase {
                             condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), F.FECHA " +
+                        sql="SELECT C.CODIGO, '', 0, '', C.NOMBRE, '',  COUNT(DISTINCT F.COREL), 0, SUM(D.PRECIO*D.CANT), CAST(F.FECHA/10000 AS INTEGER)  " +
                                 "FROM P_CLIENTE C " +
                                 "INNER JOIN D_FACTURA F ON C.CODIGO = F.CLIENTE " +
                                 "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
                                 condition+
-                                " GROUP BY C.CODIGO, C.NOMBRE, F.FECHA";
+                                " GROUP BY C.CODIGO, C.NOMBRE, CAST(F.FECHA/10000 AS INTEGER)";
                         break;
 
                     case 10:
@@ -444,7 +458,7 @@ public class CierreX extends PBase {
                                 "FROM D_FACTURA F " +
                                 "INNER JOIN P_CLIENTE C ON C.CODIGO = F.CLIENTE "+
                                 "INNER JOIN D_FACTURAD D ON F.COREL = D.COREL " +
-                                "INNER JOIN P_PRODUCTO P ON P.CODIGO = D.PRODUCTO " +
+                                "INNER JOIN P_PRODUCTO P ON P.CODIGO_PRODUCTO = D.PRODUCTO " +
                                 condition+
                                 " GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, D.PRECIO";
                         break;
@@ -455,11 +469,11 @@ public class CierreX extends PBase {
                             condition=" WHERE ANULADO=1 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
+                        sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
                                 "FROM D_FACTURA "+
                                 condition+
-                                "GROUP BY SERIE, IMPMONTO, FECHA " +
-                                "ORDER BY FECHA";
+                                "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
+                                "ORDER BY CAST(FECHA/10000 AS INTEGER)";
                         break;
                     default:
                         msgbox("Error, al identificar el tipo de reporte, cierre la ventana e intentelo de nuevo");return false;
@@ -740,10 +754,11 @@ public class CierreX extends PBase {
                         }
                     }
 
-                    if (counter==0){
+                    //CKFK 20200711 El fondo de caja ya está incluido cuando se hace el conteo de caja
+                    /*if (counter==0){
                         tot+=Fondo;
                         totF+=Fondo;
-                    }
+                    }*/
 
                     rep.line();
                     rep.add4lrrTotZ(tot,totF,totSinImp);
@@ -774,7 +789,7 @@ public class CierreX extends PBase {
                             rep.add("     REPORTE DOCUMENTOS POR DIA");
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
-                           // rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
+                            rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc1 = 2;
                         }
 
@@ -818,12 +833,13 @@ public class CierreX extends PBase {
                                 sinImp = 0;
 
                                 rep.empty();
-                               // rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
+                                rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
                             }
                         }
 
                     }else if(itemR.get(i).tipo==11){
 
+                        test = "Reporte 10";
                         if(acc11==1){
 
                             tot=0;
@@ -841,7 +857,7 @@ public class CierreX extends PBase {
                             rep.add("     FACTURAS ANULADAS POR DÍA ");
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
-                            // rep.add("             "+du.sfecha(itemA.get(j).fecha*10000));
+                            rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc11 = 2;
                         }
 
@@ -885,13 +901,13 @@ public class CierreX extends PBase {
                                 sinImp = 0;
 
                                 rep.empty();
-                                //rep.add("             " + du.sfecha(itemA.get(j+1).fecha*10000));
+                                rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
                             }
                         }
                     } else if(itemR.get(i).tipo==2){
 
                         test = "Reporte 2";
-                        fecha = du.sfecha(itemR.get(i).fecha);
+                        fecha = du.sfecha(itemR.get(i).fecha*10000);
                         if(acc2==1){
 
                             tot=0;
@@ -910,7 +926,12 @@ public class CierreX extends PBase {
                         }
 
                         if(i!=0){
-                            if(itemR.get(i).fecha!=itemR.get(i-1).fecha){
+                            //if(itemR.get(i).fecha!=itemR.get(i-1).fecha){
+
+                            String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
+                            String fecha2=String.valueOf(itemR.get(i - 1).fecha).substring(0,6);
+
+                            if (!fecha1.equals(fecha2)) {
                                 rep.line();
                                 rep.add4lrrTot("","",Integer.toString(cantF),tot);
                                 rep.empty();
@@ -920,7 +941,12 @@ public class CierreX extends PBase {
                         }
 
                         if(i!=0){
-                            if(itemR.get(i).fecha==itemR.get(i-1).fecha){
+
+                            String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
+                            String fecha2=String.valueOf(itemR.get(i - 1).fecha).substring(0,6);
+
+                            if (!fecha1.equals(fecha2)) {
+                           // if(itemR.get(i).fecha==itemR.get(i-1).fecha){
                                 if(i-1<count2){
                                     rep.add4lrrTot(fecha,itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
                                 }else {
@@ -1171,7 +1197,7 @@ public class CierreX extends PBase {
                             acc9 = 2;
                         }
 
-                        fechaR = du.univfechaReport(itemR.get(i).fecha);
+                        fechaR = du.sfecha(itemR.get(i).fecha*10000);
 
                         rep.addtwo(itemR.get(i).corel, itemR.get(i).descrip);
                         rep.add3lrrTot(fechaR, ""+itemR.get(i).cant, itemR.get(i).total);
@@ -1268,64 +1294,6 @@ public class CierreX extends PBase {
 
         }
 
-        private void generaDTAnuladas(){
-            Cursor dt=null;
-
-            try{
-
-                if(gl.reportid==9){
-                    condition =" WHERE ANULADO=1 AND KILOMETRAJE = 0 ";
-                }else if(gl.reportid==10){
-                    condition=" WHERE ANULADO=1 AND KILOMETRAJE = "+gl.corelZ+" ";
-                }
-
-                sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), FECHA " +
-                        "FROM D_FACTURA "+
-                        condition+
-                        "GROUP BY SERIE, IMPMONTO, FECHA " +
-                        "ORDER BY FECHA";
-
-                if(!sql.equals("00")){
-
-                    dt = Con.OpenDT(sql);
-
-                    if(dt==null) {
-                        msgbox("Ocurrió un error, vuelva a intentarlo");
-                        return;
-                    }
-
-                    if(dt.getCount()!=0){
-                        dt.moveToFirst();
-
-                        while(!dt.isAfterLast()){
-
-                            item = clsCls.new clsReport();
-
-                            item.corel = dt.getString(0);
-                            item.serie = dt.getString(1);
-                            item.correl = dt.getInt(2);
-                            item.codProd = dt.getString(3);
-                            item.descrip = dt.getString(4);
-                            item.um = dt.getString(5);
-                            item.cant = dt.getInt(6);
-                            item.imp = dt.getDouble(7);
-                            item.total = dt.getDouble(8);
-                            item.fecha = dt.getLong(9);
-                            item.tipo = sw;
-
-                            itemA.add(item);
-
-                            dt.moveToNext();
-                        }
-                    }
-
-                    if (dt!=null) dt.close();
-                }
-
-            }catch (Exception ex){
-
-            }
-        }
     }
 
     //endregion

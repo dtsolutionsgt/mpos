@@ -24,8 +24,8 @@
 
     <RelativeLayout
         android:id="@+id/relFilters"
-        android:layout_width="1238dp"
-        android:layout_height="228dp"
+        android:layout_width="wrap_content"
+        android:layout_height="266dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
@@ -109,8 +109,8 @@
         </RadioGroup>
 
         <RadioGroup
-            android:layout_width="435dp"
-            android:layout_height="170dp"
+            android:layout_width="428dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/textView129"
             android:layout_alignParentStart="true"
             android:layout_marginStart="65dp"
@@ -150,6 +150,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Reporte por Familia"
+                android:textSize="24sp" />
+
+            <CheckBox
+                android:id="@+id/checkBox25"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reporte Facturas Anuladas"
                 android:textSize="24sp" />
 
         </RadioGroup>

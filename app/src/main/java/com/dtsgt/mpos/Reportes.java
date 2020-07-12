@@ -810,6 +810,7 @@ public class Reportes extends PBase {
             if(gl.reportid==4) nombre="REPORTE POR FORMA DE PAGO";
             if(gl.reportid==5) nombre="REPORTE VENTA POR FAMILIA";
             if(gl.reportid==6) nombre="REPORTE VENTAS POR VENDEDOR";
+            if(gl.reportid==11) nombre="REPORTE FACTURAS ANULADAS";
 
             numero="";
             serie="";
