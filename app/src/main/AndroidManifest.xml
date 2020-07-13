@@ -37,6 +37,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
+        <activity android:name="com.dtsgt.mant.MantRepCierre"></activity>
 
         <service
             android:name="com.dtsgt.fel.FelService"
@@ -601,6 +602,7 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <receiver android:name=".PedidoDet">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />

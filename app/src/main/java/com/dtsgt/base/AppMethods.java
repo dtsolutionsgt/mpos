@@ -514,6 +514,36 @@ public class AppMethods {
 
     }
 
+    public boolean paramCierre(int pid) {
+        Cursor dt;
+        String sql,val="";
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID="+pid;
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            return val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            toast("paramCierre : "+e.getMessage());
+            return false;
+        }
+
+    }
+
+    public void paramCierreAplica(int pid,boolean valor) {
+        String sql,val="";
+
+        try {
+            if (valor) val="S";else val="N";
+            sql="UPDATE P_PARAMEXT SET VALOR='"+val+"' WHERE ID="+pid;
+            db.execSQL(sql);
+        } catch (Exception e) {
+            toast("paramCierreAplica : "+e.getMessage());
+        }
+    }
+
 	public boolean grant(int menuopt,int rol) {
 
         try {

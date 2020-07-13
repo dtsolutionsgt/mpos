@@ -1,6 +1,5 @@
 package com.dtsgt.mant;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;

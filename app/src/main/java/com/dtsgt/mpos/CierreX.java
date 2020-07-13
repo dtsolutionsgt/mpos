@@ -75,6 +75,18 @@ public class CierreX extends PBase {
         datefin = du.getActDateTime();
         dateini = du.getActDate();
 
+        FactxDia.setChecked(app.paramCierre(500));
+        VentaxDia.setChecked(app.paramCierre(501));
+        VentaxProd.setChecked(app.paramCierre(502));
+        xFPago.setChecked(app.paramCierre(503));
+        xFam.setChecked(app.paramCierre(504));
+        FactAnuladas.setChecked(app.paramCierre(505));
+        VentaxVend.setChecked(app.paramCierre(506));
+        ClienteCon.setChecked(app.paramCierre(507));
+        ClienteDet.setChecked(app.paramCierre(508));
+        MBxProd.setChecked(app.paramCierre(509));
+        MBxFam.setChecked(app.paramCierre(510));
+
         if(gl.reportid==9){
             lblTit.setText("Cierre X");
         }else if(gl.reportid==10){
@@ -100,7 +112,6 @@ public class CierreX extends PBase {
 
         lblFact.setMovementMethod(new ScrollingMovementMethod());
     }
-
 
     //region Events
 

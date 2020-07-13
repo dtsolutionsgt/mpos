@@ -30,6 +30,7 @@ import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
 import com.dtsgt.mant.MantCorel;
+import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
 
 import java.io.File;
@@ -1037,7 +1038,7 @@ public class Menu extends PBase {
             final String[] selitems = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
 					                   "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
 					                   "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
-					                   "Resolución de facturas", "Configuración"};
+					                   "Resolución de facturas", "Configuración","Configuración reportes Cierre"};
 
             menudlg = new ExDialog(this);
 
@@ -1069,6 +1070,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 16;
                     if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
                     if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
+                    if (ss.equalsIgnoreCase("Configuración reportes Cierre")) gl.mantid = 23;
 
                     if (gl.mantid == 16) {
                         startActivity(new Intent(Menu.this, MantConfig.class));
@@ -1078,6 +1080,8 @@ public class Menu extends PBase {
                         startActivity(new Intent(Menu.this, MantCorel.class));
                     } else if (gl.mantid == 21) {
                         startActivity(new Intent(Menu.this, MantRol.class));
+                    } else if (gl.mantid == 23) {
+                        startActivity(new Intent(Menu.this, MantRepCierre.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }

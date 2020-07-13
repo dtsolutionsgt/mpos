@@ -1871,7 +1871,7 @@ public class Venta extends PBase {
 
                 item = clsCls.new clsMenu();
                 item.ID=56;item.Name="Ventas";item.Icon=56;
-                mmitems.add(item);
+                //mmitems.add(item);
 
                 //item = clsCls.new clsMenu();
                 //item.ID=51;item.Name="Barra";item.Icon=51;
