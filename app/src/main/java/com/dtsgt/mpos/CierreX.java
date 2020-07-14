@@ -1010,7 +1010,12 @@ public class CierreX extends PBase {
 
                         porcentaje = (100 /totF) * itemR.get(i).total;
 
-                        rep.addtot2(itemR.get(i).codProd,itemR.get(i).descrip);
+                        if (gl.peRepVenCod) {
+                            rep.addtot2(itemR.get(i).codProd,itemR.get(i).descrip);
+                        } else {
+                           rep.add(itemR.get(i).descrip);
+                        }
+
                         rep.add4lrrTotPorc(Integer.toString(itemR.get(i).cant), itemR.get(i).um,itemR.get(i).total,porcentaje);
 
                         SumaCant = SumaCant + itemR.get(i).cant;

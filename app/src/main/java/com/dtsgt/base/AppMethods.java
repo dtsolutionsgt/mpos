@@ -511,6 +511,19 @@ public class AppMethods {
             gl.peNumImp=1;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=115";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peRepVenCod = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peRepVenCod =false;
+        }
+
 
     }
 

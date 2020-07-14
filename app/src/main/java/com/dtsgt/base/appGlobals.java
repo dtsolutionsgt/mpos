@@ -56,7 +56,7 @@ public class appGlobals extends Application {
 	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio, peInvCompart;
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp;
-    public boolean peImprFactCorrecta,peMCent,peMPrOrdCos,peMImg,peMFact,peEnvio,peCajaRec;
+    public boolean peImprFactCorrecta,peMCent,peMPrOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
 
 	// Descuentos
 	public String promprod;

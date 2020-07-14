@@ -100,6 +100,38 @@
             android:layout_toEndOf="@+id/imageView30"
             android:background="@drawable/frame_rect">
 
+            <CheckBox
+                android:id="@+id/chkEnvio6"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio4"
+                android:layout_alignStart="@id/checkBox24"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <TextView
+                android:id="@+id/lblCFact41"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_below="@+id/lblCFact39"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Reporte ventas por producto con codigo"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
             <TextView
                 android:id="@+id/lblCFact40"
                 android:layout_width="wrap_content"
