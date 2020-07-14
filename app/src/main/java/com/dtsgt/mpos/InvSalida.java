@@ -285,8 +285,6 @@ public class InvSalida extends PBase {
 
             db.beginTransaction();
 
-            if (!ingreso) db.execSQL("DELETE FROM P_STOCK");
-
             header =clsCls.new clsD_Mov();
 
             header.COREL=corel;

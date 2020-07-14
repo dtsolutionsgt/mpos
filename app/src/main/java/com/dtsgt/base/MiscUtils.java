@@ -196,9 +196,32 @@ public class MiscUtils {
         } catch (Exception ex) {
             toast(ex.getMessage());
         }
-	}   
-	
-	public void msgbox(int v) {
+	}
+
+    public void msgbox2(String msg) {
+        if (msg.isEmpty()) return;
+
+        try {
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(cCont);
+
+            dialog.setTitle(R.string.app_name);
+            dialog.setMessage(msg);
+            dialog.setCancelable(false);
+
+            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    //Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
+                }
+            });
+            dialog.show();
+
+        } catch (Exception ex) {
+            toast(ex.getMessage());
+        }
+    }
+
+    public void msgbox(int v) {
 	    msgbox(String.valueOf(v));
 	}   
 	

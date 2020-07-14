@@ -6,7 +6,6 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.TimingLogger;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
 
 import java.io.BufferedReader;
@@ -52,6 +52,7 @@ public class WSEnv extends PBase {
     private clsP_cajareporteObj P_cjReporteObj;
 
     private ArrayList<String> clients = new ArrayList<String>();
+    private ArrayList<String> rutas= new ArrayList<String>();
     private ArrayList<String> fact = new ArrayList<String>();
     private ArrayList<String> mov = new ArrayList<String>();
     private ArrayList<String> cjCierre = new ArrayList<String>();
@@ -102,14 +103,14 @@ public class WSEnv extends PBase {
         P_cjPagosObj = new clsP_cajapagosObj(this,Con,db);
         P_cjReporteObj = new clsP_cajareporteObj(this,Con,db);
 
-        prepareSend();
+        preparaEnvio();
     }
 
 
     //region Events
 
     public void doStart(View view) {
-        prepareSend();
+        preparaEnvio();
         pbar.setVisibility(View.VISIBLE);
         execws(1);
     }
@@ -221,7 +222,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
         }
     }
@@ -297,20 +298,20 @@ public class WSEnv extends PBase {
                 if (!ferr.isEmpty()) {
 
                     if (!idfact.isEmpty()){
-                        msgbox("Factura : "+idfact+"\n"+ferr);
+                        msgbox2("Factura : "+idfact+"\n"+ferr);
                     }
                 }
 
                 if (!movErr.isEmpty()) {
 
                     if(!idMov.isEmpty()){
-                        msgbox("Movimientos : "+idMov+"\n"+movErr);
+                        msgbox2("Movimientos : "+idMov+"\n"+movErr);
                     }
                 }
             }
 
         }catch (Exception ex){
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ex.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ex.getMessage());
         }
     }
 
@@ -375,7 +376,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -452,7 +453,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
@@ -483,7 +484,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -505,36 +506,33 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
     private void processMov() {
+        String vsql ="",tipomov;
+        int uruta;
+        double ucant;
 
         try {
 
             if (fTotMov==0) {
-                fIdxMov++;
-                return;
+                fIdxMov++;return;
             }
 
             fIdxMov++;
             corelMov=mov.get(fIdxMov);
             movSend=false;
 
-            mov.clear();
+            //mov.clear();
 
             D_MovObj.fill("WHERE COREL='"+corelMov+"'");
             D_MovDObj.fill("WHERE COREL='"+corelMov+"'");
 
             idMov=D_MovObj.first().COREL;
-
-            boolean Send_Stocks_Updates =false;
-
-            if (D_MovObj.first().TIPO.equalsIgnoreCase("R")){
-                //...
-                Send_Stocks_Updates=true;
-            }
+            tipomov=D_MovObj.first().TIPO;
+            boolean Send_Stocks_Updates=tipomov.equalsIgnoreCase("R");
 
             CSQL="DELETE FROM D_MOV WHERE COREL='"+corelMov+"';";
             CSQL=CSQL+"DELETE FROM D_MOVD WHERE COREL='"+corelMov+"';";
@@ -549,26 +547,32 @@ public class WSEnv extends PBase {
 
                 CSQL=CSQL+D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i)) + ";";
 
-                if(Send_Stocks_Updates){
+                AppMethods f = new AppMethods(this,null,Con,db);
+                String tipo_producto = f.prodTipo(item.producto);
 
-                    String vsql ="";
-
-                    AppMethods f = new AppMethods(this,null,Con,db);
-
-                    String tipo_producto = f.prodTipo(item.producto);
-
-                    if (tipo_producto.equalsIgnoreCase("S")){
-
+                if (Send_Stocks_Updates) {
+                    if (tipo_producto.equalsIgnoreCase("P")){
                         vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
                         vsql +=" WHERE (EMPRESA="+gl.emp+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
-                                " AND (UMPESO='"+item.unidadmedida+"')" + "AND (SUCURSAL='"+gl.tienda+"')";
+                                " AND (UNIDADMEDIDA='"+item.unidadmedida+"')" + "AND (SUCURSAL='"+gl.tienda+"')";
                         CSQL=CSQL+ vsql;
                     }
                 }
+
+                if (gl.peInvCompart && tipo_producto.equalsIgnoreCase("P") ){
+                    for (int r = 0; r <rutas.size(); r++) {
+                        ucant=item.cant;if (tipomov.equalsIgnoreCase("D")) ucant=-ucant;
+                        uruta=Integer.parseInt(rutas.get(r));
+
+                        vsql=addUpdateItem(uruta,item.producto,ucant,item.unidadmedida);
+                        CSQL=CSQL+ vsql;
+                    }
+                }
+
             }
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -596,11 +600,11 @@ public class WSEnv extends PBase {
                 db.execSQL(sql);
 
             } catch (SQLException e) {
-                msgbox(e.getMessage());
+                msgbox2(e.getMessage());
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
@@ -630,7 +634,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -658,11 +662,11 @@ public class WSEnv extends PBase {
                 db.execSQL(sql);
 
             } catch (SQLException e) {
-                msgbox(e.getMessage());
+                msgbox2(e.getMessage());
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
@@ -689,7 +693,7 @@ public class WSEnv extends PBase {
                 cjPagos.add(""+cCjPago);
             }
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -717,11 +721,11 @@ public class WSEnv extends PBase {
                 db.execSQL(sql);
 
             } catch (SQLException e) {
-                msgbox(e.getMessage());
+                msgbox2(e.getMessage());
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
@@ -749,7 +753,7 @@ public class WSEnv extends PBase {
                 cjReporte.add(""+cCjReporte);
             }
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -777,11 +781,11 @@ public class WSEnv extends PBase {
                 db.execSQL(sql);
 
             } catch (SQLException e) {
-                msgbox(e.getMessage());
+                msgbox2(e.getMessage());
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
@@ -807,7 +811,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -835,11 +839,11 @@ public class WSEnv extends PBase {
                 db.execSQL(sql);
 
             } catch (SQLException e) {
-                msgbox(e.getMessage());
+                msgbox2(e.getMessage());
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
@@ -847,7 +851,7 @@ public class WSEnv extends PBase {
 
     //region Aux
 
-    private void prepareSend() {
+    private void preparaEnvio() {
 
         ferr="";
         movErr="";
@@ -855,6 +859,14 @@ public class WSEnv extends PBase {
         int total_enviar=0;
 
         try {
+
+            rutas.clear();
+
+            if (gl.peInvCompart) {
+                clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+                P_rutaObj.fill("WHERE (SUCURSAL="+gl.tienda+") AND (CODIGO_RUTA<>"+gl.codigo_ruta+")");
+                for (int i = 0; i <P_rutaObj.count; i++) rutas.add(""+P_rutaObj.items.get(i).codigo_ruta);
+           }
 
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
             P_clienteObj.fill("WHERE ESERVICE='N'");
@@ -934,7 +946,7 @@ public class WSEnv extends PBase {
 
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -979,13 +991,55 @@ public class WSEnv extends PBase {
         new Thread(runnable).start();
     }
 
+    public String addUpdateItem(int idruta,int idproducto,double cant,String um) {
+        clsClasses.clsP_stock_update item=clsCls.new clsP_stock_update();
+
+        String fs=""+du.univfechalong(du.getActDateTime());
+
+        ins.init("P_stock_update");
+
+        //ins.add("CODIGO_STOCK",item.codigo_stock);
+        ins.add("EMPRESA",gl.emp);
+        ins.add("SUCURSAL",gl.tienda);
+        ins.add("RUTA",idruta);
+        ins.add("CODIGO_PRODUCTO",idproducto);
+        ins.add("CANTIDAD",cant);
+        ins.add("UNIDAD_MEDIDA",um);
+        ins.add("REFERENCIA","");
+        ins.add("FECHA_TRANSACCION",fs);
+        //ins.add("FECHA_PROCESADO",item.fecha_procesado);
+        ins.add("PROCESADO",0);
+
+        return ins.sql();
+
+    }
+
     //endregion
 
     //region Dialogs
 
     private void msgboxwait(String msg) {
+        try {
 
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle(R.string.app_name);
+            dialog.setMessage(msg);
+            dialog.setCancelable(false);
+
+            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            dialog.show();
+
+        } catch (Exception ex) {
+            toast(ex.getMessage());
+        }
+
+        /*
+        ExDialog dialog = new ExDialog(this);
 
         dialog.setMessage(msg);
 
@@ -996,7 +1050,7 @@ public class WSEnv extends PBase {
         });
 
         dialog.show();
-
+         */
     }
 
     //endregion

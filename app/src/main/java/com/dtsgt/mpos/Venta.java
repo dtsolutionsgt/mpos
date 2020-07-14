@@ -1939,6 +1939,10 @@ public class Venta extends PBase {
             mitems.add(item);
 
             item = clsCls.new clsMenu();
+            item.ID=26;item.Name="Reportes";item.Icon=60;
+            mitems.add(item);
+
+            item = clsCls.new clsMenu();
             item.ID=24;item.Name="Salir";item.Icon=57;
             mitems.add(item);
 
@@ -1975,6 +1979,8 @@ public class Venta extends PBase {
                     msgAskFEL("Certificar ("+pendienteFEL()+") factura(s) pendiente(s)");break;
                 case 25:
                     msgAskCierreCaja("¿Realizar cierre de caja?");break;
+                case 26:
+                    showReportMenu();break;
                 case 16:
                     menuPedidos();break;
                 case 24:
@@ -2017,6 +2023,68 @@ public class Venta extends PBase {
 
         }
     }
+
+    public void showReportMenu() {
+
+        try{
+
+            final AlertDialog Dialog;
+
+            final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
+
+            ExDialog  menudlg = new ExDialog(this);
+            menudlg.setTitle("Reportes");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                    ss=selitems[item];
+
+                    if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
+                    if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
+                    if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
+                    if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
+                    if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
+                    if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
+                    if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
+                    if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
+                    if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
+                    if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
+                    if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
+
+                    gl.titReport = ss;
+
+                    if (gl.reportid == 9 || gl.reportid == 10) {
+                        startActivity(new Intent(Venta.this,CierreX.class));
+                    }else{
+                        startActivity(new Intent(Venta.this,Reportes.class));
+                    }
+
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+
+            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbuttonp.setTextColor(Color.WHITE);
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
 
     public boolean valida(){
         try{

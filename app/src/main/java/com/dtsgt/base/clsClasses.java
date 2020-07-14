@@ -583,6 +583,19 @@ public class clsClasses {
         public String unidadmedida;
     }
 
+    public class clsP_stock_update {
+        public int  codigo_stock;
+        public int  empresa;
+        public int  sucursal;
+        public int  ruta;
+        public int  codigo_producto;
+        public double cantidad;
+        public String unidad_medida;
+        public String referencia;
+        public long fecha_transaccion;
+        public long fecha_procesado;
+        public int  procesado;
+    }
 
     public class clsP_sucursal {
         public int  codigo_sucursal;

@@ -117,6 +117,14 @@ public class PBase extends Activity {
 		}
 	}
 
+    protected void msgbox2(String msg){
+        try{
+            mu.msgbox2(msg);
+        }catch (Exception ex){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
+        }
+    }
+
 	protected void toast(String msg) {
 		toastcent(msg);
 	}

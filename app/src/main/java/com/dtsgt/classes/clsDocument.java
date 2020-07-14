@@ -267,7 +267,7 @@ public class clsDocument {
 	}
 
     protected void saveHeadLines(int reimpres) {
-        String s,ss,ss2;
+        String s,ss,ss2,su;
         String[] s2;
 		int nidx;
 
@@ -310,11 +310,16 @@ public class clsDocument {
 			}
 
 			if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
-			    if (s.contains("CLIENTE")) {
-                    s2=s.split("<<");
-                    for (int j = 1; j <s2.length; j++) {
-                        ss2=s2[j];
-                        rep.add(ss2);
+			    su=s.toUpperCase();
+			    if (su.contains("CLIENTE") ) {
+                    if (su.contains("<<") ) {
+                        s2=s.split("<<");
+                        for (int j = 1; j <s2.length; j++) {
+                            ss2=s2[j];
+                            rep.add(ss2);
+                        }
+                    } else {
+                        rep.add(s);
                     }
                 } else {
 			        s=rep.ctrim(s);

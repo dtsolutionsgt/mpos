@@ -1034,6 +1034,8 @@ public class AppMethods {
 
         try {
 
+            //toast(gl.prpar);
+
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
             intent.putExtra("mac","BT:"+gl.prpar);
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
@@ -1082,7 +1084,7 @@ public class AppMethods {
         try {
             gl.prtipo="";gl.prpar="";
 
-            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF";
+            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE RUTA="+gl.codigo_ruta;
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {

@@ -149,7 +149,7 @@ public class UtilPrint extends PBase {
 
 		try {
 
-			sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF";
+			sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE RUTA="+gl.codigo_ruta;
 			DT=Con.OpenDT(sql);
 
 			if (DT.getCount()>0) {
@@ -183,14 +183,14 @@ public class UtilPrint extends PBase {
 				if(prtipo.equalsIgnoreCase("SIN IMPRESORA")){
 					msgbox("Debe seleccionar una impresora.");
 				} else {
-					sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"'";
+					sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"' WHERE RUTA="+gl.codigo_ruta;
 					db.execSQL(sql);
 
 					Toast.makeText(this,"Configuración guardada.", Toast.LENGTH_SHORT).show();
 					super.finish();
 				}
 			} else {
-				sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"'";
+				sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"' WHERE RUTA="+gl.codigo_ruta;
 				db.execSQL(sql);
 
 				Toast.makeText(this,"Configuración guardada.", Toast.LENGTH_SHORT).show();
