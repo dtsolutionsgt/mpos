@@ -1935,11 +1935,11 @@ public class Venta extends PBase {
             mitems.add(item);
 
             item = clsCls.new clsMenu();
-            item.ID=25;item.Name="Cierra Caja";item.Icon=59;
+            item.ID=26;item.Name="Reportes";item.Icon=60;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
-            item.ID=26;item.Name="Reportes";item.Icon=60;
+            item.ID=25;item.Name="Cierra Caja";item.Icon=59;
             mitems.add(item);
 
             item = clsCls.new clsMenu();

@@ -18,7 +18,8 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 import com.dtsgt.mant.Lista;
-import com.dtsgt.webservice.wsInvActual;
+import com.dtsgt.webservice.srvInventConfirm;
+import com.dtsgt.webservice.wsInventCompartido;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,14 +35,14 @@ public class lista_ingreso_inventario extends PBase {
     private clsClasses.clsCFDV sitem;
 
     private AppMethods app;
-    private wsInvActual wsi;
+    private wsInventCompartido wsi;
     private Runnable recibeInventario;
 
     private int tipo;
     private String itemid;
 
     //Fecha
-    private boolean dateTxt,report;
+    private boolean dateTxt,report,bloqueado=false;
     private TextView lblDateini,lblDatefin;
     public final Calendar c = Calendar.getInstance();
     private static final String BARRA = "/";
@@ -79,18 +80,24 @@ public class lista_ingreso_inventario extends PBase {
         listItems();
 
         app.getURL();
-        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
         recibeInventario = new Runnable() {
-            public void run() {if (wsi.errflag) msgbox(wsi.error); }
+            public void run() {
+                bloqueado=false;
+                toast("Inventario recibido");
+                if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
+            }
         };
 
+        bloqueado=false;
         if (gl.peInvCompart) {
             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
                 public void run() {
-                    wsi.actualizaInventario(recibeInventario);
+                    bloqueado=true;
+                    wsi.execute(recibeInventario);
                 }
             };
             mtimer.postDelayed(mrunner,200);
@@ -98,12 +105,25 @@ public class lista_ingreso_inventario extends PBase {
 
     }
 
+    private void confirmaInventario() {
+        try {
+            Intent intent = new Intent(lista_ingreso_inventario.this, srvInventConfirm.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("idstock",wsi.idstock);
+            startService(intent);
+        } catch (Exception e) {}
+    }
+
     //region Events
 
     public void nuevo(View view){
         Intent intent;
 
-        try{
+        if (bloqueado) {
+            toast("Actualizando inventario . . .");return;
+        }
+
+        try {
 
             switch (tipo){
                 case 0:
@@ -128,7 +148,7 @@ public class lista_ingreso_inventario extends PBase {
     }
 
     private void setHandlers(){
-        try{
+        try {
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -153,6 +173,10 @@ public class lista_ingreso_inventario extends PBase {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
+                    if (bloqueado) {
+                        toast("Actualizando inventario . . .");return true;
+                    }
+
                     try {
                         Object lvObj = listView.getItemAtPosition(position);
                         clsClasses.clsCFDV vItem = (clsClasses.clsCFDV)lvObj;
@@ -171,10 +195,9 @@ public class lista_ingreso_inventario extends PBase {
                 }
             });
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     //endregion
@@ -451,7 +474,11 @@ public class lista_ingreso_inventario extends PBase {
         listItems();
     }
 
-    //endregion
+    @Override
+    public void onBackPressed() {
+        if (bloqueado) toast("Actualizando inventario . . .");else super.onBackPressed();
+    }
 
+    //endregion
 
 }

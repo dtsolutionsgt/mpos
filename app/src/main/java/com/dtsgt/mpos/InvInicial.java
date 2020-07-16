@@ -567,7 +567,7 @@ public class InvInicial extends PBase {
             ins.init("P_STOCK");
 
             ins.add("CODIGO",pcod);
-            ins.add("CANT",0);
+            ins.add("CANT",pcant);
             ins.add("CANTM",0);
             ins.add("PESO",0);
             ins.add("plibra",0);

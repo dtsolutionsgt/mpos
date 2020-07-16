@@ -37,7 +37,16 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
-        <activity android:name="com.dtsgt.mant.MantRepCierre"></activity>
+        <service
+            android:name="com.dtsgt.webservice.srvInventConfirm"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name="com.dtsgt.webservice.srvBase"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name="com.dtsgt.mant.MantRepCierre" />
 
         <service
             android:name="com.dtsgt.fel.FelService"

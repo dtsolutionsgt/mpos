@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +29,9 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.ladapt.ListAdaptExist;
+import com.dtsgt.webservice.srvInventConfirm;
 import com.dtsgt.webservice.wsInvActual;
+import com.dtsgt.webservice.wsInventCompartido;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -39,27 +42,26 @@ public class Exist extends PBase {
 	private ListView listView;
 	private EditText txtFilter;
 	private TextView lblReg;
+	private ProgressBar pbar;
 
-	private String prodid,savecant;
-	
+    private AppMethods app;
+
 	private ArrayList<clsClasses.clsExist> items= new ArrayList<clsClasses.clsExist>();
 	private ListAdaptExist adapter;
 	private clsClasses.clsExist selitem;
 
-    private wsInvActual wsi;
+    private wsInventCompartido wsi;
+    private clsDocExist doc;
+    private printer prn;
+    private clsRepBuilder rep;
+
+    private Runnable printclose;
     private Runnable recibeInventario;
 
-	private double cantT,disp,dispm,dispT;
-	private clsRepBuilder rep;
-	
 	private int tipo,lns, cantExistencia;
-	private String itemid;
-
-	private clsDocExist doc;
-	private printer prn;
-	private Runnable printclose;
-
-	private AppMethods app;
+	private String itemid,prodid,savecant;
+	private boolean bloqueado=false;
+    private double cantT,disp,dispm,dispT;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class Exist extends PBase {
 		listView = (ListView) findViewById(R.id.listView1);
 		txtFilter = (EditText) findViewById(R.id.txtFilter);
 		lblReg = (TextView) findViewById(R.id.textView1);lblReg.setText("");
+		pbar=findViewById(R.id.progressBar5);pbar.setVisibility(View.INVISIBLE);
 
 		setHandlers();
 
@@ -105,28 +108,45 @@ public class Exist extends PBase {
 		Toast.makeText(this, "Cantidad." + cant, Toast.LENGTH_SHORT).show();*/
 
         app.getURL();
-        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
 
         recibeInventario = new Runnable() {
             public void run() {
-                if (wsi.errflag) msgbox(wsi.error); else listItems();
+                bloqueado=false;
+                if (wsi.errflag) {
+                    msgbox(wsi.error);
+                } else {
+                    confirmaInventario();
+                    listItems();
+                    pbar.setVisibility(View.INVISIBLE);
+                }
             }
         };
 
+        bloqueado=false;
         if (gl.peInvCompart) {
+            pbar.setVisibility(View.VISIBLE);
             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
                 public void run() {
-                    wsi.actualizaInventario(recibeInventario);
+                    bloqueado=true;
+                    wsi.execute(recibeInventario);
                 }
             };
             mtimer.postDelayed(mrunner,200);
         }
-
 	}
 
-	
+    private void confirmaInventario() {
+        try {
+            Intent intent = new Intent(Exist.this, srvInventConfirm.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("idstock",wsi.idstock);
+            startService(intent);
+        } catch (Exception e) {}
+    }
+
 	//region Events
 	
 	public void printDoc(View view) {

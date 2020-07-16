@@ -33,7 +33,9 @@ import com.dtsgt.fel.FELmsgbox;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
+import com.dtsgt.webservice.srvInventConfirm;
 import com.dtsgt.webservice.wsInvActual;
+import com.dtsgt.webservice.wsInventCompartido;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -54,13 +56,13 @@ public class Anulacion extends PBase {
 	private ListAdaptCFDV adapter;
 	private clsClasses.clsCFDV selitem;
 
-    private wsInvActual wsi;
+    private wsInventCompartido wsi;
     private Runnable recibeInventario;
 
     private Runnable printotrodoc,printclose;
 	private printer prn;
     private printer prn_nc;
-    private  clsRepBuilder rep;
+    private clsRepBuilder rep;
 	private clsDocAnul doc;
 	private clsDocFactura fdoc;
 
@@ -72,7 +74,7 @@ public class Anulacion extends PBase {
 	private XMLObject xobj;
 
 	private String CSQL;
-	private boolean factsend;
+	private boolean factsend,bloqueado=false;
 
 	private int tipo,depparc,fcorel;	
 	private String selid,itemid,fserie,fres,felcorel,uuid;
@@ -132,7 +134,7 @@ public class Anulacion extends PBase {
 
         fel=new clsFELInFile(this,this,gl.timeout);
 
-		ws = new Anulacion.WebServiceHandler(Anulacion.this, gl.wsurl, gl.timeout);
+        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
 		xobj = new XMLObject(ws);
 
         clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
@@ -172,23 +174,38 @@ public class Anulacion extends PBase {
 		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"");
 
         app.getURL();
-        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
 
         recibeInventario = new Runnable() {
-            public void run() {if (wsi.errflag) msgbox(wsi.error); }
+            public void run() {
+                bloqueado=false;
+                toast("Inventario recibido");
+                if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
+            }
         };
 
+        bloqueado=false;
         if (gl.peInvCompart) {
             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
                 public void run() {
-                    wsi.actualizaInventario(recibeInventario);
+                    bloqueado=true;
+                    wsi.execute(recibeInventario);
                 }
             };
             mtimer.postDelayed(mrunner,200);
         }
 	}
+
+    private void confirmaInventario() {
+        try {
+            Intent intent = new Intent(Anulacion.this, srvInventConfirm.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("idstock",wsi.idstock);
+            startService(intent);
+        } catch (Exception e) {}
+    }
 
 	//region Events
 

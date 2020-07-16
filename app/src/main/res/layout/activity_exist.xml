@@ -118,5 +118,12 @@
         android:paddingTop="6dp"
         android:src="@drawable/erase" />
 
+    <ProgressBar
+        android:id="@+id/progressBar5"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large.Inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>
 

@@ -539,7 +539,6 @@ public class AppMethods {
             val=dt.getString(0);
             return val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            toast("paramCierre : "+e.getMessage());
             return false;
         }
 
@@ -1033,7 +1032,6 @@ public class AppMethods {
     private void printEpsonTMBT(int copies) {
 
         try {
-
             //toast(gl.prpar);
 
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");

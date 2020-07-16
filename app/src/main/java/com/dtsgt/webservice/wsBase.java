@@ -12,7 +12,7 @@ public class wsBase {
     public boolean errflag;
     public ArrayList<String> items=new ArrayList<String>();
 
-    protected String URL, NAMESPACE ="http://tempuri.org/";
+    public String URL, NAMESPACE ="http://tempuri.org/";
 
 
     private boolean idle=true;

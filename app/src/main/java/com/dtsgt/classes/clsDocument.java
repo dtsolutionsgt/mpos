@@ -476,8 +476,11 @@ public class clsDocument {
                     l = l.substring(0, idx) + serie;
                 }
                 */
-                int nn=1000000+Integer.parseInt(numero);
-                l=""+nn;l=l.substring(1,7);
+
+                if (numero.length()<7) {
+                    long nn=1000000+Long.parseLong(numero);
+                    l=""+nn;l=l.substring(1,7);
+                } else l=numero;
 
                 l="%%%Serie : "+serie +" No.: "+l;
             } else {

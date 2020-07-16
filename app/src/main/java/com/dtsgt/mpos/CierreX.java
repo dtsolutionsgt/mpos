@@ -115,27 +115,44 @@ public class CierreX extends PBase {
 
     //region Events
 
-    public void printDoc() {
+    public void GeneratePrintCierre(View view){
         try{
-            app.doPrint();
-            //printEpson();
-            //prn.printask();
+            if (!report) {
 
+                bFactxDia=0; bVentaxDia=0; bVentaxProd=0; bxFPago=0; bxFam=0; bVentaxVend=0;
+                bMBxProd=0; bMBxFam=0;bClienteCon=0; bClienteDet=0;bFactAnuxDia=0;
+
+                if (FactxDia.isChecked()) bFactxDia=1;
+                if (VentaxDia.isChecked()) bVentaxDia=2;
+                if (VentaxProd.isChecked()) bVentaxProd=3;
+                if (xFPago.isChecked()) bxFPago=4;
+                if (xFam.isChecked()) bxFam=5;
+                if (FactAnuladas.isChecked()) bVentaxVend=6;
+                if (VentaxVend.isChecked()) bMBxProd=7;
+                if (ClienteCon.isChecked()) bMBxFam=8;
+                if (ClienteDet.isChecked()) bClienteCon=9;
+                if (MBxProd.isChecked()) bClienteDet=10;
+                if (MBxFam.isChecked()) bFactAnuxDia=11;
+
+                if(fillItems()){
+                    if (itemR.size() == 0) {
+                        toastlong("No ha realizado ninguna venta desde el último cierre Z.");
+                        //return;
+                    }
+                    doc.buildPrint("0", 0);
+                    getTXT();
+                    txtbtn.setText("IMPRIMIR");
+                    report = true;
+                }else {
+                    return;
+                }
+
+            }else {
+                printDoc();
+            }
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void printEpson() {
-        try {
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
-            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
-            intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
-            intent.putExtra("askprint",1);
-            this.startActivity(intent);
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("printEpson" + e.getMessage());
+            msgbox("GeneratePrint: "+e);
         }
     }
 
@@ -309,6 +326,7 @@ public class CierreX extends PBase {
             if(gl.reportid==10) reporteZ();
 
             for(int i=0; i<12; i++){
+
                 if(i==0) sw=bFactxDia;
                 if(i==1) sw=bVentaxDia;
                 if(i==2) sw=bVentaxProd;
@@ -607,31 +625,6 @@ public class CierreX extends PBase {
         }
     }
 
-    public void GeneratePrintCierre(View view){
-        try{
-            if(!report) {
-                if(fillItems()){
-                    if (itemR.size() == 0) {
-                        toastlong("No ha realizado ninguna venta desde el último cierre Z.");
-                        //return;
-                    }
-                    doc.buildPrint("0", 0);
-                    getTXT();
-                    txtbtn.setText("IMPRIMIR");
-                    report = true;
-                }else {
-                    return;
-                }
-
-            }else {
-                printDoc();
-            }
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("GeneratePrint: "+e);
-        }
-    }
-
     public void getTXT(){
         StringBuilder text = new StringBuilder();
         try {
@@ -660,6 +653,29 @@ public class CierreX extends PBase {
 
     }
 
+    public void printDoc() {
+        try{
+            app.doPrint();
+            //printEpson();
+            //prn.printask();
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void printEpson() {
+        try {
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
+            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
+            intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
+            intent.putExtra("askprint",1);
+            this.startActivity(intent);
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox("printEpson" + e.getMessage());
+        }
+    }
 
     //endregion
 
@@ -774,7 +790,7 @@ public class CierreX extends PBase {
                     rep.line();
                     rep.add4lrrTotZ(tot,totF,totSinImp);
 
-                    rep.add("Totales sumados con el fondo de caja (" + Fondo + ")");
+                    //rep.add("Totales sumados con el fondo de caja (" + Fondo + ")");
 
                     tot=0;totF=0;totSinImp=0;
                     rep.empty();
@@ -811,23 +827,24 @@ public class CierreX extends PBase {
                         series=itemR.get(i).serie;
 
                         totSinImp = itemR.get(i).total - itemR.get(i).imp;
-                        rep.add3Tot(itemR.get(i).cant,totSinImp,itemR.get(i).imp, itemR.get(i).total);
+                        rep.add3Tot2(itemR.get(i).cant,totSinImp,itemR.get(i).imp, itemR.get(i).total);
 
                         tot += itemR.get(i).total;
                         sinImp += totSinImp;
                         impF += itemR.get(i).imp;
                         cantF += itemR.get(i).cant;
 
-                        if(i+1==itemR.size()){
+                        if (i+1==itemR.size()){
 
                             rep.line();
-                            rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+                            //rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+                            //rep.add3Tot2(cantF, sinImp, impF, tot);
 
                             totF += tot;
                             SumaCant += cantF;
                             totSinImpF += sinImp;
 
-                        }else {
+                        } else {
 
                             String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
                             String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
@@ -1079,20 +1096,20 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("      REPORTE VENTA POR FAMILIA");
-                            rep.add("Seccion   Cant.Art    Total      %");
+                            rep.add("Seccion   Cant.Art Total        %");
                             rep.line();
                             acc5 = 2;
                         }
 
                         porcentaje = (100 /totF) * itemR.get(i).total;
 
-                        rep.add4lrrTotPorc(itemR.get(i).descrip, Integer.toString(itemR.get(i).cant),itemR.get(i).total,porcentaje);
+                        rep.add4lrrTotPorc2(itemR.get(i).descrip, Integer.toString(itemR.get(i).cant),itemR.get(i).total,porcentaje);
 
                         SumaCant = SumaCant + itemR.get(i).cant;
 
                         if(i+1==count5){
                             rep.line();
-                            rep.add4lrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
+                            rep.add4lrrTotPorc2("",Integer.toString(SumaCant),totF,0.0);
                             rep.empty();
                         }
 

@@ -286,7 +286,6 @@ public class clsRepBuilder {
         items.add(ts);
     }
 
-
     public void add3Tot(int s1,double v2,double v3,double v4) {
         String sval,sval2,sval3;
         int val;
@@ -298,6 +297,20 @@ public class clsRepBuilder {
         val=sval.length()-2;
 
         ts=ltrim(Integer.toString(s1),prwt)+ltrim(sval,prwt-2)+ltrim(sval2,prwt-val)+ltrim(sval3,prwt);
+        items.add(ts);
+    }
+
+    public void add3Tot2(int s1,double v2,double v3,double v4) {
+        String sval,sval2,sval3;
+        int val;
+
+        sval=cursym+decfrm.format(v2);
+        sval2=cursym+decfrm.format(v3);
+        sval3=cursym+decfrm.format(v4);
+
+        val=sval.length()-2;
+
+        ts=ltrim(Integer.toString(s1),prwq-6)+rtrim(sval,prwq+2)+rtrim(sval2,prwq+2)+rtrim(sval3,prwq+2);
         items.add(ts);
     }
 
@@ -319,6 +332,25 @@ public class clsRepBuilder {
 		ts=ltrim(s1,prwt-4)+ltrim(s2,prwt-2)+ltrim(stot,prwt-tot)+ltrim(sval,prwt);
 		items.add(ts);
 	}
+
+    public void add4lrrTotPorc2(String s1,String s2,double s3,double v3) {
+        String stot;
+        int tot;
+        String sval;
+
+        if(v3==0.0){
+            sval="";
+        }else {
+            sval = aproxDec(v3);
+        }
+
+        stot=cursym+decfrm.format(s3);
+
+        tot=sval.length();
+
+        ts=ltrim(s1,prwq-1)+rtrim(s2,prwq-2)+rtrim(stot,prwq+4)+rtrim(sval,prwq-4);
+        items.add(ts);
+    }
 
     public void add4lrrTot(String s1,String s2,double s3,double v3) {
         String stot,scom;
