@@ -239,7 +239,7 @@ public class InvInicial extends PBase {
                 adapterr=new LA_T_movr(this,this,T_movrObj.items);
                 listView.setAdapter(adapterr);
             } catch (Exception e) {
-                mu.msgbox(e.getMessage());
+                msgbox(e.getMessage());
             }
 
         } else {
@@ -256,7 +256,7 @@ public class InvInicial extends PBase {
                 adapter=new LA_T_movd(this,this,T_movdObj.items);
                 listView.setAdapter(adapter);
             } catch (Exception e) {
-                mu.msgbox(e.getMessage());
+                msgbox(e.getMessage());
             }
 
             if (T_movdObj.count==0) creaEncabezadoInicial();
@@ -448,7 +448,6 @@ public class InvInicial extends PBase {
 
                 borraEncabezadoInicial();
                 db.execSQL("DELETE FROM T_MOVD");
-
             }
 
             db.execSQL("DELETE FROM T_MOVR");
@@ -457,6 +456,12 @@ public class InvInicial extends PBase {
             db.endTransaction();
 
             toastlong("Existencias actualizadas");
+
+            if (gl.peInvCompart) {
+                gl.autocom = 1;
+                startActivity(new Intent(this,WSEnv.class));
+            }
+
             finish();
 
         } catch (Exception e) {
@@ -561,7 +566,6 @@ public class InvInicial extends PBase {
     }
 
     private void updateStock(int pcod,double pcant,String um) {
-
         try {
 
             ins.init("P_STOCK");
@@ -587,10 +591,10 @@ public class InvInicial extends PBase {
 
             db.execSQL(ins.sql());
         } catch (Exception e) {
+            sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+            db.execSQL(sql);
         }
 
-        sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-        db.execSQL(sql);
     }
 
     //endregion
@@ -713,9 +717,8 @@ public class InvInicial extends PBase {
     //region Dialogs
 
     private void msgAskTodo(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle(invtext);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -739,9 +742,8 @@ public class InvInicial extends PBase {
     }
 
     private void msgAskSave(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle(invtext);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -763,9 +765,8 @@ public class InvInicial extends PBase {
     }
 
     private void msgAskSave2(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle(invtext);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -789,9 +790,7 @@ public class InvInicial extends PBase {
     private void msgAskExit(String msg) {
 
         ExDialog dialog = new ExDialog(this);
-        //AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Title");
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

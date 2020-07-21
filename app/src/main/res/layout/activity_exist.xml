@@ -1,9 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@layout/back"
-    tools:context=".InvBodega" >
+    tools:context=".Exist" >
 
     <RelativeLayout
         android:id="@+id/relRoad"
@@ -57,14 +58,13 @@
 
     <EditText
         android:id="@+id/txtFilter"
-        android:layout_width="150dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/relRoad"
         android:layout_alignLeft="@+id/listView1"
         android:layout_alignParentTop="false"
-        android:layout_below="@+id/relRoad"
         android:layout_marginTop="10dp"
-        android:layout_toLeftOf="@+id/ImageView01"
-        android:maxLines="1" >
+        android:maxLines="1">
 
         <requestFocus />
     </EditText>
@@ -73,9 +73,12 @@
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/txtFilter"
-        android:layout_margin="5dp" >
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp">
 
     </ListView>
 
@@ -85,7 +88,10 @@
         android:layout_height="48dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentTop="false"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentRight="false"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/textView1"
         android:clickable="true"
         android:onClick="printDoc"
         android:padding="5dp"
@@ -96,7 +102,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/listView1"
-        android:layout_toLeftOf="@+id/btnImp"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/ImageView01"
         android:paddingLeft="5dp"
         android:paddingRight="10dp"
         android:text=" ( 0 )"
@@ -107,15 +114,16 @@
         android:id="@+id/ImageView01"
         android:layout_width="48dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txtFilter"
         android:layout_alignTop="@+id/txtFilter"
-        android:layout_toLeftOf="@+id/textView1"
+        android:layout_alignBottom="@+id/txtFilter"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/txtFilter"
         android:adjustViewBounds="true"
         android:clickable="true"
         android:focusable="false"
         android:onClick="limpiaFiltro"
-        android:paddingBottom="6dp"
         android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:src="@drawable/erase" />
 
     <ProgressBar
@@ -124,6 +132,71 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
+
+    <TextView
+        android:id="@+id/textView186"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/listView1"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="-5dp"
+        android:layout_toStartOf="@+id/imageView78"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:onClick="doRecibir"
+        android:text="Actualizar"
+        android:textSize="10sp" />
+
+    <ImageView
+        android:id="@+id/imageView77"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView186"
+        android:layout_alignStart="@+id/textView186"
+        android:layout_alignTop="@+id/btnImp"
+        android:layout_alignEnd="@+id/textView186"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:clickable="true"
+        android:onClick="doRecibir"
+        android:src="@drawable/recibir_rapido" />
+
+    <TextView
+        android:id="@+id/textView187"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView186"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="0dp"
+        android:clickable="true"
+        android:gravity="center_horizontal"
+        android:onClick="doEnviar"
+        android:text="Enviar"
+        android:textSize="10sp" />
+
+    <ImageView
+        android:id="@+id/imageView78"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView187"
+        android:layout_alignStart="@+id/textView187"
+        android:layout_alignTop="@+id/imageView77"
+        android:layout_alignEnd="@+id/textView187"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:clickable="true"
+        android:onClick="doEnviar"
+        android:src="@drawable/enviar_archivos" />
 
 </RelativeLayout>
 

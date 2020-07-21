@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
@@ -25,6 +26,7 @@ import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
@@ -61,6 +63,7 @@ public class FelFactura extends PBase {
 
     private ArrayList<String> facts = new ArrayList<String>();
     private ArrayList<String> factlist = new ArrayList<String>();
+    private ArrayList<String> rutas= new ArrayList<String>();
 
     private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact;
     private boolean ddemomode,multiflag,factsend,contmode;
@@ -485,9 +488,12 @@ public class FelFactura extends PBase {
     }
 
     private void processFactura() {
-        int contingencia;
+        clsClasses.clsD_facturad item;
+        String tipo_producto,vsql;
+        int contingencia,uruta;
 
         try {
+            AppMethods f = new AppMethods(this,null,Con,db);
 
             D_facturaObj.fill("WHERE COREL='"+scorel+"'");
             D_facturadObj.fill("WHERE COREL='"+scorel+"'");
@@ -513,10 +519,31 @@ public class FelFactura extends PBase {
             String UpdateToStock = "";
 
             for (int i = 0; i <D_facturadObj.count; i++) {
+
+                item=D_facturadObj.items.get(i);
+
                 CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
-                UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
-                if (!UpdateToStock.isEmpty())
-                    CSQL=CSQL+ UpdateToStock;
+
+                tipo_producto = f.prodTipo(D_facturadObj.items.get(i).producto);
+
+                if (tipo_producto.equalsIgnoreCase("P")) {
+
+                    UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                    if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
+
+                    if (gl.peInvCompart){
+                        for (int r = 0; r <rutas.size(); r++) {
+                            uruta=Integer.parseInt(rutas.get(r));
+
+                            vsql=addUpdateItem(uruta,item.producto,-item.cant,item.umstock);
+                            CSQL=CSQL+ vsql;
+                        }
+                    }
+                }
+
+                //UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                //if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
+
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
@@ -530,16 +557,6 @@ public class FelFactura extends PBase {
                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
                         "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
             }
-
-            /*
-            if (contingencia==0) {
-                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
-                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
-            } else {
-                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
-                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
-            }
-            */
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 
@@ -845,6 +862,14 @@ public class FelFactura extends PBase {
             }
 
             ftot=facts.size();
+
+            rutas.clear();
+
+            if (gl.peInvCompart) {
+                clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+                P_rutaObj.fill("WHERE (SUCURSAL="+gl.tienda+") AND (CODIGO_RUTA<>"+gl.codigo_ruta+")");
+                for (int i = 0; i <P_rutaObj.count; i++) rutas.add(""+P_rutaObj.items.get(i).codigo_ruta);
+            }
         } catch (Exception e) {
             msgexit(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -941,6 +966,29 @@ public class FelFactura extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+    }
+
+    public String addUpdateItem(int idruta,int idproducto,double cant,String um) {
+        clsClasses.clsP_stock_update item=clsCls.new clsP_stock_update();
+
+        String fs=""+du.univfechalong(du.getActDateTime());
+
+        ins.init("P_stock_update");
+
+        //ins.add("CODIGO_STOCK",item.codigo_stock);
+        ins.add("EMPRESA",gl.emp);
+        ins.add("SUCURSAL",gl.tienda);
+        ins.add("RUTA",idruta);
+        ins.add("CODIGO_PRODUCTO",idproducto);
+        ins.add("CANTIDAD",cant);
+        ins.add("UNIDAD_MEDIDA",um);
+        ins.add("REFERENCIA","");
+        ins.add("FECHA_TRANSACCION",fs);
+        //ins.add("FECHA_PROCESADO",item.fecha_procesado);
+        ins.add("PROCESADO",0);
+
+        return ins.sql();
 
     }
 

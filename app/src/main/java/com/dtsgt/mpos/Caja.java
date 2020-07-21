@@ -187,13 +187,9 @@ public class Caja extends PBase {
                             }else {
                                 saveMontoIni();
                             }
-
-
                         }else {
                             saveMontoIni();
                         }
-
-
                     }
 
                 }else if(montoFin<0){
@@ -225,16 +221,26 @@ public class Caja extends PBase {
                 fondoCaja = caja.last().fondocaja;
             }
 
-            sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
-                    "FROM D_FACTURAP P " +
+            /*
+            sql="SELECT P.CODPAGO, SUM(P.VALOR) FROM D_FACTURAP P " +
                     "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                     "WHERE F.KILOMETRAJE=0 AND P.CODPAGO=1 " +
                     "GROUP BY P.CODPAGO";
+             */
+
+            sql="SELECT P.CODPAGO, SUM(P.VALOR) FROM D_FACTURAP P " +
+                "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                "WHERE F.KILOMETRAJE=0 AND P.TIPO='E' GROUP BY P.TIPO";
 
             dt=Con.OpenDT(sql);
 
             if(dt==null) throw new Exception();
-            if(dt.getCount()==0) tot=fondoCaja; else tot = fondoCaja+dt.getDouble(1);
+            if(dt.getCount()==0) {
+                tot=fondoCaja;
+            } else {
+                double vval=dt.getDouble(1);
+                tot = fondoCaja+vval;
+            }
             if(dt!=null) dt.close();
 
             if(cred==1){
@@ -257,7 +263,11 @@ public class Caja extends PBase {
             sql="SELECT SUM(MONTO) FROM P_cajapagos WHERE COREL=0";
             dt = Con.OpenDT(sql);
 
-            if(dt.getCount()==0) pago=0; else pago = dt.getDouble(0);
+            if(dt.getCount()==0) {
+                pago=0;
+            } else {
+                pago = dt.getDouble(0);
+            }
             if(dt!=null) dt.close();
 
             montoDif = tot - pago;

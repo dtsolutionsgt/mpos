@@ -6,6 +6,7 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -14,7 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dtsgt.webservice.srvInventConfirm;
 import com.dtsgt.webservice.wsInvActual;
+import com.dtsgt.webservice.wsInventCompartido;
 import com.dtsgt.webservice.wsPedidoDatos;
 import com.dtsgt.webservice.wsPedidosEstado;
 import com.dtsgt.webservice.wsPedidosNuevos;
@@ -35,7 +38,7 @@ public class CliPos extends PBase {
 	private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 
-    private wsInvActual wsi;
+    private wsInventCompartido wsi;
     private wsPedidosNuevos wspn;
     private wsPedidosEstado wspe;
     private wsPedidoDatos   wspd;
@@ -47,7 +50,7 @@ public class CliPos extends PBase {
 
 	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, wspnerror;
 	private boolean consFinal=false,idleped=true;
-	private boolean inicio_pedidos=true,bandera_pedidos=false;
+	private boolean inicio_pedidos=true,bandera_pedidos=false,bloqueado;
 	private int cantped,corelped;
 
     private Timer ptimer;
@@ -75,18 +78,16 @@ public class CliPos extends PBase {
         setHandlers();
 
         getURL();
+        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
         wspn=new wsPedidosNuevos(gl.wsurl,gl.emp,gl.tienda);
-        wsi=new wsInvActual(gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
         wspe=new wsPedidosEstado(gl.wsurl,null);
         wspd=new wsPedidoDatos(gl.wsurl,rnPedDatosEstado);
 
-        if (gl.peInvCompart) {
-            actualizaInventario();
-        } else {
-            try {
-                if (gl.pePedidos) wspn.execute(rnValidaPedNuevos);
-            } catch (Exception e) {}
-        }
+        bloqueado=false;
+
+        try {
+            if (gl.pePedidos) wspn.execute(rnValidaPedNuevos);
+        } catch (Exception e) {}
 
 	}
 
@@ -97,17 +98,11 @@ public class CliPos extends PBase {
 	//region  Events
 
 	public void consFinal(View view) {
-        if (gl.pePedidos) {
-            if (!idleped) {
-                //toast("Actualizando pedidos, espere por favor ....");return;
-            }
-        }
-
         try {
             consFinal=true;
             if (agregaCliente("C.F.","Consumidor final","Ciudad","")) procesaCF() ;
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 	}
 
@@ -155,6 +150,19 @@ public class CliPos extends PBase {
 
 	private void setHandlers() {
 
+        rnRecibeInventario = new Runnable() {
+            public void run() {
+                bloqueado=false;
+                pbar.setVisibility(View.INVISIBLE);
+                if (wsi.errflag) {
+                    msgbox2("wsi"+wsi.error);
+                } else {
+                    confirmaInventario();
+                    finish();
+                }
+            }
+        };
+
         rnValidaPedNuevos = new Runnable() {
             public void run() {
                 estadoPedidos();
@@ -167,18 +175,6 @@ public class CliPos extends PBase {
             public void run() {
                 idleped=true;
                 showPanel();
-            }
-        };
-
-        rnRecibeInventario = new Runnable() {
-            public void run() {
-                if (wsi.errflag) {
-                    showPanel();
-                    msgbox("wsi"+wsi.error);
-                }
-                try {
-                    wspn.execute(rnValidaPedNuevos);
-                } catch (Exception e) {}
             }
         };
 
@@ -264,7 +260,7 @@ public class CliPos extends PBase {
 			consFinal=false;
 			limpiaCampos();
 
-            finish();
+            terminaCliente();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -296,13 +292,30 @@ public class CliPos extends PBase {
 
 			limpiaCampos();
 
-			finish();
+            terminaCliente();
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
 	}
+
+	private void terminaCliente() {
+        if (gl.peInvCompart) {
+            bloqueado=true;
+            wsi.idstock="";
+            wsi.execute(rnRecibeInventario);
+        } else finish();
+    }
+
+    private void confirmaInventario() {
+        try {
+            Intent intent = new Intent(CliPos.this, srvInventConfirm.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("idstock",wsi.idstock);
+            startService(intent);
+        } catch (Exception e) {}
+    }
 
     //endregion
 
@@ -430,7 +443,7 @@ public class CliPos extends PBase {
         } catch (Exception e) {
             db.endTransaction();
             toast("agregaPedido "+e.getMessage());
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             showPanel();
             return false;
         }
@@ -686,7 +699,7 @@ public class CliPos extends PBase {
 				return true;
 
 			} catch (SQLException e1) {
-				mu.msgbox(e1.getMessage());return false;
+				mu.msgbox2(e1.getMessage());return false;
 			}
 
 		}
@@ -709,7 +722,7 @@ public class CliPos extends PBase {
             return true;
 
         } catch (Exception e) {
-            mu.msgbox(e.getMessage());return false;
+            msgbox2(e.getMessage());return false;
         }
 
     }
@@ -762,16 +775,6 @@ public class CliPos extends PBase {
 
     }
 
-    private void actualizaInventario() {
-        Handler mtimer = new Handler();
-        Runnable mrunner=new Runnable() {
-            @Override
-            public void run() {
-                wsi.actualizaInventario(rnRecibeInventario);
-            }
-        };
-        mtimer.postDelayed(mrunner,200);
-    }
 
     //endregion
 
@@ -786,7 +789,7 @@ public class CliPos extends PBase {
 
             if (browse==1) {
                 browse=0;
-                if (!gl.cliente.isEmpty()) finish();
+                if (!gl.cliente.isEmpty()) terminaCliente();
                 return;
             }
 
@@ -801,5 +804,11 @@ public class CliPos extends PBase {
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (bloqueado) toast("Actualizando inventario . . .");else super.onBackPressed();
+    }
+
     //endregion
+
 }

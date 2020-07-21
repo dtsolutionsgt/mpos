@@ -14,18 +14,11 @@ public class srvInventConfirm extends srvBase {
     public void execute() {
         wsic=new wsInventConfirm(URL,idstock);
         wsic.execute();
-        notification("Confirm service started");
     }
 
     @Override
     public void loadParams(Intent intent) {
         idstock = intent.getStringExtra("idstock");
-    }
-
-
-    @Override
-    public void onDestroy() {
-        notification("Confirm service complete");
     }
 
 }

@@ -14,7 +14,6 @@ public class wsBase {
 
     public String URL, NAMESPACE ="http://tempuri.org/";
 
-
     private boolean idle=true;
 
     public wsBase(String Url) {

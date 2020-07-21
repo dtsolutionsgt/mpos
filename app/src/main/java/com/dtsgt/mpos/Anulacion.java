@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
@@ -51,6 +52,7 @@ public class Anulacion extends PBase {
 
 	private ListView listView;
 	private TextView lblTipo;
+    private ProgressBar pbar;
 	
 	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
 	private ListAdaptCFDV adapter;
@@ -112,6 +114,7 @@ public class Anulacion extends PBase {
 		lblTipo= (TextView) findViewById(R.id.lblDescrip);
 		lblDateini = (TextView) findViewById(R.id.lblDateini2);
 		lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
+        pbar=findViewById(R.id.progressBar7);pbar.setVisibility(View.INVISIBLE);
 
 		app = new AppMethods(this, gl, Con, db);
 		gl.validimp=app.validaImpresora();
@@ -174,18 +177,19 @@ public class Anulacion extends PBase {
 		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"");
 
         app.getURL();
-        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
+        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
         recibeInventario = new Runnable() {
             public void run() {
                 bloqueado=false;
-                toast("Inventario recibido");
                 if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
+                pbar.setVisibility(View.INVISIBLE);
             }
         };
 
         bloqueado=false;
         if (gl.peInvCompart) {
+            pbar.setVisibility(View.VISIBLE);
             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
@@ -238,8 +242,12 @@ public class Anulacion extends PBase {
 		if (gl.wsurl.isEmpty()) toast("Falta archivo con URL");
 	}
 
-	public void anulDoc(View view){
-		try{
+	public void anulDoc(View view) {
+        if (bloqueado) {
+            toast("Actualizando inventario . . .");return;
+        }
+
+        try{
 			if (itemid.equalsIgnoreCase("*")) {
 				mu.msgbox("Debe seleccionar un documento.");return;
 			}
@@ -248,7 +256,6 @@ public class Anulacion extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 
 	private void setHandlers(){
@@ -454,8 +461,7 @@ public class Anulacion extends PBase {
                 	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
                 	if (uuid!=null){
 						anulacionFEL();
-					}else
-					{
+					} else {
 						anulFactura(itemid);
 					}
 
@@ -472,48 +478,15 @@ public class Anulacion extends PBase {
 			
 			mu.msgbox("Documento anulado.");
 
-			/*
-			if(tipo==3) {
-
-				clsDocFactura fdoc;
-
-				fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
-				fdoc.deviceid =gl.deviceId;
-				fdoc.buildPrint(itemid, 3, "TOL");
-
-				String corelNotaCred=tieneNotaCredFactura(itemid);
-
-				if (!corelNotaCred.isEmpty()){
-					prn.printask(printotrodoc);
-				}else {
-					prn.printask(printclose);
-				}
-
-			} else if (tipo==6){
-
-				clsDocDevolucion fdev;
-
-				fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
-				fdev.deviceid =gl.deviceId;
-
-				fdev.buildPrint(itemid, 3, "TOL");
-
-				String corelFactura=tieneFacturaNC(itemid);
-
-				if (!corelFactura.isEmpty()){
-					prn_nc.printask(printotrodoc, "printnc.txt");
-				}else {
-					prn_nc.printask(printclose, "printnc.txt");
-				}
-
-			}
-
-			*/
-
 			sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
 			db.execSQL(sql);
 
 			listItems();
+
+            if (gl.peInvCompart) {
+                gl.autocom = 1;
+                startActivity(new Intent(this,WSEnv.class));
+            }
 			
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1803,5 +1776,13 @@ public class Anulacion extends PBase {
 
     //endregion
 
+    //region Activity Events
+
+    @Override
+    public void onBackPressed() {
+        if (bloqueado) toast("Actualizando inventario . . .");else super.onBackPressed();
+    }
+
+    //endregion
 
 }

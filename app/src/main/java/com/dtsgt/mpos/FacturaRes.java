@@ -644,7 +644,12 @@ public class FacturaRes extends PBase {
         gl.cliposflag=false;
 
         if (!app.usaFEL()) {
-            impresionDocumento();
+            impresionDocumento(false);
+            if (gl.peInvCompart | gl.peEnvio) {
+                browse=4;
+                gl.autocom = 1;
+                startActivity(new Intent(this,WSEnv.class));
+            }
         } else {
             if (isNetworkAvailable()) {
                 browse=2;
@@ -659,7 +664,11 @@ public class FacturaRes extends PBase {
 
 	}
 
-	private void impresionDocumento(){
+    private void impresionDocumento(){
+        impresionDocumento(true);
+    }
+
+	private void impresionDocumento(boolean cerrar){
 
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
@@ -698,7 +707,7 @@ public class FacturaRes extends PBase {
 
 			//if (!prn.isEnabled())
 
-            super.finish();
+            if (cerrar) super.finish();
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -2530,6 +2539,12 @@ public class FacturaRes extends PBase {
 		try {
 
 			super.onResume();
+
+            if (browse==4) {
+                browse=0;
+                finish();
+                return;
+            }
 
             if (browse==3) {
                 browse=0;

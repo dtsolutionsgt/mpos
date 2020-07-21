@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsKeybHandler;
@@ -334,6 +335,11 @@ public class InvSalida extends PBase {
             db.endTransaction();
 
             toastlong("Existencias actualizadas");
+
+            if (gl.peInvCompart) {
+                gl.autocom = 1;
+                startActivity(new Intent(this,WSEnv.class));
+            }
             finish();
 
         } catch (Exception e) {
@@ -579,7 +585,7 @@ public class InvSalida extends PBase {
             if (P_motivoajusteObj.items.get(i).codigo_motivo_ajuste== motivo) sidx=i;
         }
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        ExDialog menudlg = new ExDialog(this);
         menudlg.setTitle("Razón de ajuste");
 
         menudlg.setSingleChoiceItems(selitems,sidx,  new DialogInterface.OnClickListener() {
@@ -607,9 +613,8 @@ public class InvSalida extends PBase {
     }
 
     private void msgAskTodo(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle(invtext);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -633,9 +638,8 @@ public class InvSalida extends PBase {
     }
 
     private void msgAskSave(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle(invtext);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -657,9 +661,8 @@ public class InvSalida extends PBase {
     }
 
     private void msgAskSave2(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle(invtext);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -681,9 +684,8 @@ public class InvSalida extends PBase {
     }
 
     private void msgAskExit(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        ExDialog dialog = new ExDialog(this);
 
-        dialog.setTitle("Title");
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

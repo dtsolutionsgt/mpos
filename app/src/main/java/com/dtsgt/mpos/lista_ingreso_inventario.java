@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
@@ -28,6 +29,7 @@ public class lista_ingreso_inventario extends PBase {
 
     private ListView listView;
     private TextView lblTipo;
+    private ProgressBar pbar;
 
     private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
     private ListAdaptCFDV adapter;
@@ -64,6 +66,7 @@ public class lista_ingreso_inventario extends PBase {
         lblTipo= (TextView) findViewById(R.id.lblDescrip2);
         lblDateini = (TextView) findViewById(R.id.lblDateini2);
         lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
+        pbar=findViewById(R.id.progressBar6);pbar.setVisibility(View.INVISIBLE);
 
         app = new AppMethods(this, gl, Con, db);
 
@@ -85,13 +88,14 @@ public class lista_ingreso_inventario extends PBase {
         recibeInventario = new Runnable() {
             public void run() {
                 bloqueado=false;
-                toast("Inventario recibido");
                 if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
+                pbar.setVisibility(View.INVISIBLE);
             }
         };
 
         bloqueado=false;
         if (gl.peInvCompart) {
+            pbar.setVisibility(View.VISIBLE);
             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
@@ -124,6 +128,11 @@ public class lista_ingreso_inventario extends PBase {
         }
 
         try {
+
+            clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
+            suc.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            gl.codigo_proveedor=suc.first().codigo_proveedor;
+            gl.nombre_proveedor="Completo";
 
             switch (tipo){
                 case 0:

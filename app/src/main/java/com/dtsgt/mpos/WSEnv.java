@@ -60,19 +60,10 @@ public class WSEnv extends PBase {
     private ArrayList<String> cjPagos = new ArrayList<String>();
     private ArrayList<String> cStock= new ArrayList<String>();
 
-    private String CSQL,plabel,rs,
-            corel,ferr,idfact,
-            corelMov, movErr, idMov,
-            corelCjCierre, cjCierreError,
-            corelCjReporte, cjReporteError,
-            corelCjPagos, cjPagosError,
-            cStockError;
-    private int ftot,fsend,fidx,
-                fTotMov,fIdxMov, mSend,
-                cjCierreTot, cjCierreSend,
-                cjReporteTot, cjReporteSend,
-                cjPagosTot, cjPagosSend,
-                cStockTot, cStockSend;
+    private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
+            corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
+    private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend,
+                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend, cStockTot, cStockSend;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
     @Override
@@ -104,6 +95,20 @@ public class WSEnv extends PBase {
         P_cjReporteObj = new clsP_cajareporteObj(this,Con,db);
 
         preparaEnvio();
+
+        if (gl.autocom==1) {
+
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    pbar.setVisibility(View.VISIBLE);
+                    execws(1);
+                }
+            };
+            mtimer.postDelayed(mrunner,200);
+
+        }
     }
 
 
@@ -273,6 +278,12 @@ public class WSEnv extends PBase {
                 msgboxwait(ws.error);
             } else {
 
+                if (gl.autocom==1) {
+                    if (ferr.isEmpty() && movErr.isEmpty()) {
+                        finish();return;
+                    }
+                }
+
                 ss ="Envío completo\n";
 
                 ss+="Facturas total: "+ftot+"\n";
@@ -296,21 +307,20 @@ public class WSEnv extends PBase {
                 msgboxwait(ss);
 
                 if (!ferr.isEmpty()) {
-
                     if (!idfact.isEmpty()){
                         msgbox2("Factura : "+idfact+"\n"+ferr);
                     }
                 }
 
                 if (!movErr.isEmpty()) {
-
                     if(!idMov.isEmpty()){
                         msgbox2("Movimientos : "+idMov+"\n"+movErr);
                     }
                 }
+
             }
 
-        }catch (Exception ex){
+        } catch (Exception ex){
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ex.getMessage());
         }
     }
@@ -320,8 +330,9 @@ public class WSEnv extends PBase {
     //region Envío
 
     private void processFactura() {
-
-        int contingencia;
+        clsClasses.clsD_facturad item;
+        String tipo_producto,vsql;
+        int contingencia,uruta;
 
         if (ftot==0) {
             fidx++;return;
@@ -334,6 +345,8 @@ public class WSEnv extends PBase {
         clients.clear();
 
         try {
+
+            AppMethods f = new AppMethods(this,null,Con,db);
 
             D_facturaObj.fill("WHERE COREL='"+corel+"'");
             D_facturadObj.fill("WHERE COREL='"+corel+"'");
@@ -357,10 +370,28 @@ public class WSEnv extends PBase {
             String UpdateToStock = "";
             
             for (int i = 0; i <D_facturadObj.count; i++) {
+
+                item=D_facturadObj.items.get(i);
+
                 CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
-                UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
-                if (!UpdateToStock.isEmpty())
-                CSQL=CSQL+ UpdateToStock;
+
+                tipo_producto = f.prodTipo(D_facturadObj.items.get(i).producto);
+
+                if (tipo_producto.equalsIgnoreCase("P")) {
+
+                    UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                    if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
+
+                    if (gl.peInvCompart){
+                        for (int r = 0; r <rutas.size(); r++) {
+                            uruta=Integer.parseInt(rutas.get(r));
+
+                            vsql=addUpdateItem(uruta,item.producto,-item.cant,item.umstock);
+                            CSQL=CSQL+ vsql;
+                        }
+                    }
+                }
+
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {

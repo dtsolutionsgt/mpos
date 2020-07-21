@@ -1,14 +1,7 @@
 package com.dtsgt.webservice;
 
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-
-import com.dtsgt.base.BaseDatos;
-
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
@@ -17,28 +10,20 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
 
-public class wsInventCompartido extends wsBase {
+public class wsInventRecibir extends wsBase {
 
-    public String idstock="";
-
-    private Cursor cursor =null;
-
-    private Context cont;
-    private BaseDatos Con;
-    private SQLiteDatabase db;
+    public Cursor cursor =null;
 
     private ArrayList<String> results=new ArrayList<String>();
 
     private int crows,ccols;
     private String sql;
 
-    public wsInventCompartido(Context context, String Url, int codigo_empresa, int codigo_ruta, SQLiteDatabase dbase, BaseDatos dbCon) {
+    public wsInventRecibir(String Url, int codigo_empresa, int codigo_sucursal) {
         super(Url);
-        cont=context;
-        db=dbase;Con=dbCon;
 
-        sql="SELECT CODIGO_PRODUCTO, CANTIDAD, CODIGO_STOCK, UNIDAD_MEDIDA FROM P_STOCK_UPDATE " +
-            "WHERE (PROCESADO=0) AND (EMPRESA="+codigo_empresa+") AND (RUTA="+codigo_ruta+")";
+        sql="SELECT CODIGO_PRODUCTO,CANT,UNIDADMEDIDA FROM P_STOCK " +
+            "WHERE (EMPRESA="+codigo_empresa+") AND (SUCURSAL="+codigo_sucursal+") AND (ANULADO=0) ";
     }
 
     public void execute(Runnable afterexecute) {
@@ -54,82 +39,7 @@ public class wsInventCompartido extends wsBase {
         }
     }
 
-    @Override
-    protected void wsFinished() {
-        procesaInventario();
-        super.wsFinished();
-    }
-
     //region Main
-
-    private void procesaInventario() {
-        int prid;
-        double cant;
-        String um,sid;
-
-        idstock="";
-
-        try {
-            Cursor dt=cursor;
-            if ((dt==null) | (dt.getCount()==0)) return;
-
-            dt.moveToFirst();
-            while (!dt.isAfterLast()) {
-                prid=dt.getInt(0);cant=dt.getDouble(1);
-                sid=dt.getString(2);um=dt.getString(3);
-
-                if (updateStock(prid,cant,um)) idstock+=sid+"#";
-
-                dt.moveToNext();
-            }
-
-            db.execSQL("DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0) ");
-
-        } catch (Exception e) {
-            errflag=true;error=e.getMessage();
-        }
-    }
-
-    private boolean updateStock(int pcod,double pcant,String um) {
-
-        BaseDatos.Insert ins=Con.Ins;
-
-        try {
-
-            ins.init("P_STOCK");
-
-            ins.add("CODIGO",pcod);
-            ins.add("CANT",pcant);
-            ins.add("CANTM",0);
-            ins.add("PESO",0);
-            ins.add("plibra",0);
-            ins.add("LOTE","");
-            ins.add("DOCUMENTO","");
-
-            ins.add("FECHA",0);
-            ins.add("ANULADO",0);
-            ins.add("CENTRO","");
-            ins.add("STATUS","");
-            ins.add("ENVIADO",1);
-            ins.add("CODIGOLIQUIDACION",0);
-            ins.add("COREL_D_MOV","");
-            ins.add("UNIDADMEDIDA",um);
-
-            String sp=ins.sql();
-
-            db.execSQL(ins.sql());
-
-        } catch (Exception e) {
-            try {
-                sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-                db.execSQL(sql);
-            } catch (Exception ee) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 
     private void OpenDT(String sql) {
         String METHOD_NAME = "getDT";
