@@ -85,9 +85,24 @@ public class CliPos extends PBase {
 
         bloqueado=false;
 
+        /*
         try {
             if (gl.pePedidos) wspn.execute(rnValidaPedNuevos);
         } catch (Exception e) {}
+        */
+
+        if (gl.InvCompSend) {
+            gl.InvCompSend=false;
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    gl.autocom = 1;
+                    startActivity(new Intent(CliPos.this,WSEnv.class));
+                }
+            };
+            mtimer.postDelayed(mrunner,200);
+        }
 
 	}
 

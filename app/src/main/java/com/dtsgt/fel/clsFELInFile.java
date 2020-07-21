@@ -54,7 +54,7 @@ public class clsFELInFile {
             mpos_identificador_fact,
             fel_nit,
             fel_correo,
-            fel_nombre_comercial;
+            fel_nombre_comercial, correo_sucursal;
     public int fraseIVA,fraseISR;
 
     // Private declarations
@@ -267,7 +267,6 @@ public class clsFELInFile {
     //endregion
 
     //region Certificacion
-
     public void sendJSONCert() {
 
         errlevel=2;
@@ -876,7 +875,9 @@ public class clsFELInFile {
                          String departamento,
                          String pais) {
 
-        if (pCorreo.isEmpty()) pCorreo ="dtsolutionsgt@gmail.com";
+        String stt=pCorreo;
+        if (pCorreo.isEmpty())  pCorreo = correo_sucursal;
+        if (pCorreo.length()<8) pCorreo = correo_sucursal;
 
         xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
         xml+="<dte:DireccionReceptor>";
@@ -921,7 +922,7 @@ public class clsFELInFile {
         totmonto+=total;
         //totiva+=imp;
 
-        xml+="<dte:Item BienOServicio=\"S\" NumeroLinea=\""+linea+"\">";
+        xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
         xml+="<dte:Cantidad>"+cant+"</dte:Cantidad>";
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";

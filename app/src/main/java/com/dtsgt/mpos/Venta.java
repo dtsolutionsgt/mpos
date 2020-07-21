@@ -280,7 +280,7 @@ public class Venta extends PBase {
                 //Intent intent = new Intent(this,BonList.class);
                 //startActivity(intent);
             }
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             mu.msgbox("finishOrder: "+e.getMessage());
         }

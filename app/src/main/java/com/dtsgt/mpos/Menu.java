@@ -275,6 +275,7 @@ public class Menu extends PBase {
 				case 1:
 
 					gl.cajaid=5;
+                    gl.InvCompSend=false;
 
 					if (valida()) {
 

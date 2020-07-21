@@ -236,8 +236,7 @@ public class FelFactura extends PBase {
                     }
 
                     toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
-                }
-                else {
+                }  else {
                     marcaFactura();
                 }
 
@@ -369,6 +368,7 @@ public class FelFactura extends PBase {
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             fel.codigo_postal=P_sucursalObj.first().codigo_postal;
+            fel.correo_sucursal=P_sucursalObj.first().correo;
             dir=P_sucursalObj.first().direccion;
             idmuni=P_sucursalObj.first().codigo_municipio;
 

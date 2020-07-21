@@ -642,14 +642,19 @@ public class FacturaRes extends PBase {
 		}
 
         gl.cliposflag=false;
+        gl.InvCompSend=false;
 
         if (!app.usaFEL()) {
-            impresionDocumento(false);
+            gl.InvCompSend=true;
+            impresionDocumento();
+            /*
             if (gl.peInvCompart | gl.peEnvio) {
                 browse=4;
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
             }
+
+             */
         } else {
             if (isNetworkAvailable()) {
                 browse=2;
@@ -664,11 +669,7 @@ public class FacturaRes extends PBase {
 
 	}
 
-    private void impresionDocumento(){
-        impresionDocumento(true);
-    }
-
-	private void impresionDocumento(boolean cerrar){
+	private void impresionDocumento(){
 
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
@@ -706,8 +707,7 @@ public class FacturaRes extends PBase {
             gl.iniciaVenta=true;
 
 			//if (!prn.isEnabled())
-
-            if (cerrar) super.finish();
+            super.finish();
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -919,6 +919,9 @@ public class FacturaRes extends PBase {
 			//endregion
 
 			//region D_FACTURAF
+
+            if (gl.gCorreoCliente.isEmpty()) gl.gCorreoCliente=" ";
+            if (gl.gDirCliente.isEmpty()) gl.gDirCliente=" ";
 
 			ins.init("D_FACTURAF");
 			ins.add("COREL",corel);
