@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -821,7 +822,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuración de impresora","Tablas","Información de sistema"};
+			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Información de sistema"};
 
 			menudlg = new ExDialog (this);
 
@@ -833,7 +834,9 @@ public class Menu extends PBase {
                             startActivity(new Intent(Menu.this,UtilPrint.class));break;
 						case 1:
 							startActivity(new Intent(Menu.this,Tablas.class));break;
-						case 2:
+                        case 2:
+                            actualizaVersion();break;
+						case 3:
 							infoSystem();break;
 					}
 
@@ -860,91 +863,24 @@ public class Menu extends PBase {
 
 	}		
 
-	private void menuCorelZ() {
-		Cursor DT;
-		int coract;
+	private void actualizaVersion() {
+	    /*
+        String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+ 	     */
 
-		try{
-			try {
-				sql="SELECT Corel FROM FinDia";
-				DT=Con.OpenDT(sql);
-				DT.moveToFirst();
-				coract=DT.getInt(0);
+        String gurl="https://drive.google.com/file/d/15Jg7Hb4j3d0POpkYltXAuHWiwE6n7EmJ/view?usp=sharing";
 
-                if (DT!=null) DT.close();
-			} catch (Exception e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-				mu.msgbox(e.getMessage());
-				coract=0;
-			}
-
-            ExDialog alert = new ExDialog(this);
-			alert.setMessage("Actual : "+coract);
-
-			final EditText input = new EditText(this);
-			alert.setView(input);
-
-			input.setInputType(InputType.TYPE_CLASS_NUMBER );
-			input.setText("");
-			input.requestFocus();
-
-			alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					try {
-						String s=input.getText().toString();
-						int icor=Integer.parseInt(s);
-
-						if (icor<0) throw new Exception();
-						askApplyCor(icor);
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-						mu.msgbox("Correlativo incorrecto");
-						return;
-					}
-				}
-			});
-
-			alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				}
-			});
-
-			alert.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}
-	}
-	
-	private void askApplyCor(int ncor) {
-		try{
-            ExDialog dialog = new ExDialog(this);
-			dialog.setMessage("Aplicar nuevo correlativo ?");
-
-			final int fncor=ncor;
-
-			dialog.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					try {
-						sql="UPDATE FinDia SET Corel="+fncor;
-						db.execSQL(sql);
-					} catch (SQLException e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-						mu.msgbox("Error : " + e.getMessage());
-					}
-				}
-			});
-
-			dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				}
-			});
-
-			dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		}
-
-	}
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gurl)));
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
 
 	private void askCambUsuario() {
 		try{

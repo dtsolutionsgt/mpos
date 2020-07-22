@@ -20,7 +20,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
+
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -266,7 +266,7 @@ public class CliGPS extends PBase {
 	}
 
 	public Location getLocation() {
-
+        /*
 		try {
 			locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 
@@ -328,6 +328,8 @@ public class CliGPS extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			return null;
 		}
+		
+         */
 
 		return location;
 	}
