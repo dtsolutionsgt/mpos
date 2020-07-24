@@ -1121,9 +1121,6 @@ public class FacturaRes extends PBase {
 				//sql="UPDATE P_STOCK SET CANT="+dispcant+",PESO="+disppeso+" WHERE (CODIGO='"+prid+"') AND (LOTE='"+lote+"') AND (DOCUMENTO='"+doc+"') AND (STATUS='"+stat+"')";
 				db.execSQL(sql);
 
-				sql="DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0)";
-				db.execSQL(sql);
-
 
 				// Factura Stock
 
@@ -1215,9 +1212,6 @@ public class FacturaRes extends PBase {
             sql="UPDATE P_STOCK SET CANT="+actcant+",PESO=0 WHERE (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"')";
             db.execSQL(sql);
 
-            sql="DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0)";
-            db.execSQL(sql);
-
             if (dt!=null) dt.close();
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1271,10 +1265,6 @@ public class FacturaRes extends PBase {
 
 				sql="UPDATE P_STOCK SET CANT="+dispcant+",PESO="+disppeso+" WHERE (CODIGO='"+prid+"') AND (LOTE='"+lote+"') AND (DOCUMENTO='"+doc+"') AND (STATUS='"+stat+"') AND (UNIDADMEDIDA='"+umstock+"')";
 				db.execSQL(sql);
-
-				sql="DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0)";
-				db.execSQL(sql);
-
 
 				// Bonif Stock
 

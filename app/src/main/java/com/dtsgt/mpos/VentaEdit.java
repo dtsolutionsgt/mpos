@@ -120,7 +120,7 @@ public class VentaEdit extends PBase {
 
         cstock=cantStock(prodid);
         cbcombo=cantProdCombo(prodid);
-        cdisp=cstock-cbcombo;if (cdisp<0) cdisp=0;
+        cdisp=cstock-cbcombo;
 
         return cdisp;
     }

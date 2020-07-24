@@ -93,7 +93,7 @@ public class Venta extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot;
     private double px,py,cpx,cpy,cdist;
 
-    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo;
+    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname;
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
@@ -478,19 +478,7 @@ public class Venta extends PBase {
             grdprod.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    int kcant;
-                    /*
-                    if (prodflag) prodflag=false;else return;
-
-                    Handler mtimer = new Handler();
-                    Runnable mrunner=new Runnable() {
-                        @Override
-                        public void run() {
-                            prodflag=true;
-                        }
-                    };
-                    mtimer.postDelayed(mrunner,1000);
-                    */
+                    int kcant,ppos;
 
                     try {
                         Object lvObj = grdprod.getItemAtPosition(position);
@@ -508,6 +496,9 @@ public class Venta extends PBase {
                         gl.gstr=prodid;
                         gl.prodmenu=gl.prodcod;
                         gl.pprodname=item.Name;
+                        ppos=gl.pprodname.indexOf("[");
+                        if (ppos<=1) pprodname=gl.pprodname;else pprodname=gl.pprodname.substring(0,ppos-1);
+
                         gl.um=app.umVenta(gl.prodid);
                         gl.menuitemid=prodid;
                         menuitemadd=true;
@@ -714,7 +705,7 @@ public class Venta extends PBase {
                     if (gl.limcant>0) {
                         processCant(updateitem);
                     } else {
-                        msgAskLimit("El producto no está disponible.\n¿Continuar con la venta?",updateitem);
+                        msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
                     }
                 } else if (tipo.equalsIgnoreCase("S")) {
                     processCant(updateitem);
@@ -753,7 +744,7 @@ public class Venta extends PBase {
                     if (gl.limcant>0) {
                         processCant(false);
                     } else {
-                        msgAskLimit("El producto no está disponible.\n¿Continuar con la venta?",false);
+                        msgAskLimit("\"El producto \"+ pprodname+\" no tiene existencia disponible.\n¿Continuar con la venta?",false);
                     }
                 } else if (tipo.equalsIgnoreCase("S")) {
                     processCant(false);
@@ -1787,7 +1778,7 @@ public class Venta extends PBase {
                     "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
                     "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
-                    "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
+                    "WHERE (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
             if (famid !=-1) {
                 if (famid!=0) sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }

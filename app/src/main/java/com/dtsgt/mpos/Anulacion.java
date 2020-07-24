@@ -478,9 +478,6 @@ public class Anulacion extends PBase {
 			
 			mu.msgbox("Documento anulado.");
 
-			sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
-			db.execSQL(sql);
-
 			listItems();
 
             if (gl.peInvCompart) {
@@ -512,8 +509,6 @@ public class Anulacion extends PBase {
 
 				anulFactura(itemid);
 
-				sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
-				db.execSQL(sql);
 
 				//#EJC20200706: Commit transaction from Anuldocument.
 				db.setTransactionSuccessful();
@@ -779,8 +774,6 @@ public class Anulacion extends PBase {
 			//#CKFK 20200526 Puse esto en comentario porque esa tabla no se usa en MPos
 			//anulBonif(itemid);
 
-            sql="DELETE FROM P_STOCK WHERE CANT=0 AND CANTM=0";
-            db.execSQL(sql);
 
             listItems();
 

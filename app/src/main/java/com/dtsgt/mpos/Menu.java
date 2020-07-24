@@ -860,26 +860,25 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}		
 
 	private void actualizaVersion() {
-	    /*
+        try {
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
+            intent.putExtra("filename","mpos.apk");
+            this.startActivity(intent);
+        } catch (Exception e) {
+            msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
+        }
+
+        /*
         String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
         } catch (android.content.ActivityNotFoundException anfe) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
         }
- 	     */
-
-        String gurl="https://drive.google.com/file/d/15Jg7Hb4j3d0POpkYltXAuHWiwE6n7EmJ/view?usp=sharing";
-
-        try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(gurl)));
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
+        */
     }
 
 	private void askCambUsuario() {

@@ -97,13 +97,6 @@ public class Exist extends PBase {
 
 		setHandlers();
 
-        try {
-            sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";
-            db.execSQL(sql);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-        }
-
         rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp, "");
 		
 		listItems();	
@@ -416,7 +409,7 @@ public class Exist extends PBase {
 							items.add(itemm);
   						}
 					} else {
-  						item.flag = 2;
+  						item.flag = 1;//item.flag = 2;
 						items.add(item);
 					}
 					dt.moveToNext();
@@ -673,8 +666,6 @@ public class Exist extends PBase {
 
                     dt.moveToNext();
                 }
-
-                db.execSQL("DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0) ");
 
                 db.setTransactionSuccessful();
                 db.endTransaction();

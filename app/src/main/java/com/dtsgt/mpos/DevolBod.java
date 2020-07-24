@@ -327,13 +327,6 @@ public class DevolBod extends PBase {
 			return;
 		}
 
-		try {
-			sql="DELETE FROM T_DEVOL WHERE CANT=0 AND CANTM=0";
-			db.execSQL(sql);
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			mu.msgbox("Error : " + e.getMessage());
-		}
 
 	}
 
@@ -497,8 +490,6 @@ public class DevolBod extends PBase {
 				DT.moveToNext();
 			}
 
-			sql="DELETE FROM P_STOCK WHERE CANT+CANTM=0";
-			db.execSQL(sql);
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);

@@ -344,12 +344,12 @@ public class WSEnv extends PBase {
 
         clients.clear();
 
-        try {
+        //try {
 
             AppMethods f = new AppMethods(this,null,Con,db);
 
             D_facturaObj.fill("WHERE COREL='"+corel+"'");
-            D_facturadObj.fill("WHERE COREL='"+corel+"'");
+            D_facturadObj.fill("WHERE (COREL='"+corel+"') AND (PRODUCTO<>0)");
             D_facturapObj.fill("WHERE COREL='"+corel+"'");
 
             idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
@@ -406,9 +406,9 @@ public class WSEnv extends PBase {
                     "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
             }
 
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
     }
 
     public String addFactheader(clsClasses.clsD_factura item) {
@@ -494,7 +494,7 @@ public class WSEnv extends PBase {
 
         clients.clear();
 
-        try {
+        //try {
 
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
             P_clienteObj.fill("WHERE ESERVICE='N'");
@@ -514,9 +514,9 @@ public class WSEnv extends PBase {
                 clients.add(""+ccli);
             }
 
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
     }
 
     private void statusClients() {
@@ -546,7 +546,7 @@ public class WSEnv extends PBase {
         int uruta;
         double ucant;
 
-        try {
+        //try {
 
             if (fTotMov==0) {
                 fIdxMov++;return;
@@ -602,9 +602,9 @@ public class WSEnv extends PBase {
 
             }
 
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
     }
 
     private void statusMov() {
@@ -644,7 +644,7 @@ public class WSEnv extends PBase {
 
         cjCierre.clear();
 
-        try {
+        //try {
 
             clsP_cajacierreObj P_cajacierreObj=new clsP_cajacierreObj(this,Con,db);
             P_cajacierreObj.fill("WHERE STATCOM='N'");
@@ -664,9 +664,9 @@ public class WSEnv extends PBase {
                 cjCierre.add(""+cCjCierre);
             }
 
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
     }
 
     private void statusCajaCierre() {
@@ -706,7 +706,7 @@ public class WSEnv extends PBase {
 
         cjPagos.clear();
 
-        try {
+        //try {
             clsP_cajapagosObj P_cajapagosObj=new clsP_cajapagosObj(this,Con,db);
             P_cajapagosObj.fill("WHERE STATCOM='N'");
 
@@ -723,9 +723,9 @@ public class WSEnv extends PBase {
 
                 cjPagos.add(""+cCjPago);
             }
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
     }
 
     private void statusCajaPagos() {
@@ -766,7 +766,7 @@ public class WSEnv extends PBase {
 
         cjReporte.clear();
 
-        try {
+        //try {
             clsP_cajareporteObj P_cajareporteObj=new clsP_cajareporteObj(this,Con,db);
             P_cajareporteObj.fill("WHERE STATCOM='N'");
 
@@ -783,9 +783,9 @@ public class WSEnv extends PBase {
 
                 cjReporte.add(""+cCjReporte);
             }
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
     }
 
     private void statusCajaReporte() {
@@ -825,7 +825,7 @@ public class WSEnv extends PBase {
 
         cjReporte.clear();
 
-        try {
+        //try {
             clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
             P_stockObj.fill("WHERE enviado=1");
 
@@ -841,9 +841,9 @@ public class WSEnv extends PBase {
                 cStock.add(""+codStock);
             }
 
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
     }
 
     private void statusStock() {

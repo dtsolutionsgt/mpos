@@ -371,6 +371,7 @@ public class FelFactura extends PBase {
             fel.codigo_postal=P_sucursalObj.first().codigo_postal;
             fel.correo_sucursal=P_sucursalObj.first().correo;
             dir=P_sucursalObj.first().direccion;
+
             idmuni=P_sucursalObj.first().codigo_municipio;
 
             clsP_municipioObj P_municipioObj=new clsP_municipioObj(this,Con,db);

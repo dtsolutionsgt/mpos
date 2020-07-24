@@ -83,8 +83,6 @@ public class wsInventCompartido extends wsBase {
                 dt.moveToNext();
             }
 
-            db.execSQL("DELETE FROM P_STOCK WHERE (CANT<=0) AND (CANTM<=0) ");
-
         } catch (Exception e) {
             errflag=true;error=e.getMessage();
         }

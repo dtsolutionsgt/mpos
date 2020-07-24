@@ -329,7 +329,6 @@ public class InvSalida extends PBase {
             }
 
             db.execSQL("DELETE FROM T_MOVR");
-            db.execSQL("DELETE FROM P_STOCK WHERE CANT=0");
 
             db.setTransactionSuccessful();
             db.endTransaction();
