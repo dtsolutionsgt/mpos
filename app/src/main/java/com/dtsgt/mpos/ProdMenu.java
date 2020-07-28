@@ -171,6 +171,8 @@ public class ProdMenu extends PBase {
                     items.get(i).bandera=0;
                 }
 
+                items.get(i).cant=combo.first().cant;
+
             }
 
             adapter.notifyDataSetChanged();
@@ -204,6 +206,8 @@ public class ProdMenu extends PBase {
                 item.orden=P_menuObj.items.get(i).orden;
                 item.cod=0;
                 item.unid=P_menuObj.items.get(i).unid;
+                if (item.unid>0) item.Name+="*";
+
                 items.add(item);
             }
 
@@ -468,7 +472,9 @@ public class ProdMenu extends PBase {
 
     private boolean validaData() {
         for (int i = 0; i <items.size(); i++) {
-            if (items.get(i).bandera==0) return false;
+            if (items.get(i).unid>0) {
+                if (items.get(i).bandera==0) return false;
+            }
         }
         return true;
     }

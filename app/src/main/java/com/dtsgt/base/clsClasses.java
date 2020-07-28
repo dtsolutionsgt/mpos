@@ -487,6 +487,7 @@ public class clsClasses {
         public String nombre;
         public String nota;
         public int unid;
+
     }
 
     public class clsP_prodmenuopc {
@@ -819,7 +820,7 @@ public class clsClasses {
 	}
 
     public class clsOpcion {
-        public int codigo_menu_opcion,bandera,orden,cod,unid;
+        public int codigo_menu_opcion,bandera,orden,cod,unid,cant;
         public String Name;
     }
 
