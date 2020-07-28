@@ -256,7 +256,7 @@ public class CliPos extends PBase {
 
 		try{
 
-			gl.codigo_cliente = 0;
+			gl.codigo_cliente = 10*gl.emp;
 			gl.rutatipo="V";
             gl.cliente="0";
             gl.nivel=gl.nivel_sucursal;
@@ -316,6 +316,7 @@ public class CliPos extends PBase {
 	}
 
 	private void terminaCliente() {
+
         if (gl.peInvCompart) {
             bloqueado=true;
             wsi.idstock="";
@@ -628,7 +629,7 @@ public class CliPos extends PBase {
 						gl.gDirCliente =DT.getString(4);
 
 						gl.media=DT.getInt(5);
-						gl.codigo_cliente=DT.getInt(5);
+						gl.codigo_cliente=DT.getInt(7);
 
 						//limpiaCampos();
 						//finish();
@@ -655,20 +656,23 @@ public class CliPos extends PBase {
 
 	private boolean agregaCliente(String NIT,String Nom,String dir, String Correo) {
 
+        if (consFinal) {
+            gl.codigo_cliente = 10*gl.emp;
+            agregaClienteCF(NIT,Nom,dir,Correo);return true;
+        }
+
         int codigo=nitnum(NIT);
 
 		try {
 
-			if (!consFinal) {
-				if (codigo==0){
-					toast("NIT no es válido");
-					return false;
-				}
-			}
+            if (codigo==0){
+                toast("NIT no es válido");return false;
+            }
 
 			ins.init("P_CLIENTE");
             ins.add("CODIGO_CLIENTE",codigo);
             ins.add("CODIGO",""+codigo);
+            ins.add("EMPRESA",gl.emp);
             ins.add("NOMBRE",Nom);
             ins.add("BLOQUEADO",0);
             ins.add("NIVELPRECIO",1);
@@ -720,6 +724,47 @@ public class CliPos extends PBase {
 		}
 
 	}
+
+    private void agregaClienteCF(String NIT,String Nom,String dir, String Correo) {
+
+        int codigo=10*gl.emp;
+
+        try {
+
+            ins.init("P_CLIENTE");
+            ins.add("CODIGO_CLIENTE",codigo);
+            ins.add("CODIGO","0");
+            ins.add("EMPRESA",gl.emp);
+            ins.add("NOMBRE",Nom);
+            ins.add("BLOQUEADO",0);
+            ins.add("NIVELPRECIO",1);
+            ins.add("MEDIAPAGO","1");
+            ins.add("LIMITECREDITO",0);
+            ins.add("DIACREDITO",0);
+            ins.add("DESCUENTO",1);
+            ins.add("BONIFICACION",1);
+            ins.add("ULTVISITA",du.getActDate());
+            ins.add("IMPSPEC",0);
+            ins.add("NIT",NIT.toUpperCase());
+            ins.add("EMAIL",Correo);
+            ins.add("ESERVICE","N"); // estado envio
+            ins.add("TELEFONO"," ");
+            ins.add("DIRECCION",dir);
+            ins.add("COORX",0);
+            ins.add("COORY",0);
+            ins.add("BODEGA",""+gl.sucur);
+            ins.add("COD_PAIS","");
+            ins.add("CODBARRA","");
+            ins.add("PERCEPCION",0);
+            ins.add("TIPO_CONTRIBUYENTE","");
+            ins.add("EMPRESA",gl.emp);
+            ins.add("IMAGEN","");
+            db.execSQL(ins.sql());
+
+        } catch (Exception e) {}
+
+    }
+
 
     private boolean actualizaCliente(String NIT,String Nom,String dir, String Correo) {
 

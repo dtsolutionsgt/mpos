@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dtsgt.mpos"
     android:installLocation="preferExternal"
-    android:versionCode="3"
-    android:versionName="3.1.45">
+    android:versionCode="4"
+    android:versionName="3.2.3">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -37,21 +37,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
-        <service
-            android:name="com.dtsgt.webservice.srvInventConfirm"
-            android:enabled="true"
-            android:exported="true"></service>
-        <service
-            android:name="com.dtsgt.webservice.srvBase"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name="com.dtsgt.mant.MantRepCierre" />
-
-        <service
-            android:name="com.dtsgt.fel.FelService"
-            android:enabled="true"
-            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
@@ -70,6 +55,22 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
+
+        <activity android:name="com.dtsgt.mant.MantRepCierre" />
+
+        <service
+            android:name="com.dtsgt.webservice.srvInventConfirm"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name="com.dtsgt.webservice.srvBase"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="com.dtsgt.fel.FelService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity
             android:name=".Menu"
             android:label="@string/title_activity_menu"

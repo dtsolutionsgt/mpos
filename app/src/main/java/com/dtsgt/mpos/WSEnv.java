@@ -346,65 +346,76 @@ public class WSEnv extends PBase {
 
         //try {
 
-            AppMethods f = new AppMethods(this,null,Con,db);
 
-            D_facturaObj.fill("WHERE COREL='"+corel+"'");
-            D_facturadObj.fill("WHERE (COREL='"+corel+"') AND (PRODUCTO<>0)");
-            D_facturapObj.fill("WHERE COREL='"+corel+"'");
+        AppMethods f = new AppMethods(this,null,Con,db);
+        clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
 
-            idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
-            try {
-                contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
-                if (contingencia<1) contingencia=0;
-            } catch (Exception e) {
-                contingencia=0;
-            }
+        D_facturaObj.fill("WHERE COREL='"+corel+"'");
+        D_facturadObj.fill("WHERE (COREL='"+corel+"') AND (PRODUCTO<>0)");
+        D_facturapObj.fill("WHERE COREL='"+corel+"'");
 
-            CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
+        idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
+        int cliid=D_facturaObj.first().cliente;
 
-            CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
+        try {
+            contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
+            if (contingencia<1) contingencia=0;
+        } catch (Exception e) {
+            contingencia=0;
+        }
 
-            String UpdateToStock = "";
-            
-            for (int i = 0; i <D_facturadObj.count; i++) {
+        CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"';";
+        CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"';";
+        CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
 
-                item=D_facturadObj.items.get(i);
+        CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
-                CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
+        String UpdateToStock = "";
 
-                tipo_producto = f.prodTipo(D_facturadObj.items.get(i).producto);
+        for (int i = 0; i <D_facturadObj.count; i++) {
 
-                if (tipo_producto.equalsIgnoreCase("P")) {
+            item=D_facturadObj.items.get(i);
 
-                    UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
-                    if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
+            CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
 
-                    if (gl.peInvCompart){
-                        for (int r = 0; r <rutas.size(); r++) {
-                            uruta=Integer.parseInt(rutas.get(r));
+            tipo_producto = f.prodTipo(D_facturadObj.items.get(i).producto);
 
-                            vsql=addUpdateItem(uruta,item.producto,-item.cant,item.umstock);
-                            CSQL=CSQL+ vsql;
-                        }
+            if (tipo_producto.equalsIgnoreCase("P")) {
+
+                UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
+
+                if (gl.peInvCompart){
+                    for (int r = 0; r <rutas.size(); r++) {
+                        uruta=Integer.parseInt(rutas.get(r));
+
+                        vsql=addUpdateItem(uruta,item.producto,-item.cant,item.umstock);
+                        CSQL=CSQL+ vsql;
                     }
                 }
-
             }
 
-            for (int i = 0; i < D_facturapObj.count; i++) {
-                CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
-            }
+        }
 
-            CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
-                    "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
+        for (int i = 0; i < D_facturapObj.count; i++) {
+            CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
+        }
 
-            if (contingencia>0) {
-                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
+        CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
+
+        if (contingencia>0) {
+            CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
                     "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
-            }
+        }
+
+        P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
+
+        ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
+        CSQL = CSQL + ss + ";";
+        ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
+        CSQL = CSQL + ss + ";";
 
         //} catch (Exception e) {
         //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

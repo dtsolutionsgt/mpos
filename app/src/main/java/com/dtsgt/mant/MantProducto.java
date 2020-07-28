@@ -512,7 +512,7 @@ public class MantProducto extends PBase {
 
         try {
 
-            niv.fill("WHERE Activo=1 ORDER BY Codigo");
+            niv.fill("ORDER BY Codigo");
 
             for (int i = 0; i <niv.count; i++) {
 
