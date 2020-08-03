@@ -35,6 +35,8 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
+import com.dtsgt.webservice.srvInventConfirm;
+import com.dtsgt.webservice.srvPedidosImport;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -208,12 +210,16 @@ public class MainActivity extends PBase {
     }
 
     public void doLogin(View view) {
-        try {
-            //Intent intent = new Intent(this, FelService.class);
-            //intent.putExtra("URL","https://www.vogella.com/index.html");
-            //startService(intent);
-        } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        if (gl.pePedidos) {
+            try {
+                Intent intent = new Intent(MainActivity.this, srvPedidosImport.class);
+                intent.putExtra("URL","http://192.168.1.10/mposws/mposws.asmx");
+                intent.putExtra("idempresa",3);
+                intent.putExtra("idsucursal",4);
+                startService(intent);
+            } catch (Exception e) {
+                msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            }
         }
     }
 
@@ -756,18 +762,25 @@ public class MainActivity extends PBase {
         lblEmp.setText(gl.empnom);
 
         try {
-
             String emplogo = Environment.getExternalStorageDirectory() + "/mPosFotos/" + "/mposlogo.png";
             File file = new File(emplogo);
-
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(emplogo);
                 imgLogo.setImageBitmap(bmImg);
             }
+        } catch (Exception e) {}
 
-        } catch (Exception e) {
+        try {
+            String orddir=Environment.getExternalStorageDirectory().getPath() + "/mposordser";
+            File directory = new File(orddir);
+            directory.mkdirs();
+        } catch (Exception e) {}
 
-        }
+        try {
+            String errdir=Environment.getExternalStorageDirectory().getPath() + "/mposordser/error";
+            File directory = new File(errdir);
+            directory.mkdirs();
+        } catch (Exception e) {}
 
     }
 

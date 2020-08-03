@@ -18,10 +18,14 @@ import android.widget.Toast;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -1108,6 +1112,59 @@ public class AppMethods {
     }
 
     //endregion
+
+    //region "Pedidos"
+
+    public boolean agregaPedido(String fname,String ename,long fa) {
+        File file=null;
+        BufferedReader br=null;
+        ArrayList<String> items=new ArrayList<String>();
+        String sql;
+
+        try {
+            file=new File(fname);
+            br = new BufferedReader(new FileReader(file));
+        } catch (Exception e) {
+            moveFile(fname,ename);return false;
+        }
+
+        try {
+            db.beginTransaction();
+
+            while ((sql=br.readLine())!= null) {
+                items.add(sql);
+                db.execSQL(sql);
+            }
+
+            sql="UPDATE D_PEDIDO SET FECHA_PEDIDO="+fa+" WHERE FECHA_PEDIDO=0";
+            db.execSQL(sql);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+        } catch (Exception e) {
+            db.endTransaction();moveFile(fname,ename);return false;
+        }
+
+        try {
+            br.close();
+        } catch (Exception e) {
+            file.delete();
+        }
+
+        return true;
+    }
+
+    private void moveFile(String fname,String ename) {
+        try {
+            FileUtils.forceDelete(new File(fname));
+            FileUtils.moveFile(new File(fname),new File(ename));
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    //
 
 	//region Aux
 

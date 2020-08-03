@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.webservice.srvInventConfirm;
 import com.dtsgt.webservice.wsInvActual;
 import com.dtsgt.webservice.wsInventCompartido;
@@ -34,28 +35,22 @@ public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef, txtCorreo;
 	private TextView lblPed;
-    private ImageView imgPed;
-	private RelativeLayout relped,relcli;
+    private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 
     private wsInventCompartido wsi;
-    private wsPedidosNuevos wspn;
-    private wsPedidosEstado wspe;
-    private wsPedidoDatos   wspd;
 
-    private Runnable rnRecibeInventario, rnValidaPedNuevos,rnPedidosEstado;
-    private ExtRunnable rnPedDatosEstado;
+    private Runnable rnRecibeInventario;
 
     private ArrayList<String> pedidos =new ArrayList<String>();
 
 	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, wspnerror;
 	private boolean consFinal=false,idleped=true;
-	private boolean inicio_pedidos=true,bandera_pedidos=false,bloqueado;
-	private int cantped,corelped;
+	private boolean request_exit=false,bloqueado;
+	private int cantped;
 
-    private Timer ptimer;
     private TimerTask ptask;
-    private int tick=0,period=1000,delay=50,frequency=15;
+    private int period=10000,delay=50;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +65,6 @@ public class CliPos extends PBase {
 		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("");
         txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
-        imgPed = (ImageView) findViewById(R.id.imageView68);
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
@@ -79,17 +73,8 @@ public class CliPos extends PBase {
 
         getURL();
         wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
-        wspn=new wsPedidosNuevos(gl.wsurl,gl.emp,gl.tienda);
-        wspe=new wsPedidosEstado(gl.wsurl,null);
-        wspd=new wsPedidoDatos(gl.wsurl,rnPedDatosEstado);
 
         bloqueado=false;
-
-        /*
-        try {
-            if (gl.pePedidos) wspn.execute(rnValidaPedNuevos);
-        } catch (Exception e) {}
-        */
 
         if (gl.InvCompSend) {
             gl.InvCompSend=false;
@@ -176,35 +161,6 @@ public class CliPos extends PBase {
                     finish();
                 }
             }
-        };
-
-        rnValidaPedNuevos = new Runnable() {
-            public void run() {
-                estadoPedidos();
-                if (inicio_pedidos) iniciaPedidos();
-                showPanel();
-            }
-        };
-
-        rnPedidosEstado = new Runnable() {
-            public void run() {
-                idleped=true;
-                showPanel();
-            }
-        };
-
-        rnPedDatosEstado = new ExtRunnable() {
-            @Override
-            public void run(String data) {
-                if (agregaPedido(data)) {
-                    wspe.execute(data,1,0);
-                } else {
-                    idleped=true;
-                    showPanel();
-                }
-            }
-
-            public void run() {}
         };
 
 		try{
@@ -338,131 +294,66 @@ public class CliPos extends PBase {
     //region Pedidos
 
     private void iniciaPedidos() {
-        inicio_pedidos=false;
-        tick=0;
 
         if (gl.pePedidos) {
+            lblPed.setText("-");
             relped.setVisibility(View.VISIBLE);
 
-            ptimer = new Timer();
-            ptimer.scheduleAtFixedRate(ptask = new TimerTask(){
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(ptask=new TimerTask() {
                 public void run() {
-                    try {
-                        tick=tick % frequency;
-                        if (tick==0) {
-                            idleped=false;
-                            hidePanel();
-                            wspn.execute(rnValidaPedNuevos);
+                     runOnUiThread(new Runnable() {
+                        @Override
+                        public synchronized void run() {
+                            recibePedidos();
                         }
-                        tick++;
-                    } catch (Exception e) {}
+                    });
                 }
             }, delay, period);
         }
+
     }
 
     private void cancelaPedidos() {
-        idleped=true;
-        if (gl.pePedidos) {
-            bandera_pedidos=true;
-            ptask.cancel();
-        }
+        try {
+             ptask.cancel();
+        } catch (Exception e) {}
     }
 
-    private void estadoPedidos() {
+    private void recibePedidos() {
+        int pp;
+        String fname;
+
+        idleped=false;
+
         try {
-            lblPed.setVisibility(View.INVISIBLE);
-            imgPed.setVisibility(View.INVISIBLE);
-            pedidos.clear();wspnerror="";
+            String path = Environment.getExternalStorageDirectory().getPath() + "/mposordser";
+            File directory = new File(path);
+            File[] files = directory.listFiles();
 
-            if (!wspn.errflag) {
-                cantped=wspn.items.size();
-                if (cantped >0) {
-
-                    //wspn.pause();
-
-                    for (int i = 0; i <cantped; i++) pedidos.add(wspn.items.get(i));
-
-                    lblPed.setVisibility(View.VISIBLE);
-                    lblPed.setText(""+cantped);
-
-                    procesaPedidos();
-                    
-                    //wspn.resume();
+            for (int i = 0; i < files.length; i++) {
+                fname=files[i].getName();
+                pp=fname.indexOf(".txt");
+                if (pp>1){
+                    if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime())) {
+                        msgbox2("Ocurrio error en recepción de orden");
+                    }
                 }
-            } else {
-                imgPed.setVisibility(View.VISIBLE);
-                wspnerror="Pedidos nuevos : "+wspn.error;toastcent(wspnerror);
-                showPanel();
             }
         } catch (Exception e) {
-            wspnerror="Pedidos nuevos : "+e.getMessage();toastcent(wspnerror);
-            showPanel();
+            msgbox2("recibePedidos : "+e.getMessage());
         }
-    }
-
-    private void procesaPedidos() {
-        Cursor dt;
-        String corel;
-        int cnt;
-
-        if (pedidos.size()==0) return;
 
         try {
-
-            sql="SELECT MAX(FECHA_SISTEMA) FROM D_PEDIDO ";
-            dt=Con.OpenDT(sql);
-            if (dt.getCount()>=0) {
-                dt.moveToFirst();
-                corelped=dt.getInt(0);
-            } else corelped=0;
-
-            //for (int i = 0; i <pedidos.size(); i++) {
-            int i=0;
-            corel=pedidos.get(i);
-
-            sql="SELECT Corel FROM D_PEDIDO WHERE Corel='"+corel+"'";
-            dt=Con.OpenDT(sql);
-            cnt=dt.getCount();
-            if (dt!=null) dt.close();
-
-            if (cnt==0) {
-                wspd.execute(corel);return;
-            } else {
-                wspe.execute(corel,1,0);
-            }
-            //}
+            clsD_pedidoObj D_pedidoObj=new clsD_pedidoObj(this,Con,db);
+            D_pedidoObj.fill("WHERE FECHA_RECEPCION_SUC=0");
+            cantped=D_pedidoObj.count;
+            lblPed.setText(""+cantped);
         } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            showPanel();
+            msgbox2("recibePedidos : "+e.getMessage());
         }
-    }
 
-    private boolean agregaPedido(String corel) {
-        String ss;
-
-        try {
-            db.beginTransaction();
-
-            for (int i = 0; i <wspd.items.size(); i++) {
-                ss=wspd.items.get(i);
-                db.execSQL(ss);
-            }
-
-            corelped++;
-            ss="UPDATE D_Pedido SET FECHA_RECEPCION_SUC="+du.getActDateTime()+", FECHA_SISTEMA="+corelped+" WHERE Corel='"+corel+"'";
-            db.execSQL(ss);
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-            return true;
-        } catch (Exception e) {
-            db.endTransaction();
-            toast("agregaPedido "+e.getMessage());
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            showPanel();
-            return false;
-        }
+        idleped=true;
     }
 
     private void hidePanel() {
@@ -845,7 +736,7 @@ public class CliPos extends PBase {
         try{
             super.onResume();
 
-            if (bandera_pedidos) iniciaPedidos();
+            if (gl.pePedidos) iniciaPedidos();
 
             if (browse==1) {
                 browse=0;
@@ -860,7 +751,7 @@ public class CliPos extends PBase {
 
     @Override
     protected void onPause() {
-        cancelaPedidos();
+        if (gl.pePedidos) cancelaPedidos();
         super.onPause();
     }
 

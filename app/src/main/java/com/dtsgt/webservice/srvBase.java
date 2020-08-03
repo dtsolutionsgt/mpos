@@ -1,5 +1,6 @@
 package com.dtsgt.webservice;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,10 +8,14 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
 
 import com.dtsgt.mpos.R;
 
@@ -26,7 +31,7 @@ public class srvBase extends Service {
 
     private boolean idle=false;
 
-    private String appname="MPOs";
+    private String appname="MPos";
     private int iconresource=R.drawable.logo;
 
     @Override
@@ -64,6 +69,47 @@ public class srvBase extends Service {
     //endregion
 
     //region Notification
+
+    public void notifynew(int pedidos) {
+        String message;
+        int notificationId = createID();
+        String channelId = "channel-id",channelName = "Channel Name";
+
+
+        if (pedidos==1) message="Nuevo orden";else message=pedidos+" nuevos ordenes";
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        Intent fullScreenIntent = new Intent(this, srvBase.class);
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
+                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification);
+
+        notificationLayout.setTextViewText(R.id.title, message);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(iconresource)
+                //.setLargeIcon(bm)
+                .setContentTitle(appname)
+                .setContentText(message)
+                .setVibrate(new long[]{100, 250})
+                .setLights(Color.YELLOW, 500, 5000)
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setContent(notificationLayout)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_CALL)
+                .setFullScreenIntent(fullScreenPendingIntent, true)
+                .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sonarsub))
+                .setColor(Color.parseColor("#6200EE"));
+
+        notificationManager.notify(notificationId, mBuilder.build());
+
+    }
 
     public void notification(String message) {
 
