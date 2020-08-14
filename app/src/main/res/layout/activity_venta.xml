@@ -121,6 +121,8 @@
             android:layout_marginEnd="10dp"
             android:layout_toLeftOf="@id/relLogo"
             android:background="@drawable/frame_rect_white"
+            android:clickable="true"
+            android:onClick="doNivel"
             android:paddingLeft="10dp"
             android:paddingTop="3dp"
             android:paddingRight="10dp"

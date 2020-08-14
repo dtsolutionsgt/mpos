@@ -336,7 +336,7 @@ public class CliPos extends PBase {
                 pp=fname.indexOf(".txt");
                 if (pp>1){
                     if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime())) {
-                        msgbox2("Ocurrio error en recepción de orden");
+                        msgbox2("Ocurrio error en recepción de orden :\n"+app.errstr);
                     }
                 }
             }
@@ -346,7 +346,8 @@ public class CliPos extends PBase {
 
         try {
             clsD_pedidoObj D_pedidoObj=new clsD_pedidoObj(this,Con,db);
-            D_pedidoObj.fill("WHERE FECHA_RECEPCION_SUC=0");
+            D_pedidoObj.fill("WHERE EMPRESA=0");
+            //D_pedidoObj.fill("WHERE CODIGO_USUARIO_CREO=0");
             cantped=D_pedidoObj.count;
             lblPed.setText(""+cantped);
         } catch (Exception e) {

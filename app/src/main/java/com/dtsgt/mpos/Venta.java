@@ -38,6 +38,7 @@ import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -87,18 +88,19 @@ public class Venta extends PBase {
     private AppMethods app;
 
     private clsD_pedidoObj D_pedidoObj;
+    private clsP_nivelprecioObj P_nivelprecioObj;
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
-    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot;
-    private double px,py,cpx,cpy,cdist;
+    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
+    private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
-    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname;
+    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,nivname;
     private int nivel,dweek,clidia,counter;
-    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private int codigo_cliente, emp,pedidoscant;
-    private String cliid;
+    private int codigo_cliente, emp,pedidoscant,cod_prod;
+    private String cliid,saveprodid;
     private int famid = -1;
 
     @Override
@@ -111,12 +113,16 @@ public class Venta extends PBase {
 
         setControls();
 
+        P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
+        P_nivelprecioObj.fill("ORDER BY Nombre");
+
         //gl.cliente="";
         //gl.iniciaVenta=false;
         gl.scancliente="";
         emp=gl.emp;
-        nivel=gl.nivel_sucursal;
-        gl.nivel=nivel;
+        gl.nivel=gl.nivel_sucursal;
+        setNivel();
+
         cliid=gl.cliente;
         //cliid="0"; #CKFK 20200515 puse esto en comentario porque primero se le asigna el Id de cliente
         decimal=false;
@@ -146,6 +152,10 @@ public class Venta extends PBase {
         browse=0;
         txtBarra.requestFocus();txtBarra.setText("");
         clearItem();
+
+        if (P_nivelprecioObj.count==0) {
+            toastlong("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");finish();return;
+        }
 
         imgflag=gl.peMImg;
         setVisual();
@@ -205,87 +215,6 @@ public class Venta extends PBase {
         finalizarOrden();
     }
 
-    public void finalizarOrden(){
-
-        try{
-            clsBonifGlob clsBonG;
-            clsDeGlob clsDeG;
-            String s,ss;
-
-            if (!hasProducts())  {
-                mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
-            }
-
-            if (gl.cliente.isEmpty()) {
-                toast("Cliente pendiente");
-                browse=8;
-                startActivity(new Intent(this,Clientes.class));
-                return;
-            }
-
-            gl.gstr="";
-            browse=1;
-
-            gl.bonprodid="*";
-            gl.bonus.clear();
-
-            clsDeG=new clsDeGlob(this,tot);ss="";
-
-            if (clsDeG.tieneDesc()) {
-
-                gl.descglob=clsDeG.valor;
-                gl.descgtotal=clsDeG.vmonto;
-
-                for (int i = 0; i <clsDeG.items.size(); i++) {
-                    s=clsDeG.items.get(i).valor+" , "+clsDeG.items.get(i).lista;
-                    ss=ss+s+"\n";
-                }
-            }
-
-            ss=ss+"acum : "+clsDeG.acum+" , limit "+clsDeG.maxlimit+"\n";
-            ss=ss+"Valor : "+clsDeG.valor+"\n";
-            ss=ss+"acum : "+clsDeG.valacum+"\n";
-            ss=ss+"max : "+clsDeG.valmax+"\n";
-            //mu.msgbox(ss);
-
-            // Bonificacion
-
-            gl.bonprodid="*";
-            gl.bonus.clear();
-
-            clsBonG=new clsBonifGlob(this,tot);
-            if (clsBonG.tieneBonif()) {
-                for (int i = 0; i <clsBonG.items.size(); i++) {
-                    //s=clsBonG.items.get(i).valor+"   "+clsBonG.items.get(i).tipolista+"  "+clsBonG.items.get(i).lista;
-                    //Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
-                    gl.bonus.add(clsBonG.items.get(i));
-                }
-            } else {
-
-            }
-
-            if (gl.dvbrowse!=0){
-                if (tot<gl.dvdispventa){
-                    mu.msgbox("No puede totalizar la factura, es menor al monto permitido para la nota de crédito: " + gl.dvdispventa);return;
-                }
-            }
-            gl.brw=0;
-
-            browse=0;
-
-            Intent intent = new Intent(this,FacturaRes.class);
-            startActivity(intent);
-
-            if (gl.bonus.size()>0) {
-                //Intent intent = new Intent(this,BonList.class);
-                //startActivity(intent);
-            }
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            mu.msgbox("finishOrder: "+e.getMessage());
-        }
-    }
-
     public void showPromo(View view){
         try{
             gl.gstr="*";
@@ -315,22 +244,15 @@ public class Venta extends PBase {
         //}
     }
 
+    public void doNivel(View view) {
+        showNivelMenu();
+    }
+
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
             barcode=khand.getStringValue();
             if (!barcode.isEmpty()) addBarcode();
-            /*
-            if (handlecant) {
-                if (khand.isValid) {
-                    gl.dval=khand.value;
-                    processCant();
-                }
-            } else {
-                barcode=khand.getStringValue();
-                if (!barcode.isEmpty()) addBarcode();
-            }
-            */
          }
     }
 
@@ -680,8 +602,18 @@ public class Venta extends PBase {
     }
 
     private void processItem(boolean updateitem){
+        boolean exists;
 
         try{
+
+            try {
+                sql="SELECT Empresa,Cant FROM T_VENTA WHERE (PRODUCTO='"+prodid+"')";
+                Cursor dt=Con.OpenDT(sql);
+                exists=dt.getCount()>0;
+            } catch (SQLException e) {
+                exists=false;
+            }
+            descflag=true;
 
             String pid=gl.gstr;
             if (mu.emptystr(pid)) return;
@@ -694,6 +626,7 @@ public class Venta extends PBase {
             khand.enable();khand.focus();
 
             prodPrecio();
+            saveprec=mu.round2(prc.preciobase);
 
             gl.dval=1;
             gl.limcant=getDisp(prodid);
@@ -703,11 +636,13 @@ public class Venta extends PBase {
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
                     if (gl.limcant>0) {
+                        if (exists) descflag=false;
                         processCant(updateitem);
                     } else {
                         msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
                     }
                 } else if (tipo.equalsIgnoreCase("S")) {
+                    if (exists) descflag=false;
                     processCant(updateitem);
                 }
             } else if (tipo.equalsIgnoreCase("M")){
@@ -822,6 +757,8 @@ public class Venta extends PBase {
         cnt = gl.dval;
         if (cnt < 0) return;
 
+        cod_prod=app.codigoProducto(prodid);
+
         try {
             try {
                 sql = "SELECT CODIGO,DESCCORTA FROM P_PRODUCTO WHERE CODIGO='" + prodid + "'";
@@ -843,6 +780,7 @@ public class Venta extends PBase {
 
             desc = 0;
             prodPrecio();
+            savetot=saveprec*cant;
 
             gl.bonprodcant = cant;
             gl.bonus.clear();
@@ -860,14 +798,16 @@ public class Venta extends PBase {
             }
             */
 
-            clsDesc = new clsDescuento(this, prodid, cant);
+            clsDesc = new clsDescuento(this, ""+cod_prod, cant);
             desc = clsDesc.getDesc();
             mdesc = clsDesc.monto;
+            savecant=cant;
+            descmon=0;
 
             if (desc + mdesc > 0) {
 
                 browse = 3;
-                gl.promprod = prodid;
+                gl.promprod =""+cod_prod;// prodid;
                 gl.promcant = cant;
 
                 if (desc > 0) {
@@ -878,7 +818,9 @@ public class Venta extends PBase {
                     gl.promdesc = mdesc;
                 }
 
-                startActivity(new Intent(this, DescBon.class));
+                saveprodid=prodid;
+                if (descflag) startActivity(new Intent(this, DescBon.class));
+                descflag=true;
 
             } else {
                 /*
@@ -889,19 +831,18 @@ public class Venta extends PBase {
                 */
             }
 
-            //prodPrecio();
+            prodPrecio();
 
             /*
             precsin = prc.precsin;
             imp = prc.imp;
             impval = prc.impval;
-            descmon = prc.descmon;
             tot = prc.tot;
+            descmon = savetot-tot;//prc.descmon;
             prodtot = tot;
             totsin = prc.totsin;
-            percep = 0; */
-
-            //endregion
+            percep = 0;
+             */
 
             tipo=prodTipo(gl.prodcod);
 
@@ -964,19 +905,12 @@ public class Venta extends PBase {
 
     private void processCantMenu() {
         listItems();
-        /*
-        gl.dval=gl.retcant;
-        if (menuitemadd) {
-           processCant(false);
-        } else {
-           processCant(true);
-        }
-        */
     }
 
     private void updDesc(){
         try{
             desc=gl.promdesc;
+            cant=savecant;
             prodPrecio();
             updItem();
         }catch (Exception e){
@@ -986,6 +920,8 @@ public class Venta extends PBase {
     }
 
     private void prodPrecio() {
+        double sdesc=desc;
+
         try {
             if (prodPorPeso(prodid)) {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
@@ -1000,6 +936,7 @@ public class Venta extends PBase {
             }
 
             prec=mu.round(prec,2);
+            desc=sdesc;
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
@@ -1164,8 +1101,12 @@ public class Venta extends PBase {
     }
 
     private void updItem(){
+        double ptot=0;
 
         try {
+            savetot=mu.round(saveprec*cant,2);
+            ptot=mu.round(prec*cant,2);
+            descmon = savetot-ptot;
 
             upd.init("T_VENTA");
 
@@ -1173,7 +1114,7 @@ public class Venta extends PBase {
             upd.add("IMP",imp);
             upd.add("DES",desc);
             upd.add("DESMON",descmon);
-            upd.add("TOTAL",tot);
+            upd.add("TOTAL",ptot);
             upd.add("PRECIODOC",prec);
 
             upd.Where("PRODUCTO='"+prodid+"'");
@@ -1262,6 +1203,87 @@ public class Venta extends PBase {
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());
+        }
+    }
+
+    public void finalizarOrden(){
+
+        try{
+            clsBonifGlob clsBonG;
+            clsDeGlob clsDeG;
+            String s,ss;
+
+            if (!hasProducts())  {
+                mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
+            }
+
+            if (gl.cliente.isEmpty()) {
+                toast("Cliente pendiente");
+                browse=8;
+                startActivity(new Intent(this,Clientes.class));
+                return;
+            }
+
+            gl.gstr="";
+            browse=1;
+
+            gl.bonprodid="*";
+            gl.bonus.clear();
+
+            clsDeG=new clsDeGlob(this,tot);ss="";
+
+            if (clsDeG.tieneDesc()) {
+
+                gl.descglob=clsDeG.valor;
+                gl.descgtotal=clsDeG.vmonto;
+
+                for (int i = 0; i <clsDeG.items.size(); i++) {
+                    s=clsDeG.items.get(i).valor+" , "+clsDeG.items.get(i).lista;
+                    ss=ss+s+"\n";
+                }
+            }
+
+            ss=ss+"acum : "+clsDeG.acum+" , limit "+clsDeG.maxlimit+"\n";
+            ss=ss+"Valor : "+clsDeG.valor+"\n";
+            ss=ss+"acum : "+clsDeG.valacum+"\n";
+            ss=ss+"max : "+clsDeG.valmax+"\n";
+            //mu.msgbox(ss);
+
+            // Bonificacion
+
+            gl.bonprodid="*";
+            gl.bonus.clear();
+
+            clsBonG=new clsBonifGlob(this,tot);
+            if (clsBonG.tieneBonif()) {
+                for (int i = 0; i <clsBonG.items.size(); i++) {
+                    //s=clsBonG.items.get(i).valor+"   "+clsBonG.items.get(i).tipolista+"  "+clsBonG.items.get(i).lista;
+                    //Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
+                    gl.bonus.add(clsBonG.items.get(i));
+                }
+            } else {
+
+            }
+
+            if (gl.dvbrowse!=0){
+                if (tot<gl.dvdispventa){
+                    mu.msgbox("No puede totalizar la factura, es menor al monto permitido para la nota de crédito: " + gl.dvdispventa);return;
+                }
+            }
+            gl.brw=0;
+
+            browse=0;
+
+            Intent intent = new Intent(this,FacturaRes.class);
+            startActivity(intent);
+
+            if (gl.bonus.size()>0) {
+                //Intent intent = new Intent(this,BonList.class);
+                //startActivity(intent);
+            }
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox("finishOrder: "+e.getMessage());
         }
     }
 
@@ -1844,6 +1866,12 @@ public class Venta extends PBase {
 
             try {
 
+                if (pedidos) {
+                    item = clsCls.new clsMenu();
+                    item.ID=61;item.Name="Orden ";item.Icon=61;
+                    mmitems.add(item);
+                }
+
                 item = clsCls.new clsMenu();
                 item.ID=50;item.Name="Buscar ";item.Icon=50;
                 mmitems.add(item);
@@ -2076,7 +2104,6 @@ public class Venta extends PBase {
         }
     }
 
-
     public boolean valida(){
         try{
 
@@ -2209,6 +2236,7 @@ public class Venta extends PBase {
 
     public void menuPedidos() {
         try{
+            gl.closePedido=false;
             Intent intent = new Intent(this,Pedidos.class);
             startActivity(intent);
         } catch (Exception e){
@@ -2301,23 +2329,27 @@ public class Venta extends PBase {
 
             switch (menuid) {
                 case 50:
-                    gl.gstr = "";browse = 1;gl.prodtipo = 1;
-                    startActivity(new Intent(this, Producto.class));break;
+                    gl.gstr = "";
+                    browse = 1;
+                    gl.prodtipo = 1;
+                    startActivity(new Intent(this, Producto.class));
+                    break;
                 case 51:
                     if (khand.isValid) {
-                        barcode=khand.val;addBarcode();
+                        barcode = khand.val;
+                        addBarcode();
                     }
                     break;
                 case 52:
                     if (!gl.exitflag) {
-                        browse=8;
-                        gl.climode=false;
+                        browse = 8;
+                        gl.climode = false;
 
                         if (usarbio) {
-                            startActivity(new Intent(Venta.this,Clientes.class));
+                            startActivity(new Intent(Venta.this, Clientes.class));
                         } else {
                             if (!gl.forcedclose) {
-                                startActivity(new Intent(Venta.this,CliPos.class));
+                                startActivity(new Intent(Venta.this, CliPos.class));
                             }
                         }
                     }
@@ -2325,12 +2357,16 @@ public class Venta extends PBase {
                 case 53:
                     break;
                 case 54:
-                    borraLinea();break;
+                    borraLinea();
+                    break;
                 case 55:
                     borraTodo();
                     break;
                 case 56:
                     showMenuSwitch();
+                    break;
+                case 61:
+                    msgAskOrden("Convertir al orden");
                     break;
             }
         } catch (Exception e) {
@@ -2419,7 +2455,7 @@ public class Venta extends PBase {
     private void estadoPedidos() {
 
         try {
-            D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_ENTREGO=0) ");
+            D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_CREO=0) ");
             int peds=D_pedidoObj.count;
 
             for (int i = 0; i <mitems.size(); i++) {
@@ -2442,7 +2478,6 @@ public class Venta extends PBase {
         try{
             final AlertDialog Dialog;
             final String[] selitems = {"Repesaje","Borrar"};
-
 
             ExDialog menudlg = new ExDialog(this);
 
@@ -2990,6 +3025,23 @@ public class Venta extends PBase {
 
     }
 
+    private void setNivel() {
+
+        nivel=gl.nivel;
+
+        try {
+            for (int i = 0; i <P_nivelprecioObj.count; i++) {
+                if (P_nivelprecioObj.items.get(i).codigo==gl.nivel) {
+                    lblNivel.setText(""+P_nivelprecioObj.items.get(i).nombre);break;
+                }
+            }
+
+            if (famid>0) listProduct();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+     }
+
     //endregion
 
     //region Dialogs
@@ -3042,7 +3094,64 @@ public class Venta extends PBase {
 
     }
 
-    //endregion
+    private void msgAskOrden(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                toast("Pendiente implementacion");
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void showNivelMenu() {
+        final AlertDialog Dialog;
+
+        try {
+
+            final String[] selitems = new String[P_nivelprecioObj.count];
+            for (int i = 0; i <P_nivelprecioObj.count; i++) {
+                selitems[i]=P_nivelprecioObj.items.get(i).nombre;
+            }
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Nivel de precio");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    int niv=P_nivelprecioObj.items.get(item).codigo;
+                    gl.nivel=niv;
+                    setNivel();
+
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+   //endregion
 
     //region Activity Events
 
@@ -3052,6 +3161,13 @@ public class Venta extends PBase {
         try {
             super.onResume();
             D_pedidoObj.reconnect(Con,db);
+
+
+            try {
+                P_nivelprecioObj.reconnect(Con,db);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             if (gl.forcedclose) {
                 super.finish();
@@ -3073,6 +3189,7 @@ public class Venta extends PBase {
                 lblVend.setText(" ");
 
                 gl.nivel=gl.nivel_sucursal;
+                setNivel();
 
                 try  {
                     db.execSQL("DELETE FROM T_VENTA");
@@ -3126,7 +3243,9 @@ public class Venta extends PBase {
             }
 
             if (browse==3) {
-                browse=0;if (gl.promapl) updDesc();return;
+                browse=0;
+                prodid=saveprodid;
+                if (gl.promapl) updDesc();return;
             }
 
             if (browse==4) {

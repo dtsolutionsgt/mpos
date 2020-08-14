@@ -173,7 +173,14 @@ public class clsClasses {
         public String nota;
     }
 
-
+    public class clsD_pedidoc {
+        public String corel;
+        public String nombre;
+        public String telefono;
+        public String direccion;
+        public String referencia;
+        public String nit;
+    }
 
     public class clsP_archivoconf {
         public String ruta;
@@ -318,9 +325,9 @@ public class clsClasses {
 
     public class clsP_descuento {
         public int  codigo_descuento;
-        public String cliente;
+        public int cliente;
         public int  ctipo;
-        public String producto;
+        public int producto;
         public int  ptipo;
         public int  tiporuta;
         public double rangoini;
@@ -688,6 +695,66 @@ public class clsClasses {
         public int  cant;
     }
 
+    public class clsT_combo {
+        public int  codigo_menu;
+        public int  idcombo;
+        public int  unid;
+        public int  cant;
+        public int  idseleccion;
+        public int  orden;
+    }
+
+    public class clsT_movd {
+        public int  coreldet;
+        public String corel;
+        public int  producto;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public String lote;
+        public int  codigoliquidacion;
+        public String unidadmedida;
+        public double precio;
+        public int  razon;
+    }
+
+    public class clsT_movr {
+        public int  coreldet;
+        public String corel;
+        public int  producto;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public String lote;
+        public int  codigoliquidacion;
+        public String unidadmedida;
+        public double precio;
+        public int  razon;
+    }
+
+    public class clsT_venta {
+        public String producto;
+        public String empresa;
+        public String um;
+        public double cant;
+        public String umstock;
+        public double factor;
+        public double precio;
+        public double imp;
+        public double des;
+        public double desmon;
+        public double total;
+        public double preciodoc;
+        public double peso;
+        public double val1;
+        public String val2;
+        public double val3;
+        public String val4;
+        public double percep;
+    }
+
     //
 
 	public class clsLista {
@@ -836,44 +903,6 @@ public class clsClasses {
 		public int inicial,fin,actual;
 	}
 
-    public class clsT_combo {
-        public int  codigo_menu;
-        public int  idcombo;
-        public int  unid;
-        public int  cant;
-        public int  idseleccion;
-        public int  orden;
-    }
-
-    public class clsT_movd {
-        public int  coreldet;
-        public String corel;
-        public int  producto;
-        public double cant;
-        public double cantm;
-        public double peso;
-        public double pesom;
-        public String lote;
-        public int  codigoliquidacion;
-        public String unidadmedida;
-        public double precio;
-        public int  razon;
-    }
-
-    public class clsT_movr {
-        public int  coreldet;
-        public String corel;
-        public int  producto;
-        public double cant;
-        public double cantm;
-        public double peso;
-        public double pesom;
-        public String lote;
-        public int  codigoliquidacion;
-        public String unidadmedida;
-        public double precio;
-        public int  razon;
-    }
 
 
     //endregion

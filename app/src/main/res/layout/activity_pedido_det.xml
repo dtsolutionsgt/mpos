@@ -12,6 +12,28 @@
         android:layout_height="92dp"
         android:background="@drawable/frame_rect_blue">
 
+        <TextView
+            android:id="@+id/textView191"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/frame_rect_white"
+            android:clickable="true"
+            android:onClick="doAnul"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp"
+            android:text="ANULAR"
+            android:textColor="#FFFFFF"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/imageView69"
             android:layout_width="wrap_content"
@@ -22,19 +44,44 @@
             android:padding="10dp"
             android:src="@drawable/break_w" />
 
-        <ImageView
-            android:id="@+id/imageView70"
+        <TextView
+            android:id="@+id/textView188"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentTop="false"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="100dp"
+            android:background="@drawable/frame_rect_white"
+            android:clickable="true"
+            android:onClick="doCliente"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp"
+            android:text="INFORMACIÓN CLIENTE"
+            android:textColor="#FFFFFF"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView190"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:adjustViewBounds="true"
-            android:padding="20dp"
-            android:src="@drawable/menu" />
+            android:layout_marginStart="153dp"
+            android:layout_marginTop="2dp"
+            android:text="000"
+            android:textColor="#FFFFFF"
+            android:textSize="64dp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/relestado"
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_below="@+id/relRoad"
@@ -232,4 +279,18 @@
                 android:textSize="18sp" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="3dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toStartOf="@+id/relestado" />
 </RelativeLayout>

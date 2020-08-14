@@ -129,13 +129,13 @@ public class ProdMenu extends PBase {
 
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox( e.getMessage());
+                        mu.msgbox2(e.getMessage());
                     }
                 };
             });
 
         } catch (Exception e) {
-            mu.msgbox( e.getMessage());
+            mu.msgbox2( e.getMessage());
         }
     }
 
@@ -177,7 +177,7 @@ public class ProdMenu extends PBase {
 
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
-            mu.msgbox(e.getMessage());
+            mu.msgbox2(e.getMessage());
         }
     }
 
@@ -215,7 +215,7 @@ public class ProdMenu extends PBase {
             listView.setAdapter(adapter);
 
         } catch (Exception e) {
-            mu.msgbox(e.getMessage());
+            mu.msgbox2(e.getMessage());
         }
     }
 
@@ -286,7 +286,7 @@ public class ProdMenu extends PBase {
             return true;
         } catch (Exception e) {
             db.endTransaction();
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
             return false;
         }
     }
@@ -344,7 +344,7 @@ public class ProdMenu extends PBase {
             Dialog.show();
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -364,7 +364,7 @@ public class ProdMenu extends PBase {
             }
         }
 
-        if (!flag) msgbox(ststr);
+        if (!flag) msgbox2(ststr);
         return flag;
     }
 
@@ -607,7 +607,7 @@ public class ProdMenu extends PBase {
             P_productoObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 

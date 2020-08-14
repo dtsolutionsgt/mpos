@@ -410,7 +410,7 @@ public class FelFactura extends PBase {
             fel.completar(fact.serie,fact.corelativo);
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -431,7 +431,7 @@ public class FelFactura extends PBase {
             D_facturaObj.update(fact);
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -466,7 +466,7 @@ public class FelFactura extends PBase {
 
         } catch (Exception e) {
             db.endTransaction();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -568,7 +568,7 @@ public class FelFactura extends PBase {
             CSQL = CSQL + ss + ";";
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -638,7 +638,7 @@ public class FelFactura extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 
@@ -754,7 +754,7 @@ public class FelFactura extends PBase {
             CSQL = CSQL + ss + "\n";
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -775,7 +775,7 @@ public class FelFactura extends PBase {
             lbl1.setText("Pendientes envio : "+ftot);
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -835,7 +835,7 @@ public class FelFactura extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
         }
     }
@@ -966,7 +966,7 @@ public class FelFactura extends PBase {
 
             D_fel_errorObj.add(item);
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -1042,7 +1042,7 @@ public class FelFactura extends PBase {
             D_facturapObj.reconnect(Con,db);
             prod.reconnect(Con,db);
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            msgbox2(e.getMessage());
         }
     }
 

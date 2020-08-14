@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
 
 public class Precio {
 
-	public double costo,descmon,imp,impval,tot,precsin,totsin,precdoc,precioespecial,desc;
+	public double costo,descmon,imp,impval,tot,precsin,totsin,precdoc,precioespecial,desc,preciobase;
 	
 	private int active;
 	private android.database.sqlite.SQLiteDatabase db;
@@ -54,7 +54,7 @@ public class Precio {
 		um=unimedida;umpeso=unimedidapeso;umventa=umven;
 		prec=0;costo=0;descmon=0;imp=0;tot=0;precioespecial=0;
 
-		clsDescuento clsDesc=new clsDescuento(cont,prodid,cant);
+		clsDescuento clsDesc=new clsDescuento(cont,""+codigoprod,cant);
 		desc=clsDesc.getDesc();
 
 		if (cant>0) {
@@ -114,6 +114,8 @@ public class Precio {
 				pr=0;
 			}
 	    }
+
+        preciobase=pr;
 		
 		totsin=pr*cant;tsimp=mu.round(totsin,ndec);
 		
@@ -187,8 +189,9 @@ public class Precio {
 			
 		} catch (Exception e) {
 			pr=0;
-	    }	
-		
+	    }
+
+        preciobase=pr;
 		totsin=pr;tsimp=mu.round(totsin,ndec);
 		
 		imp=getImp();

@@ -172,9 +172,9 @@ public class MantDescuento extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.cliente="*";
+        item.cliente=0;
         item.ctipo=0;
-        item.producto="";
+        item.producto=0;
         item.ptipo=0;
         item.tiporuta=0;
         item.rangoini=1;
@@ -310,7 +310,7 @@ public class MantDescuento extends PBase {
                     msgbox("¡Un descuento con este producto ya existe!\n"+holder.first().nombre);return false;
                 }
 
-                item.producto=ss;
+                //item.producto=ss;
             }
 
             ss=txt2.getText().toString().trim();

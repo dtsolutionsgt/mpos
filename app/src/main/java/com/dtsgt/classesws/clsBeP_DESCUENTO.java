@@ -5,9 +5,11 @@ import org.simpleframework.xml.Element;
 
 public class clsBeP_DESCUENTO {
 
-    @Element(required=false) public String CLIENTE;
+    @Element(required=false) public int CODIGO_DESCUENTO;
+    @Element(required=false) public int EMPRESA;
+    @Element(required=false) public int CODIGO_CLIENTE;
     @Element(required=false) public int CTIPO;
-    @Element(required=false) public String PRODUCTO;
+    @Element(required=false) public int CODIGO_PRODUCTO;
     @Element(required=false) public int PTIPO;
     @Element(required=false) public int TIPORUTA;
     @Element(required=false) public double RANGOINI;
@@ -20,23 +22,23 @@ public class clsBeP_DESCUENTO {
     @Element(required=false) public int FECHAFIN;
     @Element(required=false) public int CODDESC;
     @Element(required=false) public String NOMBRE;
-    @Element(required=false) public String EMP;
     @Element(required=false) public int ACTIVO;
-    @Element(required=false) public int CODIGO_DESCUENTO;
 
 
     public clsBeP_DESCUENTO() {
     }
 
-    public clsBeP_DESCUENTO(String CLIENTE,int CTIPO,String PRODUCTO,int PTIPO,
-                            int TIPORUTA,double RANGOINI,double RANGOFIN,String DESCTIPO,
-                            double VALOR,String GLOBDESC,String PORCANT,int FECHAINI,
-                            int FECHAFIN,int CODDESC,String NOMBRE,String EMP,
-                            int ACTIVO,int CODIGO_DESCUENTO) {
+    public clsBeP_DESCUENTO(int CODIGO_DESCUENTO,int EMPRESA,int CODIGO_CLIENTE,int CTIPO,
+                            int CODIGO_PRODUCTO,int PTIPO,int TIPORUTA,double RANGOINI,
+                            double RANGOFIN,String DESCTIPO,double VALOR,String GLOBDESC,
+                            String PORCANT,int FECHAINI,int FECHAFIN,int CODDESC,
+                            String NOMBRE,int ACTIVO) {
 
-        this.CLIENTE=CLIENTE;
+        this.CODIGO_DESCUENTO=CODIGO_DESCUENTO;
+        this.EMPRESA=EMPRESA;
+        this.CODIGO_CLIENTE=CODIGO_CLIENTE;
         this.CTIPO=CTIPO;
-        this.PRODUCTO=PRODUCTO;
+        this.CODIGO_PRODUCTO=CODIGO_PRODUCTO;
         this.PTIPO=PTIPO;
         this.TIPORUTA=TIPORUTA;
         this.RANGOINI=RANGOINI;
@@ -49,18 +51,28 @@ public class clsBeP_DESCUENTO {
         this.FECHAFIN=FECHAFIN;
         this.CODDESC=CODDESC;
         this.NOMBRE=NOMBRE;
-        this.EMP=EMP;
         this.ACTIVO=ACTIVO;
-        this.CODIGO_DESCUENTO=CODIGO_DESCUENTO;
 
     }
 
 
-    public String getCLIENTE() {
-        return CLIENTE;
+    public int getCODIGO_DESCUENTO() {
+        return CODIGO_DESCUENTO;
     }
-    public void setCLIENTE(String value) {
-        CLIENTE=value;
+    public void setCODIGO_DESCUENTO(int value) {
+        CODIGO_DESCUENTO=value;
+    }
+    public int getEMPRESA() {
+        return EMPRESA;
+    }
+    public void setEMPRESA(int value) {
+        EMPRESA=value;
+    }
+    public int getCODIGO_CLIENTE() {
+        return CODIGO_CLIENTE;
+    }
+    public void setCODIGO_CLIENTE(int value) {
+        CODIGO_CLIENTE=value;
     }
     public int getCTIPO() {
         return CTIPO;
@@ -68,11 +80,11 @@ public class clsBeP_DESCUENTO {
     public void setCTIPO(int value) {
         CTIPO=value;
     }
-    public String getPRODUCTO() {
-        return PRODUCTO;
+    public int getCODIGO_PRODUCTO() {
+        return CODIGO_PRODUCTO;
     }
-    public void setPRODUCTO(String value) {
-        PRODUCTO=value;
+    public void setCODIGO_PRODUCTO(int value) {
+        CODIGO_PRODUCTO=value;
     }
     public int getPTIPO() {
         return PTIPO;
@@ -146,23 +158,12 @@ public class clsBeP_DESCUENTO {
     public void setNOMBRE(String value) {
         NOMBRE=value;
     }
-    public String getEMP() {
-        return EMP;
-    }
-    public void setEMP(String value) {
-        EMP=value;
-    }
     public int getACTIVO() {
         return ACTIVO;
     }
     public void setACTIVO(int value) {
         ACTIVO=value;
     }
-    public int getCODIGO_DESCUENTO() {
-        return CODIGO_DESCUENTO;
-    }
-    public void setCODIGO_DESCUENTO(int value) {
-        CODIGO_DESCUENTO=value;
-    }
+
 }
 

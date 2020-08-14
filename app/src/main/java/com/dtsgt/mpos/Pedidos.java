@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -13,6 +14,10 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.ladapt.LA_D_pedido;
+
+import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Pedidos extends PBase {
 
@@ -26,9 +31,12 @@ public class Pedidos extends PBase {
     private String sql;
     private boolean modo=false;
 
-    private String sql1="WHERE (ANULADO=0) AND (CODIGO_USUARIO_ENTREGO=0) ORDER BY FECHA_RECEPCION_SUC,FECHA_SISTEMA ";
+    private String sql1="WHERE (ANULADO=0) AND (FECHA_SALIDA_SUC=0) ORDER BY EMPRESA,FECHA_RECEPCION_SUC ";
     private String sql2="WHERE (ANULADO=0) AND (FECHA_SALIDA_SUC>0) ORDER BY FECHA_SALIDA_SUC DESC ";
-    private String sql3="WHERE (ANULADO=1) ORDER BY FECHA_RECEPCION_SUC DESC";
+    private String sql3="WHERE (ANULADO=1) ORDER BY EMPRESA DESC";
+
+    private TimerTask ptask;
+    private int period=10000,delay=50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +92,13 @@ public class Pedidos extends PBase {
 
     private void listItems() {
         clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
+
         try {
 
             cnue=0;cpen=0;ccomp=0;
 
             D_pedidoObj.fill(sql);
+            sql=sql1;
 
             for (int i = 0; i <D_pedidoObj.count; i++) {
                 item=D_pedidoObj.items.get(i);
@@ -106,6 +116,53 @@ public class Pedidos extends PBase {
             mu.msgbox(e.getMessage());
         }
     }
+
+    private void iniciaPedidos() {
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(ptask=new TimerTask() {
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public synchronized void run() {
+                             recibePedidos();
+                        }
+                    });
+                }
+            }, delay, period);
+     }
+
+    private void cancelaPedidos() {
+        try {
+            ptask.cancel();
+        } catch (Exception e) {}
+    }
+
+    private void recibePedidos() {
+        int pp;
+        String fname;
+
+        try {
+            String path = Environment.getExternalStorageDirectory().getPath() + "/mposordser";
+            File directory = new File(path);
+            File[] files = directory.listFiles();
+
+            for (int i = 0; i < files.length; i++) {
+                fname=files[i].getName();
+                pp=fname.indexOf(".txt");
+                if (pp>1){
+                    if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime())) {
+                        msgbox2("Ocurrio error en recepción de orden :\n"+app.errstr);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            msgbox2("recibePedidos : "+e.getMessage());
+        }
+
+        listItems();
+
+    }
+
 
     //endregion
 
@@ -157,12 +214,25 @@ public class Pedidos extends PBase {
 
     @Override
     protected void onResume() {
-          super.onResume();
+        super.onResume();
 
-          if (browse==1) {
-              browse=0;
-              listItems();return;
-          }
+        if (gl.closePedido) {
+            gl.closePedido=false;
+            finish();return;
+        }
+
+        iniciaPedidos();
+
+        if (browse==1) {
+            browse=0;
+            listItems();return;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        cancelaPedidos();
+        super.onPause();
     }
 
     //endregion

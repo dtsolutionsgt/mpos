@@ -27,7 +27,7 @@ public class appGlobals extends Application {
 	public String tiendanom,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
-	public boolean closeCliDet, closeVenta, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
+	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,

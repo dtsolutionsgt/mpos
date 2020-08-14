@@ -120,16 +120,15 @@ public class clsDescuento {
 		Cursor DT;
 		String iid;
 		double val;
-		
+
+		if (cant<=0) return;
+
 		try {
 			vSQL="SELECT PRODUCTO,PTIPO,VALOR,PORCANT "+
 				 "FROM T_DESC WHERE  ("+cant+">=RANGOINI) AND ("+cant+"<=RANGOFIN) "+
 				 "AND (PTIPO<4) AND (DESCTIPO='R') AND (GLOBDESC='N') ";
 			     //"AND (PTIPO<4) AND (DESCTIPO='R') AND (GLOBDESC='N') AND ((PORCANT='S') OR (PORCANT='1'))";
-
 			DT=Con.OpenDT(vSQL);
-		
-			
 			if (DT.getCount()==0) return;
 			
 			DT.moveToFirst();
@@ -153,7 +152,11 @@ public class clsDescuento {
 				}		
 				
 				if (val>0) {
-					if (canttipo.equalsIgnoreCase("1")) montos.add(val); else items.add(val);
+					if (canttipo.equalsIgnoreCase("S")) {
+                        items.add(val);
+                    } else {
+                        montos.add(val);
+                    }
 				}
 				
 				DT.moveToNext();
@@ -233,7 +236,7 @@ public class clsDescuento {
 		Cursor DT;
 		
 		try {
-			vSQL="SELECT DESCUENTO,LINEA,'' AS SUBLINEA,MARCA FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
+			vSQL="SELECT DESCUENTO,LINEA,'' AS SUBLINEA,MARCA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prodid;
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
 			

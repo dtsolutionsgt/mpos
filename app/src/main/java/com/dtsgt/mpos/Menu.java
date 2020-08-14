@@ -274,34 +274,24 @@ public class Menu extends PBase {
 			switch (menuid) {
 
 				case 1:
-
 					gl.cajaid=5;
                     gl.InvCompSend=false;
 
 					if (valida()) {
 
-					    gl.nivel_sucursal=app.nivelSucursal();
-						gl.cliente="C.F.";
+					    gl.nivel_sucursal=app.nivelSucursal();gl.cliente="C.F.";
 						gl.gNombreCliente ="Consumidor final";
-						gl.gNITCliente ="C.F.";
-						gl.gDirCliente ="Ciudad";
-
-                        gl.cliposflag=false;
-						gl.rutatipo="V";gl.rutatipog="V";
+						gl.gNITCliente ="C.F.";gl.gDirCliente ="Ciudad";
+                        gl.cliposflag=false;gl.rutatipo="V";gl.rutatipog="V";
 						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
-
-						gl.iniciaVenta=true;
-						gl.exitflag=false;
-						gl.forcedclose=false;
+						gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
 
 						if (impresoraInstalada()) {
                             startActivity(new Intent(this, Venta.class));
                         } else {
                             msgAskImpresora();
                         }
-
 					} else {
-
 						if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
 						//msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
 						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
@@ -311,97 +301,57 @@ public class Menu extends PBase {
 							if(gl.cajaid==6) msgAskValidUltZ("No se realizó el último cierre de caja, ¿Desea continuar la venta con la fecha: "+du.univfechaReport(gl.lastDate)+", o desea realizar el cierre Z?");
 						}
 					}
-
 					break;
-
 				case 2:  // Comunicacion
                     showMenuCom();break;
-
 				case 3:  // Reimpresion
 			        showPrintMenuTodo();break;
-
 				case 4:  // Anulacion
 				    showVoidMenuTodo();break;
-
 				case 5:  // Consultas
-
 					//#HS_20181206 Verifica el usuario si es DTS.
+					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
+						mu.msgbox("No puede realizar esta acción");
+					} else showConsMenu();
+					break;
+				case 6:  // Deposito
+					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
+						mu.msgbox("No puede realizar esta acción");
+					} else showCajaMenu();
+					break;
+				case 7:  // Inventario
+					//#HS_20181206 Verifica el usuario si es DTS.
+					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
+						mu.msgbox("No puede realizar esta acción");
+					} else showInvMenuVenta();
+					break;
+				case 8:  // Fin Dia
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
 						mu.msgbox("No puede realizar esta acción");
 					} else {
-						showConsMenu();
-					}
-					break;
-
-				case 6:  // Deposito
-
-					//getDepTipo();
-
-					//#HS_20181206 Verifica el usuario si es DTS.
-					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
-						mu.msgbox("No puede realizar esta acción");
-					}else {
-						showCajaMenu();
-					}
-
-					break;
-
-				case 7:  // Inventario
-
-					//#HS_20181206 Verifica el usuario si es DTS.
-					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
-						mu.msgbox("No puede realizar esta acción");
-					}else {
-						showInvMenuVenta();
-					}
-
-					break;
-
-				case 8:  // Fin Dia
-
-					//#HS_20181206 Verifica el usuario si es DTS.
-					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
-						mu.msgbox("No puede realizar esta acción");
-					}else {
 						Intent intent8 = new Intent(this, FinDia.class);
 						startActivity(intent8);
 					}
-
 					break;
-
 				case 9:  // Utilerias
-					showInvMenuUtils();
-					break;
-
+					showInvMenuUtils();break;
 				case 10:  // Cambio usuario
-					askCambUsuario();
-					break;
-
+					askCambUsuario();break;
 				case 11:
 				    if (gl.peMCent) {
                         if (app.grant(11,gl.rol)) {
                             showMantMenu();
                         } else {
-                            if (app.grant(12,gl.rol)) {
-                            	showMantCliente();
-							}
-                        }
+                            if (app.grant(12,gl.rol)) showMantCliente();
+                       }
                     } else {
-                        if (gl.rol>2) {
-                        	showMantMenu();
-                        } else {
-                        	showMantCliente();
-						}
+                        if (gl.rol>2) showMantMenu(); else showMantCliente();
                     }
 					break;
-
 				case 12:
-					showReportMenu();
-					break;
-
+					showReportMenu();break;
 				case 13:
-					apagar();
-
+					apagar();break;
 			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1286,13 +1236,12 @@ public class Menu extends PBase {
 	}
 
 	public boolean valida(){
-		try{
+		try {
 
 			clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
-
 			caja.fill();
 
-			if(gl.cajaid==1 || gl.cajaid==2){
+			if (gl.cajaid==1 || gl.cajaid==2){
 
 				if(gl.cajaid==1){
 					if(caja.count==0) return true;
@@ -1305,23 +1254,31 @@ public class Menu extends PBase {
 
 				if(gl.cajaid==2){
 					if(caja.count==0) return false;
-
 					if(caja.last().estado==0){
 						return true;
 					}
 				}
 
-			} else if(gl.cajaid==3 || gl.cajaid==5){
+			} else if (gl.cajaid==3 || gl.cajaid==5){
 
 				if(caja.count==0) {
-					if(gl.cajaid==3) gl.cajaid=0;
+					if (gl.cajaid==3) gl.cajaid=0;
 					return false;
 				}
 
-				if(caja.last().estado==1){
+				if (caja.last().estado==1) {
 					return false;
-				}else if(gl.cajaid==5) {
+				} else if(gl.cajaid==5) {
 
+				    long fc=caja.last().fecha;
+				    long fa=du.getActDate();
+
+                    if(fc!=fa){
+                        gl.validDate=true;
+                        gl.cajaid=6; return false;
+                    }
+
+                    /*
 					if (gl.lastDate!=0){
 
 						if(caja.last().fecha!=gl.lastDate){
@@ -1330,11 +1287,15 @@ public class Menu extends PBase {
 							gl.cajaid=6; return false;
 						}
 					}
+					*/
 				}
+			} else {
+			    if(gl.cajaid==4) {
+			        return false;
+                }
+            }
 
-			}else if(gl.cajaid==4) return false;
-
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			msgbox("Ocurrió error (valida) "+e);
 			return false;

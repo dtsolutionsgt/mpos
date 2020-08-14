@@ -1,5 +1,6 @@
 package com.dtsgt.base;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,15 +22,21 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
 
 public class AppMethods {
+
+    public String errstr;
 
 	private Context cont;
 	private appGlobals gl;
@@ -582,8 +589,8 @@ public class AppMethods {
 	}
 
     public void getURL() {
-        gl.wsurl = "http://192.168.1.10/mposws/mposws.asmx";
-        gl.timeout = 6000;
+        gl.wsurl = "http://52.41.114.122/MPosWS_QA/Mposws.asmx";
+        gl.timeout = 20000;
 
         try {
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
@@ -594,8 +601,19 @@ public class AppMethods {
 
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
-                if(line.isEmpty()) gl.timeout = 6000;else gl.timeout = Integer.valueOf(line);
+                if(line.isEmpty()) gl.timeout = 20000;else gl.timeout = Integer.valueOf(line);
                 myReader.close();
+            } else {
+                BufferedWriter writer = null;
+                FileWriter wfile;
+
+                wfile=new FileWriter(file1,false);
+                writer = new BufferedWriter(wfile);
+                writer.write(gl.wsurl);writer.write("\r\n");
+                writer.write(gl.timeout);writer.write("\r\n");
+                writer.close();
+
+                toast("Creado archivo de conexion");
             }
         } catch (Exception e) {}
     }
@@ -1121,11 +1139,12 @@ public class AppMethods {
         ArrayList<String> items=new ArrayList<String>();
         String sql;
 
+
         try {
             file=new File(fname);
             br = new BufferedReader(new FileReader(file));
         } catch (Exception e) {
-            moveFile(fname,ename);return false;
+            moveFile(fname,ename);errstr=e.getMessage();return false;
         }
 
         try {
@@ -1136,21 +1155,24 @@ public class AppMethods {
                 db.execSQL(sql);
             }
 
-            sql="UPDATE D_PEDIDO SET FECHA_PEDIDO="+fa+" WHERE FECHA_PEDIDO=0";
+            sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0 WHERE FECHA_RECEPCION_SUC=0";
             db.execSQL(sql);
 
             db.setTransactionSuccessful();
             db.endTransaction();
 
         } catch (Exception e) {
-            db.endTransaction();moveFile(fname,ename);return false;
+            db.endTransaction();errstr=e.getMessage();moveFile(fname,ename);
+            return false;
         }
 
         try {
             br.close();
         } catch (Exception e) {
-            file.delete();
+            errstr=e.getMessage();
         }
+
+        file.delete();
 
         return true;
     }
@@ -1159,9 +1181,7 @@ public class AppMethods {
         try {
             FileUtils.forceDelete(new File(fname));
             FileUtils.moveFile(new File(fname),new File(ename));
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
+        } catch (Exception e) {}
     }
 
     //
@@ -1311,12 +1331,12 @@ public class AppMethods {
 
 	public void msgbox(String msg) {
 
-		try{
-
+		try {
 			if (!emptystr(msg)){
 
                 ExDialog dialog = new ExDialog(cont);
-				dialog.setMessage(msg);
+
+                dialog.setMessage(msg);
 
 				dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
@@ -1327,8 +1347,9 @@ public class AppMethods {
 
 			}
 
-		}catch (Exception ex)
-			{toast(ex.getMessage());}
+		} catch (Exception ex) {
+		    toast(ex.getMessage());
+		}
 	}
 
 	public int isOnWifi(){

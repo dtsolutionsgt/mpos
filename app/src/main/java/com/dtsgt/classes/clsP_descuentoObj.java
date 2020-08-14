@@ -147,9 +147,9 @@ public class clsP_descuentoObj {
 
             item = clsCls.new clsP_descuento();
 
-            item.cliente = dt.getString(0);
+            item.cliente = dt.getInt(0);
             item.ctipo = dt.getInt(1);
-            item.producto = dt.getString(2);
+            item.producto = dt.getInt(2);
             item.ptipo = dt.getInt(3);
             item.tiporuta = dt.getInt(4);
             item.rangoini = dt.getDouble(5);

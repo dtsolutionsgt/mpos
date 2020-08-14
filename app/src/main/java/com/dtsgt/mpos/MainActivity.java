@@ -57,7 +57,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.3 / 27-Jul-2020 ";
+    private String parVer = " 3.2.5 / 14-Ago-2020 ";
 
     Typeface typeface;
 
@@ -122,10 +122,10 @@ public class MainActivity extends PBase {
             this.setTitle("MPos");
             gl.parVer = parVer;
 
-            lblRuta = (TextView) findViewById(R.id.lblCDisp);
-            lblRTit = (TextView) findViewById(R.id.lblCUsed);
+            lblRuta = (TextView) findViewById(R.id.lblCDisp);lblRuta.setText("");
+            lblRTit = (TextView) findViewById(R.id.lblCUsed);lblRTit.setText("");
             lblVer = (TextView) findViewById(R.id.textView10);
-            lblEmp = (TextView) findViewById(R.id.textView82);
+            lblEmp = (TextView) findViewById(R.id.textView82);lblEmp.setText("");
             lblPass = (TextView) findViewById(R.id.lblPass);
             lblKeyDP = (TextView) findViewById(R.id.textView110);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
@@ -214,8 +214,8 @@ public class MainActivity extends PBase {
             try {
                 Intent intent = new Intent(MainActivity.this, srvPedidosImport.class);
                 intent.putExtra("URL","http://192.168.1.10/mposws/mposws.asmx");
-                intent.putExtra("idempresa",3);
-                intent.putExtra("idsucursal",4);
+                intent.putExtra("idempresa",gl.emp);
+                intent.putExtra("idsucursal",gl.tienda);
                 startService(intent);
             } catch (Exception e) {
                 msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());

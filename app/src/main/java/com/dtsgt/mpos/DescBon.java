@@ -27,14 +27,14 @@ public class DescBon extends PBase {
 		addlog("DescBon",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
 		lblDesc= (TextView) findViewById(R.id.lblFecha);
-		txtDesc = (EditText) findViewById(R.id.txtDesc);
+		txtDesc = (EditText) findViewById(R.id.txtDesc);txtDesc.setEnabled(false);
 		
-		prodid=((appGlobals) vApp).promprod;
-		cant=((appGlobals) vApp).promcant;
-		desc=((appGlobals) vApp).promdesc;
-		prommodo=((appGlobals) vApp).prommodo;
+		prodid=gl.promprod;
+		cant=gl.promcant;
+		desc=gl.promdesc;
+		prommodo=gl.prommodo;
 		
-		((appGlobals) vApp).promapl=false;
+		gl.promapl=false;
 		
 		setHandlers();
 		
@@ -48,6 +48,7 @@ public class DescBon extends PBase {
 			if (prommodo==0) ss=" %"; else ss=" (monto) ";
 
 			lblDesc.setText("Máximo : "+mu.frmdecno(desc)+ss);
+            lblDesc.setText("");
 			txtDesc.setText(mu.frmdecno(desc));
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -96,15 +97,15 @@ public class DescBon extends PBase {
 			}
 
 			desc=vd;
-			((appGlobals) vApp).promprod=prodid;
+			gl.promprod=prodid;
 			if (prommodo==0) {
-				((appGlobals) vApp).promdesc=desc;
-				((appGlobals) vApp).prommdesc=0;
+				gl.promdesc=desc;
+				gl.prommdesc=0;
 			} else {
-				((appGlobals) vApp).promdesc=0;
-				((appGlobals) vApp).prommdesc=desc;
+				gl.promdesc=0;
+				gl.prommdesc=desc;
 			}
-			((appGlobals) vApp).promapl=true;
+			gl.promapl=true;
 
 			super.finish();
 		}catch (Exception e){

@@ -84,12 +84,12 @@ public class LA_D_pedido  extends BaseAdapter {
         }
 
         if (idlargo) {
-            corel=(int) items.get(position).fecha_sistema;
+            corel=(int) items.get(position).empresa;
         } else {
-            corel=(int) items.get(position).fecha_sistema % 1000;
+            corel=(int) items.get(position).empresa % 1000;
         }
 
-        holder.lbl1.setText(""+corel);
+        if (corel>0) holder.lbl1.setText(""+corel);else holder.lbl1.setText("");
         holder.lbl2.setText(du.sfechash(items.get(position).fecha_recepcion_suc));
         holder.lbl3.setText(du.shora(items.get(position).fecha_recepcion_suc));
         holder.lbl4.setText("");
@@ -102,7 +102,7 @@ public class LA_D_pedido  extends BaseAdapter {
         if (items.get(position).codigo_usuario_proceso>0)  {
             color=Color.parseColor("#8DDF8F");resid=R.drawable.ped_3;
         }
-        if (items.get(position).codigo_usuario_entrego>0)  {
+        if (items.get(position).fecha_salida_suc>0)  {
             color=Color.parseColor("#57CAD7");resid=R.drawable.ped_4;
         }
         if (items.get(position).anulado==1)  {

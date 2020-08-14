@@ -172,7 +172,7 @@ public class WSRec extends PBase {
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
-        getURL();
+        app.getURL();
         setHandlers();
 
         ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
@@ -371,16 +371,14 @@ public class WSRec extends PBase {
                 case 1:
                     processEmpresas();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(3);
                     break;
                 case 3:
                     processConfig();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(4);
                     break;
@@ -391,228 +389,206 @@ public class WSRec extends PBase {
                 case 5:
                     processCorel();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(6);
                     break;
                 case 6:
-                    //processDescuento();if (ws.errorflag) { processComplete();break;}
+                    /*
+                    processDescuento();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    */
                     execws(7);
+
                     break;
                 case 7:
                     processFactor();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(8);
                     break;
                 case 8:
                     processImpuesto();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(9);
                     break;
                 case 9:
                     processLinea();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(10);
                     break;
                 case 10:
                     processCliente();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(11);
                     break;
                 case 11:
                     processEncabezado();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(12);
                     break;
                 case 12:
                     processMedia();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(13);
                     break;
                 case 13:
                     processMoneda();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(14);
                     break;
                 case 14:
                     processNivel();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(15);
                     break;
                 case 15:
                     processCombo();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(16);
                     break;
                 case 16:
                     processProdMenu();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(17);
                     break;
                 case 17:
                     processPrecios();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(18);
                     break;
                 case 18:
                     processOpciones();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(28);
                     break;
                 case 28:
                     processOpcionesdet();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(20);
                     break;
                 case 20:
                     processProveedores();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(21);
                     break;
                 case 21:
                     processProductos();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(22);
                     break;
                 case 22:
                     processRutas();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(23);
                     break;
                 case 23:
                     processSucursales();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(24);
                     break;
                 case 24:
                     processUsrGrupos();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(25);
                     break;
                 case 25:
                     processUsrGrOpc();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(26);
                     break;
                 case 26:
                     processGrOpciones();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(27);
                     break;
                 case 27:
                     processVendedores();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                    execws(29);
                    break;
                 case 29:
                     processConceptoPago();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(30);
                     break;
                 case 30:
                     processParametrosExtra();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(31);
                     break;
                 case 31:
                     processBancos();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(32);
                     break;
                 case 32:
                     processMotivoAjustes();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(33);
                     break;
                 case 33:
                     processDepartamentos();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(34);
                     break;
                 case 34:
                     processMunicipios();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(36);
                     //processComplete();
@@ -620,23 +596,21 @@ public class WSRec extends PBase {
                 case 35:
                     processProductoTipo();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     execws(36);
                     break;
                 case 36:
                     processFrases();
                     if (ws.errorflag) {
-                        processComplete();
-                        break;
+                        processComplete();break;
                     }
                     processComplete();
                     break;
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
         }
     }
@@ -893,7 +867,7 @@ public class WSRec extends PBase {
 
         guardaDatosConexion();
 
-        getURL();
+        app.getURL();
         ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
@@ -1362,9 +1336,9 @@ public class WSRec extends PBase {
             for (int i = 0; i < items.items.size(); i++) {
                 item = items.items.get(i);
                 var = clsCls.new clsP_descuento();
-                var.cliente = item.CLIENTE;
+                var.cliente = item.CODIGO_CLIENTE;
                 var.ctipo = item.CTIPO;
-                var.producto = item.PRODUCTO;
+                var.producto = item.CODIGO_PRODUCTO;
                 var.ptipo = item.PTIPO;
                 var.tiporuta = item.TIPORUTA;
                 var.rangoini = item.RANGOINI;
@@ -2482,34 +2456,6 @@ public class WSRec extends PBase {
 
     //region Aux
 
-    private void getURL() {
-
-        gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-        gl.timeout = 6000;
-
-        try {
-
-            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
-
-            if (file1.exists()) {
-
-                FileInputStream fIn = new FileInputStream(file1);
-                BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
-
-                gl.wsurl = myReader.readLine();
-
-                String line = myReader.readLine();
-                if (line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
-
-                myReader.close();
-            }
-
-        } catch (Exception e) {}
-
-        if (!gl.wsurl.isEmpty()) txtURLWS.setText(gl.wsurl);
-        else txtURLWS.setText("Falta archivo con URL");
-
-    }
 
     private void updateLabel() {
         Handler handler = new Handler();
@@ -2608,7 +2554,7 @@ public class WSRec extends PBase {
             }
 
         }catch (Exception ex){
-            msgbox("Ocurrió un error validando los datos " + ex.getMessage());
+            msgbox2("Ocurrió un error validando los datos " + ex.getMessage());
             resultado = false;
         }
 
@@ -2631,7 +2577,7 @@ public class WSRec extends PBase {
             if (dt.getCount()==0) return false;
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return false;
         }
 
@@ -2661,7 +2607,7 @@ public class WSRec extends PBase {
             writer.close();
 
         } catch (Exception e) {
-            msgbox("Error " + e.getMessage());
+            msgbox2("Error " + e.getMessage());
         }
 
     }

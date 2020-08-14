@@ -564,7 +564,7 @@ public class BaseDatosScript {
                     "IMAGEN TEXT,"+
                     "FECHA_INICIO_LABORES INTEGER,"+
                     "FECHA_FIN_LABORES INTEGER, "+
-                    "PRIMARY KEY ([CODIGO],[RUTA])"+
+                    "PRIMARY KEY ([CODIGO_VENDEDOR])"+
                     ");";
             database.execSQL(sql);
 
@@ -1031,6 +1031,16 @@ public class BaseDatosScript {
 
             sql="CREATE INDEX D_pedidocombo_idx1 ON D_pedidocombo(COREL_DET)";database.execSQL(sql);
 
+            sql="CREATE TABLE [D_pedidoc] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+             database.execSQL(sql);
 
             return 1;
         } catch (SQLiteException e) {

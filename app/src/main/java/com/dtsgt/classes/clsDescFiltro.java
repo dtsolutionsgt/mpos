@@ -50,7 +50,7 @@ public class clsDescFiltro {
 			return;
 		}
 		
-		if (!validaPermisos()) return;
+		//if (!validaPermisos()) return;
 		
 		filtrarDescuentos();
 		
@@ -58,43 +58,14 @@ public class clsDescFiltro {
 	
 	private void filtrarDescuentos() {
 		Cursor DT;
-		int i,NivelPrec;
-		//String  CTipoNeg,CTipo,CSubTipo,CCanal,CSubCanal,CSucursal;
+		int i;
 
-		try {
-			//#CKFK20200524_FIX_BY_OPENDT Quité  TIPO,SUBTIPO,CANAL,SUBCANAL,SUCURSAL,TIPONEGO del select
-			vSQL="SELECT NIVELPRECIO FROM P_CLIENTE WHERE CODIGO='"+cliid+"'";
-           	DT=Con.OpenDT(vSQL);
-			DT.moveToFirst();
-			
-			/*CTipoNeg = DT.getString(0);
-			CTipo = DT.getString(1);
-			CSubTipo = DT.getString(2);
-			CCanal = DT.getString(3);
-			CSubCanal = DT.getString(4);
-			CSucursal = DT.getString(5);*/
-			NivelPrec = DT.getInt(6);
-			
-		} catch (Exception e) {
-		   	return ;
-	    }
-		
 		i=0;
 		
 		try {
 			
 			vSQL="SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,DESCTIPO,VALOR,GLOBDESC,PORCANT,FECHAINI,FECHAFIN,CODDESC,NOMBRE "+
-				 "FROM P_DESCUENTO WHERE (CTIPO=0) OR "+
-				  "((CTIPO=1) AND (CLIENTE='" + cliid + "')) OR "+
-				  /*"((CTIPO=2) AND (CLIENTE='" + CTipoNeg + "')) OR "+
-				  "((CTIPO=3) AND (CLIENTE='" + CTipo + "')) OR "+
-				  "((CTIPO=4) AND (CLIENTE='" + CSubTipo + "')) OR "+
-				  "((CTIPO=5) AND (CLIENTE='" + CCanal + "')) OR "+
-				  "((CTIPO=6) AND (CLIENTE='" + CSubCanal + "')) OR "+
-				  "((CTIPO=8) AND (CLIENTE='" + CSucursal + "')) OR "+*/
-				  "((CTIPO=9) AND (CLIENTE='" + NivelPrec + "')) "+
-				  " AND ((FECHAINI<="+fecha+") AND (FECHAFIN>="+fecha+")) ";
-			
+				 "FROM P_DESCUENTO WHERE ((FECHAINI<="+fecha+") AND (FECHAFIN>="+fecha+")) ";
 			DT=Con.OpenDT(vSQL);
 				
 			if (DT.getCount()>0) {
@@ -132,53 +103,7 @@ public class clsDescFiltro {
 			estr=e.getMessage();
 	    }
 		
-		i=0;
-		
-		
-		try {
-			vSQL="SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,DESCTIPO,VALOR,GLOBDESC,PORCANT,FECHAINI,FECHAFIN,CODDESC,NOMBRE "+
-				 "FROM P_DESCUENTO WHERE (CTIPO=10) "+
-				 " AND ((FECHAINI<="+fecha+") AND (FECHAFIN>="+fecha+")) ";
-			
-			DT=Con.OpenDT(vSQL);
-			estr=vSQL+"\n"+DT.getCount();
-			
-			if (DT.getCount()>0) {
-			
-				DT.moveToFirst();
-				while (!DT.isAfterLast()) {
-				  
-					try {
-						
-						ins.init("T_DESC");
-						
-						ins.add("ID",i);
-						ins.add("PRODUCTO",DT.getString(2));
-						ins.add("PTIPO",DT.getInt(3));
-						ins.add("RANGOINI",DT.getDouble(5));
-						ins.add("RANGOFIN",DT.getDouble(6));
-						ins.add("DESCTIPO",DT.getString(7));
-						ins.add("VALOR",DT.getDouble(8));
-						ins.add("GLOBDESC",DT.getString(9));
-						ins.add("PORCANT",DT.getString(10));
-						ins.add("NOMBRE",DT.getString(14));
-						
-				    	db.execSQL(ins.sql());
-				    	
-					} catch (SQLException e) {
-					}	
-			  
-					DT.moveToNext();i+=1;
-				}	
-			}
-			
-			ival=i;
-			
-		} catch (Exception e) {
-			estr=e.getMessage();
-	    }		
-		
-			  	    
+
 	}
 	
 	
@@ -197,7 +122,7 @@ public class clsDescFiltro {
 	    //}
 		
 		try {
-			vSQL="SELECT DESCUENTO FROM P_CLIENTE WHERE CODIGO='"+cliid+"'";
+			vSQL="SELECT DESCUENTO FROM P_CLIENTE WHERE CODIGO_CODIGO="+cliid;
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
 			if (DT.getInt(0)==0) return false;

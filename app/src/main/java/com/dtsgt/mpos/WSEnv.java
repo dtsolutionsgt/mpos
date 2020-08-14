@@ -78,7 +78,7 @@ public class WSEnv extends PBase {
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
-        getURL();
+        app.getURL();
 
         ws = new WebServiceHandler(WSEnv.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
@@ -992,32 +992,6 @@ public class WSEnv extends PBase {
         }
     }
 
-    private void getURL() {
-
-        gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-        gl.timeout = 6000;
-
-        try {
-
-            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
-
-            if (file1.exists()) {
-
-                FileInputStream fIn = new FileInputStream(file1);
-                BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
-
-                gl.wsurl = myReader.readLine();
-
-                String line = myReader.readLine();
-
-                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
-
-                myReader.close();
-            }
-        } catch (Exception e) {}
-
-        if (!gl.wsurl.isEmpty()) lbl2.setText(gl.wsurl);else lbl2.setText("Falta archivo con URL");
-    }
 
     private void updateLabel() {
         final Handler handler = new Handler();

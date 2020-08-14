@@ -281,7 +281,7 @@ public class clsDocument {
                 s=encabezado(s);
                 ss=s.toUpperCase();
                 nidx=ss.indexOf("NIT");
-                if (nidx>=0) s="NIT : "+nitsuc;
+                //if (nidx>=0) s="NIT : "+nitsuc;
             } catch (Exception e) {
                 s="##";
             }
