@@ -34,7 +34,10 @@ import com.dtsgt.mant.MantCorel;
 import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 
 public class Menu extends PBase {
@@ -772,7 +775,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Información de sistema"};
+			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Información de sistema"};
 
 			menudlg = new ExDialog (this);
 
@@ -786,7 +789,9 @@ public class Menu extends PBase {
 							startActivity(new Intent(Menu.this,Tablas.class));break;
                         case 2:
                             actualizaVersion();break;
-						case 3:
+                        case 3:
+                            enviarBaseDeDatos();break;
+						case 4:
 							infoSystem();break;
 					}
 
@@ -855,7 +860,31 @@ public class Menu extends PBase {
 
 	}
 
-	private void infoSystem() {
+	private void enviarBaseDeDatos() {
+        msgAskDatabase("Enviar la base de datos al centro de soporte");
+    }
+
+    private void sendDB() {
+
+        try {
+            File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
+            File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.cajaid+".db");
+            FileUtils.copyFile(f1, f2);
+            Uri uri = Uri.fromFile(f2);
+
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:dtsolutionsgt@gmail.com"));
+
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Base de datos : "+gl.tiendanom+" caja : "+gl.cajaid);
+            emailIntent.putExtra(Intent.EXTRA_TEXT, "Adjunto base de datos");
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(emailIntent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void infoSystem() {
 		String ss,sb="",sm="",sd="";
 
 		try {
@@ -1602,6 +1631,25 @@ public class Menu extends PBase {
         });
 
         dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskDatabase(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                sendDB();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {}
         });
 

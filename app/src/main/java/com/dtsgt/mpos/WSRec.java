@@ -2476,6 +2476,7 @@ public class WSRec extends PBase {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
+        dialog.setTitle("MPos");
         dialog.setMessage(msg);
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -2489,6 +2490,7 @@ public class WSRec extends PBase {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
+        dialog.setTitle("MPos");
         dialog.setMessage(msg);
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

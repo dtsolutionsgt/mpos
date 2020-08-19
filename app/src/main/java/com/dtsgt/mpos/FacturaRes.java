@@ -742,7 +742,8 @@ public class FacturaRes extends PBase {
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid;
 		boolean flag;
 
-		corel=gl.ruta+"_"+mu.getCorelBase();
+        corel=gl.codigo_ruta+"_"+mu.getCorelBase();
+		//corel=gl.ruta+"_"+mu.getCorelBase();
 
         sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
         dt=Con.OpenDT(sql);

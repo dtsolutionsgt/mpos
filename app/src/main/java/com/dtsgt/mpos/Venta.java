@@ -2237,6 +2237,7 @@ public class Venta extends PBase {
     public void menuPedidos() {
         try{
             gl.closePedido=false;
+            browse=9;
             Intent intent = new Intent(this,Pedidos.class);
             startActivity(intent);
         } catch (Exception e){
@@ -3267,6 +3268,10 @@ public class Venta extends PBase {
                 } else {
                     cargaCliente();
                 }
+            }
+
+            if (browse==9) {
+                browse=0;listItems();return;
             }
 
         } catch (Exception e){

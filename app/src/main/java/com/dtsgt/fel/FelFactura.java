@@ -405,7 +405,7 @@ public class FelFactura extends PBase {
                 factd=D_facturadObj.items.get(i);
                 fel.detalle(prodName(factd.producto),factd.cant,"UNI",
                         factd.precio,factd.total,factd.desmon);
-             }
+            }
 
             fel.completar(fact.serie,fact.corelativo);
 

@@ -34,11 +34,13 @@ public class PedidoDet extends PBase {
     private clsD_pedidoObj D_pedidoObj;
     private clsP_productoObj P_productoObj;
     private clsT_ventaObj T_ventaObj;
+
     private clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
+    private clsClasses.clsD_pedidod pitem=clsCls.new clsD_pedidod();
     private clsClasses.clsT_venta venta=clsCls.new clsT_venta();
 
     private String pedid;
-    private int est,modo;
+    private int est,modo,counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,30 +261,71 @@ public class PedidoDet extends PBase {
         String sql;
 
         try {
-
-            clsClasses.clsD_pedidod item;
-
-            try {
-                sql="SELECT COREL, 0 AS COREL_DET, CODIGO_PRODUCTO, UMVENTA, SUM(CANT) AS Expr1, SUM(TOTAL) AS Expr2,'' AS NOTA,'' AS CODIGO_TIPO_PRODUCTO " +
+            sql="SELECT COREL, 0 AS COREL_DET, CODIGO_PRODUCTO, UMVENTA, SUM(CANT) AS Expr1, SUM(TOTAL) AS Expr2,'' AS NOTA,'' AS CODIGO_TIPO_PRODUCTO " +
                     "FROM D_PEDIDOD WHERE (COREL='"+pedid+"') AND (CODIGO_TIPO_PRODUCTO='P') " +
                     "GROUP BY COREL, CODIGO_PRODUCTO, UMVENTA";
-                D_pedidodObj.fillSelect(sql);
+            D_pedidodObj.fillSelect(sql);
 
-                for (int i = 0; i <D_pedidodObj.count; i++) {
-                    item=D_pedidodObj.items.get(i);
-                }
-
-             } catch (Exception e) {
-                mu.msgbox(e.getMessage());
+            counter=0;
+            for (int i = 0; i <D_pedidodObj.count; i++) {
+                pitem=D_pedidodObj.items.get(i);
+                addItem();
             }
 
-
-            //gl.closePedido=true;
-            //finish();
+            gl.closePedido=true;
+            finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private boolean addItem(){
+        double prodtot,precdoc,fact,cantbas,peso;
+        String umb;
+
+        counter++;
+
+        try {
+            umb=pitem.umventa;
+            fact=1;
+            cantbas=pitem.cant*fact;
+            peso=0;
+            prodtot=pitem.total;
+            precdoc=prodtot/cantbas;precdoc=mu.round2(precdoc);
+
+            ins.init("T_VENTA");
+
+            ins.add("PRODUCTO",app.prodCod(pitem.codigo_producto));
+            ins.add("EMPRESA",""+counter);
+            ins.add("UM",umb);
+            ins.add("CANT",pitem.cant);
+            ins.add("UMSTOCK",umb);
+            ins.add("FACTOR",fact);
+            ins.add("PRECIO",precdoc);
+            ins.add("IMP",0);
+            ins.add("DES",0);
+            ins.add("DESMON",0);
+            ins.add("TOTAL",prodtot);
+            ins.add("PRECIODOC",precdoc);
+            ins.add("PESO",peso);
+            ins.add("VAL1",0);
+            ins.add("VAL2","0");
+            ins.add("VAL3",0);
+            ins.add("VAL4","0");
+            ins.add("PERCEP",0);
+
+            db.execSQL(ins.sql());
+
+            counter++;
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());return false;
+        }
+
+        return true;
+    }
+
 
     //endregion
 

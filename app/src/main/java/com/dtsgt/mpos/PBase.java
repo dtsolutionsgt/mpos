@@ -111,7 +111,8 @@ public class PBase extends Activity {
 	
 	protected void msgbox(String msg){
 		try{
-			mu.msgbox(msg);
+			mu.msgbox2(msg);
+            //mu.msgbox(msg);
 		}catch (Exception ex){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
 		}

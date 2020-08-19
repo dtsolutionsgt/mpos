@@ -338,7 +338,7 @@ public class Caja extends PBase {
 
                 msgAskExit("Inicio de caja correcto");
 
-            }else if(gl.cajaid==3){
+            } else if(gl.cajaid==3) {
 
                 //#CKFK 20200711 Agregué la condicion de que sume las que no están anuladas AND F.ANULADO = 0
                 sql="SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +

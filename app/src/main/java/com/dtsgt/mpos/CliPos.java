@@ -554,6 +554,7 @@ public class CliPos extends PBase {
         }
 
         int codigo=nitnum(NIT);
+        gl.codigo_cliente=codigo;
 
 		try {
 
@@ -661,6 +662,8 @@ public class CliPos extends PBase {
     private boolean actualizaCliente(String NIT,String Nom,String dir, String Correo) {
 
         int codigo=nitnum(NIT);
+
+        gl.codigo_cliente=codigo;
 
         try {
 

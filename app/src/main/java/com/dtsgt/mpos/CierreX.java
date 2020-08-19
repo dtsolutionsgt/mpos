@@ -388,7 +388,21 @@ public class CierreX extends PBase {
                                 " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                                 " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
                         break;
+
                     case 4:
+                        if(gl.reportid==9){
+                            condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
+                        }else if(gl.reportid==10){
+                            condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
+                        }
+
+                        sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
+                                "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                                "WHERE P.COREL IN ( SELECT COREL FROM D_FACTURA "+
+                                condition+")" +
+                                " GROUP BY M.NOMBRE";
+
+                        /*
                         if(gl.reportid==9){
                             condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
@@ -399,8 +413,10 @@ public class CierreX extends PBase {
                                 "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                                 "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+
                                 condition+
-                                "AND F.ANULADO=0 "+
                                 " GROUP BY M.NOMBRE";
+
+                         */
+
                         break;
 
                     case 5:
@@ -714,6 +730,9 @@ public class CierreX extends PBase {
             String series="", fecha="";
 
             try {
+
+                rep.add("Caja : "+gl.cajanom);
+
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
                 rep.add(fecharango);
                 rep.empty();
