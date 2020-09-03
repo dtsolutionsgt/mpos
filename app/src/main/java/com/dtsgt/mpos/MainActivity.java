@@ -16,11 +16,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -35,8 +33,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
-import com.dtsgt.webservice.srvInventConfirm;
-import com.dtsgt.webservice.srvPedidosImport;
+import com.dtsgt.webservice.startPedidosImport;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -57,7 +54,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.8  / 19-Ago-2020 ";
+    private String parVer = " 3.2.9  / 22-Ago-2020 ";
 
     Typeface typeface;
 
@@ -166,10 +163,7 @@ public class MainActivity extends PBase {
             } */
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }
@@ -210,7 +204,15 @@ public class MainActivity extends PBase {
     }
 
     public void doLogin(View view) {
+        String params;
+
         if (gl.pePedidos) {
+
+            //uurl="http://192.168.1.10/mposws/mposws.asmx";
+            params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
+
+            startPedidosImport.startService(this,params);
+            /*
             try {
                 Intent intent = new Intent(MainActivity.this, srvPedidosImport.class);
                 intent.putExtra("URL","http://192.168.1.10/mposws/mposws.asmx");
@@ -220,6 +222,8 @@ public class MainActivity extends PBase {
             } catch (Exception e) {
                 msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             }
+
+             */
         }
     }
 
@@ -421,8 +425,7 @@ public class MainActivity extends PBase {
             AppMethods app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
         }
 
@@ -435,7 +438,6 @@ public class MainActivity extends PBase {
         configBase();
 
         llenaUsuarios();
-
 
     }
 
@@ -761,6 +763,8 @@ public class MainActivity extends PBase {
         lblRuta.setText(gl.cajanom);
         lblEmp.setText(gl.empnom);
 
+        app.getURL();
+
         try {
             String emplogo = Environment.getExternalStorageDirectory() + "/mPosFotos/" + "/mposlogo.png";
             File file = new File(emplogo);
@@ -817,17 +821,16 @@ public class MainActivity extends PBase {
         clsVendedoresObj VendedoresObj = new clsVendedoresObj(this, Con, db);
         clsClasses.clsMenu item;
 
-        usr = "";
-        pwd = "";
+        usr = "";pwd = "";
 
         try {
 
             mitems.clear();
 
             if (gl.codigo_ruta ==0){
-                VendedoresObj.fill();
+                VendedoresObj.fill(" ORDER BY Nombre");
             }else{
-                VendedoresObj.fill("WHERE RUTA = " + gl.codigo_ruta);
+                VendedoresObj.fill("WHERE RUTA = " + gl.codigo_ruta+" ORDER BY Nombre");
             }
 
             for (int i = 0; i < VendedoresObj.count; i++) {

@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.fel.FelFactura;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -297,7 +298,8 @@ public class Venta extends PBase {
                         Object lvObj = listView.getItemAtPosition(position);
                         clsVenta item = (clsVenta)lvObj;
 
-                        prodid=item.Cod;//gl.prodmenu=prodid;
+                        prodid=item.Cod;gl.prodid=prodid;
+                        gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
                         uid=item.emp;gl.menuitemid=uid;seluid=uid;
                         adapter.setSelectedIndex(position);
@@ -307,7 +309,9 @@ public class Venta extends PBase {
                         gl.limcant=getDisp(prodid);
                         menuitemadd=false;
 
-                        tipo=prodTipo(gl.prodcod);
+                        //tipo=prodTipo(gl.prodcod);
+                        tipo=prodTipo(prodid);
+                        gl.tipoprodcod=tipo;
                         if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
                             browse=6;
                             gl.menuitemid=prodid;
@@ -1229,31 +1233,24 @@ public class Venta extends PBase {
 
             gl.bonprodid="*";
             gl.bonus.clear();
+            gl.descglob=0;
+            gl.descgtotal=0;
 
             clsDeG=new clsDeGlob(this,tot);ss="";
 
-            if (clsDeG.tieneDesc()) {
-
-                gl.descglob=clsDeG.valor;
-                gl.descgtotal=clsDeG.vmonto;
-
-                for (int i = 0; i <clsDeG.items.size(); i++) {
-                    s=clsDeG.items.get(i).valor+" , "+clsDeG.items.get(i).lista;
-                    ss=ss+s+"\n";
+            if (!app.usaFEL()) {
+                if (clsDeG.tieneDesc()) {
+                    gl.descglob=clsDeG.valor;
+                    gl.descgtotal=clsDeG.vmonto;
                 }
             }
-
-            ss=ss+"acum : "+clsDeG.acum+" , limit "+clsDeG.maxlimit+"\n";
-            ss=ss+"Valor : "+clsDeG.valor+"\n";
-            ss=ss+"acum : "+clsDeG.valacum+"\n";
-            ss=ss+"max : "+clsDeG.valmax+"\n";
-            //mu.msgbox(ss);
 
             // Bonificacion
 
             gl.bonprodid="*";
             gl.bonus.clear();
 
+            /*
             clsBonG=new clsBonifGlob(this,tot);
             if (clsBonG.tieneBonif()) {
                 for (int i = 0; i <clsBonG.items.size(); i++) {
@@ -1264,6 +1261,7 @@ public class Venta extends PBase {
             } else {
 
             }
+            */
 
             if (gl.dvbrowse!=0){
                 if (tot<gl.dvdispventa){
@@ -2454,9 +2452,14 @@ public class Venta extends PBase {
     //region Pedidos
 
     private void estadoPedidos() {
+        long tact,tlim,tbot;
+
+        tact=du.getActDateTime();tlim=tact+100;tbot=du.getActDate();
 
         try {
-            D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_CREO=0) ");
+            //D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_CREO=0) ");
+            String fsql="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+")  AND (FECHA_SALIDA_SUC=0) ";
+            D_pedidoObj.fill(fsql);
             int peds=D_pedidoObj.count;
 
             for (int i = 0; i <mitems.size(); i++) {
@@ -2738,6 +2741,15 @@ public class Venta extends PBase {
     }
 
     private String prodTipo(int prodid) {
+        try {
+            return app.prodTipo(prodid);
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            throw e;
+        }
+    }
+
+    private String prodTipo(String prodid) {
         try {
             return app.prodTipo(prodid);
         } catch (Exception e) {
@@ -3116,8 +3128,15 @@ public class Venta extends PBase {
 
     private void showNivelMenu() {
         final AlertDialog Dialog;
+        int nivuser=0;
 
         try {
+
+            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+            VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.codigo_vendedor);
+            if (VendedoresObj.count>0) nivuser=(int) VendedoresObj.first().nivelprecio;
+
+            P_nivelprecioObj.fill("WHERE (CODIGO="+gl.nivel_sucursal+") OR (CODIGO="+nivuser+") ORDER BY Nombre");
 
             final String[] selitems = new String[P_nivelprecioObj.count];
             for (int i = 0; i <P_nivelprecioObj.count; i++) {

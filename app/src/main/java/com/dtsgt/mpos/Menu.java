@@ -48,22 +48,12 @@ public class Menu extends PBase {
 	
 	private ArrayList<clsMenu> items= new ArrayList<clsMenu>();
 
-	//#HS_20181207 Controles para seleccionar el ayudante y vehiculo.
-    //#CKFK 20200525 Puse esto en comentario lo del vehículo y el vendedor porque en MPos no se utiliza
-	/*private Spinner Ayudante,Vehiculo;
-	private TextView lblAyudante,lblVehiculo;
-	private ArrayList<String> listIDAyudante = new ArrayList<String>();
-	private ArrayList<String> listAyudante = new ArrayList<String>();
-	private ArrayList<String> listIDVehiculo = new ArrayList<String>();
-	private ArrayList<String> listVehiculo = new ArrayList<String>();*/
-
 	private ListAdaptMenuGrid adaptergrid;
 	private ExDialog menudlg;
 	
 	private int selId,selIdx,menuid,iicon;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje;
-	// JP 20200527
 	private boolean listo=true;
 	
 	private final int mRequestCode = 1001;
@@ -148,7 +138,6 @@ public class Menu extends PBase {
 
         lblVendedor.setText(gl.vendnom);
         lblRuta.setText(gl.ruta);
-
 
         items.clear();selIdx=-1;
 
@@ -949,11 +938,18 @@ public class Menu extends PBase {
 
         try {
             final AlertDialog Dialog;
+            final String[] selitems;
 
-            final String[] selitems = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
+            final String[] selitems1 = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
 					                   "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
 					                   "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
 					                   "Resolución de facturas", "Configuración","Configuración reportes Cierre"};
+            final String[] selitems2 = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
+                    "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
+                    "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
+                    "Resolución de facturas","Restaurante","Configuración","Configuración reportes Cierre"};
+
+            if (gl.peRest) selitems=selitems2;else selitems=selitems1;
 
             menudlg = new ExDialog(this);
 

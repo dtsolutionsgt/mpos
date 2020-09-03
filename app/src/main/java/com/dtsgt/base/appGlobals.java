@@ -29,15 +29,13 @@ public class appGlobals extends Application {
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
-	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular;
+	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,codigo_pais;
 	public double precio_recarga,total_pago;
 	public boolean configCajaSuc = false,InvCompSend=false,
-	               inicio_caja_correcto = false,
-			       inicia_caja_primera_vez = false,
-	               recibir_automatico = false;
+	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,recibir_automatico = false;
 
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false
@@ -52,11 +50,12 @@ public class appGlobals extends Application {
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
 	// Parametros Extra
-	public String peModal,peMon,peFormatoFactura,peMMod,peFEL;
-	public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
+	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peMACCosina;
+    public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp;
+    public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
-	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp;
-    public boolean peImprFactCorrecta,peMCent,peMPrOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
+    public Boolean peImprFactCorrecta,peMCent, peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
+    public Boolean peAnulSuper,peRest;
 
 	// Descuentos
 	public String promprod;

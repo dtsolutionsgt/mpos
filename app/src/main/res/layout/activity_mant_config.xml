@@ -88,7 +88,7 @@
         <RelativeLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="605dp"
-            android:layout_height="wrap_content"
+            android:layout_height="1100dp"
             android:layout_above="@+id/relbotpan"
             android:layout_below="@+id/relRoad"
             android:layout_centerHorizontal="true"
@@ -99,6 +99,45 @@
             android:layout_toStartOf="@+id/imgImg2"
             android:layout_toEndOf="@+id/imageView30"
             android:background="@drawable/frame_rect">
+
+            <CheckBox
+                android:id="@+id/chkEnvio9"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtDiasAnul3"
+                android:layout_alignStart="@id/checkBox24"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <CheckBox
+                android:id="@+id/chkEnvio7"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio6"
+                android:layout_alignStart="@id/checkBox24"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <CheckBox
+                android:id="@+id/chkEnvio8"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio7"
+                android:layout_alignStart="@id/checkBox24"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
 
             <CheckBox
                 android:id="@+id/chkEnvio6"
@@ -127,6 +166,78 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:text="Reporte ventas por producto con codigo"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact44"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignTop="@+id/txtDiasAnul3"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="MAC impresora cosina"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact45"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignTop="@+id/chkEnvio9"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Modulo restaurante"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact43"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignTop="@+id/chkEnvio8"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Imprimir orden para la cosina"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact42"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignTop="@+id/chkEnvio7"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Anulacion autoriza supervisor"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -395,6 +506,20 @@
                 android:layout_alignEnd="@id/chkCierreDiario"
                 android:layout_alignParentBottom="false"
                 android:layout_marginTop="0dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true"
+                android:inputType="number" />
+
+            <EditText
+                android:id="@+id/txtDiasAnul3"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio8"
+                android:layout_alignStart="@id/chkCierreDiario"
+                android:layout_alignEnd="@id/chkCierreDiario"
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:clickable="true"
                 android:enabled="true"

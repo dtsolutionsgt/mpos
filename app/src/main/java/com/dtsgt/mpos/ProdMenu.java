@@ -145,7 +145,7 @@ public class ProdMenu extends PBase {
 
     private void listItems() {
 
-        int menuid,selid;
+        int menuid,selid,idcombo;
 
         listMenuItems();
 
@@ -159,20 +159,23 @@ public class ProdMenu extends PBase {
 
                 menuid=items.get(i).codigo_menu_opcion;
                 combo.fill("WHERE (IdCombo="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
-                selid=combo.first().idseleccion;
 
-                if (selid>0) {
-                    items.get(i).cod=selid;
-                    items.get(i).Name=getProdName(selid);
-                    items.get(i).bandera=1;
-                } else {
-                    items.get(i).cod=0;
-                    //items.get(i).Name=combo.first().;
-                    items.get(i).bandera=0;
+                try {
+                    selid=combo.first().idseleccion;
+
+                    if (selid>0) {
+                        items.get(i).cod=selid;
+                        items.get(i).Name=getProdName(selid);
+                        items.get(i).bandera=1;
+                    } else {
+                        items.get(i).cod=0;
+                        //items.get(i).Name=combo.first().;
+                        items.get(i).bandera=0;
+                    }
+
+                    items.get(i).cant=combo.first().cant;
+                } catch (Exception e) {
                 }
-
-                items.get(i).cant=combo.first().cant;
-
             }
 
             adapter.notifyDataSetChanged();
@@ -220,13 +223,13 @@ public class ProdMenu extends PBase {
     }
 
     private boolean saveItem() {
-
         clsClasses.clsT_combo item;
 
         try {
 
             String um=getProdUM(gl.prodmenu);
-            double prec = prc.precio(gl.prodid, cant, gl.nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
+
+            double prec = prc.precio(gl.prodid, cant, gl.nivel, um, gl.umpeso, gl.dpeso,um,gl.prodmenu);
 
             double impval = prc.impval;
             double desc=prc.desc;
@@ -357,6 +360,7 @@ public class ProdMenu extends PBase {
         ststr="";
 
         for (int i = 0; i <items.size(); i++) {
+            boolean ss=isProdStock(items.get(i).cod);
             if (isProdStock(items.get(i).cod)) {
                 if (!stockProducto(items.get(i).cod,cant,items.get(i).unid)) {
                     flag=false;

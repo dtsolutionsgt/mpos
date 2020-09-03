@@ -1,22 +1,16 @@
 package com.dtsgt.webservice;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
@@ -26,9 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class srvBase extends Service {
+public class srvBaseJob extends JobService {
 
-    public String URL="",error="";
+    public String URL = "", error = "";
 
     private NotificationManager notificationManager;
 
@@ -39,14 +33,20 @@ public class srvBase extends Service {
 
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        if (initSession(intent)) execute();
-        return Service.START_STICKY;
+    public boolean onStartJob(JobParameters params) {
+        try {
+            String paramstr=params.getExtras().getString("params");
+            if (initSession(paramstr)) execute();
+        } catch (Exception e) {
+            error=e.getMessage();
+        }
+
+        return false;
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public boolean onStopJob(JobParameters params) {
+        return false;
     }
 
     @Override
@@ -56,19 +56,15 @@ public class srvBase extends Service {
 
     public void execute() {}
 
-    public void loadParams(Intent intent) {}
+    public boolean loadParams(String paramstr) {
+        return true;
+    }
 
-    private boolean initSession(Intent intent) {
+    private boolean initSession(String paramstr) {
         try {
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            URL = intent.getStringExtra("URL");
-
-            loadParams(intent);
-
-            return true;
+            return loadParams(paramstr);
         } catch (Exception e) {
-            //notification("Error inicio : "+e.getMessage());
             return false;
         }
     }
@@ -82,7 +78,6 @@ public class srvBase extends Service {
         int notificationId = createID();
         String channelId = "channel-id",channelName = "Channel Name";
 
-
         if (pedidos==1) message="Nuevo orden";else message=pedidos+" nuevos ordenes";
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -90,7 +85,7 @@ public class srvBase extends Service {
             notificationManager.createNotificationChannel(mChannel);
         }
 
-        Intent fullScreenIntent = new Intent(this, srvBase.class);
+        Intent fullScreenIntent = new Intent(this, srvBaseJob.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -142,7 +137,7 @@ public class srvBase extends Service {
                 .setColor(Color.parseColor("#6200EE"));
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addNextIntent(new Intent(this, srvBase.class));
+        stackBuilder.addNextIntent(new Intent(this, srvBaseJob.class));
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
 
@@ -168,8 +163,6 @@ public class srvBase extends Service {
         int id = Integer.parseInt(new SimpleDateFormat("ddHHmmss", Locale.ENGLISH).format(now));
         return id;
     }
-
-
 
     //endregion
 

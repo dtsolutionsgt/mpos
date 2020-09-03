@@ -110,17 +110,25 @@ public class PBase extends Activity {
 	}	
 	
 	protected void msgbox(String msg){
-		try{
-			mu.msgbox2(msg);
+        try{
+            mu.msgbox2(msg);
             //mu.msgbox(msg);
-		}catch (Exception ex){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
-		}
-	}
+        }catch (Exception ex){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
+        }
+    }
 
     protected void msgbox2(String msg){
         try{
             mu.msgbox2(msg);
+        }catch (Exception ex){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
+        }
+    }
+
+    protected void msgboxex(String msg){
+        try{
+            mu.msgbox(msg);
         }catch (Exception ex){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
         }

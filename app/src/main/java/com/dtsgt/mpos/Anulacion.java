@@ -247,13 +247,22 @@ public class Anulacion extends PBase {
             toast("Actualizando inventario . . .");return;
         }
 
-        try{
+        try {
 			if (itemid.equalsIgnoreCase("*")) {
 				mu.msgbox("Debe seleccionar un documento.");return;
 			}
 
-			msgAsk("Anular documento");
-		}catch (Exception e){
+			boolean flag=gl.peAnulSuper;
+			if (gl.rol==2 | gl.rol==3) flag=false;
+
+            if (flag) {
+                browse=1;
+                startActivity(new Intent(this,ValidaSuper.class));
+            } else {
+                msgAsk("Anular documento");
+            }
+
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
@@ -1770,6 +1779,17 @@ public class Anulacion extends PBase {
     //endregion
 
     //region Activity Events
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (browse==1) {
+            browse=0;
+            if (gl.checksuper) msgAsk("Anular documento");
+            return;
+        }
+    }
 
     @Override
     public void onBackPressed() {

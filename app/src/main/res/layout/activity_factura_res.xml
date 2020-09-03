@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#DBF5F3"
-    tools:context=".PedidoRes">
+    tools:context=".FactutaRes">
 
     <ImageView
         android:id="@+id/imgPFoto"
@@ -130,7 +130,7 @@
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="128dp"
-            android:layout_height="128dp"
+            android:layout_height="88dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="10dp"
@@ -143,11 +143,11 @@
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="128dp"
-            android:layout_height="128dp"
+            android:layout_height="88dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_marginRight="30dp"
-            android:layout_marginBottom="61dp"
+            android:layout_marginBottom="40dp"
             android:clickable="true"
             android:onClick="payCred"
             android:src="@drawable/pago"
@@ -228,7 +228,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:clickable="true"
             android:gravity="center"
             android:onClick="payCred"
@@ -329,6 +329,35 @@
                 android:text="Q20"
                 android:textSize="24sp" />
         </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView84"
+            android:layout_width="128dp"
+            android:layout_height="118dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="false"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="30dp"
+            android:clickable="true"
+            android:onClick="pendientePago"
+            android:paddingBottom="30dp"
+            android:src="@drawable/pago_pendiente" />
+
+        <TextView
+            android:id="@+id/textView197"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/imageView84"
+            android:layout_alignEnd="@+id/imageView84"
+            android:layout_alignBottom="@+id/imageView84"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:onClick="pendientePago"
+            android:text="Pago Pendiente"
+            android:textSize="15sp" />
 
     </RelativeLayout>
 

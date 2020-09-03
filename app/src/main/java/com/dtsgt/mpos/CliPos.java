@@ -62,7 +62,7 @@ public class CliPos extends PBase {
 
 		txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.setText("");txtNIT.requestFocus();
 		txtNom = (EditText) findViewById(R.id.editText2);txtNom.setText("");
-		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("");
+		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("Ciudad");
         txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
@@ -115,6 +115,10 @@ public class CliPos extends PBase {
             sDireccionCliente =txtRef.getText().toString();
             sCorreoCliente = txtCorreo.getText().toString();
 
+            if (sDireccionCliente.isEmpty()) {
+                toast("Falta definir la direccion");return;
+            }
+
 			if (!existeCliente()){
 
 			    if (!validaNIT(sNITCliente)) {
@@ -124,6 +128,8 @@ public class CliPos extends PBase {
 				if (mu.emptystr(sNombreCliente)) {
 					toast("Nombre incorrecto");return;
 				}
+
+
 
 				if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente)) procesaNIT(sNITCliente);
 
@@ -323,8 +329,10 @@ public class CliPos extends PBase {
     private void recibePedidos() {
         int pp;
         String fname;
+        long tact,tlim,tbot;
 
         idleped=false;
+        tact=du.getActDateTime();tlim=tact+100;tbot=du.getActDate();
 
         try {
             String path = Environment.getExternalStorageDirectory().getPath() + "/mposordser";
@@ -334,8 +342,8 @@ public class CliPos extends PBase {
             for (int i = 0; i < files.length; i++) {
                 fname=files[i].getName();
                 pp=fname.indexOf(".txt");
-                if (pp>1){
-                    if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime())) {
+                if (pp>0){
+                    if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime(),fname)) {
                         msgbox2("Ocurrio error en recepción de orden :\n"+app.errstr);
                     }
                 }
@@ -346,8 +354,10 @@ public class CliPos extends PBase {
 
         try {
             clsD_pedidoObj D_pedidoObj=new clsD_pedidoObj(this,Con,db);
-            D_pedidoObj.fill("WHERE EMPRESA=0");
-            //D_pedidoObj.fill("WHERE CODIGO_USUARIO_CREO=0");
+            //D_pedidoObj.fill("WHERE EMPRESA=0");
+            String fsql="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+") AND (FECHA_SALIDA_SUC=0) ";
+            D_pedidoObj.fill(fsql);
+
             cantped=D_pedidoObj.count;
             lblPed.setText(""+cantped);
         } catch (Exception e) {
@@ -528,11 +538,11 @@ public class CliPos extends PBase {
 
 						resultado=true;
 
-					}else{
+					} else {
 
-                        txtNom.setText("");
-                        txtRef.setText("");
-                        txtCorreo.setText("");
+                        //txtNom.setText("");
+                        //txtRef.setText("");
+                        //txtCorreo.setText("");
 
                     }
 				}

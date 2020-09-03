@@ -74,16 +74,14 @@ public class LA_D_pedidod  extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl1.setText(""+items.get(position).umventa);
-        holder.lbl2.setText(""+items.get(position).nota);
-
+        String st=items.get(position).umventa;
         String sn=items.get(position).nota;
 
-        if (!sn.isEmpty() && sn.length()>3) {
-            holder.lbl2.setVisibility(View.VISIBLE);
-        } else {
-            holder.lbl2.setVisibility(View.GONE);
-        }
+        holder.lbl1.setText(st);
+        holder.lbl2.setText(sn);
+
+        if (!st.isEmpty() && st.length()>3) holder.lbl1.setVisibility(View.VISIBLE);else holder.lbl1.setVisibility(View.GONE);
+        if (!sn.isEmpty() && sn.length()>3) holder.lbl2.setVisibility(View.VISIBLE);else holder.lbl2.setVisibility(View.GONE);
 
         if(selectedIndex!= -1 && position == selectedIndex) {
             convertView.setBackgroundColor(Color.rgb(26,138,198));

@@ -1,6 +1,5 @@
 package com.dtsgt.base;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,11 +24,9 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
@@ -76,6 +73,8 @@ public class AppMethods {
 		Cursor dt;
 		String sql,val="";
 		int ival;
+
+		//region Parametros Road
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=1";
@@ -320,6 +319,8 @@ public class AppMethods {
 			gl.peMargenGPS =0;
 		}
 
+		//endregion
+
         try {
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=100";
             dt=Con.OpenDT(sql);
@@ -341,9 +342,9 @@ public class AppMethods {
             val=dt.getString(0);
             if (emptystr(val)) throw new Exception();
 
-            gl.peMPrOrdCos=val.equalsIgnoreCase("S");
+            gl.peImpOrdCos =val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peMPrOrdCos=false;
+            gl.peImpOrdCos =false;
         }
 
         try {
@@ -535,6 +536,45 @@ public class AppMethods {
             gl.peRepVenCod =false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=116";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peAnulSuper = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peAnulSuper =false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=117";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+
+            gl.peMACCosina =val;
+        } catch (Exception e) {
+            gl.peMACCosina="";
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=118";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peRest = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peRest =false;
+        }
+
+
 
     }
 
@@ -673,6 +713,27 @@ public class AppMethods {
         }
 
 		return result;
+
+    }
+
+    public String prodTipo(String cod) {
+
+        Cursor DT;
+        String result="";
+
+        try {
+
+            String sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO='" + cod+"'";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            result = DT.getString(0);
+
+        } catch (Exception e) {
+            throw e;
+        }
+
+        return result;
 
     }
 
@@ -1131,16 +1192,19 @@ public class AppMethods {
 
     //endregion
 
-    //region "Pedidos"
+    //region Pedidos
 
-    public boolean agregaPedido(String fname,String ename,long fa) {
+    public boolean agregaPedido(String fname,String ename,long fa,String cor) {
         File file=null;
         BufferedReader br=null;
         ArrayList<String> items=new ArrayList<String>();
         String sql;
+        int lim;
 
 
         try {
+            cor=cor.replace(".txt","");
+
             file=new File(fname);
             br = new BufferedReader(new FileReader(file));
         } catch (Exception e) {
@@ -1155,7 +1219,9 @@ public class AppMethods {
                 db.execSQL(sql);
             }
 
-            sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0 WHERE FECHA_RECEPCION_SUC=0";
+            lim=limitePedido(cor);
+
+            sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0,FIRMA_CLIENTE="+lim+" WHERE FECHA_RECEPCION_SUC=0";
             db.execSQL(sql);
 
             db.setTransactionSuccessful();
@@ -1184,7 +1250,26 @@ public class AppMethods {
         } catch (Exception e) {}
     }
 
-    //
+    private int limitePedido(String corel) {
+        Cursor dt;
+
+        try {
+            String sqls="SELECT SUM(P_PRODUCTO.TIEMPO_PREPARACION) FROM  D_PEDIDOD " +
+                    "INNER JOIN P_PRODUCTO ON D_PEDIDOD.CODIGO_PRODUCTO=P_PRODUCTO.CODIGO_PRODUCTO " +
+                    "WHERE (D_PEDIDOD.COREL='"+corel+"')";
+            dt=Con.OpenDT(sqls);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                return dt.getInt(0);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return 0;
+    }
+
+    //endregion
 
 	//region Aux
 

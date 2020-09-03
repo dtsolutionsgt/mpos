@@ -151,6 +151,9 @@ public class clsClasses {
         public int  codigo_usuario_proceso;
         public int  codigo_usuario_entrego;
         public int  anulado;
+
+        public String nombre;
+        public long tini,tdif,lim;
     }
 
     public class clsD_pedidod {

@@ -258,8 +258,8 @@ public class WSRec extends PBase {
                         callMethod("GetP_COREL", "EMPRESA", gl.emp);
                         break;
                     case 6:
-                        //callMethod("GetP_DESCUENTO", "EMPRESA", gl.emp);
-                        callEmptyMethod();
+                        callMethod("GetP_DESCUENTO", "EMPRESA", gl.emp);
+                        //callEmptyMethod();
                         break;
                     case 7:
                         callMethod("GetP_FACTORCONV", "EMPRESA", gl.emp);
@@ -394,14 +394,11 @@ public class WSRec extends PBase {
                     execws(6);
                     break;
                 case 6:
-                    /*
                     processDescuento();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    */
                     execws(7);
-
                     break;
                 case 7:
                     processFactor();

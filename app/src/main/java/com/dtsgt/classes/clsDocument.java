@@ -329,8 +329,8 @@ public class clsDocument {
 
             if (docfactura) {
 
-                if (!modofact.equalsIgnoreCase("TICKET")) {
-
+                //if (!modofact.equalsIgnoreCase("TICKET")) {
+                if (facturaflag) {
                     if (i==7){
                         if (!banderafel) {
                             rep.add("");

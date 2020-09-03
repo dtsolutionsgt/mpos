@@ -72,8 +72,6 @@ public class DescBon extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
-		
 	}
 	
 	public void aplProm(View view){

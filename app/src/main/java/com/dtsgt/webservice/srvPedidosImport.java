@@ -1,6 +1,5 @@
 package com.dtsgt.webservice;
 
-import android.content.Intent;
 import android.os.Environment;
 
 import java.io.BufferedWriter;
@@ -9,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class srvPedidosImport extends srvBase {
+public class srvPedidosImport extends srvBaseJob {
 
     private wsPedidosImport wspi;
     private wsPedidosRecibidos wspr;
@@ -18,13 +17,15 @@ public class srvPedidosImport extends srvBase {
     public ArrayList<String> items=new ArrayList<String>();
 
     private int idempresa,idsucursal;
+    private String params;
     private String orddir= Environment.getExternalStorageDirectory().getPath() + "/mposordser";
-
 
     @Override
     public void execute() {
 
         items.clear();
+
+        //notification("MPos Service ");
 
         rnPedidosNuevos = new Runnable() {
             public void run() {
@@ -34,12 +35,25 @@ public class srvPedidosImport extends srvBase {
 
         wspi=new wsPedidosImport(URL,idempresa,idsucursal);
         wspi.execute(rnPedidosNuevos);
+
     }
 
     @Override
-    public void loadParams(Intent intent) {
-        idempresa = intent.getIntExtra("idempresa",0);
-        idsucursal = intent.getIntExtra("idsucursal",0);
+    public boolean loadParams(String paramstr) {
+        params=paramstr;
+
+        try {
+            String[] sp = params.split("#");
+
+            URL=sp[0];
+            idempresa=Integer.parseInt(sp[1]);
+            idsucursal=Integer.parseInt(sp[2]);
+
+            return true;
+        } catch (Exception e) {
+            URL="";idempresa=0;idsucursal=0;
+            error=e.getMessage();return false;
+        }
     }
 
     private void procesaPedidos() {
@@ -102,6 +116,8 @@ public class srvPedidosImport extends srvBase {
             notifynew(items.size());
         }
 
+        startPedidosImport.startService(getApplicationContext(),params);
+
     }
 
     private void pedidosRecibidos() {
@@ -118,7 +134,6 @@ public class srvPedidosImport extends srvBase {
         } catch (Exception e) {
             notification("MPos error : "+e.getMessage());
         }
-
     }
 
 }

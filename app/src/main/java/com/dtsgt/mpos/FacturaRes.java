@@ -51,8 +51,8 @@ import java.util.List;
 public class FacturaRes extends PBase {
 
 	private ListView listView;
-	private TextView lblPago,lblFact,lblMPago,lblCred, lblCard,lblMonto,lblKeyDP,lblTotal,lblPEfect,lblPCard;
-	private ImageView imgBon,imgMPago,imgCred, imgCard;
+	private TextView lblPago,lblFact,lblMPago,lblCred, lblCard,lblPend,lblMonto,lblKeyDP,lblTotal,lblPEfect,lblPCard;
+	private ImageView imgBon,imgMPago,imgCred, imgCard, imgPend;
 	private TextView lblVuelto;
 	private EditText txtVuelto;
 	private RelativeLayout rl_facturares;
@@ -78,7 +78,7 @@ public class FacturaRes extends PBase {
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,pend,stot0,stot,descmon,totimp,totperc,credito;
 	private double dispventa,falt;
-	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pagocompleto=false;
+	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
 
 
 	//@SuppressLint("MissingPermission")
@@ -101,11 +101,13 @@ public class FacturaRes extends PBase {
         lblTotal = (TextView) findViewById(R.id.lblFact3);
         lblPEfect = (TextView) findViewById(R.id.textView166);
         lblPCard = (TextView) findViewById(R.id.textView167);
+        lblPend = (TextView) findViewById(R.id.textView197);
 
 		imgBon = (ImageView) findViewById(R.id.imageView6);
 		imgMPago = (ImageView) findViewById(R.id.btnImp);
 		imgCred = (ImageView) findViewById(R.id.imageView3);
 		imgCard = (ImageView) findViewById(R.id.imageView2);
+        imgPend = (ImageView) findViewById(R.id.imageView84);
 
 		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
 		rl_facturares.setVisibility(View.VISIBLE);
@@ -122,25 +124,25 @@ public class FacturaRes extends PBase {
 		gl.cobroPendiente = false;
 		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
 		notaC = gl.tiponcredito;
+        pendiente=false;
 
         mu.currsymb(gl.peMon);
 
 		app = new AppMethods(this, gl, Con, db);
         khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
 
-        imgCred.setVisibility(View.VISIBLE);
-        lblCred.setVisibility(View.VISIBLE);
+        imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+        imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
 
-        imgMPago.setVisibility(View.INVISIBLE);
-        lblMPago.setVisibility(View.INVISIBLE);
+        if (!gl.pePedidos) {
+            imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
+        }
 
         if (media==4) {
             if (credito<=0 || gl.facturaVen != 0) {
-                imgCred.setVisibility(View.INVISIBLE);
-                lblCred.setVisibility(View.INVISIBLE);
+                imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
             } else if(credito > 0){
-                imgCred.setVisibility(View.VISIBLE);
-                lblCred.setVisibility(View.VISIBLE);
+                imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
             }
         }
 
@@ -239,7 +241,7 @@ public class FacturaRes extends PBase {
 	}
 
 	public void paySelect(View view) {
-
+        pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -258,11 +260,10 @@ public class FacturaRes extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("paySelect: " + e.getMessage());
 		}
-
 	}
 
 	public void payCash(View view) {
-
+        pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -276,11 +277,10 @@ public class FacturaRes extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("payCash: " + e.getMessage());
 		}
-
 	}
 
     public void payCard(View view) {
-
+        pendiente=false;
         try{
 
             if (fcorel==0) {
@@ -303,7 +303,7 @@ public class FacturaRes extends PBase {
     }
 
     public void payCred(View view) {
-
+        pendiente=false;
 		try{
 
 			if (fcorel==0) {
@@ -316,8 +316,14 @@ public class FacturaRes extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("payCred: " + e.getMessage());
 		}
-
 	}
+
+    public void pendientePago(View view){
+        if (fcorel==0) {
+            msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
+        }
+        askPendientePago();
+    }
 
     public void delPay(View view) {
 	    askDelPago();
@@ -392,15 +398,6 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	public void pendientePago(View view){
-		try{
-			askPendientePago();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-
     public void pago100(View view){
         khand.val="100";
         validaPagoEfectivo();
@@ -439,15 +436,17 @@ public class FacturaRes extends PBase {
 
 	private void processFinalPromo(){
 
-		descg=gl.descglob;
-		descgtotal=gl.descgtotal;
+		try {
 
-		try{
+            descg=gl.descglob;
+            descgtotal=gl.descgtotal;
 
-			//descgmon=(double) (stot0*descg/100);
-			descgmon=(double) (descg*descgtotal/100);
+		    descgmon=mu.round2(descg*descgtotal/100);
+            if (descgmon>0) msgboxex("Se aplicó descuento adicional por volumen de venta.\n Monto descuento : "+mu.frmcur(descgmon));
+
 			totalOrder();
 
+			/*
 			if (descg>0) {
 				final Handler handler = new Handler();
 				handler.postDelayed(new Runnable() {
@@ -457,6 +456,7 @@ public class FacturaRes extends PBase {
 					}
 				}, 300);
 			}
+			*/
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -739,7 +739,7 @@ public class FacturaRes extends PBase {
 		Cursor dt;
 		String vprod,vumstock,vumventa,vbarra;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
-		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter;
 		boolean flag;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
@@ -795,7 +795,11 @@ public class FacturaRes extends PBase {
 
 			ins.add("ADD1",gl.ref1);
 			ins.add("ADD2",gl.ref2);
-			ins.add("ADD3",gl.ref3);
+			if (pendiente) {
+                ins.add("ADD3","P");
+            } else {
+                ins.add("ADD3","");
+            }
 
 			ins.add("DEPOS",false);
 			ins.add("PEDCOREL","");
@@ -842,7 +846,7 @@ public class FacturaRes extends PBase {
 			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
 			dt=Con.OpenDT(sql);
 
-			dt.moveToFirst();
+			dt.moveToFirst();counter=1;
 
 			while (!dt.isAfterLast()) {
 
@@ -865,12 +869,15 @@ public class FacturaRes extends PBase {
 				ins.add("PRECIODOC",dt.getDouble(7));
 				ins.add("PESO",dt.getDouble(8));
 				ins.add("VAL1",dt.getDouble(9));
-				ins.add("VAL2",dt.getString(10));
+				ins.add("VAL2",""+counter);
+                //ins.add("VAL2",dt.getString(10));
 				ins.add("UMVENTA",dt.getString(11));
 				ins.add("FACTOR",dt.getDouble(12));
                 vumstock=app.umVenta2(dt.getString(0));
 				ins.add("UMSTOCK",vumstock);
 				ins.add("UMPESO",dt.getString(13));
+
+				String ssq=ins.sql();
 
 			    db.execSQL(ins.sql());
 
@@ -886,7 +893,7 @@ public class FacturaRes extends PBase {
                     rebajaStockUM(vprod,vumstock,vcant);
 				}
 
-			    dt.moveToNext();
+			    dt.moveToNext();counter++;
 			}
 
 			//endregion
@@ -1852,7 +1859,53 @@ public class FacturaRes extends PBase {
 
 	}
 
-	private void inputCredito() {
+    private void applyPendiente() {
+        Cursor dt;
+        int codpago=0;
+
+        try {
+
+            sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 1";
+            dt = Con.OpenDT(sql);
+            if(dt!=null) {
+                if(dt.getCount()>0){
+                    dt.moveToFirst();
+                    codpago=dt.getInt(0);
+                }
+
+                if (dt!=null) dt.close();
+            }
+
+            int item=1;
+
+            sql="SELECT MAX(ITEM) FROM T_PAGO";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                item=dt.getInt(0)+1;
+            }
+
+            ins.init("T_PAGO");
+
+            ins.add("ITEM",item);
+            ins.add("CODPAGO",codpago);
+            ins.add("TIPO","E");
+            ins.add("VALOR",0);
+            ins.add("DESC1","");
+            ins.add("DESC2","");
+            ins.add("DESC3","");
+
+            db.execSQL(ins.sql());
+
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Pago incorrecto"+e.getMessage());
+        }
+
+    }
+
+    private void inputCredito() {
 
 		try{
 
@@ -2052,7 +2105,7 @@ public class FacturaRes extends PBase {
             sql="SELECT SUM(VALOR) FROM T_PAGO";
             DT=Con.OpenDT(sql);
 
-            if(DT.getCount()>0){
+            if (DT.getCount()>0){
                 DT.moveToFirst();
                 tpago=DT.getDouble(0);
                 if (DT!=null) DT.close();
@@ -2060,7 +2113,11 @@ public class FacturaRes extends PBase {
                 tpago=0;
             }
 
+            if (pendiente) {
+                tpago=tot;
+            }
             s=mu.frmcur(tpago);
+
             pend=tot-tpago;if (pend<0) pend=0;
             lblTotal.setText(mu.frmcur(pend));
 
@@ -2393,18 +2450,17 @@ public class FacturaRes extends PBase {
 
     }
 
-    //#HS_20181212 Dialogo para Pendiente de pago
     private void askPendientePago() {
         try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            ExDialog dialog = new ExDialog(this);
 
-            dialog.setTitle("Road");
-            dialog.setMessage("Está factura quedará PENDIENTE DE PAGO, deberá realizar el pago posteriormente. ¿Continuar?");
+            dialog.setMessage("Esta factura quedará PENDIENTE DE PAGO. ¿Continuar?");
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    gl.cobroPendiente = true;
-                    finishOrder();
+                    pendiente = true;
+                    applyPendiente();
+                    checkPago();
                 }
             });
 
@@ -2495,7 +2551,6 @@ public class FacturaRes extends PBase {
     }
 
     private void askDelPago() {
-
         try{
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
@@ -2519,8 +2574,6 @@ public class FacturaRes extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
-
     }
 
     //endregion
