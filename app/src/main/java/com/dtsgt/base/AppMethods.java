@@ -1200,36 +1200,46 @@ public class AppMethods {
         ArrayList<String> items=new ArrayList<String>();
         String sql;
         int lim;
+        boolean flag=true;
 
+        cor=cor.replace(".txt","");
 
         try {
-            cor=cor.replace(".txt","");
+            sql="SELECT Corel FROM D_PEDIDO WHERE Corel='"+cor+"'";
+            Cursor dt=Con.OpenDT(sql);
+            if (dt.getCount()>0) flag=false;
+        } catch (Exception e) {
+            String ss=e.getMessage();
+        }
 
+        try {
             file=new File(fname);
             br = new BufferedReader(new FileReader(file));
         } catch (Exception e) {
             moveFile(fname,ename);errstr=e.getMessage();return false;
         }
 
-        try {
-            db.beginTransaction();
+        if (flag) {
+            try {
+                db.beginTransaction();
 
-            while ((sql=br.readLine())!= null) {
-                items.add(sql);
+                while ((sql=br.readLine())!= null) {
+                    items.add(sql);
+                    db.execSQL(sql);
+                }
+
+                lim=limitePedido(cor);
+
+                sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0,FIRMA_CLIENTE="+lim+" WHERE FECHA_RECEPCION_SUC=0";
                 db.execSQL(sql);
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+
+            } catch (Exception e) {
+                db.endTransaction();errstr=e.getMessage();moveFile(fname,ename);
+                return false;
             }
-
-            lim=limitePedido(cor);
-
-            sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0,FIRMA_CLIENTE="+lim+" WHERE FECHA_RECEPCION_SUC=0";
-            db.execSQL(sql);
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-        } catch (Exception e) {
-            db.endTransaction();errstr=e.getMessage();moveFile(fname,ename);
-            return false;
         }
 
         try {
@@ -1267,6 +1277,20 @@ public class AppMethods {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
         return 0;
+    }
+
+    public int pendientesPago(String pcor) {
+        try {
+            sql="SELECT P.COREL FROM D_FACTURAP P " +
+                "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                "WHERE (P.TIPO='E') AND (F.PEDCOREL<>'') AND (F.ANULADO=0) AND (P.VALOR=0) ";
+            if (!pcor.isEmpty()) sql+=" AND (F.PEDCOREL='"+pcor+"')";
+            Cursor dt=Con.OpenDT(sql);
+
+            return dt.getCount();
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     //endregion

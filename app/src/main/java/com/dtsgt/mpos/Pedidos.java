@@ -24,7 +24,7 @@ import java.util.TimerTask;
 public class Pedidos extends PBase {
 
     private GridView gridView;
-    private TextView lblNue,lblPen,lblComp,lblHora,lblStat;
+    private TextView lblNue,lblPen,lblComp,lblHora,lblStat,lblPend;
 
     private LA_D_pedido adapter;
     private clsD_pedidoObj D_pedidoObj;
@@ -51,6 +51,7 @@ public class Pedidos extends PBase {
         lblComp = (TextView) findViewById(R.id.textView182);lblComp.setText("");
         lblHora = (TextView) findViewById(R.id.textView194);lblHora.setText(du.shora(du.getActDateTime()));
         lblStat = (TextView) findViewById(R.id.textView199);lblStat.setText("");
+        lblPend = (TextView) findViewById(R.id.textView179a);lblPend.setText("");
 
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         D_pedidocObj=new clsD_pedidocObj(this,Con,db);
@@ -103,7 +104,7 @@ public class Pedidos extends PBase {
         String cli,stat;
         long tact,tlim;
         double tate,efi;
-        int retr,mdif,mlim,sate,slim;
+        int retr,mdif,mlim,sate,slim,ppend;
 
         statistics();
 
@@ -111,6 +112,7 @@ public class Pedidos extends PBase {
             tact=du.getActDateTime();tlim=tact+100;
             cnue=0;cpen=0;ccomp=0;stat="";
             retr=0;sate=0;slim=0;
+            ppend=app.pendientesPago("");
 
             if (!modo){
                 sql="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+") " +
@@ -144,6 +146,8 @@ public class Pedidos extends PBase {
             }
 
             lblNue.setText(""+cnue);lblPen.setText(""+cpen);lblComp.setText(""+ccomp);
+            if (ppend>-1) lblPend.setText(""+ppend);else lblPend.setText("");
+
             adapter=new LA_D_pedido(this,this,D_pedidoObj.items,modo);
             gridView.setAdapter(adapter);
         } catch (Exception e) {
@@ -229,7 +233,7 @@ public class Pedidos extends PBase {
             for (int i = 0; i < files.length; i++) {
                 fname=files[i].getName();
                 pp=fname.indexOf(".txt");
-                if (pp>1){
+                if (pp>0){
                     if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime(),fname)) {
                         msgbox2("Ocurrio error en recepción de orden :\n"+app.errstr);
                     }
@@ -271,10 +275,9 @@ public class Pedidos extends PBase {
 
     //region Dialogs
 
-
     private void showItemMenu() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Pedidos Activos","Pedidos Pagados","Pedidos Anulados"};
+        final String[] selitems = {"Ordenes Activos","Ordenes Pagados","Ordenes Anulados","Borrar Ordenes"};
 
         ExDialog menudlg = new ExDialog(this);
 
@@ -287,6 +290,9 @@ public class Pedidos extends PBase {
                         sql=sql2;modo=true;break;
                     case 2:
                         sql=sql3;modo=true;break;
+                    case 3:
+                        browse=2;
+                        startActivity(new Intent(Pedidos.this,ValidaSuper.class));
                 }
 
                 listItems();
@@ -305,6 +311,60 @@ public class Pedidos extends PBase {
         Dialog.show();
     }
 
+    private void msgAskDelete(String msg) {
+        ExDialog dialog = new ExDialog(this);
+
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgAskDelete2("Está seguro");
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskDelete2(String msg) {
+        ExDialog dialog = new ExDialog(this);
+
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    db.beginTransaction();
+
+                    db.execSQL("DELETE FROM D_PEDIDO");
+                    db.execSQL("DELETE FROM D_PEDIDOC");
+                    db.execSQL("DELETE FROM D_PEDIDOCOMBO");
+                    db.execSQL("DELETE FROM D_PEDIDOD");
+
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+
+                    toast("Ordenes borrados");
+                    finish();
+                } catch (Exception e) {
+                    db.endTransaction();
+                    msgbox(e.getMessage());
+                }
+
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
 
     //endregion
 
@@ -327,6 +387,13 @@ public class Pedidos extends PBase {
         if (browse==1) {
             browse=0;
             listItems();return;
+        }
+
+        if (browse==2) {
+            browse=0;
+            if (gl.checksuper) msgAskDelete("Borrar todos los ordenes");
+            gl.checksuper=false;
+            return;
         }
     }
 

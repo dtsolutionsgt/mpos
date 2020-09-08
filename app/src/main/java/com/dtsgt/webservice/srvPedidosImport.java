@@ -30,6 +30,7 @@ public class srvPedidosImport extends srvBaseJob {
         rnPedidosNuevos = new Runnable() {
             public void run() {
                 procesaPedidos();
+                startPedidosImport.startService(getApplicationContext(),params);
             }
         };
 
@@ -115,8 +116,6 @@ public class srvPedidosImport extends srvBaseJob {
             pedidosRecibidos();
             notifynew(items.size());
         }
-
-        startPedidosImport.startService(getApplicationContext(),params);
 
     }
 

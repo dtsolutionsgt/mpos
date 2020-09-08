@@ -161,7 +161,16 @@ public class PBase extends Activity {
 		Toast toast= Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT);  
 		toast.setGravity(Gravity.CENTER, 0, 0);
 		toast.show();
-	}	
+	}
+
+    protected void toasttop(String msg) {
+
+        if (mu.emptystr(msg)) return;
+
+        Toast toast= Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP, 0, 0);
+        toast.show();
+    }
 	
 	public void addlog(final String methodname, String msg, String info) {
 

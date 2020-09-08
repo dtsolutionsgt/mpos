@@ -18,12 +18,9 @@ public class startPedidosImport {
             //JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
             JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent).setOverrideDeadline(0L).setExtras(extras);
 
+            builder.setMinimumLatency(30 * 1000); // wait at least
+            builder.setOverrideDeadline(20 * 1000); // maximum delay
 
-
-            //builder.setMinimumLatency(20 * 1000); // wait at least
-            //builder.setOverrideDeadline(30 * 1000); // maximum delay
-            builder.setMinimumLatency(5 * 1000); // wait at least
-            builder.setOverrideDeadline(10 * 1000); // maximum delay
             //builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
             //builder.setRequiresDeviceIdle(true); // device should be idle
             //builder.setRequiresCharging(false); // we don't care if the device is charging or not

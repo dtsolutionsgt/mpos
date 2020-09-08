@@ -74,6 +74,8 @@ public class CliPos extends PBase {
         getURL();
         wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
+        gl.pedcorel="";
+
         bloqueado=false;
 
         if (gl.InvCompSend) {

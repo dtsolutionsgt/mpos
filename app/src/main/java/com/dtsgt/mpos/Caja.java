@@ -91,11 +91,8 @@ public class Caja extends PBase {
 
             MontoIni.setEnabled(false);
             MontoIni.setText(""+gl.fondoCaja);
-            //#EJC20200710: No colocar valor por defecto.
-            //MontoFin.setText("0");
 
-            validaPendiente();
-
+            if (app.pendientesPago("")>0)  msgbox("Existen facturas pendientes de pago");
             MontoFin.requestFocus();
         }
 
@@ -470,20 +467,7 @@ public class Caja extends PBase {
         }
     }
 
-    private void validaPendiente() {
-        try {
-            sql="SELECT P.COREL FROM D_FACTURAP P " +
-                    "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                    "WHERE F.KILOMETRAJE=0 AND P.TIPO='E' AND F.ANULADO=0 AND P.VALOR=0";
-            Cursor dt=Con.OpenDT(sql);
 
-            if (dt.getCount()>0) {
-                msgbox("Existen facturas pendientes de pago");
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-   }
 
     //endregion
 

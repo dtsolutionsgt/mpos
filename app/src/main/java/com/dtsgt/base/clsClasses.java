@@ -569,11 +569,29 @@ public class clsClasses {
         public float tiempo_preparacion;
     }
 
+    public class clsP_res_mesa {
+        public int  codigo_mesa;
+        public int  sucursal;
+        public String nombre;
+        public double largo;
+        public double ancho;
+        public double posx;
+        public double posy;
+    }
+
     public class clsP_proveedor {
         public int  codigo_proveedor;
         public String codigo;
         public String nombre;
         public Boolean  activo;
+    }
+
+    public class clsP_ruta {
+        public String codigo;
+        public String sucursal;
+        public String nombre;
+        public int  codigo_ruta;
+        public boolean activo;
     }
 
     public class clsP_stock {
@@ -632,14 +650,6 @@ public class clsClasses {
         public int  codigo_escenario_iva;
         public String codigo_municipio;
         public int codigo_proveedor;
-    }
-
-    public class clsP_ruta {
-        public String codigo;
-        public String sucursal;
-        public String nombre;
-        public int  codigo_ruta;
-        public boolean activo;
     }
 
     public class clsP_usuario {

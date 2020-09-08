@@ -204,26 +204,10 @@ public class MainActivity extends PBase {
     }
 
     public void doLogin(View view) {
-        String params;
-
         if (gl.pePedidos) {
-
-            //uurl="http://192.168.1.10/mposws/mposws.asmx";
-            params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
-
+            String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
             startPedidosImport.startService(this,params);
-            /*
-            try {
-                Intent intent = new Intent(MainActivity.this, srvPedidosImport.class);
-                intent.putExtra("URL","http://192.168.1.10/mposws/mposws.asmx");
-                intent.putExtra("idempresa",gl.emp);
-                intent.putExtra("idsucursal",gl.tienda);
-                startService(intent);
-            } catch (Exception e) {
-                msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-            }
-
-             */
+            toast("Captura de ordenes activada");
         }
     }
 
@@ -438,6 +422,12 @@ public class MainActivity extends PBase {
         configBase();
 
         llenaUsuarios();
+
+        if (gl.pePedidos) {
+            String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
+            startPedidosImport.startService(this,params);
+            toasttop("Captura de ordenes activada");
+        }
 
     }
 
@@ -764,6 +754,8 @@ public class MainActivity extends PBase {
         lblEmp.setText(gl.empnom);
 
         app.getURL();
+
+
 
         try {
             String emplogo = Environment.getExternalStorageDirectory() + "/mPosFotos/" + "/mposlogo.png";

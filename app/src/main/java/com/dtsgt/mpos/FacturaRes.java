@@ -802,7 +802,7 @@ public class FacturaRes extends PBase {
             }
 
 			ins.add("DEPOS",false);
-			ins.add("PEDCOREL","");
+			ins.add("PEDCOREL",gl.pedcorel);
 			ins.add("REFERENCIA","");
 
 			if (gl.dvbrowse!=0){

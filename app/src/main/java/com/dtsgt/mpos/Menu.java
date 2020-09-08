@@ -982,6 +982,7 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
                     if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
                     if (ss.equalsIgnoreCase("Configuración reportes Cierre")) gl.mantid = 23;
+                    if (ss.equalsIgnoreCase("Restaurante")) gl.mantid = 24;
 
                     if (gl.mantid == 16) {
                         startActivity(new Intent(Menu.this, MantConfig.class));
@@ -993,6 +994,8 @@ public class Menu extends PBase {
                         startActivity(new Intent(Menu.this, MantRol.class));
                     } else if (gl.mantid == 23) {
                         startActivity(new Intent(Menu.this, MantRepCierre.class));
+                    } else if (gl.mantid == 24) {
+                        startActivity(new Intent(Menu.this, SalaDis.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }

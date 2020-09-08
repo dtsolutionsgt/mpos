@@ -32,7 +32,7 @@ import java.util.TimerTask;
 public class PedidoDet extends PBase {
 
     private ListView listView;
-    private TextView lblID,lblAnul,lblFecha,lblTiempo;
+    private TextView lblID,lblAnul,lblFecha,lblTiempo,lblPend,lblTot;
     private RelativeLayout rel1,rel2,rel3,rel4,rel5;
 
     private LA_D_pedidod adapter;
@@ -50,8 +50,9 @@ public class PedidoDet extends PBase {
     private TimerTask ptask;
     private int period=10000,delay=50;
 
-    private String pedid;
+    private String pedid,corelfact;
     private int est,modo,counter;
+    private double monto=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,8 @@ public class PedidoDet extends PBase {
         lblAnul=findViewById(R.id.textView191);
         lblFecha=findViewById(R.id.textView193);
         lblTiempo=findViewById(R.id.textView195);
+        lblPend=findViewById(R.id.textView198);lblPend.setVisibility(View.INVISIBLE);
+        lblTot=findViewById(R.id.textView200);
 
         pedid=gl.pedid;
 
@@ -109,8 +112,7 @@ public class PedidoDet extends PBase {
     }
 
     public void doPago(View view) {
-        modo=5;
-        msgAsk("Marcar como Pagado");
+        msgAskPago("Aplicar pago de monto "+mu.frmcur(monto)+" ");
     }
 
     public void doCliente(View view) {
@@ -224,15 +226,23 @@ public class PedidoDet extends PBase {
         rel5.setVisibility(View.INVISIBLE);
         if (est>=2) rel3.setVisibility(View.VISIBLE);
         if (est>=3) rel4.setVisibility(View.VISIBLE);
-        if (est>=4) rel5.setVisibility(View.VISIBLE);
+        if ((est>=4) && (app.pendientesPago(pedid)==0)) rel5.setVisibility(View.VISIBLE);
 
         if (item.empresa>0) lblID.setText("#"+item.empresa % 1000);else lblID.setText("");
 
         if (item.anulado==1) lblAnul.setVisibility(View.INVISIBLE);
+
+        lblTot.setText("Total : "+mu.frmcur(item.total));
+        if (app.pendientesPago(pedid)>0) {
+            monto=montoPago(pedid);
+            lblTot.setText("Total : "+mu.frmcur(monto));
+            if (monto>0) lblPend.setVisibility(View.VISIBLE);
+        }
     }
 
     private void estado() {
         int ordid=1;
+        gl.pedcorel="";
 
         D_pedidoObj.fill("ORDER BY Empresa DESC");
         if (D_pedidoObj.count>0) ordid=D_pedidoObj.first().empresa+1;
@@ -255,11 +265,12 @@ public class PedidoDet extends PBase {
             item.anulado=0;
         }
         if (modo==3) {
-            item.codigo_estado=2;
-            item.codigo_usuario_proceso=gl.codigo_vendedor;
-            item.fecha_salida_suc=0;
-            item.fecha_entrega=0;
-            item.anulado=0;
+            item.codigo_estado = 2;
+            item.codigo_usuario_proceso = gl.codigo_vendedor;
+            item.fecha_salida_suc = 0;
+            item.fecha_entrega = 0;
+            item.anulado = 0;
+            gl.pedcorel=pedid;
         }
         if (modo==4) {
             item.codigo_estado=3;
@@ -321,6 +332,17 @@ public class PedidoDet extends PBase {
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void aplicarPago() {
+        try {
+            sql="UPDATE D_FACTURAP SET VALOR="+monto+" WHERE (COREL='"+corelfact+"') AND (TIPO='E') AND (VALOR=0) ";
+            db.execSQL(sql);
+            modo=5;
+            estado();
+        } catch (Exception e) {
+             msgbox(e.getMessage());
         }
     }
 
@@ -536,6 +558,18 @@ public class PedidoDet extends PBase {
 
     }
 
+    public double montoPago(String pcor) {
+        try {
+            sql="SELECT Total,Corel FROM D_FACTURA WHERE PEDCOREL='"+pcor+"'";
+            Cursor dt=Con.OpenDT(sql);
+
+            dt.moveToFirst();
+            corelfact=dt.getString(1);
+            return dt.getDouble(0);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 
     //endregion
 
@@ -617,6 +651,26 @@ public class PedidoDet extends PBase {
 
     }
 
+    private void msgAskPago(String msg) {
+        ExDialog dialog = new ExDialog(this);
+
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                aplicarPago();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+
     //endregion
 
     //region Activity Events
@@ -641,7 +695,7 @@ public class PedidoDet extends PBase {
         if (browse==1) {
             browse=0;
             if (gl.checksuper) msgAskAnul("Anular orden");
-            return;
+            gl.checksuper=false;return;
         }
     }
 
