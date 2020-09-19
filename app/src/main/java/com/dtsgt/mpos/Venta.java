@@ -41,6 +41,7 @@ import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.fel.FelFactura;
+import com.dtsgt.fel.FelVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -3103,7 +3104,8 @@ public class Venta extends PBase {
             public void onClick(DialogInterface dialog, int which) {
                 try {
                     gl.felcorel="";gl.feluuid="";
-                    startActivity(new Intent(Venta.this, FelFactura.class));
+                    //startActivity(new Intent(Venta.this, FelFactura.class));
+                    startActivity(new Intent(Venta.this, FelVerificacion.class));
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

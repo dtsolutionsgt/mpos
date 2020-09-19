@@ -195,6 +195,7 @@ public class FelFactura extends PBase {
 
     @Override
     public void felCallBack()  {
+        boolean skipflag=false;
 
         try {
 
@@ -207,6 +208,7 @@ public class FelFactura extends PBase {
                     ffail++;
                     guardaError();
                     marcaFacturaContingencia();
+                    skipflag=true;
                 } if (fel.errorflag && fel.duplicado) {
 
                     //Hacer algo con la factura y su identificador interno...
@@ -235,15 +237,16 @@ public class FelFactura extends PBase {
                     if (fel.idcontingencia ==0){
                         fact.corelativo = corcont;
                         D_facturaObj.update(fact);
-                    }else{
+                    } else {
                         fact.feelcontingencia = ""+corcont;
                         D_facturaObj.update(fact);
                     }
 
                     toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
                 }  else {
-                    marcaFactura();
-                }
+                    //JP20200918 - evita procesar marcaFactura en caso que (fel.errorflag && !fel.duplicado)
+                    if (!skipflag)  marcaFactura();
+                 }
 
                 callBackMulti();
 
@@ -279,7 +282,7 @@ public class FelFactura extends PBase {
                         citem.corelult=corcont;
                         P_corelObj.update(citem);
 
-                        if (fel.idcontingencia ==0){
+                        if (fel.idcontingencia==0){
                             fact.corelativo = corcont;
                             D_facturaObj.update(fact);
                         }else{
@@ -308,7 +311,11 @@ public class FelFactura extends PBase {
         } else {
             if (ffail==0) {
                 endstr="Certificados : "+ftot;
-                if (gl.peEnvio) envioFacturas();else {toast(endstr); finish();}
+                if (gl.peEnvio) {
+                    envioFacturas();
+                } else {
+                    toast(endstr); finish();
+                }
             } else {
                 endstr="Certificados : "+(ftot-ffail)+"\nSin certificacion : "+ffail;
                 if (gl.peEnvio) envioFacturas(); else msgexit(endstr);
@@ -448,17 +455,31 @@ public class FelFactura extends PBase {
 
         try {
 
+            D_facturaObj.fill("WHERE Corel='"+corel+"'");
+            fact=D_facturaObj.first();
+
+            //JP20200918 - si ya esta marcada como contingencia, no lo marca de nuevo
+            String fcont=fact.feelcontingencia;if (fcont.equalsIgnoreCase(" ")) fcont="";
+
+            if (!fcont.isEmpty()) {
+                return ;
+            }
+
             db.beginTransaction();
 
             clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
             P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
             citem=P_corelObj.first();
-            corcont=citem.corelult+1;
+            if (citem.corelult==0) {
+                corcont=citem.corelini;
+            } else {
+                corcont=citem.corelult+1;
+            }
+
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
-            //fact.feelcontingencia=fel.fact_serie+"-"+fel.fact_numero;
             fact.feelcontingencia=""+corcont;
 
             D_facturaObj.update(fact);
