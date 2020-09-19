@@ -34,7 +34,7 @@ public class appGlobals extends Application {
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,codigo_pais;
 	public double precio_recarga,total_pago;
-	public boolean configCajaSuc = false,InvCompSend=false,
+	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,recibir_automatico = false;
 
 
@@ -54,8 +54,8 @@ public class appGlobals extends Application {
     public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp;
     public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
-    public Boolean peImprFactCorrecta,peMCent, peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
-    public Boolean peAnulSuper,peRest;
+    public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
+    public Boolean peAnulSuper,peRest,peModifPed;
 
 	// Descuentos
 	public String promprod;

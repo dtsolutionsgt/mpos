@@ -204,11 +204,13 @@ public class MainActivity extends PBase {
     }
 
     public void doLogin(View view) {
+        /*
         if (gl.pePedidos) {
             String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
             startPedidosImport.startService(this,params);
             toast("Captura de ordenes activada");
         }
+        */
     }
 
     public void doLoginScreen(View view) {
@@ -408,6 +410,8 @@ public class MainActivity extends PBase {
         try {
             AppMethods app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
+
+            mu.curr=gl.peMon;
         } catch (Exception e) {
             addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());

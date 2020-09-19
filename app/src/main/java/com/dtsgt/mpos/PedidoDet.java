@@ -17,9 +17,11 @@ import android.widget.Toast;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_pedidoObj;
+import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.ladapt.LA_D_pedidod;
@@ -46,6 +48,8 @@ public class PedidoDet extends PBase {
     private clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
     private clsClasses.clsD_pedidod pitem=clsCls.new clsD_pedidod();
     private clsClasses.clsT_venta venta=clsCls.new clsT_venta();
+
+    private clsRepBuilder rep;
 
     private TimerTask ptask;
     private int period=10000,delay=50;
@@ -75,6 +79,8 @@ public class PedidoDet extends PBase {
         lblTot=findViewById(R.id.textView200);
 
         pedid=gl.pedid;
+        gl.closePedido=false;
+
 
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         D_pedidodObj=new clsD_pedidodObj(this,Con,db);
@@ -82,6 +88,8 @@ public class PedidoDet extends PBase {
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
         T_ventaObj=new clsT_ventaObj(this,Con,db);
         T_comboObj = new clsT_comboObj(this, Con, db);
+
+        rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
         setHandlers();
 
@@ -164,6 +172,16 @@ public class PedidoDet extends PBase {
         String s,cp,cn;
 
         try {
+
+            rep.clear();
+            rep.empty();
+            rep.line();
+            rep.empty();
+            rep.add("ORDEN "+lblID.getText().toString());
+            rep.empty();
+            rep.line();
+            rep.empty();
+
             D_pedidodObj.fill("WHERE Corel='"+pedid+"'");
 
             for (int i = 0; i <D_pedidodObj.count; i++) {
@@ -171,26 +189,41 @@ public class PedidoDet extends PBase {
                 item=D_pedidodObj.items.get(i);
                 s=mu.frmdecno(item.cant)+" x "+getProd(item.codigo_producto);
                 item.umventa=s;
+                rep.add(s);
 
                 line=clsCls.new clsD_pedidod();
                 line.umventa=s;line.nota="";
-                cn=item.nota;if (!cn.isEmpty()) line.umventa+=" / "+cn;
+                cn=item.nota;
+                if (!cn.isEmpty()) {
+                    line.umventa+=" / "+cn;rep.add("N : "+s);
+                }
                 lines.add(line);
 
-                if (item.codigo_tipo_producto.equalsIgnoreCase("M")) {
 
+                if (item.codigo_tipo_producto.equalsIgnoreCase("M")) {
+                    //lines.add(line);
                     D_pedidocomboObj.fill("WHERE COREL_DET="+item.corel_det);
                     for (int j = 0; j <D_pedidocomboObj.count; j++) {
+                        if (j==0) rep.line();
                         cp=getProd(D_pedidocomboObj.items.get(j).codigo_producto);
                         cn=D_pedidocomboObj.items.get(j).nota;
 
                         line=clsCls.new clsD_pedidod();
                         line.umventa="";
-                        line.nota=" - "+cp;if (!cn.isEmpty()) line.nota+=" / "+cn;
+                        line.nota=" - "+cp;
+                        rep.add(line.nota);
+
+                        if (!cn.isEmpty()) {
+                            line.nota+=" / "+cn;rep.add(" - N: "+cn);
+                        }
                         lines.add(line);
+                        if (j<D_pedidocomboObj.count-1) rep.empty();
                      }
                 }
+
+                rep.line();
             }
+
 
             adapter=new LA_D_pedidod(this,this,lines);
             listView.setAdapter(adapter);
@@ -263,6 +296,8 @@ public class PedidoDet extends PBase {
             item.fecha_salida_suc=0;
             item.fecha_entrega=0;
             item.anulado=0;
+
+            lblID.setText("#"+item.empresa % 1000);
         }
         if (modo==3) {
             item.codigo_estado = 2;
@@ -300,19 +335,18 @@ public class PedidoDet extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        if (modo==2) imprimirOrden();
-
-        if (modo==3) {
+        if (modo==2) {
+            imprimirOrden();return;
+        } else  if (modo==3) {
             if (ventaVacia()) {
                 crearVenta();
             } else {
-                msgAskVenta("Borra la venta actual y convertir orden a una venta nueva");
+                msgAskVenta("Borrar la venta actual y convertir orden a una venta nueva");
             }
             return;
+        } else {
+            finish();
         }
-
-        finish();
-
     }
 
     private void anular() {
@@ -347,7 +381,25 @@ public class PedidoDet extends PBase {
     }
 
     private void imprimirOrden() {
-        gl.closePedido=true;
+
+        if (!gl.peImpOrdCos) return;
+
+        try {
+            rep.empty();
+            rep.line();
+            rep.add("Hora : "+du.shora(du.getActDateTime()));
+            rep.line();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.save();
+
+            app.doPrint();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        //gl.closePedido=true;
         finish();
     }
 
@@ -385,10 +437,63 @@ public class PedidoDet extends PBase {
             }
 
             gl.closePedido=true;
+
+            crearTicketEntrega();
+
+            gl.ventalock=true;
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private void crearTicketEntrega() {
+        String s;
+        String[] sp;
+        int sps=gl.prw-2;
+
+        try {
+
+            clsD_pedidocObj D_pedidocObj=new clsD_pedidocObj(this,Con,db);
+            D_pedidocObj.fill("WHERE (corel='"+pedid+"')");
+            clsClasses.clsD_pedidoc item=D_pedidocObj.first();
+
+            rep.clear();
+            rep.empty();
+            rep.line();
+            rep.empty();
+            rep.add("ENTREGA ORDEN "+lblID.getText().toString());
+            rep.empty();
+            rep.line();
+            rep.empty();
+
+            rep.add("Nombre : ");
+            s=item.nombre+" ";
+            sp=splitByLen(s,sps);for (int i = 0; i <sp.length; i++) rep.add(sp[i]);
+            rep.add("Direccion : ");
+            s=item.direccion+" ";
+            sp=splitByLen(s,sps);for (int i = 0; i <sp.length; i++) rep.add(sp[i]);
+            s=item.referencia;
+            if (!s.isEmpty()) {
+                s=" - "+s;
+                sp=splitByLen(s,sps);for (int i = 0; i <sp.length; i++) rep.add(sp[i]);
+            }
+            rep.add("Telefono : "+item.telefono);
+
+            rep.empty();
+            rep.line();
+            rep.add("Hora : "+du.shora(du.getActDateTime()));
+            rep.line();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.save();
+
+            app.doPrint();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     private boolean addItem(){
@@ -570,6 +675,17 @@ public class PedidoDet extends PBase {
             return 0;
         }
     }
+
+    private String[] splitByLen(String s, int size) {
+        if(s == null || size <= 0)
+            return null;
+        int chunks = s.length() / size + ((s.length() % size > 0) ? 1 : 0);
+        String[] arr = new String[chunks];
+        for(int i = 0, j = 0, l = s.length(); i < l; i += size, j++)
+            arr[j] = s.substring(i, Math.min(l, i + size));
+        return arr;
+    }
+
 
     //endregion
 

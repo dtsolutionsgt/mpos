@@ -161,6 +161,8 @@ public class Venta extends PBase {
         imgflag=gl.peMImg;
         setVisual();
 
+        checkLock();
+
         if(!gl.exitflag) {
 
             Handler mtimer = new Handler();
@@ -1406,7 +1408,6 @@ public class Venta extends PBase {
         }
     }
 
-
     private int cantBolsa() {
         try {
             sql="SELECT BARRA FROM T_BARRA WHERE CODIGO='"+prodid+"'";
@@ -2009,6 +2010,56 @@ public class Venta extends PBase {
         }
     }
 
+    private void processMenuBtn(int menuid) {
+        try {
+
+            switch (menuid) {
+                case 50:
+                    gl.gstr = "";
+                    browse = 1;
+                    gl.prodtipo = 1;
+                    startActivity(new Intent(this, Producto.class));
+                    break;
+                case 51:
+                    if (khand.isValid) {
+                        barcode = khand.val;
+                        addBarcode();
+                    }
+                    break;
+                case 52:
+                    if (!gl.exitflag) {
+                        browse = 8;
+                        gl.climode = false;
+
+                        if (usarbio) {
+                            startActivity(new Intent(Venta.this, Clientes.class));
+                        } else {
+                            if (!gl.forcedclose) {
+                                startActivity(new Intent(Venta.this, CliPos.class));
+                            }
+                        }
+                    }
+                    break;
+                case 53:
+                    break;
+                case 54:
+                    if (!gl.ventalock) borraLinea();else toast("No se puede modificar el orden");
+                    break;
+                case 55:
+                    if (!gl.ventalock) borraTodo();else toast("No se puede modificar el orden");
+                    break;
+                case 56:
+                    showMenuSwitch();
+                    break;
+                case 61:
+                    msgAskOrden("Convertir al orden");
+                    break;
+            }
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+    }
+
     public void cierreCaja(){
         try{
             if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
@@ -2320,56 +2371,6 @@ public class Venta extends PBase {
             startActivity(intent);
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void processMenuBtn(int menuid) {
-        try {
-
-            switch (menuid) {
-                case 50:
-                    gl.gstr = "";
-                    browse = 1;
-                    gl.prodtipo = 1;
-                    startActivity(new Intent(this, Producto.class));
-                    break;
-                case 51:
-                    if (khand.isValid) {
-                        barcode = khand.val;
-                        addBarcode();
-                    }
-                    break;
-                case 52:
-                    if (!gl.exitflag) {
-                        browse = 8;
-                        gl.climode = false;
-
-                        if (usarbio) {
-                            startActivity(new Intent(Venta.this, Clientes.class));
-                        } else {
-                            if (!gl.forcedclose) {
-                                startActivity(new Intent(Venta.this, CliPos.class));
-                            }
-                        }
-                    }
-                    break;
-                case 53:
-                    break;
-                case 54:
-                    borraLinea();
-                    break;
-                case 55:
-                    borraTodo();
-                    break;
-                case 56:
-                    showMenuSwitch();
-                    break;
-                case 61:
-                    msgAskOrden("Convertir al orden");
-                    break;
-            }
-        } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 
@@ -3055,6 +3056,16 @@ public class Venta extends PBase {
         }
      }
 
+    private void checkLock() {
+
+        if (gl.ventalock) toast("El orden está protegido, no se puede modificar");
+
+        listView.setEnabled(!gl.ventalock);
+        grdfam.setEnabled(!gl.ventalock);
+        grdprod.setEnabled(!gl.ventalock);
+
+    }
+
     //endregion
 
     //region Dialogs
@@ -3182,6 +3193,7 @@ public class Venta extends PBase {
             super.onResume();
             D_pedidoObj.reconnect(Con,db);
 
+            checkLock();
 
             try {
                 P_nivelprecioObj.reconnect(Con,db);
@@ -3290,7 +3302,8 @@ public class Venta extends PBase {
             }
 
             if (browse==9) {
-                browse=0;listItems();return;
+                browse=0;listItems();
+                return;
             }
 
         } catch (Exception e){

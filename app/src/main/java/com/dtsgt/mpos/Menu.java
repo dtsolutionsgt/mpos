@@ -268,6 +268,7 @@ public class Menu extends PBase {
 				case 1:
 					gl.cajaid=5;
                     gl.InvCompSend=false;
+                    gl.ventalock=false;
 
 					if (valida()) {
 
@@ -933,7 +934,6 @@ public class Menu extends PBase {
 	public void showMantMenu() {
 
 	    gl.climode=false;
-
 	    gl.listaedit=true;
 
         try {
@@ -995,7 +995,8 @@ public class Menu extends PBase {
                     } else if (gl.mantid == 23) {
                         startActivity(new Intent(Menu.this, MantRepCierre.class));
                     } else if (gl.mantid == 24) {
-                        startActivity(new Intent(Menu.this, SalaDis.class));
+                        showMantRestMenu();
+                        //startActivity(new Intent(Menu.this, SalaDis.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }
@@ -1026,6 +1027,61 @@ public class Menu extends PBase {
         }
 
 	}
+
+    public void showMantRestMenu() {
+
+        try {
+            final AlertDialog Dialog;
+
+            final String[] selitems = {"Mesero", "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
+
+            menudlg = new ExDialog(this);
+
+            menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                    ss = selitems[item];
+
+                    if (ss.equalsIgnoreCase("Mesero")) gl.mantid = 25;
+                    if (ss.equalsIgnoreCase("Sala")) gl.mantid = 26;
+                    if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
+                    if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
+                    if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
+
+                    if (gl.mantid == 24) {
+                        startActivity(new Intent(Menu.this, SalaDis.class));
+                    } else if (gl.mantid == 28) {
+                        //startActivity(new Intent(Menu.this, GrupoMesas.class));
+                    } else {
+                        startActivity(new Intent(Menu.this, Lista.class));
+                    }
+
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+
+            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbuttonp.setTextColor(Color.WHITE);
+
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+
+    }
 
     public void showMantCliente() {
 

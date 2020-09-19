@@ -318,15 +318,28 @@
 
         <TextView
             android:id="@+id/textView199"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="false"
             android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="14dp"
             android:gravity="center_horizontal"
             android:text="Eficiencia "
             android:textColor="#FFFFFF"
             android:textSize="30sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageView86"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toStartOf="@+id/textView199"
+            android:adjustViewBounds="true"
+            android:padding="6dp"
+            android:src="@drawable/stat_arr_up" />
     </RelativeLayout>
 </RelativeLayout>

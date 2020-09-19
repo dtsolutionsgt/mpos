@@ -24,7 +24,7 @@ public class MiscUtils {
 		
 	private Context cCont;
 	private DecimalFormat ffrmdec,ffrmint,ffrmint2,ffrmdec2,ffrmgps;
-	private String curr;
+	public String curr;
 
 	private PBase pB;
 	

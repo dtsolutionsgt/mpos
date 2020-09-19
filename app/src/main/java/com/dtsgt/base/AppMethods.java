@@ -574,7 +574,18 @@ public class AppMethods {
             gl.peRest =false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=119";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
 
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peModifPed = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peModifPed=false;
+        }
 
     }
 
@@ -1230,7 +1241,7 @@ public class AppMethods {
 
                 lim=limitePedido(cor);
 
-                sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0,FIRMA_CLIENTE="+lim+" WHERE FECHA_RECEPCION_SUC=0";
+                sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0,FIRMA_CLIENTE="+lim+",CODIGO_USUARIO_CREO="+gl.codigo_vendedor+" WHERE FECHA_RECEPCION_SUC=0";
                 db.execSQL(sql);
 
                 db.setTransactionSuccessful();

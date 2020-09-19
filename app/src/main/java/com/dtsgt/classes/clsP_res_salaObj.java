@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
 
-public class clsP_res_mesaObj {
+public class clsP_res_salaObj {
 
     public int count;
 
@@ -18,11 +18,11 @@ public class clsP_res_mesaObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM P_res_mesa";
+    private String sel="SELECT * FROM P_res_sala";
     private String sql;
-    public ArrayList<clsClasses.clsP_res_mesa> items= new ArrayList<clsClasses.clsP_res_mesa>();
+    public ArrayList<clsClasses.clsP_res_sala> items= new ArrayList<clsClasses.clsP_res_sala>();
 
-    public clsP_res_mesaObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
+    public clsP_res_salaObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
         cont=context;
         Con=dbconnection;
         ins=Con.Ins;upd=Con.Upd;
@@ -36,15 +36,15 @@ public class clsP_res_mesaObj {
         db = dbase;
     }
 
-    public void add(clsClasses.clsP_res_mesa item) {
+    public void add(clsClasses.clsP_res_sala item) {
         addItem(item);
     }
 
-    public void update(clsClasses.clsP_res_mesa item) {
+    public void update(clsClasses.clsP_res_sala item) {
         updateItem(item);
     }
 
-    public void delete(clsClasses.clsP_res_mesa item) {
+    public void delete(clsClasses.clsP_res_sala item) {
         deleteItem(item);
     }
 
@@ -64,47 +64,41 @@ public class clsP_res_mesaObj {
         fillItems(sq);
     }
 
-    public clsClasses.clsP_res_mesa first() {
+    public clsClasses.clsP_res_sala first() {
         return items.get(0);
     }
 
 
     // Private
 
-    private void addItem(clsClasses.clsP_res_mesa item) {
+    private void addItem(clsClasses.clsP_res_sala item) {
 
-        ins.init("P_res_mesa");
+        ins.init("P_res_sala");
 
-        ins.add("CODIGO_MESA",item.codigo_mesa);
+        ins.add("CODIGO_SALA",item.codigo_sala);
         ins.add("EMPRESA",item.empresa);
         ins.add("SUCURSAL",item.sucursal);
-        ins.add("SALA",item.sala);
         ins.add("NOMBRE",item.nombre);
-        ins.add("LARGO",item.largo);
-        ins.add("ANCHO",item.ancho);
-        ins.add("POSX",item.posx);
-        ins.add("POSY",item.posy);
-        ins.add("TIPO",item.tipo);
+        ins.add("ACTIVO",item.activo);
+        ins.add("ESCALA",item.escala);
+        ins.add("TAM_LETRA",item.tam_letra);
 
         db.execSQL(ins.sql());
 
     }
 
-    private void updateItem(clsClasses.clsP_res_mesa item) {
+    private void updateItem(clsClasses.clsP_res_sala item) {
 
-        upd.init("P_res_mesa");
+        upd.init("P_res_sala");
 
         upd.add("EMPRESA",item.empresa);
         upd.add("SUCURSAL",item.sucursal);
-        upd.add("SALA",item.sala);
         upd.add("NOMBRE",item.nombre);
-        upd.add("LARGO",item.largo);
-        upd.add("ANCHO",item.ancho);
-        upd.add("POSX",item.posx);
-        upd.add("POSY",item.posy);
-        upd.add("TIPO",item.tipo);
+        upd.add("ACTIVO",item.activo);
+        upd.add("ESCALA",item.escala);
+        upd.add("TAM_LETRA",item.tam_letra);
 
-        upd.Where("(CODIGO_MESA="+item.codigo_mesa+")");
+        upd.Where("(CODIGO_SALA="+item.codigo_sala+")");
 
         db.execSQL(upd.sql());
 
@@ -112,19 +106,19 @@ public class clsP_res_mesaObj {
 
     }
 
-    private void deleteItem(clsClasses.clsP_res_mesa item) {
-        sql="DELETE FROM P_res_mesa WHERE (CODIGO_MESA="+item.codigo_mesa+")";
+    private void deleteItem(clsClasses.clsP_res_sala item) {
+        sql="DELETE FROM P_res_sala WHERE (CODIGO_SALA="+item.codigo_sala+")";
         db.execSQL(sql);
     }
 
     private void deleteItem(int id) {
-        sql="DELETE FROM P_res_mesa WHERE id=" + id;
+        sql="DELETE FROM P_res_sala WHERE id=" + id;
         db.execSQL(sql);
     }
 
     private void fillItems(String sq) {
         Cursor dt;
-        clsClasses.clsP_res_mesa item;
+        clsClasses.clsP_res_sala item;
 
         items.clear();
 
@@ -134,18 +128,15 @@ public class clsP_res_mesaObj {
 
         while (!dt.isAfterLast()) {
 
-            item = clsCls.new clsP_res_mesa();
+            item = clsCls.new clsP_res_sala();
 
-            item.codigo_mesa=dt.getInt(0);
+            item.codigo_sala=dt.getInt(0);
             item.empresa=dt.getInt(1);
             item.sucursal=dt.getInt(2);
-            item.sala=dt.getInt(3);
-            item.nombre=dt.getString(4);
-            item.largo=dt.getDouble(5);
-            item.ancho=dt.getDouble(6);
-            item.posx=dt.getDouble(7);
-            item.posy=dt.getDouble(8);
-            item.tipo=dt.getInt(9);
+            item.nombre=dt.getString(3);
+            item.activo=dt.getInt(4);
+            item.escala=dt.getDouble(5);
+            item.tam_letra=dt.getDouble(6);
 
             items.add(item);
 
@@ -173,40 +164,34 @@ public class clsP_res_mesaObj {
         return nid;
     }
 
-    public String addItemSql(clsClasses.clsP_res_mesa item) {
+    public String addItemSql(clsClasses.clsP_res_sala item) {
 
-        ins.init("P_res_mesa");
+        ins.init("P_res_sala");
 
-        ins.add("CODIGO_MESA",item.codigo_mesa);
+        ins.add("CODIGO_SALA",item.codigo_sala);
         ins.add("EMPRESA",item.empresa);
         ins.add("SUCURSAL",item.sucursal);
-        ins.add("SALA",item.sala);
         ins.add("NOMBRE",item.nombre);
-        ins.add("LARGO",item.largo);
-        ins.add("ANCHO",item.ancho);
-        ins.add("POSX",item.posx);
-        ins.add("POSY",item.posy);
-        ins.add("TIPO",item.tipo);
+        ins.add("ACTIVO",item.activo);
+        ins.add("ESCALA",item.escala);
+        ins.add("TAM_LETRA",item.tam_letra);
 
         return ins.sql();
 
     }
 
-    public String updateItemSql(clsClasses.clsP_res_mesa item) {
+    public String updateItemSql(clsClasses.clsP_res_sala item) {
 
-        upd.init("P_res_mesa");
+        upd.init("P_res_sala");
 
         upd.add("EMPRESA",item.empresa);
         upd.add("SUCURSAL",item.sucursal);
-        upd.add("SALA",item.sala);
         upd.add("NOMBRE",item.nombre);
-        upd.add("LARGO",item.largo);
-        upd.add("ANCHO",item.ancho);
-        upd.add("POSX",item.posx);
-        upd.add("POSY",item.posy);
-        upd.add("TIPO",item.tipo);
+        upd.add("ACTIVO",item.activo);
+        upd.add("ESCALA",item.escala);
+        upd.add("TAM_LETRA",item.tam_letra);
 
-        upd.Where("(CODIGO_MESA="+item.codigo_mesa+")");
+        upd.Where("(CODIGO_SALA="+item.codigo_sala+")");
 
         return upd.sql();
 

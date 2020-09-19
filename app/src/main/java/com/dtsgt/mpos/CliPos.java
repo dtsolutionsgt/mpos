@@ -17,11 +17,7 @@ import android.widget.TextView;
 
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.webservice.srvInventConfirm;
-import com.dtsgt.webservice.wsInvActual;
 import com.dtsgt.webservice.wsInventCompartido;
-import com.dtsgt.webservice.wsPedidoDatos;
-import com.dtsgt.webservice.wsPedidosEstado;
-import com.dtsgt.webservice.wsPedidosNuevos;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -166,6 +162,7 @@ public class CliPos extends PBase {
                     msgbox2("wsi"+wsi.error);
                 } else {
                     confirmaInventario();
+                    gl.ventalock=false;
                     finish();
                 }
             }
@@ -285,7 +282,10 @@ public class CliPos extends PBase {
             bloqueado=true;
             wsi.idstock="";
             wsi.execute(rnRecibeInventario);
-        } else finish();
+        } else {
+            gl.ventalock=false;
+            finish();
+        }
     }
 
     private void confirmaInventario() {
@@ -534,9 +534,6 @@ public class CliPos extends PBase {
 
 						gl.media=DT.getInt(5);
 						gl.codigo_cliente=DT.getInt(7);
-
-						//limpiaCampos();
-						//finish();
 
 						resultado=true;
 

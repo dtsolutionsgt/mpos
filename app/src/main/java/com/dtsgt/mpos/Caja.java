@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -434,6 +435,19 @@ public class Caja extends PBase {
                 gl.reportid=10;
                 gl.FinMonto=montoFin;
                 startActivity(new Intent(this, CierreX.class));
+
+                Handler mtimer = new Handler();
+                Runnable mrunner=new Runnable() {
+                    @Override
+                    public void run() {
+                        gl.autocom = 1;
+                        startActivity(new Intent(Caja.this,WSEnv.class));
+                    }
+                };
+                mtimer.postDelayed(mrunner,200);
+
+
+
                 super.finish();
             }
 

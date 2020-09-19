@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="200dp"
             android:adjustViewBounds="true"
             android:padding="10dp"
             android:src="@drawable/res_text_zoom" />
@@ -33,8 +33,9 @@
             android:layout_marginEnd="50dp"
             android:layout_toStartOf="@+id/imageView88"
             android:adjustViewBounds="true"
+            android:onClick="doZoomIn"
             android:padding="10dp"
-            android:src="@drawable/zoom_out" />
+            android:src="@drawable/zoom_in" />
 
         <ImageView
             android:id="@+id/imageView90"
@@ -59,8 +60,9 @@
             android:layout_marginEnd="0dp"
             android:layout_toStartOf="@+id/imageView90"
             android:adjustViewBounds="true"
+            android:onClick="doZoomOut"
             android:padding="10dp"
-            android:src="@drawable/zoom_in" />
+            android:src="@drawable/zoom_out" />
 
         <ImageView
             android:id="@+id/imageView92"
@@ -71,8 +73,10 @@
             android:layout_marginBottom="0dp"
             android:layout_toStartOf="@+id/imageView91"
             android:adjustViewBounds="true"
+            android:clickable="true"
+            android:onClick="doZoomIn"
             android:padding="10dp"
-            android:src="@drawable/zoom_out" />
+            android:src="@drawable/zoom_in" />
 
         <ImageView
             android:id="@+id/imageView93"
@@ -98,8 +102,10 @@
             android:layout_marginEnd="0dp"
             android:layout_toStartOf="@+id/imageView93"
             android:adjustViewBounds="true"
+            android:clickable="true"
+            android:onClick="doZoomOut"
             android:padding="10dp"
-            android:src="@drawable/zoom_in" />
+            android:src="@drawable/zoom_out" />
 
         <TextView
             android:id="@+id/textView203"
@@ -110,7 +116,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="100dp"
+            android:layout_marginEnd="50dp"
             android:layout_marginBottom="10dp"
             android:layout_toStartOf="@+id/imageView94"
             android:background="@drawable/frame_rect_white"
@@ -130,7 +136,7 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentTop="true"
             android:layout_marginTop="22dp"
-            android:layout_marginEnd="110dp"
+            android:layout_marginEnd="60dp"
             android:layout_toStartOf="@+id/imageView94"
             android:adjustViewBounds="true"
             android:src="@drawable/spinarrow" />
@@ -165,6 +171,20 @@
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageView85"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:onClick="doReset"
+            android:padding="16dp"
+            android:src="@drawable/menu" />
 
     </RelativeLayout>
 

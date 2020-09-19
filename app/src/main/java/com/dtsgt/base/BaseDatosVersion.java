@@ -32,9 +32,28 @@ public class BaseDatosVersion {
 	}
 
     public void update(){
-        if (!update01()) return;
+        update01();
+        update02();
     }
 
+    private void update02() {
+        try {
+            sql="CREATE TABLE [D_orden_bitacora] ("+
+                    "FECHA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "CANT_ORDENES INTEGER NOT NULL,"+
+                    "CANT_RETRASADOS INTEGER NOT NULL,"+
+                    "TPPO REAL NOT NULL,"+
+                    "EFICIENCIA REAL NOT NULL,"+
+                    "STATCOM INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([FECHA],[CODIGO_VENDEDOR])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+    }
 
 	private boolean update01() {
 

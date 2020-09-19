@@ -125,6 +125,56 @@ public class DateUtils {
 		return s;
 	}
 
+    public String univfechahora(long f) {
+        long vy,vm,vd,m,h;
+        String s;
+
+        //yyyyMMdd hh:mm:ss
+
+        vy=(int) f/100000000;f=f % 100000000;
+        vm=(int) f/1000000;f=f % 1000000;
+        vd=(int) f/10000;f=f % 10000;
+        h= (int) f/100;
+        m= f % 100;
+
+        s="20";
+        if (vy>9) s=s+vy; else s=s+"0"+vy;
+        if (vm>9) s=s+vm; else s=s+"0"+vm;
+        if (vd>9) s=s+vd; else s=s+"0"+vd;
+        s=s+" ";
+        if (h>9)  s=s+h;  else s=s+"0"+h;
+        s=s+":";
+        if (m>9)  s=s+m;  else s=s+"0"+m;
+        s=s+":00";
+
+        return s;
+    }
+
+    public String univfecha_vb_net(long f) {
+        long vy,vm,vd,m,h;
+        String s;
+
+        //yyyyMMdd hh:mm:ss
+
+        vy=(int) f/100000000;f=f % 100000000;
+        vm=(int) f/1000000;f=f % 1000000;
+        vd=(int) f/10000;f=f % 10000;
+        h= (int) f/100;
+        m= f % 100;
+
+        s="20";
+        if (vy>9) s=s+vy; else s=s+"0"+vy;s=s+"-";
+        if (vm>9) s=s+vm; else s=s+"0"+vm;s=s+"-";
+        if (vd>9) s=s+vd; else s=s+"0"+vd;
+        s=s+" ";
+        if (h>9)  s=s+h;  else s=s+"0"+h;
+        s=s+":";
+        if (m>9)  s=s+m;  else s=s+"0"+m;
+        s=s+":00";
+
+        return s;
+    }
+
 	public String univfechasinhora(long f) {
 		int vy,vm,vd;
 		String s;

@@ -156,6 +156,17 @@ public class clsClasses {
         public long tini,tdif,lim;
     }
 
+    public class clsD_orden_bitacora {
+        public long fecha;
+        public int  codigo_sucursal;
+        public int  codigo_vendedor;
+        public int  cant_ordenes;
+        public int  cant_retrasados;
+        public double tppo;
+        public double eficiencia;
+        public int  statcom;
+    }
+
     public class clsD_pedidod {
         public String corel;
         public int  corel_det;
@@ -569,16 +580,6 @@ public class clsClasses {
         public float tiempo_preparacion;
     }
 
-    public class clsP_res_mesa {
-        public int  codigo_mesa;
-        public int  sucursal;
-        public String nombre;
-        public double largo;
-        public double ancho;
-        public double posx;
-        public double posy;
-    }
-
     public class clsP_proveedor {
         public int  codigo_proveedor;
         public String codigo;
@@ -592,6 +593,29 @@ public class clsClasses {
         public String nombre;
         public int  codigo_ruta;
         public boolean activo;
+    }
+
+    public class clsP_res_mesa {
+        public int  codigo_mesa;
+        public int  empresa;
+        public int  sucursal;
+        public int  sala;
+        public String nombre;
+        public double largo;
+        public double ancho;
+        public double posx;
+        public double posy;
+        public int  tipo;
+    }
+
+    public class clsP_res_sala {
+        public int  codigo_sala;
+        public int  empresa;
+        public int  sucursal;
+        public String nombre;
+        public int  activo;
+        public double escala;
+        public double tam_letra;
     }
 
     public class clsP_stock {

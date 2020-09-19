@@ -1,9 +1,8 @@
 package com.dtsgt.mpos;
 
-import android.graphics.Color;
-import android.graphics.Typeface;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -11,21 +10,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsDisSala;
 import com.dtsgt.classes.clsDisTouchHandler;
 import com.dtsgt.classes.clsP_res_mesaObj;
 
-public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongClickListener {
+public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongClickListener,View.OnClickListener {
 
     private RelativeLayout board;
+    private TextView lblzoom,lblchar;
 
-    private clsDisTouchHandler touch;
+
+    public int dimX,dimY,dispY,unit;
+    public clsDisTouchHandler touch;
+    public clsDisSala sala;
+    public double zoom=1;
+
     private clsP_res_mesaObj P_res_mesaObj;
     private clsClasses.clsP_res_mesa item=clsCls.new clsP_res_mesa();
 
-    private int dimX,dimY,dispY,unit,posx,posy;
-    private double zoom=1;
 
-    private int wrap=RelativeLayout.LayoutParams.WRAP_CONTENT;
+    //private int wrap=RelativeLayout.LayoutParams.WRAP_CONTENT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +38,30 @@ public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongCl
 
         super.InitBase();
 
-        board=(RelativeLayout)findViewById(R.id.relsala);
+        board=findViewById(R.id.relsala);
+        lblzoom=findViewById(R.id.textView201);
+        lblchar=findViewById(R.id.textView202);
 
         P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
+        sala=new clsDisSala(this,board,P_res_mesaObj.items);
 
         setHandlers();
     }
 
     //region Events
 
+    public void doZoomOut(View view) {
+        if (zoom<4) zoom+=0.1;setZoom();
+    }
+
+    public void doZoomIn(View view) {
+        if (zoom>0.1) zoom-=0.1;setZoom();
+    }
+
+
+    public void doReset(View view) {
+        msgAskReset("Reiniciar el diseño de la sala");
+    }
 
     private void setHandlers() {
         try {
@@ -73,9 +92,7 @@ public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongCl
             dimX=board.getWidth();dimY=board.getHeight();
             unit=(int)(0.8*Math.floor(dimY/5));unit=(int) unit/2;unit=2*unit;
 
-            touch=new clsDisTouchHandler(this,dimX,dimY,dispY,unit);
-
-            toast(unit+ " / "+touch.grid);
+            touch=new clsDisTouchHandler(this);
 
             loadItems();
 
@@ -86,76 +103,18 @@ public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongCl
 
     private void loadItems() {
         try {
-
             buildItems();//P_res_mesaObj.fill();
-
-            board.removeAllViews();
-
-            addItem(1);
-            addItem(2);
-
+            sala.setZoom();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
-    private void buildItems() {
-        try {
-            P_res_mesaObj.items.clear();
+    private void setZoom() {
+        int zv=(int) (zoom*100);
 
-            item=clsCls.new clsP_res_mesa();
-            item.codigo_mesa=1;item.nombre="1";item.sucursal=gl.tienda;
-            item.posx=0;item.posx=0;
-            item.largo=1;item.ancho=1;
-            P_res_mesaObj.items.add(item);
-
-            item=clsCls.new clsP_res_mesa();
-            item.codigo_mesa=2;item.nombre="2";item.sucursal=gl.tienda;
-            item.posx=0;item.posx=0;
-            item.largo=1;item.ancho=1;
-            P_res_mesaObj.items.add(item);
-
-            item=clsCls.new clsP_res_mesa();
-            item.codigo_mesa=3;item.nombre="3";item.sucursal=gl.tienda;
-            item.posx=0;item.posx=0;
-            item.largo=1;item.ancho=1;
-            P_res_mesaObj.items.add(item);
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void addItem(int id) {
-        TextView tv;
-        RelativeLayout.LayoutParams rlParamsName = new RelativeLayout.LayoutParams(wrap,wrap);
-        int posx,posy;
-
-        try {
-            tv = new TextView(this);
-
-            tv.setId(id);
-            tv.setText("T"+id);tv.setTag("T"+id);
-            tv.setTextColor(Color.BLACK);
-            tv.setTypeface(null, Typeface.BOLD);
-            tv.setTextSize(24);
-            tv.setGravity(Gravity.CENTER);
-            tv.setBackgroundResource(R.drawable.frame_dis);
-            tv.setWidth(100);tv.setHeight(80);
-
-            posx=50*id;posy=35*id;
-            rlParamsName.setMargins(posx, posy, 0, 0);
-            tv.setLayoutParams(rlParamsName);
-
-            tv.setOnTouchListener(this);
-            tv.setOnLongClickListener(this);
-            tv.setLongClickable(true);
-
-            board.addView(tv);
-
-        } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
+        lblzoom.setText(zv+" %");
+        sala.setZoom();
     }
 
     //endregion
@@ -170,17 +129,70 @@ public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongCl
 
     @Override
     public boolean onLongClick(View view) {
-        toast("long click ");
+        toast("long click "+view.getTag().toString());
         return true;
     }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
     //endregion
 
     //region Aux
 
+    private void buildItems() {
+        try {
+            P_res_mesaObj.items.clear();
+
+            item=clsCls.new clsP_res_mesa();
+            item.codigo_mesa=1;item.nombre="1";item.sucursal=gl.tienda;
+            item.posx=1;item.posy=1;
+            item.largo=1;item.ancho=1;
+            P_res_mesaObj.items.add(item);
+
+            item=clsCls.new clsP_res_mesa();
+            item.codigo_mesa=2;item.nombre="2";item.sucursal=gl.tienda;
+            item.posx=0;item.posy=2;
+            item.largo=1;item.ancho=1;
+            P_res_mesaObj.items.add(item);
+
+            item=clsCls.new clsP_res_mesa();
+            item.codigo_mesa=3;item.nombre="3";item.sucursal=gl.tienda;
+            item.posx=2;item.posy=2;
+            item.largo=1;item.ancho=1;
+            P_res_mesaObj.items.add(item);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 
     //region Dialogs
+
+
+    private void msgAskReset(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Title");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                ;
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
 
 
     //endregion
@@ -196,6 +208,7 @@ public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongCl
             msgbox(e.getMessage());
         }
     }
+
 
 
 

@@ -97,14 +97,14 @@ public class LA_D_pedido  extends BaseAdapter {
 
         if (corel>0) holder.lbl1.setText(""+corel);else holder.lbl1.setText("");
         if (tdif>=0) {
-            st="Tiempo : "+tdif+" m";stl="Meta : "+tlim+" m";
+            st="TPPO : "+tdif+" m";stl="Meta : "+tlim+" m";
         } else {
             st="";stl="";
         }
         holder.lbl2.setText(st);
         holder.lbl5.setText(stl);
         if (items.get(position).fecha_salida_suc==0) {
-            holder.lbl3.setText(du.shora(items.get(position).fecha_pedido));
+            holder.lbl3.setText("Inicio : "+du.shora(items.get(position).fecha_pedido));
         } else {
             holder.lbl3.setText("Salio : "+du.shora(items.get(position).fecha_salida_suc));
         }

@@ -216,14 +216,19 @@ public class FelFactura extends PBase {
                     int corcont;
                     clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
 
-                    if (fel.idcontingencia ==0){
+                    if (fel.idcontingencia==0){
                         P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)");
                     }else{
                         P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
                     }
 
                     citem=P_corelObj.first();
-                    corcont=citem.corelult+1;
+                    if (citem.corelult==0) {
+                        corcont=citem.corelini;
+                    } else {
+                        corcont=citem.corelult+1;
+                    }
+
                     citem.corelult=corcont;
                     P_corelObj.update(citem);
 

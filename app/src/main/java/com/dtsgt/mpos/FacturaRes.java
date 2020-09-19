@@ -192,7 +192,8 @@ public class FacturaRes extends PBase {
 
 		printexit= new Runnable() {
 			public void run() {
-				FacturaRes.super.finish();
+                gl.ventalock=false;
+			    FacturaRes.super.finish();
 			}
 		};
 
@@ -707,6 +708,7 @@ public class FacturaRes extends PBase {
             gl.iniciaVenta=true;
 
 			//if (!prn.isEnabled())
+            gl.ventalock=false;
             super.finish();
 
 		} catch (Exception e){
@@ -716,6 +718,7 @@ public class FacturaRes extends PBase {
 			//gl.closeCliDet = true;
 			//gl.closeVenta = true;
 
+            gl.ventalock=false;
 			super.finish();
 		}
 	}
@@ -773,13 +776,14 @@ public class FacturaRes extends PBase {
             ins.add("EMPRESA",gl.emp);
          	ins.add("COREL",corel);
 			ins.add("ANULADO",false);
-			if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
+			//if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
+            ins.add("FECHA",fecha);
 			ins.add("RUTA",gl.codigo_ruta);
 			ins.add("VENDEDOR",gl.codigo_vendedor);
 			ins.add("CLIENTE",gl.codigo_cliente);
 
 			ins.add("KILOMETRAJE",0);
-			ins.add("FECHAENTR",fechae);
+			ins.add("FECHAENTR",fecha);
 			ins.add("FACTLINK"," ");
 	   		ins.add("TOTAL",tot);
 			ins.add("DESMONTO",descmon);
@@ -1658,7 +1662,10 @@ public class FacturaRes extends PBase {
             public void onClick(DialogInterface dialog, int which) {
                 applyCash();
                 checkPago();
-                if (!app.usaFEL()) finish();
+                if (!app.usaFEL()) {
+                    gl.ventalock=false;
+                    finish();
+                }
             }
         });
 
@@ -1770,7 +1777,10 @@ public class FacturaRes extends PBase {
                 sefect=""+aplcash;
                 applyCash();
                 checkPago();
-                if (!app.usaFEL()) finish();
+                if (!app.usaFEL()) {
+                    gl.ventalock=false;
+                    finish();
+                }
             } else {
                 aplcash=aplcash-vuel;
                 sefect=""+aplcash;
@@ -2352,7 +2362,11 @@ public class FacturaRes extends PBase {
 
             P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
             citem=P_corelObj.first();
-            corcont=citem.corelult+1;
+            if (citem.corelult==0) {
+                corcont=citem.corelini;
+            } else {
+                corcont=citem.corelult+1;
+            }
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
@@ -2521,6 +2535,8 @@ public class FacturaRes extends PBase {
                         }
 
                         gl.brw=0;
+
+                        gl.ventalock=false;
                         FacturaRes.super.finish();
                     } else {
 
@@ -2589,6 +2605,7 @@ public class FacturaRes extends PBase {
 
             if (browse==4) {
                 browse=0;
+                gl.ventalock=false;
                 finish();
                 return;
             }

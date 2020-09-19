@@ -9,13 +9,17 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_orden_bitacoraObj;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.ladapt.LA_D_pedido;
+import com.dtsgt.webservice.srvPedidoEstado;
+import com.dtsgt.webservice.srvPedidosBitacora;
 
 import java.io.File;
 import java.util.Timer;
@@ -25,10 +29,12 @@ public class Pedidos extends PBase {
 
     private GridView gridView;
     private TextView lblNue,lblPen,lblComp,lblHora,lblStat,lblPend;
+    private ImageView img1;
 
     private LA_D_pedido adapter;
     private clsD_pedidoObj D_pedidoObj;
     private clsD_pedidocObj D_pedidocObj;
+    private clsD_orden_bitacoraObj D_orden_bitacoraObj;
 
     private int cnue,cpen,ccomp;
     private String sql,sql1,sql2,sql3;
@@ -52,9 +58,11 @@ public class Pedidos extends PBase {
         lblHora = (TextView) findViewById(R.id.textView194);lblHora.setText(du.shora(du.getActDateTime()));
         lblStat = (TextView) findViewById(R.id.textView199);lblStat.setText("");
         lblPend = (TextView) findViewById(R.id.textView179a);lblPend.setText("");
+        img1 = (ImageView) findViewById(R.id.imageView86);img1.setImageResource(R.drawable.blank32);
 
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         D_pedidocObj=new clsD_pedidocObj(this,Con,db);
+        D_orden_bitacoraObj=new clsD_orden_bitacoraObj(this,Con,db);
 
         tbot=du.getActDate();
         sql1="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) ORDER BY FECHA_SALIDA_SUC,EMPRESA ";
@@ -157,48 +165,6 @@ public class Pedidos extends PBase {
 
     }
 
-    private void statistics() {
-        clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
-        long tact,tlim;
-        String stat,sqls;
-        double tate,efi;
-        int retr,mdif,mlim,sate,slim;
-
-        try {
-
-            tact=du.getActDateTime();tlim=tact+100;
-            retr=0;sate=0;slim=0;
-
-            sqls="WHERE (ANULADO=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+") " +
-                        "ORDER BY FECHA_SALIDA_SUC,EMPRESA,FECHA_PEDIDO ";
-            D_pedidoObj.fill(sqls);
-
-            for (int i = 0; i <D_pedidoObj.count; i++) {
-                item=D_pedidoObj.items.get(i);
-
-                item.tdif=du.timeDiff(tact,item.fecha_recepcion_suc);
-                if (item.fecha_salida_suc!=0) item.tdif=du.timeDiff(item.fecha_salida_suc,item.fecha_recepcion_suc);
-
-                item.lim=item.firma_cliente;
-                mdif=(int) item.tdif;mlim=(int) item.lim;
-                sate+=mdif;slim+=mlim;
-                if (mdif>mlim && mlim>0) retr++;
-            }
-
-            if (D_pedidoObj.count>0) {
-                tate=sate/D_pedidoObj.count;
-                if (sate>0) efi=100*slim/sate;else efi=0;
-                stat="Tiempo promedio : "+mu.frmdecimal(tate,1)+" min   ,   Eficiencia : "+ mu.frmint(efi)+" %   ,   Retrasados : "+retr;
-            } else stat="";
-        } catch (Exception e) {
-            mu.msgbox(e.getMessage());stat="";
-        }
-
-        String ss=stat;
-        lblStat.setText(stat);
-
-    }
-
     private void iniciaPedidos() {
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(ptask=new TimerTask() {
@@ -247,6 +213,139 @@ public class Pedidos extends PBase {
 
     }
 
+    //endregion
+
+    //region Stats
+
+    private void statistics() {
+        clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
+        long tact,tlim;
+        String stat,sqls;
+        double tate,efi,ltate;
+        int retr,mdif,mlim,sate,slim,cord,rid;
+
+        try {
+
+            tact=du.getActDateTime();tlim=tact+100;
+            retr=0;sate=0;slim=0;cord=0;
+
+            sqls="WHERE (ANULADO=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+") AND (CODIGO_USUARIO_CREO="+gl.codigo_vendedor+") " +
+                    "ORDER BY FECHA_SALIDA_SUC,EMPRESA,FECHA_PEDIDO ";
+            D_pedidoObj.fill(sqls);
+
+            for (int i = 0; i <D_pedidoObj.count; i++) {
+                item=D_pedidoObj.items.get(i);cord++;
+
+                item.tdif=du.timeDiff(tact,item.fecha_recepcion_suc);
+                if (item.fecha_salida_suc!=0) item.tdif=du.timeDiff(item.fecha_salida_suc,item.fecha_recepcion_suc);
+
+                item.lim=item.firma_cliente;
+                mdif=(int) item.tdif;mlim=(int) item.lim;
+                sate+=mdif;slim+=mlim;
+                if (mdif>mlim && mlim>0) retr++;
+            }
+
+            if (D_pedidoObj.count>0) {
+                ltate = statTPPO();
+                tate = sate / D_pedidoObj.count;
+
+                rid=R.drawable.blank32;
+                if (ltate>0) {
+                    if (tate<=ltate) rid=R.drawable.stat_arr_up; else rid=R.drawable.stat_arr_dn;
+                }
+                img1.setImageResource(rid);
+
+                if (sate>0) efi=100*slim/sate;else efi=0;if (efi>100) efi=100;
+                stat="TPPO : "+mu.frmdecimal(tate,1)+" min , Ordenes : "+cord+" , Eficiencia : "+ mu.frmint(efi)+" %  , Retrasados : "+retr;
+
+                updateStats(tate,cord,efi,retr);
+            } else {
+                stat="";
+            }
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());stat="";
+        }
+
+        String ss=stat;
+        lblStat.setText(stat);
+    }
+
+    private void updateStats(double tate,int cord,double efi,int retr) {
+        clsClasses.clsD_orden_bitacora stat=null;
+        long ff;
+
+        ff=du.getActDateTime();ff=ff/100;ff=ff*100;
+
+        try {
+            stat = clsCls.new clsD_orden_bitacora();
+
+            stat.fecha=ff;
+            stat.codigo_sucursal=gl.tienda;
+            stat.codigo_vendedor=gl.codigo_vendedor;
+            stat.cant_ordenes=cord;
+            stat.cant_retrasados=retr;
+            stat.tppo=tate;
+            stat.eficiencia=efi;
+            stat.statcom=0;
+
+            D_orden_bitacoraObj.add(stat);
+
+        } catch (Exception e) {
+            try {
+                D_orden_bitacoraObj.update(stat);
+                toast("upd2");
+            } catch (Exception ee) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
+            }
+        }
+
+        syncStat(stat);
+
+    }
+
+    private void syncStat(clsClasses.clsD_orden_bitacora stat) {
+        String s,ss;
+
+        toast("sync stat");
+
+        /*
+        try {
+            D_orden_bitacoraObj.fill("WHERE CODIGO_VENDEDOR="+gl.codigo_vendedor+" ORDER BY FECHA DESC");
+            stat=D_orden_bitacoraObj.items.get(1);
+        } catch (Exception ee) {
+            return;
+        }
+        */
+
+        try {
+            s=gl.emp+";";
+            ss=du.univfecha_vb_net(stat.fecha);s+=ss+";";
+            ss=""+gl.tienda;s+=ss+";";
+            ss=""+gl.codigo_vendedor;s+=ss+";";
+            ss=""+stat.cant_ordenes;s+=ss+";";
+            ss=""+stat.cant_retrasados;s+=ss+";";
+            ss=""+stat.tppo;s+=ss+";";
+            ss=""+stat.eficiencia;s+=ss+";";
+
+            Intent intent = new Intent(Pedidos.this, srvPedidosBitacora.class);
+
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("params",s);
+
+            startService(intent);
+        } catch (Exception ee) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
+        }
+    }
+
+    private double statTPPO() {
+        try {
+            D_orden_bitacoraObj.fill("WHERE CODIGO_VENDEDOR="+gl.codigo_vendedor+" ORDER BY FECHA DESC");
+            return D_orden_bitacoraObj.first().tppo;
+        } catch (Exception ee) {
+            return -1;
+        }
+    }
 
     //endregion
 
@@ -375,6 +474,7 @@ public class Pedidos extends PBase {
         super.onResume();
         try {
             D_pedidocObj.reconnect(Con,db);
+            D_orden_bitacoraObj.reconnect(Con,db);
         } catch (Exception e) { }
 
         if (gl.closePedido) {

@@ -25,8 +25,6 @@ public class srvPedidosImport extends srvBaseJob {
 
         items.clear();
 
-        //notification("MPos Service ");
-
         rnPedidosNuevos = new Runnable() {
             public void run() {
                 procesaPedidos();
