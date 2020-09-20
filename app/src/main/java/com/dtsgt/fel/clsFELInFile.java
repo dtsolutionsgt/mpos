@@ -361,6 +361,10 @@ public class clsFELInFile {
 
                 error=jObj.getString("descripcion");
 
+                fact_uuid =jObj.getString("uuid");
+                fact_serie =jObj.getString("serie");
+                fact_numero =jObj.getString("numero");
+
                 ret_uuid=jObj.getString("uuid");
                 ret_serie=jObj.getString("serie");
                 ret_numero=jObj.getString("numero");

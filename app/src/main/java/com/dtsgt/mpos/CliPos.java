@@ -117,6 +117,8 @@ public class CliPos extends PBase {
                 toast("Falta definir la direccion");return;
             }
 
+            sDireccionCliente=sDireccionCliente+" ";
+
 			if (!existeCliente()){
 
 			    if (!validaNIT(sNITCliente)) {
@@ -564,6 +566,8 @@ public class CliPos extends PBase {
 
         int codigo=nitnum(NIT);
         gl.codigo_cliente=codigo;
+
+        dir=dir+" ";
 
 		try {
 

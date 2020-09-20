@@ -211,10 +211,21 @@ public class FELFactura extends PBase {
                     msgexit(fel.error);return;
                 }
                 if (fel.errorflag && !fel.duplicado) {
+
+                    //fel.fact_serie=fel.ret_serie;
+                    //fel.fact_numero=fel.ret_numero;
+                    //fel.fact_uuid=fel.ret_uuid;
+
+                    marcaFactura();
+
+
+                    /*
                     ffail++;
                     guardaError();
                     marcaFacturaContingencia();
+                    */
                     skipflag=true;
+
                 } if (fel.errorflag && fel.duplicado) {
 
                     //Hacer algo con la factura y su identificador interno...
