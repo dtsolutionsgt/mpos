@@ -575,7 +575,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.dtsgt.fel.FelFactura"
+            android:name="com.dtsgt.fel.FELFactura"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -647,7 +647,12 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name="com.dtsgt.fel.FelVerificacion"
+            android:name="com.dtsgt.fel.FELVerificacion"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name="com.dtsgt.fel.FELContAnul"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />

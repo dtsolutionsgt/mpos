@@ -38,9 +38,8 @@ public class clsFELInFile {
     public int errlevel, idcontingencia;
 
     public String xml,xmlanul;
-    public String fact_uuid;
-    public String fact_serie;
-    public String fact_numero;
+    public String fact_uuid,fact_serie,fact_numero;
+    public String ret_uuid,ret_serie,ret_numero;
 
     // Parametrizacion FEL
 
@@ -358,6 +357,14 @@ public class clsFELInFile {
 
                 int duplidx=jstr.indexOf("Documento enviado previamente.");
 
+                jObj = new JSONObject(jstr);
+
+                error=jObj.getString("descripcion");
+
+                ret_uuid=jObj.getString("uuid");
+                ret_serie=jObj.getString("serie");
+                ret_numero=jObj.getString("numero");
+
                 if (duplidx>1) {
                     //#EJC20200710: No firmar factura con un identificador previamente enviado...
                     duplicado=true;
@@ -366,19 +373,12 @@ public class clsFELInFile {
                     return;
                 }
 
-                jObj = new JSONObject(jstr);
-
-                error= jObj.getString("descripcion");
-
                 if (!jObj.getBoolean("resultado")) {
-
                     errorflag=true;
 
                     try {
-
                         //#EJC20200707: Obtener mensaje de error específico en respuesta.
                         JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
-
                         for (int i=0; i<ArrayError.length(); i++) {
                             JSONObject theJsonObject = ArrayError.getJSONObject(i);
                             String name = theJsonObject.getString("mensaje_error");

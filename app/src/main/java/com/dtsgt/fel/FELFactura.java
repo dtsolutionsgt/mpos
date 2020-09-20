@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
@@ -28,8 +27,10 @@ import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.mpos.Caja;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
+import com.dtsgt.mpos.WSEnv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FelFactura extends PBase {
+public class FELFactura extends PBase {
 
     // gl.peFEL  "SIN FEL", "INFILE"
 
@@ -90,7 +91,7 @@ public class FelFactura extends PBase {
         getURL();
         fel=new clsFELInFile(this,this,gl.timeout);
 
-        ws = new WebServiceHandler(FelFactura.this, gl.wsurl, gl.timeout);
+        ws = new WebServiceHandler(FELFactura.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
         clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
@@ -126,7 +127,11 @@ public class FelFactura extends PBase {
         lbl2.setText("Certificador : "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
 
-        buildList();
+        if (felcorel.isEmpty()) {
+            buildList();
+        } else {
+            facts.add(felcorel);
+        }
 
         ffail=0;fidx=0;
 
@@ -139,8 +144,6 @@ public class FelFactura extends PBase {
                         contingencia();
                     } else {
                         Date currentTime = Calendar.getInstance().getTime();
-                        Log.i("FEL_INI: ", currentTime.toString());
-                        //#EJC20200622: Inicial FEL
                         certificacion();
                     }
                 }
@@ -196,6 +199,9 @@ public class FelFactura extends PBase {
     @Override
     public void felCallBack()  {
         boolean skipflag=false;
+        int corcont,mcont;
+
+        int ii=0;
 
         try {
 
@@ -215,7 +221,6 @@ public class FelFactura extends PBase {
                     //#EJC20200710: Incremente en 1 nuestro correlativo interno para alcanzar el de infile.
 
                     clsClasses.clsP_corel citem;
-                    int corcont;
                     clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
 
                     if (fel.idcontingencia==0){
@@ -224,12 +229,15 @@ public class FelFactura extends PBase {
                         P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
                     }
 
+                    mcont=maxconting();
                     citem=P_corelObj.first();
                     if (citem.corelult==0) {
                         corcont=citem.corelini;
                     } else {
                         corcont=citem.corelult+1;
                     }
+
+                    if (mcont>corcont) corcont=mcont;
 
                     citem.corelult=corcont;
                     P_corelObj.update(citem);
@@ -245,7 +253,9 @@ public class FelFactura extends PBase {
                     toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
                 }  else {
                     //JP20200918 - evita procesar marcaFactura en caso que (fel.errorflag && !fel.duplicado)
-                    if (!skipflag)  marcaFactura();
+                    if (!skipflag)  {
+                        marcaFactura();
+                    }
                  }
 
                 callBackMulti();
@@ -262,13 +272,12 @@ public class FelFactura extends PBase {
                         marcaFacturaContingencia();
                         guardaError();
                         callBackSingle();
-                    }else{
+                    } else {
 
                         //Hacer algo con la factura y su identificador interno...
                         //#EJC20200710: Incremente en 1 nuestro correlativo interno para alcanzar el de infile.
 
                         clsClasses.clsP_corel citem;
-                        int corcont;
                         clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
 
                         if (fel.idcontingencia ==0){
@@ -277,8 +286,11 @@ public class FelFactura extends PBase {
                             P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
                         }
 
+                        mcont=maxconting();
                         citem=P_corelObj.first();
                         corcont=citem.corelult+1;
+                        if (mcont>corcont) corcont=mcont;
+
                         citem.corelult=corcont;
                         P_corelObj.update(citem);
 
@@ -707,8 +719,11 @@ public class FelFactura extends PBase {
         Runnable mrunner = new Runnable() {
             @Override
             public void run() {
-                ws.callback = 2;
-                ws.execute();
+                //ws.callback = 2;
+                //ws.execute();
+                gl.autocom = 1;
+                startActivity(new Intent(FELFactura.this, WSEnv.class));
+                finish();
             }
         };
         mtimer.postDelayed(mrunner, 200);
@@ -875,7 +890,8 @@ public class FelFactura extends PBase {
         ftot=0;
 
         try {
-            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0)");
+            //D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0)");
+            D_facturaObj.fill("WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0) AND (CODIGOLIQUIDACION=3) AND (FEELCONTINGENCIA<>' ') ORDER BY FEELCONTINGENCIA");
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {
@@ -1020,6 +1036,17 @@ public class FelFactura extends PBase {
 
     }
 
+    private int maxconting() {
+        try {
+            D_facturaObj.fill("ORDER BY FEELCONTINGENCIA DESC");
+            String ss=D_facturaObj.first().feelcontingencia;
+            int val=Integer.parseInt(ss);
+            return val+1;
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -1078,4 +1105,5 @@ public class FelFactura extends PBase {
     }
 
     //endregion
+
 }

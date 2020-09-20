@@ -21,8 +21,11 @@ public class clsVendedoresObj {
     private MiscUtils mu;
 
     private String sel="SELECT * FROM Vendedores";
-    private String selDistinct="SELECT DISTINCT 0,CODIGO, EMPRESA, RUTA, NOMBRE, CLAVE, NIVEL, NIVELPRECIO, BODEGA, " +
-                               "SUBBODEGA, ACTIVO FROM Vendedores";
+    public String selDistinct="SELECT DISTINCT 0,CODIGO, EMPRESA, RUTA, NOMBRE, CLAVE, NIVEL, NIVELPRECIO, BODEGA, " +
+                               "SUBBODEGA, ACTIVO FROM Vendedores ORDER BY NOMBRE";
+
+
+
     private String sql;
     public ArrayList<clsClasses.clsVendedores> items= new ArrayList<clsClasses.clsVendedores>();
 

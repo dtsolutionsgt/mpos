@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class WSEnv extends PBase {
 
-    private TextView lbl1,lbl2;
+    private TextView lbl1,lbl2,lbl3;
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
@@ -75,6 +75,7 @@ public class WSEnv extends PBase {
 
         lbl1 = (TextView) findViewById(R.id.msgHeader);lbl1.setText("");
         lbl2 = (TextView) findViewById(R.id.textView151);lbl2.setText("");
+        lbl3 = (TextView) findViewById(R.id.cmdRecibir);
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
@@ -103,6 +104,7 @@ public class WSEnv extends PBase {
                 @Override
                 public void run() {
                     pbar.setVisibility(View.VISIBLE);
+                    lbl3.setVisibility(View.INVISIBLE);
                     execws(1);
                 }
             };

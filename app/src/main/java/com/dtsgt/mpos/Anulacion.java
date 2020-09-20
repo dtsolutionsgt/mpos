@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -30,12 +29,9 @@ import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
-import com.dtsgt.fel.FELmsgbox;
-import com.dtsgt.fel.FelFactura;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 import com.dtsgt.webservice.srvInventConfirm;
-import com.dtsgt.webservice.wsInvActual;
 import com.dtsgt.webservice.wsInventCompartido;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,7 +42,6 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Anulacion extends PBase {
 
@@ -608,6 +603,7 @@ public class Anulacion extends PBase {
 
 		return  NIT;
 	}
+
     //endregion
 
 	//region WebService handler

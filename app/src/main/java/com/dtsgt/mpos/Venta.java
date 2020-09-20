@@ -40,8 +40,7 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsVendedoresObj;
-import com.dtsgt.fel.FelFactura;
-import com.dtsgt.fel.FelVerificacion;
+import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -3009,7 +3008,8 @@ public class Venta extends PBase {
 
     private int pendienteFEL() {
          try {
-             sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
+             //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
+             sql="SELECT COREL FROM D_factura WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0)";
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
              if (DT!=null) DT.close();
@@ -3105,7 +3105,7 @@ public class Venta extends PBase {
                 try {
                     gl.felcorel="";gl.feluuid="";
                     //startActivity(new Intent(Venta.this, FelFactura.class));
-                    startActivity(new Intent(Venta.this, FelVerificacion.class));
+                    startActivity(new Intent(Venta.this, FELVerificacion.class));
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

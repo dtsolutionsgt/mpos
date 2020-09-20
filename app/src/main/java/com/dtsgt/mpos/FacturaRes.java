@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.content.res.ResourcesCompat;
@@ -41,7 +40,7 @@ import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.fel.FelFactura;
+import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 
 import java.io.File;
@@ -660,7 +659,7 @@ public class FacturaRes extends PBase {
             if (isNetworkAvailable()) {
                 browse=2;
                 gl.felcorel=corel;gl.feluuid="";
-                startActivity(new Intent(this, FelFactura.class));
+                startActivity(new Intent(this, FELFactura.class));
             } else {
                 marcaFacturaContingencia();
                 toast("No hay conexion a internet");

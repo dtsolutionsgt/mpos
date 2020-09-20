@@ -54,7 +54,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.9  / 22-Ago-2020 ";
+    private String parVer = " 3.2.10  / 20-Sep-2020 ";
 
     Typeface typeface;
 
@@ -824,8 +824,8 @@ public class MainActivity extends PBase {
             mitems.clear();
 
             if (gl.codigo_ruta ==0){
-                VendedoresObj.fill(" ORDER BY Nombre");
-            }else{
+                VendedoresObj.fill("ORDER BY CODIGO_VENDEDOR");
+            } else {
                 VendedoresObj.fill("WHERE RUTA = " + gl.codigo_ruta+" ORDER BY Nombre");
             }
 

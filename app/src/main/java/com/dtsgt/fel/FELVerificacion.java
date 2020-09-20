@@ -3,26 +3,19 @@ package com.dtsgt.fel;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
-import com.dtsgt.classes.clsD_fel_errorObj;
-import com.dtsgt.classes.clsP_clienteObj;
-import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
@@ -36,17 +29,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
-
-public class FelVerificacion extends PBase {
+public class FELVerificacion extends PBase {
 
     private TextView lbl1,lbl2,lbl3;
     private ProgressBar pbar;
 
     private clsFELInFile fel;
-     private XMLObject xobj;
+    private XMLObject xobj;
 
     private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
@@ -60,11 +50,9 @@ public class FelVerificacion extends PBase {
     private clsClasses.clsD_facturap factp=clsCls.new clsD_facturap();
 
     private ArrayList<String> facts = new ArrayList<String>();
-    private ArrayList<String> factlist = new ArrayList<String>();
-    private ArrayList<String> rutas= new ArrayList<String>();
 
     private String felcorel,corel,ffcorel,scorel,CSQL,endstr,idfact;
-    private boolean ddemomode,multiflag,factsend,contmode;
+    private boolean conerrflag,ddemomode,multiflag,factsend,contmode;
     private int ftot,ffail,fidx,cliid,felnivel;
 
     @Override
@@ -122,9 +110,10 @@ public class FelVerificacion extends PBase {
 
         buildList();
 
-        ffail=0;fidx=0;
+        ffail=0;fidx=0;conerrflag=false;
 
         if (facts.size()>0) {
+
             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
@@ -133,8 +122,19 @@ public class FelVerificacion extends PBase {
                 }
             };
             mtimer.postDelayed(mrunner,200);
+
         } else {
-            finish();return;
+
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(FELVerificacion.this,FELContAnul.class));
+                    finish();return;
+                }
+            };
+            mtimer.postDelayed(mrunner,500);
+
         }
 
     }
@@ -173,55 +173,32 @@ public class FelVerificacion extends PBase {
 
     @Override
     public void felCallBack()  {
-        boolean skipflag=false;
 
         try {
 
             if (fel.errorcon) {
+                conerrflag=true;
                 msgexit(fel.error);return;
             }
-            if (fel.errorflag && !fel.duplicado) {
-                ffail++;
-                guardaError();
-                marcaFacturaContingencia();
-                skipflag=true;
-            } if (fel.errorflag && fel.duplicado) {
 
-                //Hacer algo con la factura y su identificador interno...
-                //#EJC20200710: Incremente en 1 nuestro correlativo interno para alcanzar el de infile.
+            if (fel.errorflag) {
+                if (fel.duplicado) {
+                    fact.codigoliquidacion=1;
 
-                clsClasses.clsP_corel citem;
-                int corcont;
-                clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
+                    fact.feeluuid=fel.ret_uuid;
+                    fact.feelserie=fel.ret_serie;
+                    fact.feelnumero=fel.ret_numero;
 
-                if (fel.idcontingencia==0){
-                    P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)");
-                }else{
-                    P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
-                }
-
-                citem=P_corelObj.first();
-                if (citem.corelult==0) {
-                    corcont=citem.corelini;
-                } else {
-                    corcont=citem.corelult+1;
-                }
-
-                citem.corelult=corcont;
-                P_corelObj.update(citem);
-
-                if (fel.idcontingencia ==0){
-                    fact.corelativo = corcont;
-                    D_facturaObj.update(fact);
-                } else {
-                    fact.feelcontingencia = ""+corcont;
                     D_facturaObj.update(fact);
                 }
+            } else {
+                fact.codigoliquidacion=2;
 
-                toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
-            }  else {
-                //JP20200918 - evita procesar marcaFactura en caso que (fel.errorflag && !fel.duplicado)
-                if (!skipflag)  marcaFactura();
+                fact.feeluuid=fel.ret_uuid;
+                fact.feelserie=fel.ret_serie;
+                fact.feelnumero=fel.ret_numero;
+
+                D_facturaObj.update(fact);
             }
 
             callBackMulti();
@@ -237,17 +214,8 @@ public class FelVerificacion extends PBase {
             if (fel.errorflag) ffail++;
             procesafactura();
         } else {
-            if (ffail==0) {
-                endstr="Verificados : "+ftot;
-                if (gl.peEnvio) {
-                    //envioFacturas();
-                } else {
-                    toast(endstr); finish();
-                }
-            } else {
-                endstr="Verificados : "+(ftot-ffail);
-                //if (gl.peEnvio) envioFacturas(); else msgexit(endstr);
-            }
+            if (!conerrflag) startActivity(new Intent(this,FELContAnul.class));
+            finish();
         }
     }
 
@@ -275,12 +243,7 @@ public class FelVerificacion extends PBase {
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
 
-            //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
-            if (fel.idcontingencia==0) {
-                fel.mpos_identificador_fact =fact.serie+fact.corelativo;
-            } else {
-                fel.mpos_identificador_fact =""+fel.idcontingencia;
-            }
+            fel.mpos_identificador_fact =fact.serie+fact.corelativo;
 
             fel.iniciar(fact.fecha);
             fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
@@ -335,76 +298,6 @@ public class FelVerificacion extends PBase {
         }
     }
 
-    private void marcaFactura() {
-
-        try {
-
-            D_facturaObj.fill("WHERE Corel='"+corel+"'");
-            fact=D_facturaObj.first();
-
-            //fact.serie=fel.fact_serie;
-            //fact.corelativo=fel.fact_numero;
-            fact.feelserie=fel.fact_serie;
-            fact.feelnumero=""+fel.fact_numero;
-            fact.feeluuid=fel.fact_uuid;
-            fact.feelfechaprocesado=du.getActDateTime();
-
-            D_facturaObj.update(fact);
-
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-    }
-
-    private void marcaFacturaContingencia() {
-
-        clsClasses.clsP_corel citem;
-        int corcont;
-
-        try {
-
-            D_facturaObj.fill("WHERE Corel='"+corel+"'");
-            fact=D_facturaObj.first();
-
-            //JP20200918 - si ya esta marcada como contingencia, no lo marca de nuevo
-            String fcont=fact.feelcontingencia;if (fcont.equalsIgnoreCase(" ")) fcont="";
-
-            if (!fcont.isEmpty()) {
-                return ;
-            }
-
-            db.beginTransaction();
-
-            clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
-            P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
-            citem=P_corelObj.first();
-            if (citem.corelult==0) {
-                corcont=citem.corelini;
-            } else {
-                corcont=citem.corelult+1;
-            }
-
-
-            D_facturaObj.fill("WHERE Corel='"+corel+"'");
-            fact=D_facturaObj.first();
-
-            fact.feelcontingencia=""+corcont;
-
-            D_facturaObj.update(fact);
-
-            citem.corelult=corcont;
-            P_corelObj.update(citem);
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
     //endregion
 
     //region Aux
@@ -414,7 +307,7 @@ public class FelVerificacion extends PBase {
         ftot=0;
 
         try {
-            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0)");
+            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) AND (CODIGOLIQUIDACION=0) ORDER BY FEELCONTINGENCIA");
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {
@@ -430,13 +323,6 @@ public class FelVerificacion extends PBase {
 
             ftot=facts.size();
 
-            rutas.clear();
-
-            if (gl.peInvCompart) {
-                clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
-                P_rutaObj.fill("WHERE (SUCURSAL="+gl.tienda+") AND (CODIGO_RUTA<>"+gl.codigo_ruta+")");
-                for (int i = 0; i <P_rutaObj.count; i++) rutas.add(""+P_rutaObj.items.get(i).codigo_ruta);
-            }
         } catch (Exception e) {
             msgexit(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -448,7 +334,7 @@ public class FelVerificacion extends PBase {
             public void run() {
                 handler.post(new Runnable(){
                     public void run() {
-                        lbl1.setText("Certificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
+                        lbl1.setText("Verificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
                     }
                 });
             }
@@ -494,32 +380,6 @@ public class FelVerificacion extends PBase {
         } catch (Exception e) {}
 
         if (gl.wsurl.isEmpty()) lbl2.setText("Falta archivo con URL");
-    }
-
-    private void guardaError() {
-        clsD_fel_errorObj D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
-        clsClasses.clsD_fel_error item=clsCls.new clsD_fel_error();
-
-        String err=fel.error;
-        String cor=ffcorel;
-        int nivel=fel.errlevel; // nivel=1 - firma  , 2 - certificacion
-
-        try {
-            int iditem=D_fel_errorObj.newID("SELECT MAX(Item) FROM D_fel_error");
-
-            item.empresa=gl.emp;
-            item.corel=cor;
-            item.item=iditem;
-            item.fecha=du.getActDateTime();
-            item.nivel=nivel;
-            item.error=err;
-            item.enviado=0;
-
-            D_fel_errorObj.add(item);
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
     }
 
     //endregion
