@@ -414,6 +414,10 @@ public class WSEnv extends PBase {
 
         P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 
+        //#CKFK 20200920 Agregué el Delete de la direcciones del cliente
+        ss="DELETE FROM P_CLIENTE_DIR WHERE (CODIGO_CLIENTE="+cliid+")";
+        CSQL = CSQL + ss + ";";
+
         ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
         CSQL = CSQL + ss + ";";
         ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);

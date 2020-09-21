@@ -174,7 +174,7 @@ public class clsFELInFile {
             InputStream is = connection.getInputStream();
 
             int response=connection.getResponseCode();
-
+            //response=199;
             if (response==200) {
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
@@ -340,7 +340,7 @@ public class clsFELInFile {
             int response=connection.getResponseCode();
 
             //JP20200918 - para emular error de transmision
-            //response=199;
+             //response=199;
 
             if (response==200) {
 
@@ -517,6 +517,7 @@ public class clsFELInFile {
             InputStream is = connection.getInputStream();
 
             int response=connection.getResponseCode();
+
             if (response==200) {
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
