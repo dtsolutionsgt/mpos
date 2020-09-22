@@ -147,19 +147,19 @@ public class SalaDis extends PBase implements View.OnTouchListener,View.OnLongCl
             P_res_mesaObj.items.clear();
 
             item=clsCls.new clsP_res_mesa();
-            item.codigo_mesa=1;item.nombre="1";item.sucursal=gl.tienda;
+            item.codigo_mesa=1;item.nombre="1";item.codigo_sucursal=gl.tienda;
             item.posx=1;item.posy=1;
             item.largo=1;item.ancho=1;
             P_res_mesaObj.items.add(item);
 
             item=clsCls.new clsP_res_mesa();
-            item.codigo_mesa=2;item.nombre="2";item.sucursal=gl.tienda;
+            item.codigo_mesa=2;item.nombre="2";item.codigo_sucursal=gl.tienda;
             item.posx=0;item.posy=2;
             item.largo=1;item.ancho=1;
             P_res_mesaObj.items.add(item);
 
             item=clsCls.new clsP_res_mesa();
-            item.codigo_mesa=3;item.nombre="3";item.sucursal=gl.tienda;
+            item.codigo_mesa=3;item.nombre="3";item.codigo_sucursal=gl.tienda;
             item.posx=2;item.posy=2;
             item.largo=1;item.ancho=1;
             P_res_mesaObj.items.add(item);

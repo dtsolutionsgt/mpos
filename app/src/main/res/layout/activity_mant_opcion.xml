@@ -16,7 +16,7 @@ tools:context="com.dtsgt.mant.MantOpcion">
     android:layout_marginRight="10dp"
     android:layout_marginBottom="478dp"
     android:clickable="true"
-    android:onClick="doSave"
+    android:onClick="doBandera"
     android:src="@drawable/icok" />
 
 <RelativeLayout

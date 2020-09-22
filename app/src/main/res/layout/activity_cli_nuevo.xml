@@ -191,7 +191,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:clickable="true"
-        android:onClick="doSave"
+        android:onClick="doBandera"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
         android:src="@drawable/next48" />

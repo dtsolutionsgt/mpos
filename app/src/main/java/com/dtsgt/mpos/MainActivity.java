@@ -54,9 +54,9 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.10  / 20-Sep-2020 ";
+    private String parVer = " 3.2.11  / 22-Sep-2020 ";
 
-    Typeface typeface;
+    private Typeface typeface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +249,10 @@ public class MainActivity extends PBase {
         }
     }
 
+    public void doFPTest(View view) {
+        startActivity(new Intent(this, FingPTest.class));
+    }
+
     private void setHandlers() {
 
         try {
@@ -281,9 +285,6 @@ public class MainActivity extends PBase {
 
     }
 
-    public void doFPTest(View view) {
-        startActivity(new Intent(this, FingPTest.class));
-    }
 
     //endregion
 

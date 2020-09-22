@@ -113,7 +113,7 @@
             android:background="@drawable/frame_btn"
             android:clickable="true"
             android:gravity="center"
-            android:onClick="doSave"
+            android:onClick="doBandera"
             android:text="GUARDAR"
             android:textStyle="bold" />
 

@@ -268,7 +268,7 @@ public class FELFactura extends PBase {
                     if (!skipflag)  {
                         marcaFactura();
                     }
-                 }
+                }
 
                 callBackMulti();
 
@@ -905,8 +905,8 @@ public class FELFactura extends PBase {
         ftot=0;
 
         try {
-            //D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0)");
-            D_facturaObj.fill("WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0) AND (CODIGOLIQUIDACION=3) AND (FEELCONTINGENCIA<>' ') ORDER BY FEELCONTINGENCIA");
+            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0)");
+            //D_facturaObj.fill("WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0) AND (CODIGOLIQUIDACION=3) AND (FEELCONTINGENCIA<>' ') ORDER BY FEELCONTINGENCIA");
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {
@@ -1006,7 +1006,7 @@ public class FELFactura extends PBase {
         clsD_fel_errorObj D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
         clsClasses.clsD_fel_error item=clsCls.new clsD_fel_error();
 
-        String err=fel.error;
+        String err=fel.response+" "+fel.error;
         String cor=ffcorel;
         int nivel=fel.errlevel; // nivel=1 - firma  , 2 - certificacion
 

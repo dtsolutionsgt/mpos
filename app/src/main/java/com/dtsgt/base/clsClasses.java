@@ -595,23 +595,40 @@ public class clsClasses {
         public boolean activo;
     }
 
+    public class clsP_res_grupo {
+        public int  codigo_grupo;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public String nombre;
+        public String telefono;
+    }
+
     public class clsP_res_mesa {
         public int  codigo_mesa;
         public int  empresa;
-        public int  sucursal;
-        public int  sala;
+        public int  codigo_sucursal;
+        public int  codigo_sala;
+        public int  codigo_grupo;
         public String nombre;
         public double largo;
         public double ancho;
         public double posx;
         public double posy;
-        public int  tipo;
+    }
+
+    public class clsP_res_mesero {
+        public int  codigo_mesero;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  codigo_grupo;
+        public String nombre;
+        public String clave;
     }
 
     public class clsP_res_sala {
         public int  codigo_sala;
         public int  empresa;
-        public int  sucursal;
+        public int  codigo_sucursal;
         public String nombre;
         public int  activo;
         public double escala;

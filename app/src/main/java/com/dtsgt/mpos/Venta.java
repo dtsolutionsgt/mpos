@@ -1925,11 +1925,13 @@ public class Venta extends PBase {
 
             if (app.usaFEL()) {
                 int pendfel=pendienteFEL();
+                /*
                 if (pendfel>0) {
                     item = clsCls.new clsMenu();
                     item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
                     mitems.add(item);
                 }
+                */
             }
 
             if (pedidos) {
@@ -3009,8 +3011,8 @@ public class Venta extends PBase {
 
     private int pendienteFEL() {
          try {
-             //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
-             sql="SELECT COREL FROM D_factura WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0)";
+             sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
+             //sql="SELECT COREL FROM D_factura WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0)";
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
              if (DT!=null) DT.close();
