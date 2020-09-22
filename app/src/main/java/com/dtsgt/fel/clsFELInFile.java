@@ -649,7 +649,7 @@ public class clsFELInFile {
 
             connection = (HttpsURLConnection)url.openConnection();
             connection.setConnectTimeout(timeout);
-            connection.setReadTimeout(timeout);
+            connection.setReadTimeout(timeout*2);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
             connection.setRequestProperty("Content-Length",""+Integer.toString(jsanul.getBytes().length));
