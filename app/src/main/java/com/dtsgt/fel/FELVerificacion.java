@@ -57,6 +57,7 @@ public class FELVerificacion extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fel_verificacion);
 
@@ -73,6 +74,7 @@ public class FELVerificacion extends PBase {
         gl.feluuid="";
 
         getURL();
+
         fel=new clsFELInFile(this,this,gl.timeout);
 
         clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
@@ -122,20 +124,21 @@ public class FELVerificacion extends PBase {
                 }
             };
             mtimer.postDelayed(mrunner,200);
-
-        } else {
-
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(FELVerificacion.this,FELContAnul.class));
-                    finish();return;
-                }
-            };
-            mtimer.postDelayed(mrunner,500);
-
         }
+        //#EJC20200921: Ya no es necesaria la anulación.
+//        else {
+//
+//            Handler mtimer = new Handler();
+//            Runnable mrunner=new Runnable() {
+//                @Override
+//                public void run() {
+//                    startActivity(new Intent(FELVerificacion.this,FELContAnul.class));
+//                    finish();return;
+//                }
+//            };
+//            mtimer.postDelayed(mrunner,500);
+//
+//        }
 
     }
 
@@ -184,20 +187,19 @@ public class FELVerificacion extends PBase {
             if (fel.errorflag) {
                 if (fel.duplicado) {
                     fact.codigoliquidacion=1;
-
                     fact.feeluuid=fel.ret_uuid;
                     fact.feelserie=fel.ret_serie;
                     fact.feelnumero=fel.ret_numero;
-
+                    fact.feelfechaprocesado = du.getActDateTime(); //#EJC20200921: Marcar como enviada a FEL.
                     D_facturaObj.update(fact);
                 }
-            } else {
+            } else
+            {
+                //#EJC20200921: What does codigoliquidacion 2 means ?
                 fact.codigoliquidacion=2;
-
                 fact.feeluuid=fel.ret_uuid;
                 fact.feelserie=fel.ret_serie;
                 fact.feelnumero=fel.ret_numero;
-
                 D_facturaObj.update(fact);
             }
 
@@ -214,7 +216,8 @@ public class FELVerificacion extends PBase {
             if (fel.errorflag) ffail++;
             procesafactura();
         } else {
-            if (!conerrflag) startActivity(new Intent(this,FELContAnul.class));
+            //#EJC20200921: Ya no es necesario
+            //if (!conerrflag) startActivity(new Intent(this,FELContAnul.class));
             finish();
         }
     }

@@ -2154,6 +2154,7 @@ public class Venta extends PBase {
     }
 
     public boolean valida(){
+
         try{
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);

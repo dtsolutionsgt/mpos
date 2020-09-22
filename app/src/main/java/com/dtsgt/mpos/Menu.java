@@ -1359,7 +1359,12 @@ public class Menu extends PBase {
 
                     if(fc!=fa){
                         gl.validDate=true;
-                        gl.cajaid=6; return false;
+                        gl.cajaid=6;
+                        //#EJC20200921: Agregué por mensaje sin fecha en cierre de caja.
+						if (gl.lastDate==0){
+							gl.lastDate=caja.last().fecha;
+						}
+                        return false;
                     }
 
                     /*

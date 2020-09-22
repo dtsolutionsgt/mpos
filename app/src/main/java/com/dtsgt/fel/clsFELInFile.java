@@ -312,7 +312,7 @@ public class clsFELInFile {
             url = new URL(WSURLCert);
             connection = (HttpsURLConnection)url.openConnection();
             connection.setConnectTimeout(timeout);
-            connection.setReadTimeout(timeout);
+            connection.setReadTimeout(timeout *2);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
@@ -324,6 +324,7 @@ public class clsFELInFile {
             connection.setDoOutput(true);
 
             DataOutputStream wr = null;
+
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {

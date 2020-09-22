@@ -198,6 +198,7 @@ public class FELFactura extends PBase {
 
     @Override
     public void felCallBack()  {
+
         boolean skipflag=false;
         int corcont,mcont;
 
@@ -389,12 +390,15 @@ public class FELFactura extends PBase {
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
 
-            //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
+            //#EJC20200921: Enviar siempre el mismo identificador de factura.
+            fel.mpos_identificador_fact =fact.serie+fact.corelativo;
+
+/*            //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
             if (fel.idcontingencia==0) {
                 fel.mpos_identificador_fact =fact.serie+fact.corelativo;
             } else {
                 fel.mpos_identificador_fact =""+fel.idcontingencia;
-            }
+            }*/
 
             fel.iniciar(fact.fecha);
             fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
