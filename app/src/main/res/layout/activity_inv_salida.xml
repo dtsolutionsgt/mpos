@@ -852,7 +852,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="0dp"
                 android:clickable="true"
-                android:onClick="doSave"
+                android:onClick="doBandera"
                 android:padding="15dp"
                 android:src="@drawable/icok" />
         </RelativeLayout>

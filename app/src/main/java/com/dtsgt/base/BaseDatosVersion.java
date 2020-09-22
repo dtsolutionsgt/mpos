@@ -53,6 +53,66 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [P_res_grupo] ("+
+                    "CODIGO_GRUPO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_GRUPO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_res_mesa] ("+
+                    "CODIGO_MESA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_SALA INTEGER NOT NULL,"+
+                    "CODIGO_GRUPO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "LARGO REAL NOT NULL,"+
+                    "ANCHO REAL NOT NULL,"+
+                    "POSX REAL NOT NULL,"+
+                    "POSY REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MESA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_res_mesero] ("+
+                    "CODIGO_MESERO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_GRUPO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "CLAVE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MESERO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_res_sala] ("+
+                    "CODIGO_SALA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "ESCALA REAL NOT NULL,"+
+                    "TAM_LETRA REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_SALA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
     }
 
 	private boolean update01() {

@@ -1,35 +1,20 @@
 package com.dtsgt.mpos;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteStatement;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import com.dtsgt.classes.Globals;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-
-import java.io.File;
 
 public class FingPTest extends PBase {
 
-    private ImageView img1,img2;
+    private EditText txt1;
 
-   /* private Reader m_reader = null;
-    private Engine m_engine = null;
-    private Fmd m_fmd = null;
-    private Reader.CaptureResult cap_result = null;*/
-    private int m_DPI = 0;
-    private String m_deviceName = "$01$/dev/bus/usb/001/002";
-
-    private Bitmap bmImg;
-
-    private String imgfold;
-    private int id;
+    private String pass;
+    private long datelim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,160 +23,173 @@ public class FingPTest extends PBase {
 
         super.InitBase();
 
-        img1 = (ImageView) findViewById(R.id.imageView40);
-        img2 = (ImageView) findViewById(R.id.imageView41);
+        txt1 = findViewById(R.id.editTextNumberPassword);
 
-        //db.execSQL("create table FPrint ( ID TEXT, image BLOB)");
-        imgfold= Environment.getExternalStorageDirectory()+ "/mPosFotos/";
+        pass=strfechasinhora(du.getActDate())+gl.codigo_ruta;
 
-        //initializeReader();
+        datelim=du.addDays(du.getActDate(),-4);
 
-        try {
-            String prodimg = imgfold+"fprint.png";
-            File file = new File(prodimg);
-            if (file.exists()) {
-                bmImg = BitmapFactory.decodeFile(prodimg);
-                img1.setImageBitmap(bmImg);
-            }
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
+        int i=0;
 
-        String qu = "SELECT * FROM FPrint ";
-        Cursor cur = db.rawQuery(qu, new String[]{});
-        id=cur.getCount();
-        toast("regfs : "+id);
     }
 
     //region Events
 
-    public void doSave(View view) {
+    public void doBandera(View view) {
         try {
-            if (!save()) return;
-            Bitmap bm=load();
-            img2.setImageBitmap(bm);
+            String s=txt1.getText().toString();
+            if (!s.equalsIgnoreCase(pass)) throw new Exception();
+            msgAsk1("Marcar las facturas previas de fecha "+du.sfecha(datelim)+" como certificadas");
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            mu.msgbox("Contraseña incorrecta");return;
         }
     }
 
-    public void doEmpty(View view) {
+    //endregion
+
+    //region Main
+
+    public void aplicaBandera() {
         try {
-            db.execSQL("DELETE FROM FPrint ");
+            db.beginTransaction();
+
+            toast("Espere por favor . . . ");
+
+            sql="UPDATE D_FACTURA SET FEELUUID='"+pass+"' WHERE (FECHA<"+datelim+") AND (FEELUUID=' ') AND (FEELCONTINGENCIA<>' ')";
+            db.execSQL(sql);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            msgExit("Transaccion completa");
         } catch (Exception e) {
+            db.endTransaction();
             msgbox(e.getMessage());
         }
     }
 
     //endregion
 
-    //region Image database Save/Load
+    //region Aux
 
-    private boolean save() {
-        try {
-            id++;
-            insertImage(""+id,bmImg);
-            return true;
-        } catch (Exception e) {
-            msgbox(e.getMessage());return false;
-        }
+    public String strfechasinhora(long f) {
+        int vy,vm,vd;
+        String s;
+
+        f=f/10000;
+        vy=(int) f/10000;f=f % 10000;
+        vm=(int) f/100;f=f % 100;
+        vd=(int) f;
+
+        s="20"+vy;
+        if (vm>9) s=s+vm; else s=s+"0"+vm;
+        if (vd>9) s=s+vd; else s=s+"0"+vd;
+
+        return s;
     }
 
-    private Bitmap load() {
-        Bitmap bm=null;
+    //endregion
 
-        bm=getImage();
-        return bm;
-    }
+    //region Dialogs
 
-    public Bitmap getImage() {
+    private void msgAsk1(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        String qu = "SELECT * FROM FPrint WHERE ID="+id;
-        Cursor cur = null;
+        dialog.setTitle("MPos");
+        dialog.setMessage("¿" + msg + "?");
 
-        cur = db.rawQuery(qu, new String[]{});
-
-        if (cur != null) {
-
-            if (cur.moveToFirst()) {
-
-                byte[] imgByte = cur.getBlob(1);
-                cur.close();
-                msgbox("Size 2 : "+imgByte.length);
-
-                Bitmap bmp=BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
-
-                return bmp;
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgAsk2("Esta transaccion no se puede revertir.\nEstá seguro de proceder");
             }
+        });
 
-            try {
-                if (cur != null && !cur.isClosed()) cur.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAsk2(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("MPos");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                aplicaBandera();
             }
+        });
 
-        }
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
 
-        return null;
+        dialog.show();
+
     }
 
-    public void insertImage(String name, Bitmap img) {
-        Bitmap storedBitmap = null;
-        String sql = "INSERT INTO FPrint (ID,image) VALUES(?,?)";
+    private void inputValor() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        SQLiteStatement insertStmt = db.compileStatement(sql);
+        alert.setTitle("Ingrese contraseña");
 
-        byte[] imgByte = getBitmapAsByteArray(img);
-        msgbox("Size 1 : "+imgByte.length);
-        //storedBitmap = getImage(name);
+        final EditText input = new EditText(this);
+        alert.setView(input);
 
-        //if (storedBitmap == null) {
-            insertStmt.bindString(1, name);
-            insertStmt.bindBlob(2, imgByte);
+        input.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        input.setText("");
+        input.requestFocus();
 
-        try {
-            insertStmt.executeInsert();
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
+        alert.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    if (!s.equalsIgnoreCase(pass)) throw new Exception();
+                    msgAsk1("Marcar las facturas previas de fecha "+du.sfecha(datelim)+" como certificadas");
+                } catch (Exception e) {
+                    mu.msgbox("Contraseña incorrecta");return;
+                }
+            }
+        });
 
-        //}
-     }
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
 
-    public byte[] getBitmapAsByteArray(Bitmap bitmap) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-        return outputStream.toByteArray();
+        alert.show();
     }
+
+
+    private void msgExit(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Mpos");
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+
+
 
     //endregion
 
-    //region DPUaU
+    //region Activity Events
 
-    private boolean initializeReader() {
-        try {
-            /*Globals.DefaultImageProcessing = Reader.ImageProcessing.IMG_PROC_DEFAULT;
-
-            //Context applContext = getApplicationContext();
-            //m_reader = Globals.getInstance().getReader(m_deviceName, applContext);
-
-            m_reader = Globals.getInstance().getReader(m_deviceName, this);
-            m_reader.Open(Reader.Priority.COOPERATIVE);
-            m_DPI = Globals.GetFirstDPI(m_reader);
-            m_engine = UareUGlobal.GetEngine();*/
-            return true;
-        } catch (Exception e) {
-            m_deviceName = "";
-            String ss=e.getMessage();
-            toastlong("No se logro conectar con lector : "+e.getMessage());
-            return false;
-        }
-    }
 
     //endregion
 
-    //region DPUaU Globals
 
-    //endregion
 
 }

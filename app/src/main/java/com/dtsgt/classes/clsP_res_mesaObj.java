@@ -77,14 +77,14 @@ public class clsP_res_mesaObj {
 
         ins.add("CODIGO_MESA",item.codigo_mesa);
         ins.add("EMPRESA",item.empresa);
-        ins.add("SUCURSAL",item.sucursal);
-        ins.add("SALA",item.sala);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO_SALA",item.codigo_sala);
+        ins.add("CODIGO_GRUPO",item.codigo_grupo);
         ins.add("NOMBRE",item.nombre);
         ins.add("LARGO",item.largo);
         ins.add("ANCHO",item.ancho);
         ins.add("POSX",item.posx);
         ins.add("POSY",item.posy);
-        ins.add("TIPO",item.tipo);
 
         db.execSQL(ins.sql());
 
@@ -95,14 +95,14 @@ public class clsP_res_mesaObj {
         upd.init("P_res_mesa");
 
         upd.add("EMPRESA",item.empresa);
-        upd.add("SUCURSAL",item.sucursal);
-        upd.add("SALA",item.sala);
+        upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        upd.add("CODIGO_SALA",item.codigo_sala);
+        upd.add("CODIGO_GRUPO",item.codigo_grupo);
         upd.add("NOMBRE",item.nombre);
         upd.add("LARGO",item.largo);
         upd.add("ANCHO",item.ancho);
         upd.add("POSX",item.posx);
         upd.add("POSY",item.posy);
-        upd.add("TIPO",item.tipo);
 
         upd.Where("(CODIGO_MESA="+item.codigo_mesa+")");
 
@@ -138,14 +138,14 @@ public class clsP_res_mesaObj {
 
             item.codigo_mesa=dt.getInt(0);
             item.empresa=dt.getInt(1);
-            item.sucursal=dt.getInt(2);
-            item.sala=dt.getInt(3);
-            item.nombre=dt.getString(4);
-            item.largo=dt.getDouble(5);
-            item.ancho=dt.getDouble(6);
-            item.posx=dt.getDouble(7);
-            item.posy=dt.getDouble(8);
-            item.tipo=dt.getInt(9);
+            item.codigo_sucursal=dt.getInt(2);
+            item.codigo_sala=dt.getInt(3);
+            item.codigo_grupo=dt.getInt(4);
+            item.nombre=dt.getString(5);
+            item.largo=dt.getDouble(6);
+            item.ancho=dt.getDouble(7);
+            item.posx=dt.getDouble(8);
+            item.posy=dt.getDouble(9);
 
             items.add(item);
 
@@ -179,14 +179,14 @@ public class clsP_res_mesaObj {
 
         ins.add("CODIGO_MESA",item.codigo_mesa);
         ins.add("EMPRESA",item.empresa);
-        ins.add("SUCURSAL",item.sucursal);
-        ins.add("SALA",item.sala);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO_SALA",item.codigo_sala);
+        ins.add("CODIGO_GRUPO",item.codigo_grupo);
         ins.add("NOMBRE",item.nombre);
         ins.add("LARGO",item.largo);
         ins.add("ANCHO",item.ancho);
         ins.add("POSX",item.posx);
         ins.add("POSY",item.posy);
-        ins.add("TIPO",item.tipo);
 
         return ins.sql();
 
@@ -197,14 +197,14 @@ public class clsP_res_mesaObj {
         upd.init("P_res_mesa");
 
         upd.add("EMPRESA",item.empresa);
-        upd.add("SUCURSAL",item.sucursal);
-        upd.add("SALA",item.sala);
+        upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        upd.add("CODIGO_SALA",item.codigo_sala);
+        upd.add("CODIGO_GRUPO",item.codigo_grupo);
         upd.add("NOMBRE",item.nombre);
         upd.add("LARGO",item.largo);
         upd.add("ANCHO",item.ancho);
         upd.add("POSX",item.posx);
         upd.add("POSY",item.posy);
-        upd.add("TIPO",item.tipo);
 
         upd.Where("(CODIGO_MESA="+item.codigo_mesa+")");
 

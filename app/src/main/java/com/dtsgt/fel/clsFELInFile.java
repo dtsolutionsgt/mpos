@@ -6,6 +6,7 @@ package com.dtsgt.fel;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -35,7 +36,7 @@ public class clsFELInFile {
 
     public String  error, fecha_factura;
     public Boolean errorflag,errorcon,constat,duplicado;
-    public int errlevel, idcontingencia;
+    public int errlevel, idcontingencia,response;
 
     public String xml,xmlanul;
     public String fact_uuid,fact_serie,fact_numero;
@@ -140,6 +141,7 @@ public class clsFELInFile {
         URL url;
         HttpURLConnection connection = null;
         JSONObject jObj = null;
+        response=0;
 
         try {
 
@@ -171,10 +173,15 @@ public class clsFELInFile {
             wr.flush ();
             wr.close ();
 
-            InputStream is = connection.getInputStream();
+            InputStream is;
+            try {
+                is= connection.getInputStream();
+            } catch (IOException e) {
+                is= connection.getInputStream();
+            }
 
-            int response=connection.getResponseCode();
-            //response=199;
+            response=connection.getResponseCode();
+
             if (response==200) {
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
@@ -306,6 +313,7 @@ public class clsFELInFile {
         URL url;
         HttpsURLConnection connection = null;
         JSONObject jObj = null;
+        response=0;
 
         try {
 
@@ -336,9 +344,14 @@ public class clsFELInFile {
             wr.flush ();
             wr.close ();
 
-            InputStream is = connection.getInputStream();
+            InputStream is;
+            try {
+                is= connection.getInputStream();
+            } catch (IOException e) {
+                is= connection.getInputStream();
+            }
 
-            int response=connection.getResponseCode();
+            response=connection.getResponseCode();
 
             //JP20200918 - para emular error de transmision
              //response=199;

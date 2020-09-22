@@ -704,32 +704,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-            sql="CREATE TABLE [P_res_mesa] ("+
-                    "CODIGO_MESA INTEGER NOT NULL,"+
-                    "EMPRESA INTEGER NOT NULL,"+
-                    "SUCURSAL INTEGER NOT NULL,"+
-                    "SALA INTEGER NOT NULL,"+
-                    "NOMBRE TEXT NOT NULL,"+
-                    "LARGO REAL NOT NULL,"+
-                    "ANCHO REAL NOT NULL,"+
-                    "POSX REAL NOT NULL,"+
-                    "POSY REAL NOT NULL,"+
-                    "TIPO INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO_MESA])"+
-                    ");";
-            database.execSQL(sql);
-
-            sql="CREATE TABLE [P_res_sala] ("+
-                    "CODIGO_SALA INTEGER NOT NULL,"+
-                    "EMPRESA INTEGER NOT NULL,"+
-                    "SUCURSAL INTEGER NOT NULL,"+
-                    "NOMBRE TEXT NOT NULL,"+
-                    "ACTIVO INTEGER NOT NULL,"+
-                    "ESCALA REAL NOT NULL,"+
-                    "TAM_LETRA REAL NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO_SALA])"+
-                    ");";
-            database.execSQL(sql);
 
             return 1;
 
