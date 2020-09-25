@@ -248,7 +248,7 @@ public class WSRec extends PBase {
                         callMethod("GetP_BANCO", "EMPRESA", gl.emp);
                         break;
                     case 3:
-                        callMethod("GetP_ARCHIVOCONF", "EMPRESA", gl.emp, "RUTA", gl.ruta);
+                        callMethod("GetP_ARCHIVOCONF", "EMPRESA", gl.emp, "RUTA", gl.codigo_ruta);
                         break;
                     case 4:
                         //callMethod("GetP_BONIF", "EMPRESA", gl.emp);

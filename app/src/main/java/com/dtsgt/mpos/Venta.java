@@ -1925,13 +1925,13 @@ public class Venta extends PBase {
 
             if (app.usaFEL()) {
                 int pendfel=pendienteFEL();
-                /*
+
                 if (pendfel>0) {
                     item = clsCls.new clsMenu();
                     item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
                     mitems.add(item);
                 }
-                */
+
             }
 
             if (pedidos) {

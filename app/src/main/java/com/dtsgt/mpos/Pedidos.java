@@ -306,7 +306,7 @@ public class Pedidos extends PBase {
     private void syncStat(clsClasses.clsD_orden_bitacora stat) {
         String s,ss;
 
-        toast("sync stat");
+       // toast("sync stat");
 
         /*
         try {

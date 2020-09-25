@@ -39,6 +39,7 @@ public class FingPTest extends PBase {
         try {
             String s=txt1.getText().toString();
             if (!s.equalsIgnoreCase(pass)) throw new Exception();
+            txt1.setText("");
             msgAsk1("Marcar las facturas previas de fecha "+du.sfecha(datelim)+" como certificadas");
         } catch (Exception e) {
             mu.msgbox("Contraseña incorrecta");return;
@@ -132,38 +133,6 @@ public class FingPTest extends PBase {
 
     }
 
-    private void inputValor() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("Ingrese contraseña");
-
-        final EditText input = new EditText(this);
-        alert.setView(input);
-
-        input.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        input.setText("");
-        input.requestFocus();
-
-        alert.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    String s=input.getText().toString();
-                    if (!s.equalsIgnoreCase(pass)) throw new Exception();
-                    msgAsk1("Marcar las facturas previas de fecha "+du.sfecha(datelim)+" como certificadas");
-                } catch (Exception e) {
-                    mu.msgbox("Contraseña incorrecta");return;
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
-        alert.show();
-    }
-
-
     private void msgExit(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
@@ -179,9 +148,6 @@ public class FingPTest extends PBase {
         dialog.show();
 
     }
-
-
-
 
     //endregion
 
