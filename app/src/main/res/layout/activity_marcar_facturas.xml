@@ -1,0 +1,269 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@layout/back"
+        tools:context=".MarcarFacturas" >
+
+        <RelativeLayout
+            android:id="@+id/relRoad"
+            android:layout_width="match_parent"
+            android:layout_height="48dp">
+
+            <RelativeLayout
+                android:id="@+id/relRoadbar"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:background="#9A999E"></RelativeLayout>
+
+            <ImageView
+                android:id="@+id/imgTitLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/logo_panel" />
+
+            <ImageView
+                android:id="@+id/imgRoadTit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/relRoadbar"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:padding="5dp"
+                android:src="@drawable/anulacion_gris" />
+
+            <TextView
+                android:id="@+id/lblTit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/imgRoadTit"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Marcar facturas certificadas"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#1A8AC6" />
+        </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/llFechas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblDescrip"
+        android:layout_alignEnd="@+id/listView1"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/llFechaIni"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="230dp"
+                android:layout_height="26dp" />
+
+            <TextView
+                android:id="@+id/lblCFact30"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="180dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:text="Fecha inicio :"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblDateini2"
+                android:layout_width="202dp"
+                android:layout_height="39dp"
+                android:layout_gravity="center|center_horizontal|center_vertical"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/frame_btn"
+                android:gravity="center"
+                android:onClick="showDateDialog1"
+                android:text="00/00/0000"
+                android:textSize="21dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llFechaFin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="230dp"
+                android:layout_height="22dp" />
+
+            <TextView
+                android:id="@+id/lblCFact29"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="180dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center"
+                android:text="Fecha fin :    "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblDatefin2"
+                android:layout_width="202dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/frame_btn"
+                android:gravity="center"
+                android:onClick="showDateDialog2"
+                android:text="00/00/0000"
+                android:textSize="21dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="769dp"
+        android:layout_height="931dp"
+        android:layout_above="@+id/relbotpan"
+        android:layout_below="@+id/relRoad"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp">
+
+    </ListView>
+
+    <ImageView
+        android:id="@+id/imgImg"
+        android:layout_width="144dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/editTextNumberPassword2"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_toEndOf="@+id/llFechas"
+        android:clickable="true"
+        android:onClick="anulDoc"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/anulacion48" />
+
+    <TextView
+        android:id="@+id/lblDescrip"
+        android:layout_width="wrap_content"
+        android:layout_height="15dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignLeft="@+id/listView1"
+        android:layout_alignEnd="@+id/listView1"
+        android:layout_alignParentTop="false"
+        android:layout_marginEnd="0dp"
+        android:layout_toLeftOf="@+id/imgImg"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+            android:id="@+id/relbotpan"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="false"
+            android:layout_margin="1dp"
+            android:background="@layout/blue_strip" >
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:paddingRight="10dp"
+                android:text="DTSolutions"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+    <EditText
+        android:id="@+id/editTextNumberPassword2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="24dp"
+        android:layout_toEndOf="@+id/llFechas"
+        android:ems="10"
+        android:inputType="numberPassword"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView206"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignStart="@+id/editTextNumberPassword2"
+        android:layout_alignEnd="@+id/editTextNumberPassword2"
+        android:layout_marginTop="6dp"
+        android:gravity="center_horizontal"
+        android:text="Ingrese la contraseña" />
+
+    <TextView
+        android:id="@+id/textView208"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/listView1"
+        android:layout_alignEnd="@+id/listView1"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="193dp"
+        android:layout_marginEnd="50dp"
+        android:gravity="center_horizontal"
+        android:text="TextView" />
+
+</RelativeLayout>

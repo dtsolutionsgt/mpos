@@ -6,6 +6,7 @@ package com.dtsgt.fel;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
@@ -34,9 +35,10 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class clsFELInFile {
 
-    public String  error, fecha_factura;
-    public Boolean errorflag,errorcon,constat,duplicado;
-    public int errlevel, idcontingencia,response;
+    public String error,fecha_factura;
+    public Boolean errorflag,errorcon,constat,duplicado,errcert,errfirma,modoiduni,iduniflag;
+    public int errlevel,response;
+    public long idcontingencia;
 
     public String xml,xmlanul;
     public String fact_uuid,fact_serie,fact_numero;
@@ -56,6 +58,7 @@ public class clsFELInFile {
             fel_correo,
             fel_nombre_comercial, correo_sucursal;
     public int fraseIVA,fraseISR;
+    public long fechaf_y,fechaf_m,fechaf_d;
 
     // Private declarations
 
@@ -66,8 +69,9 @@ public class clsFELInFile {
     private JSONObject jsonc = new JSONObject();
     private JSONObject jsonfa = new JSONObject();
     private JSONObject jsona = new JSONObject();
+    private JSONObject jsoniu = new JSONObject();
 
-    private String s64, jsfirm,jscert,jsanul,firma;
+    private String s64, jsfirm,jscert,jsanul,jsidu,firma;
     private double imp,totmonto,totiva;
     private int linea;
 
@@ -78,6 +82,7 @@ public class clsFELInFile {
     private String WSURL="https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml";
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";
+    private String WSURLIdUni="https://certificador.feel.com.gt/fel/consulta/dte/v2/identificador_unico";
 
     //#EJC20200527:Versión ant (1)
     //private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
@@ -142,6 +147,8 @@ public class clsFELInFile {
         HttpURLConnection connection = null;
         JSONObject jObj = null;
         response=0;
+
+        errfirma=false;modoiduni=false;
 
         try {
 
@@ -223,11 +230,11 @@ public class clsFELInFile {
                 }
 
             } else {
-                error=""+response;errorflag=true;return;
+                error=""+response;errorflag=true;errfirma=true;return;
             }
 
         } catch (Exception e) {
-            error=e.getMessage();errorflag=true;
+            error=e.getMessage();errorflag=true;errfirma=true;
         } finally {
             //if (connection!=null) connection.disconnect();
         }
@@ -273,6 +280,7 @@ public class clsFELInFile {
     //endregion
 
     //region Certificacion
+
     public void sendJSONCert() {
 
         errlevel=2;
@@ -315,6 +323,8 @@ public class clsFELInFile {
         JSONObject jObj = null;
         response=0;
 
+        errcert=false;
+
         try {
 
             url = new URL(WSURLCert);
@@ -344,17 +354,28 @@ public class clsFELInFile {
             wr.flush ();
             wr.close ();
 
-            InputStream is;
+            InputStream is=null;
             try {
                 is= connection.getInputStream();
             } catch (IOException e) {
-                is= connection.getInputStream();
+                try {
+                    is= connection.getInputStream();
+                } catch (IOException ee) {
+                    try {
+                        is= connection.getInputStream();
+                    } catch (IOException eee) {
+                        errcert=true;
+                    }
+                }
             }
 
             response=connection.getResponseCode();
 
             //JP20200918 - para emular error de transmision
-             //response=199;
+            //response=199;
+            //errcert=true;
+
+            if (errcert) return;
 
             if (response==200) {
 
@@ -416,10 +437,10 @@ public class clsFELInFile {
                 errorflag=false;
 
             } else {
-                error=""+response;errorflag=true;return;
+                error=""+response;errorflag=true;errcert=true;return;
             }
         } catch (Exception e) {
-            error=e.getMessage();errorflag=true;
+            error=e.getMessage();errorflag=true;errcert=true;
         } finally {
             //if (connection!=null) connection.disconnect();
         }
@@ -427,7 +448,11 @@ public class clsFELInFile {
 
     public void wsFinishedC() {
         try  {
-            parent.felCallBack();
+            if (errcert) {
+                sendJSONIDUnico();
+            } else {
+                parent.felCallBack();
+            }
         } catch (Exception e)  { }
     }
 
@@ -445,6 +470,166 @@ public class clsFELInFile {
         protected void onPostExecute(Void result) {
             try {
                 wsFinishedC();
+            } catch (Exception e)  {}
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+    }
+
+    //endregion
+
+    //region ID Unico
+
+    public void sendJSONIDUnico() {
+        String fnit=fel_nit.replace("-","");
+
+        errlevel=4;
+
+        //mpos_identificador_fact="A026610";
+        modoiduni=true;iduniflag=false;
+
+        try {
+
+            jsoniu = new JSONObject();
+            jsoniu.put("nit_emisor",fnit);
+            jsoniu.put("tipo_operacion","CERTIFICACION");
+            jsoniu.put("tipo_documento","FACT");
+            jsoniu.put("codigo_establecimiento",""+fel_codigo_establecimiento);
+            jsoniu.put("identificador_unico_dte",mpos_identificador_fact);
+            jsoniu.put("anio_documento",""+fechaf_y);
+            jsoniu.put("mes_documento",""+fechaf_m);
+            jsoniu.put("dia_documento",""+fechaf_d);
+
+            Handler mtimer = new Handler();
+
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    executeWSIDUnico();
+                }
+            };
+            mtimer.postDelayed(mrunner,1000);
+
+
+            //executeWSIDUnico();
+
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+        }
+    }
+
+    public void executeWSIDUnico() {
+        jsidu = jsoniu.toString();
+        errorflag=false;error="";
+
+        AsyncCallWSIDUnico wstask = new AsyncCallWSIDUnico();
+        wstask.execute();
+    }
+
+    public void wsExecuteIDu(){
+
+        URL url;
+        HttpsURLConnection connection = null;
+        JSONObject jObj = null;
+        response=0;
+
+        errcert=false;
+
+        try {
+
+            url = new URL(WSURLIdUni);
+            connection = (HttpsURLConnection)url.openConnection();
+            connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout *2);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setRequestProperty("usuario",fel_usuario_certificacion);
+            connection.setRequestProperty("llave", fel_llave_certificacion);
+            connection.setRequestProperty("identificador", mpos_identificador_fact);
+
+            connection.setUseCaches (false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+            DataOutputStream wr = null;
+
+            try {
+                wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (IOException e) {
+                error="No hay conexión al internet";
+                errorcon=true;errorflag=true;constat=false;return;
+            }
+
+            wr.writeBytes (jsidu);
+            wr.flush ();
+            wr.close ();
+
+            InputStream is= connection.getInputStream();
+
+            response=connection.getResponseCode();
+
+            if (response==202) {
+
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder sb = new StringBuilder();
+
+                while((line = rd.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                rd.close();
+
+                String jstr=sb.toString();
+
+                jObj = new JSONObject(jstr);
+
+                String rslt=jObj.getString("resultado");
+
+                if (rslt.equalsIgnoreCase("false")) {
+                    errorflag=true;return;
+                } else iduniflag=true;
+
+                fact_uuid =jObj.getString("uuid");
+                fact_serie =jObj.getString("serie");
+                fact_numero =jObj.getString("numero");
+
+                errorflag=false;
+
+            } else {
+                errorflag=true;return;
+            }
+        } catch (Exception e) {
+            errorflag=true;
+        } finally {
+            //if (connection!=null) connection.disconnect();
+        }
+    }
+
+    public void wsFinishedIDu() {
+        try  {
+            parent.felCallBack();
+        } catch (Exception e)  { }
+    }
+
+    private class AsyncCallWSIDUnico extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params)  {
+            try  {
+                wsExecuteIDu();
+            } catch (Exception e) { }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            try {
+                wsFinishedIDu();
             } catch (Exception e)  {}
         }
 
@@ -773,7 +958,7 @@ public class clsFELInFile {
 
     //region XML
 
-    public void iniciar(long fecha_emision) {
+    public void iniciar(long fecha_emision,String idconting) {
 
         String sf=parseDate(fecha_emision);
         fecha_factura=sf;
@@ -796,10 +981,16 @@ public class clsFELInFile {
         xml+="<dte:SAT ClaseDocumento=\"dte\">";
         xml+="<dte:DTE ID=\"DatosCertificados\">";
         xml+="<dte:DatosEmision ID=\"DatosEmision\">";
-        xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+
+        if (idconting.isEmpty()) { // sin contingencia
+            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+        } else { // con contingencia
+            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+        }
+
     }
 
-    public void completar(String serie,int numero) {
+    public void completar(String serie,long numero) {
 
         //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
         //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi

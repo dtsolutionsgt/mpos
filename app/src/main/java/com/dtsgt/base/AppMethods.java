@@ -661,7 +661,7 @@ public class AppMethods {
                 wfile=new FileWriter(file1,false);
                 writer = new BufferedWriter(wfile);
                 writer.write(gl.wsurl);writer.write("\r\n");
-                writer.write(gl.timeout);writer.write("\r\n");
+                writer.write("20000");writer.write("\r\n");
                 writer.close();
 
                 toast("Creado archivo de conexion");

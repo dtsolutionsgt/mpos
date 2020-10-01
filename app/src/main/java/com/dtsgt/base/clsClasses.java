@@ -21,7 +21,7 @@ public class clsClasses {
         public String statcom;
         public boolean calcobj;
         public String serie;
-        public int  corelativo;
+        public long  corelativo;
         public int  impres;
         public String add1;
         public String add2;
@@ -325,9 +325,9 @@ public class clsClasses {
         public int  empresa;
         public String resol;
         public String serie;
-        public int  corelini;
-        public int  corelfin;
-        public int  corelult;
+        public long  corelini;
+        public long  corelfin;
+        public long  corelult;
         public long fechares;
         public int  ruta;
         public int  activa;

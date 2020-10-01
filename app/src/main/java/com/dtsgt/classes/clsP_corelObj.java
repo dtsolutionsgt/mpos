@@ -147,9 +147,9 @@ public class clsP_corelObj {
             item.empresa=dt.getInt(1);
             item.resol=dt.getString(2);
             item.serie=dt.getString(3);
-            item.corelini=dt.getInt(4);
-            item.corelfin=dt.getInt(5);
-            item.corelult=dt.getInt(6);
+            item.corelini=dt.getLong(4);
+            item.corelfin=dt.getLong(5);
+            item.corelult=dt.getLong(6);
             item.fechares=dt.getLong(7);
             item.ruta=dt.getInt(8);
             item.activa=dt.getInt(9);

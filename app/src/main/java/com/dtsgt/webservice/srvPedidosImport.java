@@ -63,7 +63,9 @@ public class srvPedidosImport extends srvBaseJob {
         int pp,ppe;
         boolean flag=false;
 
-        if (wspi.items.size()==0) return;
+        if (wspi.items.size()==0) {
+            return;
+        }
 
         try {
 

@@ -185,12 +185,14 @@ public class FELFactura extends PBase {
         lbl1.setText("Certificando factura . . .");lbl3.setText("");
 
         contmode=false;
+
+        fel.errcert=false;fel.errfirma=false;
+
         buildFactXML();
         fel.certificacion();
     }
 
     private void contingencia() {
-
         lbl1.setText("Certificando factura  . . ."); lbl3.setText("");ffail=0;
         contmode=true;
         procesafactura();
@@ -200,38 +202,21 @@ public class FELFactura extends PBase {
     public void felCallBack()  {
 
         boolean skipflag=false;
-        int corcont,mcont;
+        long corcont,mcont;
 
         int ii=0;
 
         try {
 
-            if (multiflag) {
+            if (multiflag) {  // Verificacion
 
                 if (fel.errorcon) {
                     msgexit(fel.error);return;
                 }
                 if (fel.errorflag && !fel.duplicado) {
-
-                    //fel.fact_serie=fel.ret_serie;
-                    //fel.fact_numero=fel.ret_numero;
-                    //fel.fact_uuid=fel.ret_uuid;
-
                     marcaFactura();
-
-
-                    /*
-                    ffail++;
-                    guardaError();
-                    marcaFacturaContingencia();
-                    */
                     skipflag=true;
-
                 } if (fel.errorflag && fel.duplicado) {
-
-                    //Hacer algo con la factura y su identificador interno...
-                    //#EJC20200710: Incremente en 1 nuestro correlativo interno para alcanzar el de infile.
-
                     clsClasses.clsP_corel citem;
                     clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
 
@@ -243,12 +228,7 @@ public class FELFactura extends PBase {
 
                     mcont=maxconting();
                     citem=P_corelObj.first();
-                    if (citem.corelult==0) {
-                        corcont=citem.corelini;
-                    } else {
-                        corcont=citem.corelult+1;
-                    }
-
+                    if (citem.corelult==0) corcont=citem.corelini; else corcont=citem.corelult+1;
                     if (mcont>corcont) corcont=mcont;
 
                     citem.corelult=corcont;
@@ -265,14 +245,12 @@ public class FELFactura extends PBase {
                     toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
                 }  else {
                     //JP20200918 - evita procesar marcaFactura en caso que (fel.errorflag && !fel.duplicado)
-                    if (!skipflag)  {
-                        marcaFactura();
-                    }
-                }
+                    if (!skipflag)  marcaFactura();
+                 }
 
                 callBackMulti();
 
-            } else {
+            } else {  // Certificacion - una factura despues de venta
 
                 if (fel.duplicado) toastcent("Documento enviado previamente." + fel.mpos_identificador_fact);
 
@@ -280,15 +258,18 @@ public class FELFactura extends PBase {
                     marcaFactura();
                     callBackSingle();
                 } else {
+
+                    if (fel.iduniflag) {
+                        marcaFactura();
+                        callBackSingle();
+                        return;
+                    }
+
                     if (!fel.duplicado){
                         marcaFacturaContingencia();
                         guardaError();
                         callBackSingle();
                     } else {
-
-                        //Hacer algo con la factura y su identificador interno...
-                        //#EJC20200710: Incremente en 1 nuestro correlativo interno para alcanzar el de infile.
-
                         clsClasses.clsP_corel citem;
                         clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
 
@@ -315,7 +296,6 @@ public class FELFactura extends PBase {
                         }
 
                         toastlong("Correlativo interno incrementado a: " + corcont + " por previo envío, reintente por favor");
-
                         callBackSingle();
                     }
                 }
@@ -393,14 +373,11 @@ public class FELFactura extends PBase {
             //#EJC20200921: Enviar siempre el mismo identificador de factura.
             fel.mpos_identificador_fact =fact.serie+fact.corelativo;
 
-/*            //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
-            if (fel.idcontingencia==0) {
-                fel.mpos_identificador_fact =fact.serie+fact.corelativo;
-            } else {
-                fel.mpos_identificador_fact =""+fel.idcontingencia;
-            }*/
+            fel.fechaf_y=du.getyear(fact.fecha);
+            fel.fechaf_m=du.getmonth(fact.fecha);
+            fel.fechaf_d=du.getday(fact.fecha);
 
-            fel.iniciar(fact.fecha);
+            fel.iniciar(fact.fecha,"");
             fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
                       fel.fel_nit,fel.fel_nombre_comercial, fel.fel_usuario_firma);
 
@@ -476,9 +453,8 @@ public class FELFactura extends PBase {
     }
 
     private void marcaFacturaContingencia() {
-
         clsClasses.clsP_corel citem;
-        int corcont;
+        long corcont;
 
         try {
 
@@ -1051,11 +1027,11 @@ public class FELFactura extends PBase {
 
     }
 
-    private int maxconting() {
+    private long maxconting() {
         try {
             D_facturaObj.fill("ORDER BY FEELCONTINGENCIA DESC");
             String ss=D_facturaObj.first().feelcontingencia;
-            int val=Integer.parseInt(ss);
+            long val=Integer.parseInt(ss);
             return val+1;
         } catch (Exception e) {
             return 1;

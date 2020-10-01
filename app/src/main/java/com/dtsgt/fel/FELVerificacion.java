@@ -23,6 +23,7 @@ import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
+import com.dtsgt.mpos.WSEnv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -179,6 +180,8 @@ public class FELVerificacion extends PBase {
 
         try {
 
+            int ii=0;
+
             if (fel.errorcon) {
                 conerrflag=true;
                 msgexit(fel.error);return;
@@ -193,13 +196,13 @@ public class FELVerificacion extends PBase {
                     fact.feelfechaprocesado = du.getActDateTime(); //#EJC20200921: Marcar como enviada a FEL.
                     D_facturaObj.update(fact);
                 }
-            } else
-            {
+            } else  {
                 //#EJC20200921: What does codigoliquidacion 2 means ?
                 fact.codigoliquidacion=2;
                 fact.feeluuid=fel.ret_uuid;
                 fact.feelserie=fel.ret_serie;
                 fact.feelnumero=fel.ret_numero;
+                fact.feelfechaprocesado = du.getActDateTime(); //#EJC20200921: Marcar como enviada a FEL.
                 D_facturaObj.update(fact);
             }
 
@@ -218,6 +221,8 @@ public class FELVerificacion extends PBase {
         } else {
             //#EJC20200921: Ya no es necesario
             //if (!conerrflag) startActivity(new Intent(this,FELContAnul.class));
+            gl.autocom = 1;
+            startActivity(new Intent(FELVerificacion.this, WSEnv.class));
             finish();
         }
     }
@@ -248,7 +253,7 @@ public class FELVerificacion extends PBase {
 
             fel.mpos_identificador_fact =fact.serie+fact.corelativo;
 
-            fel.iniciar(fact.fecha);
+            fel.iniciar(fact.fecha,""+fel.idcontingencia);
             fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
                     fel.fel_nit,fel.fel_nombre_comercial, fel.fel_usuario_firma);
 
@@ -337,7 +342,7 @@ public class FELVerificacion extends PBase {
             public void run() {
                 handler.post(new Runnable(){
                     public void run() {
-                        lbl1.setText("Verificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
+                        lbl1.setText("Certificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
                     }
                 });
             }

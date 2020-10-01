@@ -2350,7 +2350,7 @@ public class FacturaRes extends PBase {
 
         clsClasses.clsP_corel citem;
         clsClasses.clsD_factura fact=clsCls.new clsD_factura();
-        int corcont;
+        long corcont;
 
         try {
 

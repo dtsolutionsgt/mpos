@@ -765,7 +765,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Información de sistema"};
+			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Información de sistema"};
 
 			menudlg = new ExDialog (this);
 
@@ -782,7 +782,9 @@ public class Menu extends PBase {
                         case 3:
                             enviarBaseDeDatos();break;
 						case 4:
-							infoSystem();break;
+                            startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+                        case 5:
+                            infoSystem();break;
 					}
 
 					dialog.cancel();

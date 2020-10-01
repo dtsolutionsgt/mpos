@@ -159,6 +159,8 @@ public class ConfigCaja extends PBase {
     //region Aux
 
     private boolean validaDatos() {
+
+        int ii=0;
         try {
             if (idsuc==0) {
                 msgbox("Falta definir tienda");return false;
