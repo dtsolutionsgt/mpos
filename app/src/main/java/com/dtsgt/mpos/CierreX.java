@@ -396,9 +396,9 @@ public class CierreX extends PBase {
                             condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
+                        sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(DISTINCT P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
                                 "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                                "WHERE P.COREL IN ( SELECT COREL FROM D_FACTURA "+
+                                "WHERE P.COREL IN (SELECT COREL FROM D_FACTURA "+
                                 condition+")" +
                                 " GROUP BY M.NOMBRE";
 
@@ -726,6 +726,7 @@ public class CierreX extends PBase {
         }
 
         protected boolean buildDetail() {
+
             int acc1=1, acc2=1, acc3=1, acc4=1, acc5=1, acc6=1, acc7=1, acc9=1, acc10=1, acc11=1;
             String series="", fecha="";
 
@@ -1065,6 +1066,7 @@ public class CierreX extends PBase {
                     }else if(itemR.get(i).tipo==4){
 
                         test = "Reporte 4";
+
                         if(acc4==1){
 
                             tot=0;
