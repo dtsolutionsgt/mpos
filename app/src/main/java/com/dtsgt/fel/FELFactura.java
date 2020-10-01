@@ -881,8 +881,14 @@ public class FELFactura extends PBase {
         ftot=0;
 
         try {
-            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0)");
-            //D_facturaObj.fill("WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0) AND (CODIGOLIQUIDACION=3) AND (FEELCONTINGENCIA<>' ') ORDER BY FEELCONTINGENCIA");
+
+            sql = "SELECT * FROM d_factura\n" +
+                    "WHERE feelcontingencia > 0  " +
+                    "AND anulado =0 and feelfechaprocesado = 0\n" +
+                    "AND feeluuid = ' '\n" +
+                    "ORDER BY fecha desc";
+
+            D_facturaObj.fill(sql);
 
             facts.clear();
             for (int i = 0; i <D_facturaObj.count; i++) {

@@ -315,9 +315,15 @@ public class FELVerificacion extends PBase {
         ftot=0;
 
         try {
-            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) AND (CODIGOLIQUIDACION=0) ORDER BY FEELCONTINGENCIA");
+
+            String sql = " where feelcontingencia>0  and anulado =0 and feelfechaprocesado = 0 " +
+                         " and feeluuid = ' ' " +
+                         " order by fecha desc" ;
+
+            D_facturaObj.fill(sql);
 
             facts.clear();
+
             for (int i = 0; i <D_facturaObj.count; i++) {
                 cor=D_facturaObj.items.get(i).corel;ffcorel=cor;
                 if (felcorel.isEmpty()) {

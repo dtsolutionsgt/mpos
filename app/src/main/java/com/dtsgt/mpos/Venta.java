@@ -3010,9 +3010,14 @@ public class Venta extends PBase {
     }
 
     private int pendienteFEL() {
+
          try {
-             sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
-             //sql="SELECT COREL FROM D_factura WHERE (FEELFECHAPROCESADO=0) AND (ANULADO=0)";
+
+             String sql = "select * from d_factura " +
+             " where feelcontingencia>0  and anulado =0 and feelfechaprocesado = 0 " +
+             " and feeluuid = ' ' " +
+             " order by fecha desc" ;
+
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
              if (DT!=null) DT.close();
