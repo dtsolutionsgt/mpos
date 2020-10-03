@@ -66,8 +66,7 @@ public class WSEnv extends PBase {
     private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
     private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend,
-                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend, cStockTot, cStockSend,
-                fsc_tot,fsc_send,fsc_idx;
+                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend, cStockTot, cStockSend;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
     @Override
@@ -942,23 +941,6 @@ public class WSEnv extends PBase {
                 fact.add(D_facturaObj.items.get(i).corel);
             }
             total_enviar+=ftot;
-
-            /*
-            //#CKFK 20201002 Obtener facturas sin certificar
-            if (app.usaFEL()) {
-                D_factura_SC_Obj.fill("WHERE (FEELUUID = ' ') ");
-                fsc_tot=D_factura_SC_Obj.count;
-                fsc_send=0;
-                if (fsc_tot>0) fsc_idx=-1;else fsc_idx=0;
-
-                fact_sc.clear();
-                for (int i = 0; i <fsc_tot; i++) {
-                    fact_sc.add(D_factura_SC_Obj.items.get(i).corel);
-                }
-                total_enviar+=fsc_tot;
-            }
-
-             */
 
             clsD_MovObj D_MovObj = new clsD_MovObj(this,Con,db);
             D_MovObj.fill("WHERE STATCOM = 'N'");
