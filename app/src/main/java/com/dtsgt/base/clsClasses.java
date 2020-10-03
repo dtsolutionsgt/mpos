@@ -750,6 +750,15 @@ public class clsClasses {
         public int  orden;
     }
 
+    public class clsT_factura_fel {
+        public String corel;
+        public String feelserie;
+        public String feelnumero;
+        public String feeluuid;
+        public long feelfechaprocesado;
+        public String feelcontingencia;
+    }
+
     public class clsT_movd {
         public int  coreldet;
         public String corel;

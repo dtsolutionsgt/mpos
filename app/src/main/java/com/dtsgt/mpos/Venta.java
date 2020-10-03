@@ -3100,7 +3100,7 @@ public class Venta extends PBase {
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
              sql="select * from d_factura  where feelcontingencia>0  and anulado=0 and " +
-                 "feelfechaprocesado=0 and feeluuid = ' ' ";
+                 "feelfechaprocesado=0 and feeluuid = ' ' and fecha>2009230000;";
 
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();

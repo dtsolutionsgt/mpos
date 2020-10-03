@@ -469,7 +469,7 @@ public class Caja extends PBase {
                     lf=du.addDays(lf,-gl.peAvizoFEL);lf=du.ffecha24(lf);
 
                     clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
-                    D_facturaObj.fill("WHERE (ANULADO=0) AND (FECHA<="+lf+") AND (FEELUUID=' ') ");
+                    D_facturaObj.fill("WHERE (ANULADO=0) AND (FECHA<="+lf+") AND (FECHA>2009230000) AND (FEELUUID=' ') ");
                     if (D_facturaObj.count>0) ms="Existen facturas no certificadas por FEL próximas a expirar";
                 }
             }

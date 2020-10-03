@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
@@ -21,9 +22,13 @@ import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsT_factura_felObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import com.dtsgt.mpos.WSEnv;
+import com.dtsgt.webservice.wsFacturasFEL;
+import com.dtsgt.webservice.wsInventEnvio;
+import com.dtsgt.webservice.wsInventRecibir;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,6 +49,9 @@ public class FELVerificacion extends PBase {
     private clsD_facturafObj D_facturafObj;
     private clsD_facturapObj D_facturapObj;
     private clsP_productoObj prod;
+
+    private wsFacturasFEL ffel;
+    private Runnable rnFacturasFEL;
 
     private clsClasses.clsD_factura fact=clsCls.new clsD_factura();
     private clsClasses.clsD_facturad factd=clsCls.new clsD_facturad();
@@ -77,6 +85,8 @@ public class FELVerificacion extends PBase {
         getURL();
 
         fel=new clsFELInFile(this,this,gl.timeout);
+
+        ffel=new wsFacturasFEL(gl.wsurl);
 
         clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
         sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
@@ -115,31 +125,22 @@ public class FELVerificacion extends PBase {
 
         ffail=0;fidx=0;conerrflag=false;
 
-        if (facts.size()>0) {
-
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
+        rnFacturasFEL=new Runnable() {
+            @Override
+            public void run() {
+                if (ffel.items.size()>0) {
+                    actualizaValidadas();
+                } else {
                     contingencia();
                 }
-            };
-            mtimer.postDelayed(mrunner,200);
+            }
+        };
+
+        if (facts.size()>0) {
+            procesaValidacion();
+        } else {
+            msgexit("No existen facturas pendientes de certificación");
         }
-        //#EJC20200921: Ya no es necesaria la anulación.
-//        else {
-//
-//            Handler mtimer = new Handler();
-//            Runnable mrunner=new Runnable() {
-//                @Override
-//                public void run() {
-//                    startActivity(new Intent(FELVerificacion.this,FELContAnul.class));
-//                    finish();return;
-//                }
-//            };
-//            mtimer.postDelayed(mrunner,500);
-//
-//        }
 
     }
 
@@ -308,6 +309,64 @@ public class FELVerificacion extends PBase {
 
     //endregion
 
+    //region Validacion BD Nube
+
+    private void procesaValidacion() {
+        String ss="SELECT COREL, FEELSERIE, FEELNUMERO, FEELUUID, FEELFECHAPROCESADO, FEELCONTINGENCIA " +
+                "FROM D_FACTURA WHERE (FEELUUID<>' ') AND COREL IN  (";
+
+        for (int i = 0; i <facts.size(); i++) {
+            ss=ss+"'"+facts.get(i)+"'";
+            if (i<facts.size()-1) ss=ss+",";else ss=ss+")";
+        }
+
+        ffel.execute(ss,rnFacturasFEL);
+    }
+
+    private void actualizaValidadas() {
+        clsClasses.clsD_factura fact;
+
+        try {
+            clsT_factura_felObj T_factura_felObj=new clsT_factura_felObj(this,Con,db);
+
+            for (int i = 0; i <ffel.items.size(); i++) {
+                sql=ffel.items.get(i);
+                db.execSQL(sql);
+            }
+
+            T_factura_felObj.fill();
+
+            for (int i = 0; i <T_factura_felObj.count; i++) {
+
+                D_facturaObj.fill("WHERE COREL='"+T_factura_felObj.items.get(i).corel+"'");
+                fact=D_facturaObj.first();
+
+                fact.feelserie=T_factura_felObj.items.get(i).feelserie;
+                fact.feelnumero=T_factura_felObj.items.get(i).feelnumero;
+                fact.feeluuid=T_factura_felObj.items.get(i).feeluuid;
+                fact.feelfechaprocesado=T_factura_felObj.items.get(i).feelfechaprocesado;
+                fact.feelcontingencia=T_factura_felObj.items.get(i).feelcontingencia;
+                fact.statcom="S";
+
+                D_facturaObj.update(fact);
+
+            }
+
+            buildList();
+
+            if (facts.size()>0) {
+                contingencia();
+            } else {
+                showMsgExit2("Certificacion completa");
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void buildList() {
@@ -320,7 +379,8 @@ public class FELVerificacion extends PBase {
             //D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
             //   "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
             sql="where feelcontingencia>0  and anulado=0 and " +
-                    "feelfechaprocesado=0 and feeluuid = ' ' ";
+                    "feelfechaprocesado=0 and feeluuid = ' ' and fecha>2009230000";
+
             D_facturaObj.fill(sql);
 
             facts.clear();
@@ -417,6 +477,23 @@ public class FELVerificacion extends PBase {
     public void showMsgExit(String msg) {
         try {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setMessage(msg);
+            dialog.setCancelable(false);
+
+            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    gl.feluuid="";finish();
+                }
+            });
+            dialog.show();
+
+        } catch (Exception ex) {
+        }
+    }
+
+    public void showMsgExit2(String msg) {
+        try {
+            ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setCancelable(false);
 

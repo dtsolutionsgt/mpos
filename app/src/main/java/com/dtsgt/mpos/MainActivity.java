@@ -54,7 +54,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.17  / 01-Oct-2020 ";
+    private String parVer = " 3.2.18  / 03-Oct-2020 ";
 
     private Typeface typeface;
 

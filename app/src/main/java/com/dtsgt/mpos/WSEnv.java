@@ -918,7 +918,7 @@ public class WSEnv extends PBase {
                 clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
                 P_rutaObj.fill("WHERE (SUCURSAL="+gl.tienda+") AND (CODIGO_RUTA<>"+gl.codigo_ruta+")");
                 for (int i = 0; i <P_rutaObj.count; i++) rutas.add(""+P_rutaObj.items.get(i).codigo_ruta);
-           }
+            }
 
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
             P_clienteObj.fill("WHERE ESERVICE='N'");
@@ -943,6 +943,7 @@ public class WSEnv extends PBase {
             }
             total_enviar+=ftot;
 
+            /*
             //#CKFK 20201002 Obtener facturas sin certificar
             if (app.usaFEL()) {
                 D_factura_SC_Obj.fill("WHERE (FEELUUID = ' ') ");
@@ -956,6 +957,8 @@ public class WSEnv extends PBase {
                 }
                 total_enviar+=fsc_tot;
             }
+
+             */
 
             clsD_MovObj D_MovObj = new clsD_MovObj(this,Con,db);
             D_MovObj.fill("WHERE STATCOM = 'N'");
@@ -1006,7 +1009,7 @@ public class WSEnv extends PBase {
                             "\nReportes caja: "+cjReporteTot+
                             "\nStock: "+cStockTot);
 
-            }else{
+            } else {
                 msgboxwait("No hay datos pendientes de envío");
             }
 
@@ -1015,7 +1018,6 @@ public class WSEnv extends PBase {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     private void updateLabel() {
         final Handler handler = new Handler();

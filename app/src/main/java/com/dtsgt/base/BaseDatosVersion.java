@@ -111,6 +111,20 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [T_FACTURA_FEL] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "FEELSERIE TEXT NOT NULL,"+
+                    "FEELNUMERO TEXT NOT NULL,"+
+                    "FEELUUID TEXT NOT NULL,"+
+                    "FEELFECHAPROCESADO INTEGER NOT NULL,"+
+                    "FEELCONTINGENCIA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
     }
 
 	private boolean update01() {

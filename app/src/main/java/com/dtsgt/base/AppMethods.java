@@ -1322,7 +1322,7 @@ public class AppMethods {
         try {
             sql="SELECT P.COREL FROM D_FACTURAP P " +
                 "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                "WHERE (P.TIPO='E') AND (F.PEDCOREL<>'') AND (F.ANULADO=0) AND (P.VALOR=0) ";
+                "WHERE (P.TIPO='E') AND (F.FECHA>2009230000) AND (F.PEDCOREL<>'') AND (F.ANULADO=0) AND (P.VALOR=0) ";
             if (!pcor.isEmpty()) sql+=" AND (F.PEDCOREL='"+pcor+"')";
             Cursor dt=Con.OpenDT(sql);
 
