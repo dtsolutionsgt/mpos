@@ -394,7 +394,14 @@ public class MantVendedores extends PBase {
         spincode.clear();spinlist.clear();
 
         try {
-            grupos.fill(" WHERE (Cuenta='S') ORDER BY Nombre");
+
+            if (gl.peRest) {
+                sql="WHERE ((Cuenta='S') OR (Cuenta='M')) ORDER BY Nombre";
+            } else {
+                sql="WHERE (Cuenta='S') ORDER BY Nombre";
+            }
+
+            grupos.fill(sql);
 
             for (int i = 0; i <grupos.count; i++) {
                 scod=grupos.items.get(i).codigo;

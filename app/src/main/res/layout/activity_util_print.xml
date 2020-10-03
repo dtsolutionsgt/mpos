@@ -5,6 +5,20 @@
     android:background="@layout/back"
     tools:context=".Deposito" >
 
+    <Spinner
+        android:id="@+id/spinner19"
+        android:layout_width="400dp"
+        android:layout_height="48dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/textView211"
+        android:background="@drawable/spinner_style" />
+
     <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
@@ -57,18 +71,22 @@
         android:id="@+id/spinner1"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignEnd="@+id/spinner19"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="false"
-        android:layout_below="@+id/relRoad"
-        android:layout_margin="5dp"
-        android:background="@layout/spinner_style" />
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/spinner_style" />
 
     <TextView
         android:id="@+id/lblMC"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/spinner1"
-        android:paddingLeft="10dp"
+        android:paddingLeft="30dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
         android:text="Bluetooth MAC"
@@ -92,30 +110,32 @@
         android:id="@+id/imgImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/txtFilter"
+        android:layout_alignEnd="@+id/spinner1"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentBottom="false"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="0dp"
         android:clickable="true"
         android:onClick="doApply"
-        android:paddingBottom="10dp"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         android:paddingTop="5dp"
-        android:src="@drawable/next48" />
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/check_green" />
 
     <ImageView
         android:id="@+id/ImageView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignTop="@+id/imgImg"
+        android:layout_alignParentLeft="true"
         android:clickable="true"
         android:onClick="doTestPrint"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="30dp"
         android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
         android:src="@drawable/reimpresion48" />
 
     <RelativeLayout
@@ -143,5 +163,42 @@
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView211"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="false"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="0dp"
+        android:text="Impresora #"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView209"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relRoad"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="25dp"
+        android:layout_toEndOf="@+id/spinner19"
+        android:text="Impresora de facturacion"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView210"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtFilter"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="9dp"
+        android:layout_toEndOf="@+id/ImageView01"
+        android:clickable="true"
+        android:onClick="doTestPrint"
+        android:text="Antes de imprimir debe guardar la configuracion"
+        android:textSize="18sp" />
 
 </RelativeLayout>

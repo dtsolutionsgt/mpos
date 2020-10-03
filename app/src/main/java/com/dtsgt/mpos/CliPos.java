@@ -725,7 +725,7 @@ public class CliPos extends PBase {
 
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-        gl.timeout = 6000;
+        gl.timeout = 20000;
 
         try {
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
@@ -736,7 +736,7 @@ public class CliPos extends PBase {
 
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
-                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
+                if(line.isEmpty()) gl.timeout = 20000; else gl.timeout = Integer.valueOf(line);
                 myReader.close();
             }
         } catch (Exception e) {}

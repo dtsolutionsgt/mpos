@@ -390,6 +390,9 @@ public class CierreX extends PBase {
                         break;
 
                     case 4:
+                        int repcant=0;
+                        double reptot=0;
+
                         if(gl.reportid==9){
                             condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
@@ -401,21 +404,6 @@ public class CierreX extends PBase {
                                 "WHERE P.COREL IN (SELECT COREL FROM D_FACTURA "+
                                 condition+")" +
                                 " GROUP BY M.NOMBRE";
-
-                        /*
-                        if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
-                        }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
-                        }
-
-                        sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 FROM P_MEDIAPAGO M " +
-                                "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                                "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+
-                                condition+
-                                " GROUP BY M.NOMBRE";
-
-                         */
 
                         break;
 

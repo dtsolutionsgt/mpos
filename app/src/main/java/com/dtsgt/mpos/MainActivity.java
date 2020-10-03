@@ -54,7 +54,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.13  / 24-Sep-2020 ";
+    private String parVer = " 3.2.17  / 01-Oct-2020 ";
 
     private Typeface typeface;
 
@@ -197,8 +197,11 @@ public class MainActivity extends PBase {
 
     public void gotoMenu() {
         try {
-            Intent intent = new Intent(this, Menu.class);
-            startActivity(intent);
+            if (gl.rol != 4) {
+                startActivity(new Intent(this,Menu.class));
+            } else {
+                startActivity(new Intent(this,ResMesero.class));
+            }
         } catch (Exception e) {
         }
     }
@@ -250,7 +253,7 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
-        startActivity(new Intent(this, FingPTest.class));
+        //startActivity(new Intent(this, FingPTest.class));
     }
 
     private void setHandlers() {

@@ -25,12 +25,17 @@ import java.util.ArrayList;
 
 public class UtilPrint extends PBase {
 	
-	private Spinner  spinPrint;
+	private Spinner  spinPrint,spinNum;
 	private EditText txtPar;
+	private TextView lbl1;
 
 	private ArrayList<String> spincode= new ArrayList<String>();
+    private ArrayList<String> prnnum= new ArrayList<String>();
+    private ArrayList<String> prnmac= new ArrayList<String>();
+    private ArrayList<Integer> prntipo= new ArrayList<Integer>();
+
     private String prtipo,prpar;
-    private int pridx;
+    private int pridx,prnum=0, tipoimp;
 
 	private AppMethods app;
     private printer prn;
@@ -47,15 +52,18 @@ public class UtilPrint extends PBase {
 		addlog("UtilPrint",""+du.getActDateTime(),gl.vend);
 		
 		spinPrint = (Spinner) findViewById(R.id.spinner1);
+        spinNum = (Spinner) findViewById(R.id.spinner19);
 		txtPar = (EditText) findViewById(R.id.txtFilter);
+        lbl1 = (TextView) findViewById(R.id.textView209);lbl1.setText("");
 
 		app = new AppMethods(this, gl, Con, db);
 
 		setHandlers();
-		
-		loadItem();
-				
-		fillSpinner();
+
+        fillSpinnerNum();
+
+		//loadItem();
+		//fillSpinnerTipos();
 		
 		buildFile();
 
@@ -73,8 +81,7 @@ public class UtilPrint extends PBase {
 
 		
 	}
-	
-	
+
 	// Events
 	
 	public void doApply(View view) {
@@ -98,7 +105,7 @@ public class UtilPrint extends PBase {
 			}
 
 			if (buildFile()) {
-			   app.doPrint();
+			   app.doPrint(tipoimp);
             }
 
 		}catch (Exception e){
@@ -135,10 +142,36 @@ public class UtilPrint extends PBase {
 		        return;
 		    }
 
-		});	
-			
-	}		
-	
+		});
+
+        spinNum.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                TextView spinlabel;
+
+                try {
+                    spinlabel=(TextView)parentView.getChildAt(0);
+                    spinlabel.setTextColor(Color.BLACK);
+                    spinlabel.setPadding(5, 0, 0, 0);
+                    spinlabel.setTextSize(18);
+
+                    prnum=Integer.parseInt(prnnum.get(position));
+                    tipoimp =prntipo.get(position);
+
+                    if (tipoimp ==0)  lbl1.setText("Impresora facturación");else  lbl1.setText("Impresora cosina");
+                    loadItem();
+
+                } catch (Exception e) {
+                    mu.msgbox( e.getMessage());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                return;
+            }
+        });
+	}
 	
 	// Main
 	
@@ -149,7 +182,7 @@ public class UtilPrint extends PBase {
 
 		try {
 
-			sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE RUTA="+gl.codigo_ruta;
+			sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE CODIGO_ARCHIVOCONF="+prnum;
 			DT=Con.OpenDT(sql);
 
 			if (DT.getCount()>0) {
@@ -157,8 +190,10 @@ public class UtilPrint extends PBase {
 				prtipo=DT.getString(0);
 				prpar=DT.getString(1);
 			} else {
-                addItem();
+                //addItem();
             }
+
+            fillSpinnerTipos();
 
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -183,20 +218,17 @@ public class UtilPrint extends PBase {
 				if(prtipo.equalsIgnoreCase("SIN IMPRESORA")){
 					msgbox("Debe seleccionar una impresora.");
 				} else {
-					sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"' WHERE RUTA="+gl.codigo_ruta;
+					sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"' WHERE CODIGO_ARCHIVOCONF="+prnum;
 					db.execSQL(sql);
 
 					Toast.makeText(this,"Configuración guardada.", Toast.LENGTH_SHORT).show();
 					super.finish();
 				}
 			} else {
-				sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"' WHERE RUTA="+gl.codigo_ruta;
+				sql="UPDATE P_ARCHIVOCONF SET TIPO_IMPRESORA='"+prtipo+"',PUERTO_IMPRESION='"+prpar+"' WHERE CODIGO_ARCHIVOCONF="+prnum;
 				db.execSQL(sql);
-
-				Toast.makeText(this,"Configuración guardada.", Toast.LENGTH_SHORT).show();
-				super.finish();
+                msgbox("Configuración guardada.");
 			}
-
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox( e.getMessage());
@@ -228,8 +260,41 @@ public class UtilPrint extends PBase {
     }
 
 	// Aux
-	
-	private void fillSpinner() 	{
+
+    private void fillSpinnerNum() 	{
+        Cursor dt;
+
+        try {
+
+            prnnum.clear();prnmac.clear();prntipo.clear();prnum=0;
+
+            sql="SELECT CODIGO_ARCHIVOCONF,PUERTO_IMPRESION,NOTA_CREDITO FROM P_ARCHIVOCONF WHERE RUTA="+gl.codigo_ruta;
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+                    prnnum.add(dt.getString(0));
+                    prnmac.add(dt.getString(0)+" - ( MAC : "+dt.getString(1)+" )");
+                    prntipo.add(dt.getInt(2));
+
+                    dt.moveToNext();
+                }
+            }
+
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, prnmac);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinNum.setAdapter(dataAdapter);
+            spinNum.setSelection(0);
+
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            Log.d("e",e.getMessage());
+        }
+    }
+
+    private void fillSpinnerTipos() 	{
 		int sp=0;
 	
 		try {

@@ -481,8 +481,6 @@ public class Caja extends PBase {
         }
     }
 
-
-
     //endregion
 
     //region Dialogs
@@ -504,6 +502,12 @@ public class Caja extends PBase {
         }else if(msgAcc==1){
             dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    if (isNetworkAvailable()) {
+                        gl.recibir_automatico = true;
+                        startActivity(new Intent(Caja.this,WSRec.class));
+                    } else {
+                        toast("No hay conexión a internet");
+                    }
                     finish();
                 }
             });

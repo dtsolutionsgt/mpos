@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +40,10 @@ import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
@@ -90,13 +95,16 @@ public class Venta extends PBase {
 
     private clsD_pedidoObj D_pedidoObj;
     private clsP_nivelprecioObj P_nivelprecioObj;
+    private clsP_productoObj P_productoObj;
+
+    private clsRepBuilder rep;
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
-    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,nivname;
+    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
@@ -137,9 +145,13 @@ public class Venta extends PBase {
 
         pedidos=gl.pePedidos;
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
+        P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
+
 
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
+
+        rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
         counter=1;
 
@@ -214,10 +226,6 @@ public class Venta extends PBase {
         } catch (Exception e) {}
     }
 
-    public void finishOrder(View view) {
-        finalizarOrden();
-    }
-
     public void showPromo(View view){
         try{
             gl.gstr="*";
@@ -275,7 +283,7 @@ public class Venta extends PBase {
                     onBackPressed();
                 }
                 public void onSwipeLeft() {
-                    finishOrder(null);
+                    //finishOrder(null);
                 }
             });
 
@@ -474,7 +482,7 @@ public class Venta extends PBase {
                         clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
                         adaptergrid.setSelectedIndex(position);
-                        processMenuMenu(item.ID);
+                        processMenuTools(item.ID);
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
@@ -489,7 +497,7 @@ public class Venta extends PBase {
                         clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
                         adapterb.setSelectedIndex(position);
-                        processMenuBtn(item.ID);
+                        processMenuItems(item.ID);
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
@@ -1871,6 +1879,12 @@ public class Venta extends PBase {
                     mmitems.add(item);
                 }
 
+                if (gl.peImpOrdCos) {
+                    item = clsCls.new clsMenu();
+                    item.ID=62;item.Name="Comanda";item.Icon=62;
+                    mmitems.add(item);
+                }
+
                 item = clsCls.new clsMenu();
                 item.ID=50;item.Name="Buscar ";item.Icon=50;
                 mmitems.add(item);
@@ -1909,6 +1923,59 @@ public class Venta extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
+    }
+
+    private void processMenuItems(int menuid) {
+        try {
+
+            switch (menuid) {
+                case 50:
+                    gl.gstr = "";
+                    browse = 1;
+                    gl.prodtipo = 1;
+                    startActivity(new Intent(this, Producto.class));
+                    break;
+                case 51:
+                    if (khand.isValid) {
+                        barcode = khand.val;
+                        addBarcode();
+                    }
+                    break;
+                case 52:
+                    if (!gl.exitflag) {
+                        browse = 8;
+                        gl.climode = false;
+
+                        if (usarbio) {
+                            startActivity(new Intent(Venta.this, Clientes.class));
+                        } else {
+                            if (!gl.forcedclose) {
+                                startActivity(new Intent(Venta.this, CliPos.class));
+                            }
+                        }
+                    }
+                    break;
+                case 53:
+                    break;
+                case 54:
+                    if (!gl.ventalock) borraLinea();else toast("No se puede modificar el orden");
+                    break;
+                case 55:
+                    if (!gl.ventalock) borraTodo();else toast("No se puede modificar el orden");
+                    break;
+                case 56:
+                    showMenuSwitch();
+                    break;
+                case 61:
+                    msgAskOrden("Convertir al orden");
+                    break;
+                case 62:
+                    if (hasProducts()) inputMesa(); else toastcent("El orden está vacio");
+                    break;
+            }
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
     }
 
     private void menuTools() {
@@ -1984,7 +2051,7 @@ public class Venta extends PBase {
 
     }
 
-    private void processMenuMenu(int menuid) {
+    private void processMenuTools(int menuid) {
         try {
             switch (menuid) {
                 case 1:
@@ -2005,56 +2072,6 @@ public class Venta extends PBase {
                     menuPedidos();break;
                 case 24:
                     exitBtn();
-                    break;
-            }
-        } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
-    }
-
-    private void processMenuBtn(int menuid) {
-        try {
-
-            switch (menuid) {
-                case 50:
-                    gl.gstr = "";
-                    browse = 1;
-                    gl.prodtipo = 1;
-                    startActivity(new Intent(this, Producto.class));
-                    break;
-                case 51:
-                    if (khand.isValid) {
-                        barcode = khand.val;
-                        addBarcode();
-                    }
-                    break;
-                case 52:
-                    if (!gl.exitflag) {
-                        browse = 8;
-                        gl.climode = false;
-
-                        if (usarbio) {
-                            startActivity(new Intent(Venta.this, Clientes.class));
-                        } else {
-                            if (!gl.forcedclose) {
-                                startActivity(new Intent(Venta.this, CliPos.class));
-                            }
-                        }
-                    }
-                    break;
-                case 53:
-                    break;
-                case 54:
-                    if (!gl.ventalock) borraLinea();else toast("No se puede modificar el orden");
-                    break;
-                case 55:
-                    if (!gl.ventalock) borraTodo();else toast("No se puede modificar el orden");
-                    break;
-                case 56:
-                    showMenuSwitch();
-                    break;
-                case 61:
-                    msgAskOrden("Convertir al orden");
                     break;
             }
         } catch (Exception e) {
@@ -2476,6 +2493,72 @@ public class Venta extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    //endregion
+
+    //region Comanda
+
+    private void imprimeComanda() {
+        clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
+        clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
+        clsClasses.clsT_venta venta;
+        clsClasses.clsT_combo combo;
+
+        int prid,idcombo;
+
+        try {
+            rep.clear();
+            rep.empty();
+            rep.add("ORDEN MESA : "+mesa);
+            rep.empty();
+            rep.add("Hora : "+du.shora(du.getActDateTime()));
+            rep.line();
+            rep.empty();
+
+            T_ventaObj.fill();
+
+            for (int i = 0; i <T_ventaObj.count; i++) {
+                venta=T_ventaObj.items.get(i);
+
+                prid=app.codigoProducto(venta.producto);
+                s=mu.frmdecno(venta.cant)+" x "+getProd(prid);
+                rep.add(s);
+
+                if (app.prodTipo(prid).equalsIgnoreCase("M")) {
+                    T_comboObj.fill("WHERE IdCombo="+venta.val4);
+
+                    for (int j = 0; j <T_comboObj.count; j++) {
+                        if (j==0) rep.line();
+                        s=" -  "+getProd(T_comboObj.items.get(j).idseleccion);
+                        rep.add(s);
+                    }
+                    rep.line();
+                }
+            }
+
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.empty();
+            rep.save();
+
+            //app.doPrint(1);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private String getProd(int prodid) {
+        try {
+            for (int i = 0; i <P_productoObj.count; i++) {
+                if (P_productoObj.items.get(i).codigo_producto==prodid) return P_productoObj.items.get(i).desclarga;
+            }
+        } catch (Exception e) {}
+        return ""+prodid;
     }
 
     //endregion
@@ -3012,11 +3095,12 @@ public class Venta extends PBase {
     private int pendienteFEL() {
 
          try {
+             long flim=du.addDays(du.getActDate(),-4);
 
-             String sql = "select * from d_factura " +
-             " where feelcontingencia>0  and anulado =0 and feelfechaprocesado = 0 " +
-             " and feeluuid = ' ' " +
-             " order by fecha desc" ;
+             //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
+             //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
+             sql="select * from d_factura  where feelcontingencia>0  and anulado=0 and " +
+                 "feelfechaprocesado=0 and feeluuid = ' ' ";
 
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
@@ -3030,7 +3114,7 @@ public class Venta extends PBase {
 
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-        gl.timeout = 6000;
+        gl.timeout = 20000;
 
         try {
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
@@ -3041,7 +3125,7 @@ public class Venta extends PBase {
 
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
-                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
+                if(line.isEmpty()) gl.timeout = 20000; else gl.timeout = Integer.valueOf(line);
                 myReader.close();
             }
         } catch (Exception e) {}
@@ -3192,7 +3276,38 @@ public class Venta extends PBase {
         }
     }
 
-   //endregion
+    private void inputMesa() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Impresion de comanda");
+        alert.setMessage("MESA NUMERO : ");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER );
+        input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    mesa=input.getText().toString();
+                    imprimeComanda();
+                } catch (Exception e) {
+                    mu.msgbox("Valor incorrecto");return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
+    //endregion
 
     //region Activity Events
 
@@ -3201,7 +3316,9 @@ public class Venta extends PBase {
 
         try {
             super.onResume();
+
             D_pedidoObj.reconnect(Con,db);
+            P_productoObj.reconnect(Con,db);
 
             checkLock();
 

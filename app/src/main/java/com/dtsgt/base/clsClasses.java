@@ -614,15 +614,7 @@ public class clsClasses {
         public double ancho;
         public double posx;
         public double posy;
-    }
-
-    public class clsP_res_mesero {
-        public int  codigo_mesero;
-        public int  empresa;
-        public int  codigo_sucursal;
-        public int  codigo_grupo;
-        public String nombre;
-        public String clave;
+        public String codigo_qr;
     }
 
     public class clsP_res_sala {

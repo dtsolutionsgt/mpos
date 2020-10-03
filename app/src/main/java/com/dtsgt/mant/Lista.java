@@ -355,6 +355,22 @@ public class Lista extends PBase {
                 if (flag) sql+="AND ((CODIGO_MOTIVO_AJUSTE='"+ft+"') OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+            case 26: // Sala
+                sql="SELECT 0,CODIGO_SALA,NOMBRE,'','', '','','','' FROM P_RES_SALA WHERE ";
+                if (act) sql+="(ACTIVO=1) ";else sql+="(ACTIVO=0) ";
+                if (flag) sql+="AND ((CODIGO_SALA="+ft+") OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
+            case 27: // Mesa
+                sql="SELECT 0,CODIGO_MESA,NOMBRE,'','', '','','','' FROM P_RES_MESA  ";
+                if (flag) sql+="WHERE ((CODIGO_MESA="+ft+") OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
+            case 28: // Grupo de mesas
+                sql="SELECT 0,CODIGO_GRUPO,NOMBRE,'','', '','','','' FROM P_RES_GRUPO  ";
+                if (flag) sql+="WHERE ((CODIGO_GRUPO="+ft+") OR (NOMBRE LIKE '%"+ft+"%')) ";
+                sql+="ORDER BY NOMBRE";
+                break;
         }
     }
 
@@ -409,6 +425,12 @@ public class Lista extends PBase {
                 lblTit.setText("Correlativos");break;
             case 22:
                 lblTit.setText("Motivos de ajuste");break;
+            case 26:
+                lblTit.setText("Sala");break;
+            case 27:
+                lblTit.setText("Mesa");break;
+            case 28:
+                lblTit.setText("Grupo de mesas");break;
         }
     }
 

@@ -315,11 +315,12 @@ public class FELVerificacion extends PBase {
         ftot=0;
 
         try {
+            long flim=du.addDays(du.getActDate(),-4);
 
-            String sql = " where feelcontingencia>0  and anulado =0 and feelfechaprocesado = 0 " +
-                         " and feeluuid = ' ' " +
-                         " order by fecha desc" ;
-
+            //D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
+            //   "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
+            sql="where feelcontingencia>0  and anulado=0 and " +
+                    "feelfechaprocesado=0 and feeluuid = ' ' ";
             D_facturaObj.fill(sql);
 
             facts.clear();
@@ -368,7 +369,7 @@ public class FELVerificacion extends PBase {
     private void getURL() {
 
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-        gl.timeout = 6000;
+        gl.timeout = 20000;
 
         try {
 
@@ -383,7 +384,7 @@ public class FELVerificacion extends PBase {
                 String line = myReader.readLine();
 
                 if(line.isEmpty()) {
-                    gl.timeout = 6000;
+                    gl.timeout = 20000;
                 }  else {
                     gl.timeout = Integer.valueOf(line);
                 }

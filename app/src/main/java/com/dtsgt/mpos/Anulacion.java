@@ -210,7 +210,7 @@ public class Anulacion extends PBase {
 
 	private void getURL() {
 		gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-		gl.timeout = 6000;
+		gl.timeout = 20000;
 
 		try {
 			File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
@@ -223,7 +223,7 @@ public class Anulacion extends PBase {
 				String line = myReader.readLine();
 
 				if(line.isEmpty()) {
-					gl.timeout = 6000;
+					gl.timeout = 20000;
 				}
 				else {
 					gl.timeout = Integer.valueOf(line);

@@ -85,6 +85,7 @@ public class clsP_res_mesaObj {
         ins.add("ANCHO",item.ancho);
         ins.add("POSX",item.posx);
         ins.add("POSY",item.posy);
+        ins.add("CODIGO_QR",item.codigo_qr);
 
         db.execSQL(ins.sql());
 
@@ -103,6 +104,7 @@ public class clsP_res_mesaObj {
         upd.add("ANCHO",item.ancho);
         upd.add("POSX",item.posx);
         upd.add("POSY",item.posy);
+        upd.add("CODIGO_QR",item.codigo_qr);
 
         upd.Where("(CODIGO_MESA="+item.codigo_mesa+")");
 
@@ -146,6 +148,7 @@ public class clsP_res_mesaObj {
             item.ancho=dt.getDouble(7);
             item.posx=dt.getDouble(8);
             item.posy=dt.getDouble(9);
+            item.codigo_qr=dt.getString(10);
 
             items.add(item);
 
@@ -187,6 +190,7 @@ public class clsP_res_mesaObj {
         ins.add("ANCHO",item.ancho);
         ins.add("POSX",item.posx);
         ins.add("POSY",item.posy);
+        ins.add("CODIGO_QR",item.codigo_qr);
 
         return ins.sql();
 
@@ -205,6 +209,7 @@ public class clsP_res_mesaObj {
         upd.add("ANCHO",item.ancho);
         upd.add("POSX",item.posx);
         upd.add("POSY",item.posy);
+        upd.add("CODIGO_QR",item.codigo_qr);
 
         upd.Where("(CODIGO_MESA="+item.codigo_mesa+")");
 

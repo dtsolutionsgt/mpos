@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ResMesero">
+
+        <RelativeLayout
+            android:id="@+id/relRoad"
+            android:layout_width="match_parent"
+            android:layout_height="92dp"
+            android:background="@drawable/frame_rect_blue">
+
+            <TextView
+                android:id="@+id/textView178b2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="2dp"
+                android:layout_toStartOf="@+id/rel00"
+                android:gravity="center_horizontal"
+                android:text="Sala"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/textView179b3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView178b2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/rel00"
+                android:gravity="center"
+                android:text="Sala 1"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:id="@+id/rel00a"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="5dp"
+                android:layout_toEndOf="@+id/rel00">
+
+                <TextView
+                    android:id="@+id/textView178b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="Area"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/textView179b"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/textView178b"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="0dp"
+                    android:gravity="center"
+                    android:text="Entrada"
+                    android:textColor="#FFFFFF"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel00"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginBottom="5dp">
+
+                <TextView
+                    android:id="@+id/textView178a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/textView179a"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="Cuentas abiertas"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:id="@+id/imageView71a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="18dp"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="15dp"
+                    android:paddingEnd="5dp"
+                    android:paddingBottom="5dp"
+                    android:src="@drawable/mesas" />
+
+                <TextView
+                    android:id="@+id/textView179a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_toEndOf="@+id/imageView71a"
+                    android:text="00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="52sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    <GridView
+        android:id="@+id/gridView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/relbotpan"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginBottom="4dp"
+        android:numColumns="4" />
+
+        <RelativeLayout
+            android:id="@+id/relbotpan"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="-3dp"
+            android:background="@drawable/frame_rect_blue">
+
+            <TextView
+                android:id="@+id/textView196"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="17dp"
+                android:text="TextView"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView212"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView87"
+        android:layout_alignStart="@+id/imageView87"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_horizontal"
+        android:text="Actualizar" />
+
+    <ImageView
+        android:id="@+id/imageView87"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignTop="@+id/gridView1"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="false"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="0dp"
+        android:padding="10dp"
+        android:src="@drawable/recibir_rapido" />
+
+    <ImageView
+        android:id="@+id/imageView96"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/imageView87"
+        android:layout_alignBottom="@+id/gridView1"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="20dp"
+        android:padding="5dp"
+        android:src="@drawable/btn_exit" />
+
+    <TextView
+        android:id="@+id/textView213"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/imageView96"
+        android:layout_alignBottom="@+id/gridView1"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:gravity="center_horizontal"
+        android:text="Salir" />
+</RelativeLayout>

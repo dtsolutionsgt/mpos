@@ -293,7 +293,6 @@ public class Pedidos extends PBase {
         } catch (Exception e) {
             try {
                 D_orden_bitacoraObj.update(stat);
-                toast("upd2");
             } catch (Exception ee) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
             }

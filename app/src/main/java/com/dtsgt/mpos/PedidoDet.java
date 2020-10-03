@@ -686,7 +686,6 @@ public class PedidoDet extends PBase {
         return arr;
     }
 
-
     //endregion
 
     //region Dialogs

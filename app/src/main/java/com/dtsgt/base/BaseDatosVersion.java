@@ -85,15 +85,13 @@ public class BaseDatosVersion {
         }
 
         try {
-            sql="CREATE TABLE [P_res_mesero] ("+
-                    "CODIGO_MESERO INTEGER NOT NULL,"+
-                    "EMPRESA INTEGER NOT NULL,"+
-                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
-                    "CODIGO_GRUPO INTEGER NOT NULL,"+
-                    "NOMBRE TEXT NOT NULL,"+
-                    "CLAVE TEXT NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO_MESERO])"+
-                    ");";
+            sql="ALTER TABLE P_res_mesa ADD COLUMN CODIGO_QR TEXT;";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="DROP TABLE P_res_mesero;";
             db.execSQL(sql);
         } catch (Exception e) {
         }

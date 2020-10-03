@@ -213,7 +213,7 @@ public class FacturaRes extends PBase {
 
 		setHandlers();
 
-        txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER  | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        txtVuelto.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         pend=tot;
         if (tot>credito) credito=0;
@@ -222,6 +222,8 @@ public class FacturaRes extends PBase {
             imgCred.setVisibility(View.INVISIBLE);
             lblCred.setVisibility(View.INVISIBLE);
         }
+
+        //if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
 
     }
 
@@ -684,7 +686,7 @@ public class FacturaRes extends PBase {
 			if (app.impresora()) {
 
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
-                app.doPrint(gl.peNumImp);
+                app.doPrint(gl.peNumImp,0);
 
                 try {
 
@@ -2278,6 +2280,14 @@ public class FacturaRes extends PBase {
 
 	//endregion
 
+    //region Comanda Cosina
+
+    private void imprimeComanda() {
+        app.doPrint(1);
+    }
+
+    //endregion
+
 	//region Aux
 
 	private void clearGlobals() {
@@ -2590,6 +2600,25 @@ public class FacturaRes extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
+
+    private void msgAskComanda(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                imprimeComanda();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
 
     //endregion
 	

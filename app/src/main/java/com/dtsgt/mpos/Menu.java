@@ -24,8 +24,10 @@ import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
@@ -55,6 +57,7 @@ public class Menu extends PBase {
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje;
 	private boolean listo=true;
+	private long contcorini,contcorult;
 	
 	private final int mRequestCode = 1001;
 	private Exist Existencia = new Exist();
@@ -765,7 +768,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Información de sistema"};
+			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema"};
 
 			menudlg = new ExDialog (this);
 
@@ -784,6 +787,8 @@ public class Menu extends PBase {
 						case 4:
                             startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
                         case 5:
+                            msgAskActualizar("Actualizar correlativos de contingencia");break;
+                        case 6:
                             infoSystem();break;
 					}
 
@@ -860,13 +865,13 @@ public class Menu extends PBase {
 
         try {
             File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
-            File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.cajaid+".db");
+            File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
             FileUtils.copyFile(f1, f2);
             Uri uri = Uri.fromFile(f2);
 
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:dtsolutionsgt@gmail.com"));
 
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Base de datos : "+gl.tiendanom+" caja : "+gl.cajaid);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Base de datos : "+gl.tiendanom+" caja : "+gl.codigo_ruta);
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Adjunto base de datos");
             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
             startActivity(emailIntent);
@@ -928,6 +933,84 @@ public class Menu extends PBase {
 		dialog.show();
 
 	}
+
+	private void actualizarCont() {
+	    long cact,flim,ncont;
+        clsClasses.clsD_factura fact;
+
+        if (!validaCorel()) {
+            msgAskActualizar2("Correlativo actual incorrecto. Por favor actualize los datos");return;
+        }
+
+        try {
+            flim=du.addDays(du.getActDate(),-4);
+            //flim=2009260000;
+
+            cact=contcorult;
+            if (cact<contcorini) cact=contcorini;
+            /*
+            long cini=200000000+100000*gl.codigo_ruta;
+            contcorini=cini;
+            cact=cini;
+             */
+
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            sql="WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
+            D_facturaObj.fill(sql);
+
+            for (int i = 0; i <D_facturaObj.count; i++) {
+
+                try {
+                    fact=D_facturaObj.items.get(i);
+
+                    if (fact.feelfechaprocesado>0) {
+                        ncont=Long.parseLong(fact.feelcontingencia);
+                        if (ncont<contcorini) {
+                            cact++;
+                            sql="UPDATE D_FACTURA SET FEELCONTINGENCIA='"+cact+"' WHERE COREL='"+fact.corel+"' ";
+                            db.execSQL(sql);
+                        }
+                    } else {
+                        cact++;
+                        sql="UPDATE D_FACTURA SET FEELCONTINGENCIA='"+cact+"' WHERE COREL='"+fact.corel+"' ";
+                        db.execSQL(sql);
+                    }
+                } catch (Exception e) {
+                    String ss=e.getMessage();
+                }
+            }
+
+            sql="UPDATE P_COREL SET CORELULT="+cact+" WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)";
+            db.execSQL(sql);
+
+            msgbox("Proceso completo, por favor certifique las facturas pendientes");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private boolean validaCorel() {
+        Cursor dt;
+        long cini=100000000+100000*gl.codigo_ruta;
+
+        try {
+            sql="SELECT CORELINI,CORELULT FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                contcorini=dt.getLong(0);
+                contcorult=dt.getLong(1);
+                if (contcorini==cini) return true;
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
+    }
 
 	//endregion
 
@@ -1035,7 +1118,8 @@ public class Menu extends PBase {
         try {
             final AlertDialog Dialog;
 
-            final String[] selitems = {"Mesero", "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
+            final String[] selitems = { "Sala", "Mesa", "Grupo de mesas"};
+            //final String[] selitems = { "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
 
             menudlg = new ExDialog(this);
 
@@ -1044,7 +1128,6 @@ public class Menu extends PBase {
 
                     ss = selitems[item];
 
-                    if (ss.equalsIgnoreCase("Mesero")) gl.mantid = 25;
                     if (ss.equalsIgnoreCase("Sala")) gl.mantid = 26;
                     if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
                     if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
@@ -1052,8 +1135,6 @@ public class Menu extends PBase {
 
                     if (gl.mantid == 24) {
                         startActivity(new Intent(Menu.this, SalaDis.class));
-                    } else if (gl.mantid == 28) {
-                        //startActivity(new Intent(Menu.this, GrupoMesas.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }
@@ -1719,6 +1800,50 @@ public class Menu extends PBase {
 
     }
 
+    private void msgAskActualizar(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                actualizarCont();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskActualizar2(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (isNetworkAvailable()) {
+                    gl.recibir_automatico = true;
+                    startActivity(new Intent(Menu.this,WSRec.class));
+                } else {
+                    toast("No hay conexión a internet");
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+
     //endregion
 
 	//region Activity Events
@@ -1735,8 +1860,7 @@ public class Menu extends PBase {
 
 			if(browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
 				gl.recibir_automatico = false;
-				if (gl.peCajaRec) {
-
+				/*if (gl.peCajaRec) {
 					if (isNetworkAvailable()) {
 						gl.recibir_automatico = true;
 						startActivity(new Intent(Menu.this,WSRec.class));
@@ -1744,7 +1868,7 @@ public class Menu extends PBase {
 						if (!ms.isEmpty()) ms+="\n\n";
 						ms+="No hay conexión a internet";
 					}
-				}
+				}*/
 
 				browse=0;
 			}

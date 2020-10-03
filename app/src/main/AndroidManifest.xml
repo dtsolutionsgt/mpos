@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dtsgt.mpos"
     android:installLocation="preferExternal"
-    android:versionCode="4"
-    android:versionName="3.2.3">
+    android:versionCode="5"
+    android:versionName="3.2.14">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -661,7 +661,11 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
+        <activity
+            android:name=".ResMesero"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
     </application>
 

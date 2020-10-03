@@ -2584,9 +2584,10 @@ public class WSRec extends PBase {
     }
 
     protected void guardaDatosConexion() {
-
         BufferedWriter writer = null;
         FileWriter wfile;
+
+        if (gl.timeout==0) gl.timeout=20000;
 
         try {
 
@@ -2601,7 +2602,7 @@ public class WSRec extends PBase {
             writer = new BufferedWriter(wfile);
 
             writer.write(gl.wsurl + "\n");
-            writer.write("7000");
+            writer.write(""+gl.timeout);
 
             writer.close();
 

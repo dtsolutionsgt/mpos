@@ -1092,17 +1092,23 @@ public class AppMethods {
     //region Impresion
 
     public void doPrint() {
-        doPrint(0);
+        doPrint(0,0);
     }
 
-    public void doPrint(int copies) {
+    public void doPrint(int prtipo) {
+        doPrint(0,prtipo);
+    }
+
+    public void doPrint(int copies,int tipoimpr) {
 
 	    if (copies<1) copies=1;
 
-        loadPrintConfig();
+        loadPrintConfig(tipoimpr);
 
-        if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
-            toast("No se puede imprimir. No está definida impresora");return;
+        if (tipoimpr==0) {
+            if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
+                toast("No se puede imprimir. No está definida impresora");return;
+            }
         }
 
         if (gl.prpar.isEmpty()) {
@@ -1190,6 +1196,28 @@ public class AppMethods {
         }
 
     }
+
+    public void loadPrintConfig(int tipoimpr) {
+        Cursor DT;
+
+        try {
+            gl.prtipo="";gl.prpar="";
+
+            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") AND (NOTA_CREDITO="+tipoimpr+")";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                gl.prtipo=DT.getString(0);
+                gl.prpar=DT.getString(1);
+            }
+
+        } catch (Exception e) {
+            gl.prtipo="";gl.prpar="00:01:90:85:0D:8C";
+        }
+
+    }
+
 
     public boolean impresora() {
         loadPrintConfig();
