@@ -463,7 +463,7 @@ public class Reportes extends PBase {
                         condition = " AND M.CODIGO = '"+ id_item +"' ";
                     }
 
-                    sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(P.VALOR), 0 " +
+                    sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(DISTINCT F.COREL), 0,SUM(P.VALOR), 0 " +
                         "FROM P_MEDIAPAGO M " +
                         "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                         "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
