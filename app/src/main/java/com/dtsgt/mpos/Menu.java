@@ -939,7 +939,7 @@ public class Menu extends PBase {
         clsClasses.clsD_factura fact;
 
         if (!validaCorel()) {
-            msgAskActualizar2("Correlativo actual incorrecto. Por favor actualize los datos");return;
+            msgAskActualizar2("Correlativo actual incorrecto. Por favor actualice los datos");return;
         }
 
         try {
