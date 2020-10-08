@@ -738,12 +738,13 @@ public class FacturaRes extends PBase {
 
         clsP_productoObj P_productoObj= new clsP_productoObj(this, Con, db);
         clsD_facturasObj D_facturas= new clsD_facturasObj(this, Con, db);
+        clsD_facturaObj D_fact= new clsD_facturaObj(this, Con, db);
         clsClasses.clsD_facturas fsitem;
 
 		Cursor dt;
 		String vprod,vumstock,vumventa,vbarra;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
-		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend;
 		boolean flag;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
@@ -762,6 +763,10 @@ public class FacturaRes extends PBase {
 		mitem++;
 
 		try {
+
+            String ss="WHERE anulado=0 AND feelfechaprocesado=0 AND feeluuid=' ' AND fecha>2010010000";
+            D_fact.fill(ss);
+            fpend=D_fact.count;
 
 			db.beginTransaction();
 
@@ -816,7 +821,7 @@ public class FacturaRes extends PBase {
 				ins.add("ASIGNACION","");
 			}
 
-			ins.add("SUPERVISOR"," ");
+			ins.add("SUPERVISOR",""+fpend);
 			ins.add("VEHICULO"," ");
 			ins.add("AYUDANTE"," ");
 			ins.add("CODIGOLIQUIDACION",0);
@@ -1472,8 +1477,27 @@ public class FacturaRes extends PBase {
             ca=ca1;
 
             if (ca2>ca) ca=ca2;
-
             fcorel=ca+1;
+
+            sql="SELECT COREL FROM D_FACT_LOG WHERE COREL="+fcorel;
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                try {
+                    sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
+                    DT=Con.OpenDT(sql);
+                    DT.moveToFirst();
+
+                    ins.init("D_FACT_LOG");
+                    ins.add("ITEM",DT.getInt(0));
+                    ins.add("SERIE","DUPL");
+                    ins.add("COREL",fcorel);
+                    ins.add("FECHA",0);
+                    ins.add("RUTA",gl.ruta);
+                    db.execSQL(ins.sql());
+                } catch (SQLException e) {
+                }
+                fcorel++;
+            }
 
             if (fcorel>cf) {
                 mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");

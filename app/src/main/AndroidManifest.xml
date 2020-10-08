@@ -37,6 +37,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
+        <activity android:name="com.dtsgt.mant.MantResSala"></activity>
+        <activity android:name="com.dtsgt.mant.MantResGrupo" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -666,7 +668,6 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
     </application>
 
 </manifest>

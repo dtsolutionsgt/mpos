@@ -8,17 +8,18 @@ import android.widget.ImageView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.clsP_proveedorObj;
+import com.dtsgt.classes.clsP_res_grupoObj;
+import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-public class MantProveedor extends PBase {
+public class MantResGrupo extends PBase {
 
     private ImageView imgstat,imgadd;
     private EditText txt1,txt2;
 
-    private clsP_proveedorObj holder;
-    private clsClasses.clsP_proveedor item=clsCls.new clsP_proveedor();
+    private clsP_res_grupoObj holder;
+    private clsClasses.clsP_res_grupo item=clsCls.new clsP_res_grupo();
 
     private String id;
     private boolean newitem=false;
@@ -26,7 +27,7 @@ public class MantProveedor extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mant_proveedor);
+        setContentView(R.layout.activity_mant_res_grupo);
 
         super.InitBase();
 
@@ -35,16 +36,14 @@ public class MantProveedor extends PBase {
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
-        holder =new clsP_proveedorObj(this,Con,db);
+        holder =new clsP_res_grupoObj(this,Con,db);
 
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
 
         if (gl.peMCent) {
-            //if (!app.grant(13,gl.rol)) {
-                imgadd.setVisibility(View.INVISIBLE);
-                imgstat.setVisibility(View.INVISIBLE);
-            //}
+            imgadd.setVisibility(View.INVISIBLE);
+            imgstat.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -60,11 +59,7 @@ public class MantProveedor extends PBase {
     }
 
     public void doStatus(View view) {
-        if (item.activo) {
-            msgAskStatus("Deshabilitar registro");
-        } else {
-            msgAskStatus("Habilitar registro");
-        }
+        msgAskDelete("Eliminar registro");
     }
 
     public void doExit(View view) {
@@ -77,19 +72,14 @@ public class MantProveedor extends PBase {
 
     private void loadItem() {
         try {
-            holder.fill("WHERE CODIGO_PROVEEDOR="+id);
+            holder.fill("WHERE CODIGO_GRUPO="+id);
             item=holder.first();
 
             showItem();
 
-            txt1.setEnabled(false);
-            txt2.requestFocus();
+            txt1.requestFocus();
             imgstat.setVisibility(View.VISIBLE);
-            if (item.activo) {
-                imgstat.setImageResource(R.drawable.delete_64);
-            } else {
-                imgstat.setImageResource(R.drawable.mas);
-            }
+            imgstat.setImageResource(R.drawable.delete_64);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -101,9 +91,8 @@ public class MantProveedor extends PBase {
 
         imgstat.setVisibility(View.INVISIBLE);
 
-        item.codigo="";
+        item.codigo_grupo=holder.newID("SELECt MAX(codigo_grupo) FROM P_RES_GRUPO");
         item.nombre="";
-        item.activo=true;
 
         showItem();
     }
@@ -111,7 +100,7 @@ public class MantProveedor extends PBase {
     private void addItem() {
         try {
             holder.add(item);
-            gl.gcods=""+item.codigo;
+            gl.gcods=""+item.codigo_grupo;
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -127,41 +116,40 @@ public class MantProveedor extends PBase {
         }
     }
 
+    private void deleteItem() {
+        try {
+            clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
+            P_res_mesaObj.fill("WHERE CODIGO_GRUPO="+item.codigo_grupo);
+            if (P_res_mesaObj.count>0) {
+                msgboxex("No se puede eliminar grupo, existen mesas asociadas");return;
+            } else {
+                holder.delete(item);
+                finish();
+            }
+       } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Aux
 
     private void showItem() {
-        if(newitem) txt1.setText(""); else txt1.setText(""+item.codigo);
-        txt2.setText(item.nombre);
+        txt1.setText(item.nombre);
+        txt2.setText(item.telefono);
     }
 
     private boolean validaDatos() {
         String ss;
 
         try {
-
-            if (newitem) {
-                ss=txt1.getText().toString();
-                if (ss.isEmpty()) {
-                    msgbox("¡Falta definir código!");return false;
-                }
-
-                holder.fill("WHERE CODIGO='"+ss+"'");
-                if (holder.count>0) {
-                    msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
-                }
-
-                item.codigo=ss;
-            }
-
-            ss=txt2.getText().toString();
+            ss=txt1.getText().toString();
             if (ss.isEmpty()) {
-                msgbox("¡Nombre incorrecto!");
-                return false;
-            } else {
-                item.nombre=ss;
+                msgbox("¡Falta definir descripcion!");return false;
             }
+            item.nombre=ss;
+            item.telefono=""+txt2.getText().toString();
 
             return true;
         } catch (Exception e) {
@@ -200,7 +188,6 @@ public class MantProveedor extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 updateItem();
-                finish();
             }
         });
 
@@ -211,19 +198,13 @@ public class MantProveedor extends PBase {
         dialog.show();
     }
 
-    private void msgAskStatus(String msg) {
+    private void msgAskDelete(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                if (item.activo) {
-                    item.activo=false;
-                } else {
-                    item.activo=true;
-                };
-                updateItem();
-                finish();
+                deleteItem();
             }
         });
 

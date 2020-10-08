@@ -938,6 +938,7 @@ public class Menu extends PBase {
 	    long cact,flim,ncont;
         clsClasses.clsD_factura fact;
 
+
         if (!validaCorel()) {
             msgAskActualizar2("Correlativo actual incorrecto. Por favor actualice los datos");return;
         }

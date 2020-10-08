@@ -80,7 +80,7 @@
             android:layout_marginRight="5dp"
             android:adjustViewBounds="true"
             android:clickable="true"
-            android:onClick="doBandera"
+            android:onClick="doSave"
             android:paddingBottom="2dp"
             android:paddingTop="2dp"
             android:src="@drawable/next48" />

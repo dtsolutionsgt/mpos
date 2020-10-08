@@ -477,6 +477,9 @@ public class Lista extends PBase {
             case 22:
                 startActivity(new Intent(this, MantMotivoAjuste.class));break;
 
+
+            case 28:
+                startActivity(new Intent(this, MantResGrupo.class));break;
         }
 
         progress.cancel();

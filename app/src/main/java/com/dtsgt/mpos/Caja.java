@@ -369,6 +369,7 @@ public class Caja extends PBase {
                             itemC.montoini = montoIni;
                             itemC.montofin = montoFin;
                             itemC.montodif = montoFin-montoIni;
+                            //itemC.codpago=1;
 
                             sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
                             db.execSQL(sql);
@@ -380,10 +381,12 @@ public class Caja extends PBase {
 
                             if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
 
+                                itemC.codigo_cajacierre=itemC.codigo_cajacierre+"C";
                                 montoIni = dt.getDouble(2);
                                 itemC.montoini = montoIni;
                                 itemC.montofin = montoCred;
                                 itemC.montodif = montoCred - montoIni;
+                                //itemC.codpago=5;
 
                                 caja.add(itemC);
                             }
@@ -445,7 +448,6 @@ public class Caja extends PBase {
                     }
                 };
                 mtimer.postDelayed(mrunner,200);
-
 
 
                 super.finish();

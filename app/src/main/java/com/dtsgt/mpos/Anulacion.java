@@ -314,7 +314,6 @@ public class Anulacion extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 
 	//endregion
@@ -351,7 +350,7 @@ public class Anulacion extends PBase {
 					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
 					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
 					"WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.KILOMETRAJE=0)  " +
-					"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+         			"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					"ORDER BY D_FACTURA.COREL DESC ";
 			}
 			
@@ -458,6 +457,11 @@ public class Anulacion extends PBase {
 			
 			if (tipo==3) {
 				//if (checkFactDepos()) return;
+                //#JP20201008 - llena variable uuid antes de validar
+                clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+                D_facturaObj.fill("WHERE COREL='"+itemid+"'");
+                uuid=D_facturaObj.first().feeluuid;
+
                 String idfel=gl.peFEL;
                 if (idfel.isEmpty() || idfel.equalsIgnoreCase("SIN FEL")) {
                     anulFactura(itemid);
@@ -468,7 +472,6 @@ public class Anulacion extends PBase {
 					} else {
 						anulFactura(itemid);
 					}
-
                 }
 			}
 			
@@ -501,38 +504,30 @@ public class Anulacion extends PBase {
     //region FEL
 
     private void anulacionFEL() {
-        if (buildAnulXML())  fel.anulacion(uuid);
+        if (buildAnulXML()) fel.anulacion(uuid);
     }
 
 	@Override
     public void felCallBack()  {
 
         if (!fel.errorflag) {
-
 			try {
-
 				anulFactura(itemid);
-
 
 				//#EJC20200706: Commit transaction from Anuldocument.
 				db.setTransactionSuccessful();
 				db.endTransaction();
 
 				envioFactura();
-
 				toast(String.format("Se anuló la factura %d correctamente",itemid));
-
 				listItems();
 
 			} catch (SQLException e) {
 				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 				db.endTransaction();
 				mu.msgbox(e.getMessage());
-				e.printStackTrace();
 			}
-
 		} else {
-
 			try {
 				//#EJC20200706: Commit transaction from Anuldocument.
 				db.endTransaction();

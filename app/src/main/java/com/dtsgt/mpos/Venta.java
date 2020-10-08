@@ -1282,6 +1282,8 @@ public class Venta extends PBase {
 
             browse=0;
 
+            gridView.setEnabled(false);
+
             Intent intent = new Intent(this,FacturaRes.class);
             startActivity(intent);
 
@@ -1290,6 +1292,7 @@ public class Venta extends PBase {
                 //startActivity(intent);
             }
         } catch (Exception e){
+            gridView.setEnabled(true);
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             mu.msgbox("finishOrder: "+e.getMessage());
         }
@@ -2604,7 +2607,7 @@ public class Venta extends PBase {
 
         try{
             listView = (ListView) findViewById(R.id.listView1);
-            gridView = (GridView) findViewById(R.id.gridView2);
+            gridView = (GridView) findViewById(R.id.gridView2);gridView.setEnabled(true);
             grdfam = (GridView) findViewById(R.id.grdFam);
             grdprod = (GridView) findViewById(R.id.grdProd);
             grdbtn = (GridView) findViewById(R.id.grdbtn);
@@ -3100,7 +3103,7 @@ public class Venta extends PBase {
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
              sql="select * from d_factura  where anulado=0 and " +
-                 "feelfechaprocesado=0 and feeluuid = ' ' and fecha>2009230000;";
+                 "feelfechaprocesado=0 and feeluuid = ' ' and fecha>2010010000;";
 
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
@@ -3316,6 +3319,8 @@ public class Venta extends PBase {
 
         try {
             super.onResume();
+
+            gridView.setEnabled(true);
 
             D_pedidoObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);

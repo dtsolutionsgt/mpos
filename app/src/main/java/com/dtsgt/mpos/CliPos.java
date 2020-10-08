@@ -122,14 +122,12 @@ public class CliPos extends PBase {
 			if (!existeCliente()){
 
 			    if (!validaNIT(sNITCliente)) {
-					toast("NIT incorrecto");return;
+					msgbox("NIT incorrecto");return;
 				}
 
 				if (mu.emptystr(sNombreCliente)) {
-					toast("Nombre incorrecto");return;
+                    msgbox("Nombre incorrecto");return;
 				}
-
-
 
 				if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente)) procesaNIT(sNITCliente);
 
@@ -397,66 +395,70 @@ public class CliPos extends PBase {
 
 	private boolean validaNIT(String N)  {
 
-		try{
-			String P, C, s, NC;
-			int[] v = {0,0,0,0,0,0,0,0,0,0};
-			int j, mp, sum, d11, m11, r11, cn, ll;
+        try{
+            String P, C, s, NC;
+            int[] v = {0,0,0,0,0,0,0,0,0,0};
+            int j, mp, sum, d11, m11, r11, cn, ll;
 
-			N=N.trim();
-			N=N.replaceAll(" ","");
-			if (mu.emptystr(N)) return false;
-		/*
-		N=N.toUpperCase();
-		if (N.equalsIgnoreCase("CF")) N="C.F.";
-		if (N.equalsIgnoreCase("C/F")) N="C.F.";
-		if (N.equalsIgnoreCase("C.F")) N="C.F.";
-		if (N.equalsIgnoreCase("CF.")) N="C.F.";
+            N=N.trim();
+            N=N.replaceAll(" ","");
+            if (N.isEmpty()) return false;
 
-		if (N.equalsIgnoreCase("C.F.")) return true;
+            N=N.toUpperCase();
+            if (N.equalsIgnoreCase("CF")) N="C.F.";
+            if (N.equalsIgnoreCase("C/F")) N="C.F.";
+            if (N.equalsIgnoreCase("C.F")) N="C.F.";
+            if (N.equalsIgnoreCase("CF.")) N="C.F.";
 
-		ll = N.length();
-		if (ll<5) return false;
+            if (N.equalsIgnoreCase("C.F.")) return true;
 
-		P = N.substring(0,ll-2);
-		C = N.substring(ll-1, ll);
+            ll = N.length();
+            if (ll<5) return false;
 
-		ll = ll - 1;
-		sum = 0;
+            P = N.substring(0,ll-2);
+            C = N.substring(ll-1, ll);
 
-		try {
+            ll = ll - 1;
+            sum = 0;
 
-			for (int i = 0; i <ll-1; i++) {
-				s =P.substring( i, i+1);
-				j=Integer.parseInt(s);
-				mp = ll + 1 - i-1;
-				sum = sum + j * mp;
-			}
+            try {
 
-			d11 =(int) Math.floor(sum/11);
-			m11 = d11 * 11;
-			r11 = sum - m11;
-			cn = 11 - r11;
+                for (int i = 0; i <ll-1; i++) {
+                    s =P.substring( i, i+1);
+                    j=Integer.parseInt(s);
+                    mp = ll + 1 - i-1;
+                    sum = sum + j * mp;
+                }
 
-			if (cn == 10) s = "K"; else s=""+cn;
+                d11 =(int) Math.floor(sum/11);
+                m11 = d11 * 11;
+                r11 = sum - m11;
+                cn = 11 - r11;
 
-			if (cn>10) {
-				cn = cn % 11;
-				s =""+cn;
-			}
+                if (cn == 10) s = "K"; else s=""+cn;
 
-			NC = P+"-"+s;
-			//mu.msgbox(NC);
+                if (cn>10) {
+                    cn = cn % 11;
+                    s =""+cn;
+                }
 
-			if (N.equalsIgnoreCase(NC)) return true; else return false;
+                NC = P+"-"+s;
+                //mu.msgbox(NC);
 
-		} catch (Exception e) {
-			return false;
-		}
-		*/
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-		return true;
+                if (N.equalsIgnoreCase(NC)) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            } catch (Exception e) {
+                return false;
+            }
+
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+        return true;
 
 	}
 	

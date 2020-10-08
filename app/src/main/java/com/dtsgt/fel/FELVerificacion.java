@@ -17,6 +17,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
+import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
@@ -120,6 +121,8 @@ public class FELVerificacion extends PBase {
         app.parametrosExtra();
         lbl2.setText("Certificador : "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
+
+        marcaFacturaContingencia();
 
         buildList();
 
@@ -289,6 +292,7 @@ public class FELVerificacion extends PBase {
             //#EJC20200527: Quitar "-" del nit
             factf.nit =factf.nit.replace("-","");
             factf.nit =factf.nit.replace(".","");
+            factf.nit=factf.nit.toUpperCase();
 
             fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);
 
@@ -306,6 +310,55 @@ public class FELVerificacion extends PBase {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private void marcaFacturaContingencia() {
+        clsClasses.clsP_corel citem;
+        long corcont;
+
+        try {
+
+            //ss="where anulado=0 and feelfechaprocesado=0 and feeluuid=' ' and feelcontingencia=' 'and fecha>2009230000";
+            ss="WHERE anulado=0 AND feelfechaprocesado=0 " +
+                    " AND feeluuid=' ' AND feelcontingencia=' ' AND fecha>='2010010000'";
+            D_facturaObj.fill(ss);
+            if (D_facturaObj.count == 0) return;
+
+            clsP_corelObj P_corelObj = new clsP_corelObj(this, Con, db);
+            P_corelObj.fill("WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=1)");
+            citem = P_corelObj.first();
+            if (citem.corelult == 0) {
+                corcont = citem.corelini;
+            } else {
+                corcont = citem.corelult + 1;
+            }
+
+            for (int i = 0; i < D_facturaObj.count; i++) {
+
+                try {
+                    db.beginTransaction();
+
+                    fact = D_facturaObj.items.get(i);
+                    fact.feelcontingencia = "" + corcont;
+                    D_facturaObj.update(fact);
+
+                    citem.corelult = corcont;
+                    P_corelObj.update(citem);
+
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+                } catch (Exception e) {
+                    db.endTransaction();
+                    msgbox2(new Object() {}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+
+                corcont++;
+            }
+
+        } catch(Exception ee){
+            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ee.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -378,8 +431,9 @@ public class FELVerificacion extends PBase {
 
             //D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
             //   "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
-            sql="where feelcontingencia>0  and anulado=0 and " +
-                    "feelfechaprocesado=0 and feeluuid = ' ' and fecha>2009230000";
+            //sql="where feelcontingencia>0  and anulado=0 and " +
+            //        "feelfechaprocesado=0 and feeluuid=' ' and fecha>2009230000";
+            sql="where anulado=0 and feelfechaprocesado=0 and feeluuid=' ' and fecha>2009230000";
 
             D_facturaObj.fill(sql);
 

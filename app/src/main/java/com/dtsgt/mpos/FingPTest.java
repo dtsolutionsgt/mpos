@@ -35,7 +35,7 @@ public class FingPTest extends PBase {
 
     //region Events
 
-    public void doBandera(View view) {
+    public void doSave(View view) {
         try {
             String s=txt1.getText().toString();
             if (!s.equalsIgnoreCase(pass)) throw new Exception();

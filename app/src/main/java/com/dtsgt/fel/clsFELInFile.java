@@ -734,14 +734,10 @@ public class clsFELInFile {
                 error= jObj.getString("descripcion");
 
                 if (jObj.getBoolean("resultado")) {
-
                     errorflag=false;
                     firma=jObj.getString("archivo");
-
                 } else {
-
                     errorflag=true;
-
                     try {
                         //#EJC20200707: Obtener mensaje de error específico en respuesta.
                         JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
@@ -754,13 +750,10 @@ public class clsFELInFile {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
                 }
-
             } else {
                 error=""+response;errorflag=true;return;
             }
-
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         } finally {
@@ -808,7 +801,6 @@ public class clsFELInFile {
     //region Anulacion
 
     public void sendJSONAnul() {
-
         try {
 
             s64= anulToBase64();
@@ -835,13 +827,11 @@ public class clsFELInFile {
     }
 
     public void wsExecuteA(){
-
         URL url;
         HttpsURLConnection connection = null;
         JSONObject jObj = null;
 
         try {
-
             //Create connection
             url = new URL(WSURLAnul);
 
@@ -895,9 +885,7 @@ public class clsFELInFile {
                 if (jObj.getBoolean("resultado")) {
                     errorflag=false;
                 } else {
-
                     errorflag=true;
-
                     try {
                         //#EJC20200707: Obtener mensaje de error específico en respuesta.
                         JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
@@ -915,7 +903,6 @@ public class clsFELInFile {
             } else {
                 error=""+response;errorflag=true;return;
             }
-
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         } finally {

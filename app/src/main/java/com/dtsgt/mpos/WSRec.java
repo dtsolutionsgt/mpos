@@ -47,6 +47,9 @@ import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_prodprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_proveedorObj;
+import com.dtsgt.classes.clsP_res_grupoObj;
+import com.dtsgt.classes.clsP_res_mesaObj;
+import com.dtsgt.classes.clsP_res_salaObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_usgrupoObj;
@@ -108,6 +111,12 @@ import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPO;
 import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPOList;
 import com.dtsgt.classesws.clsBeP_PROVEEDOR;
 import com.dtsgt.classesws.clsBeP_PROVEEDORList;
+import com.dtsgt.classesws.clsBeP_RES_GRUPO;
+import com.dtsgt.classesws.clsBeP_RES_GRUPOList;
+import com.dtsgt.classesws.clsBeP_RES_MESA;
+import com.dtsgt.classesws.clsBeP_RES_MESAList;
+import com.dtsgt.classesws.clsBeP_RES_SALA;
+import com.dtsgt.classesws.clsBeP_RES_SALAList;
 import com.dtsgt.classesws.clsBeP_RUTA;
 import com.dtsgt.classesws.clsBeP_RUTAList;
 import com.dtsgt.classesws.clsBeP_SUCURSAL;
@@ -349,10 +358,18 @@ public class WSRec extends PBase {
                     case 36:
                         callMethod("GetP_FRASE");
                         break;
+                    case 37:
+                        callMethod("GetP_RES_SALA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
+                    case 38:
+                        callMethod("GetP_RES_MESA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
+                    case 39:
+                        callMethod("GetP_RES_GRUPO", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
                 }
             } catch (Exception e) {
-                error = e.getMessage();
-                errorflag = true;
+                error=e.getMessage();errorflag=true;
             }
         }
     }
@@ -602,6 +619,27 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(37);
+                    break;
+                case 37:
+                    processResSala();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(38);
+                    break;
+                case 38:
+                    processResMesa();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(39);
+                    break;
+                case 39:
+                    processResGrupo();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
                     break;
             }
@@ -722,6 +760,15 @@ public class WSRec extends PBase {
                 break;
             case 36:
                 plabel = "Frases";
+                break;
+            case 37:
+                plabel = "Salas";
+                break;
+            case 38:
+                plabel = "Mesas";
+                break;
+            case 39:
+                plabel = "Grupos de mesas";
                 break;
         }
 
@@ -903,8 +950,8 @@ public class WSRec extends PBase {
                 app.setDateRecep(du.getActDate());
                 msgboxwait("Recepción completa");
             } else {
-                msgboxexit("Configuración de tiendas y cajas incorrecta");
-                finish();
+                msgboxexit("Configuración de tienda o caja incorrecta");
+                //finish();
             }
 
             return true;
@@ -2449,10 +2496,132 @@ public class WSRec extends PBase {
         }
     }
 
+    private void processResSala() {
+
+        try {
+            clsP_res_salaObj handler = new clsP_res_salaObj(this, Con, db);
+            clsBeP_RES_SALAList items = new clsBeP_RES_SALAList();
+            clsBeP_RES_SALA item = new clsBeP_RES_SALA();
+            clsClasses.clsP_res_sala var;
+
+            script.add("DELETE FROM P_RES_SALA");
+
+            items = xobj.getresult(clsBeP_RES_SALAList.class, "GetP_RES_SALA");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_res_sala();
+
+                var.codigo_sala=item.CODIGO_SALA;
+                var.empresa=item.EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.nombre=item.NOMBRE;
+                var.activo=mu.bool(item.ACTIVO);
+                var.escala=item.ESCALA;
+                var.tam_letra=item.TAM_LETRA;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+
+    }
+
+    private void processResMesa() {
+
+        try {
+            clsP_res_mesaObj handler = new clsP_res_mesaObj(this, Con, db);
+            clsBeP_RES_MESAList items = new clsBeP_RES_MESAList();
+            clsBeP_RES_MESA item = new clsBeP_RES_MESA();
+            clsClasses.clsP_res_mesa var;
+
+            script.add("DELETE FROM P_RES_MESA");
+
+            items = xobj.getresult(clsBeP_RES_MESAList.class, "GetP_RES_MESA");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_res_mesa();
+
+                var.codigo_mesa=item.CODIGO_MESA;
+                var.empresa=item.EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.codigo_sala=item.CODIGO_SALA;
+                var.codigo_grupo=item.CODIGO_GRUPO;
+                var.nombre=item.NOMBRE;
+                var.largo=item.LARGO;
+                var.ancho=item.ANCHO;
+                var.posx=item.POSX;
+                var.posy=item.POSY;
+                var.codigo_qr=item.CODIGO_QR;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+
+    }
+
+    private void processResGrupo() {
+
+        try {
+            clsP_res_grupoObj handler = new clsP_res_grupoObj(this, Con, db);
+            clsBeP_RES_GRUPOList items = new clsBeP_RES_GRUPOList();
+            clsBeP_RES_GRUPO item = new clsBeP_RES_GRUPO();
+            clsClasses.clsP_res_grupo var;
+
+            script.add("DELETE FROM P_RES_GRUPO");
+
+            items = xobj.getresult(clsBeP_RES_GRUPOList.class, "GetP_RES_GRUPO");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_res_grupo();
+
+                var.codigo_grupo=item.CODIGO_GRUPO;
+                var.empresa=item.EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.nombre=item.NOMBRE;
+                var.telefono=""+item.TELEFONO;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+
+    }
+
+
     //endregion
 
     //region Aux
-
 
     private void updateLabel() {
         Handler handler = new Handler();

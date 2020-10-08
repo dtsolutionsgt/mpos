@@ -127,11 +127,15 @@ public class FELFactura extends PBase {
         lbl2.setText("Certificador : "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
 
+        /*
         if (felcorel.isEmpty()) {
             buildList();
         } else {
             facts.add(felcorel);
         }
+        */
+
+        facts.add(felcorel);
 
         ffail=0;fidx=0;
 
@@ -412,6 +416,7 @@ public class FELFactura extends PBase {
             //#EJC20200527: Quitar "-" del nit
             factf.nit =factf.nit.replace("-","");
             factf.nit =factf.nit.replace(".","");
+            factf.nit=factf.nit.toUpperCase();
 
             fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);
 
@@ -882,12 +887,8 @@ public class FELFactura extends PBase {
 
         try {
 
-            sql = "SELECT * FROM d_factura\n" +
-                    "WHERE feelcontingencia > 0  " +
-                    "AND anulado =0 and feelfechaprocesado = 0\n" +
-                    "AND feeluuid = ' '\n" +
-                    "ORDER BY fecha desc";
-
+            sql = "SELECT * FROM d_factura WHERE anulado =0   " +
+                    "AND feelfechaprocesado=0 AND feeluuid = ' ' ORDER BY fecha desc";
             D_facturaObj.fill(sql);
 
             facts.clear();
