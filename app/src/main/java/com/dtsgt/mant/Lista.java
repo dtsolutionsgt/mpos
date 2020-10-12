@@ -163,7 +163,7 @@ public class Lista extends PBase {
                 adapt=new listAdapt_desc(this,this,ViewObj.items);
                 listView.setAdapter(adapt);
             }else {
-                adapter=new LA_Lista(this,this,ViewObj.items);
+                adapter=new LA_Lista(this,this,ViewObj.items,gl.mantid);
                 listView.setAdapter(adapter);
             }
 
@@ -476,8 +476,10 @@ public class Lista extends PBase {
                 startActivity(new Intent(this, MantConceptoPago.class));break;
             case 22:
                 startActivity(new Intent(this, MantMotivoAjuste.class));break;
-
-
+            case 26:
+                startActivity(new Intent(this, MantResSala.class));break;
+            case 27:
+                startActivity(new Intent(this, MantResMesa.class));break;
             case 28:
                 startActivity(new Intent(this, MantResGrupo.class));break;
         }

@@ -12,41 +12,6 @@
             android:layout_height="92dp"
             android:background="@drawable/frame_rect_blue">
 
-            <TextView
-                android:id="@+id/textView178b2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="false"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="2dp"
-                android:layout_toStartOf="@+id/rel00"
-                android:gravity="center_horizontal"
-                android:text="Sala"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/textView179b3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/textView178b2"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="0dp"
-                android:layout_toStartOf="@+id/rel00"
-                android:gravity="center"
-                android:text="Sala 1"
-                android:textColor="#FFFFFF"
-                android:textSize="36sp"
-                android:textStyle="bold" />
-
             <RelativeLayout
                 android:id="@+id/rel00a"
                 android:layout_width="wrap_content"
@@ -83,8 +48,10 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="0dp"
+                    android:clickable="true"
                     android:gravity="center"
-                    android:text="Entrada"
+                    android:onClick="doGrupo"
+                    android:text="Area de mesas"
                     android:textColor="#FFFFFF"
                     android:textSize="36sp"
                     android:textStyle="bold" />
@@ -145,6 +112,17 @@
                     android:textSize="52sp"
                     android:textStyle="bold" />
             </RelativeLayout>
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="188dp"
+                android:layout_height="69dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="10dp"
+                android:onClick="doOrder"
+                android:text="Button" />
 
         </RelativeLayout>
 
@@ -207,6 +185,8 @@
         android:layout_alignParentBottom="false"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="0dp"
+        android:clickable="true"
+        android:onClick="doRec"
         android:padding="10dp"
         android:src="@drawable/recibir_rapido" />
 
@@ -219,6 +199,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
         android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:onClick="doExit"
         android:padding="5dp"
         android:src="@drawable/btn_exit" />
 

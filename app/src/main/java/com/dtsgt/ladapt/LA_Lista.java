@@ -27,13 +27,14 @@ public class LA_Lista extends BaseAdapter {
     private appGlobals appG;
 
     private ArrayList<clsClasses.clsLista> items = new ArrayList<clsClasses.clsLista>();
-    private int selectedIndex;
+    private int selectedIndex,mantid;
     private LayoutInflater l_Inflater;
 
-    public LA_Lista(Context context, PBase owner, ArrayList<clsClasses.clsLista> results) {
+    public LA_Lista(Context context, PBase owner, ArrayList<clsClasses.clsLista> results,int mant_id) {
         items = results;
         l_Inflater = LayoutInflater.from(context);
         selectedIndex = -1;
+        mantid=mant_id;
 
         mu = owner.mu;
         du = owner.du;
@@ -80,7 +81,7 @@ public class LA_Lista extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl2.setText("" + items.get(position).f1);
+        holder.lbl2.setText("" + items.get(position).f1);if (mantid==27) holder.lbl2.setText("");
         holder.lbl3.setText("" + items.get(position).f2);
         if(appG.banco){
             holder.lbl4.setText("" + items.get(position).f3);

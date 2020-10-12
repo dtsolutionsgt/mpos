@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.dtsgt.mant.MantResSala">
+        tools:context="com.dtsgt.mant.MantResMesa">
 
         <ImageView
             android:id="@+id/imgImg2"
@@ -64,7 +64,7 @@
                 android:layout_toRightOf="@+id/imgRoadTit"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:text="Sala"
+                android:text="Mesa"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#1A8AC6"
                 android:textSize="24sp"
@@ -85,11 +85,67 @@
             android:layout_marginBottom="5dp"
             android:background="@layout/frame_rect">
 
+            <Spinner
+                android:id="@+id/spinner21"
+                android:layout_width="300dp"
+                android:layout_height="42dp"
+                android:layout_below="@+id/txt17"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@+id/textView216"
+                android:background="@drawable/spinner_style" />
+
+            <Spinner
+                android:id="@+id/spinner20"
+                android:layout_width="100dp"
+                android:layout_height="42dp"
+                android:layout_below="@+id/textView214"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/textView216"
+                android:layout_toEndOf="@+id/textView217"
+                android:background="@drawable/spinner_style" />
+
+            <TextView
+                android:id="@+id/textView214"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/txt1"
+                android:layout_alignBottom="@+id/txt1"
+                android:layout_alignParentLeft="false"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/txt1"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Largo :"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/textView215"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/txt1"
+                android:layout_alignBottom="@+id/txt1"
+                android:layout_alignParentLeft="false"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/txt16"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Ancho :"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF" />
+
             <TextView
                 android:id="@+id/lblBU"
                 android:layout_width="wrap_content"
                 android:layout_height="10dp"
-                android:layout_below="@+id/textView2"
+                android:layout_below="@+id/textView217"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="5dp"
                 android:text="Small Text"
@@ -98,13 +154,47 @@
 
             <EditText
                 android:id="@+id/txt1"
-                android:layout_width="300dp"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="false"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/txt16"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@+id/textView214"
+                android:ems="10"
+                android:inputType="numberDecimal"
+                android:maxLength="15"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/txt17"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@+id/textView215"
+                android:ems="10"
+                android:inputType="numberDecimal"
                 android:maxLength="15"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -123,6 +213,38 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:text="Descripcion :"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/textView217"
+                android:layout_width="150dp"
+                android:layout_height="42dp"
+                android:layout_below="@+id/textView2"
+                android:layout_alignStart="@+id/textView2"
+                android:layout_alignParentLeft="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Sala :"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/textView216"
+                android:layout_width="150dp"
+                android:layout_height="42dp"
+                android:layout_below="@+id/textView2"
+                android:layout_alignStart="@+id/textView215"
+                android:layout_alignParentLeft="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Grupo mesas :"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF" />
 

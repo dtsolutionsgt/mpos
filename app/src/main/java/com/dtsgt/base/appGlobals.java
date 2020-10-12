@@ -25,7 +25,7 @@ public class appGlobals extends Application {
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente;
 	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel;
 	public String tiendanom,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
-	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid;
+	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,

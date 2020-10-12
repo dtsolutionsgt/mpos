@@ -214,9 +214,8 @@
     <RelativeLayout
         android:id="@+id/relEnter"
         android:layout_width="355dp"
-        android:layout_height="match_parent"
+        android:layout_height="320dp"
         android:layout_above="@id/relbotpan"
-        android:layout_below="@id/textView127"
         android:layout_alignParentRight="false"
         android:layout_alignParentBottom="false"
         android:layout_centerHorizontal="true">
@@ -229,8 +228,7 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:layout_marginBottom="5dp"
-            android:clickable="false"
-            >
+            android:clickable="false">
 
             <TextView
                 android:id="@+id/lblPass"
@@ -674,9 +672,8 @@
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="320dp"
         android:layout_above="@id/relbotpan"
-        android:layout_below="@id/textView127"
         android:layout_alignParentStart="false"
         android:layout_alignParentBottom="false"
         android:layout_marginLeft="10dp"

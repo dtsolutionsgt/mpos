@@ -157,7 +157,7 @@ public class ListaProveedores extends PBase {
                 adapt=new listAdapt_desc(this,this,ViewObj.items);
                 listView.setAdapter(adapt);
             }else {
-                adapter=new LA_Lista(this,this,ViewObj.items);
+                adapter=new LA_Lista(this,this,ViewObj.items,gl.mantid);
                 listView.setAdapter(adapter);
             }
 

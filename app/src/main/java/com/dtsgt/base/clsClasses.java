@@ -627,6 +627,12 @@ public class clsClasses {
         public double tam_letra;
     }
 
+    public class clsP_res_turno {
+        public long fecha;
+        public int  vendedor;
+        public int  codigo_grupo;
+    }
+
     public class clsP_stock {
         public int  codigo;
         public double cant;

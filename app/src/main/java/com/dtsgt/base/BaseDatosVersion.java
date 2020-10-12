@@ -125,6 +125,17 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [P_res_turno] ("+
+                    "FECHA INTEGER NOT NULL,"+
+                    "VENDEDOR INTEGER NOT NULL,"+
+                    "CODIGO_GRUPO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([FECHA],[VENDEDOR])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
     }
 
 	private boolean update01() {
@@ -247,7 +258,6 @@ public class BaseDatosVersion {
         return true;
 		
 	}
-	
 
 	//region Aux
 	
