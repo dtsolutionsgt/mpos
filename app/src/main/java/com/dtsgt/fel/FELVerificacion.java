@@ -127,6 +127,7 @@ public class FELVerificacion extends PBase {
         buildList();
 
         ffail=0;fidx=0;conerrflag=false;
+        fel.errorflag=false;fel.halt=false;
 
         rnFacturasFEL=new Runnable() {
             @Override
@@ -214,6 +215,18 @@ public class FELVerificacion extends PBase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void felProgress(String msg) {
+        Handler mtimer = new Handler();
+        Runnable mrunner = new Runnable() {
+            @Override
+            public void run() {
+                lbl1.setText(msg);
+            }
+        };
+        mtimer.postDelayed(mrunner,50);
     }
 
     private void callBackMulti() {

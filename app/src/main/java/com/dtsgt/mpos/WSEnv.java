@@ -19,6 +19,7 @@ import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturapObj;
+import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
@@ -62,11 +63,12 @@ public class WSEnv extends PBase {
     private ArrayList<String> cjReporte = new ArrayList<String>();
     private ArrayList<String> cjPagos = new ArrayList<String>();
     private ArrayList<String> cStock= new ArrayList<String>();
+    private ArrayList<String> cBita= new ArrayList<String>();
 
     private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
     private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend,
-                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend, cStockTot, cStockSend;
+                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend,cjFelBita, cStockTot, cStockSend;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
     @Override
@@ -174,6 +176,11 @@ public class WSEnv extends PBase {
                         cStockTot=cStock.size();
                         if (cStockTot>0) callMethod("Commit", "SQL", CSQL);
                         break;
+                    case 8:
+                        processFelBita();
+                        cjFelBita=cBita.size();
+                        if (cjFelBita>0) callMethod("Commit", "SQL", CSQL);
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();errorflag=true;
@@ -228,8 +235,13 @@ public class WSEnv extends PBase {
                     break;
                 case 7:
                     if (cStockTot>0) statusStock();
+                    execws(8);
+                    break;
+                case 8:
+                    if (cjFelBita>0) statusFelBita();
                     processComplete();
                     break;
+
             }
 
         } catch (Exception e) {
@@ -422,7 +434,8 @@ public class WSEnv extends PBase {
         ss="DELETE FROM P_CLIENTE_DIR WHERE (CODIGO_CLIENTE="+cliid+")";
         CSQL = CSQL + ss + ";";
 
-        ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
+        //ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
+        ss="DELETE FROM P_CLIENTE WHERE (CODIGO_CLIENTE="+cliid+")";
         CSQL = CSQL + ss + ";";
         ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
         CSQL = CSQL + ss + ";";
@@ -899,6 +912,43 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processFelBita() {
+        String codBita;
+
+        try {
+        cBita.clear();
+
+        clsD_fel_bitacoraObj D_fel_bitacoraObj=new clsD_fel_bitacoraObj(this,Con,db);
+        D_fel_bitacoraObj.fill("WHERE STATCOM=0");
+
+        CSQL="";
+
+        for (int i = 0; i <D_fel_bitacoraObj.count; i++) {
+
+            codBita = D_fel_bitacoraObj.items.get(i).corel;
+            ss=D_fel_bitacoraObj.addItemSql(D_fel_bitacoraObj.items.get(i));
+            CSQL = CSQL + ss + ";";
+
+            cBita.add(""+codBita);
+        }
+
+        } catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void statusFelBita() {
+        try {
+
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+            if (!rs.equalsIgnoreCase("#")) return;
+
+            sql="UPDATE D_fel_bitacora SET STATCOM=1 WHERE STATCOM=0";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+    }
+
     //endregion
 
     //region Aux
@@ -960,27 +1010,27 @@ public class WSEnv extends PBase {
             clsP_cajacierreObj P_cjCierreObj=new clsP_cajacierreObj(this,Con,db);
             P_cjCierreObj.fill("WHERE STATCOM='N'");
             cjCierreTot=P_cjCierreObj.count;
-
             total_enviar+=cjCierreTot;
 
             clsP_cajapagosObj P_cjPagoObj=new clsP_cajapagosObj(this,Con,db);
             P_cjPagoObj.fill("WHERE STATCOM='N'");
             cjPagosTot=P_cjPagoObj.count;
-
             total_enviar+=cjPagosTot;
 
             clsP_cajareporteObj P_cjReporteObj=new clsP_cajareporteObj(this,Con,db);
             P_cjReporteObj.fill("WHERE STATCOM='N'");
             cjReporteTot=P_cjReporteObj.count;
-
             total_enviar+=cjReporteTot;
 
             clsP_stockObj P_cStockObj=new clsP_stockObj(this,Con,db);
             P_cStockObj.fill("WHERE ENVIADO=0");
-
             cStockTot=P_cStockObj.count;
-
             total_enviar+=cStockTot;
+
+            clsD_fel_bitacoraObj D_fel_bitacoraObj=new clsD_fel_bitacoraObj(this,Con,db);
+            D_fel_bitacoraObj.fill("WHERE STATCOM=0");
+            cjFelBita=D_fel_bitacoraObj.count;
+            total_enviar+=cjFelBita;
 
             if(total_enviar>0){
 

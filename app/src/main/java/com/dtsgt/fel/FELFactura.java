@@ -19,6 +19,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
+import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_corelObj;
@@ -36,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,23 +46,28 @@ public class FELFactura extends PBase {
 
     // gl.peFEL  "SIN FEL", "INFILE"
 
-    private TextView lbl1,lbl2,lbl3;
+    private TextView lbl1,lbl2,lbl3,lblHalt;
     private ProgressBar pbar;
 
     private clsFELInFile fel;
     private WebServiceHandler ws;
     private XMLObject xobj;
 
-    private clsD_facturaObj D_facturaObj;
+    private clsD_facturaObj  D_facturaObj;
     private clsD_facturadObj D_facturadObj;
     private clsD_facturafObj D_facturafObj;
     private clsD_facturapObj D_facturapObj;
     private clsP_productoObj prod;
+    private clsD_fel_bitacoraObj D_fel_bitacoraObj;
 
     private clsClasses.clsD_factura fact=clsCls.new clsD_factura();
     private clsClasses.clsD_facturad factd=clsCls.new clsD_facturad();
     private clsClasses.clsD_facturaf factf=clsCls.new clsD_facturaf();
     private clsClasses.clsD_facturap factp=clsCls.new clsD_facturap();
+    private clsClasses.clsD_fel_bitacora fbita=clsCls.new clsD_fel_bitacora();
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss aa");
+    private Date systemTime,stime;
 
     private ArrayList<String> facts = new ArrayList<String>();
     private ArrayList<String> factlist = new ArrayList<String>();
@@ -81,6 +88,7 @@ public class FELFactura extends PBase {
         lbl1 = (TextView) findViewById(R.id.msgHeader);lbl1.setText("");
         lbl2 = (TextView) findViewById(R.id.lblWS);lbl2.setText("");
         lbl3 = (TextView) findViewById(R.id.textView152);lbl3.setText("");
+        lblHalt = (TextView) findViewById(R.id.textView218);lblHalt.setVisibility(View.VISIBLE);
         pbar = (ProgressBar) findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
@@ -116,11 +124,13 @@ public class FELFactura extends PBase {
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
         fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
+        fel.iduniflag=false;fel.halt=false;
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);
         D_facturafObj=new clsD_facturafObj(this,Con,db);
         D_facturapObj=new clsD_facturapObj(this,Con,db);
+        D_fel_bitacoraObj=new clsD_fel_bitacoraObj(this,Con,db);
         prod=new clsP_productoObj(this,Con,db);
 
         app.parametrosExtra();
@@ -161,6 +171,11 @@ public class FELFactura extends PBase {
 
     //region Events
 
+    public void doHalt(View viev) {
+        fel.halt=true;
+        lblHalt.setVisibility(View.INVISIBLE);
+    }
+
     //endregion
 
     //region Main
@@ -186,7 +201,28 @@ public class FELFactura extends PBase {
 
     private void certificacion() {
 
-        lbl1.setText("Certificando factura . . .");lbl3.setText("");
+        lbl1.setText("Procesando firma . . .");lbl3.setText("");
+
+        try {
+            fbita.empresa=gl.emp;
+            fbita.codigo_sucursal=gl.tienda;
+            fbita.codigo_ruta=gl.codigo_ruta;
+            fbita.corel=felcorel;
+            fbita.fecha=du.getActDateTime();
+            fbita.tiempo_firma=-1;
+            fbita.tiempo_cert=-1;
+            fbita.estado=-1;
+            fbita.codigo_vendedor=gl.codigo_vendedor;
+            fbita.statcom=0;
+
+            D_fel_bitacoraObj.add(fbita);
+
+            systemTime=Calendar.getInstance().getTime();
+            fel.ftime1=systemTime.getTime();
+
+        } catch (Exception e) {
+            String ee=e.getMessage();
+        }
 
         contmode=false;
 
@@ -209,6 +245,32 @@ public class FELFactura extends PBase {
         long corcont,mcont;
 
         int ii=0;
+        long tdiff;
+        double tsec;
+
+        try {
+            Date systemTime=Calendar.getInstance().getTime();
+            fel.ftime3=systemTime.getTime();
+
+            if (fel.ftime1>0) {
+                if (fel.ftime2>0) {
+                    tdiff=fel.ftime2-fel.ftime1;
+                    tsec=((double) tdiff)/1000;
+                    fbita.tiempo_firma=tsec;
+                    if (fel.ftime3>0) {
+                        tdiff=fel.ftime3-fel.ftime2;
+                        tsec=((double) tdiff)/1000;
+                        fbita.tiempo_cert=tsec;
+                    }
+
+                    fbita.estado=1;
+                    if (fel.halt) fbita.estado=0;
+
+                    D_fel_bitacoraObj.update(fbita);
+                }
+            }
+        } catch (Exception e) {}
+
 
         try {
 
@@ -308,6 +370,18 @@ public class FELFactura extends PBase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void felProgress(String msg) {
+        Handler mtimer = new Handler();
+        Runnable mrunner = new Runnable() {
+            @Override
+            public void run() {
+                lbl1.setText(msg);
+            }
+        };
+        mtimer.postDelayed(mrunner,50);
     }
 
     private void callBackMulti() {
@@ -1091,6 +1165,7 @@ public class FELFactura extends PBase {
             D_facturadObj.reconnect(Con,db);
             D_facturafObj.reconnect(Con,db);
             D_facturapObj.reconnect(Con,db);
+            D_fel_bitacoraObj.reconnect(Con,db);
             prod.reconnect(Con,db);
         } catch (Exception e) {
             msgbox2(e.getMessage());

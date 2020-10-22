@@ -37,12 +37,15 @@ public class clsFELInFile {
 
     public String error,fecha_factura;
     public Boolean errorflag,errorcon,constat,duplicado,errcert,errfirma,modoiduni,iduniflag;
+    public Boolean halt=false;
     public int errlevel,response;
     public long idcontingencia;
 
     public String xml,xmlanul;
     public String fact_uuid,fact_serie,fact_numero;
     public String ret_uuid,ret_serie,ret_numero;
+
+    public long ftime1=1,ftime2=-1,ftime3=-1;
 
     // Parametrizacion FEL
 
@@ -242,12 +245,25 @@ public class clsFELInFile {
 
     private void wsFinishedF() {
         try  {
-            if (!errorflag) {
-                Date currentTime = Calendar.getInstance().getTime();
-                Log.i("FEL_CERT: ", currentTime.toString());
-                sendJSONCert();
-            } else {
+
+            if (halt) {
+                errorflag=true;error="Interrupido por usuario";
                 parent.felCallBack();
+            } else {
+                if (!errorflag) {
+                    Date currentTime = Calendar.getInstance().getTime();
+                    Log.i("FEL_CERT: ", currentTime.toString());
+                    sendJSONCert();
+
+                    try {
+                        parent.felProgress("Certificando factura ...");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    parent.felCallBack();
+                }
             }
         } catch (Exception e) {}
     }
@@ -284,6 +300,11 @@ public class clsFELInFile {
     public void sendJSONCert() {
 
         errlevel=2;
+
+        try {
+            Date systemTime=Calendar.getInstance().getTime();
+            ftime2=systemTime.getTime();
+        } catch (Exception e) {}
 
         try {
 

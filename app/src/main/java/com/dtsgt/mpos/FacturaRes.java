@@ -1499,13 +1499,14 @@ public class FacturaRes extends PBase {
                 fcorel++;
             }
 
-            if (fcorel>cf) {
-                mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");
-                fcorel=0;return;
+            if (!app.usaFEL()) {
+                if (fcorel>cf) {
+                    mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");
+                    fcorel=0;return;
+                }
+                //#HS_20181128_1602 Cambie el texto del mensaje.
+                if (fcorel==cf) mu.msgbox("Esta es la última factura disponible.");
             }
-
-            //#HS_20181128_1602 Cambie el texto del mensaje.
-            if (fcorel==cf) mu.msgbox("Esta es la última factura disponible.");
 
             if (gl.peMFact) s="Factura : ";else s="Ticket : ";
             lblFact.setText(s+fserie+" - "+fcorel+" , Talonario : "+fcorel+" / "+cf);

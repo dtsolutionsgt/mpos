@@ -248,13 +248,17 @@ public class Caja extends PBase {
                 sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
                         "FROM D_FACTURAP P " +
                         "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                        "WHERE F.KILOMETRAJE=0 AND P.CODPAGO=5 " +
+                        "WHERE F.KILOMETRAJE=0 AND P.TIPO='K' " +
                         "GROUP BY P.CODPAGO";
 
                 dt=Con.OpenDT(sql);
 
                 if(dt==null) throw new Exception();
-                if(dt.getCount()==0) totCred=0; else totCred = dt.getDouble(1);
+                if(dt.getCount()==0) {
+                    totCred=0;
+                } else{
+                    totCred = dt.getDouble(1);
+                }
                 if(dt!=null) dt.close();
 
                 montoDifCred = montoCred - totCred;

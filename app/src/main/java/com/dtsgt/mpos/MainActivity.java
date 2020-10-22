@@ -54,7 +54,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.22 / 08-Oct-2020";
+    private String parVer = " 3.2.27 / 22-Oct-2020";
 
     private Typeface typeface;
 
@@ -199,6 +199,7 @@ public class MainActivity extends PBase {
             if (gl.rol != 4) {
                 startActivity(new Intent(this,Menu.class));
             } else {
+                gl.idmesero=gl.codigo_vendedor;
                 startActivity(new Intent(this,ResMesero.class));
             }
         } catch (Exception e) {
@@ -461,6 +462,8 @@ public class MainActivity extends PBase {
 
         try {
 
+            gl.idmesero=0;
+
             if (usr.isEmpty()) {
 
                 mu.msgbox("Usuario incorrecto.");
@@ -505,21 +508,21 @@ public class MainActivity extends PBase {
                 gl.modoinicial = false;
             }
 
-            if (gl.rol != 3) {
-                sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO, CODIGO_VENDEDOR FROM VENDEDORES " +
-                        "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
-                DT = Con.OpenDT(sql);
+            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO, CODIGO_VENDEDOR FROM VENDEDORES " +
+                    "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
+            DT = Con.OpenDT(sql);
 
+            if (gl.rol != 3) {
                 if (DT.getCount() == 0) {
                     mu.msgbox("¡El usuario no tiene permiso de ingreso para " + gl.tiendanom + "!");
                     return false;
                 }
             }
 
-            gl.vendnom = DT.getString(0);
-            gl.vend = usr;
-            gl.codigo_vendedor = DT.getInt(4);;
-            gl.vnivprec = DT.getInt(3);
+            gl.vendnom=DT.getString(0);
+            gl.vend=usr;
+            gl.codigo_vendedor=DT.getInt(4);
+            gl.vnivprec=DT.getInt(3);
 
             khand.clear();
             khand.enable();

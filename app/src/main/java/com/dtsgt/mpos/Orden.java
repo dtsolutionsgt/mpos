@@ -41,6 +41,7 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ventaObj;
@@ -52,7 +53,6 @@ import com.dtsgt.ladapt.ListAdaptGridProd;
 import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptOrden;
-import com.dtsgt.ladapt.ListAdaptVenta;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -64,17 +64,16 @@ public class Orden extends PBase {
 
     private ListView listView;
     private GridView gridView,grdbtn,grdfam,grdprod;
-    private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant,lblBarra;
+    private TextView lblTot,lblTit,lblAlm,lblVend;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
-    private EditText txtBarra,txtFilter;
-    private ImageView imgroad,imgscan;
-    private RelativeLayout relScan;
+    private ImageView imgroad;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
     private ListAdaptOrden adapter;
     private clsVenta selitem;
     private Precio prc;
-    private clsKeybHandler khand;
+
+    //private clsKeybHandler khand;
 
     private ListAdaptMenuVenta adaptergrid;
     private ListAdaptMenuVenta adapterb;
@@ -94,7 +93,6 @@ public class Orden extends PBase {
 
     private AppMethods app;
 
-    private clsD_pedidoObj D_pedidoObj;
     private clsP_nivelprecioObj P_nivelprecioObj;
     private clsP_productoObj P_productoObj;
 
@@ -107,12 +105,11 @@ public class Orden extends PBase {
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
     private int nivel,dweek,clidia,counter;
-    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private int codigo_cliente, emp,pedidoscant,cod_prod;
-    private String cliid,saveprodid;
+    private int codigo_cliente, emp,cod_prod;
+    private String idorden,cliid,saveprodid;
     private int famid = -1;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,15 +123,12 @@ public class Orden extends PBase {
         P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
         P_nivelprecioObj.fill("ORDER BY Nombre");
 
-        //gl.cliente="";
-        //gl.iniciaVenta=false;
         gl.scancliente="";
         emp=gl.emp;
-        gl.nivel=gl.nivel_sucursal;
-        setNivel();
+        gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
+        idorden=gl.idorden;
 
         cliid=gl.cliente;
-        //cliid="0"; #CKFK 20200515 puse esto en comentario porque primero se le asigna el Id de cliente
         decimal=false;
 
         gl.atentini=du.getActDateTime();
@@ -144,10 +138,7 @@ public class Orden extends PBase {
 
         getURL();
 
-        pedidos=gl.pePedidos;
-        D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
-
 
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
@@ -157,21 +148,19 @@ public class Orden extends PBase {
         counter=1;
 
         prc=new Precio(this,mu,2);
-        khand=new clsKeybHandler(this,lblCant,lblKeyDP);
 
-        menuItems();
         setHandlers();
         initValues();
 
         browse=0;
-        txtBarra.requestFocus();txtBarra.setText("");
         clearItem();
 
         if (P_nivelprecioObj.count==0) {
             toastlong("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");finish();return;
         }
 
-        imgflag=gl.peMImg;
+        imgflag=false;//imgflag=gl.peMImg;
+
         setVisual();
 
         checkLock();
@@ -195,12 +184,6 @@ public class Orden extends PBase {
 
     }
 
-    public void doFocus(View view) {
-        try {
-            txtBarra.requestFocus();
-        } catch (Exception e) {}
-    }
-
     public void showPromo(View view){
         try{
             gl.gstr="*";
@@ -214,39 +197,7 @@ public class Orden extends PBase {
 
     }
 
-    public void doSoftScan(View view) {
-		/*if (softscanexist) {
-			try{
-				browse=5;barcode="";
-
-				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-				intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "QR_CODE_MODE");
-				startActivityForResult(intent, 0);
-			}catch (Exception e){
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			}
-		//} else {*/
-        doFocus(view);
-        //}
-    }
-
-    public void doNivel(View view) {
-        showNivelMenu();
-    }
-
-    public void doKey(View view) {
-        khand.handleKey(view.getTag().toString());
-        if (khand.isEnter) {
-            barcode=khand.getStringValue();
-            if (!barcode.isEmpty()) addBarcode();
-        }
-    }
-
     public void subItemClick(int position,int handle) {
-    }
-
-    public void doFocusScan(View view) {
-        txtBarra.requestFocus();
     }
 
     private void setHandlers(){
@@ -265,19 +216,6 @@ public class Orden extends PBase {
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    /*
-                    if (listflag) listflag=false;else return;
-
-                    Handler mtimer = new Handler();
-                    Runnable mrunner=new Runnable() {
-                        @Override
-                        public void run() {
-                            listflag=true;
-                        }
-                    };
-                    mtimer.postDelayed(mrunner,1000);
-                    */
-
 
                     try {
                         Object lvObj = listView.getItemAtPosition(position);
@@ -341,30 +279,6 @@ public class Orden extends PBase {
                 }
             });
 
-            txtBarra.addTextChangedListener(new TextWatcher() {
-
-                public void afterTextChanged(Editable s) {}
-
-                public void beforeTextChanged(CharSequence s, int start,int count, int after) { }
-
-                public void onTextChanged(CharSequence s, int start,int before, int count) {
-                    //mu.msgbox("start "+start+" before "+before+" count "+count);
-
-                    final CharSequence ss=s;
-
-                    if (!scanning) {
-                        scanning=true;
-                        Handler handlerTimer = new Handler();
-                        handlerTimer.postDelayed(new Runnable(){
-                            public void run() {
-                                compareSC(ss);
-                            }}, 500);
-                    }
-
-
-                }
-            });
-
             grdfam.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
@@ -414,15 +328,7 @@ public class Orden extends PBase {
                         gl.menuitemid=prodid;
                         menuitemadd=true;
 
-                        if (khand.val.isEmpty()) {
-                            processItem(false);
-                        } else {
-                            try {
-                                kcant=Integer.parseInt(khand.val);
-                                if (kcant>0) processItem(kcant);
-                            } catch (Exception e) { }
-                            khand.clear();
-                        }
+                        processItem(false);
 
                     } catch (Exception e) {
                         String ss=e.getMessage();
@@ -458,21 +364,6 @@ public class Orden extends PBase {
 
                         adaptergrid.setSelectedIndex(position);
                         processMenuTools(item.ID);
-                    } catch (Exception e) {
-                        String ss=e.getMessage();
-                    }
-                };
-            });
-
-            grdbtn.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        Object lvObj = grdbtn.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
-
-                        adapterb.setSelectedIndex(position);
-                        processMenuItems(item.ID);
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
@@ -612,8 +503,6 @@ public class Orden extends PBase {
             gl.um=app.umVenta(prodid); um=gl.um;
             gl.bonprodid=prodid;
 
-            khand.enable();khand.focus();
-
             prodPrecio();
             saveprec=mu.round2(prc.preciobase);
 
@@ -640,100 +529,6 @@ public class Orden extends PBase {
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-    }
-
-    private void processItem(int prcant){
-
-        try{
-
-            String pid=gl.gstr;
-            if (mu.emptystr(pid)) return;
-
-            prodid=pid;
-
-            gl.um=app.umVenta(prodid); um=gl.um;
-            gl.bonprodid=prodid;
-
-            khand.enable();khand.focus();
-
-            prodPrecio();
-
-            gl.dval=prcant;
-            gl.limcant=getDisp(prodid);
-            tipo=prodTipo(gl.prodcod);
-            gl.tipoprodcod=tipo;
-
-            if (!tipo.equalsIgnoreCase("M")) {
-                if (tipo.equalsIgnoreCase("P")) {
-                    if (gl.limcant>0) {
-                        processCant(false);
-                    } else {
-                        msgAskLimit("\"El producto \"+ pprodname+\" no tiene existencia disponible.\n¿Continuar con la venta?",false);
-                    }
-                } else if (tipo.equalsIgnoreCase("S")) {
-                    processCant(false);
-                }
-            } else if (tipo.equalsIgnoreCase("M")){
-                processMenuItem();
-            }
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private boolean processProdBarra(String barra) {
-        Cursor DT;
-
-        txtBarra.setText("");
-        txtBarra.requestFocus();
-
-        try {
-
-            sql="SELECT CODIGO,DESCLARGA FROM P_PRODUCTO WHERE (CODBARRA='"+barra+"') OR (CODIGO='"+barra+"')";
-            DT=Con.OpenDT(sql);
-            if (DT.getCount()==0) {
-                toast("Barra no existe");return false;
-            }
-
-            DT.moveToFirst();
-            gl.gstr=DT.getString(0);
-            gl.pprodname=DT.getString(1);
-            if (DT!=null) DT.close();
-
-            processItem(false);
-
-            txtBarra.requestFocus();
-
-            return true;
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox(e.getMessage());return false;
-        }
-    }
-
-    private void setCant(){
-        Cursor dt;
-        double icant;
-
-        try {
-            sql="SELECT CANT FROM T_VENTA WHERE PRODUCTO='"+prodid+"'";
-            dt=Con.OpenDT(sql);
-
-            if(dt.getCount()>0) {
-                dt.moveToFirst();
-                icant = dt.getDouble(0);
-            } else {
-                icant =0;
-            }
-
-            if (dt!=null) dt.close();
-        } catch (Exception e) {
-            icant=0;
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-        }
-
-        khand.setValue(icant);
-        khand.enable();khand.focus();
     }
 
     private void processCant(boolean updateitem){
@@ -1195,415 +990,19 @@ public class Orden extends PBase {
         }
     }
 
-    public void finalizarOrden(){
-
-        try{
-            clsBonifGlob clsBonG;
-            clsDeGlob clsDeG;
-            String s,ss;
-
-            if (!hasProducts())  {
-                mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
-            }
-
-            if (gl.cliente.isEmpty()) {
-                toast("Cliente pendiente");
-                browse=8;
-                startActivity(new Intent(this,Clientes.class));
-                return;
-            }
-
-            gl.gstr="";
-            browse=1;
-
-            gl.bonprodid="*";
-            gl.bonus.clear();
-            gl.descglob=0;
-            gl.descgtotal=0;
-
-            clsDeG=new clsDeGlob(this,tot);ss="";
-
-            if (!app.usaFEL()) {
-                if (clsDeG.tieneDesc()) {
-                    gl.descglob=clsDeG.valor;
-                    gl.descgtotal=clsDeG.vmonto;
-                }
-            }
-
-            // Bonificacion
-
-            gl.bonprodid="*";
-            gl.bonus.clear();
-
-            /*
-            clsBonG=new clsBonifGlob(this,tot);
-            if (clsBonG.tieneBonif()) {
-                for (int i = 0; i <clsBonG.items.size(); i++) {
-                    //s=clsBonG.items.get(i).valor+"   "+clsBonG.items.get(i).tipolista+"  "+clsBonG.items.get(i).lista;
-                    //Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
-                    gl.bonus.add(clsBonG.items.get(i));
-                }
-            } else {
-
-            }
-            */
-
-            if (gl.dvbrowse!=0){
-                if (tot<gl.dvdispventa){
-                    mu.msgbox("No puede totalizar la factura, es menor al monto permitido para la nota de crédito: " + gl.dvdispventa);return;
-                }
-            }
-            gl.brw=0;
-
-            browse=0;
-
-            gridView.setEnabled(false);
-
-            Intent intent = new Intent(this,FacturaRes.class);
-            startActivity(intent);
-
-            if (gl.bonus.size()>0) {
-                //Intent intent = new Intent(this,BonList.class);
-                //startActivity(intent);
-            }
-        } catch (Exception e){
-            gridView.setEnabled(true);
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            mu.msgbox("finishOrder: "+e.getMessage());
-        }
-    }
-
-    //endregion
-
-    //region Barras
-
-    private void addBarcode() {
-        gl.barra=barcode;
-
-        if (barraProducto()) {
-            txtBarra.setText("");return;
-        } else {
-            toastlong("¡La barra "+barcode+" no existe!");
-            txtBarra.setText("");
-        }
-    }
-
-    private void actualizaTotalesBarra() {
-        Cursor dt;
-        int ccant;
-        double ppeso,pprecio;
-
+    private void cerrarCuenta() {
         try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+            sess.estado=-1;
+            sess.fechault=du.getActDateTime();
+            P_res_sesionObj.update(sess);
 
-            //sql="SELECT COUNT(BARRA),SUM(PESO),SUM(PRECIO) FROM T_BARRA WHERE CODIGO='"+prodid+"'";
-            //#CKFK 20190410 se modificó esta consulta para sumar la cantidad y no contar las barras
-            sql="SELECT SUM(CANTIDAD),SUM(PESO),SUM(PRECIO) FROM T_BARRA WHERE CODIGO='"+prodid+"'";
-            dt=Con.OpenDT(sql);
-
-            ccant=0;ppeso=0;pprecio=0;
-
-            if (dt.getCount()>0) {
-                dt.moveToFirst();
-
-                ccant=dt.getInt(0);
-                ppeso=dt.getDouble(1);
-                pprecio=dt.getDouble(2);
-                if (dt!=null) dt.close();
-            }
-
-            sql="UPDATE T_VENTA SET Cant="+ccant+",Peso="+ppeso+",Total="+pprecio+" WHERE PRODUCTO='"+prodid+"'";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_VENTA WHERE Cant=0";
-            db.execSQL(sql);
-
-            listItems();
+            finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-    }
-
-    private boolean barraProducto() {
-        Cursor dt;
-
-        try {
-
-            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA " +
-                    "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
-                    "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO)  " +
-                    "WHERE (P_STOCK.CANT > 0) AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"')) ";
-            sql += "UNION ";
-            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA FROM P_PRODUCTO " +
-                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) " +
-                    "AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"'))  COLLATE NOCASE";
-
-            dt=Con.OpenDT(sql);
-
-            if (dt.getCount()>0) {
-                dt.moveToFirst();
-                khand.clear(true);
-
-                gl.gstr=dt.getString(0);gl.um="UN";
-                gl.pprodname=dt.getString(1);
-                if (dt!=null) dt.close();
-
-                processItem(false);
-                return true;
-            }
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-        return false;
-    }
-
-    private void borraBarra() {
-        clsBonif clsBonif;
-        int bcant,bontotal,boncant,bfaltcant,bon;
-        String bprod="";
-
-        try {
-            db.execSQL("DELETE FROM T_BARRA WHERE BARRA='"+gl.barra+"' AND CODIGO='"+prodid+"'");
-            actualizaTotalesBarra();
-
-            gl.bonbarprod=prodid;
-
-            bcant=cantBolsa();
-            boncant=cantBonif();
-            bfaltcant=cantFalt();
-
-            clsBonif = new clsBonif(this, prodid, bcant, 0);
-            if (clsBonif.tieneBonif()) {
-                bon=(int) clsBonif.items.get(0).valor;
-                bprod=clsBonif.items.get(0).lista;
-                gl.bonbarid=clsBonif.items.get(0).lista;
-            } else {
-                bon=0;gl.bonbarid="";
-            }
-
-            bontotal=boncant+bfaltcant;
-
-            //toast("Bolsas : "+bcant+" bon : "+bon+"  / "+bontotal);
-            if (bon<bontotal) {
-                removerBonif(bprod,(bontotal-bon));
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private int cantBolsa() {
-        try {
-            sql="SELECT BARRA FROM T_BARRA WHERE CODIGO='"+prodid+"'";
-            Cursor dt=Con.OpenDT(sql);
-
-            int i=dt.getCount();
-            if (dt!=null) dt.close();
-            return i;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            return 0;
-        }
-    }
-
-    private int cantBonif() {
-        try {
-            sql="SELECT BARRA FROM T_BARRA_BONIF WHERE PRODUCTO='"+prodid+"'";
-            Cursor dt=Con.OpenDT(sql);
-            int i=dt.getCount();
-            if (dt!=null) dt.close();
-            return i;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            return 0;
-        }
-    }
-
-    private int cantFalt() {
-        try {
-            sql="SELECT PRODID FROM T_BONIFFALT WHERE PRODUCTO='"+prodid+"'";
-            Cursor dt=Con.OpenDT(sql);
-            int i=dt.getCount();
-            if (dt!=null) dt.close();
-            return i;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            return 0;
-        }
-    }
-
-    private void removerBonif(String bprod,int bcant) {
-        Cursor dt;
-        String barra,sbarra="";
-        int bc=0;
-
-        try {
-            for (int i = 1; i == bcant; i++) {
-
-                sql = "SELECT CANT FROM T_BONIFFALT WHERE (PRODID='"+prodid+"') ";
-                dt = Con.OpenDT(sql);
-
-                if (dt.getCount() > 0) {
-                    dt.moveToFirst();
-
-                    sql="UPDATE T_BONIFFALT SET CANT=CANT-1 WHERE (PRODID='"+prodid+"') ";
-                    db.execSQL(sql);
-
-                    sql="DELETE FROM T_BONIFFALT WHERE CANT=0";
-                    db.execSQL(sql);
-
-                } else {
-
-                    sql = "SELECT BARRA FROM T_BARRA_BONIF WHERE (PRODUCTO='"+prodid+"') ";
-                    dt = Con.OpenDT(sql);
-
-                    if (dt.getCount() > 0) {
-                        dt.moveToLast();
-                        barra=dt.getString(0);sbarra+=barra+"\n";bc++;
-
-                        sql = "DELETE FROM T_BARRA_BONIF WHERE (PRODUCTO='"+prodid+"') AND (BARRA='"+barra+"') ";
-                        db.execSQL(sql);
-                    }
-                }
-
-                if (dt!=null) dt.close();
-            }
-
-            reportBonif();
-
-            if (bc>0) msgbox("Las barra devueltas : \n"+sbarra);
-
-        } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-        }
-    }
-
-    private void reportBonif() {
-        int bont,bon,bonf;
-
-        bon=cantBonif();
-        bonf=cantFalt();
-        bont=bon+bonf;
-
-        if (bonf==0) {
-            toast("Bonificación actual : "+bon);
-        } else {
-            toast("Bonificación actual : "+bon+" / "+bont);
-        }
-
-    }
-
-    //endregion
-
-    //region No atencion
-
-    public void showAtenDialog() {
-        try{
-            final AlertDialog Dialog;
-
-            final String[] selitems = new String[lname.size()];
-            for (int i = 0; i < lname.size(); i++) {
-                selitems[i] = lname.get(i);
-            }
-
-            mMenuDlg = new ExDialog(this);
-
-            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    try {
-                        String s=lcode.get(item);
-                        setNoAtt(s);
-                        doExit();
-                    } catch (Exception e) {
-                    }
-                }
-            });
-
-            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-
-            Dialog = mMenuDlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void setNoAtt(String scna){
-        int cna;
-
-        try {
-            cna=Integer.parseInt(scna);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            return;
-        }
-
-        //int cliid = gl.cliente; #CKFK 2020515
-
-        saveAtten(""+cna);
-    }
-
-    private void saveAtten(String codnoate) {
-        long ti,tf,td;
-
-        ti=gl.atentini;tf=du.getActDateTime();
-        td=du.timeDiff(tf,ti);if (td<1) td=1;
-
-        try {
-            ins.init("D_ATENCION");
-
-            ins.add("RUTA",gl.ruta);
-            ins.add("FECHA",ti);
-            ins.add("HORALLEG",du.shora(ti)+":00");
-            ins.add("HORASAL",du.shora(tf)+":00");
-            ins.add("TIEMPO",td);
-
-            ins.add("VENDEDOR",gl.vend);
-            ins.add("CLIENTE",gl.cliente);
-            ins.add("DIAACT",du.dayofweek(ti));
-            ins.add("DIA",du.dayofweek(ti));
-            ins.add("DIAFLAG","S");
-
-            ins.add("SECUENCIA",1);
-            ins.add("SECUENACT",1);
-            ins.add("CODATEN",codnoate);
-            ins.add("KILOMET",0);
-
-            ins.add("VALORVENTA",0);
-            ins.add("VALORNEXT",0);
-            ins.add("CLIPORDIA",clidia);
-            ins.add("CODOPER","X");
-            ins.add("COREL","");
-
-            if (gl.gpspass) ins.add("SCANNED","G");else ins.add("SCANNED",gl.escaneo);
-            ins.add("STATCOM","N");
-            ins.add("LLEGO_COMPETENCIA_ANTES",0);
-
-            ins.add("CoorX",gl.gpspx);
-            ins.add("CoorY",gl.gpspy);
-            ins.add("CliCoorX",gl.gpscpx);
-            ins.add("CliCoorY",gl.gpscpy);
-            ins.add("Dist",gl.gpscdist);
-
-            db.execSQL(ins.sql());
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            //mu.msgbox("Error : " + e.getMessage());
-        }
-
     }
 
     //endregion
@@ -1661,31 +1060,6 @@ public class Orden extends PBase {
 
     }
 
-    private void msgAskBarra(String msg) {
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg  + " ?");
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    borraBarra();
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-
-    }
-
     private void msgAskAdd(String msg) {
         try{
 
@@ -1732,7 +1106,6 @@ public class Orden extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
-
 
     //endregion
 
@@ -1840,122 +1213,6 @@ public class Orden extends PBase {
 
     }
 
-    private void menuItems() {
-
-        clsClasses.clsMenu item;
-
-        menuTools();
-
-        try {
-            mmitems.clear();
-
-            try {
-
-                if (pedidos) {
-                    item = clsCls.new clsMenu();
-                    item.ID=61;item.Name="Orden ";item.Icon=61;
-                    mmitems.add(item);
-                }
-
-                if (gl.peImpOrdCos) {
-                    item = clsCls.new clsMenu();
-                    item.ID=62;item.Name="Comanda";item.Icon=62;
-                    mmitems.add(item);
-                }
-
-                item = clsCls.new clsMenu();
-                item.ID=50;item.Name="Buscar ";item.Icon=50;
-                mmitems.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=52;item.Name="Cliente";item.Icon=52;
-                mmitems.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=54;item.Name="Borrar linea ";item.Icon=54;
-                mmitems.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=55;item.Name="Borrar todo ";item.Icon=55;
-                mmitems.add(item);
-
-                item = clsCls.new clsMenu();
-                item.ID=56;item.Name="Ventas";item.Icon=56;
-                //mmitems.add(item);
-
-                //item = clsCls.new clsMenu();
-                //item.ID=51;item.Name="Barra";item.Icon=51;
-                //mmitems.add(item);
-
-                //item = clsCls.new clsMenu();
-                //item.ID=53;item.Name="Bloquear";item.Icon=53;
-                //mmitems.add(item);
-
-            } catch (Exception e) {
-                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            }
-
-            adapterb=new ListAdaptMenuVenta(this, mmitems);
-            grdbtn.setAdapter(adapterb);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-
-    private void processMenuItems(int menuid) {
-        try {
-
-            switch (menuid) {
-                case 50:
-                    gl.gstr = "";
-                    browse = 1;
-                    gl.prodtipo = 1;
-                    startActivity(new Intent(this, Producto.class));
-                    break;
-                case 51:
-                    if (khand.isValid) {
-                        barcode = khand.val;
-                        addBarcode();
-                    }
-                    break;
-                case 52:
-                    if (!gl.exitflag) {
-                        browse = 8;
-                        gl.climode = false;
-
-                        if (usarbio) {
-                            startActivity(new Intent(Orden.this, Clientes.class));
-                        } else {
-                            if (!gl.forcedclose) {
-                                startActivity(new Intent(Orden.this, CliPos.class));
-                            }
-                        }
-                    }
-                    break;
-                case 53:
-                    break;
-                case 54:
-                    if (!gl.ventalock) borraLinea();else toast("No se puede modificar el orden");
-                    break;
-                case 55:
-                    if (!gl.ventalock) borraTodo();else toast("No se puede modificar el orden");
-                    break;
-                case 56:
-                    showMenuSwitch();
-                    break;
-                case 61:
-                    msgAskOrden("Convertir al orden");
-                    break;
-                case 62:
-                    if (hasProducts()) inputMesa(); else toastcent("El orden está vacio");
-                    break;
-            }
-        } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
-    }
-
     private void menuTools() {
 
         clsClasses.clsMenu item;
@@ -1965,61 +1222,24 @@ public class Orden extends PBase {
         try {
 
             item = clsCls.new clsMenu();
+            item.ID=52;item.Name="Cuentas";item.Icon=12;
+            mitems.add(item);
+
+            item = clsCls.new clsMenu();
+            item.ID=3;item.Name="Preimpresión";item.Icon=3;
+            mitems.add(item);
+
+            item = clsCls.new clsMenu();
             item.ID=1;item.Name="Pago";item.Icon=58;
             mitems.add(item);
 
-            if (app.usaFEL()) {
-                int pendfel=pendienteFEL();
-
-                if (pendfel>0) {
-                    item = clsCls.new clsMenu();
-                    item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
-                    mitems.add(item);
-                }
-
-            }
-
-            if (pedidos) {
-                item = clsCls.new clsMenu();
-                item.ID=16;item.Name="Pedidos";item.Icon=16;item.cant=pedidoscant+1;
-                mitems.add(item);
-            }
-
             item = clsCls.new clsMenu();
-            item.ID=3;item.Name="Reimpresión";item.Icon=3;
-            mitems.add(item);
-
-            if (gl.rol>1) {
-                item = clsCls.new clsMenu();
-                item.ID=4;item.Name="Anulación";item.Icon=4;
-                mitems.add(item);
-            }
-
-            item = clsCls.new clsMenu();
-            item.ID=14;item.Name="Actualizar";item.Icon=14;
-            mitems.add(item);
-
-            item = clsCls.new clsMenu();
-            item.ID=26;item.Name="Reportes";item.Icon=60;
-            mitems.add(item);
-
-            item = clsCls.new clsMenu();
-            item.ID=25;item.Name="Cierra Caja";item.Icon=59;
+            item.ID=50;item.Name="Buscar ";item.Icon=64;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
             item.ID=24;item.Name="Salir";item.Icon=57;
             mitems.add(item);
-
-            /*
-            item = clsCls.new clsMenu();
-            item.ID=7;item.Name="Existencias";item.Icon=7;
-            mitems.add(item);
-
-            item = clsCls.new clsMenu();
-            item.ID=101;item.Name="Baktún";item.Icon=101;
-            mitems.add(item);
-            */
 
             adaptergrid=new ListAdaptMenuVenta(this, mitems);
             gridView.setAdapter(adaptergrid);
@@ -2033,400 +1253,22 @@ public class Orden extends PBase {
         try {
             switch (menuid) {
                 case 1:
-                    finalizarOrden();break;
-                case 3:
-                    menuImprDoc(3);break;
-                case 4:
-                    gl.tipo=3;menuAnulDoc();break;
-                case 14:
-                    showQuickRecep();break;
-                case 15:
-                    msgAskFEL("Certificar ("+pendienteFEL()+") factura(s) pendiente(s)");break;
-                case 25:
-                    msgAskCierreCaja("¿Realizar cierre de caja?");break;
-                case 26:
-                    showReportMenu();break;
-                case 16:
-                    menuPedidos();break;
+                    msgAskOrden("Completar la cuenta y realizar pago");
+                    break;
+                case 3://preimpresion
+                    break;
                 case 24:
-                    exitBtn();
+                    exitBtn();break;
+                case 50:
+                    gl.gstr = "";browse=1;gl.prodtipo=1;
+                    startActivity(new Intent(this, Producto.class));
+                    break;
+                case 52:
                     break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
-    }
-
-    public void cierreCaja(){
-        try{
-            if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
-
-            gl.titReport = ss;
-
-            if(valida()){
-
-                if(gl.cajaid!=2){
-
-                    gl.inicio_caja_correcto =false;
-
-                    browse=1;
-
-                    startActivity(new Intent(Orden.this,Caja.class));
-                    finish();
-
-                }
-
-            } else {
-                String txt="";
-
-                if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
-                msgAskValid(txt);
-
-            }
-
-        }catch (Exception ex){
-
-        }
-    }
-
-    public void showReportMenu() {
-
-        try{
-
-            final AlertDialog Dialog;
-
-            final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
-
-            ExDialog  menudlg = new ExDialog(this);
-            menudlg.setTitle("Reportes");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    ss=selitems[item];
-
-                    if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
-                    if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
-                    if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
-                    if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
-                    if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
-                    if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
-                    if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
-                    if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
-                    if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
-                    if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
-                    if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
-
-                    gl.titReport = ss;
-
-                    if (gl.reportid == 9 || gl.reportid == 10) {
-                        startActivity(new Intent(Orden.this,CierreX.class));
-                    }else{
-                        startActivity(new Intent(Orden.this,Reportes.class));
-                    }
-
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbuttonp.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    public boolean valida(){
-
-        try{
-
-            clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
-
-            caja.fill();
-
-            if(gl.cajaid==3){
-
-                if(caja.count==0) {
-                    if(gl.cajaid==3) gl.cajaid=0;
-                    return false;
-                }
-
-                if(caja.last().estado==1){
-                    return false;
-                }else if(gl.cajaid==5) {
-
-                    if (gl.lastDate!=0){
-
-                        if(caja.last().fecha!=gl.lastDate){
-                            gl.validDate=true;
-                            gl.lastDate=caja.last().fecha;
-                            gl.cajaid=6; return false;
-                        }
-                    }
-                }
-
-            }
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("Ocurrió error (valida) "+e);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void msgAskValid(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage(msg);
-        dialog.setCancelable(false);
-
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
-        dialog.show();
-
-    }
-
-    private void msgAskCierreCaja(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage(msg);
-        dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                ss="Cierre de Caja";
-                cierreCaja();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
-        dialog.show();
-
-    }
-
-    public void showPrintMenuTodo() {
-
-        try {
-            final AlertDialog Dialog;
-            //final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
-            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
-
-
-            ExDialog menudlg = new ExDialog(this);
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    switch (item) {
-                        case 0:
-                            menuImprDoc(3);break;
-                        case 1:
-                            menuImprDoc(2);break;
-                        case 2:
-                            menuImprDoc(4);break;
-                        case 3:
-                            menuImprDoc(5);break;
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-
-    public void menuImprDoc(int doctipo) {
-        try{
-            gl.tipo=doctipo;
-
-            Intent intent = new Intent(this,Reimpresion.class);
-            startActivity(intent);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    public void menuPedidos() {
-        try{
-            gl.closePedido=false;
-            browse=9;
-            Intent intent = new Intent(this,Pedidos.class);
-            startActivity(intent);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    public void showVoidMenuTodo() {
-        try{
-            final AlertDialog Dialog;
-            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
-
-            ExDialog menudlg = new ExDialog(this);
-
-            menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    switch (item) {
-                        case 0:
-                            gl.tipo=3;break;
-                        case 1:
-                            gl.tipo=2;break;
-                        case 2:
-                            gl.tipo=4;break;
-                        case 3:
-                            gl.tipo=5;break;
-                    }
-
-                    menuAnulDoc();
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    public void showQuickRecep() {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage("¿Actualizar parametros de venta?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    gl.findiaactivo=false;
-                    gl.tipo = 0;
-                    gl.autocom = 0;
-                    gl.modoadmin = false;
-                    gl.comquickrec = true;
-                    startActivity(new Intent(Orden.this, WSRec.class));
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
-        dialog.show();
-
-    }
-
-    private void menuAnulDoc() {
-        try{
-            Intent intent = new Intent(this,Anulacion.class);
-            startActivity(intent);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void borraLinea() {
-        if (seluid.isEmpty()) return;
-
-        try {
-            sql="DELETE  FROM T_VENTA WHERE EMPRESA='"+seluid+"'";
-            db.execSQL(sql);
-            listItems();
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void borraTodo() {
-        msgAskTodo("Borrar toda la venta");
-    }
-
-    private void showMenuSwitch() {
-
-        try {
-            final AlertDialog Dialog;
-            final String[] selitems = {"Iniciar nueva venta","Cambiar venta"};
-
-            ExDialog menudlg = new ExDialog(this);
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    switch (item) {
-                        case 0:
-                            ;break;
-                        case 1:
-                            ;break;
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
     }
 
     private void exitBtn() {
@@ -2443,33 +1285,6 @@ public class Orden extends PBase {
             }
 
         } catch (Exception e) {
-        }
-    }
-
-    //endregion
-
-    //region Pedidos
-
-    private void estadoPedidos() {
-        long tact,tlim,tbot;
-
-        tact=du.getActDateTime();tlim=tact+100;tbot=du.getActDate();
-
-        try {
-            //D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_CREO=0) ");
-            String fsql="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+")  AND (FECHA_SALIDA_SUC=0) ";
-            D_pedidoObj.fill(fsql);
-            int peds=D_pedidoObj.count;
-
-            for (int i = 0; i <mitems.size(); i++) {
-                if (mitems.get(i).ID==16) {
-                    mitems.get(i).cant=peds;
-                    adaptergrid.notifyDataSetChanged();
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -2593,20 +1408,12 @@ public class Orden extends PBase {
             lblTit= (TextView) findViewById(R.id.lblTit);
             lblAlm= (TextView) findViewById(R.id.lblTit2);
             lblVend= (TextView) findViewById(R.id.lblTit4);
-            lblNivel= (TextView) findViewById(R.id.lblTit3);
             lblPokl= (TextView) findViewById(R.id.lblTit5);
 
-            lblCant= (TextView) findViewById(R.id.lblCant);lblCant.setText("");
-            lblBarra= (TextView) findViewById(R.id.textView122);lblBarra.setText("");
             lblKeyDP=(TextView) findViewById(R.id.textView110);
             lblDir=(TextView) findViewById(R.id.lblDir);
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
-            imgscan= (ImageView) findViewById(R.id.imageView13);
-
-            txtBarra=(EditText) findViewById(R.id.editText10);
-
-            relScan= (RelativeLayout) findViewById(R.id.relScan);
 
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -2658,12 +1465,6 @@ public class Orden extends PBase {
                 usarscan=true;
             }
             if (!tiposcan.equalsIgnoreCase("SIN ESCANER")) usarscan=true;
-        }
-
-        if (usarscan) {
-            imgscan.setVisibility(View.VISIBLE);
-        } else {
-            imgscan.setVisibility(View.INVISIBLE);
         }
 
         try {
@@ -2744,8 +1545,6 @@ public class Orden extends PBase {
 
         lblTot.setText("Total : "+mu.frmcur(0));
         lblVend.setText("");
-
-        khand.clear(true);khand.enable();
     }
 
     private boolean hasProducts(){
@@ -2762,22 +1561,6 @@ public class Orden extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             return false;
         }
-    }
-
-    private void showCredit(){
-        try{
-            if (hasCredits()){
-                Intent intent = new Intent(this,Cobro.class);
-                startActivity(intent);
-            }
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-
-    private boolean hasCredits(){
-        return false;
     }
 
     private void doExit(){
@@ -2826,15 +1609,6 @@ public class Orden extends PBase {
     private boolean prodPorPeso(String prodid) {
         try {
             return app.ventaPeso(prodid);
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            return false;
-        }
-    }
-
-    private boolean prodBarra(String prodid) {
-        try {
-            return app.prodBarra(prodid);
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             return false;
@@ -3050,46 +1824,6 @@ public class Orden extends PBase {
         return cred;
     }
 
-    private void compareSC(CharSequence s) {
-        String os,bc;
-
-        bc=txtBarra.getText().toString();
-        if (bc.isEmpty() || bc.length()<2) {
-            txtBarra.setText("");
-            scanning=false;
-            return;
-        }
-        os=s.toString();
-
-        if (bc.equalsIgnoreCase(os)) {
-            barcode=bc;
-            addBarcode();
-        }
-
-        txtBarra.setText("");txtBarra.requestFocus();
-        scanning=false;
-    }
-
-    private int pendienteFEL() {
-
-        try {
-            long flim=du.addDays(du.getActDate(),-4);
-
-            //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
-            //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
-            sql="select * from d_factura  where anulado=0 and " +
-                    "feelfechaprocesado=0 and feeluuid = ' ' and fecha>2010010000;";
-
-            Cursor DT=Con.OpenDT(sql);
-            int i=DT.getCount();
-            if (DT!=null) DT.close();
-            return i;
-
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
         gl.timeout = 20000;
@@ -3108,23 +1842,6 @@ public class Orden extends PBase {
             }
         } catch (Exception e) {}
 
-    }
-
-    private void setNivel() {
-
-        nivel=gl.nivel;
-
-        try {
-            for (int i = 0; i <P_nivelprecioObj.count; i++) {
-                if (P_nivelprecioObj.items.get(i).codigo==gl.nivel) {
-                    lblNivel.setText(""+P_nivelprecioObj.items.get(i).nombre);break;
-                }
-            }
-
-            if (famid>0) listProduct();
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
     }
 
     private void checkLock() {
@@ -3166,30 +1883,6 @@ public class Orden extends PBase {
 
     }
 
-    private void msgAskFEL(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    gl.felcorel="";gl.feluuid="";
-                    //startActivity(new Intent(Venta.this, FelFactura.class));
-                    startActivity(new Intent(Orden.this, FELVerificacion.class));
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
-        dialog.show();
-
-    }
-
     private void msgAskOrden(String msg) {
 
         ExDialog dialog = new ExDialog(this);
@@ -3197,7 +1890,7 @@ public class Orden extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                toast("Pendiente implementacion");
+                cerrarCuenta();
             }
         });
 
@@ -3207,51 +1900,6 @@ public class Orden extends PBase {
 
         dialog.show();
 
-    }
-
-    private void showNivelMenu() {
-        final AlertDialog Dialog;
-        int nivuser=0;
-
-        try {
-
-            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-            VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.codigo_vendedor);
-            if (VendedoresObj.count>0) nivuser=(int) VendedoresObj.first().nivelprecio;
-
-            P_nivelprecioObj.fill("WHERE (CODIGO="+gl.nivel_sucursal+") OR (CODIGO="+nivuser+") ORDER BY Nombre");
-
-            final String[] selitems = new String[P_nivelprecioObj.count];
-            for (int i = 0; i <P_nivelprecioObj.count; i++) {
-                selitems[i]=P_nivelprecioObj.items.get(i).nombre;
-            }
-
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Nivel de precio");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    int niv=P_nivelprecioObj.items.get(item).codigo;
-                    gl.nivel=niv;
-                    setNivel();
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
     }
 
     private void inputMesa() {
@@ -3297,7 +1945,6 @@ public class Orden extends PBase {
 
             gridView.setEnabled(true);
 
-            D_pedidoObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
 
             checkLock();
@@ -3316,19 +1963,12 @@ public class Orden extends PBase {
             gl.climode=true;
             menuTools();
 
-            if (pedidos) estadoPedidos();
-
-            try {
-                txtBarra.requestFocus();
-            } catch (Exception e) {}
-
             if (gl.iniciaVenta) {
 
                 browse=0;
                 lblVend.setText(" ");
 
                 gl.nivel=gl.nivel_sucursal;
-                setNivel();
 
                 try  {
                     db.execSQL("DELETE FROM T_VENTA");
@@ -3389,10 +2029,6 @@ public class Orden extends PBase {
 
             if (browse==4) {
                 browse=0;listItems();return;
-            }
-
-            if (browse==5) {
-                browse=0;addBarcode();return;
             }
 
             if (browse==6) {

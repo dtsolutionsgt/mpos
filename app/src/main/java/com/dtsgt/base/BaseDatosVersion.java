@@ -136,6 +136,48 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [P_res_sesion] ("+
+                    "ID TEXT NOT NULL,"+
+                    "CODIGO_MESA INTEGER NOT NULL,"+
+                    "VENDEDOR INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "CANTP INTEGER NOT NULL,"+
+                    "CANTC INTEGER NOT NULL,"+
+                    "FECHAINI INTEGER NOT NULL,"+
+                    "FECHAFIN INTEGER NOT NULL,"+
+                    "FECHAULT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_res_sesion_idx1 ON P_res_sesion(CODIGO_MESA)";db.execSQL(sql);
+            sql="CREATE INDEX P_res_sesion_idx2 ON P_res_sesion(ESTADO)";db.execSQL(sql);
+
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [D_fel_bitacora] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_RUTA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "TIEMPO_FIRMA REAL NOT NULL,"+
+                    "TIEMPO_CERT REAL NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "STATCOM INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_fel_bitacora_idx1 ON D_fel_bitacora(FECHA)";db.execSQL(sql);
+
+        } catch (Exception e) {
+        }
+
     }
 
 	private boolean update01() {

@@ -93,7 +93,10 @@ public class PBase extends Activity {
 
     public void felCallBack() throws Exception {}
 
-	// Aux
+    public void felProgress(String msg) throws Exception {}
+
+
+    // Aux
 	
 	protected void closekeyb(){
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);

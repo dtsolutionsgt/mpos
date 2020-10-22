@@ -96,6 +96,7 @@ public class Venta extends PBase {
     private clsD_pedidoObj D_pedidoObj;
     private clsP_nivelprecioObj P_nivelprecioObj;
     private clsP_productoObj P_productoObj;
+    private clsVendedoresObj MeserosObj;
 
     private clsRepBuilder rep;
 
@@ -146,6 +147,7 @@ public class Venta extends PBase {
         pedidos=gl.pePedidos;
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
+        MeserosObj =new clsVendedoresObj(this,Con,db);
 
 
         app = new AppMethods(this, gl, Con, db);
@@ -1984,7 +1986,7 @@ public class Venta extends PBase {
                     if (hasProducts()) inputMesa(); else toastcent("El orden está vacio");
                     break;
                 case 63:
-                    toast("Lista de meseros");
+                    listaMeseros();
                     break;
             }
         } catch (Exception e) {
@@ -3337,6 +3339,47 @@ public class Venta extends PBase {
         alert.show();
     }
 
+    private void listaMeseros() {
+        final AlertDialog Dialog;
+
+        try {
+            sql="WHERE CODIGO_VENDEDOR IN (SELECT VENDEDORES.CODIGO_VENDEDOR " +
+                    "FROM VENDEDORES INNER JOIN P_RUTA ON VENDEDORES.RUTA=P_RUTA.CODIGO_RUTA " +
+                    "WHERE (P_RUTA.SUCURSAL="+gl.tienda+") AND (VENDEDORES.NIVEL=4)) ORDER BY VENDEDORES.NOMBRE";
+            MeserosObj.fill(sql);
+
+            final String[] selitems = new String[MeserosObj.count];
+            for (int i = 0; i <MeserosObj.count; i++) {
+                selitems[i]=MeserosObj.items.get(i).nombre;
+            }
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Mesero");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    gl.idmesero=MeserosObj.items.get(item).codigo_vendedor;
+                    startActivity(new Intent(Venta.this,ResMesero.class));
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
     //endregion
 
     //region Activity Events
@@ -3351,6 +3394,7 @@ public class Venta extends PBase {
 
             D_pedidoObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
+            MeserosObj.reconnect(Con,db);
 
             checkLock();
 

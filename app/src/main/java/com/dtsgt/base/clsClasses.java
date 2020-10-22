@@ -93,6 +93,19 @@ public class clsClasses {
         public String umstock;
     }
 
+    public class clsD_fel_bitacora {
+        public int empresa;
+        public int codigo_sucursal;
+        public int codigo_ruta;
+        public String corel;
+        public long fecha;
+        public double tiempo_firma;
+        public double tiempo_cert;
+        public int estado;
+        public int codigo_vendedor;
+        public int statcom;
+    }
+
     public class clsD_fel_error {
         public int  empresa;
         public String corel;
@@ -716,6 +729,27 @@ public class clsClasses {
         public int  codigo;
         public String menugroup;
         public String nombre;
+    }
+
+    public class clsRes_mesa {
+        public int  codigo_mesa;
+        public String nombre;
+        public int  estado;
+        public int  pers;
+        public int  cuentas;
+        public long fecha;
+    }
+
+    public class clsP_res_sesion {
+        public String id;
+        public int  codigo_mesa;
+        public int  vendedor;
+        public int  estado;
+        public int  cantp;
+        public int  cantc;
+        public long fechaini;
+        public long fechafin;
+        public long fechault;
     }
 
     public class clsVendedores {

@@ -123,7 +123,6 @@ public class ListAdaptOrden extends BaseAdapter {
 		return convertView;
 	}
 	
-	
 	static class ViewHolder {
 		TextView  lblCod, lblNombre,lblCant,lblPrec,lblDesc,lblTot,lblPeso;
 	}
