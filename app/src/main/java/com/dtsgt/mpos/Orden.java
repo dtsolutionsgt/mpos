@@ -6,47 +6,35 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.base.clsClasses.clsVenta;
+import com.dtsgt.base.clsClasses.clsOrden;
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
-import com.dtsgt.classes.clsBonifGlob;
-import com.dtsgt.classes.clsD_pedidoObj;
-import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
-import com.dtsgt.classes.clsKeybHandler;
-import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsRepBuilder;
-import com.dtsgt.classes.clsT_comboObj;
-import com.dtsgt.classes.clsT_ventaObj;
-import com.dtsgt.classes.clsVendedoresObj;
-import com.dtsgt.fel.FELVerificacion;
+import com.dtsgt.classes.clsT_ordenObj;
+import com.dtsgt.classes.clsT_ordencomboObj;
+import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -68,12 +56,10 @@ public class Orden extends PBase {
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
     private ImageView imgroad;
 
-    private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
+    private ArrayList<clsClasses.clsOrden> items= new ArrayList<clsOrden>();
     private ListAdaptOrden adapter;
-    private clsVenta selitem;
+    private clsOrden selitem;
     private Precio prc;
-
-    //private clsKeybHandler khand;
 
     private ListAdaptMenuVenta adaptergrid;
     private ListAdaptMenuVenta adapterb;
@@ -107,7 +93,7 @@ public class Orden extends PBase {
     private int nivel,dweek,clidia,counter;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private int codigo_cliente, emp,cod_prod;
+    private int codigo_cliente, emp,cod_prod,cantcuentas;
     private String idorden,cliid,saveprodid;
     private int famid = -1;
 
@@ -125,6 +111,7 @@ public class Orden extends PBase {
 
         gl.scancliente="";
         emp=gl.emp;
+        gl.nivel_sucursal=nivelSucursal();
         gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
         idorden=gl.idorden;
 
@@ -163,7 +150,7 @@ public class Orden extends PBase {
 
         setVisual();
 
-        checkLock();
+        listItems();
 
     }
 
@@ -197,31 +184,60 @@ public class Orden extends PBase {
 
     }
 
+    public void doExit(View view){
+        exitBtn();
+    }
+
     public void subItemClick(int position,int handle) {
     }
 
     private void setHandlers(){
 
-        try{
-
-            listView.setOnTouchListener(new SwipeListener(this) {
-                public void onSwipeRight() {
-                    onBackPressed();
-                }
-                public void onSwipeLeft() {
-                    //finishOrder(null);
-                }
-            });
+        try {
 
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-
+                    int flag;
                     try {
                         Object lvObj = listView.getItemAtPosition(position);
-                        clsVenta item = (clsVenta)lvObj;
+                        clsOrden item = (clsOrden)lvObj;selitem=item;
+
+                        prodid=item.Cod;gl.produid=item.id;
+
+                        flag=items.get(position).estado;
+                        if (flag==0) flag=1;else flag=0;
+                        items.get(position).estado=flag;
+
+                        try {
+                            sql="UPDATE T_orden SET ESTADO="+flag+" WHERE (ID="+item.id+") AND (COREL='"+idorden+"')";
+                            db.execSQL(sql);
+
+                            sql="UPDATE P_res_sesion SET FECHAULT="+du.getActDateTime()+" WHERE (ID='"+idorden+"')";
+                            db.execSQL(sql);
+
+                        } catch (SQLException e) {
+                            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                        }
+
+                        adapter.setSelectedIndex(position);
+                        adapter.notifyDataSetChanged();
+
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                };
+            });
+
+            listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    try {
+                        Object lvObj = listView.getItemAtPosition(position);
+                        clsOrden item = (clsOrden)lvObj;selitem=item;
 
                         prodid=item.Cod;gl.prodid=prodid;
+                        gl.produid=item.id;
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
                         uid=item.emp;gl.menuitemid=uid;seluid=uid;
@@ -238,43 +254,16 @@ public class Orden extends PBase {
                         if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
                             browse=6;
                             gl.menuitemid=prodid;
-                            startActivity(new Intent(Orden.this,VentaEdit.class));
-                        } else if (tipo.equalsIgnoreCase("M")) {
+                          } else if (tipo.equalsIgnoreCase("M")) {
                             gl.newmenuitem=false;
                             gl.menuitemid=item.emp;
                             browse=7;
-                            startActivity(new Intent(Orden.this,ProdMenu.class));
                         }
-
-                    } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                        showItemPopMenu();
+                   } catch (Exception e) {
                         mu.msgbox( e.getMessage());
                     }
-                };
-            });
 
-            listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    try {
-                        Object lvObj = listView.getItemAtPosition(position);
-                        clsVenta vItem = (clsVenta)lvObj;
-
-                        prodid=vItem.Cod;
-                        adapter.setSelectedIndex(position);
-
-                        if (prodRepesaje(prodid) && gl.rutatipo.equalsIgnoreCase("V")) {
-                            gl.gstr=prodid;
-                            gl.gstr2=vItem.Nombre;
-                            showItemMenu();
-                        } else {
-                            msgAskDel("Borrar producto");
-                        }
-                    } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox( e.getMessage());
-                    }
                     return true;
                 }
             });
@@ -382,17 +371,18 @@ public class Orden extends PBase {
 
     public void listItems() {
         Cursor DT;
-        clsVenta item;
+        clsOrden item;
         double tt,stot,tdesc,desc;
         int ii;
 
         items.clear();tot=0;ttimp=0;ttperc=0;tdesc=0;selidx=-1;ii=0;seluid="";
 
         try {
-            sql="SELECT T_VENTA.PRODUCTO, P_PRODUCTO.DESCCORTA, T_VENTA.TOTAL, T_VENTA.CANT, T_VENTA.PRECIODOC, " +
-                    "T_VENTA.DES, T_VENTA.IMP, T_VENTA.PERCEP, T_VENTA.UM, T_VENTA.PESO, T_VENTA.UMSTOCK, T_VENTA.DESMON, T_VENTA.EMPRESA  " +
-                    "FROM T_VENTA INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_VENTA.PRODUCTO "+
-                    "ORDER BY P_PRODUCTO.DESCCORTA ";
+            sql="SELECT T_ORDEN.PRODUCTO, P_PRODUCTO.DESCCORTA, T_ORDEN.TOTAL, T_ORDEN.CANT, T_ORDEN.PRECIODOC, " +
+                "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
+                "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
+                "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
+                "WHERE (COREL='"+idorden+"') ORDER BY T_ORDEN.ID ";
 
             DT=Con.OpenDT(sql);
 
@@ -403,11 +393,12 @@ public class Orden extends PBase {
 
                     tt=DT.getDouble(2);
 
-                    item = clsCls.new clsVenta();
+                    item = clsCls.new clsOrden();
 
                     item.Cod=DT.getString(0);
                     item.Nombre=DT.getString(1);
                     item.Cant=DT.getDouble(3);
+                    item.icant=(int) item.Cant;
                     item.Prec=DT.getDouble(4);
                     item.Desc=DT.getDouble(5);
                     item.sdesc=mu.frmdec(item.Prec);
@@ -426,6 +417,10 @@ public class Orden extends PBase {
                         seluid=uid;
                     }
                     desc=DT.getDouble(11);tdesc+=desc;
+
+                    item.cuenta=DT.getInt(13);
+                    item.estado=DT.getInt(14);
+                    item.id=DT.getInt(15);
 
                     item.val=mu.frmdecimal(item.Cant,gl.peDecImp)+" "+ltrim(item.um,6);
                     if (gl.usarpeso) {
@@ -475,8 +470,8 @@ public class Orden extends PBase {
         }
 
         if (selidx>-1) {
-            adapter.setSelectedIndex(selidx);
-            listView.smoothScrollToPosition(selidx);
+            //adapter.setSelectedIndex(selidx);
+            //listView.smoothScrollToPosition(selidx);
         } else seluid="";
 
     }
@@ -487,7 +482,7 @@ public class Orden extends PBase {
         try{
 
             try {
-                sql="SELECT Empresa,Cant FROM T_VENTA WHERE (PRODUCTO='"+prodid+"')";
+                sql="SELECT Empresa,Cant FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (PRODUCTO='"+prodid+"')";
                 Cursor dt=Con.OpenDT(sql);
                 exists=dt.getCount()>0;
             } catch (SQLException e) {
@@ -580,11 +575,13 @@ public class Orden extends PBase {
                     gl.bonus.add(clsBonif.items.get(i));
                 }
             }
-            */
 
             clsDesc = new clsDescuento(this, ""+cod_prod, cant);
             desc = clsDesc.getDesc();
             mdesc = clsDesc.monto;
+            */
+
+            desc =0;mdesc=0;
             savecant=cant;
             descmon=0;
 
@@ -648,7 +645,7 @@ public class Orden extends PBase {
         }
 
         try {
-            sql="DELETE FROM T_VENTA WHERE CANT=0";
+            sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (CANT=0)";
             db.execSQL(sql);
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -664,7 +661,7 @@ public class Orden extends PBase {
         gl.retcant=1;
 
         browse=7;
-        startActivity(new Intent(this,ProdMenu.class));
+        startActivity(new Intent(this,OrdenMenu.class));
 
     }
 
@@ -730,12 +727,14 @@ public class Orden extends PBase {
         Cursor dt;
         double precdoc,fact,cantbas,peso;
         String umb;
+        int newid;
 
         tipo=prodTipo(gl.prodcod);
 
-        if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
+        /*
+         if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
             try {
-                sql="SELECT Empresa,Cant FROM T_VENTA WHERE (PRODUCTO='"+prodid+"')";
+                sql="SELECT Empresa,Cant FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (PRODUCTO='"+prodid+"')";
                 dt=Con.OpenDT(sql);
                 if (dt.getCount()>0) {
                     if (dt!=null) dt.close();
@@ -746,6 +745,7 @@ public class Orden extends PBase {
                 mu.msgbox("Error : " + e.getMessage());return false;
             }
         }
+        */
 
         try {
             int icod=Integer.parseInt(prodid);
@@ -767,11 +767,22 @@ public class Orden extends PBase {
         prodtot=mu.round(prec*cant,2);
 
         try {
+            sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+            newid=dt.getInt(0)+1;
+        } catch (Exception e) {
+            newid=1;
+        }
+
+        try {
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
-            ins.init("T_VENTA");
+            ins.init("T_ORDEN");
 
+            ins.add("ID",newid);
+            ins.add("COREL",idorden);
             ins.add("PRODUCTO",prodid);
             ins.add("EMPRESA",""+counter);
             if (porpeso) ins.add("UM",gl.umpeso);else ins.add("UM",gl.um);
@@ -791,6 +802,8 @@ public class Orden extends PBase {
             ins.add("VAL3",0);
             ins.add("VAL4","0");
             ins.add("PERCEP",percep);
+            ins.add("CUENTA",1);
+            ins.add("ESTADO",1);
 
             db.execSQL(ins.sql());
 
@@ -802,7 +815,7 @@ public class Orden extends PBase {
         }
 
         try {
-            sql="DELETE FROM T_VENTA WHERE CANT=0";
+            sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (CANT=0)";
             db.execSQL(sql);
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -818,7 +831,7 @@ public class Orden extends PBase {
         Cursor dt;
         double precdoc,fact,cantbas,peso;
         String umb;
-
+        int newid;
 
         try {
             sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO='"+prodid+"') AND (UNIDADSUPERIOR='"+gl.um+"')";
@@ -838,11 +851,22 @@ public class Orden extends PBase {
         prodtot=mu.round(prec*cant,2);
 
         try {
+            sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+            newid=dt.getInt(0)+1;
+        } catch (Exception e) {
+            newid=1;
+        }
+
+        try {
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
-            ins.init("T_VENTA");
+            ins.init("T_ORDEN");
 
+            ins.add("ID",newid);
+            ins.add("COREL",idorden);
             ins.add("PRODUCTO",prodid);
             ins.add("EMPRESA",""+counter);
             if (porpeso) ins.add("UM",gl.umpeso);else ins.add("UM",gl.um);
@@ -862,6 +886,8 @@ public class Orden extends PBase {
             ins.add("VAL3",0);
             ins.add("VAL4","");
             ins.add("PERCEP",percep);
+            ins.add("CUENTA",1);
+            ins.add("ESTADO",1);
 
             db.execSQL(ins.sql());
 
@@ -872,7 +898,7 @@ public class Orden extends PBase {
         }
 
         try {
-            sql="DELETE FROM T_VENTA WHERE CANT=0";
+            sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (CANT=0)";
             db.execSQL(sql);
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -892,7 +918,7 @@ public class Orden extends PBase {
             ptot=mu.round(prec*cant,2);
             descmon = savetot-ptot;
 
-            upd.init("T_VENTA");
+            upd.init("T_ORDEN");
 
             upd.add("PRECIO",prec);
             upd.add("IMP",imp);
@@ -901,7 +927,7 @@ public class Orden extends PBase {
             upd.add("TOTAL",ptot);
             upd.add("PRECIODOC",prec);
 
-            upd.Where("PRODUCTO='"+prodid+"'");
+            upd.Where("(COREL='"+idorden+"') AND (PRODUCTO='"+prodid+"')");
 
             db.execSQL(upd.sql());
 
@@ -922,7 +948,7 @@ public class Orden extends PBase {
             prodtot=mu.round(prec*cant,2);
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
-            upd.init("T_VENTA");
+            upd.init("T_ORDEN");
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
             upd.add("IMP",imp);
@@ -932,7 +958,7 @@ public class Orden extends PBase {
             upd.add("TOTAL",prodtot);
             upd.add("PRECIODOC",precdoc);
 
-            upd.Where("EMPRESA='"+uid+"'");
+            upd.Where("(COREL='"+idorden+"') AND (EMPRESA='"+uid+"')");
 
             db.execSQL(upd.sql());
 
@@ -955,7 +981,7 @@ public class Orden extends PBase {
             prodtot=mu.round(prec*cant,2);
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
-            upd.init("T_VENTA");
+            upd.init("T_ORDEN");
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
             upd.add("IMP",imp);
@@ -965,7 +991,7 @@ public class Orden extends PBase {
             upd.add("TOTAL",prodtot);
             upd.add("PRECIODOC",precdoc);
 
-            upd.Where("EMPRESA='"+uid+"'");
+            upd.Where("(COREL='"+idorden+"') AND (EMPRESA='"+uid+"')");
 
             db.execSQL(upd.sql());
 
@@ -982,7 +1008,7 @@ public class Orden extends PBase {
 
     private void delItem(){
         try {
-            db.execSQL("DELETE FROM T_VENTA WHERE PRODUCTO='"+prodid+"'");
+            db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
             listItems();
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -990,11 +1016,42 @@ public class Orden extends PBase {
         }
     }
 
-    private void cerrarCuenta() {
+    private void aplicarPreimpresion() {
         try {
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+            sess.estado=2;
+            sess.fechault=du.getActDateTime();
+            P_res_sesionObj.update(sess);
+
+            finish();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void aplicarPago() {
+        try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+            sess.estado=3;
+            sess.fechault=du.getActDateTime();
+            P_res_sesionObj.update(sess);
+
+            finish();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cerrarCuentas() {
+        try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+
             sess.estado=-1;
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
@@ -1005,111 +1062,45 @@ public class Orden extends PBase {
         }
     }
 
-    //endregion
+    private void splitItem() {
+        clsClasses.clsT_orden item,fitem;
+        int cnt,newid;
 
-    //region Dialogs
+        try {
+            db.beginTransaction();
 
-    private void msgAskExit(String msg) {
-        try{
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+selitem.id+")");
+            fitem=T_ordenObj.first();
+            cnt=(int) fitem.cant;if (cnt<=1) return;
 
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg  + " ?");
-            dialog.setIcon(R.drawable.ic_quest);
+            newid=T_ordenObj.newID("SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')");
 
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    gl.cliposflag=true;
-                    if (gl.dvbrowse!=0) gl.dvbrowse =0;
-                    browse=0;
-                    gl.forcedclose=true;
-                    doExit();
-                }
-            });
+            fitem.cant=1;
+            T_ordenObj.update(fitem);
 
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
+            for (int i = 1; i <cnt; i++) {
+                //item = clsCls.new clsT_orden();
+                item = fitem;
+                item.id=newid;newid++;
+                item.cant=1;
 
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
+                T_ordenObj.add(item);
+            }
 
-    private void msgAskDel(String msg) {
-        try{
+            db.setTransactionSuccessful();
+            db.endTransaction();
 
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg  + " ?");
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    delItem();
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-
-    private void msgAskAdd(String msg) {
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg);
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void msgAskLimit(String msg,boolean updateitem) {
-        final boolean updatem=updateitem;
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg);
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    processCant(updatem);
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
         }
     }
 
     //endregion
 
-    //region Menu
+    //region Menus
 
     private void listFamily() {
 
@@ -1234,12 +1225,18 @@ public class Orden extends PBase {
             mitems.add(item);
 
             item = clsCls.new clsMenu();
-            item.ID=50;item.Name="Buscar ";item.Icon=64;
+            item.ID=2;item.Name="Completar";item.Icon=55;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
+            item.ID=50;item.Name="Buscar ";item.Icon=64;
+            mitems.add(item);
+
+            /*
+            item = clsCls.new clsMenu();
             item.ID=24;item.Name="Salir";item.Icon=57;
             mitems.add(item);
+            */
 
             adaptergrid=new ListAdaptMenuVenta(this, mitems);
             gridView.setAdapter(adaptergrid);
@@ -1253,9 +1250,13 @@ public class Orden extends PBase {
         try {
             switch (menuid) {
                 case 1:
-                    msgAskOrden("Completar la cuenta y realizar pago");
+                    msgAskOrden("Procesar pago");
                     break;
-                case 3://preimpresion
+                case 2:
+                    msgAskCuentas("Completar las cuentas");
+                    break;
+                case 3:
+                    msgAskPrint("Procesar preimpresion");
                     break;
                 case 24:
                     exitBtn();break;
@@ -1272,20 +1273,7 @@ public class Orden extends PBase {
     }
 
     private void exitBtn() {
-        Cursor dt;
-
-        try {
-            sql="SELECT * FROM T_VENTA";
-            dt=Con.OpenDT(sql);
-
-            if (dt.getCount()>0) {
-                msgAskExit("Regresar al menú principal sin terminar la venta");
-            } else {
-                finish();
-            }
-
-        } catch (Exception e) {
-        }
+        finish();
     }
 
     //endregion
@@ -1293,10 +1281,10 @@ public class Orden extends PBase {
     //region Comanda
 
     private void imprimeComanda() {
-        clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
-        clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
-        clsClasses.clsT_venta venta;
-        clsClasses.clsT_combo combo;
+        clsT_ordenObj T_ventaObj=new clsT_ordenObj(this,Con,db);
+        clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
+        clsClasses.clsT_orden venta;
+        clsClasses.clsT_ordencombo combo;
 
         int prid,idcombo;
 
@@ -1442,9 +1430,7 @@ public class Orden extends PBase {
 
         tiposcan="*";
 
-        lblTit.setText(gl.tiendanom+" - "+gl.cajanom);
-        lblAlm.setText(gl.tiendanom);
-        lblPokl.setText(gl.vendnom);
+        lblTit.setText("");lblAlm.setText("");lblPokl.setText("");
 
         try {
             sql="SELECT TIPO_HH FROM P_ARCHIVOCONF WHERE RUTA='"+gl.ruta+"'";
@@ -1474,62 +1460,8 @@ public class Orden extends PBase {
             sinimp=false;
         }
 
-		/*
-		contrib=gl.contrib;
-		if (contrib.equalsIgnoreCase("C")) sinimp=true;
-		if (contrib.equalsIgnoreCase("F")) sinimp=false;
-		*/
-
         sinimp=false;
         gl.sinimp=sinimp;
-
-        try {
-            sql="DELETE FROM T_VENTA";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_COMBO";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_BARRA";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_BARRA_BONIF";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_BONIFFALT";
-            db.execSQL(sql);
-
-            sql="DELETE FROM T_PRODMENU";
-            db.execSQL(sql);
-
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-
-        try {
-            sql="DELETE FROM T_PAGO";
-            db.execSQL(sql);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-
-        try {
-            sql="DELETE FROM T_BONIFFALT";
-            db.execSQL(sql);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
-
-        try {
-            sql="DELETE FROM T_BONITEM";
-            db.execSQL(sql);
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
 
         gl.ref1="";
         gl.ref2="";
@@ -1544,14 +1476,14 @@ public class Orden extends PBase {
         dweek=mu.dayofweek();
 
         lblTot.setText("Total : "+mu.frmcur(0));
-        lblVend.setText("");
+        lblVend.setText(gl.mesanom);
     }
 
     private boolean hasProducts(){
         Cursor dt;
 
         try {
-            sql="SELECT PRODUCTO FROM T_VENTA";
+            sql="SELECT PRODUCTO FROM T_ORDEN WHERE (COREL='"+idorden+"')";
             dt=Con.OpenDT(sql);
 
             int i=dt.getCount();
@@ -1723,7 +1655,7 @@ public class Orden extends PBase {
 
                 if (items.get(i).Cod.equalsIgnoreCase(prodid)) {
 
-                    clsVenta item = items.get(i);
+                    clsOrden item = items.get(i);
 
                     prodid=item.Cod;//gl.prodmenu=prodid;
                     uprodid=prodid;
@@ -1784,12 +1716,10 @@ public class Orden extends PBase {
             gl.credito=disp;
             if (disp>0) ss=" [Cred: "+mu.frmcur(disp)+" ]";else ss="";
 
-            lblVend.setText(DT.getString(0)+" "+gl.gNITCliente +" "+ss);
-
             if (DT!=null) DT.close();
 
         } catch (Exception e) {
-            lblVend.setText("");
+
         }
     }
 
@@ -1844,21 +1774,209 @@ public class Orden extends PBase {
 
     }
 
-    private void checkLock() {
+    public int nivelSucursal() {
+        Cursor DT;
+        int niv;
 
-        if (gl.ventalock) toast("El orden está protegido, no se puede modificar");
+        try {
+            String sql = "SELECT CODIGO_NIVEL_PRECIO FROM P_SUCURSAL WHERE CODIGO_SUCURSAL=" + gl.tienda ;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
 
-        listView.setEnabled(!gl.ventalock);
-        grdfam.setEnabled(!gl.ventalock);
-        grdprod.setEnabled(!gl.ventalock);
+            niv=DT.getInt(0);
+        } catch (Exception e) {
+            niv=1;
+        }
 
+        return niv;
+    }
+
+    public void asignaCuenta(int idcuenta) {
+        clsClasses.clsT_orden item;
+
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+selitem.id+")");
+            item=T_ordenObj.first();
+            item.cuenta=idcuenta;
+            T_ordenObj.update(item);
+
+            listItems();
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
+    public void agregarCuenta() {
+        try {
+            cantcuentas++;
+
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+            clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
+
+            cuenta.corel=idorden;
+            cuenta.id=cantcuentas;
+            cuenta.cf=1;
+            cuenta.nombre="Consumidor final";
+            cuenta.nit="C.F.";
+            cuenta.direccion="Ciudad";
+            cuenta.correo="";
+
+            T_ordencuentaObj.add(cuenta);
+
+            asignaCuenta(cantcuentas);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion
 
     //region Dialogs
 
-    private void msgAskTodo(String msg) {
+    private void msgAskExit(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    gl.cliposflag=true;
+                    if (gl.dvbrowse!=0) gl.dvbrowse =0;
+                    browse=0;
+                    gl.forcedclose=true;
+                    doExit();
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskDel(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    delItem();
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskAdd(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskLimit(String msg,boolean updateitem) {
+        final boolean updatem=updateitem;
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    processCant(updatem);
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void showItemPopMenu() {
+        final AlertDialog Dialog;
+        final String[] selitems = {"Modificar","Cambiar cuenta","Borrar","Dividir"};
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Articulo del orden");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        if (browse==6) {
+                            startActivity(new Intent(Orden.this,VentaEdit.class));
+                        } else if (browse==7) {
+                            startActivity(new Intent(Orden.this,OrdenMenu.class));
+                        }
+                        break;
+                    case 1:
+                        showMenuCuenta();break;
+                    case 2:
+                        msgAskDel("Está seguro de borrar");break;
+                    case 3:
+                        if (selitem.Cant>1) {
+                            msgAskDividir("Dividir articulo");
+                        } else {
+                            toastcent("Articulo con cantidad 1 no se puede dividir");
+                        }
+                        break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    private void msgAskDividir(String msg) {
 
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
@@ -1866,9 +1984,7 @@ public class Orden extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    sql="DELETE FROM T_VENTA";
-                    db.execSQL(sql);
-                    listItems();
+                    splitItem();
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
@@ -1890,7 +2006,45 @@ public class Orden extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                cerrarCuenta();
+                aplicarPago();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskPrint(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                aplicarPreimpresion();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskCuentas(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                cerrarCuentas();
             }
         });
 
@@ -1933,6 +2087,57 @@ public class Orden extends PBase {
         alert.show();
     }
 
+    private void showMenuCuenta() {
+        clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+        final AlertDialog Dialog;
+
+        try {
+
+            T_ordencuentaObj.fill("WHERE (COREL='"+idorden+"') ORDER BY ID");
+
+            final String[] selitems = new String[T_ordencuentaObj.count];
+
+            cantcuentas=T_ordencuentaObj.count;
+
+            for (int i = 0; i <T_ordencuentaObj.count; i++) {
+                selitems[i]=""+(i+1);
+            }
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Seleccione una cuenta");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    asignaCuenta(item+1);
+
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setPositiveButton("Nueva cuenta", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    agregarCuenta();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
+
     //endregion
 
     //region Activity Events
@@ -1946,8 +2151,6 @@ public class Orden extends PBase {
             gridView.setEnabled(true);
 
             P_productoObj.reconnect(Con,db);
-
-            checkLock();
 
             try {
                 P_nivelprecioObj.reconnect(Con,db);
@@ -1966,12 +2169,11 @@ public class Orden extends PBase {
             if (gl.iniciaVenta) {
 
                 browse=0;
-                lblVend.setText(" ");
 
                 gl.nivel=gl.nivel_sucursal;
 
                 try  {
-                    db.execSQL("DELETE FROM T_VENTA");
+                    db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"')");
                     listItems();
                 } catch (SQLException e){
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -2054,6 +2256,5 @@ public class Orden extends PBase {
     }
 
     //endregion
-
 
 }

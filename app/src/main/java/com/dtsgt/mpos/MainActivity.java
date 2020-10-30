@@ -54,7 +54,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.27 / 22-Oct-2020";
+    private String parVer = " 3.2.31 / 29-Oct-2020";
 
     private Typeface typeface;
 
@@ -200,6 +200,7 @@ public class MainActivity extends PBase {
                 startActivity(new Intent(this,Menu.class));
             } else {
                 gl.idmesero=gl.codigo_vendedor;
+                gl.meserodir=true;
                 startActivity(new Intent(this,ResMesero.class));
             }
         } catch (Exception e) {

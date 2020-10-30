@@ -643,6 +643,7 @@ public class Venta extends PBase {
 
             khand.enable();khand.focus();
 
+            gl.prodcod=app.codigoProducto(prodid);
             prodPrecio();
             saveprec=mu.round2(prc.preciobase);
 
@@ -3359,6 +3360,7 @@ public class Venta extends PBase {
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
                     gl.idmesero=MeserosObj.items.get(item).codigo_vendedor;
+                    gl.meserodir=false;
                     startActivity(new Intent(Venta.this,ResMesero.class));
                     dialog.cancel();
                 }

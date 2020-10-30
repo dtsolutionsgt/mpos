@@ -15,18 +15,19 @@ import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.ladapt.ListAdaptOpcion;
 
 import java.util.ArrayList;
 
-public class ProdMenu extends PBase {
+public class OrdenMenu extends PBase {
 
     private ListView listView;
     private TextView lbl1,lbl2,lbl3;
     private ImageView img1;
 
     private ListAdaptOpcion adapter;
-    private clsT_comboObj T_comboObj;
+    private clsT_ordencomboObj T_comboObj;
     private clsP_productoObj P_productoObj;
 
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
@@ -37,12 +38,12 @@ public class ProdMenu extends PBase {
 
     private int cant,lcant, uitemid;
     private boolean newitem;
-    private String ststr,prodname;
+    private String ststr,prodname,idorden;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_prod_menu);
+        setContentView(R.layout.activity_orden_menu);
 
         super.InitBase();
 
@@ -53,7 +54,7 @@ public class ProdMenu extends PBase {
         img1 = (ImageView) findViewById(R.id.imageView27);
 
         P_productoObj = new clsP_productoObj(this, Con, db);
-        T_comboObj = new clsT_comboObj(this, Con, db);
+        T_comboObj = new clsT_ordencomboObj(this, Con, db);
         prc = new Precio(this, mu, 2);
 
         setHandlers();
@@ -63,6 +64,7 @@ public class ProdMenu extends PBase {
 
         uitemid = Integer.parseInt(gl.menuitemid);
         newitem = gl.newmenuitem;
+        idorden=gl.idorden;
 
         lbl1.setText(gl.gstr);
         lbl2.setText(""+cant);
@@ -151,14 +153,14 @@ public class ProdMenu extends PBase {
 
         try {
 
-            clsT_comboObj combo=new clsT_comboObj(this,Con,db);
-            combo.fill("WHERE IdCombo="+ uitemid);
+            clsT_ordencomboObj combo=new clsT_ordencomboObj(this,Con,db);
+            combo.fill("WHERE (COREL='"+idorden+"') AND (IdCombo="+ uitemid+")");
             cant=combo.first().cant; lbl2.setText(""+cant);
 
             for (int i = 0; i <items.size(); i++) {
 
                 menuid=items.get(i).codigo_menu_opcion;
-                combo.fill("WHERE (IdCombo="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
+                combo.fill("WHERE (COREL='"+idorden+"') AND (IdCombo="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
 
                 try {
                     selid=combo.first().idseleccion;
@@ -185,7 +187,7 @@ public class ProdMenu extends PBase {
     }
 
     private void newItem() {
-        uitemid=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_COMBO");gl.menuitemid=""+uitemid;
+        uitemid=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_ORDENCOMBO");gl.menuitemid=""+uitemid;
         listMenuItems();
     }
 
@@ -223,7 +225,19 @@ public class ProdMenu extends PBase {
     }
 
     private boolean saveItem() {
-        clsClasses.clsT_combo item;
+        Cursor dt;
+        clsClasses.clsT_ordencombo item;
+        int newid;
+
+        try {
+            sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+            newid=dt.getInt(0)+1;
+        } catch (Exception e) {
+            newid=1;
+        }
+
 
         try {
 
@@ -239,15 +253,15 @@ public class ProdMenu extends PBase {
             db.beginTransaction();
 
             if (!newitem){
-                db.execSQL("DELETE FROM T_COMBO WHERE IdCombo="+uitemid);
-                db.execSQL("DELETE FROM T_VENTA WHERE (PRODUCTO='"+gl.prodid+"') AND (EMPRESA='"+uitemid+"')");
+                db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
+                db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
             }
 
             for (int i = 0; i <items.size(); i++) {
 
-                item=clsCls.new clsT_combo();
+                item=clsCls.new clsT_ordencombo();
 
-                //#EJC20200524: Revisar
+                item.corel=idorden;
                 item.codigo_menu=items.get(i).codigo_menu_opcion;
                 item.idcombo=uitemid;
                 item.cant=cant;
@@ -258,7 +272,10 @@ public class ProdMenu extends PBase {
                 T_comboObj.add(item);
             }
 
-            ins.init("T_VENTA");
+            ins.init("T_ORDEN");
+
+            ins.add("ID",newid);
+            ins.add("COREL",idorden);
             ins.add("PRODUCTO",gl.prodid);
             ins.add("EMPRESA",""+uitemid);
             ins.add("UM","UNI");
@@ -277,6 +294,8 @@ public class ProdMenu extends PBase {
             ins.add("VAL3",0);
             ins.add("VAL4",""+uitemid);
             ins.add("PERCEP",0);
+            ins.add("CUENTA",1);
+            ins.add("ESTADO",1);
 
             db.execSQL(ins.sql());
 
@@ -355,9 +374,9 @@ public class ProdMenu extends PBase {
         try {
             db.beginTransaction();
 
-            sql="DELETE FROM T_VENTA WHERE VAL4='"+uitemid+"'";
+            sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (VAL4='"+uitemid+"')";
             db.execSQL(sql);
-            db.execSQL("DELETE FROM T_COMBO WHERE (IdCombo="+uitemid+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
             db.execSQL(sql);
 
             db.setTransactionSuccessful();
@@ -371,7 +390,6 @@ public class ProdMenu extends PBase {
             msgbox(e.getMessage());
         }
     }
-
 
     //endregion
 
@@ -438,7 +456,7 @@ public class ProdMenu extends PBase {
             P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prodid);
             prodname=P_productoObj.first().desclarga;
 
-            sql="SELECT SUM(CANT) FROM T_VENTA WHERE PRODUCTO='"+P_productoObj.first().codigo+"'";
+            sql="SELECT SUM(CANT) FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (PRODUCTO='"+P_productoObj.first().codigo+"')";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {

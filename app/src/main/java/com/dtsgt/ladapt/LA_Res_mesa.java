@@ -82,7 +82,9 @@ public class LA_Res_mesa  extends BaseAdapter {
 
         est=items.get(position).estado;
 
-        holder.lbl1.setText(""+items.get(position).codigo_mesa);
+        holder.lbl1.setText(""+items.get(position).nombre);
+
+        holder.img1.setImageResource(R.drawable.blank48);
 
         if (est==0) {
             holder.lbl3.setText("");
@@ -95,16 +97,21 @@ public class LA_Res_mesa  extends BaseAdapter {
             holder.lbl3.setText(""+items.get(position).pers);
             holder.lbl4.setText(""+items.get(position).cuentas);
             holder.lbl5.setText(""+du.shora(items.get(position).fecha));
-
-            holder.img1.setVisibility(View.VISIBLE);
             holder.rel1.setBackgroundColor(Color.WHITE);
 
             switch (est) {
                 case 1:
-                    ;break;
+                    holder.img1.setImageResource(R.drawable.blank48);
+                    break;
                 case 2:
-                    ;break;
+                    holder.img1.setImageResource(R.drawable.preimpresion);
+                    break;
+                case 3:
+                    holder.img1.setImageResource(R.drawable.pago_pendiente);
+                    break;
             }
+
+            if (items.get(position).pendiente>0) holder.img1.setImageResource(R.drawable.icon_cooking2);
 
         }
 

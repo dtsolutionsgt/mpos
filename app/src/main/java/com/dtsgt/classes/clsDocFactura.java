@@ -498,6 +498,13 @@ public class clsDocFactura extends clsDocument {
         rep.addc("----------------------");
         rep.addc("Firma cliente  ");
         rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
 
         return super.buildFooter();
     }
@@ -565,6 +572,12 @@ public class clsDocFactura extends clsDocument {
             rep.add("EXIJA SU FACTURA ORIGINAL");
             rep.add("");
         }
+
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
 
         return super.buildFooter();
     }

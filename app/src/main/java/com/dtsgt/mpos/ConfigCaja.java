@@ -186,7 +186,7 @@ public class ConfigCaja extends PBase {
         spincode.add("0");spinlist.add("");
 
         try {
-            sucur.fill(" WHERE (Activo=1) OR (Codigo='"+selid+"') ORDER BY Nombre");
+            sucur.fill(" WHERE (Activo=1) OR (Codigo='"+selid+"') ORDER BY Descripcion");
             if (sucur.count==0) {
                 msgAskReturn("Lista de sucursales está vacia, no se puede continuar");return false;
             }
@@ -307,8 +307,6 @@ public class ConfigCaja extends PBase {
 
         dialog.show();
     }
-
-
 
     private void msgAskReturn(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);

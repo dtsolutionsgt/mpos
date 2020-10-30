@@ -175,8 +175,90 @@ public class BaseDatosVersion {
 
             sql="CREATE INDEX D_fel_bitacora_idx1 ON D_fel_bitacora(FECHA)";db.execSQL(sql);
 
+        } catch (Exception e) {}
+
+        try {
+            Cursor vCursor = db.rawQuery("SELECT * FROM T_ORDEN", null);
+            if (vCursor != null) vCursor.moveToLast();
+            if (vCursor.getCount()==0) db.execSQL("DROP TABLE T_ORDEN");
+        } catch (Exception e) {
+            String ee=e.getMessage();
+        }
+
+        try {
+            sql="CREATE TABLE [T_orden] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO TEXT NOT NULL,"+
+                    "EMPRESA TEXT NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UMSTOCK TEXT NOT NULL,"+
+                    "FACTOR REAL NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "IMP REAL NOT NULL,"+
+                    "DES REAL NOT NULL,"+
+                    "DESMON REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "PRECIODOC REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "VAL1 REAL NOT NULL,"+
+                    "VAL2 TEXT NOT NULL,"+
+                    "VAL3 REAL NOT NULL,"+
+                    "VAL4 TEXT NOT NULL,"+
+                    "PERCEP REAL NOT NULL,"+
+                    "CUENTA INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID],[COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_orden_idx1 ON T_orden(COREL)";db.execSQL(sql);
         } catch (Exception e) {
         }
+
+        try {
+            sql="CREATE TABLE [T_ordencombo] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "CODIGO_MENU INTEGER NOT NULL,"+
+                    "IDCOMBO INTEGER NOT NULL,"+
+                    "UNID INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "IDSELECCION INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[CODIGO_MENU],[IDCOMBO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_ordencombo_idx1 ON T_ordencombo(COREL)";db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            Cursor vCursor = db.rawQuery("SELECT * FROM T_ordencuenta", null);
+            if (vCursor != null) vCursor.moveToLast();
+            if (vCursor.getCount()==0) db.execSQL("DROP TABLE T_ordencuenta");
+        } catch (Exception e) {
+            String ee=e.getMessage();
+        }
+
+        try {
+            sql="CREATE TABLE [T_ordencuenta] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "ID INTEGER NOT NULL,"+
+                    "CF INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "CORREO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[ID])"+
+                    ");";
+
+            db.execSQL(sql);
+            sql="CREATE INDEX T_ordencombo_idx1 ON T_ordencombo(COREL)";db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
 
     }
 

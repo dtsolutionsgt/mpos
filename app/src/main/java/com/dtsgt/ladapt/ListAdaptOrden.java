@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
 import com.dtsgt.mpos.Orden;
 import com.dtsgt.mpos.R;
@@ -21,14 +23,14 @@ public class ListAdaptOrden extends BaseAdapter {
 
 	public String cursym;
 
-	private static ArrayList<clsVenta> items;
+	private static ArrayList<clsClasses.clsOrden> items;
 	private Context cont;
 	private int selectedIndex;
 	private LayoutInflater l_Inflater;
 	private DecimalFormat frmdec;
 	private Orden owner;
 
-	public ListAdaptOrden(Context context, Orden owner, ArrayList<clsVenta> results) {
+	public ListAdaptOrden(Context context, Orden owner, ArrayList<clsClasses.clsOrden> results) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		cont=context;
@@ -64,7 +66,7 @@ public class ListAdaptOrden extends BaseAdapter {
 	
 		if (convertView == null) {
 			
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_venta, null);
+			convertView = l_Inflater.inflate(R.layout.activity_list_view_orden, null);
 			holder = new ViewHolder();
 			
 			holder.lblCod  = (TextView) convertView.findViewById(R.id.lblETipo);
@@ -74,31 +76,29 @@ public class ListAdaptOrden extends BaseAdapter {
 			holder.lblDesc = (TextView) convertView.findViewById(R.id.lblFecha);
 			holder.lblTot = (TextView) convertView.findViewById(R.id.lblTot);
 			holder.lblPeso = (TextView) convertView.findViewById(R.id.lblPeso);
+            holder.imgFlag = (ImageView) convertView.findViewById(R.id.imageView103);
 			
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 							
-		holder.lblCod.setText(items.get(position).Cod);
+		holder.lblCod.setText(""+items.get(position).cuenta);
 		holder.lblNombre.setText(items.get(position).Nombre);
-		
-		//val=items.get(position).Cant;
-		//holder.lblCant.setText(frmdec.format(val)+" "+items.get(position).um);
-		holder.lblCant.setText(items.get(position).val);
-		//val=items.get(position).Prec;
-		//holder.lblPrec.setText(frmdec.format(val));
+		holder.lblCant.setText(items.get(position).icant+" x "+items.get(position).sdesc);
 		holder.lblPrec.setText("");
-		holder.lblDesc.setText(items.get(position).sdesc);
-		val=items.get(position).Total;
-		holder.lblTot.setText(cursym+" "+frmdec.format(val));
-
-		holder.lblPeso.setText(items.get(position).valp);
-		if (items.get(position).valp.equalsIgnoreCase(".")) holder.lblPeso.setVisibility(View.GONE);
-		if (items.get(position).Peso==0) holder.lblPeso.setVisibility(View.GONE);
-
+        val=items.get(position).Total;
+		holder.lblDesc.setText(cursym+" "+frmdec.format(val));
+		holder.lblTot.setText("");
+		holder.lblPeso.setText(" ");
 		holder.lblDesc.setOnClickListener(new CustomOnClickListener( position,1));
 		holder.lblTot.setOnClickListener(new CustomOnClickListener( position,2));
+
+		if (items.get(position).estado==1) {
+		    holder.imgFlag.setVisibility(View.VISIBLE);
+        } else {
+		    holder.imgFlag.setVisibility(View.INVISIBLE);
+        }
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -125,6 +125,7 @@ public class ListAdaptOrden extends BaseAdapter {
 	
 	static class ViewHolder {
 		TextView  lblCod, lblNombre,lblCant,lblPrec,lblDesc,lblTot,lblPeso;
+		ImageView imgFlag;
 	}
 
 	public class CustomOnClickListener implements OnClickListener {

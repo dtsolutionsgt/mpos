@@ -212,9 +212,7 @@ public class clsFELInFile {
                     errorflag=false;
                     firma=jObj.getString("archivo");
                 } else {
-
                     errorflag=true;
-
                     try {
 
                         //#EJC20200707: Obtener mensaje de error específico en respuesta.
@@ -1098,6 +1096,8 @@ public class clsFELInFile {
                          String pais) {
 
         String stt=pCorreo;
+
+        if (pCorreo.indexOf("@")<3)  pCorreo="";
         if (pCorreo.isEmpty())  pCorreo = correo_sucursal;
         if (pCorreo.length()<8) pCorreo = correo_sucursal;
 

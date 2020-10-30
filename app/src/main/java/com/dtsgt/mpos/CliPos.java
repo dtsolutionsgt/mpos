@@ -113,6 +113,8 @@ public class CliPos extends PBase {
             sDireccionCliente =txtRef.getText().toString();
             sCorreoCliente = txtCorreo.getText().toString();
 
+
+
             if (sDireccionCliente.isEmpty()) {
                 toast("Falta definir la direccion");return;
             }
@@ -128,6 +130,12 @@ public class CliPos extends PBase {
 				if (mu.emptystr(sNombreCliente)) {
                     msgbox("Nombre incorrecto");return;
 				}
+
+                if (!sCorreoCliente.isEmpty()) {
+                    if (sCorreoCliente.indexOf("@")<3) {
+                        msgbox("Correo incorrecto");return;
+                    }
+                }
 
 				if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente)) procesaNIT(sNITCliente);
 
@@ -250,7 +258,7 @@ public class CliPos extends PBase {
 		try {
 
 			gl.rutatipo="V";
-			gl.cliente=""+codigo;
+			gl.cliente=""+codigo; if (codigo==-1) gl.cliente=gl.emp+"0";
 			gl.nivel=gl.nivel_sucursal;
             gl.percepcion=0;
             gl.contrib="";
@@ -394,6 +402,14 @@ public class CliPos extends PBase {
 	//region Aux
 
 	private boolean validaNIT(String N)  {
+
+        if (N.isEmpty()) return false;
+
+        if (N.indexOf("-")<0) {
+            if (N.length()!=8) return false;
+        } else {
+            if (N.length()!=9) return false;
+        }
 
         try{
             String P, C, s, NC;

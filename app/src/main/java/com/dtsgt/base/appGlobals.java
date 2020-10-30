@@ -23,7 +23,7 @@ public class appGlobals extends Application {
 	public boolean CellCom,closeDevBod,modoinicial,newmenuitem,validDate,comquickrec;
 	public String ref1,ref2,ref3,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente;
-	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden;
+	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom;
 	public String tiendanom,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
@@ -31,11 +31,12 @@ public class appGlobals extends Application {
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
-			    emp, tienda,dias_anul,cod_prov_recarga,	timeout;
+			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,codigo_pais;
 	public double precio_recarga,total_pago;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
-	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,recibir_automatico = false;
+	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
+                   recibir_automatico = false,meserodir;
 
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false

@@ -17,6 +17,8 @@ import com.dtsgt.classes.clsP_res_grupoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_res_turnoObj;
+import com.dtsgt.classes.clsT_ordenObj;
+import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Res_mesa;
 
@@ -31,6 +33,7 @@ public class ResMesero extends PBase {
     private clsP_res_turnoObj P_res_turnoObj;
     private clsP_res_mesaObj P_res_mesaObj;
     private clsP_res_sesionObj P_res_sesionObj;
+    private clsT_ordenObj T_ordenObj;
 
     private LA_Res_mesa adapter;
 
@@ -56,6 +59,7 @@ public class ResMesero extends PBase {
         P_res_turnoObj=new clsP_res_turnoObj(this,Con,db);
         P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
         P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+        T_ordenObj=new clsT_ordenObj(this,Con,db);
 
         setHandlers();
         cargaConfig();
@@ -77,7 +81,11 @@ public class ResMesero extends PBase {
     }
 
     public void doExit(View view) {
-        msgAskExit("Salir");
+        if (gl.meserodir) {
+            msgAskExit("Salir");
+        } else {
+            finish();
+        }
     }
 
     private void setHandlers() {
@@ -115,16 +123,21 @@ public class ResMesero extends PBase {
                 mesa.nombre=P_res_mesaObj.items.get(i).nombre;
 
                 P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
+
                 if (P_res_sesionObj.count>0) {
                     mesa.estado=P_res_sesionObj.first().estado;
                     mesa.pers=P_res_sesionObj.first().cantp;
                     mesa.cuentas=P_res_sesionObj.first().cantc;
                     mesa.fecha=P_res_sesionObj.first().fechault;
+
+                    T_ordenObj.fill("WHERE (COREL='"+P_res_sesionObj.first().id+"') AND (ESTADO=1)");
+                    mesa.pendiente=T_ordenObj.count;
                 } else {
                     mesa.estado=0;
                     mesa.pers=0;
                     mesa.cuentas=0;
                     mesa.fecha=0;
+                    mesa.pendiente=0;
                 }
 
                 mesas.add(mesa);
@@ -142,6 +155,7 @@ public class ResMesero extends PBase {
             P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
             if (P_res_sesionObj.count>0) {
                 gl.idorden=P_res_sesionObj.first().id;
+                gl.mesanom=mesa.nombre;
                 startActivity(new Intent(this,Orden.class));
             } else {
                 inputPersonas();
@@ -153,6 +167,7 @@ public class ResMesero extends PBase {
 
     private void addOrden() {
         try {
+            db.beginTransaction();
 
             clsClasses.clsP_res_sesion item = clsCls.new clsP_res_sesion();
 
@@ -168,9 +183,27 @@ public class ResMesero extends PBase {
 
             P_res_sesionObj.add(item);
 
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+            clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
+
+            cuenta.corel=item.id;
+            cuenta.id=1;
+            cuenta.cf=1;
+            cuenta.nombre="Consumidor final";
+            cuenta.nit="C.F.";
+            cuenta.direccion="Ciudad";
+            cuenta.correo="";
+
+            T_ordencuentaObj.add(cuenta);
+
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
             gl.idorden=item.id;
             startActivity(new Intent(this,Orden.class));
         } catch (Exception e) {
+            db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
@@ -358,6 +391,7 @@ public class ResMesero extends PBase {
             P_res_turnoObj.reconnect(Con,db);
             P_res_mesaObj.reconnect(Con,db);
             P_res_sesionObj.reconnect(Con,db);
+            T_ordenObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

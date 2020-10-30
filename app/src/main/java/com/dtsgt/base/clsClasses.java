@@ -738,6 +738,7 @@ public class clsClasses {
         public int  pers;
         public int  cuentas;
         public long fecha;
+        public int  pendiente;
     }
 
     public class clsP_res_sesion {
@@ -829,6 +830,51 @@ public class clsClasses {
         public int  razon;
     }
 
+    public class clsT_orden {
+        public int  id;
+        public String corel;
+        public String producto;
+        public String empresa;
+        public String um;
+        public double cant;
+        public String umstock;
+        public double factor;
+        public double precio;
+        public double imp;
+        public double des;
+        public double desmon;
+        public double total;
+        public double preciodoc;
+        public double peso;
+        public double val1;
+        public String val2;
+        public double val3;
+        public String val4;
+        public double percep;
+        public int  cuenta;
+        public int  estado;
+    }
+
+    public class clsT_ordencombo {
+        public String corel;
+        public int  codigo_menu;
+        public int  idcombo;
+        public int  unid;
+        public int  cant;
+        public int  idseleccion;
+        public int  orden;
+    }
+
+    public class clsT_ordencuenta {
+        public String corel;
+        public int  id;
+        public int  cf;
+        public String nombre;
+        public String nit;
+        public String direccion;
+        public String correo;
+    }
+
     public class clsT_venta {
         public String producto;
         public String empresa;
@@ -907,6 +953,12 @@ public class clsClasses {
 		public double Cant,Peso,Prec,Desc,Total,imp,percep;
 		
 	}
+
+    public class clsOrden {
+        public String Cod,Nombre,um,val,valp,sdesc,emp;
+        public double Cant,Peso,Prec,Desc,Total,imp,percep;
+        public int id,icant,cuenta,estado;
+    }
 	
 	public class clsPromoItem {
 		public String Prod,Nombre,Bon,Tipo;

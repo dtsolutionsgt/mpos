@@ -246,9 +246,8 @@ public class Caja extends PBase {
 
             if(cred==1){
                 sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
-                        "FROM D_FACTURAP P " +
-                        "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                        "WHERE F.KILOMETRAJE=0 AND P.TIPO='K' " +
+                        "FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                        "WHERE F.KILOMETRAJE=0 AND P.TIPO='K' AND F.ANULADO=0 " +
                         "GROUP BY P.CODPAGO";
 
                 dt=Con.OpenDT(sql);
