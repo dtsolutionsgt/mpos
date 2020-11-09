@@ -209,6 +209,17 @@ public class clsClasses {
         public String nit;
     }
 
+    public class clsD_usuario_asistencia {
+        public int  codigo_asistencia;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  codigo_vendedor;
+        public long fecha;
+        public long inicio;
+        public long fin;
+        public int  bandera;
+    }
+
     public class clsP_archivoconf {
         public String ruta;
         public String tipo_hh;

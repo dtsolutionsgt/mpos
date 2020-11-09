@@ -840,6 +840,7 @@ public class Menu extends PBase {
 
 			dialog.setPositiveButton("Cambiar", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
+				    app.logoutUser(du.getActDateTime());
 					Menu.super.finish();
 				}
 			});
@@ -853,8 +854,6 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
-
 	}
 
 	private void enviarBaseDeDatos() {

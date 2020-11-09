@@ -30,6 +30,7 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
@@ -54,7 +55,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.31 / 29-Oct-2020";
+    private String parVer = " 3.2.32 / 03-Nov-2020";
 
     private Typeface typeface;
 
@@ -450,12 +451,14 @@ public class MainActivity extends PBase {
         }
         */
 
-        if (checkUser()) gotoMenu();
+        if (checkUser()) {
+            logUser();
+            gotoMenu();
+        }
 
     }
 
     private boolean checkUser() {
-
         Cursor DT;
         String dpwd;
 
@@ -538,6 +541,33 @@ public class MainActivity extends PBase {
             return false;
         }
 
+    }
+
+    private void logUser() {
+        long ff=du.getActDate();
+
+        try {
+
+            clsD_usuario_asistenciaObj D_usuario_asistenciaObj=new clsD_usuario_asistenciaObj(this,Con,db);
+            D_usuario_asistenciaObj.fill("WHERE (CODIGO_VENDEDOR="+gl.codigo_vendedor+") AND (FECHA="+ff+")");
+            if (D_usuario_asistenciaObj.count>0) return;
+
+            clsClasses.clsD_usuario_asistencia item = clsCls.new clsD_usuario_asistencia();
+
+            item.codigo_asistencia=D_usuario_asistenciaObj.newID("SELECT MAX(CODIGO_ASISTENCIA) FROM D_usuario_asistencia");
+            item.empresa=gl.emp;
+            item.codigo_sucursal=gl.tienda;
+            item.codigo_vendedor=gl.codigo_vendedor;
+            item.fecha=ff;
+            item.inicio=du.getActDateTime();
+            item.fin=0;
+            item.bandera=0;
+
+            D_usuario_asistenciaObj.add(item);
+
+        } catch (Exception e) {
+
+        }
     }
 
     private void accesoAdmin() {
@@ -696,8 +726,7 @@ public class MainActivity extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             uniqueID = "0000000000";
         }
 

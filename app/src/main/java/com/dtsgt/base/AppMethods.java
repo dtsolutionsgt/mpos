@@ -3,6 +3,7 @@ package com.dtsgt.base;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -16,6 +17,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 
 import org.apache.commons.io.FileUtils;
@@ -74,9 +76,11 @@ public class AppMethods {
 		String sql,val="";
 		int ival;
 
+        parametrosExtraLocal();
+
 		//region Parametros Road
 
-		try {
+        try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=1";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -589,6 +593,22 @@ public class AppMethods {
 
     }
 
+    public void parametrosExtraLocal() {
+        try {
+            SharedPreferences pref = cont.getApplicationContext().getSharedPreferences("MPos", 0);
+            SharedPreferences.Editor editor = pref.edit();
+
+            try {
+                gl.pelCaja=pref.getBoolean("pelCaja", false);
+            } catch (Exception e) {
+                gl.pelCaja=false;
+            }
+
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
+
     public boolean paramCierre(int pid) {
         Cursor dt;
         String sql,val="";
@@ -667,6 +687,26 @@ public class AppMethods {
                 toast("Creado archivo de conexion");
             }
         } catch (Exception e) {}
+    }
+
+    public void logoutUser(long ff) {
+        try {
+
+
+            long f0=ff / 10000;
+            f0=f0*10000;
+
+            clsD_usuario_asistenciaObj D_usuario_asistenciaObj=new clsD_usuario_asistenciaObj(cont,Con,db);
+            D_usuario_asistenciaObj.fill("WHERE (CODIGO_VENDEDOR="+gl.codigo_vendedor+") AND (FECHA="+f0+")");
+            if (D_usuario_asistenciaObj.count==0) return;
+
+            clsClasses.clsD_usuario_asistencia item=D_usuario_asistenciaObj.first();
+            item.fin=ff;
+            D_usuario_asistenciaObj.update(item);
+
+        } catch (Exception e) {
+
+        }
     }
 
     //endregion

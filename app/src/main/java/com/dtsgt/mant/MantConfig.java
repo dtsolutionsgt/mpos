@@ -1,6 +1,7 @@
 package com.dtsgt.mant;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ public class MantConfig extends PBase {
 
     private CheckBox cb100,cb101,cb102,cb103,cb104,cb106,cb107,cb109,cb111,cb112,cb113,cb115;
     private CheckBox cb116,cb118,cb119;
+    private CheckBox locCaja;
     private Spinner spin16,spin105;
     private TextView txt108,txt110,txt114,txt117;
     private ImageView imgadd;
@@ -37,6 +39,8 @@ public class MantConfig extends PBase {
     private boolean value111,value112,value113,value115,value116,value118,value119;
     private String  value16,value105,value117;
     private int value108,value110,value114;
+
+    private boolean valCaja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,8 @@ public class MantConfig extends PBase {
         txt117 = (EditText) findViewById(R.id.txtDiasAnul3);
         cb118  = (CheckBox) findViewById(R.id.chkEnvio9);
         cb119  = (CheckBox) findViewById(R.id.chkEnvio10);
+
+        locCaja  = (CheckBox) findViewById(R.id.chkEnvio11);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -144,6 +150,8 @@ public class MantConfig extends PBase {
     //region Main
 
     private void loadItem() {
+
+        loadLocalItems();
 
         try {
             holder.fill("WHERE ID="+16);
@@ -314,10 +322,30 @@ public class MantConfig extends PBase {
         cb119.setChecked(value119);
     }
 
+    private void loadLocalItems() {
+        try {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
+            SharedPreferences.Editor editor = pref.edit();
+
+            try {
+                valCaja=pref.getBoolean("pelCaja", false);
+            } catch (Exception e) {
+                valCaja=false;
+            }
+
+            locCaja.setChecked(valCaja);
+        } catch (Exception e) {
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+
+    }
+
     private void updateItem() {
         String s100="N",s101="N",s102="N",s103="N",s104="N",s105="",s106="S", s107="S",
                s108="5", s109="S", s110="3", s111="N", s112="N", s113="N", s114="1",
                s115="N", s116="N", s117="", s118="N", s119="N";
+
+        updateLocalItems();
 
         try {
 
@@ -395,6 +423,21 @@ public class MantConfig extends PBase {
             finish();
         } catch (Exception e) {
             db.endTransaction();
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+    }
+
+    private void updateLocalItems() {
+        try {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
+            SharedPreferences.Editor editor = pref.edit();
+
+            valCaja=locCaja.isChecked();
+
+            editor.putBoolean("pelCaja", valCaja);
+
+            editor.commit();
+        } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }

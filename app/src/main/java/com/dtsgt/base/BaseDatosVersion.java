@@ -178,12 +178,26 @@ public class BaseDatosVersion {
         } catch (Exception e) {}
 
         try {
+            sql="CREATE TABLE [D_usuario_asistencia] ("+
+                    "CODIGO_ASISTENCIA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "INICIO INTEGER NOT NULL,"+
+                    "FIN INTEGER NOT NULL,"+
+                    "BANDERA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_ASISTENCIA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+
+        try {
             Cursor vCursor = db.rawQuery("SELECT * FROM T_ORDEN", null);
             if (vCursor != null) vCursor.moveToLast();
             if (vCursor.getCount()==0) db.execSQL("DROP TABLE T_ORDEN");
-        } catch (Exception e) {
-            String ee=e.getMessage();
-        }
+        } catch (Exception e) {}
 
         try {
             sql="CREATE TABLE [T_orden] ("+
@@ -214,8 +228,7 @@ public class BaseDatosVersion {
             db.execSQL(sql);
 
             sql="CREATE INDEX T_orden_idx1 ON T_orden(COREL)";db.execSQL(sql);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
 
         try {
             sql="CREATE TABLE [T_ordencombo] ("+

@@ -404,12 +404,8 @@ public class CliPos extends PBase {
 	private boolean validaNIT(String N)  {
 
         if (N.isEmpty()) return false;
-
-        if (N.indexOf("-")<0) {
-            if (N.length()!=8) return false;
-        } else {
-            if (N.length()!=9) return false;
-        }
+        if (!N.contains("-")) return false;
+        if (N.length()!=9) return false;
 
         try{
             String P, C, s, NC;

@@ -41,6 +41,8 @@ import com.dtsgt.ladapt.ListAdaptGridProd;
 import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptOrden;
+import com.dtsgt.webservice.srvOrdenEnvio;
+import com.dtsgt.webservice.srvPedidoEstado;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1021,9 +1023,12 @@ public class Orden extends PBase {
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+
             sess.estado=2;
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
+
+            envioMesa(2);
 
             finish();
         } catch (Exception e) {
@@ -1036,6 +1041,9 @@ public class Orden extends PBase {
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+
+            envioMesa(3);
+
             sess.estado=3;
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
@@ -1055,6 +1063,8 @@ public class Orden extends PBase {
             sess.estado=-1;
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
+
+            envioMesa(-1);
 
             finish();
         } catch (Exception e) {
@@ -1247,17 +1257,47 @@ public class Orden extends PBase {
     }
 
     private void processMenuTools(int menuid) {
+        String s="";
+
         try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            int est=P_res_sesionObj.first().estado;
+
             switch (menuid) {
                 case 1:
-                    msgAskOrden("Procesar pago");
-                    break;
+                    if (est==2) {
+                        s="Procesar pago";
+                    } else {
+                        if (est==1) {
+                            s="La mesa esta pendiente de preimpresion.\nProcesar pago";
+                        } else {
+                            s="La mesa esta pendiente de completar.\nProcesar pago";
+                        }
+                    }
+                    msgAskOrden(s);break;
                 case 2:
-                    msgAskCuentas("Completar las cuentas");
-                    break;
+                    if (est==3) {
+                        s="Completar la mesa";
+                    } else {
+                        if (est==1) {
+                            s="La mesa esta pendiente de preimpresion.\nCompletar orden";
+                        } else {
+                            s="La mesa esta pendiente de pago.\nCompletar orden";
+                        }
+                    }
+                    msgAskCuentas(s);break;
                 case 3:
-                    msgAskPrint("Procesar preimpresion");
-                    break;
+                    if (est==1) {
+                        s="Procesar preimpresion";
+                    } else {
+                        if (est==2) {
+                            s="La mesa esta pendiente de pago.\nProcesar preimpresion";
+                        } else {
+                            s="La mesa esta pendiente de completar.\nProcesar preimpresion";
+                        }
+                    }
+                    msgAskPrint(s);break;
                 case 24:
                     exitBtn();break;
                 case 50:
@@ -1340,6 +1380,62 @@ public class Orden extends PBase {
             }
         } catch (Exception e) {}
         return ""+prodid;
+    }
+
+    //endregion
+
+    //region Envio
+
+    private void envioMesa(int estado) {
+       String cmd="";
+
+       estadoMesa(estado);
+
+       try {
+
+           if (estado>1) {
+               cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
+               cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
+               cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
+
+               clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+               P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
+               cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+
+               clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
+               T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
+               for (int i = 0; i < T_ordenObj.count; i++) {
+                   cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
+               }
+
+               clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
+               T_ordencuentaObj.fill("WHERE (COREL='" + idorden + "')");
+               for (int i = 0; i < T_ordencuentaObj.count; i++) {
+                   cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
+               }
+           } else {
+               cmd += "UPDATE P_res_sesion SET Estado=-1 WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
+           }
+
+           Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+           intent.putExtra("URL",gl.wsurl);
+           intent.putExtra("command",cmd);
+           startService(intent);
+
+       } catch (Exception e) {
+           msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+       }
+    }
+
+    private void estadoMesa(int est) {
+        try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            P_res_sesionObj.first().estado=est;
+            P_res_sesionObj.update(P_res_sesionObj.first());
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion

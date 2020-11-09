@@ -138,6 +138,8 @@ public class Caja extends PBase {
 
         try{
 
+            app.logoutUser(du.getActDateTime());
+
             if(gl.cajaid==1 && !MontoIni.getText().toString().trim().isEmpty()){
 
                 fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());

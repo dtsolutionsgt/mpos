@@ -114,6 +114,22 @@
                 android:enabled="true" />
 
             <CheckBox
+                android:id="@+id/chkEnvio11"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio9"
+                android:layout_alignStart="@id/checkBox24"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <CheckBox
                 android:id="@+id/chkEnvio7"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -204,6 +220,45 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:text="Modulo restaurante"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact47"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignTop="@+id/chkEnvio9"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Modulo restaurante"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact48"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignTop="@+id/chkEnvio11"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Modulo caja"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"

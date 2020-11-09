@@ -20,6 +20,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_fel_bitacoraObj;
+import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
 import com.dtsgt.classes.clsP_cajareporteObj;
@@ -44,12 +45,9 @@ public class WSEnv extends PBase {
     private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
     private clsD_facturapObj D_facturapObj;
-
     private clsD_facturaObj D_factura_SC_Obj;
-
     private clsD_MovObj D_MovObj;
     private clsD_MovDObj D_MovDObj;
-
     private clsP_cajacierreObj P_cjCierreObj;
     private clsP_cajapagosObj P_cjPagosObj;
     private clsP_cajareporteObj P_cjReporteObj;
@@ -64,10 +62,11 @@ public class WSEnv extends PBase {
     private ArrayList<String> cjPagos = new ArrayList<String>();
     private ArrayList<String> cStock= new ArrayList<String>();
     private ArrayList<String> cBita= new ArrayList<String>();
+    private ArrayList<String> cAsist= new ArrayList<String>();
 
     private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
-    private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend,
+    private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend, cjAsist,
                 cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend,cjFelBita, cStockTot, cStockSend;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
@@ -150,8 +149,7 @@ public class WSEnv extends PBase {
                     case 2:
                         processFactura();
                         if (ftot>0) callMethod("Commit", "SQL", CSQL);
-
-                         break;
+                        break;
                     case 3:
                         processMov();
                         if (fTotMov>0) callMethod("Commit", "SQL", CSQL);
@@ -180,6 +178,11 @@ public class WSEnv extends PBase {
                         processFelBita();
                         cjFelBita=cBita.size();
                         if (cjFelBita>0) callMethod("Commit", "SQL", CSQL);
+                        break;
+                    case 9:
+                        processAsist();
+                        cjAsist=cAsist.size();
+                        if (cjAsist>0) callMethod("Commit", "SQL", CSQL);
                         break;
                 }
             } catch (Exception e) {
@@ -239,6 +242,10 @@ public class WSEnv extends PBase {
                     break;
                 case 8:
                     if (cjFelBita>0) statusFelBita();
+                    execws(9);
+                    break;
+                case 9:
+                    if (cjAsist>0) statusAsist();
                     processComplete();
                     break;
 
@@ -447,12 +454,13 @@ public class WSEnv extends PBase {
 
     public String addFactheader(clsClasses.clsD_factura item) {
 
-        String fst;
+        String fst,fs,fse;
 
         //String fs=""+du.univfechalong(item.fecha);
         //#EJC20200702: Formato fecha corregido.
-        String fs=""+du.univfecha(item.fecha);
+        fs=""+du.univfecha(item.fecha);
         if (item.feelfechaprocesado>0) fst=du.univfecha(item.feelfechaprocesado);else fst="20000101 00:00:00";
+        fse=""+du.univfechahora(item.fecha);
 
         ins.init("D_factura");
         ins.add("EMPRESA",item.empresa);
@@ -463,7 +471,7 @@ public class WSEnv extends PBase {
         ins.add("VENDEDOR",item.vendedor);
         ins.add("CLIENTE",item.cliente);
         ins.add("KILOMETRAJE",item.kilometraje);
-        ins.add("FECHAENTR",fs);
+        ins.add("FECHAENTR",fse);
         ins.add("FACTLINK",item.factlink);
         ins.add("TOTAL",item.total);
         ins.add("DESMONTO",item.desmonto);
@@ -949,6 +957,68 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processAsist() {
+        int codAsist;
+        long f0=du.ffecha00(du.getActDate());
+
+        try {
+            cAsist.clear();
+
+            clsD_usuario_asistenciaObj D_usuario_asistenciaObj=new clsD_usuario_asistenciaObj(this,Con,db);
+            D_usuario_asistenciaObj.fill("WHERE (BANDERA=0) AND (FECHA<"+f0+")");
+
+            CSQL="";
+
+            for (int i = 0; i <D_usuario_asistenciaObj.count; i++) {
+
+                codAsist = D_usuario_asistenciaObj.items.get(i).codigo_asistencia;
+                ss=asistaddItemSql(D_usuario_asistenciaObj.items.get(i));
+                CSQL = CSQL + ss + ";";
+
+                cAsist.add(""+codAsist);
+            }
+
+        } catch (Exception e) {
+            //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public String asistaddItemSql(clsClasses.clsD_usuario_asistencia item) {
+        String fsi,fsf;
+
+        ins.init("D_usuario_asistencia");
+
+        //ins.add("CODIGO_ASISTENCIA",item.codigo_asistencia);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
+
+        fsi=""+du.univfechahora(item.inicio);
+        if (item.fin>0) fsf=du.univfechahora(item.fin);else fsf="20000101 00:00:00";
+
+        ins.add("INICIO",fsi);
+        ins.add("FIN",fsf);
+        int ff=(int) (item.fecha/10000);
+        ins.add("BANDERA",ff);
+
+        return ins.sql();
+
+    }
+
+    private void statusAsist() {
+        long f0=du.ffecha00(du.getActDate());
+
+        try {
+
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+            if (!rs.equalsIgnoreCase("#")) return;
+
+            sql="UPDATE D_usuario_asistencia SET BANDERA=1 WHERE (BANDERA=0) AND (FECHA<"+f0+")";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+    }
+
     //endregion
 
     //region Aux
@@ -1031,6 +1101,13 @@ public class WSEnv extends PBase {
             D_fel_bitacoraObj.fill("WHERE STATCOM=0");
             cjFelBita=D_fel_bitacoraObj.count;
             total_enviar+=cjFelBita;
+
+            long f0=du.ffecha00(du.getActDate());
+            clsD_usuario_asistenciaObj D_usuario_asistenciaObj=new clsD_usuario_asistenciaObj(this,Con,db);
+            D_usuario_asistenciaObj.fill("WHERE (BANDERA=0) AND (FECHA<"+f0+")");
+            cjAsist=D_usuario_asistenciaObj.count;
+            total_enviar+=cjAsist;
+
 
             if(total_enviar>0){
 

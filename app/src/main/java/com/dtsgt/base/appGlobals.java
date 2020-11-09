@@ -58,6 +58,9 @@ public class appGlobals extends Application {
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
     public Boolean peAnulSuper,peRest,peModifPed;
 
+    // Parametros Extra Local
+    public Boolean pelCaja;
+
 	// Descuentos
 	public String promprod;
 	public double promcant,promdesc,prommdesc,descglob,descgtotal;

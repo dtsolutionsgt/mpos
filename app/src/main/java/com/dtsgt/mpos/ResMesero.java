@@ -334,6 +334,7 @@ public class ResMesero extends PBase {
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                   app.logoutUser(du.getActDateTime());
                    finish();
                 }
             });

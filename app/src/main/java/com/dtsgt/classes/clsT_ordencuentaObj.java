@@ -163,12 +163,13 @@ public class clsT_ordencuentaObj {
         return nid;
     }
 
-    public String addItemSql(clsClasses.clsT_ordencuenta item) {
+    public String addItemSql(clsClasses.clsT_ordencuenta item,int idempresa) {
 
         ins.init("T_ordencuenta");
 
         ins.add("COREL",item.corel);
         ins.add("ID",item.id);
+        ins.add("EMPRESA",idempresa);
         ins.add("CF",item.cf);
         ins.add("NOMBRE",item.nombre);
         ins.add("NIT",item.nit);

@@ -208,14 +208,14 @@ public class clsT_ordenObj {
         return nid;
     }
 
-    public String addItemSql(clsClasses.clsT_orden item) {
+    public String addItemSql(clsClasses.clsT_orden item,int idemp) {
 
         ins.init("T_orden");
 
         ins.add("ID",item.id);
         ins.add("COREL",item.corel);
         ins.add("PRODUCTO",item.producto);
-        ins.add("EMPRESA",item.empresa);
+        ins.add("EMPRESA",idemp);
         ins.add("UM",item.um);
         ins.add("CANT",item.cant);
         ins.add("UMSTOCK",item.umstock);

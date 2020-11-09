@@ -685,6 +685,7 @@ public class FELFactura extends PBase {
 
         //#EJC20200702:Correccion formato de fechas
         String fs=""+du.univfecha(item.fecha);
+        String fse=""+du.univfechahora(item.fecha);
         if (item.feelfechaprocesado>0) fst=du.univfecha(item.feelfechaprocesado);else fst="20000101 00:00:00";
 
         ins.init("D_factura");
@@ -696,7 +697,7 @@ public class FELFactura extends PBase {
         ins.add("VENDEDOR",item.vendedor);
         ins.add("CLIENTE",item.cliente);
         ins.add("KILOMETRAJE",item.kilometraje);
-        ins.add("FECHAENTR",fs);
+        ins.add("FECHAENTR",fse);
         ins.add("FACTLINK",item.factlink);
         ins.add("TOTAL",item.total);
         ins.add("DESMONTO",item.desmonto);

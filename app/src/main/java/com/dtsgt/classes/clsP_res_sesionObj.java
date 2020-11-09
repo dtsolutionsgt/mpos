@@ -170,10 +170,11 @@ public class clsP_res_sesionObj {
         return nid;
     }
 
-    public String addItemSql(clsClasses.clsP_res_sesion item) {
+    public String addItemSql(clsClasses.clsP_res_sesion item,int idemp) {
 
         ins.init("P_res_sesion");
 
+        ins.add("EMPRESA",idemp);
         ins.add("ID",item.id);
         ins.add("CODIGO_MESA",item.codigo_mesa);
         ins.add("VENDEDOR",item.vendedor);

@@ -1889,13 +1889,19 @@ public class Venta extends PBase {
 
                 if (pedidos) {
                     item = clsCls.new clsMenu();
-                    item.ID=61;item.Name="Orden ";item.Icon=61;
+                    item.ID=61;item.Name="Orden";item.Icon=61;
                     mmitems.add(item);
                 }
 
                 if (gl.peImpOrdCos) {
                     item = clsCls.new clsMenu();
                     item.ID=62;item.Name="Comanda";item.Icon=62;
+                    mmitems.add(item);
+                }
+
+                if (gl.pelCaja) {
+                    item = clsCls.new clsMenu();
+                    item.ID=65;item.Name="Caja";item.Icon=65;
                     mmitems.add(item);
                 }
 
@@ -1988,6 +1994,9 @@ public class Venta extends PBase {
                     break;
                 case 63:
                     listaMeseros();
+                    break;
+                case 65:
+                    startActivity(new Intent(this,ResCaja.class));
                     break;
             }
         } catch (Exception e) {
