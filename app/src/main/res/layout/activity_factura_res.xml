@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#DBF5F3"
-    tools:context=".FactutaRes">
+    tools:context=".FacturaRes">
 
     <ImageView
         android:id="@+id/imgPFoto"
@@ -30,8 +30,8 @@
         android:scaleType="fitXY"
         android:src="@drawable/sepgray" />
 
-    <ListView
-        android:id="@+id/listView1"
+    <RelativeLayout
+        android:id="@+id/listViewRel"
         android:layout_width="843dp"
         android:layout_height="106dp"
         android:layout_above="@id/textView137"
@@ -43,7 +43,45 @@
         android:layout_marginBottom="5dp"
         android:layout_toStartOf="@+id/textView136">
 
-    </ListView>
+        <RelativeLayout
+            android:id="@+id/relpreimp"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true">
+
+            <ImageView
+                android:id="@+id/imageView105"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:onClick="prnCuenta"
+                android:padding="5dp"
+                android:src="@drawable/preimpresion" />
+
+            <TextView
+                android:id="@+id/textView220"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView105"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:gravity="center_horizontal"
+                android:text="Preimpresion"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/relpreimp" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
@@ -216,7 +254,7 @@
             android:onClick="payCash"
             android:text="Pago Tarjeta"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/lblPend"
@@ -236,7 +274,7 @@
             android:paddingBottom="3dp"
             android:text="Pago Crédito"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="15sp" />
+            android:textSize="12sp" />
 
         <RelativeLayout
             android:layout_width="150dp"
@@ -357,7 +395,7 @@
             android:gravity="center_horizontal"
             android:onClick="pendientePago"
             android:text="Pago Pendiente"
-            android:textSize="15sp" />
+            android:textSize="12sp" />
 
     </RelativeLayout>
 

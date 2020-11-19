@@ -75,6 +75,7 @@ public class AppMethods {
 		Cursor dt;
 		String sql,val="";
 		int ival;
+		double dval;
 
         parametrosExtraLocal();
 
@@ -550,7 +551,7 @@ public class AppMethods {
 
             gl.peAnulSuper = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peAnulSuper =false;
+            gl.peAnulSuper=false;
         }
 
         try {
@@ -559,10 +560,11 @@ public class AppMethods {
             dt.moveToFirst();
 
             val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
 
-            gl.peMACCosina =val;
+            gl.pePropinaFija = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            gl.peMACCosina="";
+            gl.pePropinaFija =true;
         }
 
         try {
@@ -591,6 +593,20 @@ public class AppMethods {
             gl.peModifPed=false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=120";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            dval=Double.parseDouble(val);
+            if (dval<0 | dval>99) dval=0;
+
+            gl.pePropinaPerc =dval;
+        } catch (Exception e) {
+            gl.pePropinaPerc=0;
+        }
+
     }
 
     public void parametrosExtraLocal() {
@@ -602,6 +618,12 @@ public class AppMethods {
                 gl.pelCaja=pref.getBoolean("pelCaja", false);
             } catch (Exception e) {
                 gl.pelCaja=false;
+            }
+
+            try {
+                gl.pelCajaRecep=pref.getBoolean("pelCajaRecep", false);
+            } catch (Exception e) {
+                gl.pelCajaRecep=false;
             }
 
         } catch (Exception e) {

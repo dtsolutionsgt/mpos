@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.dtsgt.mant.MantConfigRes">
+
+        <ImageView
+            android:id="@+id/imgImg2"
+            android:layout_width="64dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="478dp"
+            android:clickable="true"
+            android:onClick="doSave"
+            android:src="@drawable/icok" />
+
+        <RelativeLayout
+            android:id="@+id/relRoad"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#FFFFFF">
+
+            <RelativeLayout
+                android:id="@+id/relRoadbar"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true"
+                android:background="#9A999E"></RelativeLayout>
+
+            <ImageView
+                android:id="@+id/imgTitLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/logo_panel" />
+
+            <ImageView
+                android:id="@+id/imgRoadTit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/relRoadbar"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true"
+                android:padding="5dp"
+                android:src="@drawable/mantenimientos48" />
+
+            <TextView
+                android:id="@+id/lblTit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/imgRoadTit"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="Configuración restaurante"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#1A8AC6"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/relbotpan"
+            android:layout_below="@+id/relRoad"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toStartOf="@+id/imgImg2"
+            android:layout_toEndOf="@+id/imageView30">
+
+
+            <RelativeLayout
+                android:id="@+id/relativeLayout1"
+                android:layout_width="605dp"
+                android:layout_height="300dp"
+                android:layout_above="@+id/relbotpan"
+                android:layout_below="@+id/relRoad"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toStartOf="@+id/imgImg2"
+                android:layout_toEndOf="@+id/imageView30"
+                android:background="@drawable/frame_rect">
+
+                <CheckBox
+                    android:id="@+id/chkEnvio11"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio8"
+                    android:layout_alignStart="@+id/chkEnvio8"
+                    android:layout_alignEnd="@+id/chkEnvio8"
+                    android:layout_alignParentBottom="false"
+                    android:layout_marginStart="-12dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:clickable="true"
+                    android:enabled="true" />
+
+                <CheckBox
+                    android:id="@+id/chkEnvio14"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio12"
+                    android:layout_alignStart="@+id/chkEnvio8"
+                    android:layout_alignEnd="@+id/chkEnvio8"
+                    android:layout_alignParentBottom="false"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:clickable="true"
+                    android:enabled="true" />
+
+                <CheckBox
+                    android:id="@+id/chkEnvio12"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio11"
+                    android:layout_alignStart="@+id/chkEnvio8"
+                    android:layout_alignEnd="@+id/chkEnvio11"
+                    android:layout_alignParentBottom="false"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:clickable="true"
+                    android:enabled="false" />
+
+                <CheckBox
+                    android:id="@+id/chkEnvio8"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="false"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/lblCFact43"
+                    android:clickable="true"
+                    android:enabled="true" />
+
+                <TextView
+                    android:id="@+id/lblCFact48"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact43"
+                    android:layout_alignStart="@+id/lblCFact43"
+                    android:layout_alignEnd="@+id/lblCFact43"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Modulo caja"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/lblCFact49"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact48"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Caja - recepcion de ordenes"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/lblCFact44"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact49"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Propina fija"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/lblCFact45"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact44"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Propina [ % ]"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/lblCFact43"
+                    android:layout_width="300dp"
+                    android:layout_height="32dp"
+                    android:layout_alignEnd="@+id/textView2"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Imprimir orden para la cosina"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <EditText
+                    android:id="@+id/editTextNumber3"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio14"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@+id/lblCFact45"
+                    android:ems="10"
+                    android:inputType="numberDecimal" />
+
+            </RelativeLayout>
+        </ScrollView>
+
+        <RelativeLayout
+            android:id="@+id/relbotpan"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/blue_strip">
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:paddingRight="10dp"
+                android:text="DTSolutions"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView30"
+            android:layout_width="64dp"
+            android:layout_height="48dp"
+            android:layout_below="@id/relRoad"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:onClick="doExit"
+            android:src="@drawable/prev48" />
+
+
+
+
+
+    </RelativeLayout>

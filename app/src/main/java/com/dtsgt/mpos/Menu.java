@@ -32,6 +32,7 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
+import com.dtsgt.mant.MantConfigRes;
 import com.dtsgt.mant.MantCorel;
 import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
@@ -1118,7 +1119,7 @@ public class Menu extends PBase {
         try {
             final AlertDialog Dialog;
 
-            final String[] selitems = { "Sala", "Mesa", "Grupo de mesas"};
+            final String[] selitems = {"Configuracion", "Sala", "Mesa", "Grupo de mesas"};
             //final String[] selitems = { "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
 
             menudlg = new ExDialog(this);
@@ -1132,9 +1133,12 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
                     if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
                     if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
+                    if (ss.equalsIgnoreCase("Configuracion")) gl.mantid = 29;
 
                     if (gl.mantid == 24) {
                         startActivity(new Intent(Menu.this, SalaDis.class));
+                    } else if (gl.mantid == 29) {
+                            startActivity(new Intent(Menu.this, MantConfigRes.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }

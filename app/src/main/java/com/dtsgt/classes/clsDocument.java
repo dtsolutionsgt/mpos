@@ -20,11 +20,12 @@ public class clsDocument {
 	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
-	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid;
+	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
-	public boolean docdesglose,pass,facturaflag,banderafel;
+	public boolean docdesglose,pass,facturaflag,banderafel,propadd;
 	public int ffecha,pendiente,diacred,pagoefectivo;
+	public double ptotal,pdesc,pprop;
 
 	protected android.database.sqlite.SQLiteDatabase db;
 	protected BaseDatos Con;
@@ -165,7 +166,28 @@ public class clsDocument {
         return true;
     }
 
-	public boolean buildPrintAppend(String corel,int reimpres,String modo) {
+    public boolean buildPrint(String pmesa,String pcuenta,double total,double desc,double prop,boolean ppropadd) {
+	    rep.clear();
+
+        try{
+            mesa=pmesa;cuenta=pcuenta;
+            ptotal=total;pdesc=desc;pprop=prop;propadd=ppropadd;
+
+            if (!buildHeader()) return false;
+            if (!buildDetail()) return false;
+            if (!buildFooter()) return false;
+
+            if (!rep.save()) return false;
+
+        } catch (Exception e){
+            setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+        return true;
+    }
+
+
+    public boolean buildPrintAppend(String corel,int reimpres,String modo) {
 		int flag;
 
 		modofact=modo;
@@ -757,7 +779,28 @@ public class clsDocument {
 		return true;
 	}
 
-	// Aux
+    private boolean buildHeader() {
+
+        lines.clear();
+
+        try {
+            Con = new BaseDatos(cont);
+            opendb();
+
+            loadDocData("");
+
+            try {
+                Con.close();
+            } catch (Exception e1) {}
+
+        } catch (Exception e) {
+            Toast.makeText(cont,"buildheader: "+e.getMessage(), Toast.LENGTH_SHORT).show();return false;
+        }
+
+        return true;
+    }
+
+    // Aux
 	
 	private boolean loadHeadLines() {
         clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
@@ -765,8 +808,6 @@ public class clsDocument {
 		String s,sucur;
 		
 		try {
-
-            //textofin,felcert,felnit
 
 			sql = "SELECT SUCURSAL FROM P_RUTA WHERE CODIGO_RUTA="+ruta;
 			DT = Con.OpenDT(sql);

@@ -32,7 +32,8 @@ public class appGlobals extends Application {
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid;
-	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,codigo_pais;
+	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
+                codigo_pais,primesa,pricuenta;
 	public double precio_recarga,total_pago;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
@@ -51,15 +52,16 @@ public class appGlobals extends Application {
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
 	// Parametros Extra
-	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peMACCosina;
+	public String peModal,peMon,peFormatoFactura,peMMod,peFEL;
     public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp;
     public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
-    public Boolean peAnulSuper,peRest,peModifPed;
+    public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija;
+    public double  pePropinaPerc;
 
     // Parametros Extra Local
-    public Boolean pelCaja;
+    public Boolean pelCaja,pelCajaRecep;
 
 	// Descuentos
 	public String promprod;

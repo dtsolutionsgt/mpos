@@ -405,7 +405,6 @@ public class CliPos extends PBase {
 
         if (N.isEmpty()) return false;
         if (!N.contains("-")) return false;
-        if (N.length()!=9) return false;
 
         try{
             String P, C, s, NC;

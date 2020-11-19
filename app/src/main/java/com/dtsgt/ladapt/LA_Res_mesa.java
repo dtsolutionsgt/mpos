@@ -61,7 +61,7 @@ public class LA_Res_mesa  extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        int est;
+        int est,pend;
 
         if (convertView == null) {
 
@@ -81,9 +81,9 @@ public class LA_Res_mesa  extends BaseAdapter {
         }
 
         est=items.get(position).estado;
+        pend=items.get(position).pendiente;
 
         holder.lbl1.setText(""+items.get(position).nombre);
-
         holder.img1.setImageResource(R.drawable.blank48);
 
         if (est==0) {
@@ -102,6 +102,9 @@ public class LA_Res_mesa  extends BaseAdapter {
             switch (est) {
                 case 1:
                     holder.img1.setImageResource(R.drawable.blank48);
+                    if (pend>0) {
+                        holder.img1.setImageResource(R.drawable.icon_cooking2);
+                    }
                     break;
                 case 2:
                     holder.img1.setImageResource(R.drawable.preimpresion);
@@ -110,8 +113,6 @@ public class LA_Res_mesa  extends BaseAdapter {
                     holder.img1.setImageResource(R.drawable.pago_pendiente);
                     break;
             }
-
-            if (items.get(position).pendiente>0) holder.img1.setImageResource(R.drawable.icon_cooking2);
 
         }
 

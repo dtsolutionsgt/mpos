@@ -93,7 +93,7 @@ public class Orden extends PBase {
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
     private int nivel,dweek,clidia,counter;
-    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag,enviarorden;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private int codigo_cliente, emp,cod_prod,cantcuentas;
     private String idorden,cliid,saveprodid;
@@ -117,6 +117,8 @@ public class Orden extends PBase {
         gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
         idorden=gl.idorden;
 
+        enviarorden=gl.meserodir;
+
         cliid=gl.cliente;
         decimal=false;
 
@@ -132,6 +134,7 @@ public class Orden extends PBase {
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
 
+        setPrintWidth();
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
         counter=1;
@@ -242,7 +245,7 @@ public class Orden extends PBase {
                         gl.produid=item.id;
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
-                        uid=item.emp;gl.menuitemid=uid;seluid=uid;
+                        uid=""+item.id;gl.menuitemid=uid;seluid=uid;
                         adapter.setSelectedIndex(position);
 
                         gl.gstr=item.Nombre;
@@ -256,7 +259,7 @@ public class Orden extends PBase {
                         if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
                             browse=6;
                             gl.menuitemid=prodid;
-                          } else if (tipo.equalsIgnoreCase("M")) {
+                        } else if (tipo.equalsIgnoreCase("M")) {
                             gl.newmenuitem=false;
                             gl.menuitemid=item.emp;
                             browse=7;
@@ -559,7 +562,6 @@ public class Orden extends PBase {
             sql="DELETE FROM T_BONITEM WHERE Prodid='"+prodid+"'";
             db.execSQL(sql);
 
-            desc = 0;
             prodPrecio();
             savetot=saveprec*cant;
 
@@ -577,15 +579,13 @@ public class Orden extends PBase {
                     gl.bonus.add(clsBonif.items.get(i));
                 }
             }
+            */
 
             clsDesc = new clsDescuento(this, ""+cod_prod, cant);
             desc = clsDesc.getDesc();
-            mdesc = clsDesc.monto;
-            */
+            mdesc = saveprec*cant*desc/100;mdesc=mu.round2(mdesc);
 
-            desc =0;mdesc=0;
             savecant=cant;
-            descmon=0;
 
             if (desc + mdesc > 0) {
 
@@ -616,16 +616,16 @@ public class Orden extends PBase {
 
             prodPrecio();
 
-            /*
+            double dsc=desc;
+
             precsin = prc.precsin;
             imp = prc.imp;
             impval = prc.impval;
             tot = prc.tot;
-            descmon = savetot-tot;//prc.descmon;
+            descmon = mdesc;
             prodtot = tot;
             totsin = prc.totsin;
             percep = 0;
-             */
 
             tipo=prodTipo(gl.prodcod);
 
@@ -719,8 +719,8 @@ public class Orden extends PBase {
             }
 
             prec=mu.round(prec,2);
-            desc=sdesc;
-        }catch (Exception e){
+            //desc=sdesc;
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
     }
@@ -960,7 +960,7 @@ public class Orden extends PBase {
             upd.add("TOTAL",prodtot);
             upd.add("PRECIODOC",precdoc);
 
-            upd.Where("(COREL='"+idorden+"') AND (EMPRESA='"+uid+"')");
+            upd.Where("(COREL='"+idorden+"') AND (ID='"+uid+"')");
 
             db.execSQL(upd.sql());
 
@@ -1110,7 +1110,7 @@ public class Orden extends PBase {
 
     //endregion
 
-    //region Menus
+    //region Menu
 
     private void listFamily() {
 
@@ -1223,19 +1223,19 @@ public class Orden extends PBase {
         try {
 
             item = clsCls.new clsMenu();
-            item.ID=52;item.Name="Cuentas";item.Icon=12;
+            item.ID=66;item.Name="Comandas";item.Icon=66;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
-            item.ID=3;item.Name="Preimpresión";item.Icon=3;
+            item.ID=3;item.Name="Preimpresión";item.Icon=68;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
-            item.ID=1;item.Name="Pago";item.Icon=58;
+            item.ID=1;item.Name="Pago";item.Icon=67;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
-            item.ID=2;item.Name="Completar";item.Icon=55;
+            item.ID=2;item.Name="Completar";item.Icon=69;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
@@ -1304,7 +1304,8 @@ public class Orden extends PBase {
                     gl.gstr = "";browse=1;gl.prodtipo=1;
                     startActivity(new Intent(this, Producto.class));
                     break;
-                case 52:
+                case 66:
+                    msgAskComanda("Enviar comanda a la cosina");
                     break;
             }
         } catch (Exception e) {
@@ -1321,12 +1322,12 @@ public class Orden extends PBase {
     //region Comanda
 
     private void imprimeComanda() {
-        clsT_ordenObj T_ventaObj=new clsT_ordenObj(this,Con,db);
+        clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
         clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
         clsClasses.clsT_orden venta;
         clsClasses.clsT_ordencombo combo;
-
-        int prid,idcombo;
+        String prname;
+        int prid;
 
         try {
             rep.clear();
@@ -1337,21 +1338,22 @@ public class Orden extends PBase {
             rep.line();
             rep.empty();
 
-            T_ventaObj.fill();
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
 
-            for (int i = 0; i <T_ventaObj.count; i++) {
-                venta=T_ventaObj.items.get(i);
+            for (int i = 0; i <T_ordenObj.count; i++) {
+                venta=T_ordenObj.items.get(i);
 
-                prid=app.codigoProducto(venta.producto);
-                s=mu.frmdecno(venta.cant)+" x "+getProd(prid);
+                prid = app.codigoProducto(venta.producto);
+                prname=getProd(prid);
+                s = mu.frmdecno(venta.cant) + " x " + prname;
                 rep.add(s);
 
                 if (app.prodTipo(prid).equalsIgnoreCase("M")) {
-                    T_comboObj.fill("WHERE IdCombo="+venta.val4);
+                    T_comboObj.fill("WHERE IdCombo=" + venta.val4);
 
-                    for (int j = 0; j <T_comboObj.count; j++) {
-                        if (j==0) rep.line();
-                        s=" -  "+getProd(T_comboObj.items.get(j).idseleccion);
+                    for (int j = 0; j < T_comboObj.count; j++) {
+                        if (j == 0) rep.line();
+                        s = " -  " + getProd(T_comboObj.items.get(j).idseleccion);
                         rep.add(s);
                     }
                     rep.line();
@@ -1366,7 +1368,7 @@ public class Orden extends PBase {
             rep.empty();
             rep.save();
 
-            //app.doPrint(1);
+            app.doPrint(1);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1390,6 +1392,8 @@ public class Orden extends PBase {
        String cmd="";
 
        estadoMesa(estado);
+
+       if (!enviarorden) return;
 
        try {
 
@@ -1572,7 +1576,7 @@ public class Orden extends PBase {
         dweek=mu.dayofweek();
 
         lblTot.setText("Total : "+mu.frmcur(0));
-        lblVend.setText(gl.mesanom);
+        lblVend.setText(gl.mesanom);mesa=gl.mesanom;
     }
 
     private boolean hasProducts(){
@@ -1926,6 +1930,27 @@ public class Orden extends PBase {
         }
     }
 
+    private void setPrintWidth() {
+        Cursor DT;
+        int prwd=32;
+
+        try {
+            sql="SELECT COL_IMP FROM P_EMPRESA";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+            prwd=DT.getInt(0);
+
+            if (DT!=null) DT.close();
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            prwd=32;
+        }
+
+        gl.prw=prwd;
+
+    }
+
+
     //endregion
 
     //region Dialogs
@@ -1990,6 +2015,29 @@ public class Orden extends PBase {
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
 
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskComanda(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    imprimeComanda();
                 }
             });
 
@@ -2231,8 +2279,6 @@ public class Orden extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
-
 
     //endregion
 

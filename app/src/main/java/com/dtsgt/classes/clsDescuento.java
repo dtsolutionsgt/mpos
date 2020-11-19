@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class clsDescuento {
 		
-	public double monto;
+	public double monto,descper,descmonto;
 	
 	private int active;
 	private android.database.sqlite.SQLiteDatabase db;
@@ -55,14 +55,17 @@ public class clsDescuento {
 		
 		items.clear();
 		
-		if (!validaPermisos()) return 0;
+		//if (!validaPermisos()) return 0;
 		
 		listaDescRango();
 		listaDescMult();
 		
 		dval=descFinal();
 		monto=montoFinal();
-		
+
+        descper=dval;
+        descmonto=monto;
+
 		return dval;
 	}
 	

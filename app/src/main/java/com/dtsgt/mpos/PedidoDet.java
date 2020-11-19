@@ -564,7 +564,6 @@ public class PedidoDet extends PBase {
         return true;
     }
 
-
     //endregion
 
     //region Aux

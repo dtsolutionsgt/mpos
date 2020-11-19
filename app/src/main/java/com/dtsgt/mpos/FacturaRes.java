@@ -34,6 +34,7 @@ import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
+import com.dtsgt.classes.clsDocCuenta;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsKeybHandler;
@@ -54,7 +55,7 @@ public class FacturaRes extends PBase {
 	private ImageView imgBon,imgMPago,imgCred, imgCard, imgPend;
 	private TextView lblVuelto;
 	private EditText txtVuelto;
-	private RelativeLayout rl_facturares;
+	private RelativeLayout rl_facturares,rl_preimpresion;
 
 	private List<String> spname = new ArrayList<String>();
 	private ArrayList<clsClasses.clsCDB> items= new ArrayList<clsClasses.clsCDB>();
@@ -76,7 +77,7 @@ public class FacturaRes extends PBase {
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,pend,stot0,stot,descmon,totimp,totperc,credito;
-	private double dispventa,falt;
+	private double dispventa,falt,descimp;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
 
 
@@ -87,7 +88,6 @@ public class FacturaRes extends PBase {
 		setContentView(R.layout.activity_factura_res);
 
 		super.InitBase();
-        addlog("FacturaRes",""+du.getActDateTime(),String.valueOf(gl.vend));
 
 		listView = (ListView) findViewById(R.id.listView1);
 		lblPago = (TextView) findViewById(R.id.TextView01);
@@ -110,6 +110,7 @@ public class FacturaRes extends PBase {
 
 		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
 		rl_facturares.setVisibility(View.VISIBLE);
+        rl_preimpresion=findViewById(R.id.relpreimp);
 
 		lblVuelto = new TextView(this,null);
 		txtVuelto = new EditText(this,null);
@@ -124,6 +125,8 @@ public class FacturaRes extends PBase {
 		dispventa = gl.dvdispventa;dispventa=mu.round(dispventa,2);
 		notaC = gl.tiponcredito;
         pendiente=false;
+
+        if (!gl.pelCaja) rl_preimpresion.setVisibility(View.GONE);
 
         mu.currsymb(gl.peMon);
 
@@ -152,7 +155,7 @@ public class FacturaRes extends PBase {
 
 		clsDesc=new clsDescGlob(this);
 
-		descpmon=totalDescProd();
+		descpmon=totalDescProd(); //descpmon=0;
 
 		dmax=clsDesc.dmax;
 		acum=clsDesc.acum;
@@ -331,6 +334,10 @@ public class FacturaRes extends PBase {
 	    askDelPago();
 	}
 
+    public void prnCuenta(View view) {
+        askDelCuenta();
+    }
+
     public void showBon(View view) {
 		try{
 			Intent intent = new Intent(this,BonVenta.class);
@@ -340,7 +347,47 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	private void setHandlers(){
+    public void DaVuelto(View view) {
+        try{
+            Davuelto();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    public void pago100(View view){
+        khand.val="100";
+        validaPagoEfectivo();
+    }
+
+    public void pago50(View view){
+        khand.val="50";
+        validaPagoEfectivo();
+    }
+
+    public void pago20(View view){
+        khand.val="20";
+        validaPagoEfectivo();
+    }
+
+    public void pago10(View view){
+        khand.val="10";
+        validaPagoEfectivo();
+    }
+
+    public void pago5(View view){
+        khand.val="5";
+        validaPagoEfectivo();
+    }
+
+    public void doKey(View view) {
+        khand.handleKey(view.getTag().toString());
+        if (khand.isEnter) {
+            validaPagoEfectivo();
+        }
+    }
+
+    private void setHandlers(){
 
 		try{
 
@@ -391,46 +438,6 @@ public class FacturaRes extends PBase {
 		}
 
 	}
-
-	public void DaVuelto(View view) {
-		try{
-			Davuelto();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-	}
-
-    public void pago100(View view){
-        khand.val="100";
-        validaPagoEfectivo();
-    }
-
-    public void pago50(View view){
-        khand.val="50";
-        validaPagoEfectivo();
-    }
-
-    public void pago20(View view){
-        khand.val="20";
-        validaPagoEfectivo();
-    }
-
-    public void pago10(View view){
-        khand.val="10";
-        validaPagoEfectivo();
-    }
-
-    public void pago5(View view){
-        khand.val="5";
-        validaPagoEfectivo();
-    }
-
-    public void doKey(View view) {
-        khand.handleKey(view.getTag().toString());
-        if (khand.isEnter) {
-            validaPagoEfectivo();
-        }
-    }
 
 	//endregion
 
@@ -510,6 +517,7 @@ public class FacturaRes extends PBase {
 		try{
 
 			if (acum) {
+                descimp=descgmon;
 				dfinmon=descpmon+descgmon;
 				cleandprod=false;
 			} else {
@@ -2419,6 +2427,21 @@ public class FacturaRes extends PBase {
         }
     }
 
+    private void impresionCuenta() {
+        try {
+           clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
+
+            //if (app.impresora()) {
+            fdoc.vendedor=gl.vendnom;
+            fdoc.rutanombre=gl.tiendanom;
+                fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,10,true);
+                app.doPrint(1,0);
+            //}
+        } catch (Exception e){
+            mu.msgbox("impresionCuenta : "  + e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -2626,6 +2649,31 @@ public class FacturaRes extends PBase {
         }
     }
 
+    private void askDelCuenta() {
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle("Preimpresion");
+            dialog.setMessage("¿Imprimir la cuenta?");
+
+            dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        impresionCuenta();
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                }
+            });
+
+            dialog.setNegativeButton("Salir", null);
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
     private void msgAskComanda(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
@@ -2643,7 +2691,6 @@ public class FacturaRes extends PBase {
         dialog.show();
 
     }
-
 
     //endregion
 	

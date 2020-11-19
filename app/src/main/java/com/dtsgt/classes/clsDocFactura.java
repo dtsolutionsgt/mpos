@@ -534,6 +534,10 @@ public class clsDocFactura extends clsDocument {
 
         try {
             if (!textofin.isEmpty()) {
+                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
+                    textofin=textofin+" S.A.";
+                }
+
                 String[] sp = textofin.split(",");
                 for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
             }

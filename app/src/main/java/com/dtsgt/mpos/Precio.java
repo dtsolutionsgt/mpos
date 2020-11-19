@@ -53,6 +53,7 @@ public class Precio {
 		cant=pcant;nivel=nivelprec;
 		um=unimedida;umpeso=unimedidapeso;umventa=umven;
 		prec=0;costo=0;descmon=0;imp=0;tot=0;precioespecial=0;
+        if (pcant==0) pcant=1;
 
 		clsDescuento clsDesc=new clsDescuento(cont,""+codigoprod,cant);
 		desc=clsDesc.getDesc();
