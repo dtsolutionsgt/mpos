@@ -71,7 +71,7 @@ public class ConfigCaja extends PBase {
                 try {
                     TextView spinlabel = (TextView) parentView.getChildAt(0);
                     spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                    spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                     idsuc = Integer.valueOf(spincode.get(position));
 
@@ -96,7 +96,7 @@ public class ConfigCaja extends PBase {
                 try {
                     TextView spinlabel = (TextView) parentView.getChildAt(0);
                     spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                    spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                    spinlabel.setTextSize(18);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                     idcaja = Integer.valueOf(cajacode.get(position));
                 } catch (Exception e) {

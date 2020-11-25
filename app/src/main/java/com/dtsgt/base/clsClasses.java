@@ -85,6 +85,16 @@ public class clsClasses {
         public boolean depos;
     }
 
+    public class clsD_facturapr {
+        public int  empresa;
+        public String corel;
+        public int  anulado;
+        public long  fecha;
+        public int  codigo_sucursal;
+        public int  codigo_vendedor;
+        public double propina;
+    }
+
     public class clsD_facturas {
         public String corel;
         public int  id;

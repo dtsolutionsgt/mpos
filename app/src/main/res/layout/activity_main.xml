@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@layout/back"
     android:clickable="true"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/imgFel"
@@ -33,7 +32,7 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="5dp"
-              android:text="Medium Text"
+            android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:visibility="invisible" />
 
@@ -52,12 +51,13 @@
             android:id="@+id/imgNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView82"
+            android:layout_above="@+id/spinner22"
+            android:layout_below="@+id/lblCDisp"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:clickable="true"
             android:maxWidth="610dp"
             android:onClick="doLoginScreen"
@@ -68,8 +68,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView82"
-            android:layout_marginLeft="20dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center_horizontal|center_vertical"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
@@ -77,16 +78,19 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#000000"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/lblCDisp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/lblCUsed"
-            android:layout_alignStart="@+id/lblCUsed"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_below="@+id/textView82"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:gravity="clip_vertical|center_horizontal"
             android:maxLines="1"
@@ -101,13 +105,29 @@
             android:id="@+id/textView82"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="false"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:maxLines="1"
             android:text="TextView"
-            android:textSize="32sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinner22"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/spinner_style" />
 
     </RelativeLayout>
 
@@ -115,11 +135,11 @@
         android:id="@+id/relbotpan"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="1dp"
-        android:background="@layout/blue_strip" >
+        android:background="@layout/blue_strip">
 
         <ImageView
             android:id="@+id/imgPFoto"
@@ -134,7 +154,7 @@
             android:paddingTop="5dp"
             android:paddingRight="10dp"
             android:paddingBottom="5dp"
-            android:src="@drawable/sincronizar_blanco" />
+            android:src="@drawable/mpos"/>
 
         <ImageView
             android:id="@+id/btnImp"
@@ -156,47 +176,43 @@
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentTop="false"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:clickable="true"
             android:gravity="center_vertical"
             android:onClick="doRegister"
-            android:paddingRight="10dp"
-            android:text="Copyright (C) DTSolutions S.A. , Guatemala"
+            android:paddingBottom="5dp"
+            android:text="Copyright (C) DTSolutions S.A."
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
 
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dp"
+            android:text="MPos ver. X.X  -  XX/XX/XXXX"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/imageView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:onClick="doOrientation"
+            android:padding="7dp"
+            android:src="@drawable/switch_mode" />
+
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView3"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="62dp"
-        android:gravity="center_horizontal"
-        android:text="ROAD ver. 9.5  -  21/01/2020"
-        android:textColor="#000000"
-        android:textSize="13sp" />
-
-    <ImageView
-        android:id="@+id/imageView19"
-        android:layout_width="96dp"
-        android:layout_height="64dp"
-        android:layout_above="@+id/relbotpan"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="41dp"
-        android:clickable="true"
-        android:onClick="doLogin"
-        android:src="@drawable/logo_nuevo" />
 
     <TextView
         android:id="@+id/textView127"

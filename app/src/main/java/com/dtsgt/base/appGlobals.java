@@ -29,15 +29,15 @@ public class appGlobals extends Application {
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
-	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper;
+	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
-			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid;
+			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
-                codigo_pais,primesa,pricuenta;
-	public double precio_recarga,total_pago;
+                codigo_pais,primesa,pricuenta,ordcorel;
+	public double precio_recarga,total_pago,propina_valor;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
-                   recibir_automatico = false,meserodir;
+                   recibir_automatico = false,meserodir,cerrarmesero;
 
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false
@@ -61,7 +61,7 @@ public class appGlobals extends Application {
     public double  pePropinaPerc;
 
     // Parametros Extra Local
-    public Boolean pelCaja,pelCajaRecep;
+    public Boolean pelCaja,pelCajaRecep,pelTablet;
 
 	// Descuentos
 	public String promprod;

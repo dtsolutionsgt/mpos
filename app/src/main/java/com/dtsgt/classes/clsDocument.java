@@ -23,9 +23,9 @@ public class clsDocument {
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
-	public boolean docdesglose,pass,facturaflag,banderafel,propadd;
+	public boolean docdesglose,pass,facturaflag,banderafel,propfija;
 	public int ffecha,pendiente,diacred,pagoefectivo;
-	public double ptotal,pdesc,pprop;
+	public double ptotal,pdesc,pprop,propvalor;
 
 	protected android.database.sqlite.SQLiteDatabase db;
 	protected BaseDatos Con;
@@ -166,12 +166,13 @@ public class clsDocument {
         return true;
     }
 
-    public boolean buildPrint(String pmesa,String pcuenta,double total,double desc,double prop,boolean ppropadd) {
+    public boolean buildPrint(String pmesa,String pcuenta,double total,double desc,double prop,boolean ppropfija,double ppropvalor) {
 	    rep.clear();
 
         try{
             mesa=pmesa;cuenta=pcuenta;
-            ptotal=total;pdesc=desc;pprop=prop;propadd=ppropadd;
+            ptotal=total;pdesc=desc;
+            pprop=prop;propfija=ppropfija;propvalor=ppropvalor;
 
             if (!buildHeader()) return false;
             if (!buildDetail()) return false;

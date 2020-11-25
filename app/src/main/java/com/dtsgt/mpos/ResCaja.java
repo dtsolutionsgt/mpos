@@ -2,20 +2,25 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
+import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_ResCaja;
@@ -92,15 +97,9 @@ public class ResCaja extends PBase {
                 adapter.setSelectedIndex(position);
 
                 corel=item.f1;mesa=item.f2;cuenta=item.pk;
-                gl.primesa=mesa;gl.pricuenta=""+cuenta;
+                gl.ordcorel=corel;gl.primesa=mesa;gl.pricuenta=""+cuenta;
 
-                if (gl.pelCajaRecep) {
-                    if (item.f3.equalsIgnoreCase("2")) showMenuPreimpresion();
-                    if (item.f3.equalsIgnoreCase("3")) showMenuPago();
-                } else {
-                    if (item.f3.equalsIgnoreCase("2")) msgAskPreimpresion("Imprimir cuenta "+cuenta);
-                    if (item.f3.equalsIgnoreCase("3")) msgAskPago("Pagar cuenta "+cuenta);
-                }
+                showMenuMesa();
             };
         });
     }
@@ -141,24 +140,22 @@ public class ResCaja extends PBase {
 
     }
 
-    private void deleteItem() {
-
+    private void completeItem() {
         try {
-            db.beginTransaction();
-
-            db.execSQL("DELETE FROM P_RES_SESION WHERE ID='"+corel+"'");
-            db.execSQL("DELETE FROM T_ORDEN WHERE COREL='"+corel+"'");
-            db.execSQL("DELETE FROM T_ORDENCUENTA WHERE COREL='"+corel+"'");
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
+            db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1,FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'");
             listItems();
         } catch (Exception e) {
-            db.endTransaction();
             msgbox(e.getMessage());
         }
+    }
 
+    private void hideItem() {
+        try {
+            db.execSQL("UPDATE P_RES_SESION SET ESTADO=1,FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'");
+            listItems();
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
     }
 
     //endregion
@@ -166,10 +163,13 @@ public class ResCaja extends PBase {
     //region Venta
 
     private void crearVenta() {
-
         try {
             db.execSQL("DELETE FROM T_COMBO");
             db.execSQL("DELETE FROM T_VENTA");
+
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+corel+"'");
+            gl.mesero_venta=P_res_sesionObj.first().vendedor;
 
             T_ordenObj.fill("WHERE COREL='"+corel+"'");
             counter=0;
@@ -179,20 +179,7 @@ public class ResCaja extends PBase {
                 if (oitem.cuenta==cuenta) addItem();
             }
 
-            /*
-
-            //sql="SELECT COREL, 0 AS COREL_DET, CODIGO_PRODUCTO, UMVENTA, CANT, TOTAL,'' AS NOTA,'' AS CODIGO_TIPO_PRODUCTO " +
-            //        "FROM D_PEDIDOD WHERE (COREL='"+pedid+"') AND (CODIGO_TIPO_PRODUCTO='M') ";
-            sql="SELECT * FROM D_PEDIDOD WHERE (COREL='"+pedid+"') AND (CODIGO_TIPO_PRODUCTO='M') ";
-            D_pedidodObj.fillSelect(sql);
-
-            for (int i = 0; i <D_pedidodObj.count; i++) {
-                pitem=D_pedidodObj.items.get(i);
-                addItem();
-            }
-
-             */
-
+            cargaCliente();
             gl.ventalock=false;
             finish();
         } catch (Exception e) {
@@ -282,9 +269,122 @@ public class ResCaja extends PBase {
         return false;
     }
 
+    private void datosCuenta() {
+        try {
+            startActivity(new Intent(this,ResCliente.class));
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cargaCliente() {
+        try {
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+            T_ordencuentaObj.fill("WHERE (COREL='"+corel+"') AND (ID="+cuenta+")");
+
+            if (T_ordencuentaObj.count>0) {
+                gl.gNombreCliente = T_ordencuentaObj.first().nombre;
+                gl.gNITCliente = T_ordencuentaObj.first().nit;
+                gl.gDirCliente = T_ordencuentaObj.first().direccion;
+                gl.gCorreoCliente = T_ordencuentaObj.first().correo;
+                gl.gNITcf=T_ordencuentaObj.first().cf==1;
+            } else {
+                gl.gNombreCliente = "Consumidor final";
+                gl.gNITCliente ="C.F.";
+                gl.gDirCliente = "Ciudad";
+                gl.gCorreoCliente = "";
+                gl.gNITcf=true;
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
+
+    private void showMenuMesa() {
+        final AlertDialog Dialog;
+        final String[] selitems = {"Imprimir","Datos cliente","Pagar","Completar","Borrar"}; // cuenta
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Mesa "+mesa+" , Cuenta #"+cuenta);
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        if (ventaVacia()) {
+                            crearVenta();
+                        } else msgbox("Antes de preimprimir la cuenta debe terminar la venta actual");
+                        //msgAskPreimpresion("Imprimir la cuenta "+cuenta);
+                        break;
+                    case 1:
+                        datosCuenta();break;
+                    case 2:
+                        if (ventaVacia()) {
+
+                            if (gl.pePropinaFija) {
+                                crearVenta();
+                            } else {
+                                inputPropina();
+                            }
+
+                        } else msgbox("Antes de pagar la cuenta debe terminar la venta actual");
+                        //msgAskPago("Pagar la cuenta "+cuenta);
+                        break;
+                    case 3:
+                        msgAskCompletar("Completar la mesa "+mesa);break;
+                    case 4:
+                        msgAskBorrar("Borrar la mesa "+mesa);break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    private void inputPropina() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Monto propina");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    crearVenta();
+                } catch (Exception e) {
+                    mu.msgbox("Monto incorrecto");return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
 
     private void msgAskPreimpresion(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -317,7 +417,7 @@ public class ResCaja extends PBase {
             public void onClick(DialogInterface dialog, int which) {
                 if (ventaVacia()) {
                     crearVenta();
-                } else msgbox("Antes de pagar al cuenta debe terminar la venta actual");
+                } else msgbox("Antes de pagar la cuenta debe terminar la venta actual");
             }
         });
 
@@ -328,68 +428,23 @@ public class ResCaja extends PBase {
         dialog.show();
     }
 
-    private void showMenuPreimpresion() {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Imprimir","Borrar"};
+    private void msgAskCompletar(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Mesa "+mesa);
+        dialog.setTitle("Mesa "+mesa);
+        dialog.setMessage("¿" + msg + "?");
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        ;break;
-                    case 1:
-                        msgAskBorrar("Borrar la mesa "+mesa);break;
-                }
-
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+                completeItem();
             }
         });
 
-        Dialog = menudlg.create();
-        Dialog.show();
-    }
-
-    private void showMenuPago() {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Pagar","Completar","Borrar"};
-
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Mesa "+mesa);
-
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        ;break;
-                    case 1:
-                        ;break;
-                    case 2:
-                        msgAskBorrar("Borrar la mesa "+mesa);break;
-                }
-
-                dialog.cancel();
-            }
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
         });
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
+        dialog.show();
     }
 
     private void msgAskBorrar(String msg) {
@@ -400,7 +455,7 @@ public class ResCaja extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                deleteItem();
+                hideItem();
             }
         });
 

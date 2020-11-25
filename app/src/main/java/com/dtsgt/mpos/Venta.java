@@ -196,7 +196,7 @@ public class Venta extends PBase {
                         if (!gl.cliposflag) {
                             gl.cliposflag=true;
                             if (!gl.exitflag) {
-                                startActivity(new Intent(Venta.this,CliPos.class));
+                                if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
                             }
                         }
                     }
@@ -1881,7 +1881,7 @@ public class Venta extends PBase {
 
             try {
 
-                if (meseros) {
+                if (meseros && gl.peRest) {
                     item = clsCls.new clsMenu();
                     item.ID=63;item.Name="Mesero";item.Icon=63;
                     mmitems.add(item);
@@ -1901,7 +1901,7 @@ public class Venta extends PBase {
                 }
                 */
 
-                if (gl.pelCaja) {
+                if (gl.pelCaja  && gl.peRest) {
                     item = clsCls.new clsMenu();
                     item.ID=65;item.Name="Caja";item.Icon=65;
                     mmitems.add(item);
@@ -1995,6 +1995,7 @@ public class Venta extends PBase {
                     if (hasProducts()) inputMesa(); else toastcent("El orden está vacio");
                     break;
                 case 63:
+                    gl.cerrarmesero=false;
                     listaMeseros();
                     break;
                 case 65:
@@ -3412,6 +3413,8 @@ public class Venta extends PBase {
 
             checkLock();
 
+            listItems();
+
             try {
                 P_nivelprecioObj.reconnect(Con,db);
             } catch (Exception e) {
@@ -3461,7 +3464,7 @@ public class Venta extends PBase {
                             if (!gl.cliposflag) {
                                 gl.cliposflag=true;
                                 if (!gl.forcedclose) {
-                                    startActivity(new Intent(Venta.this,CliPos.class));
+                                    if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
                                 }
                             }
                         }
@@ -3524,7 +3527,9 @@ public class Venta extends PBase {
             }
 
             if (browse==10) {
-                browse=0;listItems();
+                browse=0;
+                lblVend.setText(gl.gNombreCliente+" - "+gl.gNITCliente);
+                listItems();
                 return;
             }
 

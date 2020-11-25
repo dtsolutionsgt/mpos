@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.content.res.ResourcesCompat;
@@ -32,6 +33,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocCuenta;
@@ -51,7 +53,8 @@ import java.util.List;
 public class FacturaRes extends PBase {
 
 	private ListView listView;
-	private TextView lblPago,lblFact,lblMPago,lblCred, lblCard,lblPend,lblMonto,lblKeyDP,lblTotal,lblPEfect,lblPCard;
+	private TextView lblPago,lblFact,lblMPago,lblCred, lblCard,lblPend,lblMonto,lblKeyDP;
+	private TextView lblTotal,lblPEfect,lblPCard;
 	private ImageView imgBon,imgMPago,imgCred, imgCard, imgPend;
 	private TextView lblVuelto;
 	private EditText txtVuelto;
@@ -76,7 +79,7 @@ public class FacturaRes extends PBase {
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres;
 
-	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,pend,stot0,stot,descmon,totimp,totperc,credito;
+	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,pend,stot0,stot,descmon,totimp,totperc,credito;
 	private double dispventa,falt,descimp;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
 
@@ -538,13 +541,18 @@ public class FacturaRes extends PBase {
 			descmon=mu.round2(dfinmon);
 			stot=mu.round2(stot0);
 
+			if (gl.pePropinaFija) {
+                propina=stot*gl.pePropinaPerc/100;propina=mu.round2(propina);
+            } else {
+                propina=gl.propina_valor;
+            }
+
 			fillTotals();
 
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("totalOrder: " + e.getMessage());
 		}
-
 
 	}
 
@@ -565,6 +573,7 @@ public class FacturaRes extends PBase {
 				totperc=mu.round2(totperc);
 
 				tot=stot+totimp-descmon+totperc;
+				tot=tot+propina;
 				tot=mu.round2(tot);
 
 				item = clsCls.new clsCDB();
@@ -585,16 +594,17 @@ public class FacturaRes extends PBase {
 				item.Cod="Descuento";item.Desc=mu.frmcur(-descmon);item.Bandera=0;
 				items.add(item);
 
-				if (gl.dvbrowse!=0){
+                if (propina>0){
+
 					item = clsCls.new clsCDB();
-					item.Cod="Nota Crédito";item.Desc=mu.frmcur(-dispventa);item.Bandera=0;
+                    item.Cod="Propina";item.Desc=mu.frmcur(propina);item.Bandera=0;
 					items.add(item);
 
 					item = clsCls.new clsCDB();
 					item.Cod="TOTAL";item.Desc=mu.frmcur(tot-dispventa);item.Bandera=1;
 					items.add(item);
 
-				}else{
+				} else {
 					item = clsCls.new clsCDB();
 					item.Cod="TOTAL";item.Desc=mu.frmcur(tot);item.Bandera=1;
 					items.add(item);
@@ -604,8 +614,8 @@ public class FacturaRes extends PBase {
 
 				totimp=mu.round2(totimp);
 				tot=stot-descmon;
+                tot=tot+propina;
 				tot=mu.round2(tot);
-
 
 				item = clsCls.new clsCDB();
 				item.Cod="Subtotal";item.Desc=mu.frmcur(stot);item.Bandera=0;
@@ -615,10 +625,10 @@ public class FacturaRes extends PBase {
 				item.Cod="Descuento";item.Desc=mu.frmcur(-descmon);item.Bandera=0;
 				items.add(item);
 
-				if (gl.dvbrowse!=0){
+				if (propina>0){
 
 					item = clsCls.new clsCDB();
-					item.Cod="Nota Crédito";item.Desc=mu.frmcur(-dispventa);item.Bandera=0;
+					item.Cod="Propina";item.Desc=mu.frmcur(propina);item.Bandera=0;
 					items.add(item);
 
 					item = clsCls.new clsCDB();
@@ -820,7 +830,7 @@ public class FacturaRes extends PBase {
             }
 
 			ins.add("DEPOS",false);
-			ins.add("PEDCOREL",gl.pedcorel);
+			ins.add("PEDCOREL",gl.pedcorel+"");
 			ins.add("REFERENCIA","");
 
 			if (gl.dvbrowse!=0){
@@ -1057,6 +1067,32 @@ public class FacturaRes extends PBase {
             //endregion
 
 			//endregion
+
+            //region D_FACTURAPR
+
+            // Propina por factura - solo modulo restaurante
+
+            if (gl.peRest ) {
+                try {
+                    clsD_facturaprObj D_facturaprObj=new clsD_facturaprObj(this,Con,db);
+                    clsClasses.clsD_facturapr itempr = clsCls.new clsD_facturapr();
+
+                    itempr.empresa=gl.emp;
+                    itempr.corel=corel;
+                    itempr.anulado=0;
+                    itempr.fecha=fecha;
+                    itempr.codigo_sucursal=gl.tienda;
+                    itempr.codigo_vendedor=gl.mesero_venta;
+                    itempr.propina=propina;
+
+                    D_facturaprObj.add(itempr);
+
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+           }
+
+            //endregion
 
 			//region Actualizacion de ultimo correlativo
 
@@ -2429,13 +2465,26 @@ public class FacturaRes extends PBase {
 
     private void impresionCuenta() {
         try {
-           clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
+            clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
             //if (app.impresora()) {
             fdoc.vendedor=gl.vendnom;
             fdoc.rutanombre=gl.tiendanom;
-                fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,10,true);
-                app.doPrint(1,0);
+            fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,gl.pePropinaPerc,gl.pePropinaFija,propina);
+            app.doPrint(1,0);
+
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        db.execSQL("UPDATE P_RES_SESION SET ESTADO=3 WHERE ID='"+ gl.ordcorel+"'");
+                    } catch (SQLException e) { }
+                    gl.iniciaVenta=true;
+                    finish();
+                }
+            };
+            mtimer.postDelayed(mrunner,200);
             //}
         } catch (Exception e){
             mu.msgbox("impresionCuenta : "  + e.getMessage());

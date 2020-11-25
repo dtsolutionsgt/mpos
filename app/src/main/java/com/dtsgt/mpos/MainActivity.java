@@ -6,10 +6,13 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,9 +24,11 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
@@ -41,21 +46,25 @@ import java.util.ArrayList;
 
 public class MainActivity extends PBase {
 
+    private ListView listView;
     private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
     private ImageView imgLogo, imgFel;
+    private Spinner spin;
 
     private BaseDatosVersion dbVers;
 
-    private ListView listView;
     private LA_Login adapter;
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<clsClasses.clsMenu>();
+    private ArrayList<String> spincode=new ArrayList<String>();
+    private ArrayList<String> spinlist=new ArrayList<String>();
+
 
     private clsKeybHandler khand;
 
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = " 3.2.34 / 18-Nov-2020";
+    private String parVer = " 3.2.35 / 25-Nov-2020";
 
     private Typeface typeface;
 
@@ -129,6 +138,7 @@ public class MainActivity extends PBase {
             imgFel = (ImageView) findViewById(R.id.imgFel);
 
             listView = (ListView) findViewById(R.id.listView1);
+            spin = (Spinner) findViewById(R.id.spinner22);
 
             lblVer.setText("Version " + gl.parVer);
 
@@ -143,6 +153,7 @@ public class MainActivity extends PBase {
 
             gl.peMCent = false;
 
+            iniciaPantalla();
             initSession();
 
             try {
@@ -200,22 +211,20 @@ public class MainActivity extends PBase {
             if (gl.rol != 4) {
                 startActivity(new Intent(this,Menu.class));
             } else {
-                gl.idmesero=gl.codigo_vendedor;
-                gl.meserodir=true;
-                startActivity(new Intent(this,ResMesero.class));
+                if (gl.peRest) {
+                    gl.idmesero=gl.codigo_vendedor;
+                    gl.meserodir=true;
+                    startActivity(new Intent(this,ResMesero.class));
+                } else {
+                    msgbox("No está activado modulo restaurante");
+                }
             }
         } catch (Exception e) {
         }
     }
 
-    public void doLogin(View view) {
-        /*
-        if (gl.pePedidos) {
-            String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
-            startPedidosImport.startService(this,params);
-            toast("Captura de ordenes activada");
-        }
-        */
+    public void doOrientation(View view) {
+        showOrientMenu();
     }
 
     public void doLoginScreen(View view) {
@@ -274,8 +283,7 @@ public class MainActivity extends PBase {
                         usr = item.Cod;
 
                     } catch (Exception e) {
-                        addlog(new Object() {
-                        }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+                        addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
                         mu.msgbox(e.getMessage());
                     }
                 }
@@ -283,6 +291,27 @@ public class MainActivity extends PBase {
                 ;
             });
 
+            spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                    try {
+                        TextView spinlabel = (TextView) parentView.getChildAt(0);
+                        spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
+                        spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+
+                        usr = spincode.get(position);
+                    } catch (Exception e) {
+                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                        mu.msgbox(e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {
+                    return;
+                }
+
+            });
 
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -290,8 +319,9 @@ public class MainActivity extends PBase {
 
     }
 
-
     //endregion
+
+    //region Main
 
     private void initSession() {
         Cursor DT;
@@ -436,7 +466,7 @@ public class MainActivity extends PBase {
         if (gl.pePedidos) {
             String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
             startPedidosImport.startService(this,params);
-            toasttop("Captura de ordenes activada");
+            //toasttop("Captura de ordenes activada");
         }
 
     }
@@ -570,6 +600,53 @@ public class MainActivity extends PBase {
         }
     }
 
+    //endregion
+
+    //region Orientacion
+
+    private void iniciaPantalla() {
+        try {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
+            SharedPreferences.Editor editor = pref.edit();
+
+            try {
+                gl.pelTablet=pref.getBoolean("pelTablet", true);
+            } catch (Exception e) {
+                gl.pelTablet=true;
+            }
+
+            if (gl.pelTablet) {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                listView.setVisibility(View.VISIBLE);
+                spin.setVisibility(View.INVISIBLE);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                listView.setVisibility(View.INVISIBLE);
+                spin.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+    }
+
+    private void guardaPantalla(boolean istablet) {
+        try {
+            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
+            SharedPreferences.Editor editor = pref.edit();
+
+            editor.putBoolean("pelTablet", istablet);
+
+            editor.commit();
+            iniciaPantalla();
+        } catch (Exception e) {
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+    }
+
+    //endregion
+
+    //region Aux
+
     private void accesoAdmin() {
 
         if (!tieneTiendaCaja()) return;
@@ -695,22 +772,6 @@ public class MainActivity extends PBase {
 
         return false;
 
-    }
-
-    private void msgAskLic(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle(R.string.app_name);
-        dialog.setMessage(msg);
-        dialog.setIcon(R.drawable.ic_quest);
-
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        dialog.show();
     }
 
     @SuppressLint("MissingPermission")
@@ -854,6 +915,7 @@ public class MainActivity extends PBase {
         clsClasses.clsMenu item;
 
         usr = "";pwd = "";
+        spincode.clear();spinlist.clear();
 
         try {
 
@@ -870,15 +932,78 @@ public class MainActivity extends PBase {
                 item.Cod = VendedoresObj.items.get(i).codigo;
                 item.Name = item.Cod+" - "+VendedoresObj.items.get(i).nombre;// estaba .ruta #CKFK 20200517
                 mitems.add(item);
+
+                spincode.add(item.Cod);
+                spinlist.add(item.Name);
+
             }
 
             adapter = new LA_Login(this, mitems);
             listView.setAdapter(adapter);
 
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spin.setAdapter(dataAdapter);
+
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
         }
     }
+
+    //endregion
+
+    //region Dialogs
+
+    private void msgAskLic(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle(R.string.app_name);
+        dialog.setMessage(msg);
+        dialog.setIcon(R.drawable.ic_quest);
+
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void showOrientMenu() {
+        final AlertDialog Dialog;
+        final String[] selitems = {"Tableta","Telefono"};
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Calibracion de pantalla");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        guardaPantalla(true);break;
+                    case 1:
+                        guardaPantalla(false);break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    //endregion
+
+    //region Activity Events
 
     protected void onResume() {
         try {
@@ -904,5 +1029,7 @@ public class MainActivity extends PBase {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
+
+    //endregion
 
 }

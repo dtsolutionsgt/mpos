@@ -272,6 +272,21 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [D_facturapr] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "PROPINA REAL NOT NULL,"+
+                    "PRIMARY KEY ([EMPRESA],[COREL])"+
+                    ");";
+            db.execSQL(sql);
+            sql="CREATE INDEX T_ordencombo_idx1 ON T_ordencombo(COREL)";db.execSQL(sql);
+        } catch (Exception e) {
+        }
 
     }
 

@@ -1031,6 +1031,8 @@ public class Orden extends PBase {
             envioMesa(2);
 
             finish();
+            //gl.cerrarmesero=true;
+            //startActivity(new Intent(this,ResCaja.class));
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1049,6 +1051,8 @@ public class Orden extends PBase {
             P_res_sesionObj.update(sess);
 
             finish();
+            //gl.cerrarmesero=true;
+            //startActivity(new Intent(this,ResCaja.class));
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1075,6 +1079,7 @@ public class Orden extends PBase {
     private void splitItem() {
         clsClasses.clsT_orden item,fitem;
         int cnt,newid;
+        double ttot;
 
         try {
             db.beginTransaction();
@@ -1087,13 +1092,18 @@ public class Orden extends PBase {
             newid=T_ordenObj.newID("SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')");
 
             fitem.cant=1;
+            ttot=fitem.cant*fitem.precio;ttot=mu.round2(ttot);
+            fitem.total=ttot;
             T_ordenObj.update(fitem);
 
             for (int i = 1; i <cnt; i++) {
                 //item = clsCls.new clsT_orden();
                 item = fitem;
+                item.empresa=""+newid;
                 item.id=newid;newid++;
                 item.cant=1;
+                ttot=item.cant*item.precio;ttot=mu.round2(ttot);
+                item.total=ttot;
 
                 T_ordenObj.add(item);
             }
@@ -1266,7 +1276,7 @@ public class Orden extends PBase {
 
             switch (menuid) {
                 case 1:
-                    if (est==2) {
+                     if (est==2) {
                         s="Procesar pago";
                     } else {
                         if (est==1) {
@@ -1275,7 +1285,9 @@ public class Orden extends PBase {
                             s="La mesa esta pendiente de completar.\nProcesar pago";
                         }
                     }
-                    msgAskOrden(s);break;
+                    msgAskOrden(s);
+                    //aplicarPago();
+                    break;
                 case 2:
                     if (est==3) {
                         s="Completar la mesa";
@@ -1297,7 +1309,9 @@ public class Orden extends PBase {
                             s="La mesa esta pendiente de completar.\nProcesar preimpresion";
                         }
                     }
-                    msgAskPrint(s);break;
+                    msgAskPrint(s);
+                    //aplicarPreimpresion();
+                    break;
                 case 24:
                     exitBtn();break;
                 case 50:

@@ -35,13 +35,17 @@ public class ResMesero extends PBase {
     private clsP_res_sesionObj P_res_sesionObj;
     private clsT_ordenObj T_ordenObj;
 
+    private ArrayList<String> lcode = new ArrayList<String>();
+    private ArrayList<String> lname = new ArrayList<String>();
+
     private LA_Res_mesa adapter;
 
     private ArrayList<clsClasses.clsRes_mesa> mesas= new ArrayList<clsClasses.clsRes_mesa>();
     private clsClasses.clsRes_mesa mesa= clsCls.new clsRes_mesa();
 
     private int idgrupo,cantpers;
-    private String nommes;
+    private String nommes,nmesa,idmesa;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,8 @@ public class ResMesero extends PBase {
         setHandlers();
         cargaConfig();
 
+
+
     }
 
     //region Events
@@ -72,8 +78,8 @@ public class ResMesero extends PBase {
         showGrupoMenu();
     }
 
-    public void doOrder(View view) {
-        startActivity(new Intent(this,Orden.class));
+    public void doComp(View view) {
+        listMesa();
     }
 
     public void doRec(View view) {
@@ -81,11 +87,7 @@ public class ResMesero extends PBase {
     }
 
     public void doExit(View view) {
-        if (gl.meserodir) {
-            msgAskExit("Salir");
-        } else {
-            finish();
-        }
+        if (gl.meserodir) msgAskExit("Salir"); else finish();
     }
 
     private void setHandlers() {
@@ -173,7 +175,7 @@ public class ResMesero extends PBase {
 
             item.id=gl.codigo_ruta+"_"+mu.getCorelBase();
             item.codigo_mesa=mesa.codigo_mesa;
-            item.vendedor=gl.codigo_vendedor;
+            item.vendedor=gl.idmesero;
             item.estado=1;
             item.cantp=cantpers;
             item.cantc=1;
@@ -204,6 +206,100 @@ public class ResMesero extends PBase {
             startActivity(new Intent(this,Orden.class));
         } catch (Exception e) {
             db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void listMesa() {
+
+        try {
+            lcode.clear();lname.clear();
+
+            for (int i = 0; i <mesas.size(); i++) {
+                if (mesas.get(i).estado==0) {
+                    lcode.add(""+mesas.get(i).codigo_mesa);
+                    lname.add(mesas.get(i).nombre);
+                }
+            }
+
+            final String[] selitems = new String[lname.size()];
+
+            for (int i = 0; i < lname.size(); i++) {
+                selitems[i] = "Mesa "+lname.get(i);
+            }
+
+            ExDialog mMenuDlg = new ExDialog(this);
+
+            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    try {
+                        idmesa=lcode.get(item);
+                        nmesa=lname.get(item);
+                        listComp();
+                    } catch (Exception e) {
+                        toast(e.getMessage());
+                    }
+                }
+            });
+
+            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            AlertDialog Dialog = mMenuDlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void listComp() {
+
+        try {
+            lcode.clear();lname.clear();
+
+            P_res_sesionObj.fill("WHERE (CODIGO_MESA="+idmesa+") AND (Estado=-1) AND (FECHAULT>="+du.ffecha00(du.getActDate())+")");
+
+            if (P_res_sesionObj.count==0) {
+                msgbox("No existe ninguna cuenta completa para la mesa");return;
+            }
+
+            for (int i = 0; i <P_res_sesionObj.count; i++) {
+                lcode.add(P_res_sesionObj.items.get(i).id);
+                lname.add("Mesa : "+nmesa+"  "+du.shora(P_res_sesionObj.items.get(i).fechault));
+            }
+
+            final String[] selitems = new String[lname.size()];
+
+            for (int i = 0; i < lname.size(); i++) {
+                selitems[i] = lname.get(i);
+            }
+
+            ExDialog mMenuDlg = new ExDialog(this);
+
+            mMenuDlg.setTitle("Activar cuenta completa");
+
+            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    try {
+                        msgAskActivar("Activar la cuenta",lcode.get(item));
+                     } catch (Exception e) {
+                        toast(e.getMessage());
+                    }
+                }
+            });
+
+            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            AlertDialog Dialog = mMenuDlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
@@ -349,6 +445,34 @@ public class ResMesero extends PBase {
         }
     }
 
+    private void msgAskActivar(String msg,String id) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        db.execSQL("UPDATE P_RES_SESION SET ESTADO=1 WHERE ID='"+id+"'");
+                        listItems();
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
     private void inputPersonas() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
@@ -397,7 +521,7 @@ public class ResMesero extends PBase {
             msgbox(e.getMessage());
         }
 
-        listItems();
+        if (gl.cerrarmesero) finish();else listItems();
     }
 
     @Override

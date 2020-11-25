@@ -6,11 +6,9 @@ import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,7 +52,6 @@ public class CliPos extends PBase {
 		setContentView(R.layout.activity_cli_pos);
 
 		super.InitBase();
-		addlog("CliPos",""+du.getActDateTime(),String.valueOf(gl.vend));
 
 		txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.setText("");txtNIT.requestFocus();
 		txtNom = (EditText) findViewById(R.id.editText2);txtNom.setText("");

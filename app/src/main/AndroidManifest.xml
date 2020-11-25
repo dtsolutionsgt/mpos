@@ -40,7 +40,7 @@
          <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
@@ -515,7 +515,7 @@
         <activity android:name=".FingPTest" />
         <activity
             android:name=".ConfigCaja"
-            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -580,7 +580,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".WSRec"
-            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -705,6 +705,12 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".ResCliente"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+
     </application>
 
 </manifest>

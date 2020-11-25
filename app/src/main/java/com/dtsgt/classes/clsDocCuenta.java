@@ -229,11 +229,7 @@ public class clsDocCuenta extends clsDocument {
 		
 		try {
 
-
-
-
-
-			sql="SELECT T_VENTA.PRODUCTO,P_PRODUCTO.DESCLARGA,T_VENTA.CANT,T_VENTA.PRECIODOC,T_VENTA.TOTAL " +
+    		sql="SELECT T_VENTA.PRODUCTO,P_PRODUCTO.DESCLARGA,T_VENTA.CANT,T_VENTA.PRECIODOC,T_VENTA.TOTAL " +
 				"FROM T_VENTA INNER JOIN P_PRODUCTO ON T_VENTA.PRODUCTO = P_PRODUCTO.CODIGO";
 			
 			DT=Con.OpenDT(sql);
@@ -339,20 +335,35 @@ public class clsDocCuenta extends clsDocument {
   	}
 
     private boolean footerBaseGUA() {
-        double totimp,totperc;
 
-
-        //pprop=,propadd
-
-        if (pdesc!=0) {
-            rep.addtotsp("Subtotal", (ptotal+pdesc));
-            rep.addtotsp("Descuento", -pdesc);
+        if (pdesc!=0 | propfija) {
+            if (pprop!=0 | propfija) {
+                rep.addtotsp("Subtotal", (ptotal + pdesc-propvalor));
+                if (pdesc != 0)  rep.addtotsp("Descuento", -pdesc);
+                rep.addtotsp("Propina : ",propvalor);
+            } else {
+                if (pdesc != 0) {
+                    rep.addtotsp("Subtotal", (ptotal + pdesc));
+                    rep.addtotsp("Descuento", -pdesc);
+                }
+            }
         }
+
         rep.addtotsp("TOTAL A PAGAR ", ptotal);
         rep.add("");
         rep.add("Les atendio : ");
         rep.add(vendedor);
         rep.add("");
+
+        if (pprop>0) {
+            if (!propfija) {
+                rep.add("Propina : ");
+                rep.add("");
+                rep.add("");
+                rep.line();
+            }
+        }
+
         rep.add("");
         rep.add("Nombre cliente :");
         rep.add("");
