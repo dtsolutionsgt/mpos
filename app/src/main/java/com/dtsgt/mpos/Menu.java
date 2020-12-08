@@ -778,7 +778,9 @@ public class Menu extends PBase {
 
 					switch (item) {
 						case 0:
-                            startActivity(new Intent(Menu.this,UtilPrint.class));break;
+                            //startActivity(new Intent(Menu.this,UtilPrint.class));
+                            configuracionImpresora();
+                            break;
 						case 1:
 							startActivity(new Intent(Menu.this,Tablas.class));break;
                         case 2:
@@ -813,7 +815,26 @@ public class Menu extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-	}		
+	}
+
+	private void configuracionImpresora() {
+        try {
+            gl.climode=false;
+            gl.listaedit=true;
+            gl.mantid =30;
+
+            try {
+                gl.climode=false;
+                 if (gl.codigo_ruta>0) db.execSQL("DELETE FROM P_archivoconf WHERE RUTA<>'"+gl.codigo_ruta+"'");
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            startActivity(new Intent(Menu.this, Lista.class));
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
 	private void actualizaVersion() {
         try {
@@ -1119,7 +1140,7 @@ public class Menu extends PBase {
         try {
             final AlertDialog Dialog;
 
-            final String[] selitems = {"Configuracion", "Sala", "Mesa", "Grupo de mesas"};
+            final String[] selitems = {"Configuracion", "Sala", "Mesa", "Grupo de mesas","Estacion cocina"};
             //final String[] selitems = { "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
 
             menudlg = new ExDialog(this);
@@ -1134,11 +1155,12 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
                     if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
                     if (ss.equalsIgnoreCase("Configuracion")) gl.mantid = 29;
+                    if (ss.equalsIgnoreCase("Estacion cocina")) gl.mantid = 31;
 
                     if (gl.mantid == 24) {
                         startActivity(new Intent(Menu.this, SalaDis.class));
                     } else if (gl.mantid == 29) {
-                            startActivity(new Intent(Menu.this, MantConfigRes.class));
+                        startActivity(new Intent(Menu.this, MantConfigRes.class));
                     } else {
                         startActivity(new Intent(Menu.this, Lista.class));
                     }

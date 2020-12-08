@@ -81,11 +81,14 @@ public class LA_Lista extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl2.setText("" + items.get(position).f1);if (mantid==27) holder.lbl2.setText("");
+        holder.lbl2.setText("" + items.get(position).f1);
+        if (mantid==27) holder.lbl2.setText("");
+        if (mantid==30) holder.lbl2.setText("");
+        if (mantid==31) holder.lbl2.setText("");
         holder.lbl3.setText("" + items.get(position).f2);
-        if(appG.banco){
+        if (appG.banco) {
             holder.lbl4.setText("" + items.get(position).f3);
-        }else {
+        } else {
             holder.lbl4.setVisibility(View.GONE);
         }
 

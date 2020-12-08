@@ -59,14 +59,15 @@ public class WebService {
     public void wsExecute(){ }
 
     public void wsFinished() {
-        try     {
+        try {
             parent.wsCallBack(errorflag,error,0);
-        } catch (Exception e)  {
-        }
+        } catch (Exception e)  {}
     }
 
     public void callEmptyMethod()  {
-
+        try {
+            parent.wsCallBack(errorflag,error,0);
+        } catch (Exception e)  {}
     }
 
     public void callMethod(String methodName, Object... args) throws Exception {

@@ -1,6 +1,5 @@
 package com.dtsgt.mant;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;

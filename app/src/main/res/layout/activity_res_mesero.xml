@@ -12,35 +12,15 @@
             android:layout_height="92dp"
             android:background="@drawable/frame_rect_blue">
 
-            <TextView
-                android:id="@+id/textView179b2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="20dp"
-                android:layout_toStartOf="@+id/rel00"
-                android:clickable="true"
-                android:gravity="center"
-                android:onClick="doGrupo"
-                android:text="Nombre mesero"
-                android:textColor="#FFFFFF"
-                android:textSize="36sp"
-                android:textStyle="bold" />
-
             <RelativeLayout
                 android:id="@+id/rel00a"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="5dp"
-                android:layout_toEndOf="@+id/rel00">
+                android:layout_marginBottom="5dp">
 
                 <TextView
                     android:id="@+id/textView178b"
@@ -60,16 +40,22 @@
 
                 <TextView
                     android:id="@+id/textView179b"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_above="@+id/textView178b"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_alignParentTop="false"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginBottom="0dp"
+                    android:background="@drawable/spinner_style_white"
                     android:clickable="true"
                     android:gravity="center"
+                    android:minWidth="350dp"
                     android:onClick="doGrupo"
+                    android:paddingLeft="50dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="50dp"
                     android:text="Area de mesas"
                     android:textColor="#FFFFFF"
                     android:textSize="36sp"
@@ -81,9 +67,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
+                android:layout_centerHorizontal="false"
                 android:layout_marginStart="0dp"
-                android:layout_marginBottom="5dp">
+                android:layout_marginBottom="5dp"
+                android:visibility="invisible">
 
                 <TextView
                     android:id="@+id/textView178a"
@@ -98,7 +85,7 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="2dp"
                     android:gravity="center_horizontal"
-                    android:text="Cuentas abiertas"
+                    android:text="Mesas abiertas"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
 
@@ -144,7 +131,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="110dp"
+        android:layout_marginEnd="80dp"
         android:layout_marginBottom="4dp"
         android:numColumns="4" />
 
@@ -157,6 +144,24 @@
             android:layout_marginStart="0dp"
             android:layout_marginBottom="-3dp"
             android:background="@drawable/frame_rect_blue">
+
+            <TextView
+                android:id="@+id/textView179b2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="0dp"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="doGrupo"
+                android:text="Nombre mesero"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView196"
@@ -182,12 +187,13 @@
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="16dp"
         android:gravity="center_horizontal"
-        android:text="Actualizar" />
+        android:text="Actualizar"
+        android:textSize="10sp" />
 
     <ImageView
         android:id="@+id/imageView87"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="75dp"
+        android:layout_height="80dp"
         android:layout_alignTop="@+id/gridView1"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="false"
@@ -200,8 +206,8 @@
 
     <ImageView
         android:id="@+id/imageView96"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_alignStart="@+id/imageView87"
         android:layout_alignBottom="@+id/gridView1"
         android:layout_alignParentEnd="true"
@@ -223,12 +229,13 @@
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
         android:gravity="center_horizontal"
-        android:text="Salir" />
+        android:text="Salir"
+        android:textSize="10sp" />
 
     <ImageView
         android:id="@+id/imageView106"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_below="@+id/textView212"
         android:layout_alignStart="@+id/imageView87"
         android:layout_alignParentEnd="true"
@@ -252,5 +259,6 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
         android:gravity="center_horizontal"
-        android:text="Completos" />
+        android:text="Completos"
+        android:textSize="10sp" />
 </RelativeLayout>

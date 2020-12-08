@@ -1236,8 +1236,8 @@ public class Venta extends PBase {
                 mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
             }
 
-            if (gl.cliente.isEmpty()) {
-                toast("Cliente pendiente");
+            if (gl.codigo_cliente==0) {
+                toast("Falta definir cliente");
                 browse=8;
                 startActivity(new Intent(this,Clientes.class));
                 return;
@@ -1801,11 +1801,11 @@ public class Venta extends PBase {
     }
 
     private void listProduct() {
-
         Cursor dt;
         clsClasses.clsMenu item;
         ArrayList<String> pcodes = new ArrayList<String>();
         String pcode;
+        double pprec;
         int pact;
 
         try {
@@ -1847,9 +1847,12 @@ public class Venta extends PBase {
                         item=clsCls.new clsMenu();
                         item.Cod=dt.getString(0);
                         item.icod=dt.getInt(4);
-                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+prodPrecioBase(item.icod)+" ]";
-
-                        pitems.add(item);pcodes.add(pcode);
+                        pprec=prodPrecioBaseVal(item.icod);
+                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+pprec+" ]";
+                        if (pprec>0) {
+                            pitems.add(item);
+                            pcodes.add(pcode);
+                        }
                     }
                 }
 
@@ -2936,6 +2939,26 @@ public class Venta extends PBase {
         sprec=mu.frmdec(pr);
 
         return sprec;
+    }
+
+    private double prodPrecioBaseVal(int prid) {
+        Cursor DT;
+        double pr,stot,pprec,tsimp;
+        String sprec="";
+
+        try {
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+prid+"') AND (NIVEL="+nivel+") ";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            pr=DT.getDouble(0);
+
+            if (DT!=null) DT.close();
+        } catch (Exception e) {
+            pr=0;
+        }
+
+        return pr;
     }
 
     private int getDisp(String prid) {

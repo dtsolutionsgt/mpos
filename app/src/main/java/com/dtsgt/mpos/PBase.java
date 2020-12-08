@@ -176,7 +176,7 @@ public class PBase extends Activity {
     }
 	
 	public void addlog(final String methodname, String msg, String info) {
-
+        /*
 		final String vmethodname = methodname;
 		final String vmsg = msg;
 		final String vinfo = info;
@@ -188,6 +188,7 @@ public class PBase extends Activity {
 				setAddlog(vmethodname,vmsg, vinfo);
 			}
 		}, 500);
+        */
 	}
 
 	protected void setAddlog(String methodname,String msg,String info) {

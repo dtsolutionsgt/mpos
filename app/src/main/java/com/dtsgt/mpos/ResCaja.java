@@ -180,7 +180,7 @@ public class ResCaja extends PBase {
             }
 
             cargaCliente();
-            gl.ventalock=false;
+            gl.ventalock=true;
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
