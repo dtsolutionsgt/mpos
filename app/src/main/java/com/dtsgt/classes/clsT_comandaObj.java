@@ -30,6 +30,7 @@ public class clsT_comandaObj {
         count = 0;
     }
 
+
     public void reconnect(BaseDatos dbconnection, SQLiteDatabase dbase) {
         Con=dbconnection;
         ins=Con.Ins;upd=Con.Upd;
