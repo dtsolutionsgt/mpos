@@ -27,11 +27,13 @@ public class LA_Res_mesa  extends BaseAdapter {
     private ArrayList<clsClasses.clsRes_mesa> items= new ArrayList<clsClasses.clsRes_mesa>();
     private int selectedIndex;
     private LayoutInflater l_Inflater;
+    private boolean fullsize;
 
-    public LA_Res_mesa(Context context, PBase owner, ArrayList<clsClasses.clsRes_mesa> results) {
+    public LA_Res_mesa(Context context, PBase owner, ArrayList<clsClasses.clsRes_mesa> results,boolean isTablet) {
         items = results;
         l_Inflater = LayoutInflater.from(context);
         selectedIndex = -1;
+        fullsize=isTablet;
 
         mu=owner.mu;
         du=owner.du;
@@ -65,12 +67,15 @@ public class LA_Res_mesa  extends BaseAdapter {
 
         if (convertView == null) {
 
-            convertView = l_Inflater.inflate(R.layout.lv_res_mesa, null);
+            if (fullsize) {
+                convertView = l_Inflater.inflate(R.layout.lv_res_mesa, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.lv_res_mesa_half, null);
+            }
+
             holder = new ViewHolder();
 
             holder.lbl1 = (TextView) convertView.findViewById(R.id.lblV1);
-            holder.lbl3 = (TextView) convertView.findViewById(R.id.lblV3);
-            holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
             holder.lbl5 = (TextView) convertView.findViewById(R.id.lblV5);
             holder.img1 =  convertView.findViewById(R.id.imageView97);
             holder.rel1 =  convertView.findViewById(R.id.relcolor);
@@ -87,15 +92,11 @@ public class LA_Res_mesa  extends BaseAdapter {
         holder.img1.setImageResource(R.drawable.blank48);
 
         if (est==0) {
-            holder.lbl3.setText("");
-            holder.lbl4.setText("");
             holder.lbl5.setText("");
             holder.img1.setVisibility(View.INVISIBLE);
             holder.rel1.setBackgroundColor(Color.parseColor("#D0D0D0"));
 
         } else {
-            holder.lbl3.setText(""+items.get(position).pers);
-            holder.lbl4.setText(""+items.get(position).cuentas);
             holder.lbl5.setText(""+du.shora(items.get(position).fecha));
             holder.rel1.setBackgroundColor(Color.WHITE);
 
@@ -128,7 +129,7 @@ public class LA_Res_mesa  extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl1,lbl3,lbl4,lbl5;
+        TextView lbl1,lbl5;
         ImageView img1;
         RelativeLayout rel1;
     }

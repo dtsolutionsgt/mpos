@@ -231,6 +231,7 @@ public class clsClasses {
     }
 
     public class clsP_archivoconf {
+        public int codigo_archivoconf;
         public String ruta;
         public String tipo_hh;
         public String idioma;
@@ -240,7 +241,6 @@ public class clsClasses {
         public String puerto_impresion;
         public String lbs_o_kgs;
         public int  nota_credito;
-        public int codigo_archivoconf;
     }
 
     public class clsP_banco {
@@ -416,6 +416,14 @@ public class clsClasses {
         public String sucursal;
     }
 
+    public class clsP_estacion {
+        public int  codigo_estacion;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public String  nombre;
+        public int  codigo_impresora;
+    }
+
     public class clsP_factorconv {
         public int producto;
         public String unidadsuperior;
@@ -443,6 +451,22 @@ public class clsClasses {
         public int  activo;
         public String imagen;
         public int  codigo_linea;
+    }
+
+    public class clsP_linea_estacion {
+        public int  codigo_linea_estacion;
+        public int  codigo_linea;
+        public int  codigo_sucursal;
+        public int  empresa;
+        public int  codigo_estacion;
+    }
+
+    public class clsP_linea_impresora {
+        public int  codigo_linea_impresora;
+        public int  codigo_linea;
+        public int  codigo_sucursal;
+        public int  empresa;
+        public int  codigo_impresora;
     }
 
     public class clsP_Producto_Tipo   {
@@ -801,6 +825,12 @@ public class clsClasses {
         public int  bandera;
         public int  idlista;
         public int  cant;
+    }
+
+    public class clsT_comanda {
+        public int  linea;
+        public int  id;
+        public String texto;
     }
 
     public class clsT_combo {

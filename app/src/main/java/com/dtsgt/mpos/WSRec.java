@@ -30,10 +30,12 @@ import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
+import com.dtsgt.classes.clsP_estacionObj;
 import com.dtsgt.classes.clsP_factorconvObj;
 import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_linea_estacionObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_motivoajusteObj;
@@ -75,6 +77,8 @@ import com.dtsgt.classesws.clsBeP_DESCUENTOList;
 import com.dtsgt.classesws.clsBeP_EMPRESA;
 import com.dtsgt.classesws.clsBeP_ENCABEZADO_REPORTESHH;
 import com.dtsgt.classesws.clsBeP_ENCABEZADO_REPORTESHHList;
+import com.dtsgt.classesws.clsBeP_ESTACION;
+import com.dtsgt.classesws.clsBeP_ESTACIONList;
 import com.dtsgt.classesws.clsBeP_FACTORCONV;
 import com.dtsgt.classesws.clsBeP_FACTORCONVList;
 import com.dtsgt.classesws.clsBeP_FRASE;
@@ -83,6 +87,8 @@ import com.dtsgt.classesws.clsBeP_IMPUESTO;
 import com.dtsgt.classesws.clsBeP_IMPUESTOList;
 import com.dtsgt.classesws.clsBeP_LINEA;
 import com.dtsgt.classesws.clsBeP_LINEAList;
+import com.dtsgt.classesws.clsBeP_LINEA_ESTACION;
+import com.dtsgt.classesws.clsBeP_LINEA_ESTACIONList;
 import com.dtsgt.classesws.clsBeP_MEDIAPAGO;
 import com.dtsgt.classesws.clsBeP_MEDIAPAGOList;
 import com.dtsgt.classesws.clsBeP_MONEDA;
@@ -257,7 +263,8 @@ public class WSRec extends PBase {
                         callMethod("GetP_BANCO", "EMPRESA", gl.emp);
                         break;
                     case 3:
-                        callMethod("GetP_ARCHIVOCONF", "EMPRESA", gl.emp, "RUTA", gl.codigo_ruta);
+                        //callMethod("GetP_ARCHIVOCONF", "EMPRESA", gl.emp, "RUTA", gl.codigo_ruta);
+                        callEmptyMethod();
                         break;
                     case 4:
                         //callMethod("GetP_BONIF", "EMPRESA", gl.emp);
@@ -268,7 +275,6 @@ public class WSRec extends PBase {
                         break;
                     case 6:
                         callMethod("GetP_DESCUENTO", "EMPRESA", gl.emp);
-                        //callEmptyMethod();
                         break;
                     case 7:
                         callMethod("GetP_FACTORCONV", "EMPRESA", gl.emp);
@@ -281,7 +287,6 @@ public class WSRec extends PBase {
                         break;
                     case 10:
                         callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
-                        //callEmptyMethod();
                         break;
                     case 11:
                         callMethod("GetP_ENCABEZADO_REPORTESHH", "EMPRESA", gl.emp);
@@ -359,13 +364,30 @@ public class WSRec extends PBase {
                         callMethod("GetP_FRASE");
                         break;
                     case 37:
-                        callMethod("GetP_RES_SALA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        if (gl.peRest) {
+                            callMethod("GetP_RES_SALA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        } else callEmptyMethod();
                         break;
                     case 38:
-                        callMethod("GetP_RES_MESA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        if (gl.peRest) {
+                            callMethod("GetP_RES_MESA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        } else callEmptyMethod();
                         break;
                     case 39:
-                        callMethod("GetP_RES_GRUPO", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        if (gl.peRest) {
+                            callMethod("GetP_RES_GRUPO", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        } else callEmptyMethod();
+                        break;
+                    case 40:
+                        if (gl.peRest) {
+                            callMethod("GetP_ESTACION", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        } else callEmptyMethod();
+                        break;
+                    case 41:
+                        //if (gl.peRest) {
+                        //    callMethod("GetP_LINEA_ESTACION", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        //} else
+                            callEmptyMethod();
                         break;
                 }
             } catch (Exception e) {
@@ -393,10 +415,7 @@ public class WSRec extends PBase {
                     execws(3);
                     break;
                 case 3:
-                    processConfig();
-                    if (ws.errorflag) {
-                        processComplete();break;
-                    }
+                    //processConfig();
                     execws(4);
                     break;
                 case 4:
@@ -640,6 +659,20 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(40);
+                    break;
+                case 40:
+                    processEstacion();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(41);
+                    break;
+                case 41:
+                    //processLineaEstacion();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
                     break;
             }
@@ -769,6 +802,12 @@ public class WSRec extends PBase {
                 break;
             case 39:
                 plabel = "Grupos de mesas";
+                break;
+            case 40:
+                plabel = "Estaciones";
+                break;
+            case 41:
+                plabel = "Estacion por familia";
                 break;
         }
 
@@ -2618,6 +2657,81 @@ public class WSRec extends PBase {
 
     }
 
+
+    private void processEstacion() {
+
+        try {
+            clsP_estacionObj handler = new clsP_estacionObj(this, Con, db);
+            clsBeP_ESTACIONList items = new clsBeP_ESTACIONList();
+            clsBeP_ESTACION item = new clsBeP_ESTACION();
+            clsClasses.clsP_estacion var;
+
+            script.add("DELETE FROM P_ESTACION");
+
+            items = xobj.getresult(clsBeP_ESTACIONList.class, "GetP_ESTACION");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_estacion();
+
+                var.codigo_estacion=item.CODIGO_ESTACION;
+                var.empresa=item.EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.nombre=item.NOMBRE;
+                var.codigo_impresora=item.CODIGO_IMPRESORA;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+
+    }
+
+    private void processLineaEstacion() {
+
+        try {
+            clsP_linea_estacionObj handler = new clsP_linea_estacionObj(this, Con, db);
+            clsBeP_LINEA_ESTACIONList items = new clsBeP_LINEA_ESTACIONList();
+            clsBeP_LINEA_ESTACION item = new clsBeP_LINEA_ESTACION();
+            clsClasses.clsP_linea_estacion var;
+
+            script.add("DELETE FROM P_LINEA_ESTACION");
+
+            items = xobj.getresult(clsBeP_LINEA_ESTACIONList.class, "GetP_LINEA_ESTACION");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_linea_estacion();
+
+                var.codigo_linea_estacion=item.CODIGO_LINEA_ESTACION;
+                var.codigo_linea=item.CODIGO_LINEA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.empresa=item.EMPRESA;
+                var.codigo_estacion=item.CODIGO_ESTACION;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
 
     //endregion
 

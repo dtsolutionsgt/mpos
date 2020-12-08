@@ -98,8 +98,8 @@ public class Lista extends PBase {
                 Object lvObj = listView.getItemAtPosition(position);
                 clsClasses.clsLista item = (clsClasses.clsLista) lvObj;
 
-                progress.setMessage("Cargando detalle...");
-                progress.show();
+                //progress.setMessage("Cargando detalle...");
+                //progress.show();
 
                 if(gl.mantid==15){
                     adapt.setSelectedIndex(position);
@@ -194,8 +194,6 @@ public class Lista extends PBase {
                 adapter.setSelectedIndex(selidx);
             }
         }
-
-
     }
 
     private void setTableSQL() {
@@ -371,6 +369,16 @@ public class Lista extends PBase {
                 if (flag) sql+="WHERE ((CODIGO_GRUPO="+ft+") OR (NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY NOMBRE";
                 break;
+            case 30: // Impresoras
+                sql="SELECT 0,CODIGO_ARCHIVOCONF,tipo_hh,'','', '','','','' FROM P_archivoconf  ";
+                if (flag) sql+="WHERE ((RUTA='"+gl.codigo_ruta+"') OR (tipo_hh '%"+ft+"%')) ";
+                sql+="ORDER BY tipo_hh";
+                break;
+            case 31: // Estacion cocina
+                sql="SELECT 0,CODIGO_ESTACION,NOMBRE,'','', '','','','' FROM P_ESTACION  ";
+                if (flag) sql+="WHERE  (NOMBRE '%"+ft+"%') ";
+                sql+="ORDER BY NOMBRE";
+                break;
         }
     }
 
@@ -379,6 +387,8 @@ public class Lista extends PBase {
     //region Aux
 
     private void setMantID() {
+
+        swact.setVisibility(View.VISIBLE);
 
         switch (gl.mantid) {
             case 0:
@@ -431,6 +441,10 @@ public class Lista extends PBase {
                 lblTit.setText("Mesa");break;
             case 28:
                 lblTit.setText("Grupo de mesas");break;
+            case 30:
+                lblTit.setText("Impresora");swact.setVisibility(View.INVISIBLE);break;
+            case 31:
+                lblTit.setText("Estacion cocina");swact.setVisibility(View.INVISIBLE);break;
         }
     }
 
@@ -482,6 +496,10 @@ public class Lista extends PBase {
                 startActivity(new Intent(this, MantResMesa.class));break;
             case 28:
                 startActivity(new Intent(this, MantResGrupo.class));break;
+            case 30:
+                startActivity(new Intent(this, MantImpresora.class));break;
+            case 31:
+                startActivity(new Intent(this, MantEstacion.class));break;
         }
 
         progress.cancel();

@@ -1244,7 +1244,7 @@ public class AppMethods {
         try {
             gl.prtipo="";gl.prpar="";
 
-            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE RUTA="+gl.codigo_ruta;
+            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") AND (NOTA_CREDITO=1)";
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {
@@ -1254,7 +1254,7 @@ public class AppMethods {
             }
 
         } catch (Exception e) {
-            gl.prtipo="";gl.prpar="00:01:90:85:0D:8C";
+            gl.prtipo="SIN IMPRESORA";gl.prpar="00:00:00:00:00:00";
         }
 
     }
@@ -1265,7 +1265,7 @@ public class AppMethods {
         try {
             gl.prtipo="";gl.prpar="";
 
-            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") AND (NOTA_CREDITO="+tipoimpr+")";
+            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") AND (NOTA_CREDITO=1)";
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {
@@ -1273,9 +1273,8 @@ public class AppMethods {
                 gl.prtipo=DT.getString(0);
                 gl.prpar=DT.getString(1);
             }
-
         } catch (Exception e) {
-            gl.prtipo="";gl.prpar="00:01:90:85:0D:8C";
+            gl.prtipo="SIN IMPRESORA";gl.prpar="00:00:00:00:00:00";
         }
 
     }

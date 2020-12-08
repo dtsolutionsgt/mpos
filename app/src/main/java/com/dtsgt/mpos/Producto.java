@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
@@ -62,6 +63,8 @@ public class Producto extends PBase {
 		this.setTitle("Producto");
 		if (prodtipo==1) this.setTitle("Producto con existencia");
 
+        calibraPantalla();
+
         app = new AppMethods(this, gl, Con, db);
 
         items = new ArrayList<clsCD>();
@@ -76,7 +79,8 @@ public class Producto extends PBase {
 
 	}
 
-    // Events
+    //region Events
+
 	public void porCodigo(View view) {
 		try{
 			ordPorNombre=false;
@@ -225,7 +229,9 @@ public class Producto extends PBase {
 
     }
 
-    // Main
+    //endregion
+
+    //region Main
 	
 	private void listItems() {
 		Cursor DT;
@@ -494,8 +500,10 @@ public class Producto extends PBase {
 	    }	
 		
 	}
-	
-	// Aux
+
+    //endregion
+
+	//region Aux
 	
 	private void fillSpinner(){
 		Cursor DT;
@@ -623,8 +631,17 @@ public class Producto extends PBase {
         return sprec;
     }
 
+    private void calibraPantalla() {
+        if (gl.pelTablet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
 
-    // Activity Events
+    //endregion
+
+    //region Activity Events
 	
 	protected void onResume() {
 		try{
@@ -634,5 +651,7 @@ public class Producto extends PBase {
 		}
 
 	}
+
+	//endregion
 
 }

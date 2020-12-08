@@ -112,20 +112,6 @@ public class BaseDatosVersion {
         }
 
         try {
-            sql="CREATE TABLE [T_FACTURA_FEL] ("+
-                    "COREL TEXT NOT NULL,"+
-                    "FEELSERIE TEXT NOT NULL,"+
-                    "FEELNUMERO TEXT NOT NULL,"+
-                    "FEELUUID TEXT NOT NULL,"+
-                    "FEELFECHAPROCESADO INTEGER NOT NULL,"+
-                    "FEELCONTINGENCIA TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL])"+
-                    ");";
-            db.execSQL(sql);
-        } catch (Exception e) {
-        }
-
-        try {
             sql="CREATE TABLE [P_res_turno] ("+
                     "FECHA INTEGER NOT NULL,"+
                     "VENDEDOR INTEGER NOT NULL,"+
@@ -248,6 +234,21 @@ public class BaseDatosVersion {
         }
 
         try {
+            sql="CREATE TABLE [T_FACTURA_FEL] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "FEELSERIE TEXT NOT NULL,"+
+                    "FEELNUMERO TEXT NOT NULL,"+
+                    "FEELUUID TEXT NOT NULL,"+
+                    "FEELFECHAPROCESADO INTEGER NOT NULL,"+
+                    "FEELCONTINGENCIA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+
+        try {
             Cursor vCursor = db.rawQuery("SELECT * FROM T_ordencuenta", null);
             if (vCursor != null) vCursor.moveToLast();
             if (vCursor.getCount()==0) db.execSQL("DROP TABLE T_ordencuenta");
@@ -285,6 +286,54 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
             sql="CREATE INDEX T_ordencombo_idx1 ON T_ordencombo(COREL)";db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+
+        try {
+            sql="CREATE TABLE [P_estacion] ("+
+                    "CODIGO_ESTACION INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "CODIGO_IMPRESORA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_ESTACION])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+
+            sql="CREATE TABLE [P_linea_impresora] ("+
+                    "CODIGO_LINEA_IMPRESORA INTEGER NOT NULL,"+
+                    "CODIGO_LINEA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_IMPRESORA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_LINEA_IMPRESORA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="INSERT INTO P_linea_impresora VALUES (1,15,4,3,2)";db.execSQL(sql);
+            sql="INSERT INTO P_linea_impresora VALUES (2,16,4,3,3)";db.execSQL(sql); //papas y ensal
+            sql="INSERT INTO P_linea_impresora VALUES (3,17,4,3,2)";db.execSQL(sql);
+            sql="INSERT INTO P_linea_impresora VALUES (4,18,4,3,2)";db.execSQL(sql);
+            sql="INSERT INTO P_linea_impresora VALUES (5,19,4,3,4)";db.execSQL(sql); //beb
+
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [T_comanda] ("+
+                    "LINEA INTEGER NOT NULL,"+
+                    "ID INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([LINEA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_comanda_idx1 ON T_comanda(ID)";db.execSQL(sql);
         } catch (Exception e) {
         }
 

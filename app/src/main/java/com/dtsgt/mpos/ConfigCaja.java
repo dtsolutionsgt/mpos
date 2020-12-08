@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -47,6 +48,12 @@ public class ConfigCaja extends PBase {
         cajacode=new ArrayList<String>();cajalist=new ArrayList<String>();
 
         gl.configCajaSuc = false;
+
+        if (gl.pelTablet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         setHandlers();
 

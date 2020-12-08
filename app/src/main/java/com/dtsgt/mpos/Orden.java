@@ -3,9 +3,11 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
@@ -28,10 +31,12 @@ import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
@@ -54,9 +59,10 @@ public class Orden extends PBase {
 
     private ListView listView;
     private GridView gridView,grdbtn,grdfam,grdprod;
-    private TextView lblTot,lblTit,lblAlm,lblVend;
+    private TextView lblTot,lblTit,lblAlm,lblVend,lblCent;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
     private ImageView imgroad;
+    private RelativeLayout relprod,relsep,relsep2;
 
     private ArrayList<clsClasses.clsOrden> items= new ArrayList<clsOrden>();
     private ListAdaptOrden adapter;
@@ -83,6 +89,8 @@ public class Orden extends PBase {
 
     private clsP_nivelprecioObj P_nivelprecioObj;
     private clsP_productoObj P_productoObj;
+    private clsP_linea_impresoraObj P_linea_impresoraObj;
+    private clsT_comandaObj T_comandaObj;
 
     private clsRepBuilder rep;
 
@@ -92,7 +100,7 @@ public class Orden extends PBase {
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
-    private int nivel,dweek,clidia,counter;
+    private int nivel,dweek,clidia,counter,prodlinea;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag,enviarorden;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private int codigo_cliente, emp,cod_prod,cantcuentas;
@@ -108,6 +116,10 @@ public class Orden extends PBase {
 
         setControls();
 
+        calibraPantalla();
+
+        P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
+        T_comandaObj=new clsT_comandaObj(this,Con,db);
         P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
         P_nivelprecioObj.fill("ORDER BY Nombre");
 
@@ -193,6 +205,11 @@ public class Orden extends PBase {
         exitBtn();
     }
 
+    public void doAdd(View view) {
+        gl.gstr = "";browse=1;gl.prodtipo=1;
+        startActivity(new Intent(this, Producto.class));
+    }
+
     public void subItemClick(int position,int handle) {
     }
 
@@ -264,8 +281,13 @@ public class Orden extends PBase {
                             gl.menuitemid=item.emp;
                             browse=7;
                         }
-                        showItemPopMenu();
-                   } catch (Exception e) {
+
+                        if (item.estado==1) {
+                            showItemPopMenu();
+                        } else {
+                            showItemPopMenuLock();
+                        }
+                    } catch (Exception e) {
                         mu.msgbox( e.getMessage());
                     }
 
@@ -524,6 +546,8 @@ public class Orden extends PBase {
                     processCant(updateitem);
                 }
             } else if (tipo.equalsIgnoreCase("M")){
+                gl.prodmenu=gl.prodcod;
+                gl.prodid=prodid;
                 processMenuItem();
             }
         } catch (Exception e){
@@ -1248,15 +1272,9 @@ public class Orden extends PBase {
             item.ID=2;item.Name="Completar";item.Icon=69;
             mitems.add(item);
 
-            item = clsCls.new clsMenu();
-            item.ID=50;item.Name="Buscar ";item.Icon=64;
-            mitems.add(item);
-
-            /*
-            item = clsCls.new clsMenu();
-            item.ID=24;item.Name="Salir";item.Icon=57;
-            mitems.add(item);
-            */
+            //item = clsCls.new clsMenu();
+            //item.ID=50;item.Name="Buscar";item.Icon=64;
+            //mitems.add(item);
 
             adaptergrid=new ListAdaptMenuVenta(this, mitems);
             gridView.setAdapter(adaptergrid);
@@ -1336,6 +1354,95 @@ public class Orden extends PBase {
     //region Comanda
 
     private void imprimeComanda() {
+        if (!divideComanda()) return;
+        if (!generaArchivos()) return;
+        ejecutaImpresion();
+    }
+
+    private boolean divideComanda() {
+        clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+        clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
+        clsClasses.clsT_orden venta;
+        clsClasses.clsT_ordencombo combo;
+
+        String prname,cname;
+        int prodid,prid,linea=1;
+
+        try {
+            db.execSQL("DELETE FROM T_comanda");
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+
+            for (int i = 0; i <T_ordenObj.count; i++) {
+                venta=T_ordenObj.items.get(i);
+
+                prodid = app.codigoProducto(venta.producto);
+                prname=getProd(prodid);
+                s = mu.frmdecno(venta.cant) + " x " + prname;
+
+                if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
+                    P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
+                    for (int k = 0; k <P_linea_impresoraObj.count; k++) {
+                        prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
+                        agregaComanda(linea,prid,s);linea++;
+                    }
+
+                } else {
+                    T_comboObj.fill("WHERE IdCombo=" + venta.val4);
+                    cname=s;
+
+                    for (int j = 0; j < T_comboObj.count; j++) {
+                        prodid=T_comboObj.items.get(j).idseleccion;
+                        s = " -  " + getProd(prodid);
+                        P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
+
+                        for (int k = 0; k <P_linea_impresoraObj.count; k++) {
+                            prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
+                            agregaComanda(linea,prid,cname);linea++;
+                            agregaComanda(linea,prid,s);linea++;
+                        }
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    private boolean agregaComanda(int linea,int prid,String texto) {
+        try {
+            clsClasses.clsT_comanda item = clsCls.new clsT_comanda();
+
+            item.linea=linea;
+            item.id=prid;
+            item.texto=texto;
+
+            T_comandaObj.add(item);
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    private boolean generaArchivos() {
+        try {
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    private void ejecutaImpresion() {
+        try {
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void imprimeComanda2() {
         clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
         clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
         clsClasses.clsT_orden venta;
@@ -1392,7 +1499,10 @@ public class Orden extends PBase {
     private String getProd(int prodid) {
         try {
             for (int i = 0; i <P_productoObj.count; i++) {
-                if (P_productoObj.items.get(i).codigo_producto==prodid) return P_productoObj.items.get(i).desclarga;
+                if (P_productoObj.items.get(i).codigo_producto==prodid) {
+                    prodlinea=P_productoObj.items.get(i).linea;
+                    return P_productoObj.items.get(i).desclarga;
+                }
             }
         } catch (Exception e) {}
         return ""+prodid;
@@ -1497,7 +1607,7 @@ public class Orden extends PBase {
 
     private void setControls(){
 
-        try{
+        try {
             listView = (ListView) findViewById(R.id.listView1);
             gridView = (GridView) findViewById(R.id.gridView2);gridView.setEnabled(true);
             grdfam = (GridView) findViewById(R.id.grdFam);
@@ -1511,13 +1621,18 @@ public class Orden extends PBase {
             lblAlm= (TextView) findViewById(R.id.lblTit2);
             lblVend= (TextView) findViewById(R.id.lblTit4);
             lblPokl= (TextView) findViewById(R.id.lblTit5);
+            lblCent= (TextView) findViewById(R.id.textView72);
 
             lblKeyDP=(TextView) findViewById(R.id.textView110);
             lblDir=(TextView) findViewById(R.id.lblDir);
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
 
-        }catch (Exception e){
+            relprod=findViewById(R.id.relProd);
+            relsep=findViewById(R.id.relSepar);
+            relsep2=findViewById(R.id.relSep2);
+
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
@@ -1590,7 +1705,7 @@ public class Orden extends PBase {
         dweek=mu.dayofweek();
 
         lblTot.setText("Total : "+mu.frmcur(0));
-        lblVend.setText(gl.mesanom);mesa=gl.mesanom;
+        lblVend.setText("Mesa : "+gl.mesanom);mesa=gl.mesanom;
     }
 
     private boolean hasProducts(){
@@ -1964,6 +2079,21 @@ public class Orden extends PBase {
 
     }
 
+    private void calibraPantalla() {
+        if (gl.pelTablet) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            relprod.setVisibility(View.VISIBLE);
+            relsep.setVisibility(View.VISIBLE);
+            lblCent.setVisibility(View.VISIBLE);
+            relsep2.setBackgroundResource(R.drawable.blue_strip);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            relprod.setVisibility(View.GONE);
+            relsep.setVisibility(View.GONE);
+            lblCent.setVisibility(View.GONE);
+            relsep2.setBackgroundColor(Color.parseColor("#DBF5F3"));
+        }
+    }
 
     //endregion
 
@@ -2111,6 +2241,44 @@ public class Orden extends PBase {
                     case 2:
                         msgAskDel("Está seguro de borrar");break;
                     case 3:
+                        if (selitem.Cant>1) {
+                            msgAskDividir("Dividir articulo");
+                        } else {
+                            toastcent("Articulo con cantidad 1 no se puede dividir");
+                        }
+                        break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    private void showItemPopMenuLock() {
+        final AlertDialog Dialog;
+        final String[] selitems = {"Cambiar cuenta","Borrar","Dividir"};
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Articulo del orden");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        showMenuCuenta();break;
+                    case 1:
+                        msgAskDel("Está seguro de borrar");break;
+                    case 2:
                         if (selitem.Cant>1) {
                             msgAskDividir("Dividir articulo");
                         } else {
@@ -2307,6 +2475,8 @@ public class Orden extends PBase {
             gridView.setEnabled(true);
 
             P_productoObj.reconnect(Con,db);
+            P_linea_impresoraObj.reconnect(Con,db);
+            T_comandaObj.reconnect(Con,db);
 
             try {
                 P_nivelprecioObj.reconnect(Con,db);

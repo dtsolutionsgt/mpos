@@ -312,8 +312,6 @@ public class Reportes extends PBase {
 
         } catch (Exception e) 		{
             mu.msgbox( e.getMessage());
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            Log.d("prods",e.getMessage());
         }
 
         adaptFill=new ListAdaptProd(this,itemsFill);
@@ -417,7 +415,7 @@ public class Reportes extends PBase {
 
     }
 
-    private boolean fillItems(){
+    private boolean fillItems() {
         Cursor dt;
         String condition;
 
@@ -426,11 +424,17 @@ public class Reportes extends PBase {
 
             switch (gl.reportid){
                 case 1:
+                    /*
                     sql="SELECT '', SERIE, 0, '', '', '', COUNT(COREL), IMPMONTO, SUM(TOTAL), CAST(FECHA/10000 AS INTEGER) " +
                             "FROM D_FACTURA WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                             "AND ANULADO=0 " +
                             "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
                             "ORDER BY CAST(FECHA/10000 AS INTEGER)";
+                    */
+                    sql="SELECT '', SERIE, CORELATIVO, '', '', '', COREL, IMPMONTO, TOTAL, CAST(FECHA/10000 AS INTEGER) " +
+                            "FROM D_FACTURA WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                            "AND ANULADO=0 " +
+                            "ORDER BY CORELATIVO";
                     break;
                 case 2:
                     sql="SELECT '', SERIE, COUNT(COREL), '', '', '', 0, 0, " +
@@ -599,7 +603,7 @@ public class Reportes extends PBase {
 
             return true;
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("fillItems: "+e);
             return false;
@@ -846,7 +850,8 @@ public class Reportes extends PBase {
 
                         if(acc==1){
                             rep.add("     REPORTE DOCUMENTOS POR DIA");
-                            rep.add("Cant.Fact   Costo  Impuesto    Total");
+                            //rep.add("Cant.Fact   Costo  Impuesto    Total");
+                            rep.add("Correlativo SubTotal   Impuesto    Total");
                             rep.line();
                             rep.empty();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
@@ -860,7 +865,8 @@ public class Reportes extends PBase {
                         series=itemR.get(i).serie;
 
                         totSinImp = itemR.get(i).total - itemR.get(i).imp;
-                        rep.add3Tot(itemR.get(i).cant,totSinImp,itemR.get(i).imp, itemR.get(i).total);
+                        //rep.add3Tot(itemR.get(i).cant,totSinImp,itemR.get(i).imp, itemR.get(i).total);
+                        rep.add3Tot(itemR.get(i).correl,totSinImp,itemR.get(i).imp, itemR.get(i).total);
 
                         tot += itemR.get(i).total;
                         sinImp += totSinImp;
@@ -874,7 +880,7 @@ public class Reportes extends PBase {
                             SumaCant += cantF;
                             totSinImpF += sinImp;
 
-                        }else {
+                        } else {
 
                             String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
                             String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);

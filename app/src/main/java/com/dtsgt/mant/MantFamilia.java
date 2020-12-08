@@ -16,12 +16,15 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsP_estacionObj;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.clsP_linea_estacionObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -32,14 +35,18 @@ public class MantFamilia extends PBase {
 
     private ImageView imgstat,img1,imgadd,imgfotoadd,imgfotodel;
     private EditText txt1,txt2;
-    private TextView lblfoto;
+    private TextView lblfoto,lblest;
+    private RelativeLayout relest;
 
     private clsP_lineaObj holder;
-    private clsClasses.clsP_linea item=clsCls.new clsP_linea();
+    public clsClasses.clsP_linea item=clsCls.new clsP_linea();
+    private clsP_estacionObj P_estacionObj;
+    private clsP_linea_estacionObj P_linea_estacionObj;
+    public clsClasses.clsP_linea_estacion estacion=clsCls.new clsP_linea_estacion();
 
     private String id,idfoto,signfile;
     private boolean newitem=false;
-    private int TAKE_PHOTO_CODE = 0;
+    private int TAKE_PHOTO_CODE = 0,idestacion=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,17 +58,24 @@ public class MantFamilia extends PBase {
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
         lblfoto = (TextView) findViewById(R.id.lblBU);
+        lblest =findViewById(R.id.textView219);
+
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgfotoadd  = (ImageView) findViewById(R.id.imageView40);
         imgfotodel = (ImageView) findViewById(R.id.imageView41);
         img1 = (ImageView) findViewById(R.id.imageView41);
         imgadd = (ImageView) findViewById(R.id.imgImg2);
+        relest=findViewById(R.id.relestacion);
 
         holder =new clsP_lineaObj(this,Con,db);
+        P_estacionObj=new clsP_estacionObj(this,Con,db);
+        P_linea_estacionObj=new clsP_linea_estacionObj(this,Con,db);
 
         id=gl.gcods;
         idfoto=id;
         if (id.isEmpty()) newItem(); else loadItem();
+        if (!gl.peRest) relest.setVisibility(View.INVISIBLE);
+
         showImage();
         setHandlers();
 
@@ -109,6 +123,10 @@ public class MantFamilia extends PBase {
         }
     }
 
+    public void doEstacion(View view) {
+        listaEstaciones();
+    }
+
     public void doExit(View view) {
         msgAskExit("Salir");
     }
@@ -140,6 +158,19 @@ public class MantFamilia extends PBase {
             holder.fill("WHERE CODIGO='"+id+"'");
             item=holder.first();
 
+            P_linea_estacionObj.fill("WHERE codigo_linea="+item.codigo_linea);
+            if (P_linea_estacionObj.count>0) {
+                estacion=P_linea_estacionObj.first();
+                idestacion=estacion.codigo_estacion;
+            } else {
+                idestacion=0;
+                estacion.codigo_linea_estacion=P_linea_estacionObj.newID("SELECT MAX(codigo_linea_estacion) FROM P_linea_estacion");
+                estacion.codigo_linea=item.codigo_linea;
+                estacion.codigo_sucursal=gl.tienda;
+                estacion.empresa=gl.emp;
+                estacion.codigo_estacion=idestacion;
+            }
+
             showItem();
 
             txt1.setEnabled(false);
@@ -167,12 +198,24 @@ public class MantFamilia extends PBase {
         item.activo=1;
         item.imagen="";
 
+        idestacion=0;
+
+        estacion.codigo_linea_estacion=P_linea_estacionObj.newID("SELECT MAX(codigo_linea_estacion) FROM P_linea_estacion");
+        estacion.codigo_linea=item.codigo_linea;
+        estacion.codigo_sucursal=gl.tienda;
+        estacion.empresa=gl.emp;
+        estacion.codigo_estacion=idestacion;
+
         showItem();
     }
 
     private void addItem() {
         try {
             holder.add(item);
+
+            estacion.codigo_estacion=idestacion;
+            P_linea_estacionObj.add(estacion);
+
             gl.gcods=""+item.codigo;
             finish();
         } catch (Exception e) {
@@ -183,8 +226,15 @@ public class MantFamilia extends PBase {
     private void updateItem() {
         try {
             holder.update(item);
-            finish();
 
+            estacion.codigo_estacion=idestacion;
+            try {
+                P_linea_estacionObj.add(estacion);
+            } catch (Exception e) {
+                P_linea_estacionObj.update(estacion);
+            }
+
+            finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -250,6 +300,7 @@ public class MantFamilia extends PBase {
     private void showItem() {
         txt1.setText(item.codigo);
         txt2.setText(item.nombre);
+        lblest.setText(nombreEstacion());
     }
 
     private boolean validaDatos() {
@@ -286,6 +337,15 @@ public class MantFamilia extends PBase {
         }
     }
 
+    private String nombreEstacion() {
+        try {
+            P_estacionObj.fill("WHERE CODIGO_ESTACION="+idestacion);
+            return P_estacionObj.first().nombre;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -307,7 +367,6 @@ public class MantFamilia extends PBase {
 
         dialog.show();
     }
-
 
     private void msgAskUpdate(String msg) {
         ExDialog dialog = new ExDialog(this);
@@ -368,6 +427,53 @@ public class MantFamilia extends PBase {
 
     }
 
+    private void listaEstaciones() {
+        final AlertDialog Dialog;
+
+        try {
+            P_estacionObj.fill("ORDER BY NOMBRE");
+
+            final String[] selitems = new String[P_estacionObj.count];
+
+            for (int i = 0; i <P_estacionObj.count; i++) {
+                selitems[i]=P_estacionObj.items.get(i).nombre;
+            }
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Estacion de cocina");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    idestacion=P_estacionObj.items.get(item).codigo_estacion;
+                    lblest.setText(nombreEstacion());
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setPositiveButton("Limpiar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    idestacion=0;
+                    lblest.setText(nombreEstacion());
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Activity Events
@@ -377,6 +483,8 @@ public class MantFamilia extends PBase {
         super.onResume();
         try {
             holder.reconnect(Con,db);
+            P_estacionObj.reconnect(Con,db);
+            P_linea_estacionObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
