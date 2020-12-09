@@ -24,12 +24,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 public class XMLObject {
-
     private WebService ws;
     private Cursor data;
     private int adimx,adimy;
-
-
     public String debg="";
 
     public XMLObject(WebService webservice) {
