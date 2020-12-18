@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -32,6 +33,7 @@ import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsBonifGlob;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
@@ -41,6 +43,7 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ventaObj;
@@ -106,7 +109,7 @@ public class Venta extends PBase {
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
-    private int nivel,dweek,clidia,counter;
+    private int nivel,dweek,clidia,counter,menuitemid;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
@@ -486,7 +489,12 @@ public class Venta extends PBase {
                         clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
                         adaptergrid.setSelectedIndex(position);
-                        processMenuTools(item.ID);
+
+                        if (item.ID==1) {
+                            if (validaFacturas()) processMenuTools(item.ID);
+                        } else {
+                            processMenuTools(item.ID);
+                        }
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
@@ -1896,13 +1904,12 @@ public class Venta extends PBase {
                     mmitems.add(item);
                 }
 
-                /*
-                if (gl.peImpOrdCos) {
+
+                //if (gl.peImpOrdCos) {
                     item = clsCls.new clsMenu();
                     item.ID=62;item.Name="Comanda";item.Icon=62;
                     mmitems.add(item);
-                }
-                */
+                //}
 
                 if (gl.pelCaja  && gl.peRest) {
                     item = clsCls.new clsMenu();
@@ -2578,8 +2585,12 @@ public class Venta extends PBase {
             rep.empty();
             rep.save();
 
-            //app.doPrint(1);
-        } catch (Exception e) {
+            if (gl.emp==9) {
+                app.doPrint(2,1);
+            } else {
+                app.doPrint(1);
+            }
+         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
@@ -3228,6 +3239,68 @@ public class Venta extends PBase {
         }
     }
 
+    private boolean validaFacturas() {
+        long fi,ff;
+
+        if (!app.usaFEL()) return true;
+
+        try {
+            ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
+            fi=du.ffecha00(fi);
+            ff=du.addDays(ff,-4);ff=du.ffecha24(ff);
+            if (fi>ff) {
+                fi=du.addDays(ff,-1);fi=du.ffecha00(fi);
+            }
+            sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
+
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            D_facturaObj.fill(sql);
+            int fc=D_facturaObj.count;
+
+            if (fc==0) {
+                return true;
+            } else {
+                msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n La facturación queda bloqueada.");
+                return false;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+
+    }
+
+    private void enviaAvizo() {
+        String subject,body;
+
+        try {
+            subject="Bloqueo de venta : "+gl.rutanom+" ID : "+gl.codigo_ruta;
+            body="Estimado usuario,\n\nMPos reporta bloqueo de venta por razón de existencia de facturas" +
+                    "pendientes de certificaciones de mas de 4 días.\n" +
+                    "Por favor comuniquese con el soporte para solucionar el problema.\n" +
+                    "Saludos\nDT Solutions S.A.\n";
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
+
+            String[] TO = {"jpospichal@dts.com.gt"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"jpospichal@dts.com.gt"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            startActivity(emailIntent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -3417,6 +3490,19 @@ public class Venta extends PBase {
         }
     }
 
+    private void msgAskSend(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //enviaAvizo();
+                processMenuTools(1);
+            }
+        });
+
+        dialog.show();
+    }
 
     //endregion
 

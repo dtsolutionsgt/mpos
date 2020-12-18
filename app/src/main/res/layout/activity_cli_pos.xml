@@ -168,11 +168,12 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/editText1"
             android:layout_alignStart="@+id/editText1"
-            android:layout_alignEnd="@+id/editText1"
-            android:layout_alignRight="@id/editText1"
+            android:layout_alignRight="@id/progressBar4"
             android:layout_marginTop="5dp"
-            android:inputType="textEmailAddress"
-            android:ems="10" />
+            android:layout_marginEnd="80dp"
+            android:layout_toStartOf="@+id/progressBar4"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
 
         <TextView
             android:id="@+id/textView4"
@@ -355,7 +356,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="8dp"
             android:layout_marginTop="54dp"
-            android:src="@android:drawable/ic_dialog_email" />
+            android:src="@drawable/envelope" />
 
         <ProgressBar
             android:id="@+id/progressBar4"
@@ -363,6 +364,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@+id/imageView99"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/editText1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/phone2" />
+
+        <TextView
+            android:id="@+id/textView223"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView99"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@+id/imageView99"
+            android:text="Teléfono"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/editTextNumber4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txtCorreo"
+            android:layout_alignEnd="@+id/editText1"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/textView223"
+            android:ems="10"
+            android:inputType="number" />
 
     </RelativeLayout>
 

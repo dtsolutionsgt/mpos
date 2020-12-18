@@ -185,6 +185,9 @@ public class Lista extends PBase {
             if (gl.mantid==2) {
                 if (fprints.contains(ss)) ViewObj.items.get(i).f8="X";
             }
+            if (gl.mantid==33) {
+                ViewObj.items.get(i).f2=ViewObj.items.get(i).f3 + " " +ViewObj.items.get(i).f2;
+            }
         }
 
         if (selidx>-1) {
@@ -291,8 +294,8 @@ public class Lista extends PBase {
                 break;
 
             case 13: // Caja
-                sql="SELECT 0,P_RUTA.CODIGO,P_SUCURSAL.DESCRIPCION,P_RUTA.NOMBRE,'','', '','','','' ";
-                sql+="FROM P_RUTA INNER JOIN P_SUCURSAL ON P_RUTA.SUCURSAL=P_SUCURSAL.CODIGO WHERE (1=1) ";
+                sql="SELECT 0,P_RUTA.CODIGO_RUTA,P_SUCURSAL.DESCRIPCION,P_RUTA.NOMBRE,'','', '','','','' ";
+                sql+="FROM P_RUTA INNER JOIN P_SUCURSAL ON P_RUTA.SUCURSAL=P_SUCURSAL.CODIGO_SUCURSAL WHERE (1=1) ";
                 //if (act) sql+="(P_RUTA.ACTIVO=1) ";else sql+="(P_RUTA.ACTIVO=0) ";
                 if (flag) sql+="AND ((P_RUTA.CODIGO='"+ft+"') OR (P_RUTA.NOMBRE LIKE '%"+ft+"%')) ";
                 sql+="ORDER BY P_SUCURSAL.DESCRIPCION,P_RUTA.NOMBRE";
@@ -379,6 +382,26 @@ public class Lista extends PBase {
                 if (flag) sql+="WHERE  (NOMBRE '%"+ft+"%') ";
                 sql+="ORDER BY NOMBRE";
                 break;
+            case 32: // Impresora marca
+                sql="SELECT 0,CODIGO_IMPRESORA_MARCA,NOMBRE,'','', '','','','' FROM P_IMPRESORA_MARCA  WHERE (1=1) ";
+                if (flag) sql+="AND (NOMBRE '%"+ft+"%') ";
+                if (act)  sql+="AND (ACTIVO=1) ";else sql+="AND (ACTIVO=0) ";
+                sql+="ORDER BY NOMBRE";
+                break;
+            case 33: // Impresora modelo
+                sql="SELECT 0, P_IMPRESORA_MODELO.CODIGO_IMPRESORA_MODELO, P_IMPRESORA_MODELO.NOMBRE, P_IMPRESORA_MARCA.NOMBRE,'', '','','','' " +
+                    "FROM P_IMPRESORA_MODELO INNER JOIN P_IMPRESORA_MARCA ON P_IMPRESORA_MODELO.CODIGO_IMPRESORA_MARCA=P_IMPRESORA_MARCA.CODIGO_IMPRESORA_MARCA   WHERE (1=1) ";
+                if (flag) sql+="AND (P_IMPRESORA_MODELO.NOMBRE '%"+ft+"%') ";
+                if (act)  sql+="AND (P_IMPRESORA_MODELO.ACTIVO=1) ";else sql+="AND (P_IMPRESORA_MODELO.ACTIVO=0) ";
+                sql+="ORDER BY P_IMPRESORA_MARCA.NOMBRE,P_IMPRESORA_MODELO.NOMBRE";
+                break;
+            case 34: // Impresora
+                sql="SELECT 0,CODIGO_IMPRESORA,NOMBRE,'','', '','','','' FROM P_IMPRESORA  WHERE (1=1) ";
+                if (flag) sql+="AND (NOMBRE '%"+ft+"%') ";
+                if (act)  sql+="AND (ACTIVO=1) ";else sql+="AND (ACTIVO=0) ";
+                sql+="ORDER BY NOMBRE";
+                break;
+
         }
     }
 
@@ -445,6 +468,12 @@ public class Lista extends PBase {
                 lblTit.setText("Impresora");swact.setVisibility(View.INVISIBLE);break;
             case 31:
                 lblTit.setText("Estacion cocina");swact.setVisibility(View.INVISIBLE);break;
+            case 32:
+                lblTit.setText("Impresora marca");break;
+            case 33:
+                lblTit.setText("Impresora modelo");break;
+            case 34:
+                lblTit.setText("Impresora");break;
         }
     }
 
@@ -500,6 +529,12 @@ public class Lista extends PBase {
                 startActivity(new Intent(this, MantImpresora.class));break;
             case 31:
                 startActivity(new Intent(this, MantEstacion.class));break;
+            case 32:
+                startActivity(new Intent(this, MantImpMarca.class));break;
+            case 33:
+                startActivity(new Intent(this, MantImpModelo.class));break;
+            case 34:
+                startActivity(new Intent(this, MantImpresora.class));break;
         }
 
         progress.cancel();

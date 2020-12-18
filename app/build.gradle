@@ -57,6 +57,7 @@ dependencies {
     implementation files('libs/do_androidsdk.jar')
     implementation files('libs/ZSDK_ANDROID_API.jar')
     implementation files('libs/ePOS2.jar')
+
     //implementation files('libs/libdpfr6.so')
     //implementation files('libs/dpuareu.jar')
     //implementation files('libs/dpuareu.aar')

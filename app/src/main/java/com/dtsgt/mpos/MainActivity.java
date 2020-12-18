@@ -64,7 +64,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "3.2.37";
+    private String parVer = "3.2.41";
 
     private Typeface typeface;
 
@@ -301,8 +301,6 @@ public class MainActivity extends PBase {
 
                         usr = spincode.get(position);
                     } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox(e.getMessage());
                     }
                 }
 

@@ -10,6 +10,8 @@ public class DateUtils {
 	public String sfecha(long f) {
 		long vy,vm,vd;
 		String s;
+
+		if (f==0) return "";
 		
 		vy=(long) f/100000000;
 		f=f % 100000000;

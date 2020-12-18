@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -43,6 +44,7 @@ import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 
@@ -1484,11 +1486,22 @@ public class FacturaRes extends PBase {
     private void assignCorel(){
 
         Cursor DT;
-        int ca,ci,cf,ca1,ca2;
+        int ca,ci,cf,ca1,ca2,cult;
 
         fcorel=0;fserie="";
 
         try {
+
+            sql="SELECT MAX(CORELATIVO) FROM D_FACTURA";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0){
+                DT.moveToFirst();
+                cult=DT.getInt(0);
+            } else {
+                cult=0;
+            }
+
 
             sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
             DT=Con.OpenDT(sql);
@@ -1556,6 +1569,10 @@ public class FacturaRes extends PBase {
             lblFact.setText(s+fserie+" - "+fcorel+" , Talonario : "+fcorel+" / "+cf);
 
             if (DT!=null) DT.close();
+
+            if (fcorel-cult>1) {
+                msgAskSend("Encortramos un inconveniente, por favor envie el siguiente correo al soporte.");
+            }
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -2491,6 +2508,28 @@ public class FacturaRes extends PBase {
         }
     }
 
+    private void enviaAvizo() {
+        String subject,body;
+
+        try {
+            subject="Correlativo inconsistente : "+gl.rutanom+" ID : "+gl.codigo_ruta;
+            body="  ";
+            String[] TO = {"jpospichal@dts.com.gt"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            startActivity(emailIntent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -2735,6 +2774,20 @@ public class FacturaRes extends PBase {
 
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskSend(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                enviaAvizo();
+            }
         });
 
         dialog.show();

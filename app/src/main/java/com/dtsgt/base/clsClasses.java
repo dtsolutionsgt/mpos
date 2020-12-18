@@ -444,6 +444,35 @@ public class clsClasses {
 		public boolean activo;
 	}
 
+    public class clsP_impresora {
+        public int  codigo_impresora;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public String nombre;
+        public String numero_serie;
+        public int  codigo_marca;
+        public int  codigo_modelo;
+        public String tipo_impresora;
+        public String mac;
+        public String ip;
+        public int  fecha_agr;
+        public int  impresiones;
+        public int  activo;
+    }
+
+    public class clsP_impresora_marca {
+        public int  codigo_impresora_marca;
+        public String nombre;
+        public int  activo;
+    }
+
+    public class clsP_impresora_modelo {
+        public int  codigo_impresora_modelo;
+        public int  codigo_impresora_marca;
+        public String nombre;
+        public int  activo;
+    }
+
     public class clsP_linea   {
         public String codigo;
         public String marca;

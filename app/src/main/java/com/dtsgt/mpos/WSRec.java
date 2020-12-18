@@ -33,9 +33,13 @@ import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
 import com.dtsgt.classes.clsP_estacionObj;
 import com.dtsgt.classes.clsP_factorconvObj;
 import com.dtsgt.classes.clsP_fraseObj;
+import com.dtsgt.classes.clsP_impresoraObj;
+import com.dtsgt.classes.clsP_impresora_marcaObj;
+import com.dtsgt.classes.clsP_impresora_modeloObj;
 import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_estacionObj;
+import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_motivoajusteObj;
@@ -83,12 +87,20 @@ import com.dtsgt.classesws.clsBeP_FACTORCONV;
 import com.dtsgt.classesws.clsBeP_FACTORCONVList;
 import com.dtsgt.classesws.clsBeP_FRASE;
 import com.dtsgt.classesws.clsBeP_FRASEList;
+import com.dtsgt.classesws.clsBeP_IMPRESORA;
+import com.dtsgt.classesws.clsBeP_IMPRESORAList;
+import com.dtsgt.classesws.clsBeP_IMPRESORA_MARCA;
+import com.dtsgt.classesws.clsBeP_IMPRESORA_MARCAList;
+import com.dtsgt.classesws.clsBeP_IMPRESORA_MODELO;
+import com.dtsgt.classesws.clsBeP_IMPRESORA_MODELOList;
 import com.dtsgt.classesws.clsBeP_IMPUESTO;
 import com.dtsgt.classesws.clsBeP_IMPUESTOList;
 import com.dtsgt.classesws.clsBeP_LINEA;
 import com.dtsgt.classesws.clsBeP_LINEAList;
 import com.dtsgt.classesws.clsBeP_LINEA_ESTACION;
 import com.dtsgt.classesws.clsBeP_LINEA_ESTACIONList;
+import com.dtsgt.classesws.clsBeP_LINEA_IMPRESORA;
+import com.dtsgt.classesws.clsBeP_LINEA_IMPRESORAList;
 import com.dtsgt.classesws.clsBeP_MEDIAPAGO;
 import com.dtsgt.classesws.clsBeP_MEDIAPAGOList;
 import com.dtsgt.classesws.clsBeP_MONEDA;
@@ -188,6 +200,7 @@ public class WSRec extends PBase {
         pbar.setVisibility(View.INVISIBLE);
 
         app.getURL();
+        app.parametrosExtra();
         setHandlers();
 
         ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
@@ -263,9 +276,8 @@ public class WSRec extends PBase {
                         callMethod("GetP_BANCO", "EMPRESA", gl.emp);
                         break;
                     case 3:
-                        //callMethod("GetP_ARCHIVOCONF", "EMPRESA", gl.emp, "RUTA", gl.codigo_ruta);
-                        callEmptyMethod();
-                        break;
+                         callMethod("GetP_ARCHIVOCONF", "EMPRESA", gl.emp, "RUTA", gl.codigo_ruta);
+                         break;
                     case 4:
                         //callMethod("GetP_BONIF", "EMPRESA", gl.emp);
                         callEmptyMethod();
@@ -366,7 +378,8 @@ public class WSRec extends PBase {
                     case 37:
                         if (gl.peRest) {
                             callMethod("GetP_RES_SALA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        } else callEmptyMethod();
+                        } else
+                            callEmptyMethod();
                         break;
                     case 38:
                         if (gl.peRest) {
@@ -380,12 +393,22 @@ public class WSRec extends PBase {
                         break;
                     case 40:
                         if (gl.peRest) {
-                            callMethod("GetP_ESTACION", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                            callMethod("GetP_LINEA_IMPRESORA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
                         } else callEmptyMethod();
                         break;
                     case 41:
                         if (gl.peRest) {
-                            callMethod("GetP_LINEA_ESTACION", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                            callMethod("GetP_IMPRESORA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        } else callEmptyMethod();
+                        break;
+                    case 42:
+                        if (gl.peRest) {
+                            callMethod("GetP_IMPRESORA_MARCA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        } else callEmptyMethod();
+                        break;
+                    case 43:
+                        if (gl.peRest) {
+                            callMethod("GetP_IMPRESORA_MODELO", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
                         } else callEmptyMethod();
                         break;
                 }
@@ -414,7 +437,7 @@ public class WSRec extends PBase {
                     execws(3);
                     break;
                 case 3:
-                    //processConfig();
+                    processConfig();
                     execws(4);
                     break;
                 case 4:
@@ -661,14 +684,28 @@ public class WSRec extends PBase {
                     execws(40);
                     break;
                 case 40:
-                    processEstacion();
+                    processLineaImpresora();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
                     execws(41);
                     break;
                 case 41:
-                    processLineaEstacion();
+                    processImpresora();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(42);
+                    break;
+                case 42:
+                    processMarcaImpresora();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(43);
+                    break;
+                case 43:
+                    processModeloImpresora();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
@@ -803,11 +840,18 @@ public class WSRec extends PBase {
                 plabel = "Grupos de mesas";
                 break;
             case 40:
-                plabel = "Estaciones";
+                plabel = "Impresora por familia";
                 break;
             case 41:
-                plabel = "Estacion por familia";
+                plabel = "Impresoras";
                 break;
+            case 42:
+                plabel = "Marcas de impresora";
+                break;
+            case 43:
+                plabel = "Modelo de impresora";
+                break;
+
         }
 
         updateLabel();
@@ -1280,6 +1324,8 @@ public class WSRec extends PBase {
             for (int i = 0; i < items.items.size(); i++) {
                 item = items.items.get(i);
                 var = clsCls.new clsP_archivoconf();
+
+                var.codigo_archivoconf=item.CODIGO_ARCHIVOCONF;
                 var.ruta = item.RUTA;
                 var.tipo_hh = item.TIPO_HH + "";
                 var.idioma = item.IDIOMA + "";
@@ -2656,18 +2702,17 @@ public class WSRec extends PBase {
 
     }
 
-
-    private void processEstacion() {
+    private void processLineaImpresora() {
 
         try {
-            clsP_estacionObj handler = new clsP_estacionObj(this, Con, db);
-            clsBeP_ESTACIONList items = new clsBeP_ESTACIONList();
-            clsBeP_ESTACION item = new clsBeP_ESTACION();
-            clsClasses.clsP_estacion var;
+            clsP_linea_impresoraObj handler = new clsP_linea_impresoraObj(this, Con, db);
+            clsBeP_LINEA_IMPRESORAList items = new clsBeP_LINEA_IMPRESORAList();
+            clsBeP_LINEA_IMPRESORA item = new clsBeP_LINEA_IMPRESORA();
+            clsClasses.clsP_linea_impresora var;
 
-            script.add("DELETE FROM P_ESTACION");
+            script.add("DELETE FROM P_LINEA_IMPRESORA");
 
-            items = xobj.getresult(clsBeP_ESTACIONList.class, "GetP_ESTACION");
+            items = xobj.getresult(clsBeP_LINEA_IMPRESORAList.class, "GetP_LINEA_IMPRESORA");
 
             try {
                 if (items.items.size() == 0) return;
@@ -2677,12 +2722,12 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++) {
                 item = items.items.get(i);
-                var = clsCls.new clsP_estacion();
+                var = clsCls.new clsP_linea_impresora();
 
-                var.codigo_estacion=item.CODIGO_ESTACION;
-                var.empresa=item.EMPRESA;
+                var.codigo_linea_impresora=item.CODIGO_LINEA_IMPRESORA;
+                var.codigo_linea=item.CODIGO_LINEA;
                 var.codigo_sucursal=item.CODIGO_SUCURSAL;
-                var.nombre=item.NOMBRE;
+                var.empresa=item.EMPRESA;
                 var.codigo_impresora=item.CODIGO_IMPRESORA;
 
                 script.add(handler.addItemSql(var));
@@ -2692,20 +2737,19 @@ public class WSRec extends PBase {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
-
     }
 
-    private void processLineaEstacion() {
+    private void processImpresora() {
 
         try {
-            clsP_linea_estacionObj handler = new clsP_linea_estacionObj(this, Con, db);
-            clsBeP_LINEA_ESTACIONList items = new clsBeP_LINEA_ESTACIONList();
-            clsBeP_LINEA_ESTACION item = new clsBeP_LINEA_ESTACION();
-            clsClasses.clsP_linea_estacion var;
+            clsP_impresoraObj handler = new clsP_impresoraObj(this, Con, db);
+            clsBeP_IMPRESORAList items = new clsBeP_IMPRESORAList();
+            clsBeP_IMPRESORA item = new clsBeP_IMPRESORA();
+            clsClasses.clsP_impresora var;
 
-            script.add("DELETE FROM P_LINEA_ESTACION");
+            script.add("DELETE FROM P_IMPRESORA");
 
-            items = xobj.getresult(clsBeP_LINEA_ESTACIONList.class, "GetP_LINEA_ESTACION");
+            items = xobj.getresult(clsBeP_IMPRESORAList.class, "GetP_IMPRESORA");
 
             try {
                 if (items.items.size() == 0) return;
@@ -2715,13 +2759,92 @@ public class WSRec extends PBase {
 
             for (int i = 0; i < items.items.size(); i++) {
                 item = items.items.get(i);
-                var = clsCls.new clsP_linea_estacion();
+                var = clsCls.new clsP_impresora();
 
-                var.codigo_linea_estacion=item.CODIGO_LINEA_ESTACION;
-                var.codigo_linea=item.CODIGO_LINEA;
-                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.codigo_impresora=item.CODIGO_IMPRESORA;
                 var.empresa=item.EMPRESA;
-                var.codigo_estacion=item.CODIGO_ESTACION;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.nombre=item.NOMBRE+"";
+                var.numero_serie=item.NUMERO_SERIE+"";
+                var.codigo_marca=item.CODIGO_MARCA;
+                var.codigo_modelo=item.CODIGO_MODELO;
+                var.tipo_impresora=item.TIPO_IMPRESORA;
+                var.mac=item.MAC+"";
+                var.ip=item.IP+"";
+                var.fecha_agr=0;
+                var.impresiones=item.IMPRESIONES;
+                var.activo=mu.bool(item.ACTIVO);
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processMarcaImpresora() {
+
+        try {
+            clsP_impresora_marcaObj handler = new clsP_impresora_marcaObj(this, Con, db);
+            clsBeP_IMPRESORA_MARCAList items = new clsBeP_IMPRESORA_MARCAList();
+            clsBeP_IMPRESORA_MARCA item = new clsBeP_IMPRESORA_MARCA();
+            clsClasses.clsP_impresora_marca var;
+
+            script.add("DELETE FROM P_IMPRESORA_MARCA");
+
+            items = xobj.getresult(clsBeP_IMPRESORA_MARCAList.class, "GetP_IMPRESORA_MARCA");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_impresora_marca();
+
+                var.codigo_impresora_marca=item.CODIGO_IMPRESORA_MARCA;
+                var.nombre=item.NOMBRE;
+                var.activo=mu.bool(item.ACTIVO);
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processModeloImpresora() {
+
+        try {
+            clsP_impresora_modeloObj handler = new clsP_impresora_modeloObj(this, Con, db);
+            clsBeP_IMPRESORA_MODELOList items = new clsBeP_IMPRESORA_MODELOList();
+            clsBeP_IMPRESORA_MODELO item = new clsBeP_IMPRESORA_MODELO();
+            clsClasses.clsP_impresora_modelo var;
+
+            script.add("DELETE FROM P_IMPRESORA_MODELO");
+
+            items = xobj.getresult(clsBeP_IMPRESORA_MODELOList.class, "GetP_IMPRESORA_MODELO");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_impresora_modelo();
+
+                var.codigo_impresora_modelo=item.CODIGO_IMPRESORA_MODELO;
+                var.codigo_impresora_marca=item.CODIGO_IMPRESORA_MARCA;
+                var.nombre=item.NOMBRE;
+                var.activo=mu.bool(item.ACTIVO);
 
                 script.add(handler.addItemSql(var));
             }

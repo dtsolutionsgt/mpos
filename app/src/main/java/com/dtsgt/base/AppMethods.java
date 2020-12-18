@@ -1244,7 +1244,7 @@ public class AppMethods {
         try {
             gl.prtipo="";gl.prpar="";
 
-            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") AND (NOTA_CREDITO=1)";
+            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") ";
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {
@@ -1265,7 +1265,8 @@ public class AppMethods {
         try {
             gl.prtipo="";gl.prpar="";
 
-            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") AND (NOTA_CREDITO=1)";
+            //sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") AND (NOTA_CREDITO=1)";
+            sql="SELECT TIPO_IMPRESORA,PUERTO_IMPRESION FROM P_ARCHIVOCONF WHERE (RUTA="+gl.codigo_ruta+") ";
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {

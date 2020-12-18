@@ -3,7 +3,9 @@ package com.dtsgt.mpos;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,10 +13,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 
 
 public class Caja extends PBase {
@@ -100,6 +104,8 @@ public class Caja extends PBase {
         itemC = clsCls.new clsP_cajacierre();
 
         setHandlers();
+
+        validaFacturas();
     }
 
     //region Events
@@ -526,6 +532,20 @@ public class Caja extends PBase {
 
     }
 
+    private void msgAskSend(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                enviaAvizo();
+            }
+        });
+
+        dialog.show();
+
+    }
+
     public void msgboxValidaMonto(String msg) {
 
         try{
@@ -556,6 +576,60 @@ public class Caja extends PBase {
     //endregion
 
     //region Aux
+
+    private void validaFacturas() {
+        long fi,ff;
+
+        if (!app.usaFEL()) return;
+
+        try {
+            ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
+            fi=du.ffecha00(fi);
+            ff=du.addDays(ff,-1);ff=du.ffecha00(ff);
+            sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
+
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            D_facturaObj.fill(sql);
+            int fc=D_facturaObj.count;
+
+            if (fc>0) msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que un dia. Deben informar el soporte.");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void enviaAvizo() {
+        String subject,body;
+
+        try {
+            subject="Facturas pendientes de certificacion : "+gl.rutanom+" ID : "+gl.codigo_ruta;
+            body="Estimado usuario,\n\nMPos reporta facturas pendientes de certificaciones de mas de un dia.\n" +
+                    "Por favor comuniquese con el soporte para solucionar el problema.\n" +
+                    "En el caso de que una factura supere 4 días sin certificacion la aplicacion no permite vender.\n\n" +
+                    "Saludos\nDT Solutions S.A.\n";
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
+
+            String[] TO = {"jpospichal@dts.com.gt"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"jpospichal@dts.com.gt"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            startActivity(emailIntent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 

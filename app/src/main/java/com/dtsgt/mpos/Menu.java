@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
+import android.os.StrictMode;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +30,7 @@ import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -220,7 +222,11 @@ public class Menu extends PBase {
 
 					adaptergrid.setSelectedIndex(position);
 
-					showMenuItem();
+					if (menuid==1) {
+                        if (validaFacturas()) showMenuItem();
+                    } else {
+                        showMenuItem();
+                    }
 				}
 			});
 		}catch (Exception e){
@@ -818,6 +824,8 @@ public class Menu extends PBase {
 	}
 
 	private void configuracionImpresora() {
+        startActivity(new Intent(Menu.this, UtilPrint.class));
+        /*
         try {
             gl.climode=false;
             gl.listaedit=true;
@@ -825,7 +833,7 @@ public class Menu extends PBase {
 
             try {
                 gl.climode=false;
-                 if (gl.codigo_ruta>0) db.execSQL("DELETE FROM P_archivoconf WHERE RUTA<>'"+gl.codigo_ruta+"'");
+                if (gl.codigo_ruta>0) db.execSQL("DELETE FROM P_archivoconf WHERE RUTA<>'"+gl.codigo_ruta+"'");
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -834,6 +842,8 @@ public class Menu extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+        */
+
     }
 
 	private void actualizaVersion() {
@@ -883,6 +893,7 @@ public class Menu extends PBase {
     }
 
     private void sendDB() {
+        String subject,body;
 
         try {
             File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
@@ -890,12 +901,32 @@ public class Menu extends PBase {
             FileUtils.copyFile(f1, f2);
             Uri uri = Uri.fromFile(f2);
 
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:dtsolutionsgt@gmail.com"));
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
 
+            subject= "Base de datos : "+gl.tiendanom+" caja : "+gl.codigo_ruta;
+            body="Adjunto base de datos";
+
+            String[] TO = {"dtsolutionsgt@gmail.com"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(emailIntent);
+
+            /*
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:dtsolutionsgt@gmail.com"));
+            emailIntent.setType("text/plain");
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Base de datos : "+gl.tiendanom+" caja : "+gl.codigo_ruta);
             emailIntent.putExtra(Intent.EXTRA_TEXT, "Adjunto base de datos");
             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
             startActivity(emailIntent);
+            */
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1050,10 +1081,13 @@ public class Menu extends PBase {
             final String[] selitems1 = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
 					                   "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
 					                   "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
+                                       "Impresora","Impresora marca","Impresora modelo",
 					                   "Resolución de facturas", "Configuración","Configuración reportes Cierre"};
+
             final String[] selitems2 = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
                     "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
                     "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
+                    "Impresora","Impresora marca","Impresora modelo",
                     "Resolución de facturas","Restaurante","Configuración","Configuración reportes Cierre"};
 
             if (gl.peRest) selitems=selitems2;else selitems=selitems1;
@@ -1090,6 +1124,9 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
                     if (ss.equalsIgnoreCase("Configuración reportes Cierre")) gl.mantid = 23;
                     if (ss.equalsIgnoreCase("Restaurante")) gl.mantid = 24;
+                    if (ss.equalsIgnoreCase("Impresora marca")) gl.mantid = 32;
+                    if (ss.equalsIgnoreCase("Impresora modelo")) gl.mantid = 33;
+                    if (ss.equalsIgnoreCase("Impresora")) gl.mantid = 34;
 
                     if (gl.mantid == 16) {
                         startActivity(new Intent(Menu.this, MantConfig.class));
@@ -1140,7 +1177,7 @@ public class Menu extends PBase {
         try {
             final AlertDialog Dialog;
 
-            final String[] selitems = {"Configuracion", "Sala", "Mesa", "Grupo de mesas","Estacion cocina"};
+            final String[] selitems = {"Configuracion", "Sala", "Mesa", "Grupo de mesas"};
             //final String[] selitems = { "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
 
             menudlg = new ExDialog(this);
@@ -1694,7 +1731,72 @@ public class Menu extends PBase {
         }
     }
 
-	//endregion
+    private boolean validaFacturas() {
+        long fi,ff;
+
+        if (!app.usaFEL()) return true;
+
+        try {
+
+            ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
+            fi=du.ffecha00(fi);
+            ff=du.addDays(ff,-3);ff=du.ffecha24(ff);
+            if (fi>ff) {
+                fi=du.addDays(ff,-2);fi=du.ffecha00(fi);
+            }
+            sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
+
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            D_facturaObj.fill(sql);
+            int fc=D_facturaObj.count;
+
+            if (fc==0) {
+                return true;
+            } else {
+                msgAskSend("Existen facturas pendientes de certificacion de mas que 3 días. Por favor envie siguente correo al soporte.");
+                return false;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+
+    }
+
+    private void enviaAvizo() {
+        String subject,body;
+
+        try {
+            subject="Facturas pendientes de certificacion : "+gl.rutanom+" ID : "+gl.codigo_ruta;
+            body="Estimado usuario,\n\nMPos reporta facturas pendientes de certificaciones de mas de 3 dias.\n" +
+                    "Por favor comuniquese con el soporte para solucionar el problema.\n" +
+                    "En el caso de que una factura supere 4 días sin certificacion la aplicacion no permite vender.\n\n" +
+                    "Saludos\nDT Solutions S.A.\n";
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
+
+            String[] TO = {"jpospichal@dts.com.gt"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"jpospichal@dts.com.gt"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            startActivity(emailIntent);
+
+
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
 
     //region Dialogs
 
@@ -1869,6 +1971,20 @@ public class Menu extends PBase {
 
     }
 
+    private void msgAskSend(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                showMenuItem();
+                enviaAvizo();
+            }
+        });
+
+        dialog.show();
+
+    }
 
     //endregion
 

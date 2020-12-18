@@ -27,7 +27,7 @@ import java.util.TimerTask;
 
 public class CliPos extends PBase {
 
-	private EditText txtNIT,txtNom,txtRef, txtCorreo;
+	private EditText txtNIT,txtNom,txtRef, txtCorreo,txtTel;
 	private TextView lblPed;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
@@ -38,7 +38,7 @@ public class CliPos extends PBase {
 
     private ArrayList<String> pedidos =new ArrayList<String>();
 
-	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, wspnerror;
+	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, sTelCliente,wspnerror;
 	private boolean consFinal=false,idleped=true;
 	private boolean request_exit=false,bloqueado;
 	private int cantped;
@@ -57,6 +57,7 @@ public class CliPos extends PBase {
 		txtNom = (EditText) findViewById(R.id.editText2);txtNom.setText("");
 		txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("Ciudad");
         txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
+        txtTel= (EditText) findViewById(R.id.editTextNumber4);txtTel.setText("");
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
@@ -95,7 +96,7 @@ public class CliPos extends PBase {
 	public void consFinal(View view) {
         try {
             consFinal=true;
-            if (agregaCliente("C.F.","Consumidor final","Ciudad","")) procesaCF() ;
+            if (agregaCliente("C.F.","Consumidor final","Ciudad","","")) procesaCF() ;
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -109,8 +110,7 @@ public class CliPos extends PBase {
             sNombreCliente =txtNom.getText().toString();
             sDireccionCliente =txtRef.getText().toString();
             sCorreoCliente = txtCorreo.getText().toString();
-
-
+            sTelCliente=txtTel.getText().toString();
 
             if (sDireccionCliente.isEmpty()) {
                 toast("Falta definir la direccion");return;
@@ -134,10 +134,12 @@ public class CliPos extends PBase {
                     }
                 }
 
-				if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente)) procesaNIT(sNITCliente);
+                if (sTelCliente.isEmpty()) sTelCliente="";
+
+				if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
 
 			} else {
-                actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente);
+                actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente);
                 procesaNIT(sNITCliente);
             }
 
@@ -520,7 +522,7 @@ public class CliPos extends PBase {
 				resultado=false;
 			} else {
 
-				sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL FROM P_CLIENTE " +
+				sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL,TELEFONO FROM P_CLIENTE " +
 					"WHERE NIT = '" + NIT + "'";
 				DT=Con.OpenDT(sql);
 
@@ -533,6 +535,7 @@ public class CliPos extends PBase {
 						txtNom.setText(DT.getString(1));
 						txtRef.setText(DT.getString(2));
                         txtCorreo.setText(DT.getString(8));
+                        txtTel.setText(DT.getString(9));
 
 						gl.rutatipo="V";
                         gl.cliente=DT.getString(0);
@@ -567,7 +570,7 @@ public class CliPos extends PBase {
 		return resultado;
 	}
 
-	private boolean agregaCliente(String NIT,String Nom,String dir, String Correo) {
+	private boolean agregaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
 
         if (consFinal) {
             gl.codigo_cliente = 10*gl.emp;
@@ -602,7 +605,7 @@ public class CliPos extends PBase {
             ins.add("NIT",NIT.toUpperCase());
             ins.add("EMAIL",Correo);
             ins.add("ESERVICE","N"); // estado envio
-            ins.add("TELEFONO"," ");
+            ins.add("TELEFONO",tel);
             ins.add("DIRECCION",dir);
             ins.add("COORX",0);
             ins.add("COORY",0);
@@ -682,7 +685,7 @@ public class CliPos extends PBase {
     }
 
 
-    private boolean actualizaCliente(String NIT,String Nom,String dir, String Correo) {
+    private boolean actualizaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
 
         int codigo=nitnum(NIT);
 
@@ -694,6 +697,7 @@ public class CliPos extends PBase {
             upd.add("NOMBRE",Nom);
             upd.add("DIRECCION",dir);
             upd.add("EMAIL",Correo);
+            upd.add("TELEFONO",tel);
             upd.Where("CODIGO_CLIENTE="+codigo);
             db.execSQL(upd.sql());
 
@@ -719,7 +723,7 @@ public class CliPos extends PBase {
 
             return nnit;
         } catch (Exception e) {
-            return -1;
+            return gl.emp*10;
         }
     }
 

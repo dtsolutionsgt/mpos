@@ -47,7 +47,7 @@ public class CierreX extends PBase {
 
     private Double Fondo;
 
-    private String condition;
+    private String condition,stampstr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,11 +117,29 @@ public class CierreX extends PBase {
 
     public void GeneratePrintCierre(View view){
         try{
+
+            stampstr="Generado : "+du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime());
+
             if (!report) {
 
                 bFactxDia=0; bVentaxDia=0; bVentaxProd=0; bxFPago=0; bxFam=0; bVentaxVend=0;
                 bMBxProd=0; bMBxFam=0;bClienteCon=0; bClienteDet=0;bFactAnuxDia=0;
 
+                if (FactxDia.isChecked()) bFactxDia=1;
+                if (VentaxDia.isChecked()) bVentaxDia=2;
+                if (VentaxProd.isChecked()) bVentaxProd=3;
+                if (xFPago.isChecked()) bxFPago=4;
+                if (xFam.isChecked()) bxFam=5;
+                if (VentaxVend.isChecked()) bVentaxVend=6;
+                if (MBxProd.isChecked()) bMBxProd=7;
+                if (MBxFam.isChecked()) bMBxFam=8;
+                if (ClienteCon.isChecked()) bClienteCon=9;
+                if (ClienteDet.isChecked()) bClienteDet=10;
+                if (FactAnuladas.isChecked()) {
+                    bFactAnuxDia=11;
+                }
+
+                /*
                 if (FactxDia.isChecked()) bFactxDia=1;
                 if (VentaxDia.isChecked()) bVentaxDia=2;
                 if (VentaxProd.isChecked()) bVentaxProd=3;
@@ -133,6 +151,7 @@ public class CierreX extends PBase {
                 if (ClienteDet.isChecked()) bClienteCon=9;
                 if (MBxProd.isChecked()) bClienteDet=10;
                 if (MBxFam.isChecked()) bFactAnuxDia=11;
+                */
 
                 if(fillItems()){
                     if (itemR.size() == 0) {
@@ -325,7 +344,7 @@ public class CierreX extends PBase {
 
             if(gl.reportid==10) reporteZ();
 
-            for(int i=0; i<12; i++){
+            for (int i=0; i<11; i++){
 
                 if(i==0) sw=bFactxDia;
                 if(i==1) sw=bVentaxDia;
@@ -337,8 +356,8 @@ public class CierreX extends PBase {
                 if(i==7) sw=bMBxFam;
                 if(i==8) sw=bClienteCon;
                 if(i==9) sw=bClienteDet;
-                if(i==10) sw=0;
-                if(i==11) sw=bFactAnuxDia;
+                //if(i==10) sw=0;
+                if(i==10) sw=bFactAnuxDia;
 
                 switch (sw){
                     case 0:
@@ -496,7 +515,7 @@ public class CierreX extends PBase {
                         if(gl.reportid==9){
                             condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
+                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         sql="SELECT F.COREL, C.CODIGO, 0, P.CODIGO, P.DESCCORTA, C.NOMBRE, SUM(D.CANT), D.PRECIO, D.PRECIO*D.CANT, F.FECHA, 0 " +
@@ -532,6 +551,8 @@ public class CierreX extends PBase {
                         msgbox("Ocurrió un error, vuelva a intentarlo");return false;
                     }
 
+                    //if (i==11 && dt.getCount()==0)
+
                     if(dt.getCount()!=0){
                         dt.moveToFirst();
 
@@ -554,6 +575,24 @@ public class CierreX extends PBase {
                             itemR.add(item);
 
                             dt.moveToNext();
+                        }
+                    } else {
+                        if (sw==11 ) {
+                            item = clsCls.new clsReport();
+
+                            item.corel = "";
+                            item.serie = "";
+                            item.correl = 0;
+                            item.codProd = "";
+                            item.descrip = "";
+                            item.um = "";
+                            item.cant = 0;
+                            item.imp = 0;
+                            item.total = 0;
+                            item.fecha = 0;
+                            item.tipo = sw;
+
+                            itemR.add(item);
                         }
                     }
 
@@ -737,6 +776,8 @@ public class CierreX extends PBase {
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
                 rep.add(fecharango);
                 rep.empty();
+                rep.add(stampstr);
+                rep.empty();
 
                 count1 = 0;
                 count2 = 0;
@@ -903,7 +944,7 @@ public class CierreX extends PBase {
                             rep.empty();
 
                             rep.add("     FACTURAS ANULADAS POR DÍA ");
-                            rep.add("Cant.Fact   Costo  Impuesto    Total");
+                            rep.add("Cant.Fact    Costo    Impuesto    Total");
                             rep.line();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
                             acc11 = 2;
@@ -926,7 +967,8 @@ public class CierreX extends PBase {
                         if(i+1==itemR.size()){
 
                             rep.line();
-                            rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+                            //rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+                            rep.add3Tot(cantF, sinImp, impF, tot);
 
                             totF += tot;
                             SumaCant += cantF;
@@ -1338,6 +1380,9 @@ public class CierreX extends PBase {
 
             try {
 
+                rep.empty();
+                rep.empty();
+                rep.add(stampstr);
                 rep.empty();
                 rep.empty();
 

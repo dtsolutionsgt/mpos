@@ -488,8 +488,9 @@ public class FELFactura extends PBase {
             fel.emisorDireccion(dir,fel.codigo_postal,muni,dep,gl.codigo_pais);
 
             //#EJC20200527: Quitar "-" del nit
-            factf.nit =factf.nit.replace("-","");
-            factf.nit =factf.nit.replace(".","");
+            factf.nit=factf.nit.trim();
+            factf.nit=factf.nit.replace("-","");
+            factf.nit=factf.nit.replace(".","");
             factf.nit=factf.nit.toUpperCase();
 
             fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);

@@ -511,10 +511,9 @@ public class WSEnv extends PBase {
 
             rs =(String) xobj.getSingle("CommitResult",String.class);
 
+            factsend=true;
             if (!rs.equalsIgnoreCase("#")) {
-                ferr=rs;factsend=true;return;
-            } else {
-                factsend=true;
+                    ferr = rs;return;
             }
 
             fsend++;
@@ -548,7 +547,8 @@ public class WSEnv extends PBase {
                 ccli=P_clienteObj.items.get(i).codigo_cliente;
                 P_clienteObj.items.get(i).eservice="S";
 
-                ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+ccli+")";
+                //ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+ccli+")";
+                ss="DELETE FROM P_CLIENTE WHERE (CODIGO_CLIENTE="+ccli+")";
                 CSQL = CSQL + ss + ";";
                 ss=P_clienteObj.addItemSql(P_clienteObj.items.get(i),gl.emp);
                 CSQL = CSQL + ss + ";";

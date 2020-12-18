@@ -34,6 +34,9 @@ public class BaseDatosVersion {
     public void update(){
         update01();
         update02();
+
+
+        update99();
     }
 
     private void update02() {
@@ -315,12 +318,59 @@ public class BaseDatosVersion {
                     ");";
             db.execSQL(sql);
 
+            /*
             sql="INSERT INTO P_linea_impresora VALUES (1,15,4,3,2)";db.execSQL(sql);
             sql="INSERT INTO P_linea_impresora VALUES (2,16,4,3,3)";db.execSQL(sql); //papas y ensal
             sql="INSERT INTO P_linea_impresora VALUES (3,17,4,3,2)";db.execSQL(sql);
             sql="INSERT INTO P_linea_impresora VALUES (4,18,4,3,2)";db.execSQL(sql);
             sql="INSERT INTO P_linea_impresora VALUES (5,19,4,3,4)";db.execSQL(sql); //beb
 
+             */
+
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_impresora] ("+
+                    "CODIGO_IMPRESORA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "NUMERO_SERIE TEXT NOT NULL,"+
+                    "CODIGO_MARCA INTEGER NOT NULL,"+
+                    "CODIGO_MODELO INTEGER NOT NULL,"+
+                    "TIPO_IMPRESORA TEXT NOT NULL,"+
+                    "MAC TEXT NOT NULL,"+
+                    "IP TEXT NOT NULL,"+
+                    "FECHA_AGR INTEGER NOT NULL,"+
+                    "IMPRESIONES INTEGER NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_IMPRESORA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_impresora_marca] ("+
+                    "CODIGO_IMPRESORA_MARCA INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_IMPRESORA_MARCA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_impresora_modelo] ("+
+                    "CODIGO_IMPRESORA_MODELO INTEGER NOT NULL,"+
+                    "CODIGO_IMPRESORA_MARCA INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_IMPRESORA_MODELO])"+
+                    ");";
+            db.execSQL(sql);
         } catch (Exception e) {
         }
 
@@ -459,6 +509,20 @@ public class BaseDatosVersion {
         return true;
 		
 	}
+
+    private void update99() {
+        try {
+            db.beginTransaction();
+
+            db.execSQL("UPDATE D_FACTURA SET STATCOM='S' WHERE COREL='28_201125082101'");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+        }
+
+    }
 
 	//region Aux
 	
