@@ -278,6 +278,14 @@ public class clsClasses {
         public String umbonificacion;
     }
 
+    public class clsP_caja_impresora {
+        public int  codigo_caja_impresora;
+        public int  codigo_caja;
+        public int  codigo_sucursal;
+        public int  empresa;
+        public int  codigo_impresora;
+    }
+
     public class clsP_cajacierre {
         public int empresa;
         public int sucursal;
@@ -854,6 +862,12 @@ public class clsClasses {
         public int  bandera;
         public int  idlista;
         public int  cant;
+    }
+
+    public class clsT_cierre {
+        public int  id;
+        public int  dia;
+        public String texto;
     }
 
     public class clsT_comanda {

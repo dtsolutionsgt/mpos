@@ -66,7 +66,7 @@ public class WSEnv extends PBase {
 
     private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
-    private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend, cjAsist,
+    private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend, cjAsist,fTotAnul,
                 cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend,cjFelBita, cStockTot, cStockSend;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
@@ -151,8 +151,11 @@ public class WSEnv extends PBase {
                         if (ftot>0) callMethod("Commit", "SQL", CSQL);
                         break;
                     case 3:
+                        processAnul();
                         processMov();
-                        if (fTotMov>0) callMethod("Commit", "SQL", CSQL);
+                        if (fTotMov+fTotAnul>0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
                         break;
                     case 4:
                         processCajaCierre();
@@ -681,6 +684,24 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processAnul() {
+        String corr,ssql;
+
+
+        long fan=du.addDays(du.getActDate(),-5);
+        D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>"+fan+") ");
+        fTotAnul=D_facturaObj.count;
+
+        for (int i = 0; i <D_facturaObj.count; i++) {
+
+            corr =D_facturaObj.items.get(i).corel;
+            ssql="UPDATE D_FACTURA SET ANULADO=1 WHERE (EMPRESA="+gl.emp+") AND (COREL='"+corr+"')";
+
+            CSQL=CSQL+ssql + ";";
+        }
+
+    }
+
     private void processCajaCierre() {
         String cCjCierre;
 
@@ -1048,7 +1069,7 @@ public class WSEnv extends PBase {
             String idfel=gl.peFEL;
 
             if (app.usaFEL()) {
-                D_facturaObj.fill("WHERE (STATCOM='N')  AND (FEELUUID<>' ') AND (FECHA>2009230000) ");
+                D_facturaObj.fill("WHERE (STATCOM='N') AND (FEELUUID<>' ') AND (FECHA>2009230000) ");
             } else {
                 D_facturaObj.fill("WHERE (STATCOM='N') AND (FECHA>2009230000) ");
             }
@@ -1062,6 +1083,10 @@ public class WSEnv extends PBase {
                 fact.add(D_facturaObj.items.get(i).corel);
             }
             total_enviar+=ftot;
+
+            long fan=du.addDays(du.getActDate(),-5);
+            D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>"+fan+") ");
+            total_enviar+=D_facturaObj.count;
 
             clsD_MovObj D_MovObj = new clsD_MovObj(this,Con,db);
             D_MovObj.fill("WHERE STATCOM = 'N'");

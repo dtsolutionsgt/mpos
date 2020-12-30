@@ -31,6 +31,8 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -41,7 +43,9 @@ import com.dtsgt.mant.MantRol;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -1317,7 +1321,9 @@ public class Menu extends PBase {
 
 			final AlertDialog Dialog;
 
-			final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
+			final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto",
+                    "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente",
+                    "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z","Ultimo cierre"};
 
             menudlg = new ExDialog(this);
             menudlg.setTitle("Reportes");
@@ -1338,12 +1344,15 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
 					if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
 					if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
+                    if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
 
 					gl.titReport = ss;
 
 					if (gl.reportid == 9 || gl.reportid == 10) {
-						startActivity(new Intent(Menu.this,CierreX.class));
-					}else{
+                        startActivity(new Intent(Menu.this, CierreX.class));
+                    } else if (gl.reportid == 12) {
+                        msgAskUltimoCierre();
+					} else {
 						startActivity(new Intent(Menu.this,Reportes.class));
 					}
 
@@ -1737,13 +1746,19 @@ public class Menu extends PBase {
         if (!app.usaFEL()) return true;
 
         try {
-
+            /*
             ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
             fi=du.ffecha00(fi);
             ff=du.addDays(ff,-3);ff=du.ffecha24(ff);
             if (fi>ff) {
                 fi=du.addDays(ff,-2);fi=du.ffecha00(fi);
             }
+            */
+
+            ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
+            fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
+            ff=du.addDays(ff,-3);ff=du.ffecha00(ff);
+
             sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
 
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
@@ -1790,6 +1805,29 @@ public class Menu extends PBase {
             startActivity(emailIntent);
 
 
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void imprimirCierre() {
+        String fname = Environment.getExternalStorageDirectory()+"/print.txt";
+
+        try {
+            FileWriter wfile=new FileWriter(fname,false);
+            BufferedWriter writer = new BufferedWriter(wfile);
+
+            clsT_cierreObj T_cierreObj=new clsT_cierreObj(this,Con,db);
+            T_cierreObj.fill("ORDER BY ID");
+
+            for (int i = 0; i < T_cierreObj.items.size(); i++) {
+                writer.write(T_cierreObj.items.get(i).texto);writer.write("\r\n");
+            }
+
+            writer.close();
+
+            app.doPrint();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1985,6 +2023,26 @@ public class Menu extends PBase {
         dialog.show();
 
     }
+
+    private void msgAskUltimoCierre() {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿Imprimir ultimo cierre?");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                imprimirCierre();
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
 
     //endregion
 

@@ -14,8 +14,10 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,30 +25,36 @@ import android.widget.Toast;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_estacionObj;
+import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_estacionObj;
+import com.dtsgt.classes.clsP_linea_impresoraObj;
+import com.dtsgt.ladapt.LA_P_usopcion;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 public class MantFamilia extends PBase {
 
     private ImageView imgstat,img1,imgadd,imgfotoadd,imgfotodel;
     private EditText txt1,txt2;
-    private TextView lblfoto,lblest;
+    private TextView lblfoto;
     private RelativeLayout relest;
+    private ListView listView;
 
     private clsP_lineaObj holder;
+    private clsP_linea_impresoraObj P_linea_impresoraObj;
     public clsClasses.clsP_linea item=clsCls.new clsP_linea();
-    private clsP_estacionObj P_estacionObj;
-    private clsP_linea_estacionObj P_linea_estacionObj;
-    public clsClasses.clsP_linea_estacion estacion=clsCls.new clsP_linea_estacion();
+    private ArrayList<clsClasses.clsP_usopcion> items= new ArrayList<clsClasses.clsP_usopcion>();
+
+    private LA_P_usopcion adapter;
 
     private String id,idfoto,signfile;
     private boolean newitem=false;
-    private int TAKE_PHOTO_CODE = 0,idestacion=0;
+    private int idlinea,TAKE_PHOTO_CODE = 0,idestacion=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +65,6 @@ public class MantFamilia extends PBase {
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
-        lblfoto = (TextView) findViewById(R.id.lblBU);
-        lblest =findViewById(R.id.textView219);
 
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgfotoadd  = (ImageView) findViewById(R.id.imageView40);
@@ -67,9 +73,11 @@ public class MantFamilia extends PBase {
         imgadd = (ImageView) findViewById(R.id.imgImg2);
         relest=findViewById(R.id.relestacion);
 
+        listView = (ListView) findViewById(R.id.listView1);
+
         holder =new clsP_lineaObj(this,Con,db);
-        P_estacionObj=new clsP_estacionObj(this,Con,db);
-        P_linea_estacionObj=new clsP_linea_estacionObj(this,Con,db);
+        P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
+
 
         id=gl.gcods;
         idfoto=id;
@@ -78,6 +86,7 @@ public class MantFamilia extends PBase {
 
         showImage();
         setHandlers();
+        listItems();
 
         if (gl.peMCent) {
             //if (!app.grant(13,gl.rol)) {
@@ -91,20 +100,6 @@ public class MantFamilia extends PBase {
     }
 
     //region Events
-
-    private void setHandlers() {
-
-        txt1.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {}
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                item.codigo = txt1.getText().toString().trim();
-            }
-        });
-    }
 
     public void doSave(View view) {
         if (!validaDatos()) return;
@@ -123,53 +118,46 @@ public class MantFamilia extends PBase {
         }
     }
 
-    public void doEstacion(View view) {
-        listaEstaciones();
-    }
-
     public void doExit(View view) {
         msgAskExit("Salir");
+    }
+
+    private void setHandlers() {
+
+        txt1.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                item.codigo = txt1.getText().toString().trim();
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                Object lvObj = listView.getItemAtPosition(position);
+                clsClasses.clsP_usopcion item = (clsClasses.clsP_usopcion)lvObj;
+
+                if (item.nombre.isEmpty()) item.nombre="x"; else item.nombre="";
+
+                adapter.setSelectedIndex(position);
+                adapter.notifyDataSetChanged();
+            };
+        });
     }
 
     //endregion
 
     //region Main
 
-    private void resizeFoto() {
-        try {
-
-            String fname = Environment.getExternalStorageDirectory() + "/mPosFotos/Familia/" + idfoto + ".jpg";
-            File file = new File(fname);
-
-            Bitmap bitmap = BitmapFactory.decodeFile(fname);
-            bitmap=mu.scaleBitmap(bitmap,640,360);
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG,80,out);
-
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            msgbox("No se logró procesar la foto. Por favor tómela de nuevo.");
-        }
-    }
-
     private void loadItem() {
         try {
             holder.fill("WHERE CODIGO='"+id+"'");
             item=holder.first();
-
-            P_linea_estacionObj.fill("WHERE codigo_linea="+item.codigo_linea);
-            if (P_linea_estacionObj.count>0) {
-                estacion=P_linea_estacionObj.first();
-                idestacion=estacion.codigo_estacion;
-            } else {
-                idestacion=0;
-                estacion.codigo_linea_estacion=P_linea_estacionObj.newID("SELECT MAX(codigo_linea_estacion) FROM P_linea_estacion");
-                estacion.codigo_linea=item.codigo_linea;
-                estacion.codigo_sucursal=gl.tienda;
-                estacion.empresa=gl.emp;
-                estacion.codigo_estacion=idestacion;
-            }
+            idlinea=item.codigo_linea;
 
             showItem();
 
@@ -200,21 +188,13 @@ public class MantFamilia extends PBase {
 
         idestacion=0;
 
-        estacion.codigo_linea_estacion=P_linea_estacionObj.newID("SELECT MAX(codigo_linea_estacion) FROM P_linea_estacion");
-        estacion.codigo_linea=item.codigo_linea;
-        estacion.codigo_sucursal=gl.tienda;
-        estacion.empresa=gl.emp;
-        estacion.codigo_estacion=idestacion;
-
         showItem();
     }
 
     private void addItem() {
         try {
             holder.add(item);
-
-            estacion.codigo_estacion=idestacion;
-            P_linea_estacionObj.add(estacion);
+            updatePrinters();
 
             gl.gcods=""+item.codigo;
             finish();
@@ -226,17 +206,136 @@ public class MantFamilia extends PBase {
     private void updateItem() {
         try {
             holder.update(item);
-
-            estacion.codigo_estacion=idestacion;
-            try {
-                P_linea_estacionObj.add(estacion);
-            } catch (Exception e) {
-                P_linea_estacionObj.update(estacion);
-            }
+            updatePrinters();
 
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void listItems() {
+        ArrayList<Integer> opts=new ArrayList<Integer>();
+        clsP_impresoraObj P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+        clsClasses.clsP_usopcion item;
+        int opt;
+
+        try {
+            P_impresoraObj.fill("ORDER BY Nombre");
+
+            for (int i = 0; i <P_impresoraObj.count; i++) {
+
+                item=clsCls.new clsP_usopcion();
+
+                item.codigo=P_impresoraObj.items.get(i).codigo_impresora;
+                item.menugroup=P_impresoraObj.items.get(i).nombre;
+
+                P_linea_impresoraObj.fill("WHERE (CODIGO_LINEA="+idlinea+") AND (CODIGO_IMPRESORA="+item.codigo+")");
+                if (P_linea_impresoraObj.count>0) item.nombre="X";else item.nombre="";
+
+                items.add(item);
+            }
+
+            adapter=new LA_P_usopcion(this,this,items);
+            listView.setAdapter(adapter);
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());
+        }
+    }
+
+    private void updatePrinters() {
+        clsClasses.clsP_linea_impresora item;
+
+        try {
+            db.beginTransaction();
+
+            int newid=P_linea_impresoraObj.newID("SELECT MAX(codigo_linea_impresora) FROM P_linea_impresora");
+
+            db.execSQL("DELETE FROM P_linea_impresora WHERE CODIGO_LINEA="+idlinea);
+
+            for (int i = 0; i <items.size(); i++) {
+
+                if (items.get(i).nombre.equalsIgnoreCase("X")) {
+
+                    item = clsCls.new clsP_linea_impresora();
+
+                    item.codigo_linea_impresora=newid;
+                    item.codigo_linea=idlinea;
+                    item.codigo_sucursal=gl.tienda;
+                    item.empresa=gl.emp;
+                    item.codigo_impresora=items.get(i).codigo;
+
+                    P_linea_impresoraObj.add(item);newid++;
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
+    }
+
+    //endregion
+
+    //region Aux
+
+    private void showItem() {
+        txt1.setText(item.codigo);
+        txt2.setText(item.nombre);
+    }
+
+    private boolean validaDatos() {
+        String ss;
+
+        try {
+
+            if (newitem) {
+                ss=txt1.getText().toString();
+                if (ss.isEmpty()) {
+                    msgbox("¡Falta definir código!");return false;
+                }
+
+                holder.fill("WHERE CODIGO='"+ss+"'");
+                if (holder.count>0) {
+                    msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
+                }
+
+                item.codigo=ss;
+            }
+
+            ss=txt2.getText().toString();
+            if (ss.isEmpty()) {
+                msgbox("¡Nombre incorrecto!");
+                return false;
+            } else {
+                item.nombre=ss;
+            }
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private void resizeFoto() {
+        try {
+
+            String fname = Environment.getExternalStorageDirectory() + "/mPosFotos/Familia/" + idfoto + ".jpg";
+            File file = new File(fname);
+
+            Bitmap bitmap = BitmapFactory.decodeFile(fname);
+            bitmap=mu.scaleBitmap(bitmap,640,360);
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG,80,out);
+
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            msgbox("No se logró procesar la foto. Por favor tómela de nuevo.");
         }
     }
 
@@ -291,59 +390,6 @@ public class MantFamilia extends PBase {
             msgbox(e.getMessage());
         }
 
-    }
-
-    //endregion
-
-    //region Aux
-
-    private void showItem() {
-        txt1.setText(item.codigo);
-        txt2.setText(item.nombre);
-        lblest.setText(nombreEstacion());
-    }
-
-    private boolean validaDatos() {
-        String ss;
-
-        try {
-
-            if (newitem) {
-                ss=txt1.getText().toString();
-                if (ss.isEmpty()) {
-                    msgbox("¡Falta definir código!");return false;
-                }
-
-                holder.fill("WHERE CODIGO='"+ss+"'");
-                if (holder.count>0) {
-                    msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
-                }
-
-                item.codigo=ss;
-            }
-
-            ss=txt2.getText().toString();
-            if (ss.isEmpty()) {
-                msgbox("¡Nombre incorrecto!");
-                return false;
-            } else {
-                item.nombre=ss;
-            }
-
-            return true;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            return false;
-        }
-    }
-
-    private String nombreEstacion() {
-        try {
-            P_estacionObj.fill("WHERE CODIGO_ESTACION="+idestacion);
-            return P_estacionObj.first().nombre;
-        } catch (Exception e) {
-            return "";
-        }
     }
 
     //endregion
@@ -427,53 +473,6 @@ public class MantFamilia extends PBase {
 
     }
 
-    private void listaEstaciones() {
-        final AlertDialog Dialog;
-
-        try {
-            P_estacionObj.fill("ORDER BY NOMBRE");
-
-            final String[] selitems = new String[P_estacionObj.count];
-
-            for (int i = 0; i <P_estacionObj.count; i++) {
-                selitems[i]=P_estacionObj.items.get(i).nombre;
-            }
-
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Estacion de cocina");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    idestacion=P_estacionObj.items.get(item).codigo_estacion;
-                    lblest.setText(nombreEstacion());
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setPositiveButton("Limpiar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    idestacion=0;
-                    lblest.setText(nombreEstacion());
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
     //endregion
 
     //region Activity Events
@@ -483,8 +482,7 @@ public class MantFamilia extends PBase {
         super.onResume();
         try {
             holder.reconnect(Con,db);
-            P_estacionObj.reconnect(Con,db);
-            P_linea_estacionObj.reconnect(Con,db);
+            P_linea_impresoraObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

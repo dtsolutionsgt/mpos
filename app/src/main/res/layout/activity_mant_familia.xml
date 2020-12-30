@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.dtsgt.mant.MantFamilia">
 
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/relbotpan"
+        android:layout_below="@+id/lblCFact50"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="35dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp">
+
+    </ListView>
+
     <ImageView
         android:id="@+id/imgImg2"
         android:layout_width="64dp"
@@ -80,12 +94,12 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
-        android:layout_marginLeft="18dp"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="5dp"
-        android:background="@layout/frame_rect">
+        android:background="@layout/frame_rect"
+        android:paddingBottom="5dp">
 
         <EditText
             android:id="@+id/txt1"
@@ -200,51 +214,6 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF" />
 
-        <RelativeLayout
-            android:id="@+id/relestacion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt2"
-            android:layout_alignParentBottom="false"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:paddingBottom="20dp">
-
-            <TextView
-                android:id="@+id/lblCFact50"
-                android:layout_width="151dp"
-                android:layout_height="38dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="0dp"
-                android:background="@drawable/blue_strip"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:text="Estacion :"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/textView219"
-                android:layout_width="300dp"
-                android:layout_height="38dp"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="194dp"
-                android:layout_marginBottom="0dp"
-                android:background="@drawable/spinner_style"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:onClick="doImpresora"
-                android:paddingStart="15dp"
-                android:text="TextView"
-                android:textSize="21sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -298,6 +267,24 @@
         android:clickable="true"
         android:onClick="doStatus"
         android:src="@drawable/delete_64" />
+
+    <TextView
+        android:id="@+id/lblCFact50"
+        android:layout_width="151dp"
+        android:layout_height="38dp"
+        android:layout_below="@+id/relativeLayout1"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/blue_strip"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="Impresoras :"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="normal" />
 
 
 </RelativeLayout>

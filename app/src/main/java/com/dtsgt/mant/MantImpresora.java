@@ -1,5 +1,6 @@
 package com.dtsgt.mant;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -33,7 +34,8 @@ public class MantImpresora extends PBase {
 
     private ArrayList<String> spinlist=new ArrayList<String>();
 
-    private String id;
+    private String id,nmarca;
+    private int idmarca;
     private boolean newitem=false;
 
     //"SIN IMPRESORA";
@@ -82,7 +84,7 @@ public class MantImpresora extends PBase {
     }
 
     public void doPrinter(View view) {
-        ;
+        showMarcaList();
     }
 
     private void setHandlers() {
@@ -296,6 +298,71 @@ public class MantImpresora extends PBase {
     */
 
 
+    private void showMarcaList() {
+        final AlertDialog Dialog;
+
+        clsP_impresora_marcaObj marcas =new clsP_impresora_marcaObj(this,Con,db);
+        marcas.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
+        String[] selitems = new String[marcas.count];
+        for (int i = 0; i <marcas.count; i++) {
+            selitems[i]=marcas.items.get(i).nombre;
+        }
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Marca de impresora");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                idmarca=marcas.items.get(item).codigo_impresora_marca;
+                nmarca=marcas.items.get(item).nombre;
+                showModeloList();
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    private void showModeloList() {
+        final AlertDialog Dialog;
+
+        clsP_impresora_modeloObj modelos =new clsP_impresora_modeloObj(this,Con,db);
+        modelos.fill("WHERE CODIGO_IMPRESORA_MARCA="+idmarca+" ORDER BY NOMBRE");
+
+        String[] selitems = new String[modelos.count];
+        for (int i = 0; i <modelos.count; i++) {
+            selitems[i]=modelos.items.get(i).nombre;
+        }
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle(nmarca);
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int idx) {
+                item.codigo_modelo=modelos.items.get(idx).codigo_impresora_modelo;
+                setMarca(item.codigo_modelo);
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
 
     private void setMarca(int idmodelo) {
         try {

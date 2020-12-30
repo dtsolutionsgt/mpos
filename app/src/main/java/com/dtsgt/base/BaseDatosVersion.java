@@ -375,6 +375,19 @@ public class BaseDatosVersion {
         }
 
         try {
+            sql="CREATE TABLE [P_caja_impresora] ("+
+                    "CODIGO_CAJA_IMPRESORA INTEGER NOT NULL,"+
+                    "CODIGO_CAJA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_IMPRESORA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_CAJA_IMPRESORA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
             sql="CREATE TABLE [T_comanda] ("+
                     "LINEA INTEGER NOT NULL,"+
                     "ID INTEGER NOT NULL,"+
@@ -386,6 +399,19 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_comanda_idx1 ON T_comanda(ID)";db.execSQL(sql);
         } catch (Exception e) {
         }
+
+        try {
+            sql="CREATE TABLE [T_cierre] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "DIA INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+        } catch (Exception e) {
+        }
+
 
     }
 

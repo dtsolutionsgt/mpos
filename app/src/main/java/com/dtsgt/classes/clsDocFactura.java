@@ -213,7 +213,6 @@ public class clsDocFactura extends clsDocument {
 		} catch (Exception e) {
 	    }
 
-
         add1=add1+" - ";
 		add2=add2+" - ";
 		

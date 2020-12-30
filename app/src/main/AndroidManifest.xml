@@ -436,7 +436,7 @@
             android:name="com.dtsgt.mant.MantFamilia"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysVisible" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantEmpresa"
             android:screenOrientation="landscape"

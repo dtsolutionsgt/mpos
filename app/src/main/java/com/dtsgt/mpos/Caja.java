@@ -20,7 +20,6 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 
-
 public class Caja extends PBase {
 
     private TextView lblTit, lblMontoIni, lblMontoFin,lblMontoCred;
@@ -293,7 +292,7 @@ public class Caja extends PBase {
 
     public void saveMontoIni(){
 
-        Cursor dt, dt2;
+        Cursor dt, dt2, dt3;
         int fecha=0, codpago=0;
 
         try{
@@ -434,15 +433,26 @@ public class Caja extends PBase {
                     caja.update(itemC);
                 }
 
-
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
                 db.execSQL(sql);
+
+                /*
+                try {
+                    sql="SELECT COREL FROM D_FACTURA WHERE KILOMETRAJE = 0";
+                    dt3=Con.OpenDT(sql);
+                    if (dt3.getCount()>0) toastlong("Ocurrio inconsistencia en cierre del dia, informe el soporte.");
+                } catch (Exception e) {
+                    toastlong("saveMontoIni : "+e.getMessage());
+                }
+                */
 
                 //sql="UPDATE D_DEPOS SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
                 //db.execSQL(sql);
 
                 sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
                 db.execSQL(sql);
+
+
 
                 Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();
 
@@ -584,7 +594,7 @@ public class Caja extends PBase {
 
         try {
             ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
-            fi=du.ffecha00(fi);
+            fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
             ff=du.addDays(ff,-1);ff=du.ffecha00(ff);
             sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
 

@@ -3077,10 +3077,10 @@ public class Venta extends PBase {
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
-            gl.gNombreCliente =DT.getString(0);
+            //gl.gNombreCliente =DT.getString(0);
             lcred=DT.getDouble(1);
-            gl.gNITCliente =DT.getString(2);
-            gl.gDirCliente =DT.getString(3);
+            //gl.gNITCliente =DT.getString(2);
+            //gl.gDirCliente =DT.getString(3);
             gl.media=DT.getInt(4);
             gl.gCorreoCliente =  DT.getString(6);
 
@@ -3157,14 +3157,17 @@ public class Venta extends PBase {
     }
 
     private int pendienteFEL() {
+        long flim,f1;
 
          try {
-             long flim=du.addDays(du.getActDate(),-4);
+             flim=du.addDays(du.getActDate(),-5);
+             f1=du.getActDate();f1=du.cfecha(du.getyear(f1),du.getmonth(f1),1);
+             if (f1<flim) flim=f1;
 
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
              sql="select * from d_factura  where anulado=0 and " +
-                 "feelfechaprocesado=0 and feeluuid = ' ' and fecha>2010010000;";
+                 "feelfechaprocesado=0 and feeluuid=' ' and fecha>="+flim+";";
 
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
@@ -3245,12 +3248,19 @@ public class Venta extends PBase {
         if (!app.usaFEL()) return true;
 
         try {
+            /*
             ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
             fi=du.ffecha00(fi);
             ff=du.addDays(ff,-4);ff=du.ffecha24(ff);
             if (fi>ff) {
                 fi=du.addDays(ff,-1);fi=du.ffecha00(fi);
             }
+            */
+
+            ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
+            fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
+            ff=du.addDays(ff,-4);ff=du.ffecha00(ff);
+
             sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
 
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
@@ -3260,7 +3270,8 @@ public class Venta extends PBase {
             if (fc==0) {
                 return true;
             } else {
-                msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n La facturación queda bloqueada.");
+                //msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n La facturación queda bloqueada.");
+                msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n Reporte el problema o la facturación quedará bloqueada.");
                 return false;
             }
         } catch (Exception e) {

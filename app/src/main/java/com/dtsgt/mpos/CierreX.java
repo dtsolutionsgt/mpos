@@ -17,6 +17,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_cierreObj;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,6 +43,7 @@ public class CierreX extends PBase {
 
     private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
     private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<clsClasses.clsBonifProd>();
+    public  ArrayList<String> repl=new ArrayList<String>();
 
     private Long dateini, datefin;
 
@@ -160,6 +162,8 @@ public class CierreX extends PBase {
                     }
                     doc.buildPrint("0", 0);
                     getTXT();
+
+                    respaldoReporte();
                     txtbtn.setText("IMPRIMIR");
                     report = true;
                 }else {
@@ -172,6 +176,26 @@ public class CierreX extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("GeneratePrint: "+e);
+        }
+    }
+
+    private void respaldoReporte() {
+        String ss;
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM T_cierre");
+            for (int i = 0; i <repl.size(); i++) {
+                ss=repl.get(i);
+                db.execSQL("INSERT INTO T_cierre VALUES ("+i+",0,'"+ss+"')");
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox("No se pudo generar respaldo de impresion del cierre.\n"+e.getMessage());
         }
     }
 
@@ -686,10 +710,12 @@ public class CierreX extends PBase {
             File Storage = Environment.getExternalStorageDirectory();
             File file = new File(Storage,"print.txt");
 
+            repl.clear();
+
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null) {
-                text.append(line);
+                text.append(line);repl.add(line);
                 text.append('\n');
             }
             br.close() ;
@@ -771,6 +797,8 @@ public class CierreX extends PBase {
 
             try {
 
+                rep.add("Vesion MPos : "+gl.parVer);
+                rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                 rep.add("Caja : "+gl.cajanom);
 
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);

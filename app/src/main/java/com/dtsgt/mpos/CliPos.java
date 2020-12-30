@@ -232,9 +232,16 @@ public class CliPos extends PBase {
             gl.contrib="";
             gl.scancliente=gl.cliente;
 
-            gl.gNombreCliente ="Consumidor final";
             gl.gNITCliente ="CF";
-            gl.gDirCliente ="Ciudad";
+            sNombreCliente =txtNom.getText().toString();
+            sDireccionCliente =txtRef.getText().toString();
+            sCorreoCliente = txtCorreo.getText().toString();
+            sTelCliente=txtTel.getText().toString();
+
+            if (sNombreCliente.isEmpty()) gl.gNombreCliente ="Consumidor final";else gl.gNombreCliente=sNombreCliente;
+            if (sDireccionCliente.isEmpty()) gl.gDirCliente ="Ciudad";else gl.gDirCliente=sDireccionCliente;
+            if (sTelCliente.isEmpty()) gl.gTelCliente =""; else gl.gTelCliente=sTelCliente;
+
             gl.media=1;
 
 			//Intent intent = new Intent(this,Venta.class);
@@ -267,6 +274,7 @@ public class CliPos extends PBase {
             gl.gNITCliente =snit;
             gl.gDirCliente = sDireccionCliente;
             gl.gCorreoCliente = sCorreoCliente;
+            gl.gTelCliente=sTelCliente;
 
             gl.media=1;
 
@@ -291,6 +299,8 @@ public class CliPos extends PBase {
             wsi.execute(rnRecibeInventario);
         } else {
             gl.ventalock=false;
+
+            String ss=gl.gNombreCliente;
             finish();
         }
     }

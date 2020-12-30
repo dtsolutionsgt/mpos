@@ -966,7 +966,13 @@ public class FacturaRes extends PBase {
 			ins.add("NOMBRE",gl.gNombreCliente);
 			ins.add("NIT",gl.gNITCliente);
 			ins.add("DIRECCION",gl.gDirCliente);
-			ins.add("CORREO",gl.gCorreoCliente);
+
+			if (gl.gNITCliente.equalsIgnoreCase("CF")) {
+                ins.add("CORREO",gl.gTelCliente);
+            } else {
+                ins.add("CORREO",gl.gCorreoCliente);
+            }
+
 			db.execSQL(ins.sql());
 
 			//endregion
@@ -1571,7 +1577,7 @@ public class FacturaRes extends PBase {
             if (DT!=null) DT.close();
 
             if (fcorel-cult>1) {
-                msgAskSend("Encortramos un inconveniente, por favor envie el siguiente correo al soporte.");
+                if (cult>0) msgAskSend("Encortramos un inconveniente, por favor envie el siguiente correo al soporte.");
             }
 
         } catch (Exception e) {
