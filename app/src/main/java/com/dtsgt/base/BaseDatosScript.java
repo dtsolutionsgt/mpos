@@ -1369,7 +1369,7 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (19,'Margen de error de GPS','10',0)");
 
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','S',0)");
-        db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cosina','N',0)");
+        db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cocina','N',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','S',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (103,'Pos modalidad','',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (104,'Imprimir factura','S',0)");

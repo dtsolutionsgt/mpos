@@ -839,6 +839,10 @@ public class Reportes extends PBase {
                 impF=0;
                 SumaCant=0;
                 cantF=0;
+                rep.line();
+                rep.add("Vesion MPos : "+gl.parVer);
+                rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                rep.line();
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
                 rep.add(fecharango);
                 rep.empty();

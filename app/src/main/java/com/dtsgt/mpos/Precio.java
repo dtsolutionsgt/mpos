@@ -107,7 +107,7 @@ public class Precio {
 			pr=0;
 
 			try {
-				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+")  ";
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+codprod+") AND (NIVEL="+nivel+")  ";
 				DT=Con.OpenDT(sql);
 				DT.moveToFirst();
 				pr=DT.getDouble(0);
@@ -182,7 +182,7 @@ public class Precio {
 
 		try {
 
-			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+") ";
+			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+codprod+") AND (NIVEL="+nivel+") ";
            	DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 							  
@@ -238,7 +238,7 @@ public class Precio {
 		int ic1,ic2,ic3;
 		
 		try {
-			sql="SELECT IMP1,IMP2,IMP3 FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
+			sql="SELECT IMP1,IMP2,IMP3 FROM P_PRODUCTO WHERE (CODIGO_PRODUCTO="+codprod+") ";
            	DT=Con.OpenDT(sql);
 			DT.moveToFirst();
 							  
@@ -247,7 +247,7 @@ public class Precio {
 			ic3=DT.getInt(2);
 			
 			if (ic1>0) {
-				sql="SELECT VALOR FROM P_IMPUESTO WHERE CODIGO="+ic1;
+				sql="SELECT VALOR FROM P_IMPUESTO WHERE CODIGO_IMPUESTO="+ic1;
 	           	DT=Con.OpenDT(sql);
 	           	
 				try {
@@ -260,7 +260,7 @@ public class Precio {
 			}
 			
 			if (ic2>0) {
-				sql="SELECT VALOR FROM P_IMPUESTO WHERE CODIGO="+ic2;
+				sql="SELECT VALOR FROM P_IMPUESTO WHERE CODIGO_IMPUESTO="+ic2;
 	           	DT=Con.OpenDT(sql);
 	           	
 				try {
@@ -273,7 +273,7 @@ public class Precio {
 			}
 			
 			if (ic3>0) {
-				sql="SELECT VALOR FROM P_IMPUESTO WHERE CODIGO="+ic3;
+				sql="SELECT VALOR FROM P_IMPUESTO WHERE CODIGO_IMPUESTO="+ic3;
 	           	DT=Con.OpenDT(sql);
 	           	
 				try {
@@ -284,12 +284,10 @@ public class Precio {
 				}	
 				
 			}			
-			
-			
+
 			imv=im1+im2+im3;
 			
 			return imv;
-			
 		} catch (Exception e) {
 			return 0;
 	    }		

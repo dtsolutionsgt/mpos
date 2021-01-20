@@ -18,11 +18,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsP_Producto_TipoObj;
 import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
 import com.dtsgt.classes.clsP_bonifObj;
+import com.dtsgt.classes.clsP_caja_impresoraObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_conceptopagoObj;
 import com.dtsgt.classes.clsP_corelObj;
@@ -68,6 +70,8 @@ import com.dtsgt.classesws.clsBeP_BANCO;
 import com.dtsgt.classesws.clsBeP_BANCOList;
 import com.dtsgt.classesws.clsBeP_BONIF;
 import com.dtsgt.classesws.clsBeP_BONIFList;
+import com.dtsgt.classesws.clsBeP_CAJA_IMPRESORA;
+import com.dtsgt.classesws.clsBeP_CAJA_IMPRESORAList;
 import com.dtsgt.classesws.clsBeP_CLIENTE;
 import com.dtsgt.classesws.clsBeP_CLIENTEList;
 import com.dtsgt.classesws.clsBeP_CONCEPTOPAGO;
@@ -168,11 +172,11 @@ public class WSRec extends PBase {
     private WebServiceHandler ws;
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
-    private boolean pbd_vacia = false;
+    private boolean pbd_vacia = false,nueva_version=false;
     private String plabel, fechasync;
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
 
-    private String clave;
+    private String idversion,clave;
 
     public boolean automatico;
 
@@ -409,6 +413,14 @@ public class WSRec extends PBase {
                     case 43:
                         if (gl.peRest) {
                             callMethod("GetP_IMPRESORA_MODELO", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        } else callEmptyMethod();
+                        break;
+                    case 44:
+                        callMethod("getIns", "SQL","SELECT * FROM P_EMPRESA_VERSION WHERE Empresa="+gl.emp);
+                        break;
+                    case 45:
+                        if (gl.peRest) {
+                            callMethod("GetP_CAJA_IMPRESORA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
                         } else callEmptyMethod();
                         break;
                 }
@@ -709,6 +721,20 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(44);
+                    break;
+                case 44:
+                    processVersion();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(45);
+                    break;
+                case 45:
+                    processCajaImpresora();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
                     break;
             }
@@ -850,6 +876,9 @@ public class WSRec extends PBase {
                 break;
             case 43:
                 plabel = "Modelo de impresora";
+                break;
+            case 44:
+                plabel = "Version";
                 break;
 
         }
@@ -1012,6 +1041,7 @@ public class WSRec extends PBase {
             processData();
             browse = 1;
         }
+
     }
 
     private boolean processData() {
@@ -2855,6 +2885,63 @@ public class WSRec extends PBase {
         }
     }
 
+    private void processVersion() {
+        String ss;
+        int p1,p2;
+
+        try {
+            p1=ws.xmlresult.indexOf(",'")+2;
+            p2=ws.xmlresult.indexOf("');");
+            if (p1<1 | p2<1) {
+                idversion="";return;
+            }
+
+            idversion=ws.xmlresult.substring(p1,p2);
+            idversion=idversion.trim();
+            nueva_version=!idversion.equalsIgnoreCase(gl.parVer);
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processCajaImpresora() {
+
+        try {
+            clsP_caja_impresoraObj handler = new clsP_caja_impresoraObj(this, Con, db);
+            clsBeP_CAJA_IMPRESORAList items = new clsBeP_CAJA_IMPRESORAList();
+            clsBeP_CAJA_IMPRESORA item = new clsBeP_CAJA_IMPRESORA();
+            clsClasses.clsP_caja_impresora var;
+
+            script.add("DELETE FROM P_CAJA_IMPRESORA");
+
+            items = xobj.getresult(clsBeP_CAJA_IMPRESORAList.class, "GetP_CAJA_IMPRESORA");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_caja_impresora();
+
+                var.codigo_caja_impresora=item.CODIGO_CAJA_IMPRESORA;
+                var.codigo_caja=item.CODIGO_CAJA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.empresa=item.EMPRESA;
+                var.codigo_impresora=item.CODIGO_IMPRESORA;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
     //endregion
 
     //region Aux
@@ -2882,10 +2969,40 @@ public class WSRec extends PBase {
         dialog.setMessage(msg);
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                finish();
+                if (nueva_version) {
+                    msgAskVersion("¿Existe nueva version, proceder con la instalación?");
+                } else
+                    finish();
             }
         });
         dialog.show();
+    }
+
+    private void msgAskVersion(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("MPos");
+        dialog.setMessage(msg);
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    Intent intent =WSRec.this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
+                    intent.putExtra("filename","mpos.apk");
+                    WSRec.this.startActivity(intent);
+                } catch (Exception e) {
+                    msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+
+        dialog.show();
+
     }
 
     private void msgboxexit(String msg) {

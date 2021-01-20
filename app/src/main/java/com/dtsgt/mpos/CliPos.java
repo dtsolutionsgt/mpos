@@ -1,5 +1,7 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -93,14 +95,20 @@ public class CliPos extends PBase {
 
 	//region  Events
 
-	public void consFinal(View view) {
-        try {
-            consFinal=true;
-            if (agregaCliente("C.F.","Consumidor final","Ciudad","","")) procesaCF() ;
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+    public void consFinal(View view) {
+        String ss=txtNIT.getText().toString();
+
+        if (ss.length()>4) {
+            msgAskCF("Está seguro de continuar con el consumidor final");
+        } else {
+            try {
+                consFinal=true;
+                if (agregaCliente("C.F.","Consumidor final","Ciudad","","")) procesaCF() ;
+            } catch (Exception e) {
+                msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
         }
-	}
+    }
 
 	public void clienteNIT(View view) {
 
@@ -363,7 +371,7 @@ public class CliPos extends PBase {
                 pp=fname.indexOf(".txt");
                 if (pp>0){
                     if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime(),fname)) {
-                        msgbox2("Ocurrio error en recepción de orden :\n"+app.errstr);
+                        msgbox2("Ocurrio error en recepción de órden :\n"+app.errstr);
                     }
                 }
             }
@@ -694,7 +702,6 @@ public class CliPos extends PBase {
 
     }
 
-
     private boolean actualizaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
 
         int codigo=nitnum(NIT);
@@ -764,6 +771,36 @@ public class CliPos extends PBase {
                 myReader.close();
             }
         } catch (Exception e) {}
+
+    }
+
+    //endregion
+
+    //region Dialogos
+
+
+    private void msgAskCF(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Consumidor final");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    consFinal=true;
+                    if (agregaCliente("C.F.","Consumidor final","Ciudad","","")) procesaCF() ;
+                } catch (Exception e) {
+                    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
 
     }
 

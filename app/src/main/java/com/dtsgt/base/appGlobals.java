@@ -37,7 +37,7 @@ public class appGlobals extends Application {
 	public double precio_recarga,total_pago,propina_valor;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
-                   recibir_automatico = false,meserodir,cerrarmesero;
+                   recibir_automatico = false,meserodir,cerrarmesero,preimpresion;
 
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false

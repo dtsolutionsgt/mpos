@@ -33,6 +33,7 @@ import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsRepBuilder;
@@ -40,6 +41,7 @@ import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
+import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -103,7 +105,7 @@ public class Orden extends PBase {
     private int nivel,dweek,clidia,counter,prodlinea;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag,enviarorden;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private int codigo_cliente, emp,cod_prod,cantcuentas;
+    private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum;
     private String idorden,cliid,saveprodid;
     private int famid = -1;
 
@@ -1337,7 +1339,7 @@ public class Orden extends PBase {
                     startActivity(new Intent(this, Producto.class));
                     break;
                 case 66:
-                    msgAskComanda("Enviar comanda a la cosina");
+                    msgAskComanda("Enviar comanda a la cocina");
                     break;
             }
         } catch (Exception e) {
@@ -1369,6 +1371,13 @@ public class Orden extends PBase {
         int prodid,prid,linea=1;
 
         try {
+
+            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+            ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+            clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
+            ord.id=ordennum;
+            P_orden_numeroObj.add(ord);
+
             db.execSQL("DELETE FROM T_comanda");
 
             T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
@@ -1426,7 +1435,39 @@ public class Orden extends PBase {
     }
 
     private boolean generaArchivos() {
+        clsRepBuilder rep;
+        int printid;
+
         try {
+            clsViewObj ViewObj=new clsViewObj(this,Con,db);
+            ViewObj.fillSelect("SELECT DISTINCT ID, '','','','', '','','','' FROM T_comanda ORDER BY ID");
+
+            for (int i = 0; i <ViewObj.count; i++) {
+                printid=ViewObj.items.get(i).pk;
+
+                rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"comanda_"+printid+".txt");
+
+                rep.add("");rep.add("");rep.add("");
+                rep.add("ORDEN : "+ordennum);
+                rep.add("MESA : "+mesa);
+                rep.add("Hora : "+du.shora(du.getActDateTime()));
+                rep.line();
+
+                T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
+
+                for (int j = 0; j <T_comandaObj.count; j++) {
+                    rep.add(T_comandaObj.items.get(j).texto);
+                }
+
+                rep.line();
+                rep.add("");rep.add("");rep.add("");
+
+                rep.save();rep.clear();
+            }
+
+            //mesa
+            //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
+
 
             return true;
         } catch (Exception e) {

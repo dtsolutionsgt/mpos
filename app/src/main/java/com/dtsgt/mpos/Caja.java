@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -7,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -18,7 +20,10 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+
+import java.util.Random;
 
 public class Caja extends PBase {
 
@@ -26,9 +31,10 @@ public class Caja extends PBase {
     private EditText Vendedor, Fecha, MontoIni, MontoFin, MontoCred;
 
     private clsClasses.clsP_cajacierre itemC;
+    private clsClasses.clsP_cajahora itemH;
 
     private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoDifCred=0, montoCred=0;
-
+    private String cap;
     private int acc=1,msgAcc=0,cred=0;
 
     @Override
@@ -101,6 +107,7 @@ public class Caja extends PBase {
         }
 
         itemC = clsCls.new clsP_cajacierre();
+        itemH = clsCls.new clsP_cajahora();
 
         setHandlers();
 
@@ -174,8 +181,8 @@ public class Caja extends PBase {
 
                     if(montoDif!=0){
                         if(acc==1){
-                            msgboxValidaMonto("El monto de efectivo no cuadra, ¿Continuar?");
-                            acc=0;
+                            msgboxValidaMonto("El monto de efectivo no cuadra");
+                            //acc=0;
                         }else {
                             saveMontoIni();
                         }
@@ -186,12 +193,11 @@ public class Caja extends PBase {
 
                             if(montoDifCred!=0){
                                 if(acc==1){
-                                    msgboxValidaMonto("El monto de crédito no cuadra, ¿Continuar?");
-                                    acc=0;
-                                }else {
+                                    msgboxValidaMonto("El monto de crédito no cuadra,");
+                                    //acc=0;
+                                } else {
                                     saveMontoIni();
                                 }
-
                             }else {
                                 saveMontoIni();
                             }
@@ -291,13 +297,13 @@ public class Caja extends PBase {
     }
 
     public void saveMontoIni(){
-
         Cursor dt, dt2, dt3;
         int fecha=0, codpago=0;
 
         try{
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
+            clsP_cajahoraObj cajah = new clsP_cajahoraObj(this,Con,db);
 
             if (gl.cajaid==1) {
 
@@ -342,6 +348,11 @@ public class Caja extends PBase {
                 itemC.montodif = 0;
 
                 caja.add(itemC);
+
+                itemH.corel= gl.corelZ;
+                itemH.fechaini=du.getActDateTime();
+                itemH.fechafin=0;
+                cajah.add(itemH);
 
                 msgAcc=1;
 
@@ -452,8 +463,6 @@ public class Caja extends PBase {
                 sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
                 db.execSQL(sql);
 
-
-
                 Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();
 
                 gl.reportid=10;
@@ -553,9 +562,52 @@ public class Caja extends PBase {
         });
 
         dialog.show();
-
     }
 
+    public void msgboxValidaMonto(String msg) {
+        String mm=msg;
+
+        try{
+            captcha();
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+            alert.setTitle(msg+"\nIngrese valor "+cap+" para continuar");
+
+            final EditText input = new EditText(this);
+            alert.setView(input);
+
+            input.setInputType(InputType.TYPE_CLASS_NUMBER );
+            input.setText("");
+            input.requestFocus();
+
+            alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    try {
+                        String s=input.getText().toString();
+                        if (!s.equalsIgnoreCase(cap)) throw new Exception();
+
+                        acc=0;
+                        saveMontoIni();
+                    } catch (Exception e) {
+                        acc=1;
+                        mu.msgbox("Valor incorrecto");
+                    }
+                }
+            });
+
+            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {}
+            });
+
+            alert.show();
+
+        } catch (Exception ex) {
+            msgbox("Error msgboxValidaMonto: "+ex);return;
+        }
+    }
+
+    /*
     public void msgboxValidaMonto(String msg) {
 
         try{
@@ -582,6 +634,8 @@ public class Caja extends PBase {
             msgbox("Error msgboxValidaMonto: "+ex);return;
         }
     }
+
+     */
 
     //endregion
 
@@ -639,6 +693,13 @@ public class Caja extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private void captcha() {
+        Random r = new Random();
+        cap=""+(r.nextInt(8) + 1);
+        cap+=""+(r.nextInt(8)  + 1);
+        cap+=""+(r.nextInt(8)  + 1);
     }
 
     //endregion

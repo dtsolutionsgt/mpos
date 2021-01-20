@@ -303,6 +303,12 @@ public class clsClasses {
         public String codigo_cajacierre;
     }
 
+    public class clsP_cajahora {
+        public int  corel;
+        public long fechaini;
+        public long fechafin;
+    }
+
     public class clsP_cajapagos {
         public int empresa;
         public int sucursal;
@@ -559,6 +565,10 @@ public class clsClasses {
 		public String symbolo;
 		public double cambio;
 	}
+
+    public class clsP_orden_numero {
+        public int  id;
+    }
 
     public class clsP_paramext {
         public int  id;

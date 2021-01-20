@@ -152,7 +152,6 @@ public class Venta extends PBase {
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
         MeserosObj =new clsVendedoresObj(this,Con,db);
 
-
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
 
@@ -490,11 +489,11 @@ public class Venta extends PBase {
 
                         adaptergrid.setSelectedIndex(position);
 
-                        if (item.ID==1) {
-                            if (validaFacturas()) processMenuTools(item.ID);
-                        } else {
+                        //if (item.ID==1) {
+                        //    if (validaFacturas()) processMenuTools(item.ID);
+                        //} else {
                             processMenuTools(item.ID);
-                        }
+                        //}
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
@@ -860,16 +859,17 @@ public class Venta extends PBase {
 
             prodPrecio();
 
-            /*
             precsin = prc.precsin;
             imp = prc.imp;
             impval = prc.impval;
+            totsin = prc.totsin;
+
+            /*
             tot = prc.tot;
             descmon = savetot-tot;//prc.descmon;
             prodtot = tot;
-            totsin = prc.totsin;
             percep = 0;
-             */
+            */
 
             tipo=prodTipo(gl.prodcod);
 
@@ -952,14 +952,8 @@ public class Venta extends PBase {
         try {
             if (prodPorPeso(prodid)) {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
-                    if (prc.precioespecial>0) prec=prc.precioespecial;
-                }
             } else {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,0)) {
-                    if (prc.precioespecial>0) prec=prc.precioespecial;
-                }
             }
 
             prec=mu.round(prec,2);
@@ -1990,19 +1984,19 @@ public class Venta extends PBase {
                 case 53:
                     break;
                 case 54:
-                    if (!gl.ventalock) borraLinea();else toast("No se puede modificar el orden");
+                    if (!gl.ventalock) borraLinea();else toast("No se puede modificar el órden");
                     break;
                 case 55:
-                    if (!gl.ventalock) borraTodo();else toast("No se puede modificar el orden");
+                    if (!gl.ventalock) borraTodo();else toast("No se puede modificar el órden");
                     break;
                 case 56:
                     showMenuSwitch();
                     break;
                 case 61:
-                    msgAskOrden("Convertir al orden");
+                    msgAskOrden("Convertir al órden");
                     break;
                 case 62:
-                    if (hasProducts()) inputMesa(); else toastcent("El orden está vacio");
+                    if (hasProducts()) inputMesa(); else toastcent("El órden está vacio");
                     break;
                 case 63:
                     gl.cerrarmesero=false;
@@ -2745,7 +2739,6 @@ public class Venta extends PBase {
 		if (contrib.equalsIgnoreCase("F")) sinimp=false;
 		*/
 
-        sinimp=false;
         gl.sinimp=sinimp;
 
         try {
@@ -3218,7 +3211,7 @@ public class Venta extends PBase {
 
     private void checkLock() {
 
-        if (gl.ventalock) toast("El orden está protegido, no se puede modificar");
+        //if (gl.ventalock) toast("El orden está protegido, no se puede modificar");
 
         listView.setEnabled(!gl.ventalock);
         grdfam.setEnabled(!gl.ventalock);
@@ -3267,13 +3260,17 @@ public class Venta extends PBase {
             D_facturaObj.fill(sql);
             int fc=D_facturaObj.count;
 
+            return true;
+            /*
             if (fc==0) {
                 return true;
             } else {
-                //msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n La facturación queda bloqueada.");
-                msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n Reporte el problema o la facturación quedará bloqueada.");
+                msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n La facturación queda bloqueada.");
+                //msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que 4 días.\n Reporte el problema o la facturación quedará bloqueada.");
                 return false;
             }
+
+             */
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
@@ -3507,7 +3504,7 @@ public class Venta extends PBase {
 
         dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                //enviaAvizo();
+                enviaAvizo();
                 processMenuTools(1);
             }
         });

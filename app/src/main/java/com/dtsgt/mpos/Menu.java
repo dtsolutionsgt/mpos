@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.BatteryManager;
@@ -15,12 +14,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
 import android.os.StrictMode;
-import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -292,6 +289,7 @@ public class Menu extends PBase {
                         gl.cliposflag=false;gl.rutatipo="V";gl.rutatipog="V";
 						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
 						gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
+                        gl.preimpresion=false;
 
 						if (impresoraInstalada()) {
                             startActivity(new Intent(this, Venta.class));
@@ -1181,7 +1179,7 @@ public class Menu extends PBase {
         try {
             final AlertDialog Dialog;
 
-            final String[] selitems = {"Configuracion", "Sala", "Mesa", "Grupo de mesas"};
+            final String[] selitems = {"Configuración", "Sala", "Mesa", "Grupo de mesas"};
             //final String[] selitems = { "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
 
             menudlg = new ExDialog(this);
@@ -1195,8 +1193,8 @@ public class Menu extends PBase {
                     if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
                     if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
                     if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
-                    if (ss.equalsIgnoreCase("Configuracion")) gl.mantid = 29;
-                    if (ss.equalsIgnoreCase("Estacion cocina")) gl.mantid = 31;
+                    if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 29;
+                    if (ss.equalsIgnoreCase("Estación cocina")) gl.mantid = 31;
 
                     if (gl.mantid == 24) {
                         startActivity(new Intent(Menu.this, SalaDis.class));

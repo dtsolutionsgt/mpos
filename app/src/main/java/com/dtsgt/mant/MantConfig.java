@@ -362,7 +362,7 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (115,'Reporte ventas por producto con codigo','"+s115+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (116,'Anulacion autoriza supervisor','"+s116+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (118,'Modulo restaurante','"+s118+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (119,'Modificar orden a domicilio','"+s119+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (119,'Modificar órden a domicilio','"+s119+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();

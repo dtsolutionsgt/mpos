@@ -179,7 +179,6 @@ public class clsRepBuilder {
 		items.clear();
 	}
 
-	
 	// Simple 
 	
 	public void empty() {

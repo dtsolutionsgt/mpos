@@ -78,7 +78,6 @@ public class MantFamilia extends PBase {
         holder =new clsP_lineaObj(this,Con,db);
         P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
 
-
         id=gl.gcods;
         idfoto=id;
         if (id.isEmpty()) newItem(); else loadItem();

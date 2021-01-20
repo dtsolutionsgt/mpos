@@ -279,6 +279,9 @@ public class ResCaja extends PBase {
 
     private void cargaCliente() {
         try {
+
+            gl.codigo_cliente=gl.emp*10;
+
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             T_ordencuentaObj.fill("WHERE (COREL='"+corel+"') AND (ID="+cuenta+")");
 
@@ -307,7 +310,7 @@ public class ResCaja extends PBase {
 
     private void showMenuMesa() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Imprimir","Datos cliente","Pagar","Completar","Borrar"}; // cuenta
+        final String[] selitems = {"Preimpresion","Datos cliente","Pagar","Completar","Borrar"}; // cuenta
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Mesa "+mesa+" , Cuenta #"+cuenta);

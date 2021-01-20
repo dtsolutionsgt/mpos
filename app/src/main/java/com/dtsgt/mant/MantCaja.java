@@ -9,12 +9,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsP_caja_impresoraObj;
+import com.dtsgt.classes.clsP_impresoraObj;
+import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.ladapt.LA_P_usopcion;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -25,14 +30,19 @@ public class MantCaja extends PBase {
     private ImageView imgstat,imgadd;
     private EditText txt1,txt2;
     private Spinner spin;
+    private ListView listView;
 
     private clsP_rutaObj holder;
     private clsClasses.clsP_ruta item=clsCls.new clsP_ruta();
+    private clsP_caja_impresoraObj P_caja_impresoraObj;
+
+    private LA_P_usopcion adapter;
 
     private ArrayList<String> spincode,spinlist;
+    private ArrayList<clsClasses.clsP_usopcion> items= new ArrayList<clsClasses.clsP_usopcion>();
 
     private String id;
-    private int precpos=0;
+    private int idcaja,precpos=0;
     private boolean newitem=false;
 
     @Override
@@ -47,8 +57,10 @@ public class MantCaja extends PBase {
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgadd = (ImageView) findViewById(R.id.imgImg2);
         spin = (Spinner) findViewById(R.id.spinner10);
+        listView = (ListView) findViewById(R.id.listView1);
 
         holder =new clsP_rutaObj(this,Con,db);
+        P_caja_impresoraObj=new clsP_caja_impresoraObj(this,Con,db);
 
         spincode=new ArrayList<String>();spinlist=new ArrayList<String>();
 
@@ -57,6 +69,8 @@ public class MantCaja extends PBase {
         setHandlers();
 
         if (id.isEmpty()) newItem(); else loadItem();
+
+        listItems();
 
         if (gl.peMCent) {
             //if (!app.grant(13,gl.rol)) {
@@ -115,6 +129,19 @@ public class MantCaja extends PBase {
 
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                Object lvObj = listView.getItemAtPosition(position);
+                clsClasses.clsP_usopcion item = (clsClasses.clsP_usopcion)lvObj;
+
+                if (item.nombre.isEmpty()) item.nombre="x"; else item.nombre="";
+
+                adapter.setSelectedIndex(position);
+                adapter.notifyDataSetChanged();
+            };
+        });
+
     }
 
     //endregion
@@ -123,8 +150,9 @@ public class MantCaja extends PBase {
 
     private void loadItem() {
         try {
-            holder.fill("WHERE CODIGO='"+id+"'");
+            holder.fill("WHERE CODIGO_RUTA="+id);
             item=holder.first();
+            idcaja=item.codigo_ruta;
 
             showItem();
 
@@ -163,6 +191,7 @@ public class MantCaja extends PBase {
 
         try {
             holder.add(item);
+            updatePrinters();
 
             gl.gcods = "" + item.codigo;
             finish();
@@ -174,10 +203,76 @@ public class MantCaja extends PBase {
     private void updateItem() {
         try {
             holder.update(item);
+            updatePrinters();
+
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private void listItems() {
+        ArrayList<Integer> opts=new ArrayList<Integer>();
+        clsP_impresoraObj P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+        clsClasses.clsP_usopcion item;
+        int opt;
+
+        try {
+            P_impresoraObj.fill("ORDER BY Nombre");
+
+            for (int i = 0; i <P_impresoraObj.count; i++) {
+
+                item=clsCls.new clsP_usopcion();
+
+                item.codigo=P_impresoraObj.items.get(i).codigo_impresora;
+                item.menugroup=P_impresoraObj.items.get(i).nombre;
+
+                P_caja_impresoraObj.fill("WHERE (CODIGO_CAJA="+idcaja+") AND (CODIGO_IMPRESORA="+item.codigo+")");
+                if (P_caja_impresoraObj.count>0) item.nombre="X";else item.nombre="";
+
+                items.add(item);
+            }
+
+            adapter=new LA_P_usopcion(this,this,items);
+            listView.setAdapter(adapter);
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());
+        }
+    }
+
+    private void updatePrinters() {
+        clsClasses.clsP_caja_impresora item;
+
+        try {
+            db.beginTransaction();
+
+            int newid=P_caja_impresoraObj.newID("SELECT MAX(codigo_caja_impresora) FROM P_caja_impresora");
+
+            db.execSQL("DELETE FROM P_caja_impresora WHERE CODIGO_CAJA="+idcaja);
+
+            for (int i = 0; i <items.size(); i++) {
+
+                if (items.get(i).nombre.equalsIgnoreCase("X")) {
+
+                    item = clsCls.new clsP_caja_impresora();
+
+                    item.codigo_caja_impresora=newid;
+                    item.codigo_caja=idcaja;
+                    item.codigo_sucursal=gl.tienda;
+                    item.empresa=gl.emp;
+                    item.codigo_impresora=items.get(i).codigo;
+
+                    P_caja_impresoraObj.add(item);newid++;
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
     }
 
     //endregion
@@ -232,13 +327,13 @@ public class MantCaja extends PBase {
         spincode.clear();spinlist.clear();
 
         try {
-            sucur.fill(" WHERE (Activo=1) OR (Codigo='"+selid+"') ORDER BY Nombre");
+            sucur.fill(" WHERE (Activo=1) OR (Codigo_sucursal="+selid+") ORDER BY Nombre");
             if (sucur.count==0) {
                 msgAskReturn("Lista de sucursales está vacia, no se puede continuar");return false;
             }
 
             for (int i = 0; i <sucur.count; i++) {
-                scod=sucur.items.get(i).codigo;
+                scod=""+sucur.items.get(i).codigo_sucursal;
                 spincode.add(scod);
                 spinlist.add(sucur.items.get(i).descripcion);
                 if (scod.equalsIgnoreCase(selid)) selidx=i;

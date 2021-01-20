@@ -78,7 +78,8 @@ public class ProdMenu extends PBase {
 
     public void doApply(View view) {
         if (!validaData()) {
-            msgAskApply("Aplicar sin definir todas las opciónes");
+            //msgAskApply("Aplicar sin definir todas las opciónes");
+            msgbox("No están definidas todas las opciónes");return;
         } else {
             if (validaStock()) {
                 saveItem();
@@ -542,7 +543,8 @@ public class ProdMenu extends PBase {
 
     private void msgAskDelete(String msg) {
         try{
-            ExDialog dialog = new ExDialog(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("MPos");
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -564,7 +566,9 @@ public class ProdMenu extends PBase {
 
     private void msgAskExit(String msg) {
         try{
-            ExDialog dialog = new ExDialog(this);
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("MPos");
+
             dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
@@ -586,7 +590,8 @@ public class ProdMenu extends PBase {
     }
 
     private void msgAskApply(String msg) {
-        ExDialog dialog = new ExDialog(this);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("MPos");
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -604,7 +609,8 @@ public class ProdMenu extends PBase {
     }
 
     private void msgAskSave(String msg) {
-        ExDialog dialog = new ExDialog(this);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("MPos");
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

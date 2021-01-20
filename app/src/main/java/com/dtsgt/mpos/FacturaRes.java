@@ -813,7 +813,7 @@ public class FacturaRes extends PBase {
 			ins.add("FACTLINK"," ");
 	   		ins.add("TOTAL",tot);
 			ins.add("DESMONTO",descmon);
-			ins.add("IMPMONTO",totimp+totperc);
+			ins.add("IMPMONTO",totimp);//ins.add("IMPMONTO",totimp+totperc);
 			ins.add("PESO",peso);
 
 			ins.add("BANDERA","N");
@@ -823,26 +823,17 @@ public class FacturaRes extends PBase {
 			ins.add("CORELATIVO",fcorel);
 			ins.add("IMPRES",0);
 
-			ins.add("ADD1",gl.ref1);
-			ins.add("ADD2",gl.ref2);
-			if (pendiente) {
-                ins.add("ADD3","P");
-            } else {
-                ins.add("ADD3","");
-            }
+            ins.add("ADD1",gl.ref1);
+            ins.add("ADD2",gl.ref2);
+            if (pendiente) ins.add("ADD3","P"); else ins.add("ADD3","");
 
 			ins.add("DEPOS",false);
 			ins.add("PEDCOREL",gl.pedcorel+"");
 			ins.add("REFERENCIA","");
-
-			if (gl.dvbrowse!=0){
-				ins.add("ASIGNACION",gl.dvcorreld);
-			}else{
-				ins.add("ASIGNACION","");
-			}
+			if (gl.dvbrowse!=0)	ins.add("ASIGNACION",gl.dvcorreld); else ins.add("ASIGNACION","");
 
 			ins.add("SUPERVISOR",""+fpend);
-			ins.add("VEHICULO"," ");
+			ins.add("VEHICULO",gl.parVer);
 			ins.add("AYUDANTE"," ");
 			ins.add("CODIGOLIQUIDACION",0);
 			ins.add("RAZON_ANULACION","");
@@ -958,8 +949,17 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAF
 
-            if (gl.gCorreoCliente.isEmpty()) gl.gCorreoCliente=" ";
-            if (gl.gDirCliente.isEmpty()) gl.gDirCliente=" ";
+            try {
+                if (gl.gCorreoCliente.isEmpty()) gl.gCorreoCliente=" ";
+            } catch (Exception e) {
+                gl.gCorreoCliente=" ";
+            }
+
+            try {
+                if (gl.gDirCliente.isEmpty()) gl.gDirCliente=" ";
+            } catch (Exception e) {
+                gl.gDirCliente=" ";
+            }
 
 			ins.init("D_FACTURAF");
 			ins.add("COREL",corel);
@@ -983,7 +983,7 @@ public class FacturaRes extends PBase {
             sql="SELECT UNID,CANT,IDSELECCION,IDCOMBO FROM T_COMBO ";
             dt=Con.OpenDT(sql);
 
-            String prcod="";
+            String prcod="";int iidd=1;
 
             if (dt.getCount()>0) {
 
@@ -1002,7 +1002,7 @@ public class FacturaRes extends PBase {
 
                     fsitem=clsCls.new clsD_facturas();
                     fsitem.corel=corel;
-                    fsitem.id=fsid;
+                    fsitem.id=iidd;//fsitem.id=fsid;
                     fsitem.producto=""+prid;
                     fsitem.cant=unipr;
                     fsitem.umstock=app.umVenta2(prcod);
@@ -1010,7 +1010,7 @@ public class FacturaRes extends PBase {
 
                     rebajaStockUM(prcod,fsitem.umstock,fsitem.cant);
 
-                    dt.moveToNext();
+                    dt.moveToNext();iidd++;
                 }
             }
 
@@ -2372,7 +2372,7 @@ public class FacturaRes extends PBase {
 
 	//endregion
 
-    //region Comanda Cosina
+    //region Comanda Cocina
 
     private void imprimeComanda() {
         app.doPrint(1);

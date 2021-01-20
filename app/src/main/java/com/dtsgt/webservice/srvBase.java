@@ -83,7 +83,7 @@ public class srvBase extends Service {
         String channelId = "channel-id",channelName = "Channel Name";
 
 
-        if (pedidos==1) message="Nuevo orden";else message=pedidos+" nuevos ordenes";
+        if (pedidos==1) message="Nuevo órden";else message=pedidos+" nuevos órdenes";
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);

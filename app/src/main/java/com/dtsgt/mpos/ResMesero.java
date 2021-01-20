@@ -155,10 +155,10 @@ public class ResMesero extends PBase {
 
     private void abrirOrden() {
         try {
+            gl.mesanom=mesa.nombre;
             P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
             if (P_res_sesionObj.count>0) {
                 gl.idorden=P_res_sesionObj.first().id;
-                gl.mesanom=mesa.nombre;
                 startActivity(new Intent(this,Orden.class));
             } else {
                 inputPersonas();

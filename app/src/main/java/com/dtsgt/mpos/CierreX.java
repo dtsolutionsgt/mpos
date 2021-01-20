@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
+import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_cierreObj;
 
@@ -118,7 +119,19 @@ public class CierreX extends PBase {
     //region Events
 
     public void GeneratePrintCierre(View view){
-        try{
+        long cfi;
+
+        try {
+
+            try {
+                clsP_cajahoraObj P_cajahoraObj=new clsP_cajahoraObj(this,Con,db);
+                P_cajahoraObj.fill("WHERE COREL="+gl.corelZ);
+                cfi=P_cajahoraObj.first().fechaini;
+            } catch (Exception e) {
+                cfi=0;
+            }
+
+            doc.horaini=du.sfecha(cfi)+" "+du.shora(cfi);
 
             stampstr="Generado : "+du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime());
 
@@ -764,7 +777,7 @@ public class CierreX extends PBase {
 
     private class clsDocExist extends clsDocument {
         String fechaR="";
-        String test;
+        String test,horaini;
         int cantF,cantfF,SumaCant;
         int count1, count2, count3, count4, count5, count6, count7, count8, count9, count10, count11;
         double tot,totF;
@@ -800,8 +813,10 @@ public class CierreX extends PBase {
                 rep.add("Vesion MPos : "+gl.parVer);
                 rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                 rep.add("Caja : "+gl.cajanom);
+                rep.add("Inicio : "+horaini);
 
-                fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
+                //fecharango="Fecha cierre : "+du.univfechaReport(dateini);
+                //fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
                 rep.add(fecharango);
                 rep.empty();
                 rep.add(stampstr);
@@ -845,9 +860,13 @@ public class CierreX extends PBase {
                 count11 += count10;
 
                 if(gl.reportid==10){
-                    rep.add("FONDO CAJA:        Q."+Fondo);
+                    rep.add("Fondo caja : Q."+Fondo);
                     rep.empty();
                     rep.add("         REPORTE DE CUADRE");
+                    rep.line();
+                    rep.add("Vesion MPos : "+gl.parVer);
+                    rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                    rep.line();
                     rep.add("CODIGO  M.PAGO");
                     rep.add("MONT.INI        MONT.FIN       DIF.");
                     rep.line();
@@ -887,6 +906,8 @@ public class CierreX extends PBase {
 
                 for (int i = 0; i <itemR.size(); i++) {
 
+
+
                     //Reporte 1
                     if(itemR.get(i).tipo==1){
 
@@ -903,6 +924,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("     REPORTE DOCUMENTOS POR DIA");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.line();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
@@ -972,6 +997,10 @@ public class CierreX extends PBase {
                             rep.empty();
 
                             rep.add("     FACTURAS ANULADAS POR DÍA ");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Cant.Fact    Costo    Impuesto    Total");
                             rep.line();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
@@ -1037,6 +1066,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("      REPORTE DE VENTAS POR DIA");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.line();
                             rep.add("Fecha      Serie   Cant.Fact   Total");
                             rep.line();
@@ -1109,6 +1142,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("      REPORTE VENTA POR PRODUCTO");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Cod   Descripcion");
                             rep.add("Cant        UM       Total        %");
                             rep.line();
@@ -1152,6 +1189,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("     REPORTE POR FORMA DE PAGO");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Forma    Cantidad");
                             rep.add("Pago      Factura     Total     %");
                             rep.line();
@@ -1187,6 +1228,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("      REPORTE VENTA POR FAMILIA");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Seccion   Cant.Art Total        %");
                             rep.line();
                             acc5 = 2;
@@ -1225,6 +1270,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("    REPORTE VENTAS POR VENDEDOR");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Codigo     Nombre");
                             rep.add("Cant       %       Total    Comision");
                             rep.line();
@@ -1271,6 +1320,10 @@ public class CierreX extends PBase {
                             rep.empty();
                             if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICIO POR PRODUCTO");
                             if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICIO POR FAMILIA");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Codigo     Nombre");
                             rep.add("Venta      Costo    Beneficio    %");
                             rep.line();
@@ -1316,6 +1369,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("REPORTE VENTAS POR CLIENTE CONSOLIDADO");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
                             rep.add("Codigo        Nombre");
                             rep.add("Fecha       Cant.Fact       Total");
                             rep.line();
@@ -1354,6 +1411,10 @@ public class CierreX extends PBase {
 
                             rep.empty();
                             rep.add("REPORTE VENTAS POR CLIENTE DETALLE");
+                            rep.line();
+                            rep.add("Vesion MPos : "+gl.parVer);
+                            rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                            rep.line();
 
                             rep.add("Fecha        Corelativo");
                             rep.add("Producto   Cant    Precio    Total");

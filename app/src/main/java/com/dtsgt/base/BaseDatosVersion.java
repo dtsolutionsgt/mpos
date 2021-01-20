@@ -250,7 +250,6 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
-
         try {
             Cursor vCursor = db.rawQuery("SELECT * FROM T_ordencuenta", null);
             if (vCursor != null) vCursor.moveToLast();
@@ -401,6 +400,15 @@ public class BaseDatosVersion {
         }
 
         try {
+            sql="CREATE TABLE [P_orden_numero] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
             sql="CREATE TABLE [T_cierre] ("+
                     "ID INTEGER NOT NULL,"+
                     "DIA INTEGER NOT NULL,"+
@@ -408,10 +416,19 @@ public class BaseDatosVersion {
                     "PRIMARY KEY ([ID])"+
                     ");";
             db.execSQL(sql);
-
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [P_cajahora] ("+
+                    "COREL INTEGER NOT NULL,"+
+                    "FECHAINI INTEGER NOT NULL,"+
+                    "FECHAFIN INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
 
     }
 

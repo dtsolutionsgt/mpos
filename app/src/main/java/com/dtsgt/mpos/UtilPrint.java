@@ -158,7 +158,7 @@ public class UtilPrint extends PBase {
                     prnum=Integer.parseInt(prnnum.get(position));
                     tipoimp =prntipo.get(position);
 
-                    if (tipoimp ==0)  lbl1.setText("Impresora facturación");else  lbl1.setText("Impresora cosina");
+                    if (tipoimp ==0)  lbl1.setText("Impresora facturación");else  lbl1.setText("Impresora cocina");
                     loadItem();
 
                 } catch (Exception e) {

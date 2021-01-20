@@ -413,6 +413,8 @@ public class PedidoDet extends PBase {
         counter=0;
         try {
 
+            gl.codigo_cliente=gl.emp*10;
+
             db.execSQL("DELETE FROM T_COMBO");
             db.execSQL("DELETE FROM T_VENTA");
 
