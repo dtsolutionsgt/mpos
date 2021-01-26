@@ -299,7 +299,7 @@
                 android:onClick="pago5"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Q5"
+                android:text="5"
                 android:textSize="24sp" />
 
             <TextView
@@ -316,7 +316,7 @@
                 android:onClick="pago10"
                 android:paddingTop="10dp"
                 android:paddingBottom="5dp"
-                android:text="Q10"
+                android:text="10"
                 android:textSize="24sp" />
 
             <TextView
@@ -333,7 +333,7 @@
                 android:onClick="pago50"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Q50"
+                android:text="50"
                 android:textSize="24sp" />
 
             <TextView
@@ -348,7 +348,7 @@
                 android:onClick="pago100"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Q100"
+                android:text="100"
                 android:textSize="24sp" />
 
             <TextView
@@ -365,7 +365,7 @@
                 android:onClick="pago20"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Q20"
+                android:text="20"
                 android:textSize="24sp" />
         </RelativeLayout>
 

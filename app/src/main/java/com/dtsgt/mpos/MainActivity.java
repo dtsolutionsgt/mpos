@@ -58,13 +58,12 @@ public class MainActivity extends PBase {
     private ArrayList<String> spincode=new ArrayList<String>();
     private ArrayList<String> spinlist=new ArrayList<String>();
 
-
     private clsKeybHandler khand;
 
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "3.2.52";
+    private String parVer = "3.2.55";
 
     private Typeface typeface;
 
@@ -857,7 +856,7 @@ public class MainActivity extends PBase {
 
 
         try {
-            String emplogo = Environment.getExternalStorageDirectory() + "/mPosFotos/" + "/mposlogo.png";
+            String emplogo = Environment.getExternalStorageDirectory() + "/mPosFotos/mposlogo.png";
             File file = new File(emplogo);
             if (file.exists()) {
                 Bitmap bmImg = BitmapFactory.decodeFile(emplogo);

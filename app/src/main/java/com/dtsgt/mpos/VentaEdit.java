@@ -131,7 +131,9 @@ public class VentaEdit extends PBase {
         try {
             P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prodid);
 
-            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+P_productoObj.first().codigo+"') AND (UNIDADMEDIDA='"+P_productoObj.first().unidbas+"')";
+            //sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+P_productoObj.first().codigo+"') AND (UNIDADMEDIDA='"+P_productoObj.first().unidbas+"')";
+            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+prodid+"') ";
+
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {

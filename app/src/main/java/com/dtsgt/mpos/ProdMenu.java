@@ -218,8 +218,90 @@ public class ProdMenu extends PBase {
             adapter=new ListAdaptOpcion(this,items);
             listView.setAdapter(adapter);
 
+            llenaPredeterminado();
         } catch (Exception e) {
             mu.msgbox2(e.getMessage());
+        }
+    }
+
+    private void llenaPredeterminado() {
+        clsP_productoObj prod=new clsP_productoObj(this,Con,db);
+        clsP_prodmenuopcdetObj opc=new clsP_prodmenuopcdetObj(this,Con,db);
+        clsClasses.clsOpcion item;
+        int codmo,codpr;
+
+        for (int i = 0; i <items.size(); i++) {
+            codmo=items.get(i).codigo_menu_opcion;
+            opc.fill("WHERE CODIGO_MENU_OPCION="+codmo);
+
+            if (opc.count==1) {
+                codpr=opc.first().codigo_producto;
+                items.get(i).cod=codpr;
+                items.get(i).Name=getProdName(codpr);
+                items.get(i).bandera=1;
+                adapter.notifyDataSetChanged();
+                //validaStock();
+            }
+
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    private void listOptions(String title,int idoption) {
+
+        clsP_productoObj prod=new clsP_productoObj(this,Con,db);
+        clsP_prodmenuopcdetObj opc=new clsP_prodmenuopcdetObj(this,Con,db);
+        clsClasses.clsOpcion item;
+
+        final AlertDialog Dialog;
+        int cod;
+
+        try {
+
+            lcode.clear();lname.clear();
+
+            opc.fill("WHERE CODIGO_MENU_OPCION="+idoption);
+
+            for (int i = 0; i <opc.count; i++) {
+                //#EJC20200524: Buscar aquí los productos de cada menu_opcion.
+                cod=opc.items.get(i).codigo_producto;
+                lcode.add(""+cod);
+                lname.add(getProdName(cod));
+            }
+
+            final String[] selitems = new String[lname.size()];
+
+            for (int i = 0; i < lname.size(); i++) {
+                selitems[i] = lname.get(i);
+            }
+
+            ExDialog mMenuDlg = new ExDialog(this);
+
+            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    try {
+                        items.get(selidx).cod=Integer.parseInt(lcode.get(item));
+                        items.get(selidx).Name=lname.get(item);
+                        items.get(selidx).bandera=1;
+                        adapter.notifyDataSetChanged();
+                        validaStock();
+                    } catch (Exception e) {
+                        toast(e.getMessage());
+                    }
+                }
+            });
+
+            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            Dialog = mMenuDlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -295,63 +377,6 @@ public class ProdMenu extends PBase {
         }
     }
 
-    private void listOptions(String title,int idoption) {
-
-        clsP_productoObj prod=new clsP_productoObj(this,Con,db);
-        clsP_prodmenuopcdetObj opc=new clsP_prodmenuopcdetObj(this,Con,db);
-        clsClasses.clsOpcion item;
-
-        final AlertDialog Dialog;
-        int cod;
-
-        try {
-
-            lcode.clear();lname.clear();
-
-            opc.fill("WHERE CODIGO_MENU_OPCION="+idoption);
-
-            for (int i = 0; i <opc.count; i++) {
-                //#EJC20200524: Buscar aquí los productos de cada menu_opcion.
-                cod=opc.items.get(i).codigo_producto;
-                lcode.add(""+cod);
-                lname.add(getProdName(cod));
-            }
-
-            final String[] selitems = new String[lname.size()];
-
-            for (int i = 0; i < lname.size(); i++) {
-                selitems[i] = lname.get(i);
-            }
-
-            ExDialog mMenuDlg = new ExDialog(this);
-
-            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    try {
-                        items.get(selidx).cod=Integer.parseInt(lcode.get(item));
-                        items.get(selidx).Name=lname.get(item);
-                        items.get(selidx).bandera=1;
-                        adapter.notifyDataSetChanged();
-                        validaStock();
-                    } catch (Exception e) {
-                        toast(e.getMessage());
-                    }
-                }
-            });
-
-            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            Dialog = mMenuDlg.create();
-            Dialog.show();
-
-        } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
     private void deleteItem() {
         try {
             db.beginTransaction();
@@ -372,7 +397,6 @@ public class ProdMenu extends PBase {
             msgbox(e.getMessage());
         }
     }
-
 
     //endregion
 

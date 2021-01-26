@@ -14,7 +14,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="478dp"
         android:clickable="true"
         android:onClick="save"
         android:src="@drawable/icok" />
@@ -232,5 +231,17 @@
         android:inputType="numberDecimal"
         android:textSize="36sp"
         android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/imageView107"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_below="@+id/imgImg4"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="20dp"
+        android:clickable="true"
+        android:onClick="pendiente"
+        android:src="@drawable/pago_pendiente" />
 
 </RelativeLayout>

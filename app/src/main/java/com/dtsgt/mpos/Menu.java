@@ -43,6 +43,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 
@@ -1757,7 +1758,7 @@ public class Menu extends PBase {
             fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
             ff=du.addDays(ff,-3);ff=du.ffecha00(ff);
 
-            sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
+            sql="WHERE (ANULADO=0) AND (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
 
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             D_facturaObj.fill(sql);
@@ -1785,6 +1786,19 @@ public class Menu extends PBase {
                     "En el caso de que una factura supere 4 días sin certificacion la aplicacion no permite vender.\n\n" +
                     "Saludos\nDT Solutions S.A.\n";
 
+            Uri uri=null;
+            try {
+                File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
+                File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
+                FileUtils.copyFile(f1, f2);
+                uri = Uri.fromFile(f2);
+
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+            } catch (IOException e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
@@ -1800,9 +1814,9 @@ public class Menu extends PBase {
             if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
             emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
             startActivity(emailIntent);
-
-
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

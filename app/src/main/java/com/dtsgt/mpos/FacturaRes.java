@@ -911,7 +911,7 @@ public class FacturaRes extends PBase {
 
 				if (esProductoConStock(dt.getString(0))) {
 					//rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
-                    rebajaStockUM(vprod,vumstock,vcant);
+                    rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
 				}
 
 			    dt.moveToNext();counter++;
@@ -1008,7 +1008,7 @@ public class FacturaRes extends PBase {
                     fsitem.umstock=app.umVenta2(prcod);
                     D_facturas.add(fsitem);
 
-                    rebajaStockUM(prcod,fsitem.umstock,fsitem.cant);
+                    rebajaStockUM(prid,fsitem.umstock,fsitem.cant);
 
                     dt.moveToNext();iidd++;
                 }
@@ -1264,14 +1264,17 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-    private void rebajaStockUM(String prid,String umstock,double cantapl) {
+    private void rebajaStockUM(int prid,String umstock,double cantapl) {
         Cursor dt;
         double dispcant,actcant;
 
         try {
 
+            //sql="SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV " +
+            //        "FROM P_STOCK WHERE (CANT>0) AND (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"') ORDER BY CANT";
             sql="SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV " +
-                    "FROM P_STOCK WHERE (CANT>0) AND (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"') ORDER BY CANT";
+                    "FROM P_STOCK WHERE (CANT>0) AND (CODIGO="+prid+") ORDER BY CANT";
+
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()==0) return;
@@ -1279,7 +1282,8 @@ public class FacturaRes extends PBase {
             dispcant=dt.getDouble(0);
             actcant=dispcant-cantapl;
 
-            sql="UPDATE P_STOCK SET CANT="+actcant+",PESO=0 WHERE (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"')";
+            //sql="UPDATE P_STOCK SET CANT="+actcant+",PESO=0 WHERE (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"')";
+            sql="UPDATE P_STOCK SET CANT="+actcant+",PESO=0 WHERE (CODIGO="+prid+") ";
             db.execSQL(sql);
 
             if (dt!=null) dt.close();

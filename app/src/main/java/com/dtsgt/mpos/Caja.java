@@ -8,10 +8,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +25,17 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
 public class Caja extends PBase {
 
     private TextView lblTit, lblMontoIni, lblMontoFin,lblMontoCred;
     private EditText Vendedor, Fecha, MontoIni, MontoFin, MontoCred;
+    private ImageView imgpend;
 
     private clsClasses.clsP_cajacierre itemC;
     private clsClasses.clsP_cajahora itemH;
@@ -54,6 +61,7 @@ public class Caja extends PBase {
         MontoFin = (EditText) findViewById(R.id.editText20);
         MontoCred = (EditText) findViewById(R.id.editText17);
         lblMontoCred = (TextView) findViewById(R.id.textView130);
+        imgpend=findViewById(R.id.imageView107);
 
         Vendedor.setText(gl.vendnom);
         Fecha.setText(du.getActDateStr());
@@ -102,9 +110,12 @@ public class Caja extends PBase {
             MontoIni.setEnabled(false);
             MontoIni.setText(""+gl.fondoCaja);
 
-            if (app.pendientesPago("")>0)  msgbox("Existen facturas pendientes de pago");
+            if (app.pendientesPago("")>0) msgbox("Existen facturas pendientes de pago");
+
             MontoFin.requestFocus();
         }
+
+        validaPendiente();
 
         itemC = clsCls.new clsP_cajacierre();
         itemH = clsCls.new clsP_cajahora();
@@ -122,6 +133,11 @@ public class Caja extends PBase {
 
     public void doExit(View view) {
         msgAskExit("¿Salir?");
+    }
+
+    public void pendiente(View view){
+        browse=1;
+        startActivity(new Intent(this,CajaPagosPend.class));
     }
 
     //endregion
@@ -650,7 +666,7 @@ public class Caja extends PBase {
             ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
             fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
             ff=du.addDays(ff,-1);ff=du.ffecha00(ff);
-            sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
+            sql="WHERE (ANULADO=0) AND (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
 
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             D_facturaObj.fill(sql);
@@ -673,6 +689,19 @@ public class Caja extends PBase {
                     "En el caso de que una factura supere 4 días sin certificacion la aplicacion no permite vender.\n\n" +
                     "Saludos\nDT Solutions S.A.\n";
 
+            Uri uri=null;
+            try {
+                File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
+                File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
+                FileUtils.copyFile(f1, f2);
+                uri = Uri.fromFile(f2);
+
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+            } catch (IOException e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
@@ -688,6 +717,8 @@ public class Caja extends PBase {
             if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
             emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
             startActivity(emailIntent);
 
         } catch (Exception e) {
@@ -700,6 +731,24 @@ public class Caja extends PBase {
         cap=""+(r.nextInt(8) + 1);
         cap+=""+(r.nextInt(8)  + 1);
         cap+=""+(r.nextInt(8)  + 1);
+    }
+
+    private void validaPendiente() {
+        if (app.pendientesPago("")>0) imgpend.setVisibility(View.VISIBLE);else imgpend.setVisibility(View.INVISIBLE);
+    }
+
+    //endregion
+
+    //region Activity Events
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (browse==1) {
+            browse=0;
+            validaPendiente();return;
+        }
     }
 
     //endregion

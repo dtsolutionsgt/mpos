@@ -1145,12 +1145,15 @@ public class clsFELInFile {
         totmonto+=total;
         //totiva+=imp;
 
+        //precuni=precuni+desc;
+
         xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
         xml+="<dte:Cantidad>"+cant+"</dte:Cantidad>";
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";
         xml+="<dte:PrecioUnitario>"+precuni+"</dte:PrecioUnitario>";
         xml+="<dte:Precio>"+total+"</dte:Precio>";
+        //xml+="<dte:Precio>"+precuni+"</dte:Precio>";
         xml+="<dte:Descuento>"+desc+"</dte:Descuento>";
 
         String impbasestr = String.format("%.2f", impbase);

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -56,9 +57,12 @@ import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptVenta;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -3254,7 +3258,7 @@ public class Venta extends PBase {
             fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
             ff=du.addDays(ff,-4);ff=du.ffecha00(ff);
 
-            sql="WHERE (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
+            sql="WHERE (ANULADO=0) AND (FECHA>="+fi+") AND (FECHA<="+ff+") AND (FEELUUID=' ')";
 
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             D_facturaObj.fill(sql);
@@ -3287,6 +3291,19 @@ public class Venta extends PBase {
                     "Por favor comuniquese con el soporte para solucionar el problema.\n" +
                     "Saludos\nDT Solutions S.A.\n";
 
+            Uri uri=null;
+            try {
+                File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
+                File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
+                FileUtils.copyFile(f1, f2);
+                uri = Uri.fromFile(f2);
+
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+            } catch (IOException e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
@@ -3302,6 +3319,8 @@ public class Venta extends PBase {
             if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
             emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
             startActivity(emailIntent);
 
         } catch (Exception e) {
