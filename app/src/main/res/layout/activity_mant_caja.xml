@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/lblCFact52"
-        android:layout_width="151dp"
+        android:layout_width="300dp"
         android:layout_height="38dp"
         android:layout_below="@+id/relativeLayout1"
         android:layout_alignParentStart="true"
@@ -32,7 +32,7 @@
         android:background="@drawable/blue_strip"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
-        android:text="Impresoras :"
+        android:text="Impresoras asignada a la caja :"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#FFFFFF"
         android:textSize="18sp"

@@ -853,8 +853,6 @@ public class MainActivity extends PBase {
 
         app.getURL();
 
-
-
         try {
             String emplogo = Environment.getExternalStorageDirectory() + "/mPosFotos/mposlogo.png";
             File file = new File(emplogo);

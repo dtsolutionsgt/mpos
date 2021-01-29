@@ -245,11 +245,13 @@ public class WSRec extends PBase {
         }
 
         if (gl.recibir_automatico){
-           cmdRecibir.setVisibility(View.INVISIBLE);
-           browse=2;
+            cmdRecibir.setVisibility(View.INVISIBLE);
+            browse=2;
         }else{
             cmdRecibir.setVisibility(View.VISIBLE);
         }
+
+        //if (gl.emp==2) gl.peRest=false;
 
     }
 
