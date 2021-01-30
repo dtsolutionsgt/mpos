@@ -308,6 +308,14 @@ public class FELVerificacion extends PBase {
             factf.nit =factf.nit.replace(".","");
             factf.nit=factf.nit.toUpperCase();
 
+            //#EJC20210130: Una dirección tenía enter... quitar espacios vacíos.
+            factf.direccion = factf.direccion.trim();
+
+            //#EJC20210130: Si la direccion es vacia, enviar ciudad o valor parametrizado por defecto
+            if (factf.direccion.isEmpty()){
+                factf.direccion =muni;
+            }
+
             fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");

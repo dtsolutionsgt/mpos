@@ -719,7 +719,7 @@ public class FacturaRes extends PBase {
                     }
 
                 } catch (Exception e) {
-                    toastlong("Impresion Factura : "+e.getMessage());
+						toastlong("Impresion ||1		|1 "+e.getMessage());
                 }
 
             }

@@ -242,7 +242,7 @@ public class CliPos extends PBase {
 
             gl.gNITCliente ="CF";
             sNombreCliente =txtNom.getText().toString();
-            sDireccionCliente =txtRef.getText().toString();
+            sDireccionCliente =txtRef.getText().toString().trim();
             sCorreoCliente = txtCorreo.getText().toString();
             sTelCliente=txtTel.getText().toString();
 
