@@ -242,6 +242,7 @@ public class CliPos extends PBase {
 
             gl.gNITCliente ="CF";
             sNombreCliente =txtNom.getText().toString();
+            //#EJC20210130: Una dirección tenía enter... quitar espacios vacíos con Trim.
             sDireccionCliente =txtRef.getText().toString().trim();
             sCorreoCliente = txtCorreo.getText().toString();
             sTelCliente=txtTel.getText().toString();
