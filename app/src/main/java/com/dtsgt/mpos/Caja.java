@@ -683,7 +683,7 @@ public class Caja extends PBase {
         String subject,body;
 
         try {
-            subject="Facturas pendientes de certificacion : "+gl.rutanom+" ID : "+gl.codigo_ruta;
+            subject="Facturas pendientes de certificacion : Ruta ID : "+gl.codigo_ruta;
             body="Estimado usuario,\n\nMPos reporta facturas pendientes de certificaciones de mas de un dia.\n" +
                     "Por favor comuniquese con el soporte para solucionar el problema.\n" +
                     "En el caso de que una factura supere 4 días sin certificacion la aplicacion no permite vender.\n\n" +

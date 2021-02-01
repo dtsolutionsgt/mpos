@@ -3285,7 +3285,7 @@ public class Venta extends PBase {
         String subject,body;
 
         try {
-            subject="Bloqueo de venta : "+gl.rutanom+" ID : "+gl.codigo_ruta;
+            subject="Bloqueo de venta : Ruta ID : "+gl.codigo_ruta;
             body="Estimado usuario,\n\nMPos reporta bloqueo de venta por razón de existencia de facturas" +
                     "pendientes de certificaciones de mas de 4 días.\n" +
                     "Por favor comuniquese con el soporte para solucionar el problema.\n" +

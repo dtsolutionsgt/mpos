@@ -29,7 +29,7 @@ import java.util.TimerTask;
 
 public class CliPos extends PBase {
 
-	private EditText txtNIT,txtNom,txtRef, txtCorreo,txtTel;
+	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
 	private TextView lblPed;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
@@ -246,6 +246,7 @@ public class CliPos extends PBase {
             sDireccionCliente =txtRef.getText().toString().trim();
             sCorreoCliente = txtCorreo.getText().toString();
             sTelCliente=txtTel.getText().toString();
+
 
             if (sNombreCliente.isEmpty()) gl.gNombreCliente ="Consumidor final";else gl.gNombreCliente=sNombreCliente;
             if (sDireccionCliente.isEmpty()) gl.gDirCliente ="Ciudad";else gl.gDirCliente=sDireccionCliente;
