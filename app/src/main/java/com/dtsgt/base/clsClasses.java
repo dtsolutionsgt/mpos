@@ -979,6 +979,12 @@ public class clsClasses {
         public String correo;
     }
 
+    public class clsT_orden_nota {
+        public int  id;
+        public String corel;
+        public String nota;
+    }
+
     public class clsT_venta {
         public String producto;
         public String empresa;

@@ -25,7 +25,6 @@ public class clsVendedoresObj {
                                "SUBBODEGA, ACTIVO FROM Vendedores ORDER BY NOMBRE";
 
 
-
     private String sql;
     public ArrayList<clsClasses.clsVendedores> items= new ArrayList<clsClasses.clsVendedores>();
 

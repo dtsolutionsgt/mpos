@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_ordenObj;
+import com.dtsgt.classes.clsT_orden_notaObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsViewObj;
@@ -93,6 +94,7 @@ public class Orden extends PBase {
     private clsP_productoObj P_productoObj;
     private clsP_linea_impresoraObj P_linea_impresoraObj;
     private clsT_comandaObj T_comandaObj;
+    private clsT_orden_notaObj T_orden_notaObj;
 
     private clsRepBuilder rep;
 
@@ -122,6 +124,7 @@ public class Orden extends PBase {
 
         P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
         T_comandaObj=new clsT_comandaObj(this,Con,db);
+        T_orden_notaObj=new clsT_orden_notaObj(this,Con,db);
         P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
         P_nivelprecioObj.fill("ORDER BY Nombre");
 
@@ -1367,7 +1370,7 @@ public class Orden extends PBase {
         clsClasses.clsT_orden venta;
         clsClasses.clsT_ordencombo combo;
 
-        String prname,cname;
+        String prname,cname,nn;
         int prodid,prid,linea=1;
 
         try {
@@ -1389,14 +1392,24 @@ public class Orden extends PBase {
                 prname=getProd(prodid);
                 s = mu.frmdecno(venta.cant) + " x " + prname;
 
+                nn="";
+                T_orden_notaObj.fill("WHERE (id="+venta.id+") AND (corel='"+idorden+"')");
+                if (T_orden_notaObj.count>0) nn=T_orden_notaObj.first().nota+"";
+
+
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
+
                     P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
                     for (int k = 0; k <P_linea_impresoraObj.count; k++) {
                         prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
                         agregaComanda(linea,prid,s);linea++;
+                        if (!nn.isEmpty()) {
+                            agregaComanda(linea,prid,nn);linea++;
+                        }
                     }
 
                 } else {
+
                     T_comboObj.fill("WHERE IdCombo=" + venta.val4);
                     cname=s;
 
@@ -1409,9 +1422,13 @@ public class Orden extends PBase {
                             prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
                             agregaComanda(linea,prid,cname);linea++;
                             agregaComanda(linea,prid,s);linea++;
+                            if (!nn.isEmpty()) {
+                                agregaComanda(linea,prid,nn);linea++;
+                            }
                         }
                     }
                 }
+
             }
             return true;
         } catch (Exception e) {
@@ -2262,7 +2279,7 @@ public class Orden extends PBase {
 
     private void showItemPopMenu() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Modificar","Cambiar cuenta","Borrar","Dividir"};
+        final String[] selitems = {"Modificar","Nota","Cambiar cuenta","Borrar","Dividir"};
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Articulo del orden");
@@ -2278,10 +2295,12 @@ public class Orden extends PBase {
                         }
                         break;
                     case 1:
-                        showMenuCuenta();break;
+                        inputNota();break;
                     case 2:
-                        msgAskDel("Está seguro de borrar");break;
+                        showMenuCuenta();break;
                     case 3:
+                        msgAskDel("Está seguro de borrar");break;
+                    case 4:
                         if (selitem.Cant>1) {
                             msgAskDividir("Dividir articulo");
                         } else {
@@ -2423,6 +2442,56 @@ public class Orden extends PBase {
 
     }
 
+    private void inputNota() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        String nn="";
+
+        try {
+            T_orden_notaObj.fill("WHERE (id="+gl.produid+") AND (corel='"+idorden+"')");
+            if (T_orden_notaObj.count>0) nn=T_orden_notaObj.first().nota+"";
+        } catch (Exception e) {
+            nn="";
+        }
+
+        alert.setTitle("Nota");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setText(""+nn);
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    aplicaNota(s);
+                } catch (Exception e) {
+                    mu.msgbox("Error : "+e.getMessage());return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
+    private void aplicaNota(String nn) {
+        clsClasses.clsT_orden_nota nota = clsCls.new clsT_orden_nota();
+
+        try {
+            nota.id=gl.produid;
+            nota.corel=idorden;
+            nota.nota=nn+"";
+            T_orden_notaObj.add(nota);
+        } catch (Exception e) {
+            T_orden_notaObj.update(nota);
+        }
+    }
+
     private void inputMesa() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
@@ -2518,6 +2587,7 @@ public class Orden extends PBase {
             P_productoObj.reconnect(Con,db);
             P_linea_impresoraObj.reconnect(Con,db);
             T_comandaObj.reconnect(Con,db);
+            T_orden_notaObj.reconnect(Con,db);
 
             try {
                 P_nivelprecioObj.reconnect(Con,db);

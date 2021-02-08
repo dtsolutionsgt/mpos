@@ -237,6 +237,19 @@ public class BaseDatosVersion {
         }
 
         try {
+            sql="CREATE TABLE [T_orden_nota] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID],[COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_orden_nota_idx1 ON T_orden_nota(COREL)";db.execSQL(sql);
+        } catch (Exception e) {}
+
+
+        try {
             sql="CREATE TABLE [T_FACTURA_FEL] ("+
                     "COREL TEXT NOT NULL,"+
                     "FEELSERIE TEXT NOT NULL,"+

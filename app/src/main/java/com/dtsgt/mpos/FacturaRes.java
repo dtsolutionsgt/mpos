@@ -968,7 +968,8 @@ public class FacturaRes extends PBase {
 			ins.add("DIRECCION",gl.gDirCliente);
 
 			if (gl.gNITCliente.equalsIgnoreCase("CF")) {
-                ins.add("CORREO",gl.gTelCliente);
+                //ins.add("CORREO",gl.gTelCliente);
+                ins.add("CORREO"," ");
             } else {
                 ins.add("CORREO",gl.gCorreoCliente);
             }
@@ -1130,7 +1131,6 @@ public class FacturaRes extends PBase {
             if (dt!=null) dt.close();
 
         } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             db.endTransaction();
             mu.msgbox("Error (factura) " + e.getMessage());return false;
         }

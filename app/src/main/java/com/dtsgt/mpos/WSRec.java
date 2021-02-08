@@ -405,7 +405,9 @@ public class WSRec extends PBase {
                     case 41:
                         if (gl.peRest) {
                             callMethod("GetP_IMPRESORA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        } else callEmptyMethod();
+                        } else {
+                            callEmptyMethod();
+                        }
                         break;
                     case 42:
                         if (gl.peRest) {
