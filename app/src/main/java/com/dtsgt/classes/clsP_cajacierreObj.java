@@ -105,6 +105,7 @@ public class clsP_cajacierreObj {
 
         upd.init("P_cajacierre");
 
+        upd.add("CODPAGO",item.codpago);
         upd.add("ESTADO",item.estado);
         upd.add("FECHA",item.fecha);
         upd.add("VENDEDOR",item.vendedor);
@@ -118,7 +119,7 @@ public class clsP_cajacierreObj {
         //upd.Where("(SUCURSAL='"+item.sucursal+"') AND (RUTA='"+item.ruta+"') AND (COREL="+item.corel+") AND (CODPAGO="+item.codpago+")");
         upd.Where("(CODIGO_CAJACIERRE='"+item.codigo_cajacierre+"')");
 
-         db.execSQL(upd.sql());
+        db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 

@@ -654,7 +654,7 @@ public class CierreX extends PBase {
             sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0 " +
                     "FROM P_CAJACIERRE C " +
                     "INNER JOIN P_MEDIAPAGO M ON C.CODPAGO = M.CODIGO " +
-                    "WHERE C.COREL = "+ gl.corelZ +
+                    "WHERE C.COREL = "+ gl.corelZ +" " +
                     " GROUP BY M.CODIGO";
 
             dt = Con.OpenDT(sql);
@@ -796,6 +796,7 @@ public class CierreX extends PBase {
             numero="";
             serie="";
             ruta=gl.ruta;
+            codigo_ruta=""+gl.codigo_ruta;
             vendedor=gl.vendnom;
             cliente="";
             vendcod=gl.vend;

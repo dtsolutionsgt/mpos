@@ -123,6 +123,7 @@ public class WSEnv extends PBase {
     public void doStart(View view) {
         preparaEnvio();
         pbar.setVisibility(View.VISIBLE);
+        lbl3.setVisibility(View.INVISIBLE);
         execws(1);
     }
 
@@ -299,6 +300,8 @@ public class WSEnv extends PBase {
     private void processComplete() {
         try{
             pbar.setVisibility(View.INVISIBLE);
+            //lbl3.setVisibility(View.VISIBLE);
+
             plabel = "";
             updateLabel();
 

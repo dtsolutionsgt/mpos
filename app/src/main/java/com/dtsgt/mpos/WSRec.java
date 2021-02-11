@@ -1016,9 +1016,10 @@ public class WSRec extends PBase {
 
         script.clear();
 
-        pbar.setVisibility(View.VISIBLE);
-
         if (!validaDatos()) return;
+
+        cmdRecibir.setVisibility(View.INVISIBLE);
+        pbar.setVisibility(View.VISIBLE);
 
         gl.emp=Integer.valueOf(txtEmpresa.getText().toString());
         gl.clave=txtClave.getText().toString();

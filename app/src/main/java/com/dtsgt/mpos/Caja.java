@@ -169,15 +169,12 @@ public class Caja extends PBase {
             app.logoutUser(du.getActDateTime());
 
             if(gl.cajaid==1 && !MontoIni.getText().toString().trim().isEmpty()){
-
                 fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
-
                 if(fondoCaja>0){
                     saveMontoIni();
-                }else{
+                } else {
                     msgbox("El monto inicial debe ser mayor a 0");
                 }
-
             } else if(gl.cajaid==3 && !MontoFin.getText().toString().trim().isEmpty()){
                 montoFin = Double.parseDouble(MontoFin.getText().toString().trim());
 
@@ -199,38 +196,20 @@ public class Caja extends PBase {
                         if(acc==1){
                             msgboxValidaMonto("El monto de efectivo no cuadra");
                             //acc=0;
-                        }else {
-                            saveMontoIni();
-                        }
-
-                    }else {
-
+                        } else saveMontoIni();
+                    } else {
                         if(cred==1){
-
                             if(montoDifCred!=0){
                                 if(acc==1){
                                     msgboxValidaMonto("El monto de crédito no cuadra,");
                                     //acc=0;
-                                } else {
-                                    saveMontoIni();
-                                }
-                            }else {
-                                saveMontoIni();
-                            }
-                        }else {
-                            saveMontoIni();
-                        }
-                    }
-
-                }else if(montoFin<0){
-                    msgbox("El monto final no puede ser menor a 0");
-                }
-
-            }else {
-                msgbox("El monto no puede ir vacío");
-            }
-
-        }catch (Exception e){
+                                } else saveMontoIni();
+                           } else saveMontoIni();
+                        } else saveMontoIni();
+                     }
+                } else if(montoFin<0) msgbox("El monto final no puede ser menor a 0");
+            } else msgbox("El monto no puede ir vacío");
+        }  catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("Error al guardar el inicio de caja: "+e);return;
         }
@@ -250,13 +229,6 @@ public class Caja extends PBase {
                 caja.fill(" WHERE ESTADO = 0");
                 fondoCaja = caja.last().fondocaja;
             }
-
-            /*
-            sql="SELECT P.CODPAGO, SUM(P.VALOR) FROM D_FACTURAP P " +
-                    "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                    "WHERE F.KILOMETRAJE=0 AND P.CODPAGO=1 " +
-                    "GROUP BY P.CODPAGO";
-             */
 
             sql="SELECT P.CODPAGO, SUM(P.VALOR) FROM D_FACTURAP P " +
                 "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
@@ -408,9 +380,10 @@ public class Caja extends PBase {
                             itemC.montodif = montoFin-montoIni;
                             //itemC.codpago=1;
 
-                            sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
-                            db.execSQL(sql);
+                            //sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
+                            //db.execSQL(sql);
 
+                            if (itemC.codpago==0) itemC.codpago=7;
                             caja.update(itemC);
                         }
 
@@ -442,8 +415,9 @@ public class Caja extends PBase {
                             dt2.moveToFirst();
                             codpago=dt2.getInt(0);
                         }
-
                         dt2.close();
+                    } else {
+                        codpago=7;
                     }
 
                     itemC.codpago=codpago;
@@ -454,27 +428,15 @@ public class Caja extends PBase {
                     itemC.montofin = montoFin;
                     itemC.montodif = montoFin-montoIni;
 
-                    sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
-                    db.execSQL(sql);
+                    //sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
+                    //db.execSQL(sql);
 
+                    if (itemC.codpago==0) itemC.codpago=7;
                     caja.update(itemC);
                 }
 
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
                 db.execSQL(sql);
-
-                /*
-                try {
-                    sql="SELECT COREL FROM D_FACTURA WHERE KILOMETRAJE = 0";
-                    dt3=Con.OpenDT(sql);
-                    if (dt3.getCount()>0) toastlong("Ocurrio inconsistencia en cierre del dia, informe el soporte.");
-                } catch (Exception e) {
-                    toastlong("saveMontoIni : "+e.getMessage());
-                }
-                */
-
-                //sql="UPDATE D_DEPOS SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
-                //db.execSQL(sql);
 
                 sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
                 db.execSQL(sql);
@@ -495,12 +457,11 @@ public class Caja extends PBase {
                 };
                 mtimer.postDelayed(mrunner,200);
 
-
                 super.finish();
             }
 
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e){
+            toastlong("Error saveMontoIni: "+e);
             msgbox("Error saveMontoIni: "+e);return;
         }
     }

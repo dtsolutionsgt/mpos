@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class clsDocument {
 
-	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor;
+	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor,codigo_ruta;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta;
@@ -810,7 +810,7 @@ public class clsDocument {
 		
 		try {
 
-			sql = "SELECT SUCURSAL FROM P_RUTA WHERE CODIGO_RUTA="+ruta;
+			sql = "SELECT SUCURSAL FROM P_RUTA WHERE CODIGO_RUTA="+codigo_ruta;//+ruta;
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
 			sucur = DT.getString(0);

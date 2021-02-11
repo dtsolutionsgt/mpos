@@ -50,7 +50,7 @@ public class clsDocFactura extends clsDocument {
 
 				serie=DT.getString(0);
 				numero=""+DT.getInt(1);
-				ruta=DT.getString(2);
+				ruta=DT.getString(2);codigo_ruta=ruta;
 
 				vend=DT.getString(3);
 				cli=DT.getString(4);
