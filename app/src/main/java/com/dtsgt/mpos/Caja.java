@@ -444,8 +444,8 @@ public class Caja extends PBase {
                 db.execSQL(sql);
 
                 Cursor dtk=Con.OpenDT("SELECT KILOMETRAJE FROM D_FACTURA WHERE KILOMETRAJE=0");
-                if (dtk.getCount()==0) {
-                    setAddlog("saveMontoIni", "gKILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
+                if (dtk.getCount()>0) {
+                    setAddlog("saveMontoIni", "KILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
                     msgbox("NO se puede realizar fin del dia. Existen facturas sin codigo de cierre. Por favor, informe soporte.");
                     return;
                 }
