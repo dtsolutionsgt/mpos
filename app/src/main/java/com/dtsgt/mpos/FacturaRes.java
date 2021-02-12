@@ -1581,7 +1581,7 @@ public class FacturaRes extends PBase {
             if (DT!=null) DT.close();
 
             if (fcorel-cult>1) {
-                if (cult>0) msgAskSend("Encortramos un inconveniente, por favor envie el siguiente correo al soporte.");
+                if (cult>0) msgAskSend("Encontramos un inconveniente en los correlativos, por favor envie el siguiente correo al soporte.");
             }
 
         } catch (Exception e) {

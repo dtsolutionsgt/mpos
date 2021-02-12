@@ -224,7 +224,6 @@ public class Caja extends PBase {
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
 
-
             if(gl.cajaid==3){
                 caja.fill(" WHERE ESTADO = 0");
                 fondoCaja = caja.last().fondocaja;
@@ -435,11 +434,24 @@ public class Caja extends PBase {
                     caja.update(itemC);
                 }
 
+                if (gl.corelZ==0) {
+                    setAddlog("saveMontoIni", "gl.corelZ=0 antes de UPDATE", "");
+                    msgbox("NO se puede realizar fin del dia. Correlativo =0. Por favor, informe soporte.");
+                    return;
+                }
+
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
                 db.execSQL(sql);
 
-                sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
-                db.execSQL(sql);
+                Cursor dtk=Con.OpenDT("SELECT KILOMETRAJE FROM D_FACTURA WHERE KILOMETRAJE=0");
+                if (dtk.getCount()==0) {
+                    setAddlog("saveMontoIni", "gKILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
+                    msgbox("NO se puede realizar fin del dia. Existen facturas sin codigo de cierre. Por favor, informe soporte.");
+                    return;
+                }
+
+                //sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
+                //db.execSQL(sql);
 
                 Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();
 
@@ -461,8 +473,9 @@ public class Caja extends PBase {
             }
 
         } catch (Exception e){
-            toastlong("Error saveMontoIni: "+e);
-            msgbox("Error saveMontoIni: "+e);return;
+            setAddlog("Error saveMontoIni", e.getMessage(), "");
+            toastlong("Error saveMontoIni: "+e.getMessage());
+            msgbox("Error saveMontoIni: "+e.getMessage());return;
         }
     }
 
