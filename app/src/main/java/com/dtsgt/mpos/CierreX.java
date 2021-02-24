@@ -133,7 +133,7 @@ public class CierreX extends PBase {
 
             doc.horaini=du.sfecha(cfi)+" "+du.shora(cfi);
 
-            stampstr="Generado : "+du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime());
+            stampstr="Generado : "+du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime())+" ("+gl.corelZ+")";
 
             if (!report) {
 
@@ -649,19 +649,19 @@ public class CierreX extends PBase {
 
     private void reporteZ(){
         Cursor dt;
+        String ss;
 
         try{
-            sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0 " +
+            sql="SELECT M.CODIGO, M.NOMBRE, C.FONDOCAJA, 0, 0, C.MONTOINI, C.MONTOFIN, C.MONTODIF, 0,C.COREL " +
                     "FROM P_CAJACIERRE C " +
                     "INNER JOIN P_MEDIAPAGO M ON C.CODPAGO = M.CODIGO " +
                     "WHERE C.COREL = "+ gl.corelZ +" " +
-                    " GROUP BY M.CODIGO";
+                    "GROUP BY M.CODIGO";
 
             dt = Con.OpenDT(sql);
+            if(dt==null) msgbox("Ocurrió un error en reporte Z, vuelva a intentarlo");
 
-            if(dt==null) {
-                msgbox("Ocurrió un error en reporte Z, vuelva a intentarlo");
-            }
+            writeCorelLog(201,dt.getCount(),sql);
 
             itemRZ.clear();
 
@@ -669,6 +669,9 @@ public class CierreX extends PBase {
                 dt.moveToFirst();
 
                 Fondo = dt.getDouble(2);
+
+                ss="Fon:"+dt.getDouble(2)+",ini:"+dt.getDouble(5)+",fin:"+dt.getDouble(6)+",dif:"+dt.getDouble(7);
+                writeCorelLog(202,dt.getInt(9),ss);
 
                 while(!dt.isAfterLast()){
 
@@ -690,11 +693,14 @@ public class CierreX extends PBase {
                 }
 
 
-            }else if(dt.getCount()==0){
+            } else if(dt.getCount()==0) {
 
                 itemZ = clsCls.new clsBonifProd();
 
                 Fondo = gl.fondoCaja;
+
+                ss="Fon:"+Fondo+",ini:"+dt.getDouble(5)+",fin:"+dt.getDouble(6)+",dif:"+dt.getDouble(7);
+                writeCorelLog(203,dt.getInt(9),ss);
 
                 itemZ.id="";
                 itemZ.nombre="Fondo de Caja";
@@ -1488,7 +1494,7 @@ public class CierreX extends PBase {
 
     //endregion
 
-    //region AUX
+    //region Aux
 
     private void msgAskExit(String msg) {
         ExDialog dialog = new ExDialog(this);
@@ -1506,6 +1512,15 @@ public class CierreX extends PBase {
 
         dialog.show();
 
+    }
+
+    private void writeCorelLog(int id,int corel,String text) {
+        String ss;
+        try {
+            ss="INSERT INTO T_BARRA_BONIF VALUES ('"+du.getActDateTime()+"','"+id+"',"+corel+",0,0,'"+text+"')";
+            db.execSQL(ss);
+        } catch (Exception e) {
+        }
     }
 
     //endregion

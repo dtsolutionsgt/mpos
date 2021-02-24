@@ -22,16 +22,22 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class AppMethods {
 
@@ -1225,6 +1231,15 @@ public class AppMethods {
         }
     }
 
+    public void print3nstarw() {
+        try {
+            Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nsw");
+            cont.startActivity(intent);
+        } catch (Exception e) {
+            toastlong("El controlador de 3nStar LAN  no está instalado");
+        }
+    }
+
     private void HPEngageUSB(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
@@ -1279,7 +1294,6 @@ public class AppMethods {
         }
 
     }
-
 
     public boolean impresora() {
         loadPrintConfig();
@@ -1591,6 +1605,35 @@ public class AppMethods {
 		return activo;
 
 	}
+
+    public void zip(String file, String zipFile) throws IOException {
+        BufferedInputStream origin = null;
+        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
+        int BUFFER_SIZE = 6 * 1024;
+
+        try {
+            String[] files = new String[1];files[0]=file;
+
+            byte data[] = new byte[BUFFER_SIZE];
+
+            for (int i = 0; i < files.length; i++) {
+                FileInputStream fi = new FileInputStream(files[i]);
+                origin = new BufferedInputStream(fi, BUFFER_SIZE);
+                try {
+                    ZipEntry entry = new ZipEntry(files[i].substring(files[i].lastIndexOf("/") + 1));
+                    out.putNextEntry(entry);
+                    int count;
+                    while ((count = origin.read(data, 0, BUFFER_SIZE)) != -1) {
+                        out.write(data, 0, count);
+                    }
+                } finally {
+                    origin.close();
+                }
+            }
+        } finally {
+            out.close();
+        }
+    }
 
     //endregion
 

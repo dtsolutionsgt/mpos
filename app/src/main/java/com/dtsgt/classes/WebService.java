@@ -112,7 +112,7 @@ public class WebService {
 
            //#EJC20200702:Capturar excepcion de SQL (No se sabe el error pero sabemos que no se proceso)
            if (responsecode==500) {
-               //este error tira tambien cuando la consulta no regresa ninguno registro, por eso lo deshabilite
+               //JP 20210201 Este error tira tambien cuando la consulta no regresa ninguno registro, por eso lo deshabilite
                /*
                throw new Exception("Error 500: Esto es poco usual pero algún problema ocurrió del lado del motor de BD al ejecutar sentencia SQL: \n" +
                        "\n[" +methodName+"] , "+ args[1].toString());

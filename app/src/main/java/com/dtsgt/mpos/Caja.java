@@ -40,7 +40,7 @@ public class Caja extends PBase {
     private clsClasses.clsP_cajacierre itemC;
     private clsClasses.clsP_cajahora itemH;
 
-    private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoDifCred=0, montoCred=0;
+    private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoDifCred=0, montoCred=0,venta_total;
     private String cap;
     private int acc=1,msgAcc=0,cred=0;
 
@@ -177,6 +177,7 @@ public class Caja extends PBase {
                 }
             } else if(gl.cajaid==3 && !MontoFin.getText().toString().trim().isEmpty()){
                 montoFin = Double.parseDouble(MontoFin.getText().toString().trim());
+                gl.monto_final_ingresado=montoFin;
 
                 if(montoFin>=0){
 
@@ -189,8 +190,11 @@ public class Caja extends PBase {
                     }
 
                     fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
-
                     montoDif();
+
+                    if (venta_total>0 && montoFin==fondoCaja) {
+
+                    }
 
                     if(montoDif!=0){
                         if(acc==1){
@@ -229,6 +233,8 @@ public class Caja extends PBase {
                 fondoCaja = caja.last().fondocaja;
             }
 
+            venta_total=-1;
+
             sql="SELECT P.CODPAGO, SUM(P.VALOR) FROM D_FACTURAP P " +
                 "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                 "WHERE F.KILOMETRAJE=0 AND P.TIPO='E' AND F.ANULADO=0 GROUP BY P.TIPO";
@@ -236,10 +242,14 @@ public class Caja extends PBase {
             dt=Con.OpenDT(sql);
 
             if(dt==null) throw new Exception();
+
+            venta_total=0;
+
             if(dt.getCount()==0) {
                 tot=fondoCaja;
             } else {
                 double vval=dt.getDouble(1);
+                venta_total=vval;
                 tot = fondoCaja+vval;
             }
             if(dt!=null) dt.close();
@@ -259,6 +269,8 @@ public class Caja extends PBase {
                     totCred = dt.getDouble(1);
                 }
                 if(dt!=null) dt.close();
+
+                venta_total+=totCred;
 
                 montoDifCred = montoCred - totCred;
             }
@@ -292,6 +304,8 @@ public class Caja extends PBase {
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
             clsP_cajahoraObj cajah = new clsP_cajahoraObj(this,Con,db);
 
+            writeCorelLog(1,gl.corelZ,"");
+
             if (gl.cajaid==1) {
 
                 caja.fill();
@@ -308,13 +322,23 @@ public class Caja extends PBase {
                     itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
                 }
 
+                writeCorelLog(2,gl.corelZ,"");
+
             } else if (gl.cajaid==3){
+
+                writeCorelLog(3,gl.corelZ,"");
+
                 caja.fill(" WHERE ESTADO = 0");
                 gl.corelZ = caja.last().corel;
+
+                writeCorelLog(4,gl.corelZ,"");
+
                 fecha = caja.last().fecha;
                 fondoCaja = caja.last().fondocaja;
                 itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
             }
+
+            writeCorelLog(5,gl.corelZ,"");
 
             itemC.empresa=gl.emp;
             itemC.sucursal =  gl.tienda;
@@ -326,6 +350,8 @@ public class Caja extends PBase {
 
             if(gl.cajaid==1){
 
+                writeCorelLog(6,gl.corelZ,"");
+
                 itemC.fecha = (int) du.getFechaActual();
 
                 itemC.estado = 0;
@@ -336,10 +362,14 @@ public class Caja extends PBase {
 
                 caja.add(itemC);
 
-                itemH.corel= gl.corelZ;
-                itemH.fechaini=du.getActDateTime();
-                itemH.fechafin=0;
-                cajah.add(itemH);
+                try {
+                    itemH.corel= itemC.corel;
+                    itemH.fechaini=du.getActDateTime();
+                    itemH.fechafin=0;
+                    cajah.add(itemH);
+                } catch (Exception e) {
+                    msgbox("Error saveMontoIni: "+e.getMessage());
+                }
 
                 msgAcc=1;
 
@@ -348,6 +378,8 @@ public class Caja extends PBase {
                 msgAskExit("Inicio de caja correcto");
 
             } else if(gl.cajaid==3) {
+
+                writeCorelLog(7,gl.corelZ,"");
 
                 //#CKFK 20200711 Agregué la condicion de que sume las que no están anuladas AND F.ANULADO = 0
                 sql="SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +
@@ -406,6 +438,8 @@ public class Caja extends PBase {
 
                 } else if(dt.getCount()==0){
 
+                    writeCorelLog(8,gl.corelZ,"");
+
                     sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 1";
                     dt2=Con.OpenDT(sql);
 
@@ -434,8 +468,11 @@ public class Caja extends PBase {
                     caja.update(itemC);
                 }
 
+                writeCorelLog(9,gl.corelZ,"");
+
                 if (gl.corelZ==0) {
                     setAddlog("saveMontoIni", "gl.corelZ=0 antes de UPDATE", "");
+                    writeCorelLog(10,gl.corelZ,"gl.corelZ=0");
                     msgbox("NO se puede realizar fin del dia. Correlativo =0. Por favor, informe soporte.");
                     return;
                 }
@@ -443,12 +480,17 @@ public class Caja extends PBase {
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
                 db.execSQL(sql);
 
+                writeCorelLog(10,gl.corelZ,sql);
+
                 Cursor dtk=Con.OpenDT("SELECT KILOMETRAJE FROM D_FACTURA WHERE KILOMETRAJE=0");
                 if (dtk.getCount()>0) {
+                    writeCorelLog(11,gl.corelZ,"KILOMETRAJE=0 DESPUES de UPDATE");
                     setAddlog("saveMontoIni", "KILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
                     msgbox("NO se puede realizar fin del dia. Existen facturas sin codigo de cierre. Por favor, informe soporte.");
                     return;
                 }
+
+                writeCorelLog(12,gl.corelZ,"");
 
                 //sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
                 //db.execSQL(sql);
@@ -655,6 +697,7 @@ public class Caja extends PBase {
 
     private void enviaAvizo() {
         String subject,body;
+        String dir=Environment.getExternalStorageDirectory()+"";
 
         try {
             subject="Facturas pendientes de certificacion : Ruta ID : "+gl.codigo_ruta;
@@ -665,10 +708,14 @@ public class Caja extends PBase {
 
             Uri uri=null;
             try {
-                File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
-                File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
+                File f1 = new File(dir + "/posdts.db");
+                File f2 = new File(dir + "/posdts_"+gl.codigo_ruta+".db");
+                File f3 = new File(dir + "/posdts_"+gl.codigo_ruta+".zip");
                 FileUtils.copyFile(f1, f2);
-                uri = Uri.fromFile(f2);
+                uri = Uri.fromFile(f3);
+
+                app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
+
 
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());
@@ -709,6 +756,15 @@ public class Caja extends PBase {
 
     private void validaPendiente() {
         if (app.pendientesPago("")>0) imgpend.setVisibility(View.VISIBLE);else imgpend.setVisibility(View.INVISIBLE);
+    }
+
+    private void writeCorelLog(int id,int corel,String text) {
+        String ss;
+        try {
+            ss="INSERT INTO T_BARRA_BONIF VALUES ('"+du.getActDateTime()+"','"+id+"',"+corel+",0,0,'"+text+"')";
+            db.execSQL(ss);
+        } catch (Exception e) {
+        }
     }
 
     //endregion

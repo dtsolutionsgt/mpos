@@ -1103,6 +1103,8 @@ public class clsFELInFile {
         if (pCorreo.isEmpty())  pCorreo = correo_sucursal;
         if (pCorreo.length()<8) pCorreo = correo_sucursal;
 
+        if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
+
         xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
         xml+="<dte:DireccionReceptor>";
         xml+="<dte:Direccion>"+pDireccionCliente+"</dte:Direccion>";

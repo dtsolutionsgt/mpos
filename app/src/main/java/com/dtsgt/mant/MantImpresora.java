@@ -41,6 +41,7 @@ public class MantImpresora extends PBase {
     //"SIN IMPRESORA";
     //"EPSON TM BlueTooth";
     //"HP Engage USB"
+    //"3nStar LAN"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,6 +231,7 @@ public class MantImpresora extends PBase {
             spinlist.add("SIN IMPRESORA");
             spinlist.add("EPSON TM BlueTooth");
             spinlist.add("HP Engage USB");
+            spinlist.add("3nStar LAN");
 
             for (int i = 0; i <spinlist.size(); i++) {
                 if (spinlist.get(i).equalsIgnoreCase(selid)) selidx=i;

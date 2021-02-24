@@ -211,9 +211,7 @@ public class MiscUtils {
             dialog.setCancelable(false);
 
             dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    //Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
-                }
+                public void onClick(DialogInterface dialog, int which) {}
             });
             dialog.show();
 

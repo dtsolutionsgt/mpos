@@ -2755,8 +2755,8 @@ public class Venta extends PBase {
             sql="DELETE FROM T_BARRA";
             db.execSQL(sql);
 
-            sql="DELETE FROM T_BARRA_BONIF";
-            db.execSQL(sql);
+            //sql="DELETE FROM T_BARRA_BONIF";
+            //db.execSQL(sql);
 
             sql="DELETE FROM T_BONIFFALT";
             db.execSQL(sql);
@@ -3283,6 +3283,7 @@ public class Venta extends PBase {
 
     private void enviaAvizo() {
         String subject,body;
+        String dir=Environment.getExternalStorageDirectory()+"";
 
         try {
             subject="Bloqueo de venta : Ruta ID : "+gl.codigo_ruta;
@@ -3293,10 +3294,13 @@ public class Venta extends PBase {
 
             Uri uri=null;
             try {
-                File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
-                File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
+                File f1 = new File(dir + "/posdts.db");
+                File f2 = new File(dir + "/posdts_"+gl.codigo_ruta+".db");
+                File f3 = new File(dir + "/posdts_"+gl.codigo_ruta+".zip");
                 FileUtils.copyFile(f1, f2);
-                uri = Uri.fromFile(f2);
+                uri = Uri.fromFile(f3);
+
+                app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
 
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());

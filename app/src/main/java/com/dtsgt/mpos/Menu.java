@@ -282,7 +282,7 @@ public class Menu extends PBase {
                     gl.InvCompSend=false;
                     gl.ventalock=false;
 
-					if (valida()) {
+                    if (valida()) {
 
 					    gl.nivel_sucursal=app.nivelSucursal();gl.cliente="C.F.";
 						gl.gNombreCliente ="Consumidor final";
@@ -298,7 +298,10 @@ public class Menu extends PBase {
                             msgAskImpresora();
                         }
 					} else {
-						if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
+
+                        writeCorelLog(103,gl.cajaid,"showMenuItem gl.cajaid");
+
+                        if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
 						//msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
 						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
 						if (gl.cierreDiario){
@@ -897,12 +900,16 @@ public class Menu extends PBase {
 
     private void sendDB() {
         String subject,body;
+        String dir=Environment.getExternalStorageDirectory()+"";
 
         try {
-            File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
-            File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
+            File f1 = new File(dir + "/posdts.db");
+            File f2 = new File(dir + "/posdts_"+gl.codigo_ruta+".db");
+            File f3 = new File(dir + "/posdts_"+gl.codigo_ruta+".zip");
             FileUtils.copyFile(f1, f2);
-            Uri uri = Uri.fromFile(f2);
+            Uri uri = Uri.fromFile(f3);
+
+            app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
 
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
@@ -930,6 +937,7 @@ public class Menu extends PBase {
             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
             startActivity(emailIntent);
             */
+
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1410,14 +1418,10 @@ public class Menu extends PBase {
 					if(valida()){
 
 						if(gl.cajaid!=2){
-
 							gl.inicio_caja_correcto =false;
-
 							browse=1;
-
 							startActivity(new Intent(Menu.this,Caja.class));
-
-						}else {
+						} else {
 							startActivity(new Intent(Menu.this,CajaPagos.class));
 						}
 
@@ -1475,69 +1479,51 @@ public class Menu extends PBase {
 
 	public boolean valida(){
 		try {
-
 			clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
 			caja.fill();
 
-			if (gl.cajaid==1 || gl.cajaid==2){
+            writeCorelLog(101,gl.cajaid,"valida gl.cajaid");
 
+			if (gl.cajaid==1 || gl.cajaid==2){
 				if(gl.cajaid==1){
 					if(caja.count==0) return true;
-
-					if(caja.last().estado==0){
-						return false;  //JP20200618 cambie valor a true, porque no dejaba hacer segundo inicio caja en mismo dia
-                        //return true;
-					}
+					if(caja.last().estado==0) {
+                        writeCorelLog(106,gl.cajaid,"valida caja.last().estado==0");
+					    return false;
+                    }
 				}
-
 				if(gl.cajaid==2){
-					if(caja.count==0) return false;
-					if(caja.last().estado==0){
-						return true;
-					}
-				}
-
-			} else if (gl.cajaid==3 || gl.cajaid==5){
-
-				if(caja.count==0) {
-					if (gl.cajaid==3) gl.cajaid=0;
-					return false;
-				}
-
-				if (caja.last().estado==1) {
-					return false;
-				} else if(gl.cajaid==5) {
-
-				    long fc=caja.last().fecha;
-				    long fa=du.getActDate();
-
-                    if(fc!=fa){
-                        gl.validDate=true;
-                        gl.cajaid=6;
-                        //#EJC20200921: Agregué por mensaje sin fecha en cierre de caja.
-						if (gl.lastDate==0){
-							gl.lastDate=caja.last().fecha;
-						}
+					if(caja.count==0) {
+                        writeCorelLog(107,gl.cajaid,"gl.cajaid==2 , caja.count==0");
                         return false;
                     }
+					if(caja.last().estado==0) return true;
+				}
+			} else if (gl.cajaid==3 || gl.cajaid==5){
+				if(caja.count==0) {
+                    writeCorelLog(108,gl.cajaid,"gl.cajaid==3 || gl.cajaid==5,  caja.count==0");
+                    if (gl.cajaid==3) gl.cajaid=0;
+					return false;
+				}
+				if (caja.last().estado==1) {
+                    writeCorelLog(109,gl.cajaid,"caja.last().estado==1");
+                    return false;
+				} else if(gl.cajaid==5) {
+				    long fc=caja.last().fecha;long fa=du.getActDate();
+                    writeCorelLog(104,gl.cajaid,"valida gl.cajaid==5");
 
-                    /*
-					if (gl.lastDate!=0){
+                    if(fc!=fa){
+                        writeCorelLog(105,0,"fc: "+fc+"  fa:"+fa);
 
-						if(caja.last().fecha!=gl.lastDate){
-							gl.validDate=true;
-							gl.lastDate=caja.last().fecha;
-							gl.cajaid=6; return false;
-						}
-					}
-					*/
+                        gl.validDate=true;
+                        gl.cajaid=6;
+  						if (gl.lastDate==0) gl.lastDate=caja.last().fecha;
+  						return false;
+                    }
 				}
 			} else {
-			    if(gl.cajaid==4) {
-			        return false;
-                }
-            }
-
+			    if(gl.cajaid==4) return false;
+			}
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			msgbox("Ocurrió error (valida) "+e);
@@ -1778,6 +1764,7 @@ public class Menu extends PBase {
 
     private void enviaAvizo() {
         String subject,body;
+        String dir=Environment.getExternalStorageDirectory()+"";
 
         try {
             subject="Facturas pendientes de certificacion : Ruta ID - "+gl.codigo_ruta;
@@ -1788,10 +1775,13 @@ public class Menu extends PBase {
 
             Uri uri=null;
             try {
-                File f1 = new File(Environment.getExternalStorageDirectory() + "/posdts.db");
-                File f2 = new File(Environment.getExternalStorageDirectory() + "/posdts_"+gl.codigo_ruta+".db");
+                File f1 = new File(dir + "/posdts.db");
+                File f2 = new File(dir + "/posdts_"+gl.codigo_ruta+".db");
+                File f3 = new File(dir + "/posdts_"+gl.codigo_ruta+".zip");
                 FileUtils.copyFile(f1, f2);
-                uri = Uri.fromFile(f2);
+                uri = Uri.fromFile(f3);
+
+                app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
 
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());
@@ -1843,6 +1833,15 @@ public class Menu extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void writeCorelLog(int id,int corel,String text) {
+        String ss;
+        try {
+            ss="INSERT INTO T_BARRA_BONIF VALUES ('"+du.getActDateTime()+"','"+id+"',"+corel+",0,0,'"+text+"')";
+            db.execSQL(ss);
+        } catch (Exception e) {
         }
     }
 
@@ -2054,7 +2053,6 @@ public class Menu extends PBase {
         dialog.show();
 
     }
-
 
     //endregion
 

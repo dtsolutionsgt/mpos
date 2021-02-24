@@ -166,7 +166,7 @@ public class WSRec extends PBase {
 
     private TextView lbl1, lbl2, lblIdDispositivo;
     private TextView lblTitulo,cmdRecibir;
-    EditText txtEmpresa, txtClave, txtURLWS;
+    private EditText txtEmpresa, txtClave, txtURLWS;
     private ProgressBar pbar;
 
     private WebServiceHandler ws;

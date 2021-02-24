@@ -30,6 +30,7 @@ import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
+import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
@@ -95,6 +96,7 @@ public class Orden extends PBase {
     private clsP_linea_impresoraObj P_linea_impresoraObj;
     private clsT_comandaObj T_comandaObj;
     private clsT_orden_notaObj T_orden_notaObj;
+    private clsP_impresoraObj P_impresoraObj;
 
     private clsRepBuilder rep;
 
@@ -125,6 +127,7 @@ public class Orden extends PBase {
         P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
         T_comandaObj=new clsT_comandaObj(this,Con,db);
         T_orden_notaObj=new clsT_orden_notaObj(this,Con,db);
+        P_impresoraObj=new clsP_impresoraObj(this,Con,db);
         P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
         P_nivelprecioObj.fill("ORDER BY Nombre");
 
@@ -1454,6 +1457,20 @@ public class Orden extends PBase {
     private boolean generaArchivos() {
         clsRepBuilder rep;
         int printid;
+        String fname;
+        File file;
+
+        try {
+            P_impresoraObj.fill();
+            for (int i = 0; i <P_impresoraObj.count; i++) {
+                fname = Environment.getExternalStorageDirectory()+"/comanda_"+P_impresoraObj.items.get(i).codigo_impresora+".txt";
+                file=new File(fname);
+                try {
+                    file.delete();
+                } catch (Exception e) { }
+            }
+        } catch (Exception e) {
+        }
 
         try {
             clsViewObj ViewObj=new clsViewObj(this,Con,db);
@@ -1461,8 +1478,13 @@ public class Orden extends PBase {
 
             for (int i = 0; i <ViewObj.count; i++) {
                 printid=ViewObj.items.get(i).pk;
+                P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA="+printid+")");
 
                 rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"comanda_"+printid+".txt");
+
+                rep.add(P_impresoraObj.first().tipo_impresora);
+                rep.add(P_impresoraObj.first().nombre);
+                rep.add(P_impresoraObj.first().ip);
 
                 rep.add("");rep.add("");rep.add("");
                 rep.add("ORDEN : "+ordennum);
@@ -1494,7 +1516,7 @@ public class Orden extends PBase {
 
     private void ejecutaImpresion() {
         try {
-
+            app.print3nstarw();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -2588,6 +2610,7 @@ public class Orden extends PBase {
             P_linea_impresoraObj.reconnect(Con,db);
             T_comandaObj.reconnect(Con,db);
             T_orden_notaObj.reconnect(Con,db);
+            P_impresoraObj.reconnect(Con,db);
 
             try {
                 P_nivelprecioObj.reconnect(Con,db);
