@@ -34,7 +34,7 @@ public class appGlobals extends Application {
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
                 codigo_pais,primesa,pricuenta,ordcorel;
-	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado;
+	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion;
@@ -52,16 +52,17 @@ public class appGlobals extends Application {
     public String dvcorreld,dvcorrelnc,dvestado,dvactuald,dvactualnc;
 
 	// Parametros Extra
-	public String peModal,peMon,peFormatoFactura,peMMod,peFEL;
+	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peComNoAplic;
     public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp;
     public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
-    public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija;
+    public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
     public double  pePropinaPerc;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelTablet;
+    public String pelPrefijoOrden;
 
 	// Descuentos
 	public String promprod;

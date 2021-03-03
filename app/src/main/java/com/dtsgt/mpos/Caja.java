@@ -553,6 +553,9 @@ public class Caja extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
 
+        //EJC 20210223
+        dialog.setCancelable(false);
+
         if(msgAcc==0){
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -563,7 +566,7 @@ public class Caja extends PBase {
             dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {}
             });
-        }else if(msgAcc==1){
+        } else if(msgAcc==1) {
             dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     if (isNetworkAvailable()) {

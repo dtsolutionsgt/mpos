@@ -36,7 +36,8 @@ public class OrdenMenu extends PBase {
 
     private Precio prc;
 
-    private int cant,lcant, uitemid;
+    private int cant,lcant, uitemid,nivel;
+    private double precorig, precadd, precrest, precnuevo;
     private boolean newitem;
     private String ststr,prodname,idorden;
 
@@ -50,7 +51,7 @@ public class OrdenMenu extends PBase {
         listView = (ListView) findViewById(R.id.listView);
         lbl1 = (TextView) findViewById(R.id.textView93);
         lbl2 = (TextView) findViewById(R.id.textView117);
-        lbl3 = (TextView) findViewById(R.id.textView116);
+        lbl3 = (TextView) findViewById(R.id.textView225);
         img1 = (ImageView) findViewById(R.id.imageView27);
 
         P_productoObj = new clsP_productoObj(this, Con, db);
@@ -59,7 +60,7 @@ public class OrdenMenu extends PBase {
 
         setHandlers();
 
-        cant=1;
+        cant=1;nivel=gl.nivel;
         //lcant = gl.limcant;
 
         uitemid = Integer.parseInt(gl.menuitemid);
@@ -68,6 +69,9 @@ public class OrdenMenu extends PBase {
 
         lbl1.setText(gl.gstr);
         lbl2.setText(""+cant);
+        lbl3.setText(mu.frmcur(gl.menuprecio));precorig=gl.menuprecio;
+
+        app.parametrosExtra();
 
         if (newitem) {
             newItem();img1.setVisibility(View.INVISIBLE);
@@ -128,7 +132,7 @@ public class OrdenMenu extends PBase {
                         selidx=position;
 
                         //#EJC20200524: listar items de la opcion de menu
-                        listOptions(item.Name,item.codigo_menu_opcion);
+                        listOptions(item.Name,item.codigo_menu_opcion,item.cant,item.opcional);
 
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -166,19 +170,24 @@ public class OrdenMenu extends PBase {
                 try {
                     selid=combo.first().idseleccion;
 
-                    if (selid>0) {
-                        items.get(i).cod=selid;
-                        items.get(i).Name=getProdName(selid);
-                        items.get(i).bandera=1;
-                    } else {
-                        items.get(i).cod=0;
-                        //items.get(i).Name=combo.first().;
-                        items.get(i).bandera=0;
-                    }
+                    if (selid!=0) {
+                        if (selid>0) {
+                            items.get(i).cod=selid;
+                            items.get(i).Name=getProdName(selid);
+                            items.get(i).bandera=1;
+                        } else {
+                            items.get(i).cod=0;
+                            items.get(i).bandera=0;
+                        }
 
-                    items.get(i).cant=combo.first().cant;
-                } catch (Exception e) {
-                }
+                        items.get(i).cant=combo.first().cant;
+                        items.get(i).precio=prodPrecioItem(selid);
+                        items.get(i).sprec=mu.frmdec(items.get(i).precio);
+                        if (items.get(selidx).precio==0) items.get(selidx).sprec="";
+                    } else {
+                        items.get(i).Name=gl.peComNoAplic;
+                    }
+                } catch (Exception e) { }
             }
 
             adapter.notifyDataSetChanged();
@@ -213,6 +222,12 @@ public class OrdenMenu extends PBase {
                 item.cod=0;
                 item.unid=P_menuObj.items.get(i).unid;
                 if (item.unid>0) item.Name+="*";
+                item.cant=P_menuObj.items.get(i).cant;
+                item.opcional=P_menuObj.items.get(i).cant==0;
+
+                item.precio=0;
+                item.sprec=mu.frmdec(item.precio);
+                if (item.precio==0) item.sprec="";
 
                 items.add(item);
             }
@@ -314,7 +329,7 @@ public class OrdenMenu extends PBase {
         }
     }
 
-    private void listOptions(String title,int idoption) {
+    private void listOptions(String title,int idoption,int cant,boolean opcional) {
 
         clsP_productoObj prod=new clsP_productoObj(this,Con,db);
         clsP_prodmenuopcdetObj opc=new clsP_prodmenuopcdetObj(this,Con,db);
@@ -329,11 +344,15 @@ public class OrdenMenu extends PBase {
 
             opc.fill("WHERE CODIGO_MENU_OPCION="+idoption);
 
+            if (opcional) {
+                lcode.add("0");lname.add(gl.peComNoAplic);
+            }
+
             for (int i = 0; i <opc.count; i++) {
                 //#EJC20200524: Buscar aquí los productos de cada menu_opcion.
                 cod=opc.items.get(i).codigo_producto;
                 lcode.add(""+cod);
-                lname.add(getProdName(cod));
+                lname.add(getProdName(cod)+" ["+mu.frmdec(prodPrecioItem(cod))+"]");
             }
 
             final String[] selitems = new String[lname.size()];
@@ -350,6 +369,10 @@ public class OrdenMenu extends PBase {
                         items.get(selidx).cod=Integer.parseInt(lcode.get(item));
                         items.get(selidx).Name=lname.get(item);
                         items.get(selidx).bandera=1;
+                        items.get(selidx).precio=prodPrecioItem(items.get(selidx).cod);
+                        items.get(selidx).sprec=mu.frmdec(items.get(selidx).precio);
+                        if (items.get(selidx).precio==0) items.get(selidx).sprec="";
+
                         adapter.notifyDataSetChanged();
                         validaStock();
                     } catch (Exception e) {
@@ -513,6 +536,12 @@ public class OrdenMenu extends PBase {
 
     //endregion
 
+    //region Agregar articulo
+
+
+
+    //endregion
+
     //region Aux
 
     private boolean validaData() {
@@ -552,6 +581,18 @@ public class OrdenMenu extends PBase {
             return P_productoObj.first().unidbas;
         } catch (Exception e) {
             return "";
+        }
+    }
+
+    private double prodPrecioItem(int cprod) {
+        if (cprod==0) return 0;
+
+        try {
+            double pr=prc.prodPrecioBase(cprod, nivel);
+            return mu.round(pr,2);
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+            return 0;
         }
     }
 
@@ -652,6 +693,12 @@ public class OrdenMenu extends PBase {
             T_comboObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox2(e.getMessage());
+        }
+
+        if (browse==1) {
+            browse=0;
+
+            return;
         }
     }
 

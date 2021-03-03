@@ -59,6 +59,7 @@ public class ListAdaptOpcion extends BaseAdapter {
 			
 			holder.imgEst = (ImageView) convertView.findViewById(R.id.imgNext);
 			holder.lblName = (TextView) convertView.findViewById(R.id.lblTrat);
+            holder.lblPrec = (TextView) convertView.findViewById(R.id.textView226);
 		
 			convertView.setTag(holder);
 		} else {
@@ -66,11 +67,12 @@ public class ListAdaptOpcion extends BaseAdapter {
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
+        holder.lblPrec.setText(items.get(position).sprec);
 			
 		holder.imgEst.setImageResource(R.drawable.check_round_off);
 		if (items.get(position).bandera==1) holder.imgEst.setImageResource(R.drawable.check_round_on);
 
-		if(selectedIndex!= -1 && position == selectedIndex) {
+		if (selectedIndex!=-1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
@@ -81,7 +83,7 @@ public class ListAdaptOpcion extends BaseAdapter {
 
 	static class ViewHolder {
 		ImageView imgEst;
-		TextView  lblName;
+		TextView  lblName,lblPrec;
 	}
 	
 }

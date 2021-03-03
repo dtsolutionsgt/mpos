@@ -231,7 +231,65 @@ public class Precio {
 		precsin=pprec;
 
 	}
-	
+
+    public double prodPrecioBase(int cprod,int nnivel) {
+        Cursor DT;
+        double pr,stot,pprec,tsimp;
+        String sprec="";
+
+        try {
+
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+cprod+") AND (NIVEL="+nnivel+") ";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            pr=DT.getDouble(0);
+
+        } catch (Exception e) {
+            pr=0;
+        }
+
+        preciobase=pr;
+        totsin=pr;tsimp=mu.round(totsin,ndec);
+
+        imp=getImp();
+        pr=pr*(1+imp/100);
+
+        stot=pr;stot=mu.round(stot,ndec);
+
+        if (imp>0) impval=stot-tsimp; else impval=0;
+
+        descmon=0;
+
+        tot=stot-descmon;
+        prec=tot;
+
+        try {
+            sprec=ffrmprec.format(prec);sprec=sprec.replace(",",".");
+            pprec=Double.parseDouble(sprec);
+            pprec=mu.round(pprec,ndec);
+        } catch (Exception e) {
+            pprec=prec;
+        }
+        prec=pprec;
+
+        if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
+
+        totsin=mu.round(precsin,ndec);
+        precsin=totsin;
+
+        try {
+            sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
+            pprec=Double.parseDouble(sprec);
+            pprec=mu.round(pprec,ndec);
+        } catch (Exception e) {
+            pprec=precsin;
+        }
+        precsin=pprec;
+
+        return prec;
+    }
+
 	private double getImp() {
 		Cursor DT;
 		double imv=0,im1=0,im2=0,im3=0;
@@ -293,6 +351,7 @@ public class Precio {
 	    }		
 		
 	}
+
 
 
 

@@ -181,6 +181,7 @@ public class clsP_prodmenuObj {
                 item.nombre=dt.getString(7);
                 item.nota=dt.getString(4);
                 item.unid=dt.getInt(8);
+                item.cant=dt.getInt(8);
 
                 items.add(item);
 

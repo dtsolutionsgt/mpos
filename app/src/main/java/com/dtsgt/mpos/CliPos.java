@@ -554,7 +554,7 @@ public class CliPos extends PBase {
 
 						txtNom.setText(DT.getString(1));
 						txtRef.setText(DT.getString(2));
-                        txtCorreo.setText(DT.getString(8));
+						txtCorreo.setText(DT.getString(8));
                         txtTel.setText(DT.getString(9));
 
 						gl.rutatipo="V";

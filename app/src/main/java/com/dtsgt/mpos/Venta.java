@@ -1902,12 +1902,11 @@ public class Venta extends PBase {
                     mmitems.add(item);
                 }
 
-
-                //if (gl.peImpOrdCos) {
+                if (gl.peBotComanda) {
                     item = clsCls.new clsMenu();
                     item.ID=62;item.Name="Comanda";item.Icon=62;
                     mmitems.add(item);
-                //}
+                }
 
                 if (gl.pelCaja  && gl.peRest) {
                     item = clsCls.new clsMenu();
@@ -2564,7 +2563,7 @@ public class Venta extends PBase {
                 rep.add(s);
 
                 if (app.prodTipo(prid).equalsIgnoreCase("M")) {
-                    T_comboObj.fill("WHERE IdCombo="+venta.val4);
+                    T_comboObj.fill("WHERE (IdCombo=" + venta.val4+") AND (IdSeleccion<>0)");
 
                     for (int j = 0; j <T_comboObj.count; j++) {
                         if (j==0) rep.line();

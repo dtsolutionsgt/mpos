@@ -556,6 +556,8 @@ public class Orden extends PBase {
             } else if (tipo.equalsIgnoreCase("M")){
                 gl.prodmenu=gl.prodcod;
                 gl.prodid=prodid;
+                prodPrecio();
+                gl.menuprecio=prec;
                 processMenuItem();
             }
         } catch (Exception e){
@@ -756,6 +758,8 @@ public class Orden extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
     }
+
+
 
     private boolean addItem(){
         Cursor dt;
@@ -1374,7 +1378,7 @@ public class Orden extends PBase {
         clsClasses.clsT_ordencombo combo;
 
         String prname,cname,nn;
-        int prodid,prid,linea=1;
+        int prodid,prid,idcomb,linea=1;
 
         try {
 
@@ -1413,8 +1417,9 @@ public class Orden extends PBase {
 
                 } else {
 
-                    T_comboObj.fill("WHERE IdCombo=" + venta.val4);
-                    cname=s;
+                    T_comboObj.fill("WHERE (IdCombo=" + venta.val4+") AND (IdSeleccion<>0)");
+                    idcomb=mu.CInt(venta.val4);idcomb=idcomb % 100;
+                    cname=s+" [#"+idcomb+"]";
 
                     for (int j = 0; j < T_comboObj.count; j++) {
                         prodid=T_comboObj.items.get(j).idseleccion;

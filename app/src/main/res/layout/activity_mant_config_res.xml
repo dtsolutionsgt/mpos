@@ -88,7 +88,7 @@
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
                 android:layout_width="605dp"
-                android:layout_height="300dp"
+                android:layout_height="460dp"
                 android:layout_above="@+id/relbotpan"
                 android:layout_below="@+id/relRoad"
                 android:layout_centerHorizontal="true"
@@ -99,6 +99,44 @@
                 android:layout_toStartOf="@+id/imgImg2"
                 android:layout_toEndOf="@+id/imageView30"
                 android:background="@drawable/frame_rect">
+
+                <TextView
+                    android:id="@+id/lblCFact58"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact44"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="-3dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Propina [ % ]"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/lblCFact62"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact60"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Prefijo numero orden"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
 
                 <CheckBox
                     android:id="@+id/chkEnvio11"
@@ -125,6 +163,20 @@
                     android:layout_alignParentBottom="false"
                     android:layout_marginStart="0dp"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:clickable="true"
+                    android:enabled="true" />
+
+                <CheckBox
+                    android:id="@+id/chkEnvio15"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/chkEnvio8"
+                    android:layout_alignTop="@+id/lblCFact60"
+                    android:layout_alignEnd="@+id/chkEnvio8"
+                    android:layout_alignParentBottom="false"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
                     android:layout_marginEnd="0dp"
                     android:clickable="true"
                     android:enabled="true" />
@@ -216,10 +268,10 @@
                     android:textStyle="normal" />
 
                 <TextView
-                    android:id="@+id/lblCFact45"
+                    android:id="@+id/lblCFact60"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:layout_below="@+id/lblCFact44"
+                    android:layout_below="@+id/lblCFact45"
                     android:layout_alignStart="@+id/lblCFact48"
                     android:layout_alignEnd="@+id/lblCFact48"
                     android:layout_marginStart="0dp"
@@ -228,7 +280,26 @@
                     android:background="@drawable/blue_strip"
                     android:gravity="center_vertical"
                     android:paddingLeft="10dp"
-                    android:text="Propina [ % ]"
+                    android:text="Editar totat de combo"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/lblCFact45"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact58"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Combo texto opcion no aplica"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
@@ -262,6 +333,29 @@
                     android:layout_toEndOf="@+id/lblCFact45"
                     android:ems="10"
                     android:inputType="numberDecimal" />
+
+                <EditText
+                    android:id="@+id/editTextNumber8"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio15"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/lblCFact45"
+                    android:ems="10"
+                    android:maxLength="2" />
+
+                <EditText
+                    android:id="@+id/editTextNumber6"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/editTextNumber3"
+                    android:layout_alignEnd="@+id/chkEnvio14"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_toEndOf="@+id/lblCFact45"
+                    android:ems="10" />
 
             </RelativeLayout>
         </ScrollView>

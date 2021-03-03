@@ -35,7 +35,7 @@ public class ProdMenu extends PBase {
 
     private Precio prc;
 
-    private int cant,lcant, uitemid;
+    private int cant,lcant, uitemid,nivel;
     private boolean newitem;
     private String ststr,prodname;
 
@@ -58,7 +58,7 @@ public class ProdMenu extends PBase {
 
         setHandlers();
 
-        cant=1;
+        cant=1;nivel=gl.nivel;
         //lcant = gl.limcant;
 
         uitemid = Integer.parseInt(gl.menuitemid);
@@ -175,8 +175,11 @@ public class ProdMenu extends PBase {
                     }
 
                     items.get(i).cant=combo.first().cant;
-                } catch (Exception e) {
-                }
+                    items.get(i).precio=prodPrecioItem(selid);
+                    items.get(i).sprec=mu.frmdec(items.get(i).precio);
+                    if (items.get(selidx).precio==0) items.get(selidx).sprec="";
+
+                } catch (Exception e) { }
             }
 
             adapter.notifyDataSetChanged();
@@ -211,6 +214,8 @@ public class ProdMenu extends PBase {
                 item.cod=0;
                 item.unid=P_menuObj.items.get(i).unid;
                 if (item.unid>0) item.Name+="*";
+                item.precio=0;
+                item.sprec="";
 
                 items.add(item);
             }
@@ -267,7 +272,7 @@ public class ProdMenu extends PBase {
                 //#EJC20200524: Buscar aquí los productos de cada menu_opcion.
                 cod=opc.items.get(i).codigo_producto;
                 lcode.add(""+cod);
-                lname.add(getProdName(cod));
+                lname.add(getProdName(cod)+" ["+mu.frmdec(prodPrecioItem(cod))+"]");
             }
 
             final String[] selitems = new String[lname.size()];
@@ -284,6 +289,10 @@ public class ProdMenu extends PBase {
                         items.get(selidx).cod=Integer.parseInt(lcode.get(item));
                         items.get(selidx).Name=lname.get(item);
                         items.get(selidx).bandera=1;
+                        items.get(selidx).precio=prodPrecioItem(items.get(selidx).cod);
+                        items.get(selidx).sprec=mu.frmdec(items.get(selidx).precio);
+                        if (items.get(selidx).precio==0) items.get(selidx).sprec="";
+
                         adapter.notifyDataSetChanged();
                         validaStock();
                     } catch (Exception e) {
@@ -558,6 +567,18 @@ public class ProdMenu extends PBase {
             return P_productoObj.first().unidbas;
         } catch (Exception e) {
             return "";
+        }
+    }
+
+    private double prodPrecioItem(int cprod) {
+        if (cprod==0) return 0;
+
+        try {
+            double pr=prc.prodPrecioBase(cprod, nivel);
+            return mu.round(pr,2);
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+            return 0;
         }
     }
 

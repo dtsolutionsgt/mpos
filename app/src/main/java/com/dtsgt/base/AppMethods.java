@@ -613,6 +613,44 @@ public class AppMethods {
             gl.pePropinaPerc=0;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=121";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peBotComanda = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peBotComanda = false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=122";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            gl.peComNoAplic = dt.getString(0);
+        } catch (Exception e) {
+            gl.peComNoAplic = "NO APLICA";
+        }
+
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=123";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peEditTotCombo = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peEditTotCombo = false;
+        }
+
+
     }
 
     public void parametrosExtraLocal() {
@@ -632,6 +670,11 @@ public class AppMethods {
                 gl.pelCajaRecep=false;
             }
 
+            try {
+                gl.pelPrefijoOrden=pref.getString("pelPrefijoOrden", "-");
+            } catch (Exception e) {
+                gl.pelPrefijoOrden="-";
+            }
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

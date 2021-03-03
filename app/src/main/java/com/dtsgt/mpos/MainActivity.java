@@ -63,7 +63,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "3.2.63";
+    private String parVer = "3.2.64";   //   REGISTRAR CAMBIO EN LA TABLA VERSION
 
     private Typeface typeface;
 
@@ -850,6 +850,7 @@ public class MainActivity extends PBase {
         lblRTit.setText(gl.tiendanom);
         lblRuta.setText(gl.cajanom);
         lblEmp.setText(gl.empnom);
+        lblEmp.setText(gl.tiendanom);
 
         app.getURL();
 

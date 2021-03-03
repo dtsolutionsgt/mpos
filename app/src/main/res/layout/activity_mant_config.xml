@@ -100,6 +100,26 @@
             android:layout_toEndOf="@+id/imageView30"
             android:background="@drawable/frame_rect">
 
+            <TextView
+                android:id="@+id/lblCFact57"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_below="@+id/lblCFact47"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="-2dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Mostrar boton imprimir comanda"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
             <CheckBox
                 android:id="@+id/chkEnvio9"
                 android:layout_width="150dp"
@@ -110,6 +130,22 @@
                 android:layout_alignParentBottom="false"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="10dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <CheckBox
+                android:id="@+id/chkEnvio13"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio9"
+                android:layout_alignStart="@id/checkBox24"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
                 android:layout_toRightOf="@id/textView2"
                 android:clickable="true"
                 android:enabled="true" />
@@ -168,7 +204,7 @@
                 android:layout_alignEnd="@+id/textView2"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="0dp"
                 android:background="@drawable/blue_strip"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"

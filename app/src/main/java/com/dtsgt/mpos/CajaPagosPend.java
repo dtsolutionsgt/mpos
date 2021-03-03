@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class CajaPagosPend extends PBase {
 
     private ListView listView;
-    private TextView lblTipo;
 
     private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
     private ListAdaptCFDV adapter;
@@ -41,10 +40,8 @@ public class CajaPagosPend extends PBase {
         super.InitBase();
 
         listView = (ListView) findViewById(R.id.listView1);
-        lblTipo= (TextView) findViewById(R.id.lblDescrip);
 
         gl.tipo=3;tipo=gl.tipo;
-        lblTipo.setText("Factura");
 
         itemid="*";
 
