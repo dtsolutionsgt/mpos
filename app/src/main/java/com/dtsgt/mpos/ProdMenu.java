@@ -23,7 +23,7 @@ public class ProdMenu extends PBase {
 
     private ListView listView;
     private TextView lbl1,lbl2,lbl3;
-    private ImageView img1;
+    private ImageView img1,img2;
 
     private ListAdaptOpcion adapter;
     private clsT_comboObj T_comboObj;
@@ -51,6 +51,7 @@ public class ProdMenu extends PBase {
         lbl2 = (TextView) findViewById(R.id.textView117);
         lbl3 = (TextView) findViewById(R.id.textView116);
         img1 = (ImageView) findViewById(R.id.imageView27);
+        img2 = (ImageView) findViewById(R.id.imageView109);img2.setVisibility(View.INVISIBLE);
 
         P_productoObj = new clsP_productoObj(this, Con, db);
         T_comboObj = new clsT_comboObj(this, Con, db);
@@ -66,6 +67,9 @@ public class ProdMenu extends PBase {
 
         lbl1.setText(gl.gstr);
         lbl2.setText(""+cant);
+
+        app.parametrosExtra();
+        if (gl.peAgregarCombo) img2.setVisibility(View.VISIBLE);
 
         if (newitem) {
             newItem();img1.setVisibility(View.INVISIBLE);

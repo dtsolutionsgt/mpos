@@ -443,6 +443,62 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+           sql="CREATE TABLE [T_ordencomboad] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "IDCOMBO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID],[COREL],[IDCOMBO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [T_ordencombodet] ("+
+                    "CODIGO_MENUOPC_DET INTEGER NOT NULL,"+
+                    "IDCOMBO INTEGER NOT NULL,"+
+                    "CODIGO_MENU_OPCION INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MENUOPC_DET])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [T_orden_cor] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [T_ordencomboprecio] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "IDCOMBO INTEGER NOT NULL,"+
+                    "PRECORIG REAL NOT NULL,"+
+                    "PRECITEMS REAL NOT NULL,"+
+                    "PRECDIF REAL NOT NULL,"+
+                    "PRECTOTAL REAL NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[IDCOMBO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+
+
+
+        } catch (Exception e) {
+        }
+
     }
 
 	private boolean update01() {

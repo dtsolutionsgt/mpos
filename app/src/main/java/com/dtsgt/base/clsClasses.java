@@ -959,6 +959,10 @@ public class clsClasses {
         public int  estado;
     }
 
+    public class clsT_orden_cor {
+        public int  id;
+    }
+
     public class clsT_ordencombo {
         public String corel;
         public int  codigo_menu;
@@ -969,6 +973,22 @@ public class clsClasses {
         public int  orden;
     }
 
+    public class clsT_ordencomboad {
+        public int  id;
+        public String corel;
+        public int  idcombo;
+        public String nombre;
+        public int  cant;
+    }
+
+    public class clsT_ordencombodet {
+        public int  codigo_menuopc_det;
+        public int  idcombo;
+        public int  codigo_menu_opcion;
+        public int  codigo_producto;
+        public String corel;
+    }
+
     public class clsT_ordencuenta {
         public String corel;
         public int  id;
@@ -977,6 +997,15 @@ public class clsClasses {
         public String nit;
         public String direccion;
         public String correo;
+    }
+
+    public class clsT_ordencomboprecio {
+        public String corel;
+        public int  idcombo;
+        public double precorig;
+        public double precitems;
+        public double precdif;
+        public double prectotal;
     }
 
     public class clsT_orden_nota {

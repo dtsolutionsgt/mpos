@@ -781,7 +781,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema"};
+			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion"};
 
 			menudlg = new ExDialog (this);
 
@@ -805,6 +805,8 @@ public class Menu extends PBase {
                             msgAskActualizar("Actualizar correlativos de contingencia");break;
                         case 6:
                             infoSystem();break;
+                        case 7:
+                            msgAskImprimir();break;
 					}
 
 					dialog.cancel();
@@ -2053,6 +2055,26 @@ public class Menu extends PBase {
         dialog.show();
 
     }
+
+    private void msgAskImprimir() {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("Imprimir documento");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                app.doPrint(1);
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
 
     //endregion
 

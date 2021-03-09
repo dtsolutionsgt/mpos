@@ -613,11 +613,11 @@ public class Producto extends PBase {
 
     private String prodPrecioBase(String prid) {
         Cursor DT;
-        double pr,stot,pprec,tsimp;
+        double pr;
         String sprec="";
 
         try {
-            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+prid+"') AND (NIVEL="+gl.nivel+") ";
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+app.codigoProducto(prid)+") AND (NIVEL="+gl.nivel+") ";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 

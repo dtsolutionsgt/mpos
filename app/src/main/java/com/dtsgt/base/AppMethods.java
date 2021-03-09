@@ -650,6 +650,32 @@ public class AppMethods {
             gl.peEditTotCombo = false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=124";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peAgregarCombo = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peAgregarCombo = false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=125";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peComboLimite = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peComboLimite = false;
+        }
+
 
     }
 
@@ -1085,6 +1111,22 @@ public class AppMethods {
         } catch (Exception e) {
             //toast(e.getMessage());
             return "";
+        }
+    }
+
+    public String prodNombre(int cod) {
+        Cursor DT;
+        String umm;
+
+        try {
+            String sql = "SELECT DESCCORTA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getString(0);
+            return  umm;
+        } catch (Exception e) {
+             return "";
         }
     }
 

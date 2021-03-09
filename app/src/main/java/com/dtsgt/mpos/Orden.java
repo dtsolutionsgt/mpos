@@ -105,7 +105,7 @@ public class Orden extends PBase {
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
-    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
+    private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
     private int nivel,dweek,clidia,counter,prodlinea;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag,enviarorden;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
@@ -268,12 +268,14 @@ public class Orden extends PBase {
 
                         prodid=item.Cod;gl.prodid=prodid;
                         gl.produid=item.id;
+                        cbui=item.emp;
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
                         uid=""+item.id;gl.menuitemid=uid;seluid=uid;
                         adapter.setSelectedIndex(position);
 
-                        gl.gstr=item.Nombre;
+                        gl.gstr2=item.Nombre;
+                        gl.gstr=item.Nombre+" \n[ "+gl.peMon+prodPrecioBase(app.codigoProducto(gl.prodid))+" ]";;
                         gl.retcant=(int) item.Cant;
                         gl.limcant=getDisp(prodid);
                         menuitemadd=false;
@@ -342,7 +344,7 @@ public class Orden extends PBase {
                         prodid=item.Cod;
                         gl.prodid=prodid;
                         gl.prodcod=item.icod;
-                        gl.gstr=prodid;
+                        gl.gstr=prodid; gl.gstr2=item.Name;
                         gl.prodmenu=gl.prodcod;
                         gl.pprodname=item.Name;
                         ppos=gl.pprodname.indexOf("[");
@@ -759,8 +761,6 @@ public class Orden extends PBase {
         }
     }
 
-
-
     private boolean addItem(){
         Cursor dt;
         double precdoc,fact,cantbas,peso;
@@ -869,7 +869,7 @@ public class Orden extends PBase {
         Cursor dt;
         double precdoc,fact,cantbas,peso;
         String umb;
-        int newid;
+        int nid1,nid2,newid;
 
         try {
             sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO='"+prodid+"') AND (UNIDADSUPERIOR='"+gl.um+"')";
@@ -896,6 +896,36 @@ public class Orden extends PBase {
         } catch (Exception e) {
             newid=1;
         }
+
+        /*
+        try {
+            sql="SELECT MAX(ID) FROM T_ORDEN";
+            //sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+            nid1=dt.getInt(0)+1;
+        } catch (Exception e) {
+            nid1=1;
+        }
+
+        try {
+            sql="SELECT MAX(ID) FROM T_orden_cor";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+            nid2=dt.getInt(0)+1;
+        } catch (Exception e) {
+            nid2=1;
+        }
+
+        newid=nid2;if (nid1>newid) newid=nid1;
+
+        try {
+            db.execSQL("UPDATE T_orden_cor SET ID="+newid);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+         */
 
         try {
 
@@ -1046,8 +1076,26 @@ public class Orden extends PBase {
 
     private void delItem(){
         try {
+            db.beginTransaction();
+
             db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBOAD WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBODET WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
             listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
+
+        try {
+
+
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());

@@ -155,6 +155,8 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="17dp"
+                android:clickable="true"
+                android:onClick="doAdd"
                 android:src="@drawable/sale_add" />
 
             <TextView
