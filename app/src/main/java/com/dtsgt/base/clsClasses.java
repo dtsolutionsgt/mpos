@@ -1173,9 +1173,9 @@ public class clsClasses {
 	}
 
     public class clsOpcion {
-        public int codigo_menu_opcion,bandera,orden,cod,unid,cant;
+        public int codigo_menu_opcion,bandera,orden,cod,unid,cant,modo;
         public double precio;
-        public boolean opcional;
+        public boolean opcional,adicional;
         public String Name,sprec;
     }
 
