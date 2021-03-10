@@ -1999,7 +1999,7 @@ public class Venta extends PBase {
                     msgAskOrden("Convertir al órden");
                     break;
                 case 62:
-                    if (hasProducts()) inputMesa(); else toastcent("El órden está vacio");
+                    if (hasProducts()) inputMesa(); else toastcent("La órden está vacia");
                     break;
                 case 63:
                     gl.cerrarmesero=false;
