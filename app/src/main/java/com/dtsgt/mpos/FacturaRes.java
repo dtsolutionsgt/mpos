@@ -998,18 +998,21 @@ public class FacturaRes extends PBase {
                     prid=dt.getInt(2);
                     fsid=dt.getInt(3);
 
-                    P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prid);
-                    prcod=P_productoObj.first().codigo;
+                    if (prid!=0) {
 
-                    fsitem=clsCls.new clsD_facturas();
-                    fsitem.corel=corel;
-                    fsitem.id=iidd;//fsitem.id=fsid;
-                    fsitem.producto=""+prid;
-                    fsitem.cant=unipr;
-                    fsitem.umstock=app.umVenta2(prcod);
-                    D_facturas.add(fsitem);
+                        P_productoObj.fill("WHERE CODIGO_PRODUCTO=" + prid);
+                        prcod = P_productoObj.first().codigo;
 
-                    rebajaStockUM(prid,fsitem.umstock,fsitem.cant);
+                        fsitem = clsCls.new clsD_facturas();
+                        fsitem.corel = corel;
+                        fsitem.id = iidd;//fsitem.id=fsid;
+                        fsitem.producto = "" + prid;
+                        fsitem.cant = unipr;
+                        fsitem.umstock = app.umVenta2(prcod);
+                        D_facturas.add(fsitem);
+
+                        rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
+                    }
 
                     dt.moveToNext();iidd++;
                 }

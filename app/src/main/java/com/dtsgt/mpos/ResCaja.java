@@ -20,6 +20,7 @@ import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
+import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsViewObj;
@@ -36,6 +37,7 @@ public class ResCaja extends PBase {
 
     private clsT_ordenObj T_ordenObj;
     private clsT_ordencomboObj T_ordencomboObj;
+    private clsT_ordencomboprecioObj T_ordencomboprecioObj;
     private clsT_ventaObj T_ventaObj;
     private clsT_comboObj T_comboObj;
 
@@ -63,6 +65,7 @@ public class ResCaja extends PBase {
         ViewObj=new clsViewObj(this,Con,db);
         T_ordenObj=new clsT_ordenObj(this,Con,db);
         T_ordencomboObj=new clsT_ordencomboObj(this,Con,db);
+        T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
         T_ventaObj=new clsT_ventaObj(this,Con,db);
         T_comboObj = new clsT_comboObj(this, Con, db);
 
@@ -191,6 +194,7 @@ public class ResCaja extends PBase {
         clsClasses.clsT_venta venta;
         clsClasses.clsT_combo combo;
         clsClasses.clsT_ordencombo citem;
+        double tt;
 
         try {
 
@@ -214,6 +218,15 @@ public class ResCaja extends PBase {
             venta.val3=oitem.val3;
             venta.val4=oitem.val4;
             venta.percep=oitem.percep;
+
+            T_ordencomboprecioObj.fill("WHERE (COREL='"+corel+"') AND (IDCOMBO="+oitem.empresa+")");
+            if (T_ordencomboprecioObj.count>0) {
+                venta.precio=T_ordencomboprecioObj.first().prectotal;
+                venta.preciodoc=venta.precio;
+
+                tt=venta.cant*venta.precio;tt=mu.round2(tt);
+                venta.total=oitem.total=tt;
+            }
 
             T_ventaObj.add(venta);
 
@@ -482,6 +495,8 @@ public class ResCaja extends PBase {
             T_ordencomboObj.reconnect(Con,db);
             T_ventaObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
+            T_ordencomboprecioObj.reconnect(Con,db);
+
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

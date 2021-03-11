@@ -670,8 +670,9 @@ public class OrdenMenu extends PBase {
             }
 
             precio+=precdif;
-
-            //peComboLimite;
+            if (!gl.peComboLimite) {
+                if (precio<precorig) precio=precorig;
+            }
 
             precnuevo=precio;
             lbl3.setText(mu.frmcur(precnuevo));

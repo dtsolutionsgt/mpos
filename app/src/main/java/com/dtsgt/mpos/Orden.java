@@ -42,6 +42,7 @@ import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_orden_notaObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
+import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.ListAdaptGridFam;
@@ -97,6 +98,7 @@ public class Orden extends PBase {
     private clsT_comandaObj T_comandaObj;
     private clsT_orden_notaObj T_orden_notaObj;
     private clsP_impresoraObj P_impresoraObj;
+    private clsT_ordencomboprecioObj T_ordencomboprecioObj;
 
     private clsRepBuilder rep;
 
@@ -127,6 +129,7 @@ public class Orden extends PBase {
         P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
         T_comandaObj=new clsT_comandaObj(this,Con,db);
         T_orden_notaObj=new clsT_orden_notaObj(this,Con,db);
+        T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
         P_impresoraObj=new clsP_impresoraObj(this,Con,db);
         P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
         P_nivelprecioObj.fill("ORDER BY Nombre");
@@ -470,6 +473,15 @@ public class Orden extends PBase {
                         ttsin=tt-item.imp-item.percep;
                         item.Total=ttsin;
                     } else {
+                        item.Total=tt;
+                    }
+
+                    T_ordencomboprecioObj.fill("WHERE (COREL='"+idorden+"') AND (IDCOMBO="+item.emp+")");
+                    if (T_ordencomboprecioObj.count>0) {
+                        item.Prec=T_ordencomboprecioObj.first().prectotal;
+                        item.sdesc=mu.frmdec(item.Prec);
+
+                        tt=item.icant*item.Prec;tt=mu.round2(tt);
                         item.Total=tt;
                     }
 
@@ -2664,6 +2676,7 @@ public class Orden extends PBase {
             T_comandaObj.reconnect(Con,db);
             T_orden_notaObj.reconnect(Con,db);
             P_impresoraObj.reconnect(Con,db);
+            T_ordencomboprecioObj.reconnect(Con,db);
 
             try {
                 P_nivelprecioObj.reconnect(Con,db);

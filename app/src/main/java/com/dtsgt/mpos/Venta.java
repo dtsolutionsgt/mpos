@@ -47,6 +47,7 @@ import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.fel.FELVerificacion;
