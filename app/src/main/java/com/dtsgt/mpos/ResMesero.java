@@ -161,7 +161,9 @@ public class ResMesero extends PBase {
                 gl.idorden=P_res_sesionObj.first().id;
                 startActivity(new Intent(this,Orden.class));
             } else {
-                inputPersonas();
+                //inputPersonas();
+                browse=1;
+                startActivity(new Intent(this,Comensales.class));
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -365,6 +367,16 @@ public class ResMesero extends PBase {
         }
     }
 
+    private void cantidadComensales() {
+        try {
+            cantpers=gl.comensales;
+            if (cantpers<1 | cantpers>50) throw new Exception();
+            addOrden();
+        } catch (Exception e) {
+            mu.msgbox("Cantidad incorrecta");return;
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -531,6 +543,11 @@ public class ResMesero extends PBase {
             T_ordenObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
+        }
+
+        if (browse==1) {
+            browse=0;
+            cantidadComensales();
         }
 
         if (gl.cerrarmesero) finish();else listItems();

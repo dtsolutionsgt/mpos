@@ -130,7 +130,7 @@ public class OrdenMenu extends PBase {
 
     public void doAdd(View view) {
         browse=1;
-        gl.gstr = "";gl.prodtipo=1;
+        gl.gstr="";gl.prodtipo=1;
         startActivity(new Intent(this, Producto.class));
     }
 
@@ -1014,7 +1014,8 @@ public class OrdenMenu extends PBase {
 
         if (browse==1) {
             browse=0;
-            agregaArticulo(app.codigoProducto(gl.gstr));return;
+            if (!gl.gstr.isEmpty()) agregaArticulo(app.codigoProducto(gl.gstr));
+            return;
         }
     }
 

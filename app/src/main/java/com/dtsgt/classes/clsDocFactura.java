@@ -213,7 +213,7 @@ public class clsDocFactura extends clsDocument {
 		} catch (Exception e) {
 	    }
 
-        add1=add1+" - ";
+        add1=add1+"";
 		add2=add2+" - ";
 		
 		return true;
@@ -578,7 +578,13 @@ public class clsDocFactura extends clsDocument {
 
         rep.add("");
         rep.add("");
-        rep.add("");
+
+        if (impresionorden) {
+            String sod=add1;if (!sod.isEmpty()) sod="ORDEN # "+sod;
+            rep.add(sod);
+        } else {
+            rep.add("");
+        }
         rep.add("");
         rep.add("");
 

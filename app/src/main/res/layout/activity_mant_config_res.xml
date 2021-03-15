@@ -88,7 +88,7 @@
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
                 android:layout_width="605dp"
-                android:layout_height="500dp"
+                android:layout_height="450dp"
                 android:layout_above="@+id/relbotpan"
                 android:layout_below="@+id/relRoad"
                 android:layout_centerHorizontal="true"
@@ -114,25 +114,6 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:text="Propina [ % ]"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="normal" />
-
-                <TextView
-                    android:id="@+id/lblCFact62"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_below="@+id/lblCFact60"
-                    android:layout_alignStart="@+id/lblCFact48"
-                    android:layout_alignEnd="@+id/lblCFact48"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="0dp"
-                    android:background="@drawable/blue_strip"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="10dp"
-                    android:text="Prefijo numero orden"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
@@ -185,12 +166,12 @@
                     android:id="@+id/chkEnvio16"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio15"
                     android:layout_alignStart="@+id/chkEnvio8"
-                    android:layout_alignTop="@+id/lblCFact59"
                     android:layout_alignEnd="@+id/chkEnvio8"
                     android:layout_alignParentBottom="false"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="0dp"
                     android:clickable="true"
                     android:enabled="true" />
@@ -318,7 +299,7 @@
                     android:id="@+id/lblCFact59"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:layout_below="@+id/lblCFact62"
+                    android:layout_below="@+id/lblCFact60"
                     android:layout_alignStart="@+id/lblCFact48"
                     android:layout_alignEnd="@+id/lblCFact48"
                     android:layout_marginStart="0dp"
@@ -399,17 +380,6 @@
                     android:layout_toEndOf="@+id/lblCFact45"
                     android:ems="10"
                     android:inputType="numberDecimal" />
-
-                <EditText
-                    android:id="@+id/editTextNumber8"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/chkEnvio15"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toEndOf="@+id/lblCFact45"
-                    android:ems="10"
-                    android:maxLength="2" />
 
                 <EditText
                     android:id="@+id/editTextNumber6"

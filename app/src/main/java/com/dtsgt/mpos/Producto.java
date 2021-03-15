@@ -512,10 +512,7 @@ public class Producto extends PBase {
         try {
             spincode.clear();
             spinlist.clear();
-
-        } catch (Exception e) {
-
-        }
+        } catch (Exception e) {}
 
         try {
 
@@ -527,11 +524,11 @@ public class Producto extends PBase {
                     sql="SELECT DISTINCT P_PRODUCTO.LINEA,P_LINEA.NOMBRE "+
 						"FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO " +
 						"INNER JOIN P_LINEA ON P_PRODUCTO.LINEA=P_LINEA.CODIGO_LINEA " +
-						"WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.CODIGO_TIPO = 'P') " +
+						"WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.CODIGO_TIPO = 'P') AND (P_LINEA.ACTIVO=1) " +
 						"UNION "+
 						"SELECT DISTINCT P_PRODUCTO.LINEA,P_LINEA.NOMBRE "+
 						"FROM P_PRODUCTO INNER JOIN P_LINEA ON P_PRODUCTO.LINEA=P_LINEA.CODIGO_LINEA " +
-						"WHERE (P_PRODUCTO.CODIGO_TIPO = 'S' OR P_PRODUCTO.CODIGO_TIPO = 'M') " +
+						"WHERE (P_PRODUCTO.CODIGO_TIPO = 'S' OR P_PRODUCTO.CODIGO_TIPO = 'M') AND (P_LINEA.ACTIVO=1) " +
 						"ORDER BY P_LINEA.NOMBRE";
                     break;
                 case 2: // Mercadeo propio

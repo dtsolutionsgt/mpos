@@ -472,7 +472,7 @@ public class FacturaRes extends PBase {
 			}
 			*/
 
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("processFinalPromo: " + e.getMessage());
 		}
@@ -705,6 +705,7 @@ public class FacturaRes extends PBase {
 
 			if (app.impresora()) {
 
+			    fdoc.impresionorden=gl.peOrdenComanda;
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
                 app.doPrint(gl.peNumImp,0);
 

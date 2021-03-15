@@ -31,7 +31,7 @@ public class appGlobals extends Application {
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
-			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta;
+			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,comensales;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
                 codigo_pais,primesa,pricuenta,ordcorel;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio;
@@ -58,12 +58,12 @@ public class appGlobals extends Application {
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
     public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
-    public Boolean peAgregarCombo,peComboLimite;
+    public Boolean peAgregarCombo,peComboLimite,peOrdenComanda;
     public double  pePropinaPerc;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelTablet;
-    public String pelPrefijoOrden;
+    public String  pelPrefijoOrden;
 
 	// Descuentos
 	public String promprod;

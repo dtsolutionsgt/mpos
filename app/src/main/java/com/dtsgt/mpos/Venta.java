@@ -43,6 +43,7 @@ import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
@@ -105,6 +106,7 @@ public class Venta extends PBase {
     private clsP_nivelprecioObj P_nivelprecioObj;
     private clsP_productoObj P_productoObj;
     private clsVendedoresObj MeserosObj;
+    private clsT_ordencomboprecioObj T_ordencomboprecioObj;
 
     private clsRepBuilder rep;
 
@@ -156,6 +158,8 @@ public class Venta extends PBase {
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
         MeserosObj =new clsVendedoresObj(this,Con,db);
+        T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
+
 
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
@@ -588,6 +592,15 @@ public class Venta extends PBase {
                         ttsin=tt-item.imp-item.percep;
                         item.Total=ttsin;
                     } else {
+                        item.Total=tt;
+                    }
+
+                    T_ordencomboprecioObj.fill("WHERE (COREL='VENTA') AND (IDCOMBO="+item.emp+")");
+                    if (T_ordencomboprecioObj.count>0) {
+                        item.Prec=T_ordencomboprecioObj.first().prectotal;
+                        item.sdesc=mu.frmdec(item.Prec);
+
+                        tt=item.Cant*item.Prec;tt=mu.round2(tt);
                         item.Total=tt;
                     }
 
@@ -1058,7 +1071,8 @@ public class Venta extends PBase {
 
     private boolean addItemMenu(){
         Cursor dt;
-        double precdoc,fact,cantbas,peso;
+        double precdoc,fact,cantbas,peso,tt,cprec;
+        int precid;
         String umb;
 
 
@@ -1092,18 +1106,31 @@ public class Venta extends PBase {
             ins.add("UMSTOCK",gl.um);
             if (gl.umfactor==0) gl.umfactor=1;
             ins.add("FACTOR",gl.umfactor);
-            if (porpeso) ins.add("PRECIO",gl.prectemp); else ins.add("PRECIO",prec);
             ins.add("IMP",impval);
             ins.add("DES",desc);
             ins.add("DESMON",descmon);
-            ins.add("TOTAL",prodtot);
-            if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
             ins.add("PESO",peso);
             ins.add("VAL1",0);
             ins.add("VAL2","");
             ins.add("VAL3",0);
             ins.add("VAL4","");
             ins.add("PERCEP",percep);
+
+            T_ordencomboprecioObj.fill("WHERE (COREL='VENTA') ORDER BY IDCOMBO DESC)");
+            precid=T_ordencomboprecioObj.first().idcombo;
+
+            T_ordencomboprecioObj.fill("WHERE (COREL='VENTA') AND (IDCOMBO="+precid+")");
+            if (T_ordencomboprecioObj.count>0) {
+                cprec=T_ordencomboprecioObj.first().prectotal;
+                ins.add("PRECIO",cprec);
+                ins.add("PRECIODOC",cprec);
+                tt=cant*cprec;tt=mu.round2(tt);
+                ins.add("TOTAL",tt);
+            } else {
+                if (porpeso) ins.add("PRECIO",gl.prectemp); else ins.add("PRECIO",prec);
+                if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
+                ins.add("TOTAL",prodtot);
+            }
 
             db.execSQL(ins.sql());
 
@@ -1855,7 +1882,8 @@ public class Venta extends PBase {
                         item.Cod=dt.getString(0);
                         item.icod=dt.getInt(4);
                         pprec=prodPrecioBaseVal(item.icod);
-                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+pprec+" ]";
+                        //item.Name=dt.getString(1)+" \n[ "+gl.peMon+pprec+" ]";
+                          item.Name=dt.getString(1)+"  [ "+gl.peMon+pprec+" ]";
                         if (pprec>0) {
                             pitems.add(item);
                             pcodes.add(pcode);
@@ -2692,15 +2720,15 @@ public class Venta extends PBase {
 
     private void initValues(){
         Cursor DT;
-        String contrib;
+        String ordencod;
+        int ordennum;
 
         app.parametrosExtra();
         usarbio=gl.peMMod.equalsIgnoreCase("1");
 
         tiposcan="*";
 
-        lblTit.setText(gl.tiendanom+" - "+gl.cajanom);
-        lblAlm.setText(gl.tiendanom);
+        lblTit.setText(gl.cajanom);
         lblPokl.setText(gl.vendnom);
 
         try {
@@ -2752,6 +2780,22 @@ public class Venta extends PBase {
             sql="DELETE FROM T_COMBO";
             db.execSQL(sql);
 
+            sql="DELETE FROM T_ORDEN WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBO WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBOAD WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBODET WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+            sql="DELETE FROM T_ORDENCOMBOPRECIO WHERE COREL='VENTA'";
+            db.execSQL(sql);
+
+
             sql="DELETE FROM T_BARRA";
             db.execSQL(sql);
 
@@ -2793,9 +2837,29 @@ public class Venta extends PBase {
             mu.msgbox("Error : " + e.getMessage());
         }
 
-        gl.ref1="";
+        gl.ref1="";lblAlm.setText("");
         gl.ref2="";
         gl.ref3="";
+
+        if (gl.peOrdenComanda) {
+            try {
+                clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+                ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+                clsClasses.clsP_orden_numero orditem = clsCls.new clsP_orden_numero();
+                orditem.id=ordennum;
+                P_orden_numeroObj.add(orditem);
+
+
+                ordennum=ordennum % 1000;ordennum=ordennum+1000;
+                ordencod=""+ordennum;
+                ordencod=gl.pelPrefijoOrden+ordencod.substring(1,4);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                ordencod="---";
+            }
+            gl.ref1=ordencod;
+            lblAlm.setText("#"+gl.ref1);
+        }
 
         clsDescFiltro clsDFilt=new clsDescFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
 
@@ -3550,6 +3614,7 @@ public class Venta extends PBase {
             D_pedidoObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
             MeserosObj.reconnect(Con,db);
+            T_ordencomboprecioObj.reconnect(Con,db);
 
             checkLock();
 

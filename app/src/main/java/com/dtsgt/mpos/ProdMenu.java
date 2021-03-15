@@ -2,7 +2,9 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,9 +14,14 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_prodmenuObj;
+import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ordencomboObj;
+import com.dtsgt.classes.clsT_ordencomboadObj;
+import com.dtsgt.classes.clsT_ordencombodetObj;
+import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.ladapt.ListAdaptOpcion;
 
 import java.util.ArrayList;
@@ -28,16 +35,19 @@ public class ProdMenu extends PBase {
     private ListAdaptOpcion adapter;
     private clsT_comboObj T_comboObj;
     private clsP_productoObj P_productoObj;
+    private clsT_ordencomboprecioObj T_ordencomboprecioObj;
 
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
+    private ArrayList<String> mname = new ArrayList<String>();
 
     private Precio prc;
 
     private int cant,lcant, uitemid,nivel;
+    private double precorig,precitems,precdif, precio, precnuevo;
     private boolean newitem;
-    private String ststr,prodname;
+    private String ststr,prodname,idorden;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +59,14 @@ public class ProdMenu extends PBase {
         listView = (ListView) findViewById(R.id.listView);
         lbl1 = (TextView) findViewById(R.id.textView93);
         lbl2 = (TextView) findViewById(R.id.textView117);
-        lbl3 = (TextView) findViewById(R.id.textView116);
+        lbl3 = (TextView) findViewById(R.id.textView227);
         img1 = (ImageView) findViewById(R.id.imageView27);
         img2 = (ImageView) findViewById(R.id.imageView109);img2.setVisibility(View.INVISIBLE);
 
         P_productoObj = new clsP_productoObj(this, Con, db);
         T_comboObj = new clsT_comboObj(this, Con, db);
+        T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
+
         prc = new Precio(this, mu, 2);
 
         setHandlers();
@@ -64,6 +76,10 @@ public class ProdMenu extends PBase {
 
         uitemid = Integer.parseInt(gl.menuitemid);
         newitem = gl.newmenuitem;
+        idorden="VENTA";
+
+        precorig=gl.menuprecio;
+        precorig=prodPrecioItem(app.codigoProducto(gl.prodid));
 
         lbl1.setText(gl.gstr);
         lbl2.setText(""+cant);
@@ -109,6 +125,12 @@ public class ProdMenu extends PBase {
         msgAskDelete("Eliminar articulo");
     }
 
+    public void doAdd(View view) {
+        browse=1;
+        gl.gstr = "";gl.prodtipo=1;
+        startActivity(new Intent(this, Producto.class));
+    }
+
     public void doClose(View view) {
         exit();
     }
@@ -130,7 +152,7 @@ public class ProdMenu extends PBase {
                         selidx=position;
 
                         //#EJC20200524: listar items de la opcion de menu
-                        listOptions(item.Name,item.codigo_menu_opcion);
+                        listOptions(item.Name,item.codigo_menu_opcion,item.cant,item.opcional);
 
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -168,25 +190,68 @@ public class ProdMenu extends PBase {
                 try {
                     selid=combo.first().idseleccion;
 
-                    if (selid>0) {
-                        items.get(i).cod=selid;
-                        items.get(i).Name=getProdName(selid);
-                        items.get(i).bandera=1;
+                    if (selid!=0) {
+                        if (selid>0) {
+                            items.get(i).cod=selid;
+                            items.get(i).Name=getProdName(selid);
+                            items.get(i).bandera=1;
+                        } else {
+                            items.get(i).cod=0;
+                            //items.get(i).Name=combo.first().;
+                            items.get(i).bandera=0;
+                        }
+
+                        items.get(i).cant=combo.first().cant;
+                        items.get(i).precio=prodPrecioItem(selid);
+                        items.get(i).sprec=mu.frmdec(items.get(i).precio);
+                        if (items.get(selidx).precio==0) items.get(selidx).sprec="";
                     } else {
-                        items.get(i).cod=0;
-                        //items.get(i).Name=combo.first().;
-                        items.get(i).bandera=0;
+                        items.get(i).Name=gl.peComNoAplic;
                     }
 
-                    items.get(i).cant=combo.first().cant;
-                    items.get(i).precio=prodPrecioItem(selid);
-                    items.get(i).sprec=mu.frmdec(items.get(i).precio);
-                    if (items.get(selidx).precio==0) items.get(selidx).sprec="";
+                    if (items.get(i).cod==0) items.get(i).modo=0; else items.get(i).modo=1;
 
                 } catch (Exception e) { }
             }
 
             adapter.notifyDataSetChanged();
+            precioFinal();
+        } catch (Exception e) {
+            mu.msgbox2(e.getMessage());
+        }
+    }
+
+    private void updateItems() {
+        int selid;
+
+        try {
+            for (int i = 0; i <items.size(); i++) {
+
+                try {
+                    selid=items.get(i).cod;
+
+                    if (selid!=0) {
+                        if (selid>0) {
+                            items.get(i).Name=getProdName(selid);
+                            items.get(i).bandera=1;
+                        } else {
+                            items.get(i).cod=0;
+                            items.get(i).bandera=0;
+                        }
+
+                        items.get(i).precio=prodPrecioItem(selid);
+                        items.get(i).sprec=mu.frmdec(items.get(i).precio);
+                        if (items.get(selidx).precio==0) items.get(selidx).sprec="";
+                    } else {
+                        items.get(i).Name=gl.peComNoAplic;
+                    }
+                } catch (Exception e) {
+                    String ss=e.getMessage();
+                }
+            }
+
+            adapter.notifyDataSetChanged();
+            precioFinal();
         } catch (Exception e) {
             mu.msgbox2(e.getMessage());
         }
@@ -198,9 +263,10 @@ public class ProdMenu extends PBase {
     }
 
     private void listMenuItems() {
-
         clsP_prodmenuObj P_menuObj=new clsP_prodmenuObj(this,Con,db);
         clsClasses.clsOpcion item;
+        clsT_ordencomboadObj T_ordencomboadObj=new clsT_ordencomboadObj(this,Con,db);
+        clsClasses.clsT_ordencomboad aitem;
 
         try {
 
@@ -218,11 +284,41 @@ public class ProdMenu extends PBase {
                 item.cod=0;
                 item.unid=P_menuObj.items.get(i).unid;
                 if (item.unid>0) item.Name+="*";
+                item.cant=P_menuObj.items.get(i).cant;
+
+                item.opcional=P_menuObj.items.get(i).cant==0;
+                item.adicional=false;
+                item.modo=1;
+
                 item.precio=0;
                 item.sprec="";
 
                 items.add(item);
             }
+
+            T_ordencomboadObj.fill("WHERE (COREL='"+idorden+"') AND (IDCOMBO="+uitemid+")");
+            for (int i = 0; i <T_ordencomboadObj.count; i++) {
+
+                item=clsCls.new clsOpcion();
+                item.codigo_menu_opcion =T_ordencomboadObj.items.get(i).id;
+                item.Name=T_ordencomboadObj.items.get(i).nombre;
+                item.bandera=0;
+                item.orden=0;
+                item.cod=0;
+                item.unid=T_ordencomboadObj.items.get(i).cant;
+                if (item.unid>0) item.Name+="*";
+                item.cant=T_ordencomboadObj.items.get(i).cant;
+                item.opcional=T_ordencomboadObj.items.get(i).cant==0;
+                item.adicional=true;
+                item.modo=-1;
+
+                item.precio=0;
+                item.sprec=mu.frmdec(item.precio);
+                if (item.precio==0) item.sprec="";
+
+                items.add(item);
+            }
+
 
             adapter=new ListAdaptOpcion(this,items);
             listView.setAdapter(adapter);
@@ -257,25 +353,34 @@ public class ProdMenu extends PBase {
         adapter.notifyDataSetChanged();
     }
 
-    private void listOptions(String title,int idoption) {
-
-        clsP_productoObj prod=new clsP_productoObj(this,Con,db);
-        clsP_prodmenuopcdetObj opc=new clsP_prodmenuopcdetObj(this,Con,db);
-        clsClasses.clsOpcion item;
-
+    private void listOptions(String title,int idoption,int cant,boolean opcional) {
         final AlertDialog Dialog;
+        clsP_prodmenuopcdetObj opc=new clsP_prodmenuopcdetObj(this,Con,db);
+        clsT_ordencombodetObj T_ordencombodetObj=new clsT_ordencombodetObj(this,Con,db);
         int cod;
 
         try {
 
-            lcode.clear();lname.clear();
+            lcode.clear();lname.clear();mname.clear();
 
             opc.fill("WHERE CODIGO_MENU_OPCION="+idoption);
+            T_ordencombodetObj.fill("WHERE CODIGO_MENU_OPCION="+idoption);
+
+            if (opcional) {
+                lcode.add("0");lname.add(gl.peComNoAplic);mname.add(gl.peComNoAplic);
+            }
 
             for (int i = 0; i <opc.count; i++) {
-                //#EJC20200524: Buscar aquí los productos de cada menu_opcion.
                 cod=opc.items.get(i).codigo_producto;
                 lcode.add(""+cod);
+                mname.add(getProdName(cod));
+                lname.add(getProdName(cod)+" ["+mu.frmdec(prodPrecioItem(cod))+"]");
+            }
+
+            for (int i = 0; i <T_ordencombodetObj.count; i++) {
+                cod=T_ordencombodetObj.items.get(i).codigo_producto;
+                lcode.add(""+cod);
+                mname.add(getProdName(cod));
                 lname.add(getProdName(cod)+" ["+mu.frmdec(prodPrecioItem(cod))+"]");
             }
 
@@ -288,16 +393,22 @@ public class ProdMenu extends PBase {
             ExDialog mMenuDlg = new ExDialog(this);
 
             mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
+                public void onClick(DialogInterface dialog, int position) {
                     try {
-                        items.get(selidx).cod=Integer.parseInt(lcode.get(item));
-                        items.get(selidx).Name=lname.get(item);
-                        items.get(selidx).bandera=1;
-                        items.get(selidx).precio=prodPrecioItem(items.get(selidx).cod);
-                        items.get(selidx).sprec=mu.frmdec(items.get(selidx).precio);
-                        if (items.get(selidx).precio==0) items.get(selidx).sprec="";
+
+                        clsClasses.clsOpcion item=items.get(selidx);
+
+                        item.cod=Integer.parseInt(lcode.get(position));
+                        item.Name=mname.get(position);
+                        item.bandera=1;
+                        item.precio=prodPrecioItem(items.get(selidx).cod);
+                        item.sprec=mu.frmdec(items.get(selidx).precio);
+                        if (item.precio==0) items.get(selidx).sprec="";
+
+                        if (item.cod==0) item.modo=0; else item.modo=1;
 
                         adapter.notifyDataSetChanged();
+                        precioFinal();
                         validaStock();
                     } catch (Exception e) {
                         toast(e.getMessage());
@@ -337,7 +448,11 @@ public class ProdMenu extends PBase {
             if (!newitem){
                 db.execSQL("DELETE FROM T_COMBO WHERE IdCombo="+uitemid);
                 db.execSQL("DELETE FROM T_VENTA WHERE (PRODUCTO='"+gl.prodid+"') AND (EMPRESA='"+uitemid+"')");
+            } else {
+                guardaPrecios();
             }
+
+            db.execSQL("UPDATE T_ordencomboprecio SET PRECTOTAL="+precnuevo+" WHERE (COREL='VENTA') AND (IdCombo="+uitemid+")");
 
             for (int i = 0; i <items.size(); i++) {
 
@@ -353,6 +468,9 @@ public class ProdMenu extends PBase {
 
                 T_comboObj.add(item);
             }
+
+            prec=precnuevo;
+            tot=cant*prec;tot=mu.round2(tot);
 
             ins.init("T_VENTA");
             ins.add("PRODUCTO",gl.prodid);
@@ -399,6 +517,12 @@ public class ProdMenu extends PBase {
             db.execSQL("DELETE FROM T_COMBO WHERE (IdCombo="+uitemid+")");
             db.execSQL(sql);
 
+
+            sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (VAL4='"+uitemid+"')";
+            db.execSQL(sql);
+            db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBOAD WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
+
             db.setTransactionSuccessful();
             db.endTransaction();
 
@@ -409,6 +533,182 @@ public class ProdMenu extends PBase {
             db.endTransaction();
             msgbox(e.getMessage());
         }
+    }
+
+    private void agregaArticulo(int aid) {
+
+        clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(this,Con,db);
+        clsT_ordencomboObj combo=new clsT_ordencomboObj(this,Con,db);
+        clsT_ordencomboadObj T_ordencomboadObj=new clsT_ordencomboadObj(this,Con,db);
+        clsClasses.clsT_ordencomboad item;
+        clsT_ordencombodetObj T_ordencombodetObj=new clsT_ordencombodetObj(this,Con,db);
+        clsClasses.clsT_ordencombodet ditem;
+        clsClasses.clsOpcion oitem;
+
+        String prodname=app.prodNombre(aid);
+        int id=0,id1,id2;
+
+        try {
+            db.beginTransaction();
+
+            // P_PRODMENUOPC
+
+            id1=T_comboObj.newID("SELECT MAX(CODIGO_MENU) FROM T_ordencombo");
+            id2=T_ordencomboadObj.newID("SELECT MAX(ID) FROM T_ordencomboad");
+            id=id1+1000000;if (id2>id) id=id2;
+
+            item = clsCls.new clsT_ordencomboad();
+
+            item.id=id;
+            item.corel=idorden;
+            item.idcombo=uitemid;
+            item.nombre=prodname;
+            //item.nombre="Adicional";
+            item.cant=0;
+
+            T_ordencomboadObj.add(item);
+
+            // P_PRODMENUOPCDET
+
+            id1=T_ordencombodetObj.newID("SELECT MAX(CODIGO_MENUOPC_DET) FROM T_ordencombodet");
+            id2=T_comboObj.newID("SELECT MAX(CODIGO_MENU) FROM T_ordencombo");
+            if (id2>id1) id1=id2;
+
+            ditem = clsCls.new clsT_ordencombodet();
+
+            ditem.codigo_menuopc_det=id1;
+            ditem.idcombo=uitemid;
+            ditem.codigo_menu_opcion=id;
+            ditem.codigo_producto=aid;
+            ditem.corel=idorden;
+
+            T_ordencombodetObj.add(ditem);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
+        try {
+            oitem=clsCls.new clsOpcion();
+
+            oitem.codigo_menu_opcion =id;
+            oitem.cod=aid;
+            oitem.bandera=1;
+            oitem.Name=prodname;
+            oitem.bandera=0;
+            oitem.orden=0;
+            oitem.unid=0;
+            oitem.cant=0;
+            oitem.opcional=true;
+            oitem.adicional=true;
+            oitem.precio=prodPrecioItem(aid);
+            oitem.sprec=mu.frmdec(oitem.precio);
+            if (oitem.precio==0) oitem.sprec="";
+
+            items.add(oitem);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+
+        adapter.notifyDataSetChanged();
+
+        adapter=new ListAdaptOpcion(this,items);
+        listView.setAdapter(adapter);
+
+        updateItems();
+
+    }
+
+    //endregion
+
+    //region Precios
+
+    private void precioFinal() {
+        precio=precorig-precdif;
+
+        try {
+
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).cod==0 && items.get(i).modo==0) {
+                    if (!items.get(i).adicional) precio -= precioItem(items.get(i).codigo_menu_opcion);
+                }
+            }
+
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).cod!=0 && items.get(i).adicional ) {
+                    precio += prodPrecioItem(items.get(i).cod);
+                }
+            }
+
+            precio+=precdif;
+            if (!gl.peComboLimite) {
+                if (precio<precorig) precio=precorig;
+            }
+
+            precnuevo=precio;
+            lbl3.setText(mu.frmcur(precnuevo));
+
+            if (precorig==precnuevo) {
+                lbl3.setTextColor(Color.parseColor("#1B76B9"));
+            } else {
+                lbl3.setTextColor(Color.RED);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void precioInicial() {
+        try {
+            double iprec=0;
+
+            for (int i = 0; i < items.size(); i++) {
+                iprec+=precioItem(items.get(i).codigo_menu_opcion);
+            }
+
+            precitems=iprec;
+            precdif=precitems-precorig;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private double precioItem(int itemid) {
+        clsP_prodmenuopcdetObj opc = new clsP_prodmenuopcdetObj(this, Con, db);
+        int cod;
+        double pp,pmin=10000000;
+
+        try {
+            opc.fill("WHERE CODIGO_MENU_OPCION="+itemid);
+            for (int ii = 0; ii <opc.count; ii++) {
+                cod=opc.items.get(ii).codigo_producto;
+                pp=prodPrecioItem(cod);
+                if (ii==0) {
+                    pmin=pp;
+                } else {
+                    if (pp<pmin) pmin=pp;
+                }
+            }
+            return pmin;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return 0;
+        }
+    }
+
+    private void guardaPrecios() {
+        clsClasses.clsT_ordencomboprecio pitem = clsCls.new clsT_ordencomboprecio();
+
+        pitem.corel="VENTA";
+        pitem.idcombo=uitemid;
+        pitem.precorig=precorig;
+        pitem.precitems=precitems;
+        pitem.precdif=precdif;
+        pitem.prectotal=precnuevo;
+
+        T_ordencomboprecioObj.add(pitem);
     }
 
     //endregion
@@ -686,8 +986,15 @@ public class ProdMenu extends PBase {
         try {
             P_productoObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
+            T_ordencomboprecioObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox2(e.getMessage());
+        }
+
+        if (browse==1) {
+            browse=0;
+            if (!gl.gstr.isEmpty()) agregaArticulo(app.codigoProducto(gl.gstr));
+            return;
         }
     }
 
