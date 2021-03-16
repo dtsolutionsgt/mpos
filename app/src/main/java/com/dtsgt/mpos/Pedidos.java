@@ -436,8 +436,8 @@ public class Pedidos extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    db.beginTransaction();
 
+                    db.beginTransaction();
                     db.execSQL("DELETE FROM D_PEDIDO");
                     db.execSQL("DELETE FROM D_PEDIDOC");
                     db.execSQL("DELETE FROM D_PEDIDOCOMBO");
@@ -446,8 +446,9 @@ public class Pedidos extends PBase {
                     db.setTransactionSuccessful();
                     db.endTransaction();
 
-                    toast("Ordenes borrados");
+                    toast("Órdenes borradas");
                     finish();
+
                 } catch (Exception e) {
                     db.endTransaction();
                     msgbox(e.getMessage());
@@ -490,7 +491,7 @@ public class Pedidos extends PBase {
 
         if (browse==2) {
             browse=0;
-            if (gl.checksuper) msgAskDelete("Borrar todos los ordenes");
+            if (gl.checksuper) msgAskDelete("Borrar todos las órdenes");
             gl.checksuper=false;
             return;
         }

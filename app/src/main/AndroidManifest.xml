@@ -4,7 +4,9 @@
     package="com.dtsgt.mpos"
     android:installLocation="preferExternal"
     android:versionCode="5"
-    android:versionName="3.2.14">
+    android:versionName="3.2.14"
+    android:hardwareAccelerated="true"
+    android:largeHeap="true">
 
     <uses-feature
         android:name="android.hardware.camera"

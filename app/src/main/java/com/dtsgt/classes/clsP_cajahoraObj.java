@@ -74,11 +74,9 @@ public class clsP_cajahoraObj {
     private void addItem(clsClasses.clsP_cajahora item) {
 
         ins.init("P_cajahora");
-
         ins.add("COREL",item.corel);
         ins.add("FECHAINI",item.fechaini);
         ins.add("FECHAFIN",item.fechafin);
-
         db.execSQL(ins.sql());
 
     }

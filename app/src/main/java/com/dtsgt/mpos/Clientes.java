@@ -818,6 +818,7 @@ public class Clientes extends PBase {
                 imgAdd.setImageBitmap(bmImg);
             }
         } catch (Exception e) {
+        	Log.e("err",e.getMessage());
         }
     }
 

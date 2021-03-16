@@ -21,6 +21,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -861,7 +862,9 @@ public class MainActivity extends PBase {
                 Bitmap bmImg = BitmapFactory.decodeFile(emplogo);
                 imgLogo.setImageBitmap(bmImg);
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            Log.e("err",e.getMessage());
+        }
 
         try {
             String orddir=Environment.getExternalStorageDirectory().getPath() + "/mposordser";
