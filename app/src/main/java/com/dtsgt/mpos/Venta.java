@@ -2025,7 +2025,7 @@ public class Venta extends PBase {
                     showMenuSwitch();
                     break;
                 case 61:
-                    msgAskOrden("Convertir al órden");
+                    msgAskOrden("Convertir a órden");
                     break;
                 case 62:
                     if (hasProducts()) inputMesa(); else toastcent("La órden está vacia");
@@ -3456,7 +3456,7 @@ public class Venta extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                toast("Pendiente implementacion");
+                toast("Orden en proceso...");
             }
         });
 
