@@ -216,6 +216,7 @@ public class clsD_facturadObj {
         ins.add("UMVENTA",item.umventa);
         ins.add("FACTOR",item.factor);
         ins.add("UMSTOCK",item.umstock);
+
         return ins.sql();
 
     }

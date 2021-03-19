@@ -75,7 +75,7 @@ public class LA_T_movd  extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl4.setText(mu.frmint(items.get(position).cant));
+        holder.lbl4.setText(mu.frmint(items.get(position).cant)+" "+items.get(position).unidadmedida);
         holder.lbl7.setText(mu.frmcur(items.get(position).pesom));
         holder.lbl8.setText(""+items.get(position).lote);
 

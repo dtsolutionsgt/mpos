@@ -95,6 +95,14 @@ public class clsClasses {
         public double propina;
     }
 
+    public class clsD_facturar {
+        public int  empresa;
+        public String corel;
+        public int  producto;
+        public double cant;
+        public String um;
+    }
+
     public class clsD_facturas {
         public String corel;
         public int  id;
@@ -595,6 +603,15 @@ public class clsClasses {
         public String unidadmedida;
     }
 
+    public class clsP_prodreceta {
+        public int  codigo_receta;
+        public int  empresa;
+        public int  codigo_producto;
+        public int  codigo_articulo;
+        public double cant;
+        public String um;
+    }
+
     public class clsP_nivelpreciolist {
         public String codigo;
         public int  nivel;
@@ -796,6 +813,18 @@ public class clsClasses {
         public int codigo_proveedor;
     }
 
+    public class clsP_unidad {
+        public String  codigo_unidad;
+        public String nombre;
+    }
+
+    public class clsP_unidad_conv {
+        public int  codigo_conversion;
+        public String codigo_unidad1;
+        public String codigo_unidad2;
+        public double factor;
+    }
+
     public class clsP_usuario {
 		public String codigo;
 		public String nombre;
@@ -893,6 +922,13 @@ public class clsClasses {
         public int  cant;
         public int  idseleccion;
         public int  orden;
+    }
+
+    public class clsT_factreceta {
+        public int  id;
+        public int  producto;
+        public double cant;
+        public String um;
     }
 
     public class clsT_factura_fel {

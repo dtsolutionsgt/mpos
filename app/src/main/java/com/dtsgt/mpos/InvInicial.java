@@ -17,6 +17,8 @@ import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_unidadObj;
+import com.dtsgt.classes.clsP_unidad_convObj;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
 import com.dtsgt.ladapt.LA_T_movd;
@@ -29,7 +31,8 @@ public class InvInicial extends PBase {
 
     private ListView listView;
     private GridView grdbtn;
-    private TextView lblBar,lblKeyDP,lblProd,lblCant,lblCosto,lblTCant,lblTCosto,lblTit,lblDocumento;
+    private TextView lblBar,lblKeyDP,lblProd,lblCant,lblCosto,lblTCant;
+    private TextView lblTCosto,lblTit,lblDocumento,lblUni;
 
     private clsKeybHandler khand;
     private LA_T_movd adapter;
@@ -39,14 +42,16 @@ public class InvInicial extends PBase {
     private clsT_movdObj T_movdObj;
     private clsT_movrObj T_movrObj;
     private clsP_productoObj P_productoObj;
+    private clsP_unidadObj P_unidadObj;
+    private clsP_unidad_convObj P_unidad_convObj;
 
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
     private clsClasses.clsT_movd selitem;
     private clsClasses.clsT_movr selitemr;
 
-    private String barcode,prodname,um,invtext;
+    private String barcode,prodname,um,invtext,ubas,convum;
     private int prodid,selidx;
-    private double cantt,costot;
+    private double cantt,costot,convcant;
     private boolean ingreso;
 
     @Override
@@ -67,6 +72,7 @@ public class InvInicial extends PBase {
         lblCosto = (TextView) findViewById(R.id.textView160);
         lblTCant = (TextView) findViewById(R.id.textView155);
         lblTCosto = (TextView) findViewById(R.id.textView150);
+        lblUni = (TextView) findViewById(R.id.textView229);
 
         prodid=0;
         ingreso=gl.invregular;
@@ -84,6 +90,8 @@ public class InvInicial extends PBase {
         T_movdObj=new clsT_movdObj(this,Con,db);
         T_movrObj=new clsT_movrObj(this,Con,db);
         P_productoObj=new clsP_productoObj(this,Con,db);
+        P_unidadObj=new clsP_unidadObj(this,Con,db);
+        P_unidad_convObj=new clsP_unidad_convObj(this,Con,db);
 
         setHandlers();
 
@@ -145,7 +153,6 @@ public class InvInicial extends PBase {
                 if (!barcode.isEmpty()) addBarcode();
             } else if (khand.label==lblCant) {
                 if (gl.invregular) {
-
                     if (lblCosto.getText().toString().equals("0")){
                         khand.val="0";
                         lblCosto.setText("");
@@ -158,6 +165,10 @@ public class InvInicial extends PBase {
                 if (gl.invregular) addItem();
             }
         }
+    }
+
+    public void doListUnits(View view) {
+       listUnits();
     }
 
     private void setHandlers() {
@@ -218,9 +229,11 @@ public class InvInicial extends PBase {
 
     private void listItems() {
         double tc,can;
+        int cl=0;
 
         selidx=-1;
-        lblProd.setText("");lblBar.setText("");lblCant.setText("");lblCosto.setText("");
+        lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
+        lblBar.setText("");lblCant.setText("");lblCosto.setText("");
         khand.setLabel(lblBar,false);
 
         costot=0;cantt=0;
@@ -228,7 +241,7 @@ public class InvInicial extends PBase {
         if (ingreso) {
 
             try {
-                T_movrObj.fill();
+                T_movrObj.fill();cl=T_movrObj.count;
 
                 for (int i = 0; i <T_movrObj.count; i++) {
                     can=T_movrObj.items.get(i).cant;cantt+=can;
@@ -245,7 +258,7 @@ public class InvInicial extends PBase {
         } else {
 
             try {
-                T_movdObj.fill();
+                T_movdObj.fill();cl=T_movdObj.count;
 
                 for (int i = 0; i <T_movdObj.count; i++) {
                     can=T_movdObj.items.get(i).cant;cantt+=can;
@@ -263,7 +276,7 @@ public class InvInicial extends PBase {
 
         }
 
-        lblTCant.setText("Artículos : "+mu.frmint(cantt));
+        lblTCant.setText("Artículos : "+mu.frmint(cl));//lblTCant.setText("Artículos : "+mu.frmint(cantt));
         lblTCosto.setText("Total : "+mu.frmcur(costot));
     }
 
@@ -313,7 +326,7 @@ public class InvInicial extends PBase {
                     itemr.pesom=0;
                     itemr.lote=prodname;
                     itemr.codigoliquidacion=0;
-                    itemr.unidadmedida=um;
+                    itemr.unidadmedida=lblUni.getText().toString();
                     itemr.precio=costo;
 
                     T_movrObj.add(itemr);
@@ -337,7 +350,7 @@ public class InvInicial extends PBase {
                     item.pesom=0;
                     item.lote=prodname;
                     item.codigoliquidacion=0;
-                    item.unidadmedida=um;
+                    item.unidadmedida=lblUni.getText().toString();
                     item.precio=costo;
 
                     T_movdObj.add(item);
@@ -353,7 +366,8 @@ public class InvInicial extends PBase {
             listItems();
 
             prodid=0;khand.setLabel(lblBar,false);
-            lblProd.setText("");lblBar.setText("");lblCant.setText("");lblCosto.setText("");
+            lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
+            lblBar.setText("");lblCant.setText("");lblCosto.setText("");
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -399,25 +413,27 @@ public class InvInicial extends PBase {
                 for (int i = 0; i <T_movrObj.count; i++) {
 
                     imovr=T_movrObj.items.get(i);
+                    converUMBas(imovr.producto,imovr.cant,imovr.unidadmedida);
 
                     item =clsCls.new clsD_MovD();
 
                     item.coreldet=corm+i+1;
                     item.corel=corel;
                     item.producto=imovr.producto;
-                    item.cant=imovr.cant;
+                    item.cant=convcant;         // imovr.cant;
                     item.cantm=0;
                     item.peso=0;
                     item.pesom=0;
                     item.lote="";
                     item.codigoliquidacion=0;
-                    item.unidadmedida=imovr.unidadmedida;
+                    item.unidadmedida=convum;   // imovr.unidadmedida;
                     item.precio=imovr.precio;
                     item.motivo_ajuste=0;
 
                     movd.add(item);
 
-                    updateStock(imovr.producto,imovr.cant,imovr.unidadmedida);
+                    updateStock(imovr.producto,convcant,convum);
+                    //updateStock(imovr.producto,imovr.cant,imovr.unidadmedida);
                 }
 
             } else {
@@ -425,25 +441,27 @@ public class InvInicial extends PBase {
                 for (int i = 0; i <T_movdObj.count; i++) {
 
                     imov=T_movdObj.items.get(i);
+                    converUMBas(imov.producto,imov.cant,imov.unidadmedida);
 
                     item =clsCls.new clsD_MovD();
 
                     item.coreldet=corm+i+1;
                     item.corel=corel;
                     item.producto=imov.producto;
-                    item.cant=imov.cant;
+                    item.cant=convcant;         // imov.cant;
                     item.cantm=0;
                     item.peso=0;
                     item.pesom=0;
                     item.lote="";
                     item.codigoliquidacion=0;
-                    item.unidadmedida=imov.unidadmedida;
+                    item.unidadmedida=convum;   // imov.unidadmedida;
                     item.precio=imov.precio;
                     item.motivo_ajuste=0;
 
                     movd.add(item);
 
-                    updateStock(imov.producto,imov.cant,imov.unidadmedida);
+                    updateStock(imov.producto,convcant,convum);
+                    //updateStock(imov.producto,imov.cant,imov.unidadmedida);
                 }
 
                 borraEncabezadoInicial();
@@ -474,8 +492,8 @@ public class InvInicial extends PBase {
         if (barraProducto()) {
             return;
         } else {
-            lblProd.setText("");lblBar.setText("");
-            lblCant.setText("");lblCosto.setText("");
+            lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
+            lblBar.setText("");lblCant.setText("");lblCosto.setText("");
             khand.setLabel(lblBar,false);
 
             toastlong("¡El producto "+barcode+" no existe!");
@@ -498,7 +516,9 @@ public class InvInicial extends PBase {
             prodname=P_productoObj.first().codigo+" - "+P_productoObj.first().desclarga;
             um=P_productoObj.first().unidbas;
 
-            lblProd.setText(prodname);
+            lblProd.setText(prodname);nombreUnidad();
+            lblUni.setVisibility(View.VISIBLE);
+
             khand.setLabel(lblCant,false);khand.val="";
             lblCant.setText("");
 
@@ -520,7 +540,8 @@ public class InvInicial extends PBase {
     private void setProduct() {
         try {
 
-            lblProd.setText("");lblBar.setText("");lblCant.setText("");lblCosto.setText("");
+            lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
+            lblBar.setText("");lblCant.setText("");lblCosto.setText("");
 
             prodid=selitem.producto;
 
@@ -530,11 +551,14 @@ public class InvInicial extends PBase {
             prodname=P_productoObj.first().codigo+" - "+P_productoObj.first().desclarga;
             um=P_productoObj.first().unidbas;
 
-            lblProd.setText(prodname);
+            lblProd.setText(prodname);nombreUnidad();
+            lblUni.setVisibility(View.VISIBLE);
 
             lblCant.setText(mu.frmint(selitem.cant));
             khand.setLabel(lblCant,false);
             lblCosto.setText(""+selitem.precio);
+
+            lblUni.setText(selitemr.unidadmedida);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -544,7 +568,8 @@ public class InvInicial extends PBase {
     private void setProductr() {
         try {
 
-            lblProd.setText("");lblBar.setText("");lblCant.setText("");lblCosto.setText("");
+            lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
+            lblBar.setText("");lblCant.setText("");lblCosto.setText("");
 
             prodid=selitemr.producto;
 
@@ -554,11 +579,14 @@ public class InvInicial extends PBase {
             prodname=P_productoObj.first().codigo+" - "+P_productoObj.first().desclarga;
             um=P_productoObj.first().unidbas;
 
-            lblProd.setText(prodname);
+            lblProd.setText(prodname);nombreUnidad();
+            lblUni.setVisibility(View.VISIBLE);
 
             lblCant.setText(mu.frmint(selitemr.cant));
             khand.setLabel(lblCant,false);
             lblCosto.setText(""+selitemr.precio);
+
+            lblUni.setText(selitemr.unidadmedida);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -595,6 +623,25 @@ public class InvInicial extends PBase {
             db.execSQL(sql);
         }
 
+    }
+
+    private void converUMBas(int prodid,Double ccant,String umed) throws Exception {
+        String prumb;
+        double factor;
+
+        P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prodid);
+        prumb=P_productoObj.first().unidbas;
+        factor=1;
+
+        if (!umed.equalsIgnoreCase(prumb)) {
+            P_unidad_convObj.fill("WHERE (CODIGO_UNIDAD1='"+prumb+"') AND (CODIGO_UNIDAD2='"+umed+"')");
+            factor=P_unidad_convObj.first().factor;
+        }
+
+        if (factor<=0) throw new Exception("Factor conversion no existe "+prumb+" / "+umed);
+
+        convum=prumb;
+        convcant=ccant/factor;
     }
 
     //endregion
@@ -636,10 +683,8 @@ public class InvInicial extends PBase {
             switch (menuid) {
                 case 50:
 
-                    gl.gstr = "";
-                    browse = 1;
+                    gl.gstr = "";        browse = 1;
                     gl.gstr="";
-
                     gl.prodtipo = 2;
 
                     startActivity(new Intent(this, Producto.class));break;
@@ -706,6 +751,55 @@ public class InvInicial extends PBase {
     private void borraEncabezadoInicial() {
         try {
             db.execSQL("DELETE FROM D_MOV WHERE STATCOM='X'");
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void nombreUnidad() {
+        try {
+            P_unidadObj.fill("WHERE (CODIGO_UNIDAD='"+um+"')");
+            ubas=P_unidadObj.first().nombre;
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            ubas=um;
+        }
+
+        lblUni.setText(um);
+    }
+
+    private void listUnits() {
+        final AlertDialog Dialog;
+
+        try {
+            P_unidad_convObj.fill("WHERE (CODIGO_UNIDAD1='"+um+"') AND (CODIGO_UNIDAD2<>'"+um+"')");
+
+            final String[] selitems = new String[P_unidad_convObj.count+1];
+            selitems[0]=um;
+            for (int i = 0; i <P_unidad_convObj.count; i++) {
+                selitems[i+1]=P_unidad_convObj.items.get(i).codigo_unidad2;
+            }
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+            menudlg.setTitle("Unidad de medida");
+
+            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    lblUni.setText(selitems[item]);
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -819,6 +913,8 @@ public class InvInicial extends PBase {
             T_movdObj.reconnect(Con,db);
             T_movrObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
+            P_unidadObj.reconnect(Con,db);
+            P_unidad_convObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

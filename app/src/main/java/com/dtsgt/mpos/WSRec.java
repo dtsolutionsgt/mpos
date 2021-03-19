@@ -53,6 +53,7 @@ import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_prodprecioObj;
+import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_proveedorObj;
 import com.dtsgt.classes.clsP_res_grupoObj;
@@ -60,6 +61,8 @@ import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_salaObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_unidadObj;
+import com.dtsgt.classes.clsP_unidad_convObj;
 import com.dtsgt.classes.clsP_usgrupoObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsP_usopcionObj;
@@ -127,6 +130,8 @@ import com.dtsgt.classesws.clsBeP_PRODMENUOPC_DET;
 import com.dtsgt.classesws.clsBeP_PRODMENUOPC_DETList;
 import com.dtsgt.classesws.clsBeP_PRODPRECIO;
 import com.dtsgt.classesws.clsBeP_PRODPRECIOList;
+import com.dtsgt.classesws.clsBeP_PRODRECETA;
+import com.dtsgt.classesws.clsBeP_PRODRECETAList;
 import com.dtsgt.classesws.clsBeP_PRODUCTO;
 import com.dtsgt.classesws.clsBeP_PRODUCTOList;
 import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPO;
@@ -143,6 +148,10 @@ import com.dtsgt.classesws.clsBeP_RUTA;
 import com.dtsgt.classesws.clsBeP_RUTAList;
 import com.dtsgt.classesws.clsBeP_SUCURSAL;
 import com.dtsgt.classesws.clsBeP_SUCURSALList;
+import com.dtsgt.classesws.clsBeP_UNIDAD;
+import com.dtsgt.classesws.clsBeP_UNIDADList;
+import com.dtsgt.classesws.clsBeP_UNIDAD_CONV;
+import com.dtsgt.classesws.clsBeP_UNIDAD_CONVList;
 import com.dtsgt.classesws.clsBeP_USGRUPO;
 import com.dtsgt.classesws.clsBeP_USGRUPOList;
 import com.dtsgt.classesws.clsBeP_USGRUPOOPC;
@@ -427,6 +436,20 @@ public class WSRec extends PBase {
                             callMethod("GetP_CAJA_IMPRESORA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
                         } else callEmptyMethod();
                         break;
+                    case 46:
+                        //callMethod("GetP_UNIDAD", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        callEmptyMethod();
+                        break;
+                    case 47:
+                        //callMethod("GetP_UNIDAD_CONV", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        callEmptyMethod();
+                        break;
+                    case 48:
+                        //callMethod("GetP_PRODRECETA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        callEmptyMethod();
+                        break;
+
+
                 }
             } catch (Exception e) {
                 error=e.getMessage();errorflag=true;
@@ -739,6 +762,27 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(46);
+                    break;
+                case 46:
+                    processUnidad();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(47);
+                    break;
+                case 47:
+                    processUnidadConv();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(48);
+                    break;
+                case 48:
+                    processProdReceta();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
                     break;
             }
@@ -883,6 +927,18 @@ public class WSRec extends PBase {
                 break;
             case 44:
                 plabel = "Version";
+                break;
+            case 45:
+                plabel = "Impresoras";
+                break;
+            case 46:
+                plabel = "Unidades";
+                break;
+            case 47:
+                plabel = "Conversion";
+                break;
+            case 48:
+                plabel = "Recetas";
                 break;
 
         }
@@ -1920,6 +1976,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_PRODCOMBO");
 
             items = xobj.getresult(clsBeP_PRODCOMBOList.class, "GetP_PRODCOMBO");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -1959,6 +2016,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_PRODMENU");
 
             items = xobj.getresult(clsBeP_PRODMENUList.class, "GetP_PRODMENU");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -1996,6 +2054,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_PRODMENUOPC");
 
             items = xobj.getresult(clsBeP_PRODMENUOPCList.class, "GetP_PRODMENUOPC");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2033,6 +2092,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_PRODMENUOPC_DET");
 
             items = xobj.getresult(clsBeP_PRODMENUOPC_DETList.class, "GetP_PRODMENUOPC_DET");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2557,6 +2617,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_CONCEPTOPAGO");
 
             items = xobj.getresult(clsBeP_CONCEPTOPAGOList.class, "GetP_CONCEPTOPAGO");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2626,6 +2687,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_RES_SALA");
 
             items = xobj.getresult(clsBeP_RES_SALAList.class, "GetP_RES_SALA");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2666,6 +2728,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_RES_MESA");
 
             items = xobj.getresult(clsBeP_RES_MESAList.class, "GetP_RES_MESA");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2710,6 +2773,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_RES_GRUPO");
 
             items = xobj.getresult(clsBeP_RES_GRUPOList.class, "GetP_RES_GRUPO");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2748,6 +2812,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_LINEA_IMPRESORA");
 
             items = xobj.getresult(clsBeP_LINEA_IMPRESORAList.class, "GetP_LINEA_IMPRESORA");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2785,6 +2850,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_IMPRESORA");
 
             items = xobj.getresult(clsBeP_IMPRESORAList.class, "GetP_IMPRESORA");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2830,6 +2896,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_IMPRESORA_MARCA");
 
             items = xobj.getresult(clsBeP_IMPRESORA_MARCAList.class, "GetP_IMPRESORA_MARCA");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2865,6 +2932,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_IMPRESORA_MODELO");
 
             items = xobj.getresult(clsBeP_IMPRESORA_MODELOList.class, "GetP_IMPRESORA_MODELO");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2921,6 +2989,7 @@ public class WSRec extends PBase {
             script.add("DELETE FROM P_CAJA_IMPRESORA");
 
             items = xobj.getresult(clsBeP_CAJA_IMPRESORAList.class, "GetP_CAJA_IMPRESORA");
+            if (items==null) return;
 
             try {
                 if (items.items.size() == 0) return;
@@ -2937,6 +3006,115 @@ public class WSRec extends PBase {
                 var.codigo_sucursal=item.CODIGO_SUCURSAL;
                 var.empresa=item.EMPRESA;
                 var.codigo_impresora=item.CODIGO_IMPRESORA;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processUnidad() {
+
+        try {
+            clsP_unidadObj handler = new clsP_unidadObj(this, Con, db);
+            clsBeP_UNIDADList items = new clsBeP_UNIDADList();
+            clsBeP_UNIDAD item = new clsBeP_UNIDAD();
+            clsClasses.clsP_unidad var;
+
+            script.add("DELETE FROM P_UNIDAD");
+
+            items = xobj.getresult(clsBeP_UNIDADList.class, "GetP_UNIDAD");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_unidad();
+
+                var.codigo_unidad=item.CODIGO_UNIDAD;
+                var.nombre=item.NOMBRE;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processUnidadConv() {
+
+        try {
+            clsP_unidad_convObj handler = new clsP_unidad_convObj(this, Con, db);
+            clsBeP_UNIDAD_CONVList items = new clsBeP_UNIDAD_CONVList();
+            clsBeP_UNIDAD_CONV item = new clsBeP_UNIDAD_CONV();
+            clsClasses.clsP_unidad_conv var;
+
+            script.add("DELETE FROM P_UNIDAD_CONV");
+
+            items = xobj.getresult(clsBeP_UNIDAD_CONVList.class, "GetP_UNIDAD_CONV");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_unidad_conv();
+
+                var.codigo_conversion=item.CODIGO_CONVERSION;
+                var.codigo_unidad1=item.CODIGO_UNIDAD1;
+                var.codigo_unidad2=item.CODIGO_UNIDAD2;
+                var.factor=item.FACTOR;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processProdReceta() {
+
+        try {
+            clsP_prodrecetaObj handler = new clsP_prodrecetaObj(this, Con, db);
+            clsBeP_PRODRECETAList items = new clsBeP_PRODRECETAList();
+            clsBeP_PRODRECETA item = new clsBeP_PRODRECETA();
+            clsClasses.clsP_prodreceta var;
+
+            script.add("DELETE FROM P_PRODRECETA");
+
+            items = xobj.getresult(clsBeP_PRODRECETAList.class, "GetP_PRODRECETA");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+                var = clsCls.new clsP_prodreceta();
+
+                var.codigo_receta=item.CODIGO_RECETA;
+                var.empresa=item.EMPRESA;
+                var.codigo_producto=item.CODIGO_PRODUCTO;
+                var.codigo_articulo=item.CODIGO_ARTICULO;
+                var.cant=item.CANT;
+                var.um=item.UM;
 
                 script.add(handler.addItemSql(var));
             }

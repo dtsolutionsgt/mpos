@@ -493,6 +493,77 @@ public class BaseDatosVersion {
         }
 
         try {
+            sql="CREATE TABLE [D_facturar] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([EMPRESA],[COREL],[PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_facturar_idx1 ON D_facturar(COREL)";db.execSQL(sql);
+            sql="CREATE INDEX D_facturar_idx2 ON D_facturar(PRODUCTO)";db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_prodreceta] ("+
+                    "CODIGO_RECETA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CODIGO_ARTICULO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_RECETA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_prodreceta_idx1 ON P_prodreceta(EMPRESA)";db.execSQL(sql);
+            sql="CREATE INDEX P_prodreceta_idx2 ON P_prodreceta(CODIGO_PRODUCTO)";db.execSQL(sql);
+            sql="CREATE INDEX P_prodreceta_idx3 ON P_prodreceta(CODIGO_ARTICULO)";db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_unidad] ("+
+                    "CODIGO_UNIDAD TEXT NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_UNIDAD])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [P_unidad_conv] ("+
+                    "CODIGO_CONVERSION INTEGER NOT NULL,"+
+                    "CODIGO_UNIDAD1 TEXT NOT NULL,"+
+                    "CODIGO_UNIDAD2 TEXT NOT NULL,"+
+                    "FACTOR REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_CONVERSION])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_unidad_conv_idx1 ON P_unidad_conv(CODIGO_UNIDAD1)";db.execSQL(sql);
+            sql="CREATE INDEX P_unidad_conv_idx2 ON P_unidad_conv(CODIGO_UNIDAD2)";db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [T_factreceta] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
 
 
 

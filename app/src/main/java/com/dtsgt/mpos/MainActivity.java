@@ -69,27 +69,19 @@ public class MainActivity extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         try {
-
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
             grantPermissions();
-
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
-
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
-
     }
 
     private void grantPermissions() {
-
         try {
-
             if (Build.VERSION.SDK_INT >= 20) {
 
                 if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
@@ -112,10 +104,8 @@ public class MainActivity extends PBase {
             }
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 

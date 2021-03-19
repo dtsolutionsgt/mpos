@@ -35,6 +35,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturaprObj;
+import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocCuenta;
@@ -43,8 +44,12 @@ import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
+import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_factrecetaObj;
+import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 
@@ -67,6 +72,10 @@ public class FacturaRes extends PBase {
 	private ListAdaptTotals adapter;
 	
 	private Runnable printcallback,printclose,printexit;
+
+    private clsP_prodrecetaObj P_prodrecetaObj;
+    private clsT_factrecetaObj T_factrecetaObj;
+    private clsT_comboObj T_comboObj;
 	
 	private clsDescGlob clsDesc;
 	private printer prn;
@@ -79,12 +88,11 @@ public class FacturaRes extends PBase {
 	private long fecha,fechae;
 	private int fcorel,clidia,media;
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel;
-	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres;
+	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,pend,stot0,stot,descmon,totimp,totperc,credito;
 	private double dispventa,falt,descimp;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
-
 
 	//@SuppressLint("MissingPermission")
 	@Override
@@ -116,6 +124,10 @@ public class FacturaRes extends PBase {
 		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
 		rl_facturares.setVisibility(View.VISIBLE);
         rl_preimpresion=findViewById(R.id.relpreimp);
+
+        T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
+        P_prodrecetaObj=new clsP_prodrecetaObj(this,Con,db);
+        T_comboObj=new clsT_comboObj(this,Con,db);
 
 		lblVuelto = new TextView(this,null);
 		txtVuelto = new EditText(this,null);
@@ -1107,6 +1119,8 @@ public class FacturaRes extends PBase {
 
             //endregion
 
+            procesaRecetas();
+
 			//region Actualizacion de ultimo correlativo
 
 			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
@@ -1616,6 +1630,109 @@ public class FacturaRes extends PBase {
 	}
 
 	//endregion
+
+    //region Recetas
+
+    private void procesaRecetas() {
+        clsT_ventaObj T_ventaObj = new clsT_ventaObj(this, Con, db);
+        int prodid;
+
+        db.execSQL("DELETE FROM T_factreceta");
+
+        recid=0;
+
+        T_ventaObj.fill("WHERE (VAL4='0')"); // Productos individuales
+        for (int i = 0; i < T_ventaObj.count; i++) {
+            prodid=app.codigoProducto(T_ventaObj.items.get(i).producto);
+            agregaReceta(prodid,T_ventaObj.items.get(i).cant);
+        }
+
+        T_ventaObj.fill("WHERE (VAL4<>'0')"); // Combos
+        for (int i = 0; i < T_ventaObj.count; i++) {
+            agregaCombo(T_ventaObj.items.get(i).val4,T_ventaObj.items.get(i).cant);
+        }
+
+        inventarioRecetas();
+
+    }
+
+    private void agregaCombo(String comboid,double ccant) {
+        T_comboObj.fill("WHERE (IDCOMBO="+comboid+")");
+        if (T_comboObj.count==0) return;
+
+        for (int ij = 0; ij <T_comboObj.count; ij++) {
+            agregaReceta(T_comboObj.items.get(ij).idseleccion,
+                         T_comboObj.items.get(ij).cant*ccant);
+        }
+    }
+
+    private void agregaReceta(int prodid,double rcant) {
+        double reccant;
+        int idart;
+        String aum;
+
+        P_prodrecetaObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+")");
+        if (P_prodrecetaObj.count==0) return;
+
+        for (int ii = 0; ii <P_prodrecetaObj.count; ii++) {
+
+            idart=P_prodrecetaObj.items.get(ii).codigo_articulo;
+            reccant=P_prodrecetaObj.items.get(ii).cant*rcant;
+            aum=P_prodrecetaObj.items.get(ii).um;
+
+            agregaProductoReceta(idart,reccant,aum);
+        }
+    }
+
+    private void agregaProductoReceta(int prodid,double pcant,String unid) {
+        recid++;
+
+        clsClasses.clsT_factreceta item = clsCls.new clsT_factreceta();
+
+        item.id=recid;
+        item.producto=prodid;
+        item.cant=pcant;
+        item.um=unid;
+
+        T_factrecetaObj.add(item);
+    }
+
+    private void inventarioRecetas() {
+        Cursor dt;
+        clsD_facturarObj D_facturarObj=new clsD_facturarObj(this,Con,db);
+
+        db.execSQL("DELETE FROM D_facturar WHERE Corel='"+corel+"'");
+
+        sql="SELECT SUM(CANT),PRODUCTO,UM FROM T_factreceta GROUP BY PRODUCTO,UM";
+        dt=Con.OpenDT(sql);
+
+        if (dt.getCount()>0) {
+            dt.moveToFirst();
+            while (!dt.isAfterLast()) {
+
+                clsClasses.clsD_facturar item = clsCls.new clsD_facturar();
+
+                item.empresa=gl.emp;
+                item.corel=corel;
+                item.producto=dt.getInt(1);
+                item.cant=dt.getDouble(0);
+                item.um=dt.getString(2);
+
+                D_facturarObj.add(item);
+
+                existenciaReceta(item.producto,item.cant,item.um);
+
+                dt.moveToNext();
+            }
+        }
+
+    }
+
+    private void existenciaReceta(int prodid,double pcant,String unid) {
+
+    }
+
+    //endregion
 
 	//region Pago
 
@@ -2818,6 +2935,10 @@ public class FacturaRes extends PBase {
 		try {
 
 			super.onResume();
+
+            P_prodrecetaObj.reconnect(Con,db);
+            T_factrecetaObj.reconnect(Con,db);
+            T_comboObj.reconnect(Con,db);
 
             if (browse==4) {
                 browse=0;
