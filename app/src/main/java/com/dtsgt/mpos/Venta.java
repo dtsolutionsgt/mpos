@@ -3376,8 +3376,8 @@ public class Venta extends PBase {
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
 
-            String[] TO = {"jpospichal@dts.com.gt"};if (!cor.isEmpty()) TO[0]=cor;
-            String[] CC = {"jpospichal@dts.com.gt"};
+            String[] TO = {"jpospichal@dtsguatemala.onmicrosoft.com"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"jpospichal@dtsguatemala.onmicrosoft.com"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
 

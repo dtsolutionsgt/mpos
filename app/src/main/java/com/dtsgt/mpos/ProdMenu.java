@@ -284,7 +284,7 @@ public class ProdMenu extends PBase {
                 item.cod=0;
                 item.unid=P_menuObj.items.get(i).unid;
                 if (item.unid>0) item.Name+="*";
-                item.cant=P_menuObj.items.get(i).cant;
+                item.cant=P_menuObj.items.get(i).cant;if (item.cant==0) item.cant=1;
 
                 item.opcional=P_menuObj.items.get(i).cant==0;
                 item.adicional=false;
@@ -564,7 +564,7 @@ public class ProdMenu extends PBase {
             item.idcombo=uitemid;
             item.nombre=prodname;
             //item.nombre="Adicional";
-            item.cant=0;
+            item.cant=1;
 
             T_ordencomboadObj.add(item);
 

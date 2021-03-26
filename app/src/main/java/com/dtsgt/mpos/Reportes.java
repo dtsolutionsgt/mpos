@@ -245,6 +245,7 @@ public class Reportes extends PBase {
                 case 11:
                     sql="SELECT CODIGO, NOMBRE FROM P_CLIENTE"+ condi;
                     break;
+
             }
 
             DT=Con.OpenDT(sql);
@@ -565,6 +566,17 @@ public class Reportes extends PBase {
                         "GROUP BY C.CODIGO, C.NOMBRE, F.COREL, F.FECHA, P.DESCCORTA, C.CODIGO_CLIENTE, P.CODIGO";
                     break;
 
+                case 13:
+
+                    sql="SELECT '','',0,'',P_PRODUCTO.DESCLARGA,   D_FACTURAR.UM,0,0,SUM(D_FACTURAR.CANT),0  " +
+                        "FROM  D_FACTURAR INNER JOIN " +
+                        "P_PRODUCTO ON D_FACTURAR.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
+                        "D_FACTURA ON D_FACTURAR.EMPRESA = D_FACTURA.EMPRESA AND D_FACTURAR.COREL = D_FACTURA.COREL " +
+                        "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.FECHA >= 2101010000) AND (D_FACTURA.FECHA <=2105010000) " +
+                        "GROUP BY P_PRODUCTO.DESCLARGA, D_FACTURAR.UM  ORDER BY P_PRODUCTO.DESCLARGA ";
+
+                    break;
+
                 default:
                     msgbox("Error, al identificar el tipo de reporte, cierre la ventana e inténtelo de nuevo");return false;
             }
@@ -850,7 +862,7 @@ public class Reportes extends PBase {
                 for (int i = 0; i <itemR.size(); i++) {
 
                     //Reporte 1
-                    if(gl.reportid==1){
+                    if (gl.reportid==1){
 
                         if(acc==1){
                             rep.add("     REPORTE DOCUMENTOS POR DIA");
@@ -905,7 +917,7 @@ public class Reportes extends PBase {
                             }
                         }
 
-                    //Reporte 2
+                        //Reporte 2
                     } else if(gl.reportid==2){
 
                         fecha = du.sfecha(itemR.get(i).fecha*10000);
@@ -948,8 +960,7 @@ public class Reportes extends PBase {
                             tot = 0;
                         }
 
-                    //Reporte 3
-                    }else if(gl.reportid==3){
+                    } else if(gl.reportid==3){ //Reporte 3
 
                         if(acc==1){
 
@@ -977,8 +988,7 @@ public class Reportes extends PBase {
 
                         SumaCant = SumaCant + itemR.get(i).cant;
 
-                    //Reporte 4
-                    }else if(gl.reportid==4){
+                    } else if(gl.reportid==4) { //Reporte 4
 
                         if(acc==1){
 
@@ -997,7 +1007,7 @@ public class Reportes extends PBase {
                         rep.add4lrrTotPorc(itemR.get(i).descrip, Integer.toString(itemR.get(i).cant),itemR.get(i).total,porcentaje);
 
                         SumaCant = SumaCant + itemR.get(i).cant;
-                    }else if(gl.reportid==5){
+                    } else if(gl.reportid==5) {
 
                         if(acc==1){
 
@@ -1017,7 +1027,7 @@ public class Reportes extends PBase {
 
                         SumaCant = SumaCant + itemR.get(i).cant;
 
-                    } else if(gl.reportid==6){
+                    } else if(gl.reportid==6) {
 
                         if(acc==1){
 
@@ -1048,7 +1058,8 @@ public class Reportes extends PBase {
 
                         SumaCant = SumaCant + itemR.get(i).cant;
                         totSinImpF += comision;
-                    }else if(gl.reportid==7 || gl.reportid==8){
+
+                    } else if(gl.reportid==7 || gl.reportid==8){
 
                         if(acc==1){
 
@@ -1074,7 +1085,7 @@ public class Reportes extends PBase {
                         rep.addtot2(itemR.get(i).corel, itemR.get(i).descrip);
                         rep.add4(itemR.get(i).total, itemR.get(i).imp, tot, porcentaje);
 
-                    } else if(gl.reportid==11){
+                    } else if(gl.reportid==11) {
 
                         if(acc==1){
 
@@ -1098,13 +1109,14 @@ public class Reportes extends PBase {
 
                         SumaCant = SumaCant + itemR.get(i).cant;
                         totF += itemR.get(i).total;
-                    }else if(gl.reportid==12){
+
+                    } else if(gl.reportid==12) {
 
                         if(acc==1){
 
                             rep.add("REPORTE VENTAS POR CLIENTE DETALLE");
-                           // rep.add("Codigo Cliente: "+itemR.get(i).serie);
-                           // rep.add("Nombre Cliente: "+itemR.get(i).um);
+                            // rep.add("Codigo Cliente: "+itemR.get(i).serie);
+                            // rep.add("Nombre Cliente: "+itemR.get(i).um);
                             rep.empty();
 
                             rep.add("Fecha        Corelativo");
@@ -1162,33 +1174,6 @@ public class Reportes extends PBase {
                             }
                         }
 
-
-
-                       if(!fechaR.equals(du.univfechaReport(itemR.get(i).fecha))){
-                            /*if(i!=0){
-                                rep.line();
-                                rep.add4lrrT("", ""+cantF, 0.0,tot);
-                                rep.empty();
-                                cantF = 0;
-                                tot = 0;
-
-                            }*/
-                        }
-                        /*else if(i+1==itemR.size()){
-
-                            rep.line();
-                            rep.add4lrrT("", ""+cantF, 0.0,tot);
-                            rep.empty();
-                            cantF = 0;
-                            tot = 0;
-
-                        }*/
-                        else {
-
-                           // rep.add4lrrT(itemR.get(i).descrip, ""+itemR.get(i).cant, itemR.get(i).imp,itemR.get(i).total);
-
-                        }
-
                         cantF += itemR.get(i).cant;
                         tot += itemR.get(i).total;
                         SumaCant += itemR.get(i).cant;
@@ -1202,8 +1187,23 @@ public class Reportes extends PBase {
                             cantF = 0;
                             tot = 0;
                         }
+                    } else if (gl.reportid==13) {
+
+                        if(acc==1){
+
+                            rep.add("    REPORTE CONSUMO MATERIA PRIMA");
+                            rep.line();
+                            rep.add("Nombre                 Cantidad     UM");
+                            rep.line();
+                            acc = 2;
+                        }
+
+                        rep.addmp(itemR.get(i).descrip, itemR.get(i).total, itemR.get(i).um);
+
                     }
+
                 }
+
                 rep.line();
 
                 return true;

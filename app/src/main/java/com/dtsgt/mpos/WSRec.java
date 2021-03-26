@@ -184,7 +184,7 @@ public class WSRec extends PBase {
     private boolean pbd_vacia = false,nueva_version=false;
     private String plabel, fechasync;
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
-
+    
     private String idversion,clave;
 
     public boolean automatico;
@@ -437,16 +437,16 @@ public class WSRec extends PBase {
                         } else callEmptyMethod();
                         break;
                     case 46:
-                        //callMethod("GetP_UNIDAD", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        callEmptyMethod();
+                        callMethod("GetP_UNIDAD", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        //callEmptyMethod();
                         break;
                     case 47:
-                        //callMethod("GetP_UNIDAD_CONV", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        callEmptyMethod();
+                        callMethod("GetP_UNIDAD_CONV", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        //callEmptyMethod();
                         break;
                     case 48:
-                        //callMethod("GetP_PRODRECETA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        callEmptyMethod();
+                        callMethod("GetP_PRODRECETA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        //callEmptyMethod();
                         break;
 
 

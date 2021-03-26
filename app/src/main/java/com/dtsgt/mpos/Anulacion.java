@@ -24,6 +24,8 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_facturarObj;
+import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
@@ -717,6 +719,8 @@ public class Anulacion extends PBase {
 	}	
 	
 	private boolean anulFactura(String itemid) {
+        clsD_facturarObj D_facturarObj=new clsD_facturarObj(this,Con,db);
+        clsD_facturasObj D_facturasObj=new clsD_facturasObj(this,Con,db);
 
 		Cursor DT;
 		String um;
@@ -774,6 +778,14 @@ public class Anulacion extends PBase {
 			//#CKFK 20200526 Puse esto en comentario porque esa tabla no se usa en MPos
 			//anulBonif(itemid);
 
+            // Inventario recetas
+
+            D_facturarObj.fill("WHERE COREL='"+itemid+"'");
+            for (int i = 0; i <D_facturarObj.count; i++) {
+                revertProd(D_facturarObj.items.get(i).producto,
+                           D_facturarObj.items.get(i).um,
+                           D_facturarObj.items.get(i).cant);
+            }
 
             listItems();
 
@@ -886,7 +898,43 @@ public class Anulacion extends PBase {
             ins.init("P_STOCK");
 
             ins.add("CODIGO",""+pcod);
-            ins.add("CANT",0);
+            ins.add("CANT",pcant);
+            ins.add("CANTM",0);
+            ins.add("PESO",0);
+            ins.add("plibra",0);
+            ins.add("LOTE","");
+            ins.add("DOCUMENTO","");
+
+            ins.add("FECHA",0);
+            ins.add("ANULADO",0);
+            ins.add("CENTRO","");
+            ins.add("STATUS","");
+            ins.add("ENVIADO",1);
+            ins.add("CODIGOLIQUIDACION",0);
+            ins.add("COREL_D_MOV", "");
+            ins.add("UNIDADMEDIDA", um);
+
+            db.execSQL(ins.sql());
+
+        } catch (Exception e){
+            try {
+                sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO='"+pcod+"') AND (UNIDADMEDIDA='"+um+"')";
+                db.execSQL(sql);
+            } catch (Exception ee){
+                msgbox(ee.getMessage());
+            }
+        }
+
+    }
+
+    private void revertProd(int pcod,String um,double pcant) {
+
+        try {
+
+            ins.init("P_STOCK");
+
+            ins.add("CODIGO",""+pcod);
+            ins.add("CANT",pcant);
             ins.add("CANTM",0);
             ins.add("PESO",0);
             ins.add("plibra",0);

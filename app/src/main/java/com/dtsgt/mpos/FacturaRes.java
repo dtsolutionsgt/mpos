@@ -46,7 +46,6 @@ import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_factrecetaObj;
 import com.dtsgt.classes.clsT_ventaObj;
@@ -76,6 +75,7 @@ public class FacturaRes extends PBase {
     private clsP_prodrecetaObj P_prodrecetaObj;
     private clsT_factrecetaObj T_factrecetaObj;
     private clsT_comboObj T_comboObj;
+    private clsP_productoObj P_productoObj;
 	
 	private clsDescGlob clsDesc;
 	private printer prn;
@@ -128,6 +128,7 @@ public class FacturaRes extends PBase {
         T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
         P_prodrecetaObj=new clsP_prodrecetaObj(this,Con,db);
         T_comboObj=new clsT_comboObj(this,Con,db);
+        P_productoObj=new clsP_productoObj(this,Con,db);
 
 		lblVuelto = new TextView(this,null);
 		txtVuelto = new EditText(this,null);
@@ -922,10 +923,12 @@ public class FacturaRes extends PBase {
 				vfactor=vpeso/(vcant*factpres);
 				vumventa=dt.getString(11);
 
+				/*
 				if (esProductoConStock(dt.getString(0))) {
 					//rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
                     rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
 				}
+				*/
 
 			    dt.moveToNext();counter++;
 			}
@@ -1005,7 +1008,7 @@ public class FacturaRes extends PBase {
 
                 while (!dt.isAfterLast()) {
 
-                    prcant=dt.getInt(0);
+                    prcant=dt.getInt(0);if (prcant==0) prcant=1;
                     unid=dt.getInt(1);
                     unipr=prcant*unid;
                     prid=dt.getInt(2);
@@ -1022,6 +1025,7 @@ public class FacturaRes extends PBase {
                         fsitem.producto = "" + prid;
                         fsitem.cant = unipr;
                         fsitem.umstock = app.umVenta2(prcod);
+
                         D_facturas.add(fsitem);
 
                         rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
@@ -1119,7 +1123,7 @@ public class FacturaRes extends PBase {
 
             //endregion
 
-            procesaRecetas();
+            procesaInventario();
 
 			//region Actualizacion de ultimo correlativo
 
@@ -1631,9 +1635,9 @@ public class FacturaRes extends PBase {
 
 	//endregion
 
-    //region Recetas
+    //region Inventario
 
-    private void procesaRecetas() {
+    private void procesaInventario() {
         clsT_ventaObj T_ventaObj = new clsT_ventaObj(this, Con, db);
         int prodid;
 
@@ -1672,7 +1676,10 @@ public class FacturaRes extends PBase {
         String aum;
 
         P_prodrecetaObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+")");
-        if (P_prodrecetaObj.count==0) return;
+        if (P_prodrecetaObj.count==0) {
+            //existenciaComboItem(prodid, rcant);
+            return;
+        }
 
         for (int ii = 0; ii <P_prodrecetaObj.count; ii++) {
 
@@ -1725,11 +1732,20 @@ public class FacturaRes extends PBase {
                 dt.moveToNext();
             }
         }
-
     }
 
     private void existenciaReceta(int prodid,double pcant,String unid) {
+        P_productoObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+")");
+        if (P_productoObj.count==0) return;
+        if (!P_productoObj.first().codigo_tipo.equalsIgnoreCase("P")) return;
+        rebajaStockUM(prodid,unid,pcant);
+    }
 
+    private void existenciaComboItem(int prodid,double pcant) {
+        P_productoObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+")");
+        if (P_productoObj.count==0) return;
+        if (!P_productoObj.first().codigo_tipo.equalsIgnoreCase("P")) return;
+        rebajaStockUM(prodid,P_productoObj.first().unidbas,pcant);
     }
 
     //endregion
@@ -2645,7 +2661,7 @@ public class FacturaRes extends PBase {
         try {
             subject="Correlativo inconsistente : "+gl.rutanom+" ID : "+gl.codigo_ruta;
             body="  ";
-            String[] TO = {"jpospichal@dts.com.gt"};
+            String[] TO = {"jpospichal@dtsguatemala.onmicrosoft.com"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
@@ -2939,6 +2955,7 @@ public class FacturaRes extends PBase {
             P_prodrecetaObj.reconnect(Con,db);
             T_factrecetaObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
+            P_productoObj.reconnect(Con,db);
 
             if (browse==4) {
                 browse=0;
@@ -2963,7 +2980,6 @@ public class FacturaRes extends PBase {
                 impresionDocumento();
                 return;
             }
-
 
             if (browse!=2) {
                 checkPromo();

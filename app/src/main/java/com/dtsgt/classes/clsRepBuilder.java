@@ -568,6 +568,20 @@ public class clsRepBuilder {
 		items.add(ss);
 		
 	}
+
+    public void addmp(String s1,double val,String s3) {
+        String ss,s2;
+
+        s1=StringUtils.rightPad(s1,22);ss=s1+"\t";
+
+        s2=decfrm.format(val);
+        s2=StringUtils.leftPad(s2,8);ss+=s2+"\t";
+
+        s3=StringUtils.leftPad(s3,6);ss=ss+s3;
+
+        items.add(ss);
+
+    }
 	
 	public void addg(String s1,String s2,String val) {
 		String ss,s3;

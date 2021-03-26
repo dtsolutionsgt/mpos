@@ -781,7 +781,7 @@ public class Menu extends PBase {
 		try{
 			final AlertDialog Dialog;
 			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion"};
+			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final"};
 
 			menudlg = new ExDialog (this);
 
@@ -807,6 +807,8 @@ public class Menu extends PBase {
                             infoSystem();break;
                         case 7:
                             msgAskImprimir();break;
+                        case 8:
+                            msgAskCF();break;
 					}
 
 					dialog.cancel();
@@ -1331,7 +1333,8 @@ public class Menu extends PBase {
 			final AlertDialog Dialog;
 
 			final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto",
-                    "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente",
+                    "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor",
+                    "Consumo materia prima","Reporte de Ventas por Cliente",
                     "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z","Ultimo cierre"};
 
             menudlg = new ExDialog(this);
@@ -1354,6 +1357,7 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
 					if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
                     if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
+                    if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
 
 					gl.titReport = ss;
 
@@ -1795,8 +1799,8 @@ public class Menu extends PBase {
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
 
-            String[] TO = {"jpospichal@dts.com.gt"};if (!cor.isEmpty()) TO[0]=cor;
-            String[] CC = {"jpospichal@dts.com.gt"};
+            String[] TO = {"jpospichal@dtsguatemala.onmicrosoft.com"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"jpospichal@dtsguatemala.onmicrosoft.com"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
@@ -2075,7 +2079,31 @@ public class Menu extends PBase {
 
     }
 
+    private void msgAskCF() {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("Corregir consumidor final");
+        dialog.setCancelable(false);
 
+        dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    String ccf=gl.emp+"0";
+                    sql="UPDATE P_CLIENTE SET NOMBRE='Consumidor final',NIT='C.F.' WHERE CODIGO_CLIENTE="+ccf;
+                    db.execSQL(sql);
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
     //endregion
 
 	//region Activity Events
