@@ -25,6 +25,7 @@ public class MantConfig extends PBase {
 
     private CheckBox  cb100,cb102,cb103,cb104,cb106,cb107,cb109,cb111,cb112,cb113,cb115;
     private CheckBox  cb116,cb118,cb119,cb121,cb126;
+    private CheckBox  locDesp;
     private Spinner   spin16,spin105;
     private TextView  txt108,txt110,txt114;
     private ImageView imgadd;
@@ -42,6 +43,7 @@ public class MantConfig extends PBase {
     private int value108,value110,value114;
 
     private String valPrefCaja;
+    private Boolean valDespacho;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,7 @@ public class MantConfig extends PBase {
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
         locPrefCaja  = findViewById(R.id.editTextNumber5);
+        locDesp= (CheckBox) findViewById(R.id.chkEnvio19);
 
         holder =new clsP_paramextObj(this,Con,db);
 
@@ -336,6 +339,14 @@ public class MantConfig extends PBase {
             }
             locPrefCaja.setText(valPrefCaja);
 
+
+            try {
+                valDespacho=pref.getBoolean("pelDespacho",false);
+            } catch (Exception e) {
+                valDespacho=false;
+            }
+            locDesp.setChecked(valDespacho);
+
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -441,6 +452,8 @@ public class MantConfig extends PBase {
 
             valPrefCaja=locPrefCaja.getText().toString();
             editor.putString("pelPrefCaja", valPrefCaja);
+
+            editor.putBoolean("pelDespacho", locDesp.isChecked());
 
             editor.commit();
         } catch (Exception e) {

@@ -33,7 +33,7 @@ public class appGlobals extends Application {
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,comensales;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
-                codigo_pais,primesa,pricuenta,ordcorel;
+                codigo_pais,primesa,pricuenta,ordcorel,numero_orden;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
@@ -62,7 +62,7 @@ public class appGlobals extends Application {
     public double  pePropinaPerc;
 
     // Parametros Extra Local
-    public Boolean pelCaja,pelCajaRecep,pelTablet;
+    public Boolean pelCaja,pelCajaRecep,pelTablet,pelDespacho;
     public String  pelPrefijoOrden;
 
 	// Descuentos

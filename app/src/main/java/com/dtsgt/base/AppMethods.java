@@ -709,10 +709,17 @@ public class AppMethods {
             }
 
             try {
-                gl.pelPrefijoOrden=pref.getString("pelPrefijoOrden", "");
+                gl.pelPrefijoOrden=pref.getString("pelPrefCaja", "");
             } catch (Exception e) {
                 gl.pelPrefijoOrden="";
             }
+
+            try {
+                gl.pelDespacho=pref.getBoolean("pelDespacho",false);
+            } catch (Exception e) {
+                gl.pelDespacho=false;
+            }
+
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

@@ -51,6 +51,8 @@ import com.dtsgt.classes.clsT_factrecetaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
+import com.dtsgt.webservice.srvCommit;
+import com.dtsgt.webservice.srvOrdenEnvio;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -678,6 +680,8 @@ public class FacturaRes extends PBase {
 
         gl.cliposflag=false;
         gl.InvCompSend=false;
+
+        if (gl.pelDespacho) generaOrdenDespacho();
 
         if (!app.usaFEL()) {
             gl.InvCompSend=true;
@@ -2517,6 +2521,59 @@ public class FacturaRes extends PBase {
 
     private void imprimeComanda() {
         app.doPrint(1);
+    }
+
+    //endregion
+
+    //region Monitor despacho
+
+    private void generaOrdenDespacho() {
+        clsClasses.clsD_orden item;
+
+        try {
+            item = clsCls.new clsD_orden();
+
+            item.codigo_orden=0;
+            item.corel=corel;
+            item.empresa=gl.emp;
+            item.codigo_ruta=gl.tienda;
+            item.tipo=0;
+            item.num_orden=gl.ref1;
+            item.estado=0;
+            item.tiempo_limite=0;
+            item.tiempo_total=0;
+            item.nota="";
+
+            sql=addOrdedEncItemSql(item);
+
+            Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",sql);
+            startService(intent);
+
+        } catch (Exception e) {
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public String addOrdedEncItemSql(clsClasses.clsD_orden item) {
+
+        ins.init("D_orden");
+
+        ins.add("COREL",item.corel);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("TIPO",item.tipo);
+        ins.add("NUM_ORDEN",item.num_orden);
+        ins.add("ESTADO",item.estado);
+        ins.add("FECHA_INICIO","20000101 00:00:00");
+        ins.add("FECHA_FIN","20000101 00:00:00");
+        ins.add("TIEMPO_LIMITE",item.tiempo_limite);
+        ins.add("TIEMPO_TOTAL",item.tiempo_total);
+        ins.add("NOTA",item.nota);
+
+        return ins.sql();
+
     }
 
     //endregion

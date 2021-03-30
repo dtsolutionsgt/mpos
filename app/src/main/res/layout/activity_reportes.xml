@@ -123,9 +123,11 @@
             android:layout_height="378dp"
             android:layout_above="@+id/cbDet"
             android:layout_below="@+id/txtFill"
+            android:layout_alignEnd="@+id/txtFill"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="68dp"
+            android:layout_marginStart="60dp"
             android:layout_marginTop="14dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginBottom="10dp" />
 
         <TextView
@@ -168,13 +170,12 @@
 
         <TextView
             android:id="@+id/lblDatefin"
-            android:layout_width="202dp"
+            android:layout_width="200dp"
             android:layout_height="39dp"
             android:layout_alignTop="@+id/lblCFact15"
             android:layout_alignBottom="@+id/lblCFact15"
-            android:layout_marginStart="18dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="2dp"
-            android:layout_marginBottom="-4dp"
             android:layout_toEndOf="@+id/lblCFact15"
             android:background="@drawable/frame_btn"
             android:gravity="center"
@@ -185,16 +186,14 @@
 
         <TextView
             android:id="@+id/lblCFact15"
-            android:layout_width="wrap_content"
+            android:layout_width="140dp"
             android:layout_height="37dp"
             android:layout_below="@+id/lblCFact14"
             android:layout_alignEnd="@+id/lblCFact14"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="57dp"
-            android:layout_marginLeft="57dp"
+            android:layout_marginStart="60dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="-5dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/blue_strip"
             android:gravity="center|center_vertical"
@@ -207,13 +206,11 @@
 
         <TextView
             android:id="@+id/lblCFact14"
-            android:layout_width="142dp"
+            android:layout_width="140dp"
             android:layout_height="38dp"
             android:layout_below="@+id/textView129"
-            android:layout_alignStart="@+id/relFilters"
             android:layout_alignParentLeft="true"
-            android:layout_marginStart="53dp"
-            android:layout_marginLeft="53dp"
+            android:layout_marginStart="60dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/blue_strip"
@@ -227,11 +224,11 @@
 
         <TextView
             android:id="@+id/lblDateini"
-            android:layout_width="204dp"
+            android:layout_width="200dp"
             android:layout_height="39dp"
             android:layout_alignTop="@+id/lblCFact14"
             android:layout_alignBottom="@+id/lblCFact16"
-            android:layout_marginStart="17dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
             android:layout_toEndOf="@+id/lblCFact14"

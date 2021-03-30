@@ -160,7 +160,6 @@ public class Venta extends PBase {
         MeserosObj =new clsVendedoresObj(this,Con,db);
         T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
 
-
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
 
@@ -2720,8 +2719,6 @@ public class Venta extends PBase {
 
     private void initValues(){
         Cursor DT;
-        String ordencod;
-        int ordennum;
 
         app.parametrosExtra();
         usarbio=gl.peMMod.equalsIgnoreCase("1");
@@ -2841,25 +2838,7 @@ public class Venta extends PBase {
         gl.ref2="";
         gl.ref3="";
 
-        if (gl.peOrdenComanda) {
-            try {
-                clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
-                ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
-                clsClasses.clsP_orden_numero orditem = clsCls.new clsP_orden_numero();
-                orditem.id=ordennum;
-                P_orden_numeroObj.add(orditem);
-
-
-                ordennum=ordennum % 1000;ordennum=ordennum+1000;
-                ordencod=""+ordennum;
-                ordencod=gl.pelPrefijoOrden+ordencod.substring(1,4);
-            } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                ordencod="---";
-            }
-            gl.ref1=ordencod;
-            lblAlm.setText("#"+gl.ref1);
-        }
+        numeroOrden();
 
         clsDescFiltro clsDFilt=new clsDescFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
 
@@ -3396,6 +3375,32 @@ public class Venta extends PBase {
         }
     }
 
+    private void numeroOrden() {
+        int ordennum;
+        String ordencod;
+
+        if (gl.peOrdenComanda) {
+            try {
+                clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+                ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+                clsClasses.clsP_orden_numero orditem = clsCls.new clsP_orden_numero();
+                orditem.id=ordennum;
+                P_orden_numeroObj.add(orditem);
+
+
+                ordennum=ordennum % 1000;ordennum=ordennum+1000;
+                ordencod=""+ordennum;
+                ordencod=gl.pelPrefijoOrden+ordencod.substring(1,4);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                ordencod="---";
+            }
+
+            gl.ref1=ordencod;
+            lblAlm.setText("#"+gl.ref1);
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -3647,6 +3652,8 @@ public class Venta extends PBase {
 
                 gl.nivel=gl.nivel_sucursal;
                 setNivel();
+
+                numeroOrden();
 
                 try  {
                     db.execSQL("DELETE FROM T_VENTA");

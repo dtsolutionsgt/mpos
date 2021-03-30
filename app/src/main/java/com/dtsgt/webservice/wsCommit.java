@@ -7,11 +7,11 @@ import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-public class wsOrdenEnvio extends wsBase {
+public class wsCommit extends wsBase {
 
     private String command;
 
-    public wsOrdenEnvio(String Url) {
+    public wsCommit(String Url) {
         super(Url);
     }
 

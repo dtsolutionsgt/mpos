@@ -88,6 +88,10 @@
             android:name="com.dtsgt.webservice.srvOrdenEnvio"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name="com.dtsgt.webservice.srvCommit"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity
             android:name=".Menu"

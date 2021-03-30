@@ -164,6 +164,21 @@ public class clsClasses {
         public int  motivo_ajuste;
     }
 
+    public class clsD_orden {
+        public int  codigo_orden;
+        public String corel;
+        public int  empresa;
+        public int  codigo_ruta;
+        public int  tipo;
+        public String num_orden;
+        public int  estado;
+        public long fecha_inicio;
+        public long fecha_fin;
+        public int  tiempo_limite;
+        public int  tiempo_total;
+        public String nota;
+    }
+
     public class clsD_pedido {
         public int  empresa;
         public String corel;
