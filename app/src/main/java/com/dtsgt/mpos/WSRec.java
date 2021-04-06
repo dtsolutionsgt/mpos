@@ -437,16 +437,16 @@ public class WSRec extends PBase {
                         } else callEmptyMethod();
                         break;
                     case 46:
-                        callMethod("GetP_UNIDAD", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        //callEmptyMethod();
+                        //callMethod("GetP_UNIDAD", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        callEmptyMethod();
                         break;
                     case 47:
-                        callMethod("GetP_UNIDAD_CONV", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        //callEmptyMethod();
+                        //callMethod("GetP_UNIDAD_CONV", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        callEmptyMethod();
                         break;
                     case 48:
-                        callMethod("GetP_PRODRECETA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        //callEmptyMethod();
+                        //callMethod("GetP_PRODRECETA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        callEmptyMethod();
                         break;
 
 
