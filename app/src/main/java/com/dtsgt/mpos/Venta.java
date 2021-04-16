@@ -614,32 +614,33 @@ public class Venta extends PBase {
             }
 
             if (DT!=null) DT.close();
+
+            adapter=new ListAdaptVenta(this,this, items);
+            adapter.cursym=gl.peMon;
+            listView.setAdapter(adapter);
+
+            if (sinimp) {
+                ttsin=tot-ttimp-ttperc;
+                ttsin=mu.round(ttsin,2);
+                lblTot.setText(mu.frmcur(ttsin));
+            } else {
+                tot=mu.round(tot,2);
+                tdesc=mu.round(tdesc,2);
+                stot=tot-tdesc;
+                lblTot.setText(mu.frmcur(tot));
+                lblDesc.setText("Desc : "+mu.frmcur(tdesc));
+                lblStot.setText("Subt : "+mu.frmcur(stot));
+            }
+
+            if (selidx>-1) {
+                adapter.setSelectedIndex(selidx);
+                listView.smoothScrollToPosition(selidx);
+            } else seluid="";
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
         }
-
-        adapter=new ListAdaptVenta(this,this, items);
-        adapter.cursym=gl.peMon;
-        listView.setAdapter(adapter);
-
-        if (sinimp) {
-            ttsin=tot-ttimp-ttperc;
-            ttsin=mu.round(ttsin,2);
-            lblTot.setText(mu.frmcur(ttsin));
-        } else {
-            tot=mu.round(tot,2);
-            tdesc=mu.round(tdesc,2);
-            stot=tot-tdesc;
-            lblTot.setText(mu.frmcur(tot));
-            lblDesc.setText("Desc : "+mu.frmcur(tdesc));
-            lblStot.setText("Subt : "+mu.frmcur(stot));
-        }
-
-        if (selidx>-1) {
-            adapter.setSelectedIndex(selidx);
-            listView.smoothScrollToPosition(selidx);
-        } else seluid="";
 
     }
 
@@ -3614,7 +3615,6 @@ public class Venta extends PBase {
         try {
             super.onResume();
 
-            toastcent("PASO 4");
 
             gridView.setEnabled(true);
 
@@ -3624,8 +3624,6 @@ public class Venta extends PBase {
             T_ordencomboprecioObj.reconnect(Con,db);
 
             checkLock();
-
-            toastcent("PASO 5");
 
             listItems();
 
@@ -3643,15 +3641,13 @@ public class Venta extends PBase {
             gl.climode=true;
             menuTools();
 
-            if (pedidos) estadoPedidos();
+            //if (pedidos) estadoPedidos();
 
             try {
                 txtBarra.requestFocus();
             } catch (Exception e) {}
 
             if (gl.iniciaVenta) {
-
-                toastcent("PASO 6");
 
                 browse=0;
                 lblVend.setText(" ");
@@ -3668,8 +3664,6 @@ public class Venta extends PBase {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
                     mu.msgbox("Error : " + e.getMessage());
                 }
-
-                toastcent("PASO 7");
 
                 Handler mtimer = new Handler();
                 Runnable mrunner=new Runnable() {

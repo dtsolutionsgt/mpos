@@ -2,6 +2,25 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
+    public class clsD_compra {
+        public String corel;
+        public int  empresa;
+        public int  codigo_ruta;
+        public int  anulado;
+        public long fecha;
+        public int  codigo_proveedor;
+        public int  codigo_usuario;
+        public String referencia;
+        public int  statcom;
+    }
+
+    public class clsD_comprad {
+        public String corel;
+        public int  codigo_producto;
+        public double cant;
+        public String um;
+    }
+
     public class clsD_factura {
         public int  empresa;
         public String corel;

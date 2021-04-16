@@ -729,9 +729,6 @@ public class FacturaRes extends PBase {
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
                 app.doPrint(gl.peNumImp,0);
 
-                toastcent("PASO 1");
-
-
                 try {
 
                     File file1 = new File(fname);
@@ -755,15 +752,11 @@ public class FacturaRes extends PBase {
 			//if (!prn.isEnabled())
             gl.ventalock=false;
 
-            toastcent("PASO 2");
-
             super.finish();
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("impresionDocumento : "  + e.getMessage());
-
-            toastlong("PASO 3"+e.getMessage());
 
 			//gl.closeCliDet = true;
 			//gl.closeVenta = true;

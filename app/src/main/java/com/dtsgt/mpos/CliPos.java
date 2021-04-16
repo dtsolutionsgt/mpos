@@ -34,7 +34,7 @@ public class CliPos extends PBase {
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 
-    private wsInventCompartido wsi;
+    //private wsInventCompartido wsi;
 
     private Runnable rnRecibeInventario;
 
@@ -67,13 +67,16 @@ public class CliPos extends PBase {
 
         setHandlers();
 
+        gl.InvCompSend=false;
+
         getURL();
-        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
+        //wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
         gl.pedcorel="";
 
         bloqueado=false;
 
+        /*
         if (gl.InvCompSend) {
             gl.InvCompSend=false;
             Handler mtimer = new Handler();
@@ -86,6 +89,7 @@ public class CliPos extends PBase {
             };
             mtimer.postDelayed(mrunner,200);
         }
+         */
 
 	}
 
@@ -173,13 +177,13 @@ public class CliPos extends PBase {
             public void run() {
                 bloqueado=false;
                 pbar.setVisibility(View.INVISIBLE);
-                if (wsi.errflag) {
-                    msgbox2("wsi"+wsi.error);
-                } else {
-                    confirmaInventario();
+               // if (wsi.errflag) {
+                    //msgbox2("wsi"+wsi.error);
+                //} else {
+                    //confirmaInventario();
                     gl.ventalock=false;
                     finish();
-                }
+                //}
             }
         };
 
@@ -304,9 +308,9 @@ public class CliPos extends PBase {
 	private void terminaCliente() {
 
         if (gl.peInvCompart) {
-            bloqueado=true;
-            wsi.idstock="";
-            wsi.execute(rnRecibeInventario);
+            //bloqueado=true;
+            //wsi.idstock="";
+            //wsi.execute(rnRecibeInventario);
         } else {
             gl.ventalock=false;
 
@@ -317,10 +321,13 @@ public class CliPos extends PBase {
 
     private void confirmaInventario() {
         try {
+            /*
             Intent intent = new Intent(CliPos.this, srvInventConfirm.class);
             intent.putExtra("URL",gl.wsurl);
             intent.putExtra("idstock",wsi.idstock);
             startService(intent);
+
+             */
         } catch (Exception e) {}
     }
 
@@ -820,6 +827,7 @@ public class CliPos extends PBase {
 
             if (browse==1) {
                 browse=0;
+                toastcent("TERMINA CLIENTE");
                 if (!gl.cliente.isEmpty()) terminaCliente();
                 return;
             }

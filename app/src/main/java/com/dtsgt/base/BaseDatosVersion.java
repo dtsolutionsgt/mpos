@@ -554,6 +554,35 @@ public class BaseDatosVersion {
         }
 
         try {
+            sql="CREATE TABLE [D_compra] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_RUTA INTEGER NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
+                    "CODIGO_USUARIO INTEGER NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "STATCOM INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="CREATE TABLE [D_comprad] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
 
 
 
