@@ -35,7 +35,6 @@ public class BaseDatosVersion {
         update01();
         update02();
 
-
         update99();
     }
 
@@ -329,15 +328,6 @@ public class BaseDatosVersion {
                     "PRIMARY KEY ([CODIGO_LINEA_IMPRESORA])"+
                     ");";
             db.execSQL(sql);
-
-            /*
-            sql="INSERT INTO P_linea_impresora VALUES (1,15,4,3,2)";db.execSQL(sql);
-            sql="INSERT INTO P_linea_impresora VALUES (2,16,4,3,3)";db.execSQL(sql); //papas y ensal
-            sql="INSERT INTO P_linea_impresora VALUES (3,17,4,3,2)";db.execSQL(sql);
-            sql="INSERT INTO P_linea_impresora VALUES (4,18,4,3,2)";db.execSQL(sql);
-            sql="INSERT INTO P_linea_impresora VALUES (5,19,4,3,4)";db.execSQL(sql); //beb
-
-             */
 
         } catch (Exception e) {
         }

@@ -3614,6 +3614,8 @@ public class Venta extends PBase {
         try {
             super.onResume();
 
+            toastcent("PASO 4");
+
             gridView.setEnabled(true);
 
             D_pedidoObj.reconnect(Con,db);
@@ -3622,6 +3624,8 @@ public class Venta extends PBase {
             T_ordencomboprecioObj.reconnect(Con,db);
 
             checkLock();
+
+            toastcent("PASO 5");
 
             listItems();
 
@@ -3647,6 +3651,8 @@ public class Venta extends PBase {
 
             if (gl.iniciaVenta) {
 
+                toastcent("PASO 6");
+
                 browse=0;
                 lblVend.setText(" ");
 
@@ -3662,6 +3668,8 @@ public class Venta extends PBase {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
                     mu.msgbox("Error : " + e.getMessage());
                 }
+
+                toastcent("PASO 7");
 
                 Handler mtimer = new Handler();
                 Runnable mrunner=new Runnable() {

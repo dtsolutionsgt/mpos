@@ -216,6 +216,7 @@ public class Clientes extends PBase {
 					gl.cliente=sitem.Cod;
 					gl.scancliente=sitem.Cod;
 					gl.codigo_cliente = sitem.CodNum;
+					gl.gNITCliente=sitem.nit;
 
                     finish();
 

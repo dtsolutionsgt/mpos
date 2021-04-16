@@ -37,6 +37,8 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
+import com.dtsgt.classes.clsD_ordencObj;
+import com.dtsgt.classes.clsD_ordendObj;
 import com.dtsgt.classes.clsDescGlob;
 import com.dtsgt.classes.clsDocCuenta;
 import com.dtsgt.classes.clsDocDevolucion;
@@ -78,6 +80,8 @@ public class FacturaRes extends PBase {
     private clsT_factrecetaObj T_factrecetaObj;
     private clsT_comboObj T_comboObj;
     private clsP_productoObj P_productoObj;
+    private clsD_ordendObj D_ordendObj;
+    private clsD_ordencObj D_ordencObj;
 	
 	private clsDescGlob clsDesc;
 	private printer prn;
@@ -89,7 +93,7 @@ public class FacturaRes extends PBase {
 
 	private long fecha,fechae;
 	private int fcorel,clidia,media;
-	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel;
+	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,pend,stot0,stot,descmon,totimp,totperc,credito;
@@ -709,7 +713,6 @@ public class FacturaRes extends PBase {
 	}
 
 	private void impresionDocumento(){
-
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
 		try{
@@ -725,6 +728,9 @@ public class FacturaRes extends PBase {
 			    fdoc.impresionorden=gl.peOrdenComanda;
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
                 app.doPrint(gl.peNumImp,0);
+
+                toastcent("PASO 1");
+
 
                 try {
 
@@ -748,11 +754,16 @@ public class FacturaRes extends PBase {
 
 			//if (!prn.isEnabled())
             gl.ventalock=false;
+
+            toastcent("PASO 2");
+
             super.finish();
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("impresionDocumento : "  + e.getMessage());
+
+            toastlong("PASO 3"+e.getMessage());
 
 			//gl.closeCliDet = true;
 			//gl.closeVenta = true;
@@ -2528,27 +2539,16 @@ public class FacturaRes extends PBase {
     //region Monitor despacho
 
     private void generaOrdenDespacho() {
-        clsClasses.clsD_orden item;
 
         try {
-            item = clsCls.new clsD_orden();
+            P_productoObj.fill();
 
-            item.codigo_orden=0;
-            item.corel=corel;
-            item.empresa=gl.emp;
-            item.codigo_ruta=gl.tienda;
-            item.tipo=0;
-            item.num_orden=gl.ref1;
-            item.estado=0;
-            item.tiempo_limite=0;
-            item.tiempo_total=0;
-            item.nota="";
-
-            sql=addOrdedEncItemSql(item);
+            generaOrdenEncabezado();
+            generaOrdenDetalle();
 
             Intent intent = new Intent(FacturaRes.this, srvCommit.class);
             intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("command",sql);
+            intent.putExtra("command",osql);
             startService(intent);
 
         } catch (Exception e) {
@@ -2556,7 +2556,91 @@ public class FacturaRes extends PBase {
         }
     }
 
+    private void generaOrdenEncabezado() {
+        clsClasses.clsD_orden item;
+        int tlim;
+
+        tlim=tiempoPreparacion();osql="";
+
+        item = clsCls.new clsD_orden();
+
+        item.codigo_orden=0;
+        item.corel=corel;
+        item.empresa=gl.emp;
+        item.codigo_ruta=gl.tienda;
+        item.tipo=0;
+        item.num_orden=gl.ref1;
+        item.estado=0;
+        item.tiempo_limite=tlim;
+        item.tiempo_total=0;
+        item.nota="";
+
+        sql=addOrdedEncItemSql(item);
+
+        osql+=sql+";";
+
+    }
+
+    private void generaOrdenDetalle() {
+        D_ordendObj=new clsD_ordendObj(this,Con,db);
+        D_ordencObj=new clsD_ordencObj(this,Con,db);
+        clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
+        clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
+        clsClasses.clsT_venta venta;
+        clsClasses.clsT_combo combo;
+
+        int prid,pp;
+        String ss;
+
+        T_ventaObj.fill();pp=0;
+
+        for (int i = 0; i <T_ventaObj.count; i++) {
+            venta=T_ventaObj.items.get(i);
+
+            pp++;
+            prid=app.codigoProducto(venta.producto);
+            s=mu.frmdecno(venta.cant)+" x "+getProd(prid);
+
+            sql=addProducto(pp,s);osql+=sql+";";
+
+            if (app.prodTipo(prid).equalsIgnoreCase("M")) {
+                T_comboObj.fill("WHERE (IdCombo=" + venta.val4+") AND (IdSeleccion<>0)");
+                for (int j = 0; j <T_comboObj.count; j++) {
+                    pp++;
+                    s=" -  "+getProd(T_comboObj.items.get(j).idseleccion);
+                    sql=addProducto(pp,s);osql+=sql+";";
+                }
+            }
+
+        }
+
+        pp++;sql=addProducto(pp,"------    FIN DEL LISTADO   ------");osql+=sql+";";
+
+        ss="(SELECT CODIGO_ORDEN FROM D_orden WHERE COREL='"+corel+"') ";
+        sql="UPDATE D_ordend SET CODIGO_ORDEN="+ss+" WHERE (CODIGO_ORDEN=0) AND (EMPRESA="+gl.emp+") AND (COREL='"+corel+"')";
+        osql+=sql+";";
+
+    }
+
+    private String addProducto(int itemid,String nom) {
+
+        clsClasses.clsD_ordend item = clsCls.new clsD_ordend();
+
+        item.codigo_orden=0;
+        item.corel=corel;
+        item.empresa=gl.emp;
+        item.itemid=itemid;
+        item.tipo=0;
+        item.nombre=nom;
+        item.nota="";
+        item.modif="";
+
+        return D_ordendObj.addItemSql(item);
+    }
+
     public String addOrdedEncItemSql(clsClasses.clsD_orden item) {
+
+        String fsi=du.univfechahora(du.getActDateTime());
 
         ins.init("D_orden");
 
@@ -2566,7 +2650,7 @@ public class FacturaRes extends PBase {
         ins.add("TIPO",item.tipo);
         ins.add("NUM_ORDEN",item.num_orden);
         ins.add("ESTADO",item.estado);
-        ins.add("FECHA_INICIO","20000101 00:00:00");
+        ins.add("FECHA_INICIO",fsi);
         ins.add("FECHA_FIN","20000101 00:00:00");
         ins.add("TIEMPO_LIMITE",item.tiempo_limite);
         ins.add("TIEMPO_TOTAL",item.tiempo_total);
@@ -2575,6 +2659,48 @@ public class FacturaRes extends PBase {
         return ins.sql();
 
     }
+
+    private String getProd(int prodid) {
+        try {
+            for (int i = 0; i <P_productoObj.count; i++) {
+                if (P_productoObj.items.get(i).codigo_producto==prodid) return P_productoObj.items.get(i).desclarga;
+            }
+        } catch (Exception e) {}
+        return ""+prodid;
+    }
+
+    private int tiempoProd(int prodid) {
+        try {
+            for (int i = 0; i <P_productoObj.count; i++) {
+                if (P_productoObj.items.get(i).codigo_producto==prodid) return (int) P_productoObj.items.get(i).tiempo_preparacion;
+            }
+        } catch (Exception e) {}
+        return 1;
+    }
+
+    private int tiempoPreparacion() {
+        clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
+        clsClasses.clsT_venta venta;
+
+        int prid,tt,tmax=0,tprep=0;
+
+        T_ventaObj.fill();
+        tprep=1+1; // tiempo impresion + tiempo empaque
+        tprep+=T_ventaObj.count-1;
+
+        for (int i = 0; i <T_ventaObj.count; i++) {
+            venta=T_ventaObj.items.get(i);
+
+            prid=app.codigoProducto(venta.producto);
+            tt=tiempoProd(prid);
+            if (tt>tmax) tmax=tt;
+        }
+
+        tprep+=tmax;
+
+        return tprep;
+    }
+
 
     //endregion
 

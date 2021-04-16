@@ -179,6 +179,28 @@ public class clsClasses {
         public String nota;
     }
 
+    public class clsD_ordenc {
+        public int  codigo_orden;
+        public String corel;
+        public int  empresa;
+        public int  comboid;
+        public int  itemid;
+        public String nombre;
+        public String nota;
+        public String modif;
+    }
+
+    public class clsD_ordend {
+        public int  codigo_orden;
+        public String corel;
+        public int  empresa;
+        public int  itemid;
+        public int  tipo;
+        public String nombre;
+        public String nota;
+        public String modif;
+    }
+
     public class clsD_pedido {
         public int  empresa;
         public String corel;
