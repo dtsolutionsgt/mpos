@@ -569,17 +569,32 @@ public class clsRepBuilder {
 		
 	}
 
-    public void addmp(String s1,double val,String s3) {
-        String ss,s2;
+    public void addmp(String s1,double val,String s3,double costo) {
+        String ss,s2,s4;
+        double ccos;
 
-        s1=StringUtils.rightPad(s1,22);ss=s1+"\t";
+        s1=StringUtils.rightPad(s1,16);ss=s1+"\t";
 
         s2=decfrm.format(val);
-        s2=StringUtils.leftPad(s2,8);ss+=s2+"\t";
+        s2=StringUtils.leftPad(s2,7);ss+=s2+"\t";
 
-        s3=StringUtils.leftPad(s3,6);ss=ss+s3;
+        s3=StringUtils.leftPad(s3,4);ss=ss+s3;
+
+        ccos=val*costo;
+        s4=decfrm.format(ccos);
+        s4=StringUtils.leftPad(s4,10);ss=ss+s4;
 
         items.add(ss);
+
+    }
+
+    public void addmptot(double total) {
+        String ss,s2,s4;
+
+        s2=decfrm.format(total);
+        s4=StringUtils.leftPad(s2,39);
+
+        items.add(s4);
 
     }
 	

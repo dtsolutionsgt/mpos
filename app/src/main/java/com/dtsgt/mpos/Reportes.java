@@ -568,7 +568,7 @@ public class Reportes extends PBase {
 
                 case 13:
 
-                    sql="SELECT '','',0,'',P_PRODUCTO.DESCLARGA,   D_FACTURAR.UM,0,0,SUM(D_FACTURAR.CANT),0  " +
+                    sql="SELECT '','',0,'',P_PRODUCTO.DESCLARGA,   D_FACTURAR.UM,0,P_PRODUCTO.COSTO,SUM(D_FACTURAR.CANT),0  " +
                         "FROM  D_FACTURAR INNER JOIN " +
                         "P_PRODUCTO ON D_FACTURAR.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
                         "D_FACTURA ON D_FACTURAR.EMPRESA = D_FACTURA.EMPRESA AND D_FACTURAR.COREL = D_FACTURA.COREL " +
@@ -842,6 +842,7 @@ public class Reportes extends PBase {
         protected boolean buildDetail() {
             int acc=1;
             String series="", fecha="";
+            double costo;
 
             try {
                 tot=0;
@@ -1190,15 +1191,21 @@ public class Reportes extends PBase {
                     } else if (gl.reportid==13) {
 
                         if(acc==1){
-
+                            tot=0;
                             rep.add("    REPORTE CONSUMO MATERIA PRIMA");
                             rep.line();
-                            rep.add("Nombre                 Cantidad     UM");
+                            rep.add("Nombre           Cantidad  UM     Costo");
                             rep.line();
                             acc = 2;
                         }
 
-                        rep.addmp(itemR.get(i).descrip, itemR.get(i).total, itemR.get(i).um);
+                        costo=itemR.get(i).imp;tot+=costo*itemR.get(i).total;
+                        rep.addmp(itemR.get(i).descrip, itemR.get(i).total, itemR.get(i).um,costo);
+
+                        if(i==itemR.size()-1){
+                            rep.line();
+                            rep.addmptot(tot);
+                        }
 
                     }
 
