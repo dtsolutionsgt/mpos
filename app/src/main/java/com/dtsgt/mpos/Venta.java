@@ -3654,7 +3654,6 @@ public class Venta extends PBase {
 
                 gl.nivel=gl.nivel_sucursal;
                 setNivel();
-
                 numeroOrden();
 
                 try  {
@@ -3685,6 +3684,7 @@ public class Venta extends PBase {
                     }
                 };
                 mtimer.postDelayed(mrunner,100);
+
             } else {
             }
 
@@ -3746,6 +3746,7 @@ public class Venta extends PBase {
                 listItems();
                 return;
             }
+
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

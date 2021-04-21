@@ -729,27 +729,18 @@ public class FacturaRes extends PBase {
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
                 app.doPrint(gl.peNumImp,0);
 
+                /*
                 try {
-
                     File file1 = new File(fname);
                     File ffile = new File(file1.getPath());
-
                     for (int i = 0; i <90; i++) {
-                        SystemClock.sleep(1000);
-                        if (!ffile.exists()) break;
+                            SystemClock.sleep(1000);if (!ffile.exists()) break;
                     }
-
-                } catch (Exception e) {
-						toastlong("Impresion ||1		|1 "+e.getMessage());
-                }
-
+                } catch (Exception e) {}
+                */
             }
 
-			//gl.closeCliDet=true;
-			//gl.closeVenta=true;
-            gl.iniciaVenta=true;
-
-			//if (!prn.isEnabled())
+	        gl.iniciaVenta=true;
             gl.ventalock=false;
 
             super.finish();
@@ -757,9 +748,6 @@ public class FacturaRes extends PBase {
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("impresionDocumento : "  + e.getMessage());
-
-			//gl.closeCliDet = true;
-			//gl.closeVenta = true;
 
             gl.ventalock=false;
 			super.finish();
