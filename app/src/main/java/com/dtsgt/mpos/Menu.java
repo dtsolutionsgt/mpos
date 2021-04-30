@@ -139,7 +139,6 @@ public class Menu extends PBase {
 
 	}
 
-	//#CKFK20200524_FIX_BY_OPENDT Quité la función InsertCorrel porque la tabla P_CORREL_OTROS ya no se utiliza
 	public void listItems() {
 
         clsMenu item;
@@ -182,7 +181,7 @@ public class Menu extends PBase {
                     if (gl.rol>1) addMenuItem(9,"Utilerias");
                     if (gl.rol>1) addMenuItem(11,"Mantenimientos");
                     if (gl.rol>1) addMenuItem(12,"Reportes");
-                    if (gl.rol>1) addMenuItem(4,"Anulación");
+                    addMenuItem(4,"Anulación");
 
                 }
 
@@ -281,6 +280,7 @@ public class Menu extends PBase {
 					gl.cajaid=5;
                     gl.InvCompSend=false;
                     gl.ventalock=false;
+                    gl.impresion_comanda=false;
 
                     if (valida()) {
 
@@ -1335,7 +1335,7 @@ public class Menu extends PBase {
 			final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto",
                     "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor",
                     "Consumo materia prima","Reporte de Ventas por Cliente",
-                    "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z","Ultimo cierre"};
+                    "Margen y Beneficio por Producto", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z","Ultimo cierre"};
 
             menudlg = new ExDialog(this);
             menudlg.setTitle("Reportes");
@@ -1358,6 +1358,7 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
                     if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
                     if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
+                    //if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
 
 					gl.titReport = ss;
 

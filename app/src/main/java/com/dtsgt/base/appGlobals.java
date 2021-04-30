@@ -37,7 +37,8 @@ public class appGlobals extends Application {
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
-                   recibir_automatico = false,meserodir,cerrarmesero,preimpresion;
+                   recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
+                   impresion_comanda ;
 
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false
@@ -58,11 +59,11 @@ public class appGlobals extends Application {
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
     public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
-    public Boolean peAgregarCombo,peComboLimite,peOrdenComanda;
+    public Boolean peAgregarCombo,peComboLimite;
     public double  pePropinaPerc;
 
     // Parametros Extra Local
-    public Boolean pelCaja,pelCajaRecep,pelTablet,pelDespacho;
+    public Boolean pelCaja,pelCajaRecep,pelTablet,pelDespacho, pelOrdenComanda;
     public String  pelPrefijoOrden;
 
 	// Descuentos

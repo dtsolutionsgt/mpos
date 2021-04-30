@@ -245,14 +245,14 @@
 
         <EditText
             android:id="@+id/txt1"
-            android:layout_width="659dp"
+            android:layout_width="500dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/relRoad"
-            android:layout_alignRight="@id/textView4"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="150dp"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_toStartOf="@+id/progressBar4"
             android:ems="10"
             android:inputType="textEmailAddress"
             android:singleLine="true" />
@@ -398,6 +398,24 @@
             android:layout_toEndOf="@+id/textView223"
             android:ems="10"
             android:inputType="number" />
+
+        <CheckBox
+            android:id="@+id/checkBox21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txt1"
+            android:layout_alignBottom="@+id/txt1"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/txt1"
+            android:text="   PARA LLEVAR"
+            android:textColor="#000000"
+            android:textColorHighlight="#000000"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

@@ -22,7 +22,7 @@ public class clsDocument {
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta;
 	public clsRepBuilder rep;
-	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
+	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod,parallevar;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
 	public int ffecha,pendiente,diacred,pagoefectivo;
 	public double ptotal,pdesc,pprop,propvalor;

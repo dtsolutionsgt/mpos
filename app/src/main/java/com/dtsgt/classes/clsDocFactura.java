@@ -577,11 +577,21 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
+        if (parallevar) rep.addc("PARA LLEVAR");
         rep.add("");
 
         if (impresionorden) {
-            String sod=add1;if (!sod.isEmpty()) sod="ORDEN # "+sod;
-            rep.add(sod);
+            String sod=add1;
+            if (!sod.isEmpty()) {
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+                rep.addc("ORDEN # "+sod.toUpperCase());
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+            }
+
         } else {
             rep.add("");
         }

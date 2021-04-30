@@ -64,6 +64,7 @@ import java.util.Calendar;
 
 public class Reportes extends PBase {
 
+    private ListView lvReport;
     private Button btnImp;
     private TextView lblDateini,lblDatefin, lblImp, lblFact,lblTit,lblProd,txtFill,txtTitle;
     private ImageView btnClear;
@@ -80,8 +81,6 @@ public class Reportes extends PBase {
     private ListAdaptProd adaptFill;
     private ListReportVenta adapt;
     private clsClasses.clsReport item;
-
-    private ListView lvReport;
 
     private clsDocFactura fdoc;
     private double cantT,disp,dispm,dispT;
@@ -160,7 +159,8 @@ public class Reportes extends PBase {
 
         setHandlers();
 
-        if(gl.reportid==3 || gl.reportid==4 || gl.reportid==7 || gl.reportid==8 || gl.reportid==11){
+        if(gl.reportid==3 || gl.reportid==4  || gl.reportid==7 ||
+           gl.reportid==8 || gl.reportid==11 || gl.reportid==14 ){
             txtTitle.setVisibility(View.VISIBLE);
             btnClear.setVisibility(View.VISIBLE);
             txtFill.setVisibility(View.VISIBLE);
@@ -207,6 +207,106 @@ public class Reportes extends PBase {
         }
     }
 
+    private void setHandlers(){
+
+        try {
+            lvReport.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    try {
+
+                        Object lvObj = lvReport.getItemAtPosition(position);
+                        clsClasses.clsCD item = (clsClasses.clsCD) lvObj;
+
+                        adaptFill.setSelectedIndex(position);
+
+                        report =  false;
+                        id_item = item.Cod;
+
+                        if(id_item.equals("NO")) { lblProd.setText("");}
+
+                        if(!id_item.equals("Todos")){
+
+                            if(gl.reportid==3 || gl.reportid==8){
+
+                                linea.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(linea.count==0) return;
+                                nameProd = linea.first().nombre.trim();
+                                lblProd.setText(nameProd);
+
+                            } else if(gl.reportid==4){
+
+                                medP.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(medP.count==0) return;
+                                nameVend = medP.first().nombre.trim();
+                                lblProd.setText(nameVend);
+
+                            } else if(gl.reportid==7){
+
+                                prod.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(prod.count==0) return;
+                                nameVend = prod.first().desccorta.trim();
+                                lblProd.setText(nameVend);
+
+                            } else if(gl.reportid==11){
+
+                                cli.fill("WHERE CODIGO = '"+id_item+"'");
+                                if(cli.count==0) return;
+                                nameVend = cli.first().nombre.trim();
+                                lblProd.setText(nameVend);
+
+                            } else if(gl.reportid==14){
+
+                                toast(""+item.codInt);
+                            }
+
+                        } else {
+                            lblProd.setText("");
+                        }
+
+                        itemR.clear();
+                        lblFact.setText("");
+                        lblImp.setText("GENERAR");
+                        report=false;
+
+                    } catch (Exception e) {
+                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                        mu.msgbox(e.getMessage());
+                    }
+                }
+            });
+
+            cbDet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    report = false;
+                    lblImp.setText("GENERAR");
+                    lblFact.setText("");
+
+                    if(cbDet.isChecked()){
+                        if(gl.reportid!=3 && gl.reportid!=6) gl.reportid=12;else validCB=1;
+                    } else {
+                        if(gl.reportid!=3 && gl.reportid!=6) gl.reportid=11;else validCB=0;
+                    }
+                }
+            });
+
+            txtFill.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if ((event.getAction()==KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                        listItems();
+                    }
+                    return false;
+                }
+            });
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
     //endregion
 
     //region Main
@@ -224,10 +324,7 @@ public class Reportes extends PBase {
 
         try {
 
-
-            if(!vF.isEmpty()){
-                condi = " WHERE CODIGO LIKE '%"+vF+"%'";
-            }
+            if(!vF.isEmpty()) condi = " WHERE CODIGO LIKE '%"+vF+"%'";
 
             switch(gl.reportid){
                 case 3:
@@ -245,6 +342,12 @@ public class Reportes extends PBase {
                 case 11:
                     sql="SELECT CODIGO, NOMBRE FROM P_CLIENTE"+ condi;
                     break;
+                case 14:
+                    sql="SELECT CODIGO, DESCCORTA, CODIGO_PRODUCTO FROM P_PRODUCTO " +
+                        "WHERE (CODIGO_TIPO='P') AND (CODIGO_PRODUCTO IN (SELECT DISTINCT PRODUCTO FROM D_FACTURAR)) ";
+                    if(!vF.isEmpty()) sql+= " AND (CODIGO LIKE '%"+vF+"%')";
+                    sql+= " ORDER BY DESCCORTA";
+                    break;
 
             }
 
@@ -253,9 +356,9 @@ public class Reportes extends PBase {
             if (DT.getCount()==0) {
 
                 if(!vF.isEmpty()){
-                    if(gl.reportid==7){
+                    if (gl.reportid==7){
                         condi = " WHERE DESCCORTA LIKE '%'"+vF+"%'";
-                    }else {
+                    } else {
                         condi = " WHERE NOMBRE LIKE '%"+vF+"%'";
                     }
                 }
@@ -283,7 +386,7 @@ public class Reportes extends PBase {
                 if (DT.getCount()==0) return;
             }
 
-            if(gl.reportid!=12){
+            if(gl.reportid!=12 && gl.reportid!=14){
                 vItem = clsCls.new clsCD();
                 vItem.Cod="Todos";
                 vItem.Desc="";
@@ -291,7 +394,6 @@ public class Reportes extends PBase {
                 vItem.Text="";
                 itemsFill.add(vItem);
             }
-
 
             DT.moveToFirst();
             while (!DT.isAfterLast()) {
@@ -302,9 +404,9 @@ public class Reportes extends PBase {
                 vItem = clsCls.new clsCD();
                 vItem.Cod=cod;
                 vItem.Desc=name;
-
                 vItem.um="";
                 vItem.Text="";
+                if(gl.reportid==14) vItem.codInt=DT.getInt(2);
 
                 itemsFill.add(vItem);
 
@@ -620,127 +722,6 @@ public class Reportes extends PBase {
             msgbox("fillItems: "+e);
             return false;
         }
-    }
-
-    private void setHandlers(){
-
-        try{
-            lvReport.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    try {
-
-                        Object lvObj = lvReport.getItemAtPosition(position);
-                        clsClasses.clsCD item = (clsClasses.clsCD) lvObj;
-
-                        adaptFill.setSelectedIndex(position);
-
-                        report =  false;
-                        id_item = item.Cod;
-
-                        if(id_item.equals("NO")) { lblProd.setText("");}
-
-                        if(!id_item.equals("Todos")){
-
-                            if(gl.reportid==3 || gl.reportid==8){
-
-                                linea.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(linea.count==0) return;
-                                nameProd = linea.first().nombre.trim();
-                                lblProd.setText(nameProd);
-
-                            }else if(gl.reportid==4){
-
-                                medP.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(medP.count==0) return;
-                                nameVend = medP.first().nombre.trim();
-                                lblProd.setText(nameVend);
-
-                            }else if(gl.reportid==7){
-
-                                prod.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(prod.count==0) return;
-                                nameVend = prod.first().desccorta.trim();
-                                lblProd.setText(nameVend);
-
-                            }else if(gl.reportid==11){
-
-                                cli.fill("WHERE CODIGO = '"+id_item+"'");
-                                if(cli.count==0) return;
-                                nameVend = cli.first().nombre.trim();
-                                lblProd.setText(nameVend);
-
-                            }
-
-                        }else {
-                            lblProd.setText("");
-                        }
-
-                        itemR.clear();
-                        lblFact.setText("");
-                        lblImp.setText("GENERAR");
-                        report=false;
-
-                    } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        mu.msgbox(e.getMessage());
-                    }
-                }
-            });
-
-            cbDet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    report = false;
-                    lblImp.setText("GENERAR");
-                    lblFact.setText("");
-
-                    if(cbDet.isChecked()){
-                        if(gl.reportid!=3 && gl.reportid!=6){
-                            gl.reportid=12;
-                        }else {
-                            validCB=1;
-                        }
-
-                    }else{
-                        if(gl.reportid!=3 && gl.reportid!=6){
-                            gl.reportid=11;
-                        }else {
-                            validCB=0;
-                        }
-
-                    }
-
-                }
-            });
-
-            txtFill.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if ((event.getAction()==KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
-                        listItems();
-                    }
-
-                    return false;
-                }
-            });
-
-            /*txtFill.addTextChangedListener(new TextWatcher() {
-
-                public void afterTextChanged(Editable s) {}
-
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    listItems();
-                }
-            });*/
-
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-
     }
 
     private void obtenerFecha(){
@@ -1206,9 +1187,7 @@ public class Reportes extends PBase {
                             rep.line();
                             rep.addmptot(tot);
                         }
-
                     }
-
                 }
 
                 rep.line();

@@ -676,18 +676,6 @@ public class AppMethods {
             gl.peComboLimite = false;
         }
 
-        try {
-            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=126";
-            dt=Con.OpenDT(sql);
-            dt.moveToFirst();
-
-            val=dt.getString(0);
-            if (emptystr(val)) throw new Exception();
-
-            gl.peOrdenComanda = val.equalsIgnoreCase("S");
-        } catch (Exception e) {
-            gl.peOrdenComanda = false;
-        }
 
     }
 
@@ -719,6 +707,13 @@ public class AppMethods {
             } catch (Exception e) {
                 gl.pelDespacho=false;
             }
+
+            try {
+                gl.pelOrdenComanda=pref.getBoolean("pelOrdenComanda",false);
+            } catch (Exception e) {
+                gl.pelOrdenComanda=false;
+            }
+
 
         } catch (Exception e) {
             msgbox(e.getMessage());

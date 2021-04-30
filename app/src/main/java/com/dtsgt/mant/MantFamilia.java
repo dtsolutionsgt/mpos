@@ -41,8 +41,6 @@ public class MantFamilia extends PBase {
 
     private ImageView imgstat,img1,imgadd,imgfotoadd,imgfotodel;
     private EditText txt1,txt2;
-    private TextView lblfoto;
-    private RelativeLayout relest;
     private ListView listView;
 
     private clsP_lineaObj holder;
@@ -71,7 +69,6 @@ public class MantFamilia extends PBase {
         imgfotodel = (ImageView) findViewById(R.id.imageView41);
         img1 = (ImageView) findViewById(R.id.imageView41);
         imgadd = (ImageView) findViewById(R.id.imgImg2);
-        relest=findViewById(R.id.relestacion);
 
         listView = (ListView) findViewById(R.id.listView1);
 
@@ -81,17 +78,17 @@ public class MantFamilia extends PBase {
         id=gl.gcods;
         idfoto=id;
         if (id.isEmpty()) newItem(); else loadItem();
-        if (!gl.peRest) relest.setVisibility(View.INVISIBLE);
 
-        showImage();
-        setHandlers();
-        listItems();
+        try {
+            showImage();
+            setHandlers();
+            listItems();
+        } catch (Exception e) {}
 
         if (gl.peMCent) {
             //if (!app.grant(13,gl.rol)) {
                 imgadd.setVisibility(View.INVISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);
-                lblfoto.setVisibility(View.INVISIBLE);
                 imgfotoadd.setVisibility(View.INVISIBLE);
                 imgfotodel.setVisibility(View.INVISIBLE);
             //}

@@ -75,7 +75,7 @@ public class Venta extends PBase {
     private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant,lblBarra;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
     private EditText txtBarra,txtFilter;
-    private ImageView imgroad,imgscan;
+    private ImageView imgroad,imgscan,imgllevar;
     private RelativeLayout relScan;
 
     private ArrayList<clsVenta> items= new ArrayList<clsVenta>();
@@ -918,7 +918,7 @@ public class Venta extends PBase {
     }
 
     private void processMenuItem() {
-
+        counter++;
         gl.menuitemid=""+counter;
         gl.newmenuitem=true;
         gl.gstr=gl.pprodname;
@@ -926,7 +926,6 @@ public class Venta extends PBase {
 
         browse=7;
         startActivity(new Intent(this,ProdMenu.class));
-
     }
 
     private void updateCant() {
@@ -2631,6 +2630,14 @@ public class Venta extends PBase {
         return ""+prodid;
     }
 
+    private void ejecutaImpresionComanda() {
+        try {
+            app.print3nstarw();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Aux
@@ -2695,6 +2702,7 @@ public class Venta extends PBase {
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
             imgscan= (ImageView) findViewById(R.id.imageView13);
+            imgllevar= (ImageView) findViewById(R.id.imageView110);
 
             txtBarra=(EditText) findViewById(R.id.editText10);
 
@@ -3380,7 +3388,7 @@ public class Venta extends PBase {
         int ordennum;
         String ordencod;
 
-        if (gl.peOrdenComanda) {
+        if (gl.pelOrdenComanda) {
             try {
                 clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
                 ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
@@ -3397,7 +3405,7 @@ public class Venta extends PBase {
                 ordencod="---";
             }
 
-            gl.ref1=ordencod;
+            gl.ref1=ordencod.toUpperCase();
             lblAlm.setText("#"+gl.ref1);
         }
     }
@@ -3615,8 +3623,8 @@ public class Venta extends PBase {
         try {
             super.onResume();
 
-
             gridView.setEnabled(true);
+            if (gl.parallevar) imgllevar.setVisibility(View.VISIBLE);else imgllevar.setVisibility(View.INVISIBLE);
 
             D_pedidoObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
@@ -3684,6 +3692,19 @@ public class Venta extends PBase {
                     }
                 };
                 mtimer.postDelayed(mrunner,100);
+
+                if (gl.impresion_comanda) {
+                    gl.impresion_comanda=false;
+
+                    Handler mtimerc = new Handler();
+                    Runnable mrunnerc=new Runnable() {
+                        @Override
+                        public void run() {
+                            ejecutaImpresionComanda();
+                        }
+                    };
+                    mtimerc.postDelayed(mrunnerc,1500);
+                }
 
             } else {
             }

@@ -407,26 +407,24 @@ public class WSRec extends PBase {
                         } else callEmptyMethod();
                         break;
                     case 40:
-                        if (gl.peRest) {
+                        //if (gl.peRest) {
                             callMethod("GetP_LINEA_IMPRESORA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        } else callEmptyMethod();
+                        //} else callEmptyMethod();
                         break;
                     case 41:
-                        if (gl.peRest) {
+                        //if (gl.peRest) {
                             callMethod("GetP_IMPRESORA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        } else {
-                            callEmptyMethod();
-                        }
+                        //} else callEmptyMethod();
                         break;
                     case 42:
-                        if (gl.peRest) {
+                        //if (gl.peRest) {
                             callMethod("GetP_IMPRESORA_MARCA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        } else callEmptyMethod();
+                        //} else callEmptyMethod();
                         break;
                     case 43:
-                        if (gl.peRest) {
+                        //if (gl.peRest) {
                             callMethod("GetP_IMPRESORA_MODELO", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        } else callEmptyMethod();
+                        // else callEmptyMethod();
                         break;
                     case 44:
                         callMethod("getIns", "SQL","SELECT * FROM P_EMPRESA_VERSION WHERE Empresa="+gl.emp);

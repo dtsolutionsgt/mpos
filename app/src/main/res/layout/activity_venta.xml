@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="60dp"
             android:layout_marginBottom="0dp"
             android:layout_toStartOf="@+id/lblTit3"
             android:layout_toEndOf="@+id/lblTit2"
@@ -164,6 +164,19 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imageView110"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/lblTit3"
+            android:layout_alignBottom="@+id/lblTit3"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toStartOf="@+id/lblTit3"
+            android:adjustViewBounds="true"
+            android:src="@drawable/llevar" />
 
     </RelativeLayout>
 

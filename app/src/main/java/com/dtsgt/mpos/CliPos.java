@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -33,6 +34,7 @@ public class CliPos extends PBase {
 	private TextView lblPed;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
+	private CheckBox cbllevar;
 
     //private wsInventCompartido wsi;
 
@@ -64,6 +66,8 @@ public class CliPos extends PBase {
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
+        cbllevar = findViewById(R.id.checkBox21);
+
 
         setHandlers();
 
@@ -72,8 +76,7 @@ public class CliPos extends PBase {
         getURL();
         //wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
-        gl.pedcorel="";
-
+        gl.pedcorel="";gl.parallevar=false;
         bloqueado=false;
 
         /*
@@ -182,6 +185,7 @@ public class CliPos extends PBase {
                 //} else {
                     //confirmaInventario();
                     gl.ventalock=false;
+                    gl.parallevar=cbllevar.isChecked();
                     finish();
                 //}
             }
@@ -306,6 +310,8 @@ public class CliPos extends PBase {
 	}
 
 	private void terminaCliente() {
+
+        gl.parallevar=cbllevar.isChecked();
 
         if (gl.peInvCompart) {
             //bloqueado=true;
@@ -827,7 +833,6 @@ public class CliPos extends PBase {
 
             if (browse==1) {
                 browse=0;
-                toastcent("TERMINA CLIENTE");
                 if (!gl.cliente.isEmpty()) terminaCliente();
                 return;
             }

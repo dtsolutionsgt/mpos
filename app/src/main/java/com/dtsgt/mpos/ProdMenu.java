@@ -258,7 +258,7 @@ public class ProdMenu extends PBase {
     }
 
     private void newItem() {
-        uitemid=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_COMBO");gl.menuitemid=""+uitemid;
+        //uitemid=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_COMBO");gl.menuitemid=""+uitemid;
         listMenuItems();
     }
 
