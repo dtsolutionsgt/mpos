@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class MantConfigRes extends PBase {
 
     private CheckBox cb101,cb117,cb123,cb124,cb125;
-    private CheckBox locCaja,locCajaRecep;
+    private CheckBox locCaja,locCajaRecep,locClaveMes,locClaveCaja;
     private EditText txt120,txt122;
     private ImageView imgadd;
 
@@ -34,7 +34,7 @@ public class MantConfigRes extends PBase {
     private double  value120;
     private String  value122;
 
-    private boolean valCaja,valCajaRecep;
+    private boolean valCaja,valCajaRecep,valClaveMes,valClaveCaja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,8 @@ public class MantConfigRes extends PBase {
 
         locCaja      = findViewById(R.id.chkEnvio11);
         locCajaRecep = findViewById(R.id.chkEnvio12);
+        locClaveMes = findViewById(R.id.chkEnvio20);
+        locClaveCaja = findViewById(R.id.chkEnvio21);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -162,6 +164,20 @@ public class MantConfigRes extends PBase {
             }
             locCajaRecep.setChecked(valCajaRecep);
 
+            try {
+                valClaveMes=pref.getBoolean("pelClaveMes", false);
+            } catch (Exception e) {
+                valClaveMes=false;
+            }
+            locClaveMes.setChecked(valClaveMes);
+
+            try {
+                valClaveCaja=pref.getBoolean("pelClaveCaja", false);
+            } catch (Exception e) {
+                valClaveCaja=false;
+            }
+            locClaveCaja.setChecked(valClaveCaja);
+
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -230,6 +246,12 @@ public class MantConfigRes extends PBase {
 
             valCajaRecep=locCajaRecep.isChecked();
             editor.putBoolean("pelCajaRecep", valCajaRecep);
+
+            valClaveMes=locClaveMes.isChecked();
+            editor.putBoolean("pelClaveMes", valClaveMes);
+
+            valClaveCaja=locClaveCaja.isChecked();
+            editor.putBoolean("pelClaveCaja", valClaveCaja);
 
             editor.commit();
         } catch (Exception e) {

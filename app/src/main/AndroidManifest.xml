@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.dtsgt.mpos"
-    android:installLocation="preferExternal"
-    android:versionCode="5"
-    android:versionName="3.2.14"
     android:hardwareAccelerated="true"
-    android:largeHeap="true">
+    android:installLocation="preferExternal"
+    android:largeHeap="true"
+    android:versionCode="5"
+    android:versionName="3.2.14">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -747,7 +747,11 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
+        <activity
+            android:name=".ValidaClave"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
     </application>
 

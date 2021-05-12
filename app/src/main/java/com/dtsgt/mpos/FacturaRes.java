@@ -236,7 +236,7 @@ public class FacturaRes extends PBase {
 		prn=new printer(this,printexit,gl.validimp);
 		prn_nc=new printer(this,printclose,gl.validimp);
 
-		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
+		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
 		fdoc.deviceid =gl.deviceId;
 
 		fdev=new clsDocDevolucion(this,prn_nc.prw,gl.peMon,gl.peDecImp, "printnc.txt");
@@ -738,6 +738,7 @@ public class FacturaRes extends PBase {
 			    fdoc.impresionorden=gl.pelOrdenComanda;
 			    fdoc.parallevar=gl.parallevar;
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
+
                 app.doPrint(gl.peNumImp,0);
 
                 /*
@@ -788,10 +789,10 @@ public class FacturaRes extends PBase {
         clsD_facturaObj D_fact= new clsD_facturaObj(this, Con, db);
         clsClasses.clsD_facturas fsitem;
 
-		Cursor dt;
-		String vprod,vumstock,vumventa,vbarra;
+		Cursor dt,dtc;
+		String vprod,vumstock,vumventa,vbarra,ssq;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
-		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid;
 		boolean flag;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
@@ -902,8 +903,10 @@ public class FacturaRes extends PBase {
 				factpres=dt.getDouble(12);
 				peso=dt.getDouble(8);
 				vumstock=dt.getString(11);
+                itemuid=dt.getInt(14);
 
 			  	ins.init("D_FACTURAD");
+
 				ins.add("COREL",corel);
 				ins.add("PRODUCTO",app.codigoProducto(dt.getString(0)));
 				ins.add("EMPRESA",gl.emp);
@@ -917,16 +920,14 @@ public class FacturaRes extends PBase {
 				ins.add("PRECIODOC",dt.getDouble(7));
 				ins.add("PESO",dt.getDouble(8));
 				ins.add("VAL1",dt.getDouble(9));
-				ins.add("VAL2",""+counter);
-                //ins.add("VAL2",dt.getString(10));
+				ins.add("VAL2",""+itemuid);
 				ins.add("UMVENTA",dt.getString(11));
 				ins.add("FACTOR",dt.getDouble(12));
                 vumstock=app.umVenta2(dt.getString(0));
 				ins.add("UMSTOCK",vumstock);
 				ins.add("UMPESO",dt.getString(13));
 
-				String ssq=ins.sql();
-
+				ssq=ins.sql();
 			    db.execSQL(ins.sql());
 
 			    vprod=dt.getString(0);
@@ -944,7 +945,33 @@ public class FacturaRes extends PBase {
 				*/
 
 			    dt.moveToNext();counter++;
-			}
+
+                sql="SELECT CODIGO_MENU,IDCOMBO,UNID,CANT,IDSELECCION,ORDEN FROM T_COMBO WHERE IDCOMBO="+itemuid;
+                dtc=Con.OpenDT(sql);
+
+                if (dtc.getCount()>0) {
+                    dtc.moveToFirst();
+                    while (!dtc.isAfterLast()) {
+
+                        ins.init("D_facturac");
+
+                        ins.add("EMPRESA",gl.emp);
+                        ins.add("COREL",corel);
+                        ins.add("CODIGO_MENU",dtc.getInt(0));
+                        ins.add("IDCOMBO",dtc.getInt(1));
+                        ins.add("UNID",dtc.getInt(2));
+                        ins.add("CANT",dtc.getInt(3));
+                        ins.add("IDSELECCION",dtc.getInt(4));
+                        ins.add("ORDEN",dtc.getInt(5));
+                        ins.add("NOMBRE",app.prodNombre(dtc.getInt(4)));
+
+                        db.execSQL(ins.sql());
+
+                        dtc.moveToNext();
+                    }
+                }
+
+            }
 
 			//endregion
 
@@ -1540,39 +1567,57 @@ public class FacturaRes extends PBase {
             sql="SELECT MAX(CORELATIVO) FROM D_FACTURA";
             DT=Con.OpenDT(sql);
 
-            if (DT.getCount()>0){
-                DT.moveToFirst();
-                cult=DT.getInt(0);
-            } else {
+
+            try {
+                if (DT.getCount()>0){
+                    DT.moveToFirst();
+                    cult=DT.getInt(0);
+                } else {
+                    cult=0;
+                }
+            } catch (Exception e) {
                 cult=0;
             }
+
 
 
             sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
             DT=Con.OpenDT(sql);
 
-            if(DT.getCount()>0){
+            try {
+                if (DT.getCount()>0){
 
-                DT.moveToFirst();
+                    DT.moveToFirst();
 
-                fserie=DT.getString(0);
-                ca1=DT.getInt(1);
-                ci=DT.getInt(2);
-                cf=DT.getInt(3);
+                    fserie=DT.getString(0);
+                    ca1=DT.getInt(1);
+                    ci=DT.getInt(2);
+                    cf=DT.getInt(3);
 
-            } else {
+                } else {
+                    fcorel=0;fserie="";
+                    //mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+                    return;
+                }
+            } catch (Exception e) {
                 fcorel=0;fserie="";
                 //mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
                 return;
             }
 
-            sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
+            //sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
+            sql="SELECT MAX(COREL) FROM D_FACT_LOG ";
+
             DT=Con.OpenDT(sql);
 
-            if (DT.getCount()>0){
-                DT.moveToFirst();
-                ca2=DT.getInt(0);
-            }else {
+            try {
+                if (DT.getCount()>0){
+                    DT.moveToFirst();
+                    ca2=DT.getInt(0);
+                }else {
+                    ca2=0;
+                }
+            } catch (Exception e) {
                 ca2=0;
             }
 
@@ -1583,22 +1628,26 @@ public class FacturaRes extends PBase {
 
             sql="SELECT COREL FROM D_FACT_LOG WHERE COREL="+fcorel;
             DT=Con.OpenDT(sql);
-            if (DT.getCount()>0) {
-                try {
-                    sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
-                    DT=Con.OpenDT(sql);
-                    DT.moveToFirst();
 
-                    ins.init("D_FACT_LOG");
-                    ins.add("ITEM",DT.getInt(0));
-                    ins.add("SERIE","DUPL");
-                    ins.add("COREL",fcorel);
-                    ins.add("FECHA",0);
-                    ins.add("RUTA",gl.ruta);
-                    db.execSQL(ins.sql());
-                } catch (SQLException e) {
+            try {
+                if (DT.getCount()>0) {
+                    try {
+                        sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
+                        DT=Con.OpenDT(sql);
+
+                        DT.moveToFirst();
+
+                        ins.init("D_FACT_LOG");
+                        ins.add("ITEM",DT.getInt(0));
+                        ins.add("SERIE","DUPL");
+                        ins.add("COREL",fcorel);
+                        ins.add("FECHA",0);
+                        ins.add("RUTA",gl.ruta);
+                        db.execSQL(ins.sql());
+                    } catch (SQLException e) { }
+                    fcorel++;
                 }
-                fcorel++;
+            } catch (Exception e) {
             }
 
             if (!app.usaFEL()) {
@@ -1867,7 +1916,7 @@ public class FacturaRes extends PBase {
 					if (vuel==0.0){
 						msgAskVuelto("Pago Realizado Correctamente");
 					} else {
-						msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
+						msgAskVuelto("Su vuelto : "+mu.frmcur(vuel));
 					}
 				}
 
@@ -1953,7 +2002,7 @@ public class FacturaRes extends PBase {
 
 						vuel=pg-tot;
 
-						lblVuelto.setText(String.format("    Vuelto: " + mu.frmcur(vuel)) );
+						lblVuelto.setText("    Vuelto: " + mu.frmcur(vuel));
 
 					}else{
 
@@ -1963,7 +2012,7 @@ public class FacturaRes extends PBase {
 
 						vuel=pg-tot;
 
-						lblVuelto.setText(String.format("    Vuelto: " + mu.frmcur(vuel)) );
+						lblVuelto.setText("    Vuelto: " + mu.frmcur(vuel));
 
 					}
 
@@ -2033,7 +2082,7 @@ public class FacturaRes extends PBase {
                 sefect=""+aplcash;
                 //applyCash();
                 checkPagoNF();
-                msgAskVuelto("Su vuelto : "+mu.frmdec(vuel));
+                msgAskVuelto("Su vuelto : "+mu.frmcur(vuel));
             }
         }
 
@@ -2609,8 +2658,10 @@ public class FacturaRes extends PBase {
     private boolean generaArchivos() {
         clsRepBuilder rep;
         int printid;
-        String fname;
+        String fname,plev="";
         File file;
+
+        if (gl.parallevar) plev=" - PARA LLEVAR";
 
         try {
             P_impresoraObj.fill();
@@ -2639,8 +2690,9 @@ public class FacturaRes extends PBase {
                 rep.add(P_impresoraObj.first().ip);
 
                 rep.add("");rep.add("");rep.add("");
-                rep.add("ORDEN : "+gl.ref1.toUpperCase());
-                rep.add("Hora : "+du.shora(du.getActDateTime()));
+                rep.add("ORDEN : "+gl.ref1.toUpperCase()+plev);
+                rep.add("");
+                rep.add("Fecha : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                 rep.line();
 
                 T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
@@ -2650,11 +2702,13 @@ public class FacturaRes extends PBase {
                 }
 
                 rep.line();
-                rep.add("");rep.add("");rep.add("");
+                rep.add("");
+                rep.add("Caja : "+gl.rutanom);
+                rep.add("Cajero : "+gl.vendnom);
+                rep.add("");rep.add("");
 
                 rep.save();rep.clear();
             }
-
             //mesa
             //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
@@ -2719,6 +2773,7 @@ public class FacturaRes extends PBase {
 
         if (gl.parallevar) {
             item.nota="PARA LLEVAR";
+            if (gl.emp==14) item.nota="COMER EN MESA";
         } else {
             item.nota="";
         }

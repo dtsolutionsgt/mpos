@@ -171,7 +171,7 @@ public class Anulacion extends PBase {
 
 		doc=new clsDocAnul(this,prn.prw,"");
 
-		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"");
+		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
 
         app.getURL();
         wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
@@ -1341,7 +1341,7 @@ public class Anulacion extends PBase {
 				if (!corelFactura.isEmpty()){
 					clsDocFactura fdoc;
 
-					fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp, "");
+					fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
 					fdoc.deviceid =gl.deviceId;
 
 					fdoc.buildPrint(corelFactura, 3, "TOL"); prn.printnoask(printclose,"print.txt");

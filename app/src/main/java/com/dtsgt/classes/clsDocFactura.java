@@ -12,11 +12,11 @@ public class clsDocFactura extends clsDocument {
 	private ArrayList<itemData> bons= new ArrayList<itemData>();
 
 	private double tot,desc,imp,stot,percep,totNotaC;
-	private boolean sinimp;
+	private boolean sinimp,detcombo;
 	private String 	contrib,corelNotaC,asignacion,ccorel,corelF;
 	private int decimp,totitems;
 
-	public clsDocFactura(Context context,int printwidth,String cursymbol,int decimpres, String archivo) {
+	public clsDocFactura(Context context,int printwidth,String cursymbol,int decimpres, String archivo,boolean detallecombo) {
 		super(context, printwidth,cursymbol,decimpres, archivo);
 
 		docfactura=true;
@@ -24,6 +24,7 @@ public class clsDocFactura extends clsDocument {
 		docpedido=false;
 		docrecibo=false;
 		decimp=decimpres;
+        detcombo=detallecombo;
 	}
 
 	protected boolean loadHeadData(String corel) {
@@ -266,7 +267,9 @@ public class clsDocFactura extends clsDocument {
 
                 items.add(item);
 
-                if (DT.getDouble(11)==1) detalleCombo(DT.getString(12));
+                if (DT.getDouble(11)==1) {
+                    if (detcombo) detalleCombo(DT.getString(12));
+                }
 
                 DT.moveToNext();
             }
@@ -307,6 +310,37 @@ public class clsDocFactura extends clsDocument {
 	}
 
 	private void detalleCombo(String idcombo ) {
+        clsD_facturacObj D_facturacObj=new clsD_facturacObj(cont,Con,db);
+        String nombre;
+        itemData item;
+
+        D_facturacObj.fill("WHERE (COREL='"+ccorel+"') AND (IDCombo="+idcombo+")");
+
+        for (int i = 0; i <D_facturacObj.count; i++) {
+
+            nombre=D_facturacObj.items.get(i).nombre;
+
+            item = new itemData();
+
+            item.cod = "";
+            item.nombre = nombre;
+            item.cant = 1;
+            item.prec =0;
+            item.imp = 0;
+            item.descper = 0;
+            item.desc = 0;
+            item.tot = 0;
+            item.um ="";
+            item.ump ="";
+            item.peso =0 ;
+            item.flag=true;
+
+            items.add(item);
+        }
+
+    }
+
+    private void detalleComboOrig(String idcombo ) {
         clsD_facturasObj D_facturasObj=new clsD_facturasObj(cont,Con,db);
         clsP_productoObj P_productoObj=new clsP_productoObj(cont,Con,db);
         String prid,nombre;
@@ -340,7 +374,7 @@ public class clsDocFactura extends clsDocument {
 
     }
 
-	//region Detalle por empresa
+    //region Detalle por empresa
 
 	protected boolean buildDetail() {
 	    /*

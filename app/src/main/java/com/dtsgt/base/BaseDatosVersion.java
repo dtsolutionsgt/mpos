@@ -579,8 +579,24 @@ public class BaseDatosVersion {
                     "PRIMARY KEY ([COREL])"+
                     ");";
             db.execSQL(sql);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [D_facturac] ("+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "CODIGO_MENU INTEGER NOT NULL,"+
+                    "IDCOMBO INTEGER NOT NULL,"+
+                    "UNID INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "IDSELECCION INTEGER NOT NULL,"+
+                    "ORDEN INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([EMPRESA],[COREL],[CODIGO_MENU],[IDCOMBO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
 
         try {
 

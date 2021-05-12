@@ -351,6 +351,8 @@ public class ProdMenu extends PBase {
         }
 
         adapter.notifyDataSetChanged();
+
+        precioFinal();
     }
 
     private void listOptions(String title,int idoption,int cant,boolean opcional) {
@@ -405,7 +407,11 @@ public class ProdMenu extends PBase {
                         item.sprec=mu.frmdec(items.get(selidx).precio);
                         if (item.precio==0) items.get(selidx).sprec="";
 
-                        if (item.cod==0) item.modo=0; else item.modo=1;
+                        if (item.cod==0) {
+                            item.modo=0;
+                        } else {
+                            item.modo=1;
+                        }
 
                         adapter.notifyDataSetChanged();
                         precioFinal();
@@ -633,7 +639,9 @@ public class ProdMenu extends PBase {
 
             for (int i = 0; i < items.size(); i++) {
                 if (items.get(i).cod==0 && items.get(i).modo==0) {
-                    if (!items.get(i).adicional) precio -= precioItem(items.get(i).codigo_menu_opcion);
+                    if (!items.get(i).adicional) {
+                        precio -= precioItem(items.get(i).codigo_menu_opcion);
+                    }
                 }
             }
 

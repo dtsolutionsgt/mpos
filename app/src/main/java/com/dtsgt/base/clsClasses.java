@@ -61,6 +61,18 @@ public class clsClasses {
         public String feelcontingencia;
     }
 
+    public class clsD_facturac {
+        public int  empresa;
+        public String corel;
+        public int  codigo_menu;
+        public int  idcombo;
+        public int  unid;
+        public int  cant;
+        public int  idseleccion;
+        public int  orden;
+        public String nombre;
+    }
+
     public class clsD_facturad {
         public int  empresa;
         public String corel;
@@ -1176,7 +1188,7 @@ public class clsClasses {
 
 	public class clsMenu {
 		public int ID,Icon,icod,cant;
-		public String Name,Cod;
+		public String Name,Cod,Pass;
 	}	
 	
 	public class clsVenta {

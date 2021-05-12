@@ -27,8 +27,7 @@ import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
-import com.dtsgt.classes.clsP_sucursalObj;
-import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
@@ -44,7 +43,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 
 public class Menu extends PBase {

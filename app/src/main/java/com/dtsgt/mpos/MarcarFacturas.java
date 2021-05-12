@@ -77,7 +77,7 @@ public class MarcarFacturas extends PBase {
         setFechaAct();
         listItems();
 
-        fdoc=new clsDocFactura(this,38,gl.peMon,gl.peDecImp,"");
+        fdoc=new clsDocFactura(this,38,gl.peMon,gl.peDecImp,"",gl.peComboDet);
 
         pass=strfechasinhora(du.getActDate())+gl.codigo_ruta;
      }

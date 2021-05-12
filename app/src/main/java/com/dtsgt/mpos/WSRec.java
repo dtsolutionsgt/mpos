@@ -1195,10 +1195,9 @@ public class WSRec extends PBase {
                     }
                 }
 
-                } catch (Exception ee)
-                {
-                    Log.e("ImgOp", ee.getMessage());
-                }
+            } catch (Exception ee)   {
+                Log.e("ImgOp", ee.getMessage());
+            }
 
         } catch (Exception e) {
             ws.error = e.getMessage();

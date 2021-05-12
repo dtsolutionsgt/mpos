@@ -64,7 +64,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "3.2.66";   //   REGISTRAR CAMBIO EN LA TABLA VERSION
+    private String parVer = "4.0.2";   //   REGISTRAR CAMBIO EN LA TABLA VERSION
 
     private Typeface typeface;
 
@@ -331,7 +331,7 @@ public class MainActivity extends PBase {
 
         try {
             //#HS_20181122_1505 Se agrego el campo Impresion.
-            sql = "SELECT CODIGO,NOMBRE,SUCURSAL, CODIGO_RUTA FROM P_RUTA ";
+            sql = "SELECT CODIGO,NOMBRE,SUCURSAL, CODIGO_RUTA FROM P_RUTA WHERE CODIGO_RUTA="+gl.codigo_ruta;
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {
@@ -839,7 +839,7 @@ public class MainActivity extends PBase {
         }
 
         lblRTit.setText(gl.tiendanom);
-        lblRuta.setText(gl.cajanom);
+        lblRuta.setText(gl.rutanom);
         lblEmp.setText(gl.empnom);
         lblEmp.setText(gl.tiendanom);
 

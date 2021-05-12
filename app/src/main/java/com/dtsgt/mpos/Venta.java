@@ -1025,7 +1025,7 @@ public class Venta extends PBase {
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
             ins.init("T_VENTA");
-
+            counter++;
             ins.add("PRODUCTO",prodid);
             ins.add("EMPRESA",""+counter);
             if (porpeso) ins.add("UM",gl.umpeso);else ins.add("UM",gl.um);
@@ -1936,7 +1936,7 @@ public class Venta extends PBase {
                     mmitems.add(item);
                 }
 
-                if (gl.pelCaja  && gl.peRest) {
+                if (gl.pelCaja && gl.peRest) {
                     item = clsCls.new clsMenu();
                     item.ID=65;item.Name="Caja";item.Icon=65;
                     mmitems.add(item);
@@ -2030,12 +2030,14 @@ public class Venta extends PBase {
                     if (hasProducts()) inputMesa(); else toastcent("La órden está vacia");
                     break;
                 case 63:
-                    gl.cerrarmesero=false;
-                    listaMeseros();
+                    gl.cerrarmesero=false;gl.modoclave=0;
+                    //listaMeseros();
+                    startActivity(new Intent(this,ValidaClave.class));
                     break;
                 case 65:
-                    browse=10;
-                    startActivity(new Intent(this,ResCaja.class));
+                    browse=10;gl.modoclave=1;
+                    startActivity(new Intent(this,ValidaClave.class));
+                    //startActivity(new Intent(this,ResCaja.class));
                     break;
             }
         } catch (Exception e) {

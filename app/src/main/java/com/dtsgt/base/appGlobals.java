@@ -25,7 +25,7 @@ public class appGlobals extends Application {
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente;
 	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom;
 	public String tiendanom,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
-	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero;
+	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero,modoclave;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
 	public boolean closeCliDet, closeVenta,closePedido, promapl, pagado, pagocobro, sinimp, rutapos, devol, modoadmin,
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
@@ -59,11 +59,12 @@ public class appGlobals extends Application {
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
     public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
-    public Boolean peAgregarCombo,peComboLimite;
+    public Boolean peAgregarCombo,peComboLimite,peComboDet;
     public double  pePropinaPerc;
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelTablet,pelDespacho, pelOrdenComanda;
+    public Boolean pelClaveMes,pelClaveCaja;
     public String  pelPrefijoOrden;
 
 	// Descuentos

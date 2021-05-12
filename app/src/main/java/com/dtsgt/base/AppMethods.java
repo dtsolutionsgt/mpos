@@ -676,6 +676,19 @@ public class AppMethods {
             gl.peComboLimite = false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=126";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peComboDet = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peComboDet = false;
+        }
+
 
     }
 
@@ -714,6 +727,17 @@ public class AppMethods {
                 gl.pelOrdenComanda=false;
             }
 
+            try {
+                gl.pelClaveMes=pref.getBoolean("pelClaveMes",false);
+            } catch (Exception e) {
+                gl.pelClaveMes=false;
+            }
+
+            try {
+                gl.pelClaveCaja=pref.getBoolean("pelClaveCaja",false);
+            } catch (Exception e) {
+                gl.pelClaveCaja=false;
+            }
 
         } catch (Exception e) {
             msgbox(e.getMessage());
@@ -1317,13 +1341,7 @@ public class AppMethods {
             File currentFile = new File(fname);
             File newFile = new File(fnamenew);
 
-            if (rename(currentFile, newFile)) {
-                //Success
-                Log.i("TAG", "Success");
-            } else {
-                //Fail
-                Log.i("TAG", "Fail");
-            }
+            if (rename(currentFile, newFile)) Log.i("TAG", "Success");else Log.i("TAG", "Fail");
 
             //msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
             //msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
