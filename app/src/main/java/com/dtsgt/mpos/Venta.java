@@ -1958,8 +1958,14 @@ public class Venta extends PBase {
                 item.ID=55;item.Name="Borrar todo ";item.Icon=55;
                 mmitems.add(item);
 
-                item = clsCls.new clsMenu();
-                item.ID=56;item.Name="Ventas";item.Icon=56;
+                if (gl.peRest | gl.pelOrdenComanda) {
+                    item = clsCls.new clsMenu();
+                    item.ID=70;item.Name="Mensaje";item.Icon=70;
+                    mmitems.add(item);
+                }
+
+                //item = clsCls.new clsMenu();
+                //item.ID=56;item.Name="Ventas";item.Icon=56;
                 //mmitems.add(item);
 
                 //item = clsCls.new clsMenu();
@@ -2031,13 +2037,14 @@ public class Venta extends PBase {
                     break;
                 case 63:
                     gl.cerrarmesero=false;gl.modoclave=0;
-                    //listaMeseros();
                     startActivity(new Intent(this,ValidaClave.class));
                     break;
                 case 65:
                     browse=10;gl.modoclave=1;
                     startActivity(new Intent(this,ValidaClave.class));
-                    //startActivity(new Intent(this,ResCaja.class));
+                    break;
+                case 70:
+                    startActivity(new Intent(this,ImpresMsg.class));
                     break;
             }
         } catch (Exception e) {

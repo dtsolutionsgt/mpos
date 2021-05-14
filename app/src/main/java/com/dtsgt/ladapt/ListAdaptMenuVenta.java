@@ -115,6 +115,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
         if (items.get(position).Icon==67) holder.imgEst.setImageResource(R.drawable.pago_caja);
         if (items.get(position).Icon==68) holder.imgEst.setImageResource(R.drawable.preimpresion);
         if (items.get(position).Icon==69) holder.imgEst.setImageResource(R.drawable.btn_complete);
+        if (items.get(position).Icon==70) holder.imgEst.setImageResource(R.drawable.cocina_msg);
 
         if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 

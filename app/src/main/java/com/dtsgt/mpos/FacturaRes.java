@@ -1077,89 +1077,28 @@ public class FacturaRes extends PBase {
 
             //endregion
 
-			//region Bonificaciones
+            //region D_FACTURAPR Propina por factura - solo modulo restaurante
 
-            //region D_BONIF
+            if (gl.peRest) {
+                if (propina>0) {
+                    try {
+                        clsD_facturaprObj D_facturaprObj = new clsD_facturaprObj(this, Con, db);
+                        clsClasses.clsD_facturapr itempr = clsCls.new clsD_facturapr();
 
-            /*
-			sql="SELECT ITEM,PRODID,BONIID,CANT,PRECIO,COSTO,UMVENTA,UMSTOCK,UMPESO,FACTOR FROM T_BONITEM";
-			dt=Con.OpenDT(sql);
+                        itempr.empresa = gl.emp;
+                        itempr.corel = corel;
+                        itempr.anulado = 0;
+                        itempr.fecha = fecha;
+                        itempr.codigo_sucursal = gl.tienda;
+                        itempr.codigo_vendedor = gl.mesero_venta;
+                        itempr.propina = propina;
 
-			if(dt.getCount()>0){
-
-				dt.moveToFirst();bitem=1;
-				while (!dt.isAfterLast()) {
-
-					vcant= dt.getDouble(3);
-					vprec= dt.getDouble(4);
-					vtot= vcant*vprec;vtot=mu.roundr(vtot,2);
-
-					ins.init("D_BONIF");
-
-					ins.add("COREL",corel);
-					ins.add("ITEM",bitem);
-					ins.add("FECHA",fecha);
-					ins.add("ANULADO","N");
-					ins.add("EMPRESA",gl.emp);
-					ins.add("RUTA",gl.ruta);
-					ins.add("CLIENTE",gl.cliente);
-					ins.add("PRODUCTO",dt.getString(2));
-					ins.add("CANT",vcant);
-					ins.add("VENPED","V");
-					ins.add("TIPO","");
-					ins.add("PRECIO",vprec);
-					ins.add("COSTO",dt.getDouble(5));
-					ins.add("TOTAL",vtot );
-					ins.add("STATCOM","N");
-					ins.add("UMVENTA",dt.getString(6));
-					ins.add("UMSTOCK",dt.getString(7) );
-					ins.add("UMPESO",dt.getString(8));
-					ins.add("FACTOR",dt.getDouble(9));
-
-					db.execSQL(ins.sql());
-
-					vprod=dt.getString(2);
-					vumstock=dt.getString(7);
-					vumventa=dt.getString(6);
-					vfactor=dt.getDouble(9);
-					peso=vcant*vfactor;
-					factpres=app.factorPres(vprod,vumventa,vumstock);
-
-					rebajaStockBonif(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
-
-					dt.moveToNext();bitem++;
-				}
-			}
-
-
-             */
-            //endregion
-
-			//endregion
-
-            //region D_FACTURAPR
-
-            // Propina por factura - solo modulo restaurante
-
-            if (gl.peRest ) {
-                try {
-                    clsD_facturaprObj D_facturaprObj=new clsD_facturaprObj(this,Con,db);
-                    clsClasses.clsD_facturapr itempr = clsCls.new clsD_facturapr();
-
-                    itempr.empresa=gl.emp;
-                    itempr.corel=corel;
-                    itempr.anulado=0;
-                    itempr.fecha=fecha;
-                    itempr.codigo_sucursal=gl.tienda;
-                    itempr.codigo_vendedor=gl.mesero_venta;
-                    itempr.propina=propina;
-
-                    D_facturaprObj.add(itempr);
-
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                        D_facturaprObj.add(itempr);
+                    } catch (Exception e) {
+                        msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+                    }
                 }
-           }
+            }
 
             //endregion
 

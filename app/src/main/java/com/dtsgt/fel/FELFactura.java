@@ -16,11 +16,13 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_facturacObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
+import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
@@ -425,8 +427,7 @@ public class FELFactura extends PBase {
     }
 
     private void buildFactXML() {
-
-        String dir,muni,dep,iddep,idmuni;
+        String dir,muni,dep,iddep,idmuni,lcombo;
         int idcont;
 
         corel=facts.get(fidx);
@@ -499,8 +500,9 @@ public class FELFactura extends PBase {
 
             for (int i = 0; i <D_facturadObj.count; i++) {
                 factd=D_facturadObj.items.get(i);
+                if (gl.peComboDet) lcombo=listaCombo(factd.corel,factd.val2); else lcombo="";
                 fel.detalle(prodName(factd.producto),factd.cant,"UNI",
-                        factd.precio,factd.total,factd.desmon);
+                        factd.precio,factd.total,factd.desmon,lcombo);
             }
 
             fel.completar(fact.serie,fact.corelativo);
@@ -1118,6 +1120,25 @@ public class FELFactura extends PBase {
             return val+1;
         } catch (Exception e) {
             return 1;
+        }
+    }
+
+    private String listaCombo(String ccorel,String idcombo) {
+        clsD_facturacObj D_facturacObj=new clsD_facturacObj(this,Con,db);
+        String lc,nombre;
+
+        try {
+            D_facturacObj.fill("WHERE (COREL='"+ccorel+"') AND (IDCombo="+idcombo+")");
+
+            lc="";
+            for (int i = 0; i <D_facturacObj.count; i++) {
+                nombre = D_facturacObj.items.get(i).nombre;
+                lc+="|@"+nombre;
+            }
+
+            return lc;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return "";
         }
     }
 

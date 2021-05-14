@@ -64,7 +64,7 @@ public class appGlobals extends Application {
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelTablet,pelDespacho, pelOrdenComanda;
-    public Boolean pelClaveMes,pelClaveCaja;
+    public Boolean pelClaveMes,pelClaveCaja,pelComandaBT;
     public String  pelPrefijoOrden;
 
 	// Descuentos

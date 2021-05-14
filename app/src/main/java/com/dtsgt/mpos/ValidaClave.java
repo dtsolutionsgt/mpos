@@ -1,5 +1,8 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
@@ -113,8 +117,8 @@ public class ValidaClave extends PBase {
 
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();
-                item.Cod = VendedoresObj.items.get(i).codigo;
-                item.Name = item.Cod+" - "+VendedoresObj.items.get(i).nombre;
+                item.Cod =""+VendedoresObj.items.get(i).codigo_vendedor;
+                item.Name = VendedoresObj.items.get(i).nombre;
                 item.Pass = VendedoresObj.items.get(i).clave;
                 mitems.add(item);
             }
@@ -128,11 +132,22 @@ public class ValidaClave extends PBase {
 
     private void validaClave(String clave) {
         if (usr.isEmpty()) {
-            toast("Debe seleccionar un usuario");return;
+            msgbox("Debe seleccionar un usuario");return;
         }
 
+        if (!selitem.Pass.equalsIgnoreCase(clave)) {
+            msgbox("Clave incorrecta");return;
+        }
 
+        if (gl.modoclave==0) {
+            gl.idmesero=Integer.parseInt(selitem.Cod);
+            gl.meserodir=false;
+            startActivity(new Intent(this,ResMesero.class));
+        } else {
+            startActivity(new Intent(this,ResCaja.class));
+        }
 
+        finish();
     }
 
     //endregion

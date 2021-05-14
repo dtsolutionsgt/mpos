@@ -121,7 +121,7 @@ public class ResCaja extends PBase {
                     "FROM P_RES_SESION INNER JOIN " +
                     "T_ORDENCUENTA ON P_RES_SESION.ID =T_ORDENCUENTA.COREL INNER JOIN " +
                     "P_RES_MESA ON P_RES_SESION.CODIGO_MESA = P_RES_MESA.CODIGO_MESA " +
-                    "WHERE (P_RES_SESION.ESTADO IN (2, 3)) ORDER BY P_RES_MESA.NOMBRE, CUENTA ";
+                    "WHERE (P_RES_SESION.ESTADO IN (1, 2, 3)) ORDER BY P_RES_MESA.NOMBRE, CUENTA ";
             ViewObj.fillSelect(sql);
 
             for (int i = 0; i <ViewObj.count; i++) {
