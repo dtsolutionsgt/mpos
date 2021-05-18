@@ -1426,10 +1426,14 @@ public class Orden extends PBase {
     //region Comanda
 
     private void imprimeComanda() {
-        if (!divideComanda()) return;
-        if (!generaArchivos()) return;
-        ejecutaImpresion();
-    }
+        if (gl.pelComandaBT) {
+            imprimeComandaBT();
+        } else {
+            if (!divideComanda()) return;
+            if (!generaArchivos()) return;
+            ejecutaImpresion();
+        }
+     }
 
     private boolean divideComanda() {
         clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
@@ -1587,7 +1591,7 @@ public class Orden extends PBase {
         }
     }
 
-    private void imprimeComanda2() {
+    private void imprimeComandaBT() {
         clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
         clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
         clsClasses.clsT_orden venta;
@@ -1596,11 +1600,32 @@ public class Orden extends PBase {
         int prid;
 
         try {
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+
+            if (T_ordenObj.count==0) {
+                msgInfo("Ninguno artículo está marcado para la impresión");return;
+            }
+
+            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+            ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+            clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
+            ord.id=ordennum;
+            P_orden_numeroObj.add(ord);
+        } catch (Exception e) {
+            ordennum=0;
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+
+        try {
             rep.clear();
             rep.empty();
-            rep.add("ORDEN MESA : "+mesa);
+            rep.add("ORDEN : "+ordennum);
             rep.empty();
+            rep.add("MESA : "+mesa);
             rep.add("Hora : "+du.shora(du.getActDateTime()));
+            rep.empty();
             rep.line();
             rep.empty();
 
@@ -1626,7 +1651,7 @@ public class Orden extends PBase {
                 }
             }
 
-            rep.empty();
+            rep.line();
             rep.empty();
             rep.empty();
             rep.empty();
@@ -1635,10 +1660,13 @@ public class Orden extends PBase {
             rep.save();
 
             app.doPrint(1);
+
+            sql="UPDATE T_orden SET ESTADO=0 WHERE (COREL='"+idorden+"')";
+            db.execSQL(sql);
+            listItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     private String getProd(int prodid) {
@@ -2321,7 +2349,7 @@ public class Orden extends PBase {
         try{
 
             ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg);
+            dialog.setMessage("¿"+msg+"?");
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -2340,9 +2368,25 @@ public class Orden extends PBase {
         }
     }
 
+    private void msgInfo(String msg) {
+        try {
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
     private void msgAskLimit(String msg,boolean updateitem) {
         final boolean updatem=updateitem;
-        try{
+        try {
 
             ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);

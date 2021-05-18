@@ -134,11 +134,11 @@ public class InvInicial extends PBase {
     }
 
     public void doFocusBar(View view) {
-        khand.setLabel(lblBar,false);
+        khand.setLabel(lblBar,true);
     }
 
     public void doFocusCant(View view) {
-        khand.setLabel(lblCant,false);
+        khand.setLabel(lblCant,true);
     }
 
     public void doFocusCosto(View view) {
@@ -234,7 +234,7 @@ public class InvInicial extends PBase {
         selidx=-1;
         lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
         lblBar.setText("");lblCant.setText("");lblCosto.setText("");
-        khand.setLabel(lblBar,false);
+        khand.setLabel(lblBar,true);
 
         costot=0;cantt=0;
 
@@ -276,29 +276,28 @@ public class InvInicial extends PBase {
 
         }
 
-        lblTCant.setText("Artículos : "+mu.frmint(cl));//lblTCant.setText("Artículos : "+mu.frmint(cantt));
+        lblTCant.setText("Cantidad : "+mu.frmdecno(cl));;
         lblTCosto.setText("Total : "+mu.frmcur(costot));
     }
 
     private void addItem() {
         clsClasses.clsT_movd item=clsCls.new clsT_movd();
         clsClasses.clsT_movr itemr=clsCls.new clsT_movr();
-        int cant;
-        double costo,dd;
+        double cant,costo,dd;
         String ss;
 
         if (prodid==0) {
             toast("Falta definir articulo");
-            khand.setLabel(lblBar,false);return;
+            khand.setLabel(lblBar,true);return;
         }
 
         try {
             ss=lblCant.getText().toString();
             dd=Double.parseDouble(ss);
-            cant=(int) dd;
+            cant=dd;
             if (cant<=0) throw new Exception();
         } catch (Exception e) {
-            toast("Cantidad incorrecta");khand.setLabel(lblCant,false);return;
+            toast("Cantidad incorrecta");khand.setLabel(lblCant,true);return;
         }
 
         try {
@@ -365,7 +364,7 @@ public class InvInicial extends PBase {
 
             listItems();
 
-            prodid=0;khand.setLabel(lblBar,false);
+            prodid=0;khand.setLabel(lblBar,true);
             lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
             lblBar.setText("");lblCant.setText("");lblCosto.setText("");
 
@@ -403,6 +402,7 @@ public class InvInicial extends PBase {
             header.IMPRES=0;
             header.CODIGOLIQUIDACION=0;
             header.CODIGO_PROVEEDOR= gl.codigo_proveedor;
+            header.TOTAL=costot;
 
             mov.add(header);
 
@@ -494,7 +494,7 @@ public class InvInicial extends PBase {
         } else {
             lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
             lblBar.setText("");lblCant.setText("");lblCosto.setText("");
-            khand.setLabel(lblBar,false);
+            khand.setLabel(lblBar,true);
 
             toastlong("¡El producto "+barcode+" no existe!");
         }
@@ -519,7 +519,7 @@ public class InvInicial extends PBase {
             lblProd.setText(prodname);nombreUnidad();
             lblUni.setVisibility(View.VISIBLE);
 
-            khand.setLabel(lblCant,false);khand.val="";
+            khand.setLabel(lblCant,true);khand.val="";
             lblCant.setText("");
 
             if (P_productoObj.first().costo>0) {
@@ -554,8 +554,8 @@ public class InvInicial extends PBase {
             lblProd.setText(prodname);nombreUnidad();
             lblUni.setVisibility(View.VISIBLE);
 
-            lblCant.setText(mu.frmint(selitem.cant));
-            khand.setLabel(lblCant,false);
+            lblCant.setText(mu.frmdecno(selitem.cant));
+            khand.setLabel(lblCant,true);
             lblCosto.setText(""+selitem.precio);
 
             lblUni.setText(selitemr.unidadmedida);
@@ -582,8 +582,8 @@ public class InvInicial extends PBase {
             lblProd.setText(prodname);nombreUnidad();
             lblUni.setVisibility(View.VISIBLE);
 
-            lblCant.setText(mu.frmint(selitemr.cant));
-            khand.setLabel(lblCant,false);
+            lblCant.setText(mu.frmdecno(selitemr.cant));
+            khand.setLabel(lblCant,true);
             lblCosto.setText(""+selitemr.precio);
 
             lblUni.setText(selitemr.unidadmedida);

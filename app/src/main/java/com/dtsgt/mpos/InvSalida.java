@@ -104,14 +104,14 @@ public class InvSalida extends PBase {
     }
 
     public void doFocusBar(View view) {
-        khand.setLabel(lblBar,false);
+        khand.setLabel(lblBar,true);
         lblProd.setText("");lblBar.setText("");lblCant.setText("");
         lblRazon.setText("");lblCosto.setText("");
         motivo=-1;
     }
 
     public void doFocusCant(View view) {
-        khand.setLabel(lblCant,false);
+        khand.setLabel(lblCant,true);
     }
 
     public void doFocusCosto(View view) {
@@ -125,12 +125,15 @@ public class InvSalida extends PBase {
                 barcode=khand.getStringValue();
                 if (!barcode.isEmpty()) addBarcode();
             } else if (khand.label==lblCant) {
+                khand.setLabel(lblCosto,true);
+            } else if (khand.label==lblCosto) {
                 khand.setLabel(lblRazon,true);
                 if (validaDisp()) listaMotivos();
             } else if (khand.label== lblRazon) {
                 if (validaDisp()) listaMotivos();
             }
         }
+
     }
 
     private void setHandlers() {
@@ -176,7 +179,7 @@ public class InvSalida extends PBase {
         selidx=-1;
         lblProd.setText("");lblBar.setText("");lblCant.setText("");
         lblRazon.setText("");lblCosto.setText("");motivo=-1;
-        khand.setLabel(lblBar,false);
+        khand.setLabel(lblBar,true);
 
         costot=0;cantt=0;
 
@@ -195,33 +198,32 @@ public class InvSalida extends PBase {
             mu.msgbox(e.getMessage());
         }
 
-        lblTCant.setText("Articulos : "+mu.frmint(cantt));
+        lblTCant.setText("Cantidad : "+mu.frmdecno(cantt));
         lblTCosto.setText("Total : "+mu.frmcur(costot));
     }
 
     private void addItem() {
         clsClasses.clsT_movd item=clsCls.new clsT_movd();
         clsClasses.clsT_movr itemr=clsCls.new clsT_movr();
-        int cant;
-        double costo,dd;
+        double cant,costo,dd;
         String ss;
 
         if (prodid==0) {
             toast("Falta definir articulo");
-            khand.setLabel(lblBar,false);return;
+            khand.setLabel(lblBar,true);return;
         }
 
         try {
             ss=lblCant.getText().toString();
             dd=Double.parseDouble(ss);
-            cant=(int) dd;
+            cant=dd;
             if (cant<=0) throw new Exception();
         } catch (Exception e) {
-            toast("Cantidad incorrecta");khand.setLabel(lblCant,false);return;
+            toast("Cantidad incorrecta");khand.setLabel(lblCant,true);return;
         }
 
         if (cant>exist) {
-            toast("Insuficiente existencia ("+exist+")");khand.setLabel(lblCant,false);return;
+            toast("Insuficiente existencia ("+exist+")");khand.setLabel(lblCant,true);return;
         }
 
         try {
@@ -253,9 +255,9 @@ public class InvSalida extends PBase {
                 itemr.razon=motivo;
 
                 T_movrObj.add(itemr);
-
             } else {
                 selitemr.cant=cant;
+                selitemr.precio=costo;
                 selitemr.razon=motivo;
 
                 T_movrObj.update(selitemr);
@@ -263,7 +265,7 @@ public class InvSalida extends PBase {
 
             listItems();
 
-            prodid=0;khand.setLabel(lblBar,false);
+            prodid=0;khand.setLabel(lblBar,true);
             lblProd.setText("");lblBar.setText("");lblCant.setText("");
             lblRazon.setText("");
 
@@ -299,6 +301,7 @@ public class InvSalida extends PBase {
             header.IMPRES=0;
             header.CODIGOLIQUIDACION=0;
             header.CODIGO_PROVEEDOR= gl.codigo_proveedor;
+            header.TOTAL=costot;
 
             mov.add(header);
 
@@ -354,7 +357,7 @@ public class InvSalida extends PBase {
             lblProd.setText("");lblBar.setText("");
             lblCant.setText("");
             lblRazon.setText("");
-            khand.setLabel(lblBar,false);
+            khand.setLabel(lblBar,true);
         }
     }
 
@@ -404,13 +407,13 @@ public class InvSalida extends PBase {
             }
 
             lblProd.setText(prodname);
-            khand.setLabel(lblCant,false);khand.val="";
+            khand.setLabel(lblCant,true);khand.val="";
             lblCant.setText("");
 
             if (P_productoObj.first().costo>0) {
                 lblCosto.setText(""+P_productoObj.first().costo);
             } else {
-                lblCosto.setText("0");
+                lblCosto.setText("");
             }
 
             motivo=-1;
@@ -443,8 +446,8 @@ public class InvSalida extends PBase {
 
             lblProd.setText(prodname);
 
-            lblCant.setText(mu.frmint(selitemr.cant));
-            khand.setLabel(lblCant,false);
+            lblCant.setText(mu.frmdecno(selitemr.cant));
+            khand.setLabel(lblCant,true);
             lblCosto.setText(""+selitemr.precio);
             lblRazon.setText(nombreMotivo(motivo));
 
@@ -557,12 +560,12 @@ public class InvSalida extends PBase {
             cant=(int) dd;
             if (cant<=0) throw new Exception();
         } catch (Exception e) {
-            toast("Cantidad incorrecta");khand.setLabel(lblCant,false);
+            toast("Cantidad incorrecta");khand.setLabel(lblCant,true);
             return false;
         }
 
         if (cant>exist) {
-            toast("Insuficiente existencia ("+exist+")");khand.setLabel(lblCant,false);
+            toast("Insuficiente existencia ("+exist+")");khand.setLabel(lblCant,true);
             return false;
         }
 
@@ -585,9 +588,9 @@ public class InvSalida extends PBase {
         }
 
         ExDialog menudlg = new ExDialog(this);
-        menudlg.setTitle("Razón de ajuste");
+        menudlg.setTitle("Motivo de ajuste");
 
-        menudlg.setSingleChoiceItems(selitems,sidx,  new DialogInterface.OnClickListener() {
+        menudlg.setItems(selitems,  new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 int ii=item;
 

@@ -739,6 +739,12 @@ public class AppMethods {
                 gl.pelClaveCaja=false;
             }
 
+            try {
+                gl.pelComandaBT=pref.getBoolean("pelComandaBT",false);
+            } catch (Exception e) {
+                gl.pelComandaBT=false;
+            }
+
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

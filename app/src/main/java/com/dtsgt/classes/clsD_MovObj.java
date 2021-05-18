@@ -108,6 +108,7 @@ public class clsD_MovObj {
         upd.add("IMPRES",item.IMPRES);
         upd.add("CODIGOLIQUIDACION",item.CODIGOLIQUIDACION);
         upd.add("CODIGO_PROVEEDOR",item.CODIGO_PROVEEDOR);
+        upd.add("TOTAL",item.TOTAL);
 
         upd.Where("(COREL="+item.COREL+")");
         db.execSQL(upd.sql());
@@ -151,6 +152,7 @@ public class clsD_MovObj {
             item.IMPRES=dt.getInt(8);
             item.CODIGOLIQUIDACION=dt.getInt(9);
             item.CODIGO_PROVEEDOR=dt.getInt(10);
+            item.TOTAL=dt.getDouble(11);
 
             items.add(item);
 

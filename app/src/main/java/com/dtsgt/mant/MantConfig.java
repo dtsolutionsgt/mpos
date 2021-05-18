@@ -25,7 +25,7 @@ public class MantConfig extends PBase {
 
     private CheckBox  cb100,cb102,cb103,cb104,cb106,cb107,cb109,cb111,cb112,cb113,cb115;
     private CheckBox  cb116,cb118,cb119,cb121,cb126;
-    private CheckBox  locDesp,locOrdenComanda;
+    private CheckBox  locDesp,locOrdenComanda,locComandaBT;
     private Spinner   spin16,spin105;
     private TextView  txt108,txt110,txt114;
     private ImageView imgadd;
@@ -43,7 +43,7 @@ public class MantConfig extends PBase {
     private int value108,value110,value114;
 
     private String valPrefCaja;
-    private Boolean valDespacho, valOrdenComanda;
+    private Boolean valDespacho, valOrdenComanda, valComandaBT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +73,7 @@ public class MantConfig extends PBase {
         cb119  = (CheckBox) findViewById(R.id.chkEnvio10);
         cb121  = (CheckBox) findViewById(R.id.chkEnvio13);
         cb126  = (CheckBox) findViewById(R.id.chkEnvio22);
+        locComandaBT  = (CheckBox) findViewById(R.id.chkEnvio23);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -355,6 +356,14 @@ public class MantConfig extends PBase {
             }
             locOrdenComanda.setChecked(valOrdenComanda);
 
+            try {
+                valComandaBT=pref.getBoolean("pelComandaBT",false);
+            } catch (Exception e) {
+                valComandaBT=false;
+            }
+            locComandaBT.setChecked(valComandaBT);
+
+
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -458,8 +467,8 @@ public class MantConfig extends PBase {
             editor.putString("pelPrefCaja", valPrefCaja);
 
             editor.putBoolean("pelDespacho", locDesp.isChecked());
-
             editor.putBoolean("pelOrdenComanda", locOrdenComanda.isChecked());
+            editor.putBoolean("pelComandaBT", locComandaBT.isChecked());
 
             editor.commit();
         } catch (Exception e) {
