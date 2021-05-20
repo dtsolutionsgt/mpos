@@ -1,6 +1,5 @@
 package com.dtsgt.ladapt;
 
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -70,6 +69,7 @@ public class LA_T_movr extends BaseAdapter {
             holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
             holder.lbl7 = (TextView) convertView.findViewById(R.id.lblV7);
             holder.lbl8 = (TextView) convertView.findViewById(R.id.lblV8);
+            holder.lbl9 = (TextView) convertView.findViewById(R.id.textView234);
 
             convertView.setTag(holder);
         } else {
@@ -79,6 +79,7 @@ public class LA_T_movr extends BaseAdapter {
         holder.lbl4.setText(mu.frmdecno(items.get(position).cant)+" "+items.get(position).unidadmedida);
         holder.lbl7.setText(mu.frmcur(items.get(position).pesom));
         holder.lbl8.setText(""+items.get(position).lote);
+        holder.lbl9.setText(""+items.get(position).srazon);
 
         if(selectedIndex!= -1 && position == selectedIndex) {
             convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -90,7 +91,7 @@ public class LA_T_movr extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl4,lbl7,lbl8;
+        TextView lbl4,lbl7,lbl8,lbl9;
     }
 
 }

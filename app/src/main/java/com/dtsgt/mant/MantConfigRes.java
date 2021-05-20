@@ -25,13 +25,13 @@ public class MantConfigRes extends PBase {
 
     private CheckBox cb101,cb117,cb123,cb124,cb125;
     private CheckBox locCaja,locCajaRecep,locClaveMes,locClaveCaja;
-    private EditText txt120,txt122;
+    private EditText txt120,txt122,txt127;
     private ImageView imgadd;
 
     private clsP_paramextObj holder;
 
     private boolean value101,value117,value123,value124,value125;
-    private double  value120;
+    private double  value120,value127;
     private String  value122;
 
     private boolean valCaja,valCajaRecep,valClaveMes,valClaveCaja;
@@ -51,6 +51,7 @@ public class MantConfigRes extends PBase {
 
         txt120 = findViewById(R.id.editTextNumber3);
         txt122 = findViewById(R.id.editTextNumber6);
+        txt127 = findViewById(R.id.editTextNumber7);
 
         locCaja      = findViewById(R.id.chkEnvio11);
         locCajaRecep = findViewById(R.id.chkEnvio12);
@@ -143,6 +144,14 @@ public class MantConfigRes extends PBase {
         }
         cb125.setChecked(value125);
 
+        try {
+            holder.fill("WHERE ID="+127);
+            value127 =Double.parseDouble(holder.first().valor);
+        } catch (Exception e) {
+            value127=0;
+        }
+        txt127.setText(""+value127);
+
     }
 
     private void loadLocalItems() {
@@ -185,8 +194,8 @@ public class MantConfigRes extends PBase {
     }
 
     private void updateItem() {
-        String s101="N",s117="S",s120="0",s122="NO APLICA",s123="N",s124="N",s125="N";
-        double dval120;
+        String s101="N",s117="S",s120="0",s122="NO APLICA",s123="N",s124="N",s125="N",s127="0";
+        double dval120,dval127;
 
         updateLocalItems();
 
@@ -198,6 +207,14 @@ public class MantConfigRes extends PBase {
             }
             if (dval120<0 | dval120>99) dval120=0;
 
+            try {
+                dval127=Double.parseDouble(txt127.getText().toString());
+            } catch (NumberFormatException e) {
+                dval127=0;
+            }
+            if (dval127<0 | dval127>99) dval127=0;
+
+
             if (cb101.isChecked())  s101="S";
             if (!cb117.isChecked()) s117="N";
             s120=""+dval120;
@@ -205,6 +222,7 @@ public class MantConfigRes extends PBase {
             if (cb123.isChecked())  s123="S";
             if (cb124.isChecked())  s124="S";
             if (cb125.isChecked())  s125="S";
+            s127=""+dval127;
 
             db.beginTransaction();
 
@@ -215,6 +233,7 @@ public class MantConfigRes extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=123");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=124");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=125");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=127");
 
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (101,'Imprimir orden para la cocina','"+s101+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (117,'Propina fija','"+s117+"')");
@@ -223,6 +242,8 @@ public class MantConfigRes extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (123,'Editar total de combo','"+s123+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (124,'Agregar articulo a combo','"+s124+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (125,'Precio de combo sin limite','"+s125+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (127,'Propina pago con tarjeta','"+s127+"')");
+
 
             db.setTransactionSuccessful();
             db.endTransaction();

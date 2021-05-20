@@ -499,6 +499,9 @@ public class Reimpresion extends PBase {
 		}
 
 		try {
+
+            fdoc.parallevar=gl.parallevar;
+            fdoc.factsinpropina=gl.peFactSinPropina;
             if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 app.doPrint();
 

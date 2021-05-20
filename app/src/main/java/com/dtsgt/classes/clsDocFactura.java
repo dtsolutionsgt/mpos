@@ -11,7 +11,7 @@ public class clsDocFactura extends clsDocument {
 	private ArrayList<itemData> items= new ArrayList<itemData>();
 	private ArrayList<itemData> bons= new ArrayList<itemData>();
 
-	private double tot,desc,imp,stot,percep,totNotaC;
+	private double tot,desc,imp,stot,percep,propina,totNotaC;
 	private boolean sinimp,detcombo;
 	private String 	contrib,corelNotaC,asignacion,ccorel,corelF;
 	private int decimp,totitems;
@@ -201,6 +201,19 @@ public class clsDocFactura extends clsDocument {
 		} catch (Exception e) {
             pagoefectivo=0;
 		}
+
+        propina=0;
+        try {
+            sql="SELECT PROPINA FROM D_FACTURAPR WHERE (COREL='"+corel+"')";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                propina=DT.getDouble(0);
+             }
+        } catch (Exception e) {
+            propina=0;
+        }
 
 		try {
 			sql="SELECT NOMBRE,NIT,DIRECCION FROM D_FACTURAF WHERE COREL='"+corel+"'";
@@ -505,7 +518,8 @@ public class clsDocFactura extends clsDocument {
 	//region Pie por empresa
 
 	protected boolean buildFooter() {
-        if (modofact.equalsIgnoreCase("GUA")) {
+        if (modofact.isEmpty()) {
+        //if (modofact.equalsIgnoreCase("GUA")) {
             if (facturaflag) { // Factura
                 return footerBaseGUA();
             } else { // Ticket
@@ -519,10 +533,22 @@ public class clsDocFactura extends clsDocument {
     private boolean footerBaseGUATicket() {
         double totimp,totperc;
 
-        if (desc!=0) {
-            rep.addtotsp("Subtotal", stot);
-            rep.addtotsp("Descuento", -desc);
+        if (factsinpropina) {
+            stot = stot - propina;
+            tot = tot - propina;
+            if (desc != 0) {
+                rep.addtotsp("Subtotal", stot);
+                rep.addtotsp("Descuento", -desc);
+            }
+        } else {
+            if (desc != 0 | propina != 0) {
+                stot = stot - propina;
+                rep.addtotsp("Subtotal", stot);
+            }
+            if (desc != 0) rep.addtotsp("Descuento", -desc);
+            if (propina != 0) rep.addtotsp("Propina", propina);
         }
+
         rep.addtotsp("TOTAL A PAGAR ", tot);
         rep.add("");
         rep.add("");
@@ -555,11 +581,24 @@ public class clsDocFactura extends clsDocument {
             if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion", totperc);
             rep.addtotsp("Descuento", -desc);
             rep.addtotsp("TOTAL", tot);
+
         } else {
-            if (desc!=0) {
-                rep.addtotsp("Subtotal", stot);
-                rep.addtotsp("Descuento", -desc);
+            if (factsinpropina) {
+                stot = stot - propina;
+                tot = tot - propina;
+                if (desc != 0) {
+                    rep.addtotsp("Subtotal", stot);
+                    rep.addtotsp("Descuento", -desc);
+                }
+            } else {
+                if (desc != 0 | propina != 0) {
+                    stot = stot - propina;
+                    rep.addtotsp("Subtotal", stot);
+                }
+                if (desc != 0) rep.addtotsp("Descuento", -desc);
+                if (propina != 0) rep.addtotsp("Propina", propina);
             }
+
             rep.addtotsp("TOTAL A PAGAR ", tot);
         }
 

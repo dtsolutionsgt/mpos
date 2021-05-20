@@ -167,6 +167,8 @@ public class FacturaRes extends PBase {
 		app = new AppMethods(this, gl, Con, db);
         khand=new clsKeybHandler(this,lblMonto,lblKeyDP);
 
+        app.parametrosExtra();
+
         imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
         imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
 
@@ -578,6 +580,8 @@ public class FacturaRes extends PBase {
                 propina=gl.propina_valor;
             }
 
+            propina=mu.round2(propina);
+
 			fillTotals();
 
 		}catch (Exception e){
@@ -722,7 +726,7 @@ public class FacturaRes extends PBase {
 
 	}
 
-	private void impresionDocumento(){
+	private void impresionDocumento() {
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
 		try{
@@ -737,6 +741,7 @@ public class FacturaRes extends PBase {
 
 			    fdoc.impresionorden=gl.pelOrdenComanda;
 			    fdoc.parallevar=gl.parallevar;
+			    fdoc.factsinpropina=gl.peFactSinPropina;
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
 
                 app.doPrint(gl.peNumImp,0);
@@ -793,7 +798,7 @@ public class FacturaRes extends PBase {
 		String vprod,vumstock,vumventa,vbarra,ssq;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid;
-		boolean flag;
+		boolean flag,pagocarta=false;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
 		//corel=gl.ruta+"_"+mu.getCorelBase();
@@ -937,12 +942,10 @@ public class FacturaRes extends PBase {
 				vfactor=vpeso/(vcant*factpres);
 				vumventa=dt.getString(11);
 
-				/*
 				if (esProductoConStock(dt.getString(0))) {
 					//rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
                     rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
 				}
-				*/
 
 			    dt.moveToNext();counter++;
 
@@ -983,6 +986,8 @@ public class FacturaRes extends PBase {
             dt.moveToFirst();
 
             while (!dt.isAfterLast()) {
+
+                if (dt.getString(2).equalsIgnoreCase("K")) pagocarta=true;
 
                 ins.init("D_FACTURAP");
                 ins.add("COREL", corel);
@@ -1081,6 +1086,9 @@ public class FacturaRes extends PBase {
 
             if (gl.peRest) {
                 if (propina>0) {
+
+                    propina=mu.round2(propina);
+
                     try {
                         clsD_facturaprObj D_facturaprObj = new clsD_facturaprObj(this, Con, db);
                         clsClasses.clsD_facturapr itempr = clsCls.new clsD_facturapr();
@@ -1091,7 +1099,15 @@ public class FacturaRes extends PBase {
                         itempr.fecha = fecha;
                         itempr.codigo_sucursal = gl.tienda;
                         itempr.codigo_vendedor = gl.mesero_venta;
+                        if (itempr.codigo_vendedor==0) itempr.codigo_vendedor=gl.codigo_vendedor;
                         itempr.propina = propina;
+
+                        if (pagocarta) {
+                            if (gl.pePropinaCarta>0 && gl.pePropinaPerc>0) {
+                                if (gl.pePropinaCarta>gl.pePropinaPerc) gl.pePropinaCarta=gl.pePropinaPerc;
+                                itempr.propina = propina*gl.pePropinaCarta/gl.pePropinaPerc;
+                            }
+                        }
 
                         D_facturaprObj.add(itempr);
                     } catch (Exception e) {
@@ -2948,25 +2964,27 @@ public class FacturaRes extends PBase {
         try {
             clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
-            //if (app.impresora()) {
-            fdoc.vendedor=gl.vendnom;
-            fdoc.rutanombre=gl.tiendanom;
-            fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,gl.pePropinaPerc,gl.pePropinaFija,propina);
-            app.doPrint(1,0);
+            if (app.impresora()) {
 
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        db.execSQL("UPDATE P_RES_SESION SET ESTADO=3 WHERE ID='"+ gl.ordcorel+"'");
-                    } catch (SQLException e) { }
-                    gl.iniciaVenta=true;
-                    finish();
-                }
-            };
-            mtimer.postDelayed(mrunner,200);
-            //}
+                try {
+                    db.execSQL("UPDATE P_RES_SESION SET ESTADO=3 WHERE ID='"+ gl.ordcorel+"'");
+                } catch (SQLException e) { }
+
+                fdoc.vendedor=gl.vendnom;
+                fdoc.rutanombre=gl.tiendanom;
+                fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,gl.pePropinaPerc,gl.pePropinaFija,propina);
+                app.doPrint(1,0);
+
+                Handler mtimer = new Handler();
+                Runnable mrunner=new Runnable() {
+                    @Override
+                    public void run() {
+                        gl.iniciaVenta=true;
+                        finish();
+                    }
+                };
+                mtimer.postDelayed(mrunner,200);
+            }
         } catch (Exception e){
             mu.msgbox("impresionCuenta : "  + e.getMessage());
         }

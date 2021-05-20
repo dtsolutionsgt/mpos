@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class MantConfig extends PBase {
 
     private CheckBox  cb100,cb102,cb103,cb104,cb106,cb107,cb109,cb111,cb112,cb113,cb115;
-    private CheckBox  cb116,cb118,cb119,cb121,cb126;
+    private CheckBox  cb116,cb118,cb119,cb121,cb126,cb128;
     private CheckBox  locDesp,locOrdenComanda,locComandaBT;
     private Spinner   spin16,spin105;
     private TextView  txt108,txt110,txt114;
@@ -38,7 +38,7 @@ public class MantConfig extends PBase {
 
     private boolean value100,value102,value103,value104,value106, value107,value109;
     private boolean value111,value112,value113,value115,value116,value118,value119;
-    private boolean value121,value126;
+    private boolean value121,value126,value128;
     private String  value16,value105;
     private int value108,value110,value114;
 
@@ -73,6 +73,8 @@ public class MantConfig extends PBase {
         cb119  = (CheckBox) findViewById(R.id.chkEnvio10);
         cb121  = (CheckBox) findViewById(R.id.chkEnvio13);
         cb126  = (CheckBox) findViewById(R.id.chkEnvio22);
+        cb128  = (CheckBox) findViewById(R.id.chkEnvio24);
+
         locComandaBT  = (CheckBox) findViewById(R.id.chkEnvio23);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
@@ -327,6 +329,13 @@ public class MantConfig extends PBase {
         }
         cb126.setChecked(value126);
 
+        try {
+            holder.fill("WHERE ID="+128);
+            value128=holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            value128 = false;
+        }
+        cb128.setChecked(value128);
 
     }
 
@@ -373,7 +382,7 @@ public class MantConfig extends PBase {
     private void updateItem() {
         String s100="N",s102="N",s103="N",s104="N",s105="",s106="S", s107="S",
                s108="5", s109="S", s110="3", s111="N", s112="N", s113="N", s114="1",
-               s115="N", s116="N", s118="N", s119="N", s121="N", s126="N";
+               s115="N", s116="N", s118="N", s119="N", s121="N", s126="N", s128="N";
 
         try {
 
@@ -398,6 +407,7 @@ public class MantConfig extends PBase {
             if (cb119.isChecked())  s119="S";
             if (cb121.isChecked())  s121="S";
             if (cb126.isChecked())  s126="S";
+            if (cb128.isChecked())  s128="S";
 
             db.beginTransaction();
 
@@ -422,6 +432,7 @@ public class MantConfig extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=119");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=121");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=126");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=128");
 
 
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES ( 16,'Formato factura','"+value16+"')");
@@ -445,6 +456,7 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (119,'Modificar órden a domicilio','"+s119+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (121,'Mostrar botón comanda','"+s121+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (126,'Factura con detalle de combo','"+s126+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (128,'Factura sin propina','"+s128+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();

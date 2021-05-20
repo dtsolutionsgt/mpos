@@ -82,6 +82,12 @@ public class clsKeybHandler {
             } else if (keychar.equalsIgnoreCase("B")) {
                 ll=val.length();
                 if (ll>0) val=val.substring(0,ll-1);
+            } else if (keychar.equalsIgnoreCase("-")) {
+                if (val.isEmpty()) {
+                    val = "-" ;
+                } else {
+                    if (val.substring(0, 1).equalsIgnoreCase("-")) val=val.substring(1);else  val="-"+val;
+                }
             } else if (keychar.equalsIgnoreCase(".")) {
                 val+=".";
             } else if (keychar.equalsIgnoreCase("0")) {

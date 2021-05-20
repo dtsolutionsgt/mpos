@@ -247,6 +247,7 @@ public class InvInicial extends PBase {
                     can=T_movrObj.items.get(i).cant;cantt+=can;
                     tc=can*T_movrObj.items.get(i).precio; costot+=tc;
                     T_movrObj.items.get(i).pesom=tc;
+                    T_movrObj.items.get(i).srazon=" ";
                 }
 
                 adapterr=new LA_T_movr(this,this,T_movrObj.items);
@@ -264,6 +265,7 @@ public class InvInicial extends PBase {
                     can=T_movdObj.items.get(i).cant;cantt+=can;
                     tc=can*T_movdObj.items.get(i).precio; costot+=tc;
                     T_movdObj.items.get(i).pesom=tc;
+                    T_movrObj.items.get(i).srazon=" ";
                 }
 
                 adapter=new LA_T_movd(this,this,T_movdObj.items);

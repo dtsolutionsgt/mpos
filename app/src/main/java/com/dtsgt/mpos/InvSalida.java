@@ -48,8 +48,8 @@ public class InvSalida extends PBase {
     private clsClasses.clsT_movr selitemr;
 
     private String barcode,prodname,um,invtext;
-    private int prodid,selidx, motivo,exist,selcant;
-    private double cantt,costot;
+    private int prodid,selidx, motivo,selcant;
+    private double exist,cantt,costot;
     private boolean ingreso;
 
     @Override
@@ -128,9 +128,9 @@ public class InvSalida extends PBase {
                 khand.setLabel(lblCosto,true);
             } else if (khand.label==lblCosto) {
                 khand.setLabel(lblRazon,true);
-                if (validaDisp()) listaMotivos();
+                listaMotivos();
             } else if (khand.label== lblRazon) {
-                if (validaDisp()) listaMotivos();
+                listaMotivos();
             }
         }
 
@@ -175,6 +175,7 @@ public class InvSalida extends PBase {
 
     private void listItems() {
         double tc,can;
+        String ss;
 
         selidx=-1;
         lblProd.setText("");lblBar.setText("");lblCant.setText("");
@@ -190,6 +191,13 @@ public class InvSalida extends PBase {
                 can=T_movrObj.items.get(i).cant;cantt+=can;
                 tc=can*T_movrObj.items.get(i).precio; costot+=tc;
                 T_movrObj.items.get(i).pesom=tc;
+
+                P_motivoajusteObj.fill("WHERE (CODIGO_MOTIVO_AJUSTE="+T_movrObj.items.get(i).razon+")");
+                if (P_motivoajusteObj.count>0) {
+                    T_movrObj.items.get(i).srazon=P_motivoajusteObj.first().nombre;
+                } else {
+                    T_movrObj.items.get(i).srazon="";
+                }
             }
 
             adapterr=new LA_T_movr(this,this,T_movrObj.items);
@@ -217,14 +225,12 @@ public class InvSalida extends PBase {
             ss=lblCant.getText().toString();
             dd=Double.parseDouble(ss);
             cant=dd;
-            if (cant<=0) throw new Exception();
+            if (cant==0) throw new Exception();
         } catch (Exception e) {
             toast("Cantidad incorrecta");khand.setLabel(lblCant,true);return;
         }
 
-        if (cant>exist) {
-            toast("Insuficiente existencia ("+exist+")");khand.setLabel(lblCant,true);return;
-        }
+        //if (cant>exist) toast("Insuficiente existencia ("+exist+")");
 
         try {
             costo=Double.parseDouble(lblCosto.getText().toString());
@@ -362,7 +368,7 @@ public class InvSalida extends PBase {
     }
 
     private boolean barraProducto() {
-        int tdisp=0;
+        double tdisp=0;
 
         try {
             khand.clear(true);khand.enable();khand.focus();
@@ -379,32 +385,6 @@ public class InvSalida extends PBase {
             prodid=P_productoObj.first().codigo_producto;
             prodname=P_productoObj.first().codigo+" - "+P_productoObj.first().desclarga;
             um=P_productoObj.first().unidbas;
-
-            P_stockObj.fill("WHERE codigo="+prodid);
-
-            if (P_stockObj.count==0) {
-                toast("¡El producto "+barcode+" no tiene existencia!");return false;
-            }
-
-            exist=(int) P_stockObj.first().cant;
-
-            tdisp=0;
-
-            T_movrObj.fill("WHERE PRODUCTO="+prodid);
-
-            if (T_movrObj.count>0) {
-
-                for (int i = 0; i <T_movrObj.count; i++) {
-                    tdisp+=(int) T_movrObj.items.get(i).cant;
-                }
-            }
-
-            if (selidx>=0) exist=exist+selcant;
-
-            exist=exist-tdisp;
-            if (exist<=0) {
-                toast("¡El producto "+barcode+" no tiene existencia!");return false;
-            }
 
             lblProd.setText(prodname);
             khand.setLabel(lblCant,true);khand.val="";
@@ -457,7 +437,7 @@ public class InvSalida extends PBase {
     }
 
     private void adjustStock(int pcod,double pcant,String um) {
-        sql="UPDATE P_STOCK SET CANT=CANT-"+pcant+" WHERE CODIGO="+pcod;
+        sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO="+pcod;
         db.execSQL(sql);
     }
 
@@ -551,28 +531,6 @@ public class InvSalida extends PBase {
         return "";
     }
 
-    private boolean validaDisp() {
-        int cant;
-
-        try {
-            ss=lblCant.getText().toString();
-            double dd=Double.parseDouble(ss);
-            cant=(int) dd;
-            if (cant<=0) throw new Exception();
-        } catch (Exception e) {
-            toast("Cantidad incorrecta");khand.setLabel(lblCant,true);
-            return false;
-        }
-
-        if (cant>exist) {
-            toast("Insuficiente existencia ("+exist+")");khand.setLabel(lblCant,true);
-            return false;
-        }
-
-
-        return true;
-    }
-
     //endregion
 
     //region Dialogs
@@ -581,7 +539,9 @@ public class InvSalida extends PBase {
         final AlertDialog Dialog;
         int sidx=-1;
 
+        P_motivoajusteObj.fill("WHERE ACTIVO=1 ORDER BY Nombre");
         final String[] selitems = new String[P_motivoajusteObj.count];
+
         for (int i = 0; i <P_motivoajusteObj.count; i++) {
             selitems[i]= P_motivoajusteObj.items.get(i).nombre;
             if (P_motivoajusteObj.items.get(i).codigo_motivo_ajuste== motivo) sidx=i;
@@ -647,7 +607,7 @@ public class InvSalida extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    if (ingreso) save();else msgAskSave2("Continuar");
+                    if (ingreso) save();else msgAskSave2("Está seguro de continuar");
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

@@ -1036,6 +1036,8 @@ public class clsClasses {
         public String unidadmedida;
         public double precio;
         public int  razon;
+
+        public String srazon;
     }
 
     public class clsT_orden {

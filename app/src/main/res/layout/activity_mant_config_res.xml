@@ -100,6 +100,36 @@
                 android:layout_toEndOf="@+id/imageView30"
                 android:background="@drawable/frame_rect">
 
+                <EditText
+                    android:id="@+id/editTextNumber7"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/lblCFact69"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="-5dp"
+                    android:layout_toEndOf="@+id/lblCFact45"
+                    android:ems="10"
+                    android:inputType="numberDecimal" />
+
+                <TextView
+                    android:id="@+id/lblCFact69"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact58"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Propina, pago con tarjeta [ % ]"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
                 <TextView
                     android:id="@+id/lblCFact66"
                     android:layout_width="wrap_content"
@@ -403,11 +433,11 @@
                     android:id="@+id/lblCFact45"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:layout_below="@+id/lblCFact58"
+                    android:layout_below="@+id/lblCFact69"
                     android:layout_alignStart="@+id/lblCFact48"
                     android:layout_alignEnd="@+id/lblCFact48"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="0dp"
                     android:background="@drawable/blue_strip"
                     android:gravity="center_vertical"
@@ -440,9 +470,9 @@
                     android:id="@+id/editTextNumber3"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/chkEnvio14"
+                    android:layout_alignBottom="@+id/lblCFact58"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="-5dp"
                     android:layout_toEndOf="@+id/lblCFact45"
                     android:ems="10"
                     android:inputType="numberDecimal" />
@@ -451,11 +481,11 @@
                     android:id="@+id/editTextNumber6"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/editTextNumber3"
                     android:layout_alignEnd="@+id/chkEnvio14"
+                    android:layout_alignBottom="@+id/lblCFact45"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="-5dp"
                     android:layout_toEndOf="@+id/lblCFact45"
                     android:ems="10" />
 

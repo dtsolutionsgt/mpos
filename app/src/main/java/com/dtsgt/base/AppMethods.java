@@ -689,6 +689,33 @@ public class AppMethods {
             gl.peComboDet = false;
         }
 
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=127";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            dval=Double.parseDouble(val);
+            if (dval<0 | dval>99) dval=0;
+
+            gl.pePropinaCarta =dval;
+        } catch (Exception e) {
+            gl.pePropinaCarta=0;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=128";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.peFactSinPropina = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.peFactSinPropina = false;
+        }
+
 
     }
 
