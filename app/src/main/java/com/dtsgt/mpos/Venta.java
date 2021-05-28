@@ -36,6 +36,8 @@ import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsBonifGlob;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_pedidoObj;
+import com.dtsgt.classes.clsD_pedidocomboObj;
+import com.dtsgt.classes.clsD_pedidodObj;
 import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
@@ -99,6 +101,7 @@ public class Venta extends PBase {
     private ArrayList<clsClasses.clsMenu> pitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
+    private ArrayList<String> peditems = new ArrayList<String>();
 
     private AppMethods app;
 
@@ -120,7 +123,7 @@ public class Venta extends PBase {
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
-    private String cliid,saveprodid;
+    private String cliid,saveprodid,pedcorel;
     private int famid = -1;
 
     @Override
@@ -2013,6 +2016,7 @@ public class Venta extends PBase {
                             startActivity(new Intent(Venta.this, Clientes.class));
                         } else {
                             if (!gl.forcedclose) {
+                                gl.modo_domicilio=false;
                                 startActivity(new Intent(Venta.this, CliPos.class));
                             }
                         }
@@ -2030,7 +2034,10 @@ public class Venta extends PBase {
                     showMenuSwitch();
                     break;
                 case 61:
-                    msgAskOrden("Convertir a órden");
+                    gl.modo_domicilio=true;
+                    gl.dom_total=tot;
+                    startActivity(new Intent(Venta.this, CliPos.class));
+                    //msgAskOrden("Convertir a órden");
                     break;
                 case 62:
                     if (hasProducts()) inputMesa(); else toastcent("La órden está vacia");
@@ -2077,7 +2084,8 @@ public class Venta extends PBase {
 
             if (pedidos) {
                 item = clsCls.new clsMenu();
-                item.ID=16;item.Name="Pedidos";item.Icon=16;item.cant=pedidoscant+1;
+                item.ID=16;item.Name="Pedidos";item.Icon=16;
+                item.cant=pedidoscant;
                 mitems.add(item);
             }
 
@@ -2544,33 +2552,6 @@ public class Venta extends PBase {
 
     //endregion
 
-    //region Pedidos
-
-    private void estadoPedidos() {
-        long tact,tlim,tbot;
-
-        tact=du.getActDateTime();tlim=tact+100;tbot=du.getActDate();
-
-        try {
-            //D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_CREO=0) ");
-            String fsql="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+")  AND (FECHA_SALIDA_SUC=0) ";
-            D_pedidoObj.fill(fsql);
-            int peds=D_pedidoObj.count;
-
-            for (int i = 0; i <mitems.size(); i++) {
-                if (mitems.get(i).ID==16) {
-                    mitems.get(i).cant=peds;
-                    adaptergrid.notifyDataSetChanged();
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    //endregion
-
     //region Comanda
 
     private void imprimeComanda() {
@@ -2649,6 +2630,152 @@ public class Venta extends PBase {
 
     //endregion
 
+    //region Pedidos
+
+    private void crearPedido() {
+
+        try {
+            peditems.clear();
+            if (crearPedidoEncabezado()) crearPedidoDetalle();
+        } catch (Exception e) {
+            msgbox(e.getMessage());return;
+        }
+
+        try {
+            db.beginTransaction();
+
+            for (int i = 0; i <peditems.size(); i++) {
+                db.execSQL(peditems.get(i));
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            menuPedidos();
+
+            try  {
+                db.execSQL("DELETE FROM T_VENTA");
+                db.execSQL("DELETE FROM T_COMBO");
+                listItems();
+            } catch (SQLException e){
+                mu.msgbox("Error : " + e.getMessage());
+            }
+        } catch (Exception e) {
+            db.endTransaction();msgbox(e.getMessage());
+        }
+    }
+    
+    private boolean crearPedidoEncabezado() {
+        clsD_pedidoObj D_pedidoObj=new clsD_pedidoObj(this,Con,db);
+        clsClasses.clsD_pedido item = clsCls.new clsD_pedido();
+
+        pedcorel=mu.getCorelBase();
+
+        item.empresa=gl.emp;
+        item.corel=pedcorel;
+        item.fecha_sistema=du.getActDateTime();
+        item.fecha_pedido=du.getActDateTime();
+        item.fecha_recepcion_suc=du.getActDateTime();
+        item.fecha_salida_suc=0;
+        item.fecha_entrega=0;
+        item.codigo_cliente=gl.codigo_cliente;
+        item.codigo_direccion=0;
+        item.codigo_sucursal=gl.tienda;
+        item.total=tot;
+        item.codigo_estado=0;
+        item.codigo_usuario_creo=gl.codigo_vendedor;
+        item.codigo_usuario_proceso=gl.codigo_vendedor;
+        item.codigo_usuario_entrego=0;
+        item.anulado=0;
+
+        String ss=D_pedidoObj.addItemSql(item);
+        peditems.add(ss);
+
+        return true;
+    }
+
+    private void  crearPedidoDetalle() {
+        clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
+        clsD_pedidodObj D_pedidodObj=new clsD_pedidodObj(this,Con,db);
+        clsD_pedidocomboObj D_pedidocomboObj=new clsD_pedidocomboObj(this,Con,db);
+        clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
+        clsClasses.clsT_venta venta;
+        clsClasses.clsD_pedidod item;
+        clsClasses.clsD_pedidocombo combo;
+        int corid,comboid;
+        String ss,pt,comid;
+
+        T_ventaObj.fill();
+        corid=D_pedidodObj.newID("SELECT MAX(COREL_DET) FROM D_pedidod");
+        comboid=D_pedidocomboObj.newID("SELECT MAX(COREL_COMBO) FROM D_pedidocombo");
+
+        for (int i = 0; i <T_ventaObj.count; i++) {
+            venta=T_ventaObj.items.get(i);
+
+            item = clsCls.new clsD_pedidod();
+
+            item.corel=pedcorel;
+            item.corel_det=corid;
+            item.codigo_producto=app.codigoProducto(venta.producto);
+            item.umventa=venta.um;
+            item.cant=venta.cant;
+            item.total=venta.total;
+            item.nota="";
+            item.codigo_tipo_producto=app.prodTipo(item.codigo_producto);pt=item.codigo_tipo_producto;
+
+            ss=D_pedidodObj.addItemSql(item);
+            peditems.add(ss);
+
+            if (pt.equalsIgnoreCase("M")) {
+                comid=venta.empresa;
+                T_comboObj.fill("WHERE (IDCOMBO="+comid+")");
+
+                for (int j = 0; j <T_comboObj.count; j++) {
+
+                    combo = clsCls.new clsD_pedidocombo();
+
+                    combo.corel_det=corid;
+                    combo.corel_combo=comboid;comboid++;
+                    combo.seleccion=corid;
+                    combo.codigo_producto=T_comboObj.items.get(j).idseleccion;
+                    combo.cant=T_comboObj.items.get(j).cant;
+                    combo.nota="";
+
+                    ss=D_pedidocomboObj.addItemSql(combo);
+                    peditems.add(ss);
+
+                }
+            }
+
+            corid++;
+        }
+    }
+
+    private void estadoPedidos() {
+        long tact,tlim,tbot;
+
+        tact=du.getActDateTime();tlim=tact+100;tbot=du.getActDate();
+
+        try {
+            //D_pedidoObj.fill("WHERE (ANULADO=0) AND (CODIGO_USUARIO_CREO=0) ");
+            String fsql="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) AND (FECHA_PEDIDO<="+tlim+") AND (FECHA_PEDIDO>="+tbot+")  AND (FECHA_SALIDA_SUC=0) ";
+            D_pedidoObj.fill(fsql);
+            int peds=D_pedidoObj.count;
+
+            for (int i = 0; i <mitems.size(); i++) {
+                if (mitems.get(i).ID==16) {
+                    mitems.get(i).cant=peds;
+                    adaptergrid.notifyDataSetChanged();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+    
     //region Aux
 
     private void showItemMenu() {
@@ -3474,12 +3601,16 @@ public class Venta extends PBase {
 
     private void msgAskOrden(String msg) {
 
+        if (!hasProducts()) {
+            msgbox("La venta está vacía, no se puede convertir a orden!");return;
+        }
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                toast("Orden en proceso...");
+                crearPedido();
             }
         });
 
@@ -3658,7 +3789,7 @@ public class Venta extends PBase {
             gl.climode=true;
             menuTools();
 
-            //if (pedidos) estadoPedidos();
+            if (pedidos) estadoPedidos();
 
             try {
                 txtBarra.requestFocus();
@@ -3673,11 +3804,12 @@ public class Venta extends PBase {
                 setNivel();
                 numeroOrden();
 
+                gl.cliente_dom=0;gl.modo_domicilio=false;
+
                 try  {
                     db.execSQL("DELETE FROM T_VENTA");
                     listItems();
                 } catch (SQLException e){
-                    addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
                     mu.msgbox("Error : " + e.getMessage());
                 }
 

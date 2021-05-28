@@ -88,7 +88,6 @@ public class clsP_clienteObj {
         return maximo;
     }
 
-
     private int nitnum(String nit) {
         int pp;
 

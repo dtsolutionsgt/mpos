@@ -141,7 +141,8 @@ public class Pedidos extends PBase {
                 if (item.fecha_salida_suc!=0) item.tdif=du.timeDiff(item.fecha_salida_suc,item.fecha_recepcion_suc);
                 if (item.anulado==1) item.tdif=-1;
 
-                item.lim=item.firma_cliente;//item.lim= limitePedido(item.corel);
+                //item.lim=item.firma_cliente;
+                item.lim= limitePedido(item.corel);
                 mdif=(int) item.tdif;mlim=(int) item.lim;
                 sate+=mdif;slim+=mlim;
                 if (mdif>mlim) retr++;
@@ -256,7 +257,7 @@ public class Pedidos extends PBase {
                 img1.setImageResource(rid);
 
                 if (sate>0) efi=100*slim/sate;else efi=0;if (efi>100) efi=100;
-                stat="TPPO : "+mu.frmdecimal(tate,1)+" min , Ordenes : "+cord+" , Eficiencia : "+ mu.frmint(efi)+" %  , Retrasados : "+retr;
+                stat="Tiempo : "+mu.frmdecimal(tate,1)+" min , Ordenes : "+cord+" , Eficiencia : "+ mu.frmint(efi)+" %  , Retrasados : "+retr;
 
                 updateStats(tate,cord,efi,retr);
             } else {

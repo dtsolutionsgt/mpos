@@ -158,8 +158,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/editText2"
             android:layout_alignStart="@+id/editText2"
-            android:layout_alignEnd="@+id/editText2"
-            android:layout_alignRight="@id/textView4"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/textView238"
             android:ems="10" />
 
         <EditText
@@ -391,8 +393,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/txtCorreo"
-            android:layout_alignEnd="@+id/editText1"
-            android:layout_marginStart="30dp"
+            android:layout_alignEnd="@+id/editText2"
+            android:layout_marginStart="27dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:layout_toEndOf="@+id/textView223"
@@ -405,10 +407,8 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/txt1"
             android:layout_alignBottom="@+id/txt1"
-            android:layout_alignParentEnd="true"
             android:layout_marginStart="50dp"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="20dp"
             android:layout_marginBottom="0dp"
             android:layout_toEndOf="@+id/txt1"
             android:text="   PARA LLEVAR"
@@ -416,6 +416,47 @@
             android:textColorHighlight="#000000"
             android:textSize="30sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView237"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/checkBox21"
+            android:layout_alignBottom="@+id/checkBox21"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/frame_stat"
+            android:clickable="true"
+            android:onClick="doDomicilio"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:text="DOMICILIO"
+            android:textColor="#000000"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView238"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView237"
+            android:layout_alignBottom="@+id/editTextNumber4"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="62dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="58dp"
+            android:background="@drawable/frame_btn"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="doDireccion"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:text="CAMBIAR"
+            android:textColor="#000000"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            tools:text="CAMBIAR" />
 
     </RelativeLayout>
 

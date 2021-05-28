@@ -97,7 +97,7 @@ public class LA_D_pedido  extends BaseAdapter {
 
         if (corel>0) holder.lbl1.setText(""+corel);else holder.lbl1.setText("");
         if (tdif>=0) {
-            st="TPPO : "+tdif+" m";stl="Meta : "+tlim+" m";
+            st="Tiempo : "+tdif+" m";stl="Meta : "+tlim+" m";
         } else {
             st="";stl="";
         }

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".CliDirList">
+
+    <RelativeLayout
+        android:id="@+id/relRoad"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@layout/blue_strip">
+
+        <ImageView
+            android:id="@+id/imgTitLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/logo_panel" />
+
+        <TextView
+            android:id="@+id/lblTit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/imgRoadTit"
+            android:paddingLeft="15dp"
+            android:paddingRight="5dp"
+            android:text="Direcciones de entrega"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/llFechas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lblDescrip2"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"/>
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="792dp"
+        android:layout_height="553dp"
+        android:layout_above="@+id/relbotpan"
+        android:layout_below="@id/llFechas"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp">
+
+    </ListView>
+
+    <ImageView
+        android:id="@+id/imgImg5"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="0dp"
+        android:clickable="true"
+        android:onClick="nuevo"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:src="@drawable/mas" />
+
+    <TextView
+        android:id="@+id/lblDescrip2"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignLeft="@+id/listView1"
+        android:layout_alignBottom="@+id/imgImg"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="80dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical|center_horizontal"
+        android:paddingTop="5dp"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/progressBar6"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+        <RelativeLayout
+            android:id="@+id/relbotpan"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="1dp"
+            android:background="@layout/blue_strip">
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:gravity="center_horizontal"
+                android:paddingRight="10dp"
+                android:text="DTSolutions"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>

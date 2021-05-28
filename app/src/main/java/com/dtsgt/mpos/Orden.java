@@ -231,31 +231,16 @@ public class Orden extends PBase {
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    int flag;
                     try {
                         Object lvObj = listView.getItemAtPosition(position);
                         clsOrden item = (clsOrden)lvObj;selitem=item;
-
                         prodid=item.Cod;gl.produid=item.id;
 
-                        flag=items.get(position).estado;
-                        if (flag==0) flag=1;else flag=0;
-                        items.get(position).estado=flag;
-
-                        try {
-                            sql="UPDATE T_orden SET ESTADO="+flag+" WHERE (ID="+item.id+") AND (COREL='"+idorden+"')";
-                            db.execSQL(sql);
-
-                            sql="UPDATE P_res_sesion SET FECHAULT="+du.getActDateTime()+" WHERE (ID='"+idorden+"')";
-                            db.execSQL(sql);
-
-                        } catch (SQLException e) {
-                            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                        if (items.get(position).estado==0) {
+                            msgAskState("Agregar a la comanda",1,position);
+                        } else {
+                            msgAskState("Quitar de la comanda",0,position);
                         }
-
-                        adapter.setSelectedIndex(position);
-                        adapter.notifyDataSetChanged();
-
                     } catch (Exception e) {
                         msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                     }
@@ -1332,13 +1317,20 @@ public class Orden extends PBase {
             item.ID=66;item.Name="Comandas";item.Icon=66;
             mitems.add(item);
 
-            item = clsCls.new clsMenu();
-            item.ID=3;item.Name="Preimpresión";item.Icon=68;
-            mitems.add(item);
+            if (gl.pelMeseroCaja) {
 
-            item = clsCls.new clsMenu();
-            item.ID=1;item.Name="Pago";item.Icon=67;
-            mitems.add(item);
+                item = clsCls.new clsMenu();
+                item.ID = 3;
+                item.Name = "Preimpresión";
+                item.Icon = 68;
+                mitems.add(item);
+
+                item = clsCls.new clsMenu();
+                item.ID = 1;
+                item.Name = "Pago";
+                item.Icon = 67;
+                mitems.add(item);
+            }
 
             item = clsCls.new clsMenu();
             item.ID=2;item.Name="Completar";item.Icon=69;
@@ -1366,40 +1358,17 @@ public class Orden extends PBase {
 
             switch (menuid) {
                 case 1:
-                     if (est==2) {
-                        s="Procesar pago";
-                    } else {
-                        if (est==1) {
-                            s="La mesa esta pendiente de preimpresion.\nProcesar pago";
-                        } else {
-                            s="La mesa esta pendiente de completar.\nProcesar pago";
-                        }
-                    }
-                    msgAskOrden(s);
+                    msgAskOrden("Procesar pago");
                     //aplicarPago();
                     break;
                 case 2:
-                    if (est==3) {
-                        s="Completar la mesa";
-                    } else {
-                        if (est==1) {
-                            s="La mesa esta pendiente de preimpresion.\nCompletar orden";
-                        } else {
-                            s="La mesa esta pendiente de pago.\nCompletar orden";
-                        }
+                    if (!app.validaCompletarCuenta(idorden)) {
+                        msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
                     }
-                    msgAskCuentas(s);break;
+                    msgAskCuentas("Completar la mesa");
+                    break;
                 case 3:
-                    if (est==1) {
-                        s="Procesar preimpresion";
-                    } else {
-                        if (est==2) {
-                            s="La mesa esta pendiente de pago.\nProcesar preimpresion";
-                        } else {
-                            s="La mesa esta pendiente de completar.\nProcesar preimpresion";
-                        }
-                    }
-                    msgAskPrint(s);
+                    msgAskPrint("Procesar preimpresion");
                     //aplicarPreimpresion();
                     break;
                 case 24:
@@ -1409,7 +1378,7 @@ public class Orden extends PBase {
                     startActivity(new Intent(this, Producto.class));
                     break;
                 case 66:
-                    msgAskComanda("Enviar comanda a la cocina");
+                    msgAskComanda();
                     break;
             }
         } catch (Exception e) {
@@ -2345,11 +2314,28 @@ public class Orden extends PBase {
         }
     }
 
-    private void msgAskComanda(String msg) {
-        try{
+    private void msgAskComanda() {
+        clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+        int art;
+        String msg;
+
+        try {
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+            art=T_ordenObj.count;
+
+            if (art==0) {
+                msgInfo("Ninguno artículo está marcado para la impresión");return;
+            }
+
+            if (art==1) {
+                msg="¿Enviar 1 artículo a la cocina?";
+            } else {
+                msg="¿Enviar "+art+" artículos a la cocina?";
+            }
 
             ExDialog dialog = new ExDialog(this);
-            dialog.setMessage("¿"+msg+"?");
+            dialog.setMessage(msg);
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -2364,7 +2350,7 @@ public class Orden extends PBase {
 
             dialog.show();
         }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" : "+e.getMessage());
         }
     }
 
@@ -2395,6 +2381,45 @@ public class Orden extends PBase {
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     processCant(updatem);
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskState(String msg,int flag,int position) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    items.get(position).estado=flag;
+
+                    try {
+                        sql="UPDATE T_orden SET ESTADO="+flag+" WHERE (ID="+selitem.id+") AND (COREL='"+idorden+"')";
+                        db.execSQL(sql);
+
+                        sql="UPDATE P_res_sesion SET FECHAULT="+du.getActDateTime()+" WHERE (ID='"+idorden+"')";
+                        db.execSQL(sql);
+
+                    } catch (SQLException e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+
+                    adapter.setSelectedIndex(position);
+                    adapter.notifyDataSetChanged();
+
                 }
             });
 

@@ -583,6 +583,7 @@ public class clsDocFactura extends clsDocument {
             rep.addtotsp("TOTAL", tot);
 
         } else {
+
             if (factsinpropina) {
                 stot = stot - propina;
                 tot = tot - propina;

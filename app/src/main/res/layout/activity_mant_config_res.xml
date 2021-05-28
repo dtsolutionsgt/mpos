@@ -88,7 +88,7 @@
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
                 android:layout_width="605dp"
-                android:layout_height="500dp"
+                android:layout_height="600dp"
                 android:layout_above="@+id/relbotpan"
                 android:layout_below="@+id/relRoad"
                 android:layout_centerHorizontal="true"
@@ -99,6 +99,39 @@
                 android:layout_toStartOf="@+id/imgImg2"
                 android:layout_toEndOf="@+id/imageView30"
                 android:background="@drawable/frame_rect">
+
+                <CheckBox
+                    android:id="@+id/chkEnvio25"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio21"
+                    android:layout_alignStart="@+id/chkEnvio8"
+                    android:layout_alignEnd="@+id/chkEnvio8"
+                    android:layout_alignParentBottom="false"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:clickable="true"
+                    android:enabled="true" />
+
+                <TextView
+                    android:id="@+id/lblCFact71"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact66"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Enviar requerimientos a la caja"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
 
                 <EditText
                     android:id="@+id/editTextNumber7"

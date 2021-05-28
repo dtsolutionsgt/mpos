@@ -50,6 +50,7 @@ import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
@@ -803,6 +804,12 @@ public class FacturaRes extends PBase {
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
 		//corel=gl.ruta+"_"+mu.getCorelBase();
 
+        try {
+            if (gl.numero_orden.isEmpty()) gl.numero_orden=" ";
+        } catch (Exception e) {
+            gl.numero_orden=" ";
+        }
+
         sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
         dt=Con.OpenDT(sql);
 
@@ -843,7 +850,7 @@ public class FacturaRes extends PBase {
 
 			ins.add("KILOMETRAJE",0);
 			ins.add("FECHAENTR",fecha);
-			ins.add("FACTLINK"," ");
+			ins.add("FACTLINK",""+gl.numero_orden);
 	   		ins.add("TOTAL",tot);
 			ins.add("DESMONTO",descmon);
 			ins.add("IMPMONTO",totimp);//ins.add("IMPMONTO",totimp+totperc);
@@ -1064,16 +1071,19 @@ public class FacturaRes extends PBase {
                         P_productoObj.fill("WHERE CODIGO_PRODUCTO=" + prid);
                         prcod = P_productoObj.first().codigo;
 
-                        fsitem = clsCls.new clsD_facturas();
-                        fsitem.corel = corel;
-                        fsitem.id = iidd;//fsitem.id=fsid;
-                        fsitem.producto = "" + prid;
-                        fsitem.cant = unipr;
-                        fsitem.umstock = app.umVenta2(prcod);
+                        if (P_productoObj.first().codigo_tipo.equalsIgnoreCase("P")) {
 
-                        D_facturas.add(fsitem);
+                            fsitem = clsCls.new clsD_facturas();
+                            fsitem.corel = corel;
+                            fsitem.id = iidd;//fsitem.id=fsid;
+                            fsitem.producto = "" + prid;
+                            fsitem.cant = unipr;
+                            fsitem.umstock = app.umVenta2(prcod);
 
-                        rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
+                            D_facturas.add(fsitem);
+
+                            rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
+                        }
                     }
 
                     dt.moveToNext();iidd++;
@@ -1286,15 +1296,38 @@ public class FacturaRes extends PBase {
         double dispcant,actcant;
 
         try {
+            clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+
+            clsClasses.clsP_stock item = clsCls.new clsP_stock();
+
+            item.codigo=prid;
+            item.cant=0;
+            item.cantm=0;
+            item.peso=0;
+            item.plibra=0;
+            item.lote="";
+            item.documento="";
+            item.fecha=0;
+            item.anulado=0;
+            item.centro="";
+            item.status="";
+            item.enviado=1;
+            item.codigoliquidacion=0;
+            item.corel_d_mov="";
+            item.unidadmedida=umstock;
+
+            P_stockObj.add(item);
+
+        } catch (Exception e) {}
+
+        try {
 
             //sql="SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV " +
             //        "FROM P_STOCK WHERE (CANT>0) AND (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"') ORDER BY CANT";
             sql="SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV " +
-                    "FROM P_STOCK WHERE (CANT>0) AND (CODIGO="+prid+") ORDER BY CANT";
+                    "FROM P_STOCK WHERE (CODIGO="+prid+") ORDER BY CANT";
 
             dt=Con.OpenDT(sql);
-
-            if (dt.getCount()==0) return;
 
             dispcant=dt.getDouble(0);
             actcant=dispcant-cantapl;
@@ -1305,8 +1338,8 @@ public class FacturaRes extends PBase {
 
             if (dt!=null) dt.close();
         } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("rebajaStockUM: "+e.getMessage());
+            toastlong("rebajaStockUM: "+e.getMessage());
         }
     }
 

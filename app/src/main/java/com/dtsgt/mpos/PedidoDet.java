@@ -81,7 +81,6 @@ public class PedidoDet extends PBase {
         pedid=gl.pedid;
         gl.closePedido=false;
 
-
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         D_pedidodObj=new clsD_pedidodObj(this,Con,db);
         D_pedidocomboObj=new clsD_pedidocomboObj(this,Con,db);
@@ -205,18 +204,22 @@ public class PedidoDet extends PBase {
                     D_pedidocomboObj.fill("WHERE COREL_DET="+item.corel_det);
                     for (int j = 0; j <D_pedidocomboObj.count; j++) {
                         if (j==0) rep.line();
-                        cp=getProd(D_pedidocomboObj.items.get(j).codigo_producto);
-                        cn=D_pedidocomboObj.items.get(j).nota;
 
-                        line=clsCls.new clsD_pedidod();
-                        line.umventa="";
-                        line.nota=" - "+cp;
-                        rep.add(line.nota);
+                        if (D_pedidocomboObj.items.get(j).codigo_producto!=0) {
+                            cp = getProd(D_pedidocomboObj.items.get(j).codigo_producto);
+                            cn = D_pedidocomboObj.items.get(j).nota;
 
-                        if (!cn.isEmpty()) {
-                            line.nota+=" / "+cn;rep.add(" - N: "+cn);
+                            line = clsCls.new clsD_pedidod();
+                            line.umventa = "";
+                            line.nota = " - " + cp;
+                            rep.add(line.nota);
+
+                            if (!cn.isEmpty()) {
+                                line.nota += " / " + cn;
+                                rep.add(" - N: " + cn);
+                            }
+                            lines.add(line);
                         }
-                        lines.add(line);
                         if (j<D_pedidocomboObj.count-1) rep.empty();
                      }
                 }

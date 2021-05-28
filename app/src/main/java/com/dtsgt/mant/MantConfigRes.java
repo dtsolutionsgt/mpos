@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class MantConfigRes extends PBase {
 
     private CheckBox cb101,cb117,cb123,cb124,cb125;
-    private CheckBox locCaja,locCajaRecep,locClaveMes,locClaveCaja;
+    private CheckBox locCaja,locCajaRecep,locClaveMes,locClaveCaja,locMeseroCaja;
     private EditText txt120,txt122,txt127;
     private ImageView imgadd;
 
@@ -34,7 +34,7 @@ public class MantConfigRes extends PBase {
     private double  value120,value127;
     private String  value122;
 
-    private boolean valCaja,valCajaRecep,valClaveMes,valClaveCaja;
+    private boolean valCaja,valCajaRecep,valClaveMes,valClaveCaja,valMeseroCaja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,7 @@ public class MantConfigRes extends PBase {
         locCajaRecep = findViewById(R.id.chkEnvio12);
         locClaveMes = findViewById(R.id.chkEnvio20);
         locClaveCaja = findViewById(R.id.chkEnvio21);
+        locMeseroCaja = findViewById(R.id.chkEnvio25);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -187,6 +188,13 @@ public class MantConfigRes extends PBase {
             }
             locClaveCaja.setChecked(valClaveCaja);
 
+            try {
+                valMeseroCaja=pref.getBoolean("pelMeseroCaja", false);
+            } catch (Exception e) {
+                valMeseroCaja=false;
+            }
+            locMeseroCaja.setChecked(valMeseroCaja);
+
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -273,6 +281,9 @@ public class MantConfigRes extends PBase {
 
             valClaveCaja=locClaveCaja.isChecked();
             editor.putBoolean("pelClaveCaja", valClaveCaja);
+
+            valMeseroCaja=locMeseroCaja.isChecked();
+            editor.putBoolean("pelMeseroCaja", valMeseroCaja);
 
             editor.commit();
         } catch (Exception e) {

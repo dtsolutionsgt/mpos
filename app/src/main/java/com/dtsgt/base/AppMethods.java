@@ -17,8 +17,11 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
+import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
+import com.dtsgt.classes.clsT_ordencuentaObj;
 
 import org.apache.commons.io.FileUtils;
 
@@ -770,6 +773,12 @@ public class AppMethods {
                 gl.pelComandaBT=pref.getBoolean("pelComandaBT",false);
             } catch (Exception e) {
                 gl.pelComandaBT=false;
+            }
+
+            try {
+                gl.pelMeseroCaja =pref.getBoolean("pelMeseroCaja",false);
+            } catch (Exception e) {
+                gl.pelMeseroCaja =false;
             }
 
         } catch (Exception e) {
@@ -1556,6 +1565,32 @@ public class AppMethods {
             return dt.getCount();
         } catch (Exception e) {
             return -1;
+        }
+    }
+
+    //endregion
+
+    //region Caja
+
+    public boolean validaCompletarCuenta(String corel) {
+        int ccant,compl,cuenta;
+
+        try {
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(cont,Con,db);
+
+            T_ordencuentaObj.fill("WHERE COREL='"+corel+"'");
+            ccant=T_ordencuentaObj.count;compl=0;
+
+            for (int i = 0; i <ccant; i++) {
+                cuenta=T_ordencuentaObj.items.get(i).id;
+                D_facturaObj.fill("WHERE (FACTLINK='"+corel+"_"+cuenta+"') AND (ANULADO=0)");
+                if (D_facturaObj.count!=0) compl++;
+            }
+
+            return compl==ccant;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
     }
 

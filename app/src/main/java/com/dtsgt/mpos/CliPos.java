@@ -16,7 +16,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_pedidoObj;
+import com.dtsgt.classes.clsD_pedidocomboObj;
+import com.dtsgt.classes.clsD_pedidodObj;
+import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.webservice.srvInventConfirm;
 import com.dtsgt.webservice.wsInventCompartido;
 
@@ -31,7 +37,7 @@ import java.util.TimerTask;
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
-	private TextView lblPed;
+	private TextView lblPed,lblDom,lblDir;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar;
@@ -41,10 +47,12 @@ public class CliPos extends PBase {
     private Runnable rnRecibeInventario;
 
     private ArrayList<String> pedidos =new ArrayList<String>();
+    private ArrayList<String> peditems = new ArrayList<String>();
 
-	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, sTelCliente,wspnerror;
+	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente,
+            sTelCliente,wspnerror,pedcorel;
 	private boolean consFinal=false,idleped=true;
-	private boolean request_exit=false,bloqueado;
+	private boolean request_exit=false,bloqueado,domicilio;
 	private int cantped;
 
     private TimerTask ptask;
@@ -63,6 +71,8 @@ public class CliPos extends PBase {
         txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
         txtTel= (EditText) findViewById(R.id.editTextNumber4);txtTel.setText("");
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
+        lblDom = (TextView) findViewById(R.id.textView237);
+        lblDir= (TextView) findViewById(R.id.textView238);
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
@@ -76,8 +86,19 @@ public class CliPos extends PBase {
         getURL();
         //wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
-        gl.pedcorel="";gl.parallevar=false;
+        gl.pedcorel="";gl.parallevar=false;gl.cf_domicilio=false;
         bloqueado=false;
+
+        domicilio=gl.modo_domicilio;
+        if (domicilio) {
+            lblDom.setVisibility(View.VISIBLE);
+            lblDir.setVisibility(View.VISIBLE);
+            cbllevar.setChecked(true);cbllevar.setEnabled(false);
+        } else {
+            lblDom.setVisibility(View.INVISIBLE);
+            lblDir.setVisibility(View.GONE);
+            cbllevar.setChecked(false);cbllevar.setEnabled(true);
+        }
 
         /*
         if (gl.InvCompSend) {
@@ -170,6 +191,44 @@ public class CliPos extends PBase {
         startActivity(new Intent(this,Clientes.class));
     }
 
+    public void doDomicilio(View view) {
+        if (hasProducts()) {
+            if (gl.cliente_dom>0) {
+
+            } else {
+                msgbox("Falta definir cliente");
+            }
+        } else {
+            msgExit("LISTA DE PRODUCTOS ESTÁ VACÍA");
+        }
+    }
+
+    public void doDireccion(View view) {
+        String snit =txtNIT.getText().toString();
+
+        if (snit.isEmpty()) {
+            msgbox("Falta el NIT de cliente");txtNIT.requestFocus();return;
+        }
+        if (esCF(snit)) {
+            msgbox("Al consumidor final no se puede cambiar la direccion");txtRef.requestFocus();return;
+        }
+
+        if (clientePorNIT(snit)==0) {
+            msgbox("Al cliente nuevo no se puede cambiar la direccion");txtRef.requestFocus();return;
+        } else {
+            if (gl.codigo_cliente!=0) {
+                gl.gstr=txtNom.getText().toString();
+                if (gl.gstr.isEmpty()) {
+                    msgbox("Falta nombre de cliente");return;
+                }
+                startActivity(new Intent(this,CliDirList.class));
+            } else {
+                msgbox("No se logro identificar cliente.\n Ingrese de nuevo el NIT");
+                txtNIT.selectAll();txtNIT.requestFocus();return;
+            }
+        }
+    }
+
     public void doWspnError(View view) {
         toast(wspnerror);
     }
@@ -192,17 +251,6 @@ public class CliPos extends PBase {
         };
 
 		try{
-
-            /*txtNIT.addTextChangedListener(new TextWatcher() {
-
-                public void afterTextChanged(Editable s) {}
-
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                     buscaCliente();
-                }
-            });*/
 
 			txtNIT.setOnKeyListener(new View.OnKeyListener() {
 				@Override
@@ -268,6 +316,7 @@ public class CliPos extends PBase {
 			consFinal=false;
 			limpiaCampos();
 
+            gl.cf_domicilio=true;
             terminaCliente();
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -301,6 +350,7 @@ public class CliPos extends PBase {
 
 			limpiaCampos();
 
+            gl.cf_domicilio=false;
             terminaCliente();
 
 		}catch (Exception e){
@@ -321,8 +371,13 @@ public class CliPos extends PBase {
             gl.ventalock=false;
 
             String ss=gl.gNombreCliente;
-            finish();
-        }
+
+            if (domicilio) {
+                msgAskOrden("Convertir a órden");
+            } else {
+                finish();
+            }
+         }
     }
 
     private void confirmaInventario() {
@@ -339,7 +394,7 @@ public class CliPos extends PBase {
 
     //endregion
 
-    //region Pedidos
+    //region Pedidos Nube
 
     private void iniciaPedidos() {
 
@@ -427,6 +482,140 @@ public class CliPos extends PBase {
                 relcli.setEnabled(true);
             }
         });
+    }
+
+    //endregion
+
+    //region Pedidos Telefono
+
+    private void crearPedido() {
+
+        try {
+            peditems.clear();
+            if (crearPedidoEncabezado()) crearPedidoDetalle();
+        } catch (Exception e) {
+            msgbox(e.getMessage());return;
+        }
+
+        try {
+            db.beginTransaction();
+
+            for (int i = 0; i <peditems.size(); i++) {
+                db.execSQL(peditems.get(i));
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            menuPedidos();
+
+            try  {
+                db.execSQL("DELETE FROM T_VENTA");
+                db.execSQL("DELETE FROM T_COMBO");
+             } catch (SQLException e){
+                mu.msgbox("Error : " + e.getMessage());
+            }
+
+            finish();
+        } catch (Exception e) {
+            db.endTransaction();msgbox(e.getMessage());
+        }
+    }
+
+    private boolean crearPedidoEncabezado() {
+        clsD_pedidoObj D_pedidoObj=new clsD_pedidoObj(this,Con,db);
+        clsClasses.clsD_pedido item = clsCls.new clsD_pedido();
+
+        pedcorel=mu.getCorelBase();
+
+        item.empresa=gl.emp;
+        item.corel=pedcorel;
+        item.fecha_sistema=du.getActDateTime();
+        item.fecha_pedido=du.getActDateTime();
+        item.fecha_recepcion_suc=du.getActDateTime();
+        item.fecha_salida_suc=0;
+        item.fecha_entrega=0;
+        item.codigo_cliente=gl.codigo_cliente;
+        item.codigo_direccion=0;
+        item.codigo_sucursal=gl.tienda;
+        item.total=gl.dom_total;
+        item.codigo_estado=0;
+        item.codigo_usuario_creo=gl.codigo_vendedor;
+        item.codigo_usuario_proceso=gl.codigo_vendedor;
+        item.codigo_usuario_entrego=0;
+        item.anulado=0;
+
+        String ss=D_pedidoObj.addItemSql(item);
+        peditems.add(ss);
+
+        return true;
+    }
+
+    private void  crearPedidoDetalle() {
+        clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
+        clsD_pedidodObj D_pedidodObj=new clsD_pedidodObj(this,Con,db);
+        clsD_pedidocomboObj D_pedidocomboObj=new clsD_pedidocomboObj(this,Con,db);
+        clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
+        clsClasses.clsT_venta venta;
+        clsClasses.clsD_pedidod item;
+        clsClasses.clsD_pedidocombo combo;
+        int corid,comboid;
+        String ss,pt,comid;
+
+        T_ventaObj.fill();
+        corid=D_pedidodObj.newID("SELECT MAX(COREL_DET) FROM D_pedidod");
+        comboid=D_pedidocomboObj.newID("SELECT MAX(COREL_COMBO) FROM D_pedidocombo");
+
+        for (int i = 0; i <T_ventaObj.count; i++) {
+            venta=T_ventaObj.items.get(i);
+
+            item = clsCls.new clsD_pedidod();
+
+            item.corel=pedcorel;
+            item.corel_det=corid;
+            item.codigo_producto=app.codigoProducto(venta.producto);
+            item.umventa=venta.um;
+            item.cant=venta.cant;
+            item.total=venta.total;
+            item.nota="";
+            item.codigo_tipo_producto=app.prodTipo(item.codigo_producto);pt=item.codigo_tipo_producto;
+
+            ss=D_pedidodObj.addItemSql(item);
+            peditems.add(ss);
+
+            if (pt.equalsIgnoreCase("M")) {
+                comid=venta.empresa;
+                T_comboObj.fill("WHERE (IDCOMBO="+comid+")");
+
+                for (int j = 0; j <T_comboObj.count; j++) {
+
+                    combo = clsCls.new clsD_pedidocombo();
+
+                    combo.corel_det=corid;
+                    combo.corel_combo=comboid;comboid++;
+                    combo.seleccion=corid;
+                    combo.codigo_producto=T_comboObj.items.get(j).idseleccion;
+                    combo.cant=T_comboObj.items.get(j).cant;
+                    combo.nota="";
+
+                    ss=D_pedidocomboObj.addItemSql(combo);
+                    peditems.add(ss);
+
+                }
+            }
+
+            corid++;
+        }
+    }
+
+    public void menuPedidos() {
+        try {
+            gl.closePedido = false;
+            Intent intent = new Intent(this, Pedidos.class);
+            startActivity(intent);
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
     }
 
     //endregion
@@ -789,10 +978,50 @@ public class CliPos extends PBase {
 
     }
 
+    private boolean hasProducts(){
+        Cursor dt;
+
+        try {
+            sql="SELECT PRODUCTO FROM T_VENTA";
+            dt=Con.OpenDT(sql);
+
+            int i=dt.getCount();
+            if (dt!=null) dt.close();
+            return i>0;
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            return false;
+        }
+    }
+
+    private boolean esCF(String ss) {
+        String N=ss.toUpperCase();
+
+        if (N.equalsIgnoreCase("CF")) N="C.F.";
+        if (N.equalsIgnoreCase("C/F")) N="C.F.";
+        if (N.equalsIgnoreCase("C.F")) N="C.F.";
+        if (N.equalsIgnoreCase("CF.")) N="C.F.";
+
+        return N.equalsIgnoreCase("C.F.");
+    }
+
+    public int clientePorNIT(String snit) {
+        Cursor DT;
+
+        try {
+            sql ="SELECT codigo_cliente FROM P_CLIENTE WHERE (NIT='"+snit+"')  COLLATE NOCASE";
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            return DT.getInt(0);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
     //endregion
 
     //region Dialogos
-
 
     private void msgAskCF(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -819,6 +1048,44 @@ public class CliPos extends PBase {
 
     }
 
+    private void msgAskOrden(String msg) {
+
+        if (!hasProducts()) {
+            finish();return;
+        }
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Orden a domicilio");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                crearPedido();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgExit(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Orden a domicilio");
+        dialog.setMessage( msg);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+               finish();
+            }
+        });
+
+        dialog.show();
+    }
 
     //endregion
 
@@ -833,7 +1100,14 @@ public class CliPos extends PBase {
 
             if (browse==1) {
                 browse=0;
-                if (!gl.cliente.isEmpty()) terminaCliente();
+                if (!gl.cliente.isEmpty()) {
+                    if (domicilio) {
+                        txtNIT.setText(gl.gNITCliente);
+                        existeCliente();
+                    } else {
+                        terminaCliente();
+                    }
+                }
                 return;
             }
 

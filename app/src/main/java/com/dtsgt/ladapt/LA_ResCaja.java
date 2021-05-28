@@ -83,11 +83,13 @@ public class LA_ResCaja extends BaseAdapter {
         holder.lbl4.setText(""+items.get(position).f4);
         holder.lbl5.setText(""+items.get(position).pk);
 
-        holder.img1.setImageResource(R.drawable.icon_cooking2);
+        holder.img1.setImageResource(R.drawable.mesa_ocupada);
         if (items.get(position).f3.equalsIgnoreCase("2")) {
             holder.img1.setImageResource(R.drawable.preimpresion);
         } else if (items.get(position).f3.equalsIgnoreCase("3")) {
             holder.img1.setImageResource(R.drawable.pago_caja);
+        } else if (items.get(position).f3.equalsIgnoreCase("4")) {
+            holder.img1.setImageResource(R.drawable.mesa_pago_completo);
         }
 
         if(selectedIndex!= -1 && position == selectedIndex) {

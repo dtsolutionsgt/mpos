@@ -31,14 +31,15 @@ public class appGlobals extends Application {
 			    reportList, usarpeso, banderafindia, depparc, incNoLectura, cobroPendiente, findiaactivo,
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
-			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,comensales;
+			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,
+                comensales, cliente_dom;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden;
-	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio;
+	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
-                   impresion_comanda ;
+                   impresion_comanda, modo_domicilio, cf_domicilio ;
 
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false
@@ -64,7 +65,7 @@ public class appGlobals extends Application {
 
     // Parametros Extra Local
     public Boolean pelCaja,pelCajaRecep,pelTablet,pelDespacho, pelOrdenComanda;
-    public Boolean pelClaveMes,pelClaveCaja,pelComandaBT;
+    public Boolean pelClaveMes,pelClaveCaja,pelComandaBT, pelMeseroCaja;
     public String  pelPrefijoOrden;
 
 	// Descuentos

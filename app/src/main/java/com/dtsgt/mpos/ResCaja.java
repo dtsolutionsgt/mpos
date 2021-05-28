@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordenObj;
@@ -133,6 +134,8 @@ public class ResCaja extends PBase {
                     fs="";
                 }
                 ViewObj.items.get(i).f4=fs;
+
+                if (cuentaPagada(ViewObj.items.get(i).f1,ViewObj.items.get(i).pk)) ViewObj.items.get(i).f3="4";
             }
 
             adapter=new LA_ResCaja(this,this,ViewObj.items);
@@ -174,6 +177,7 @@ public class ResCaja extends PBase {
             P_res_sesionObj.fill("WHERE ID='"+corel+"'");
             gl.mesero_venta=P_res_sesionObj.first().vendedor;
 
+            gl.numero_orden=corel+"_"+cuenta;
             T_ordenObj.fill("WHERE COREL='"+corel+"'");
             counter=0;
 
@@ -317,11 +321,37 @@ public class ResCaja extends PBase {
         }
     }
 
+    private Boolean cuentaPagada(String corr,int id) {
+        try {
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            D_facturaObj.fill("WHERE (FACTLINK='"+corr+"_"+id+"') AND (ANULADO=0)");
+            return D_facturaObj.count!=0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
     //endregion
 
     //region Dialogs
 
     private void showMenuMesa() {
+        clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+
+        try {
+            D_facturaObj.fill("WHERE (FACTLINK='"+corel+"_"+cuenta+"')");
+
+            if (D_facturaObj.count==0) {
+                showMenuMesaPendiente();
+            } else {
+                showMenuMesaCompleta();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void showMenuMesaPendiente() {
         final AlertDialog Dialog;
         final String[] selitems = {"Preimpresion","Datos cliente","Pagar","Completar","Borrar"}; // cuenta
 
@@ -355,6 +385,36 @@ public class ResCaja extends PBase {
                         msgAskCompletar("Completar la mesa "+mesa);break;
                     case 4:
                         msgAskBorrar("Borrar la mesa "+mesa);break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    private void showMenuMesaCompleta() {
+        final AlertDialog Dialog;
+        final String[] selitems = {"Completar"};
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Mesa "+mesa+" , Cuenta #"+cuenta);
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        msgAskCompletar("Completar la mesa "+mesa);
+                        break;
                 }
 
                 dialog.cancel();
@@ -446,6 +506,10 @@ public class ResCaja extends PBase {
 
     private void msgAskCompletar(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        if (!app.validaCompletarCuenta(corel)) {
+            msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
+        }
 
         dialog.setTitle("Mesa "+mesa);
         dialog.setMessage("¿" + msg + "?");

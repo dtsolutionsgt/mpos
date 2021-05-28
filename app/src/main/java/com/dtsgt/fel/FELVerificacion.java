@@ -103,7 +103,7 @@ public class FELVerificacion extends PBase {
         fel.fel_usuario_firma=suc.texto;
 
         fel.codigo_postal =suc.codigo_postal;
-        fel.fel_nit=suc.nit; // NIT  96038888
+        fel.fel_nit=suc.nit.toUpperCase(); // NIT  96038888
         fel.fel_correo=suc.correo;  //
 
         //fel.fel_nombre_comercial = gl.tiendanom;  //JP2020071
