@@ -1929,7 +1929,7 @@ public class Venta extends PBase {
 
                 if (pedidos) {
                     item = clsCls.new clsMenu();
-                    item.ID=61;item.Name="Orden";item.Icon=61;
+                    item.ID=61;item.Name="Para llevar";item.Icon=61;
                     mmitems.add(item);
                 }
 
@@ -2079,12 +2079,11 @@ public class Venta extends PBase {
                     item.ID=15;item.Name="FEL";item.Icon=15;item.cant=pendfel;
                     mitems.add(item);
                 }
-
             }
 
             if (pedidos) {
                 item = clsCls.new clsMenu();
-                item.ID=16;item.Name="Pedidos";item.Icon=16;
+                item.ID=16;item.Name="Para llevar";item.Icon=16;
                 item.cant=pedidoscant;
                 mitems.add(item);
             }

@@ -1,6 +1,8 @@
 package com.dtsgt.mpos;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Handler;
@@ -14,10 +16,13 @@ import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_proveedorObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_movdObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.ListAdaptCFDV;
+import com.dtsgt.ladapt.ListAdaptMovInv;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.webservice.srvInventConfirm;
 import com.dtsgt.webservice.wsInventCompartido;
@@ -32,7 +37,7 @@ public class lista_ingreso_inventario extends PBase {
     private ProgressBar pbar;
 
     private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
-    private ListAdaptCFDV adapter;
+    private ListAdaptMovInv adapter;
     private clsClasses.clsCFDV selitem;
     private clsClasses.clsCFDV sitem;
 
@@ -75,6 +80,8 @@ public class lista_ingreso_inventario extends PBase {
         if (tipo==0) lblTipo.setText("Ingresos");
         if (tipo==1) lblTipo.setText("Salidas");
         if (tipo==2) lblTipo.setText("Inventario Inicial");
+
+        gl.corelmov="";
 
         setHandlers();
 
@@ -127,6 +134,8 @@ public class lista_ingreso_inventario extends PBase {
             toast("Actualizando inventario . . .");return;
         }
 
+        gl.corelmov="";
+
         try {
 
             clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
@@ -167,10 +176,15 @@ public class lista_ingreso_inventario extends PBase {
                         Object lvObj = listView.getItemAtPosition(position);
                         clsClasses.clsCFDV vItem = (clsClasses.clsCFDV)lvObj;
 
-                        itemid=vItem.Cod;
+                        itemid=vItem.Cod;gl.corelmov=itemid;
                         adapter.setSelectedIndex(position);
 
                         sitem=vItem;
+                        if (vItem.val==0) {
+                            gl.corelmov="";
+                        } else {
+                            if (tipo==0) msgAskResume("Continuar o borrar");
+                        }
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                         mu.msgbox( e.getMessage());
@@ -214,6 +228,7 @@ public class lista_ingreso_inventario extends PBase {
     //region Main
 
     public void listItems() {
+        clsP_proveedorObj P_proveedorObj=new clsP_proveedorObj(this,Con,db);
         Cursor DT;
         clsClasses.clsCFDV vItem;
         int vP,f;
@@ -228,17 +243,17 @@ public class lista_ingreso_inventario extends PBase {
             switch (tipo){
 
                 case 0:
-                    sql="SELECT COREL,REFERENCIA,FECHA,0 "+
+                    sql="SELECT COREL,REFERENCIA,FECHA,0,IMPRES,CODIGO_PROVEEDOR "+
                         "FROM D_MOV WHERE (TIPO='R') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                         "ORDER BY FECHA DESC ";
                     break;
                 case 1:
-                    sql="SELECT COREL,REFERENCIA,FECHA,0 "+
+                    sql="SELECT COREL,REFERENCIA,FECHA,0,IMPRES,0 "+
                         "FROM D_MOV WHERE (TIPO='D') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                         "ORDER BY FECHA DESC ";
                     break;
                 case 2:
-                    sql="SELECT COREL,REFERENCIA,FECHA,0 "+
+                    sql="SELECT COREL,REFERENCIA,FECHA,0,IMPRES,0 "+
                             "FROM D_MOV WHERE (TIPO='I') AND (ANULADO<>1) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                             "ORDER BY FECHA DESC ";
                     break;
@@ -257,21 +272,20 @@ public class lista_ingreso_inventario extends PBase {
                     vItem =clsCls.new clsCFDV();
 
                     vItem.Cod=DT.getString(0);
-                    vItem.Desc=DT.getString(1);
+                    vItem.UUID=DT.getString(1);
+                    vItem.val=DT.getDouble(4);
 
                     f=DT.getInt(2);
                     sf=du.sfecha(f)+" "+du.shora(f);
-
                     vItem.Fecha=sf;
+                    if (vItem.val==0) vItem.Valor="";else  vItem.Valor="PENDIENTE";
 
-                    vItem.Valor="";
+                    if (tipo==0) {
+                        P_proveedorObj.fill("WHERE (CODIGO_PROVEEDOR="+DT.getInt(5)+")");
+                        if (P_proveedorObj.count>0)  vItem.UUID+=" - "+P_proveedorObj.first().nombre;
+                    }
 
-                    items.add(vItem);
-
-                    vP+=1;
-
-                    vItem.UUID="";
-                    vItem.FechaFactura="";
+                    items.add(vItem);vP+=1;
 
                     DT.moveToNext();
                 }
@@ -282,7 +296,7 @@ public class lista_ingreso_inventario extends PBase {
             mu.msgbox(e.getMessage());
         }
 
-        adapter=new ListAdaptCFDV(this, items);
+        adapter=new ListAdaptMovInv(this, items);
         listView.setAdapter(adapter);
 
         if (selidx>-1) {
@@ -414,6 +428,57 @@ public class lista_ingreso_inventario extends PBase {
 
     //endregion
 
+    //region Dialogs
+
+    private void msgAskResume(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Ingreso de mercancia");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                browse=2;
+                startActivity(new Intent(lista_ingreso_inventario.this,InvInicial.class));
+            }
+        });
+
+        dialog.setNeutralButton("Borrar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgAskDelete("Está seguro");
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskDelete(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Ingreso de mercanci");
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                borrarIngreso();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    //endregion
+
     //region Aux
 
     private void validaInicial() {
@@ -457,6 +522,24 @@ public class lista_ingreso_inventario extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
+
+    private void borrarIngreso() {
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM D_MOV WHERE COREL='"+gl.corelmov+"'");
+            db.execSQL("DELETE FROM D_MOVD WHERE COREL='"+gl.corelmov+"'");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+    }
+
 
     //endregion
 

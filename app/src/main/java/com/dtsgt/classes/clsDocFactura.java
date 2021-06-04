@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class clsDocFactura extends clsDocument {
@@ -16,7 +17,9 @@ public class clsDocFactura extends clsDocument {
 	private String 	contrib,corelNotaC,asignacion,ccorel,corelF;
 	private int decimp,totitems;
 
-	public clsDocFactura(Context context,int printwidth,String cursymbol,int decimpres, String archivo,boolean detallecombo) {
+    private DecimalFormat ffrmnodec = new DecimalFormat("#,##0.##");
+
+    public clsDocFactura(Context context,int printwidth,String cursymbol,int decimpres, String archivo,boolean detallecombo) {
 		super(context, printwidth,cursymbol,decimpres, archivo);
 
 		docfactura=true;
@@ -597,10 +600,15 @@ public class clsDocFactura extends clsDocument {
                     rep.addtotsp("Subtotal", stot);
                 }
                 if (desc != 0) rep.addtotsp("Descuento", -desc);
-                if (propina != 0) rep.addtotsp("Propina", propina);
+                if (propina != 0) rep.addtotsp("Propina "+ffrmnodec.format(propperc)+" % ", propina);
             }
 
             rep.addtotsp("TOTAL A PAGAR ", tot);
+        }
+
+        if (modorest) {
+            rep.add("");
+            rep.add("Le atendio : "+nommesero);
         }
 
         rep.add("");

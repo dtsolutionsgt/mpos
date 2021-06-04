@@ -409,6 +409,7 @@ public class ProdMenu extends PBase {
 
                         if (item.cod==0) {
                             item.modo=0;
+                            doAdd(null);
                         } else {
                             item.modo=1;
                         }

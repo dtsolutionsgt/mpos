@@ -82,6 +82,8 @@ public class clsD_facturaprObj {
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         ins.add("PROPINA",item.propina);
+        ins.add("PROPPERC",item.propperc);
+        ins.add("PROPEXTRA",item.propextra);
 
         db.execSQL(ins.sql());
 
@@ -96,6 +98,8 @@ public class clsD_facturaprObj {
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         upd.add("PROPINA",item.propina);
+        upd.add("PROPPERC",item.propperc);
+        upd.add("PROPEXTRA",item.propextra);
 
         upd.Where("(EMPRESA="+item.empresa+") AND (COREL='"+item.corel+"')");
 
@@ -136,6 +140,8 @@ public class clsD_facturaprObj {
             item.codigo_sucursal=dt.getInt(4);
             item.codigo_vendedor=dt.getInt(5);
             item.propina=dt.getDouble(6);
+            item.propperc=dt.getDouble(7);
+            item.propextra=dt.getDouble(8);
 
             items.add(item);
 
@@ -174,6 +180,8 @@ public class clsD_facturaprObj {
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         ins.add("PROPINA",item.propina);
+        ins.add("PROPPERC",item.propperc);
+        ins.add("PROPEXTRA",item.propextra);
 
         return ins.sql();
 
@@ -188,6 +196,8 @@ public class clsD_facturaprObj {
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         upd.add("PROPINA",item.propina);
+        upd.add("PROPPERC",item.propperc);
+        upd.add("PROPEXTRA",item.propextra);
 
         upd.Where("(EMPRESA="+item.empresa+") AND (COREL='"+item.corel+"')");
 
@@ -198,4 +208,6 @@ public class clsD_facturaprObj {
     }
 
 }
+
+
 

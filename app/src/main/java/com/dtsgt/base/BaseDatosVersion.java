@@ -597,6 +597,50 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) {}
 
+        try {
+
+            sql="CREATE TABLE [P_cliente_dir] ("+
+                    "CODIGO_DIRECCION INTEGER NOT NULL,"+
+                    "CODIGO_CLIENTE INTEGER NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "CODIGO_DEPARTAMENTO TEXT NOT NULL,"+
+                    "CODIGO_MUNICIPIO TEXT NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "ZONA_ENTREGA INTEGER NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_DIRECCION])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {  }
+
+        try {
+            sql="CREATE TABLE [P_cliente_dir_act] ("+
+                    "CODIGO_DIRECCION INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "CODIGO_CLIENTE INTEGER NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "TELEFONO TEXT NOT NULL,"+
+                    "STATCOM INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_DIRECCION])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_cliente_dir_act_idx1 ON P_cliente_dir_act(STATCOM)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="ALTER TABLE D_FACTURAPR ADD COLUMN PROPPERC REAL DEFAULT 0;";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+        try {
+            sql="ALTER TABLE D_FACTURAPR ADD COLUMN PROPEXTRA REAL DEFAULT 0;";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
 
         try {
 

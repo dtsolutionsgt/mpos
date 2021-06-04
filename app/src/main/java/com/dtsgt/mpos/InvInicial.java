@@ -97,6 +97,9 @@ public class InvInicial extends PBase {
 
         iniciaProceso();
 
+        if (!gl.corelmov.isEmpty()) cargaDatos();
+
+
         listItems();
 
         lblDocumento.requestFocus();
@@ -107,7 +110,6 @@ public class InvInicial extends PBase {
     public void doSave(View view) {
 
         if (ingreso) {
-
             if (lblDocumento.getText().toString().isEmpty()){
                 msgbox("Ingrese el número de documento");
                 lblDocumento.requestFocus();
@@ -117,13 +119,10 @@ public class InvInicial extends PBase {
             if (T_movrObj.count==0) {
                 msgbox("No se puede guardar un inventario vacío");return;
             }
-
         } else {
-
             if (T_movdObj.count==0) {
                 msgbox("No se puede guardar un inventario vacío");return;
             }
-
         }
 
         if (ingreso) {
@@ -169,6 +168,10 @@ public class InvInicial extends PBase {
 
     public void doListUnits(View view) {
        listUnits();
+    }
+
+    public void doInterrupt(View view) {
+        msgAskInterrupt("Interrupir el ingreso de mercancia");
     }
 
     private void setHandlers() {
@@ -390,6 +393,10 @@ public class InvInicial extends PBase {
             db.beginTransaction();
 
             if (!ingreso) db.execSQL("DELETE FROM P_STOCK");
+            if (!gl.corelmov.isEmpty()) {
+                db.execSQL("DELETE FROM D_MOV WHERE COREL='" + gl.corelmov + "'");
+                db.execSQL("DELETE FROM D_MOVD WHERE COREL='" + gl.corelmov + "'");
+            }
 
             header =clsCls.new clsD_Mov();
 
@@ -645,6 +652,141 @@ public class InvInicial extends PBase {
         convum=prumb;
         convcant=ccant/factor;
     }
+
+    private void cargaDatos() {
+        clsClasses.clsD_MovD item;
+        clsClasses.clsT_movr itemr=clsCls.new clsT_movr();
+        int prodid;
+        String pname;
+
+        try {
+
+            clsD_MovObj D_movObj=new clsD_MovObj(this,Con,db);
+            D_movObj.fill("WHERE (COREL='"+gl.corelmov+"')");
+
+            lblDocumento.setText(D_movObj.first().REFERENCIA);
+            gl.codigo_proveedor=D_movObj.first().CODIGO_PROVEEDOR;
+
+            db.execSQL("DELETE FROM T_MOVR");
+
+            clsD_MovDObj D_movdObj=new clsD_MovDObj(this,Con,db);
+            D_movdObj.fill("WHERE (COREL='"+gl.corelmov+"')");
+
+            clsT_movrObj T_movrObj=new clsT_movrObj(this,Con,db);
+
+            for (int i = 0; i <D_movdObj.count; i++) {
+                item=D_movdObj.items.get(i);
+                prodid=item.producto;
+
+                P_productoObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+")");
+                if (P_productoObj.count>0) pname=P_productoObj.first().desclarga;else pname="";
+
+                itemr.coreldet=T_movrObj.newID("SELECT MAX(coreldet) FROM T_MOVR");
+                itemr.corel=" ";
+                itemr.producto=prodid;
+                itemr.cant=item.cant;
+                itemr.cantm=0;
+                itemr.peso=0;
+                itemr.pesom=0;
+                itemr.lote=pname;
+                itemr.codigoliquidacion=0;
+                itemr.unidadmedida=item.unidadmedida;
+                itemr.precio=item.precio;
+
+                T_movrObj.add(itemr);
+            }
+
+            listItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void hold() {
+        clsClasses.clsD_Mov header;
+        clsClasses.clsD_MovD item;
+        clsClasses.clsT_movd imov;
+        clsClasses.clsT_movr imovr;
+        String corel;
+
+        try {
+            if (gl.corelmov.isEmpty()) {
+                corel=gl.ruta+"_"+mu.getCorelBase();
+            } else {
+                corel=gl.corelmov;
+            }
+
+            clsD_MovObj mov=new clsD_MovObj(this,Con,db);
+            clsD_MovDObj movd=new clsD_MovDObj(this,Con,db);
+
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM D_MOV WHERE COREL='"+gl.corelmov+"'");
+            db.execSQL("DELETE FROM D_MOVD WHERE COREL='"+gl.corelmov+"'");
+
+            header =clsCls.new clsD_Mov();
+
+            header.COREL=corel;
+            header.RUTA=gl.codigo_ruta;
+            header.ANULADO=0;
+            header.FECHA=du.getActDateTime();
+            if (ingreso) header.TIPO="R";else header.TIPO="I";
+            header.USUARIO=gl.codigo_vendedor;
+            header.REFERENCIA=lblDocumento.getText().toString();//gl.nombre_proveedor;
+            header.STATCOM="N";
+            header.IMPRES=-1;
+            header.CODIGOLIQUIDACION=0;
+            header.CODIGO_PROVEEDOR= gl.codigo_proveedor;
+            header.TOTAL=costot;
+
+            mov.add(header);
+
+            int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD");
+
+            if (ingreso) {
+
+                for (int i = 0; i <T_movrObj.count; i++) {
+
+                    imovr=T_movrObj.items.get(i);
+                    converUMBas(imovr.producto,imovr.cant,imovr.unidadmedida);
+
+                    item =clsCls.new clsD_MovD();
+
+                    item.coreldet=corm+i+1;
+                    item.corel=corel;
+                    item.producto=imovr.producto;
+                    item.cant=convcant;         // imovr.cant;
+                    item.cantm=0;
+                    item.peso=0;
+                    item.pesom=0;
+                    item.lote="";
+                    item.codigoliquidacion=0;
+                    item.unidadmedida=convum;   // imovr.unidadmedida;
+                    item.precio=imovr.precio;
+                    item.motivo_ajuste=0;
+
+                    movd.add(item);
+
+
+                }
+
+            }
+
+            db.execSQL("DELETE FROM T_MOVR");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            toastlong("Ingreso de mercancia guardado");
+
+            finish();
+
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -902,6 +1044,30 @@ public class InvInicial extends PBase {
         dialog.show();
 
     }
+
+    private void msgAskInterrupt(String msg) {
+        ExDialog dialog = new ExDialog(this);
+
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    hold();
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
 
     //endregion
 

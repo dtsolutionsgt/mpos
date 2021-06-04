@@ -20,13 +20,13 @@ public class clsDocument {
 	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor,codigo_ruta;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
-	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta;
+	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
-	public boolean parallevar,factsinpropina;
+	public boolean parallevar,factsinpropina,modorest;
 	public int ffecha,pendiente,diacred,pagoefectivo;
-	public double ptotal,pdesc,pprop,propvalor;
+	public double ptotal,pdesc,pprop,propvalor,propperc;
 
 	protected android.database.sqlite.SQLiteDatabase db;
 	protected BaseDatos Con;
@@ -173,7 +173,7 @@ public class clsDocument {
         try{
             mesa=pmesa;cuenta=pcuenta;
             ptotal=total;pdesc=desc;
-            pprop=prop;propfija=ppropfija;propvalor=ppropvalor;
+            pprop=prop;propfija=ppropfija;propvalor=ppropvalor;propperc=prop;
 
             if (!buildHeader()) return false;
             if (!buildDetail()) return false;

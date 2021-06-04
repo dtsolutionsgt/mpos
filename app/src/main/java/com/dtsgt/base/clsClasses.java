@@ -124,6 +124,8 @@ public class clsClasses {
         public int  codigo_sucursal;
         public int  codigo_vendedor;
         public double propina;
+        public double propperc;
+        public double propextra;
     }
 
     public class clsD_facturar {
@@ -442,6 +444,27 @@ public class clsClasses {
         public double percepcion;
         public String tipo_contribuyente;
         public String imagen;
+    }
+
+    public class clsP_cliente_dir {
+        public int  codigo_direccion;
+        public int  codigo_cliente;
+        public String referencia;
+        public String codigo_departamento;
+        public String codigo_municipio;
+        public String direccion;
+        public int  zona_entrega;
+        public String telefono;
+    }
+
+    public class clsP_cliente_dir_act {
+        public int  codigo_direccion;
+        public int  estado;
+        public int  codigo_cliente;
+        public String direccion;
+        public String referencia;
+        public String telefono;
+        public int  statcom;
     }
 
     public class clsP_corel {

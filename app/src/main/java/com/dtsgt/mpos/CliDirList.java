@@ -1,17 +1,30 @@
 package com.dtsgt.mpos;
 
-import android.support.v7.app.AppCompatActivity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsP_cliente_dirObj;
+import com.dtsgt.ladapt.LA_P_cliente_dir;
 import com.dtsgt.webservice.wsOpenDT;
+
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
 
 public class CliDirList extends PBase {
 
+    private ListView listView;
     private TextView lblNom;
     private ProgressBar pbar;
+
+    private LA_P_cliente_dir adapter;
+    private clsP_cliente_dirObj P_cliente_dirObj;
 
     private wsOpenDT ws;
 
@@ -26,8 +39,11 @@ public class CliDirList extends PBase {
 
         super.InitBase();
 
+        listView = (ListView) findViewById(R.id.listView1);
         lblNom=findViewById(R.id.lblDescrip2);
         pbar=findViewById(R.id.progressBar6);pbar.setVisibility(View.VISIBLE);
+
+        P_cliente_dirObj=new clsP_cliente_dirObj(this,Con,db);
 
         ws=new wsOpenDT(gl.wsurl);
 
@@ -41,17 +57,45 @@ public class CliDirList extends PBase {
         cliid=17638;
         lblNom.setText(gl.gstr);
 
-        loadDirs();
-    }
 
+        setHandlers();
+
+        listItems();
+        loadDirs();
+
+    }
 
     //region Events
 
+    private void setHandlers() {
+
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                Object lvObj = listView.getItemAtPosition(position);
+                clsClasses.clsP_cliente_dir item = (clsClasses.clsP_cliente_dir)lvObj;
+
+                adapter.setSelectedIndex(position);
+
+            };
+        });
+    }
 
     //endregion
 
     //region Main
 
+    private void listItems() {
+
+        try {
+            P_cliente_dirObj.fill("WHERE (CODIGO_CLIENTE="+cliid+") ORDER BY DIRECCION");
+
+            adapter = new LA_P_cliente_dir(this, this, P_cliente_dirObj.items);
+            listView.setAdapter(adapter);
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());
+        }
+    }
 
     private void loadDirs() {
         try {
@@ -64,9 +108,51 @@ public class CliDirList extends PBase {
     }
 
     private void procesaDirecciones() {
+        Cursor dt=ws.openDTCursor;
+        clsClasses.clsP_cliente_dir item;
+        int rc,did;
+
         try {
-            toastlong("Direcciones : "+ws.openDTCursor.getCount());
             pbar.setVisibility(View.INVISIBLE);
+        } catch (Exception e) {}
+
+
+        rc=dt.getCount();if (rc==0) return;
+        //sql="SELECT CODIGO_DIRECCION, DIRECCION, REFERENCIA, TELEFONO " +
+        try {
+            dt.moveToFirst();
+            while (!dt.isAfterLast()) {
+
+                did=dt.getInt(0);
+                P_cliente_dirObj.fill("WHERE (CODIGO_DIRECCION="+did+")");
+
+                if (P_cliente_dirObj.count==0) {
+
+                    item = clsCls.new clsP_cliente_dir();
+
+                    item.codigo_direccion=P_cliente_dirObj.newID("SELECT MAX(CODIGO_DIRECCION) FROM P_cliente_dir");
+                    item.codigo_cliente=cliid;
+                    item.referencia=dt.getString(2);
+                    item.codigo_departamento="2";
+                    item.codigo_municipio="10";
+                    item.direccion=dt.getString(1);
+                    item.zona_entrega=0;
+                    item.telefono=dt.getString(3);
+
+                    P_cliente_dirObj.add(item);
+                } else {
+                    item=P_cliente_dirObj.first();
+
+                    item.direccion=dt.getString(1);
+                    item.referencia=dt.getString(2);
+                    item.telefono=dt.getString(3);
+
+                    P_cliente_dirObj.update(item);
+                }
+                dt.moveToNext();
+            }
+
+            listItems();
         } catch (Exception e) {
             toast("No se pudo procesar lista de direcciones");
         }

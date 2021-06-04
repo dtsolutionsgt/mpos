@@ -56,6 +56,7 @@ import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_factrecetaObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
@@ -69,11 +70,10 @@ public class FacturaRes extends PBase {
 
 	private ListView listView;
 	private TextView lblPago,lblFact,lblMPago,lblCred, lblCard,lblPend,lblMonto,lblKeyDP;
-	private TextView lblTotal,lblPEfect,lblPCard;
-	private ImageView imgBon,imgMPago,imgCred, imgCard, imgPend;
-	private TextView lblVuelto;
+	private TextView lblTotal,lblPEfect,lblPCard,lblPreimp,lblProp,lblVuelto;
+	private ImageView imgBon,imgMPago,imgCred, imgCard, imgPend,imgPreimp,imgProp;
 	private EditText txtVuelto;
-	private RelativeLayout rl_facturares,rl_preimpresion;
+	private RelativeLayout rl_facturares;
 
 	private List<String> spname = new ArrayList<String>();
 	private ArrayList<clsClasses.clsCDB> items= new ArrayList<clsClasses.clsCDB>();
@@ -104,8 +104,8 @@ public class FacturaRes extends PBase {
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea;
 
-	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,pend,stot0,stot,descmon,totimp,totperc,credito;
-	private double dispventa,falt,descimp;
+	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext,pend,stot,stot0;
+	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
 
 	//@SuppressLint("MissingPermission")
@@ -128,16 +128,19 @@ public class FacturaRes extends PBase {
         lblPEfect = (TextView) findViewById(R.id.textView166);
         lblPCard = (TextView) findViewById(R.id.textView167);
         lblPend = (TextView) findViewById(R.id.textView197);
+        lblPreimp= (TextView) findViewById(R.id.textView220);
+        lblProp= (TextView) findViewById(R.id.textView240);
 
 		imgBon = (ImageView) findViewById(R.id.imageView6);
 		imgMPago = (ImageView) findViewById(R.id.btnImp);
 		imgCred = (ImageView) findViewById(R.id.imageView3);
 		imgCard = (ImageView) findViewById(R.id.imageView2);
         imgPend = (ImageView) findViewById(R.id.imageView84);
+        imgPreimp = (ImageView) findViewById(R.id.imageView105);
+        imgProp = (ImageView) findViewById(R.id.imageView111);
 
 		rl_facturares=(RelativeLayout)findViewById(R.id.relativeLayout1);
 		rl_facturares.setVisibility(View.VISIBLE);
-        rl_preimpresion=findViewById(R.id.relpreimp);
 
         T_factrecetaObj=new clsT_factrecetaObj(this,Con,db);
         P_prodrecetaObj=new clsP_prodrecetaObj(this,Con,db);
@@ -161,7 +164,17 @@ public class FacturaRes extends PBase {
 		notaC = gl.tiponcredito;
         pendiente=false;
 
-        if (!gl.pelCaja) rl_preimpresion.setVisibility(View.GONE);
+        if (!gl.pelCaja) {
+            imgPreimp.setVisibility(View.INVISIBLE);lblPreimp.setVisibility(View.INVISIBLE);
+        }
+
+        imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
+        if (gl.peRest) {
+            imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);
+            if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
+                imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
+            }
+        }
 
         mu.currsymb(gl.peMon);
 
@@ -193,7 +206,6 @@ public class FacturaRes extends PBase {
 		clsDesc=new clsDescGlob(this);
 
 		descpmon=totalDescProd(); //descpmon=0;
-
 		dmax=clsDesc.dmax;
 		acum=clsDesc.acum;
 
@@ -392,6 +404,10 @@ public class FacturaRes extends PBase {
         }
     }
 
+    public void doPropina(View view) {
+        ingresaPropina();
+    }
+
     public void pago100(View view){
         khand.val="100";
         validaPagoEfectivo();
@@ -505,7 +521,6 @@ public class FacturaRes extends PBase {
 			*/
 
 		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("processFinalPromo: " + e.getMessage());
 		}
 
@@ -575,13 +590,14 @@ public class FacturaRes extends PBase {
 			descmon=mu.round2(dfinmon);
 			stot=mu.round2(stot0);
 
+            propinaperc=gl.pePropinaPerc;
 			if (gl.pePropinaFija) {
                 propina=stot*gl.pePropinaPerc/100;propina=mu.round2(propina);
             } else {
                 propina=gl.propina_valor;
             }
 
-            propina=mu.round2(propina);
+            propina=mu.round2(propina+propinaext);
 
 			fillTotals();
 
@@ -730,7 +746,13 @@ public class FacturaRes extends PBase {
 	private void impresionDocumento() {
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
-		try{
+		try {
+            gl.nombre_mesero="";
+            if (gl.mesero_venta>0) {
+                clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+                VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.mesero_venta);
+                if (VendedoresObj.count>0) gl.nombre_mesero=VendedoresObj.first().nombre;
+            }
 
 			rl_facturares.setVisibility(View.INVISIBLE);
 
@@ -743,6 +765,10 @@ public class FacturaRes extends PBase {
 			    fdoc.impresionorden=gl.pelOrdenComanda;
 			    fdoc.parallevar=gl.parallevar;
 			    fdoc.factsinpropina=gl.peFactSinPropina;
+			    fdoc.propperc=gl.pePropinaPerc;
+                fdoc.modorest=gl.peRest;
+                fdoc.nommesero=gl.nombre_mesero;
+
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
 
                 app.doPrint(gl.peNumImp,0);
@@ -1111,11 +1137,14 @@ public class FacturaRes extends PBase {
                         itempr.codigo_vendedor = gl.mesero_venta;
                         if (itempr.codigo_vendedor==0) itempr.codigo_vendedor=gl.codigo_vendedor;
                         itempr.propina = propina;
+                        itempr.propperc =propinaperc;
+                        itempr.propextra =propinaext;
 
                         if (pagocarta) {
                             if (gl.pePropinaCarta>0 && gl.pePropinaPerc>0) {
                                 if (gl.pePropinaCarta>gl.pePropinaPerc) gl.pePropinaCarta=gl.pePropinaPerc;
                                 itempr.propina = propina*gl.pePropinaCarta/gl.pePropinaPerc;
+                                propinaperc=gl.pePropinaCarta; itempr.propperc =propinaperc;
                             }
                         }
 
@@ -3005,7 +3034,7 @@ public class FacturaRes extends PBase {
 
                 fdoc.vendedor=gl.vendnom;
                 fdoc.rutanombre=gl.tiendanom;
-                fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,gl.pePropinaPerc,gl.pePropinaFija,propina);
+                fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
                 app.doPrint(1,0);
 
                 Handler mtimer = new Handler();
@@ -3073,10 +3102,9 @@ public class FacturaRes extends PBase {
     public void askSave(View view) {
         try{
             checkPago();
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     private void askSave() {
@@ -3329,6 +3357,41 @@ public class FacturaRes extends PBase {
         dialog.show();
 
     }
+
+    private void ingresaPropina() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Monto propina extra");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        input.setText(mu.frmdecno(propinaext));
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    propinaext=Double.parseDouble(s);
+                    if (propinaext<0) throw new Exception();
+                    totalOrder();
+                    pagoPendiente();
+                } catch (Exception e) {
+                    mu.msgbox("Valor incorrecto");return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
+
 
     //endregion
 	

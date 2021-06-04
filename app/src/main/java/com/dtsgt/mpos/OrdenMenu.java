@@ -517,7 +517,10 @@ public class OrdenMenu extends PBase {
                         item.sprec=mu.frmdec(item.precio);
                         if (item.precio==0) item.sprec="";
 
-                        if (item.cod==0) item.modo=0; else item.modo=1;
+                        if (item.cod==0) {
+                            item.modo=0;
+                            doAdd(null);
+                        } else item.modo=1;
 
                         adapter.notifyDataSetChanged();
                         precioFinal();

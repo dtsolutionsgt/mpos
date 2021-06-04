@@ -552,6 +552,8 @@ public class WSEnv extends PBase {
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         ins.add("PROPINA",item.propina);
+        ins.add("PROPPERC",item.propperc);
+        ins.add("PROPEXTRA",item.propextra);
 
         return ins.sql();
 
