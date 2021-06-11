@@ -614,7 +614,8 @@ public class BaseDatosVersion {
         } catch (Exception e) {  }
 
         try {
-            sql="CREATE TABLE [P_cliente_dir_act] ("+
+            sql="CREATE TABLE [P_cliente_dir_bita] ("+
+                    "CODIGO_BITACORA INTEGER NOT NULL,"+
                     "CODIGO_DIRECCION INTEGER NOT NULL,"+
                     "ESTADO INTEGER NOT NULL,"+
                     "CODIGO_CLIENTE INTEGER NOT NULL,"+
@@ -622,11 +623,12 @@ public class BaseDatosVersion {
                     "REFERENCIA TEXT NOT NULL,"+
                     "TELEFONO TEXT NOT NULL,"+
                     "STATCOM INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO_DIRECCION])"+
+                    "PRIMARY KEY ([CODIGO_BITACORA])"+
                     ");";
             db.execSQL(sql);
 
-            sql="CREATE INDEX P_cliente_dir_act_idx1 ON P_cliente_dir_act(STATCOM)";db.execSQL(sql);
+            sql="CREATE INDEX P_cliente_dir_bita_idx1 ON P_cliente_dir_bita(STATCOM)";db.execSQL(sql);
+
         } catch (Exception e) { }
 
         try {

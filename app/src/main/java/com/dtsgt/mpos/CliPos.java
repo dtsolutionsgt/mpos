@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -17,14 +16,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ventaObj;
-import com.dtsgt.webservice.srvInventConfirm;
-import com.dtsgt.webservice.wsInventCompartido;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -115,6 +111,8 @@ public class CliPos extends PBase {
         }
          */
 
+        if (gl.cliente_dom!=0) cargaCliente();
+
 	}
 
     public interface ExtRunnable extends Runnable {
@@ -125,13 +123,18 @@ public class CliPos extends PBase {
 
     public void consFinal(View view) {
         String ss=txtNIT.getText().toString();
+        String ddnom,ddir;
 
         if (ss.length()>4) {
             msgAskCF("Está seguro de continuar con el consumidor final");
         } else {
             try {
+                ddnom =txtNom.getText().toString();if (ddnom.isEmpty()) ddnom="Consumidor final";
+                ddir =txtRef.getText().toString();if (ddir.isEmpty()) ddir="Ciudad";
+
                 consFinal=true;
-                if (agregaCliente("C.F.","Consumidor final","Ciudad","","")) procesaCF() ;
+                if (agregaCliente("C.F.",ddnom,ddir,
+                        ""+txtCorreo.getText().toString(),""+txtTel.getText().toString())) procesaCF() ;
             } catch (Exception e) {
                 msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -204,23 +207,27 @@ public class CliPos extends PBase {
     }
 
     public void doDireccion(View view) {
+
         String snit =txtNIT.getText().toString();
 
         if (snit.isEmpty()) {
             msgbox("Falta el NIT de cliente");txtNIT.requestFocus();return;
         }
         if (esCF(snit)) {
-            msgbox("Al consumidor final no se puede cambiar la direccion");txtRef.requestFocus();return;
+            msgbox("Al consumidor final no se puede aplicar direccion de lista");txtRef.requestFocus();return;
         }
 
         if (clientePorNIT(snit)==0) {
-            msgbox("Al cliente nuevo no se puede cambiar la direccion");txtRef.requestFocus();return;
+            msgbox("Al cliente nuevo no se puede aplicar direccion de lista");txtRef.requestFocus();return;
         } else {
             if (gl.codigo_cliente!=0) {
                 gl.gstr=txtNom.getText().toString();
                 if (gl.gstr.isEmpty()) {
                     msgbox("Falta nombre de cliente");return;
                 }
+
+
+                browse=2;gl.dom_ddir="";
                 startActivity(new Intent(this,CliDirList.class));
             } else {
                 msgbox("No se logro identificar cliente.\n Ingrese de nuevo el NIT");
@@ -288,7 +295,7 @@ public class CliPos extends PBase {
 
 		try{
 
-			gl.codigo_cliente = 10*gl.emp;
+			gl.codigo_cliente = 10*gl.emp;gl.cliente_dom=gl.codigo_cliente;
 			gl.rutatipo="V";
             gl.cliente="0";
             gl.nivel=gl.nivel_sucursal;
@@ -307,6 +314,11 @@ public class CliPos extends PBase {
             if (sNombreCliente.isEmpty()) gl.gNombreCliente ="Consumidor final";else gl.gNombreCliente=sNombreCliente;
             if (sDireccionCliente.isEmpty()) gl.gDirCliente ="Ciudad";else gl.gDirCliente=sDireccionCliente;
             if (sTelCliente.isEmpty()) gl.gTelCliente =""; else gl.gTelCliente=sTelCliente;
+
+            gl.dom_nit= gl.gNITCliente;
+            gl.dom_nom=sNombreCliente;
+            gl.dom_dir =sDireccionCliente;gl.dom_ref="";
+            gl.dom_tel=sTelCliente;
 
             gl.media=1;
 
@@ -330,6 +342,8 @@ public class CliPos extends PBase {
 
 		try {
 
+            gl.cliente_dom=codigo;
+
 			gl.rutatipo="V";
 			gl.cliente=""+codigo; if (codigo==-1) gl.cliente=gl.emp+"0";
 			gl.nivel=gl.nivel_sucursal;
@@ -342,6 +356,11 @@ public class CliPos extends PBase {
             gl.gDirCliente = sDireccionCliente;
             gl.gCorreoCliente = sCorreoCliente;
             gl.gTelCliente=sTelCliente;
+
+            gl.dom_nit= gl.gNITCliente;
+            gl.dom_nom=sNombreCliente;
+            gl.dom_dir =sDireccionCliente;gl.dom_ref="";
+            gl.dom_tel=sTelCliente;
 
             gl.media=1;
 
@@ -390,6 +409,23 @@ public class CliPos extends PBase {
 
              */
         } catch (Exception e) {}
+    }
+
+    private void cargaCliente() {
+        Cursor DT;
+
+        try{
+            sql="SELECT NIT FROM P_CLIENTE WHERE CODIGO_CLIENTE = " +gl.cliente_dom;
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0){
+                DT.moveToFirst();
+                txtNIT.setText(DT.getString(0));
+                existeCliente();
+            }
+        } catch (Exception e){
+            mu.toast("Ocurrió un error buscando cliente");
+        }
     }
 
     //endregion
@@ -771,6 +807,7 @@ public class CliPos extends PBase {
 
 						gl.media=DT.getInt(5);
 						gl.codigo_cliente=DT.getInt(7);
+                        gl.cliente_dom=gl.codigo_cliente;
 
 						resultado=true;
 
@@ -796,6 +833,7 @@ public class CliPos extends PBase {
 
         if (consFinal) {
             gl.codigo_cliente = 10*gl.emp;
+            gl.cliente_dom=gl.codigo_cliente;
             agregaClienteCF(NIT,Nom,dir,Correo);return true;
         }
 
@@ -839,6 +877,8 @@ public class CliPos extends PBase {
 			ins.add("EMPRESA",gl.emp);
 			ins.add("IMAGEN","");
 			db.execSQL(ins.sql());
+
+            gl.cliente_dom=codigo;
 
 			return true;
 
@@ -1109,6 +1149,11 @@ public class CliPos extends PBase {
                     }
                 }
                 return;
+            }
+
+            if (browse==2) {
+                browse=0;
+                if (!gl.dom_ddir.isEmpty()) txtRef.setText(gl.dom_ddir);return;
             }
 
         } catch (Exception e){

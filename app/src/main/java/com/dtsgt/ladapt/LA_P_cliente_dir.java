@@ -66,13 +66,8 @@ public class LA_P_cliente_dir  extends BaseAdapter {
             convertView = l_Inflater.inflate(R.layout.lv_p_cliente_dir, null);
             holder = new ViewHolder();
 
-            holder.lbl1 = (TextView) convertView.findViewById(R.id.lblV1);
-            holder.lbl2 = (TextView) convertView.findViewById(R.id.lblV2);
             holder.lbl3 = (TextView) convertView.findViewById(R.id.lblV3);
-            holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
-            holder.lbl5 = (TextView) convertView.findViewById(R.id.lblV5);
             holder.lbl6 = (TextView) convertView.findViewById(R.id.lblV6);
-            holder.lbl7 = (TextView) convertView.findViewById(R.id.lblV7);
             holder.lbl8 = (TextView) convertView.findViewById(R.id.lblV8);
 
             convertView.setTag(holder);
@@ -80,13 +75,8 @@ public class LA_P_cliente_dir  extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl1.setText(""+items.get(position).codigo_direccion);
-        holder.lbl2.setText(""+items.get(position).codigo_cliente);
         holder.lbl3.setText(""+items.get(position).referencia);
-        holder.lbl4.setText(""+items.get(position).codigo_departamento);
-        holder.lbl5.setText(""+items.get(position).codigo_municipio);
         holder.lbl6.setText(""+items.get(position).direccion);
-        holder.lbl7.setText(""+items.get(position).zona_entrega);
         holder.lbl8.setText(""+items.get(position).telefono);
 
         if(selectedIndex!= -1 && position == selectedIndex) {
@@ -99,7 +89,7 @@ public class LA_P_cliente_dir  extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl1,lbl2,lbl3,lbl4,lbl5,lbl6,lbl7,lbl8;
+        TextView lbl3,lbl6,lbl8;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -54,9 +55,8 @@ public class CliDirList extends PBase {
         };
 
         cliid=gl.codigo_cliente;
-        cliid=17638;
         lblNom.setText(gl.gstr);
-
+        selidx=-1;selid=-1;
 
         setHandlers();
 
@@ -66,6 +66,12 @@ public class CliDirList extends PBase {
     }
 
     //region Events
+
+    public void doAdd(View view) {
+        browse=1;
+        gl.idclidir=0;
+        startActivity(new Intent(this,CliDirDom.class));
+    }
 
     private void setHandlers() {
 
@@ -77,8 +83,31 @@ public class CliDirList extends PBase {
 
                 adapter.setSelectedIndex(position);
 
+                gl.dom_ddir= item.direccion+" , "+item.referencia;
+                finish();
             };
         });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                try {
+                    Object lvObj = listView.getItemAtPosition(position);
+                    clsClasses.clsP_cliente_dir item = (clsClasses.clsP_cliente_dir) lvObj;
+
+                    adapter.setSelectedIndex(position);
+
+                    browse=1;
+                    gl.idclidir=item.codigo_direccion;selid=item.codigo_direccion;
+                    startActivity(new Intent(CliDirList.this,CliDirDom.class));
+
+                } catch (Exception e) {
+                }
+                return true;
+            }
+        });
+
     }
 
     //endregion
@@ -92,6 +121,7 @@ public class CliDirList extends PBase {
 
             adapter = new LA_P_cliente_dir(this, this, P_cliente_dirObj.items);
             listView.setAdapter(adapter);
+
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
         }
@@ -130,7 +160,9 @@ public class CliDirList extends PBase {
 
                     item = clsCls.new clsP_cliente_dir();
 
-                    item.codigo_direccion=P_cliente_dirObj.newID("SELECT MAX(CODIGO_DIRECCION) FROM P_cliente_dir");
+                    //item.codigo_direccion=P_cliente_dirObj.newID("SELECT MAX(CODIGO_DIRECCION) FROM P_cliente_dir");
+
+                    item.codigo_direccion=did;
                     item.codigo_cliente=cliid;
                     item.referencia=dt.getString(2);
                     item.codigo_departamento="2";
@@ -172,6 +204,20 @@ public class CliDirList extends PBase {
 
     //region Activity Events
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            P_cliente_dirObj.reconnect(Con,db);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+
+        if (browse==1) {
+            browse=0;
+            listItems();return;
+        }
+    }
 
     //endregion
 

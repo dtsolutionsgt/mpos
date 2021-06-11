@@ -1598,7 +1598,6 @@ public class AppMethods {
 
 	//region Aux
 
-    //Función para saber la cantidad de registros en una tabla
     public int getDocCount(String ss,String pps) {
 
         Cursor DT;
@@ -1622,7 +1621,6 @@ public class AppMethods {
         }
     }
 
-    //Función para saber la cantidad de registros en una tabla específica
     public int getDocCountTipo(String tipo, boolean sinEnviar) {
 
         Cursor DT;
@@ -1714,6 +1712,23 @@ public class AppMethods {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
+
+    public String cliFromNIT(String cod) {
+        Cursor DT;
+        String umm;
+
+        try {
+            String sql = "SELECT DESCCORTA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getString(0);
+            return  umm;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 
     //endregion
 

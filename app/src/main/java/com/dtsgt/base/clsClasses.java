@@ -457,7 +457,8 @@ public class clsClasses {
         public String telefono;
     }
 
-    public class clsP_cliente_dir_act {
+    public class clsP_cliente_dir_bita {
+        public int  codigo_bitacora;
         public int  codigo_direccion;
         public int  estado;
         public int  codigo_cliente;

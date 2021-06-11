@@ -32,9 +32,10 @@ public class appGlobals extends Application {
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,
-                comensales, cliente_dom;
+                comensales, cliente_dom, idclidir;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero, corelmov;
+	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
