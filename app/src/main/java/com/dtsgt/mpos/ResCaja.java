@@ -507,8 +507,10 @@ public class ResCaja extends PBase {
     private void msgAskCompletar(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        if (!app.validaCompletarCuenta(corel)) {
-            msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
+        if (!ventaVacia()) {
+            if (!app.validaCompletarCuenta(corel)) {
+                msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
+            }
         }
 
         dialog.setTitle("Mesa "+mesa);

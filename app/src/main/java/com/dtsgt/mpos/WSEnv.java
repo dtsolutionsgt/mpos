@@ -450,11 +450,11 @@ public class WSEnv extends PBase {
         }
 
         for (int i = 0; i < D_facturarObj.count; i++) {
-            CSQL=CSQL+D_facturarObj.addItemSql(D_facturarObj.items.get(i)) + ";";
+            CSQL=CSQL+D_factRaddItemSql(D_facturarObj.items.get(i)) + ";";
         }
 
         for (int i = 0; i < D_facturacObj.count; i++) {
-            CSQL=CSQL+D_facturacObj.addItemSql(D_facturacObj.items.get(i)) + ";";
+            CSQL=CSQL+D_factCaddItemSql(D_facturacObj.items.get(i)) + ";";
         }
 
         for (int i = 0; i < D_facturaprObj.count; i++) {
@@ -558,6 +558,39 @@ public class WSEnv extends PBase {
         return ins.sql();
 
     }
+
+    public String D_factCaddItemSql(clsClasses.clsD_facturac item) {
+
+        ins.init("D_facturac");
+
+        ins.add("EMPRESA",gl.emp);
+        ins.add("COREL",item.corel);
+        ins.add("CODIGO_MENU",item.codigo_menu);
+        ins.add("IDCOMBO",item.idcombo);
+        ins.add("UNID",item.unid);
+        ins.add("CANT",item.cant);
+        ins.add("IDSELECCION",item.idseleccion);
+        ins.add("ORDEN",item.orden);
+        ins.add("NOMBRE",item.nombre);
+
+        return ins.sql();
+
+    }
+
+    public String D_factRaddItemSql(clsClasses.clsD_facturar item) {
+
+        ins.init("D_facturar");
+
+        ins.add("EMPRESA",gl.emp);
+        ins.add("COREL",item.corel);
+        ins.add("PRODUCTO",item.producto);
+        ins.add("CANT",item.cant);
+        ins.add("UM",item.um);
+
+        return ins.sql();
+
+    }
+
 
     private void statusFactura() {
 

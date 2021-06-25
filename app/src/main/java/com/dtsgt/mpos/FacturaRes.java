@@ -824,7 +824,7 @@ public class FacturaRes extends PBase {
 		Cursor dt,dtc;
 		String vprod,vumstock,vumventa,vbarra,ssq;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
-		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid;
 		boolean flag,pagocarta=false;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
@@ -980,31 +980,41 @@ public class FacturaRes extends PBase {
                     rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
 				}
 
-			    dt.moveToNext();counter++;
+			    dt.moveToNext();counter++;ss="";
 
-                sql="SELECT CODIGO_MENU,IDCOMBO,UNID,CANT,IDSELECCION,ORDEN FROM T_COMBO WHERE IDCOMBO="+itemuid;
-                dtc=Con.OpenDT(sql);
+                try {
 
-                if (dtc.getCount()>0) {
-                    dtc.moveToFirst();
-                    while (!dtc.isAfterLast()) {
+                    sql="SELECT CODIGO_MENU,IDCOMBO,UNID,CANT,IDSELECCION,ORDEN FROM T_COMBO WHERE IDCOMBO="+itemuid;
+                    dtc=Con.OpenDT(sql);
 
-                        ins.init("D_facturac");
+                    if (dtc.getCount()>0) {
 
-                        ins.add("EMPRESA",gl.emp);
-                        ins.add("COREL",corel);
-                        ins.add("CODIGO_MENU",dtc.getInt(0));
-                        ins.add("IDCOMBO",dtc.getInt(1));
-                        ins.add("UNID",dtc.getInt(2));
-                        ins.add("CANT",dtc.getInt(3));
-                        ins.add("IDSELECCION",dtc.getInt(4));
-                        ins.add("ORDEN",dtc.getInt(5));
-                        ins.add("NOMBRE",app.prodNombre(dtc.getInt(4)));
+                        dtc.moveToFirst();cuid=0;
 
-                        db.execSQL(ins.sql());
+                        while (!dtc.isAfterLast()) {
 
-                        dtc.moveToNext();
+                            ins.init("D_facturac");
+
+                            ins.add("EMPRESA",cuid);
+                            ins.add("COREL",corel);
+                            ins.add("CODIGO_MENU",dtc.getInt(0));
+                            ins.add("IDCOMBO",dtc.getInt(1));
+                            ins.add("UNID",dtc.getInt(2));
+                            ins.add("CANT",dtc.getInt(3));
+                            ins.add("IDSELECCION",dtc.getInt(4));
+                            ins.add("ORDEN",dtc.getInt(5));
+                            ins.add("NOMBRE",app.prodNombre(dtc.getInt(4)));
+
+                            ss+=ins.sql()+"\n";
+
+                            db.execSQL(ins.sql());
+
+                            dtc.moveToNext();cuid++;
+                        }
                     }
+
+                } catch (Exception e) {
+                    //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . FACTURAC : "+e.getMessage());
                 }
 
             }
@@ -1793,12 +1803,16 @@ public class FacturaRes extends PBase {
         dt=Con.OpenDT(sql);
 
         if (dt.getCount()>0) {
+
             dt.moveToFirst();
+            int newfrid=D_facturarObj.newID("SELECT MAX(EMPRESA) FROM D_facturar");
+
+
             while (!dt.isAfterLast()) {
 
                 clsClasses.clsD_facturar item = clsCls.new clsD_facturar();
 
-                item.empresa=gl.emp;
+                item.empresa=newfrid;
                 item.corel=corel;
                 item.producto=dt.getInt(1);
                 item.cant=dt.getDouble(0);
@@ -1808,7 +1822,7 @@ public class FacturaRes extends PBase {
 
                 existenciaReceta(item.producto,item.cant,item.um);
 
-                dt.moveToNext();
+                dt.moveToNext();newfrid++;
             }
         }
     }
@@ -2832,7 +2846,6 @@ public class FacturaRes extends PBase {
                     sql=addProducto(pp,s);osql+=sql+";";
                 }
             }
-
         }
 
         pp++;sql=addProducto(pp,"------    FIN DEL LISTADO   ------");osql+=sql+";";

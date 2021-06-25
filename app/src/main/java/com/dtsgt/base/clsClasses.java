@@ -71,7 +71,7 @@ public class clsClasses {
         public int  idseleccion;
         public int  orden;
         public String nombre;
-    }
+     }
 
     public class clsD_facturad {
         public int  empresa;

@@ -1079,6 +1079,7 @@ public class Orden extends PBase {
             db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
             db.execSQL("DELETE FROM T_ORDENCOMBOAD WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
             db.execSQL("DELETE FROM T_ORDENCOMBODET WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBOPRECIO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -1362,9 +1363,13 @@ public class Orden extends PBase {
                     //aplicarPago();
                     break;
                 case 2:
+
+                    if (!ventaVacia()) {
                     if (!app.validaCompletarCuenta(idorden)) {
                         msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
                     }
+                    }
+
                     msgAskCuentas("Completar la mesa");
                     break;
                 case 3:
@@ -1565,7 +1570,7 @@ public class Orden extends PBase {
         clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
         clsClasses.clsT_orden venta;
         clsClasses.clsT_ordencombo combo;
-        String prname;
+        String prname,csi;
         int prid;
 
         try {
@@ -1613,7 +1618,8 @@ public class Orden extends PBase {
 
                     for (int j = 0; j < T_comboObj.count; j++) {
                         if (j == 0) rep.line();
-                        s = " -  " + getProd(T_comboObj.items.get(j).idseleccion);
+                        csi=getProd(T_comboObj.items.get(j).idseleccion);
+                        if (!csi.equalsIgnoreCase("0")) s =" -  "+csi;
                         rep.add(s);
                     }
                     rep.line();
@@ -2726,6 +2732,20 @@ public class Orden extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private boolean ventaVacia() {
+        Cursor dt;
+
+        try {
+            sql="SELECT * FROM T_VENTA";
+            dt=Con.OpenDT(sql);
+            if (dt.getCount()==0) return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
     }
 
     //endregion

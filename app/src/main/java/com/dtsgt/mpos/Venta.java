@@ -2560,6 +2560,7 @@ public class Venta extends PBase {
         clsClasses.clsT_combo combo;
 
         int prid,idcombo;
+        String csi;
 
         try {
             rep.clear();
@@ -2584,7 +2585,8 @@ public class Venta extends PBase {
 
                     for (int j = 0; j <T_comboObj.count; j++) {
                         if (j==0) rep.line();
-                        s=" -  "+getProd(T_comboObj.items.get(j).idseleccion);
+                        csi=getProd(T_comboObj.items.get(j).idseleccion);
+                        if (!csi.equalsIgnoreCase("0")) s=" -  "+csi;
                         rep.add(s);
                     }
                     rep.line();

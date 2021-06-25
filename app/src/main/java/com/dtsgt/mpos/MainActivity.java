@@ -64,7 +64,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "4.0.3"; // REGISTRAR CAMBIO EN LA TABLA VERSION
+    private String parVer = "4.0.4"; // REGISTRAR CAMBIO EN LA TABLA VERSION
 
     private Typeface typeface;
 
@@ -911,9 +911,9 @@ public class MainActivity extends PBase {
             mitems.clear();
 
             if (gl.codigo_ruta ==0){
-                VendedoresObj.fill("ORDER BY CODIGO_VENDEDOR");
+                VendedoresObj.fill("WHERE (ACTIVO=1) AND (NIVEL<4) ORDER BY CODIGO_VENDEDOR");
             } else {
-                VendedoresObj.fill("WHERE RUTA = " + gl.codigo_ruta+" ORDER BY Nombre");
+                VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta+") AND (NIVEL<4) AND (ACTIVO=1) ORDER BY Nombre");
             }
 
             for (int i = 0; i < VendedoresObj.count; i++) {

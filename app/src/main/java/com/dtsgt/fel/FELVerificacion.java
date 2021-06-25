@@ -307,6 +307,7 @@ public class FELVerificacion extends PBase {
             factf.nit=factf.nit.trim();
             factf.nit =factf.nit.replace("-","");
             factf.nit =factf.nit.replace(".","");
+            factf.nit =factf.nit.replace(" ","");
             factf.nit=factf.nit.toUpperCase();
 
             //#EJC20210130: Una dirección tenía enter... quitar espacios vacíos.
