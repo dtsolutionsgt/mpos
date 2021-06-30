@@ -1596,6 +1596,64 @@ public class AppMethods {
 
     //endregion
 
+    //region Cuentas
+
+    public int cuentaActiva(String corel) {
+        try {
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
+            T_ordencuentaObj.fill("WHERE (COREL='"+corel+"') ORDER BY ID");
+            for (int i =0; i< T_ordencuentaObj.count; i++) {
+                if (!cuentaPagada(corel, T_ordencuentaObj.items.get(i).id)) {
+                    return T_ordencuentaObj.items.get(i).id;
+                }
+            }
+
+            agregarCuenta(corel);
+            int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+corel+"')");
+
+            return newcid;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return 1;
+        }
+    }
+
+    private void agregarCuenta(String corel) {
+        try {
+            clsClasses clsCls = new clsClasses();
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
+            clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
+
+            int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+corel+"')");
+
+            cuenta.corel=corel;
+            cuenta.id=newcid;
+            cuenta.cf=1;
+            cuenta.nombre="Consumidor final";
+            cuenta.nit="C.F.";
+            cuenta.direccion="Ciudad";
+            cuenta.correo="";
+
+            T_ordencuentaObj.add(cuenta);
+
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
+    private Boolean cuentaPagada(String corr,int id) {
+        try {
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(cont,Con,db);
+            D_facturaObj.fill("WHERE (FACTLINK='"+corr+"_"+id+"') AND (ANULADO=0)");
+            return D_facturaObj.count!=0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    //endregion
+
 	//region Aux
 
     public int getDocCount(String ss,String pps) {
@@ -1728,7 +1786,6 @@ public class AppMethods {
             return "";
         }
     }
-
 
     //endregion
 

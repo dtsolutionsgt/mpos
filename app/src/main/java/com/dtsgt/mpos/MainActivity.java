@@ -910,10 +910,18 @@ public class MainActivity extends PBase {
 
             mitems.clear();
 
+            /*
             if (gl.codigo_ruta ==0){
                 VendedoresObj.fill("WHERE (ACTIVO=1) AND (NIVEL<4) ORDER BY CODIGO_VENDEDOR");
             } else {
                 VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta+") AND (NIVEL<4) AND (ACTIVO=1) ORDER BY Nombre");
+            }
+            */
+
+            if (gl.codigo_ruta ==0){
+                VendedoresObj.fill("WHERE (ACTIVO=1)  ORDER BY CODIGO_VENDEDOR");
+            } else {
+                VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta+") AND (ACTIVO=1) ORDER BY Nombre");
             }
 
             for (int i = 0; i < VendedoresObj.count; i++) {

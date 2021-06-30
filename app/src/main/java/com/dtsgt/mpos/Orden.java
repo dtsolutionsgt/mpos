@@ -28,6 +28,7 @@ import com.dtsgt.base.clsClasses.clsOrden;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
+import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsP_impresoraObj;
@@ -470,11 +471,13 @@ public class Orden extends PBase {
                         item.Total=tt;
                     }
 
-                    items.add(item);
+                    if (!cuentaPagada(idorden,item.cuenta)) {
+                        items.add(item);
 
-                    tot+=tt;
-                    ttimp+=item.imp;
-                    ttperc+=item.percep;
+                        tot+=tt;
+                        ttimp+=item.imp;
+                        ttperc+=item.percep;
+                    }
 
                     DT.moveToNext();ii++;
                 }
@@ -762,7 +765,7 @@ public class Orden extends PBase {
         Cursor dt;
         double precdoc,fact,cantbas,peso;
         String umb;
-        int newid;
+        int newid,cui;
 
         tipo=prodTipo(gl.prodcod);
 
@@ -814,6 +817,8 @@ public class Orden extends PBase {
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
+            cui=app.cuentaActiva(idorden);
+
             ins.init("T_ORDEN");
 
             ins.add("ID",newid);
@@ -837,7 +842,7 @@ public class Orden extends PBase {
             ins.add("VAL3",0);
             ins.add("VAL4","0");
             ins.add("PERCEP",percep);
-            ins.add("CUENTA",1);
+            ins.add("CUENTA",cui);
             ins.add("ESTADO",1);
 
             db.execSQL(ins.sql());
@@ -1365,9 +1370,9 @@ public class Orden extends PBase {
                 case 2:
 
                     if (!ventaVacia()) {
-                    if (!app.validaCompletarCuenta(idorden)) {
-                        msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
-                    }
+                        if (!app.validaCompletarCuenta(idorden)) {
+                            msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
+                        }
                     }
 
                     msgAskCuentas("Completar la mesa");
@@ -2186,13 +2191,15 @@ public class Orden extends PBase {
 
     public void agregarCuenta() {
         try {
-            cantcuentas++;
 
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
 
+            int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+idorden+"')");
+            cantcuentas=newcid;
+
             cuenta.corel=idorden;
-            cuenta.id=cantcuentas;
+            cuenta.id=newcid;
             cuenta.cf=1;
             cuenta.nombre="Consumidor final";
             cuenta.nit="C.F.";
@@ -2201,7 +2208,7 @@ public class Orden extends PBase {
 
             T_ordencuentaObj.add(cuenta);
 
-            asignaCuenta(cantcuentas);
+            asignaCuenta(newcid);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -2240,6 +2247,16 @@ public class Orden extends PBase {
             relsep.setVisibility(View.GONE);
             lblCent.setVisibility(View.GONE);
             relsep2.setBackgroundColor(Color.parseColor("#DBF5F3"));
+        }
+    }
+
+    private Boolean cuentaPagada(String corr,int id) {
+        try {
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            D_facturaObj.fill("WHERE (FACTLINK='"+corr+"_"+id+"') AND (ANULADO=0)");
+            return D_facturaObj.count!=0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
     }
 
@@ -2688,17 +2705,24 @@ public class Orden extends PBase {
     private void showMenuCuenta() {
         clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
         final AlertDialog Dialog;
+        int maxcuenta=1;
 
         try {
 
             T_ordencuentaObj.fill("WHERE (COREL='"+idorden+"') ORDER BY ID");
+            for (int i = T_ordencuentaObj.count-1; i>=0; i--) {
+                if (cuentaPagada(idorden, T_ordencuentaObj.items.get(i).id)) {
+                    T_ordencuentaObj.items.remove(i);
+                } else {
+                    if (T_ordencuentaObj.items.get(i).id>maxcuenta) maxcuenta=T_ordencuentaObj.items.get(i).id;
+                }
+            }
 
-            final String[] selitems = new String[T_ordencuentaObj.count];
+            cantcuentas=T_ordencuentaObj.items.size();
+            final String[] selitems = new String[cantcuentas];
 
-            cantcuentas=T_ordencuentaObj.count;
-
-            for (int i = 0; i <T_ordencuentaObj.count; i++) {
-                selitems[i]=""+(i+1);
+            for (int i = 0; i <cantcuentas; i++) {
+                selitems[i]=""+T_ordencuentaObj.items.get(i).id;
             }
 
             AlertDialog.Builder menudlg = new AlertDialog.Builder(this);

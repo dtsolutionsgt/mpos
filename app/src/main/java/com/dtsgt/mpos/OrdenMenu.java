@@ -375,7 +375,7 @@ public class OrdenMenu extends PBase {
     private boolean saveItem() {
         Cursor dt;
         clsClasses.clsT_ordencombo item;
-        int newid;
+        int newid,cui;
 
         try {
             sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";
@@ -424,6 +424,8 @@ public class OrdenMenu extends PBase {
                 T_comboObj.add(item);
             }
 
+            cui=app.cuentaActiva(idorden);
+
             ins.init("T_ORDEN");
 
             ins.add("ID",newid);
@@ -446,7 +448,7 @@ public class OrdenMenu extends PBase {
             ins.add("VAL3",0);
             ins.add("VAL4",""+uitemid);
             ins.add("PERCEP",0);
-            ins.add("CUENTA",1);
+            ins.add("CUENTA",cui);
             ins.add("ESTADO",1);
 
             db.execSQL(ins.sql());

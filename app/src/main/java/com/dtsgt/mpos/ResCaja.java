@@ -114,15 +114,15 @@ public class ResCaja extends PBase {
 
     private void listItems() {
         long ff;
-        String fs;
+        String fs,ssa;
 
         try {
-
             sql="SELECT T_ORDENCUENTA.ID AS Cuenta, P_RES_SESION.ID AS Corel, P_RES_MESA.NOMBRE, P_RES_SESION.ESTADO, P_RES_SESION.FECHAULT ,   '','','','' " +
                     "FROM P_RES_SESION INNER JOIN " +
                     "T_ORDENCUENTA ON P_RES_SESION.ID =T_ORDENCUENTA.COREL INNER JOIN " +
                     "P_RES_MESA ON P_RES_SESION.CODIGO_MESA = P_RES_MESA.CODIGO_MESA " +
-                    "WHERE (P_RES_SESION.ESTADO IN (1, 2, 3)) ORDER BY P_RES_MESA.NOMBRE, CUENTA ";
+                    "WHERE (P_RES_SESION.ESTADO IN (1, 2, 3)) " +
+                    "ORDER BY P_RES_MESA.NOMBRE, CUENTA ";
             ViewObj.fillSelect(sql);
 
             for (int i = 0; i <ViewObj.count; i++) {
@@ -135,7 +135,13 @@ public class ResCaja extends PBase {
                 }
                 ViewObj.items.get(i).f4=fs;
 
-                if (cuentaPagada(ViewObj.items.get(i).f1,ViewObj.items.get(i).pk)) ViewObj.items.get(i).f3="4";
+                if (cuentaPagada(ViewObj.items.get(i).f1,ViewObj.items.get(i).pk)) {
+                    ViewObj.items.get(i).f3="4";
+                }
+            }
+
+            for (int  i=ViewObj.count-1; i>=0; i--) {
+                if (ViewObj.items.get(i).f3.equalsIgnoreCase("4")) ViewObj.items.remove(i);
             }
 
             adapter=new LA_ResCaja(this,this,ViewObj.items);
@@ -330,6 +336,17 @@ public class ResCaja extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
     }
+
+    private Boolean cuentaVacia(String corr,int id) {
+        try {
+            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+            D_facturaObj.fill("WHERE (FACTLINK='"+corr+"_"+id+"') AND (ANULADO=0)");
+            return D_facturaObj.count!=0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
 
     //endregion
 
