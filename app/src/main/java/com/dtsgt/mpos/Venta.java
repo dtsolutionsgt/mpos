@@ -328,7 +328,7 @@ public class Venta extends PBase {
                         prodid=item.Cod;gl.prodid=prodid;
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
-                        uid=item.emp;gl.menuitemid=uid;seluid=uid;
+                        uid=item.emp;gl.menuitemid=uid;seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
                         adapter.setSelectedIndex(position);
 
                         gl.gstr=item.Nombre;
@@ -336,19 +336,21 @@ public class Venta extends PBase {
                         gl.limcant=getDisp(prodid);
                         menuitemadd=false;
 
-                        //tipo=prodTipo(gl.prodcod);
-                        tipo=prodTipo(prodid);
-                        gl.tipoprodcod=tipo;
-                        if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
-                            browse=6;
-                            gl.menuitemid=prodid;
-                            startActivity(new Intent(Venta.this,VentaEdit.class));
-                        } else if (tipo.equalsIgnoreCase("M")) {
-                            gl.newmenuitem=false;
-                            gl.menuitemid=item.emp;
-                            browse=7;
-                            startActivity(new Intent(Venta.this,ProdMenu.class));
-                        }
+                        if (!gl.ventalock) {
+                            //tipo=prodTipo(gl.prodcod);
+                            tipo=prodTipo(prodid);
+                            gl.tipoprodcod=tipo;
+                            if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
+                                browse=6;
+                                gl.menuitemid=prodid;
+                                startActivity(new Intent(Venta.this,VentaEdit.class));
+                            } else if (tipo.equalsIgnoreCase("M")) {
+                                gl.newmenuitem=false;
+                                gl.menuitemid=item.emp;
+                                browse=7;
+                                startActivity(new Intent(Venta.this,ProdMenu.class));
+                            }
+                         }
 
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -360,6 +362,8 @@ public class Venta extends PBase {
             listView.setOnItemLongClickListener(new OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                    if (gl.ventalock) return true;
 
                     try {
                         Object lvObj = listView.getItemAtPosition(position);
@@ -1339,6 +1343,15 @@ public class Venta extends PBase {
         }
     }
 
+    public void cambiaPrecio() {
+        //Use the value uid for identify row in T_VENTA
+        //  SELECT .... FROM T_VENTA WHERE (EMPRESA='+uid+') ...
+
+        if (uid.equalsIgnoreCase("0")) return;
+
+        valorDescuento();
+    }
+
     //endregion
 
     //region Barras
@@ -1799,6 +1812,37 @@ public class Venta extends PBase {
         }
     }
 
+    private void valorDescuento() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Porcentaje descuento");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    double val=Double.parseDouble(s);
+                    if (val<0) throw new Exception();
+                } catch (Exception e) {
+                    mu.msgbox("Porcentaje incorrecto");return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
 
     //endregion
 
@@ -1946,11 +1990,24 @@ public class Venta extends PBase {
                 }
 
                 item = clsCls.new clsMenu();
-                item.ID=50;item.Name="Buscar ";item.Icon=50;
+                item.ID=52;item.Name="Cliente";item.Icon=52;
                 mmitems.add(item);
 
+
                 item = clsCls.new clsMenu();
-                item.ID=52;item.Name="Cliente";item.Icon=52;
+                item.ID=71;item.Name="Descuento";item.Icon=71;
+                mmitems.add(item);
+
+                /*
+                if (!app.usaFEL()) {
+                    item = clsCls.new clsMenu();
+                    item.ID=72;item.Name="Descuento por total";item.Icon=72;
+                    mmitems.add(item);
+                }
+                */
+
+                item = clsCls.new clsMenu();
+                item.ID=50;item.Name="Buscar ";item.Icon=50;
                 mmitems.add(item);
 
                 item = clsCls.new clsMenu();
@@ -2053,6 +2110,10 @@ public class Venta extends PBase {
                 case 70:
                     startActivity(new Intent(this,ImpresMsg.class));
                     break;
+                case 71:
+                    cambiaPrecio();break;
+                case 72:
+                    msgbox("Pendiente implementacion");break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -2998,6 +3059,8 @@ public class Venta extends PBase {
         lblVend.setText("");
 
         khand.clear(true);khand.enable();
+
+        uid="0";
     }
 
     private boolean hasProducts(){
@@ -3406,7 +3469,7 @@ public class Venta extends PBase {
 
         //if (gl.ventalock) toast("El orden está protegido, no se puede modificar");
 
-        listView.setEnabled(!gl.ventalock);
+        //listView.setEnabled(!gl.ventalock);
         grdfam.setEnabled(!gl.ventalock);
         grdprod.setEnabled(!gl.ventalock);
 

@@ -2483,7 +2483,7 @@ public class Orden extends PBase {
                         if (selitem.Cant>1) {
                             msgAskDividir("Dividir articulo");
                         } else {
-                            toastcent("Articulo con cantidad 1 no se puede dividir");
+                            toastcent("No se puede dividir articulo con cantidad 1 ");
                         }
                         break;
                 }
