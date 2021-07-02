@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -1798,8 +1799,8 @@ public class Menu extends PBase {
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
 
-            String[] TO = {"jpospichal@dtsguatemala.onmicrosoft.com"};if (!cor.isEmpty()) TO[0]=cor;
-            String[] CC = {"jpospichal@dtsguatemala.onmicrosoft.com"};
+            String[] TO = {"jpospichal@dts.com.gt"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"jpospichal@dts.com.gt"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
@@ -1818,7 +1819,50 @@ public class Menu extends PBase {
         }
     }
 
-    private void imprimirCierre() {
+    private void enviaImpresion() {
+        String subject,body;
+        String dir=Environment.getExternalStorageDirectory()+"";
+
+        try {
+            subject="Cierre del dia : Ruta ID - "+gl.codigo_ruta;
+            body="Adjunto cierre del dia";
+
+            Uri uri=null;
+            try {
+                File f1 = new File(dir + "/print.txt");
+                uri = Uri.fromFile(f1);
+
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
+
+            String[] TO = {"jpospichal@dts.com.gt"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"dtsolutionsgt@gmail.com"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("text/plain");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+            startActivity(emailIntent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void imprimirCierre(boolean envio) {
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
         try {
@@ -1828,14 +1872,21 @@ public class Menu extends PBase {
             clsT_cierreObj T_cierreObj=new clsT_cierreObj(this,Con,db);
             T_cierreObj.fill("ORDER BY ID");
 
+            if (T_cierreObj.items.size()==0) {
+                msgbox("No existe respaldo del ultimo cierre");return;
+            }
+
             for (int i = 0; i < T_cierreObj.items.size(); i++) {
                 writer.write(T_cierreObj.items.get(i).texto);writer.write("\r\n");
             }
 
             writer.close();
 
-            app.doPrint();
-
+            if (envio) {
+                enviaImpresion();
+            } else {
+                app.doPrint();
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -2042,12 +2093,18 @@ public class Menu extends PBase {
 
     private void msgAskUltimoCierre() {
         ExDialog dialog = new ExDialog(this);
-        dialog.setMessage("¿Imprimir ultimo cierre?");
+        dialog.setMessage("Ultimo cierre");
         dialog.setCancelable(false);
 
         dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                imprimirCierre();
+                imprimirCierre(false);
+            }
+        });
+
+        dialog.setNeutralButton("Enviar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                imprimirCierre(true);
             }
         });
 

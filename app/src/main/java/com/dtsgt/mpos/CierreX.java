@@ -1,9 +1,11 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,9 +23,13 @@ import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_cierreObj;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class CierreX extends PBase {
@@ -179,11 +185,11 @@ public class CierreX extends PBase {
                     respaldoReporte();
                     txtbtn.setText("IMPRIMIR");
                     report = true;
-                }else {
+                } else {
                     return;
                 }
 
-            }else {
+            } else {
                 printDoc();
             }
         }catch (Exception e){
@@ -754,11 +760,10 @@ public class CierreX extends PBase {
     }
 
     public void printDoc() {
-        try{
-            app.doPrint();
+        try {
+            if (checkPrintFile()) app.doPrint();
             //printEpson();
             //prn.printask();
-
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -1494,7 +1499,7 @@ public class CierreX extends PBase {
 
     //endregion
 
-    //region Aux
+    //region Dialogs
 
     private void msgAskExit(String msg) {
         ExDialog dialog = new ExDialog(this);
@@ -1514,6 +1519,23 @@ public class CierreX extends PBase {
 
     }
 
+    private void msgAskReset(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                restartApp();
+            }
+        });
+
+        dialog.show();
+    }
+
+    //endregion
+
+    //region Aux
+
     private void writeCorelLog(int id,int corel,String text) {
         String ss;
         try {
@@ -1521,6 +1543,47 @@ public class CierreX extends PBase {
             db.execSQL(ss);
         } catch (Exception e) {
         }
+    }
+
+    private boolean checkPrintFile() {
+        FileInputStream fIn = null;
+        BufferedReader myReader = null;
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/print.txt");
+
+            fIn = new FileInputStream(file1);
+            myReader = new BufferedReader(new InputStreamReader(fIn));
+
+            String line = myReader.readLine();
+            myReader.close();fIn.close();
+
+            return true;
+        } catch (Exception e) {
+            try {
+                myReader.close();fIn.close();
+            } catch (Exception ee) {}
+        }
+
+        msgAskReset("Ocurrio error en impresion del cierre del dia.\n" +
+                    "La aplicacion se reinicializará.\n" +
+                    "Para la impresión utilize opcion - Reportes / Ultimo cierre");
+        return false;
+    }
+
+    private void restartApp() {
+        try{
+            PackageManager packageManager = this.getPackageManager();
+            Intent intent = packageManager.getLaunchIntentForPackage(this.getPackageName());
+            ComponentName componentName = intent.getComponent();
+            Intent mainIntent =Intent.makeRestartActivityTask(componentName);
+            //Intent mainIntent = IntentCompat..makeRestartActivityTask(componentName);
+            this.startActivity(mainIntent);
+            System.exit(0);
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
     }
 
     //endregion
