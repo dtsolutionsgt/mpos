@@ -14,7 +14,7 @@ public class PagoTarjeta extends PBase {
     private EditText txtMonto, txtAut;
     private TextView lblTipo;
 
-    final String[] selitems = new String[5];
+        final String[] selitems = new String[7];
 
     private double monto;
     private String tipo="Visa",aut;
@@ -132,7 +132,6 @@ public class PagoTarjeta extends PBase {
             }
 
             ins.init("T_PAGO");
-
             ins.add("ITEM",item);
             ins.add("CODPAGO",codpago);
             ins.add("TIPO","K");
@@ -159,6 +158,8 @@ public class PagoTarjeta extends PBase {
         selitems[2]="Mastercard";
         selitems[3]="Discover";
         selitems[4]="Citibank";
+        selitems[5]="Transferencia";
+        selitems[6]="Cheque";
     }
 
     private void listaTipos() {

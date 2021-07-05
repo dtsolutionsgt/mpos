@@ -170,6 +170,7 @@ public class clsDocFactura extends clsDocument {
 		vendedor=val;
 		
 		try {
+
 			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO " +
 				"FROM P_CLIENTE WHERE CODIGO_CLIENTE ='"+cli+"'";
 
@@ -193,6 +194,7 @@ public class clsDocFactura extends clsDocument {
 	    }
 
 		try {
+
 			sql="SELECT TIPO FROM D_FACTURAP WHERE (COREL='"+corel+"') AND (TIPO='E')";
 			DT=Con.OpenDT(sql);
 
@@ -201,11 +203,40 @@ public class clsDocFactura extends clsDocument {
             } else {
 			    pagoefectivo=0;
             }
+
 		} catch (Exception e) {
             pagoefectivo=0;
 		}
 
+        //#EJC20210705: TipoCredito, NoAutorizacion;
+        try {
+
+            sql="SELECT A.DESC2 AS Tipo, A.DESC1 AS Autorizacion FROM T_PAGO A\n" +
+                    "INNER JOIN P_MEDIAPAGO B\n" +
+                    "ON A.CODPAGO = B.CODIGO\n" +
+                    "INNER JOIN D_FACTURAP P\n" +
+                    "ON A.ITEM = P.ITEM\n" +
+                    "AND B.NIVEL = 4 AND (P.COREL='" +corel+ "')";
+            DT=Con.OpenDT(sql);
+
+            if(DT!=null){
+                DT.moveToFirst();
+                if (DT.getCount()>0) {
+                    TipoCredito=DT.getString(0);
+                    NoAutorizacion=DT.getString(1);
+                } else {
+                    TipoCredito="";
+                    NoAutorizacion="";
+                }
+            }
+
+        } catch (Exception e) {
+            TipoCredito="";
+            NoAutorizacion="";
+        }
+
         propina=0;
+
         try {
             sql="SELECT PROPINA FROM D_FACTURAPR WHERE (COREL='"+corel+"')";
             DT=Con.OpenDT(sql);
@@ -265,10 +296,8 @@ public class clsDocFactura extends clsDocument {
 			while (!DT.isAfterLast()) {
 
                 item = new itemData();
-
                 item.cod = DT.getString(0);
                 item.nombre = DT.getString(1);
-
                 item.cant = DT.getDouble(2);
                 item.prec = DT.getDouble(3);
                 item.imp = DT.getDouble(4);
@@ -280,7 +309,6 @@ public class clsDocFactura extends clsDocument {
                 item.peso = DT.getDouble(10);
                 if (sinimp) item.tot = item.tot - item.imp;
                 item.flag=false;
-
                 items.add(item);
 
                 if (DT.getDouble(11)==1) {

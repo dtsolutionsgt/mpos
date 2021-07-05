@@ -26,6 +26,7 @@ public class clsDocument {
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
 	public boolean parallevar,factsinpropina,modorest;
 	public int ffecha,pendiente,diacred,pagoefectivo;
+	public String TipoCredito, NoAutorizacion;
 	public double ptotal,pdesc,pprop,propvalor,propperc;
 
 	protected android.database.sqlite.SQLiteDatabase db;
@@ -118,6 +119,7 @@ public class clsDocument {
 	}
 
     public boolean buildPrint(String corel,int reimpres,String modo,boolean esfactura) {
+
         int flag;
 
         modofact=modo;
@@ -286,7 +288,6 @@ public class clsDocument {
 	
 	protected boolean loadHeadData(String corel) {
 		nombre="";numero="";serie="";ruta="";vendedor="";cliente="";
-		
 		return true;
 	}
 
@@ -379,6 +380,7 @@ public class clsDocument {
             if (!emptystr(clidir)) {
 
                 clidir="Dir:"+clidir;
+
                 if (clidir.length()>prw) {
 
                     String nuevaCadena = "", cadena = "";
@@ -427,7 +429,13 @@ public class clsDocument {
 			if (pagoefectivo==1){
                 rep.add("Condiciones de pago: Efectivo");
 			} else {
-                rep.add("Condiciones de pago: Crédito");
+
+			    if(!TipoCredito.isEmpty()){
+                    rep.add("Condiciones de pago: " + TipoCredito + " Aut#: " + NoAutorizacion);
+                }else{
+                    rep.add("Condiciones de pago: Crédito");
+                }
+
 			}
 		}
 
@@ -805,6 +813,7 @@ public class clsDocument {
     // Aux
 	
 	private boolean loadHeadLines() {
+
         clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
 		Cursor DT;	
 		String s,sucur;

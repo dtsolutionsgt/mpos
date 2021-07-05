@@ -337,7 +337,9 @@ public class FacturaRes extends PBase {
 	}
 
     public void payCard(View view) {
+
         pendiente=false;
+
         try{
 
             if (fcorel==0) {
@@ -751,10 +753,13 @@ public class FacturaRes extends PBase {
 	}
 
 	private void impresionDocumento() {
+
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
 		try {
+
             gl.nombre_mesero="";
+
             if (gl.mesero_venta>0) {
                 clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
                 VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.mesero_venta);
