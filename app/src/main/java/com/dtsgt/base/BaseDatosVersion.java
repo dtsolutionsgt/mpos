@@ -643,14 +643,6 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
-
-        try {
-
-
-
-        } catch (Exception e) {
-        }
-
     }
 
 	private boolean update01() {

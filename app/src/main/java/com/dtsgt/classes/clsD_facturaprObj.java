@@ -74,7 +74,6 @@ public class clsD_facturaprObj {
     private void addItem(clsClasses.clsD_facturapr item) {
 
         ins.init("D_facturapr");
-
         ins.add("EMPRESA",item.empresa);
         ins.add("COREL",item.corel);
         ins.add("ANULADO",item.anulado);
@@ -84,7 +83,6 @@ public class clsD_facturaprObj {
         ins.add("PROPINA",item.propina);
         ins.add("PROPPERC",item.propperc);
         ins.add("PROPEXTRA",item.propextra);
-
         db.execSQL(ins.sql());
 
     }
@@ -92,7 +90,6 @@ public class clsD_facturaprObj {
     private void updateItem(clsClasses.clsD_facturapr item) {
 
         upd.init("D_facturapr");
-
         upd.add("ANULADO",item.anulado);
         upd.add("FECHA",item.fecha);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
@@ -100,9 +97,7 @@ public class clsD_facturaprObj {
         upd.add("PROPINA",item.propina);
         upd.add("PROPPERC",item.propperc);
         upd.add("PROPEXTRA",item.propextra);
-
         upd.Where("(EMPRESA="+item.empresa+") AND (COREL='"+item.corel+"')");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -132,7 +127,6 @@ public class clsD_facturaprObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_facturapr();
-
             item.empresa=dt.getInt(0);
             item.corel=dt.getString(1);
             item.anulado=dt.getInt(2);
@@ -190,7 +184,6 @@ public class clsD_facturaprObj {
     public String updateItemSql(clsClasses.clsD_facturapr item) {
 
         upd.init("D_facturapr");
-
         upd.add("ANULADO",item.anulado);
         upd.add("FECHA",item.fecha);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);

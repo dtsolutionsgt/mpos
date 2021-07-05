@@ -70,34 +70,32 @@ public class clsP_mediapagoObj {
 
 
     // Private
-
+    //#ejc20210705: Agregué propina en insert
     private void addItem(clsClasses.clsP_mediapago item) {
 
-        ins.init("P_mediapago");
-
+        ins.init("P_MEDIAPAGO");
         ins.add("CODIGO",item.codigo);
         ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
         ins.add("NIVEL",item.nivel);
         ins.add("PORCOBRO",item.porcobro);
-
+//        ins.add("PROPINA",item.propina);
         db.execSQL(ins.sql());
 
     }
 
+    //#ejc20210705: Agregué propina en update
     private void updateItem(clsClasses.clsP_mediapago item) {
 
-        upd.init("P_mediapago");
-
+        upd.init("p_mediapago");
         upd.add("EMPRESA",item.empresa);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
         upd.add("NIVEL",item.nivel);
         upd.add("PORCOBRO",item.porcobro);
-
+//        upd.add("PROPINA",item.propina);
         upd.Where("(CODIGO="+item.codigo+")");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -115,6 +113,7 @@ public class clsP_mediapagoObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsP_mediapago item;
 
@@ -127,16 +126,14 @@ public class clsP_mediapagoObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_mediapago();
-
             item.codigo=dt.getInt(0);
             item.empresa=dt.getInt(1);
             item.nombre=dt.getString(2);
             item.activo=dt.getInt(3);
             item.nivel=dt.getInt(4);
             item.porcobro=dt.getInt(5);
-
+//            item.propina=dt.getInt(6);
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -145,6 +142,7 @@ public class clsP_mediapagoObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -163,31 +161,28 @@ public class clsP_mediapagoObj {
 
     public String addItemSql(clsClasses.clsP_mediapago item) {
 
-        ins.init("P_mediapago");
-
+        ins.init("P_MEDIAPAGO");
         ins.add("CODIGO",item.codigo);
         ins.add("EMPRESA",item.empresa);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
         ins.add("NIVEL",item.nivel);
         ins.add("PORCOBRO",item.porcobro);
-
+//        ins.add("PROPINA",item.propina);
         return ins.sql();
 
     }
 
     public String updateItemSql(clsClasses.clsP_mediapago item) {
 
-        upd.init("P_mediapago");
-
+        upd.init("P_MEDIAPAGO");
         upd.add("EMPRESA",item.empresa);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
         upd.add("NIVEL",item.nivel);
         upd.add("PORCOBRO",item.porcobro);
-
+//        upd.add("PROPINA",item.propina);
         upd.Where("(CODIGO="+item.codigo+")");
-
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();

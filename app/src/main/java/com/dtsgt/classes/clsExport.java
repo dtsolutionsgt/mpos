@@ -330,29 +330,26 @@ public class clsExport {
 
     public String media_ins(clsClasses.clsP_mediapago item) {
 
-        ins.init("P_mediapago");
-
+        ins.init("P_MEDIAPAGO");
         ins.add("CODIGO", item.codigo);
         ins.add("NOMBRE", item.nombre);
         ins.add("ACTIVO", item.activo);
         ins.add("NIVEL", item.nivel);
         ins.add("PORCOBRO", item.porcobro);
         ins.add("EMPRESA", emp);
-
+        ins.add("PROPINA", item.propina);
         return ins.sql();
     }
 
     public String media_upd(clsClasses.clsP_mediapago item) {
 
-        upd.init("P_mediapago");
-
+        upd.init("P_MEDIAPAGO");
         upd.add("NOMBRE", item.nombre);
         upd.add("ACTIVO", item.activo);
         upd.add("NIVEL", item.nivel);
         upd.add("PORCOBRO", item.porcobro);
-
+        upd.add("PROPINA", item.propina);
         upd.Where("(CODIGO=" + item.codigo + ") AND (EMPRESA='"+emp+"')");
-
         return upd.sql();
     }
 
@@ -362,12 +359,10 @@ public class clsExport {
 
     public String nivelprecio_ins(clsClasses.clsP_nivelprecio item) {
         ins.init("P_nivelprecio");
-
         ins.add("CODIGO", item.codigo);
         ins.add("NOMBRE", item.nombre);
         ins.add("ACTIVO", item.activo);
         ins.add("EMPRESA", emp);
-
         return ins.sql();
     }
 

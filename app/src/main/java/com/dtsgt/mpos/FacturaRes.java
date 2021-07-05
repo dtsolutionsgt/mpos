@@ -100,7 +100,8 @@ public class FacturaRes extends PBase {
     private clsKeybHandler khand;
 
 	private long fecha,fechae;
-	private int fcorel,clidia,media;
+	private int fcorel,clidia, Nivel_Media_Pago;
+	private boolean EsNivelPrecioDelivery =false;
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea;
 
@@ -155,7 +156,9 @@ public class FacturaRes extends PBase {
 
 		cliid=gl.cliente;
 		rutapos=gl.rutapos;
-		media=gl.media;
+		Nivel_Media_Pago =gl.media;
+		EsNivelPrecioDelivery = gl.EsNivelPrecioDelivery;
+
 		credito=gl.credito;
         idfel=gl.peFEL;
 
@@ -190,7 +193,7 @@ public class FacturaRes extends PBase {
             imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
         }
 
-        if (media==4) {
+        if (Nivel_Media_Pago ==4) {
             if (credito<=0 || gl.facturaVen != 0) {
                 imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
             } else if(credito > 0){
@@ -590,14 +593,18 @@ public class FacturaRes extends PBase {
 			descmon=mu.round2(dfinmon);
 			stot=mu.round2(stot0);
 
-            propinaperc=gl.pePropinaPerc;
-			if (gl.pePropinaFija) {
-                propina=stot*gl.pePropinaPerc/100;propina=mu.round2(propina);
-            } else {
-                propina=gl.propina_valor;
-            }
+			if (!EsNivelPrecioDelivery){
+				propinaperc=gl.pePropinaPerc;
+				if (gl.pePropinaFija) {
+					propina=stot*gl.pePropinaPerc/100;propina=mu.round2(propina);
+				} else {
+					propina=gl.propina_valor;
+				}
 
-            propina=mu.round2(propina+propinaext);
+				propina=mu.round2(propina+propinaext);
+			}else{
+				propina=0;
+			}
 
 			fillTotals();
 
@@ -1131,11 +1138,13 @@ public class FacturaRes extends PBase {
             //region D_FACTURAPR Propina por factura - solo modulo restaurante
 
             if (gl.peRest) {
+
                 if (propina>0) {
 
                     propina=mu.round2(propina);
 
                     try {
+
                         clsD_facturaprObj D_facturaprObj = new clsD_facturaprObj(this, Con, db);
                         clsClasses.clsD_facturapr itempr = clsCls.new clsD_facturapr();
 
@@ -1159,9 +1168,11 @@ public class FacturaRes extends PBase {
                         }
 
                         D_facturaprObj.add(itempr);
+
                     } catch (Exception e) {
                         msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
                     }
+
                 }
             }
 
@@ -1261,7 +1272,6 @@ public class FacturaRes extends PBase {
 				// Factura Stock
 
 				ins.init("D_FACTURA_STOCK");
-
 				ins.add("COREL",corel);
 				ins.add("CODIGO",prid );
 				ins.add("CANT",cantapl );
@@ -1269,7 +1279,6 @@ public class FacturaRes extends PBase {
 				ins.add("PESO",pesoapl);
 				ins.add("plibra",dt.getDouble(3));
 				ins.add("LOTE",lote );
-
 				ins.add("DOCUMENTO",doc);
 				ins.add("FECHA",dt.getInt(6));
 				ins.add("ANULADO",dt.getInt(7));
@@ -2123,6 +2132,7 @@ public class FacturaRes extends PBase {
     }
 
     private void applyCash() {
+
 	    Cursor dt;
 		double epago;
         int codpago=0;
@@ -2136,16 +2146,6 @@ public class FacturaRes extends PBase {
 
 			if (epago<0) throw new Exception();
 
-			//sql="DELETE FROM T_PAGO WHERE CODPAGO=1";
-			//db.execSQL(sql);
-			//if (epago>plim) {
-			//	MU.msgbox("Total de pago mayor que total de saldos.");return;
-			//}
-
-			//if (epago>tsel) {
-			//	msgAskOverPayd("Total de pago mayor que saldo\nContinuar");return;
-			//}
-
 			sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 1";
 			dt = Con.OpenDT(sql);
 			if(dt!=null) {
@@ -2156,9 +2156,6 @@ public class FacturaRes extends PBase {
 
                 if (dt!=null) dt.close();
 			}
-
-			//sql="DELETE FROM T_PAGO";
-			//db.execSQL(sql);
 
             int item=1;
 

@@ -1861,7 +1861,9 @@ public class WSRec extends PBase {
     }
 
     private void processMedia() {
+
         try {
+
             clsP_mediapagoObj handler = new clsP_mediapagoObj(this, Con, db);
             clsBeP_MEDIAPAGOList items = new clsBeP_MEDIAPAGOList();
             clsBeP_MEDIAPAGO item = new clsBeP_MEDIAPAGO();
@@ -1877,6 +1879,7 @@ public class WSRec extends PBase {
                 return;
             }
 
+            //#EJC20210705: Agregué propina por media_pago.
             for (int i = 0; i < items.items.size(); i++) {
                 item = items.items.get(i);
                 var = clsCls.new clsP_mediapago();
@@ -1885,6 +1888,7 @@ public class WSRec extends PBase {
                 var.activo = mu.bool(item.ACTIVO);
                 var.nivel = item.NIVEL;
                 var.porcobro = mu.bool(item.PORCOBRO);
+                var.propina = item.PROPINA;
                 script.add(handler.addItemSql(var));
             }
 
@@ -1895,6 +1899,7 @@ public class WSRec extends PBase {
     }
 
     private void processMoneda() {
+
         try {
 
             clsP_monedaObj handler = new clsP_monedaObj(this, Con, db);
@@ -1930,7 +1935,9 @@ public class WSRec extends PBase {
     }
 
     private void processNivel() {
+
         try {
+
             clsP_nivelprecioObj handler = new clsP_nivelprecioObj(this, Con, db);
             clsBeP_NIVELPRECIOList items = new clsBeP_NIVELPRECIOList();
             clsBeP_NIVELPRECIO item = new clsBeP_NIVELPRECIO();

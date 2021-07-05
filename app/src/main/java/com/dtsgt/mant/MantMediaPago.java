@@ -17,6 +17,7 @@ public class MantMediaPago extends PBase {
 
     private ImageView imgstat,imgUpd,imgadd;
     private EditText txt1,txt2;
+    private EditText txtPropina;
 
     private clsP_mediapagoObj holder;
     private clsClasses.clsP_mediapago item=clsCls.new clsP_mediapago();
@@ -33,6 +34,7 @@ public class MantMediaPago extends PBase {
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        txtPropina = (EditText) findViewById(R.id.txtPropina);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgUpd = (ImageView) findViewById(R.id.imgImg2);imgUpd.setVisibility(View.INVISIBLE);
         imgadd = (ImageView) findViewById(R.id.imgImg2);
@@ -43,6 +45,7 @@ public class MantMediaPago extends PBase {
         holder =new clsP_mediapagoObj(this,Con,db);
 
         id=gl.gcods;
+
         loadItem();
 
         if (gl.peMCent) {
@@ -81,21 +84,26 @@ public class MantMediaPago extends PBase {
     //region Main
 
     private void loadItem() {
+
         try {
+
             holder.fill("WHERE CODIGO='"+id+"'");
             item=holder.first();
 
             showItem();
 
             imgstat.setVisibility(View.VISIBLE);
+
             if (item.activo==1) {
                 imgstat.setImageResource(R.drawable.delete_64);
             } else {
                 imgstat.setImageResource(R.drawable.mas);
             }
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     private void newItem() {
@@ -137,20 +145,25 @@ public class MantMediaPago extends PBase {
     private void showItem() {
         txt1.setText(""+item.codigo);
         txt2.setText(item.nombre);
+        txtPropina.setText(String.valueOf(item.propina));
     }
 
     private boolean validaDatos() {
+
         String ss;
 
         try {
 
             if (newitem) {
+
                 ss=txt1.getText().toString();
+
                 if (ss.isEmpty()) {
                     msgbox("¡Falta definir código!");return false;
                 }
 
                 holder.fill("WHERE CODIGO='"+ss+"'");
+
                 if (holder.count>0) {
                     msgbox("¡Código ya existe!\n"+holder.first().nombre);return false;
                 }

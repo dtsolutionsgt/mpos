@@ -1540,14 +1540,15 @@ public class Menu extends PBase {
 	}
 
 	private boolean validaVenta() {
+
 		Cursor DT;
 		int ci,cf,ca1,ca2;
 		long fecha_vigencia, diferencia;
 		double dd;
 		boolean resguardo=false;
 
-
 		try {
+
 			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL ";
 			DT=Con.OpenDT(sql);
 

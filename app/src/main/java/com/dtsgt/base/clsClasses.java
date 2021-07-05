@@ -637,6 +637,7 @@ public class clsClasses {
         public int  activo;
         public int  nivel;
         public int  porcobro;
+        public float propina;
     }
 
     public class clsP_nivelprecio {

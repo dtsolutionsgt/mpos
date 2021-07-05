@@ -13,13 +13,14 @@ public class clsBeP_MEDIAPAGO {
     @Element(required=false) public boolean ACTIVO;
     @Element(required=false) public int NIVEL;
     @Element(required=false) public boolean PORCOBRO;
+    @Element(required=false) public float PROPINA;
 
 
     public clsBeP_MEDIAPAGO() {
     }
 
     public clsBeP_MEDIAPAGO(int CODIGO,String EMPRESA,String NOMBRE,boolean ACTIVO,
-                            int NIVEL,boolean PORCOBRO) {
+                            int NIVEL,boolean PORCOBRO, float PROPINA) {
 
         this.CODIGO=CODIGO;
         this.EMPRESA=EMPRESA;
@@ -27,6 +28,7 @@ public class clsBeP_MEDIAPAGO {
         this.ACTIVO=ACTIVO;
         this.NIVEL=NIVEL;
         this.PORCOBRO=PORCOBRO;
+        this.PROPINA = PROPINA;
 
     }
 
@@ -61,11 +63,20 @@ public class clsBeP_MEDIAPAGO {
     public void setNIVEL(int value) {
         NIVEL=value;
     }
+
     public boolean getPORCOBRO() {
         return PORCOBRO;
     }
     public void setPORCOBRO(boolean value) {
         PORCOBRO=value;
+    }
+
+    //#EJC20210705: Agregué propina por media_pago.
+    public float getPROPINA() {
+        return PROPINA;
+    }
+    public void setPROPINA(float value) {
+        PROPINA=value;
     }
 
 }

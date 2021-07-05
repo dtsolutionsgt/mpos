@@ -2456,6 +2456,7 @@ public class FinDia extends PBase {
     }
 
     private void msgExit(String msg) {
+
         try{
             ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);

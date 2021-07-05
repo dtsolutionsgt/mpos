@@ -73,8 +73,8 @@ import java.util.ArrayList;
 public class Venta extends PBase {
 
     private ListView listView;
-    private GridView gridView,grdbtn,grdfam,grdprod;
-    private TextView lblTot,lblTit,lblAlm,lblVend,lblNivel,lblCant,lblBarra;
+    private GridView gridViewOpciones,grdbtn,grdfam,grdprod;
+    private TextView lblTot,lblTit,lblAlm,lblVend, lblCambiarNivelPrecio,lblCant,lblBarra;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
     private EditText txtBarra,txtFilter;
     private ImageView imgroad,imgscan,imgllevar;
@@ -495,11 +495,11 @@ public class Venta extends PBase {
                 }
             });
 
-            gridView.setOnItemClickListener(new OnItemClickListener() {
+            gridViewOpciones.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
-                        Object lvObj = gridView.getItemAtPosition(position);
+                        Object lvObj = gridViewOpciones.getItemAtPosition(position);
                         clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
                         adaptergrid.setSelectedIndex(position);
@@ -1276,6 +1276,16 @@ public class Venta extends PBase {
                 mu.msgbox("No puede continuar, no ha vendido ninguno producto !");return;
             }
 
+            try{
+                //#EJC20210705: Agregué validación de propina por media_pago.
+                gl.EsNivelPrecioDelivery = hasProductsDelivery();
+            } catch (Exception e){
+                gridViewOpciones.setEnabled(true);
+                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                mu.msgbox("finishOrder: "+e.getMessage());
+            }
+
+
             if (gl.codigo_cliente==0) {
                 toast("Falta definir cliente");
                 browse=8;
@@ -1305,19 +1315,6 @@ public class Venta extends PBase {
             gl.bonprodid="*";
             gl.bonus.clear();
 
-            /*
-            clsBonG=new clsBonifGlob(this,tot);
-            if (clsBonG.tieneBonif()) {
-                for (int i = 0; i <clsBonG.items.size(); i++) {
-                    //s=clsBonG.items.get(i).valor+"   "+clsBonG.items.get(i).tipolista+"  "+clsBonG.items.get(i).lista;
-                    //Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
-                    gl.bonus.add(clsBonG.items.get(i));
-                }
-            } else {
-
-            }
-            */
-
             if (gl.dvbrowse!=0){
                 if (tot<gl.dvdispventa){
                     mu.msgbox("No puede totalizar la factura, es menor al monto permitido para la nota de crédito: " + gl.dvdispventa);return;
@@ -1327,7 +1324,7 @@ public class Venta extends PBase {
 
             browse=0;
 
-            gridView.setEnabled(false);
+            gridViewOpciones.setEnabled(false);
 
             Intent intent = new Intent(this,FacturaRes.class);
             startActivity(intent);
@@ -1337,7 +1334,7 @@ public class Venta extends PBase {
                 //startActivity(intent);
             }
         } catch (Exception e){
-            gridView.setEnabled(true);
+            gridViewOpciones.setEnabled(true);
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             mu.msgbox("finishOrder: "+e.getMessage());
         }
@@ -2186,7 +2183,7 @@ public class Venta extends PBase {
             */
 
             adaptergrid=new ListAdaptMenuVenta(this, mitems);
-            gridView.setAdapter(adaptergrid);
+            gridViewOpciones.setAdapter(adaptergrid);
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -2635,8 +2632,8 @@ public class Venta extends PBase {
             T_ventaObj.fill();
 
             for (int i = 0; i <T_ventaObj.count; i++) {
-                venta=T_ventaObj.items.get(i);
 
+                venta=T_ventaObj.items.get(i);
                 prid=app.codigoProducto(venta.producto);
                 s=mu.frmdecno(venta.cant)+" x "+getProd(prid);
                 rep.add(s);
@@ -2879,7 +2876,8 @@ public class Venta extends PBase {
 
         try{
             listView = (ListView) findViewById(R.id.listView1);
-            gridView = (GridView) findViewById(R.id.gridView2);gridView.setEnabled(true);
+            gridViewOpciones = (GridView) findViewById(R.id.gridView2);
+            gridViewOpciones.setEnabled(true);
             grdfam = (GridView) findViewById(R.id.grdFam);
             grdprod = (GridView) findViewById(R.id.grdProd);
             grdbtn = (GridView) findViewById(R.id.grdbtn);
@@ -2890,7 +2888,7 @@ public class Venta extends PBase {
             lblTit= (TextView) findViewById(R.id.lblTit);
             lblAlm= (TextView) findViewById(R.id.lblTit2);
             lblVend= (TextView) findViewById(R.id.lblTit4);
-            lblNivel= (TextView) findViewById(R.id.lblTit3);
+            lblCambiarNivelPrecio = (TextView) findViewById(R.id.lblTit3);
             lblPokl= (TextView) findViewById(R.id.lblTit5);
 
             lblCant= (TextView) findViewById(R.id.lblCant);lblCant.setText("");
@@ -3067,13 +3065,38 @@ public class Venta extends PBase {
         Cursor dt;
 
         try {
+
             sql="SELECT PRODUCTO FROM T_VENTA";
             dt=Con.OpenDT(sql);
 
             int i=dt.getCount();
             if (dt!=null) dt.close();
+
             return i>0;
+
          } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            return false;
+        }
+    }
+
+    private boolean hasProductsDelivery(){
+        Cursor dt;
+
+        try {
+
+            sql="SELECT PRODUCTO FROM T_VENTA T INNER JOIN P_PRODUCTO P ON T.PRODUCTO = P.CODIGO WHERE P.CBCONV =1 ";
+            dt=Con.OpenDT(sql);
+            int CantRegistros=0;
+
+            if(dt!=null){
+                CantRegistros=dt.getCount();
+                if (dt!=null) dt.close();
+            }
+
+            return CantRegistros>0;
+
+        } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             return false;
         }
@@ -3455,7 +3478,8 @@ public class Venta extends PBase {
         try {
             for (int i = 0; i <P_nivelprecioObj.count; i++) {
                 if (P_nivelprecioObj.items.get(i).codigo==gl.nivel) {
-                    lblNivel.setText(""+P_nivelprecioObj.items.get(i).nombre);break;
+                    lblCambiarNivelPrecio.setText(""+P_nivelprecioObj.items.get(i).nombre);
+                    break;
                 }
             }
 
@@ -3466,13 +3490,8 @@ public class Venta extends PBase {
      }
 
     private void checkLock() {
-
-        //if (gl.ventalock) toast("El orden está protegido, no se puede modificar");
-
-        //listView.setEnabled(!gl.ventalock);
         grdfam.setEnabled(!gl.ventalock);
         grdprod.setEnabled(!gl.ventalock);
-
     }
 
     private void modoMeseros() {
@@ -3827,7 +3846,7 @@ public class Venta extends PBase {
         try {
             super.onResume();
 
-            gridView.setEnabled(true);
+            gridViewOpciones.setEnabled(true);
             if (gl.parallevar) imgllevar.setVisibility(View.VISIBLE);else imgllevar.setVisibility(View.INVISIBLE);
 
             D_pedidoObj.reconnect(Con,db);
