@@ -428,7 +428,7 @@
             android:layout_marginTop="212dp"
             android:layout_marginBottom="-212dp"
             android:layout_toEndOf="@+id/txt1"
-            android:text="   PARA LLEVAR"
+            android:text="LLEVAR"
             android:textColor="#000000"
             android:textColorHighlight="#000000"
             android:textSize="30sp"
