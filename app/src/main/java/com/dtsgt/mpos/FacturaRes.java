@@ -724,6 +724,8 @@ public class FacturaRes extends PBase {
 
         gl.cliposflag=false;
         gl.InvCompSend=false;
+        gl.delivery =false;
+        gl.pickup = false;
 
         if (gl.pelDespacho) generaOrdenDespacho();
 
@@ -763,8 +765,6 @@ public class FacturaRes extends PBase {
             //#CKFK 20210705
 			fdoc.es_pickup=gl.pickup;
 			fdoc.es_delivery=gl.delivery;
-
-
 
             if (gl.mesero_venta>0) {
                 clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
@@ -2946,6 +2946,10 @@ public class FacturaRes extends PBase {
 			db.execSQL("DELETE FROM T_PAGO");
 
 			db.execSQL("DELETE FROM T_BONITEM WHERE PRODID='*'");
+
+			//#CKFK 20210706
+			gl.pickup=false;
+			gl.delivery=false;
 
 		} catch (SQLException e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
