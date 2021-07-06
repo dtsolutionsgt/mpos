@@ -388,7 +388,6 @@ public class BaseDatosScript {
                     "ACTIVO INTEGER NOT NULL,"+
                     "NIVEL INTEGER NOT NULL,"+
                     "PORCOBRO INTEGER NOT NULL,"+
-                    "PROPINA REAL NOT NULL,"+
                     "PRIMARY KEY ([CODIGO])"+
                     ");";
             database.execSQL(sql);

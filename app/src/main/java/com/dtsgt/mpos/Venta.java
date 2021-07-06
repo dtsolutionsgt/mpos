@@ -1278,7 +1278,7 @@ public class Venta extends PBase {
 
             try{
                 //#EJC20210705: Agregué validación de propina por media_pago.
-                gl.EsNivelPrecioDelivery = hasProductsDelivery();
+                gl.EsNivelPrecioDelivery = (hasProductsDelivery() || gl.pickup);
             } catch (Exception e){
                 gridViewOpciones.setEnabled(true);
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

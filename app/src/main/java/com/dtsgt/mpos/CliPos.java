@@ -37,6 +37,7 @@ public class CliPos extends PBase {
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar;
+    private CheckBox cbpickup;
 
     //private wsInventCompartido wsi;
 
@@ -73,7 +74,7 @@ public class CliPos extends PBase {
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
         cbllevar = findViewById(R.id.checkBox21);
-
+        cbpickup = findViewById(R.id.chkPickup);
 
         setHandlers();
 
@@ -381,6 +382,7 @@ public class CliPos extends PBase {
 	private void terminaCliente() {
 
         gl.parallevar=cbllevar.isChecked();
+        gl.pickup = cbpickup.isChecked();
 
         if (gl.peInvCompart) {
             //bloqueado=true;

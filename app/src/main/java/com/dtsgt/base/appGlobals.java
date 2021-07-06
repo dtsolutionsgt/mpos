@@ -40,7 +40,7 @@ public class appGlobals extends Application {
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
-                   recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
+                   recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar, pickup,
                    impresion_comanda, modo_domicilio, cf_domicilio ;
 
 
