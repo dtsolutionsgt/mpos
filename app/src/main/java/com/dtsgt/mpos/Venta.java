@@ -1278,7 +1278,8 @@ public class Venta extends PBase {
 
             try{
                 //#EJC20210705: Agregué validación de propina por media_pago.
-                gl.EsNivelPrecioDelivery = (hasProductsDelivery() || gl.pickup);
+                gl.delivery = hasProductsDelivery();
+                gl.EsNivelPrecioDelivery = (gl.delivery || gl.pickup);
             } catch (Exception e){
                 gridViewOpciones.setEnabled(true);
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -3042,6 +3043,10 @@ public class Venta extends PBase {
         gl.ref1="";lblAlm.setText("");
         gl.ref2="";
         gl.ref3="";
+
+        //#CKFK 20210706
+        gl.pickup=false;
+        gl.delivery=false;
 
         numeroOrden();
 

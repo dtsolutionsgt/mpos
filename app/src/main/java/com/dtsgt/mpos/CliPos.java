@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -286,7 +287,20 @@ public class CliPos extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
-	}
+		cbpickup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                    if (isChecked){
+                        gl.pickup = true;
+                    }else{
+                        gl.pickup = false;
+                    }
+                }
+            }
+        );
+
+    }
 
     //endregion
 

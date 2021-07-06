@@ -207,7 +207,7 @@
                 android:textStyle="normal" />
 
             <EditText
-                android:id="@+id/editTextNumber5"
+                android:id="@+id/txt130PrefijoNoOrd"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/chkEnvio18"
@@ -257,7 +257,7 @@
                 android:id="@+id/chkEnvio19"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/editTextNumber5"
+                android:layout_below="@+id/txt130PrefijoNoOrd"
                 android:layout_alignStart="@id/checkBox24"
                 android:layout_alignEnd="@id/checkBox24"
                 android:layout_alignParentBottom="false"

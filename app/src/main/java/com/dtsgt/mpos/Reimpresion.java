@@ -502,6 +502,9 @@ public class Reimpresion extends PBase {
 
             fdoc.parallevar=gl.parallevar;
             fdoc.factsinpropina=gl.peFactSinPropina;
+            fdoc.es_pickup=gl.pickup;
+            fdoc.es_delivery=gl.delivery;
+
             if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 app.doPrint();
 

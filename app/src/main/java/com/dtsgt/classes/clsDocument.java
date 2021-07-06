@@ -26,8 +26,12 @@ public class clsDocument {
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
 	public boolean parallevar,factsinpropina,modorest;
 	public int ffecha,pendiente,diacred,pagoefectivo;
+	//#EJC20210705
 	public String TipoCredito, NoAutorizacion;
 	public double ptotal,pdesc,pprop,propvalor,propperc;
+
+	//#CKFK 20210705
+    public boolean es_pickup, es_delivery;
 
 	protected android.database.sqlite.SQLiteDatabase db;
 	protected BaseDatos Con;
@@ -438,6 +442,10 @@ public class clsDocument {
 
 			}
 		}
+
+        rep.add("");
+        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 

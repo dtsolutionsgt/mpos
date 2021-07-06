@@ -760,6 +760,10 @@ public class FacturaRes extends PBase {
 
             gl.nombre_mesero="";
 
+            //#CKFK 20210705
+			fdoc.es_pickup=gl.pickup;
+			fdoc.es_delivery=gl.delivery;
+
             if (gl.mesero_venta>0) {
                 clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
                 VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.mesero_venta);

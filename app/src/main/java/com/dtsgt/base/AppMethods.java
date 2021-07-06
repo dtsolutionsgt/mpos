@@ -719,6 +719,44 @@ public class AppMethods {
             gl.peFactSinPropina = false;
         }
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=129";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.pelComandaBT = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.pelComandaBT = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=130";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.pelPrefijoOrden = val;
+		} catch (Exception e) {
+			gl.pelPrefijoOrden = "";
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=131";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.pelCaja = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.pelCaja = false;
+		}
 
     }
 
@@ -727,11 +765,11 @@ public class AppMethods {
             SharedPreferences pref = cont.getApplicationContext().getSharedPreferences("MPos", 0);
             SharedPreferences.Editor editor = pref.edit();
 
-            try {
+           /* try {
                 gl.pelCaja=pref.getBoolean("pelCaja", false);
             } catch (Exception e) {
                 gl.pelCaja=false;
-            }
+            }*/
 
             try {
                 gl.pelCajaRecep=pref.getBoolean("pelCajaRecep", false);
@@ -739,11 +777,11 @@ public class AppMethods {
                 gl.pelCajaRecep=false;
             }
 
-            try {
+            /*try {
                 gl.pelPrefijoOrden=pref.getString("pelPrefCaja", "");
             } catch (Exception e) {
                 gl.pelPrefijoOrden="";
-            }
+            }*/
 
             try {
                 gl.pelDespacho=pref.getBoolean("pelDespacho",false);
@@ -769,11 +807,11 @@ public class AppMethods {
                 gl.pelClaveCaja=false;
             }
 
-            try {
+           /* try {
                 gl.pelComandaBT=pref.getBoolean("pelComandaBT",false);
             } catch (Exception e) {
                 gl.pelComandaBT=false;
-            }
+            }*/
 
             try {
                 gl.pelMeseroCaja =pref.getBoolean("pelMeseroCaja",false);

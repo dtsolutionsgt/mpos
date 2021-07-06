@@ -30,7 +30,7 @@ public class MantConfigRes extends PBase {
 
     private clsP_paramextObj holder;
 
-    private boolean value101,value117,value123,value124,value125;
+    private boolean value101,value117,value123,value124,value125, value131;
     private double  value120,value127;
     private String  value122;
 
@@ -53,7 +53,7 @@ public class MantConfigRes extends PBase {
         txt122 = findViewById(R.id.editTextNumber6);
         txt127 = findViewById(R.id.editTextNumber7);
 
-        locCaja      = findViewById(R.id.chkEnvio11);
+        locCaja      = findViewById(R.id.chkEnvio131);
         locCajaRecep = findViewById(R.id.chkEnvio12);
         locClaveMes = findViewById(R.id.chkEnvio20);
         locClaveCaja = findViewById(R.id.chkEnvio21);
@@ -153,6 +153,14 @@ public class MantConfigRes extends PBase {
         }
         txt127.setText(""+value127);
 
+        try {
+            holder.fill("WHERE ID="+131);
+            value131 =holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            value131=false;
+        }
+        locCaja.setChecked(value131);
+
     }
 
     private void loadLocalItems() {
@@ -202,7 +210,7 @@ public class MantConfigRes extends PBase {
     }
 
     private void updateItem() {
-        String s101="N",s117="S",s120="0",s122="NO APLICA",s123="N",s124="N",s125="N",s127="0";
+        String s101="N",s117="S",s120="0",s122="NO APLICA",s123="N",s124="N",s125="N",s127="0",s131="0";
         double dval120,dval127;
 
         updateLocalItems();
@@ -231,6 +239,7 @@ public class MantConfigRes extends PBase {
             if (cb124.isChecked())  s124="S";
             if (cb125.isChecked())  s125="S";
             s127=""+dval127;
+            if (locCaja.isChecked()) s131 = "S";
 
             db.beginTransaction();
 
@@ -242,6 +251,7 @@ public class MantConfigRes extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=124");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=125");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=127");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=131");
 
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (101,'Imprimir orden para la cocina','"+s101+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (117,'Propina fija','"+s117+"')");
@@ -251,7 +261,7 @@ public class MantConfigRes extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (124,'Agregar articulo a combo','"+s124+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (125,'Precio de combo sin limite','"+s125+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (127,'Propina pago con tarjeta','"+s127+"')");
-
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (131,'Modulo caja','"+s131+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();

@@ -38,8 +38,8 @@ public class MantConfig extends PBase {
 
     private boolean value100,value102,value103,value104,value106, value107,value109;
     private boolean value111,value112,value113,value115,value116,value118,value119;
-    private boolean value121,value126,value128;
-    private String  value16,value105;
+    private boolean value121,value126,value128, value129;
+    private String  value16,value105, value130;
     private int value108,value110,value114;
 
     private String valPrefCaja;
@@ -79,7 +79,7 @@ public class MantConfig extends PBase {
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
-        locPrefCaja  = findViewById(R.id.editTextNumber5);
+        locPrefCaja  = findViewById(R.id.txt130PrefijoNoOrd);
         locDesp= (CheckBox) findViewById(R.id.chkEnvio19);
         locOrdenComanda = (CheckBox) findViewById(R.id.chkEnvio18);
 
@@ -337,6 +337,22 @@ public class MantConfig extends PBase {
         }
         cb128.setChecked(value128);
 
+        try {
+            holder.fill("WHERE ID="+129);
+            value129=holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            value129 = false;
+        }
+        locComandaBT.setChecked(value129);
+
+        try {
+            holder.fill("WHERE ID="+130);
+            valPrefCaja=holder.first().valor;
+        } catch (Exception e) {
+            value130 = "";
+        }
+        locPrefCaja.setText(valPrefCaja);
+
     }
 
     private void loadLocalItems() {
@@ -344,12 +360,12 @@ public class MantConfig extends PBase {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
             SharedPreferences.Editor editor = pref.edit();
 
-            try {
+           /* try {
                 valPrefCaja=pref.getString("pelPrefCaja", "");
             } catch (Exception e) {
                 valPrefCaja="";
             }
-            locPrefCaja.setText(valPrefCaja);
+            locPrefCaja.setText(valPrefCaja);*/
 
             try {
                 valDespacho=pref.getBoolean("pelDespacho",false);
@@ -365,12 +381,12 @@ public class MantConfig extends PBase {
             }
             locOrdenComanda.setChecked(valOrdenComanda);
 
-            try {
+           /* try {
                 valComandaBT=pref.getBoolean("pelComandaBT",false);
             } catch (Exception e) {
                 valComandaBT=false;
             }
-            locComandaBT.setChecked(valComandaBT);
+            locComandaBT.setChecked(valComandaBT);*/
 
 
         } catch (Exception e) {
@@ -382,7 +398,7 @@ public class MantConfig extends PBase {
     private void updateItem() {
         String s100="N",s102="N",s103="N",s104="N",s105="",s106="S", s107="S",
                s108="5", s109="S", s110="3", s111="N", s112="N", s113="N", s114="1",
-               s115="N", s116="N", s118="N", s119="N", s121="N", s126="N", s128="N";
+               s115="N", s116="N", s118="N", s119="N", s121="N", s126="N", s128="N",s129="N", s130="";
 
         try {
 
@@ -408,6 +424,8 @@ public class MantConfig extends PBase {
             if (cb121.isChecked())  s121="S";
             if (cb126.isChecked())  s126="S";
             if (cb128.isChecked())  s128="S";
+            if (locComandaBT.isChecked())  s129="S";
+            s130=locPrefCaja.getText().toString();
 
             db.beginTransaction();
 
@@ -433,7 +451,8 @@ public class MantConfig extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=121");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=126");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=128");
-
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=129");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=130");
 
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES ( 16,'Formato factura','"+value16+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (100,'Configuración centralizada','"+s100+"')");
@@ -457,6 +476,8 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (121,'Mostrar botón comanda','"+s121+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (126,'Factura con detalle de combo','"+s126+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (128,'Factura sin propina','"+s128+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (129,'Comandas con impresora BT','"+s129+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (130,'Prefijo numero orden por caja','"+s130+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -475,12 +496,12 @@ public class MantConfig extends PBase {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
             SharedPreferences.Editor editor = pref.edit();
 
-            valPrefCaja=locPrefCaja.getText().toString();
-            editor.putString("pelPrefCaja", valPrefCaja);
+            //valPrefCaja=locPrefCaja.getText().toString();
+           // editor.putString("pelPrefCaja", valPrefCaja);
 
             editor.putBoolean("pelDespacho", locDesp.isChecked());
             editor.putBoolean("pelOrdenComanda", locOrdenComanda.isChecked());
-            editor.putBoolean("pelComandaBT", locComandaBT.isChecked());
+           // editor.putBoolean("pelComandaBT", locComandaBT.isChecked());
 
             editor.commit();
         } catch (Exception e) {
