@@ -175,7 +175,9 @@ public class ResCaja extends PBase {
     //region Venta
 
     private void crearVenta() {
+
         try {
+
             db.execSQL("DELETE FROM T_COMBO");
             db.execSQL("DELETE FROM T_VENTA");
 
@@ -193,14 +195,18 @@ public class ResCaja extends PBase {
             }
 
             cargaCliente();
+
             gl.ventalock=true;
+
             finish();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private boolean addItem(){
+
         clsClasses.clsT_venta venta;
         clsClasses.clsT_combo combo;
         clsClasses.clsT_ordencombo citem;
@@ -209,7 +215,6 @@ public class ResCaja extends PBase {
         try {
 
             venta=clsCls.new clsT_venta();
-
             venta.producto=oitem.producto;
             venta.empresa=oitem.empresa;
             venta.um=oitem.um;
@@ -230,15 +235,36 @@ public class ResCaja extends PBase {
             venta.percep=oitem.percep;
 
             T_ordencomboprecioObj.fill("WHERE (COREL='"+corel+"') AND (IDCOMBO="+oitem.empresa+")");
+
             if (T_ordencomboprecioObj.count>0) {
                 venta.precio=T_ordencomboprecioObj.first().prectotal;
                 venta.preciodoc=venta.precio;
-
                 tt=venta.cant*venta.precio;tt=mu.round2(tt);
                 venta.total=oitem.total=tt;
             }
 
-            T_ventaObj.add(venta);
+            //#EJC20210708: Corrección en T_VENTA, consultar antes si el producto ya existe e incrementar la cantidad
+            //para evitar que devuelva error de llave.
+            Cursor dt;
+            double prodtot=0;
+
+            try {
+                String vsql="SELECT CANT FROM T_venta WHERE (PRODUCTO='"+venta.producto+"') AND (EMPRESA='"+venta.empresa+"') AND (UM='"+venta.um+"')";
+                dt=Con.OpenDT(vsql);
+                if (dt!=null){
+                    if (dt.getCount()==0) {
+                        T_ventaObj.add(venta);
+                    }else{
+                        venta.cant+= oitem.cant;
+                        prodtot=mu.round(venta.precio*venta.cant,2);
+                        venta.total = prodtot;
+                        T_ventaObj.update(venta);
+                    }
+                };
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
 
             if (app.prodTipo(venta.producto).equalsIgnoreCase("M")) {
 

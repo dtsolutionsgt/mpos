@@ -74,14 +74,12 @@ public class clsT_ordencomboprecioObj {
     private void addItem(clsClasses.clsT_ordencomboprecio item) {
 
         ins.init("T_ordencomboprecio");
-
         ins.add("COREL",item.corel);
         ins.add("IDCOMBO",item.idcombo);
         ins.add("PRECORIG",item.precorig);
         ins.add("PRECITEMS",item.precitems);
         ins.add("PRECDIF",item.precdif);
         ins.add("PRECTOTAL",item.prectotal);
-
         db.execSQL(ins.sql());
 
     }
@@ -89,14 +87,11 @@ public class clsT_ordencomboprecioObj {
     private void updateItem(clsClasses.clsT_ordencomboprecio item) {
 
         upd.init("T_ordencomboprecio");
-
         upd.add("PRECORIG",item.precorig);
         upd.add("PRECITEMS",item.precitems);
         upd.add("PRECDIF",item.precdif);
         upd.add("PRECTOTAL",item.prectotal);
-
         upd.Where("(COREL='"+item.corel+"') AND (IDCOMBO="+item.idcombo+")");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -114,6 +109,7 @@ public class clsT_ordencomboprecioObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsT_ordencomboprecio item;
 
@@ -126,16 +122,13 @@ public class clsT_ordencomboprecioObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsT_ordencomboprecio();
-
             item.corel=dt.getString(0);
             item.idcombo=dt.getInt(1);
             item.precorig=dt.getDouble(2);
             item.precitems=dt.getDouble(3);
             item.precdif=dt.getDouble(4);
             item.prectotal=dt.getDouble(5);
-
             items.add(item);
-
             dt.moveToNext();
         }
 

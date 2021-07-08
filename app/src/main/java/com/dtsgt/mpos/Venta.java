@@ -1104,7 +1104,6 @@ public class Venta extends PBase {
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
             ins.init("T_VENTA");
-
             ins.add("PRODUCTO",prodid);
             ins.add("EMPRESA",""+counter);
             if (porpeso) ins.add("UM",gl.umpeso);else ins.add("UM",gl.um);

@@ -74,7 +74,6 @@ public class clsT_ventaObj {
     private void addItem(clsClasses.clsT_venta item) {
 
         ins.init("T_venta");
-
         ins.add("PRODUCTO",item.producto);
         ins.add("EMPRESA",item.empresa);
         ins.add("UM",item.um);
@@ -101,7 +100,6 @@ public class clsT_ventaObj {
     private void updateItem(clsClasses.clsT_venta item) {
 
         upd.init("T_venta");
-
         upd.add("CANT",item.cant);
         upd.add("UMSTOCK",item.umstock);
         upd.add("FACTOR",item.factor);
@@ -117,9 +115,7 @@ public class clsT_ventaObj {
         upd.add("VAL3",item.val3);
         upd.add("VAL4",item.val4);
         upd.add("PERCEP",item.percep);
-
         upd.Where("(PRODUCTO='"+item.producto+"') AND (EMPRESA='"+item.empresa+"') AND (UM='"+item.um+"')");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -137,6 +133,7 @@ public class clsT_ventaObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsT_venta item;
 
@@ -149,7 +146,6 @@ public class clsT_ventaObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsT_venta();
-
             item.producto=dt.getString(0);
             item.empresa=dt.getString(1);
             item.um=dt.getString(2);
@@ -168,9 +164,7 @@ public class clsT_ventaObj {
             item.val3=dt.getDouble(15);
             item.val4=dt.getString(16);
             item.percep=dt.getDouble(17);
-
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -179,6 +173,7 @@ public class clsT_ventaObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -198,7 +193,6 @@ public class clsT_ventaObj {
     public String addItemSql(clsClasses.clsT_venta item) {
 
         ins.init("T_venta");
-
         ins.add("PRODUCTO",item.producto);
         ins.add("EMPRESA",item.empresa);
         ins.add("UM",item.um);
@@ -217,7 +211,6 @@ public class clsT_ventaObj {
         ins.add("VAL3",item.val3);
         ins.add("VAL4",item.val4);
         ins.add("PERCEP",item.percep);
-
         return ins.sql();
 
     }
@@ -225,7 +218,6 @@ public class clsT_ventaObj {
     public String updateItemSql(clsClasses.clsT_venta item) {
 
         upd.init("T_venta");
-
         upd.add("CANT",item.cant);
         upd.add("UMSTOCK",item.umstock);
         upd.add("FACTOR",item.factor);
@@ -241,7 +233,6 @@ public class clsT_ventaObj {
         upd.add("VAL3",item.val3);
         upd.add("VAL4",item.val4);
         upd.add("PERCEP",item.percep);
-
         upd.Where("(PRODUCTO='"+item.producto+"') AND (EMPRESA='"+item.empresa+"') AND (UM='"+item.um+"')");
 
         return upd.sql();
