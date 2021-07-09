@@ -64,7 +64,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "4.0.12"; // REGISTRAR CAMBIO EN LA TABLA VERSION
+    private String parVer = "4.0.13"; // REGISTRAR CAMBIO EN LA TABLA VERSION
 
     private Typeface typeface;
 
