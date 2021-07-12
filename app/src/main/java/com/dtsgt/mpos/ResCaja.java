@@ -249,16 +249,22 @@ public class ResCaja extends PBase {
             double prodtot=0;
 
             try {
-                String vsql="SELECT CANT FROM T_venta WHERE (PRODUCTO='"+venta.producto+"') AND (EMPRESA='"+venta.empresa+"') AND (UM='"+venta.um+"')";
+                String vsql="SELECT CANT FROM T_venta WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')";
                 dt=Con.OpenDT(vsql);
                 if (dt!=null){
-                    if (dt.getCount()==0) {
+                    //#ejc20210712: condición agregada con Jaros, para validar productos de tipo combo.
+                    if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
                         T_ventaObj.add(venta);
                     }else{
-                        venta.cant+= oitem.cant;
-                        prodtot=mu.round(venta.precio*venta.cant,2);
-                        venta.total = prodtot;
-                        T_ventaObj.update(venta);
+                        if (dt.getCount()==0) {
+                            T_ventaObj.add(venta);
+                        }else{
+
+                            venta.cant+= oitem.cant;
+                            prodtot=mu.round(venta.precio*venta.cant,2);
+                            venta.total = prodtot;
+                            T_ventaObj.update(venta);
+                        }
                     }
                 };
 
@@ -272,16 +278,13 @@ public class ResCaja extends PBase {
                 for (int j = 0; j <T_ordencomboObj.count; j++) {
 
                     citem=T_ordencomboObj.items.get(j);
-
                     combo=clsCls.new clsT_combo();
-
                     combo.codigo_menu=citem.codigo_menu;
                     combo.idcombo=citem.idcombo;
                     combo.cant=citem.cant;
                     combo.unid=citem.unid;
                     combo.idseleccion=citem.idseleccion;
                     combo.orden=citem.orden;
-
                     T_comboObj.add(combo);
                 }
             }
