@@ -257,8 +257,6 @@ public class CliDet extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox(e.getMessage());
 		}
-
-
 	}
 
 	public void mostrarFachada(View view){

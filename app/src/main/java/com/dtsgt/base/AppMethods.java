@@ -1679,7 +1679,6 @@ public class AppMethods {
         }
     }
 
-
     private Boolean cuentaPagada(String corr,int id) {
         try {
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(cont,Con,db);

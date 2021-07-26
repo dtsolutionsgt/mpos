@@ -19,7 +19,7 @@ public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor,codigo_ruta;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
-	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
+	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
@@ -193,7 +193,6 @@ public class clsDocument {
 
         return true;
     }
-
 
     public boolean buildPrintAppend(String corel,int reimpres,String modo) {
 		int flag;
@@ -371,19 +370,19 @@ public class clsDocument {
                             }
                         }
                     }
-
                 }
             }
+
         }
 
-        rep.add("Fecha : "+fsfecha);
+        rep.add("Fecha: "+fsfecha);
 
         if (docfactura){
 
-            if (!emptystr(nit)) rep.add("NIT : "+nit);
+            if (!emptystr(nit)) rep.add("NIT: "+nit);
             if (!emptystr(clidir)) {
 
-                clidir="Dir:"+clidir;
+                clidir="Dir: "+clidir;
 
                 if (clidir.length()>prw) {
 
@@ -402,31 +401,6 @@ public class clsDocument {
                         if (cadena.length()>0) rep.add(cadena);
                     }
                 } else rep.add(clidir);
-
-
-                /*
-				String nuevaCadena="", cadena="";
-				int vMod=0;
-				double division =0.0;
-
-				cadena = "Dir : "+clidir;
-				vMod = (cadena.length() / 40)+1;
-
-				if (cadena.length() > 39){
-
-					for (int i = 0; i <vMod; i++) {
-						if (cadena.length()>=40*(i+1)){
-							nuevaCadena += cadena.substring((i*40),40) + "\n";
-						}else{
-							nuevaCadena += cadena.substring((i*40)-1,cadena.length());
-						}
-					}
-				} else {
-					nuevaCadena = cadena;
-				}
-
-            	rep.add(nuevaCadena);
-            	*/
 
 			}
 
@@ -522,7 +496,11 @@ public class clsDocument {
                     l=""+nn;l=l.substring(1,7);
                 } else l=numero;
 
-                l="%%%Serie : "+serie +" No.: "+l;
+                if (facturaflag) {
+                    l="%%%Serie : "+serie +" No.: "+l;
+                } else {
+                    sfticket=serie+l;l="";
+                }
             } else {
                 l="##";
             }
@@ -821,7 +799,6 @@ public class clsDocument {
     // Aux
 	
 	private boolean loadHeadLines() {
-
         clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
 		Cursor DT;	
 		String s,sucur;

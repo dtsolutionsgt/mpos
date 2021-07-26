@@ -76,9 +76,8 @@ public class lista_ingreso_inventario extends PBase {
         app = new AppMethods(this, gl, Con, db);
 
         tipo=gl.tipo;
-
-        if (tipo==0) lblTipo.setText("Ingresos");
-        if (tipo==1) lblTipo.setText("Salidas");
+        if (tipo==0) lblTipo.setText("Ingreso de mercancía");
+        if (tipo==1) lblTipo.setText("Ajuste de inventario");
         if (tipo==2) lblTipo.setText("Inventario Inicial");
 
         gl.corelmov="";
