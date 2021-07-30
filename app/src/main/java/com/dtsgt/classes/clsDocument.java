@@ -19,7 +19,7 @@ public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
-	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
+	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
@@ -377,14 +377,15 @@ public class clsDocument {
             }
         }
 
-        rep.add("Fecha : "+fsfecha);
+        rep.add("Fecha: "+fsfecha);
 
         if (docfactura){
 
-            if (!emptystr(nit_cliente)) rep.add("NIT : "+ nit_cliente);
+            if (!emptystr(nit_cliente)) rep.add("NIT: "+nit_cliente);
+
             if (!emptystr(clidir)) {
 
-                clidir="Dir:"+clidir;
+                clidir="Dir: "+clidir;
 
                 if (clidir.length()>prw) {
 
@@ -523,7 +524,12 @@ public class clsDocument {
                     l=""+nn;l=l.substring(1,7);
                 } else l=numero;
 
-                l="%%%Serie : "+serie +" No.: "+l;
+                if (facturaflag) {
+                    l="%%%Serie : "+serie +" No.: "+l;
+                } else {
+                    sfticket=serie+l;l="";
+                }
+
             } else {
                 l="##";
             }
@@ -546,7 +552,7 @@ public class clsDocument {
         if (idx>=0) {
             if (emptystr(nombre_cliente)) return "@@";
 
-            l=l.replace("@Cliente", nombre_cliente);l=l.trim();
+            l=l.replace("@Cliente",nombre_cliente);l=l.trim();
 
             if (l.length()>prw) {
                 //l=l.replace("@Cliente",clicod+" - "+cliente);
@@ -733,7 +739,7 @@ public class clsDocument {
         if (idx>=0) {
             if (emptystr(nombre_cliente)) return "@@";
             if(l.length()>20){
-                l=l.replace("@Cliente",clicod+" - "+ nombre_cliente);
+                l=l.replace("@Cliente",clicod+" - "+nombre_cliente);
                 return l;
             }
             l=l.replace("@Cliente",clicod+" - "+rep.ltrim(nombre_cliente, 20));return l;

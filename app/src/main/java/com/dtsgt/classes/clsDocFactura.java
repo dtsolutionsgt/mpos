@@ -714,7 +714,7 @@ public class clsDocFactura extends clsDocument {
         rep.addc("ESTE DOCUMENTO ");
         rep.addc("NO ES UNA FACTURA COMERCIAL");
         rep.add("");
-        //rep.addc(sfticket);
+        rep.addc(sfticket);
         rep.add("");
         rep.add("");
         rep.add("");
