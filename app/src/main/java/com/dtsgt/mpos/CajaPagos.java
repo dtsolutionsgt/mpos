@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -411,7 +410,7 @@ public class CajaPagos extends PBase {
             serie="";
             ruta=gl.ruta;
             vendedor=gl.vendnom;
-            cliente="";
+            nombre_cliente ="";
             vendcod=gl.vend;
             fsfecha=du.getActDateStr();
 

@@ -22,7 +22,7 @@ public class clsDocCajaPagos  extends clsDocument {
         serie="";
         ruta=pruta;
         vendedor=pvend;
-        cliente="";
+        nombre_cliente ="";
         fsfecha=DU.getActDateStr();
     }
 

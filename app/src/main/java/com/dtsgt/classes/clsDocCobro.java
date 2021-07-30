@@ -198,7 +198,7 @@ public class clsDocCobro extends clsDocument {
 		
 		//Toast.makeText(cont,"Percep "+percep+"  Sinimp "+sinimp, Toast.LENGTH_SHORT).show();
 		
-		cliente=val;
+		nombre_cliente =val;
 		
 		return true;
 		

@@ -172,8 +172,8 @@ public class clsDocPedido extends clsDocument {
 			
 			clicod=cli;
 			clidir=DT.getString(3);
-			nit=DT.getString(4);
-			cliente=DT.getString(0);
+			nit_cliente =DT.getString(4);
+			nombre_cliente =DT.getString(0);
 			
 		} catch (Exception e) {
 			val=cli;
@@ -184,8 +184,8 @@ public class clsDocPedido extends clsDocument {
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
 			
-			cliente=DT.getString(0);
-		    nit=DT.getString(1);
+			nombre_cliente =DT.getString(0);
+		    nit_cliente =DT.getString(1);
           	clidir=DT.getString(2);
 					
 		} catch (Exception e) {

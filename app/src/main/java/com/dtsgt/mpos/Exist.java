@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
-import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsExist;
@@ -33,7 +31,6 @@ import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.ladapt.ListAdaptExist;
 import com.dtsgt.webservice.srvInventConfirm;
-import com.dtsgt.webservice.wsInvActual;
 import com.dtsgt.webservice.wsInventCompartido;
 import com.dtsgt.webservice.wsInventEnvio;
 import com.dtsgt.webservice.wsInventRecibir;
@@ -723,7 +720,7 @@ public class Exist extends PBase {
             serie="";
             ruta=gl.ruta;
             vendedor=gl.vendnom;
-            cliente="";
+            nombre_cliente ="";
             vendcod=gl.vend;
             fsfecha=du.getActDateStr();
 

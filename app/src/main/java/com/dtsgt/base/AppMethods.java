@@ -1493,10 +1493,11 @@ public class AppMethods {
     }
 
     public boolean impresora() {
+
         loadPrintConfig();
 
         if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
-            return false;
+            return true;
         } else {
             return true;
         }

@@ -74,14 +74,12 @@ public class clsT_factura_felObj {
     private void addItem(clsClasses.clsT_factura_fel item) {
 
         ins.init("T_factura_fel");
-
         ins.add("COREL",item.corel);
         ins.add("FEELSERIE",item.feelserie);
         ins.add("FEELNUMERO",item.feelnumero);
         ins.add("FEELUUID",item.feeluuid);
         ins.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
         ins.add("FEELCONTINGENCIA",item.feelcontingencia);
-
         db.execSQL(ins.sql());
 
     }

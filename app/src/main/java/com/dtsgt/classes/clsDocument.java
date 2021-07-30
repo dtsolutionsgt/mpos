@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class clsDocument {
 
-	public String nombre,numero,serie,ruta,rutanombre,cliente,nit,tipo,ref,vendedor,codigo_ruta;
+	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
@@ -291,7 +291,8 @@ public class clsDocument {
 	}
 	
 	protected boolean loadHeadData(String corel) {
-		nombre="";numero="";serie="";ruta="";vendedor="";cliente="";
+		nombre="";numero="";serie="";ruta="";vendedor="";
+        nombre_cliente ="";
 		return true;
 	}
 
@@ -380,7 +381,7 @@ public class clsDocument {
 
         if (docfactura){
 
-            if (!emptystr(nit)) rep.add("NIT : "+nit);
+            if (!emptystr(nit_cliente)) rep.add("NIT : "+ nit_cliente);
             if (!emptystr(clidir)) {
 
                 clidir="Dir:"+clidir;
@@ -543,9 +544,9 @@ public class clsDocument {
 
         idx=lu.indexOf("@Cliente");
         if (idx>=0) {
-            if (emptystr(cliente)) return "@@";
+            if (emptystr(nombre_cliente)) return "@@";
 
-            l=l.replace("@Cliente",cliente);l=l.trim();
+            l=l.replace("@Cliente", nombre_cliente);l=l.trim();
 
             if (l.length()>prw) {
                 //l=l.replace("@Cliente",clicod+" - "+cliente);
@@ -730,12 +731,12 @@ public class clsDocument {
 
         idx=lu.indexOf("@Cliente");
         if (idx>=0) {
-            if (emptystr(cliente)) return "@@";
+            if (emptystr(nombre_cliente)) return "@@";
             if(l.length()>20){
-                l=l.replace("@Cliente",clicod+" - "+cliente);
+                l=l.replace("@Cliente",clicod+" - "+ nombre_cliente);
                 return l;
             }
-            l=l.replace("@Cliente",clicod+" - "+rep.ltrim(cliente, 20));return l;
+            l=l.replace("@Cliente",clicod+" - "+rep.ltrim(nombre_cliente, 20));return l;
         }
 
         return l;

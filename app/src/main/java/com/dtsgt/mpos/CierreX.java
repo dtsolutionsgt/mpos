@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,14 +19,11 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsRepBuilder;
-import com.dtsgt.classes.clsT_cierreObj;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -809,7 +805,7 @@ public class CierreX extends PBase {
             ruta=gl.ruta;
             codigo_ruta=""+gl.codigo_ruta;
             vendedor=gl.vendnom;
-            cliente="";
+            nombre_cliente ="";
             vendcod=gl.vend;
             fsfecha=du.getActDateStr();
 

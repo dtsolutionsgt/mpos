@@ -1,64 +1,42 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.ladapt.ListAdaptProd;
 import android.os.Environment;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
-import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.base.clsClasses.clsVenta;
-import com.dtsgt.base.clsClasses.clsReport;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsRepBuilder;
-import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.ListAdaptExist;
-import com.dtsgt.ladapt.ListAdaptProd;
 import com.dtsgt.ladapt.ListReportVenta;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -814,7 +792,7 @@ public class Reportes extends PBase {
             serie="";
             ruta=gl.ruta;
             vendedor=gl.vendnom;
-            cliente="";
+            nombre_cliente ="";
             vendcod=gl.vend;
             fsfecha=du.getActDateStr();
 

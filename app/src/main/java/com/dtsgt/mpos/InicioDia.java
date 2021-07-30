@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -209,7 +208,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
             serie="";
             ruta=gl.ruta;
             vendedor=gl.vendnom;
-            cliente="";
+            nombre_cliente ="";
 
         }
 

@@ -2,10 +2,20 @@ package com.dtsgt.classes;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.zxing.WriterException;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGSaver;
 
 public class clsDocFactura extends clsDocument {
 
@@ -30,7 +40,13 @@ public class clsDocFactura extends clsDocument {
         detcombo=detallecombo;
 	}
 
-	protected boolean loadHeadData(String corel) {
+    Bitmap bitmap;
+    QRGEncoder qrgEncoder;
+    ImageView qrImage;
+    String TAG = "GenerateQRCode";
+    String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
+
+    protected boolean loadHeadData(String corel) {
 
 		Cursor DT;
 		String cli="",vend="",val,empp="", anulado,s1,s2;
@@ -116,7 +132,6 @@ public class clsDocFactura extends clsDocument {
 					    nombre = "TICKET";
                     }
 				}
-
 			}
 
 		} catch (Exception e) {
@@ -142,6 +157,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         try {
+
 			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+ruta+") AND (RESGUARDO=0)";
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
@@ -160,6 +176,7 @@ public class clsDocFactura extends clsDocument {
 	    }	
 		
 		try {
+
             sinimp=false;
 			
 		} catch (Exception e) {
@@ -186,7 +203,7 @@ public class clsDocFactura extends clsDocument {
 			
 			clicod=cli;
 			clidir=DT.getString(3);
-			nit=DT.getString(4);
+			nit_cliente =DT.getString(4);
 			diacred=DT.getInt(5);
 			
 		} catch (Exception e) {
@@ -254,8 +271,8 @@ public class clsDocFactura extends clsDocument {
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
 			
-			cliente=DT.getString(0);
-		    nit=DT.getString(1);
+			nombre_cliente =DT.getString(0);
+		    nit_cliente =DT.getString(1);
           	clidir=DT.getString(2);
 					
 		} catch (Exception e) {
@@ -263,12 +280,82 @@ public class clsDocFactura extends clsDocument {
 
         add1=add1+"";
 		add2=add2+" - ";
-		
+
+		//#EJC20210729: GET NIT EMISOR.
+        try {
+            sql="SELECT NIT FROM P_SUCURSAL ";
+            DT=Con.OpenDT(sql);
+            if(DT!=null){
+                DT.moveToFirst();
+                if (DT.getCount()>0) {
+                    nit_emisor=DT.getString(0);
+
+                } else {
+                    nit_emisor="";
+                }
+            }
+        } catch (Exception e) {
+
+        }
+
+        //region #EJC20210729: QR CODE
+        String Numero_Factura=feluuid;
+        if (Numero_Factura.equalsIgnoreCase(" ")) {
+            Numero_Factura=contacc;
+        }
+
+        nit_emisor=nit_emisor.trim();
+        nit_emisor=nit_emisor.replace("-","");
+        nit_emisor=nit_emisor.replace(".","");
+        nit_emisor=nit_emisor.replace(" ","");
+        nit_emisor=nit_emisor.toUpperCase();
+
+        nit_cliente=nit_cliente.trim();
+        nit_cliente=nit_cliente.replace("-","");
+        nit_cliente=nit_cliente.replace(".","");
+        nit_cliente=nit_cliente.replace(" ","");
+        nit_cliente=nit_cliente.toUpperCase();
+
+        String inputValue = "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
+                "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
+
+        if (inputValue.length() > 0) {
+            int width = 400;
+            int height = 400;
+            int smallerDimension = width < height ? width : height;
+            smallerDimension = smallerDimension * 3 / 4;
+
+            qrgEncoder = new QRGEncoder(
+                    inputValue,
+                    null,
+                    QRGContents.Type.TEXT,
+                    smallerDimension);
+            try {
+                bitmap = qrgEncoder.encodeAsBitmap();
+                boolean save;
+                String result;
+                try {
+                    save = QRGSaver.save(savePath, feluuid, bitmap, QRGContents.ImageType.IMAGE_JPEG);
+                    result = save ? "Image Saved" : "Image Not Saved";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } catch (WriterException e) {
+                Log.v(TAG, e.toString());
+            }
+        } else {
+            Log.v(TAG, "Required");
+        }
+
+        //endregion
+
 		return true;
 		
 	}
 
 	protected boolean loadDocData(String corel) {
+
 		Cursor DT;
 		itemData item,bon;
 		String corNota,idcombo;
@@ -354,6 +441,7 @@ public class clsDocFactura extends clsDocument {
 	}
 
 	private void detalleCombo(String idcombo ) {
+
         clsD_facturacObj D_facturacObj=new clsD_facturacObj(cont,Con,db);
         String nombre;
         itemData item;
@@ -385,6 +473,7 @@ public class clsDocFactura extends clsDocument {
     }
 
     private void detalleComboOrig(String idcombo ) {
+
         clsD_facturasObj D_facturasObj=new clsD_facturasObj(cont,Con,db);
         clsP_productoObj P_productoObj=new clsP_productoObj(cont,Con,db);
         String prid,nombre;
@@ -455,6 +544,7 @@ public class clsDocFactura extends clsDocument {
     }
 
     protected boolean detailToledano() {
+
 		itemData item;
 		String ss;
 
@@ -483,6 +573,7 @@ public class clsDocFactura extends clsDocument {
 	}
 
 	protected boolean detailBase() {
+
 		itemData item;
 		String cu,cp;
 
@@ -511,6 +602,7 @@ public class clsDocFactura extends clsDocument {
 	//region Bonificaciones
 
 	private void bonificaciones() {
+
 		itemData item;
 		String ss;
 

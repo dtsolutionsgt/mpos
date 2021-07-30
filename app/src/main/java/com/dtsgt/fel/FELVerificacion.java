@@ -323,13 +323,22 @@ public class FELVerificacion extends PBase {
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 
             for (int i = 0; i <D_facturadObj.count; i++) {
+
                 factd=D_facturadObj.items.get(i);
+
                 if (gl.peComboDet) lcombo=listaCombo(factd.corel,factd.val2); else lcombo="";
-                fel.detalle(prodName(factd.producto),factd.cant,"UNI",
-                        factd.precio,factd.total,factd.desmon,lcombo);
+
+                fel.detalle(prodName(factd.producto),
+                        factd.cant,
+                        "UNI",
+                        factd.precio,
+                        factd.total,
+                        factd.desmon,
+                        lcombo);
             }
 
-            fel.completar(fact.serie,fact.corelativo);
+            fel.completar(fact.serie,
+                          fact.corelativo);
 
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -337,6 +346,7 @@ public class FELVerificacion extends PBase {
     }
 
     private void marcaFacturaContingencia() {
+
         clsClasses.clsP_corel citem;
         long corcont;
 

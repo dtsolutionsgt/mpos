@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,10 +19,13 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
@@ -61,10 +67,15 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 import com.dtsgt.webservice.srvCommit;
+import com.google.zxing.WriterException;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGSaver;
 
 public class FacturaRes extends PBase {
 
@@ -786,20 +797,9 @@ public class FacturaRes extends PBase {
 			    fdoc.propperc=gl.pePropinaPerc;
                 fdoc.modorest=gl.peRest;
                 fdoc.nommesero=gl.nombre_mesero;
-
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
-
                 app.doPrint(gl.peNumImp,0);
 
-                /*
-                try {
-                    File file1 = new File(fname);
-                    File ffile = new File(file1.getPath());
-                    for (int i = 0; i <90; i++) {
-                            SystemClock.sleep(1000);if (!ffile.exists()) break;
-                    }
-                } catch (Exception e) {}
-                */
             }
 
             gl.impresion_comanda=false;

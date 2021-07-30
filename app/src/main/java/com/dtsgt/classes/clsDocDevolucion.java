@@ -176,7 +176,7 @@ public class clsDocDevolucion extends clsDocument {
             val=cli;
         }
 
-        cliente=val;
+        nombre_cliente =val;
 
         return true;
 

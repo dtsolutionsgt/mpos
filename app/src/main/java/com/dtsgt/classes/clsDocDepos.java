@@ -33,7 +33,7 @@ public class clsDocDepos extends clsDocument {
 		nombre="DEPOSITO";
 		numero="";
 		serie="";
-		cliente="";	
+		nombre_cliente ="";
 		ruta=pruta;
 		vendedor=pvend;
 		vendcod=gl.vend;

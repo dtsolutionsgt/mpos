@@ -206,6 +206,7 @@ public class FELFactura extends PBase {
         lbl1.setText("Procesando firma . . .");lbl3.setText("");
 
         try {
+
             fbita.empresa=gl.emp;
             fbita.codigo_sucursal=gl.tienda;
             fbita.codigo_ruta=gl.codigo_ruta;
@@ -231,6 +232,7 @@ public class FELFactura extends PBase {
         fel.errcert=false;fel.errfirma=false;
 
         buildFactXML();
+
         fel.certificacion();
     }
 
@@ -427,6 +429,7 @@ public class FELFactura extends PBase {
     }
 
     private void buildFactXML() {
+
         String dir,muni,dep,iddep,idmuni,lcombo;
         int idcont;
 
@@ -438,6 +441,7 @@ public class FELFactura extends PBase {
             fact=D_facturaObj.first();
 
             fel.idcontingencia=0;
+
             try {
                 idcont=Integer.parseInt(D_facturaObj.first().feelcontingencia);
                 if (idcont>0) fel.idcontingencia=idcont;
@@ -457,8 +461,13 @@ public class FELFactura extends PBase {
             fel.fechaf_d=du.getday(fact.fecha);
 
             fel.iniciar(fact.fecha,"");
-            fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
-                      fel.fel_nit,fel.fel_nombre_comercial, fel.fel_usuario_firma);
+
+            fel.emisor(fel.fel_afiliacion_iva,
+                       fel.fel_codigo_establecimiento,
+                       fel.fel_correo,
+                       fel.fel_nit,
+                       fel.fel_nombre_comercial,
+                       fel.fel_usuario_firma);
 
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
@@ -536,6 +545,7 @@ public class FELFactura extends PBase {
     }
 
     private void marcaFacturaContingencia() {
+
         clsClasses.clsP_corel citem;
         long corcont;
 
@@ -556,12 +566,12 @@ public class FELFactura extends PBase {
             clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
             P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
             citem=P_corelObj.first();
+
             if (citem.corelult==0) {
                 corcont=citem.corelini;
             } else {
                 corcont=citem.corelult+1;
             }
-
 
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
@@ -602,11 +612,13 @@ public class FELFactura extends PBase {
     }
 
     private void processFactura() {
+
         clsClasses.clsD_facturad item;
         String tipo_producto,vsql;
         int contingencia,uruta;
 
         try {
+
             AppMethods f = new AppMethods(this,null,Con,db);
 
             D_facturaObj.fill("WHERE COREL='"+scorel+"'");
@@ -627,7 +639,6 @@ public class FELFactura extends PBase {
             CSQL="DELETE FROM D_FACTURA WHERE COREL='"+scorel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+scorel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+scorel+"';";
-
             CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
             String UpdateToStock = "";
@@ -685,6 +696,7 @@ public class FELFactura extends PBase {
     }
 
     public String addFactheader(clsClasses.clsD_factura item) {
+
         String fst;
 
         //#EJC20200702:Correccion formato de fechas
@@ -756,6 +768,7 @@ public class FELFactura extends PBase {
     }
 
     private void processComplete() {
+
         Date currentTime = Calendar.getInstance().getTime();
         Log.i("FEL_FINISH: ", currentTime.toString());
 

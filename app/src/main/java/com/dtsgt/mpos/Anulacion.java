@@ -174,6 +174,7 @@ public class Anulacion extends PBase {
 		fdoc=new clsDocFactura(this,prn.prw,gl.peMon,gl.peDecImp,"",gl.peComboDet);
 
         app.getURL();
+
         wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
         recibeInventario = new Runnable() {
@@ -1394,7 +1395,7 @@ public class Anulacion extends PBase {
 			serie="";
 			ruta=gl.ruta;
 			vendedor=gl.vendnom;
-			cliente="";
+			nombre_cliente ="";
 
 		}
 

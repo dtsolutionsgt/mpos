@@ -181,7 +181,7 @@ public class clsDocCuenta extends clsDocument {
 			
 			clicod=cli;
 			clidir=DT.getString(3);
-			nit=DT.getString(4);
+			nit_cliente =DT.getString(4);
 			diacred=DT.getInt(5);
 			
 		} catch (Exception e) {
@@ -202,12 +202,13 @@ public class clsDocCuenta extends clsDocument {
 		}
 
 		try {
+
 			sql="SELECT NOMBRE,NIT,DIRECCION FROM D_FACTURAF WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
 			
-			cliente=DT.getString(0);
-		    nit=DT.getString(1);
+			nombre_cliente =DT.getString(0);
+		    nit_cliente =DT.getString(1);
           	clidir=DT.getString(2);
 					
 		} catch (Exception e) {
@@ -222,6 +223,7 @@ public class clsDocCuenta extends clsDocument {
 	}
 
 	protected boolean loadDocData(String corel) {
+
 		Cursor DT;
 		itemData item;
 
@@ -258,6 +260,7 @@ public class clsDocCuenta extends clsDocument {
 	}
 
 	private void detalleCombo(String idcombo ) {
+
         clsD_facturasObj D_facturasObj=new clsD_facturasObj(cont,Con,db);
         clsP_productoObj P_productoObj=new clsP_productoObj(cont,Con,db);
         String prid,nombre;
