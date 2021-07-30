@@ -1497,7 +1497,7 @@ public class AppMethods {
         loadPrintConfig();
 
         if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
-            return true;
+            return false;
         } else {
             return true;
         }
