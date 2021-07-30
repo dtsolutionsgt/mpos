@@ -96,7 +96,7 @@
             android:maxLines="1"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:text="Caja 1"
+            android:text="Nombre caja"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -114,7 +114,7 @@
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:maxLines="1"
-            android:text="TextView"
+            android:text="Nombre empresa"
             android:textSize="24sp"
             android:textStyle="bold" />
 

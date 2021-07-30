@@ -21,8 +21,10 @@ public class clsDocFactura extends clsDocument {
 
 	private ArrayList<itemData> items= new ArrayList<itemData>();
 	private ArrayList<itemData> bons= new ArrayList<itemData>();
+    private ArrayList<itemData> pagos= new ArrayList<itemData>();
 
-	private double tot,desc,imp,stot,percep,propina,totNotaC;
+
+    private double tot,desc,imp,stot,percep,propina,totNotaC;
 	private boolean sinimp,detcombo;
 	private String 	contrib,corelNotaC,asignacion,ccorel,corelF;
 	private int decimp,totitems;
@@ -357,7 +359,7 @@ public class clsDocFactura extends clsDocument {
 	protected boolean loadDocData(String corel) {
 
 		Cursor DT;
-		itemData item,bon;
+		itemData item,bon,pag;
 		String corNota,idcombo;
 		int corrl;
 
@@ -365,7 +367,7 @@ public class clsDocFactura extends clsDocument {
 
 		loadHeadData(corel);
 		
-		items.clear();bons.clear();
+		items.clear();bons.clear();pagos.clear();
 		
 		try {
 
@@ -432,6 +434,31 @@ public class clsDocFactura extends clsDocument {
 			} catch (Exception e) {
 				Toast.makeText(cont,"Impresion bonif : "+e.getMessage(), Toast.LENGTH_LONG).show();
 			}
+
+			// Medias de pago
+            try {
+
+                sql="SELECT P_MEDIAPAGO.NOMBRE, SUM(D_FACTURAP.VALOR) " +
+                        "FROM   D_FACTURAP INNER JOIN P_MEDIAPAGO ON D_FACTURAP.CODPAGO=P_MEDIAPAGO.CODIGO " +
+                        "WHERE  (D_FACTURAP.COREL='" + ccorel + "') GROUP BY P_MEDIAPAGO.NOMBRE";
+
+                DT=Con.OpenDT(sql);
+                if (DT.getCount()>0) DT.moveToFirst();
+
+                while (!DT.isAfterLast()) {
+
+                    pag = new itemData();
+
+                    pag.nombre = DT.getString(0);
+                    pag.cant = DT.getDouble(1);
+
+                    pagos.add(pag);
+                    DT.moveToNext();
+                }
+
+            } catch (Exception e) {
+                Toast.makeText(cont,"Impresion pagos : "+e.getMessage(), Toast.LENGTH_LONG).show();
+            }
 
 		} catch (Exception e) {
 			Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -674,15 +701,19 @@ public class clsDocFactura extends clsDocument {
 
         rep.addtotsp("TOTAL A PAGAR ", tot);
         rep.add("");
+
+        rep.add("Detalle pago : ");
+        for (int i = 0; i <pagos.size(); i++) {
+            rep.addtotDS(pagos.get(i).nombre,pagos.get(i).cant);
+        }
+
+        //rep.addc("----------------------");
+        //rep.addc("Firma cliente  ");
+         rep.add("");
+        rep.addc("ESTE DOCUMENTO ");
+        rep.addc("NO ES UNA FACTURA COMERCIAL");
         rep.add("");
-        rep.add("");
-        rep.add("");
-        rep.addc("----------------------");
-        rep.addc("Firma cliente  ");
-        rep.add("");
-        rep.add("");
-        rep.add("");
-        rep.add("");
+        rep.addc(sfticket);
         rep.add("");
         rep.add("");
         rep.add("");

@@ -688,12 +688,13 @@ public class Menu extends PBase {
             itemcnt++;
 			if (gl.peSolicInv) itemcnt++;
 
+			itemcnt=3;
 			final String[] selitems = new String[itemcnt];
 
 			selitems[itempos]="Existencias";itempos++;
 			selitems[itempos]="Ajuste de inventario";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
-            selitems[itempos]="Inventario inicial";itempos++;
+            //selitems[itempos]="Inventario inicial";itempos++;
 
 			menudlg = new ExDialog (this);
 
@@ -1793,7 +1794,7 @@ public class Menu extends PBase {
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());
             } catch (IOException e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
             }
 
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);

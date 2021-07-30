@@ -450,6 +450,11 @@ public class ProdMenu extends PBase {
             double descmon = prc.descmon;
             double tot = prc.tot;
 
+            if (precnuevo>0) {
+                prec=precnuevo;
+                tot=prec*cant;
+            }
+
             db.beginTransaction();
 
             if (!newitem){

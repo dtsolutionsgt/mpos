@@ -398,6 +398,11 @@ public class OrdenMenu extends PBase {
             double descmon = prc.descmon;
             double tot = prc.tot;
 
+            if (precnuevo>0) {
+                prec=precnuevo;
+                tot=prec*cant;
+            }
+
             db.beginTransaction();
 
             if (!newitem){
@@ -431,7 +436,8 @@ public class OrdenMenu extends PBase {
             ins.add("ID",newid);
             ins.add("COREL",idorden);
             ins.add("PRODUCTO",gl.prodid);
-            ins.add("EMPRESA",""+uitemid);
+            //ins.add("EMPRESA",""+uitemid);
+            ins.add("EMPRESA",""+newid);
             ins.add("UM","UNI");
             ins.add("CANT",cant);
             ins.add("UMSTOCK","UNI");
@@ -789,7 +795,8 @@ public class OrdenMenu extends PBase {
         try {
             P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prodid);
 
-            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+P_productoObj.first().codigo+"') AND (UNIDADMEDIDA='"+P_productoObj.first().unidbas+"')";
+            //sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+P_productoObj.first().codigo+"') AND (UNIDADMEDIDA='"+P_productoObj.first().unidbas+"')";
+            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+P_productoObj.first().unidbas+"')";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {

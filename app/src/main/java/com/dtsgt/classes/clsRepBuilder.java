@@ -495,9 +495,16 @@ public class clsRepBuilder {
 	public void addtotD(String s1,double val) {
 		String sval;
 		sval = Double.toString(val);
-		ts=ltrim(s1,prw-13)+" "+rtrim(sval,12);
+		ts=ltrim(s1,prw-13)+" "+rtrim(sval,11);
 		items.add(ts);
 	}
+
+    public void addtotDS(String s1,double val) {
+        String sval;
+        sval=cursym+decfrm.format(val);
+        ts=ltrim(s1,prw-13)+" "+rtrim(sval,11);
+        items.add(ts);
+    }
 
 	public void addtot(String s1,double val) {
 		String sval;

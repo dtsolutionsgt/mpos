@@ -824,7 +824,8 @@ public class Orden extends PBase {
             ins.add("ID",newid);
             ins.add("COREL",idorden);
             ins.add("PRODUCTO",prodid);
-            ins.add("EMPRESA",""+counter);
+            //ins.add("EMPRESA",""+counter);
+            ins.add("EMPRESA",""+newid);
             if (porpeso) ins.add("UM",gl.umpeso);else ins.add("UM",gl.um);
             ins.add("CANT",cant);
             ins.add("UMSTOCK",gl.um);
