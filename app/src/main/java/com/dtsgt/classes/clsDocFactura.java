@@ -23,6 +23,8 @@ public class clsDocFactura extends clsDocument {
 	private ArrayList<itemData> bons= new ArrayList<itemData>();
     private ArrayList<itemData> pagos= new ArrayList<itemData>();
 
+    //#EJC20210804: Variable global para parámetro de QR string.
+    public String QRCodeStr = "";
 
     private double tot,desc,imp,stot,percep,propina,totNotaC;
 	private boolean sinimp,detcombo;
@@ -318,37 +320,41 @@ public class clsDocFactura extends clsDocument {
         nit_cliente=nit_cliente.replace(" ","");
         nit_cliente=nit_cliente.toUpperCase();
 
-        String inputValue = "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
+        QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
                 "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
 
-        if (inputValue.length() > 0) {
-            int width = 400;
-            int height = 400;
-            int smallerDimension = width < height ? width : height;
-            smallerDimension = smallerDimension * 3 / 4;
+//        String inputValue = "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
+//                "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
 
-            qrgEncoder = new QRGEncoder(
-                    inputValue,
-                    null,
-                    QRGContents.Type.TEXT,
-                    smallerDimension);
-            try {
-                bitmap = qrgEncoder.encodeAsBitmap();
-                boolean save;
-                String result;
-                try {
-                    save = QRGSaver.save(savePath, feluuid, bitmap, QRGContents.ImageType.IMAGE_JPEG);
-                    result = save ? "Image Saved" : "Image Not Saved";
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-            } catch (WriterException e) {
-                Log.v(TAG, e.toString());
-            }
-        } else {
-            Log.v(TAG, "Required");
-        }
+//        if (inputValue.length() > 0) {
+//            int width = 400;
+//            int height = 400;
+//            int smallerDimension = width < height ? width : height;
+//            smallerDimension = smallerDimension * 3 / 4;
+//
+//            qrgEncoder = new QRGEncoder(
+//                    inputValue,
+//                    null,
+//                    QRGContents.Type.TEXT,
+//                    smallerDimension);
+//            try {
+//                bitmap = qrgEncoder.encodeAsBitmap();
+//                boolean save;
+//                String result;
+//                try {
+//                    save = QRGSaver.save(savePath, feluuid, bitmap, QRGContents.ImageType.IMAGE_JPEG);
+//                    result = save ? "Image Saved" : "Image Not Saved";
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            } catch (WriterException e) {
+//                Log.v(TAG, e.toString());
+//            }
+//        } else {
+//            Log.v(TAG, "Required");
+//        }
 
         //endregion
 
