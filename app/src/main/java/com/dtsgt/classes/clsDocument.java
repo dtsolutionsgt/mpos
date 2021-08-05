@@ -282,7 +282,6 @@ public class clsDocument {
 	}
 	
 	protected boolean buildFooter() {
-		
 		return true;
 	}
 	
