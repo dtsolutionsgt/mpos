@@ -1410,7 +1410,7 @@ public class AppMethods {
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
             intent.putExtra("askprint",1);
             intent.putExtra("copies",copies);
-			intent.putExtra("textqr",gl.QRCodeStr);
+			intent.putExtra("QRCodeStr",gl.QRCodeStr);
             cont.startActivity(intent);
 
         } catch (Exception e) {
