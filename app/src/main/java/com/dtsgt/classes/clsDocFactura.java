@@ -327,34 +327,34 @@ public class clsDocFactura extends clsDocument {
 //                "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
 
 
-        if (QRCodeStr.length() > 0) {
-            int width = 300;
-            int height = 300;
-            int smallerDimension = width < height ? width : height;
-            smallerDimension = smallerDimension * 3 / 4;
-
-            qrgEncoder = new QRGEncoder(
-                    QRCodeStr,
-                    null,
-                    QRGContents.Type.TEXT,
-                    smallerDimension);
-            try {
-                bitmap = qrgEncoder.encodeAsBitmap();
-                boolean save;
-                String result;
-                try {
-                    save = QRGSaver.save(savePath, feluuid, bitmap, QRGContents.ImageType.IMAGE_JPEG);
-                    result = save ? "Image Saved" : "Image Not Saved";
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            } catch (WriterException e) {
-                Log.v(TAG, e.toString());
-            }
-        } else {
-            Log.v(TAG, "Required");
-        }
+//        if (QRCodeStr.length() > 0) {
+//            int width = 300;
+//            int height = 300;
+//            int smallerDimension = width < height ? width : height;
+//            smallerDimension = smallerDimension * 3 / 4;
+//
+//            qrgEncoder = new QRGEncoder(
+//                    QRCodeStr,
+//                    null,
+//                    QRGContents.Type.TEXT,
+//                    smallerDimension);
+//            try {
+//                bitmap = qrgEncoder.encodeAsBitmap();
+//                boolean save;
+//                String result;
+//                try {
+//                    save = QRGSaver.save(savePath, feluuid, bitmap, QRGContents.ImageType.IMAGE_JPEG);
+//                    result = save ? "Image Saved" : "Image Not Saved";
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            } catch (WriterException e) {
+//                Log.v(TAG, e.toString());
+//            }
+//        } else {
+//            Log.v(TAG, "Required");
+//        }
 
         //endregion
 
@@ -795,9 +795,9 @@ public class clsDocFactura extends clsDocument {
 
             if (!feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
-                rep.add("Número de autorización :");
+                rep.add("Número de autorización: ");
                 rep.add(feluuid);
-                rep.add("Fecha de certificación :"+feldcert);
+                rep.add("Fecha de certificación: "+feldcert);
             }
 
             if (!felIVA.isEmpty()) rep.add(felIVA);
