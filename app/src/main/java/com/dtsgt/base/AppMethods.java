@@ -1307,57 +1307,6 @@ public class AppMethods {
         return niv;
     }
 
-	//#CKFK20200524_FIX_BY_OPENDT Puse esta función en comentario porque la tabla P_IMPRESORA no existe en MPos
-	/*public String impresTipo() {
-		Cursor dt;
-		String prnid;
-
-		try {
-
-			sql="SELECT prn FROM Params";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-			prnid=dt.getString(0);
-
-			sql="SELECT MARCA FROM P_IMPRESORA WHERE IDIMPRESORA='"+prnid+"'";
-			dt=Con.OpenDT(sql);
-			if (dt.getCount()==0) return "SIN IMPRESORA";
-			dt.moveToFirst();
-
-			return dt.getString(0);
-
-		} catch (Exception e) {
-			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-			return "SIN IMPRESORA";
-		}
-	}*/
-
-	//#CKFK20200524_FIX_BY_OPENDT Puse esta función en comentario porque la tabla P_IMPRESORA no existe en MPos
-	/*public String impresParam() {
-		CryptUtil cu=new CryptUtil();
-		Cursor dt;
-		String prnid;
-
-		try {
-
-			sql="SELECT prn FROM Params";
-			dt=Con.OpenDT(sql);
-			dt.moveToFirst();
-			prnid=dt.getString(0);
-
-			sql="SELECT MACADDRESS FROM P_IMPRESORA WHERE IDIMPRESORA='"+prnid+"'";
-			dt=Con.OpenDT(sql);
-			if (dt.getCount()==0) return " #### ";
-			dt.moveToFirst();
-
-			return cu.decrypt(dt.getString(0));
-
-		} catch (Exception e) {
-			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-			return " #### ";
-		}
-	}*/
-
     //endregion
 
     //region Impresion

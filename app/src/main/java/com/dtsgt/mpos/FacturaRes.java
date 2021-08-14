@@ -799,7 +799,6 @@ public class FacturaRes extends PBase {
                 fdoc.nommesero=gl.nombre_mesero;
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
-				toastlong("QRCodeStr: "+fdoc.QRCodeStr);
                 app.doPrint(gl.peNumImp,0);
 
             }
