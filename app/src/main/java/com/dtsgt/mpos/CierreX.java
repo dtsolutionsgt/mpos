@@ -765,18 +765,19 @@ public class CierreX extends PBase {
         }
     }
 
-    private void printEpson() {
-        try {
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
-            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
-            intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
-            intent.putExtra("askprint",1);
-            this.startActivity(intent);
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("printEpson" + e.getMessage());
-        }
-    }
+//    private void printEpson() {
+//        try {
+//            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
+//            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
+//            intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
+//            intent.putExtra("askprint",1);
+//            intent.putExtra("QRCodeStr",gl.QRCodeStr);
+//            this.startActivity(intent);
+//        } catch (Exception e) {
+//            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+//            msgbox("printEpson" + e.getMessage());
+//        }
+//    }
 
     //endregion
 
