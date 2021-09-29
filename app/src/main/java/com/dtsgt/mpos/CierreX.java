@@ -757,7 +757,10 @@ public class CierreX extends PBase {
 
     public void printDoc() {
         try {
-            if (checkPrintFile()) app.doPrint();
+            if (checkPrintFile()) {
+                gl.QRCodeStr="";
+                app.doPrint();
+            }
             //printEpson();
             //prn.printask();
         }catch (Exception e){
@@ -770,6 +773,7 @@ public class CierreX extends PBase {
             Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
             intent.putExtra("mac","BT:00:01:90:85:0D:8C");
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
+            intent.putExtra("askprint",1);
             intent.putExtra("askprint",1);
             this.startActivity(intent);
         } catch (Exception e) {

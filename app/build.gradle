@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.dtsgt.mpos"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 28
         renderscriptTargetApi 28
         renderscriptSupportModeEnabled true
 
@@ -49,6 +49,7 @@ android {
 
 }
 
+
 dependencies {
 
     implementation files('libs/android-core-3.1.0.jar')
@@ -81,5 +82,12 @@ dependencies {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'xpp3', module: 'xpp3'
     }
+
+    // Zxing libraries
+    //compile 'com.embarkmobile:zxing-android-minimal:2.0.0@aar'
+    //compile 'com.embarkmobile:zxing-android-integration:2.0.0@aar'
+    //compile 'com.google.zxing:core:3.0.1'
+
+    implementation 'com.google.zxing:core:3.2.0'
 
 }

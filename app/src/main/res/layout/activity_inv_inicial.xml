@@ -827,12 +827,12 @@
         android:id="@+id/relLock"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_alignTop="@+id/relVenta"
+        android:layout_alignBottom="@+id/gridView2"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="false"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/frame_rect">
 
         <ImageView
@@ -908,10 +908,10 @@
         android:layout_alignStart="@+id/relLock"
         android:layout_alignEnd="@+id/relLock"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="-25dp"
         android:layout_marginEnd="0dp"
         android:gravity="center_horizontal"
-        android:text="Aplicar" />
+        android:text="Completar" />
 
     <TextView
         android:id="@+id/textView241"
@@ -941,5 +941,41 @@
         android:onClick="doInterrupt"
         android:padding="5dp"
         android:src="@drawable/hold2" />
+
+    <RelativeLayout
+        android:layout_width="110dp"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="0dp">
+
+        <TextView
+            android:id="@+id/textView244"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:gravity="center_horizontal"
+            android:text="Agregar" />
+
+        <ImageView
+            android:id="@+id/imageView115"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/textView244"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:clickable="true"
+            android:onClick="doAdd"
+            android:src="@drawable/add" />
+    </RelativeLayout>
 
 </RelativeLayout>

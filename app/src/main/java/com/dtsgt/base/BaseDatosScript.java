@@ -704,6 +704,17 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            sql="CREATE TABLE [P_nivelprecio_sucursal] ("+
+                    "CODIGO_NIVEL_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_NIVEL_PRECIO INTEGER NOT NULL,"+
+                    "USUARIO_AGREGO INTEGER NOT NULL,"+
+                    "FECHA_AGREGADO INTEGER NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_NIVEL_SUCURSAL])"+
+                    ");";
+            database.execSQL(sql);
 
             return 1;
 

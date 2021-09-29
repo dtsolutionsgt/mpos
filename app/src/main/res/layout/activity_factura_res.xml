@@ -282,7 +282,7 @@
             android:clickable="true"
             android:gravity="center"
             android:onClick="payCash"
-            android:text="Pago Tarjeta"
+            android:text="Forma de pago"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="12sp" />
 

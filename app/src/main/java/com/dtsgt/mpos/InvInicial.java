@@ -107,6 +107,10 @@ public class InvInicial extends PBase {
 
     //region Events
 
+    public void doAdd(View view) {
+        addItem();
+    }
+
     public void doSave(View view) {
 
         if (ingreso) {
@@ -117,7 +121,7 @@ public class InvInicial extends PBase {
             }
 
             if (T_movrObj.count==0) {
-                msgbox("No se puede guardar un inventario vacío");return;
+                msgbox("No se ha agregado ningúno producto al inventario, no se puede completar");return;
             }
         } else {
             if (T_movdObj.count==0) {
@@ -962,7 +966,7 @@ public class InvInicial extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    sql="DELETE FROM T_MOVD";
+                    sql="DELETE FROM T_MOVR";
                     db.execSQL(sql);
                     listItems();
                 } catch (Exception e) {
@@ -1067,7 +1071,6 @@ public class InvInicial extends PBase {
         dialog.show();
 
     }
-
 
     //endregion
 

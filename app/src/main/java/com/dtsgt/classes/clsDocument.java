@@ -316,7 +316,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO FEL ELECTRONICO");
+                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO ELECTRONICO");
                 rep.add(nombre);
                 s=s.replace("%%%","");
             }

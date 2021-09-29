@@ -47,6 +47,7 @@ import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_motivoajusteObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
+import com.dtsgt.classes.clsP_nivelprecio_sucursalObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
@@ -118,6 +119,8 @@ import com.dtsgt.classesws.clsBeP_MUNICIPIO;
 import com.dtsgt.classesws.clsBeP_MUNICIPIOList;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIO;
 import com.dtsgt.classesws.clsBeP_NIVELPRECIOList;
+import com.dtsgt.classesws.clsBeP_NIVELPRECIO_SUCURSAL;
+import com.dtsgt.classesws.clsBeP_NIVELPRECIO_SUCURSALList;
 import com.dtsgt.classesws.clsBeP_PARAMEXT;
 import com.dtsgt.classesws.clsBeP_PARAMEXTList;
 import com.dtsgt.classesws.clsBeP_PRODCOMBO;
@@ -436,17 +439,16 @@ public class WSRec extends PBase {
                         break;
                     case 46:
                         callMethod("GetP_UNIDAD", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        //callEmptyMethod();
                         break;
                     case 47:
                         callMethod("GetP_UNIDAD_CONV", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        //callEmptyMethod();
-                        break;
+                         break;
                     case 48:
                         callMethod("GetP_PRODRECETA", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
-                        //callEmptyMethod();
                         break;
-
+                    case 49:
+                        callMethod("GetP_NIVELPRECIO_SUCURSAL","SUCURSAL",gl.tienda);
+                        break;
 
                 }
             } catch (Exception e) {
@@ -781,8 +783,16 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(49);
+                    break;
+                case 49:
+                    processNivelSucursal();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
                     break;
+
             }
 
         } catch (Exception e) {
@@ -3128,6 +3138,48 @@ public class WSRec extends PBase {
             ws.errorflag = true;
         }
     }
+
+    private void processNivelSucursal() {
+
+        try {
+            clsP_nivelprecio_sucursalObj handler = new clsP_nivelprecio_sucursalObj(this, Con, db);
+            clsBeP_NIVELPRECIO_SUCURSALList items = new clsBeP_NIVELPRECIO_SUCURSALList();
+            clsBeP_NIVELPRECIO_SUCURSAL item = new clsBeP_NIVELPRECIO_SUCURSAL();
+            clsClasses.clsP_nivelprecio_sucursal var;
+
+            script.add("DELETE FROM P_NIVELPRECIO_SUCURSAL");
+
+            items = xobj.getresult(clsBeP_NIVELPRECIO_SUCURSALList.class, "GetP_NIVELPRECIO_SUCURSAL");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_nivelprecio_sucursal();
+
+                var.codigo_nivel_sucursal=item.CODIGO_NIVEL_SUCURSAL;
+                var.codigo_empresa=item.CODIGO_EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.codigo_nivel_precio=item.CODIGO_NIVEL_PRECIO;
+                var.usuario_agrego=0;
+                var.fecha_agregado=0;
+                var.activo=1;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
 
     //endregion
 

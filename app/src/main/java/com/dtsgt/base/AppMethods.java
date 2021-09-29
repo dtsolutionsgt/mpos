@@ -1403,14 +1403,12 @@ public class AppMethods {
     private void printEpsonTMBT(int copies) {
 
         try {
-            //toast(gl.prpar);
-
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
             intent.putExtra("mac","BT:"+gl.prpar);
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
             intent.putExtra("askprint",1);
             intent.putExtra("copies",copies);
-			intent.putExtra("textqr",gl.QRCodeStr);
+			intent.putExtra("QRCodeStr",""+gl.QRCodeStr);
             cont.startActivity(intent);
 
         } catch (Exception e) {

@@ -322,7 +322,12 @@ public class FELFactura extends PBase {
 
             } else {  // Certificacion - una factura despues de venta
 
-                if (fel.duplicado) toastcent("Documento enviado previamente." + fel.mpos_identificador_fact);
+                if (fel.duplicado) {
+                    //toastcentlong("Documento enviado previamente." + fel.mpos_identificador_fact);
+                    msgbox("Documento enviado previamente.");
+                    finish();
+                    return;
+                }
 
                 if (!fel.errorflag && !fel.duplicado) {
                     marcaFactura();
