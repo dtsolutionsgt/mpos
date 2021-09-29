@@ -884,19 +884,6 @@ public class Exist extends PBase {
         }
     }
 
-    private void printEpson() {
-        try {
-            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
-            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
-            intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
-            intent.putExtra("askprint",1);
-            this.startActivity(intent);
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
-    }
-
-
     //endregion
 
     //region Dialogs
