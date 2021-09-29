@@ -52,6 +52,7 @@ public class MainActivity extends PBase {
     private ImageView imgLogo, imgFel;
     private Spinner spin;
 
+
     private BaseDatosVersion dbVers;
 
     private LA_Login adapter;
