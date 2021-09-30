@@ -96,7 +96,6 @@
         <activity
             android:name=".Menu"
             android:label="@string/title_activity_menu"
-            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -592,7 +591,6 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Caja"
-            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity

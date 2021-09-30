@@ -605,11 +605,11 @@ public class MainActivity extends PBase {
             }
 
             if (gl.pelTablet) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 listView.setVisibility(View.VISIBLE);
                 spin.setVisibility(View.INVISIBLE);
             } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 listView.setVisibility(View.INVISIBLE);
                 spin.setVisibility(View.VISIBLE);
             }
