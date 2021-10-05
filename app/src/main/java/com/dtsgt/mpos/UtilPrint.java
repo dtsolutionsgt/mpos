@@ -304,8 +304,9 @@ public class UtilPrint extends PBase {
 			s="SIN IMPRESORA";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=0;
 			s="EPSON TM BlueTooth";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=1;
             s="HP Engage USB";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=2;
+            s="Aclas";spincode.add(s); if (prtipo.equalsIgnoreCase(s)) sp=3;
 
-			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spincode);
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spincode);
 			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				
 			spinPrint.setAdapter(dataAdapter);
