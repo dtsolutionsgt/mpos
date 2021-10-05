@@ -48,7 +48,8 @@ public class clsDocFactura extends clsDocument {
     QRGEncoder qrgEncoder;
     ImageView qrImage;
     String TAG = "GenerateQRCode";
-    String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
+    //String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
+    String qrpath = Environment.getExternalStorageDirectory().getPath() + "/";
 
     protected boolean loadHeadData(String corel) {
 
@@ -323,43 +324,19 @@ public class clsDocFactura extends clsDocument {
         QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
                 "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
 
-//        String inputValue = "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
-//                "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
-
-
-//        if (QRCodeStr.length() > 0) {
-//            int width = 300;
-//            int height = 300;
-//            int smallerDimension = width < height ? width : height;
-//            smallerDimension = smallerDimension * 3 / 4;
-//
-//            qrgEncoder = new QRGEncoder(
-//                    QRCodeStr,
-//                    null,
-//                    QRGContents.Type.TEXT,
-//                    smallerDimension);
-//            try {
-//                bitmap = qrgEncoder.encodeAsBitmap();
-//                boolean save;
-//                String result;
-//                try {
-//                    save = QRGSaver.save(savePath, feluuid, bitmap, QRGContents.ImageType.IMAGE_JPEG);
-//                    result = save ? "Image Saved" : "Image Not Saved";
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//            } catch (WriterException e) {
-//                Log.v(TAG, e.toString());
-//            }
-//        } else {
-//            Log.v(TAG, "Required");
-//        }
-
-        //endregion
+        if (!QRCodeStr.isEmpty()) {
+            try {
+                qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
+                bitmap = qrgEncoder.encodeAsBitmap();
+                if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
+                    throw new Exception("Errpr al guardar la barra");
+                }
+            } catch (Exception e) {
+                Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
 
 		return true;
-		
 	}
 
 	protected boolean loadDocData(String corel) {
