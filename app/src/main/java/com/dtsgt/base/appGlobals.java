@@ -43,6 +43,10 @@ public class appGlobals extends Application {
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
                    impresion_comanda, modo_domicilio, cf_domicilio ;
 
+	//Tamaño de pantalla
+    public int scrx,scry,scrdim;
+    public boolean scrhoriz;
+
 	//#EJC20210804: Para pasar parámetro a appbundle print.
 	public String QRCodeStr ="";
 
