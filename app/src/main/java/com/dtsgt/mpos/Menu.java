@@ -85,11 +85,13 @@ public class Menu extends PBase {
 
 			gl.validDate=false;
 			gl.lastDate=0;
-
+            gl.QRCodeStr="";
 			gl.dev = false;
 			vApp=this.getApplication();
 			rutatipo=gl.rutatipog;
 			gl.devfindia=false;
+
+
 			rutapos=false;gl.rutapos=false;
 			sdoc="Venta";iicon=102;
 			rutapos=true;gl.rutapos=true;

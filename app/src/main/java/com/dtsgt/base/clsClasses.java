@@ -667,6 +667,16 @@ public class clsClasses {
 		public double cambio;
 	}
 
+    public class clsP_nivelprecio_sucursal {
+        public int  codigo_nivel_sucursal;
+        public int  codigo_empresa;
+        public int  codigo_sucursal;
+        public int  codigo_nivel_precio;
+        public int  usuario_agrego;
+        public long fecha_agregado;
+        public int  activo;
+    }
+
     public class clsP_orden_numero {
         public int  id;
     }

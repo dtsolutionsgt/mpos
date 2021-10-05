@@ -67,15 +67,11 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 import com.dtsgt.webservice.srvCommit;
-import com.google.zxing.WriterException;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidmads.library.qrgenearator.QRGContents;
-import androidmads.library.qrgenearator.QRGEncoder;
-import androidmads.library.qrgenearator.QRGSaver;
 
 public class FacturaRes extends PBase {
 
@@ -1627,29 +1623,25 @@ public class FacturaRes extends PBase {
                 cult=0;
             }
 
-
-
             sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
             DT=Con.OpenDT(sql);
 
             try {
                 if (DT.getCount()>0){
-
                     DT.moveToFirst();
 
                     fserie=DT.getString(0);
                     ca1=DT.getInt(1);
                     ci=DT.getInt(2);
                     cf=DT.getInt(3);
-
                 } else {
                     fcorel=0;fserie="";
-                    //mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+                    mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
                     return;
                 }
             } catch (Exception e) {
                 fcorel=0;fserie="";
-                //mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+                mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
                 return;
             }
 

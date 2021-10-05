@@ -52,6 +52,7 @@ public class MainActivity extends PBase {
     private ImageView imgLogo, imgFel;
     private Spinner spin;
 
+
     private BaseDatosVersion dbVers;
 
     private LA_Login adapter;
@@ -64,7 +65,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "4.0.16"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.0.20"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -604,11 +605,11 @@ public class MainActivity extends PBase {
             }
 
             if (gl.pelTablet) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 listView.setVisibility(View.VISIBLE);
                 spin.setVisibility(View.INVISIBLE);
             } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 listView.setVisibility(View.INVISIBLE);
                 spin.setVisibility(View.VISIBLE);
             }

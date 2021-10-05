@@ -757,7 +757,10 @@ public class CierreX extends PBase {
 
     public void printDoc() {
         try {
-            if (checkPrintFile()) app.doPrint();
+            if (checkPrintFile()) {
+                gl.QRCodeStr="";
+                app.doPrint();
+            }
             //printEpson();
             //prn.printask();
         }catch (Exception e){

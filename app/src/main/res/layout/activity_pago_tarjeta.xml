@@ -78,10 +78,11 @@
                 android:layout_toRightOf="@+id/imgRoadTit"
                 android:paddingLeft="55dp"
                 android:paddingRight="5dp"
-                android:text=" TARJETA CREDITO"
+                android:text="FORMA DE PAGO"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#1A8AC6"
-                android:textSize="30sp" />
+                android:textSize="30sp"
+                android:textStyle="bold" />
         </RelativeLayout>
 
         <TextView

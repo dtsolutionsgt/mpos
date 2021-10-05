@@ -53,6 +53,7 @@ import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -2659,11 +2660,11 @@ public class Venta extends PBase {
             rep.empty();
             rep.save();
 
-            if (gl.emp==9) {
+            //if (gl.emp==9) {
                 app.doPrint(2,1);
-            } else {
-                app.doPrint(1);
-            }
+            //} else {
+            //    app.doPrint(1);
+            //}
          } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -3715,6 +3716,7 @@ public class Venta extends PBase {
 
         try {
 
+            /*
             clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
             VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.codigo_vendedor);
             if (VendedoresObj.count>0) nivuser=(int) VendedoresObj.first().nivelprecio;
@@ -3725,13 +3727,33 @@ public class Venta extends PBase {
             for (int i = 0; i <P_nivelprecioObj.count; i++) {
                 selitems[i]=P_nivelprecioObj.items.get(i).nombre;
             }
+            */
+
+            clsViewObj ViewObj=new clsViewObj(this,Con,db);
+
+            sql="SELECT P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE ,'','','','','','','' " +
+            "FROM P_NIVELPRECIO INNER JOIN P_NIVELPRECIO_SUCURSAL ON P_NIVELPRECIO.CODIGO = P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO " +
+            "WHERE (P_NIVELPRECIO_SUCURSAL.CODIGO_SUCURSAL="+gl.tienda+") " +
+            "UNION " +
+            "SELECT P_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE,'','','','','','','' " +
+            "FROM P_SUCURSAL INNER JOIN P_NIVELPRECIO ON P_SUCURSAL.CODIGO_NIVEL_PRECIO = P_NIVELPRECIO.CODIGO " +
+            "WHERE (P_SUCURSAL.CODIGO_SUCURSAL ="+gl.tienda+") " +
+            "ORDER BY NNOMBRE";
+
+            ViewObj.fillSelect(sql);
+
+            final String[] selitems = new String[ViewObj.count];
+            for (int i = 0; i <ViewObj.count; i++) {
+                selitems[i]=ViewObj.items.get(i).f1;
+            }
 
             AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
             menudlg.setTitle("Nivel de precio");
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
-                    int niv=P_nivelprecioObj.items.get(item).codigo;
+                    //int niv=P_nivelprecioObj.items.get(item).codigo;
+                    int niv=ViewObj.items.get(item).pk;
                     gl.nivel=niv;
                     setNivel();
 
