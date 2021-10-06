@@ -9,25 +9,24 @@
     <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
-        android:layout_height="48dp" >
+        android:layout_height="48dp">
 
         <RelativeLayout
             android:id="@+id/relRoadbar"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:layout_centerVertical="true"
-            android:background="#9A999E" >
-        </RelativeLayout>
+            android:background="#9A999E"></RelativeLayout>
 
         <ImageView
             android:id="@+id/imgTitLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
             android:src="@drawable/logo_panel" />
@@ -54,6 +53,20 @@
             android:text="Existencias"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6" />
+
+        <TextView
+            android:id="@+id/textView245"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="9dp"
+            android:layout_marginEnd="9dp"
+            android:layout_toStartOf="@+id/imgTitLogo"
+            android:background="@drawable/frame_btn"
+            android:clickable="true"
+            android:onClick="doCor"
+            android:padding="5dp"
+            android:text="Corregir inventario" />
     </RelativeLayout>
 
     <EditText

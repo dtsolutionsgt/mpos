@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.BatteryManager;
@@ -782,8 +783,7 @@ public class Menu extends PBase {
 	public void showInvMenuUtils() {
 		try{
 			final AlertDialog Dialog;
-			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
-			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final"};
+			final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
 
 			menudlg = new ExDialog (this);
 
@@ -1081,6 +1081,7 @@ public class Menu extends PBase {
 
         return false;
     }
+
 
 	//endregion
 
@@ -2164,6 +2165,7 @@ public class Menu extends PBase {
         dialog.show();
 
     }
+
     //endregion
 
 	//region Activity Events

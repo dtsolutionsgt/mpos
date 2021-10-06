@@ -500,6 +500,7 @@ public class ProdCant extends PBase {
 		double ppeso = 0;
 
 		try {
+		    /*
 			if (cant < 0) {
 				mu.msgbox("Cantidad incorrecta");
 				txtCant.requestFocus();
@@ -513,7 +514,7 @@ public class ProdCant extends PBase {
 					return;
 				}
 			}
-
+		     */
 			if (porpeso) {
 
 				String spp = txtPeso.getText().toString();

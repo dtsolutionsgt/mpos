@@ -731,6 +731,8 @@ public class ProdMenu extends PBase {
 
     private boolean validaStock() {
         boolean flag=true;
+
+        /*
         ststr="";
 
         for (int i = 0; i <items.size(); i++) {
@@ -744,6 +746,10 @@ public class ProdMenu extends PBase {
 
         if (!flag) msgbox2(ststr);
         return flag;
+
+         */
+
+        return true;
     }
 
     private boolean stockProducto(int prodid,int prcant,int unid){

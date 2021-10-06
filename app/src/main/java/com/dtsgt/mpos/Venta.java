@@ -691,7 +691,8 @@ public class Venta extends PBase {
                         if (exists) descflag=false;
                         processCant(updateitem);
                     } else {
-                        msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
+                        processCant(updateitem);
+                        //msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
                     }
                 } else if (tipo.equalsIgnoreCase("S")) {
                     if (exists) descflag=false;
@@ -731,7 +732,8 @@ public class Venta extends PBase {
                     if (gl.limcant>0) {
                         processCant(false);
                     } else {
-                        msgAskLimit("\"El producto \"+ pprodname+\" no tiene existencia disponible.\n¿Continuar con la venta?",false);
+                        processCant(false);
+                        //msgAskLimit("\"El producto \"+ pprodname+\" no tiene existencia disponible.\n¿Continuar con la venta?",false);
                     }
                 } else if (tipo.equalsIgnoreCase("S")) {
                     processCant(false);
@@ -2997,7 +2999,6 @@ public class Venta extends PBase {
 
             sql="DELETE FROM T_ORDENCOMBOPRECIO WHERE COREL='VENTA'";
             db.execSQL(sql);
-
 
             sql="DELETE FROM T_BARRA";
             db.execSQL(sql);

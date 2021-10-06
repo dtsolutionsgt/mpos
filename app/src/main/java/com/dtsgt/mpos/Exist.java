@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -43,7 +44,7 @@ public class Exist extends PBase {
 
 	private ListView listView;
 	private EditText txtFilter;
-	private TextView lblReg,lblSync;
+	private TextView lblReg,lblSync,lblCor;
 	private ImageView imgSync;
 	private ProgressBar pbar;
 
@@ -89,6 +90,7 @@ public class Exist extends PBase {
 		txtFilter = (EditText) findViewById(R.id.txtFilter);
  		lblReg = (TextView) findViewById(R.id.textView1);lblReg.setText("");
         lblSync = (TextView) findViewById(R.id.textView186);lblSync.setVisibility(View.INVISIBLE);
+        lblCor= (TextView) findViewById(R.id.textView245);lblCor.setVisibility(View.INVISIBLE);//if (gl.emp==15) lblCor.setVisibility(View.VISIBLE);
         imgSync = (ImageView) findViewById(R.id.imageView77);imgSync.setVisibility(View.INVISIBLE);
         pbar=findViewById(R.id.progressBar5);pbar.setVisibility(View.INVISIBLE);
 
@@ -210,6 +212,10 @@ public class Exist extends PBase {
         msgAskRecibir("Recibir existencias del servidor y reescribir actuales");
     }
 
+    public void doCor(View view) {
+        msgAskDTI();
+    }
+
     private void setHandlers(){
 
         try{
@@ -300,7 +306,7 @@ public class Exist extends PBase {
 
 		vF = txtFilter.getText().toString().replace("'", "");
 
-		try {
+        try {
 
 			sql = "SELECT P_STOCK.CODIGO, P_PRODUCTO.DESCLARGA, P_PRODUCTO.CODIGO " +
 					"FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK.CODIGO  WHERE 1=1 ";
@@ -884,6 +890,204 @@ public class Exist extends PBase {
         }
     }
 
+    private void DonTacoInv20211005() {
+        Cursor dt;
+        int prodid;
+        double cant;
+        String um;
+
+        try {
+            db.beginTransaction();
+
+            // Limpia inventario
+            db.execSQL("DELETE FROM P_STOCK");
+
+            // Compras e ajustes
+            sql="SELECT  D_MOVD.PRODUCTO, SUM(D_MOVD.CANT), D_MOVD.UNIDADMEDIDA FROM D_MOV INNER JOIN " +
+                    "D_MOVD ON D_MOV.COREL = D_MOVD.COREL " +
+                    "WHERE (D_MOV.COREL >= '81_211001115300') AND (D_MOV.ANULADO = 0) " +
+                    "GROUP BY D_MOVD.PRODUCTO, D_MOVD.UNIDADMEDIDA ";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    prodid=dt.getInt(0);
+                    cant=dt.getDouble(1);
+                    um=dt.getString(2);
+
+                    ins.init("P_STOCK");
+
+                    ins.add("CODIGO",prodid);
+                    ins.add("CANT",cant);
+                    ins.add("CANTM",0);
+                    ins.add("PESO",0);
+                    ins.add("plibra",0);
+                    ins.add("LOTE","");
+                    ins.add("DOCUMENTO","");
+                    ins.add("FECHA",0);
+                    ins.add("ANULADO",0);
+                    ins.add("CENTRO","");
+                    ins.add("STATUS","");
+                    ins.add("ENVIADO",1);
+                    ins.add("CODIGOLIQUIDACION",0);
+                    ins.add("COREL_D_MOV","");
+                    ins.add("UNIDADMEDIDA",um);
+
+                    String sp=ins.sql();
+                    db.execSQL(ins.sql());
+
+                    dt.moveToNext();
+                }
+            }
+
+            // Ventas directas
+            sql="SELECT D_FACTURAD.PRODUCTO, SUM(D_FACTURAD.CANT), D_FACTURAD.UMVENTA FROM D_FACTURA INNER JOIN " +
+                    "D_FACTURAD ON D_FACTURA.COREL = D_FACTURAD.COREL AND D_FACTURA.EMPRESA = D_FACTURAD.EMPRESA " +
+                    "WHERE (D_FACTURA.ANULADO = 0)  AND (D_FACTURA.COREL>='81_211002040649')  GROUP BY D_FACTURAD.PRODUCTO, D_FACTURAD.UMVENTA ";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    prodid=dt.getInt(0);
+                    cant=dt.getDouble(1);
+                    um=dt.getString(2);
+
+                    try {
+                        ins.init("P_STOCK");
+
+                        ins.add("CODIGO",prodid);
+                        ins.add("CANT",0);
+                        ins.add("CANTM",0);
+                        ins.add("PESO",0);
+                        ins.add("plibra",0);
+                        ins.add("LOTE","");
+                        ins.add("DOCUMENTO","");
+                        ins.add("FECHA",0);
+                        ins.add("ANULADO",0);
+                        ins.add("CENTRO","");
+                        ins.add("STATUS","");
+                        ins.add("ENVIADO",1);
+                        ins.add("CODIGOLIQUIDACION",0);
+                        ins.add("COREL_D_MOV","");
+                        ins.add("UNIDADMEDIDA",um);
+
+                        String sp=ins.sql();
+                        db.execSQL(ins.sql());
+                    } catch (SQLException e) {}
+
+                    db.execSQL("UPDATE P_STOCK SET CANT=CANT-" + cant +" WHERE CODIGO="+prodid);
+
+                    dt.moveToNext();
+                }
+            }
+
+            // Combos
+            sql="SELECT D_FACTURAC.IDSELECCION, SUM(D_FACTURAC.CANT), P_PRODUCTO.UNIDBAS FROM D_FACTURA INNER JOIN " +
+                    "D_FACTURAC ON D_FACTURA.COREL = D_FACTURAC.COREL INNER JOIN " +
+                    "P_PRODUCTO ON D_FACTURAC.IDSELECCION = P_PRODUCTO.CODIGO_PRODUCTO " +
+                    "WHERE (D_FACTURA.ANULADO = 0) AND (D_FACTURA.COREL>='81_211001115300') " +
+                    "GROUP BY D_FACTURAC.IDSELECCION, P_PRODUCTO.UNIDBAS";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    prodid=dt.getInt(0);
+                    cant=dt.getDouble(1);
+                    um=dt.getString(2);
+
+                    try {
+                        ins.init("P_STOCK");
+
+                        ins.add("CODIGO",prodid);
+                        ins.add("CANT",0);
+                        ins.add("CANTM",0);
+                        ins.add("PESO",0);
+                        ins.add("plibra",0);
+                        ins.add("LOTE","");
+                        ins.add("DOCUMENTO","");
+                        ins.add("FECHA",0);
+                        ins.add("ANULADO",0);
+                        ins.add("CENTRO","");
+                        ins.add("STATUS","");
+                        ins.add("ENVIADO",1);
+                        ins.add("CODIGOLIQUIDACION",0);
+                        ins.add("COREL_D_MOV","");
+                        ins.add("UNIDADMEDIDA",um);
+
+                        String sp=ins.sql();
+                        db.execSQL(ins.sql());
+                    } catch (SQLException e) {}
+
+                    sql="UPDATE P_STOCK SET CANT=CANT-" + cant +" WHERE CODIGO="+prodid;
+                    db.execSQL(sql);
+
+                    dt.moveToNext();
+                }
+            }
+
+            // Recetas
+            sql="SELECT D_FACTURAR.PRODUCTO, SUM(D_FACTURAR.CANT), D_FACTURAR.UM FROM D_FACTURA INNER JOIN " +
+                    "D_FACTURAR ON D_FACTURA.COREL = D_FACTURAR.COREL " +
+                    "WHERE (D_FACTURA.ANULADO = 0) AND (D_FACTURA.COREL>='81_211002040649') " +
+                    "GROUP BY D_FACTURAR.PRODUCTO, D_FACTURAR.UM";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    prodid=dt.getInt(0);
+                    cant=dt.getDouble(1);
+                    um=dt.getString(2);
+
+                    try {
+                        ins.init("P_STOCK");
+
+                        ins.add("CODIGO",prodid);
+                        ins.add("CANT",0);
+                        ins.add("CANTM",0);
+                        ins.add("PESO",0);
+                        ins.add("plibra",0);
+                        ins.add("LOTE","");
+                        ins.add("DOCUMENTO","");
+                        ins.add("FECHA",0);
+                        ins.add("ANULADO",0);
+                        ins.add("CENTRO","");
+                        ins.add("STATUS","");
+                        ins.add("ENVIADO",1);
+                        ins.add("CODIGOLIQUIDACION",0);
+                        ins.add("COREL_D_MOV","");
+                        ins.add("UNIDADMEDIDA",um);
+
+                        String sp=ins.sql();
+                        db.execSQL(ins.sql());
+                    } catch (SQLException e) {}
+
+                    sql="UPDATE P_STOCK SET CANT=CANT-" + cant +" WHERE CODIGO="+prodid;
+                    db.execSQL(sql);
+
+                    dt.moveToNext();
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            toast("Proceso completo");
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
+        listItems();
+    }
+
     //endregion
 
     //region Dialogs
@@ -938,6 +1142,52 @@ public class Exist extends PBase {
         });
 
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskDTI() {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("Corregir inventario");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    msgAskDTI2();
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskDTI2() {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("Está seguro ?");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    DonTacoInv20211005();
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {}
         });
 

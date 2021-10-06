@@ -72,7 +72,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class FacturaRes extends PBase {
 
 	private ListView listView;
@@ -1133,7 +1132,7 @@ public class FacturaRes extends PBase {
 
                             D_facturas.add(fsitem);
 
-                            rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
+                            //rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
                         }
                     }
 
@@ -1382,7 +1381,6 @@ public class FacturaRes extends PBase {
             //        "FROM P_STOCK WHERE (CANT>0) AND (CODIGO='"+prid+"') AND (UNIDADMEDIDA='"+umstock+"') ORDER BY CANT";
             sql="SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV " +
                     "FROM P_STOCK WHERE (CODIGO="+prid+") ORDER BY CANT";
-
             dt=Con.OpenDT(sql);
 
             dispcant=dt.getDouble(0);

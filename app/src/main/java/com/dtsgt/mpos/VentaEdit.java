@@ -66,7 +66,9 @@ public class VentaEdit extends PBase {
             finish();
         } else {
             if (pstock) {
-                msgAskApply("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+                //msgAskApply("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+                gl.retcant = cant;
+                finish();
             } else {
                 gl.retcant = cant;
                 finish();
@@ -88,8 +90,11 @@ public class VentaEdit extends PBase {
             dif = disp - cant - 1;
             if (dif < 0) {
                 if (pstock) {
-                    msgAskLimit("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
-                } else cant++;
+                    cant++;
+                    //msgAskLimit("El producto no tiene suficiente existencia.\nFalta : " + (-dif) + "\n¿Continuar?");
+                } else {
+                    cant++;
+                }
             } else {
                 cant++;
             }

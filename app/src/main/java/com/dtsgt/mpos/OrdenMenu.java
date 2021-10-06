@@ -757,6 +757,7 @@ public class OrdenMenu extends PBase {
         boolean flag=true;
         ststr="";
 
+        /*
         for (int i = 0; i <items.size(); i++) {
             boolean ss=isProdStock(items.get(i).cod);
             if (isProdStock(items.get(i).cod)) {
@@ -767,7 +768,12 @@ public class OrdenMenu extends PBase {
         }
 
         if (!flag) msgbox2(ststr);
+
+
         return flag;
+        */
+
+        return true;
     }
 
     private boolean stockProducto(int prodid,int prcant,int unid){
