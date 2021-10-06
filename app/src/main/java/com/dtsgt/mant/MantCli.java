@@ -187,8 +187,7 @@ public class MantCli extends PBase {
         try  {
             File file = new File(Environment.getExternalStorageDirectory() + "/biomuu_erl.txt");
             if (file.exists()) file.delete();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.e("bio",e.getMessage());
         }
 
