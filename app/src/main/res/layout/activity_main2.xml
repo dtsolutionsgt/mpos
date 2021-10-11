@@ -171,7 +171,7 @@
                 android:gravity="center_vertical"
                 android:onClick="doRegister"
                 android:paddingBottom="5dp"
-                android:text="(C) DTSolutions S.A."
+                android:text="x(C) DTSolutions S.A."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#FFFFFF"
                 android:textSize="12sp" />

@@ -170,13 +170,14 @@
 
         <TextView
             android:id="@+id/textView95"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="96dp"
+            android:layout_height="52dp"
             android:layout_alignBottom="@id/txt2"
             android:layout_alignParentStart="false"
             android:layout_alignParentBottom="false"
             android:layout_marginStart="0dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="-13dp"
+            android:layout_marginBottom="-16dp"
             android:layout_toRightOf="@id/txt2"
             android:text="[ min 30, max 180 ]" />
 

@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
@@ -9,10 +10,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +24,9 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
@@ -49,9 +55,8 @@ public class MainActivity extends PBase {
 
     private ListView listView;
     private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
-    private ImageView imgLogo, imgFel;
+    private ImageView imgLogo;
     private Spinner spin;
-
 
     private BaseDatosVersion dbVers;
 
@@ -73,13 +78,29 @@ public class MainActivity extends PBase {
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+
+
+            if (pantallaHorizontal()) {
+                setContentView(R.layout.activity_main);
+            } else {
+                setContentView(R.layout.activity_main2);
+            }
+
+
 
             grantPermissions();
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        try {
+            app.setScreenDim(this);
+        } catch (Exception e) { }
     }
 
     private void grantPermissions() {
@@ -126,7 +147,6 @@ public class MainActivity extends PBase {
             lblPass = (TextView) findViewById(R.id.lblPass);
             lblKeyDP = (TextView) findViewById(R.id.textView110);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
-            imgFel = (ImageView) findViewById(R.id.imgFel);
 
             listView = (ListView) findViewById(R.id.listView1);
             spin = (Spinner) findViewById(R.id.spinner22);
@@ -164,6 +184,7 @@ public class MainActivity extends PBase {
                 supervisorRuta();
             } */
 
+            app.setScreenDim(this);
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -442,11 +463,13 @@ public class MainActivity extends PBase {
             msgbox(e.getMessage());
         }
 
+        /*
         if (!gl.peFEL.equals("SIN FEL") && !gl.peFEL.isEmpty()) {
             imgFel.setVisibility(View.VISIBLE);
         }else{
             imgFel.setVisibility(View.GONE);
         }
+         */
 
         configBase();
 
@@ -947,6 +970,41 @@ public class MainActivity extends PBase {
             mu.msgbox(e.getMessage());
         }
     }
+
+    public boolean pantallaHorizontal() {
+
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            int width=dm.widthPixels;
+            int height=dm.heightPixels;
+            double x = Math.pow(width,2);
+            double y = Math.pow(height,2);
+            double diagonal = Math.sqrt(x+y);
+
+            int dens=dm.densityDpi;
+            double screenInches = diagonal/(double)dens;
+
+            //gl.scrdim=(int) screenInches;
+            boolean horiz=point.x>point.y;
+
+            if (horiz) toasthoriz("Horiz"); else toasthoriz("Vert");
+
+            return horiz;
+        } catch (Exception e) {
+            return true;
+        }
+
+    }
+
+    protected void toasthoriz(String msg) {
+        Toast toast= Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
 
     //endregion
 
