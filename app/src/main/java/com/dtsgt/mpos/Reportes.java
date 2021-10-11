@@ -826,9 +826,9 @@ public class Reportes extends PBase {
                     if (gl.reportid==1){
 
                         if(acc==1){
-                            rep.add("     REPORTE DOCUMENTOS POR DIA");
+                            rep.add("    REPORTE DOCUMENTOS POR DIA  ");
                             //rep.add("Cant.Fact   Costo  Impuesto    Total");
-                            rep.add("Correlativo SubTotal   Impuesto    Total");
+                            rep.add("Co. SubTotal   Impuesto    Total");
                             rep.line();
                             rep.empty();
                             rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
@@ -836,7 +836,7 @@ public class Reportes extends PBase {
                         }
 
                         if(!series.equals(itemR.get(i).serie)){
-                            rep.add("--------(    Serie "+itemR.get(i).serie+"    )------------");
+                            rep.add("------(    Serie "+itemR.get(i).serie+"    )------------");
                         }
 
                         series=itemR.get(i).serie;
@@ -928,12 +928,12 @@ public class Reportes extends PBase {
                             for (int a = 0; a <itemR.size(); a++) {
                                 totF += itemR.get(a).total;
                             }
-
-                            rep.add("      REPORTE VENTA POR PRODUCTO");
+                            
+                            rep.add("   REPORTE VENTA POR PRODUCTO   ");
                             if(validCB==1) rep.add("            CONSOLIDADO");
                             if(validCB==0) rep.add("Cod   Descripcion");
-                            if(validCB==0) rep.add("Cant        UM       Total        %");
-                            if(validCB==1) rep.add("Cod        Descripcion        Total");
+                            if(validCB==0) rep.add("Cant       UM       Total      %");
+                            if(validCB==1) rep.add("Cod        Descripcion     Total");
                             rep.line();
                             acc = 2;
                         }
@@ -1032,8 +1032,8 @@ public class Reportes extends PBase {
 
                             if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICIO POR PRODUCTO");
                             if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICIO POR FAMILIA");
-                            rep.add("Codigo     Nombre");
-                            rep.add("Venta      Costo        Beneficio  %");
+                            rep.add("Codigo   Nombre");
+                            rep.add("Venta    Costo    Beneficio   %");
                             rep.line();
                             acc = 2;
                         }
@@ -1152,9 +1152,9 @@ public class Reportes extends PBase {
 
                         if(acc==1){
                             tot=0;
-                            rep.add("    REPORTE CONSUMO MATERIA PRIMA");
+                            rep.add("  REPORTE CONSUMO MATERIA PRIMA ");
                             rep.line();
-                            rep.add("Nombre           Cantidad  UM     Costo");
+                            rep.add("Nombre    Cantidad  UM     Costo");
                             rep.line();
                             acc = 2;
                         }

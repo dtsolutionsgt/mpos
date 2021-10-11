@@ -293,9 +293,9 @@ public class clsRepBuilder {
         sval2=cursym+decfrm.format(v3);
         sval3=cursym+decfrm.format(v4);
 
-        val=sval.length()-2;
+        val=sval.length()-7;
 
-        ts=ltrim(Integer.toString(s1),prwt)+ltrim(sval,prwt-2)+ltrim(sval2,prwt-val)+ltrim(sval3,prwt);
+        ts=ltrim(Integer.toString(s1),prwt-6)+ltrim(sval,prwt+1)+ltrim(sval2,prwt-val)+ltrim(sval3,prwt);
         items.add(ts);
     }
 
@@ -327,8 +327,7 @@ public class clsRepBuilder {
 		stot=cursym+decfrm.format(s3);
 
 		tot=sval.length();
-
-		ts=ltrim(s1,prwt-4)+ltrim(s2,prwt-2)+ltrim(stot,prwt-tot)+ltrim(sval,prwt);
+		ts=ltrim(s1,prwt)+ltrim(s2,prwt-5)+rtrim(stot,prwt+1)+rtrim(sval,prwt-5);
 		items.add(ts);
 	}
 
@@ -436,8 +435,7 @@ public class clsRepBuilder {
         s3tot=cursym+decfrm.format(s3);
 
         tot=sval.length()-2;
-
-        ts=ltrim(s1tot,prwt-1)+ltrim(s2tot,prwt-1)+ltrim(s3tot,prwt-2)+ltrim(sval,prwt);
+		ts=ltrim(s1tot,prwt)+rtrim(s2tot,prwt-4)+rtrim(s3tot,prwt)+rtrim(sval,prwt-4);
         items.add(ts);
     }
 
@@ -483,7 +481,7 @@ public class clsRepBuilder {
 	}
 
     public void addtot2(String s1,String val) {
-	    ts=ltrim(s1,4)+" "+ltrim(val,prw-5);
+		ts=ltrim(s1,prwt-2)+" "+ltrim(val,prw);
         items.add(ts);
     }
 
