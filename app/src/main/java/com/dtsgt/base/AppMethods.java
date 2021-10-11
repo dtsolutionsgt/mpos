@@ -1163,6 +1163,23 @@ public class AppMethods {
         }
     }
 
+    public String umVenta2(int cod) {
+        Cursor DT;
+        String umm;
+
+        try {
+            String sql = "SELECT UNIDBAS FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            umm=DT.getString(0);
+            return  umm;
+        } catch (Exception e) {
+            //toast(e.getMessage());
+            return "";
+        }
+    }
+
     public String umVenta3(int cod) {
         Cursor DT;
         String umm;
@@ -1344,7 +1361,7 @@ public class AppMethods {
         }
 
         if (gl.prtipo.equalsIgnoreCase("Aclas")) {
-            printEpsonTMBT(copies);
+            printAclas(copies);
         }
 
     }
@@ -1382,27 +1399,15 @@ public class AppMethods {
 
     private void printAclas(int copies) {
         try {
-            Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
+            Intent intent = cont.getPackageManager().getLaunchIntentForPackage("aclasprn.dts");
             intent.putExtra("mac","BT:"+gl.prpar);
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
             intent.putExtra("askprint",1);
             intent.putExtra("copies",copies);
             intent.putExtra("QRCodeStr",""+gl.QRCodeStr);
             cont.startActivity(intent);
-
         } catch (Exception e) {
-            toastlong("El controlador de Epson TM BT no está instalado");
-
-            String fname = Environment.getExternalStorageDirectory()+"/print.txt";
-            String fnamenew = Environment.getExternalStorageDirectory()+"/not_printed.txt";
-
-            File currentFile = new File(fname);
-            File newFile = new File(fnamenew);
-
-            if (rename(currentFile, newFile)) Log.i("TAG", "Success");else Log.i("TAG", "Fail");
-
-            //msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
-            //msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
+            toastlong("El controlador de Aclas no está instalado");
         }
     }
 

@@ -220,7 +220,6 @@ public class MantMoneda extends PBase {
         dialog.show();
     }
 
-
     private void msgAskUpdate(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");

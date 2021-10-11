@@ -61,6 +61,16 @@ public class clsClasses {
         public String feelcontingencia;
     }
 
+    public class clsD_factura_fel {
+        public String corel;
+        public int  empresa;
+        public String nit;
+        public String razon_social;
+        public String nombre_comercial;
+        public int  sucursal;
+        public int  ruta;
+    }
+
     public class clsD_facturac {
         public int  empresa;
         public String corel;

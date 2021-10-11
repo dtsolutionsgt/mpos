@@ -40,6 +40,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
@@ -57,6 +58,7 @@ import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
@@ -794,6 +796,7 @@ public class FacturaRes extends PBase {
                 fdoc.nommesero=gl.nombre_mesero;
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
+
                 app.doPrint(gl.peNumImp,0);
 
             }
@@ -1019,9 +1022,18 @@ public class FacturaRes extends PBase {
                             ins.add("ORDEN",dtc.getInt(5));
                             ins.add("NOMBRE",app.prodNombre(dtc.getInt(4)));
 
+                            String sn=app.prodNombre(dtc.getInt(4));
+
                             ss+=ins.sql()+"\n";
 
                             db.execSQL(ins.sql());
+
+                            if (esProductoConStock(dtc.getInt(4))) {
+                                P_prodrecetaObj.fill("WHERE (CODIGO_PRODUCTO="+dtc.getInt(4)+")");
+                                if (P_prodrecetaObj.count==0) {
+                                    rebajaStockUM(dtc.getInt(4),app.umVenta2(dtc.getInt(4)),dtc.getInt(3));
+                                }
+                            }
 
                             dtc.moveToNext();cuid++;
                         }
@@ -1185,6 +1197,26 @@ public class FacturaRes extends PBase {
 
             //endregion
 
+            //region D_FACTURA_FEL
+
+            clsD_factura_felObj D_factura_felObj=new clsD_factura_felObj(this,Con,db);
+            clsClasses.clsD_factura_fel ffel=clsCls.new clsD_factura_fel();
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
+
+            ffel.corel=corel;
+            ffel.empresa=gl.emp;
+            ffel.nit=P_sucursalObj.first().nit;
+            ffel.razon_social=P_sucursalObj.first().texto;
+            ffel.nombre_comercial=P_sucursalObj.first().nombre;
+            ffel.sucursal=gl.tienda;
+            ffel.ruta=gl.codigo_ruta;
+
+            D_factura_felObj.add(ffel);
+
+            //endregion
+
             procesaInventario();
 
 			//region Actualizacion de ultimo correlativo
@@ -1199,6 +1231,14 @@ public class FacturaRes extends PBase {
 			ins.add("FECHA",0);
 			ins.add("RUTA",gl.ruta);
 			db.execSQL(ins.sql());
+
+            try {
+                int codcf=10*gl.emp;
+                sql="UPDATE P_CLIENTE SET NOMBRE='Consumidor final' WHERE CODIGO_CLIENTE="+codcf;
+                db.execSQL(sql);
+            } catch (Exception e) {
+                msgbox2(e.getMessage());return false;
+            }
 
 			//endregion
 
@@ -1733,6 +1773,26 @@ public class FacturaRes extends PBase {
 	    }
 	}
 
+    private boolean esProductoConStock(int prcodd) {
+        Cursor DT;
+
+        try {
+            sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prcodd;
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0){
+                DT.moveToFirst();
+                return DT.getString(0).equalsIgnoreCase("P");
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            mu.msgbox("esProductoConStock: " + e.getMessage());
+            return false;
+        }
+    }
+
 	//endregion
 
     //region Inventario
@@ -1765,8 +1825,8 @@ public class FacturaRes extends PBase {
         if (T_comboObj.count==0) return;
 
         for (int ij = 0; ij <T_comboObj.count; ij++) {
-            agregaReceta(T_comboObj.items.get(ij).idseleccion,
-                         T_comboObj.items.get(ij).cant*ccant);
+            agregaReceta(T_comboObj.items.get(ij).idseleccion,T_comboObj.items.get(ij).cant);
+            //agregaReceta(T_comboObj.items.get(ij).idseleccion,T_comboObj.items.get(ij).cant*ccant);
         }
     }
 

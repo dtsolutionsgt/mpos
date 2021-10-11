@@ -658,6 +658,23 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [D_factura_fel] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "RAZON_SOCIAL TEXT NOT NULL,"+
+                    "NOMBRE_COMERCIAL TEXT NOT NULL,"+
+                    "SUCURSAL INTEGER NOT NULL,"+
+                    "RUTA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[EMPRESA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
+
+
     }
 
 	private boolean update01() {

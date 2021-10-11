@@ -17,6 +17,7 @@ import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_facturacObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturapObj;
@@ -30,6 +31,7 @@ import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,6 +53,7 @@ public class WSEnv extends PBase {
     private clsD_facturapObj D_facturapObj;
     private clsD_facturarObj D_facturarObj;
     private clsD_facturaprObj D_facturaprObj;
+    private clsD_factura_felObj D_factura_felObj;
     //private clsD_facturaObj D_factura_SC_Obj;
 
     private clsD_MovObj D_MovObj;
@@ -101,6 +104,7 @@ public class WSEnv extends PBase {
         D_facturarObj=new clsD_facturarObj(this,Con,db);
         D_facturacObj=new clsD_facturacObj(this,Con,db);
         D_facturaprObj=new clsD_facturaprObj(this,Con,db);
+        D_factura_felObj=new clsD_factura_felObj(this,Con,db);
 
         D_MovObj=new clsD_MovObj(this,Con,db);
         D_MovDObj=new clsD_MovDObj(this,Con,db);
@@ -398,6 +402,7 @@ public class WSEnv extends PBase {
         D_facturarObj.fill("WHERE COREL='"+corel+"'");
         D_facturacObj.fill("WHERE COREL='"+corel+"'");
         D_facturaprObj.fill("WHERE COREL='"+corel+"'");
+        D_factura_felObj.fill("WHERE COREL='"+corel+"'");
 
         idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
         int cliid=D_facturaObj.first().cliente;
@@ -414,7 +419,6 @@ public class WSEnv extends PBase {
         CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
         CSQL=CSQL+"DELETE FROM D_FACTURAC WHERE COREL='"+corel+"';";
         CSQL=CSQL+"DELETE FROM D_FACTURAPR WHERE COREL='"+corel+"';";
-
 
         CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
@@ -459,6 +463,10 @@ public class WSEnv extends PBase {
 
         for (int i = 0; i < D_facturaprObj.count; i++) {
             CSQL=CSQL+addPropinaItem(D_facturaprObj.items.get(i)) + ";";
+        }
+
+        for (int i = 0; i < D_factura_felObj.count; i++) {
+            CSQL=CSQL+D_factura_felObj.addItemSql(D_factura_felObj.items.get(i)) + ";";
         }
 
         CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +

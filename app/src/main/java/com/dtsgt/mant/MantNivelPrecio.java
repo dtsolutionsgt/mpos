@@ -77,7 +77,8 @@ public class MantNivelPrecio extends PBase {
 
     private void loadItem() {
         try {
-            holder.fill("WHERE CODIGO='"+id+"'");
+            //holder.fill("WHERE CODIGO='"+id+"'");
+            holder.fill_codigo(holder,id);
             item=holder.first();
 
             showItem();
@@ -191,7 +192,6 @@ public class MantNivelPrecio extends PBase {
 
         dialog.show();
     }
-
 
     private void msgAskUpdate(String msg) {
         ExDialog dialog = new ExDialog(this);

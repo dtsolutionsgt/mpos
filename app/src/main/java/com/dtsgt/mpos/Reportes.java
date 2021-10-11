@@ -158,6 +158,8 @@ public class Reportes extends PBase {
         doc=new Reportes.clsDocExist(this,prn.prw,"");
 
         lblFact.setMovementMethod(new ScrollingMovementMethod());
+
+        gl.QRCodeStr="";
     }
 
     //region Events
@@ -409,6 +411,7 @@ public class Reportes extends PBase {
             }
 
             if(report) {
+                gl.QRCodeStr="";
                 app.doPrint();
                 return;
             }
@@ -451,6 +454,7 @@ public class Reportes extends PBase {
                         msgbox("No se ha realizado ninguna venta con los parámetros indicados.");
                         return;
                     }
+                    gl.QRCodeStr="";
                     doc.buildPrint("0", 0);
                     getTXT();
                     lblImp.setText("IMPRIMIR");

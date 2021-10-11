@@ -181,4 +181,10 @@ public class clsP_nivelprecioObj {
 
     }
 
+    //region Adicional
+
+    public void fill_codigo(clsP_nivelprecioObj holder,String id) {
+        holder.fill("WHERE CODIGO='"+id+"'");
+    }
+
 }

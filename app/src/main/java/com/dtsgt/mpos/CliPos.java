@@ -276,10 +276,11 @@ public class CliPos extends PBase {
 
 			txtNIT.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 				public void onFocusChange(View v, boolean hasFocus) {
-					if(hasFocus) return;
+                    existeCliente();
+					/*if(hasFocus) return;
 						if (!txtNIT.getText().toString().isEmpty()){
 							if (!existeCliente()) 	txtNom.requestFocus();
-						}
+						}*/
 				}
 			});
 
@@ -967,6 +968,9 @@ public class CliPos extends PBase {
         int codigo=nitnum(NIT);
 
         gl.codigo_cliente=codigo;
+
+        if (consFinal) return true;
+        if (gl.codigo_cliente==10*gl.emp) return true;
 
         try {
 

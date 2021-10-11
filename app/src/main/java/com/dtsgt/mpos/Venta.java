@@ -1188,7 +1188,6 @@ public class Venta extends PBase {
         }
 
         listItems();
-
     }
 
     private boolean updateItemUID(){
@@ -1830,6 +1829,8 @@ public class Venta extends PBase {
                     String s=input.getText().toString();
                     double val=Double.parseDouble(s);
                     if (val<0) throw new Exception();
+
+                    gl.promdesc=val;
                 } catch (Exception e) {
                     mu.msgbox("Porcentaje incorrecto");return;
                 }
@@ -1842,7 +1843,6 @@ public class Venta extends PBase {
 
         alert.show();
     }
-
 
     //endregion
 

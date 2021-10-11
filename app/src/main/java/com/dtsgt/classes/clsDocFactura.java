@@ -329,7 +329,7 @@ public class clsDocFactura extends clsDocument {
                 qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
                 bitmap = qrgEncoder.encodeAsBitmap();
                 if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
-                    throw new Exception("Errpr al guardar la barra");
+                    throw new Exception("Error al guardar la barra");
                 }
             } catch (Exception e) {
                 Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
