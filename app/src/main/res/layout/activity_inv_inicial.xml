@@ -11,13 +11,11 @@
         android:id="@+id/textView155"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="0dp"
+        android:layout_below="@+id/listView1"
+        android:layout_marginTop="10dp"
         android:text="000"
         android:textColor="#1B76B9"
-        android:textSize="30sp"
+        android:textSize="18dp"
         android:textStyle="bold" />
 
     <GridView
@@ -25,22 +23,16 @@
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_below="@id/relRoad"
+        android:layout_alignBottom="@+id/textView150"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="91dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginBottom="130dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="39dp"
         android:numColumns="1" />
 
-        <TextView
-            android:id="@+id/textView72"
-            android:layout_width="6dp"
-            android:layout_height="10dp"
-            android:layout_centerInParent="true"
-            android:text="TextView"
-            android:visibility="invisible" />
-
-        <RelativeLayout
+    <RelativeLayout
             android:id="@+id/relRoad"
             android:layout_width="match_parent"
             android:layout_height="56dp"
@@ -81,14 +73,17 @@
 
     <RelativeLayout
         android:id="@+id/relVenta"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_below="@id/relRoad"
+        android:layout_width="900dp"
+        android:layout_height="600dp"
+        android:layout_below="@+id/textView155"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="260dp"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="120dp"
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@id/gridView2"
-        android:layout_toEndOf="@+id/textView72"
         android:background="@drawable/frame_rect">
 
 
@@ -167,19 +162,18 @@
         <RelativeLayout
             android:id="@+id/relbotpan"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="600dp"
             android:layout_alignTop="@id/textView89"
             android:layout_alignParentLeft="false"
             android:layout_alignParentTop="false"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginTop="-1dp"
             android:background="@drawable/frame_rect"
             android:clickable="true">
 
             <RelativeLayout
                 android:id="@+id/relKeyb"
-                android:layout_width="400dp"
+                android:layout_width="300dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
@@ -243,7 +237,7 @@
                                     android:tag="7"
                                     android:text="7"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -261,7 +255,7 @@
                                     android:tag="8"
                                     android:text="8"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -279,7 +273,7 @@
                                     android:tag="4"
                                     android:text="4"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -297,7 +291,7 @@
                                     android:tag="5"
                                     android:text="5"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                             </RelativeLayout>
@@ -333,7 +327,7 @@
                                     android:tag="1"
                                     android:text="1"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -351,7 +345,7 @@
                                     android:tag="2"
                                     android:text="2"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -369,7 +363,7 @@
                                     android:tag="0"
                                     android:text="0"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                             </RelativeLayout>
@@ -424,7 +418,7 @@
                                     android:tag="9"
                                     android:text="9"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -442,7 +436,7 @@
                                     android:tag="6"
                                     android:text="6"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -461,7 +455,7 @@
                                     android:tag="C"
                                     android:text="C"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -546,7 +540,7 @@
                                     android:tag="3"
                                     android:text="3"
                                     android:textColor="#000000"
-                                    android:textSize="36sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -564,7 +558,7 @@
                                     android:tag="."
                                     android:text="."
                                     android:textColor="#000000"
-                                    android:textSize="48sp"
+                                    android:textSize="20dp"
                                     android:textStyle="bold" />
 
                             </RelativeLayout>
@@ -666,7 +660,7 @@
 
         <RelativeLayout
             android:id="@+id/relcant"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_above="@+id/relbotpan"
             android:layout_below="@+id/rellaytot"
@@ -677,32 +671,31 @@
 
             <TextView
                 android:id="@+id/textView159"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/textView157"
-                android:layout_alignTop="@+id/textView158"
+                android:layout_below="@+id/textView156"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_toStartOf="@+id/editTextNumberDecimal"
                 android:gravity="center_vertical"
                 android:text="Cantidad"
                 android:textColor="#000000"
-                android:textSize="30sp"
+                android:textSize="21dp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView158"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/textView157"
-                android:layout_alignTop="@+id/editTextNumber"
+                android:layout_alignTop="@+id/textView159"
+                android:layout_alignBottom="@+id/textView159"
                 android:layout_alignParentEnd="false"
-                android:layout_centerHorizontal="false"
-                android:layout_marginStart="220dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toEndOf="@+id/textView159"
                 android:background="@drawable/frame_rect"
                 android:clickable="true"
                 android:gravity="center_vertical"
@@ -717,16 +710,17 @@
                 android:id="@+id/textView157"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/textView160"
+                android:layout_below="@+id/textView159"
+                android:layout_alignStart="@+id/textView159"
+                android:layout_alignEnd="@+id/textView159"
                 android:layout_alignBottom="@+id/editTextNumberDecimal"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
                 android:gravity="center_vertical"
                 android:text="Costo unitario"
                 android:textColor="#000000"
-                android:textSize="30sp"
+                android:textSize="21dp"
                 android:textStyle="bold" />
 
             <TextView
@@ -745,19 +739,21 @@
                 android:maxLines="3"
                 android:text="Articulo"
                 android:textColor="#000000"
-                android:textSize="36sp"
+                android:textSize="21dp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView160"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="false"
-                android:layout_marginStart="220dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="30dp"
+                android:layout_alignStart="@+id/textView158"
+                android:layout_alignTop="@+id/textView157"
+                android:layout_alignEnd="@+id/textView158"
+                android:layout_alignBottom="@+id/textView157"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
                 android:background="@drawable/frame_rect"
                 android:clickable="true"
                 android:maxLines="1"
@@ -768,14 +764,12 @@
 
             <TextView
                 android:id="@+id/textView229"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_alignTop="@+id/textView158"
                 android:layout_alignBottom="@+id/textView158"
-                android:layout_alignParentEnd="true"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="20dp"
                 android:layout_marginBottom="0dp"
                 android:layout_toEndOf="@+id/textView158"
                 android:background="@drawable/frame_key"
@@ -784,55 +778,21 @@
                 android:gravity="center"
                 android:onClick="doListUnits"
                 android:text="UN"
-                android:textSize="36sp"
+                android:textSize="21dp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
     </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/relSepar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/relRoad"
-            android:layout_alignLeft="@id/textView72"
-            android:layout_alignRight="@id/textView72"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="-1dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginBottom="-1dp"
-            android:background="@drawable/blue_strip">
-
-        </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/relSep2"
-        android:layout_width="5dp"
-        android:layout_height="match_parent"
-        android:layout_below="@id/relRoad"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="-1dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toLeftOf="@id/gridView2"
-        android:background="@drawable/blue_strip">
-
-    </RelativeLayout>
-
     <RelativeLayout
         android:id="@+id/relLock"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignBottom="@+id/gridView2"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_below="@+id/listView1"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/frame_rect">
 
         <ImageView
@@ -844,21 +804,19 @@
             android:layout_marginBottom="0dp"
             android:clickable="true"
             android:onClick="doSave"
-            android:padding="15dp"
+            android:padding="0dp"
             android:src="@drawable/icok" />
     </RelativeLayout>
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="635dp"
-        android:layout_height="542dp"
-        android:layout_above="@+id/textView150"
+        android:layout_height="250dp"
         android:layout_below="@+id/lblDocumento"
+        android:layout_alignEnd="@+id/lblDocumento"
         android:layout_alignParentStart="true"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toStartOf="@+id/relVenta"
+        android:layout_marginEnd="0dp"
         android:background="@drawable/frame_rect"
         android:clickable="true">
 
@@ -868,25 +826,27 @@
         android:id="@+id/textView150"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="10dp"
+        android:layout_alignTop="@+id/textView155"
+        android:layout_alignBottom="@+id/textView155"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
-        android:layout_toStartOf="@+id/relVenta"
+        android:layout_toEndOf="@+id/textView155"
         android:text="Q0.00"
         android:textColor="#1B76B9"
-        android:textSize="30sp"
+        android:textSize="18dp"
         android:textStyle="bold" />
 
     <EditText
         android:id="@+id/lblDocumento"
-        android:layout_width="478dp"
+        android:layout_width="wrap_content"
         android:layout_height="42dp"
         android:layout_below="@id/relRoad"
         android:layout_alignParentStart="true"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_toStartOf="@+id/relVenta"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@+id/gridView2"
         android:background="#F4B39C"
         android:gravity="center|center_horizontal|center_vertical"
         android:hint="Ingreso el número de documento"
@@ -919,23 +879,19 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/gridView2"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
         android:gravity="center_horizontal"
         android:text="Interrupir" />
 
     <ImageView
         android:id="@+id/imageView112"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:layout_above="@+id/textView241"
-        android:layout_alignStart="@+id/gridView2"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_width="31dp"
+        android:layout_height="29dp"
+        android:layout_alignTop="@+id/relLock"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/relLock"
         android:background="@drawable/frame_rect"
         android:clickable="true"
         android:onClick="doInterrupt"
@@ -956,23 +912,21 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginEnd="-5dp"
+            android:layout_marginBottom="39dp"
             android:gravity="center_horizontal"
             android:text="Agregar" />
 
         <ImageView
             android:id="@+id/imageView115"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/textView244"
+            android:layout_width="63dp"
+            android:layout_height="56dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="23dp"
             android:clickable="true"
             android:onClick="doAdd"
             android:src="@drawable/add" />

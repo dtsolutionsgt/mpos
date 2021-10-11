@@ -102,32 +102,32 @@
             android:name=".Clientes"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_clientes"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".CliDet"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cli_det"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".Venta"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_venta"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ComDrop"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_com_drop"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".MessageBox"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_message"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".Producto"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -138,84 +138,84 @@
             android:name=".ProdCant"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_prod_cant"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".PedidoRes"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_pedido_res"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ObjRuta"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_obj_ruta"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".ObjProd"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_obj_prod"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".ConsPrecio"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cons_precio"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".Pago"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_pago"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".Cobro"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cobro"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Reimpresion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_reimpresion"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".Anulacion"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_anulacion"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".Deposito"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_deposito"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".ListaPromo"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_lista_promo"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".ListaProveedores"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_lista_proveedores"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".DeposDoc"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_depos_doc"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".DescBon"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_desc_bon"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -226,77 +226,77 @@
             android:name=".ComWS"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_com_ws"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".DevolCli"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_devol_cli"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".DevCliCant"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_dev_cli_cant"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".Exist"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_exist"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".DevolBod"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_devol_bod"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".ActDisp"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_act_disp"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".CliNuevo"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_cli_nuevo"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".RecargCant"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_recarg_cant"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".FacturaRes"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_factura_res"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".FinDia"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_fin_dia"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".DepositoParc"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_deposito_parc"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".UtilPrint"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_util_print"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -308,234 +308,234 @@
             android:name=".BonList"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_bon_list"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
             android:name=".BonVenta"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_bon_venta"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <activity
             android:name=".CliPos"
             android:label="@string/title_activity_cli_pos"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".CliGPS"
             android:label="@string/title_activity_cli_gps"
-            android:screenOrientation="landscape" />
+             />
         <activity
             android:name=".LicRegis"
             android:label="@string/title_activity_lic_regis"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".RecargaAuto"
             android:label="@string/title_activity_recarga_auto"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".SolicInv"
             android:label="@string/title_activity_solic_inv"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".Aprofam1"
             android:label="@string/title_activity_aprofam1"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
         <activity
             android:name=".ComWSExist"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_com_wsexist"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Tablas"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Tablas"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".InicioDia"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Tablas"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".RepesajeLista"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Repesaje"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".DevolBodCan"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Soporte"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ComWSPrec"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".nota_credito"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ayudante_vehiculo"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ComWSRec"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".comWSLic"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ComWSFotos"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".WSTest"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".rating"
             android:label="Rating"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".EPrint" />
         <activity android:name=".desglose" />
         <activity
             android:name="com.dtsgt.mant.Lista"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantFamilia"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantEmpresa"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name="com.dtsgt.mant.MantTienda"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantCorel"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantProducto"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantCli"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantVendedores"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantImpuesto"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantBanco"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantProveedor"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantMoneda"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantMediaPago"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantNivelPrecio"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantDescuento"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantCaja"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantRol"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantImpresora"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantEstacion"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name="com.dtsgt.mant.MantImpModelo"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name="com.dtsgt.mant.MantImpMarca"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity android:name=".FingPTest" />
@@ -546,47 +546,47 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".VentaEdit"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ProdMenu"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Login"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantConfig"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantConfigRes"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Reportes"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.Lista2"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantMotivoAjuste"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".CierreX"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -595,12 +595,12 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".CajaPagos"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantConceptoPago"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -610,52 +610,52 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.fel.FELFactura"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".WSEnv"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.fel.FELmsgbox"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".InvSalida"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".lista_ingreso_inventario"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".InvInicial"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".InvVista"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".PagoTarjeta"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".Pedidos"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".PedidoDet"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
@@ -667,32 +667,32 @@
 
         <activity
             android:name=".PedidoCli"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".ValidaSuper"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".SalaDis"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.fel.FELVerificacion"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.fel.FELContAnul"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".MarcarFacturas"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -702,17 +702,17 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantResMesa"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantResSala"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantResGrupo"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -727,42 +727,42 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ResCaja"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ResCliente"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".CajaPagosPend"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Comensales"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ValidaClave"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ImpresMsg"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".CliDirList"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".CliDirDom"
-            android:screenOrientation="landscape"
+
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
 

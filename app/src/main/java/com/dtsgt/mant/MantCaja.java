@@ -111,11 +111,15 @@ public class MantCaja extends PBase {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 try {
                     TextView spinlabel = (TextView) parentView.getChildAt(0);
-                    spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                    spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                    if (spinlabel != null) {
+                        spinlabel.setTextColor(Color.BLACK);
+                        spinlabel.setPadding(5, 0, 0, 0);
+                        spinlabel.setTextSize(21);
+                        spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                    String scod = spincode.get(position);
-                    item.sucursal = scod;
+                        String scod = spincode.get(position);
+                        item.sucursal = scod;
+                    }
                 } catch (Exception e) {
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                     mu.msgbox(e.getMessage());
