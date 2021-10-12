@@ -70,20 +70,24 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/relbotpan"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="64dp"
-        android:layout_marginBottom="0dp">
+        android:layout_above="@id/relbotpan"
+        android:layout_below="@id/imageView31"
+        android:fillViewport="true">
 
         <RelativeLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/imgImg2"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:background="@layout/frame_rect">
@@ -171,7 +175,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
                 android:maxLength="35"
@@ -189,7 +193,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
                 android:maxLength="35"
@@ -207,7 +211,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
                 android:maxLength="35"
@@ -225,7 +229,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
                 android:maxLength="35"
@@ -243,7 +247,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
                 android:maxLength="35"
@@ -261,7 +265,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
+                android:layout_marginEnd="10dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
                 android:maxLength="50"
@@ -309,10 +313,8 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="false"
-                android:layout_alignParentEnd="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="15dp"
                 android:layout_toRightOf="@id/textView2"
                 android:ems="10"
                 android:maxLength="15"
@@ -337,6 +339,7 @@
                 android:textColor="#FFFFFF" />
 
         </RelativeLayout>
+
     </ScrollView>
 
     <RelativeLayout
@@ -390,6 +393,8 @@
         android:clickable="true"
         android:onClick="doStatus"
         android:src="@drawable/delete_64" />
+
+
 
 
 </RelativeLayout>

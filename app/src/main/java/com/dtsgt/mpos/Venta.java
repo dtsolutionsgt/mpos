@@ -3267,7 +3267,7 @@ public class Venta extends PBase {
 
         try {
 
-            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+vum+"')";
+            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO="+prodid+") AND (UNIDADMEDIDA='"+vum+"')";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {

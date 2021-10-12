@@ -782,7 +782,6 @@ public class Menu extends PBase {
 	public void showInvMenuUtils() {
 		try{
 			final AlertDialog Dialog;
-			//final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
 			final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final"};
 
 			menudlg = new ExDialog (this);
