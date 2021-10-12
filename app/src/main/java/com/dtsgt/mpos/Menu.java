@@ -779,29 +779,29 @@ public class Menu extends PBase {
 	//endregion
 
 	//region Utilerias
-	
-	public void showInvMenuUtils() {
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Configuracion de impresora","Tablas","Correlativo CierreZ","Soporte","Serial del dipositivo","Impresión de barras", "Rating ROAD"};
 
-			menudlg = new ExDialog (this);
+    public void showInvMenuUtils() {
+        try{
+            final AlertDialog Dialog;
+            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final"};
 
-			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
+            menudlg = new ExDialog (this);
 
-					switch (item) {
-						case 0:
+            menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                    switch (item) {
+                        case 0:
                             //startActivity(new Intent(Menu.this,UtilPrint.class));
                             configuracionImpresora();
                             break;
-						case 1:
-							startActivity(new Intent(Menu.this,Tablas.class));break;
+                        case 1:
+                            startActivity(new Intent(Menu.this,Tablas.class));break;
                         case 2:
                             actualizaVersion();break;
                         case 3:
                             enviarBaseDeDatos();break;
-						case 4:
+                        case 4:
                             startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
                         case 5:
                             msgAskActualizar("Actualizar correlativos de contingencia");break;
@@ -811,31 +811,31 @@ public class Menu extends PBase {
                             msgAskImprimir();break;
                         case 8:
                             msgAskCF();break;
-					}
+                    }
 
-					dialog.cancel();
-				}
-			});
+                    dialog.cancel();
+                }
+            });
 
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
 
-			Dialog = menudlg.create();
-			Dialog.show();
+            Dialog = menudlg.create();
+            Dialog.show();
 
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-	}
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
-	private void configuracionImpresora() {
+    private void configuracionImpresora() {
         startActivity(new Intent(Menu.this, UtilPrint.class));
         /*
         try {
@@ -858,7 +858,7 @@ public class Menu extends PBase {
 
     }
 
-	private void actualizaVersion() {
+    private void actualizaVersion() {
         try {
             Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
             intent.putExtra("filename","mpos.apk");
@@ -877,30 +877,30 @@ public class Menu extends PBase {
         */
     }
 
-	private void askCambUsuario() {
-		try{
+    private void askCambUsuario() {
+        try{
             ExDialog dialog = new ExDialog(this);
-			dialog.setMessage("¿Cambiar usuario?");
+            dialog.setMessage("¿Cambiar usuario?");
 
-			dialog.setPositiveButton("Cambiar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				    app.logoutUser(du.getActDateTime());
-					Menu.super.finish();
-				}
-			});
+            dialog.setPositiveButton("Cambiar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    app.logoutUser(du.getActDateTime());
+                    Menu.super.finish();
+                }
+            });
 
-			dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-				}
-			});
+            dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            });
 
-			dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-	}
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
-	private void enviarBaseDeDatos() {
+    private void enviarBaseDeDatos() {
         msgAskDatabase("Enviar la base de datos al centro de soporte");
     }
 
@@ -951,60 +951,60 @@ public class Menu extends PBase {
     }
 
     private void infoSystem() {
-		String ss,sb="",sm="",sd="";
+        String ss,sb="",sm="",sd="";
 
-		try {
-			BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
-			int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
-			sb="Carga de batería  : "+batLevel+" %";
-		} catch (Exception e) {
-			msgbox(e.getMessage());
-			sb="Carga de batería  :  -";
-		}
+        try {
+            BatteryManager bm = (BatteryManager)getSystemService(BATTERY_SERVICE);
+            int batLevel = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+            sb="Carga de batería  : "+batLevel+" %";
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+            sb="Carga de batería  :  -";
+        }
 
-		try {
-			ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-			ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-			activityManager.getMemoryInfo(mi);
-			int availableMegs = (int) (mi.availMem / 0x100000L);
-			int totalMegs = (int) (mi.totalMem / 0x100000L);
-			int percentAvail =(int) (100*mi.availMem/(double)mi.totalMem );
+        try {
+            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+            ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+            activityManager.getMemoryInfo(mi);
+            int availableMegs = (int) (mi.availMem / 0x100000L);
+            int totalMegs = (int) (mi.totalMem / 0x100000L);
+            int percentAvail =(int) (100*mi.availMem/(double)mi.totalMem );
 
-			sm="Memoria disponible  :  "+percentAvail+" %  ,   "+availableMegs+" / "+totalMegs+" [ MB ]";
-		} catch (Exception e) {
-			msgbox(e.getMessage());
-			sm="Memoria disponible  :  -";
-		}
+            sm="Memoria disponible  :  "+percentAvail+" %  ,   "+availableMegs+" / "+totalMegs+" [ MB ]";
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+            sm="Memoria disponible  :  -";
+        }
 
-		try {
-			File pathInternal = Environment.getDataDirectory();// Internal Storage
-			StatFs statInternal = new StatFs(pathInternal.getPath());
+        try {
+            File pathInternal = Environment.getDataDirectory();// Internal Storage
+            StatFs statInternal = new StatFs(pathInternal.getPath());
 
-			double totalStorage=(statInternal. getBlockCountLong()*statInternal.getBlockSizeLong())/ 0x100000L;
-			double freeStorage=(statInternal. getAvailableBlocksLong()*statInternal.getBlockSizeLong())/ 0x100000L;
-			int  availStorage=(int) (100*freeStorage/totalStorage );
+            double totalStorage=(statInternal. getBlockCountLong()*statInternal.getBlockSizeLong())/ 0x100000L;
+            double freeStorage=(statInternal. getAvailableBlocksLong()*statInternal.getBlockSizeLong())/ 0x100000L;
+            int  availStorage=(int) (100*freeStorage/totalStorage );
 
-			sd="Almacenamiento disponible  :  "+availStorage+" %   ,   "+mu.round(freeStorage/1024,1)+" / "+mu.round(totalStorage/1024,1)+" [ GB ]";
-		} catch (Exception e) {
-			msgbox(e.getMessage());
-			sd="Almacenamiento disponible  :  -";
-		}
+            sd="Almacenamiento disponible  :  "+availStorage+" %   ,   "+mu.round(freeStorage/1024,1)+" / "+mu.round(totalStorage/1024,1)+" [ GB ]";
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+            sd="Almacenamiento disponible  :  -";
+        }
 
-		ss=sb+"\n"+sm+"\n"+sd;
+        ss=sb+"\n"+sm+"\n"+sd;
 
         ExDialog dialog = new ExDialog(this);
-		dialog.setMessage(ss);
-		dialog.setCancelable(false);
+        dialog.setMessage(ss);
+        dialog.setCancelable(false);
 
-		dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-		dialog.show();
+        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+        dialog.show();
 
-	}
+    }
 
-	private void actualizarCont() {
-	    long cact,flim,ncont;
+    private void actualizarCont() {
+        long cact,flim,ncont;
         clsClasses.clsD_factura fact;
 
 
