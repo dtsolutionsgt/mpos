@@ -86,17 +86,6 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <Spinner
-            android:id="@+id/spinner22"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/spinner_style" />
-
     </RelativeLayout>
 
     <TextView
@@ -116,6 +105,18 @@
         android:id="@+id/rellaydn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/spinner22"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_above="@+id/relEnter"
+            android:layout_alignStart="@+id/relEnter"
+            android:layout_alignEnd="@+id/relEnter"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/spinner_style" />
 
         <RelativeLayout
             android:id="@+id/relbotpan"
@@ -188,20 +189,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="12sp" />
 
-            <ImageView
-                android:id="@+id/imageView19"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="5dp"
-                android:adjustViewBounds="true"
-                android:clickable="true"
-                android:onClick="doOrientation"
-                android:padding="7dp"
-                android:src="@drawable/switch_mode" />
-
         </RelativeLayout>
-
 
 
         <RelativeLayout

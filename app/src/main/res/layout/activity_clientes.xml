@@ -92,18 +92,15 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginRight="10dp"
-            android:layout_toStartOf="@+id/switch2"
+            android:layout_toStartOf="@+id/imgNext"
             android:layout_toLeftOf="@+id/imgNext"
             android:ems="10"
             android:inputType="none"
             android:maxLines="1"
             android:paddingTop="2dp"
-            android:textSize="18sp">
-
-            <requestFocus />
-        </EditText>
+            android:textSize="18sp"/>
 
         <ImageView
             android:id="@+id/imgNext"
@@ -114,7 +111,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:layout_toStartOf="@+id/switch2"
             android:clickable="true"
@@ -176,28 +173,29 @@
             android:clickable="true"
             android:onClick="callFPScan"
             android:padding="2dp"
-            android:src="@drawable/fprint2" />
+            android:src="@drawable/fprint2"
+            android:visibility="invisible" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignStart="@+id/lblPass"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
             android:background="#FFFFFF">
 
             <Switch
                 android:id="@+id/switch2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="11dp"
-                android:layout_marginTop="7dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="13dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_marginBottom="2dp"
                 android:checked="false"
                 android:text="Mostrar eliminados"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
         </RelativeLayout>
 
         <Spinner
@@ -252,7 +250,8 @@
         android:layout_below="@id/relRoad"
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/textView135"
-        android:background="@drawable/blue_strip">
+        android:background="@drawable/blue_strip"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"

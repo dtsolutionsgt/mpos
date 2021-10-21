@@ -146,7 +146,7 @@ public class ResMesero extends PBase {
                 mesas.add(mesa);
             }
 
-            adapter=new LA_Res_mesa(this,this,mesas,gl.pelTablet);
+            adapter=new LA_Res_mesa(this,this,mesas,true);
             gridView.setAdapter(adapter);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -356,6 +356,7 @@ public class ResMesero extends PBase {
     }
 
     private void calibraPantalla() {
+        /*
         if (gl.pelTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             lblmes.setTextSize(36);lblgrupo.setTextSize(36);
@@ -365,6 +366,7 @@ public class ResMesero extends PBase {
             lblmes.setTextSize(20);lblgrupo.setTextSize(20);
             gridView.setNumColumns(2);
         }
+        */
     }
 
     private void cantidadComensales() {

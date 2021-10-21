@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.view.KeyEvent;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -91,10 +92,13 @@ public class Reportes extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reportes);
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_reportes);
+        } else {
+            setContentView(R.layout.activity_reportes_ver);
+        }
 
         super.InitBase();
-        addlog("Reportes",""+du.getActDateTime(),gl.vend);
 
         lvReport = (ListView) findViewById(R.id.listViewReport);lvReport.setVisibility(View.INVISIBLE);
         txtFill = (TextView) findViewById(R.id.txtFill);txtFill.setVisibility(View.INVISIBLE);
@@ -1243,7 +1247,7 @@ public class Reportes extends PBase {
 
     //endregion
 
-    //region AUX
+    //region Aux
 
     public void clear(View view){
         txtFill.setText("");
@@ -1270,5 +1274,16 @@ public class Reportes extends PBase {
 
     }
 
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
     //endregion
+
 }

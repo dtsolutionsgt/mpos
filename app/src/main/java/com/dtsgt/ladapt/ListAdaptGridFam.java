@@ -24,12 +24,14 @@ public class ListAdaptGridFam extends BaseAdapter {
 	private int selectedIndex;
     private String imgpath;
 	private LayoutInflater l_Inflater;
+	private boolean horizontal;
 
-	public ListAdaptGridFam(Context context, ArrayList<clsMenu> results,String imgfold) {
+	public ListAdaptGridFam(Context context, ArrayList<clsMenu> results,String imgfold,boolean horiz) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
         imgpath=imgfold;
+        horizontal=horiz;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -59,7 +61,12 @@ public class ListAdaptGridFam extends BaseAdapter {
         File file;
 
 		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_gridventa, null);
+		    if (horizontal) {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_gridventa, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_gridventa_ver, null);
+            }
+
 			holder = new ViewHolder();
 			
 			holder.imgEst = (ImageView) convertView.findViewById(R.id.imgNext);

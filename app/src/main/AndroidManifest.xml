@@ -57,7 +57,10 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        <activity android:name="com.dtsgt.mant.MantRepCierre" />
+        <activity
+            android:name="com.dtsgt.mant.MantRepCierre"
+            android:screenOrientation="landscape"
+            />
 
         <service
             android:name="com.dtsgt.webservice.srvInventConfirm"
@@ -430,7 +433,6 @@
         <activity android:name=".desglose" />
         <activity
             android:name="com.dtsgt.mant.Lista"
-            
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -455,7 +457,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantProducto"
-            
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -556,12 +558,12 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantConfig"
-            
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.MantConfigRes"
-            
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -571,7 +573,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="com.dtsgt.mant.Lista2"
-            
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity

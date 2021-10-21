@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -99,8 +100,7 @@ public class Menu extends PBase {
 
 			setHandlers();
 
-			int ori=this.getResources().getConfiguration().orientation; // 1 - portrait , 2 - landscape
-			horizpos=ori==2;
+            if (pantallaHorizontal()) horizpos=true; else horizpos=false;
 
 			if (horizpos) {
 				gridView.setNumColumns(4);relbotpan.setVisibility(View.GONE);
@@ -191,11 +191,10 @@ public class Menu extends PBase {
 
             }
 
-			adaptergrid=new ListAdaptMenuGrid(this, items);
-			gridView.setAdapter(adaptergrid);
-			adaptergrid.setSelectedIndex(selIdx);
-
-		}catch (Exception e){
+            adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
+            gridView.setAdapter(adaptergrid);
+            adaptergrid.setSelectedIndex(selIdx);
+        } catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
@@ -1901,6 +1900,16 @@ public class Menu extends PBase {
             ss="INSERT INTO T_BARRA_BONIF VALUES ('"+du.getActDateTime()+"','"+id+"',"+corel+",0,0,'"+text+"')";
             db.execSQL(ss);
         } catch (Exception e) {
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
         }
     }
 

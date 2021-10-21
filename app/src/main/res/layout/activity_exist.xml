@@ -64,6 +64,8 @@
         android:layout_alignLeft="@+id/listView1"
         android:layout_alignParentTop="false"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@+id/imageView78"
         android:maxLines="1">
 
         <requestFocus />

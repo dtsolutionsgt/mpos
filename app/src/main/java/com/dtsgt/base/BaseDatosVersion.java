@@ -658,6 +658,16 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
+        try {
+            sql="CREATE TABLE [P_producto_imagen] ("+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "IMAGEN BLOB,"+
+                    "PRIMARY KEY ([CODIGO_PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {
+        }
+
     }
 
 	private boolean update01() {

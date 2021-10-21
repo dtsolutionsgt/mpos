@@ -49,12 +49,6 @@ public class ConfigCaja extends PBase {
 
         gl.configCajaSuc = false;
 
-        if (gl.pelTablet) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-
         setHandlers();
 
         loadItem();

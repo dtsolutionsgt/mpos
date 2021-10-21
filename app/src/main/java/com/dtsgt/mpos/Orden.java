@@ -1229,7 +1229,7 @@ public class Orden extends PBase {
             }
 
             if (imgflag) {
-                adapterf=new ListAdaptGridFam(this,fitems,imgfold);
+                adapterf=new ListAdaptGridFam(this,fitems,imgfold,true);
                 grdfam.setAdapter(adapterf);
             } else {
                 adapterfl=new ListAdaptGridFamList(this,fitems,imgfold);
@@ -1303,7 +1303,7 @@ public class Orden extends PBase {
         }
 
         if (imgflag) {
-            adapterp=new ListAdaptGridProd(this,pitems,imgfold);
+            adapterp=new ListAdaptGridProd(this,pitems,imgfold,true);
             grdprod.setAdapter(adapterp);
         } else {
             adapterpl=new ListAdaptGridProdList(this,pitems,imgfold);
@@ -2236,6 +2236,7 @@ public class Orden extends PBase {
     }
 
     private void calibraPantalla() {
+        /*
         if (gl.pelTablet) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             relprod.setVisibility(View.VISIBLE);
@@ -2249,6 +2250,7 @@ public class Orden extends PBase {
             lblCent.setVisibility(View.GONE);
             relsep2.setBackgroundColor(Color.parseColor("#DBF5F3"));
         }
+        */
     }
 
     private Boolean cuentaPagada(String corr,int id) {

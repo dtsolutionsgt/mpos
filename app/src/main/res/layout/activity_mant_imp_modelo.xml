@@ -74,14 +74,14 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="1275dp"
-        android:layout_height="180dp"
+        android:layout_height="170dp"
         android:layout_below="@id/imgImg2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="127dp"
+        android:layout_marginTop="110dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="0dp"
         android:layout_marginBottom="5dp">
