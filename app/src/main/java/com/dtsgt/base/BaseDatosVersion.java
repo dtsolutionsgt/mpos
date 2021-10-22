@@ -694,8 +694,6 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) {}
 
-
-
     }
 
 	private boolean update01() {
