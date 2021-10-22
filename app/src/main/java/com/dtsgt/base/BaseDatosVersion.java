@@ -665,8 +665,36 @@ public class BaseDatosVersion {
                     "PRIMARY KEY ([CODIGO_PRODUCTO])"+
                     ");";
             db.execSQL(sql);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [P_linea_imagen] ("+
+                    "CODIGO_LINEA INTEGER NOT NULL,"+
+                    "IMAGEN BLOB,"+
+                    "PRIMARY KEY ([CODIGO_LINEA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [P_empresa_imagen] ("+
+                    "CODIGO_EMPRESA INTEGER NOT NULL,"+
+                    "IMAGEN BLOB,"+
+                    "PRIMARY KEY ([CODIGO_EMPRESA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [P_vendedor_imagen] ("+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "IMAGEN BLOB,"+
+                    "PRIMARY KEY ([CODIGO_VENDEDOR])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+
 
     }
 
