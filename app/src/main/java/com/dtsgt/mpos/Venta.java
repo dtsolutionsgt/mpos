@@ -2663,6 +2663,7 @@ public class Venta extends PBase {
             rep.save();
 
             //if (gl.emp==9) {
+                gl.QRCodeStr="";
                 app.doPrint(2,1);
             //} else {
             //    app.doPrint(1);

@@ -31,7 +31,6 @@ public class srvBaseJob extends JobService {
     private String appname="MPos";
     private int iconresource=R.drawable.logo;
 
-
     @Override
     public boolean onStartJob(JobParameters params) {
         try {
@@ -78,7 +77,7 @@ public class srvBaseJob extends JobService {
         int notificationId = createID();
         String channelId = "channel-id",channelName = "Channel Name";
 
-        if (pedidos==1) message="Nueva orden";else message=pedidos+" nuevas órdenes";
+        if (pedidos==1) message="Nuevo pedido";else message=pedidos+" nuevos pedidos";
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
@@ -90,6 +89,46 @@ public class srvBaseJob extends JobService {
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification);
+
+        notificationLayout.setTextViewText(R.id.title, message);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(iconresource)
+                //.setLargeIcon(bm)
+                .setContentTitle(appname)
+                .setContentText(message)
+                .setVibrate(new long[]{100, 250})
+                .setLights(Color.YELLOW, 500, 5000)
+                .setAutoCancel(true)
+                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                .setContent(notificationLayout)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_CALL)
+                .setFullScreenIntent(fullScreenPendingIntent, true)
+                .setSound(Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.sonarsub))
+                .setColor(Color.parseColor("#6200EE"));
+
+        notificationManager.notify(notificationId, mBuilder.build());
+
+    }
+
+    public void notifyorden(int pedidos) {
+        String message;
+        int notificationId = createID();
+        String channelId = "channel-id",channelName = "Channel Name";
+
+        if (pedidos==1) message="Nuevo requerimiento";else message=pedidos+" nuevos requerimientos";
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+
+        Intent fullScreenIntent = new Intent(this, srvBaseJob.class);
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0,
+                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews notificationLayout = new RemoteViews(getPackageName(), R.layout.notification2);
 
         notificationLayout.setTextViewText(R.id.title, message);
 

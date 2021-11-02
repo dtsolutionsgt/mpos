@@ -65,10 +65,12 @@ public class MantResMesa extends PBase {
         id=gl.gcods;
         if (id.isEmpty()) newItem(); else loadItem();
 
+        /*
         if (gl.peMCent) {
             imgadd.setVisibility(View.INVISIBLE);
             imgstat.setVisibility(View.INVISIBLE);
         }
+        */
     }
 
     //region Events

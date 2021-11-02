@@ -187,7 +187,7 @@ public class WSRec extends PBase {
     private boolean pbd_vacia = false,nueva_version=false;
     private String plabel, fechasync;
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
-    
+
     private String idversion,clave;
 
     public boolean automatico;
@@ -448,6 +448,9 @@ public class WSRec extends PBase {
                         break;
                     case 49:
                         callMethod("GetP_NIVELPRECIO_SUCURSAL","SUCURSAL",gl.tienda);
+                        break;
+                    case 50:
+                        callMethod("GetP_PARAMEXT_RUTA","RUTA", gl.codigo_ruta);
                         break;
 
                 }
@@ -790,9 +793,14 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    processComplete();
+                    execws(50);
                     break;
-
+                case 50:
+                    processParametrosExtraRuta();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    processComplete();
             }
 
         } catch (Exception e) {
@@ -2683,6 +2691,41 @@ public class WSRec extends PBase {
             }
 
             script.add("UPDATE P_PARAMEXT SET VALOR='S' WHERE ID=109");
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processParametrosExtraRuta() {
+        try {
+            clsP_paramextObj handler = new clsP_paramextObj(this, Con, db);
+            clsBeP_PARAMEXTList items = new clsBeP_PARAMEXTList();
+            clsBeP_PARAMEXT item = new clsBeP_PARAMEXT();
+            clsClasses.clsP_paramext var;
+
+            items = xobj.getresult(clsBeP_PARAMEXTList.class, "GetP_PARAMEXT_RUTA");
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+
+            for (int i = 0; i < items.items.size(); i++) {
+
+                item = items.items.get(i);
+                var = clsCls.new clsP_paramext();
+                var.id = item.ID;
+                var.nombre = item.Nombre;
+                var.valor = item.Valor;
+                var.ruta  = item.IdRuta;
+
+                script.add("DELETE FROM P_PARAMEXT WHERE ID="+item.ID);
+                script.add(handler.addItemSql(var));
+            }
 
         } catch (Exception e) {
             ws.error = e.getMessage();

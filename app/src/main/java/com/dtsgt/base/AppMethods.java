@@ -86,8 +86,6 @@ public class AppMethods {
 		int ival;
 		double dval;
 
-        parametrosExtraLocal();
-
 		//region Parametros Road
 
         try {
@@ -758,70 +756,86 @@ public class AppMethods {
 			gl.pelCaja = false;
 		}
 
-    }
-
-    public void parametrosExtraLocal() {
         try {
-            SharedPreferences pref = cont.getApplicationContext().getSharedPreferences("MPos", 0);
-            SharedPreferences.Editor editor = pref.edit();
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=132";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
 
-           /* try {
-                gl.pelCaja=pref.getBoolean("pelCaja", false);
-            } catch (Exception e) {
-                gl.pelCaja=false;
-            }*/
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
 
-            try {
-                gl.pelCajaRecep=pref.getBoolean("pelCajaRecep", false);
-            } catch (Exception e) {
-                gl.pelCajaRecep=false;
-            }
-
-            /*try {
-                gl.pelPrefijoOrden=pref.getString("pelPrefCaja", "");
-            } catch (Exception e) {
-                gl.pelPrefijoOrden="";
-            }*/
-
-            try {
-                gl.pelDespacho=pref.getBoolean("pelDespacho",false);
-            } catch (Exception e) {
-                gl.pelDespacho=false;
-            }
-
-            try {
-                gl.pelOrdenComanda=pref.getBoolean("pelOrdenComanda",false);
-            } catch (Exception e) {
-                gl.pelOrdenComanda=false;
-            }
-
-            try {
-                gl.pelClaveMes=pref.getBoolean("pelClaveMes",false);
-            } catch (Exception e) {
-                gl.pelClaveMes=false;
-            }
-
-            try {
-                gl.pelClaveCaja=pref.getBoolean("pelClaveCaja",false);
-            } catch (Exception e) {
-                gl.pelClaveCaja=false;
-            }
-
-           /* try {
-                gl.pelComandaBT=pref.getBoolean("pelComandaBT",false);
-            } catch (Exception e) {
-                gl.pelComandaBT=false;
-            }*/
-
-            try {
-                gl.pelMeseroCaja =pref.getBoolean("pelMeseroCaja",false);
-            } catch (Exception e) {
-                gl.pelMeseroCaja =false;
-            }
-
+            gl.pelCajaRecep = val.equalsIgnoreCase("S");
         } catch (Exception e) {
-            msgbox(e.getMessage());
+            gl.pelCajaRecep = false;
         }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=133";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelDespacho = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pelDespacho = false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=134";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelOrdenComanda = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pelOrdenComanda = false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=135";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelClaveMes = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pelClaveMes = false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=136";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelClaveCaja = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pelClaveCaja = false;
+        }
+
+        try {
+            sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=137";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+
+            val=dt.getString(0);
+            if (emptystr(val)) throw new Exception();
+
+            gl.pelMeseroCaja = val.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            gl.pelMeseroCaja = false;
+        }
+
+
+
     }
 
     public boolean paramCierre(int pid) {
@@ -1615,6 +1629,7 @@ public class AppMethods {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
     }
+
 
     //endregion
 

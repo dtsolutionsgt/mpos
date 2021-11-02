@@ -25,11 +25,11 @@ public class MantConfig extends PBase {
 
     private CheckBox  cb100,cb102,cb103,cb104,cb106,cb107,cb109,cb111,cb112,cb113,cb115;
     private CheckBox  cb116,cb118,cb119,cb121,cb126,cb128;
-    private CheckBox  locDesp,locOrdenComanda,locComandaBT;
+    private CheckBox cb133, cb134, cb129;
     private Spinner   spin16,spin105;
     private TextView  txt108,txt110,txt114;
     private ImageView imgadd;
-    private EditText  locPrefCaja;
+    private EditText  txt130;
 
     private clsP_paramextObj holder;
 
@@ -38,12 +38,9 @@ public class MantConfig extends PBase {
 
     private boolean value100,value102,value103,value104,value106, value107,value109;
     private boolean value111,value112,value113,value115,value116,value118,value119;
-    private boolean value121,value126,value128, value129;
+    private boolean value121,value126,value128,value129,value133, value134;
     private String  value16,value105, value130;
     private int value108,value110,value114;
-
-    private String valPrefCaja;
-    private Boolean valDespacho, valOrdenComanda, valComandaBT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,28 +71,18 @@ public class MantConfig extends PBase {
         cb121  = (CheckBox) findViewById(R.id.chkEnvio13);
         cb126  = (CheckBox) findViewById(R.id.chkEnvio22);
         cb128  = (CheckBox) findViewById(R.id.chkEnvio24);
-
-        locComandaBT  = (CheckBox) findViewById(R.id.chkEnvio23);
+        cb129 = (CheckBox) findViewById(R.id.chkEnvio23);
+        txt130 = findViewById(R.id.txt130PrefijoNoOrd);
+        cb133 = (CheckBox) findViewById(R.id.chkEnvio19);
+        cb134 = (CheckBox) findViewById(R.id.chkEnvio18);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
-
-        locPrefCaja  = findViewById(R.id.txt130PrefijoNoOrd);
-        locDesp= (CheckBox) findViewById(R.id.chkEnvio19);
-        locOrdenComanda = (CheckBox) findViewById(R.id.chkEnvio18);
 
         holder =new clsP_paramextObj(this,Con,db);
 
         setHandlers();
 
         loadItem();
-
-        /*
-        if (gl.peMCent) {
-            //if (!app.grant(13,gl.rol)) {
-                imgadd.setVisibility(View.INVISIBLE);
-            //}
-        }
-        */
 
     }
 
@@ -158,8 +145,6 @@ public class MantConfig extends PBase {
     //region Main
 
     private void loadItem() {
-
-        loadLocalItems();
 
         try {
             holder.fill("WHERE ID="+16);
@@ -343,66 +328,42 @@ public class MantConfig extends PBase {
         } catch (Exception e) {
             value129 = false;
         }
-        locComandaBT.setChecked(value129);
+        cb129.setChecked(value129);
 
         try {
             holder.fill("WHERE ID="+130);
-            valPrefCaja=holder.first().valor;
+            value130 =holder.first().valor;
         } catch (Exception e) {
             value130 = "";
         }
-        locPrefCaja.setText(valPrefCaja);
+        txt130.setText(value130);
 
-    }
-
-    private void loadLocalItems() {
         try {
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
-            SharedPreferences.Editor editor = pref.edit();
-
-           /* try {
-                valPrefCaja=pref.getString("pelPrefCaja", "");
-            } catch (Exception e) {
-                valPrefCaja="";
-            }
-            locPrefCaja.setText(valPrefCaja);*/
-
-            try {
-                valDespacho=pref.getBoolean("pelDespacho",false);
-            } catch (Exception e) {
-                valDespacho=false;
-            }
-            locDesp.setChecked(valDespacho);
-
-            try {
-                valOrdenComanda=pref.getBoolean("pelOrdenComanda",false);
-            } catch (Exception e) {
-                valOrdenComanda=false;
-            }
-            locOrdenComanda.setChecked(valOrdenComanda);
-
-           /* try {
-                valComandaBT=pref.getBoolean("pelComandaBT",false);
-            } catch (Exception e) {
-                valComandaBT=false;
-            }
-            locComandaBT.setChecked(valComandaBT);*/
-
-
+            holder.fill("WHERE ID="+133);
+            value133 =holder.first().valor.equalsIgnoreCase("S");
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            value133 = false;
         }
+        cb133.setChecked(value133);
+
+        try {
+            holder.fill("WHERE ID="+134);
+            value134 =holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            value134 =false;
+        }
+        cb134.setChecked(value134);
 
     }
+
 
     private void updateItem() {
         String s100="N",s102="N",s103="N",s104="N",s105="",s106="S", s107="S",
                s108="5", s109="S", s110="3", s111="N", s112="N", s113="N", s114="1",
-               s115="N", s116="N", s118="N", s119="N", s121="N", s126="N", s128="N",s129="N", s130="";
+               s115="N", s116="N", s118="N", s119="N", s121="N", s126="N", s128="N",
+               s129="N", s130="",  s133="N", s134="N";
 
         try {
-
-            updateLocalItems();
 
             if (cb100.isChecked())  s100="S";
             if (cb102.isChecked())  s102="S";
@@ -424,8 +385,10 @@ public class MantConfig extends PBase {
             if (cb121.isChecked())  s121="S";
             if (cb126.isChecked())  s126="S";
             if (cb128.isChecked())  s128="S";
-            if (locComandaBT.isChecked())  s129="S";
-            s130=locPrefCaja.getText().toString();
+            if (cb129.isChecked())  s129="S";
+            s130= txt130.getText().toString();
+            if (cb133.isChecked())  s133="S";
+            if (cb134.isChecked())  s134="S";
 
             db.beginTransaction();
 
@@ -453,6 +416,8 @@ public class MantConfig extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=128");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=129");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=130");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=133");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=134");
 
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES ( 16,'Formato factura','"+value16+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (100,'Configuración centralizada','"+s100+"')");
@@ -478,6 +443,8 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (128,'Factura sin propina','"+s128+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (129,'Comandas con impresora BT','"+s129+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (130,'Prefijo numero orden por caja','"+s130+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (133,'Recibe ordenes de despacho','"+s133+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (134,'Imprime comanda','"+s134+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -490,26 +457,6 @@ public class MantConfig extends PBase {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
-
-    private void updateLocalItems() {
-        try {
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
-            SharedPreferences.Editor editor = pref.edit();
-
-            //valPrefCaja=locPrefCaja.getText().toString();
-           // editor.putString("pelPrefCaja", valPrefCaja);
-
-            editor.putBoolean("pelDespacho", locDesp.isChecked());
-            editor.putBoolean("pelOrdenComanda", locOrdenComanda.isChecked());
-           // editor.putBoolean("pelComandaBT", locComandaBT.isChecked());
-
-            editor.commit();
-        } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-
-    }
-
 
     //endregion
 

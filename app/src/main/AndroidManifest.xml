@@ -73,6 +73,11 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
+            android:name="com.dtsgt.webservice.srvOrdenImport"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
             android:name="com.dtsgt.webservice.srvPedidoDir"
             android:enabled="true"
             android:exported="true" />

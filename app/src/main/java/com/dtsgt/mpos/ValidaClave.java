@@ -84,6 +84,21 @@ public class ValidaClave extends PBase {
 
                         adapter.setSelectedIndex(position);
                         usr = selitem.Cod;
+
+                        if (gl.modoclave==0) {
+                            if (!gl.pelClaveMes) {
+                                gl.idmesero=Integer.parseInt(selitem.Cod);
+                                gl.meserodir=false;
+                                startActivity(new Intent(ValidaClave.this,ResMesero.class));
+                                finish();
+                            }
+                        } else {
+                            if (!gl.pelClaveCaja) {
+                                startActivity(new Intent(ValidaClave.this,ResCaja.class));
+                                finish();
+                            }
+                        }
+
                     } catch (Exception e) {
                        mu.msgbox(e.getMessage());
                     }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,14 @@ import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_ResCaja;
+import com.dtsgt.webservice.srvCommit;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ResCaja extends PBase {
 
@@ -50,7 +59,10 @@ public class ResCaja extends PBase {
 
     private String corel,mesa;
     private int cuenta,counter;
-    private boolean idle=true,exitflag=false;
+    private boolean idle=true,exitflag=false,loading=false;
+
+    private TimerTask ptask;
+    private int period=10000,delay=50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +95,7 @@ public class ResCaja extends PBase {
     //region Events
 
     public void doRec(View view) {
-
+        recibeOrdenes();
     }
 
     public void doExit(View view) {
@@ -154,7 +166,9 @@ public class ResCaja extends PBase {
 
     private void completeItem() {
         try {
-            db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1,FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'");
+            sql="UPDATE P_RES_SESION SET ESTADO=-1,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'";
+            db.execSQL(sql);
+            if (gl.pelCajaRecep) enviaCompleto(sql);
             listItems();
         } catch (Exception e) {
             msgbox(e.getMessage());
@@ -305,7 +319,105 @@ public class ResCaja extends PBase {
 
     //region Recepcion
 
+    private void recibeOrdenes() {
+        int pp;
+        String fname;
 
+        if (loading) return;
+
+        loading=true;
+
+        try {
+            String path = Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
+            File directory = new File(path);
+            File[] files = directory.listFiles();
+
+            for (int i = 0; i < files.length; i++) {
+                fname=files[i].getName();
+                pp=fname.indexOf(".txt");
+                if (pp>0){
+                    if (!agregaOrden(path+"/"+fname)) {
+                        msgbox2("Ocurrio error en la recepción de requerimiento :\n"+app.errstr);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            msgbox2("recibeOrdenes : "+e.getMessage());
+        }
+
+        loading=false;
+        listItems();
+
+    }
+
+    public boolean agregaOrden(String fname) {
+        File file=null;
+        BufferedReader br=null;
+        ArrayList<String> items=new ArrayList<String>();
+        String sql;int lim;
+        boolean flag=true;
+
+        app.errstr="";
+
+        try {
+            file=new File(fname);
+            br = new BufferedReader(new FileReader(file));
+        } catch (Exception e) {
+            app.errstr=e.getMessage();return false;
+        }
+
+        if (flag) {
+            try {
+                db.beginTransaction();
+
+                while ((sql=br.readLine())!= null) {
+                    items.add(sql);
+                    db.execSQL(sql);
+                }
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+
+            } catch (Exception e) {
+                db.endTransaction();app.errstr=e.getMessage();
+                return false;
+            }
+        }
+
+        try {
+            br.close();
+        } catch (Exception e) {
+            app.errstr=e.getMessage();
+        }
+
+        file.delete();
+
+        return true;
+    }
+
+    private void iniciaOrdenes() {
+        if (!gl.pelCajaRecep) return;
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(ptask=new TimerTask() {
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public synchronized void run() {
+                        recibeOrdenes();
+                    }
+                });
+            }
+        }, delay, period);
+    }
+
+    private void cancelaOrdenes() {
+        if (!gl.pelCajaRecep) return;
+
+        try {
+            ptask.cancel();
+        } catch (Exception e) {}
+    }
 
     //endregion
 
@@ -380,6 +492,16 @@ public class ResCaja extends PBase {
         }
     }
 
+    private void enviaCompleto(String csql) {
+        try {
+            Intent intent = new Intent(ResCaja.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",csql);
+            startService(intent);
+        } catch (Exception e) {
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 
@@ -605,6 +727,9 @@ public class ResCaja extends PBase {
     @Override
     protected void onResume() {
         super.onResume();
+
+        iniciaOrdenes();
+
         try {
             ViewObj.reconnect(Con,db);
             T_ordenObj.reconnect(Con,db);
@@ -616,6 +741,12 @@ public class ResCaja extends PBase {
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
+    }
+
+    @Override
+    protected void onPause() {
+        cancelaOrdenes();
+        super.onPause();
     }
 
     @Override

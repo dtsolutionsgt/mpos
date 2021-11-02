@@ -40,6 +40,7 @@ import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
+import com.dtsgt.webservice.startOrdenImport;
 import com.dtsgt.webservice.startPedidosImport;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public class MainActivity extends PBase {
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
 
-    private String parVer = "4.0.23"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.0.26"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -456,6 +457,12 @@ public class MainActivity extends PBase {
             String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
             startPedidosImport.startService(this,params);
             //toasttop("Captura de ordenes activada");
+        }
+
+        if (gl.pelCajaRecep) {
+            String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
+            startOrdenImport.startService(this,params);
+            toasttop("Captura de ordenes activada");
         }
 
     }
@@ -865,6 +872,18 @@ public class MainActivity extends PBase {
 
         try {
             String errdir=Environment.getExternalStorageDirectory().getPath() + "/mposordser/error";
+            File directory = new File(errdir);
+            directory.mkdirs();
+        } catch (Exception e) {}
+
+        try {
+            String orddir=Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
+            File directory = new File(orddir);
+            directory.mkdirs();
+        } catch (Exception e) {}
+
+        try {
+            String errdir=Environment.getExternalStorageDirectory().getPath() + "/mposordcaja/error";
             File directory = new File(errdir);
             directory.mkdirs();
         } catch (Exception e) {}

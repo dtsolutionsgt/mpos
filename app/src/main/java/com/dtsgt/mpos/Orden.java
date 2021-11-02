@@ -1671,7 +1671,7 @@ public class Orden extends PBase {
 
        estadoMesa(estado);
 
-       if (!enviarorden) return;
+       //if (!enviarorden) return;
 
        try {
 

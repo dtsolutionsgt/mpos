@@ -178,7 +178,7 @@ public class Pedidos extends PBase {
                     });
                 }
             }, delay, period);
-     }
+    }
 
     private void cancelaPedidos() {
         try {

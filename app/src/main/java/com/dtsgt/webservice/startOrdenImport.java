@@ -6,24 +6,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.PersistableBundle;
 
-public class startPedidosImport {
+public class startOrdenImport {
 
     public static void startService(Context context, String params) {
         try {
-            ComponentName serviceComponent = new ComponentName(context, srvPedidosImport.class);
+            ComponentName serviceComponent = new ComponentName(context, srvOrdenImport.class);
 
             PersistableBundle extras = new PersistableBundle();
             extras.putString("params",params);
-            //assert scheduler != null;
-            //JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
             JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent).setOverrideDeadline(0L).setExtras(extras);
 
-            builder.setMinimumLatency(30 * 1000); // wait at least
-            builder.setOverrideDeadline(20 * 1000); // maximum delay
+            builder.setMinimumLatency(29 * 1000); // wait at least
+            builder.setOverrideDeadline(21 * 1000); // maximum delay
 
-            //builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED); // require unmetered network
-            //builder.setRequiresDeviceIdle(true); // device should be idle
-            //builder.setRequiresCharging(false); // we don't care if the device is charging or not
             JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
             jobScheduler.schedule(builder.build());
         } catch (Exception e) {

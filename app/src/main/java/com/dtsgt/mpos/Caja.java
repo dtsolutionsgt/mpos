@@ -104,7 +104,7 @@ public class Caja extends PBase {
         } else if(gl.cajaid==3) { // Cierre de Caja
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
-            caja.fill(" WHERE ESTADO=0");
+            caja.fill(" WHERE ESTADO=0 ORDER BY COREL");
             gl.fondoCaja = caja.last().fondocaja;
 
             MontoIni.setEnabled(false);
@@ -229,7 +229,7 @@ public class Caja extends PBase {
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
 
             if(gl.cajaid==3){
-                caja.fill(" WHERE ESTADO = 0");
+                caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
                 fondoCaja = caja.last().fondocaja;
             }
 
@@ -328,14 +328,19 @@ public class Caja extends PBase {
 
                 writeCorelLog(3,gl.corelZ,"");
 
-                caja.fill(" WHERE ESTADO = 0");
+                caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
+                gl.corelZ = caja.last().corel;
+                db.execSQL("UPDATE P_CAJACIERRE SET ESTADO=1 WHERE COREL<" + gl.corelZ);
+
+                caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
                 gl.corelZ = caja.last().corel;
 
                 writeCorelLog(4,gl.corelZ,"");
 
                 fecha = caja.last().fecha;
                 fondoCaja = caja.last().fondocaja;
-                itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
+                //itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
+                itemC.codigo_cajacierre =  caja.last().codigo_cajacierre;
             }
 
             writeCorelLog(5,gl.corelZ,"");
@@ -348,7 +353,7 @@ public class Caja extends PBase {
             itemC.fondocaja = fondoCaja;
             itemC.statcom = "N";
 
-            if(gl.cajaid==1){
+            if (gl.cajaid==1) {
 
                 writeCorelLog(6,gl.corelZ,"");
 
@@ -422,11 +427,13 @@ public class Caja extends PBase {
 
                             if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
 
-                                itemC.codigo_cajacierre=itemC.codigo_cajacierre+"C";
+                                //itemC.codigo_cajacierre=itemC.codigo_cajacierre+"C";
+                                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C";
                                 montoIni = dt.getDouble(2);
                                 itemC.montoini = montoIni;
                                 itemC.montofin = montoCred;
                                 itemC.montodif = montoCred - montoIni;
+                                itemC.estado=1;
                                 //itemC.codpago=5;
 
                                 caja.add(itemC);
@@ -436,7 +443,7 @@ public class Caja extends PBase {
                         dt.moveToNext();
                     }
 
-                } else if(dt.getCount()==0){
+                } else if(dt.getCount()==0) {
 
                     writeCorelLog(8,gl.corelZ,"");
 

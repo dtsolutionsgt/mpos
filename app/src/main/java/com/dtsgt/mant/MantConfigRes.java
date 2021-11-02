@@ -2,39 +2,29 @@ package com.dtsgt.mant;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
-import java.util.ArrayList;
-
 public class MantConfigRes extends PBase {
 
     private CheckBox cb101,cb117,cb123,cb124,cb125;
-    private CheckBox locCaja,locCajaRecep,locClaveMes,locClaveCaja,locMeseroCaja;
+    private CheckBox cb131, cb132, cb135, cb136, cb137;
     private EditText txt120,txt122,txt127;
     private ImageView imgadd;
 
     private clsP_paramextObj holder;
 
-    private boolean value101,value117,value123,value124,value125, value131;
+    private boolean value101,value117,value123,value124,value125,value131,value132,val135,val136,val137;
     private double  value120,value127;
     private String  value122;
-
-    private boolean valCaja,valCajaRecep,valClaveMes,valClaveCaja,valMeseroCaja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +43,11 @@ public class MantConfigRes extends PBase {
         txt122 = findViewById(R.id.editTextNumber6);
         txt127 = findViewById(R.id.editTextNumber7);
 
-        locCaja      = findViewById(R.id.chkEnvio131);
-        locCajaRecep = findViewById(R.id.chkEnvio12);
-        locClaveMes = findViewById(R.id.chkEnvio20);
-        locClaveCaja = findViewById(R.id.chkEnvio21);
-        locMeseroCaja = findViewById(R.id.chkEnvio25);
+        cb131 = findViewById(R.id.chkEnvio131);
+        cb132 = findViewById(R.id.chkEnvio12);
+        cb136 = findViewById(R.id.chkEnvio20);
+        cb135 = findViewById(R.id.chkEnvio21);
+        cb137 = findViewById(R.id.chkEnvio25);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -86,8 +76,6 @@ public class MantConfigRes extends PBase {
     //region Main
 
     private void loadItem() {
-
-        loadLocalItems();
 
         try {
             holder.fill("WHERE ID="+101);
@@ -155,65 +143,50 @@ public class MantConfigRes extends PBase {
 
         try {
             holder.fill("WHERE ID="+131);
-            value131 =holder.first().valor.equalsIgnoreCase("S");
+            value131=holder.first().valor.equalsIgnoreCase("S");
         } catch (Exception e) {
             value131=false;
         }
-        locCaja.setChecked(value131);
+        cb131.setChecked(value131);
 
-    }
-
-    private void loadLocalItems() {
         try {
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
-            SharedPreferences.Editor editor = pref.edit();
-
-            try {
-                valCaja=pref.getBoolean("pelCaja", false);
-            } catch (Exception e) {
-                valCaja=false;
-            }
-            locCaja.setChecked(valCaja);
-
-            try {
-                valCajaRecep=pref.getBoolean("pelCajaRecep", false);
-            } catch (Exception e) {
-                valCajaRecep=false;
-            }
-            locCajaRecep.setChecked(valCajaRecep);
-
-            try {
-                valClaveMes=pref.getBoolean("pelClaveMes", false);
-            } catch (Exception e) {
-                valClaveMes=false;
-            }
-            locClaveMes.setChecked(valClaveMes);
-
-            try {
-                valClaveCaja=pref.getBoolean("pelClaveCaja", false);
-            } catch (Exception e) {
-                valClaveCaja=false;
-            }
-            locClaveCaja.setChecked(valClaveCaja);
-
-            try {
-                valMeseroCaja=pref.getBoolean("pelMeseroCaja", false);
-            } catch (Exception e) {
-                valMeseroCaja=false;
-            }
-            locMeseroCaja.setChecked(valMeseroCaja);
-
+            holder.fill("WHERE ID="+132);
+            value132=holder.first().valor.equalsIgnoreCase("S");
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            value132=false;
         }
+        cb132.setChecked(value132);
+
+        try {
+            holder.fill("WHERE ID="+135);
+            val135 =holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            val135 =false;
+        }
+        cb135.setChecked(val135);
+
+        try {
+            holder.fill("WHERE ID="+136);
+            val136 =holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            val136 =false;
+        }
+        cb136.setChecked(val136);
+
+        try {
+            holder.fill("WHERE ID="+137);
+            val137 =holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            val137 =false;
+        }
+        cb137.setChecked(val137);
 
     }
 
     private void updateItem() {
         String s101="N",s117="S",s120="0",s122="NO APLICA",s123="N",s124="N",s125="N",s127="0",s131="0";
+        String s132="N",s135="N",s136="N",s137="N";
         double dval120,dval127;
-
-        updateLocalItems();
 
         try {
             try {
@@ -239,7 +212,11 @@ public class MantConfigRes extends PBase {
             if (cb124.isChecked())  s124="S";
             if (cb125.isChecked())  s125="S";
             s127=""+dval127;
-            if (locCaja.isChecked()) s131 = "S";
+            if (cb131.isChecked()) s131 = "S";
+            if (cb132.isChecked()) s132 = "S";
+            if (cb135.isChecked()) s135 = "S";
+            if (cb136.isChecked()) s136 = "S";
+            if (cb137.isChecked()) s137 = "S";
 
             db.beginTransaction();
 
@@ -252,6 +229,10 @@ public class MantConfigRes extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=125");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=127");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=131");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=132");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=135");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=136");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=137");
 
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (101,'Imprimir orden para la cocina','"+s101+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (117,'Propina fija','"+s117+"')");
@@ -262,6 +243,10 @@ public class MantConfigRes extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (125,'Precio de combo sin limite','"+s125+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (127,'Propina pago con tarjeta','"+s127+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (131,'Modulo caja','"+s131+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (132,'Recepcion de ordenes para la caja','"+s132+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (135,'Pide contraseña para ingreso del mesero','"+s135+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (136,'Pide contraseña para ingreso a la caja','"+s136+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (137,'Envia ordenes a la caja','"+s137+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -273,33 +258,6 @@ public class MantConfigRes extends PBase {
             db.endTransaction();
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
-    }
-
-    private void updateLocalItems() {
-        try {
-            SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
-            SharedPreferences.Editor editor = pref.edit();
-
-            valCaja=locCaja.isChecked();
-            editor.putBoolean("pelCaja", valCaja);
-
-            valCajaRecep=locCajaRecep.isChecked();
-            editor.putBoolean("pelCajaRecep", valCajaRecep);
-
-            valClaveMes=locClaveMes.isChecked();
-            editor.putBoolean("pelClaveMes", valClaveMes);
-
-            valClaveCaja=locClaveCaja.isChecked();
-            editor.putBoolean("pelClaveCaja", valClaveCaja);
-
-            valMeseroCaja=locMeseroCaja.isChecked();
-            editor.putBoolean("pelMeseroCaja", valMeseroCaja);
-
-            editor.commit();
-        } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-
     }
 
     //endregion
