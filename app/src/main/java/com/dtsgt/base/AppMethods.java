@@ -881,7 +881,8 @@ public class AppMethods {
     }
 
     public boolean usaFEL() {
-        if (gl.peFEL.isEmpty()| gl.peFEL.equalsIgnoreCase(" ") | gl.peFEL.equalsIgnoreCase("SIN FEL")) {
+        if (gl.peFEL.isEmpty() | gl.peFEL.equalsIgnoreCase(" ") |
+                gl.peFEL.equalsIgnoreCase("N") | gl.peFEL.equalsIgnoreCase("SIN FEL")) {
             return false;
         } else {
             return true;

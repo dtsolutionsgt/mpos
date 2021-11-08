@@ -182,9 +182,9 @@ public class FacturaRes extends PBase {
         imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
         if (gl.peRest) {
             imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);
-            if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
-                imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
-            }
+            //if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
+            //    imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
+            //}
         }
 
         mu.currsymb(gl.peMon);
@@ -738,16 +738,28 @@ public class FacturaRes extends PBase {
         if (gl.pelDespacho) generaOrdenDespacho();
 
         if (!app.usaFEL()) {
+
+            if ( gl.peEnvio) {
+                if (isNetworkAvailable()) {
+                    impresionDocumento();
+                } else {
+                    toast("No hay conexion a internet");
+                    impresionDocumento();
+                }
+            } else {
+                gl.InvCompSend=true;
+                impresionDocumento();
+            }
+
+            /*
             gl.InvCompSend=true;
             impresionDocumento();
-            /*
-            if (gl.peInvCompart | gl.peEnvio) {
+            if ( gl.peEnvio) {
                 browse=4;
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
             }
-
-             */
+            */
         } else {
             if (isNetworkAvailable()) {
                 browse=2;
@@ -809,6 +821,20 @@ public class FacturaRes extends PBase {
 
 	        gl.iniciaVenta=true;
             gl.ventalock=false;
+
+            if (!app.usaFEL()) {
+                if ( gl.peEnvio) {
+                    Handler mtimer = new Handler();
+                    Runnable mrunner=new Runnable() {
+                        @Override
+                        public void run() {
+                            gl.autocom = 1;
+                            startActivity(new Intent(FacturaRes.this,WSEnv.class));;
+                        }
+                    };
+                    mtimer.postDelayed(mrunner,5000);
+                }
+            }
 
             super.finish();
 
@@ -3111,6 +3137,7 @@ public class FacturaRes extends PBase {
                 fdoc.vendedor=gl.vendnom;
                 fdoc.rutanombre=gl.tiendanom;
                 fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
+                gl.QRCodeStr="";
                 app.doPrint(1,0);
 
                 Handler mtimer = new Handler();

@@ -3957,9 +3957,7 @@ public class Venta extends PBase {
                     };
                     mtimerc.postDelayed(mrunnerc,1500);
                 }
-
-            } else {
-            }
+            } else {}
 
             if (browse==7) {
                 browse=0;processCantMenu();return;

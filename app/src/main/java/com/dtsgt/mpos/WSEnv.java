@@ -123,7 +123,8 @@ public class WSEnv extends PBase {
                 public void run() {
                     pbar.setVisibility(View.VISIBLE);
                     lbl3.setVisibility(View.INVISIBLE);
-                    execws(1);
+                    //execws(1);
+                    doStart(null);
                 }
             };
             mtimer.postDelayed(mrunner,200);
