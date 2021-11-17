@@ -235,7 +235,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     public void doFocus(View view) {
@@ -373,6 +372,7 @@ public class Venta extends PBase {
                         prodid=vItem.Cod;
                         adapter.setSelectedIndex(position);
 
+                        /*
                         if (prodRepesaje(prodid) && gl.rutatipo.equalsIgnoreCase("V")) {
                             gl.gstr=prodid;
                             gl.gstr2=vItem.Nombre;
@@ -380,6 +380,7 @@ public class Venta extends PBase {
                         } else {
                             msgAskDel("Borrar producto");
                         }
+                        */
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                         mu.msgbox( e.getMessage());
@@ -589,8 +590,15 @@ public class Venta extends PBase {
                     desc=DT.getDouble(11);tdesc+=desc;
 
                     item.val=mu.frmdecimal(item.Cant,gl.peDecImp)+" "+ltrim(item.um,6);
+                    /*
                     if (gl.usarpeso) {
                         item.valp=mu.frmdecimal(item.Peso,gl.peDecImp)+" "+ltrim(gl.umpeso,6);
+                    } else {
+                        item.valp=".";
+                    }
+                    */
+                    if (desc>0) {
+                        item.valp=mu.frmdecimal(desc,2);
                     } else {
                         item.valp=".";
                     }
@@ -634,7 +642,7 @@ public class Venta extends PBase {
             } else {
                 tot=mu.round(tot,2);
                 tdesc=mu.round(tdesc,2);
-                stot=tot-tdesc;
+                stot=tot+tdesc;
                 lblTot.setText(mu.frmcur(tot));
                 lblDesc.setText("Desc : "+mu.frmcur(tdesc));
                 lblStot.setText("Subt : "+mu.frmcur(stot));
@@ -973,6 +981,18 @@ public class Venta extends PBase {
 
     }
 
+    private void updDescMonto(){
+        try{
+            desc=gl.promdesc;
+            cant=savecant;
+            prodPrecio();
+            updItemMonto();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
     private void prodPrecio() {
         double sdesc=desc;
 
@@ -1190,6 +1210,37 @@ public class Venta extends PBase {
         listItems();
     }
 
+    private void updItemMonto(){
+        double ptot=0;
+
+        try {
+
+            savetot=mu.round(prec*cant,2);
+            ptot=savetot-gl.promdesc;
+            descmon = savetot-ptot;
+            desc=100*descmon/savetot;
+
+            upd.init("T_VENTA");
+
+            upd.add("PRECIO",prec);
+            upd.add("IMP",imp);
+            upd.add("DES",desc);
+            upd.add("DESMON",descmon);
+            upd.add("TOTAL",ptot);
+            upd.add("PRECIODOC",prec);
+
+            upd.Where("EMPRESA='"+uid+"'");
+
+            db.execSQL(upd.sql());
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        listItems();
+    }
+
     private boolean updateItemUID(){
         double precdoc;
 
@@ -1343,12 +1394,10 @@ public class Venta extends PBase {
     }
 
     public void cambiaPrecio() {
-        //Use the value uid for identify row in T_VENTA
-        //  SELECT .... FROM T_VENTA WHERE (EMPRESA='+uid+') ...
-
         if (uid.equalsIgnoreCase("0")) return;
 
-        valorDescuento();
+        browse=11;
+        startActivity(new Intent(this,ValidaSuper.class));
     }
 
     //endregion
@@ -1831,8 +1880,43 @@ public class Venta extends PBase {
                     if (val<0) throw new Exception();
 
                     gl.promdesc=val;
+                    updDesc();
                 } catch (Exception e) {
                     mu.msgbox("Porcentaje incorrecto");return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
+    private void valorDescuentoMonto() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Monto descuento");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    double val=Double.parseDouble(s);
+                    if (val<0) throw new Exception();
+
+                    gl.promdesc=val;
+                    updDescMonto();
+                } catch (Exception e) {
+                    mu.msgbox("Monto incorrecto");return;
                 }
             }
         });
@@ -4018,6 +4102,11 @@ public class Venta extends PBase {
                 return;
             }
 
+            if (browse==11) {
+                browse=0;
+                if (gl.checksuper) valorDescuentoMonto();
+                return;
+            }
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

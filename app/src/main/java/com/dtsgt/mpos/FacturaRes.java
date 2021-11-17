@@ -114,7 +114,7 @@ public class FacturaRes extends PBase {
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext,pend,stot,stot0;
-	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito;
+	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito,descaddmonto;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
 
 	//@SuppressLint("MissingPermission")
@@ -219,6 +219,7 @@ public class FacturaRes extends PBase {
 		descpmon=totalDescProd(); //descpmon=0;
 		dmax=clsDesc.dmax;
 		acum=clsDesc.acum;
+        descaddmonto=0;
 
 		try {
 			db.execSQL("DELETE FROM T_PAGO");
@@ -395,6 +396,11 @@ public class FacturaRes extends PBase {
     public void delPay(View view) {
 	    askDelPago();
 	}
+
+	public void doDesc(View view) {
+        browse=5;
+        startActivity(new Intent(this,ValidaSuper.class));
+    }
 
     public void prnCuenta(View view) {
         askDelCuenta();
@@ -641,6 +647,7 @@ public class FacturaRes extends PBase {
 				totperc=stot*(gl.percepcion/100);
 				totperc=mu.round2(totperc);
 
+                descmon=descmon+descaddmonto;
 				tot=stot+totimp-descmon+totperc;
 				tot=tot+propina;
 				tot=mu.round2(tot);
@@ -682,6 +689,7 @@ public class FacturaRes extends PBase {
 			} else {
 
 				totimp=mu.round2(totimp);
+                descmon=descmon+descaddmonto;
 				tot=stot-descmon;
                 tot=tot+propina;
 				tot=mu.round2(tot);
@@ -866,7 +874,7 @@ public class FacturaRes extends PBase {
 
 		Cursor dt,dtc;
 		String vprod,vumstock,vumventa,vbarra,ssq;
-		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec;
+		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1;
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid;
 		boolean flag,pagocarta=false;
 
@@ -985,6 +993,9 @@ public class FacturaRes extends PBase {
 				peso=dt.getDouble(8);
 				vumstock=dt.getString(11);
                 itemuid=dt.getInt(14);
+                adescv1=dt.getDouble(1)*dt.getDouble(2);
+                adescmon=adescv1*descaddmonto/stot;
+                adescv1=dt.getDouble(5);
 
 			  	ins.init("D_FACTURAD");
 
@@ -996,8 +1007,8 @@ public class FacturaRes extends PBase {
 				ins.add("PRECIO",dt.getDouble(2));
 				ins.add("IMP",dt.getDouble(3));
 				ins.add("DES",dt.getDouble(4));
-				ins.add("DESMON",dt.getDouble(5));
-				ins.add("TOTAL",dt.getDouble(6));
+				ins.add("DESMON",dt.getDouble(5)+adescmon);
+				ins.add("TOTAL",dt.getDouble(6)-adescmon);
 				ins.add("PRECIODOC",dt.getDouble(7));
 				ins.add("PESO",dt.getDouble(8));
 				ins.add("VAL1",dt.getDouble(9));
@@ -2034,7 +2045,7 @@ public class FacturaRes extends PBase {
 				if (!svuelt.equalsIgnoreCase("")){
 					double vuel=Double.parseDouble(svuelt);
 					falt=tot-vuel;
-					vuel=vuel-tot;
+					vuel=vuel-tot-descaddmonto;
                     lblMonto.setText("");khand.val="";
 
 					if (vuel<0.00) {
@@ -2185,7 +2196,7 @@ public class FacturaRes extends PBase {
 
             double vuel=Double.parseDouble(svuelt);
             aplcash=vuel;
-            vuel=vuel-gl.total_pago;
+            vuel=vuel-gl.total_pago+descaddmonto;
             lblMonto.setText("");khand.val="";
 
             if (vuel<0.00) {
@@ -3494,7 +3505,40 @@ public class FacturaRes extends PBase {
         alert.show();
     }
 
+    private void valorDescuentoMonto() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
+        alert.setTitle("Monto descuento");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    double val=Double.parseDouble(s);
+                    if (val<0) throw new Exception();
+                    if (val>tot) throw new Exception();
+
+                    descaddmonto=val;
+                    totalOrder();
+                } catch (Exception e) {
+                    mu.msgbox("Monto incorrecto");return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
 
     //endregion
 	
@@ -3514,6 +3558,12 @@ public class FacturaRes extends PBase {
             P_linea_impresoraObj.reconnect(Con,db);
             P_impresoraObj.reconnect(Con,db);
             T_comandaObj.reconnect(Con,db);
+
+            if (browse==5) {
+                browse=0;
+                valorDescuentoMonto();
+                return;
+            }
 
             if (browse==4) {
                 browse=0;

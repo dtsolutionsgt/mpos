@@ -55,12 +55,14 @@
                 android:id="@+id/textView240"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView111"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
+                android:layout_alignParentBottom="false"
                 android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="0dp"
                 android:clickable="true"
                 android:gravity="center_horizontal"
                 android:onClick="doPropina"
@@ -70,7 +72,7 @@
             <ImageView
                 android:id="@+id/imageView105"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="60dp"
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:onClick="prnCuenta"
@@ -93,16 +95,40 @@
 
             <ImageView
                 android:id="@+id/imageView111"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:layout_above="@+id/textView240"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="false"
+                android:layout_marginTop="155dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp"
                 android:clickable="true"
                 android:onClick="doPropina"
-                android:padding="5dp"
+                android:padding="0dp"
                 android:src="@drawable/propina" />
+
+            <ImageView
+                android:id="@+id/imageView117"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="77dp"
+                android:clickable="true"
+                android:onClick="doDesc"
+                android:src="@drawable/bot_desc" />
+
+            <TextView
+                android:id="@+id/textView246"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView117"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:gravity="center_horizontal"
+                android:text="Descuento"
+                android:textSize="12sp" />
 
         </RelativeLayout>
 

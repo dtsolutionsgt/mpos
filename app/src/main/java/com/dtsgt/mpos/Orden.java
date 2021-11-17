@@ -71,6 +71,7 @@ public class Orden extends PBase {
     private RelativeLayout relprod,relsep,relsep2;
 
     private ArrayList<clsClasses.clsOrden> items= new ArrayList<clsOrden>();
+    private ArrayList<String> tl=new ArrayList<String>();
     private ListAdaptOrden adapter;
     private clsOrden selitem;
     private Precio prc;
@@ -1447,7 +1448,6 @@ public class Orden extends PBase {
                 T_orden_notaObj.fill("WHERE (id="+venta.id+") AND (corel='"+idorden+"')");
                 if (T_orden_notaObj.count>0) nn=T_orden_notaObj.first().nota+"";
 
-
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
 
                     P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
@@ -1506,7 +1506,7 @@ public class Orden extends PBase {
     private boolean generaArchivos() {
         clsRepBuilder rep;
         int printid;
-        String fname;
+        String fname,ss;
         File file;
 
         try {
@@ -1543,9 +1543,23 @@ public class Orden extends PBase {
 
                 T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
 
+                tl.clear();
                 for (int j = 0; j <T_comandaObj.count; j++) {
-                    rep.add(T_comandaObj.items.get(j).texto);
+                    ss=T_comandaObj.items.get(j).texto;
+                    if (ss.indexOf(" - ")==0) {
+                        tl.add(ss.toUpperCase());
+                    } else {
+                        if (!itemexists(ss)) tl.add(ss.toUpperCase());
+                    }
+                };
+
+                for (int j = 0; j <tl.size(); j++) {
+                    rep.add(tl.get(j));
                 }
+
+                //for (int j = 0; j <T_comandaObj.count; j++) {
+                //    rep.add(T_comandaObj.items.get(j).texto);
+                //}
 
                 rep.line();
                 rep.add("");rep.add("");rep.add("");
@@ -1563,11 +1577,33 @@ public class Orden extends PBase {
         }
     }
 
+    private boolean itemexists(String tli) {
+        String ts;
+        if (tl.size()==0) return false;
+
+        for (int i = 0; i <tl.size(); i++) {
+            ts=tl.get(i);
+            if (ts.equalsIgnoreCase(tli)) return true;
+        }
+
+        return false;
+    }
+
     private void ejecutaImpresion() {
         try {
             app.print3nstarw();
+            actualizaEstado();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void actualizaEstado() {
+        try {
+            db.execSQL("UPDATE T_ORDEN SET ESTADO=0 WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+            listItems();
+        } catch (Exception e) {
+            msgbox(e.getMessage());
         }
     }
 

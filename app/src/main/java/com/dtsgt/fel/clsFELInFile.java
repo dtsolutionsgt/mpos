@@ -1134,7 +1134,7 @@ public class clsFELInFile {
     }
 
     public void detalle (String descrip,double cant,String unid,double precuni,double total,double desc,String lcombo) {
-        double imp,impbase;
+        double imp,impbase,tottot;
 
         linea++;
 
@@ -1143,11 +1143,16 @@ public class clsFELInFile {
 //        imp=total-impbase;
 //        imp=Math.round(imp*100);imp=imp/100;
 
+        desc=Math.round(desc*100);desc=desc/100;
+
         double parametroiva1 =(iva/100);
         double parametroiva2 = (1+parametroiva1);
         impbase=total/parametroiva2;
-        imp=impbase* parametroiva1;
+        //impbase=cant*precuni/parametroiva2;
+        imp=impbase*parametroiva1;
         if (!lcombo.isEmpty()) descrip+=lcombo;
+
+        tottot=total+desc;
 
         totmonto+=total;
         //totiva+=imp;
@@ -1159,11 +1164,11 @@ public class clsFELInFile {
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";
         xml+="<dte:PrecioUnitario>"+precuni+"</dte:PrecioUnitario>";
-        xml+="<dte:Precio>"+total+"</dte:Precio>";
+        xml+="<dte:Precio>"+tottot+"</dte:Precio>";
         xml+="<dte:Descuento>"+desc+"</dte:Descuento>";
 
         String impbasestr = String.format("%.2f",impbase);
-        String impstr = String.format("%.2f",imp);
+         String impstr = String.format("%.2f",imp);
 
         xml+="<dte:Impuestos>";
         xml+="<dte:Impuesto>";

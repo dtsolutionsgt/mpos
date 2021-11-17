@@ -51,7 +51,9 @@ public class ValidaSuper extends PBase {
             msgbox("Falta seleccionar un usuario");return;
         }
         pwd=txt1.getText().toString();
-        if (pwd.isEmpty()) msgbox("Debe ingresar una contraseña"); else checkUser();
+        if (pwd.isEmpty()) {
+            msgbox("Debe ingresar una contraseña");
+        } else checkUser();
     }
 
     private void setHandlers() {
@@ -105,11 +107,12 @@ public class ValidaSuper extends PBase {
             VendedoresObj.fill("WHERE CODIGO_VENDEDOR=" + usr);
             if (VendedoresObj.count>0) {
                 if (pwd.equalsIgnoreCase(VendedoresObj.first().clave)) {
-                    gl.checksuper=true;finish();
+                    gl.checksuper=true;finish();return;
                 }
             }
             msgbox("Contraseña incorrecta");
         } catch (Exception e) {
+             String ee=e.getMessage();
             msgbox(e.getMessage());
         }
     }
