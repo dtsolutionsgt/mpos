@@ -266,7 +266,7 @@ public class OrdenMenu extends PBase {
 
     private void newItem() {
         Cursor dt;
-        int nid1,nid2,nid3;
+        int nid1,nid2,nid3,nid4;
 
         nid1=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_ORDENCOMBOAD");
 
@@ -288,9 +288,19 @@ public class OrdenMenu extends PBase {
             nid3=1;
         }
 
+        try {
+            sql="SELECT MAX(IDCOMBO) FROM T_ordencomboprecio";
+            dt=Con.OpenDT(sql);
+            dt.moveToFirst();
+            nid4=dt.getInt(0)+1;
+        } catch (Exception e) {
+            nid4=1;
+        }
+
         uitemid=nid2;
         if (nid1>uitemid) uitemid=nid1;
         if (nid3>uitemid) uitemid=nid3;
+        if (nid4>uitemid) uitemid=nid4;
 
         try {
             db.execSQL("UPDATE T_orden_cor SET ID="+uitemid);

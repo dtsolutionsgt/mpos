@@ -80,6 +80,9 @@ public class clsT_ordencomboprecioObj {
         ins.add("PRECITEMS",item.precitems);
         ins.add("PRECDIF",item.precdif);
         ins.add("PRECTOTAL",item.prectotal);
+
+        String ss=ins.sql();
+
         db.execSQL(ins.sql());
 
     }
