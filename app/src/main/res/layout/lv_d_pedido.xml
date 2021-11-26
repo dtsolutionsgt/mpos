@@ -35,35 +35,35 @@
                 android:text="000"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
-                android:textSize="64sp"
+                android:textSize="48sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/lblV2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/lblV"
                 android:layout_alignParentLeft="false"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="3dp"
                 android:layout_marginEnd="5dp"
                 android:text="Tiempo"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/lblV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/lblV3"
                 android:layout_alignParentLeft="false"
-                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="3dp"
                 android:layout_marginEnd="5dp"
                 android:text="Meta"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -73,11 +73,11 @@
                 android:layout_alignParentLeft="false"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="50dp"
                 android:layout_marginEnd="5dp"
                 android:text="Inicio"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -98,12 +98,12 @@
             <ImageView
                 android:id="@+id/imageView72"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="80dp"
                 android:layout_above="@+id/lblV4"
                 android:layout_below="@+id/lblV2"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginBottom="10dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitStart"
@@ -111,12 +111,12 @@
 
             <ImageView
                 android:id="@+id/imageView81"
-                android:layout_width="wrap_content"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/lblV4"
-                android:layout_below="@+id/lblV3"
+                android:layout_below="@+id/lblV2"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
                 android:src="@drawable/warning" />

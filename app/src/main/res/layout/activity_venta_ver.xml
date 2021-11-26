@@ -168,11 +168,21 @@
 
         >
 
+        <TextView
+            android:id="@+id/textView250"
+            android:layout_width="wrap_content"
+            android:layout_height="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:text="TextView"
+            android:visibility="invisible" />
+
         <GridView
             android:id="@+id/grdbtn"
             android:layout_width="70dp"
             android:layout_height="match_parent"
-            android:layout_below="@+id/gridView2"
+            android:layout_below="@id/textView250"
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="0dp"
             android:layout_marginTop="5dp"
@@ -842,6 +852,8 @@
             android:id="@+id/gridView2"
             android:layout_width="70dp"
             android:layout_height="90dp"
+            android:layout_above="@id/textView250"
+            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_marginStart="5dp"
             android:layout_marginTop="0dp"
@@ -881,7 +893,7 @@
             android:id="@+id/lblDir"
             android:layout_width="5dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="80dp"
+            android:layout_marginLeft="100dp"
             android:layout_marginRight="0dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/frame_rect_blue"
@@ -898,7 +910,7 @@
 
         <GridView
             android:id="@+id/grdFam"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -915,7 +927,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="83dp"
+            android:layout_marginStart="103dp"
             android:layout_marginBottom="0dp">
 
             <GridView

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -38,7 +39,7 @@ public class Pedidos extends PBase {
 
     private int cnue,cpen,ccomp;
     private String sql,sql1,sql2,sql3;
-    private boolean modo=false;
+    private boolean modo=false,horiz;
     private long tbot;
 
     private TimerTask ptask;
@@ -47,7 +48,11 @@ public class Pedidos extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pedidos);
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_pedidos);horiz=true;
+        } else {
+            setContentView(R.layout.activity_pedidos_ver);horiz=false;
+        }
 
         super.InitBase();
 
@@ -63,6 +68,12 @@ public class Pedidos extends PBase {
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         D_pedidocObj=new clsD_pedidocObj(this,Con,db);
         D_orden_bitacoraObj=new clsD_orden_bitacoraObj(this,Con,db);
+
+        if (horiz) {
+            gridView.setNumColumns(4);
+        } else {
+            gridView.setNumColumns(2);
+        }
 
         tbot=du.getActDate();
         sql1="WHERE (ANULADO=0) AND (FECHA_ENTREGA=0) ORDER BY FECHA_SALIDA_SUC,EMPRESA ";
@@ -368,6 +379,16 @@ public class Pedidos extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
         return 0;
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     //endregion

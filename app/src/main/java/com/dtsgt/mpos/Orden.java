@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -50,6 +51,7 @@ import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
 import com.dtsgt.ladapt.ListAdaptGridProdList;
+import com.dtsgt.ladapt.ListAdaptMenuOrden;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptOrden;
 import com.dtsgt.webservice.srvOrdenEnvio;
@@ -75,7 +77,7 @@ public class Orden extends PBase {
     private clsOrden selitem;
     private Precio prc;
 
-    private ListAdaptMenuVenta adaptergrid;
+    private ListAdaptMenuOrden adaptergrid;
     private ListAdaptMenuVenta adapterb;
     private ListAdaptGridFam adapterf;
     private ListAdaptGridFamList adapterfl;
@@ -111,7 +113,7 @@ public class Orden extends PBase {
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
     private int nivel,dweek,clidia,counter,prodlinea;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag,enviarorden;
-    private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
+    private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true,horiz;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum;
     private String idorden,cliid,saveprodid;
     private int famid = -1;
@@ -119,12 +121,16 @@ public class Orden extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_orden);
+
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_orden);horiz=true;
+        } else {
+            setContentView(R.layout.activity_orden_ver);horiz=false;
+        }
 
         super.InitBase();
 
         setControls();
-
         calibraPantalla();
 
         P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
@@ -489,7 +495,7 @@ public class Orden extends PBase {
             mu.msgbox( e.getMessage());
         }
 
-        adapter=new ListAdaptOrden(this,this, items);
+        adapter=new ListAdaptOrden(this,this, items,horiz);
         adapter.cursym=gl.peMon;
         listView.setAdapter(adapter);
 
@@ -1228,11 +1234,12 @@ public class Orden extends PBase {
                 fitems.add(item);
             }
 
+            if (!horiz) imgflag=false;
             if (imgflag) {
                 adapterf=new ListAdaptGridFam(this,fitems,imgfold,true);
                 grdfam.setAdapter(adapterf);
             } else {
-                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold);
+                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold,horiz);
                 grdfam.setAdapter(adapterfl);
             }
 
@@ -1302,11 +1309,12 @@ public class Orden extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
 
+        if (!horiz) imgflag=false;
         if (imgflag) {
             adapterp=new ListAdaptGridProd(this,pitems,imgfold,true);
             grdprod.setAdapter(adapterp);
         } else {
-            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold);
+            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold,horiz);
             grdprod.setAdapter(adapterpl);
         }
 
@@ -1347,7 +1355,7 @@ public class Orden extends PBase {
             //item.ID=50;item.Name="Buscar";item.Icon=64;
             //mitems.add(item);
 
-            adaptergrid=new ListAdaptMenuVenta(this, mitems);
+            adaptergrid=new ListAdaptMenuOrden(this, mitems,horiz);
             gridView.setAdapter(adaptergrid);
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1801,6 +1809,11 @@ public class Orden extends PBase {
             grdprod.setNumColumns(1);
         }
 
+        if (!horiz) {
+            grdfam.setNumColumns(1);
+            grdprod.setNumColumns(2);
+        }
+
         listFamily();
     }
 
@@ -2236,21 +2249,16 @@ public class Orden extends PBase {
     }
 
     private void calibraPantalla() {
-        /*
-        if (gl.pelTablet) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        if (horiz) {
             relprod.setVisibility(View.VISIBLE);
             relsep.setVisibility(View.VISIBLE);
             lblCent.setVisibility(View.VISIBLE);
             relsep2.setBackgroundResource(R.drawable.blue_strip);
         } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            relprod.setVisibility(View.GONE);
-            relsep.setVisibility(View.GONE);
-            lblCent.setVisibility(View.GONE);
-            relsep2.setBackgroundColor(Color.parseColor("#DBF5F3"));
+            relsep.setVisibility(View.VISIBLE);
+            lblCent.setVisibility(View.INVISIBLE);
+            relsep2.setVisibility(View.INVISIBLE);
         }
-        */
     }
 
     private Boolean cuentaPagada(String corr,int id) {
@@ -2260,6 +2268,16 @@ public class Orden extends PBase {
             return D_facturaObj.count!=0;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
         }
     }
 

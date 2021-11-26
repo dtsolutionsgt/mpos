@@ -29,11 +29,11 @@ public class LA_Res_mesa  extends BaseAdapter {
     private LayoutInflater l_Inflater;
     private boolean fullsize;
 
-    public LA_Res_mesa(Context context, PBase owner, ArrayList<clsClasses.clsRes_mesa> results,boolean isTablet) {
+    public LA_Res_mesa(Context context, PBase owner, ArrayList<clsClasses.clsRes_mesa> results,boolean horiz) {
         items = results;
         l_Inflater = LayoutInflater.from(context);
         selectedIndex = -1;
-        fullsize=isTablet;
+        fullsize=horiz;
 
         mu=owner.mu;
         du=owner.du;

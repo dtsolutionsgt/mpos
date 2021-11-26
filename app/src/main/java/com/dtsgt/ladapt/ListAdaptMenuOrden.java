@@ -14,18 +14,19 @@ import com.dtsgt.mpos.R;
 
 import java.util.ArrayList;
 
-public class ListAdaptMenuVenta extends BaseAdapter {
+public class ListAdaptMenuOrden extends BaseAdapter {
 	private ArrayList<clsMenu> items;
 
 	private int selectedIndex;
 
 	private LayoutInflater l_Inflater;
+	private boolean horiz;
 
-
-	public ListAdaptMenuVenta(Context context, ArrayList<clsMenu> results) {
+	public ListAdaptMenuOrden(Context context, ArrayList<clsMenu> results, boolean horizdir) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
+		horiz=horizdir;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -54,9 +55,11 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		int iconid;
 
 		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
-
-            convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
+			if (horiz) {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa_h, null);
+            }
 
 			holder = new ViewHolder();
 			

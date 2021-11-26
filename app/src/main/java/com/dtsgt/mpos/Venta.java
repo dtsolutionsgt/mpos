@@ -1872,12 +1872,11 @@ public class Venta extends PBase {
                 fitems.add(item);
             }
 
-
             if (imgflag) {
                 adapterf=new ListAdaptGridFam(this,fitems,imgfold,horiz);
                 grdfam.setAdapter(adapterf);
             } else {
-                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold);
+                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold,horiz);
                 grdfam.setAdapter(adapterfl);
             }
 
@@ -1955,7 +1954,7 @@ public class Venta extends PBase {
             adapterp=new ListAdaptGridProd(this,pitems,imgfold,horiz);
             grdprod.setAdapter(adapterp);
         } else {
-            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold);
+            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold,horiz);
             grdprod.setAdapter(adapterpl);
         }
 
@@ -2670,6 +2669,7 @@ public class Venta extends PBase {
             rep.save();
 
             //if (gl.emp==9) {
+                gl.QRCodeStr="";
                 app.doPrint(2,1);
             //} else {
             //    app.doPrint(1);
@@ -2927,7 +2927,7 @@ public class Venta extends PBase {
                 grdprod.setNumColumns(3);
             } else {
                 grdfam.setNumColumns(1);
-                grdprod.setNumColumns(4);
+                grdprod.setNumColumns(3);
             }
         } else {
             grdfam.setNumColumns(2);

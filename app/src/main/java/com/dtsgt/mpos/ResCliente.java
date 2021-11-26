@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -46,7 +47,11 @@ public class ResCliente extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_res_cliente);
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_res_cliente);
+        } else {
+            setContentView(R.layout.activity_res_cliente_ver);
+        }
 
         super.InitBase();
 
@@ -594,6 +599,16 @@ public class ResCliente extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
         }
     }
 
