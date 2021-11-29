@@ -192,7 +192,39 @@ public class clsClasses {
         public double TOTAL;
     }
 
+    public class clsD_mov_almacen {
+        public String corel;
+        public int  codigo_sucursal;
+        public int  almacen_origen;
+        public int  almacen_destino;
+        public int  anulado;
+        public long fecha;
+        public String tipo;
+        public int  usuario;
+        public String referencia;
+        public String statcom;
+        public int  impres;
+        public int  codigoliquidacion;
+        public int  codigo_proveedor;
+        public double total;
+    }
+
     public class clsD_MovD {
+        public String corel;
+        public int  producto;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public String lote;
+        public int  codigoliquidacion;
+        public String unidadmedida;
+        public int  coreldet;
+        public double precio;
+        public int  motivo_ajuste;
+    }
+
+    public class clsD_movd_almacen {
         public String corel;
         public int  producto;
         public double cant;
@@ -316,6 +348,15 @@ public class clsClasses {
         public long inicio;
         public long fin;
         public int  bandera;
+    }
+
+    public class clsP_almacen {
+        public int  codigo_almacen;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  activo;
+        public String nombre;
+        public int  es_principal;
     }
 
     public class clsP_archivoconf {
@@ -884,6 +925,21 @@ public class clsClasses {
         public int  codigoliquidacion;
         public String corel_d_mov;
         public String unidadmedida;
+    }
+
+    public class clsP_stock_almacen {
+        public int  codigo_stock;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  codigo_almacen;
+        public int  codigo_producto;
+        public String unidadmedida;
+        public String lote;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public int  anulado;
     }
 
     public class clsP_stock_update {

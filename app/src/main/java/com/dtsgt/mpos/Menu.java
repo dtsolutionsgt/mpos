@@ -694,7 +694,7 @@ public class Menu extends PBase {
 			itemcnt=3;
 			final String[] selitems = new String[itemcnt];
 
-			selitems[itempos]="Existencias";itempos++;
+			selitems[itempos]="Existencias ";itempos++;
 			selitems[itempos]="Ajuste de inventario";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
             //selitems[itempos]="Inventario inicial";itempos++;

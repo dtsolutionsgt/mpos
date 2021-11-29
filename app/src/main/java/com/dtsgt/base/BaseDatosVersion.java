@@ -670,10 +670,83 @@ public class BaseDatosVersion {
                     "PRIMARY KEY ([COREL],[EMPRESA])"+
                     ");";
             db.execSQL(sql);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_almacen] ("+
+                    "CODIGO_ALMACEN INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ES_PRINCIPAL INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_ALMACEN])"+
+                    ");";
+            db.execSQL(sql);
 
+            sql="CREATE INDEX P_almacen_idx1 ON P_almacen(EMPRESA)";db.execSQL(sql);
+            sql="CREATE INDEX P_almacen_idx2 ON P_almacen(CODIGO_SUCURSAL)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [D_mov_almacen] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "ALMACEN_ORIGEN INTEGER NOT NULL,"+
+                    "ALMACEN_DESTINO INTEGER NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "TIPO TEXT NOT NULL,"+
+                    "USUARIO INTEGER NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "STATCOM TEXT NOT NULL,"+
+                    "IMPRES INTEGER NOT NULL,"+
+                    "CODIGOLIQUIDACION INTEGER NOT NULL,"+
+                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [D_movd_almacen] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "CANTM REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "PESOM REAL NOT NULL,"+
+                    "LOTE TEXT NOT NULL,"+
+                    "CODIGOLIQUIDACION INTEGER NOT NULL,"+
+                    "UNIDADMEDIDA TEXT NOT NULL,"+
+                    "CORELDET INTEGER NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "MOTIVO_AJUSTE INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CORELDET])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_stock_almacen] ("+
+                    "CODIGO_STOCK INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_ALMACEN INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "UNIDADMEDIDA TEXT NOT NULL,"+
+                    "LOTE TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "CANTM REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "PESOM REAL NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_STOCK])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
 
     }
 

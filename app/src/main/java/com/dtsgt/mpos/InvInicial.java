@@ -99,7 +99,6 @@ public class InvInicial extends PBase {
 
         if (!gl.corelmov.isEmpty()) cargaDatos();
 
-
         listItems();
 
         lblDocumento.requestFocus();
@@ -873,7 +872,6 @@ public class InvInicial extends PBase {
         String corel=gl.ruta+"_"+mu.getCorelBase();
 
         try {
-
             clsD_MovObj mov=new clsD_MovObj(this,Con,db);
 
             header =clsCls.new clsD_Mov();
@@ -899,7 +897,6 @@ public class InvInicial extends PBase {
     private void borraEncabezadoInicial() {
         try {
             db.execSQL("DELETE FROM D_MOV WHERE STATCOM='X'");
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
