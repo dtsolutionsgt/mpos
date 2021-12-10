@@ -1,5 +1,7 @@
 package com.dtsgt.mpos;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -69,8 +71,9 @@ public class MainActivity extends PBase {
 
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
+    private int scrdim,modopantalla;
 
-    private String parVer = "4.0.20"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.1.0"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -79,14 +82,15 @@ public class MainActivity extends PBase {
         try {
             super.onCreate(savedInstanceState);
 
-
             if (pantallaHorizontal()) {
-                setContentView(R.layout.activity_main);
+                if (scrdim>8) {
+                    setContentView(R.layout.activity_main);modopantalla=1;
+                } else {
+                    setContentView(R.layout.activity_main2);modopantalla=3;
+                }
             } else {
-                setContentView(R.layout.activity_main2);
+                setContentView(R.layout.activity_main);modopantalla=2;
             }
-
-
 
             grantPermissions();
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
@@ -98,9 +102,25 @@ public class MainActivity extends PBase {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+        if( newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ) {
+        } else {
+        }
+
+        if (pantallaHorizontal()) {
+            if (scrdim>8) {
+                setContentView(R.layout.activity_main);modopantalla=1;
+            } else {
+                setContentView(R.layout.activity_main2);modopantalla=3;
+            }
+        } else {
+            setContentView(R.layout.activity_main);modopantalla=2;
+        }
+
         try {
-            app.setScreenDim(this);
-        } catch (Exception e) { }
+            startApplication();
+        } catch (Exception e) {}
+
     }
 
     private void grantPermissions() {
@@ -126,8 +146,7 @@ public class MainActivity extends PBase {
                 }
             }
 
-        } catch (Exception e) {
-            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        } catch (Exception e) { addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
@@ -484,20 +503,10 @@ public class MainActivity extends PBase {
     }
 
     private void processLogIn() {
-
-        /*/
-        if (!validaLicencia()) {
-             mu.msgbox("¡Licencia invalida!");
-            startActivity(new Intent(this,comWSLic.class));
-            return;
-        }
-        */
-
         if (checkUser()) {
             logUser();
             gotoMenu();
         }
-
     }
 
     private boolean checkUser() {
@@ -621,13 +630,17 @@ public class MainActivity extends PBase {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
             SharedPreferences.Editor editor = pref.edit();
 
+            /*
             try {
                 gl.pelTablet=pref.getBoolean("pelTablet", true);
             } catch (Exception e) {
                 gl.pelTablet=true;
             }
+            */
 
-            if (gl.pelTablet) {
+            gl.scrdim=scrdim;
+
+            if (modopantalla==1) {
                 //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 listView.setVisibility(View.VISIBLE);
                 spin.setVisibility(View.INVISIBLE);
@@ -987,10 +1000,8 @@ public class MainActivity extends PBase {
             int dens=dm.densityDpi;
             double screenInches = diagonal/(double)dens;
 
-            //gl.scrdim=(int) screenInches;
+            scrdim=(int) screenInches;
             boolean horiz=point.x>point.y;
-
-            if (horiz) toasthoriz("Horiz"); else toasthoriz("Vert");
 
             return horiz;
         } catch (Exception e) {

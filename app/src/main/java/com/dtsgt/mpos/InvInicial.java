@@ -3,7 +3,9 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -57,7 +59,12 @@ public class InvInicial extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inv_inicial);
+        
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_inv_inicial);
+        } else {
+            setContentView(R.layout.activity_inv_inicial_ver);
+        }
 
         super.InitBase();
 
@@ -827,21 +834,17 @@ public class InvInicial extends PBase {
 
     private void processMenuBtn(int menuid) {
         try {
-
             switch (menuid) {
                 case 50:
-
                     gl.gstr = "";        browse = 1;
                     gl.gstr="";
                     gl.prodtipo = 2;
-
                     startActivity(new Intent(this, Producto.class));break;
-
                 case 54:
                     borraLinea();break;
                 case 55:
                     borraTodo();break;
-             }
+            }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
@@ -951,6 +954,16 @@ public class InvInicial extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
         }
     }
 

@@ -11,6 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="48dp">
 
+        <TextView
+            android:id="@+id/lblDescrip2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="80dp"
+            android:layout_toStartOf="@+id/imgTitLogo"
+            android:layout_toLeftOf="@+id/imgImg"
+            android:layout_toEndOf="@+id/imgRoadTit"
+            android:gravity="center_vertical|center_horizontal"
+            android:paddingTop="5dp"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
         <RelativeLayout
             android:id="@+id/relRoadbar"
             android:layout_width="match_parent"
@@ -42,142 +59,130 @@
             android:padding="5dp"
             android:src="@drawable/existencias" />
 
-        <TextView
-            android:id="@+id/lblTit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imgRoadTit"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="Inventario"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/llFechas"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lblDescrip2"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_below="@id/relRoad"
+        android:fillViewport="true">
 
-        <LinearLayout
-            android:id="@+id/llFechaIni"
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/lblCFact30"
-                android:layout_width="150dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="180dp"
+            <RelativeLayout
+                android:id="@+id/llFechas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relRoad"
+                android:layout_marginTop="0dp">
+
+                <RelativeLayout
+                    android:id="@+id/llFechaIni"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/lblCFact30"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/blue_strip"
+                        android:gravity="center"
+                        android:paddingLeft="10dp"
+                        android:text="Inicio :"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#FFFFFF"
+                        android:textSize="21sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/lblDateini2"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_toEndOf="@+id/lblCFact30"
+                        android:background="@drawable/frame_btn"
+                        android:gravity="center"
+                        android:onClick="showDateDialog1"
+                        android:text="00/00/0000"
+                        android:textSize="21dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/lblCFact29"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/lblCFact30"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@drawable/blue_strip"
+                        android:gravity="center"
+                        android:text="Fin :    "
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#FFFFFF"
+                        android:textSize="21sp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/lblDatefin2"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_alignTop="@+id/lblCFact29"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_toEndOf="@+id/lblCFact29"
+                        android:background="@drawable/frame_btn"
+                        android:gravity="center"
+                        android:onClick="showDateDialog2"
+                        android:text="00/00/0000"
+                        android:textSize="21dp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/listView1"
+                android:layout_width="wrap_content"
+                android:layout_height="553dp"
+                android:layout_above="@+id/relbotpan"
+                android:layout_alignTop="@+id/llFechas"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="105dp"
+                android:layout_marginEnd="5dp">
+
+            </ListView>
+
+            <ImageView
+                android:id="@+id/imgImg5"
+                android:layout_width="117dp"
+                android:layout_height="80dp"
+                android:layout_below="@+id/relRoad"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentRight="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@drawable/blue_strip"
-                android:gravity="center"
+                android:clickable="true"
+                android:onClick="nuevo"
                 android:paddingLeft="10dp"
-                android:text="Fecha inicio :"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textSize="21sp"
-                android:textStyle="normal" />
+                android:paddingTop="5dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:src="@drawable/mas" />
 
-            <TextView
-                android:id="@+id/lblDateini2"
-                android:layout_width="202dp"
-                android:layout_height="39dp"
-                android:layout_gravity="center|center_horizontal|center_vertical"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/frame_btn"
-                android:gravity="center"
-                android:onClick="showDateDialog1"
-                android:text="00/00/0000"
-                android:textSize="21dp"
-                android:textStyle="bold" />
+        </RelativeLayout>
 
-            <TextView
-                android:id="@+id/lblCFact29"
-                android:layout_width="150dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="100dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:background="@drawable/blue_strip"
-                android:gravity="center"
-                android:text="Fecha fin :    "
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textSize="21sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/lblDatefin2"
-                android:layout_width="202dp"
-                android:layout_height="39dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/frame_btn"
-                android:gravity="center"
-                android:onClick="showDateDialog2"
-                android:text="00/00/0000"
-                android:textSize="21dp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="wrap_content"
-        android:layout_height="553dp"
-        android:layout_above="@+id/relbotpan"
-        android:layout_below="@id/llFechas"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="50dp">
-
-    </ListView>
-
-    <ImageView
-        android:id="@+id/imgImg5"
-        android:layout_width="117dp"
-        android:layout_height="93dp"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="15dp"
-        android:clickable="true"
-        android:onClick="nuevo"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"
-        android:src="@drawable/mas" />
-
-    <TextView
-        android:id="@+id/lblDescrip2"
-        android:layout_width="1281dp"
-        android:layout_height="46dp"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignLeft="@+id/listView1"
-        android:layout_alignBottom="@+id/imgImg"
-        android:layout_alignParentTop="false"
-        android:layout_marginLeft="-250dp"
-        android:layout_toLeftOf="@+id/imgImg"
-        android:gravity="center_vertical|center_horizontal"
-        android:paddingTop="5dp"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+    </ScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar6"

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -51,6 +52,7 @@ public class ResCaja extends PBase {
     private String corel,mesa;
     private int cuenta,counter;
     private boolean idle=true,exitflag=false;
+    private boolean horiz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,8 @@ public class ResCaja extends PBase {
         gridView = findViewById(R.id.gridView1);
         lblRec = findViewById(R.id.textView212);
         imgRec = findViewById(R.id.imageView87);
+
+        calibraPantalla();
 
         ViewObj=new clsViewObj(this,Con,db);
         T_ordenObj=new clsT_ordenObj(this,Con,db);
@@ -380,6 +384,27 @@ public class ResCaja extends PBase {
         }
     }
 
+    private void calibraPantalla() {
+        if (pantallaHorizontal()) horiz=true; else horiz=false;
+
+        if (horiz) {
+            //lblmes.setTextSize(36);lblgrupo.setTextSize(36);
+            gridView.setNumColumns(4);
+        } else {
+            //lblmes.setTextSize(20);lblgrupo.setTextSize(20);
+            gridView.setNumColumns(2);
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
+    }
 
     //endregion
 

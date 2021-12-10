@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.KeyEvent;
@@ -57,9 +58,13 @@ public class CliPos extends PBase {
     private int period=10000,delay=50;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_cli_pos);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_cli_pos);
+        } else {
+            setContentView(R.layout.activity_cli_pos_ver);
+        }
 
 		super.InitBase();
 
@@ -1072,6 +1077,16 @@ public class CliPos extends PBase {
             return DT.getInt(0);
         } catch (Exception e) {
             return 0;
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
         }
     }
 

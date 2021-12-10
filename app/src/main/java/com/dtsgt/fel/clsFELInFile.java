@@ -35,7 +35,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class clsFELInFile {
 
-
     public String error,fecha_factura;
     public Boolean errorflag,errorcon,constat,duplicado,errcert,errfirma,modoiduni,iduniflag;
     public Boolean halt=false;

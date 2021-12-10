@@ -23,12 +23,14 @@ public class ListAdaptGridFamList extends BaseAdapter {
 	private int selectedIndex;
     private String imgpath;
 	private LayoutInflater l_Inflater;
+    private boolean horiz;
 
-	public ListAdaptGridFamList(Context context, ArrayList<clsMenu> results, String imgfold) {
+	public ListAdaptGridFamList(Context context, ArrayList<clsMenu> results, String imgfold,boolean horizdir) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
         imgpath=imgfold;
+        horiz=horizdir;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -56,11 +58,14 @@ public class ListAdaptGridFamList extends BaseAdapter {
 		ViewHolder holder;
 
 		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_gridventa_lista, null);
+            if (horiz) {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_gridventa_lista, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_gridventa_lista_ver, null);
+            }
+
 			holder = new ViewHolder();
-			
-			holder.lblName = (TextView) convertView.findViewById(R.id.lblTrat);
-		
+			holder.lblName = convertView.findViewById(R.id.lblTrat);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -68,7 +73,7 @@ public class ListAdaptGridFamList extends BaseAdapter {
 			
 		holder.lblName.setText(items.get(position).Name);
 
-		if(selectedIndex!= -1 && position == selectedIndex) {
+        if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
             holder.lblName.setTextColor(Color.WHITE);
         } else {

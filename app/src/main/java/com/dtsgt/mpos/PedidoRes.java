@@ -276,7 +276,7 @@ public class PedidoRes extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
 		
-		adapter=new ListAdaptTotals(this,items);
+		adapter=new ListAdaptTotals(this,items,true);
 		listView.setAdapter(adapter);
 	}
 	

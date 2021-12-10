@@ -6,282 +6,298 @@
     android:layout_height="match_parent"
     tools:context="com.dtsgt.mant.MantCaja">
 
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/relbotpan"
-        android:layout_below="@+id/lblCFact52"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp">
-
-    </ListView>
-
-    <TextView
-        android:id="@+id/lblCFact52"
-        android:layout_width="300dp"
-        android:layout_height="36dp"
-        android:layout_below="@+id/relativeLayout1"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:background="@drawable/blue_strip"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:text="Impresoras asignada a la caja:"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="normal" />
-
-    <ImageView
-        android:id="@+id/imgImg2"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="478dp"
-        android:clickable="true"
-        android:onClick="doSave"
-        android:src="@drawable/icok" />
-
-    <RelativeLayout
-        android:id="@+id/relRoad"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#FFFFFF">
 
         <RelativeLayout
-            android:id="@+id/relRoadbar"
+            android:id="@+id/relscroll"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_centerVertical="true"
-            android:background="#9A999E"></RelativeLayout>
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true">
 
-        <ImageView
-            android:id="@+id/imgTitLogo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/logo_panel" />
+            <TextView
+                android:id="@+id/lblCFact52"
+                android:layout_width="300dp"
+                android:layout_height="38dp"
+                 android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Impresoras asignada a la caja :"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
 
-        <ImageView
-            android:id="@+id/imgRoadTit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/relRoadbar"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:adjustViewBounds="true"
-            android:padding="5dp"
-            android:src="@drawable/mantenimientos48" />
 
-        <TextView
-            android:id="@+id/lblTit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/imgRoadTit"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:text="Caja"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relativeLayout1"
-        android:layout_width="1275dp"
-        android:layout_height="150dp"
-        android:layout_below="@+id/imageView31"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="0dp">
+            <RelativeLayout
+                android:id="@+id/relRoad"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#FFFFFF">
 
-        <TextView
-            android:id="@+id/lblCFact2"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_below="@+id/lblCFact"
-            android:layout_alignStart="@+id/lblCFact"
-            android:layout_alignEnd="@+id/lblCFact"
-            android:layout_alignParentLeft="false"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Tienda:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="normal" />
+                <RelativeLayout
+                    android:id="@+id/relRoadbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerVertical="true"
+                    android:background="#9A999E"></RelativeLayout>
 
-        <EditText
-            android:id="@+id/txt2"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/txt1"
-            android:layout_alignTop="@+id/lblCFact"
-            android:layout_alignEnd="@+id/txt1"
-            android:layout_alignBottom="@+id/lblCFact"
-            android:layout_marginStart="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="50"
-            android:maxLines="1"
-            android:selectAllOnFocus="false"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/imgTitLogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="5dp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/logo_panel" />
 
-        <TextView
-            android:id="@+id/lblCFact"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_below="@+id/textView2"
-            android:layout_alignStart="@+id/textView2"
-            android:layout_alignEnd="@+id/textView2"
-            android:layout_alignParentLeft="false"
-            android:layout_marginStart="0dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Nombre:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="normal" />
+                <ImageView
+                    android:id="@+id/imgRoadTit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/relRoadbar"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:adjustViewBounds="true"
+                    android:padding="5dp"
+                    android:src="@drawable/mantenimientos48" />
 
-        <EditText
-            android:id="@+id/txt1"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/textView2"
-            android:layout_alignBottom="@+id/textView2"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toEndOf="@+id/textView2"
-            android:layout_toRightOf="@id/textView2"
-            android:ems="10"
-            android:maxLength="15"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="21sp"
-            android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/lblTit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/imgRoadTit"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="Caja"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#1A8AC6"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="100dp"
-            android:layout_height="36dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/blue_strip"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:text="Código:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#FFFFFF" />
+            <ScrollView
+                android:id="@+id/scroll1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/relbotpan"
+                android:layout_below="@id/relRoad"
+                android:fillViewport="true">
 
-        <Spinner
-            android:id="@+id/spinner10"
-            android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:layout_alignStart="@+id/txt2"
-            android:layout_alignTop="@+id/lblCFact2"
-            android:layout_alignEnd="@+id/txt2"
-            android:layout_alignBottom="@+id/lblCFact2"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/spinner_style" />
+                <RelativeLayout
+                    android:id="@+id/relativeLayout11"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/imgImg2"
+                        android:layout_width="64dp"
+                        android:layout_height="48dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="478dp"
+                        android:clickable="true"
+                        android:onClick="doSave"
+                        android:src="@drawable/icok" />
 
-    <RelativeLayout
-        android:id="@+id/relbotpan"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
-        android:background="@drawable/blue_strip">
+                    <ImageView
+                        android:id="@+id/imageView30"
+                        android:layout_width="64dp"
+                        android:layout_height="48dp"
+                         android:layout_alignParentStart="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:clickable="true"
+                        android:onClick="doExit"
+                        android:src="@drawable/prev48" />
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:gravity="center_horizontal"
-            android:paddingRight="10dp"
-            android:text="DTSolutions"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp" />
-    </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/imageView31"
+                        android:layout_width="64dp"
+                        android:layout_height="48dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:clickable="true"
+                        android:onClick="doStatus"
+                        android:src="@drawable/delete_64" />
 
-    <ImageView
-        android:id="@+id/imageView30"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/relRoad"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:onClick="doExit"
-        android:src="@drawable/prev48" />
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout1"
+                        android:layout_width="1275dp"
+                        android:layout_height="165dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="70dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_marginBottom="0dp">
 
-    <ImageView
-        android:id="@+id/imageView31"
-        android:layout_width="64dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/relRoad"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:onClick="doStatus"
-        android:src="@drawable/delete_64" />
+                        <TextView
+                            android:id="@+id/lblCFact2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36dp"
+                            android:layout_alignStart="@+id/lblCFact"
+                            android:layout_alignTop="@+id/spinner10"
+                            android:layout_alignEnd="@+id/textView2"
+                            android:layout_alignBottom="@+id/spinner10"
+                            android:layout_alignParentLeft="true"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="0dp"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="10dp"
+                            android:text="Tienda :"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
+
+                        <EditText
+                            android:id="@+id/txt2"
+                            android:layout_width="500dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/textView2"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="30dp"
+                            android:layout_toRightOf="@id/textView2"
+                            android:ems="10"
+                            android:maxLength="50"
+                            android:maxLines="1"
+                            android:selectAllOnFocus="false"
+                            android:singleLine="true"
+                            android:textSize="21sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/lblCFact"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/txt2"
+                            android:layout_alignEnd="@+id/textView2"
+                            android:layout_alignBottom="@+id/txt2"
+                            android:layout_alignParentLeft="true"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginBottom="0dp"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="10dp"
+                            android:text="Nombre :"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
+
+                        <EditText
+                            android:id="@+id/txt1"
+                            android:layout_width="300dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="false"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_toRightOf="@id/textView2"
+                            android:ems="10"
+                            android:maxLength="15"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textSize="21sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/txt1"
+                            android:layout_alignBottom="@+id/txt1"
+                            android:layout_alignParentLeft="true"
+                            android:layout_marginLeft="10dp"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="10dp"
+                            android:text="Código :"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF" />
+
+                        <Spinner
+                            android:id="@+id/spinner10"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_below="@+id/txt2"
+                            android:layout_alignStart="@+id/txt2"
+                            android:layout_alignEnd="@+id/txt2"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="01dp"
+                            android:background="@drawable/spinner_style" />
+
+                    </RelativeLayout>
+
+                    <ListView
+                        android:id="@+id/listView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/relativeLayout1"
+                        android:layout_alignParentBottom="false"
+                        android:layout_centerHorizontal="false"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="5dp">
+
+                    </ListView>
+                </RelativeLayout>
+
+            </ScrollView>
+
+            <RelativeLayout
+                android:id="@+id/relbotpan"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginBottom="1dp"
+                android:background="@drawable/blue_strip">
+
+                <TextView
+                    android:id="@+id/textView9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_horizontal"
+                    android:paddingRight="10dp"
+                    android:text="DTSolutions"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+
+
+        </RelativeLayout>
+
 
 </RelativeLayout>

@@ -26,11 +26,13 @@ public class LA_D_pedidod  extends BaseAdapter {
     private ArrayList<clsClasses.clsD_pedidod> items= new ArrayList<clsClasses.clsD_pedidod>();
     private int selectedIndex;
     private LayoutInflater l_Inflater;
+    private boolean horiz;
 
-    public LA_D_pedidod(Context context, PBase owner, ArrayList<clsClasses.clsD_pedidod> results) {
+    public LA_D_pedidod(Context context, PBase owner, ArrayList<clsClasses.clsD_pedidod> results,boolean horizdir) {
         items = results;
         l_Inflater = LayoutInflater.from(context);
         selectedIndex = -1;
+        horiz=horizdir;
 
         mu=owner.mu;
         du=owner.du;
@@ -79,6 +81,12 @@ public class LA_D_pedidod  extends BaseAdapter {
 
         holder.lbl1.setText(st);
         holder.lbl2.setText(sn);
+
+        if (horiz) {
+            holder.lbl1.setTextSize(36F);holder.lbl2.setTextSize(36F);
+        } else {
+            holder.lbl1.setTextSize(18F);holder.lbl2.setTextSize(18F);
+        }
 
         if (!st.isEmpty() && st.length()>3) holder.lbl1.setVisibility(View.VISIBLE);else holder.lbl1.setVisibility(View.GONE);
         if (!sn.isEmpty() && sn.length()>3) holder.lbl2.setVisibility(View.VISIBLE);else holder.lbl2.setVisibility(View.GONE);

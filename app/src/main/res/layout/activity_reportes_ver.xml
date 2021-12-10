@@ -1,0 +1,289 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Reportes">
+
+
+    <RelativeLayout
+        android:id="@+id/relRoad"
+        android:layout_width="match_parent"
+        android:layout_height="36dp">
+
+        <RelativeLayout
+            android:id="@+id/relRoadbar"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true"
+            android:background="#9A999E"></RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imgTitLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/logo_panel" />
+
+        <ImageView
+            android:id="@+id/imgRoadTit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/relRoadbar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="true"
+            android:padding="5dp"
+            android:src="@drawable/existencias" />
+
+        <TextView
+            android:id="@+id/lblTit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/imgRoadTit"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Reporte"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#1A8AC6"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relRoad">
+
+        <TextView
+            android:id="@+id/textView248"
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            android:layout_centerInParent="true"
+            android:text="TextView"
+            android:visibility="invisible" />
+
+        <RelativeLayout
+            android:id="@+id/relFilters"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/textView248"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/layout_filter"
+            tools:context=".Reportes">
+
+            <EditText
+                android:id="@+id/txtFill"
+                android:layout_width="124dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/txtTitle"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_toStartOf="@+id/imageView37"
+                android:layout_toEndOf="@+id/txtTitle"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lblCFact15"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:paddingTop="3dp"
+                android:text="Buscar"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/imageView37"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignTop="@+id/txtFill"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="-8dp"
+                android:onClick="clear"
+                android:src="@drawable/erase" />
+
+            <ImageView
+                android:id="@+id/btnImp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignBottom="@+id/textView129"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="0dp"
+                android:clickable="true"
+                android:onClick="GeneratePrint"
+                android:src="@drawable/reimpresion48" />
+
+            <ListView
+                android:id="@+id/listViewReport"
+                android:layout_width="408dp"
+                android:layout_height="250dp"
+                android:layout_above="@+id/cbDet"
+                android:layout_below="@+id/txtFill"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:id="@+id/txtProdName"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="39dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="2dp"
+                android:gravity="center"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtBtn"
+                android:layout_width="115dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/btnImp"
+                android:layout_alignStart="@+id/btnImp"
+                android:layout_alignEnd="@+id/btnImp"
+                android:layout_marginStart="-20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="-20dp"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/lblDatefin"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_alignTop="@+id/lblCFact15"
+                android:layout_alignEnd="@+id/lblDateini"
+                android:layout_alignBottom="@+id/lblCFact15"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toEndOf="@+id/lblCFact15"
+                android:background="@drawable/frame_btn"
+                android:gravity="center"
+                android:onClick="showDateDialog2"
+                android:text="00/00/0000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lblCFact15"
+                android:layout_width="125dp"
+                android:layout_height="32dp"
+                android:layout_below="@+id/lblCFact14"
+                android:layout_alignEnd="@+id/lblCFact14"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center|center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Fin: "
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact14"
+                android:layout_width="60dp"
+                android:layout_height="32dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:text="Inicio:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblDateini"
+                android:layout_width="150dp"
+                android:layout_height="32dp"
+                android:layout_alignTop="@+id/lblCFact14"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toEndOf="@+id/lblCFact14"
+                android:background="@drawable/frame_btn"
+                android:gravity="center"
+                android:onClick="showDateDialog1"
+                android:text="00/00/0000"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <CheckBox
+                android:id="@+id/cbDet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="5dp"
+                android:text="Reporte Detallado"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/textView248"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp">
+
+            <TextView
+                android:id="@+id/txtFact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:scrollbars="vertical"
+                android:typeface="monospace" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>
+

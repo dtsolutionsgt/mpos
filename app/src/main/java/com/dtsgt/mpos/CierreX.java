@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.method.ScrollingMovementMethod;
@@ -57,7 +58,11 @@ public class CierreX extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cierre_x);
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_cierre_x);
+        } else {
+            setContentView(R.layout.activity_cierre_x_ver);
+        }
 
         super.InitBase();
         addlog("Cierres",""+du.getActDateTime(),String.valueOf(gl.vend));
@@ -1584,6 +1589,16 @@ public class CierreX extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     //endregion

@@ -57,19 +57,17 @@
                 android:paddingBottom="5dp"
                 android:text="Descripción"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/lblETipo"
-                android:layout_width="390dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginEnd="21dp"
-                android:layout_marginRight="382dp"
-                android:layout_toStartOf="@+id/textView138"
-                android:layout_toLeftOf="@+id/imgNext"
+                android:layout_marginEnd="0dp"
+                android:layout_toStartOf="@+id/textView245"
                 android:gravity="center_vertical"
                 android:paddingLeft="5dp"
                 android:paddingBottom="5dp"
@@ -84,21 +82,23 @@
                 android:layout_width="308dp"
                 android:layout_height="29dp"
                 android:layout_alignEnd="@+id/imageView8"
+                android:layout_marginStart="0dp"
                 android:layout_marginEnd="79dp"
+                android:layout_toEndOf="@+id/textView245"
                 android:text="NIT"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView140"
-                android:layout_width="273dp"
+                android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_below="@+id/lblPNum"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="-1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_toStartOf="@+id/textView139"
+                android:layout_marginEnd="323dp"
+                android:layout_toStartOf="@+id/textView245"
                 android:text="Telefono"
                 android:textSize="18sp" />
 
@@ -108,28 +108,48 @@
                 android:layout_height="33dp"
                 android:layout_below="@+id/lblPNum"
                 android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginEnd="1dp"
+                android:layout_toEndOf="@+id/textView245"
                 android:text="Fecha Nacimiento"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/textView139"
                 android:layout_width="227dp"
                 android:layout_height="33dp"
                 android:layout_below="@+id/lblPNum"
+                android:layout_alignStart="@+id/textView245"
+                android:layout_marginStart="0dp"
                 android:layout_marginTop="1dp"
                 android:layout_marginEnd="3dp"
                 android:layout_toStartOf="@+id/textView141"
                 android:gravity="center_horizontal"
                 android:text="Email"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/lblCodNum"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="73dp"
+                android:layout_marginTop="6dp"
                 android:text="Cod Num" />
+
+            <TextView
+                android:id="@+id/textView245"
+                android:layout_width="10dp"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:text="TextView"
+                android:visibility="invisible" />
 
         </RelativeLayout>
 

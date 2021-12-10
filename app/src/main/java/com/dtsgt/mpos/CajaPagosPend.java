@@ -71,7 +71,7 @@ public class CajaPagosPend extends PBase {
                 browse=1;
                 startActivity(new Intent(this,ValidaSuper.class));
             } else {
-                msgAsk("Anular documento");
+                msgAsk("Aplicar pago");
             }
 
         } catch (Exception e){

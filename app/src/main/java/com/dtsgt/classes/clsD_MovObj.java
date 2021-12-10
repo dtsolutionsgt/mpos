@@ -246,5 +246,12 @@ public class clsD_MovObj {
 
     }
 
+    //region Adicional
+
+
+
+    //endregion
+
+
 }
 

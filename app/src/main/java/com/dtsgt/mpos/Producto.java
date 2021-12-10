@@ -52,8 +52,7 @@ public class Producto extends PBase {
 		setContentView(R.layout.activity_producto);
 		
 		super.InitBase();
-		addlog("Producto",""+du.getActDateTime(),gl.vend);
-		
+
 		listView = (ListView) findViewById(R.id.listView1);
 		txtFilter = (EditText) findViewById(R.id.editText1);
 		spinFam = (Spinner) findViewById(R.id.spinner1);
@@ -62,8 +61,6 @@ public class Producto extends PBase {
 		gl.prodtipo=0;
 		this.setTitle("Producto");
 		if (prodtipo==1) this.setTitle("Producto con existencia");
-
-        calibraPantalla();
 
         app = new AppMethods(this, gl, Con, db);
 
@@ -628,13 +625,7 @@ public class Producto extends PBase {
         return sprec;
     }
 
-    private void calibraPantalla() {
-        if (gl.pelTablet) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-    }
+
 
     //endregion
 
