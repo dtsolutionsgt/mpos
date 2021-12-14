@@ -708,6 +708,7 @@ public class clsDocFactura extends clsDocument {
     }
 
     private boolean footerBaseGUA() {
+
         double totimp,totperc;
 
         if (sinimp) {
@@ -751,12 +752,15 @@ public class clsDocFactura extends clsDocument {
 
         try {
             if (!textofin.isEmpty()) {
-                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
-                    textofin=textofin+" S.A.";
-                }
 
-                String[] sp = textofin.split(",");
-                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
+//                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
+//                    textofin=textofin+" S.A.";
+//                }
+//
+//                String[] sp = textofin.split(",");
+//                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
+
+                rep.add(textofin);
             }
         } catch (Exception e) {}
 
@@ -822,41 +826,56 @@ public class clsDocFactura extends clsDocument {
         return super.buildFooter();
     }
 
-    private boolean footerBase() {
-		double totimp,totperc;
-
-		if (sinimp) {
-			stot=stot-imp;
-			totperc=stot*(percep/100);totperc=round2(totperc);
-			totimp=imp-totperc;
-
-			rep.addtotsp("Subtotal", stot);
-			rep.addtotsp("Impuesto", totimp);
-			if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion", totperc);
-			rep.addtotsp("Descuento", -desc);
-			rep.addtotsp("TOTAL", tot);
-		} else {
-			if (desc!=0) {
-				rep.addtotsp("Subtotal", stot);
-				rep.addtotsp("Descuento", -desc);
-			}
-			rep.addtotsp("TOTAL A PAGAR ", tot);
-		}
-
-		rep.add("");
-		rep.add("Sujeto a Pagos Trimestrales");
-		rep.add("");
-
-		//#HS_20181212 Validación para factura pendiente de pago
-		if(pendiente == 4){
-			rep.add("");
-			rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
-			rep.add("EXIJA SU FACTURA ORIGINAL");
-			rep.add("");
-		}
-
-		return super.buildFooter();
-	}
+//    private boolean footerBase() {
+//
+//		double totimp,totperc;
+//
+//		if (sinimp) {
+//			stot=stot-imp;
+//			totperc=stot*(percep/100);totperc=round2(totperc);
+//			totimp=imp-totperc;
+//
+//			rep.addtotsp("Subtotal", stot);
+//			rep.addtotsp("Impuesto", totimp);
+//			if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion", totperc);
+//			rep.addtotsp("Descuento", -desc);
+//			rep.addtotsp("TOTAL", tot);
+//		} else {
+//			if (desc!=0) {
+//				rep.addtotsp("Subtotal", stot);
+//				rep.addtotsp("Descuento", -desc);
+//			}
+//			rep.addtotsp("TOTAL A PAGAR ", tot);
+//		}
+//
+//		rep.add("");
+//
+//        try {
+//            if (!textofin.isEmpty()) {
+//                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
+//                    rep.add("Sujeto a Retención Definitiva");
+//                }else{
+//                    rep.add("Sujeto a Pagos Trimestrales");
+//                }
+//            }else{
+//                rep.add("Sujeto a Pagos Trimestrales");
+//            }
+//        } catch (Exception e) {}
+//
+//
+//
+//		rep.add("");
+//
+//		//#HS_20181212 Validación para factura pendiente de pago
+//		if(pendiente == 4){
+//			rep.add("");
+//			rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
+//			rep.add("EXIJA SU FACTURA ORIGINAL");
+//			rep.add("");
+//		}
+//
+//		return super.buildFooter();
+//	}
 
 	private boolean footerToledano() {
 		double totimp, totperc,totalNotaC;
