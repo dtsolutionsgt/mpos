@@ -318,6 +318,11 @@ public class FELVerificacion extends PBase {
                 factf.direccion =muni;
             }
 
+            //#EJC20211222: Chapusería de navidad, Jaros por favor corregir esto.
+            if(fel.fraseIVA==3){
+                fel.fraseIVA=1;
+            }
+
             fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");

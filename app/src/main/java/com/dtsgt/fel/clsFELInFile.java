@@ -441,7 +441,7 @@ public class clsFELInFile {
                         for (int i=0; i<ArrayError.length(); i++) {
                             JSONObject theJsonObject = ArrayError.getJSONObject(i);
                             String name = theJsonObject.getString("mensaje_error");
-                            error = name;
+                            error += name;
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
