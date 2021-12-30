@@ -107,11 +107,11 @@ public class DateUtils {
 		
 		//yyyyMMdd hh:mm:ss
 		
-		vy=(int) f/100000000;f=f % 100000000;
-		vm=(int) f/1000000;f=f % 1000000;
-		vd=(int) f/10000;f=f % 10000;
-		h= (int) f/100;
-		m= f % 100;
+		vy= f/100000000;f=f % 100000000;
+		vm= f/1000000;f=f % 1000000;
+		vd= f/10000;f=f % 10000;
+		h=  f/100;
+		m=  f % 100;
 		
 		s="20";
 		if (vy>9) s=s+vy; else s=s+"0"+vy; 
@@ -133,11 +133,11 @@ public class DateUtils {
 
         //yyyyMMdd hh:mm:ss
 
-        vy=(int) f/100000000;f=f % 100000000;
-        vm=(int) f/1000000;f=f % 1000000;
-        vd=(int) f/10000;f=f % 10000;
-        h= (int) f/100;
-        m= f % 100;
+        vy= f/100000000;f=f % 100000000;
+        vm= f/1000000;f=f % 1000000;
+        vd= f/10000;f=f % 10000;
+        h=  f/100;
+        m=  f % 100;
 
         s="20";
         if (vy>9) s=s+vy; else s=s+"0"+vy;
