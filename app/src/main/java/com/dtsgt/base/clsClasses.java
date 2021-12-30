@@ -421,7 +421,7 @@ public class clsClasses {
         public int ruta;
         public int  corel;
         public int  estado;
-        public int  fecha;
+        public Long  fecha;
         public int vendedor;
 		public int codpago;
 		public double fondocaja;

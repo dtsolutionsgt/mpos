@@ -297,7 +297,8 @@ public class Caja extends PBase {
 
     public void saveMontoIni(){
         Cursor dt, dt2, dt3;
-        int fecha=0, codpago=0;
+        int codpago=0;
+        Long fecha=0L;
 
         try{
 
@@ -357,7 +358,7 @@ public class Caja extends PBase {
 
                 writeCorelLog(6,gl.corelZ,"");
 
-                itemC.fecha = (int) du.getFechaActual();
+                itemC.fecha = du.getFechaActual();
 
                 itemC.estado = 0;
                 itemC.codpago = 0;
