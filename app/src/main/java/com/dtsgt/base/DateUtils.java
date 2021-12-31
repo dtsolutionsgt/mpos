@@ -106,7 +106,7 @@ public class DateUtils {
 		String s;
 		
 		//yyyyMMdd hh:mm:ss
-		
+		//#KM20211230 Se quita (int) para corregir las fechas a partir de 2022
 		vy= f/100000000;f=f % 100000000;
 		vm= f/1000000;f=f % 1000000;
 		vd= f/10000;f=f % 10000;
@@ -133,6 +133,7 @@ public class DateUtils {
 
         //yyyyMMdd hh:mm:ss
 
+		//#KM20211230 Se quita (int) para corregir las fechas a partir de 2022
         vy= f/100000000;f=f % 100000000;
         vm= f/1000000;f=f % 1000000;
         vd= f/10000;f=f % 10000;
