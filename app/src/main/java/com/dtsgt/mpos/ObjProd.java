@@ -21,7 +21,8 @@ public class ObjProd extends PBase {
 	private clsClasses.clsObj selitem;
 
 	private String rutatipo;
-	private int fecha,tipo,objtipo;	
+	private int tipo;
+	private int objtipo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -18,8 +18,8 @@ public class clsBeP_DESCUENTO {
     @Element(required=false) public double VALOR;
     @Element(required=false) public String GLOBDESC;
     @Element(required=false) public String PORCANT;
-    @Element(required=false) public int FECHAINI;
-    @Element(required=false) public int FECHAFIN;
+    @Element(required=false) public Long FECHAINI;
+    @Element(required=false) public Long FECHAFIN;
     @Element(required=false) public int CODDESC;
     @Element(required=false) public String NOMBRE;
     @Element(required=false) public int ACTIVO;
@@ -31,7 +31,7 @@ public class clsBeP_DESCUENTO {
     public clsBeP_DESCUENTO(int CODIGO_DESCUENTO,int EMPRESA,int CODIGO_CLIENTE,int CTIPO,
                             int CODIGO_PRODUCTO,int PTIPO,int TIPORUTA,double RANGOINI,
                             double RANGOFIN,String DESCTIPO,double VALOR,String GLOBDESC,
-                            String PORCANT,int FECHAINI,int FECHAFIN,int CODDESC,
+                            String PORCANT,long FECHAINI,long FECHAFIN,int CODDESC,
                             String NOMBRE,int ACTIVO) {
 
         this.CODIGO_DESCUENTO=CODIGO_DESCUENTO;
@@ -134,16 +134,16 @@ public class clsBeP_DESCUENTO {
     public void setPORCANT(String value) {
         PORCANT=value;
     }
-    public int getFECHAINI() {
+    public long getFECHAINI() {
         return FECHAINI;
     }
-    public void setFECHAINI(int value) {
+    public void setFECHAINI(long value) {
         FECHAINI=value;
     }
-    public int getFECHAFIN() {
+    public long getFECHAFIN() {
         return FECHAFIN;
     }
-    public void setFECHAFIN(int value) {
+    public void setFECHAFIN(long value) {
         FECHAFIN=value;
     }
     public int getCODDESC() {

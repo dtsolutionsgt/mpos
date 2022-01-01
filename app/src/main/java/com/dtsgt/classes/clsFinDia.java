@@ -599,37 +599,4 @@ public class clsFinDia extends PBase {
         return cnt;
     }
 
-    public boolean yaHizoFindeDia() {
-
-        Cursor DT;
-        boolean vFinDia = false;
-        int fechaUltimoCierre = ultimoCierreFecha();
-
-        try{
-
-            sql = "SELECT val1 FROM FinDia";
-            DT = Con.OpenDT(sql);
-
-            if (DT.getCount() > 0) {
-                DT.moveToFirst();
-
-                if (DT.getInt(0) == 0) {
-                    vFinDia = false;
-                } else {
-                    if (du.getActDate() == fechaUltimoCierre || fechaUltimoCierre != 0) {
-                        vFinDia = true;
-                    } else {
-                        vFinDia = false;
-                    }
-                }
-            }
-
-        }catch (Exception ex){
-            vFinDia=false;
-
-        }
-
-        return  vFinDia;
-    }
-
 }

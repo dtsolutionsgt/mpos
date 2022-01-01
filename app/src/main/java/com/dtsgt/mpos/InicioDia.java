@@ -163,7 +163,8 @@ public class InicioDia extends PBase implements View.OnClickListener{
     }
 
     private void fechaNueva(){
-        int fecha;
+
+        Long fecha;
 
         try {
 
@@ -171,7 +172,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
 
                 yy = yy - 2000;
 
-                fecha = Integer.valueOf(String.valueOf(yy) + mm + dd + "0000");
+                fecha = Long.valueOf(String.valueOf(yy) + mm + dd + "0000");
 
                 gl.nuevaFecha = fecha;
 
