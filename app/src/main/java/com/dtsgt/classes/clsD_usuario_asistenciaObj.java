@@ -170,14 +170,13 @@ public class clsD_usuario_asistenciaObj {
     public String addItemSql(clsClasses.clsD_usuario_asistencia item) {
 
         ins.init("D_usuario_asistencia");
-
         //ins.add("CODIGO_ASISTENCIA",item.codigo_asistencia);
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         ins.add("INICIO",item.inicio);
         ins.add("FIN",item.fin);
-        int ff=(int) (item.fecha/10000);
+        long ff=(long) (item.fecha/10000);
         ins.add("BANDERA",ff);
 
         return ins.sql();

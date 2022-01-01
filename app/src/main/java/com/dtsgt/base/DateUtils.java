@@ -27,22 +27,7 @@ public class DateUtils {
 		
 		return s;
 	}
-	
-	public String sfechash(long f) {
-		int vy,vm,vd;
-		String s;
-		
-		vy=(int) f/100000000;f=f % 100000000;
-		vm=(int) f/1000000;f=f % 1000000;
-		vd=(int) f/10000;f=f % 10000;
-		
-		s="";
-		if (vd>9) { s=s+String.valueOf(vd)+"/";} else {s=s+"0"+String.valueOf(vd)+"/";}  
-		if (vm>9) { s=s+String.valueOf(vm);} else {s=s+"0"+String.valueOf(vm);}  
-		
-		return s;
-	}
-	
+
 	public String shora(long vValue) {
 		long h,m;
 		String sh,sm;
@@ -55,6 +40,7 @@ public class DateUtils {
 	}
 
 	public String geActTimeStr(){
+
 		long f,ch,cm,cs;
 		String s,ss;
 		
@@ -72,7 +58,8 @@ public class DateUtils {
 	}
 
     public long addDays(long f,int days){
-        int cyear,cmonth,cday;
+
+        long cyear,cmonth,cday;
 
         final Calendar c = Calendar.getInstance();
 
@@ -326,7 +313,7 @@ public class DateUtils {
 		return c; //*10000;
 	}
 	  
-	public long cfecha(int year,int month, int day) {
+	public long cfecha(long year, long month, long day) {
 		long c;
 		c=year % 100;
 		c=c*10000+month*100+day;
@@ -334,7 +321,7 @@ public class DateUtils {
 		return c*10000;
 	}
 
-	public long cfechaDesc(int year,int month, int day) {
+	public long cfechaDesc(long year, long month, long day) {
 		long c;
 		String d,mes,dia,ano;
 		int siglo;
@@ -346,9 +333,9 @@ public class DateUtils {
 		}
 
 		year = year - siglo;
-		ano = Integer.toString(year);
-		mes = Integer.toString(month);
-		dia = Integer.toString(day);
+		ano = Long.toString(year);
+		mes = Long.toString(month);
+		dia = Long.toString(day);
 
 		if (dia.length()<2) {
 			dia = "0" + day;

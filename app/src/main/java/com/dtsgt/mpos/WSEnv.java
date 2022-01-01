@@ -1111,7 +1111,7 @@ public class WSEnv extends PBase {
 
         ins.add("INICIO",fsi);
         ins.add("FIN",fsf);
-        int ff=(int) (item.fecha/10000);
+        long ff=(long) (item.fecha/10000);
         ins.add("BANDERA",ff);
 
         return ins.sql();
