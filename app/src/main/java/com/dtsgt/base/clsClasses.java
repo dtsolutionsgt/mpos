@@ -549,8 +549,8 @@ public class clsClasses {
         public double valor;
         public String globdesc;
         public String porcant;
-        public Long  fechaini;
-        public Long  fechafin;
+        public long fechaini;
+        public long fechafin;
         public int  coddesc;
         public String nombre;
         public int activo;
