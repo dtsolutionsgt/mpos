@@ -158,8 +158,8 @@ public class clsP_descuentoObj {
             item.valor = dt.getDouble(8);
             item.globdesc = dt.getString(9);
             item.porcant = dt.getString(10);
-            item.fechaini = dt.getInt(11);
-            item.fechafin = dt.getInt(12);
+            item.fechaini = dt.getLong(11);
+            item.fechafin = dt.getLong(12);
             item.coddesc = dt.getInt(13);
             item.nombre = dt.getString(14);
             item.activo = dt.getInt(15);
