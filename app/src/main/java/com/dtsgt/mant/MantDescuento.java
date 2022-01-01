@@ -183,8 +183,8 @@ public class MantDescuento extends PBase {
         item.valor=0;
         item.globdesc="N";
         item.porcant="S";
-        item.fechaini=0;
-        item.fechafin=0;
+        item.fechaini=0L;
+        item.fechafin=0L;
         item.coddesc=1;
         item.nombre="1";
         item.activo=1;
@@ -335,7 +335,7 @@ public class MantDescuento extends PBase {
                 msgbox("¡Fecha inicial incorrecta!");
                 return false;
             }else {
-                item.fechaini = (int) date;
+                item.fechaini =  date;
             }
 
             ss=lblDate1.getText().toString().trim();
@@ -348,7 +348,7 @@ public class MantDescuento extends PBase {
                 return false;
 
             }else {
-                item.fechafin = (int) date1;
+                item.fechafin =  date1;
             }
 
             return true;

@@ -783,7 +783,7 @@ public class Menu extends PBase {
     public void showInvMenuUtils() {
         try{
             final AlertDialog Dialog;
-            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final"};
+            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final", "Actualizar fechas erroneas"};
 
             menudlg = new ExDialog (this);
 
@@ -811,6 +811,8 @@ public class Menu extends PBase {
                             msgAskImprimir();break;
                         case 8:
                             msgAskCF();break;
+						case 9:
+							msgAskCorregirFechas();break;
                     }
 
                     dialog.cancel();
@@ -2164,6 +2166,38 @@ public class Menu extends PBase {
         dialog.show();
 
     }
+
+    public void msgAskCorregirFechas() {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("¿Está seguro de corregir las fechas erroneas por la fecha actual?");
+		dialog.setCancelable(false);
+
+		dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				try {
+
+					Long fActual = du.getFechaActual();
+					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<0";
+					db.execSQL(sql);
+
+					fActual = du.getActDateTime();
+					sql="UPDATE D_FACTURA SET FECHA="+fActual+" WHERE FECHA<0";
+					db.execSQL(sql);
+					sql="UPDATE D_FACTURA SET FEELFECHAPROCESADO="+fActual+" WHERE FEELFECHAPROCESADO<0";
+					db.execSQL(sql);
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+
+			}
+		});
+
+		dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+	}
 
     //endregion
 
