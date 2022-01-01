@@ -58,7 +58,7 @@ public class clsDocCanastaBod extends clsDocument {
             ref=DT.getString(3);
             vend=DT.getString(4);//#CKFK 20200516 Validar si se guarda el codigo o el codigo_vendedor
 
-            ffecha=DT.getInt(5);
+            ffecha=DT.getLong(5);
             fsfecha=sfecha(ffecha);
 
             corel=serie;

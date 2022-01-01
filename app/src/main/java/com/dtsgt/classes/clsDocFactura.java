@@ -86,7 +86,7 @@ public class clsDocFactura extends clsDocument {
 				stot=tot+desc;
 
 				empp=DT.getString(8);
-				ffecha=DT.getInt(9);fsfecha=sfecha(ffecha)+" "+shora(ffecha);
+				ffecha=DT.getLong(9);fsfecha=sfecha(ffecha)+" "+shora(ffecha);
 
 				add1=DT.getString(10);
 				add2=DT.getString(11);

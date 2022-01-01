@@ -25,7 +25,8 @@ public class clsDocument {
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
 	public boolean parallevar,factsinpropina,modorest;
-	public int ffecha,pendiente,diacred,pagoefectivo;
+	public Long ffecha;
+    public int pendiente,diacred,pagoefectivo;
 	//#EJC20210705
 	public String TipoCredito, NoAutorizacion;
 	public double ptotal,pdesc,pprop,propvalor,propperc;
