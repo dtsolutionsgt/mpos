@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -57,11 +58,16 @@ public class PedidoDet extends PBase {
     private String pedid,corelfact;
     private int est,modo,counter;
     private double monto=0;
+    private boolean horiz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pedido_det);
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_pedido_det);horiz=true;
+        } else {
+            setContentView(R.layout.activity_pedido_det_ver);horiz=false;
+        }
 
         super.InitBase();
 
@@ -228,7 +234,7 @@ public class PedidoDet extends PBase {
             }
 
 
-            adapter=new LA_D_pedidod(this,this,lines);
+            adapter=new LA_D_pedidod(this,this,lines,horiz);
             listView.setAdapter(adapter);
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
@@ -663,7 +669,11 @@ public class PedidoDet extends PBase {
         }
         if (item.anulado==1) item.tdif=-1;
 
-        if (item.tdif>-1) lblTiempo.setText(item.tdif+" min");else lblTiempo.setText("");
+        if (item.tdif>-1) {
+            if (horiz) lblTiempo.setText(item.tdif+" min");else  lblTiempo.setText(item.tdif+" m");
+        }else{
+            lblTiempo.setText("");
+        }
 
     }
 
@@ -688,6 +698,16 @@ public class PedidoDet extends PBase {
         for(int i = 0, j = 0, l = s.length(); i < l; i += size, j++)
             arr[j] = s.substring(i, Math.min(l, i + size));
         return arr;
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     //endregion

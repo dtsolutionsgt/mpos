@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -46,7 +47,7 @@ public class ResMesero extends PBase {
 
     private int idgrupo,cantpers;
     private String nommes,nmesa,idmesa;
-
+    private boolean horiz;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +147,7 @@ public class ResMesero extends PBase {
                 mesas.add(mesa);
             }
 
-            adapter=new LA_Res_mesa(this,this,mesas,gl.pelTablet);
+            adapter=new LA_Res_mesa(this,this,mesas,horiz);
             gridView.setAdapter(adapter);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -356,12 +357,12 @@ public class ResMesero extends PBase {
     }
 
     private void calibraPantalla() {
-        if (gl.pelTablet) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        if (pantallaHorizontal()) horiz=true; else horiz=false;
+
+        if (horiz) {
             lblmes.setTextSize(36);lblgrupo.setTextSize(36);
             gridView.setNumColumns(4);
         } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             lblmes.setTextSize(20);lblgrupo.setTextSize(20);
             gridView.setNumColumns(2);
         }
@@ -374,6 +375,16 @@ public class ResMesero extends PBase {
             addOrden();
         } catch (Exception e) {
             mu.msgbox("Cantidad incorrecta");return;
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
         }
     }
 

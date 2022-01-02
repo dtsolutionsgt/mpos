@@ -1,7 +1,10 @@
 package com.dtsgt.mpos;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
@@ -9,10 +12,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +26,9 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
@@ -50,9 +58,8 @@ public class MainActivity extends PBase {
 
     private ListView listView;
     private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
-    private ImageView imgLogo, imgFel;
+    private ImageView imgLogo;
     private Spinner spin;
-
 
     private BaseDatosVersion dbVers;
 
@@ -65,6 +72,7 @@ public class MainActivity extends PBase {
 
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
+    private int scrdim,modopantalla;
 
     private String parVer = "4.1.7"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
@@ -74,13 +82,46 @@ public class MainActivity extends PBase {
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+
+            if (pantallaHorizontal()) {
+                if (scrdim>8) {
+                    setContentView(R.layout.activity_main);modopantalla=1;
+                } else {
+                    setContentView(R.layout.activity_main2);modopantalla=3;
+                }
+            } else {
+                setContentView(R.layout.activity_main);modopantalla=2;
+            }
 
             grantPermissions();
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if( newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ) {
+        } else {
+        }
+
+        if (pantallaHorizontal()) {
+            if (scrdim>8) {
+                setContentView(R.layout.activity_main);modopantalla=1;
+            } else {
+                setContentView(R.layout.activity_main2);modopantalla=3;
+            }
+        } else {
+            setContentView(R.layout.activity_main);modopantalla=2;
+        }
+
+        try {
+            startApplication();
+        } catch (Exception e) {}
+
     }
 
     private void grantPermissions() {
@@ -106,8 +147,7 @@ public class MainActivity extends PBase {
                 }
             }
 
-        } catch (Exception e) {
-            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        } catch (Exception e) { addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
@@ -127,7 +167,6 @@ public class MainActivity extends PBase {
             lblPass = (TextView) findViewById(R.id.lblPass);
             lblKeyDP = (TextView) findViewById(R.id.textView110);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
-            imgFel = (ImageView) findViewById(R.id.imgFel);
 
             listView = (ListView) findViewById(R.id.listView1);
             spin = (Spinner) findViewById(R.id.spinner22);
@@ -165,6 +204,7 @@ public class MainActivity extends PBase {
                 supervisorRuta();
             } */
 
+            app.setScreenDim(this);
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -443,11 +483,13 @@ public class MainActivity extends PBase {
             msgbox(e.getMessage());
         }
 
+        /*
         if (!gl.peFEL.equals("SIN FEL") && !gl.peFEL.isEmpty()) {
             imgFel.setVisibility(View.VISIBLE);
         }else{
             imgFel.setVisibility(View.GONE);
         }
+         */
 
         configBase();
 
@@ -468,20 +510,10 @@ public class MainActivity extends PBase {
     }
 
     private void processLogIn() {
-
-        /*/
-        if (!validaLicencia()) {
-             mu.msgbox("¡Licencia invalida!");
-            startActivity(new Intent(this,comWSLic.class));
-            return;
-        }
-        */
-
         if (checkUser()) {
             logUser();
             gotoMenu();
         }
-
     }
 
     private boolean checkUser() {
@@ -605,13 +637,17 @@ public class MainActivity extends PBase {
             SharedPreferences pref = getApplicationContext().getSharedPreferences("MPos", 0);
             SharedPreferences.Editor editor = pref.edit();
 
+            /*
             try {
                 gl.pelTablet=pref.getBoolean("pelTablet", true);
             } catch (Exception e) {
                 gl.pelTablet=true;
             }
+            */
 
-            if (gl.pelTablet) {
+            gl.scrdim=scrdim;
+
+            if (modopantalla==1) {
                 //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 listView.setVisibility(View.VISIBLE);
                 spin.setVisibility(View.INVISIBLE);
@@ -966,6 +1002,39 @@ public class MainActivity extends PBase {
             mu.msgbox(e.getMessage());
         }
     }
+
+    public boolean pantallaHorizontal() {
+
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            int width=dm.widthPixels;
+            int height=dm.heightPixels;
+            double x = Math.pow(width,2);
+            double y = Math.pow(height,2);
+            double diagonal = Math.sqrt(x+y);
+
+            int dens=dm.densityDpi;
+            double screenInches = diagonal/(double)dens;
+
+            scrdim=(int) screenInches;
+            boolean horiz=point.x>point.y;
+
+            return horiz;
+        } catch (Exception e) {
+            return true;
+        }
+
+    }
+
+    protected void toasthoriz(String msg) {
+        Toast toast= Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
 
     //endregion
 

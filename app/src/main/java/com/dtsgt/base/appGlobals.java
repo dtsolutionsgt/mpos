@@ -43,6 +43,10 @@ public class appGlobals extends Application {
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
                    impresion_comanda, modo_domicilio, cf_domicilio ;
 
+	//Tamaño de pantalla
+    public int scrx,scry,scrdim;
+    public boolean scrhoriz;
+
 	//#EJC20210804: Para pasar parámetro a appbundle print.
 	public String QRCodeStr ="";
 
@@ -71,7 +75,7 @@ public class appGlobals extends Application {
     public double  pePropinaPerc,pePropinaCarta;
 
     // Parametros Extra Local
-    public Boolean pelCaja,pelCajaRecep,pelTablet,pelDespacho, pelOrdenComanda;
+    public Boolean pelCaja,pelCajaRecep,pelDespacho, pelOrdenComanda;
     public Boolean pelClaveMes,pelClaveCaja,pelComandaBT, pelMeseroCaja;
     public String  pelPrefijoOrden;
 

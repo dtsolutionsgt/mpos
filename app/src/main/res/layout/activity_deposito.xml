@@ -197,7 +197,10 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/lblBU"
             android:layout_alignParentRight="true"
-            android:layout_margin="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
             android:clickable="true"
             android:onClick="listaDoc"
             android:src="@drawable/consultas" />
@@ -207,6 +210,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@+id/lblPTotal"
             android:ems="10" />
@@ -270,7 +275,7 @@
 
     <ImageView
         android:id="@+id/imgCalc"
-        android:layout_width="wrap_content"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/relativeLayout1"
         android:layout_alignBottom="@+id/relativeLayout1"

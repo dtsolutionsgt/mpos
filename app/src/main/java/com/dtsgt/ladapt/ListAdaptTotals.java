@@ -19,13 +19,15 @@ public class ListAdaptTotals extends BaseAdapter {
 	private ArrayList<clsCDB> items;
 
 	private int selectedIndex;
+	private boolean horiz;
 
 	private LayoutInflater l_Inflater;
 
-	public ListAdaptTotals(Context context, ArrayList<clsCDB> results) {
+	public ListAdaptTotals(Context context, ArrayList<clsCDB> results,boolean horizdir) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
+        horiz=horizdir;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -54,7 +56,12 @@ public class ListAdaptTotals extends BaseAdapter {
 
 		if (convertView == null) {
 
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_totals, null);
+		    if (horiz) {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_totals, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_totals_ver, null);
+            }
+
 			holder = new ViewHolder();
 
 			holder.lblCod  = (TextView) convertView.findViewById(R.id.lblETipo);
@@ -72,10 +79,14 @@ public class ListAdaptTotals extends BaseAdapter {
 		holder.imgBand.setVisibility(View.INVISIBLE);
 		if (items.get(position).Bandera==1) holder.imgBand.setVisibility(View.VISIBLE);
 
-		if(selectedIndex!= -1 && position == selectedIndex) {
-			convertView.setBackgroundColor(Color.rgb(0, 128, 0));
+		if (selectedIndex!= -1 && position == selectedIndex) {
+			convertView.setBackgroundColor(Color.parseColor("#1B76B9"));
+            holder.lblCod.setTextColor(Color.WHITE);
+            holder.lblDesc.setTextColor(Color.WHITE);
 		} else {
 			convertView.setBackgroundColor(Color.TRANSPARENT);
+            holder.lblCod.setTextColor(Color.BLACK);
+            holder.lblDesc.setTextColor(Color.BLACK);
 		}
 
 		return convertView;

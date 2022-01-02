@@ -52,37 +52,50 @@
             android:text="Anulación"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#1A8AC6" />
+
+        <TextView
+            android:id="@+id/lblDescrip"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toStartOf="@+id/imgTitLogo"
+            android:layout_toEndOf="@+id/lblTit"
+            android:gravity="center"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#1A8AC6"
+            android:textSize="22sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/llFechas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lblDescrip"
+        android:layout_below="@+id/relRoad"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/imgImg"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/llFechaIni"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="230dp"
-                android:layout_height="26dp" />
+            android:layout_height="48dp">
 
             <TextView
                 android:id="@+id/lblCFact30"
-                android:layout_width="150dp"
+                android:layout_width="80dp"
                 android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="180dp"
-                android:layout_marginTop="0dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:background="@drawable/blue_strip"
                 android:gravity="center"
-                android:paddingLeft="10dp"
-                android:text="Fecha inicio :"
+                android:text="Inicio :"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -90,40 +103,35 @@
 
             <TextView
                 android:id="@+id/lblDateini2"
-                android:layout_width="202dp"
+                android:layout_width="150dp"
                 android:layout_height="39dp"
-                android:layout_gravity="center|center_horizontal|center_vertical"
-                android:layout_marginStart="18dp"
+                android:layout_marginStart="0dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_toEndOf="@+id/lblCFact30"
                 android:background="@drawable/frame_btn"
                 android:gravity="center"
                 android:onClick="showDateDialog1"
                 android:text="00/00/0000"
                 android:textSize="21dp"
                 android:textStyle="bold" />
-        </LinearLayout>
+        </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/llFechaFin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Space
-                android:layout_width="230dp"
-                android:layout_height="22dp" />
+            android:layout_height="48dp">
 
             <TextView
                 android:id="@+id/lblCFact29"
-                android:layout_width="150dp"
+                android:layout_width="80dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="180dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:background="@drawable/blue_strip"
                 android:gravity="center"
-                android:text="Fecha fin :    "
+                android:text="Fin :    "
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -131,18 +139,19 @@
 
             <TextView
                 android:id="@+id/lblDatefin2"
-                android:layout_width="202dp"
+                android:layout_width="150dp"
                 android:layout_height="39dp"
-                android:layout_marginStart="18dp"
+                android:layout_marginStart="0dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
+                android:layout_toEndOf="@+id/lblCFact29"
                 android:background="@drawable/frame_btn"
                 android:gravity="center"
                 android:onClick="showDateDialog2"
                 android:text="00/00/0000"
                 android:textSize="21dp"
                 android:textStyle="bold" />
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <ListView
@@ -150,11 +159,11 @@
         android:layout_width="769dp"
         android:layout_height="931dp"
         android:layout_above="@+id/relbotpan"
-        android:layout_below="@+id/imgImg"
+        android:layout_below="@+id/llFechas"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="138dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp">
@@ -163,8 +172,8 @@
 
     <ImageView
         android:id="@+id/imgImg"
-        android:layout_width="144dp"
-        android:layout_height="108dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_below="@+id/relRoad"
         android:layout_alignParentTop="false"
         android:layout_alignParentRight="true"
@@ -175,22 +184,6 @@
         android:paddingRight="10dp"
         android:paddingBottom="10dp"
         android:src="@drawable/anulacion48" />
-
-    <TextView
-        android:id="@+id/lblDescrip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignLeft="@+id/listView1"
-        android:layout_alignBottom="@+id/imgImg"
-        android:layout_alignParentTop="false"
-        android:layout_toLeftOf="@+id/imgImg"
-        android:gravity="center_vertical|center_horizontal"
-        android:paddingTop="5dp"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="22sp"
-        android:textStyle="bold" />
 
     <ProgressBar
         android:id="@+id/progressBar7"

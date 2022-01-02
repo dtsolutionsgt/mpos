@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,7 +36,11 @@ public class ValidaClave extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_valida_clave);
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_valida_clave);
+        } else {
+            setContentView(R.layout.activity_valida_clave_ver);
+        }
 
         super.InitBase();
 
@@ -170,6 +175,15 @@ public class ValidaClave extends PBase {
 
     //region Aux
 
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
+    }
 
     //endregion
 

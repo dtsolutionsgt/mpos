@@ -118,7 +118,8 @@
             android:alpha="0.5"
             android:clickable="true"
             android:onClick="doCancelFPrint"
-            android:src="@drawable/fprint_del" />
+            android:src="@drawable/fprint_del"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/imageView42"
@@ -476,7 +477,8 @@
             android:layout_marginBottom="0dp"
             android:clickable="true"
             android:onClick="doEnroll"
-            android:src="@drawable/fplogo_gr" />
+            android:src="@drawable/fplogo_gr"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/imageView50"
@@ -501,7 +503,8 @@
             android:layout_marginEnd="0dp"
             android:gravity="center_horizontal"
             android:text="Enrollar huella"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/textView147"
@@ -516,7 +519,8 @@
             android:layout_marginEnd="0dp"
             android:gravity="center_horizontal"
             android:text="Borrar huella"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

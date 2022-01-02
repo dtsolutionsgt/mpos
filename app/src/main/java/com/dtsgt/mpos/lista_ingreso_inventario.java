@@ -179,11 +179,15 @@ public class lista_ingreso_inventario extends PBase {
                         adapter.setSelectedIndex(position);
 
                         sitem=vItem;
+                        /*
                         if (vItem.val==0) {
                             gl.corelmov="";
                         } else {
                             if (tipo==0) msgAskResume("Continuar o borrar");
                         }
+
+                         */
+                        msgAskResume("Continuar o borrar");
                     } catch (Exception e) {
                         addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                         mu.msgbox( e.getMessage());

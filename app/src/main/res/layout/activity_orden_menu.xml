@@ -22,7 +22,7 @@
 
         <RelativeLayout
             android:layout_width="244dp"
-            android:layout_height="68dp"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentEnd="false"
             android:layout_alignParentRight="true"
@@ -81,13 +81,13 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="7dp"
             android:layout_marginRight="2dp"
-            android:layout_marginBottom="73dp"
+            android:layout_marginBottom="56dp"
             android:background="#DBF5F3">
 
             <ImageView
                 android:id="@+id/imageView28"
                 android:layout_width="120dp"
-                android:layout_height="70dp"
+                android:layout_height="50dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="false"
                 android:layout_alignParentTop="false"
@@ -96,18 +96,20 @@
                 android:layout_marginBottom="24dp"
                 android:clickable="true"
                 android:onClick="doDec"
+                android:padding="3dp"
                 android:src="@drawable/menos" />
 
             <ImageView
                 android:id="@+id/imageView29"
                 android:layout_width="120dp"
-                android:layout_height="70dp"
+                android:layout_height="50dp"
                 android:layout_alignBottom="@+id/textView117"
                 android:layout_marginStart="5dp"
                 android:layout_marginBottom="0dp"
                 android:layout_toEndOf="@+id/textView117"
                 android:clickable="true"
                 android:onClick="doInc"
+                android:padding="3dp"
                 android:src="@drawable/mas" />
 
             <RelativeLayout
@@ -142,21 +144,22 @@
                 android:layout_toEndOf="@+id/imageView28"
                 android:text="99"
                 android:textColor="@android:color/holo_blue_dark"
-                android:textSize="48sp"
+                android:textSize="40sp"
                 android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/imageView108"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_alignTop="@+id/imageView29"
+                android:layout_alignBottom="@+id/imageView29"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="12dp"
-                android:layout_marginBottom="17dp"
+                android:layout_marginBottom="0dp"
                 android:clickable="true"
                 android:onClick="doAdd"
+                android:padding="3dp"
                 android:src="@drawable/sale_add" />
 
             <TextView

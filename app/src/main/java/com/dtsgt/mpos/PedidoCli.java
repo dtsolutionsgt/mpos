@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,10 +25,16 @@ public class PedidoCli extends PBase {
     private int idcli;
     private boolean changed;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pedido_cli);
+
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_pedido_cli);
+        } else {
+            setContentView(R.layout.activity_pedido_cli_ver);
+        }
 
         super.InitBase();
 
@@ -242,6 +249,16 @@ public class PedidoCli extends PBase {
              msgbox(e.getMessage());
         }
 
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     //endregion

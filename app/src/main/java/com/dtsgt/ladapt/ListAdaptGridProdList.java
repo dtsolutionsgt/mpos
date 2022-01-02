@@ -23,12 +23,14 @@ public class ListAdaptGridProdList extends BaseAdapter {
 	private int selectedIndex;
     private String imgpath;
 	private LayoutInflater l_Inflater;
+	private boolean horiz;
 
-	public ListAdaptGridProdList(Context context, ArrayList<clsMenu> results, String imgfold) {
+	public ListAdaptGridProdList(Context context, ArrayList<clsMenu> results, String imgfold,boolean horizdir) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
         imgpath=imgfold;
+        horiz=horizdir;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -67,8 +69,7 @@ public class ListAdaptGridProdList extends BaseAdapter {
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
-
-
+        if (horiz) holder.lblName.setTextSize(21F);else holder.lblName.setTextSize(14F);
 
        	if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));

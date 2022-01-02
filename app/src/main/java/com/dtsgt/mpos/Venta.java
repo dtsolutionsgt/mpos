@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -126,11 +128,17 @@ public class Venta extends PBase {
     private int codigo_cliente, emp,pedidoscant,cod_prod;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
+    private boolean horiz=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_venta);
+
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_venta);horiz=true;
+        } else {
+            setContentView(R.layout.activity_venta_ver);horiz=false;
+        }
 
         super.InitBase();
         addlog("Venta",""+du.getActDateTime(),String.valueOf(gl.vend));
@@ -1951,10 +1959,10 @@ public class Venta extends PBase {
             }
 
             if (imgflag) {
-                adapterf=new ListAdaptGridFam(this,fitems,imgfold);
+                adapterf=new ListAdaptGridFam(this,fitems,imgfold,horiz);
                 grdfam.setAdapter(adapterf);
             } else {
-                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold);
+                adapterfl=new ListAdaptGridFamList(this,fitems,imgfold,horiz);
                 grdfam.setAdapter(adapterfl);
             }
 
@@ -2029,10 +2037,10 @@ public class Venta extends PBase {
         }
 
         if (imgflag) {
-            adapterp=new ListAdaptGridProd(this,pitems,imgfold);
+            adapterp=new ListAdaptGridProd(this,pitems,imgfold,horiz);
             grdprod.setAdapter(adapterp);
         } else {
-            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold);
+            adapterpl=new ListAdaptGridProdList(this,pitems,imgfold,horiz);
             grdprod.setAdapter(adapterpl);
         }
 
@@ -3000,8 +3008,13 @@ public class Venta extends PBase {
 
     private void setVisual() {
         if (imgflag) {
-            grdfam.setNumColumns(3);
-            grdprod.setNumColumns(3);
+            if (horiz) {
+                grdfam.setNumColumns(3);
+                grdprod.setNumColumns(3);
+            } else {
+                grdfam.setNumColumns(1);
+                grdprod.setNumColumns(3);
+            }
         } else {
             grdfam.setNumColumns(2);
             grdprod.setNumColumns(1);
@@ -3353,7 +3366,7 @@ public class Venta extends PBase {
 
         try {
 
-            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+vum+"')";
+            sql="SELECT CANT FROM P_STOCK WHERE (CODIGO="+prodid+") AND (UNIDADMEDIDA='"+vum+"')";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0) {
@@ -3717,6 +3730,16 @@ public class Venta extends PBase {
 
             gl.ref1=ordencod.toUpperCase();
             lblAlm.setText("#"+gl.ref1);
+        }
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
         }
     }
 

@@ -21,6 +21,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 
 	private LayoutInflater l_Inflater;
 
+
 	public ListAdaptMenuVenta(Context context, ArrayList<clsMenu> results) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
@@ -54,6 +55,9 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 
 		if (convertView == null) {
 			convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
+
+            convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
+
 			holder = new ViewHolder();
 			
 			holder.imgEst = (ImageView) convertView.findViewById(R.id.imgNext);
@@ -75,6 +79,8 @@ public class ListAdaptMenuVenta extends BaseAdapter {
         }
 			
 		holder.imgEst.setImageResource(R.drawable.blank256);
+
+
 		
 		if (items.get(position).Icon==1) holder.imgEst.setImageResource(R.drawable.pedidos_3);
 		if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.pedidos_3);

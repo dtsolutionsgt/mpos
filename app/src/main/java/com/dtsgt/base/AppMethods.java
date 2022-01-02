@@ -1,5 +1,6 @@
 package com.dtsgt.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,11 +8,13 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -1822,6 +1825,34 @@ public class AppMethods {
         } catch (Exception e) {
             return "";
         }
+    }
+
+    public boolean setScreenDim(Activity owner) {
+
+        try {
+            Point point = new Point();
+            owner.getWindowManager().getDefaultDisplay().getRealSize(point);
+
+            DisplayMetrics dm = cont.getResources().getDisplayMetrics();
+            int width=dm.widthPixels;
+            int height=dm.heightPixels;
+            double x = Math.pow(width,2);
+            double y = Math.pow(height,2);
+            double diagonal = Math.sqrt(x+y);
+
+            int dens=dm.densityDpi;
+            double screenInches = diagonal/(double)dens;
+
+            gl.scrx=point.x;gl.scry=point.y;
+            gl.scrdim=(int) screenInches;
+            gl.scrhoriz=gl.scrx>gl.scry;
+
+            return gl.scrhoriz;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return true;
+        }
+
     }
 
     //endregion

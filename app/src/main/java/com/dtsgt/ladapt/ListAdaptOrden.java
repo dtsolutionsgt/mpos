@@ -29,14 +29,16 @@ public class ListAdaptOrden extends BaseAdapter {
 	private LayoutInflater l_Inflater;
 	private DecimalFormat frmdec;
 	private Orden owner;
+	private boolean horiz;
 
-	public ListAdaptOrden(Context context, Orden owner, ArrayList<clsClasses.clsOrden> results) {
+	public ListAdaptOrden(Context context, Orden owner, ArrayList<clsClasses.clsOrden> results,boolean horizdir) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		cont=context;
 		selectedIndex = -1;
 		frmdec = new DecimalFormat("#,##0.00");
 		this.owner=owner;
+		horiz=horizdir;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -65,8 +67,13 @@ public class ListAdaptOrden extends BaseAdapter {
 		double val;
 	
 		if (convertView == null) {
-			
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_orden, null);
+
+		    if (horiz) {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_orden, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_orden_ver, null);
+            }
+
 			holder = new ViewHolder();
 			
 			holder.lblCod  = (TextView) convertView.findViewById(R.id.lblETipo);

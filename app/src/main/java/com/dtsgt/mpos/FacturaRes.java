@@ -116,12 +116,17 @@ public class FacturaRes extends PBase {
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext,pend,stot,stot0;
 	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito,descaddmonto;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
+    private boolean horiz=true;
 
 	//@SuppressLint("MissingPermission")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_factura_res);
+	    if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_factura_res);horiz=true;
+        } else {
+            setContentView(R.layout.activity_factura_res_ver);horiz=false;
+        }
 
 		super.InitBase();
 
@@ -703,7 +708,6 @@ public class FacturaRes extends PBase {
 				items.add(item);
 
 				if (propina>0){
-
 					item = clsCls.new clsCDB();
 					item.Cod="Propina";item.Desc=mu.frmcur(propina);item.Bandera=0;
 					items.add(item);
@@ -711,23 +715,24 @@ public class FacturaRes extends PBase {
 					item = clsCls.new clsCDB();
 					item.Cod="TOTAL";item.Desc=mu.frmcur(tot-dispventa);item.Bandera=1;
 					items.add(item);
-
-				}else{
-
-					item = clsCls.new clsCDB();
+				} else{
+				    item = clsCls.new clsCDB();
 					item.Cod="TOTAL";item.Desc=mu.frmcur(tot);item.Bandera=1;
 					items.add(item);
-
 				}
-
 			}
-
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
-		adapter=new ListAdaptTotals(this,items);
+		selidx=items.size()-1;
+		adapter=new ListAdaptTotals(this,items,horiz);
 		listView.setAdapter(adapter);
+
+        if (selidx>-1) {
+            adapter.setSelectedIndex(selidx);
+            listView.smoothScrollToPosition(selidx);
+        }
 
         lblTotal.setText(mu.frmcur(tot));
 	}
@@ -3207,6 +3212,16 @@ public class FacturaRes extends PBase {
             }
         } catch (Exception e) {}
         return ""+prodid;
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     //endregion

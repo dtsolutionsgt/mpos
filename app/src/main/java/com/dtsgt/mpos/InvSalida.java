@@ -4,6 +4,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,8 +56,11 @@ public class InvSalida extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inv_salida);
-
+        if (pantallaHorizontal()) {
+            setContentView(R.layout.activity_inv_salida);
+        } else {
+            setContentView(R.layout.activity_inv_salida_ver);
+        }
         super.InitBase();
 
         listView = (ListView) findViewById(R.id.listView1);
@@ -92,7 +96,6 @@ public class InvSalida extends PBase {
 
         listItems();
     }
-
 
     //region Events
 
@@ -529,6 +532,16 @@ public class InvSalida extends PBase {
             }
         }
         return "";
+    }
+
+    public boolean pantallaHorizontal() {
+        try {
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getRealSize(point);
+            return point.x>point.y;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     //endregion

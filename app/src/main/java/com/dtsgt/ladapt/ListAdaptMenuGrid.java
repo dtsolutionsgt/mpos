@@ -18,13 +18,14 @@ public class ListAdaptMenuGrid extends BaseAdapter {
 	private static ArrayList<clsMenu> items;
 	
 	private int selectedIndex;
-	
 	private LayoutInflater l_Inflater;
+	private boolean horiz;
 
-	public ListAdaptMenuGrid(Context context, ArrayList<clsMenu> results) {
+	public ListAdaptMenuGrid(Context context, ArrayList<clsMenu> results,boolean horizpos) {
 		items = results;
 		l_Inflater = LayoutInflater.from(context);
 		selectedIndex = -1;
+		horiz=horizpos;
 	}
 
 	public void setSelectedIndex(int ind) {
@@ -53,7 +54,12 @@ public class ListAdaptMenuGrid extends BaseAdapter {
 		int iconid;
 
 		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.activity_list_view_menugrid, null);
+		    if (horiz) {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_menugrid, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_menugrid_ver, null);
+            }
+
 			holder = new ViewHolder();
 			
 			holder.imgEst = (ImageView) convertView.findViewById(R.id.imgNext);

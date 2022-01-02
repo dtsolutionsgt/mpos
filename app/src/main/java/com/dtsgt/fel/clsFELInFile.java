@@ -35,7 +35,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class clsFELInFile {
 
-
     public String error,fecha_factura;
     public Boolean errorflag,errorcon,constat,duplicado,errcert,errfirma,modoiduni,iduniflag;
     public Boolean halt=false;
@@ -442,7 +441,7 @@ public class clsFELInFile {
                         for (int i=0; i<ArrayError.length(); i++) {
                             JSONObject theJsonObject = ArrayError.getJSONObject(i);
                             String name = theJsonObject.getString("mensaje_error");
-                            error = name;
+                            error += name;
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -9,18 +9,17 @@
     <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
-        android:layout_height="48dp" >
+        android:layout_height="48dp">
 
         <RelativeLayout
             android:id="@+id/relRoadbar"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:layout_centerVertical="true"
-            android:background="#9A999E" >
-        </RelativeLayout>
+            android:background="#9A999E"></RelativeLayout>
 
         <ImageView
             android:id="@+id/imgRoadTit"
@@ -48,66 +47,123 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relFilter"
-        android:layout_width="wrap_content"
-        android:layout_height="55dp"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentRight="false"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toLeftOf="@id/switch1"
-        android:layout_toRightOf="@id/imageView32"
-        android:background="@drawable/frame_rect">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/rellaydn"
+        android:layout_below="@id/relRoad"
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-        <ImageView
-            android:id="@+id/imgNext"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:clickable="true"
-            android:onClick="doClear"
-            android:padding="3dp"
-            android:src="@drawable/erase" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/txtFilter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/imgNext"
-            android:ems="10"
-            android:inputType="none"
-            android:maxLines="1"
-            android:paddingTop="2dp"
-            android:textSize="18sp">
+            <RelativeLayout
+                android:id="@+id/relFilter"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/imageView32"
+                android:layout_alignParentLeft="false"
+                android:layout_alignParentRight="false"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/frame_rect">
 
-            <requestFocus />
-        </EditText>
-    </RelativeLayout>
+                <ImageView
+                    android:id="@+id/imgNext"
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:clickable="true"
+                    android:onClick="doClear"
+                    android:padding="3dp"
+                    android:src="@drawable/erase" />
+
+                <EditText
+                    android:id="@+id/txtFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/imgNext"
+                    android:ems="10"
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:paddingTop="2dp"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/imageView32"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginLeft="5dp"
+                android:clickable="true"
+                android:onClick="doExit"
+                android:paddingTop="10dp"
+                android:src="@drawable/prev48" />
+
+            <ImageView
+                android:id="@+id/imageView26"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:clickable="true"
+                android:onClick="doAdd"
+                android:paddingTop="10dp"
+                android:src="@drawable/mas" />
+
+            <ListView
+                android:id="@+id/listView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/relFilter"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp">
+
+            </ListView>
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="18dp"
+                android:layout_toEndOf="@+id/imageView32"
+                android:checked="false"
+                android:text="Mostrar eliminados"
+                android:textSize="18sp" />
+
+        </RelativeLayout>
+
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/rellaydn"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="1dp"
-        android:background="@layout/blue_strip" >
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:background="@layout/blue_strip">
 
         <TextView
             android:id="@+id/textView85"
@@ -116,54 +172,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="25dp"
             android:layout_marginBottom="15dp"
-             android:text="Registros : "
+            android:text="Registros : "
             android:textColor="#FFFFFF" />
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/imageView32"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_below="@id/relRoad"
-        android:layout_marginLeft="5dp"
-        android:clickable="true"
-        android:onClick="doExit"
-        android:paddingTop="10dp"
-        android:src="@drawable/prev48" />
-
-    <ImageView
-        android:id="@+id/imageView26"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_below="@id/relRoad"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:clickable="true"
-        android:onClick="doAdd"
-        android:paddingTop="10dp"
-        android:src="@drawable/mas" />
-
-    <ListView
-        android:id="@+id/listView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/rellaydn"
-        android:layout_below="@id/relFilter"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp">
-
-    </ListView>
-
-    <Switch
-        android:id="@+id/switch1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="67dp"
-        android:layout_marginEnd="30dp"
-        android:layout_toStartOf="@+id/imageView26"
-        android:checked="false"
-        android:text="Mostrar eliminados"
-        android:textSize="18sp" />
 
 </RelativeLayout>
