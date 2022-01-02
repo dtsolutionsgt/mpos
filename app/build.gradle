@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -58,26 +59,20 @@ dependencies {
     implementation files('libs/do_androidsdk.jar')
     implementation files('libs/ZSDK_ANDROID_API.jar')
     implementation files('libs/ePOS2.jar')
-
-    //implementation files('libs/libdpfr6.so')
-    //implementation files('libs/dpuareu.jar')
-    //implementation files('libs/dpuareu.aar')
     implementation files('src/main/jniLibs/httpcore-4.4.10.jar')
     implementation files('src/main/jniLibs/httpclient-4.5.6.jar')
     implementation files('src/main/jniLibs/ksoap2-android-assembly-3.0.0-jar-with-dependencies.jar')
     implementation 'com.android.support:appcompat-v7:+'
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-beta4'
     implementation 'com.commit451:PhotoView:1.2.4'
-    //noinspection GradleCompatible,GradleCompatible
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-    //noinspection GradleCompatible,GradleCompatible
     implementation 'com.android.support:support-v4:28.0.0'
-    //noinspection GradleCompatible,GradleCompatible
     implementation 'com.android.support:support-v13:28.0.0'
     implementation 'com.android.support:gridlayout-v7:+'
-    //noinspection GradleCompatible,GradleCompatible
     implementation 'com.android.support:cardview-v7:28.0.0'
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+    implementation 'com.google.firebase:firebase-analytics'
     implementation('org.simpleframework:simple-xml:2.7.1') {
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'xpp3', module: 'xpp3'
