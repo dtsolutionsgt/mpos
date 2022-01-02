@@ -69,5 +69,15 @@
     <string name="recibir">RECIBIR</string>
     <string name="dtsolutions">DTSolutions</string>
     <string name="todo">TODO</string>
+    <string name="tienda">Tienda</string>
+    <string name="c_dtsolutions_s_a">(C) DTSolutions S.A.</string>
+    <string name="_7">7</string>
+    <string name="_5">5</string>
+    <string name="_0">0</string>
+    <string name="_6">6</string>
+    <string name="x">X</string>
+    <string name="punto">.</string>
+    <string name="nombre_caja">Nombre caja</string>
+    <string name="nombre_empresa">Nombre empresa</string>
 
 </resources>
