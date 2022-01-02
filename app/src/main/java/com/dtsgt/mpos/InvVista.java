@@ -1,29 +1,13 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsD_MovDObj;
-import com.dtsgt.classes.clsD_MovObj;
-import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsT_movdObj;
-import com.dtsgt.classes.clsT_movrObj;
 import com.dtsgt.ladapt.LA_D_movd;
-import com.dtsgt.ladapt.LA_T_movd;
-import com.dtsgt.ladapt.LA_T_movr;
-import com.dtsgt.ladapt.ListAdaptMenuVenta;
-
-import java.util.ArrayList;
 
 public class InvVista extends PBase {
 

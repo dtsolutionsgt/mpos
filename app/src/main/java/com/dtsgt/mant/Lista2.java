@@ -1,7 +1,7 @@
 package com.dtsgt.mant;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsListaObj;
-import com.dtsgt.ladapt.LA_Lista;
 import com.dtsgt.ladapt.LA_Lista2;
 import com.dtsgt.ladapt.listAdapt_desc;
 import com.dtsgt.mpos.PBase;
