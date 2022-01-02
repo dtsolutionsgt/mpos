@@ -2169,11 +2169,13 @@ public class Menu extends PBase {
 
     public void msgAskCorregirFechas() {
 		ExDialog dialog = new ExDialog(this);
-		dialog.setMessage("¿Está seguro de corregir las fechas erroneas por la fecha actual?");
+		dialog.setMessage("¿Corregir  fechas erroneas por la fecha actual?");
 		dialog.setCancelable(false);
 
 		dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
+
 			public void onClick(DialogInterface dialog, int which) {
+
 				try {
 
 					Long fActual = du.getFechaActual();
@@ -2181,15 +2183,19 @@ public class Menu extends PBase {
 					db.execSQL(sql);
 
 					fActual = du.getActDateTime();
+
 					sql="UPDATE D_FACTURA SET FECHA="+fActual+" WHERE FECHA<0";
 					db.execSQL(sql);
+
 					sql="UPDATE D_FACTURA SET FEELFECHAPROCESADO="+fActual+" WHERE FEELFECHAPROCESADO<0";
 					db.execSQL(sql);
+
 				} catch (Exception e) {
 					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 				}
 
 			}
+
 		});
 
 		dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
