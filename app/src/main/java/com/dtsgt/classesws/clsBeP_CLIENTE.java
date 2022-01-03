@@ -5,7 +5,7 @@ import org.simpleframework.xml.Element;
 
 public class clsBeP_CLIENTE {
 
-    @Element(required=false) public int CODIGO_CLIENTE;
+    @Element(required=false) public long CODIGO_CLIENTE;
     @Element(required=false) public String CODIGO;
     @Element(required=false) public String EMPRESA;
     @Element(required=false) public String NOMBRE;
@@ -74,10 +74,10 @@ public class clsBeP_CLIENTE {
     }
 
 
-    public int getCODIGO_CLIENTE() {
+    public long getCODIGO_CLIENTE() {
         return CODIGO_CLIENTE;
     }
-    public void setCODIGO_CLIENTE(int value) {
+    public void setCODIGO_CLIENTE(long value) {
         CODIGO_CLIENTE=value;
     }
     public String getCODIGO() {

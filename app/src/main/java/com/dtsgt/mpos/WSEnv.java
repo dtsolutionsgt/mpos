@@ -626,7 +626,7 @@ public class WSEnv extends PBase {
 
     private void processClients() {
 
-        int ccli;
+        long ccli;
 
         clients.clear();
 

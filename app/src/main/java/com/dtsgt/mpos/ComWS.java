@@ -2959,7 +2959,7 @@ public class ComWS extends PBase {
 
 	public void updateAcumulados() {
 		long ff;
-		int oyear, omonth, rslt;
+		long oyear, omonth, rslt;
 
 		ff = du.getActDate();
 		oyear = du.getyear(ff);

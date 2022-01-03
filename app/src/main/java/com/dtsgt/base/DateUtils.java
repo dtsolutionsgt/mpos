@@ -63,7 +63,36 @@ public class DateUtils {
 
         final Calendar c = Calendar.getInstance();
 
-        c.set(getyear(f), getmonth(f)-1, getday(f));
+		int año = 0;
+		int mes = 0;
+		int dia = 0;
+
+		String saño = getyear(f)+"";
+		String smes = getmonth(f)-1+"";
+		String sdia = getday(f)+"";
+
+		try {
+			//#EJC20220102: Si el mes es enero, la resta devuelve 0, debe devolver diciembre (12)
+			if (smes.equals("0")){
+				smes ="12";
+				saño = (Integer.parseInt(saño) - 1) + "";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+
+			año = Integer.parseInt(saño);
+			mes = Integer.parseInt(smes);
+			dia = Integer.parseInt(sdia);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		//c.set(getyear(f), getmonth(f)-1, getday(f));
+		c.set(año,mes,dia);
         c.add(Calendar.DATE, days);
 
         cyear = c.get(Calendar.YEAR);
@@ -322,8 +351,11 @@ public class DateUtils {
 	}
 
 	public long cfechaDesc(long year, long month, long day) {
+
 		long c;
+
 		String d,mes,dia,ano;
+
 		int siglo;
 
 		if(year<2000){
@@ -353,8 +385,11 @@ public class DateUtils {
 	}
 
 	public long cfechaRep(int year,int month, int day, boolean inicial) {
+
 		long c;
+
 		String d,mes,dia,ano;
+
 		int siglo;
 
 		if(year<2000){
@@ -393,36 +428,38 @@ public class DateUtils {
 		return f;
 	}
 		
-	public int getyear(long f) {
-		int vy;
+	public long getyear(long f) {
+
+		long vy;
 				
-		vy=(int) f/100000000;f=f % 100000000;
+		vy=(long) f/100000000;f=f % 100000000;
 		vy=vy+2000;
 		
 		return vy;
 	}
 	
-	public int getmonth(long f) {
-		int vy,vm;
+	public long getmonth(long f) {
+		long vy,vm;
 				
-		vy=(int) f/100000000;f=f % 100000000;
-		vm=(int) f/1000000;f=f % 1000000;
+		vy=(long) f/100000000;f=f % 100000000;
+		vm=(long) f/1000000;f=f % 1000000;
 				
 		return vm;
 	}
 	
-	public int getday(long f) {
-		int vy,vm,vd;
+	public long getday(long f) {
+		long vy,vm,vd;
 				
-		vy=(int) f/100000000;f=f % 100000000;
-		vm=(int) f/1000000;f=f % 1000000;
-		vd=(int) f/10000;f=f % 10000;
+		vy=(long) f/100000000;f=f % 100000000;
+		vm=(long) f/1000000;f=f % 1000000;
+		vd=(long) f/10000;f=f % 10000;
 		
 		return vd;
 	}
 	
-	public int LastDay(int year,int month) {
-		int m,y,ld;
+	public long LastDay(int year,int month) {
+
+		long m,y,ld;
 		
 		m=month % 2;
 		if (m==1) {
@@ -441,6 +478,7 @@ public class DateUtils {
 	}
 	
 	public long timeDiff(long v1,long v2) {
+
 		long h1,m1,h2,m2,vm1,vm2,dif;
 
 		h1=v1 % 10000;m1=h1 % 100;h1=(int) h1/100;
@@ -457,12 +495,44 @@ public class DateUtils {
 	}
 	
 	public int dayofweek(long f) {
+
 		int y,m,d,dw;
 	     
 		final Calendar c = Calendar.getInstance();
-		
-		c.set(getyear(f), getmonth(f)-1, getday(f));
-			
+
+		int año = 0;
+		int mes = 0;
+		int dia = 0;
+
+		String saño = getyear(f)+"";
+		String smes = getmonth(f)-1+"";
+		String sdia = getday(f)+"";
+
+		try {
+			//#EJC20220102: Si el mes es enero, la resta devuelve 0, debe devolver diciembre (12)
+			if (smes.equals("0")){
+				smes ="12";
+				saño = (Integer.parseInt(saño) - 1) + "";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+
+			año = Integer.parseInt(saño);
+			mes = Integer.parseInt(smes);
+			dia = Integer.parseInt(sdia);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		c.set(año,mes,dia);
+
+		//#EJC20220102: Anteriormente se hacía así.
+		//c.set(getyear(f), getmonth(f)-1, getday(f));
+
 	    dw=c.get(Calendar.DAY_OF_WEEK);
 	    
 	    if (dw==1) dw=7;else dw=dw-1;

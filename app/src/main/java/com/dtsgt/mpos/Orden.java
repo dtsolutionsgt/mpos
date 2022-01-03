@@ -2158,7 +2158,7 @@ public class Orden extends PBase {
     private double totalCredito() {
         Cursor dt;
         double cred=0;
-        int mm,yy;
+        long mm,yy;
         long ff;
 
         try {

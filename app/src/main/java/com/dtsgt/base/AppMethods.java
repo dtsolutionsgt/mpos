@@ -1784,6 +1784,7 @@ public class AppMethods {
         long resultado = 0;
 
         try {
+
             sql="SELECT param1 FROM Params";
             dt=Con.OpenDT(sql);
 

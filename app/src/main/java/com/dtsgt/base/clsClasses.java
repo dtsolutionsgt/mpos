@@ -469,7 +469,7 @@ public class clsClasses {
     }
 
     public class clsP_cliente {
-        public int  codigo_cliente;
+        public long  codigo_cliente;
         public String codigo;
         public int  empresa;
         public String nombre;
