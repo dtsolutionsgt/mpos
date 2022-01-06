@@ -118,16 +118,17 @@ public class DateUtils {
 	}
 	
 	public String univfecha(long f) {
+
 		long vy,vm,vd,m,h;
 		String s;
 		
 		//yyyyMMdd hh:mm:ss
 		//#KM20211230 Se quita (int) para corregir las fechas a partir de 2022
-		vy= f/100000000;f=f % 100000000;
-		vm= f/1000000;f=f % 1000000;
-		vd= f/10000;f=f % 10000;
-		h=  f/100;
-		m=  f % 100;
+		vy= (long) f/100000000;f=f % 100000000;
+		vm= (long) f/1000000;f=f % 1000000;
+		vd= (long) f/10000;f=f % 10000;
+		h=  (long) f/100;
+		m=  (long) f % 100;
 		
 		s="20";
 		if (vy>9) s=s+vy; else s=s+"0"+vy; 

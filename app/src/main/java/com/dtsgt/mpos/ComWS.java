@@ -3993,9 +3993,10 @@ public class ComWS extends PBase {
 		return serie;
 	}
 
-	private int Get_Fecha_Inventario() 	{
+	private long Get_Fecha_Inventario() 	{
+
 		Cursor DT;
-		int fecha = 0;
+		long fecha = 0;
 
 		try {
 
@@ -4004,7 +4005,7 @@ public class ComWS extends PBase {
 
 			if(DT.getCount()>0){
                 DT.moveToFirst();
-				fecha=DT.getInt(0);
+				fecha=DT.getLong(0);
 				if (fecha==0) 				{
 					fecha = 1001010000 ;//#HS_20181129_0945 Cambie los valores de fecha porque deben se yymmdd hhmm
 				}
@@ -4014,7 +4015,9 @@ public class ComWS extends PBase {
 			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+
 		return fecha;
+
 	}
 
     private int ultimoCierreFecha() {

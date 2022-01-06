@@ -932,7 +932,7 @@ public class clsClasses {
         public double plibra;
         public String lote;
         public String documento;
-        public int  fecha;
+        public long  fecha;
         public int  anulado;
         public String centro;
         public String status;

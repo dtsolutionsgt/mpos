@@ -131,7 +131,7 @@ public class clsD_fel_errorObj {
             item.empresa=dt.getInt(0);
             item.corel=dt.getString(1);
             item.item=dt.getInt(2);
-            item.fecha=dt.getInt(3);
+            item.fecha=dt.getLong(3);
             item.nivel=dt.getInt(4);
             item.error=dt.getString(5);
             item.enviado=dt.getInt(6);

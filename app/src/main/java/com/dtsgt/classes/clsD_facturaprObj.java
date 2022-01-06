@@ -130,7 +130,7 @@ public class clsD_facturaprObj {
             item.empresa=dt.getInt(0);
             item.corel=dt.getString(1);
             item.anulado=dt.getInt(2);
-            item.fecha=dt.getInt(3);
+            item.fecha=dt.getLong(3);
             item.codigo_sucursal=dt.getInt(4);
             item.codigo_vendedor=dt.getInt(5);
             item.propina=dt.getDouble(6);

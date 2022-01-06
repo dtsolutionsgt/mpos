@@ -146,7 +146,7 @@ public class clsP_stockObj {
             item.plibra=dt.getDouble(4);
             item.lote=dt.getString(5);
             item.documento=dt.getString(6);
-            item.fecha=dt.getInt(7);
+            item.fecha=dt.getLong(7);
             item.anulado=dt.getInt(8);
             item.centro=dt.getString(9);
             item.status=dt.getString(10);

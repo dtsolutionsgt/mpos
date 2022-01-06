@@ -998,7 +998,6 @@ public class FacturaRes extends PBase {
                 adescv1=dt.getDouble(5);
 
 			  	ins.init("D_FACTURAD");
-
 				ins.add("COREL",corel);
 				ins.add("PRODUCTO",app.codigoProducto(dt.getString(0)));
 				ins.add("EMPRESA",gl.emp);
@@ -1048,7 +1047,6 @@ public class FacturaRes extends PBase {
                         while (!dtc.isAfterLast()) {
 
                             ins.init("D_facturac");
-
                             ins.add("EMPRESA",cuid);
                             ins.add("COREL",corel);
                             ins.add("CODIGO_MENU",dtc.getInt(0));
@@ -1795,6 +1793,7 @@ public class FacturaRes extends PBase {
 	}
 
 	private boolean esProductoConStock(String prcodd) {
+
 		Cursor DT;
 
 		try {
@@ -1815,6 +1814,7 @@ public class FacturaRes extends PBase {
 	}
 
     private boolean esProductoConStock(int prcodd) {
+
         Cursor DT;
 
         try {
@@ -1872,6 +1872,7 @@ public class FacturaRes extends PBase {
     }
 
     private void agregaReceta(int prodid,double rcant) {
+
         double reccant;
         int idart;
         String aum;
@@ -1906,6 +1907,7 @@ public class FacturaRes extends PBase {
     }
 
     private void inventarioRecetas() {
+
         Cursor dt;
         clsD_facturarObj D_facturarObj=new clsD_facturarObj(this,Con,db);
 
