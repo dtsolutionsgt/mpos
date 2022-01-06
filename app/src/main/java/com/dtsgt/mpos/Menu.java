@@ -2190,15 +2190,15 @@ public class Menu extends PBase {
 				try {
 
 					Long fActual = du.getFechaActual();
-					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<0";
+					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<=0";
 					db.execSQL(sql);
 
 					fActual = du.getActDateTime();
 
-					sql="UPDATE D_FACTURA SET FECHA="+fActual+" WHERE FECHA<0";
+					sql="UPDATE D_FACTURA SET FECHA="+fActual+" WHERE FECHA<=0";
 					db.execSQL(sql);
 
-					sql="UPDATE D_FACTURA SET FEELFECHAPROCESADO="+fActual+" WHERE FEELFECHAPROCESADO<0";
+					sql="UPDATE D_FACTURA SET FEELFECHAPROCESADO="+fActual+" WHERE FEELFECHAPROCESADO<=0";
 					db.execSQL(sql);
 
 				} catch (Exception e) {

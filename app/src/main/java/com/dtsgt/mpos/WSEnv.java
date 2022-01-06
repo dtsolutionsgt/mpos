@@ -313,7 +313,9 @@ public class WSEnv extends PBase {
     }
 
     private void processComplete() {
+
         try{
+
             pbar.setVisibility(View.INVISIBLE);
             //lbl3.setVisibility(View.VISIBLE);
 
@@ -376,6 +378,7 @@ public class WSEnv extends PBase {
     //region Envío
 
     private void processFactura() {
+
         clsClasses.clsD_facturad item;
         String tipo_producto,vsql;
         int contingencia,uruta;
@@ -439,6 +442,7 @@ public class WSEnv extends PBase {
                 if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
 
                 if (gl.peInvCompart){
+
                     for (int r = 0; r <rutas.size(); r++) {
                         uruta=Integer.parseInt(rutas.get(r));
 
@@ -543,7 +547,6 @@ public class WSEnv extends PBase {
         ins.add("FEELUUID",item.feeluuid);
         ins.add("FEELFECHAPROCESADO",fst);
         ins.add("FEELCONTINGENCIA",item.feelcontingencia);
-
         return ins.sql();
 
     }
@@ -553,7 +556,6 @@ public class WSEnv extends PBase {
         String fs=""+du.univfecha(item.fecha);
 
         ins.init("D_facturapr");
-
         ins.add("EMPRESA",item.empresa);
         ins.add("COREL",item.corel);
         ins.add("ANULADO",item.anulado);
@@ -563,7 +565,6 @@ public class WSEnv extends PBase {
         ins.add("PROPINA",item.propina);
         ins.add("PROPPERC",item.propperc);
         ins.add("PROPEXTRA",item.propextra);
-
         return ins.sql();
 
     }
@@ -571,7 +572,6 @@ public class WSEnv extends PBase {
     public String D_factCaddItemSql(clsClasses.clsD_facturac item) {
 
         ins.init("D_facturac");
-
         ins.add("EMPRESA",gl.emp);
         ins.add("COREL",item.corel);
         ins.add("CODIGO_MENU",item.codigo_menu);
@@ -581,7 +581,6 @@ public class WSEnv extends PBase {
         ins.add("IDSELECCION",item.idseleccion);
         ins.add("ORDEN",item.orden);
         ins.add("NOMBRE",item.nombre);
-
         return ins.sql();
 
     }
@@ -589,13 +588,11 @@ public class WSEnv extends PBase {
     public String D_factRaddItemSql(clsClasses.clsD_facturar item) {
 
         ins.init("D_facturar");
-
         ins.add("EMPRESA",gl.emp);
         ins.add("COREL",item.corel);
         ins.add("PRODUCTO",item.producto);
         ins.add("CANT",item.cant);
         ins.add("UM",item.um);
-
         return ins.sql();
 
     }
@@ -797,6 +794,7 @@ public class WSEnv extends PBase {
     }
 
     private void processCajaCierre() {
+
         String cCjCierre;
 
         cjCierre.clear();
@@ -859,6 +857,7 @@ public class WSEnv extends PBase {
     }
 
     private void processCajaPagos() {
+
         String cCjPago;
 
         cjPagos.clear();
@@ -886,6 +885,7 @@ public class WSEnv extends PBase {
     }
 
     private void statusCajaPagos() {
+
         try {
 
             rs =(String) xobj.getSingle("CommitResult",String.class);
