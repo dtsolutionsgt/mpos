@@ -681,7 +681,6 @@ public class CliPos extends PBase {
 	//region Aux
 
 	private boolean validaNIT(String N)  {
-
         if (N.isEmpty()) return false;
         if (!N.contains("-")) return false;
 
@@ -708,8 +707,7 @@ public class CliPos extends PBase {
             P = N.substring(0,ll-2);
             C = N.substring(ll-1, ll);
 
-            ll = ll - 1;
-            sum = 0;
+            ll = ll - 1; sum = 0;
 
             try {
 
@@ -733,19 +731,16 @@ public class CliPos extends PBase {
                 }
 
                 NC = P+"-"+s;
-                //mu.msgbox(NC);
 
                 if (N.equalsIgnoreCase(NC)) {
                     return true;
                 } else {
                     return false;
                 }
-
             } catch (Exception e) {
                 return false;
             }
-
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
         return true;

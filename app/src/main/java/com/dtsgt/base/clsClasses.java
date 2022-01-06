@@ -602,6 +602,21 @@ public class clsClasses {
         public String texto;
     }
 
+    public class clsP_frase_sucursal {
+        public int  codigo_frase_sucursal;
+        public int  codigo_empresa;
+        public int  codigo_sucursal;
+        public int  codigo_frase_fel;
+        public String texto;
+        public int  es_frase_isr;
+        public int  es_frase_iva;
+        public int  usuario_agrego;
+        public int  fecha_agregado;
+        public int  usuario_modifico;
+        public int  fecha_modificado;
+        public int  activo;
+    }
+
     public class clsP_impuesto {
         public  int codigo_impuesto;
 		public int  codigo;

@@ -144,7 +144,7 @@ public class clsD_MovObj {
             item.COREL=dt.getString(0);
             item.RUTA=dt.getInt(1);
             item.ANULADO=dt.getInt(2);
-            item.FECHA=dt.getInt(3);
+            item.FECHA=dt.getLong(3);
             item.TIPO=dt.getString(4);
             item.USUARIO=dt.getInt(5);
             item.REFERENCIA=dt.getString(6);

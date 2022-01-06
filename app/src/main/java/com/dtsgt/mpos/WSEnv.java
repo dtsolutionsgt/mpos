@@ -739,6 +739,8 @@ public class WSEnv extends PBase {
 
             }
 
+            String ss=CSQL;
+
         //} catch (Exception e) {
         //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         //}

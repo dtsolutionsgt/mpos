@@ -130,7 +130,6 @@ public class FELFactura extends PBase {
             fel.fraseIVA=1;
         }
 
-
         fel.fraseISR=suc.codigo_escenario_isr;
         fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
         fel.iduniflag=false;fel.halt=false;

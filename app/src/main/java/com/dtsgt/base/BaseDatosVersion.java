@@ -784,6 +784,25 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) {}
 
+        try {
+            sql="CREATE TABLE [P_frase_sucursal] ("+
+                    "CODIGO_FRASE_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_FRASE_FEL INTEGER NOT NULL,"+
+                    "TEXTO TEXT NOT NULL,"+
+                    "ES_FRASE_ISR INTEGER NOT NULL,"+
+                    "ES_FRASE_IVA INTEGER NOT NULL,"+
+                    "USUARIO_AGREGO INTEGER NOT NULL,"+
+                    "FECHA_AGREGADO INTEGER NOT NULL,"+
+                    "USUARIO_MODIFICO INTEGER NOT NULL,"+
+                    "FECHA_MODIFICADO INTEGER NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_FRASE_SUCURSAL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
     }
 
 	private boolean update01() {

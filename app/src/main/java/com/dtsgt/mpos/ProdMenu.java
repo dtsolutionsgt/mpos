@@ -46,7 +46,7 @@ public class ProdMenu extends PBase {
 
     private int cant,lcant, uitemid,nivel;
     private double precorig,precitems,precdif, precio, precnuevo;
-    private boolean newitem;
+    private boolean newitem,valido;
     private String ststr,prodname,idorden;
 
     @Override
@@ -92,6 +92,10 @@ public class ProdMenu extends PBase {
         } else {
             listItems();
         }
+
+        //valido=app.validaCombo(uitemid);
+        //int ii=app.citems.size();
+
     }
 
     //region Events

@@ -256,7 +256,8 @@ public class DateUtils {
 		s="20"+vy;
 		if (vm>9) s=s+vm; else s=s+"0"+vm;
 		if (vd>9) s=s+vd; else s=s+"0"+vd;
-		s=vy+" "+vm+":"+vd+":00"; //#HS_20181128_1102 Agregue " "+vm+":"+vd+":00" para que devolviera la hora.
+		//s=vy+" "+vm+":"+vd+":00"; //#HS_20181128_1102 Agregue " "+vm+":"+vd+":00" para que devolviera la hora.
+        s="20"+vy+" "+vm+":"+vd+":00";
 
 		return s;
 	}

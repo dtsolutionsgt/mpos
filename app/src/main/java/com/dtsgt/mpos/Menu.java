@@ -693,7 +693,7 @@ public class Menu extends PBase {
 			itemcnt=3;
 			final String[] selitems = new String[itemcnt];
 
-			selitems[itempos]="Existencias ";itempos++;
+			selitems[itempos]="Existencias";itempos++;
 			selitems[itempos]="Ajuste de inventario";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
             //selitems[itempos]="Inventario inicial";itempos++;
@@ -704,7 +704,9 @@ public class Menu extends PBase {
 				public void onClick(DialogInterface dialog, int item) {
 					String mt=selitems[item];
 
-					if (mt.equalsIgnoreCase("Existencias")) menuExist();
+					if (mt.equalsIgnoreCase("Existencias")) {
+					    menuExist();
+                    }
 					if (mt.equalsIgnoreCase("Ajuste de inventario")) menuDevBod();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
                     if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();

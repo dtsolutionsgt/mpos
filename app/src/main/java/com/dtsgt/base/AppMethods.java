@@ -22,6 +22,9 @@ import android.widget.Toast;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
+import com.dtsgt.classes.clsP_prodmenuopcObj;
+import com.dtsgt.classes.clsP_prodmenuopcdetObj;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
@@ -48,6 +51,8 @@ import java.util.zip.ZipOutputStream;
 public class AppMethods {
 
     public String errstr;
+
+    public ArrayList<String> citems= new ArrayList<String>();
 
 	private Context cont;
 	private appGlobals gl;
@@ -1854,6 +1859,51 @@ public class AppMethods {
             return true;
         }
 
+    }
+
+    public boolean validaCombo(int idcombo) {
+	    int idopc,idprod;
+	    String prname="";
+	    boolean flag;
+
+        try {
+            clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(cont,Con,db);
+            clsP_prodmenuopcdetObj P_prodmenuopc_detObj=new clsP_prodmenuopcdetObj(cont,Con,db);
+            clsP_productoObj P_productoObj=new clsP_productoObj(cont,Con,db);
+
+            citems.clear();
+            P_productoObj.fill();
+
+            P_prodmenuopcObj.fill("WHERE (CODIGO_MENU="+idcombo+")");
+            for (int i = 0; i <P_prodmenuopcObj.count; i++) {
+
+                idopc=P_prodmenuopcObj.items.get(i).codigo_menu_opcion;
+                P_prodmenuopc_detObj.fill("WHERE (CODIGO_MENU_OPCION="+idopc+")");
+
+                for (int j = 0; j <P_prodmenuopc_detObj.count; j++) {
+                    idprod=P_prodmenuopc_detObj.items.get(j).codigo_producto;
+                    flag=false;
+
+                    for (int p = 0; p <P_productoObj.count; p++) {
+                        if (P_productoObj.items.get(p).codigo_producto==idprod) {
+                            if (P_productoObj.items.get(p).activo==0) {
+                                flag=true;
+                                prname=P_productoObj.items.get(p).desccorta;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (flag) {
+                        if (!citems.contains(prname)) citems.add(prname);
+                    }
+                }
+            }
+
+            return citems.size()==0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return true;
+        }
     }
 
     //endregion

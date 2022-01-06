@@ -1168,20 +1168,24 @@ public class FacturaRes extends PBase {
                     if (prid!=0) {
 
                         P_productoObj.fill("WHERE CODIGO_PRODUCTO=" + prid);
-                        prcod = P_productoObj.first().codigo;
+                        if (P_productoObj.count>0) {
+                            prcod = P_productoObj.first().codigo;
 
-                        if (P_productoObj.first().codigo_tipo.equalsIgnoreCase("P")) {
+                            if (P_productoObj.first().codigo_tipo.equalsIgnoreCase("P")) {
 
-                            fsitem = clsCls.new clsD_facturas();
-                            fsitem.corel = corel;
-                            fsitem.id = iidd;//fsitem.id=fsid;
-                            fsitem.producto = "" + prid;
-                            fsitem.cant = unipr;
-                            fsitem.umstock = app.umVenta2(prcod);
+                                fsitem = clsCls.new clsD_facturas();
+                                fsitem.corel = corel;
+                                fsitem.id = iidd;//fsitem.id=fsid;
+                                fsitem.producto = "" + prid;
+                                fsitem.cant = unipr;
+                                fsitem.umstock = app.umVenta2(prcod);
 
-                            D_facturas.add(fsitem);
+                                D_facturas.add(fsitem);
 
-                            //rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
+                                //rebajaStockUM(prid, fsitem.umstock, fsitem.cant);
+                            }
+                        } else {
+                            throw new Exception("El producto con identificador : "+prid+" no está definido o no está activo.");
                         }
                     }
 

@@ -224,9 +224,13 @@ public class WSRec extends PBase {
 
         long fs = app.getDateRecep();
         if (fs > 0) fs = du.addDays(fs, -1);
-        fechasync = "" + fs;
 
         pbd_vacia = getIntent().getBooleanExtra("bd_vacia", false);
+
+        if (pbd_vacia) fs=2001010000;
+        if (fs==0) fs=2001010000;
+
+        fechasync = "" + fs;
 
         lblIdDispositivo.setText("ID - " + gl.deviceId);
 
@@ -1794,7 +1798,7 @@ public class WSRec extends PBase {
                 var.diacredito = item.DIACREDITO;
                 var.descuento = mu.bool(item.DESCUENTO);
                 var.bonificacion = mu.bool(item.BONIFICACION);
-                var.ultvisita = item.ULTVISITA;
+                var.ultvisita = 0; // item.ULTVISITA;
                 var.impspec = item.IMPSPEC;
                 var.nit = item.NIT;
                 var.email = item.EMAIL + "";
