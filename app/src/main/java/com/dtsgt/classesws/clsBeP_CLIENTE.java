@@ -16,7 +16,7 @@ public class clsBeP_CLIENTE {
     @Element(required=false) public int DIACREDITO;
     @Element(required=false) public boolean DESCUENTO;
     @Element(required=false) public boolean BONIFICACION;
-    @Element(required=false) public int ULTVISITA;
+    @Element(required=false) public long ULTVISITA;
     @Element(required=false) public double IMPSPEC;
     @Element(required=false) public String NIT;
     @Element(required=false) public String EMAIL;
@@ -38,7 +38,7 @@ public class clsBeP_CLIENTE {
 
     public clsBeP_CLIENTE(int CODIGO_CLIENTE,String CODIGO,String EMPRESA,String NOMBRE,
                           boolean BLOQUEADO,int NIVELPRECIO,int MEDIAPAGO,double LIMITECREDITO,
-                          int DIACREDITO,boolean DESCUENTO,boolean BONIFICACION,int ULTVISITA,
+                          int DIACREDITO,boolean DESCUENTO,boolean BONIFICACION,long ULTVISITA,
                           double IMPSPEC,String NIT,String EMAIL,String ESERVICE,
                           String TELEFONO,String DIRECCION,double COORX,double COORY,
                           String BODEGA,String COD_PAIS,String CODBARRA,double PERCEPCION,
@@ -140,7 +140,7 @@ public class clsBeP_CLIENTE {
     public void setBONIFICACION(boolean value) {
         BONIFICACION=value;
     }
-    public int getULTVISITA() {
+    public long getULTVISITA() {
         return ULTVISITA;
     }
     public void setULTVISITA(int value) {
