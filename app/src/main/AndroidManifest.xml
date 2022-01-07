@@ -771,6 +771,16 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
 
+        <!-- [START firebase_service] -->
+        <service
+            android:name="com.dtsgt.firebase.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- [END firebase_service] -->
+
     </application>
 
 </manifest>

@@ -46,6 +46,9 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startOrdenImport;
 import com.dtsgt.webservice.startPedidosImport;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,6 +94,7 @@ public class MainActivity extends PBase {
 
             grantPermissions();
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
+
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }

@@ -4,18 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.zxing.WriterException;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import androidmads.library.qrgenearator.QRGContents;
-import androidmads.library.qrgenearator.QRGEncoder;
-import androidmads.library.qrgenearator.QRGSaver;
 
 public class clsDocFactura extends clsDocument {
 
@@ -45,7 +38,7 @@ public class clsDocFactura extends clsDocument {
 	}
 
     Bitmap bitmap;
-    QRGEncoder qrgEncoder;
+    //QRGEncoder qrgEncoder;
     ImageView qrImage;
     String TAG = "GenerateQRCode";
     //String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
@@ -324,17 +317,17 @@ public class clsDocFactura extends clsDocument {
         QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
                 "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
 
-        if (!QRCodeStr.isEmpty()) {
-            try {
-                qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
-                bitmap = qrgEncoder.encodeAsBitmap();
-                if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
-                    throw new Exception("Error al guardar la barra");
-                }
-            } catch (Exception e) {
-                Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
+//        if (!QRCodeStr.isEmpty()) {
+//            try {
+//                qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
+//                bitmap = qrgEncoder.encodeAsBitmap();
+//                if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
+//                    throw new Exception("Error al guardar la barra");
+//                }
+//            } catch (Exception e) {
+//                Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        }
 
 		return true;
 	}
