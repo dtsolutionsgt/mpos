@@ -767,7 +767,6 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".CliDirDom"
-            
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
 
@@ -780,6 +779,10 @@
             </intent-filter>
         </service>
         <!-- [END firebase_service] -->
+
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
 
     </application>
 
