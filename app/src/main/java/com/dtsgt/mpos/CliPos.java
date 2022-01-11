@@ -1176,7 +1176,7 @@ public class CliPos extends PBase {
 
     private void consultaNITInfile()
     {
-        if (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
+        if (gl.codigo_pais.trim() == "GT" && !mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
 
             JSONObject params = new JSONObject();
             try {
