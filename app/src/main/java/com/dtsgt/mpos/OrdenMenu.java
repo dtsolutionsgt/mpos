@@ -30,7 +30,7 @@ public class OrdenMenu extends PBase {
 
     private ListView listView;
     private TextView lbl1,lbl2,lbl3;
-    private ImageView img1,img2;
+    private ImageView img1,img2,imgSave;
 
     private ListAdaptOpcion adapter;
     private clsT_ordencomboObj T_comboObj;
@@ -44,9 +44,9 @@ public class OrdenMenu extends PBase {
 
     private Precio prc;
 
-    private int cant,lcant, uitemid,nivel;
+    private int cant,lcant, uitemid,nivel,idcomboval;
     private double precorig,precitems,precdif, precio, precnuevo;
-    private boolean newitem;
+    private boolean newitem,valido;
     private String ststr,prodname,idorden;
 
     @Override
@@ -62,6 +62,7 @@ public class OrdenMenu extends PBase {
         lbl3 = (TextView) findViewById(R.id.textView225);
         img1 = (ImageView) findViewById(R.id.imageView27);
         img2 = (ImageView) findViewById(R.id.imageView108);img2.setVisibility(View.INVISIBLE);
+        imgSave = findViewById(R.id.imgImg3);
 
         //peEditTotCombo;
 
@@ -95,6 +96,13 @@ public class OrdenMenu extends PBase {
         } else {
             listItems();
         }
+
+        if (idcomboval==0) valido=false;else valido=app.validaCombo(idcomboval);
+        if (!valido) {
+            imgSave.setVisibility(View.INVISIBLE);
+            listaInvalidos();
+        }
+
     }
 
     //region Events
@@ -1023,6 +1031,58 @@ public class OrdenMenu extends PBase {
         });
 
         dialog.show();
+
+    }
+
+    private void listaInvalidos() {
+
+        try{
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("MPos combo");
+
+            dialog.setMessage("Uno o mas productos definidos como opcion de combo " +
+                    "no está activa y por esta razón no se puede vender. " +
+                    "Por favor informe a su superior");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    mostrarLista();
+                }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void mostrarLista() {
+        final String[] selitems = new String[app.citems.size()];
+        for (int i = 0; i <app.citems.size(); i++) {
+            selitems[i]=app.citems.get(i);
+        }
+
+        final AlertDialog Dialog;
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Producto de combo inactivo");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
 
     }
 

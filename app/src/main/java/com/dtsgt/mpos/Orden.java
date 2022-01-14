@@ -188,6 +188,7 @@ public class Orden extends PBase {
 
         listItems();
 
+
     }
 
     //region Events
@@ -1550,6 +1551,7 @@ public class Orden extends PBase {
                 rep.line();
 
                 T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
+                //T_comandaObj.fillSelect("SELECT COUNT(ID),ID,TEXTO WHERE ID="+printid+" GROUP BY ID,TEXTO");
 
                 tl.clear();
                 for (int j = 0; j <T_comandaObj.count; j++) {
@@ -1557,8 +1559,12 @@ public class Orden extends PBase {
                     if (ss.indexOf(" - ")==0) {
                         tl.add(ss.toUpperCase());
                     } else {
-                        if (!itemexists(ss)) tl.add(ss.toUpperCase());
-                    }
+                        if (gl.emp==14) {
+                            if (!itemexists(ss)) tl.add(ss.toUpperCase());
+                        } else {
+                            tl.add(ss.toUpperCase());
+                        }
+                     }
                 };
 
                 for (int j = 0; j <tl.size(); j++) {

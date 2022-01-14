@@ -512,6 +512,7 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
 
             gl.peInvCompart =val.equalsIgnoreCase("S");
+            gl.peInvCompart =false;
         } catch (Exception e) {
             gl.peInvCompart =false;
         }
@@ -1863,7 +1864,7 @@ public class AppMethods {
 
     public boolean validaCombo(int idcombo) {
 	    int idopc,idprod;
-	    String prname="";
+	    String prname="",opname;
 	    boolean flag;
 
         try {
@@ -1873,11 +1874,13 @@ public class AppMethods {
 
             citems.clear();
             P_productoObj.fill();
+            if (P_productoObj.count==0) return false;
 
             P_prodmenuopcObj.fill("WHERE (CODIGO_MENU="+idcombo+")");
             for (int i = 0; i <P_prodmenuopcObj.count; i++) {
 
                 idopc=P_prodmenuopcObj.items.get(i).codigo_menu_opcion;
+                opname=P_prodmenuopcObj.items.get(i).nombre;
                 P_prodmenuopc_detObj.fill("WHERE (CODIGO_MENU_OPCION="+idopc+")");
 
                 for (int j = 0; j <P_prodmenuopc_detObj.count; j++) {
@@ -1886,15 +1889,16 @@ public class AppMethods {
 
                     for (int p = 0; p <P_productoObj.count; p++) {
                         if (P_productoObj.items.get(p).codigo_producto==idprod) {
-                            if (P_productoObj.items.get(p).activo==0) {
+                            //if (P_productoObj.items.get(p).activo==0) {
                                 flag=true;
                                 prname=P_productoObj.items.get(p).desccorta;
-                            }
+                            //}
                             break;
                         }
                     }
 
-                    if (flag) {
+                    if (!flag) {
+                        prname=""+idprod+" , opc. "+opname;
                         if (!citems.contains(prname)) citems.add(prname);
                     }
                 }

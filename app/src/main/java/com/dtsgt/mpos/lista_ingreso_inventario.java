@@ -234,7 +234,7 @@ public class lista_ingreso_inventario extends PBase {
         clsP_proveedorObj P_proveedorObj=new clsP_proveedorObj(this,Con,db);
         Cursor DT;
         clsClasses.clsCFDV vItem;
-        int vP,f;
+        long f,vP;
         double val;
         String id,sf,sval;
 
@@ -278,7 +278,7 @@ public class lista_ingreso_inventario extends PBase {
                     vItem.UUID=DT.getString(1);
                     vItem.val=DT.getDouble(4);
 
-                    f=DT.getInt(2);
+                    f=DT.getLong(2);
                     sf=du.sfecha(f)+" "+du.shora(f);
                     vItem.Fecha=sf;
                     if (vItem.val==0) vItem.Valor="";else  vItem.Valor="PENDIENTE";

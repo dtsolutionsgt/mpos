@@ -443,8 +443,8 @@ public class MantConfig extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (128,'Factura sin propina','"+s128+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (129,'Comandas con impresora BT','"+s129+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (130,'Prefijo numero orden por caja','"+s130+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (133,'Recibe ordenes de despacho','"+s133+"')");
-            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (134,'Imprime comanda','"+s134+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (133,'Genera ordenes para despacho','"+s133+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (134,'Imprime comanda BT','"+s134+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();
