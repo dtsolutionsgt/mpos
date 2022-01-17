@@ -1230,7 +1230,7 @@ public class WSRec extends PBase {
             item = xobj.getresult(clsBeP_EMPRESA.class, "GetP_EMPRESA");
 
             if(item==null){
-                throw new Exception("No se obtuvieron datos de la Empresa el código o la clave son incorrectos");
+                throw new Exception("El código o la clave ingresados no son válidos para la empresa, o la empresa está inactiva.");
             }
 
             var.empresa = item.EMPRESA;
