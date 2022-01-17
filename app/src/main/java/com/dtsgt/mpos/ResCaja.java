@@ -261,9 +261,8 @@ public class ResCaja extends PBase {
                 venta.total=oitem.total=tt;
             }
 
-            T_ventaObj.add(venta);
+            //T_ventaObj.add(venta);
 
-            /*
             //#EJC20210708: Corrección en T_VENTA, consultar antes si el producto ya existe e incrementar la cantidad
             //para evitar que devuelva error de llave.
             Cursor dt;
@@ -280,7 +279,6 @@ public class ResCaja extends PBase {
                         if (dt.getCount()==0) {
                             T_ventaObj.add(venta);
                         }else{
-
                             venta.cant+= oitem.cant;
                             prodtot=mu.round(venta.precio*venta.cant,2);
                             venta.total = prodtot;
@@ -292,7 +290,7 @@ public class ResCaja extends PBase {
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
-            */
+
 
             if (app.prodTipo(venta.producto).equalsIgnoreCase("M")) {
 
