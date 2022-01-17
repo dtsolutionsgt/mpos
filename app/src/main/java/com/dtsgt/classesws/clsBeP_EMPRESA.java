@@ -21,6 +21,7 @@ public class clsBeP_EMPRESA {
     @Element(required=false) public int COD_CANT_EMP;
     @Element(required=false) public int CANTIDAD_PUNTOS_VENTA;
     @Element(required=false) public String CLAVE;
+    @Element(required=false) public boolean ACTIVO;
 
     public clsBeP_EMPRESA() {
     }
@@ -146,5 +147,13 @@ public class clsBeP_EMPRESA {
     public void setCLAVE(String value) {
         CLAVE=value;
     }
+
+    public boolean getACTIVO() {
+        return ACTIVO;
+    }
+    public void setACTIVO(boolean value) {
+        ACTIVO=value;
+    }
+
 }
 
