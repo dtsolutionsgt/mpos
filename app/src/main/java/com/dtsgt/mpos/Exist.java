@@ -90,7 +90,8 @@ public class Exist extends PBase {
 		txtFilter = (EditText) findViewById(R.id.txtFilter);
  		lblReg = (TextView) findViewById(R.id.textView1);lblReg.setText("");
         lblSync = (TextView) findViewById(R.id.textView186);lblSync.setVisibility(View.INVISIBLE);
-        lblCor= (TextView) findViewById(R.id.textView245);lblCor.setVisibility(View.INVISIBLE);//if (gl.emp==15) lblCor.setVisibility(View.VISIBLE);
+        lblCor= (TextView) findViewById(R.id.textView245);lblCor.setVisibility(View.INVISIBLE);
+
         imgSync = (ImageView) findViewById(R.id.imageView77);imgSync.setVisibility(View.INVISIBLE);
         pbar=findViewById(R.id.progressBar5);pbar.setVisibility(View.INVISIBLE);
 
@@ -123,7 +124,7 @@ public class Exist extends PBase {
                 if (wsi.errflag) {
                     msgbox(wsi.error);
                 } else {
-                    confirmaInventario();
+                    //confirmaInventario();
                     listItems();
                 }
                 pbar.setVisibility(View.INVISIBLE);
@@ -136,9 +137,8 @@ public class Exist extends PBase {
                 if (wsie.errflag) {
                     msgbox(wsie.error);
                 } else {
-                    toast("Existencias enviadas");
+                    //toast("Existencias enviadas");
                 }
-
             }
         };
 
@@ -148,9 +148,8 @@ public class Exist extends PBase {
                 if (wsir.errflag) {
                     msgbox(wsir.error);
                 } else {
-                    agregaInventario();
+                    //agregaInventario();
                 }
-
             }
         };
 
@@ -161,11 +160,16 @@ public class Exist extends PBase {
             Runnable mrunner=new Runnable() {
                 @Override
                 public void run() {
-                    bloqueado=true;
-                    wsi.execute(recibeInventario);
+                    //bloqueado=true;
+                    //wsi.execute(recibeInventario);
                 }
             };
             mtimer.postDelayed(mrunner,200);
+        }
+
+        if (gl.emp==15) {
+            DonTacoInv20220110();
+            //lblCor.setVisibility(View.VISIBLE);
         }
 	}
 
@@ -650,6 +654,7 @@ public class Exist extends PBase {
         double cant;
         String um;
 
+        /*
         try {
             Cursor dt=wsir.cursor;
             if ((dt==null) | (dt.getCount()==0)) return;
@@ -682,6 +687,7 @@ public class Exist extends PBase {
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
+        */
     }
 
     private void insertStock(int pcod,double pcant,String um) {
@@ -1088,6 +1094,20 @@ public class Exist extends PBase {
         listItems();
     }
 
+    private void DonTacoInv20220110() {
+
+        try {
+            db.execSQL("DELETE FROM P_STOCK where enviado=0");
+            db.execSQL("DELETE FROM P_STOCK where codigo=916 AND unidadmedida='UN'");
+            db.execSQL("DELETE FROM P_STOCK where codigo=917 AND unidadmedida='LB'");
+            db.execSQL("DELETE FROM P_STOCK where codigo=925 AND unidadmedida='onz'");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        listItems();
+    }
+
     //endregion
 
     //region Dialogs
@@ -1180,7 +1200,7 @@ public class Exist extends PBase {
         dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    DonTacoInv20211005();
+                    DonTacoInv20220110();
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

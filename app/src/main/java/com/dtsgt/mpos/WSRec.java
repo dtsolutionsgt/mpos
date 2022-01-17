@@ -1142,10 +1142,12 @@ public class WSRec extends PBase {
             if (validaParametros()) {
                 app.setDateRecep(du.getActDate());
                 msgboxwait("Recepción completa");
+
             } else {
                 msgboxexit("Configuración de tienda o caja incorrecta");
                 //finish();
             }
+            validaCombos();
 
             return true;
 
@@ -1154,6 +1156,66 @@ public class WSRec extends PBase {
             msgboxwait("DB Commit Error\n" + e.getMessage() + "\n" + sql);
             return false;
         }
+    }
+
+    private void validaCombos() {
+        Cursor dt;
+        String cp="";
+
+        app.citems.clear();
+
+        try {
+            sql="SELECT P_PRODMENU.NOMBRE,P_PRODMENUOPC.NOMBRE,P_PRODMENUOPC_DET.CODIGO_PRODUCTO " +
+                    "FROM  P_PRODMENUOPC_DET INNER JOIN P_PRODMENUOPC ON P_PRODMENUOPC_DET.CODIGO_MENU_OPCION = P_PRODMENUOPC.CODIGO_MENU_OPCION INNER JOIN " +
+                    "P_PRODMENU ON P_PRODMENUOPC.CODIGO_MENU = P_PRODMENU.CODIGO_MENU " +
+                    "WHERE (P_PRODMENUOPC_DET.CODIGO_PRODUCTO NOT IN " +
+                    "(SELECT CODIGO_PRODUCTO FROM P_PRODUCTO))";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+                    cp=dt.getString(0)+" - "+dt.getString(1)+", Cod: "+dt.getInt(2);
+                    if (!app.citems.contains(cp)) app.citems.add(cp);
+                    dt.moveToNext();
+                }
+            }
+
+            if (app.citems.size()>0) mostrarLista();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void mostrarLista() {
+        final String[] selitems = new String[app.citems.size()];
+        for (int i = 0; i <app.citems.size(); i++) {
+            selitems[i]=app.citems.get(i);
+        }
+
+        final AlertDialog Dialog;
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Producto de combo inactivo");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+
     }
 
     private void processEmpresas() {

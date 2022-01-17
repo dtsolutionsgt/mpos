@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.dtsgt.mpos.R;
 
+import java.util.ArrayList;
+
 public class ExDialog extends  AlertDialog.Builder {
 
     public ExDialog(Context context) {
@@ -63,4 +65,6 @@ public class ExDialog extends  AlertDialog.Builder {
         return adg;
     }
 
+    public void setItems(ArrayList<String> citems, DialogInterface.OnClickListener onClickListener) {
+    }
 }

@@ -942,6 +942,22 @@ public class clsClasses {
         public String unidadmedida;
     }
 
+    public class clsP_stockbof {
+        public int  empresa;
+        public int  sucursal;
+        public int  codigo_producto;
+        public double cant;
+        public double cantm;
+        public double peso;
+        public double pesom;
+        public String lote;
+        public String unidadmedida;
+        public int  anulado;
+        public int  enviado;
+        public int  codigoliquidacion;
+        public String documento;
+    }
+
     public class clsP_stock_almacen {
         public int  codigo_stock;
         public int  empresa;

@@ -440,7 +440,7 @@ public class InvSalida extends PBase {
     }
 
     private void adjustStock(int pcod,double pcant,String um) {
-        sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO="+pcod;
+        sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO="+pcod+" ";
         db.execSQL(sql);
     }
 

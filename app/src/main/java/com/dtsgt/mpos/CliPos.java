@@ -16,11 +16,14 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Response;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ventaObj;
 
@@ -31,6 +34,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.android.volley.RequestQueue;
+import com.android.volley.Request;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class CliPos extends PBase {
 
@@ -56,6 +68,8 @@ public class CliPos extends PBase {
 
     private TimerTask ptask;
     private int period=10000,delay=50;
+
+    private static String urlNit = "https://consultareceptores.feel.com.gt/rest/action";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,6 +284,9 @@ public class CliPos extends PBase {
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
 					if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                        consultaNITInfile();
+
 						if (!existeCliente()) txtNom.requestFocus();
 						return true;
 					} else {
@@ -1155,6 +1172,46 @@ public class CliPos extends PBase {
         });
 
         dialog.show();
+    }
+
+    private void consultaNITInfile()
+    {
+        if (gl.codigo_pais.trim() == "GT" && !mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
+
+            JSONObject params = new JSONObject();
+            try {
+                String nit = txtNIT.getText().toString().replace("-", "");
+                params.put("emisor_codigo", gl.felUsuarioCertificacion);
+                params.put("emisor_clave", gl.felLlaveCertificacion);
+                params.put("nit_consulta", nit);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            RequestQueue queue = Volley.newRequestQueue(CliPos.this);
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, urlNit, params, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        if (!response.getString("nombre").equals("")) {
+                            txtNom.setText(response.getString("nombre").replace(",", " ").trim());
+                        } else {
+                            Toast.makeText(CliPos.this, "No se obtuvieron datos del cliente en Infile con el NIT proporcionado", Toast.LENGTH_LONG).show();
+                            txtNom.setText("");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    msgbox("Error consulta NIT Infile");
+                }
+            });
+
+            queue.add(request);
+        }
     }
 
     //endregion

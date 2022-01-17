@@ -15,11 +15,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+
 import androidx.core.app.ActivityCompat;
+
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -46,9 +51,6 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startOrdenImport;
 import com.dtsgt.webservice.startPedidosImport;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,16 +66,16 @@ public class MainActivity extends PBase {
 
     private LA_Login adapter;
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<clsClasses.clsMenu>();
-    private ArrayList<String> spincode=new ArrayList<String>();
-    private ArrayList<String> spinlist=new ArrayList<String>();
+    private ArrayList<String> spincode = new ArrayList<String>();
+    private ArrayList<String> spinlist = new ArrayList<String>();
 
     private clsKeybHandler khand;
 
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
-    private int scrdim,modopantalla;
+    private int scrdim, modopantalla;
 
-    private String parVer = "4.1.12"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.1.15"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -83,20 +85,24 @@ public class MainActivity extends PBase {
             super.onCreate(savedInstanceState);
 
             if (pantallaHorizontal()) {
-                if (scrdim>8) {
-                    setContentView(R.layout.activity_main);modopantalla=1;
+                if (scrdim > 8) {
+                    setContentView(R.layout.activity_main);
+                    modopantalla = 1;
                 } else {
-                    setContentView(R.layout.activity_main2);modopantalla=3;
+                    setContentView(R.layout.activity_main2);
+                    modopantalla = 3;
                 }
             } else {
-                setContentView(R.layout.activity_main);modopantalla=2;
+                setContentView(R.layout.activity_main);
+                modopantalla = 2;
             }
 
             grantPermissions();
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
 
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -104,23 +110,27 @@ public class MainActivity extends PBase {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        if( newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ) {
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         } else {
         }
 
         if (pantallaHorizontal()) {
-            if (scrdim>8) {
-                setContentView(R.layout.activity_main);modopantalla=1;
+            if (scrdim > 8) {
+                setContentView(R.layout.activity_main);
+                modopantalla = 1;
             } else {
-                setContentView(R.layout.activity_main2);modopantalla=3;
+                setContentView(R.layout.activity_main2);
+                modopantalla = 3;
             }
         } else {
-            setContentView(R.layout.activity_main);modopantalla=2;
+            setContentView(R.layout.activity_main);
+            modopantalla = 2;
         }
 
         try {
             startApplication();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
     }
 
@@ -147,8 +157,11 @@ public class MainActivity extends PBase {
                 }
             }
 
-        } catch (Exception e) { addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -160,10 +173,13 @@ public class MainActivity extends PBase {
             this.setTitle("MPos");
             gl.parVer = parVer;
 
-            lblRuta = (TextView) findViewById(R.id.lblCDisp);lblRuta.setText("");
-            lblRTit = (TextView) findViewById(R.id.lblCUsed);lblRTit.setText("");
+            lblRuta = (TextView) findViewById(R.id.lblCDisp);
+            lblRuta.setText("");
+            lblRTit = (TextView) findViewById(R.id.lblCUsed);
+            lblRTit.setText("");
             lblVer = (TextView) findViewById(R.id.textView10);
-            lblEmp = (TextView) findViewById(R.id.textView82);lblEmp.setText("");
+            lblEmp = (TextView) findViewById(R.id.textView82);
+            lblEmp.setText("");
             lblPass = (TextView) findViewById(R.id.lblPass);
             lblKeyDP = (TextView) findViewById(R.id.textView110);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
@@ -206,7 +222,8 @@ public class MainActivity extends PBase {
 
             app.setScreenDim(this);
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }
@@ -241,12 +258,12 @@ public class MainActivity extends PBase {
     public void gotoMenu() {
         try {
             if (gl.rol != 4) {
-                startActivity(new Intent(this,Menu.class));
+                startActivity(new Intent(this, Menu.class));
             } else {
                 if (gl.peRest) {
-                    gl.idmesero=gl.codigo_vendedor;
-                    gl.meserodir=true;
-                    startActivity(new Intent(this,ResMesero.class));
+                    gl.idmesero = gl.codigo_vendedor;
+                    gl.meserodir = true;
+                    startActivity(new Intent(this, ResMesero.class));
                 } else {
                     msgbox("No está activado modulo restaurante");
                 }
@@ -315,7 +332,8 @@ public class MainActivity extends PBase {
                         usr = item.Cod;
 
                     } catch (Exception e) {
-                        addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+                        addlog(new Object() {
+                        }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
                         mu.msgbox(e.getMessage());
                     }
                 }
@@ -328,8 +346,10 @@ public class MainActivity extends PBase {
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                     try {
                         TextView spinlabel = (TextView) parentView.getChildAt(0);
-                        spinlabel.setTextColor(Color.BLACK);spinlabel.setPadding(5, 0, 0, 0);
-                        spinlabel.setTextSize(21);spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
+                        spinlabel.setTextColor(Color.BLACK);
+                        spinlabel.setPadding(5, 0, 0, 0);
+                        spinlabel.setTextSize(21);
+                        spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
                         usr = spincode.get(position);
                     } catch (Exception e) {
@@ -344,7 +364,8 @@ public class MainActivity extends PBase {
             });
 
         } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
 
     }
@@ -373,7 +394,7 @@ public class MainActivity extends PBase {
 
         try {
             //#HS_20181122_1505 Se agrego el campo Impresion.
-            sql = "SELECT CODIGO,NOMBRE,SUCURSAL, CODIGO_RUTA FROM P_RUTA WHERE CODIGO_RUTA="+gl.codigo_ruta;
+            sql = "SELECT CODIGO,NOMBRE,SUCURSAL, CODIGO_RUTA FROM P_RUTA WHERE CODIGO_RUTA=" + gl.codigo_ruta;
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {
@@ -421,10 +442,10 @@ public class MainActivity extends PBase {
                 gl.incNoLectura = false; //#HS_20181211 Agregue campo incNoLectura para validacion en cliente.
                 gl.depparc = false;
                 gl.lotedf = "";
-                gl.clave=DT.getString(2);
-                gl.codigo_pais=DT.getString(3);
+                gl.clave = DT.getString(2);
+                gl.codigo_pais = DT.getString(3);
 
-                if (DT!=null) DT.close();
+                if (DT != null) DT.close();
             } else {
                 gl.emp = 3;
                 gl.devol = false;
@@ -477,9 +498,10 @@ public class MainActivity extends PBase {
             AppMethods app = new AppMethods(this, gl, Con, db);
             app.parametrosExtra();
 
-            mu.curr=gl.peMon;
+            mu.curr = gl.peMon;
         } catch (Exception e) {
-            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             msgbox(e.getMessage());
         }
 
@@ -496,17 +518,18 @@ public class MainActivity extends PBase {
         llenaUsuarios();
 
         if (gl.pePedidos) {
-            String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
-            startPedidosImport.startService(this,params);
+            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
+            startPedidosImport.startService(this, params);
             //toasttop("Captura de ordenes activada");
         }
 
         if (gl.pelCajaRecep) {
-            String params=gl.wsurl+"#"+gl.emp+"#"+gl.tienda;
-            startOrdenImport.startService(this,params);
+            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
+            startOrdenImport.startService(this, params);
             toasttop("Captura de ordenes activada");
         }
 
+        ubicacion();
     }
 
     private void processLogIn() {
@@ -524,7 +547,7 @@ public class MainActivity extends PBase {
 
         try {
 
-            gl.idmesero=0;
+            gl.idmesero = 0;
 
             if (usr.isEmpty()) {
 
@@ -555,14 +578,14 @@ public class MainActivity extends PBase {
             gl.rol = DT.getInt(2);
 
             //#CKFK 20200517 if (gl.caja.isEmpty() || gl.tienda==0) {
-            if (gl.codigo_ruta == 0 || gl.tienda==0) {
+            if (gl.codigo_ruta == 0 || gl.tienda == 0) {
                 if (gl.rol == 3) {
-                    browse=2;
+                    browse = 2;
                     startActivity(new Intent(MainActivity.this, ConfigCaja.class));
                     return false;
                 } else {
                     toastlong("No está configurada la caja. Informe al gerente.");
-                    browse=2;
+                    browse = 2;
                     accesoAdmin();
                     return false;
                 }
@@ -581,15 +604,15 @@ public class MainActivity extends PBase {
                 }
             }
 
-            gl.vendnom=DT.getString(0);
-            gl.vend=usr;
-            gl.codigo_vendedor=DT.getInt(4);
-            gl.vnivprec=DT.getInt(3);
+            gl.vendnom = DT.getString(0);
+            gl.vend = usr;
+            gl.codigo_vendedor = DT.getInt(4);
+            gl.vnivprec = DT.getInt(3);
 
             khand.clear();
             khand.enable();
 
-            if (DT!=null) DT.close();
+            if (DT != null) DT.close();
 
             return true;
 
@@ -602,24 +625,24 @@ public class MainActivity extends PBase {
     }
 
     private void logUser() {
-        long ff=du.getActDate();
+        long ff = du.getActDate();
 
         try {
 
-            clsD_usuario_asistenciaObj D_usuario_asistenciaObj=new clsD_usuario_asistenciaObj(this,Con,db);
-            D_usuario_asistenciaObj.fill("WHERE (CODIGO_VENDEDOR="+gl.codigo_vendedor+") AND (FECHA="+ff+")");
-            if (D_usuario_asistenciaObj.count>0) return;
+            clsD_usuario_asistenciaObj D_usuario_asistenciaObj = new clsD_usuario_asistenciaObj(this, Con, db);
+            D_usuario_asistenciaObj.fill("WHERE (CODIGO_VENDEDOR=" + gl.codigo_vendedor + ") AND (FECHA=" + ff + ")");
+            if (D_usuario_asistenciaObj.count > 0) return;
 
             clsClasses.clsD_usuario_asistencia item = clsCls.new clsD_usuario_asistencia();
 
-            item.codigo_asistencia=D_usuario_asistenciaObj.newID("SELECT MAX(CODIGO_ASISTENCIA) FROM D_usuario_asistencia");
-            item.empresa=gl.emp;
-            item.codigo_sucursal=gl.tienda;
-            item.codigo_vendedor=gl.codigo_vendedor;
-            item.fecha=ff;
-            item.inicio=du.getActDateTime();
-            item.fin=0;
-            item.bandera=0;
+            item.codigo_asistencia = D_usuario_asistenciaObj.newID("SELECT MAX(CODIGO_ASISTENCIA) FROM D_usuario_asistencia");
+            item.empresa = gl.emp;
+            item.codigo_sucursal = gl.tienda;
+            item.codigo_vendedor = gl.codigo_vendedor;
+            item.fecha = ff;
+            item.inicio = du.getActDateTime();
+            item.fin = 0;
+            item.bandera = 0;
 
             D_usuario_asistenciaObj.add(item);
 
@@ -645,9 +668,9 @@ public class MainActivity extends PBase {
             }
             */
 
-            gl.scrdim=scrdim;
+            gl.scrdim = scrdim;
 
-            if (modopantalla==1) {
+            if (modopantalla == 1) {
                 //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 listView.setVisibility(View.VISIBLE);
                 spin.setVisibility(View.INVISIBLE);
@@ -657,7 +680,8 @@ public class MainActivity extends PBase {
                 spin.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -671,7 +695,8 @@ public class MainActivity extends PBase {
             editor.commit();
             iniciaPantalla();
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -763,7 +788,7 @@ public class MainActivity extends PBase {
             licruta = dt.getString(1);
 
 
-            if (dt!=null) dt.close();
+            if (dt != null) dt.close();
 
             if (mu.emptystr(lic)) {
                 toastlong("El dispositivo no tiene licencia válida de handheld");
@@ -819,7 +844,8 @@ public class MainActivity extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             uniqueID = "0000000000";
         }
 
@@ -853,19 +879,21 @@ public class MainActivity extends PBase {
             gl.tienda = DT.getInt(1);
             gl.codigo_ruta = DT.getInt(2);//gl.caja #CKFK 20200516 lo cambié porque debemos trabajar con el codigo_ruta4
 
-            if (gl.tienda!=0) {
+            if (gl.tienda != 0) {
                 try {
-                    sql = "SELECT DESCRIPCION FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
+                    sql = "SELECT DESCRIPCION, FEL_USUARIO_CERTIFICACION, FEL_LLAVE_CERTIFICACION FROM P_SUCURSAL WHERE CODIGO_SUCURSAL='" + gl.tienda + "'";
                     DT = Con.OpenDT(sql);
                     DT.moveToFirst();
                     gl.tiendanom = DT.getString(0);
+                    gl.felUsuarioCertificacion = DT.getString(1);
+                    gl.felLlaveCertificacion = DT.getString(2);
                 } catch (Exception e) {
                     gl.tiendanom = "";
                 }
             }
 
             //#CKFK 20200516 if (!gl.caja.isEmpty()) {
-            if (gl.codigo_ruta !=0 ) {
+            if (gl.codigo_ruta != 0) {
                 try {
                     sql = "SELECT NOMBRE FROM P_RUTA WHERE CODIGO_RUTA='" + gl.codigo_ruta + "'";
                     DT = Con.OpenDT(sql);
@@ -897,32 +925,36 @@ public class MainActivity extends PBase {
                 imgLogo.setImageBitmap(bmImg);
             }
         } catch (Exception e) {
-            Log.e("err",e.getMessage());
+            Log.e("err", e.getMessage());
         }
 
         try {
-            String orddir=Environment.getExternalStorageDirectory().getPath() + "/mposordser";
+            String orddir = Environment.getExternalStorageDirectory().getPath() + "/mposordser";
             File directory = new File(orddir);
             directory.mkdirs();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
-            String errdir=Environment.getExternalStorageDirectory().getPath() + "/mposordser/error";
+            String errdir = Environment.getExternalStorageDirectory().getPath() + "/mposordser/error";
             File directory = new File(errdir);
             directory.mkdirs();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
-            String orddir=Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
+            String orddir = Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
             File directory = new File(orddir);
             directory.mkdirs();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         try {
-            String errdir=Environment.getExternalStorageDirectory().getPath() + "/mposordcaja/error";
+            String errdir = Environment.getExternalStorageDirectory().getPath() + "/mposordcaja/error";
             File directory = new File(errdir);
             directory.mkdirs();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
     }
 
@@ -959,8 +991,10 @@ public class MainActivity extends PBase {
         clsVendedoresObj VendedoresObj = new clsVendedoresObj(this, Con, db);
         clsClasses.clsMenu item;
 
-        usr = "";pwd = "";
-        spincode.clear();spinlist.clear();
+        usr = "";
+        pwd = "";
+        spincode.clear();
+        spinlist.clear();
 
         try {
 
@@ -974,16 +1008,16 @@ public class MainActivity extends PBase {
             }
             */
 
-            if (gl.codigo_ruta ==0){
+            if (gl.codigo_ruta == 0) {
                 VendedoresObj.fill("WHERE (ACTIVO=1)  ORDER BY CODIGO_VENDEDOR");
             } else {
-                VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta+") AND (ACTIVO=1) ORDER BY Nombre");
+                VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta + ") AND (ACTIVO=1) ORDER BY Nombre");
             }
 
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();
                 item.Cod = VendedoresObj.items.get(i).codigo;
-                item.Name = item.Cod+" - "+VendedoresObj.items.get(i).nombre;// estaba .ruta #CKFK 20200517
+                item.Name = item.Cod + " - " + VendedoresObj.items.get(i).nombre;// estaba .ruta #CKFK 20200517
                 mitems.add(item);
 
                 spincode.add(item.Cod);
@@ -994,7 +1028,7 @@ public class MainActivity extends PBase {
             adapter = new LA_Login(this, mitems);
             listView.setAdapter(adapter);
 
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, spinlist);
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinlist);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spin.setAdapter(dataAdapter);
 
@@ -1010,17 +1044,17 @@ public class MainActivity extends PBase {
             getWindowManager().getDefaultDisplay().getRealSize(point);
 
             DisplayMetrics dm = getResources().getDisplayMetrics();
-            int width=dm.widthPixels;
-            int height=dm.heightPixels;
-            double x = Math.pow(width,2);
-            double y = Math.pow(height,2);
-            double diagonal = Math.sqrt(x+y);
+            int width = dm.widthPixels;
+            int height = dm.heightPixels;
+            double x = Math.pow(width, 2);
+            double y = Math.pow(height, 2);
+            double diagonal = Math.sqrt(x + y);
 
-            int dens=dm.densityDpi;
-            double screenInches = diagonal/(double)dens;
+            int dens = dm.densityDpi;
+            double screenInches = diagonal / (double) dens;
 
-            scrdim=(int) screenInches;
-            boolean horiz=point.x>point.y;
+            scrdim = (int) screenInches;
+            boolean horiz = point.x > point.y;
 
             return horiz;
         } catch (Exception e) {
@@ -1030,11 +1064,64 @@ public class MainActivity extends PBase {
     }
 
     protected void toasthoriz(String msg) {
-        Toast toast= Toast.makeText(getApplicationContext(),msg, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 
+    private void ubicacion() {
+        Location location;
+        double latitude = 0, longitude = 0;
+
+        final float MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // in Meters
+        final long MIN_TIME_BW_UPDATES = 1000; // in Milliseconds
+
+        gl.gpspx=0;gl.gpspy=0;
+
+        try {
+            LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+
+            LocationListener locationListener = new LocationListener() {
+
+                @Override
+                public void onLocationChanged(Location arg0) {
+                }
+
+                @Override
+                public void onProviderDisabled(String arg0) {
+                }
+
+                @Override
+                public void onProviderEnabled(String arg0) {
+                }
+
+                @Override
+                public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+                }
+
+            };
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                gl.gpspx=0;gl.gpspy=0;
+                return;
+            }
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
+            if (locationManager != null) {
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (location != null) {
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                }
+            }
+            gl.gpspx=longitude;
+            gl.gpspy=latitude;
+        } catch (Exception e) {
+            gl.gpspx=0;gl.gpspy=0;
+            String ss=e.getMessage();
+        }
+
+    }
 
     //endregion
 

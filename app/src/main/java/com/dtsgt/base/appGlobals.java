@@ -109,4 +109,5 @@ public class appGlobals extends Application {
 	//Comunicación con WS
 	public int isOnWifi = 0;
 
+	public String felUsuarioCertificacion, felLlaveCertificacion;
 }

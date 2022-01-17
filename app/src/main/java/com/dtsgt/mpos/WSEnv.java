@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_stockbofObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 
 import java.io.BufferedReader;
@@ -395,7 +396,6 @@ public class WSEnv extends PBase {
 
         //try {
 
-
         AppMethods f = new AppMethods(this,null,Con,db);
         clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
 
@@ -491,8 +491,11 @@ public class WSEnv extends PBase {
         //ss="DELETE FROM P_CLIENTE WHERE (Empresa="+gl.emp+") AND (CODIGO_CLIENTE="+cliid+")";
         ss="DELETE FROM P_CLIENTE WHERE (CODIGO_CLIENTE="+cliid+")";
         CSQL = CSQL + ss + ";";
-        ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
-        CSQL = CSQL + ss + ";";
+
+        if (P_clienteObj.count>0) {
+            ss=P_clienteObj.addItemSql(P_clienteObj.first(),gl.emp);
+            CSQL = CSQL + ss + ";";
+        }
 
         //} catch (Exception e) {
         //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -978,29 +981,47 @@ public class WSEnv extends PBase {
     }
 
     private void processStock() {
-        String codStock;
+        clsClasses.clsP_stockbof sitem;
 
         cjReporte.clear();
 
-        //try {
+        try {
             clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+            clsP_stockbofObj P_stockbofObj=new clsP_stockbofObj(this,Con,db);
+
             P_stockObj.fill("WHERE enviado=1");
 
-            CSQL="";
+            CSQL="DELETE FROM P_STOCK WHERE SUCURSAL="+gl.tienda+";";
+            cStock.clear();
 
             for (int i = 0; i <P_stockObj.count; i++) {
 
-                P_stockObj.items.get(i).enviado=1;
-                codStock = P_stockObj.items.get(i).documento;
-                ss=P_stockObj.addItemSql(P_stockObj.items.get(i));
+                sitem=clsCls.new clsP_stockbof();
+
+                sitem.empresa=gl.emp;
+                sitem.sucursal=gl.tienda;
+                sitem.codigo_producto=P_stockObj.items.get(i).codigo;
+                sitem.cant=P_stockObj.items.get(i).cant;
+                sitem.cantm=0;
+                sitem.peso=0;
+                sitem.pesom=0;
+                sitem.lote="";
+                sitem.unidadmedida=P_stockObj.items.get(i).unidadmedida;
+                sitem.anulado=0;
+                sitem.enviado=1;
+                sitem.codigoliquidacion=0;
+                sitem.documento="";
+
+                ss=P_stockbofObj.addItemSql(sitem);
                 CSQL = CSQL + ss + ";";
 
-                cStock.add(""+codStock);
+                cStock.add(""+i);
             }
 
-        //} catch (Exception e) {
+        } catch (Exception e) {
+            String ss=e.getMessage();
         //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        //}
+        }
     }
 
     private void statusStock() {

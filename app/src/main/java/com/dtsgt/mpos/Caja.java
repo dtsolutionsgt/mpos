@@ -602,7 +602,7 @@ public class Caja extends PBase {
 
         dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                enviaAvizo();
+                //enviaAvizo();
             }
         });
 
