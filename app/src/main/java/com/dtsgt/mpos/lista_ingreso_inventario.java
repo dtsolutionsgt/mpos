@@ -79,6 +79,7 @@ public class lista_ingreso_inventario extends PBase {
         if (tipo==0) lblTipo.setText("Ingreso de mercancía");
         if (tipo==1) lblTipo.setText("Ajuste de inventario");
         if (tipo==2) lblTipo.setText("Inventario Inicial");
+        if (tipo==3) lblTipo.setText("Orden de compra");
 
         gl.corelmov="";
 
@@ -156,6 +157,9 @@ public class lista_ingreso_inventario extends PBase {
                     break;
                 case 2:
                     validaInicial();break;
+                case 3:
+                    startActivity( new Intent(this,InvSalida.class));
+                    break;
             }
 
         } catch (Exception e){
@@ -252,12 +256,17 @@ public class lista_ingreso_inventario extends PBase {
                     break;
                 case 1:
                     sql="SELECT COREL,REFERENCIA,FECHA,0,IMPRES,0 "+
-                        "FROM D_MOV WHERE (TIPO='D') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
-                        "ORDER BY FECHA DESC ";
+                            "FROM D_MOV WHERE (TIPO='D') AND (ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                            "ORDER BY FECHA DESC ";
                     break;
                 case 2:
                     sql="SELECT COREL,REFERENCIA,FECHA,0,IMPRES,0 "+
                             "FROM D_MOV WHERE (TIPO='I') AND (ANULADO<>1) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                            "ORDER BY FECHA DESC ";
+                    break;
+                case 3:
+                    sql="SELECT COREL,REFERENCIA,FECHA,0,0,0 "+
+                            "FROM D_COMPRA_LOCAL WHERE ((ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"')) " +
                             "ORDER BY FECHA DESC ";
                     break;
             }

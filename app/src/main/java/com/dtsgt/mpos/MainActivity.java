@@ -75,7 +75,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.1.16"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.1.17"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -257,6 +257,10 @@ public class MainActivity extends PBase {
 
     public void gotoMenu() {
         try {
+
+            startActivity(new Intent(this, Menu.class));
+
+            /*
             if (gl.rol != 4) {
                 startActivity(new Intent(this, Menu.class));
             } else {
@@ -268,8 +272,8 @@ public class MainActivity extends PBase {
                     msgbox("No está activado modulo restaurante");
                 }
             }
-        } catch (Exception e) {
-        }
+            */
+        } catch (Exception e) { }
     }
 
     public void doOrientation(View view) {

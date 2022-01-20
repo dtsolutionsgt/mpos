@@ -2,23 +2,13 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
-    public class clsD_compra {
-        public String corel;
-        public int  empresa;
-        public int  codigo_ruta;
-        public int  anulado;
-        public long fecha;
-        public int  codigo_proveedor;
-        public int  codigo_usuario;
-        public String referencia;
-        public int  statcom;
-    }
-
-    public class clsD_comprad {
-        public String corel;
+    public class clsD_costo {
+        public int  codigo_costo;
+        public int  codigo_empresa;
+        public int  codigo_sucursal;
         public int  codigo_producto;
-        public double cant;
-        public String um;
+        public long fecha;
+        public double costo;
     }
 
     public class clsD_factura {
@@ -1122,6 +1112,15 @@ public class clsClasses {
         public int  cant;
         public int  idseleccion;
         public int  orden;
+    }
+
+    public class clsT_costo {
+        public String corel;
+        public int  codigo_costo;
+        public int  codigo_producto;
+        public long fecha;
+        public double costo;
+        public int  statcom;
     }
 
     public class clsT_factreceta {

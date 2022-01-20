@@ -202,7 +202,8 @@ public class WSEnv extends PBase {
                     case 9:
                         processAsist();
                         cjAsist=cAsist.size();
-                        if (cjAsist>0) callMethod("Commit", "SQL", CSQL);
+                        //if (cjAsist>0)
+                        if (!CSQL.isEmpty()) callMethod("Commit", "SQL", CSQL);
                         break;
                 }
             } catch (Exception e) {
@@ -1112,6 +1113,11 @@ public class WSEnv extends PBase {
                 CSQL = CSQL + ss + ";";
 
                 cAsist.add(""+codAsist);
+            }
+
+            if (gl.gpspx!=0) {
+                ss="UPDATE P_SUCURSAL SET PUNTOGEOGRAFICO=GEOGRAPHY::Point("+gl.gpspy+","+gl.gpspx+",4326) WHERE CODIGO_SUCURSAL="+gl.tienda;
+                CSQL = CSQL + ss + ";";
             }
 
         } catch (Exception e) {

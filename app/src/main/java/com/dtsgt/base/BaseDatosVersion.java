@@ -553,33 +553,6 @@ public class BaseDatosVersion {
         } catch (Exception e) {
         }
 
-        try {
-            sql="CREATE TABLE [D_compra] ("+
-                    "COREL TEXT NOT NULL,"+
-                    "EMPRESA INTEGER NOT NULL,"+
-                    "CODIGO_RUTA INTEGER NOT NULL,"+
-                    "ANULADO INTEGER NOT NULL,"+
-                    "FECHA INTEGER NOT NULL,"+
-                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
-                    "CODIGO_USUARIO INTEGER NOT NULL,"+
-                    "REFERENCIA TEXT NOT NULL,"+
-                    "STATCOM INTEGER NOT NULL,"+
-                    "PRIMARY KEY ([COREL])"+
-                    ");";
-            db.execSQL(sql);
-        } catch (Exception e) {
-        }
-
-        try {
-            sql="CREATE TABLE [D_comprad] ("+
-                    "COREL TEXT NOT NULL,"+
-                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
-                    "CANT REAL NOT NULL,"+
-                    "UM TEXT NOT NULL,"+
-                    "PRIMARY KEY ([COREL])"+
-                    ");";
-            db.execSQL(sql);
-        } catch (Exception e) {}
 
         try {
             sql="CREATE TABLE [D_facturac] ("+
@@ -801,6 +774,26 @@ public class BaseDatosVersion {
                     "PRIMARY KEY ([CODIGO_FRASE_SUCURSAL])"+
                     ");";
             db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [T_costo] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "CODIGO_COSTO INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "COSTO REAL NOT NULL,"+
+                    "STATCOM INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[CODIGO_COSTO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+
+
+
+        try {
+
         } catch (Exception e) {}
 
     }

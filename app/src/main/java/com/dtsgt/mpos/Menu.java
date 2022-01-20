@@ -163,7 +163,8 @@ public class Menu extends PBase {
 
                 if (gl.peMCent) {
 
-                    if (app.grant(1,gl.rol)) addMenuItem(1,"Venta");
+                    //if (app.grant(1,gl.rol))
+                    addMenuItem(1,"Venta");
                     if (app.grant(2,gl.rol)) addMenuItem(6,"Caja");
                     if (app.grant(3,gl.rol)) addMenuItem(3,"Reimpresión");
                     if (app.grant(4,gl.rol)) addMenuItem(7,"Inventario");
@@ -690,13 +691,14 @@ public class Menu extends PBase {
             itemcnt++;
 			if (gl.peSolicInv) itemcnt++;
 
-			itemcnt=3;
+			itemcnt=3;itemcnt++;
 			final String[] selitems = new String[itemcnt];
 
 			selitems[itempos]="Existencias";itempos++;
 			selitems[itempos]="Ajuste de inventario";itempos++;
 			selitems[itempos]="Ingreso de mercancía";itempos++;
             //selitems[itempos]="Inventario inicial";itempos++;
+            selitems[itempos]="Orden de compra";itempos++;
 
 			menudlg = new ExDialog (this);
 
@@ -710,6 +712,7 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Ajuste de inventario")) menuDevBod();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
                     if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
+                    if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
 
                     dialog.cancel();
 				}
@@ -773,6 +776,16 @@ public class Menu extends PBase {
             Intent intent = new Intent(this,lista_ingreso_inventario.class);
             startActivity(intent);
         } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void menuCompra() {
+        try{
+            gl.tipo = 3;
+            Intent intent = new Intent(this,lista_ingreso_inventario.class);
+            startActivity(intent);
+        }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
@@ -1490,6 +1503,9 @@ public class Menu extends PBase {
 	}
 
 	public boolean valida(){
+
+	    if (gl.rol==3 | gl.rol==4) return true;
+
 		try {
 			clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
 			caja.fill();

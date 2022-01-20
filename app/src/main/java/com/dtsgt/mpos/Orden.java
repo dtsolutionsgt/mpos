@@ -188,7 +188,9 @@ public class Orden extends PBase {
 
         listItems();
 
-
+        if (gl.nombre_mesero_sel.isEmpty()) {
+            gl.nombre_mesero_sel=gl.vendnom;
+        }
     }
 
     //region Events
@@ -1104,14 +1106,6 @@ public class Orden extends PBase {
             msgbox(e.getMessage());
         }
 
-
-        try {
-
-
-        } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());
-        }
     }
 
     private void aplicarPreimpresion() {
@@ -1548,6 +1542,8 @@ public class Orden extends PBase {
                 rep.add("ORDEN : "+ordennum);
                 rep.add("MESA : "+mesa);
                 rep.add("Hora : "+du.shora(du.getActDateTime()));
+                rep.add("Mesero : "+gl.nombre_mesero_sel);
+
                 rep.line();
 
                 T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
@@ -2579,7 +2575,10 @@ public class Orden extends PBase {
                     case 0:
                         showMenuCuenta();break;
                     case 1:
-                        msgAskDel("Está seguro de borrar");break;
+                        //msgAskDel("Está seguro de borrar");
+                        browse=10;
+                        startActivity(new Intent(Orden.this,ValidaSuper.class));
+                        break;
                     case 2:
                         if (selitem.Cant>1) {
                             msgAskDividir("Dividir articulo");
@@ -2950,6 +2949,11 @@ public class Orden extends PBase {
 
             if (browse==9) {
                 browse=0;listItems();
+                return;
+            }
+
+            if (browse==10) {
+                browse=0;if (gl.checksuper) delItem();
                 return;
             }
 

@@ -278,9 +278,10 @@ public class ResCaja extends PBase {
                     }else{
                         if (dt.getCount()==0) {
                             T_ventaObj.add(venta);
-                        }else{
+                        } else {
                             venta.cant+= oitem.cant;
-                            prodtot=mu.round(venta.precio*venta.cant,2);
+                            //prodtot=mu.round(venta.precio*venta.cant,2);
+                            prodtot=venta.total+mu.round(oitem.total,2);
                             venta.total = prodtot;
                             T_ventaObj.update(venta);
                         }
