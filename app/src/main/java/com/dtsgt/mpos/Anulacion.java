@@ -1123,6 +1123,9 @@ public class Anulacion extends PBase {
 				DT.moveToNext();
 			}
 
+            sql="DELETE FROM T_COSTO WHERE COREL='"+itemid+"'";
+            db.execSQL(sql);
+
             if (DT!=null) DT.close();
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);

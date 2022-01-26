@@ -17,10 +17,12 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_costoObj;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_unidadObj;
 import com.dtsgt.classes.clsP_unidad_convObj;
+import com.dtsgt.classes.clsT_costoObj;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
 import com.dtsgt.ladapt.LA_T_movd;
@@ -46,6 +48,7 @@ public class InvInicial extends PBase {
     private clsP_productoObj P_productoObj;
     private clsP_unidadObj P_unidadObj;
     private clsP_unidad_convObj P_unidad_convObj;
+    private clsT_costoObj T_costoObj;
 
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
     private clsClasses.clsT_movd selitem;
@@ -99,6 +102,7 @@ public class InvInicial extends PBase {
         P_productoObj=new clsP_productoObj(this,Con,db);
         P_unidadObj=new clsP_unidadObj(this,Con,db);
         P_unidad_convObj=new clsP_unidad_convObj(this,Con,db);
+        T_costoObj=new clsT_costoObj(this,Con,db);
 
         setHandlers();
 
@@ -393,6 +397,8 @@ public class InvInicial extends PBase {
         clsClasses.clsD_MovD item;
         clsClasses.clsT_movd imov;
         clsClasses.clsT_movr imovr;
+        clsClasses.clsT_costo cost;
+
         String corel=gl.ruta+"_"+mu.getCorelBase();
 
         try {
@@ -426,6 +432,7 @@ public class InvInicial extends PBase {
             mov.add(header);
 
             int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD");
+            int corc=T_costoObj.newID("SELECT MAX(CODIGO_COSTO) FROM T_costo");
 
             if (ingreso) {
 
@@ -453,6 +460,29 @@ public class InvInicial extends PBase {
 
                     updateStock(imovr.producto,convcant,convum);
                     //updateStock(imovr.producto,imovr.cant,imovr.unidadmedida);
+
+                    corc++;
+
+                    try {
+                        cost = clsCls.new clsT_costo();
+
+                        cost.corel=corel;
+                        cost.codigo_costo=corc;
+                        cost.codigo_producto=imovr.producto;
+                        cost.fecha=du.getActDateTime();
+                        cost.costo=imovr.precio;
+                        cost.codigo_proveedor=gl.codigo_proveedor;
+                        cost.statcom=0;
+
+                        T_costoObj.add(cost);
+
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+
+                    sql="UPDATE P_PRODUCTO SET COSTO="+imovr.precio+" WHERE CODIGO_PRODUCTO="+imovr.producto;
+                    db.execSQL(sql);
+
                 }
 
             } else {
@@ -520,12 +550,12 @@ public class InvInicial extends PBase {
     }
 
     private boolean barraProducto() {
-          try {
+        try {
             khand.clear(true);khand.enable();khand.focus();
             selidx=-1;
 
             sql =" WHERE (CODBARRA='"+barcode+"') OR (CODIGO='"+barcode+"') " +
-                 " COLLATE NOCASE  ";
+                    " COLLATE NOCASE  ";
             P_productoObj.fill(sql);
             if (P_productoObj.count==0) {
                 return false;
@@ -545,6 +575,12 @@ public class InvInicial extends PBase {
                 lblCosto.setText(""+P_productoObj.first().costo);
             } else {
                 lblCosto.setText("0");
+            }
+
+            try {
+                T_costoObj.fill("WHERE CODIGO_PRODUCTO="+P_productoObj.first().codigo_producto+" ORDER BY FECHA DESC LIMIT 1");
+                if (T_costoObj.count>0) lblCosto.setText(""+T_costoObj.first().costo);
+            } catch (Exception e) {
             }
 
             return true;
@@ -1096,6 +1132,7 @@ public class InvInicial extends PBase {
             P_productoObj.reconnect(Con,db);
             P_unidadObj.reconnect(Con,db);
             P_unidad_convObj.reconnect(Con,db);
+            T_costoObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

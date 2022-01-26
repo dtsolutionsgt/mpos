@@ -22,12 +22,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ListView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsVenta;
@@ -2020,8 +2019,9 @@ public class Venta extends PBase {
                         item.Cod=dt.getString(0);
                         item.icod=dt.getInt(4);
                         pprec=prodPrecioBaseVal(item.icod);
+
                         //item.Name=dt.getString(1)+" \n[ "+gl.peMon+pprec+" ]";
-                          item.Name=dt.getString(1)+"  [ "+gl.peMon+pprec+" ]";
+                          item.Name=dt.getString(1)+"  [ "+gl.peMon+mu.frmcur_sm(pprec)+" ]";
                         if (pprec>0) {
                             pitems.add(item);
                             pcodes.add(pcode);
@@ -2192,6 +2192,7 @@ public class Venta extends PBase {
                     if (hasProducts()) inputMesa(); else toastcent("La órden está vacia");
                     break;
                 case 63:
+                    browse=12;
                     gl.cerrarmesero=false;gl.modoclave=0;
                     startActivity(new Intent(this,ValidaClave.class));
                     break;
@@ -3937,6 +3938,7 @@ public class Venta extends PBase {
                 public void onClick(DialogInterface dialog, int item) {
                     gl.idmesero=MeserosObj.items.get(item).codigo_vendedor;
                     gl.meserodir=false;
+                    gl.cerrarmesero=false;
                     startActivity(new Intent(Venta.this,ResMesero.class));
                     dialog.cancel();
                 }
@@ -4128,6 +4130,13 @@ public class Venta extends PBase {
             if (browse==11) {
                 browse=0;
                 if (gl.checksuper) valorDescuentoMonto();
+                return;
+            }
+
+            if (browse==12) {
+                if (gl.cerrarmesero) browse=12;else browse=0;
+                gl.cerrarmesero=false;gl.modoclave=0;
+                startActivity(new Intent(this,ValidaClave.class));
                 return;
             }
 

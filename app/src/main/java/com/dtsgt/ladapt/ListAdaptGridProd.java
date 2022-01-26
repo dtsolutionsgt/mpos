@@ -76,24 +76,37 @@ public class ListAdaptGridProd extends BaseAdapter {
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
-        holder.imgEst.setImageResource(R.drawable.blank256);
+        holder.imgEst.setImageResource(R.drawable.blank_prod);
 
         try {
             String prodimg = imgpath+items.get(position).Cod+".png";
             file = new File(prodimg);
             if (file.exists()) {
-                Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
-                holder.imgEst.setImageBitmap(bmImg);
+                if (file.length()>300) {
+                    Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                    holder.imgEst.setImageBitmap(bmImg);
+                } else {
+                    holder.imgEst.setImageResource(R.drawable.blank_prod);
+                }
             } else {
                 prodimg = imgpath+items.get(position).Cod+".jpg";
                 file = new File(prodimg);
                 if (file.exists()) {
-                    Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
-                    holder.imgEst.setImageBitmap(bmImg);
+                    if (file.length()>300) {
+                        Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
+                        holder.imgEst.setImageBitmap(bmImg);
+                    } else {
+                        holder.imgEst.setImageResource(R.drawable.blank_prod);
+                    }
+                } else {
+                    int ii=0;
+                    holder.imgEst.setImageResource(R.drawable.blank_prod);
                 }
             }
         } catch (Exception e) {
-            holder.imgEst.setImageResource(R.drawable.blank256);
+            //holder.imgEst.setImageResource(R.drawable.blank256);
+            int ii=0;
+            holder.imgEst.setImageResource(R.drawable.blank_prod);
         }
 
 		if(selectedIndex!= -1 && position == selectedIndex) {

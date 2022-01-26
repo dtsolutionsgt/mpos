@@ -25,7 +25,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="1dp"
-        android:background="@layout/blue_strip"
+        android:background="@drawable/blue_strip"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 

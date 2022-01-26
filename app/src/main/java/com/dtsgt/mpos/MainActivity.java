@@ -35,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -57,7 +58,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends PBase {
 
-    private ListView listView;
+    private GridView gridView;
     private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
     private ImageView imgLogo;
     private Spinner spin;
@@ -184,7 +185,7 @@ public class MainActivity extends PBase {
             lblKeyDP = (TextView) findViewById(R.id.textView110);
             imgLogo = (ImageView) findViewById(R.id.imgNext);
 
-            listView = (ListView) findViewById(R.id.listView1);
+            gridView = (GridView) findViewById(R.id.listView1);
             spin = (Spinner) findViewById(R.id.spinner22);
 
             lblVer.setText("Version " + gl.parVer);
@@ -324,12 +325,12 @@ public class MainActivity extends PBase {
 
         try {
 
-            listView.setOnItemClickListener(new OnItemClickListener() {
+            gridView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                     try {
-                        Object lvObj = listView.getItemAtPosition(position);
+                        Object lvObj = gridView.getItemAtPosition(position);
                         clsClasses.clsMenu item = (clsClasses.clsMenu) lvObj;
 
                         adapter.setSelectedIndex(position);
@@ -676,11 +677,11 @@ public class MainActivity extends PBase {
 
             if (modopantalla == 1) {
                 //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                listView.setVisibility(View.VISIBLE);
+                gridView.setVisibility(View.VISIBLE);
                 spin.setVisibility(View.INVISIBLE);
             } else {
                 //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                listView.setVisibility(View.INVISIBLE);
+                gridView.setVisibility(View.INVISIBLE);
                 spin.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
@@ -1030,7 +1031,7 @@ public class MainActivity extends PBase {
             }
 
             adapter = new LA_Login(this, mitems);
-            listView.setAdapter(adapter);
+            gridView.setAdapter(adapter);
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinlist);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

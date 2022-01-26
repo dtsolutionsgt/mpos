@@ -11,8 +11,9 @@
         android:layout_width="800dp"
         android:layout_height="540dp"
         android:layout_alignParentStart="false"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="false"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
         android:layout_marginTop="20dp"
         android:background="#FFFFFF">
 
@@ -506,6 +507,14 @@
             android:layout_marginEnd="1dp"
             android:layout_marginBottom="1dp"
             android:background="@drawable/blue_strip">
+
+            <ImageView
+                android:id="@+id/imageView118"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:onClick="doExit"
+                android:src="@drawable/prev48" />
 
             <TextView
                 android:id="@+id/textView9"

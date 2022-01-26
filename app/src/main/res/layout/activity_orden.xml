@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#DBF5F3"
-        tools:context=".Orden">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Orden">
 
     <GridView
         android:id="@+id/gridView2"
@@ -19,385 +19,385 @@
         android:layout_marginBottom="100dp"
         android:numColumns="1" />
 
+    <TextView
+        android:id="@+id/textView72"
+        android:layout_width="6dp"
+        android:layout_height="10dp"
+        android:layout_centerInParent="true"
+        android:text="TextView"
+        android:visibility="invisible" />
+
+    <RelativeLayout
+        android:id="@+id/relRoad"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/frame_rect_blue">
+
         <TextView
-            android:id="@+id/textView72"
-            android:layout_width="6dp"
-            android:layout_height="10dp"
-            android:layout_centerInParent="true"
+            android:id="@+id/lblTit5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="29dp"
+            android:layout_marginBottom="4dp"
+            android:layout_toRightOf="@+id/imgRoadTit"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Caja 1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/imgRoadTit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/relRoadbar"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="true"
+            android:padding="2dp"
+            android:src="@drawable/btn_mesero" />
+
+        <RelativeLayout
+            android:id="@+id/relLogo"
+            android:layout_width="88dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="#FFFFFF">
+
+            <ImageView
+                android:id="@+id/imgTitLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="4dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/logo_panel" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relRoadbar"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerVertical="true">
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/lblTit4"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toStartOf="@+id/relLogo"
+            android:layout_toEndOf="@+id/lblTit2"
+            android:ellipsize="middle"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:singleLine="true"
+            android:text="Vendedor"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblTit2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/lblTit"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/lblTit"
+            android:layout_toRightOf="@id/lblTit"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Tienda DTS"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/lblTit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/imgRoadTit"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Caja 1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relVenta"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relRoad"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@id/gridView2"
+        android:layout_toEndOf="@+id/textView72"
+        android:background="@drawable/frame_rect">
+
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="1241dp"
+            android:layout_height="312dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="65dp"
+            android:background="@drawable/frame_rect"
+            android:clickable="true"
+            android:longClickable="true">
+
+        </ListView>
+
+        <RelativeLayout
+            android:id="@+id/relsubtot"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/frame_rect">
+
+            <TextView
+                android:id="@+id/textView115"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="5dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="Descuento : 0.00"
+                android:textColor="#1B76B9"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView103"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignStart="@+id/textView115"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginRight="5dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="Subtotal : 0.00"
+                android:textColor="#1B76B9"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lblTot"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="3dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="0.00"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#1B76B9"
+                android:textSize="38sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textView89"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_centerVertical="true"
             android:text="TextView"
             android:visibility="invisible" />
 
-        <RelativeLayout
-            android:id="@+id/relRoad"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@drawable/frame_rect_blue">
+    </RelativeLayout>
 
-            <TextView
-                android:id="@+id/lblTit5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="0dp"
-                android:layout_marginTop="29dp"
-                android:layout_marginBottom="4dp"
-                android:layout_toRightOf="@+id/imgRoadTit"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="Caja 1"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold" />
+    <RelativeLayout
+        android:id="@+id/relSepar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relRoad"
+        android:layout_alignLeft="@id/textView72"
+        android:layout_alignRight="@id/textView72"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="-1dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="-1dp"
+        android:background="@drawable/blue_strip">
 
-            <ImageView
-                android:id="@+id/imgRoadTit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/relRoadbar"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:adjustViewBounds="true"
-                android:padding="2dp"
-                android:src="@drawable/btn_mesero" />
+    </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/relLogo"
-                android:layout_width="88dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginBottom="2dp"
-                android:background="#FFFFFF">
+    <RelativeLayout
+        android:id="@+id/relProd"
+        android:layout_width="407dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relRoad"
+        android:layout_alignTop="@+id/relSepar"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_toStartOf="@+id/textView72"
+        android:background="@drawable/frame_rect">
 
-                <ImageView
-                    android:id="@+id/imgTitLogo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginBottom="4dp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/logo_panel" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/relRoadbar"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_centerVertical="true">
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/lblTit4"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="0dp"
-                android:layout_toStartOf="@+id/relLogo"
-                android:layout_toEndOf="@+id/lblTit2"
-                android:ellipsize="middle"
-                android:gravity="center"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:singleLine="true"
-                android:text="Vendedor"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textSize="36sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/lblTit2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/lblTit"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@+id/lblTit"
-                android:layout_toRightOf="@id/lblTit"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="Tienda DTS"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/lblTit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="0dp"
-                android:layout_marginTop="2dp"
-                android:layout_toRightOf="@+id/imgRoadTit"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:text="Caja 1"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/relVenta"
+        <TextView
+            android:id="@+id/textView88"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_below="@id/relRoad"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="71dp"
+            android:text="TextView"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/lblDir"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_alignTop="@id/textView88"
             android:layout_marginLeft="0dp"
-            android:layout_marginTop="-1dp"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/gridView2"
-            android:layout_toEndOf="@+id/textView72"
-            android:background="@drawable/frame_rect">
-
-
-            <ListView
-                android:id="@+id/listView1"
-                android:layout_width="1241dp"
-                android:layout_height="312dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="65dp"
-                android:background="@drawable/frame_rect"
-                android:clickable="true"
-                android:longClickable="true">
-
-            </ListView>
-
-            <RelativeLayout
-                android:id="@+id/relsubtot"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginLeft="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginRight="0dp"
-                android:layout_marginBottom="2dp"
-                android:background="@drawable/frame_rect">
-
-                <TextView
-                    android:id="@+id/textView115"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="5dp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:text="Descuento : 0.00"
-                    android:textColor="#1B76B9"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView103"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_alignStart="@+id/textView115"
-                    android:layout_alignParentStart="false"
-                    android:layout_alignParentTop="false"
-                    android:layout_alignParentEnd="false"
-                    android:layout_alignParentRight="false"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
-                    android:text="Subtotal : 0.00"
-                    android:textColor="#1B76B9"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/lblTot"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:text="0.00"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="#1B76B9"
-                    android:textSize="38sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/textView89"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_centerVertical="true"
-                android:text="TextView"
-                android:visibility="invisible" />
-
-        </RelativeLayout>
+            android:layout_marginRight="-1dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/frame_rect_blue"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:maxLines="2"
+            android:paddingLeft="10dp"
+            android:text="Pr"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#1B76B9"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <RelativeLayout
-            android:id="@+id/relSepar"
+            android:id="@+id/relPTop"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/relRoad"
-            android:layout_alignLeft="@id/textView72"
-            android:layout_alignRight="@id/textView72"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="-1dp"
-            android:layout_marginRight="0dp"
-            android:layout_marginBottom="-1dp"
-            android:background="@drawable/blue_strip">
+            android:layout_above="@id/lblDir"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="1dp">
 
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/relProd"
-            android:layout_width="407dp"
-            android:layout_height="match_parent"
-            android:layout_below="@id/relRoad"
-            android:layout_alignTop="@+id/relSepar"
-            android:layout_alignParentStart="false"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginRight="0dp"
-            android:layout_toStartOf="@+id/textView72"
-            android:background="@drawable/frame_rect">
-
-            <TextView
-                android:id="@+id/textView88"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_alignParentStart="false"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="71dp"
-                android:text="TextView"
-                android:visibility="invisible" />
-
-            <TextView
-                android:id="@+id/lblDir"
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:layout_alignTop="@id/textView88"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="-1dp"
-                android:layout_marginBottom="0dp"
-                android:background="@drawable/frame_rect_blue"
-                android:ellipsize="end"
-                android:gravity="left|center_vertical"
-                android:maxLines="2"
-                android:paddingLeft="10dp"
-                android:text="Pr"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#1B76B9"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <RelativeLayout
-                android:id="@+id/relPTop"
+            <GridView
+                android:id="@+id/grdFam"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/lblDir"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="1dp">
+                android:layout_marginTop="0dp"
+                android:numColumns="3" />
+        </RelativeLayout>
 
-                <GridView
-                    android:id="@+id/grdFam"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="0dp"
-                    android:numColumns="3" />
-            </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/relPBot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/lblDir"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="0dp">
 
-            <RelativeLayout
-                android:id="@+id/relPBot"
+            <GridView
+                android:id="@+id/grdProd"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/lblDir"
-                android:layout_alignParentStart="false"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="0dp"
-                android:layout_marginBottom="0dp">
-
-                <GridView
-                    android:id="@+id/grdProd"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginBottom="0dp"
-                    android:numColumns="3" />
-            </RelativeLayout>
+                android:layout_marginBottom="0dp"
+                android:numColumns="3" />
         </RelativeLayout>
+    </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/relSep2"
-            android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:layout_below="@id/relRoad"
-            android:layout_alignParentEnd="false"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="-1dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toLeftOf="@id/gridView2"
-            android:background="@drawable/blue_strip">
+    <RelativeLayout
+        android:id="@+id/relSep2"
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relRoad"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="-1dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toLeftOf="@id/gridView2"
+        android:background="@drawable/blue_strip">
 
-        </RelativeLayout>
+    </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/relLock"
-            android:layout_width="100dp"
-            android:layout_height="94dp"
-            android:layout_alignParentTop="true"
+    <RelativeLayout
+        android:id="@+id/relLock"
+        android:layout_width="100dp"
+        android:layout_height="94dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="false"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/frame_rect"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imageView35"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="false"
-            android:layout_marginTop="60dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame_rect"
-            android:visibility="gone">
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="18dp"
+            android:clickable="true"
+            android:onClick="finishOrder"
+            android:padding="15dp"
+            android:src="@drawable/money2"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/imageView35"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="7dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginBottom="18dp"
-                android:clickable="true"
-                android:onClick="finishOrder"
-                android:padding="15dp"
-                android:src="@drawable/money2"
-                android:visibility="gone" />
-
-        </RelativeLayout>
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/imageView100"

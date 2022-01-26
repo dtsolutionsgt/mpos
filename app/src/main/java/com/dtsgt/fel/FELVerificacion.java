@@ -395,6 +395,10 @@ public class FELVerificacion extends PBase {
             }
 
         } catch(Exception ee){
+            try {
+                db.endTransaction();
+            } catch (Exception e) { }
+
             msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ee.getMessage());
         }
     }

@@ -13,7 +13,7 @@
         android:adjustViewBounds="true"
         android:minHeight="96dp"
         android:padding="0dp"
-        android:src="@drawable/bonus" />
+        android:src="@drawable/blank_prod" />
 
     <TextView
         android:id="@+id/lblTrat"

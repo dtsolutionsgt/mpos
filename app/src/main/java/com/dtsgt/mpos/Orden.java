@@ -1119,7 +1119,7 @@ public class Orden extends PBase {
             P_res_sesionObj.update(sess);
 
             envioMesa(2);
-
+            gl.cerrarmesero=true;
             finish();
             //gl.cerrarmesero=true;
             //startActivity(new Intent(this,ResCaja.class));
@@ -1140,6 +1140,7 @@ public class Orden extends PBase {
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
 
+            gl.cerrarmesero=true;
             finish();
             //gl.cerrarmesero=true;
             //startActivity(new Intent(this,ResCaja.class));
@@ -1332,7 +1333,7 @@ public class Orden extends PBase {
 
                 item = clsCls.new clsMenu();
                 item.ID = 3;
-                item.Name = "Preimpresión";
+                item.Name = "Precuenta";
                 item.Icon = 68;
                 mitems.add(item);
 
@@ -1383,7 +1384,7 @@ public class Orden extends PBase {
                     msgAskCuentas("Completar la mesa");
                     break;
                 case 3:
-                    msgAskPrint("Procesar preimpresion");
+                    msgAskPrint("Imprimír precuenta");
                     //aplicarPreimpresion();
                     break;
                 case 24:
@@ -1402,6 +1403,7 @@ public class Orden extends PBase {
     }
 
     private void exitBtn() {
+        gl.cerrarmesero=true;
         finish();
     }
 
@@ -1416,6 +1418,7 @@ public class Orden extends PBase {
             if (!divideComanda()) return;
             if (!generaArchivos()) return;
             ejecutaImpresion();
+            exitBtn();
         }
      }
 
@@ -2665,6 +2668,25 @@ public class Orden extends PBase {
     }
 
     private void msgAskCuentas(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgAskCuentas2("Está seguro");
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskCuentas2(String msg) {
 
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");

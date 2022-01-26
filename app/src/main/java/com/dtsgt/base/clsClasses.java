@@ -9,6 +9,7 @@ public class clsClasses {
         public int  codigo_producto;
         public long fecha;
         public double costo;
+        public int  codigo_proveedor;
     }
 
     public class clsD_factura {
@@ -868,6 +869,12 @@ public class clsClasses {
         public Boolean  activo;
     }
 
+    public class clsP_regla_costo {
+        public int  codigo_empresa;
+        public int  codigo_tipo;
+        public int  dias;
+    }
+
     public class clsP_ruta {
         public String codigo;
         public String sucursal;
@@ -1120,6 +1127,7 @@ public class clsClasses {
         public int  codigo_producto;
         public long fecha;
         public double costo;
+        public int  codigo_proveedor;
         public int  statcom;
     }
 

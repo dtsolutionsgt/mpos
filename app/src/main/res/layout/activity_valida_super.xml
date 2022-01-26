@@ -17,7 +17,7 @@
         android:layout_marginLeft="2dp"
         android:layout_marginTop="50dp"
         android:layout_marginRight="2dp"
-        android:background="#DBF5F3"
+        android:background="#FFFFFF"
         android:paddingBottom="1dp">
 
         <ListView

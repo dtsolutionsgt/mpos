@@ -57,6 +57,7 @@ import com.dtsgt.classes.clsP_prodprecioObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_proveedorObj;
+import com.dtsgt.classes.clsP_regla_costoObj;
 import com.dtsgt.classes.clsP_res_grupoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_salaObj;
@@ -141,6 +142,8 @@ import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPO;
 import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPOList;
 import com.dtsgt.classesws.clsBeP_PROVEEDOR;
 import com.dtsgt.classesws.clsBeP_PROVEEDORList;
+import com.dtsgt.classesws.clsBeP_REGLA_COSTO;
+import com.dtsgt.classesws.clsBeP_REGLA_COSTOList;
 import com.dtsgt.classesws.clsBeP_RES_GRUPO;
 import com.dtsgt.classesws.clsBeP_RES_GRUPOList;
 import com.dtsgt.classesws.clsBeP_RES_MESA;
@@ -455,6 +458,9 @@ public class WSRec extends PBase {
                         break;
                     case 50:
                         callMethod("GetP_PARAMEXT_RUTA","RUTA", gl.codigo_ruta);
+                        break;
+                    case 51:
+                        callMethod("GetP_REGLA_COSTO", "EMPRESA", gl.emp);
                         break;
 
                 }
@@ -801,6 +807,12 @@ public class WSRec extends PBase {
                     break;
                 case 50:
                     processParametrosExtraRuta();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(51);
+                case 51:
+                    processReglaCosto();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
@@ -3289,6 +3301,42 @@ public class WSRec extends PBase {
         }
     }
 
+    private void processReglaCosto() {
+
+        try {
+            clsP_regla_costoObj handler = new clsP_regla_costoObj(this, Con, db);
+            clsBeP_REGLA_COSTOList items = new clsBeP_REGLA_COSTOList();
+            clsBeP_REGLA_COSTO item = new clsBeP_REGLA_COSTO();
+            clsClasses.clsP_regla_costo var;
+
+            script.add("DELETE FROM P_REGLA_COSTO");
+
+            items = xobj.getresult(clsBeP_REGLA_COSTOList.class, "GetP_REGLA_COSTO");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_regla_costo();
+
+                var.codigo_empresa=item.CODIGO_EMPRESA;
+                var.codigo_tipo=item.CODIGO_TIPO;
+                var.dias=item.DIAS;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
 
     //endregion
 

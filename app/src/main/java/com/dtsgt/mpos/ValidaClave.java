@@ -71,6 +71,10 @@ public class ValidaClave extends PBase {
         }
     }
 
+    public void doExit(View view) {
+        finish();
+    }
+
     private void setHandlers() {
 
         try {

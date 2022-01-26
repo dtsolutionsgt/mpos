@@ -1,18 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#DBF5F3"
-        tools:context=".Orden">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Orden">
 
     <TextView
-            android:id="@+id/textView72"
-            android:layout_width="6dp"
-            android:layout_height="10dp"
-            android:layout_centerInParent="true"
-            android:text="TextView"
-            android:visibility="invisible" />
+        android:id="@+id/textView72"
+        android:layout_width="6dp"
+        android:layout_height="10dp"
+        android:layout_centerInParent="true"
+        android:text="TextView"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:id="@+id/relRoad"
@@ -370,35 +370,35 @@
 
     </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/relLock"
-            android:layout_width="100dp"
-            android:layout_height="94dp"
-            android:layout_alignParentTop="true"
+    <RelativeLayout
+        android:id="@+id/relLock"
+        android:layout_width="100dp"
+        android:layout_height="94dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="false"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/frame_rect"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imageView35"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="false"
-            android:layout_marginTop="60dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/frame_rect"
-            android:visibility="gone">
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="18dp"
+            android:clickable="true"
+            android:onClick="finishOrder"
+            android:padding="15dp"
+            android:src="@drawable/money2"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/imageView35"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="7dp"
-                android:layout_marginRight="2dp"
-                android:layout_marginBottom="18dp"
-                android:clickable="true"
-                android:onClick="finishOrder"
-                android:padding="15dp"
-                android:src="@drawable/money2"
-                android:visibility="gone" />
-
-        </RelativeLayout>
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/imageView100"

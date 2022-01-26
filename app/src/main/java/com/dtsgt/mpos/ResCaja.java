@@ -549,7 +549,7 @@ public class ResCaja extends PBase {
 
     private void showMenuMesaPendiente() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Preimpresion","Datos cliente","Pagar","Completar","Borrar"}; // cuenta
+        final String[] selitems = {"Precuenta","Datos cliente","Pagar","Completar","Borrar"}; // cuenta
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Mesa "+mesa+" , Cuenta #"+cuenta);
@@ -560,7 +560,7 @@ public class ResCaja extends PBase {
                     case 0:
                         if (ventaVacia()) {
                             crearVenta();
-                        } else msgbox("Antes de preimprimir la cuenta debe terminar la venta actual");
+                        } else msgbox("Antes de imprimir precuenta debe terminar la venta actual");
                         //msgAskPreimpresion("Imprimir la cuenta "+cuenta);
                         break;
                     case 1:

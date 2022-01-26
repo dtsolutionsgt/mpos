@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DBF5F3"
+    android:background="#FFFFFF"
     android:clickable="true"
     android:onClick="doFocus"
     tools:context=".Venta">
-
-
 
 
     <TextView
@@ -937,6 +935,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="0dp"
+                android:layout_marginTop="3dp"
                 android:layout_marginBottom="0dp"
                 android:numColumns="3" />
         </RelativeLayout>

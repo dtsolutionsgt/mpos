@@ -4,7 +4,7 @@
     android:id="@+id/rl_facturares"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DBF5F3"
+    android:background="#FFFFFF"
     tools:context=".FacturaRes">
 
     <ImageView
@@ -90,7 +90,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:gravity="center_horizontal"
-                android:text="Preimpresion"
+                android:text="Precuenta"
                 android:textSize="12sp" />
 
             <ImageView
@@ -192,7 +192,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="false"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/pic_card" />
+                android:src="@drawable/pay_card" />
 
             <TextView
                 android:id="@+id/textView167"
@@ -218,7 +218,7 @@
                 android:layout_marginBottom="10dp"
                 android:clickable="true"
                 android:onClick="delPay"
-                android:src="@drawable/delete_64" />
+                android:src="@drawable/borrar" />
         </RelativeLayout>
 
         <ImageView
@@ -232,7 +232,7 @@
             android:clickable="true"
             android:contentDescription="TODO"
             android:onClick="payCard"
-            android:src="@drawable/pay_card" />
+            android:src="@drawable/pago" />
 
         <ImageView
             android:id="@+id/imageView3"
@@ -244,7 +244,7 @@
             android:layout_marginBottom="40dp"
             android:clickable="true"
             android:onClick="payCred"
-            android:src="@drawable/pago"
+            android:src="@drawable/tarjeta"
             tools:ignore="OnClick" />
 
         <ImageView
@@ -1020,9 +1020,20 @@
         android:layout_marginStart="0dp"
         android:background="#FFFFFF">
 
+        <TextView
+            android:id="@+id/textView251"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:text="PAGO DE FACTURA"
+            android:textColor="#009eef"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/imageView5"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="2dp"

@@ -17,7 +17,7 @@
 
         <ImageView
             android:id="@+id/imgNext"
-            android:layout_width="wrap_content"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/lblCDisp"
             android:layout_centerHorizontal="true"
@@ -91,7 +91,7 @@
     <TextView
         android:id="@+id/textView127"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
+        android:layout_height="100dp"
         android:layout_alignParentEnd="false"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="false"
@@ -125,8 +125,11 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="1dp"
-            android:background="@layout/blue_strip">
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/blue_strip">
 
             <ImageView
                 android:id="@+id/imgPFoto"
@@ -168,7 +171,7 @@
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentTop="false"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
@@ -180,31 +183,35 @@
                 android:text="@string/c_dtsolutions_s_a"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#FFFFFF"
-                android:textSize="12sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_horizontal"
-                android:paddingTop="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="false"
+                android:gravity="center_vertical"
+                android:paddingEnd="10dp"
                 android:text="MPos ver. X.X  -  XX/XX/XXXX"
-                android:textColor="#000000"
-                android:textSize="12sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 
 
         <RelativeLayout
             android:id="@+id/relEnter"
-            android:layout_width="355dp"
-            android:layout_height="320dp"
+            android:layout_width="540dp"
+            android:layout_height="340dp"
             android:layout_above="@id/relbotpan"
+            android:layout_alignParentTop="false"
             android:layout_alignParentRight="false"
             android:layout_alignParentBottom="false"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="25dp">
 
             <RelativeLayout
                 android:id="@+id/rellaytot"
@@ -240,7 +247,7 @@
 
             <RelativeLayout
                 android:id="@+id/relKeyb"
-                android:layout_width="350dp"
+                android:layout_width="520dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
@@ -657,19 +664,24 @@
 
         </RelativeLayout>
 
-        <ListView
+        <GridView
             android:id="@+id/listView1"
-            android:layout_width="match_parent"
+            android:layout_width="320dp"
             android:layout_height="320dp"
             android:layout_above="@id/relbotpan"
             android:layout_alignParentStart="false"
+            android:layout_alignParentTop="true"
             android:layout_alignParentBottom="false"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="100dp"
             android:layout_marginBottom="0dp"
-            android:layout_toLeftOf="@id/relEnter">
+            android:gravity="bottom"
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll"
+            android:numColumns="1">
 
 
-        </ListView>
+        </GridView>
 
 
     </RelativeLayout>

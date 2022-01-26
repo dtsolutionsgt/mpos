@@ -29,7 +29,7 @@
             android:layout_marginEnd="279dp"
             android:layout_marginRight="2dp"
             android:layout_marginBottom="2dp"
-            android:background="#DBF5F3">
+            android:background="#FFFFFF">
 
             <ImageView
                 android:id="@+id/imgImg3"
@@ -68,7 +68,7 @@
             android:layout_marginEnd="7dp"
             android:layout_marginRight="2dp"
             android:layout_marginBottom="73dp"
-            android:background="#DBF5F3">
+            android:background="#FFFFFF">
 
             <ImageView
                 android:id="@+id/imageView27"

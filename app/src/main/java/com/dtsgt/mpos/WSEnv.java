@@ -33,6 +33,7 @@ import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_stockbofObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsT_costoObj;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -55,13 +56,12 @@ public class WSEnv extends PBase {
     private clsD_facturarObj D_facturarObj;
     private clsD_facturaprObj D_facturaprObj;
     private clsD_factura_felObj D_factura_felObj;
-    //private clsD_facturaObj D_factura_SC_Obj;
-
     private clsD_MovObj D_MovObj;
     private clsD_MovDObj D_MovDObj;
     private clsP_cajacierreObj P_cjCierreObj;
     private clsP_cajapagosObj P_cjPagosObj;
     private clsP_cajareporteObj P_cjReporteObj;
+    private clsT_costoObj T_costoObj;
 
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> rutas= new ArrayList<String>();
@@ -78,7 +78,7 @@ public class WSEnv extends PBase {
     private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
     private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend, cjAsist,fTotAnul,
-                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend,cjFelBita, cStockTot, cStockSend;
+                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend,cjFelBita, cStockTot, cStockSend, cCosto;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
     @Override
@@ -106,9 +106,9 @@ public class WSEnv extends PBase {
         D_facturacObj=new clsD_facturacObj(this,Con,db);
         D_facturaprObj=new clsD_facturaprObj(this,Con,db);
         D_factura_felObj=new clsD_factura_felObj(this,Con,db);
-
         D_MovObj=new clsD_MovObj(this,Con,db);
         D_MovDObj=new clsD_MovDObj(this,Con,db);
+        T_costoObj=new clsT_costoObj(this,Con,db);
 
         P_cjCierreObj = new clsP_cajacierreObj(this,Con,db);
         P_cjPagosObj = new clsP_cajapagosObj(this,Con,db);
@@ -205,6 +205,12 @@ public class WSEnv extends PBase {
                         //if (cjAsist>0)
                         if (!CSQL.isEmpty()) callMethod("Commit", "SQL", CSQL);
                         break;
+                    case 10:
+                        if (cCosto>0) {
+                            processCosto();
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();errorflag=true;
@@ -267,9 +273,12 @@ public class WSEnv extends PBase {
                     break;
                 case 9:
                     if (cjAsist>0) statusAsist();
+                    execws(10);
+                    break;
+                case 10:
+                    statusCosto();
                     processComplete();
                     break;
-
             }
 
         } catch (Exception e) {
@@ -1161,6 +1170,29 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processCosto() {
+
+        T_costoObj.fill("WHERE STATCOM=0");
+        clsClasses.clsT_costo item;
+        CSQL="";
+
+        for (int i = 0; i <T_costoObj.count; i++) {
+            item =T_costoObj.items.get(i);
+            CSQL=CSQL+addCostoItemSql(item) + ";";
+        }
+
+        String ss=CSQL;
+    }
+
+    private void statusCosto() {
+        try {
+            sql="UPDATE T_COSTO SET STATCOM=1 WHERE STATCOM=0";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Aux
@@ -1254,6 +1286,10 @@ public class WSEnv extends PBase {
             cjAsist=D_usuario_asistenciaObj.count;
             total_enviar+=cjAsist;
 
+            clsT_costoObj T_costoObj=new clsT_costoObj(this,Con,db);
+            T_costoObj.fill("WHERE (STATCOM=0)");
+            cCosto=T_costoObj.count;
+            total_enviar+=cCosto;
 
             if(total_enviar>0){
 
@@ -1307,6 +1343,23 @@ public class WSEnv extends PBase {
         ins.add("FECHA_TRANSACCION",fs);
         //ins.add("FECHA_PROCESADO",item.fecha_procesado);
         ins.add("PROCESADO",0);
+
+        return ins.sql();
+
+    }
+
+    public String addCostoItemSql(clsClasses.clsT_costo item) {
+
+        String fs=""+du.univfechalong(du.getActDateTime());
+
+        ins.init("D_costo");
+
+        ins.add("CODIGO_EMPRESA",gl.emp);
+        ins.add("CODIGO_SUCURSAL",gl.tienda);
+        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
+        ins.add("FECHA",fs);
+        ins.add("COSTO",item.costo);
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
 
         return ins.sql();
 

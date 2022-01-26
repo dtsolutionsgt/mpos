@@ -783,14 +783,31 @@ public class BaseDatosVersion {
                     "CODIGO_PRODUCTO INTEGER NOT NULL,"+
                     "FECHA INTEGER NOT NULL,"+
                     "COSTO REAL NOT NULL,"+
+                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
                     "STATCOM INTEGER NOT NULL,"+
                     "PRIMARY KEY ([COREL],[CODIGO_COSTO])"+
                     ");";
             db.execSQL(sql);
+
+            sql="CREATE INDEX T_costo_idx1 ON T_costo(CODIGO_PRODUCTO)";db.execSQL(sql);
+            sql="CREATE INDEX T_costo_idx2 ON T_costo(FECHA)";db.execSQL(sql);
+
         } catch (Exception e) {}
 
+        try {
+            sql="CREATE TABLE [P_regla_costo] ("+
+                    "CODIGO_EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_TIPO INTEGER NOT NULL,"+
+                    "DIAS INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_EMPRESA])"+
+                    ");";
+            db.execSQL(sql);
 
+        } catch (Exception e) {}
 
+        try {
+
+        } catch (Exception e) {}
 
         try {
 

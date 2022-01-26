@@ -78,7 +78,7 @@ public class ListAdaptGridFam extends BaseAdapter {
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
-        holder.imgEst.setImageResource(R.drawable.blank256);
+        holder.imgEst.setImageResource(R.drawable.blank_prod);
 
         try {
             String prodimg = imgpath+"familia/"+items.get(position).Cod+".png";
@@ -88,14 +88,14 @@ public class ListAdaptGridFam extends BaseAdapter {
                 holder.imgEst.setImageBitmap(bmImg);
             } else {
                 prodimg = imgpath+"familia/"+items.get(position).Cod+".jpg";
-                 file = new File(prodimg);
+                file = new File(prodimg);
                 if (file.exists()) {
                     Bitmap bmImg = BitmapFactory.decodeFile(prodimg);
-                    holder.imgEst.setImageBitmap(bmImg);
-                }
+                   holder.imgEst.setImageBitmap(bmImg);
+                } else holder.imgEst.setImageResource(R.drawable.blank_prod);
             }
         } catch (Exception e) {
-            holder.imgEst.setImageResource(R.drawable.blank256);
+            holder.imgEst.setImageResource(R.drawable.blank_prod);
         }
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
