@@ -27,6 +27,7 @@ import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
+import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 
 import org.apache.commons.io.FileUtils;
@@ -1695,6 +1696,23 @@ public class AppMethods {
             return D_facturaObj.count!=0;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    public int cuentaActivaPostpago(String corel) {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(cont,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+corel+"') AND (PERCEP=0) ORDER BY CUENTA DESC");
+            if (T_ordenObj.count>0) {
+                return T_ordenObj.first().cuenta;
+            }
+
+            agregarCuenta(corel);
+            int newcid=T_ordenObj.newID("SELECT MAX(cuenta) FROM T_orden WHERE (corel='"+corel+"')");
+
+            return newcid;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return 1;
         }
     }
 

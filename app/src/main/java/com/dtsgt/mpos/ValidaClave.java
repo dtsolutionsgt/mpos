@@ -72,6 +72,7 @@ public class ValidaClave extends PBase {
     }
 
     public void doExit(View view) {
+        gl.cierra_clave=true;
         finish();
     }
 

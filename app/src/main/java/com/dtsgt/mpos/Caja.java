@@ -103,16 +103,22 @@ public class Caja extends PBase {
 
         } else if(gl.cajaid==3) { // Cierre de Caja
 
-            clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
-            caja.fill(" WHERE ESTADO=0 ORDER BY COREL");
-            gl.fondoCaja = caja.last().fondocaja;
+            try {
+                clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
+                caja.fill(" WHERE ESTADO=0 ORDER BY COREL");
+                gl.fondoCaja = caja.last().fondocaja;
 
-            MontoIni.setEnabled(false);
-            MontoIni.setText(""+gl.fondoCaja);
+                MontoIni.setEnabled(false);
+                MontoIni.setText(""+gl.fondoCaja);
 
-            if (app.pendientesPago("")>0) msgbox("Existen facturas pendientes de pago");
+                if (app.pendientesPago("")>0) msgbox("Existen facturas pendientes de pago");
 
-            MontoFin.requestFocus();
+                MontoFin.requestFocus();
+            } catch (Exception e) {
+                String ss=e.getMessage();
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
         }
 
         validaPendiente();

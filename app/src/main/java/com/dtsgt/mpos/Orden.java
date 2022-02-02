@@ -69,7 +69,7 @@ public class Orden extends PBase {
     private GridView gridView,grdbtn,grdfam,grdprod;
     private TextView lblTot,lblTit,lblAlm,lblVend,lblCent;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
-    private ImageView imgroad;
+    private ImageView imgroad,imgrefr;
     private RelativeLayout relprod,relsep,relsep2;
 
     private ArrayList<clsClasses.clsOrden> items= new ArrayList<clsOrden>();
@@ -104,6 +104,8 @@ public class Orden extends PBase {
     private clsP_impresoraObj P_impresoraObj;
     private clsT_ordencomboprecioObj T_ordencomboprecioObj;
 
+    private WebService ws;
+
     private clsRepBuilder rep;
 
     private int browse;
@@ -117,7 +119,7 @@ public class Orden extends PBase {
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true,horiz;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum;
     private String idorden,cliid,saveprodid;
-    private int famid = -1;
+    private int famid = -1,statenv,estado_modo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +150,7 @@ public class Orden extends PBase {
         gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
         idorden=gl.idorden;
 
-        enviarorden=gl.meserodir;
+        enviarorden= gl.pelMeseroCaja;
 
         cliid=gl.cliente;
         decimal=false;
@@ -188,9 +190,12 @@ public class Orden extends PBase {
 
         listItems();
 
-        if (gl.nombre_mesero_sel.isEmpty()) {
-            gl.nombre_mesero_sel=gl.vendnom;
-        }
+        if (gl.nombre_mesero_sel.isEmpty()) gl.nombre_mesero_sel=gl.vendnom;
+
+        ws=new WebService(Orden.this,gl.wsurl);
+
+        actualizaEstadoOrden(0);
+
     }
 
     //region Events
@@ -250,7 +255,7 @@ public class Orden extends PBase {
                         if (items.get(position).estado==0) {
                             msgAskState("Agregar a la comanda",1,position);
                         } else {
-                            msgAskState("Quitar de la comanda",0,position);
+                            msgAskState("Marcar como preparado",0,position);
                         }
                     } catch (Exception e) {
                         msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -290,6 +295,8 @@ public class Orden extends PBase {
                             gl.menuitemid=item.emp;
                             browse=7;
                         }
+
+                        statenv=(int) item.percep;
 
                         if (item.estado==1) {
                             showItemPopMenu();
@@ -418,7 +425,7 @@ public class Orden extends PBase {
                 "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
                 "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
                 "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
-                "WHERE (COREL='"+idorden+"') ORDER BY T_ORDEN.ID ";
+                "WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<2) ORDER BY T_ORDEN.ID ";
 
             DT=Con.OpenDT(sql);
 
@@ -481,13 +488,13 @@ public class Orden extends PBase {
                         item.Total=tt;
                     }
 
-                    if (!cuentaPagada(idorden,item.cuenta)) {
+                    //if (!cuentaPagada(idorden,item.cuenta)) {
                         items.add(item);
 
                         tot+=tt;
                         ttimp+=item.imp;
                         ttperc+=item.percep;
-                    }
+                    //}
 
                     DT.moveToNext();ii++;
                 }
@@ -499,7 +506,7 @@ public class Orden extends PBase {
             mu.msgbox( e.getMessage());
         }
 
-        adapter=new ListAdaptOrden(this,this, items,horiz);
+        adapter=new ListAdaptOrden(this,this, items, horiz);
         adapter.cursym=gl.peMon;
         listView.setAdapter(adapter);
 
@@ -828,6 +835,9 @@ public class Orden extends PBase {
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
             cui=app.cuentaActiva(idorden);
+            if (existenCuentasPagadas()) {
+                cui=app.cuentaActivaPostpago(idorden);
+            }
 
             ins.init("T_ORDEN");
 
@@ -1129,7 +1139,15 @@ public class Orden extends PBase {
     }
 
     private void aplicarPago() {
+        if (!pendientesPago()) {
+            msgbox("No existe cuenta pendiente de pago.");return;
+        }
+
         try {
+
+            sql= "UPDATE T_orden SET PERCEP=1 WHERE (COREL='"+idorden+"') AND (PERCEP=0)" + ";";
+            db.execSQL(sql);
+
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
@@ -1149,7 +1167,7 @@ public class Orden extends PBase {
         }
     }
 
-    private void cerrarCuentas() {
+    private void cerrarCuentas(int modo) {
         try {
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
@@ -1161,7 +1179,12 @@ public class Orden extends PBase {
 
             envioMesa(-1);
 
-            finish();
+            if (modo>0) {
+                msgAskExit("La mesa fue pagada");
+            } else {
+                gl.cerrarmesero=true;finish();
+                if (modo==-9) toastcentlong("Todas las cuentas del orde has sido cerradas");
+             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1329,11 +1352,17 @@ public class Orden extends PBase {
             item.ID=66;item.Name="Comandas";item.Icon=66;
             mitems.add(item);
 
+            item = clsCls.new clsMenu();
+            item.ID = 73;
+            item.Name = "Precuenta";
+            item.Icon = 73;
+            mitems.add(item);
+
             if (gl.pelMeseroCaja) {
 
                 item = clsCls.new clsMenu();
                 item.ID = 3;
-                item.Name = "Precuenta";
+                item.Name = "Precuenta caja";
                 item.Icon = 68;
                 mitems.add(item);
 
@@ -1345,12 +1374,16 @@ public class Orden extends PBase {
             }
 
             item = clsCls.new clsMenu();
-            item.ID=2;item.Name="Completar";item.Icon=69;
+            item.ID=2;
+            item.Name="Completar";
+            item.Icon=69;
             mitems.add(item);
 
-            //item = clsCls.new clsMenu();
-            //item.ID=50;item.Name="Buscar";item.Icon=64;
-            //mitems.add(item);
+            item = clsCls.new clsMenu();
+            item.ID = 74;
+            item.Name = "Cerrar cuentas";
+            item.Icon = 74;
+            mitems.add(item);
 
             adaptergrid=new ListAdaptMenuOrden(this, mitems,horiz);
             gridView.setAdapter(adaptergrid);
@@ -1370,22 +1403,40 @@ public class Orden extends PBase {
 
             switch (menuid) {
                 case 1:
-                    msgAskOrden("Procesar pago");
-                    //aplicarPago();
-                    break;
-                case 2:
 
-                    if (!ventaVacia()) {
-                        if (!app.validaCompletarCuenta(idorden)) {
-                            msgbox("No se puede completar la mesa,\nexisten cuentas pendientes de pago.");return;
-                        }
+                    if (!pendientesPago()) {
+                        msgbox("No existe cuenta pendiente de pago.");return;
                     }
 
+                    if (pendienteImpresion()) {
+                        msgbox("Existen articulos pendientes de impresion, no se puede proceder con pago.");return;
+                    }
+
+                    if (enviarorden) {
+                        actualizaEstadoOrden(1);
+                    } else {
+                        msgAskOrden("Enviar solicitud de pago a la caja");
+                    }
+
+                    break;
+                case 2:
+                    if (pendientesPago()) {
+                        //if (!app.validaCompletarCuenta(idorden)) {
+                        msgbox("No se puede completar la mesa,\nexiste cuenta pendiente de pago.");return;
+                    }
                     msgAskCuentas("Completar la mesa");
                     break;
                 case 3:
-                    msgAskPrint("Imprimír precuenta");
-                    //aplicarPreimpresion();
+                    if (pendienteImpresion()) {
+                        msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
+                    } else {
+                        if (enviarorden) {
+                            actualizaEstadoOrden(2);
+                        } else {
+                            msgAskPrint("Imprimír precuenta");
+                        }
+                    }
+
                     break;
                 case 24:
                     exitBtn();break;
@@ -1394,7 +1445,15 @@ public class Orden extends PBase {
                     startActivity(new Intent(this, Producto.class));
                     break;
                 case 66:
+                    actualizaEstadoOrden(3);
                     msgAskComanda();
+                    break;
+                case 73:
+                    msgbox("En desarrollo . . .\nMientras use la opción Precuenta caja");
+                    break;
+                case 74:
+                    browse=11;
+                    startActivity(new Intent(Orden.this,ValidaSuper.class));
                     break;
             }
         } catch (Exception e) {
@@ -1771,6 +1830,107 @@ public class Orden extends PBase {
 
     //endregion
 
+    //region Estado
+
+    private void actualizaEstadoOrden(int modo) {
+        estado_modo=modo;
+        if (items.size()>0) {
+            try {
+                sql="SELECT ID,ESTADO FROM T_ORDEN WHERE (COREL='"+idorden+"')";
+                ws.openDT(sql);
+            } catch (Exception e) {
+                //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+        } else imgrefr.setVisibility(View.INVISIBLE);
+
+    }
+
+    @Override
+    protected void wsCallBack(Boolean throwing,String errmsg) {
+        imgrefr.setVisibility(View.INVISIBLE);
+        try {
+            super.wsCallBack(throwing, errmsg);
+
+            aplicaEstadoCaja();
+
+            switch (estado_modo) {
+                case 1:
+                    if (pendientesCuentas()) {
+                        msgbox("Existe cuenta pendiente de completar pago, por favor espere . . .");return;
+                    }
+                    msgAskOrden("Enviar solicitud de pago a la caja");break;
+                case 2:
+                    msgAskPrint("Imprimír precuenta");break;
+            }
+
+        } catch (Exception e) {
+            //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+    }
+
+    private void aplicaEstadoCaja() {
+        int iid,est;
+
+        if (ws.openDTCursor.getCount()==0) return;
+
+        try {
+            db.beginTransaction();
+
+            ws.openDTCursor.moveToFirst();
+            while (!ws.openDTCursor.isAfterLast()) {
+                iid=ws.openDTCursor.getInt(0);
+                est=ws.openDTCursor.getInt(1);
+
+                sql="UPDATE T_ORDEN SET ESTADO="+est+" WHERE (COREL='"+idorden+"') AND (EMPRESA="+iid+")";
+                db.execSQL(sql);
+
+                ws.openDTCursor.moveToNext();
+            }
+
+            listItems();
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            validaCompleto();
+        } catch (Exception e) {
+            db.endTransaction();
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void validaCompleto() {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"')");
+            int ti=T_ordenObj.count;
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=2)");
+            int tic=T_ordenObj.count;
+
+            if (ti==tic) cerrarCuentas(ti);
+
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private boolean pendientesPago() {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO<2)");
+            return T_ordenObj.count>0;
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void showItemMenu() {
@@ -1830,6 +1990,8 @@ public class Orden extends PBase {
             lblDir=(TextView) findViewById(R.id.lblDir);
 
             imgroad= (ImageView) findViewById(R.id.imgRoadTit);
+            imgrefr = findViewById(R.id.imageView119);
+            if (!gl.pelMeseroCaja) imgrefr.setVisibility(View.INVISIBLE);
 
             relprod=findViewById(R.id.relProd);
             relsep=findViewById(R.id.relSepar);
@@ -2312,6 +2474,16 @@ public class Orden extends PBase {
         }
     }
 
+    private Boolean cuentaPendientePago(String corr,int cue) {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+corr+"') AND (CUENTA="+cue+") AND (PERCEP=1) ORDER BY CUENTA DESC");
+            return T_ordenObj.count>0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
     public boolean pantallaHorizontal() {
         try {
             Point point = new Point();
@@ -2319,6 +2491,40 @@ public class Orden extends PBase {
             return point.x>point.y;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    private boolean pendienteImpresion() {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+            return T_ordenObj.count>0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
+    }
+
+    private boolean pendientesCuentas() {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO<2) AND (PERCEP=1)");
+            return T_ordenObj.count>0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean existenCuentasPagadas() {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (PERCEP=1)");
+            return T_ordenObj.count>0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
         }
     }
 
@@ -2330,21 +2536,21 @@ public class Orden extends PBase {
         try{
 
             ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg  + " ?");
-            dialog.setIcon(R.drawable.ic_quest);
+            dialog.setMessage(msg  );
 
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    /*
                     gl.cliposflag=true;
                     if (gl.dvbrowse!=0) gl.dvbrowse =0;
                     browse=0;
                     gl.forcedclose=true;
                     doExit();
-                }
-            });
+                    */
 
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
+                    gl.cerrarmesero=true;
+                    finish();
+                }
             });
 
             dialog.show();
@@ -2540,7 +2746,12 @@ public class Orden extends PBase {
                     case 2:
                         showMenuCuenta();break;
                     case 3:
-                        msgAskDel("Está seguro de borrar");break;
+                        if (statenv==1) {
+                            msgbox("El artículo es parte de una cuenta enviada a pagar, no se puede borrar");
+                        } else {
+                            msgAskDel("Está seguro de borrar");
+                        }
+                        break;
                     case 4:
                         if (selitem.Cant>1) {
                             msgAskDividir("Dividir articulo");
@@ -2578,9 +2789,14 @@ public class Orden extends PBase {
                     case 0:
                         showMenuCuenta();break;
                     case 1:
-                        //msgAskDel("Está seguro de borrar");
-                        browse=10;
-                        startActivity(new Intent(Orden.this,ValidaSuper.class));
+                        if (statenv==1) {
+                            msgbox("El artículo es parte de una cuenta enviada a pagar, no se puede borrar");
+                        } else {
+                            //msgAskDel("Está seguro de borrar");
+                            browse=10;
+                            startActivity(new Intent(Orden.this,ValidaSuper.class));
+                        }
+
                         break;
                     case 2:
                         if (selitem.Cant>1) {
@@ -2693,7 +2909,45 @@ public class Orden extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                cerrarCuentas();
+                cerrarCuentas(-1);
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgBorrarOrden(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgBorrarOrden2("Está seguro");
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgBorrarOrden2(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                cerrarCuentas(-9);
             }
         });
 
@@ -2795,7 +3049,8 @@ public class Orden extends PBase {
 
             T_ordencuentaObj.fill("WHERE (COREL='"+idorden+"') ORDER BY ID");
             for (int i = T_ordencuentaObj.count-1; i>=0; i--) {
-                if (cuentaPagada(idorden, T_ordencuentaObj.items.get(i).id)) {
+                if (cuentaPendientePago(idorden, T_ordencuentaObj.items.get(i).id)) {
+                    //if (cuentaPagada(idorden, T_ordencuentaObj.items.get(i).id)) {
                     T_ordencuentaObj.items.remove(i);
                 } else {
                     if (T_ordencuentaObj.items.get(i).id>maxcuenta) maxcuenta=T_ordencuentaObj.items.get(i).id;
@@ -2814,7 +3069,7 @@ public class Orden extends PBase {
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
-                    asignaCuenta(item+1);
+                    asignaCuenta(Integer.parseInt(selitems[item]));
 
                     dialog.cancel();
                 }
@@ -2976,6 +3231,11 @@ public class Orden extends PBase {
 
             if (browse==10) {
                 browse=0;if (gl.checksuper) delItem();
+                return;
+            }
+
+            if (browse==11) {
+                browse=0;if (gl.checksuper) msgBorrarOrden("Cerrar todas las cuentas del orden");
                 return;
             }
 

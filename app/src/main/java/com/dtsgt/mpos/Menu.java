@@ -290,8 +290,10 @@ public class Menu extends PBase {
 						gl.gNombreCliente ="Consumidor final";
 						gl.gNITCliente ="C.F.";gl.gDirCliente ="Ciudad";
                         gl.cliposflag=false;gl.rutatipo="V";gl.rutatipog="V";
+
 						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
-						gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
+
+                        gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
                         gl.preimpresion=false;
 
 						if (impresoraInstalada()) {
@@ -1562,16 +1564,14 @@ public class Menu extends PBase {
 	}
 
 	private boolean validaVenta() {
-
 		Cursor DT;
 		int ci,cf,ca1,ca2;
-		long fecha_vigencia, diferencia;
 		double dd;
-		boolean resguardo=false;
 
 		try {
 
-			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL ";
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+                "WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)";
 			DT=Con.OpenDT(sql);
 
 			DT.moveToFirst();
@@ -1579,49 +1579,51 @@ public class Menu extends PBase {
 			ca1=DT.getInt(1);
 			ci=DT.getInt(2);
 			cf=DT.getInt(3);
-			fecha_vigencia=DT.getLong(4);
-			resguardo=DT.getInt(5)==1;
-
-			if(resguardo==false){
-				if(fecha_vigencia< du.getActDate()){
-					//#HS_20181128_1556 Cambie el contenido del mensaje.
-					mu.msgbox("La resolución esta vencida. No se puede continuar con la venta.");
-					return false;
-				}
-			}
-
-			if(resguardo==false){
-				diferencia = fecha_vigencia - du.getActDate();
-				if( diferencia <= 30){
-					//#HS_20181128_1556 Cambie el contenido del mensaje.
-					mu.msgbox("La resolución vence en "+diferencia+". No se puede continuar con la venta.");
-					return false;
-				}
-			}
 
 			if (ca1>=cf) {
-				//#HS_20181128_1556 Cambie el contenido del mensaje.
 				mu.msgbox("Se han terminado los correlativos de facturas. No se puede continuar con la venta.");
 				return false;
 			}
 
 			dd=cf-ci;dd=0.75*dd;
 			ca2=ci+((int) dd);
-
-			if (ca1>ca2) {
-				//toastcent("Queda menos que 25% de talonario de facturas.");
-				//#HS_20181129_1040 agregue nuevo tipo de mensaje
-				porcentaje = true;
-			}
-
+			if (ca1>ca2) porcentaje = true;
 
             if (DT!=null) DT.close();
 
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n"); //+e.getMessage());
 			return false;
 		}
+
+
+        try {
+
+            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+                    "WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)";
+            DT=Con.OpenDT(sql);
+
+            DT.moveToFirst();
+
+            ca1=DT.getInt(1);
+            ci=DT.getInt(2);
+            cf=DT.getInt(3);
+
+            if (ca1>=cf) {
+                mu.msgbox("Se han terminado los correlativos de contingencias. No se puede continuar con la venta.");
+                return false;
+            }
+
+            dd=cf-ci;dd=0.75*dd;
+            ca2=ci+((int) dd);
+            if (ca1>ca2) porcentaje = true;
+
+            if (DT!=null) DT.close();
+
+        } catch (Exception e) {
+            mu.msgbox("No esta definido correlativo de contingencia. No se puede continuar con la venta.\n"); //+e.getMessage());
+            return false;
+        }
 
 		return true;
 	}

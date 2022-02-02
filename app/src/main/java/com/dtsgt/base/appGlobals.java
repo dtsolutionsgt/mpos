@@ -36,12 +36,12 @@ public class appGlobals extends Application {
                 comensales, cliente_dom, idclidir;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel, corelmov;
-	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir;
+	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,caja_est_pago;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
-                   impresion_comanda, modo_domicilio, cf_domicilio ;
+                   impresion_comanda, modo_domicilio, cf_domicilio,cierra_clave ;
 
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;

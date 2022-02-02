@@ -144,6 +144,17 @@
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
+        <ImageView
+            android:id="@+id/imageView119"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignEnd="@+id/lblTit4"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            android:padding="3dp"
+            android:src="@drawable/ws_refresh" />
+
     </RelativeLayout>
 
     <RelativeLayout

@@ -117,7 +117,7 @@ public class srvBaseJob extends JobService {
         int notificationId = createID();
         String channelId = "channel-id",channelName = "Channel Name";
 
-        if (pedidos==1) message="Nuevo requerimiento";else message=pedidos+" nuevos requerimientos";
+        if (pedidos==1) message="Nueva solicitud de cobro";else message=pedidos+" nuevas solicitudes de cobro";
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel mChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);

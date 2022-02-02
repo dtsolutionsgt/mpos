@@ -121,12 +121,14 @@ public class ListAdaptMenuOrden extends BaseAdapter {
         if (items.get(position).Icon==64) holder.imgEst.setImageResource(R.drawable.btn_lupa2);
         if (items.get(position).Icon==65) holder.imgEst.setImageResource(R.drawable.btn_caja1);
         if (items.get(position).Icon==66) holder.imgEst.setImageResource(R.drawable.comandas);
-        if (items.get(position).Icon==67) holder.imgEst.setImageResource(R.drawable.pago_caja);
-        if (items.get(position).Icon==68) holder.imgEst.setImageResource(R.drawable.preimpresion);
+        if (items.get(position).Icon==67) holder.imgEst.setImageResource(R.drawable.pago2);
+        if (items.get(position).Icon==68) holder.imgEst.setImageResource(R.drawable.pago_caja);
         if (items.get(position).Icon==69) holder.imgEst.setImageResource(R.drawable.btn_complete);
         if (items.get(position).Icon==70) holder.imgEst.setImageResource(R.drawable.cocina_msg);
         if (items.get(position).Icon==71) holder.imgEst.setImageResource(R.drawable.bot_desc);
         if (items.get(position).Icon==72) holder.imgEst.setImageResource(R.drawable.bot_desc_total);
+        if (items.get(position).Icon==73) holder.imgEst.setImageResource(R.drawable.preimpresion);
+        if (items.get(position).Icon==74) holder.imgEst.setImageResource(R.drawable.btn_del_all);
 
         if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 

@@ -94,6 +94,8 @@ public class ResCaja extends PBase {
 
         setHandlers();
         listItems();
+        gl.ventalock=false;
+
     }
 
     //region Events
@@ -170,6 +172,7 @@ public class ResCaja extends PBase {
 
     private void completeItem() {
         try {
+            //osql+=sql+";";
             sql="UPDATE P_RES_SESION SET ESTADO=-1,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'";
             db.execSQL(sql);
             if (gl.pelCajaRecep) enviaCompleto(sql);
@@ -211,6 +214,8 @@ public class ResCaja extends PBase {
                 oitem=T_ordenObj.items.get(i);
                 if (oitem.cuenta==cuenta) addItem();
             }
+
+            gl.caja_est_pago="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL='"+corel+"') AND (CUENTA="+cuenta+"))";
 
             cargaCliente();
 
@@ -427,14 +432,19 @@ public class ResCaja extends PBase {
     //region Aux
 
     private boolean ventaVacia() {
-        Cursor dt;
-
         try {
-            sql="SELECT * FROM T_VENTA";
-            dt=Con.OpenDT(sql);
-            if (dt.getCount()==0) return true;
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM T_VENTA");
+            db.execSQL("DELETE FROM T_COMBO");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            return true;
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            db.endTransaction();
+            msgbox(e.getMessage());
         }
 
         return false;
@@ -516,6 +526,7 @@ public class ResCaja extends PBase {
             return true;
         }
     }
+
     private void enviaCompleto(String csql) {
         try {
             Intent intent = new Intent(ResCaja.this, srvCommit.class);

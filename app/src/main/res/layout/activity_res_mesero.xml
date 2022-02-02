@@ -12,6 +12,14 @@
             android:layout_height="92dp"
             android:background="@drawable/frame_rect_blue">
 
+            <ImageView
+                android:id="@+id/imageView120"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/ws_refresh" />
+
             <RelativeLayout
                 android:id="@+id/rel00a"
                 android:layout_width="wrap_content"
@@ -93,9 +101,7 @@
                     android:id="@+id/imageView71a"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
                     android:layout_alignParentTop="false"
-                    android:layout_marginStart="0dp"
                     android:layout_marginTop="0dp"
                     android:layout_marginBottom="18dp"
                     android:adjustViewBounds="true"
@@ -189,7 +195,7 @@
         android:gravity="center_horizontal"
         android:text="Actualizar"
         android:textSize="10sp"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/imageView87"
@@ -204,7 +210,7 @@
         android:onClick="doRec"
         android:padding="10dp"
         android:src="@drawable/recibir_rapido"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/imageView96"

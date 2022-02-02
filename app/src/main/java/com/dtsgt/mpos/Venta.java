@@ -2193,7 +2193,7 @@ public class Venta extends PBase {
                     break;
                 case 63:
                     browse=12;
-                    gl.cerrarmesero=false;gl.modoclave=0;
+                    gl.cerrarmesero=false;gl.cierra_clave=false;gl.modoclave=0;
                     startActivity(new Intent(this,ValidaClave.class));
                     break;
                 case 65:
@@ -4020,6 +4020,7 @@ public class Venta extends PBase {
                 browse=0;
                 lblVend.setText(" ");
 
+                gl.numero_orden=" ";
                 gl.nivel=gl.nivel_sucursal;
                 setNivel();
                 numeroOrden();
@@ -4134,9 +4135,13 @@ public class Venta extends PBase {
             }
 
             if (browse==12) {
-                if (gl.cerrarmesero) browse=12;else browse=0;
-                gl.cerrarmesero=false;gl.modoclave=0;
-                startActivity(new Intent(this,ValidaClave.class));
+                if (gl.cierra_clave) {
+                    browse=0;gl.cierra_clave=false;
+                } else {
+                    if (gl.cerrarmesero) browse=12;else browse=0;
+                    gl.cerrarmesero=false;gl.modoclave=0;
+                    startActivity(new Intent(this,ValidaClave.class));
+                }
                 return;
             }
 

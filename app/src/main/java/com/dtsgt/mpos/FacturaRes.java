@@ -738,6 +738,13 @@ public class FacturaRes extends PBase {
 			if (!saveOrder()) return;
 		}
 
+		if (!gl.numero_orden.isEmpty()) {
+		    if (gl.numero_orden.length()>3) {
+		        enviaPago(gl.caja_est_pago);
+            }
+        }
+
+
         gl.cliposflag=false;
         gl.InvCompSend=false;
         gl.delivery =false;
@@ -3222,6 +3229,17 @@ public class FacturaRes extends PBase {
             return point.x>point.y;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    private void enviaPago(String csql) {
+        try {
+            Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",csql);
+            startService(intent);
+        } catch (Exception e) {
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

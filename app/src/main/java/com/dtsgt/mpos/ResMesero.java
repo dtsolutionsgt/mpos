@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
@@ -23,13 +25,19 @@ import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Res_mesa;
+import com.dtsgt.webservice.srvOrdenEnvio;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class ResMesero extends PBase {
 
     private GridView gridView;
     private TextView lblcuenta, lblgrupo,lblmes;
+    private ImageView imgwsref;
 
     private clsP_res_grupoObj P_res_grupoObj;
     private clsP_res_turnoObj P_res_turnoObj;
@@ -37,8 +45,11 @@ public class ResMesero extends PBase {
     private clsP_res_sesionObj P_res_sesionObj;
     private clsT_ordenObj T_ordenObj;
 
+    private WebService ws;
+
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
+    private ArrayList<String> corels = new ArrayList<String>();
 
     private LA_Res_mesa adapter;
 
@@ -60,6 +71,7 @@ public class ResMesero extends PBase {
         lblcuenta =findViewById(R.id.textView179a);
         lblgrupo =findViewById(R.id.textView179b);
         lblmes =findViewById(R.id.textView179b2);
+        imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
 
         calibraPantalla();
 
@@ -71,7 +83,10 @@ public class ResMesero extends PBase {
 
         setHandlers();
         cargaConfig();
+        gl.ventalock=false;
 
+        getURL();
+        ws=new WebService(ResMesero.this,gl.wsurl);
     }
 
     //region Events
@@ -85,11 +100,15 @@ public class ResMesero extends PBase {
     }
 
     public void doRec(View view) {
-        showQuickRecep();
+        procesaEstadoMesas();
     }
 
     public void doExit(View view) {
-        if (gl.meserodir) msgAskExit("Salir"); else finish();
+        if (gl.meserodir) {
+            msgAskExit("Salir");
+        } else {
+            gl.cerrarmesero=true;finish();
+        }
     }
 
     private void setHandlers() {
@@ -113,6 +132,8 @@ public class ResMesero extends PBase {
     private void listItems() {
         int idmesa;
 
+        corels.clear();
+
         try {
             mesas.clear();
             P_res_mesaObj.fill("WHERE CODIGO_GRUPO="+idgrupo);
@@ -129,6 +150,8 @@ public class ResMesero extends PBase {
                 P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
 
                 if (P_res_sesionObj.count>0) {
+                    corels.add(P_res_sesionObj.first().id);
+
                     mesa.estado=P_res_sesionObj.first().estado;
                     mesa.pers=P_res_sesionObj.first().cantp;
                     mesa.cuentas=P_res_sesionObj.first().cantc;
@@ -309,6 +332,141 @@ public class ResMesero extends PBase {
 
     //endregion
 
+    //region Estado
+
+    @Override
+    protected void wsCallBack(Boolean throwing,String errmsg) {
+        imgwsref.setVisibility(View.INVISIBLE);
+        try {
+            super.wsCallBack(throwing, errmsg);
+            aplicaEstados();
+        } catch (Exception e) {
+            //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+    }
+
+
+    private void procesaEstadoMesas() {
+        String ss=" IN (";
+
+        imgwsref.setVisibility(View.INVISIBLE);
+
+        try {
+            if (corels.size()==0) return;
+
+            imgwsref.setVisibility(View.VISIBLE);
+
+            for (int i = 0; i <corels.size(); i++) {
+                ss+="'"+corels.get(i)+"'";
+                if (i<corels.size()-1) ss+=",";else ss+=")";
+            }
+
+            sql="SELECT ID,COREL,ESTADO FROM T_ORDEN  WHERE COREL "+ss;
+            ws.openDT(sql);
+
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void aplicaEstados() {
+        int iid,est;
+        String cor;
+
+        if (ws.openDTCursor.getCount()==0) return;
+
+        try {
+            db.beginTransaction();
+
+            ws.openDTCursor.moveToFirst();
+
+            while (!ws.openDTCursor.isAfterLast()) {
+
+                iid=ws.openDTCursor.getInt(0);
+                cor=ws.openDTCursor.getString(1);
+                est=ws.openDTCursor.getInt(2);
+
+                sql="UPDATE T_ORDEN SET ESTADO="+est+" WHERE (COREL='"+cor+"') AND (EMPRESA="+iid+")";
+                db.execSQL(sql);
+
+                validaCompleto(cor);
+
+                ws.openDTCursor.moveToNext();
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void validaCompleto(String idorden) {
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"')");
+            int ti=T_ordenObj.count;
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=2)");
+            int tic=T_ordenObj.count;
+
+            if (ti==tic) {
+                cerrarCuentas(idorden);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cerrarCuentas(String idorden) {
+        try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+
+            sess.estado=-1;
+            sess.fechault=du.getActDateTime();
+            P_res_sesionObj.update(sess);
+
+            envioMesa(idorden);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void envioMesa(String idorden) {
+
+        estadoMesa(idorden,-1);
+        if (!gl.pelMeseroCaja) return;
+
+        String cmd = "UPDATE P_res_sesion SET Estado=-1 WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
+
+        Intent intent = new Intent(ResMesero.this, srvOrdenEnvio.class);
+        intent.putExtra("URL",gl.wsurl);
+        intent.putExtra("command",cmd);
+        startService(intent);
+    }
+
+    private void estadoMesa(String idorden,int est) {
+        try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            P_res_sesionObj.first().estado=est;
+            P_res_sesionObj.update(P_res_sesionObj.first());
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void cargaConfig() {
@@ -386,6 +544,26 @@ public class ResMesero extends PBase {
         } catch (Exception e) {
             return true;
         }
+    }
+
+    private void getURL() {
+        gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+        gl.timeout = 20000;
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
+            if (file1.exists()) {
+                FileInputStream fIn = new FileInputStream(file1);
+                BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
+                gl.wsurl = myReader.readLine();
+                String line = myReader.readLine();
+                if(line.isEmpty()) gl.timeout = 20000; else gl.timeout = Integer.valueOf(line);
+                myReader.close();
+            }
+        } catch (Exception e) {}
+
     }
 
     //endregion
@@ -561,7 +739,12 @@ public class ResMesero extends PBase {
             cantidadComensales();
         }
 
-        if (gl.cerrarmesero) finish();else listItems();
+        if (gl.cerrarmesero) {
+            finish();
+        } else {
+            listItems();
+            procesaEstadoMesas();
+        }
     }
 
     @Override
