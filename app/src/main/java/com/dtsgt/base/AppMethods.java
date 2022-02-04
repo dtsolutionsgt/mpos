@@ -987,7 +987,6 @@ public class AppMethods {
     }
 
     public String prodTipo(int cod) {
-
         Cursor DT;
         String result="";
 
@@ -1025,6 +1024,24 @@ public class AppMethods {
         }
 
         return result;
+
+    }
+
+    public int codigoCombo(int cod) {
+        Cursor DT;
+
+        try {
+
+            String sql = "SELECT CODIGO_MENU FROM P_PRODMENU WHERE CODIGO_PRODUCTO=" + cod;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            return DT.getInt(0);
+        } catch (Exception e) {
+            return 0;
+        }
+
+
 
     }
 

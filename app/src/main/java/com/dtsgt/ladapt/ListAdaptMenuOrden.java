@@ -129,6 +129,7 @@ public class ListAdaptMenuOrden extends BaseAdapter {
         if (items.get(position).Icon==72) holder.imgEst.setImageResource(R.drawable.bot_desc_total);
         if (items.get(position).Icon==73) holder.imgEst.setImageResource(R.drawable.preimpresion);
         if (items.get(position).Icon==74) holder.imgEst.setImageResource(R.drawable.btn_del_all);
+        if (items.get(position).Icon==75) holder.imgEst.setImageResource(R.drawable.cambio_impresora);
 
         if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 

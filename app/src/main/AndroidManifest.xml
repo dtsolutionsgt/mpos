@@ -6,7 +6,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.1.20">
+    android:versionName="4.1.21">
 
     <uses-feature
         android:name="android.hardware.camera"

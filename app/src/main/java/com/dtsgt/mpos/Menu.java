@@ -1506,7 +1506,7 @@ public class Menu extends PBase {
 
 	public boolean valida(){
 
-	    if (gl.rol==3 | gl.rol==4) return true;
+	    //if (gl.rol==3 | gl.rol==4) return true;
 
 		try {
 			clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
@@ -1596,33 +1596,36 @@ public class Menu extends PBase {
 			return false;
 		}
 
+		if (app.usaFEL()) {
 
-        try {
+            try {
 
-            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
-                    "WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)";
-            DT=Con.OpenDT(sql);
+                sql = "SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+                        "WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=1)";
+                DT = Con.OpenDT(sql);
 
-            DT.moveToFirst();
+                DT.moveToFirst();
 
-            ca1=DT.getInt(1);
-            ci=DT.getInt(2);
-            cf=DT.getInt(3);
+                ca1 = DT.getInt(1);
+                ci = DT.getInt(2);
+                cf = DT.getInt(3);
 
-            if (ca1>=cf) {
-                mu.msgbox("Se han terminado los correlativos de contingencias. No se puede continuar con la venta.");
+                if (ca1 >= cf) {
+                    mu.msgbox("Se han terminado los correlativos de contingencias. No se puede continuar con la venta.");
+                    return false;
+                }
+
+                dd = cf - ci;
+                dd = 0.75 * dd;
+                ca2 = ci + ((int) dd);
+                if (ca1 > ca2) porcentaje = true;
+
+                if (DT != null) DT.close();
+
+            } catch (Exception e) {
+                mu.msgbox("No esta definido correlativo de contingencia. No se puede continuar con la venta.\n"); //+e.getMessage());
                 return false;
             }
-
-            dd=cf-ci;dd=0.75*dd;
-            ca2=ci+((int) dd);
-            if (ca1>ca2) porcentaje = true;
-
-            if (DT!=null) DT.close();
-
-        } catch (Exception e) {
-            mu.msgbox("No esta definido correlativo de contingencia. No se puede continuar con la venta.\n"); //+e.getMessage());
-            return false;
         }
 
 		return true;

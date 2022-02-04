@@ -179,6 +179,10 @@ public class FacturaRes extends PBase {
             imgPreimp.setVisibility(View.INVISIBLE);lblPreimp.setVisibility(View.INVISIBLE);
         }
 
+        if (!gl.numero_orden.equalsIgnoreCase(" ")) {
+            imgPreimp.setVisibility(View.VISIBLE);lblPreimp.setVisibility(View.VISIBLE);
+        }
+
         imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
         if (gl.peRest) {
             imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);

@@ -41,7 +41,7 @@ public class appGlobals extends Application {
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
-                   impresion_comanda, modo_domicilio, cf_domicilio,cierra_clave ;
+                   impresion_comanda, modo_domicilio, cf_domicilio,cierra_clave, mesero_lista;
 
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;

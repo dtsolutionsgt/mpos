@@ -4140,7 +4140,7 @@ public class Venta extends PBase {
                 } else {
                     if (gl.cerrarmesero) browse=12;else browse=0;
                     gl.cerrarmesero=false;gl.modoclave=0;
-                    startActivity(new Intent(this,ValidaClave.class));
+                    if (gl.mesero_lista) startActivity(new Intent(this,ValidaClave.class));
                 }
                 return;
             }

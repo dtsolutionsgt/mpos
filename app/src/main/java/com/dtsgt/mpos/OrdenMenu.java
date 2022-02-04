@@ -81,10 +81,11 @@ public class OrdenMenu extends PBase {
         idorden=gl.idorden;
 
         precorig=gl.menuprecio;
-        precorig=prodPrecioItem(app.codigoProducto(gl.prodid));
+        int prodcode=app.codigoProducto(gl.prodid);
+        precorig=prodPrecioItem(prodcode);
+        idcomboval=app.codigoCombo(prodcode);
 
         lbl1.setText(gl.gstr2);
-        //lbl1.setText(gl.gstr+" [ "+mu.frmcur(precorig)+" ]");
         lbl2.setText(""+cant);
         lbl3.setText(mu.frmcur(gl.menuprecio));
 
@@ -97,7 +98,11 @@ public class OrdenMenu extends PBase {
             listItems();
         }
 
-        if (idcomboval==0) valido=false;else valido=app.validaCombo(idcomboval);
+        if (idcomboval==0) {
+            valido=false;
+        } else {
+            valido=app.validaCombo(idcomboval);
+        }
         if (!valido) {
             imgSave.setVisibility(View.INVISIBLE);
             listaInvalidos();
