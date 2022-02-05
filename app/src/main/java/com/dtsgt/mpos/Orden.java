@@ -1274,6 +1274,7 @@ public class Orden extends PBase {
 
     private void cerrarCuentas(int modo) {
         try {
+
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
@@ -1975,6 +1976,7 @@ public class Orden extends PBase {
        try {
 
            if (estado>1) {
+
                cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
                cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
                cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
@@ -1994,6 +1996,7 @@ public class Orden extends PBase {
                for (int i = 0; i < T_ordencuentaObj.count; i++) {
                    cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
                }
+
            } else {
                cmd += "UPDATE P_res_sesion SET Estado=-1 WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
            }

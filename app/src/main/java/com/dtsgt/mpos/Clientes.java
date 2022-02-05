@@ -540,6 +540,7 @@ public class Clientes extends PBase {
 
 
 		try {
+
 			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL ";
 			DT=Con.OpenDT(sql);
 

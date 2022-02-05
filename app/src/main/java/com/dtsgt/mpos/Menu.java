@@ -1731,7 +1731,7 @@ public class Menu extends PBase {
             try {
 
                 sql = "SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
-                        "WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=1)";
+                        "WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=1) AND ACTIVA = 1 ";
                 DT = Con.OpenDT(sql);
 
                 DT.moveToFirst();
