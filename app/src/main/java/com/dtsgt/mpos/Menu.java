@@ -17,10 +17,12 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.StatFs;
 import android.os.StrictMode;
+import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -58,14 +60,16 @@ public class Menu extends PBase {
 
 	private ListAdaptMenuGrid adaptergrid;
 	private ExDialog menudlg;
+
+    private clsP_cajacierreObj caja;
 	
 	private int selId,selIdx,menuid,iicon;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje;
 	private boolean listo=true;
-	private long contcorini,contcorult;
-	
-	private final int mRequestCode = 1001;
+	private long contcorini,contcorult,fhoy,fayer;
+
+    private final int mRequestCode = 1001;
 	private Exist Existencia = new Exist();
 
 	@Override
@@ -799,7 +803,7 @@ public class Menu extends PBase {
     public void showInvMenuUtils() {
         try{
             final AlertDialog Dialog;
-            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final", "Actualizar fechas erroneas"};
+            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final", "Actualizar fechas erroneas","Inicio de caja"};
 
             menudlg = new ExDialog (this);
 
@@ -829,6 +833,8 @@ public class Menu extends PBase {
                             msgAskCF();break;
 						case 9:
 							msgAskCorregirFechas();break;
+                        case 10:
+                            inicioDia();break;
                     }
 
                     dialog.cancel();
@@ -1098,6 +1104,130 @@ public class Menu extends PBase {
         }
 
         return false;
+    }
+
+    private void inicioDia() {
+
+        try {
+            fhoy=du.getActDate();
+            fayer=du.addDays(fhoy,-1);
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+            alert.setTitle("Monto inicial de caja");
+
+            final EditText input = new EditText(this);
+            alert.setView(input);
+
+            input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            input.setText("");
+            input.requestFocus();
+
+            alert.setPositiveButton("Caja de hoy", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    double monto;
+                    try {
+                        String s=input.getText().toString();
+                        monto=Double.parseDouble(s);
+                        if (monto<0) throw new Exception();
+                        msgAskValor(monto,fhoy);
+                    } catch (Exception e) {
+                        mu.msgbox("Monto incorrecto");return;
+                    }
+                }
+            });
+
+            alert.setNeutralButton("Caja de ayer", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    double monto;
+                    try {
+                        String s=input.getText().toString();
+                        monto=Double.parseDouble(s);
+                        if (monto<0) throw new Exception();
+                        msgAskValor(monto,fayer);
+                    } catch (Exception e) {
+                        mu.msgbox("Monto incorrecto");return;
+                    }
+                }
+            });
+
+            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {}
+            });
+
+            alert.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void msgAskValor(double monto,long ff) {
+
+        try {
+            caja = new clsP_cajacierreObj(this,Con,db);
+
+            caja.fill("WHERE (FECHA="+ff+")");
+            if (caja.count>0) {
+                msgbox("No se puede continuar, ya existe registo de caja para el dia "+du.sfecha(ff)+" !");return;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        try {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+            dialog.setTitle("Inicio de caja");
+            dialog.setMessage("¿Iniciar caja dia "+du.sfecha(ff)+"?");
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    procesaInicioCaja(monto,ff);
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void procesaInicioCaja(double monto,long ff) {
+        clsClasses.clsP_cajacierre itemC;
+
+        try {
+            caja.fill();
+            gl.corelZ = caja.last().corel + 1;
+
+            itemC = clsCls.new clsP_cajacierre();
+
+            itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
+
+            itemC.empresa=gl.emp;
+            itemC.sucursal =  gl.tienda;
+            itemC.ruta = gl.codigo_ruta;
+            itemC.corel = gl.corelZ;
+            itemC.vendedor =  gl.codigo_vendedor;
+            itemC.fondocaja = monto;
+            itemC.statcom = "N";
+            itemC.fecha = ff;
+            itemC.estado = 0;
+            itemC.codpago = 0;
+            itemC.montoini = 0;
+            itemC.montofin = 0;
+            itemC.montodif = 0;
+
+            caja.add(itemC);
+
+            msgbox("Inicio de caja correcto");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
 	//endregion

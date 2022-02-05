@@ -91,6 +91,7 @@ public class ValidaClave extends PBase {
                         adapter.setSelectedIndex(position);
                         gl.nombre_mesero_sel=selitem.Name;
                         usr = selitem.Cod;
+                        gl.idmesero=Integer.parseInt(selitem.Cod);
 
                         if (gl.modoclave==0) {
                             if (!gl.pelClaveMes) {

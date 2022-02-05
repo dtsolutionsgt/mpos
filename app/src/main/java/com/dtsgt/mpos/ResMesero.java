@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsP_mesero_grupoObj;
 import com.dtsgt.classes.clsP_res_grupoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
@@ -44,6 +45,7 @@ public class ResMesero extends PBase {
     private clsP_res_mesaObj P_res_mesaObj;
     private clsP_res_sesionObj P_res_sesionObj;
     private clsT_ordenObj T_ordenObj;
+    private clsP_mesero_grupoObj P_mesero_grupoObj;
 
     private WebService ws;
 
@@ -80,6 +82,7 @@ public class ResMesero extends PBase {
         P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
         P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
         T_ordenObj=new clsT_ordenObj(this,Con,db);
+        P_mesero_grupoObj=new clsP_mesero_grupoObj(this,Con,db);
 
         setHandlers();
         cargaConfig();
@@ -574,7 +577,9 @@ public class ResMesero extends PBase {
         final AlertDialog Dialog;
 
         try {
-            P_res_grupoObj.fill("ORDER BY Nombre");
+            sql="WHERE (CODIGO_GRUPO IN (SELECT CODIGO_GRUPO FROM P_mesero_grupo " +
+                    "WHERE (CODIGO_MESERO="+gl.idmesero+")) ) ORDER BY Nombre";
+            P_res_grupoObj.fill(sql);
 
             final String[] selitems = new String[P_res_grupoObj.count];
             for (int i = 0; i <P_res_grupoObj.count; i++) {
@@ -582,7 +587,7 @@ public class ResMesero extends PBase {
             }
 
             AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Area de mesas");
+            menudlg.setTitle("Grupos de mesas");
 
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
@@ -596,6 +601,98 @@ public class ResMesero extends PBase {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
+                }
+            });
+
+            menudlg.setPositiveButton("Configurar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    browse=2;
+                    startActivity(new Intent(ResMesero.this,ValidaSuper.class));
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void showGrupoChecks() {
+        final AlertDialog Dialog;
+
+        try {
+            P_res_grupoObj.fill("ORDER BY Nombre");
+
+            final String[] selitems = new String[P_res_grupoObj.count];
+            final boolean[] checked = new boolean[P_res_grupoObj.count];
+
+            for (int i = 0; i <P_res_grupoObj.count; i++) {
+                selitems[i]=P_res_grupoObj.items.get(i).nombre;
+                P_mesero_grupoObj.fill("WHERE (CODIGO_MESERO="+gl.idmesero+") AND (CODIGO_GRUPO="+P_res_grupoObj.items.get(i).codigo_grupo+")");
+                checked[i]=P_mesero_grupoObj.count>0;
+            }
+
+            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+
+            menudlg.setTitle("Grupos asignados");
+
+            menudlg.setMultiChoiceItems(selitems, checked ,
+                    new DialogInterface.OnMultiChoiceClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton, boolean isChecked) {
+                            if (isChecked) {
+                                checked[whichButton]=true;
+                            } else {
+                                checked[whichButton]=false;
+                            }
+                        }
+                    });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    clsClasses.clsP_mesero_grupo item;
+
+                    try {
+                        db.beginTransaction();
+
+                        db.execSQL("DELETE FROM P_mesero_grupo WHERE (CODIGO_MESERO="+gl.idmesero+")");
+
+                        for (int i = 0; i <P_res_grupoObj.count; i++) {
+                            if (checked[i]) {
+                                item = clsCls.new clsP_mesero_grupo();
+
+                                item.codigo_mesero=gl.idmesero;
+                                item.codigo_grupo=P_res_grupoObj.items.get(i).codigo_grupo;
+
+                                P_mesero_grupoObj.add(item);
+                            }
+                        }
+
+                        db.setTransactionSuccessful();
+                        db.endTransaction();
+
+                        dialog.cancel();
+
+                        db.execSQL("DELETE FROM P_res_turno WHERE vendedor="+gl.idmesero);
+
+                        gl.exitflag=true;
+                        gl.cliposflag=false;
+                        finish();
+                    } catch (Exception e) {
+                        db.endTransaction();
+                        msgbox(e.getMessage());
+                    }
                 }
             });
 
@@ -730,6 +827,7 @@ public class ResMesero extends PBase {
             P_res_mesaObj.reconnect(Con,db);
             P_res_sesionObj.reconnect(Con,db);
             T_ordenObj.reconnect(Con,db);
+            P_mesero_grupoObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
@@ -737,6 +835,12 @@ public class ResMesero extends PBase {
         if (browse==1) {
             browse=0;
             cantidadComensales();
+        }
+
+        if (browse==2) {
+            browse=0;
+            if (gl.checksuper) showGrupoChecks();
+            return;
         }
 
         if (gl.cerrarmesero) {

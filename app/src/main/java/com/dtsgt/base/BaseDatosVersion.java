@@ -806,6 +806,15 @@ public class BaseDatosVersion {
         } catch (Exception e) {}
 
         try {
+            sql="CREATE TABLE [P_mesero_grupo] ("+
+                    "CODIGO_MESERO INTEGER NOT NULL,"+
+                    "CODIGO_GRUPO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MESERO],[CODIGO_GRUPO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
 
         } catch (Exception e) {}
 

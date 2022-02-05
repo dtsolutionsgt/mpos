@@ -716,6 +716,11 @@ public class clsClasses {
 		public int activo;
 	}
 
+    public class clsP_mesero_grupo {
+        public int  codigo_mesero;
+        public int  codigo_grupo;
+    }
+
     public class clsP_moneda {
 		public int  codigo;
 		public String nombre;

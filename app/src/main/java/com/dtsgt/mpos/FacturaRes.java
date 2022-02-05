@@ -3599,7 +3599,7 @@ public class FacturaRes extends PBase {
 
             if (browse==5) {
                 browse=0;
-                valorDescuentoMonto();
+                if (gl.checksuper) valorDescuentoMonto();
                 return;
             }
 

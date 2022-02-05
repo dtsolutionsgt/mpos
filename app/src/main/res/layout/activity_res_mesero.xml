@@ -42,7 +42,7 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="2dp"
                     android:gravity="center_horizontal"
-                    android:text="Area"
+                    android:text="Grupo de mesas"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
 
@@ -68,6 +68,7 @@
                     android:textColor="#FFFFFF"
                     android:textSize="36sp"
                     android:textStyle="bold" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -103,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="false"
                     android:layout_marginTop="0dp"
-                    android:layout_marginBottom="18dp"
+                    android:layout_marginBottom="20dp"
                     android:adjustViewBounds="true"
                     android:paddingLeft="15dp"
                     android:paddingTop="15dp"
