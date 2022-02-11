@@ -99,7 +99,8 @@ public class clsDescLista {
 					DT.moveToNext();
 				}	
 			}
-			
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 	
 	    }

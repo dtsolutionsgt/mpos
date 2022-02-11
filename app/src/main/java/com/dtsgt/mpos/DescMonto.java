@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.dtsgt.classes.clsKeybHandler;
 
-public class Comensales extends PBase {
+public class DescMonto extends PBase {
 
     private TextView lbl1,lblKeyDP;
 
@@ -15,7 +15,7 @@ public class Comensales extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comensales);
+        setContentView(R.layout.activity_desc_monto);
 
         super.InitBase();
 
@@ -24,22 +24,25 @@ public class Comensales extends PBase {
 
         khand = new clsKeybHandler(this, lbl1, lblKeyDP);
         khand.enable();
-        khand.clear(false);
+        khand.clear(true);
 
-        gl.comensales=0;
+        gl.desc_monto=-1;
     }
+
 
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
             if (khand.val.isEmpty()) {
-                toast("Cantidad incorrecta");
+                toast("Monto incorrecto");
             } else {
                 if (khand.isValid) {
-                    gl.comensales=(int) khand.value;finish();
+                    gl.desc_monto= khand.value;
+                    finish();
                 }
             }
         }
     }
+
 
 }

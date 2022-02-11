@@ -226,6 +226,7 @@ public class Venta extends PBase {
             mtimer.postDelayed(mrunner,100);
         }
 
+        if (gl.ingreso_mesero) meseroAutoLogin();
     }
 
     //region Events
@@ -287,7 +288,9 @@ public class Venta extends PBase {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
             barcode=khand.getStringValue();
-            if (!barcode.isEmpty()) addBarcode();
+            if (!barcode.isEmpty()) {
+                addBarcode();
+            }
          }
     }
 
@@ -669,6 +672,10 @@ public class Venta extends PBase {
 
     private void processItem(boolean updateitem){
         boolean exists;
+
+        if (gl.rol==4) {
+            toast("El mesero no puede realizar venta en esta pantalla");return;
+        }
 
         try{
 
@@ -1386,6 +1393,7 @@ public class Venta extends PBase {
 
             gridViewOpciones.setEnabled(false);
 
+            gl.mesero_precuenta=false;
             Intent intent = new Intent(this,FacturaRes.class);
             startActivity(intent);
 
@@ -1395,7 +1403,6 @@ public class Venta extends PBase {
             }
         } catch (Exception e){
             gridViewOpciones.setEnabled(true);
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             mu.msgbox("finishOrder: "+e.getMessage());
         }
     }
@@ -1413,6 +1420,10 @@ public class Venta extends PBase {
 
     private void addBarcode() {
         gl.barra=barcode;
+
+        if (gl.rol==4) {
+            toast("El mesero no puede realizar venta en esta pantalla");return;
+        }
 
         if (barraProducto()) {
             txtBarra.setText("");return;
@@ -2060,7 +2071,7 @@ public class Venta extends PBase {
                 if (meseros && gl.peRest) {
                     item = clsCls.new clsMenu();
                     item.ID=63;item.Name="Mesero";item.Icon=63;
-                    mmitems.add(item);
+                    if (!gl.pelCajaRecep) mmitems.add(item);
                 }
 
                 if (pedidos) {
@@ -2145,12 +2156,18 @@ public class Venta extends PBase {
 
             switch (menuid) {
                 case 50:
+                    if (gl.rol==4) {
+                        toast("El mesero no puede realizar venta en esta pantalla");return;
+                    }
                     gl.gstr = "";
                     browse = 1;
                     gl.prodtipo = 1;
                     startActivity(new Intent(this, Producto.class));
                     break;
                 case 51:
+                    if (gl.rol==4) {
+                        toast("El mesero no puede realizar venta en esta pantalla");return;
+                    }
                     if (khand.isValid) {
                         barcode = khand.val;
                         addBarcode();
@@ -2192,9 +2209,15 @@ public class Venta extends PBase {
                     if (hasProducts()) inputMesa(); else toastcent("La órden está vacia");
                     break;
                 case 63:
-                    browse=12;
-                    gl.cerrarmesero=false;gl.cierra_clave=false;gl.modoclave=0;
-                    startActivity(new Intent(this,ValidaClave.class));
+                    if (gl.ingreso_mesero) {
+                        gl.cerrarmesero=false;
+                        meseroAutoLogin();
+                    } else {
+                        browse=12;
+                        gl.cerrarmesero=false;gl.cierra_clave=false;gl.modoclave=0;
+                        startActivity(new Intent(this,ValidaClave.class));
+                    }
+
                     break;
                 case 65:
                     browse=10;gl.modoclave=1;
@@ -3363,7 +3386,7 @@ public class Venta extends PBase {
     }
 
     private int cantStock(int prodid,String vum) {
-        Cursor dt;
+        Cursor dt=null;
 
         try {
 
@@ -3376,14 +3399,18 @@ public class Venta extends PBase {
                 int i=dt.getInt(0);
                 if (dt!=null) dt.close();
                 return i;
-            } return 0;
+            }
+            if (dt!=null) dt.close();
+            return 0;
         } catch (Exception e) {
             return 0;
+        } finally {
+            if (dt!=null) dt.close();
         }
     }
 
     private int cantProdCombo(int prodid) {
-        Cursor dt;
+        Cursor dt=null;
 
         try {
             sql="SELECT SUM(CANT*UNID) FROM T_COMBO WHERE (IDSELECCION="+prodid+")";
@@ -3395,9 +3422,13 @@ public class Venta extends PBase {
                 int i=dt.getInt(0);
                 if (dt!=null) dt.close();
                 return i;
-            } return 0;
+            }
+            if (dt!=null) dt.close();
+            return 0;
         } catch (Exception e) {
             return 0;
+        } finally {
+            if (dt!=null) dt.close();
         }
     }
 
@@ -3742,6 +3773,12 @@ public class Venta extends PBase {
         } catch (Exception e) {
             return true;
         }
+    }
+
+    private void meseroAutoLogin() {
+        gl.idmesero=gl.codigo_vendedor;
+        gl.meserodir=false;
+        startActivity(new Intent(Venta.this,ResMesero.class));
     }
 
     //endregion
@@ -4130,7 +4167,10 @@ public class Venta extends PBase {
 
             if (browse==11) {
                 browse=0;
-                if (gl.checksuper) valorDescuentoMonto();
+                if (gl.checksuper) {
+                    browse=13;
+                    startActivity(new Intent(this,DescMonto.class));
+                }
                 return;
             }
 
@@ -4141,6 +4181,15 @@ public class Venta extends PBase {
                     if (gl.cerrarmesero) browse=12;else browse=0;
                     gl.cerrarmesero=false;gl.modoclave=0;
                     if (gl.mesero_lista) startActivity(new Intent(this,ValidaClave.class));
+                }
+                return;
+            }
+
+            if (browse==13) {
+                browse=0;
+                if (gl.desc_monto>=0) {
+                    gl.promdesc=gl.desc_monto;
+                    updDescMonto();
                 }
                 return;
             }

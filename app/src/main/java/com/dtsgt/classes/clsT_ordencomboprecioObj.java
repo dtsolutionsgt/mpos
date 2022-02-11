@@ -112,7 +112,6 @@ public class clsT_ordencomboprecioObj {
     }
 
     private void fillItems(String sq) {
-
         Cursor dt;
         clsClasses.clsT_ordencomboprecio item;
 

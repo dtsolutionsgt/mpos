@@ -27,7 +27,9 @@ import com.dtsgt.base.clsClasses.clsOrden;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
+import com.dtsgt.classes.clsBonifGlob;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsP_impresoraObj;
@@ -66,7 +68,7 @@ public class Orden extends PBase {
 
     private ListView listView;
     private GridView gridView,grdbtn,grdfam,grdprod;
-    private TextView lblTot,lblTit,lblAlm,lblVend,lblCent;
+    private TextView lblTot,lblCant,lblTit,lblAlm,lblVend,lblCent;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
     private ImageView imgroad,imgrefr;
     private RelativeLayout relprod,relsep,relsep2;
@@ -436,6 +438,14 @@ public class Orden extends PBase {
 
             DT=Con.OpenDT(sql);
 
+            try {
+                lblCant.setText("Articulos : "+DT.getCount());
+            } catch (Exception e) {
+                lblCant.setText("Articulos : -");
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+
             if (DT.getCount()>0) {
 
                 DT.moveToFirst();
@@ -454,12 +464,18 @@ public class Orden extends PBase {
                     item.sdesc=mu.frmdec(item.Prec);
                     item.imp=DT.getDouble(6);
                     item.percep=DT.getDouble(7);
+
+                    /*
                     if (prodPorPeso(item.Cod)) 	{
                         item.um=DT.getString(10);
                     } else {
                         //item.um=DT.getString(8);
                         item.um=app.umVenta(item.Cod);
                     }
+                    */
+
+                    item.um=DT.getString(8);
+
                     item.Peso=DT.getDouble(9);
                     item.emp=DT.getString(12);
                     if (item.emp.equalsIgnoreCase(uid)) {
@@ -494,6 +510,7 @@ public class Orden extends PBase {
                         tt=item.icant*item.Prec;tt=mu.round2(tt);
                         item.Total=tt;
                     }
+                    T_ordencomboprecioObj.items.clear();
 
                     //if (!cuentaPagada(idorden,item.cuenta)) {
                         items.add(item);
@@ -1009,17 +1026,20 @@ public class Orden extends PBase {
     }
 
     private boolean addItemVenta(){
-
-        clsClasses.clsT_venta venta;
+        clsClasses.clsT_venta venta,ventau=null;
         clsClasses.clsT_combo combo;
         clsClasses.clsT_ordencombo citem;
+
         double tt;
+        int itemid;
 
         try {
 
+            itemid=T_ventaObj.newID("SELECT MAX(EMPRESA) FROM T_VENTA");
+
             venta=clsCls.new clsT_venta();
             venta.producto=oitem.producto;
-            venta.empresa=oitem.empresa;
+            venta.empresa=""+itemid;
             venta.um=oitem.um;
             venta.cant=oitem.cant;
             venta.umstock=oitem.umstock;
@@ -1051,10 +1071,26 @@ public class Orden extends PBase {
             Cursor dt;
             double prodtot=0;
 
-
-
-
             try {
+
+                //#jp20220209
+                T_ventaObj.fill("WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')");
+                if (T_ventaObj.count>0) ventau=T_ventaObj.first();
+
+                if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
+                    T_ventaObj.add(venta);
+                } else {
+                    if (T_ventaObj.count==0) {
+                        T_ventaObj.add(venta);
+                    } else {
+                        ventau.cant+= oitem.cant;
+                        ventau.total = ventau.total+mu.round(oitem.total,2);
+                        T_ventaObj.update(ventau);
+                    }
+                }
+
+
+                /*
                 String vsql="SELECT CANT FROM T_venta WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')";
                 dt=Con.OpenDT(vsql);
 
@@ -1074,6 +1110,7 @@ public class Orden extends PBase {
                         }
                     }
                 };
+                */
 
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1338,7 +1375,13 @@ public class Orden extends PBase {
         }
     }
 
+
+    //endregion
+
+    //region Precuenta
+
     private void crearVenta() {
+        int prdcnt=0;
 
         try {
             db.beginTransaction();
@@ -1367,8 +1410,12 @@ public class Orden extends PBase {
             for (int i = 0; i <T_ordenObj.count; i++) {
                 oitem=T_ordenObj.items.get(i);
                 if (oitem.cuenta==cuenta) {
-                    addItemVenta();
+                    addItemVenta();prdcnt++;
                 }
+            }
+
+            if (prdcnt==0) {
+                msgbox("No se puede continuar, la cuenta no contiene ninun articulo");return;
             }
 
             gl.caja_est_pago="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL='"+idorden+"') AND (CUENTA="+cuenta+"))";
@@ -1378,10 +1425,58 @@ public class Orden extends PBase {
             gl.ventalock=true;
             gl.cerrarmesero=true;
             gl.mesero_lista=false;
-            finish();
+
+            gl.mesero_precuenta=true;
+            finalizarOrden();
+            //finish();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void finalizarOrden(){
+
+        try{
+            clsBonifGlob clsBonG;
+            clsDeGlob clsDeG;
+            String s,ss;
+
+            try{
+                gl.delivery = false;
+                gl.EsNivelPrecioDelivery = (gl.delivery || gl.pickup);
+            } catch (Exception e){
+                mu.msgbox("finishOrder: "+e.getMessage());
+            }
+
+            gl.gstr="";
+            browse=1;
+
+            gl.bonprodid="*";
+            gl.bonus.clear();
+            gl.descglob=0;
+            gl.descgtotal=0;
+
+            clsDeG=new clsDeGlob(this,tot);ss="";
+
+            if (!app.usaFEL()) {
+                if (clsDeG.tieneDesc()) {
+                    gl.descglob=clsDeG.valor;
+                    gl.descgtotal=clsDeG.vmonto;
+                }
+            }
+
+            // Bonificacion
+            gl.bonprodid="*";
+            gl.bonus.clear();
+            gl.brw=0;
+
+            Intent intent = new Intent(this,FacturaRes.class);
+            startActivity(intent);
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            mu.msgbox("finishOrder: "+e.getMessage());
         }
     }
 
@@ -1532,11 +1627,13 @@ public class Orden extends PBase {
                 mitems.add(item);
             }
 
+            /*
             item = clsCls.new clsMenu();
             item.ID=2;
             item.Name="Completar";
             item.Icon=69;
             mitems.add(item);
+            */
 
             if (gl.peImpOrdCos) {
                if (!gl.pelComandaBT) {
@@ -1550,7 +1647,7 @@ public class Orden extends PBase {
 
             item = clsCls.new clsMenu();
             item.ID = 74;
-            item.Name = "Cerrar cuentas";
+            item.Name = "Borrar cuentas";
             item.Icon = 74;
             mitems.add(item);
 
@@ -2172,6 +2269,7 @@ public class Orden extends PBase {
             grdbtn = (GridView) findViewById(R.id.grdbtn);
 
             lblTot= (TextView) findViewById(R.id.lblTot);
+            lblCant= (TextView) findViewById(R.id.textView252);
             lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
             lblStot= (TextView) findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
             lblTit= (TextView) findViewById(R.id.lblTit);
@@ -2399,7 +2497,7 @@ public class Orden extends PBase {
     }
 
     private int cantStock(int prodid,String vum) {
-        Cursor dt;
+        Cursor dt=null;
 
         try {
 
@@ -2415,11 +2513,13 @@ public class Orden extends PBase {
             } return 0;
         } catch (Exception e) {
             return 0;
+        } finally {
+            if (dt!=null) dt.close();
         }
     }
 
     private int cantProdCombo(int prodid) {
-        Cursor dt;
+        Cursor dt=null;
 
         try {
             sql="SELECT SUM(CANT*UNID) FROM T_COMBO WHERE (IDSELECCION="+prodid+")";
@@ -2431,9 +2531,14 @@ public class Orden extends PBase {
                 int i=dt.getInt(0);
                 if (dt!=null) dt.close();
                 return i;
-            } return 0;
+            }
+            if (dt!=null) dt.close();
+            return 0;
+
         } catch (Exception e) {
             return 0;
+        } finally {
+            if (dt!=null) dt.close();
         }
     }
 
@@ -3329,15 +3434,19 @@ public class Orden extends PBase {
         try {
 
             T_ordencuentaObj.fill("WHERE (COREL='"+idorden+"') ORDER BY ID");
-            for (int i = T_ordencuentaObj.count-1; i>=0; i--) {
-                if (cuentaPendientePago(idorden, T_ordencuentaObj.items.get(i).id)) {
-                    T_ordencuentaObj.items.remove(i);
+            if (T_ordencuentaObj.count>0) {
+                for (int i = T_ordencuentaObj.count - 1; i >= 0; i--) {
+                    if (cuentaPendientePago(idorden, T_ordencuentaObj.items.get(i).id)) {
+                        T_ordencuentaObj.items.remove(i);
+                    }
                 }
             }
 
             if (T_ordencuentaObj.count==1) {
                 cuenta=T_ordencuentaObj.first().id;
-                msgAskPrecuentaImpresion("Imprimir precuenta");
+                gl.nocuenta_precuenta=""+cuenta;
+                crearVenta();
+                //msgAskPrecuentaImpresion("Imprimir precuenta");
                 return;
             }
 
@@ -3354,7 +3463,9 @@ public class Orden extends PBase {
             menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int item) {
                     cuenta=Integer.parseInt(selitems[item]);
-                    msgAskPrecuentaImpresion("Imprimir precuenta");
+                    gl.nocuenta_precuenta=""+cuenta;
+                    crearVenta();
+                    //msgAskPrecuentaImpresion("Imprimir precuenta");
                     dialog.cancel();
                 }
             });

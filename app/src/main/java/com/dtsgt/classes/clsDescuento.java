@@ -163,8 +163,9 @@ public class clsDescuento {
 				}
 				
 				DT.moveToNext();
-			}	
-			
+			}
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 		   	MU.msgbox(e.getMessage());
 	    }
@@ -223,8 +224,9 @@ public class clsDescuento {
 				}
 				
 				DT.moveToNext();
-			}	
-			
+			}
+
+            if (DT!=null) DT.close();
 		} catch (Exception e) {
 		   	MU.msgbox(e.getMessage());
 	    }

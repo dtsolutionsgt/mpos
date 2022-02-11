@@ -184,7 +184,7 @@ public class ResCaja extends PBase {
 
     private void hideItem() {
         try {
-            db.execSQL("UPDATE P_RES_SESION SET ESTADO=1,FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'");
+            db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1,FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'");
             listItems();
         } catch (Exception e) {
             msgbox(e.getMessage());
@@ -292,6 +292,8 @@ public class ResCaja extends PBase {
                         }
                     }
                 };
+
+                if (dt!=null) dt.close();
 
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -560,7 +562,7 @@ public class ResCaja extends PBase {
 
     private void showMenuMesaPendiente() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Precuenta","Datos cliente","Pagar","Completar","Borrar"}; // cuenta
+        final String[] selitems = {"Precuenta","Datos cliente","Pagar","Borrar"}; // cuenta
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Mesa "+mesa+" , Cuenta #"+cuenta);
@@ -589,9 +591,9 @@ public class ResCaja extends PBase {
                         //msgAskPago("Pagar la cuenta "+cuenta);
                         break;
                     case 3:
-                        msgAskCompletar("Completar la mesa "+mesa);break;
-                    case 4:
-                        msgAskBorrar("Borrar la mesa "+mesa);break;
+                        browse=1;
+                        startActivity(new Intent(ResCaja.this,ValidaSuper.class));
+                        break;
                 }
 
                 dialog.cancel();
@@ -775,6 +777,12 @@ public class ResCaja extends PBase {
 
         } catch (Exception e) {
             msgbox(e.getMessage());
+        }
+
+        if (browse==1) {
+            browse=0;
+            if (gl.checksuper) msgAskBorrar("Borrar todas las cuentas de la mesa "+mesa);
+            return;
         }
     }
 

@@ -1,6 +1,7 @@
 package com.dtsgt.base;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -964,8 +965,9 @@ public class AppMethods {
 
 			umm=DT.getString(0);
 
-			return  umm.equalsIgnoreCase(gl.umpeso);
+            if (DT!=null) DT.close();
 
+			return  umm.equalsIgnoreCase(gl.umpeso);
         } catch (Exception e) {
             return false;
         }
@@ -1170,16 +1172,14 @@ public class AppMethods {
 			DT = Con.OpenDT(sql);
 
 			if (DT != null){
-
-				if(DT.getCount()>0){
-
+				if (DT.getCount()>0){
 					DT.moveToFirst();
-
 					umm=DT.getString(0);
 				}
-
 				DT.close();
 			}
+
+            if (DT!=null) DT.close();
 
 			return  umm;
 		} catch (Exception e) {
@@ -1198,6 +1198,9 @@ public class AppMethods {
             DT.moveToFirst();
 
             umm=DT.getString(0);
+
+            if (DT!=null) DT.close();
+
             return  umm;
         } catch (Exception e) {
             //toast(e.getMessage());
@@ -1215,6 +1218,9 @@ public class AppMethods {
             DT.moveToFirst();
 
             umm=DT.getString(0);
+
+             if (DT!=null) DT.close();
+
             return  umm;
         } catch (Exception e) {
             //toast(e.getMessage());
@@ -1232,6 +1238,9 @@ public class AppMethods {
             DT.moveToFirst();
 
             umm=DT.getString(0);
+
+            if (DT!=null) DT.close();
+
             return  umm;
         } catch (Exception e) {
             //toast(e.getMessage());
@@ -1240,7 +1249,7 @@ public class AppMethods {
     }
 
     public String umStock(String cod) {
-		Cursor DT;
+		Cursor DT=null;
 		String umm,sql;
 
 		try {
@@ -1258,7 +1267,7 @@ public class AppMethods {
 	}
 
     public int codigoProducto(String cod) {
-        Cursor DT;
+        Cursor DT=null;
         int umm;
 
         try {
@@ -1267,10 +1276,14 @@ public class AppMethods {
             DT.moveToFirst();
 
             umm=DT.getInt(0);
+
+            if (DT!=null) DT.close();
             return  umm;
         } catch (Exception e) {
             //toast(e.getMessage());
             return 0;
+        } finally {
+            if (DT!=null) DT.close();
         }
     }
 
@@ -1395,7 +1408,9 @@ public class AppMethods {
         }
 
         if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
-            printEpsonTMBT(copies);
+            if (estadoBluTooth()) {
+                printEpsonTMBT(copies);
+            } else return;
         }
 
         if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
@@ -1406,6 +1421,27 @@ public class AppMethods {
             printAclas(copies);
         }
 
+    }
+
+    private boolean estadoBluTooth() {
+        final int REQUEST_ENABLE_BT = 1;
+        try {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (bluetoothAdapter == null) {
+                toastlong("El dispositivo no soporta Bluetooth");return false;
+            } else {
+                if (bluetoothAdapter.isEnabled()) {
+                    return true;
+                } else {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    Activity activity = (Activity) cont;
+                    activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
     }
 
 	private boolean rename(File from, File to) {

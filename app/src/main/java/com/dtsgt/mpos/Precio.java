@@ -341,7 +341,9 @@ public class Precio {
 					im3=0;
 				}	
 				
-			}			
+			}
+
+            if (DT!=null) DT.close();
 
 			imv=im1+im2+im3;
 			

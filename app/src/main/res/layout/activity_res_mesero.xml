@@ -205,7 +205,7 @@
         android:layout_alignTop="@+id/gridView1"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="false"
-        android:layout_marginTop="125dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="0dp"
         android:clickable="true"
         android:onClick="doRec"
@@ -249,13 +249,14 @@
         android:layout_alignTop="@+id/gridView1"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="155dp"
         android:layout_marginEnd="0dp"
         android:adjustViewBounds="true"
         android:clickable="true"
         android:onClick="doComp"
         android:padding="10dp"
-        android:src="@drawable/btn_complete" />
+        android:src="@drawable/btn_complete"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textView221"
@@ -269,5 +270,6 @@
         android:layout_marginEnd="0dp"
         android:gravity="center_horizontal"
         android:text="Completos"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:visibility="invisible" />
 </RelativeLayout>

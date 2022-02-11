@@ -6,7 +6,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.1.23">
+    android:versionName="4.2.0">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -653,6 +653,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".DescMonto"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
             android:name=".ValidaClave"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -667,7 +671,14 @@
         <activity
             android:name=".CliDirDom"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysVisible" /> <!-- [START firebase_service] -->
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
+            android:name=".DescMonto"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+
+        <!-- [START firebase_service] -->
         <service
             android:name="com.dtsgt.firebase.MyFirebaseMessagingService"
             android:exported="false">

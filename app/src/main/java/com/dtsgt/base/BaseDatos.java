@@ -85,20 +85,17 @@ public class BaseDatos extends SQLiteOpenHelper {
         String vError="";
 
 		  try {
-
-		  	  if (!vDatabase.isOpen()){
-				  vDatabase = getWritableDatabase();
-			  }
+		  	  if (!vDatabase.isOpen()) vDatabase = getWritableDatabase();
 
 			  vCursor = vDatabase.rawQuery(pSQL, null);
 			  if (vCursor != null){
 				  vCursor.moveToLast();
-			  }else{
+			  } else {
 			  	throw new Exception("No se obtuvo el registro " + pSQL);
 			  }
 
 		  } catch(Exception ex){
-		  	 msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
+		  	 msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage()+" : "+ pSQL);
 			  vError = ex.getMessage();
 		  }
 

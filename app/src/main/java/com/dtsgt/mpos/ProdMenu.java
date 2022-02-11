@@ -782,7 +782,7 @@ public class ProdMenu extends PBase {
     }
 
     private int cantStock(int prodid) {
-        Cursor dt;
+        Cursor dt=null;
 
         try {
             P_productoObj.fill("WHERE CODIGO_PRODUCTO="+prodid);
@@ -792,10 +792,17 @@ public class ProdMenu extends PBase {
 
             if (dt.getCount()>0) {
                 dt.moveToFirst();
-                return dt.getInt(0);
-            } return 0;
+                int val=dt.getInt(0);
+                if (dt!=null) dt.close();
+                return val;
+            }
+
+            if (dt!=null) dt.close();
+            return 0;
         } catch (Exception e) {
             return 0;
+        } finally {
+            if (dt!=null) dt.close();
         }
     }
 

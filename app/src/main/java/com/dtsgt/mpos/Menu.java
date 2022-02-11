@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -119,6 +120,9 @@ public class Menu extends PBase {
 
 			cajaCerrada();
 
+            gl.ingreso_mesero=gl.rol==4;
+            if (gl.ingreso_mesero && gl.after_login) autoLoginMesero();
+
 		} catch (Exception e) {
 			msgbox(e.getMessage());
 		}
@@ -159,8 +163,8 @@ public class Menu extends PBase {
             if (gl.modoinicial) {
 
                 addMenuItem(11, "Mantenimientos");
-                addMenuItem(2, "Comunicación");
-                addMenuItem(9, "Utilerias");
+                addMenuItem(2,  "Comunicación");
+                addMenuItem(9,  "Utilerias");
                 addMenuItem(10, "Cambio usuario");
 
             } else {
@@ -172,7 +176,8 @@ public class Menu extends PBase {
                     if (app.grant(2,gl.rol)) addMenuItem(6,"Caja");
                     if (app.grant(3,gl.rol)) addMenuItem(3,"Reimpresión");
                     if (app.grant(4,gl.rol)) addMenuItem(7,"Inventario");
-                    if (app.grant(5,gl.rol)) addMenuItem(2,"Comunicación");
+                    addMenuItem(2,"Comunicación");
+                    //if (app.grant(5,gl.rol)) addMenuItem(2,"Comunicación");
                     if (app.grant(6,gl.rol)) addMenuItem(9,"Utilerias");
                     if (app.grant(7,gl.rol)) addMenuItem(11,"Mantenimientos");
                     if (app.grant(8,gl.rol)) addMenuItem(12,"Reportes");
@@ -803,7 +808,7 @@ public class Menu extends PBase {
     public void showInvMenuUtils() {
         try{
             final AlertDialog Dialog;
-            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final", "Actualizar fechas erroneas","Inicio de caja"};
+            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Prueba de bluetooth","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final", "Actualizar fechas erroneas","Inicio de caja"};
 
             menudlg = new ExDialog (this);
 
@@ -822,18 +827,20 @@ public class Menu extends PBase {
                         case 3:
                             enviarBaseDeDatos();break;
                         case 4:
-                            startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+                            estadoBluTooth();break;
                         case 5:
-                            msgAskActualizar("Actualizar correlativos de contingencia");break;
+                            startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
                         case 6:
-                            infoSystem();break;
+                            msgAskActualizar("Actualizar correlativos de contingencia");break;
                         case 7:
-                            msgAskImprimir();break;
+                            infoSystem();break;
                         case 8:
+                            msgAskImprimir();break;
+                        case 9:
                             msgAskCF();break;
-						case 9:
+						case 10:
 							msgAskCorregirFechas();break;
-                        case 10:
+                        case 11:
                             inicioDia();break;
                     }
 
@@ -1228,6 +1235,26 @@ public class Menu extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private void estadoBluTooth() {
+        final int REQUEST_ENABLE_BT = 1;
+        try {
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            if (bluetoothAdapter == null) {
+                msgbox("El dispositivo no soporta Bluetooth");
+            } else {
+                if (bluetoothAdapter.isEnabled()) {
+                    msgbox("Bluetooth encendido");
+                } else {
+                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
 	//endregion
@@ -1637,6 +1664,7 @@ public class Menu extends PBase {
 	public boolean valida(){
 
 	    //if (gl.rol==3 | gl.rol==4) return true;
+        if (gl.rol==4) return true;
 
 		try {
 			clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
@@ -1698,7 +1726,9 @@ public class Menu extends PBase {
 		int ci,cf,ca1,ca2;
 		double dd;
 
-		try {
+        if (gl.rol==4) return true;
+
+        try {
 
 			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
                 "WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0)";
@@ -2069,6 +2099,13 @@ public class Menu extends PBase {
         }
     }
 
+    public void autoLoginMesero() {
+        gl.after_login=false;
+        menuid=1;
+        toast("Validando ingreso . . .");
+        showMenuItem();
+    }
+
     //endregion
 
     //region Dialogs
@@ -2410,4 +2447,5 @@ public class Menu extends PBase {
 		}
 	}
 	//endregion
+
 }

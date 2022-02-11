@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
+import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
@@ -117,15 +118,31 @@ public class FacturaRes extends PBase {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	    if (pantallaHorizontal()) {
-            setContentView(R.layout.activity_factura_res);horiz=true;
-        } else {
-            setContentView(R.layout.activity_factura_res_ver);horiz=false;
+
+        try {
+
+            appGlobals ggl=((appGlobals) this.getApplication());
+
+            if (ggl.mesero_precuenta) {
+                if (pantallaHorizontal()) {
+                    setContentView(R.layout.activity_factura_res_precue);horiz=true;
+                } else {
+                    setContentView(R.layout.activity_factura_res_ver);horiz=false;
+                }
+            } else {
+                if (pantallaHorizontal()) {
+                    setContentView(R.layout.activity_factura_res);horiz=true;
+                } else {
+                    setContentView(R.layout.activity_factura_res_ver);horiz=false;
+                }
+            }
+        } catch (Exception e) {
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
 		super.InitBase();
 
-		listView = (ListView) findViewById(R.id.listView1);
+        listView = (ListView) findViewById(R.id.listView1);
 		lblPago = (TextView) findViewById(R.id.TextView01);
 		lblFact = (TextView) findViewById(R.id.lblFact);
 		lblMPago = (TextView) findViewById(R.id.lblCVence);
@@ -293,6 +310,8 @@ public class FacturaRes extends PBase {
 
         //if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
 
+        if (gl.mesero_precuenta) prnCuenta(null);
+
     }
 
 	//region Events
@@ -407,7 +426,7 @@ public class FacturaRes extends PBase {
     }
 
     public void prnCuenta(View view) {
-        askDelCuenta();
+        askPrecuenta();
     }
 
     public void showBon(View view) {
@@ -738,7 +757,11 @@ public class FacturaRes extends PBase {
 
  	private void finishOrder() {
 
-		if (!saved) {
+        if (gl.rol==4) {
+            toast("El mesero no puede realizar venta en esta pantalla");return;
+        }
+
+        if (!saved) {
 			if (!saveOrder()) return;
 		}
 
@@ -2135,48 +2158,34 @@ public class FacturaRes extends PBase {
     }
 
     public void Davuelto(){
+        double pg,vuel;
 
 		try{
-
-			double pg,vuel;
-
 			svuelt= txtVuelto.getText().toString();
 
-			if (!svuelt.equals("")){
-
+			if (!svuelt.equals("")) {
 				pg=Double.parseDouble(svuelt);
 
 				if (pg > 0) {
+                    if (gl.dvbrowse != 0) {
+                        double totdv;
+                        totdv = mu.round(tot - dispventa, 2);
+                        if (pg < totdv) {
+                            msgbox("Monto menor que total");
+                        }
 
-					if (gl.dvbrowse!=0){
-						double totdv;
-						totdv = mu.round(tot-dispventa,2);
-
-						if (pg<totdv) {
-							msgbox("Monto menor que total");
-						}
-
-						vuel=pg-tot;
-
-						lblVuelto.setText("    Vuelto: " + mu.frmcur(vuel));
-
-					}else{
-
-						if (pg<tot) {
-							msgbox("Monto menor que total");
-						}
-
-						vuel=pg-tot;
-
-						lblVuelto.setText("    Vuelto: " + mu.frmcur(vuel));
-
-					}
-
-				}
-
+                        vuel = pg - tot;
+                        lblVuelto.setText("    Vuelto: " + mu.frmcur(vuel));
+                    } else {
+                        if (pg < tot) {
+                            msgbox("Monto menor que total");
+                        }
+                        vuel = pg - tot;
+                        lblVuelto.setText("    Vuelto: " + mu.frmcur(vuel));
+                    }
+                }
 			}
-
-		}catch (Exception e) {
+		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
@@ -2213,7 +2222,8 @@ public class FacturaRes extends PBase {
 
             double vuel=Double.parseDouble(svuelt);
             aplcash=vuel;
-            vuel=vuel-gl.total_pago+descaddmonto;
+            //vuel=vuel-gl.total_pago+descaddmonto;
+            vuel=vuel-gl.total_pago;
             lblMonto.setText("");khand.val="";
 
             if (vuel<0.00) {
@@ -2592,6 +2602,7 @@ public class FacturaRes extends PBase {
                 }
             }
 
+            if (gl.mesero_precuenta) lblPago.setText("");
         } catch (Exception e) {
            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
@@ -2641,6 +2652,7 @@ public class FacturaRes extends PBase {
                 }
             }
 
+            if (gl.mesero_precuenta) lblPago.setText("");
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
@@ -3164,7 +3176,7 @@ public class FacturaRes extends PBase {
 
                 fdoc.vendedor=gl.vendnom;
                 fdoc.rutanombre=gl.tiendanom;
-                fdoc.buildPrint(gl.primesa,gl.pricuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
+                fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
                 gl.QRCodeStr="";
                 app.doPrint(1,0);
 
@@ -3453,12 +3465,12 @@ public class FacturaRes extends PBase {
         }
     }
 
-    private void askDelCuenta() {
+    private void askPrecuenta() {
         try{
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Preimpresion");
-            dialog.setMessage("¿Imprimir la cuenta?");
+            dialog.setTitle("Precuenta");
+            dialog.setMessage("¿Imprimir precuenta?");
 
             dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -3597,9 +3609,21 @@ public class FacturaRes extends PBase {
             P_impresoraObj.reconnect(Con,db);
             T_comandaObj.reconnect(Con,db);
 
+            if (browse==6) {
+                browse=0;
+                if (gl.desc_monto>=0) {
+                    descaddmonto=gl.desc_monto;
+                    totalOrder();
+                }
+                return;
+            }
+
             if (browse==5) {
                 browse=0;
-                if (gl.checksuper) valorDescuentoMonto();
+                if (gl.checksuper) {
+                    browse=6;
+                    startActivity(new Intent(this,DescMonto.class));
+                }
                 return;
             }
 

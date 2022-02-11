@@ -34,14 +34,15 @@ public class appGlobals extends Application {
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,
                 comensales, cliente_dom, idclidir;
-	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,
+	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel, corelmov;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,caja_est_pago;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
-                   impresion_comanda, modo_domicilio, cf_domicilio,cierra_clave, mesero_lista;
+                   impresion_comanda, modo_domicilio, cf_domicilio,cierra_clave, mesero_lista ,
+                   ingreso_mesero,after_login,modo_prec,mesero_precuenta;
 
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;
@@ -81,7 +82,7 @@ public class appGlobals extends Application {
 
 	// Descuentos
 	public String promprod;
-	public double promcant,promdesc,prommdesc,descglob,descgtotal;
+	public double promcant,promdesc,prommdesc,descglob,descgtotal,desc_monto;
 	public int prommodo;
 	
 	// Bonificaciones

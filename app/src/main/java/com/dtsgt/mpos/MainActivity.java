@@ -76,7 +76,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.1.23"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.2.0"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -258,6 +258,10 @@ public class MainActivity extends PBase {
 
     public void gotoMenu() {
         try {
+
+            gl.after_login=true;
+
+            if (gl.rol==4) toast("INICIANDO INGRESO MESERO. \n ESPERE , POR FAVOR . . .");
 
             startActivity(new Intent(this, Menu.class));
 
@@ -613,6 +617,8 @@ public class MainActivity extends PBase {
             gl.vend = usr;
             gl.codigo_vendedor = DT.getInt(4);
             gl.vnivprec = DT.getInt(3);
+
+            gl.nombre_mesero_sel=gl.vendnom;
 
             khand.clear();
             khand.enable();
