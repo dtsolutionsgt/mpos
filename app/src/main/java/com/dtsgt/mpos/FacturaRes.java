@@ -3184,7 +3184,7 @@ public class FacturaRes extends PBase {
                 Runnable mrunner=new Runnable() {
                     @Override
                     public void run() {
-                        gl.iniciaVenta=true;
+                        gl.iniciaVenta=false;
                         finish();
                     }
                 };

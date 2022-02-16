@@ -33,6 +33,8 @@ import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_modo_emergenciaObj;
+import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
@@ -63,10 +65,12 @@ public class Menu extends PBase {
 	private ExDialog menudlg;
 
     private clsP_cajacierreObj caja;
-	
-	private int selId,selIdx,menuid,iicon;
+    private clsP_modo_emergenciaObj P_modo_emergenciaObj;
+    private clsP_paramextObj P_paramextObj;
+
+    private int selId,selIdx,menuid,iicon;
 	private String rutatipo,sdoc;
-	private boolean rutapos,horizpos,porcentaje;
+	private boolean rutapos,horizpos,porcentaje,modo_emerg;
 	private boolean listo=true;
 	private long contcorini,contcorult,fhoy,fayer;
 
@@ -82,15 +86,16 @@ public class Menu extends PBase {
 			setContentView(R.layout.activity_menu);
 
 			super.InitBase();
-			addlog("Menu",""+du.getActDateTime(),gl.vend);
 
 			gridView = (GridView) findViewById(R.id.gridView1);
 			relbotpan = (RelativeLayout) findViewById(R.id.relbotpan);
-
 			lblVendedor = (TextView) findViewById(R.id.lblVendedor);
 			lblRuta = (TextView) findViewById(R.id.textView9);
 
-			gl.validDate=false;
+            P_modo_emergenciaObj=new clsP_modo_emergenciaObj(this,Con,db);
+            P_paramextObj=new clsP_paramextObj(this,Con,db);
+
+            gl.validDate=false;
 			gl.lastDate=0;
             gl.QRCodeStr="";
 			gl.dev = false;
@@ -98,8 +103,7 @@ public class Menu extends PBase {
 			rutatipo=gl.rutatipog;
 			gl.devfindia=false;
 
-
-			rutapos=false;gl.rutapos=false;
+            rutapos=false;gl.rutapos=false;
 			sdoc="Venta";iicon=102;
 			rutapos=true;gl.rutapos=true;
 			selId=-1;selIdx=-1;
@@ -198,8 +202,11 @@ public class Menu extends PBase {
                 }
 
                 addMenuItem(10,"Cambio usuario");
-				//addMenuItem(13,"Apagar");
-
+/*
+                if (gl.rol==3 | gl.rol==2) {
+                    if (gl.peRest) addMenuItem(14,"Modo sin internet");
+                }
+ */
             }
 
             adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
@@ -374,6 +381,8 @@ public class Menu extends PBase {
 					showReportMenu();break;
 				case 13:
 					apagar();break;
+                case 14:
+                    modoSinInternet();break;
 			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1647,6 +1656,111 @@ public class Menu extends PBase {
 
 	//endregion
 
+    //region "Sin internet"
+
+    public void modoSinInternet() {
+        try {
+            P_modo_emergenciaObj.fill();
+            modo_emerg=P_modo_emergenciaObj.count==0;
+
+            if (modo_emerg) msgAskEmerg("Activar modo sin internet");else msgAskEmerg("Desactivar modo sin internet");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void activarSinInternet() {
+        clsP_paramextObj P_paramextObj=new clsP_paramextObj(this,Con,db);
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM P_modo_emergencia");
+
+            activarItem(131,"S"); // 131  Modulo caja
+            activarItem(132,"N"); // 132 Caja – recepcion de ordenes
+            activarItem(136,"S"); // 136 Ingresar contraseña cajero
+            activarItem(135,"S"); // 135 Ingresar contraseña mesero
+            activarItem(137,"N"); // 137 Enviar ordenes a la caja
+            activarItem(129,"S"); // 129 Comandas con impresora BT
+            activarItem(133,"N"); // 133 Generar ordenes para despacho
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            doLogOff();
+            toastcentlong("Modo sin internet ACTIVADO");
+        } catch (Exception e) {
+            db.endTransaction();msgbox(e.getMessage());
+        }
+    }
+
+    private void desactivarSinInternet() {
+        clsClasses.clsP_paramext item = clsCls.new clsP_paramext();
+        clsP_paramextObj P_paramextObj=new clsP_paramextObj(this,Con,db);
+
+        try {
+            db.beginTransaction();
+
+            restaurarItem(131);
+            restaurarItem(132);
+            restaurarItem(136);
+            restaurarItem(135);
+            restaurarItem(137);
+            restaurarItem(129);
+            restaurarItem(133);
+
+            db.execSQL("DELETE FROM P_modo_emergencia");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            doLogOff();
+            toastcentlong("Modo sin internet desactivado");
+        } catch (Exception e) {
+            db.endTransaction();msgbox(e.getMessage());
+        }
+    }
+
+    private void activarItem(int id,String val) {
+        clsClasses.clsP_paramext item = clsCls.new clsP_paramext();
+        clsClasses.clsP_modo_emergencia egitem = clsCls.new clsP_modo_emergencia();
+
+        P_paramextObj.fill("WHERE ID="+id);
+        if (P_paramextObj.count>0) {
+            item=P_paramextObj.first();
+            item.valor=val;
+            P_paramextObj.update(item);
+        } else {
+            item.id=id;
+            item.valor=val;item.nombre=" ";item.ruta="";
+        }
+
+        egitem.codigo_opcion=id;
+        egitem.valor=val;
+        P_modo_emergenciaObj.add(egitem);
+    }
+
+    private void restaurarItem(int id) {
+        clsClasses.clsP_paramext item = clsCls.new clsP_paramext();
+        String val;
+
+        P_modo_emergenciaObj.fill("WHERE CODIGO_OPCION="+id);
+        val=P_modo_emergenciaObj.first().valor;
+
+        P_paramextObj.fill("WHERE ID="+id);
+        item=P_paramextObj.first();
+        item.valor=val;
+        P_paramextObj.update(item);
+    }
+
+    private void doLogOff() {
+        app.logoutUser(du.getActDateTime());
+        finish();
+    }
+
+    //endregion
+
 	//region Aux
 
 	public void CierreZ(){
@@ -2404,6 +2518,43 @@ public class Menu extends PBase {
 		dialog.show();
 	}
 
+    private void msgAskEmerg(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgAskEmerg2();
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskEmerg2() {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿Está seguro?");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (modo_emerg) activarSinInternet();else desactivarSinInternet();
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+    }
+
     //endregion
 
 	//region Activity Events
@@ -2413,8 +2564,11 @@ public class Menu extends PBase {
 
 		String ms="";
 
-		try{
+		try {
 			super.onResume();
+
+            P_paramextObj.reconnect(Con,db);
+            P_modo_emergenciaObj.reconnect(Con,db);
 
 			setPrintWidth();
 

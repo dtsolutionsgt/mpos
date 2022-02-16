@@ -815,13 +815,21 @@ public class BaseDatosVersion {
         } catch (Exception e) {}
 
         try {
-
+            sql="CREATE TABLE [P_modo_emergencia] ("+
+                    "CODIGO_OPCION INTEGER NOT NULL,"+
+                    "VALOR TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_OPCION])"+
+                    ");";
+            db.execSQL(sql);
         } catch (Exception e) {}
 
         try {
 
         } catch (Exception e) {}
 
+        try {
+
+        } catch (Exception e) {}
     }
 
 	private boolean update01() {

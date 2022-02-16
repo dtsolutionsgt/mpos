@@ -585,12 +585,14 @@ public class Venta extends PBase {
                     item.sdesc=mu.frmdec(item.Prec);
                     item.imp=DT.getDouble(6);
                     item.percep=DT.getDouble(7);
-                    if (prodPorPeso(item.Cod)) 	{
-                        item.um=DT.getString(10);
-                    } else {
+
+                    //if (prodPorPeso(item.Cod)) 	{
+                    ///    item.um=DT.getString(10);
+                    //} else {
                         //item.um=DT.getString(8);
-                        item.um=app.umVenta(item.Cod);
-                    }
+                        item.um=umVenta(item.Cod);
+                    //}
+
                     item.Peso=DT.getDouble(9);
                     item.emp=DT.getString(12);
                     if (item.emp.equalsIgnoreCase(uid)) {
@@ -1011,11 +1013,11 @@ public class Venta extends PBase {
         double sdesc=desc;
 
         try {
-            if (prodPorPeso(prodid)) {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
-            } else {
+            //if (prodPorPeso(prodid)) {
+            //    prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
+            //} else {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
-            }
+            //}
 
             prec=mu.round(prec,2);
             desc=sdesc;
@@ -3780,6 +3782,34 @@ public class Venta extends PBase {
         gl.meserodir=false;
         startActivity(new Intent(Venta.this,ResMesero.class));
     }
+
+    private String umVenta(String cod) {
+        Cursor DT;
+        String umm="";
+
+        try {
+            String sql = "SELECT P_PRODPRECIO.UNIDADMEDIDA " +
+                    "FROM P_PRODPRECIO INNER JOIN P_PRODUCTO ON P_PRODPRECIO.CODIGO_PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
+                    "WHERE P_PRODUCTO.CODIGO ='" + cod + "' AND P_PRODPRECIO.NIVEL="+gl.nivel;
+            DT = Con.OpenDT(sql);
+
+            if (DT != null){
+                if (DT.getCount()>0){
+                    DT.moveToFirst();
+                    umm=DT.getString(0);
+                }
+                DT.close();
+            }
+
+            if (DT!=null) DT.close();
+
+            return  umm;
+        } catch (Exception e) {
+            //toast(e.getMessage());
+            return "";
+        }
+    }
+
 
     //endregion
 

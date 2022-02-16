@@ -721,6 +721,11 @@ public class clsClasses {
         public int  codigo_grupo;
     }
 
+    public class clsP_modo_emergencia {
+        public int  codigo_opcion;
+        public String valor;
+    }
+
     public class clsP_moneda {
 		public int  codigo;
 		public String nombre;

@@ -5,6 +5,7 @@ import android.graphics.Point;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -56,7 +57,6 @@ public class ValidaClave extends PBase {
         listItems();
 
     }
-
 
     //region Events
 
@@ -149,6 +149,15 @@ public class ValidaClave extends PBase {
 
             adapter = new LA_Login(this, mitems);
             listView.setAdapter(adapter);
+
+            if (gl.modoclave == 1 && mitems.size()==1) {
+                Handler mtimer = new Handler();
+                Runnable mrunner= () -> {
+                    autoStartCajero();
+                };
+                mtimer.postDelayed(mrunner,200);
+            }
+
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
@@ -185,6 +194,17 @@ public class ValidaClave extends PBase {
             return point.x>point.y;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    public void autoStartCajero() {
+        try {
+            if (!gl.pelClaveCaja) {
+                startActivity(new Intent(ValidaClave.this,ResCaja.class));
+                finish();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

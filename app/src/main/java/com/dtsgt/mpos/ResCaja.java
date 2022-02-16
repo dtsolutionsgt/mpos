@@ -229,17 +229,21 @@ public class ResCaja extends PBase {
     }
 
     private boolean addItem(){
-
-        clsClasses.clsT_venta venta;
+        clsClasses.clsT_venta venta,ventau=null;
         clsClasses.clsT_combo combo;
         clsClasses.clsT_ordencombo citem;
+
         double tt;
+        int itemid;
 
         try {
 
+            itemid=T_ventaObj.newID("SELECT MAX(EMPRESA) FROM T_VENTA");
+
             venta=clsCls.new clsT_venta();
             venta.producto=oitem.producto;
-            venta.empresa=oitem.empresa;
+            venta.empresa=""+itemid;
+            //venta.empresa=oitem.empresa;
             venta.um=oitem.um;
             venta.cant=oitem.cant;
             venta.umstock=oitem.umstock;
@@ -274,31 +278,24 @@ public class ResCaja extends PBase {
             double prodtot=0;
 
             try {
-                String vsql="SELECT CANT FROM T_venta WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')";
-                dt=Con.OpenDT(vsql);
-                if (dt!=null){
-                    //#ejc20210712: condición agregada con Jaros, para validar productos de tipo combo.
-                    if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
+                //#jp20220209
+                T_ventaObj.fill("WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')");
+                if (T_ventaObj.count>0) ventau=T_ventaObj.first();
+
+                if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
+                    T_ventaObj.add(venta);
+                }else{
+                    if (T_ventaObj.count==0) {
                         T_ventaObj.add(venta);
-                    }else{
-                        if (dt.getCount()==0) {
-                            T_ventaObj.add(venta);
-                        } else {
-                            venta.cant+= oitem.cant;
-                            //prodtot=mu.round(venta.precio*venta.cant,2);
-                            prodtot=venta.total+mu.round(oitem.total,2);
-                            venta.total = prodtot;
-                            T_ventaObj.update(venta);
-                        }
+                    } else {
+                        ventau.cant+= oitem.cant;
+                        ventau.total = ventau.total+mu.round(oitem.total,2);
+                        T_ventaObj.update(ventau);
                     }
-                };
-
-                if (dt!=null) dt.close();
-
+                }
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
-
 
             if (app.prodTipo(venta.producto).equalsIgnoreCase("M")) {
 
@@ -318,7 +315,6 @@ public class ResCaja extends PBase {
             }
 
         } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());return false;
         }
 

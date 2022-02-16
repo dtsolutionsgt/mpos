@@ -2773,6 +2773,9 @@ public class Orden extends PBase {
     }
 
     private boolean pendienteImpresion() {
+
+        if (!gl.peImpOrdCos) return false;
+
         try {
             clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
             T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
@@ -3442,8 +3445,10 @@ public class Orden extends PBase {
                 }
             }
 
-            if (T_ordencuentaObj.count==1) {
-                cuenta=T_ordencuentaObj.first().id;
+            if (T_ordencuentaObj.items.size()==0) toast("No existe ninguna cuenta activa");
+
+            if (T_ordencuentaObj.items.size()==1) {
+                cuenta=T_ordencuentaObj.items.get(0).id;
                 gl.nocuenta_precuenta=""+cuenta;
                 crearVenta();
                 //msgAskPrecuentaImpresion("Imprimir precuenta");
@@ -3713,7 +3718,10 @@ public class Orden extends PBase {
             }
 
             if (browse==10) {
-                browse=0;if (gl.checksuper) delItem();
+                browse=0;
+                if (gl.checksuper) {
+                    delItem();
+                }
                 return;
             }
 
