@@ -2782,6 +2782,7 @@ public class WSRec extends PBase {
             clsBeP_PARAMEXTList items = new clsBeP_PARAMEXTList();
             clsBeP_PARAMEXT item = new clsBeP_PARAMEXT();
             clsClasses.clsP_paramext var;
+            String sqlaa;
 
             items = xobj.getresult(clsBeP_PARAMEXTList.class, "GetP_PARAMEXT_RUTA");
 
@@ -2802,13 +2803,27 @@ public class WSRec extends PBase {
                 var.ruta  = item.IdRuta;
 
                 script.add("DELETE FROM P_PARAMEXT WHERE ID="+item.ID);
-                script.add(handler.addItemSql(var));
+                sqlaa=addItemSqlParamExtRuta(var);
+                script.add(sqlaa);
             }
 
         } catch (Exception e) {
             ws.error = e.getMessage();
             ws.errorflag = true;
         }
+    }
+
+    public String addItemSqlParamExtRuta(clsClasses.clsP_paramext item) {
+
+        ins.init("P_paramext");
+
+        ins.add("ID", item.id);
+        ins.add("Nombre", item.nombre);
+        ins.add("Valor", item.valor);
+        ins.add("Ruta", item.ruta);
+
+        return ins.sql();
+
     }
 
     private void processResSala() {

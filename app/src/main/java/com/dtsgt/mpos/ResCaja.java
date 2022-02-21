@@ -41,7 +41,7 @@ public class ResCaja extends PBase {
 
     private GridView gridView;
     private TextView lblRec;
-    private ImageView imgRec;
+    private ImageView imgRec,imgnowifi;
 
     private LA_ResCaja adapter;
     private clsViewObj ViewObj;
@@ -76,6 +76,7 @@ public class ResCaja extends PBase {
         gridView = findViewById(R.id.gridView1);
         lblRec = findViewById(R.id.textView212);
         imgRec = findViewById(R.id.imageView87);
+        imgnowifi=findViewById(R.id.imageView71a);
 
         calibraPantalla();
 
@@ -96,6 +97,7 @@ public class ResCaja extends PBase {
         listItems();
         gl.ventalock=false;
 
+        if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
     }
 
     //region Events
@@ -146,7 +148,7 @@ public class ResCaja extends PBase {
             for (int i = 0; i <ViewObj.count; i++) {
                 fs=ViewObj.items.get(i).f4;
                 try {
-                    ff=Integer.parseInt(fs);
+                    ff=Long.parseLong(fs);
                     fs=du.shora(ff);
                 } catch (Exception e) {
                     fs="";

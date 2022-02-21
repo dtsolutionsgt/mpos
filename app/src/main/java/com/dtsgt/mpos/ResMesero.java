@@ -38,7 +38,7 @@ public class ResMesero extends PBase {
 
     private GridView gridView;
     private TextView lblcuenta, lblgrupo,lblmes;
-    private ImageView imgwsref;
+    private ImageView imgwsref,imgnowifi;
 
     private clsP_res_grupoObj P_res_grupoObj;
     private clsP_res_turnoObj P_res_turnoObj;
@@ -74,6 +74,7 @@ public class ResMesero extends PBase {
         lblgrupo =findViewById(R.id.textView179b);
         lblmes =findViewById(R.id.textView179b2);
         imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
+        imgnowifi=findViewById(R.id.imageView71a);
 
         calibraPantalla();
 
@@ -90,6 +91,10 @@ public class ResMesero extends PBase {
 
         getURL();
         ws=new WebService(ResMesero.this,gl.wsurl);
+
+        if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
+
+
     }
 
     //region Events
@@ -348,7 +353,6 @@ public class ResMesero extends PBase {
         }
     }
 
-
     private void procesaEstadoMesas() {
         String ss=" IN (";
 
@@ -363,6 +367,7 @@ public class ResMesero extends PBase {
                 ss+="'"+corels.get(i)+"'";
                 if (i<corels.size()-1) ss+=",";else ss+=")";
             }
+
 
             sql="SELECT ID,COREL,ESTADO FROM T_ORDEN  WHERE COREL "+ss;
             ws.openDT(sql);
@@ -418,8 +423,10 @@ public class ResMesero extends PBase {
             T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=2)");
             int tic=T_ordenObj.count;
 
-            if (ti==tic) {
-                cerrarCuentas(idorden);
+            if (ti>0) {
+                if (ti==tic) {
+                    cerrarCuentas(idorden);
+                }
             }
 
         } catch (Exception e) {
@@ -463,6 +470,20 @@ public class ResMesero extends PBase {
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             P_res_sesionObj.first().estado=est;
             P_res_sesionObj.update(P_res_sesionObj.first());
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void actualizaEstadosOrdenes() {
+
+        try {
+            if (corels.size()==0) return;
+
+            for (int i = 0; i <corels.size(); i++) {
+                validaCompleto(corels.get(i));
+            }
+            listItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -847,8 +868,13 @@ public class ResMesero extends PBase {
             finish();
         } else {
             listItems();
-            procesaEstadoMesas();
+            if (gl.pelMeseroCaja) {
+                procesaEstadoMesas();
+            } else {
+                actualizaEstadosOrdenes();
+            }
         }
+
     }
 
     @Override

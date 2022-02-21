@@ -2091,25 +2091,16 @@ public class Venta extends PBase {
                 if (gl.pelCaja && gl.peRest) {
                     item = clsCls.new clsMenu();
                     item.ID=65;item.Name="Caja";item.Icon=65;
-                    mmitems.add(item);
+                    if (gl.rol!=4) mmitems.add(item);
                 }
 
                 item = clsCls.new clsMenu();
                 item.ID=52;item.Name="Cliente";item.Icon=52;
                 mmitems.add(item);
 
-
                 item = clsCls.new clsMenu();
                 item.ID=71;item.Name="Descuento";item.Icon=71;
                 mmitems.add(item);
-
-                /*
-                if (!app.usaFEL()) {
-                    item = clsCls.new clsMenu();
-                    item.ID=72;item.Name="Descuento por total";item.Icon=72;
-                    mmitems.add(item);
-                }
-                */
 
                 item = clsCls.new clsMenu();
                 item.ID=50;item.Name="Buscar ";item.Icon=50;
@@ -2128,18 +2119,6 @@ public class Venta extends PBase {
                     item.ID=70;item.Name="Mensaje";item.Icon=70;
                     mmitems.add(item);
                 }
-
-                //item = clsCls.new clsMenu();
-                //item.ID=56;item.Name="Ventas";item.Icon=56;
-                //mmitems.add(item);
-
-                //item = clsCls.new clsMenu();
-                //item.ID=51;item.Name="Barra";item.Icon=51;
-                //mmitems.add(item);
-
-                //item = clsCls.new clsMenu();
-                //item.ID=53;item.Name="Bloquear";item.Icon=53;
-                //mmitems.add(item);
 
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -2222,6 +2201,9 @@ public class Venta extends PBase {
 
                     break;
                 case 65:
+                    if (gl.rol==4) {
+                        msgbox("El mesero no puede entrar al menu caja");return;
+                    }
                     browse=10;gl.modoclave=1;
                     startActivity(new Intent(this,ValidaClave.class));
                     break;

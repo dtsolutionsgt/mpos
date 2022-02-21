@@ -3,12 +3,10 @@ package com.dtsgt.mpos;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -25,6 +23,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -58,6 +57,7 @@ public class Menu extends PBase {
 	private GridView gridView;
 	private RelativeLayout relbotpan;
 	private TextView lblVendedor,lblRuta;
+	private ImageView imgnowifi;
 	
 	private ArrayList<clsMenu> items= new ArrayList<clsMenu>();
 
@@ -79,7 +79,6 @@ public class Menu extends PBase {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 	{
-
 		try {
 
 			super.onCreate(savedInstanceState);
@@ -91,6 +90,7 @@ public class Menu extends PBase {
 			relbotpan = (RelativeLayout) findViewById(R.id.relbotpan);
 			lblVendedor = (TextView) findViewById(R.id.lblVendedor);
 			lblRuta = (TextView) findViewById(R.id.textView9);
+            imgnowifi = findViewById(R.id.imageView122);
 
             P_modo_emergenciaObj=new clsP_modo_emergenciaObj(this,Con,db);
             P_paramextObj=new clsP_paramextObj(this,Con,db);
@@ -131,8 +131,7 @@ public class Menu extends PBase {
 			msgbox(e.getMessage());
 		}
 
-		//#CKFK20200524_FIX_BY_OPENDT Quité esta función porque la tabla P_CORREL_OTROS ya no existe
-		//insertCorrel();
+        validaModo();
 	}
 
 	//region Events
@@ -202,11 +201,11 @@ public class Menu extends PBase {
                 }
 
                 addMenuItem(10,"Cambio usuario");
-/*
+
                 if (gl.rol==3 | gl.rol==2) {
-                    if (gl.peRest) addMenuItem(14,"Modo sin internet");
+                    if (gl.peRest) addMenuItem(14,"Modo de emergencia");
                 }
- */
+
             }
 
             adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
@@ -1656,14 +1655,14 @@ public class Menu extends PBase {
 
 	//endregion
 
-    //region "Sin internet"
+    //region Modo emergencia
 
     public void modoSinInternet() {
         try {
             P_modo_emergenciaObj.fill();
             modo_emerg=P_modo_emergenciaObj.count==0;
 
-            if (modo_emerg) msgAskEmerg("Activar modo sin internet");else msgAskEmerg("Desactivar modo sin internet");
+            if (modo_emerg) msgAskEmerg("Activar modo de emergencia");else msgAskEmerg("Desactivar modo de emergencia");
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1679,8 +1678,8 @@ public class Menu extends PBase {
 
             activarItem(131,"S"); // 131  Modulo caja
             activarItem(132,"N"); // 132 Caja – recepcion de ordenes
-            activarItem(136,"S"); // 136 Ingresar contraseña cajero
-            activarItem(135,"S"); // 135 Ingresar contraseña mesero
+            //activarItem(136,"S"); // 136 Ingresar contraseña cajero
+            //activarItem(135,"S"); // 135 Ingresar contraseña mesero
             activarItem(137,"N"); // 137 Enviar ordenes a la caja
             activarItem(129,"S"); // 129 Comandas con impresora BT
             activarItem(133,"N"); // 133 Generar ordenes para despacho
@@ -1689,10 +1688,12 @@ public class Menu extends PBase {
             db.endTransaction();
 
             doLogOff();
-            toastcentlong("Modo sin internet ACTIVADO");
+            toastcentlong("Modo de emergencia ACTIVADO");
         } catch (Exception e) {
             db.endTransaction();msgbox(e.getMessage());
         }
+
+        validaModo();
     }
 
     private void desactivarSinInternet() {
@@ -1704,8 +1705,8 @@ public class Menu extends PBase {
 
             restaurarItem(131);
             restaurarItem(132);
-            restaurarItem(136);
-            restaurarItem(135);
+            //restaurarItem(136);
+            //restaurarItem(135);
             restaurarItem(137);
             restaurarItem(129);
             restaurarItem(133);
@@ -1716,28 +1717,33 @@ public class Menu extends PBase {
             db.endTransaction();
 
             doLogOff();
-            toastcentlong("Modo sin internet desactivado");
+            toastcentlong("Modo de emergencia desactivado");
         } catch (Exception e) {
             db.endTransaction();msgbox(e.getMessage());
         }
+
+        validaModo();
     }
 
     private void activarItem(int id,String val) {
         clsClasses.clsP_paramext item = clsCls.new clsP_paramext();
         clsClasses.clsP_modo_emergencia egitem = clsCls.new clsP_modo_emergencia();
+        String saveval="";
 
         P_paramextObj.fill("WHERE ID="+id);
         if (P_paramextObj.count>0) {
             item=P_paramextObj.first();
+            saveval=item.valor;
             item.valor=val;
             P_paramextObj.update(item);
         } else {
             item.id=id;
             item.valor=val;item.nombre=" ";item.ruta="";
+            P_paramextObj.add(item);
         }
 
         egitem.codigo_opcion=id;
-        egitem.valor=val;
+        egitem.valor=saveval;
         P_modo_emergenciaObj.add(egitem);
     }
 
@@ -1746,9 +1752,11 @@ public class Menu extends PBase {
         String val;
 
         P_modo_emergenciaObj.fill("WHERE CODIGO_OPCION="+id);
+        if (P_modo_emergenciaObj.count==0) return;
         val=P_modo_emergenciaObj.first().valor;
 
         P_paramextObj.fill("WHERE ID="+id);
+        if (P_paramextObj.count==0) return;
         item=P_paramextObj.first();
         item.valor=val;
         P_paramextObj.update(item);
@@ -1757,6 +1765,14 @@ public class Menu extends PBase {
     private void doLogOff() {
         app.logoutUser(du.getActDateTime());
         finish();
+    }
+
+    private void validaModo() {
+        if (app.modoSinInternet()) {
+            imgnowifi.setVisibility(View.VISIBLE);
+        } else {
+            imgnowifi.setVisibility(View.INVISIBLE);
+        }
     }
 
     //endregion

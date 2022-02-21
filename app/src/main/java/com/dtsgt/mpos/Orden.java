@@ -70,7 +70,7 @@ public class Orden extends PBase {
     private GridView gridView,grdbtn,grdfam,grdprod;
     private TextView lblTot,lblCant,lblTit,lblAlm,lblVend,lblCent;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
-    private ImageView imgroad,imgrefr;
+    private ImageView imgroad,imgrefr,imgnowifi;
     private RelativeLayout relprod,relsep,relsep2;
 
     private ArrayList<clsClasses.clsOrden> items= new ArrayList<clsOrden>();
@@ -120,7 +120,7 @@ public class Orden extends PBase {
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
     private int nivel,dweek,clidia,counter,prodlinea,cuenta;
-    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag,enviarorden;
+    private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag,enviarorden,modo_emerg;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true,horiz;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2;
     private String idorden,cliid,saveprodid;
@@ -175,6 +175,7 @@ public class Orden extends PBase {
 
         app = new AppMethods(this, gl, Con, db);
         app.parametrosExtra();
+        modo_emerg=app.modoSinInternet();
 
         setPrintWidth();
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
@@ -827,17 +828,17 @@ public class Orden extends PBase {
         */
 
         try {
-            int icod=Integer.parseInt(prodid);
+            int icod=app.codigoProducto(prodid);
 
-            sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO='"+icod+"') AND (UNIDADSUPERIOR='"+gl.um+"')";
+            sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO="+icod+") AND (UNIDADSUPERIOR='"+gl.um+"')";
             dt=Con.OpenDT(sql);
-            dt.moveToFirst();
 
+            dt.moveToFirst();
             umb=dt.getString(0);
             fact=dt.getDouble(1);
+
             if (dt!=null) dt.close();
         } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             umb=um;fact=1;
         }
 
@@ -919,7 +920,9 @@ public class Orden extends PBase {
         int nid1,nid2,newid;
 
         try {
-            sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO='"+prodid+"') AND (UNIDADSUPERIOR='"+gl.um+"')";
+            int icod=app.codigoProducto(prodid);
+
+            sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO="+icod+") AND (UNIDADSUPERIOR='"+gl.um+"')";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
 
@@ -927,8 +930,7 @@ public class Orden extends PBase {
             fact=dt.getDouble(1);
             if (dt!=null) dt.close();
         } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            umb=um;fact=1;
+            umb = um;fact = 1;
         }
 
         cantbas=cant*fact;
@@ -1613,27 +1615,22 @@ public class Orden extends PBase {
             mitems.add(item);
 
             if (gl.pelMeseroCaja) {
+                if (!app.modoSinInternet()) {
+                    item = clsCls.new clsMenu();
+                    item.ID = 3;
+                    item.Name = "Precuenta caja";
+                    item.Icon = 68;
+                    mitems.add(item);
+                }
+            }
 
-                item = clsCls.new clsMenu();
-                item.ID = 3;
-                item.Name = "Precuenta caja";
-                item.Icon = 68;
-                mitems.add(item);
-
+            //if (gl.pelMeseroCaja | app.modoSinInternet()) {
                 item = clsCls.new clsMenu();
                 item.ID = 1;
                 item.Name = "Pago";
                 item.Icon = 67;
                 mitems.add(item);
-            }
-
-            /*
-            item = clsCls.new clsMenu();
-            item.ID=2;
-            item.Name="Completar";
-            item.Icon=69;
-            mitems.add(item);
-            */
+            //}
 
             if (gl.peImpOrdCos) {
                if (!gl.pelComandaBT) {
@@ -1680,11 +1677,16 @@ public class Orden extends PBase {
                         msgbox("Existen articulos pendientes de impresion, no se puede proceder con pago.");return;
                     }
 
-                    if (enviarorden) {
-                        actualizaEstadoOrden(1);
-                    } else {
+                    if (modo_emerg) {
                         msgAskPrecuentaCaja("Enviar solicitud de pago a la caja");
+                    } else {
+                        if (enviarorden) {
+                            actualizaEstadoOrden(1);
+                        } else {
+                            msgAskPrecuentaCaja("Enviar solicitud de pago a la caja");
+                        }
                     }
+
                     break;
 
                 case 2:
@@ -2068,7 +2070,8 @@ public class Orden extends PBase {
 
        estadoMesa(estado);
 
-       //if (!enviarorden) return;
+       if (modo_emerg) return;
+       if (!gl.pelMeseroCaja) return;
 
        try {
 
@@ -2262,26 +2265,27 @@ public class Orden extends PBase {
     private void setControls(){
 
         try {
-            listView = (ListView) findViewById(R.id.listView1);
-            gridView = (GridView) findViewById(R.id.gridView2);gridView.setEnabled(true);
-            grdfam = (GridView) findViewById(R.id.grdFam);
-            grdprod = (GridView) findViewById(R.id.grdProd);
-            grdbtn = (GridView) findViewById(R.id.grdbtn);
+            listView = findViewById(R.id.listView1);
+            gridView =  findViewById(R.id.gridView2);gridView.setEnabled(true);
+            grdfam = findViewById(R.id.grdFam);
+            grdprod =  findViewById(R.id.grdProd);
+            grdbtn =  findViewById(R.id.grdbtn);
 
-            lblTot= (TextView) findViewById(R.id.lblTot);
-            lblCant= (TextView) findViewById(R.id.textView252);
-            lblDesc= (TextView) findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
-            lblStot= (TextView) findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
-            lblTit= (TextView) findViewById(R.id.lblTit);
-            lblAlm= (TextView) findViewById(R.id.lblTit2);
-            lblVend= (TextView) findViewById(R.id.lblTit4);
-            lblPokl= (TextView) findViewById(R.id.lblTit5);
-            lblCent= (TextView) findViewById(R.id.textView72);
+            lblTot=  findViewById(R.id.lblTot);
+            lblCant=  findViewById(R.id.textView252);
+            lblDesc=  findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
+            lblStot=  findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
+            lblTit=  findViewById(R.id.lblTit);
+            lblAlm=  findViewById(R.id.lblTit2);
+            lblVend=  findViewById(R.id.lblTit4);
+            lblPokl=  findViewById(R.id.lblTit5);
+            lblCent=  findViewById(R.id.textView72);
 
-            lblKeyDP=(TextView) findViewById(R.id.textView110);
-            lblDir=(TextView) findViewById(R.id.lblDir);
+            lblKeyDP= findViewById(R.id.textView110);
+            lblDir= findViewById(R.id.lblDir);
 
-            imgroad= (ImageView) findViewById(R.id.imgRoadTit);
+            imgnowifi=findViewById(R.id.imageView121);
+            imgroad=  findViewById(R.id.imgRoadTit);
             imgrefr = findViewById(R.id.imageView119);
             if (!gl.pelMeseroCaja) imgrefr.setVisibility(View.INVISIBLE);
 
@@ -2317,6 +2321,8 @@ public class Orden extends PBase {
         String contrib;
 
         app.parametrosExtra();
+        if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
+
         usarbio=gl.peMMod.equalsIgnoreCase("1");
 
         tiposcan="*";

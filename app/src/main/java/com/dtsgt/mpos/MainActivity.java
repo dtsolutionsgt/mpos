@@ -76,7 +76,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.2.3"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.2.4"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -403,7 +403,7 @@ public class MainActivity extends PBase {
 
         try {
             //#HS_20181122_1505 Se agrego el campo Impresion.
-            sql = "SELECT CODIGO,NOMBRE,SUCURSAL, CODIGO_RUTA FROM P_RUTA WHERE CODIGO_RUTA=" + gl.codigo_ruta;
+            sql = "SELECT CODIGO,NOMBRE,SUCURSAL,CODIGO_RUTA FROM P_RUTA WHERE CODIGO_RUTA=" + gl.codigo_ruta;
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() > 0) {

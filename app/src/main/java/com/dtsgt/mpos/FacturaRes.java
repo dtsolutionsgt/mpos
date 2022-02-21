@@ -3249,6 +3249,13 @@ public class FacturaRes extends PBase {
     }
 
     private void enviaPago(String csql) {
+
+        try {
+            db.execSQL(csql);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
         try {
             Intent intent = new Intent(FacturaRes.this, srvCommit.class);
             intent.putExtra("URL",gl.wsurl);

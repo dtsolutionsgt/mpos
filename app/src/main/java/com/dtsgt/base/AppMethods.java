@@ -1981,6 +1981,16 @@ public class AppMethods {
         }
     }
 
+    public boolean modoSinInternet() {
+        try {
+            Cursor DT=Con.OpenDT("SELECT * FROM P_modo_emergencia");
+            return DT.getCount()>0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
     //endregion
 
     //region Common
