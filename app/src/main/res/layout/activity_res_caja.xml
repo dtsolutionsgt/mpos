@@ -6,7 +6,36 @@
         android:layout_height="match_parent"
         tools:context=".ResCaja">
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/textView253"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView123"
+        android:layout_alignStart="@+id/imageView87"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_horizontal"
+        android:text="Recibir ordenes" />
+
+    <ImageView
+        android:id="@+id/imageView123"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="false"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="0dp"
+        android:clickable="true"
+        android:onClick="doOrden"
+        android:padding="10dp"
+        android:src="@drawable/cambio_usuario"
+        android:visibility="visible" />
+
+        <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -82,19 +111,19 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/textView212"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView87"
-            android:layout_alignStart="@+id/imageView87"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_horizontal"
-            android:text="Actualizar" />
+    <TextView
+        android:id="@+id/textView212"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView87"
+        android:layout_alignStart="@+id/imageView87"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_horizontal"
+        android:text="Actualizar" />
 
     <ImageView
         android:id="@+id/imageView87"
@@ -103,7 +132,7 @@
         android:layout_alignTop="@+id/gridView1"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="false"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="135dp"
         android:layout_marginEnd="0dp"
         android:clickable="true"
         android:onClick="doRec"

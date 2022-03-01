@@ -323,6 +323,11 @@ public class FELVerificacion extends PBase {
                 fel.fraseIVA=1;
             }
 
+            /*
+            if(fel.fraseIVA==4) fel.fraseIVA=2;
+            if(fel.fraseISR==4) fel.fraseISR=2;
+            */
+
             fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");

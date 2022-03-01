@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses.clsMenu;
@@ -56,6 +57,8 @@ public class ListAdaptGridFamList extends BaseAdapter {
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
+		int col;
+		String cstr;
 
 		if (convertView == null) {
             if (horiz) {
@@ -66,6 +69,7 @@ public class ListAdaptGridFamList extends BaseAdapter {
 
 			holder = new ViewHolder();
 			holder.lblName = convertView.findViewById(R.id.lblTrat);
+
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -74,11 +78,19 @@ public class ListAdaptGridFamList extends BaseAdapter {
 		holder.lblName.setText(items.get(position).Name);
 
         if(selectedIndex!= -1 && position == selectedIndex) {
-			convertView.setBackgroundColor(Color.rgb(26,138,198));
             holder.lblName.setTextColor(Color.WHITE);
+            convertView.setBackgroundColor(Color.rgb(26,138,198));
         } else {
-        	convertView.setBackgroundColor(Color.TRANSPARENT);
             holder.lblName.setTextColor(Color.parseColor("#1B76B9"));
+
+            convertView.setBackgroundColor(Color.TRANSPARENT);
+            try {
+                cstr=items.get(position).val;
+                col=Color.parseColor(cstr);
+                convertView.setBackgroundColor(col);
+            } catch (Exception e) {
+                convertView.setBackgroundColor(Color.TRANSPARENT);
+            }
         }
 
 		return convertView;

@@ -756,6 +756,7 @@ public class clsDocFactura extends clsDocument {
             }
         } catch (Exception e) {}
 
+        //banderafel=true;
         if (banderafel) {
 
             if (feluuid.equalsIgnoreCase(" ")) {
@@ -774,8 +775,12 @@ public class clsDocFactura extends clsDocument {
                 rep.add("Fecha de certificación: "+feldcert);
             }
 
-            if (!felIVA.isEmpty()) rep.add(felIVA);
-            if (!felISR.isEmpty()) rep.add(felISR);
+            if (!felIVA.isEmpty()) {
+                rep.add(felIVA);
+            }
+            if (!felISR.isEmpty()) {
+                rep.add(felISR);
+            }
 
             rep.add("");
             rep.add(felcert);

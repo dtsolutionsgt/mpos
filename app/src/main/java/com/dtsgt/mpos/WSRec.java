@@ -2785,17 +2785,16 @@ public class WSRec extends PBase {
             String sqlaa;
 
             items = xobj.getresult(clsBeP_PARAMEXTList.class, "GetP_PARAMEXT_RUTA");
-
             try {
                 if (items.items.size() == 0) return;
             } catch (Exception e) {
                 return;
             }
 
-
             for (int i = 0; i < items.items.size(); i++) {
 
                 item = items.items.get(i);
+                //if (item.IdRuta.equalsIgnoreCase(sruta)) {
                 var = clsCls.new clsP_paramext();
                 var.id = item.ID;
                 var.nombre = item.Nombre;
@@ -2805,7 +2804,8 @@ public class WSRec extends PBase {
                 script.add("DELETE FROM P_PARAMEXT WHERE ID="+item.ID);
                 sqlaa=addItemSqlParamExtRuta(var);
                 script.add(sqlaa);
-            }
+                //}
+           }
 
         } catch (Exception e) {
             ws.error = e.getMessage();

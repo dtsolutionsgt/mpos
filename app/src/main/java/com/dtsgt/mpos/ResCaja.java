@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,12 +13,14 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsT_comboObj;
@@ -26,13 +29,18 @@ import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_ResCaja;
 import com.dtsgt.webservice.srvCommit;
+import com.dtsgt.webservice.startOrdenImport;
+import com.dtsgt.webservice.wsOrdenImport;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -52,14 +60,17 @@ public class ResCaja extends PBase {
     private clsT_ventaObj T_ventaObj;
     private clsT_comboObj T_comboObj;
 
+    private wsOrdenImport wsoi;
+
     private clsClasses.clsT_orden oitem;
 
     private Runnable rnCargaOrdenes;
+    private Runnable rnOrdenesNuevos;
 
     private Precio prc;
 
     private String corel,mesa;
-    private int cuenta,counter;
+    private int cuenta,counter,idmesero;
     private boolean idle=true,exitflag=false,loading=false;
 
     private TimerTask ptask;
@@ -97,6 +108,14 @@ public class ResCaja extends PBase {
         listItems();
         gl.ventalock=false;
 
+        getURL();
+        rnOrdenesNuevos = new Runnable() {
+            public void run() {
+                procesaOrdenes();
+
+            }
+        };
+
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
     }
 
@@ -104,6 +123,10 @@ public class ResCaja extends PBase {
 
     public void doRec(View view) {
         recibeOrdenes();
+    }
+
+    public void doOrden(View view) {
+        listaMeseros();
     }
 
     public void doExit(View view) {
@@ -429,6 +452,77 @@ public class ResCaja extends PBase {
 
     //endregion
 
+    //region Recepcion de ordenes - recall
+
+    private void listaOrdenes() {
+        try {
+            wsoi =new wsOrdenImport(gl.wsurl,gl.emp,gl.tienda);
+            wsoi.execute(rnOrdenesNuevos);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void procesaOrdenes() {
+        try {
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    public void listaMeseros() {
+        try {
+
+            clsVendedoresObj VendedoresObj = new clsVendedoresObj(this, Con, db);
+            sql = "WHERE (RUTA IN (SELECT CODIGO_RUTA FROM P_RUTA WHERE SUCURSAL="+gl.tienda+")) AND " +
+                  "(NIVEL=4) AND (ACTIVO=1) ORDER BY NOMBRE";
+            VendedoresObj.fill(sql);
+
+            int itemcnt=VendedoresObj.count;
+            String[] selitems = new String[itemcnt];
+            int[] selcod = new int[itemcnt];
+
+            for (int i = 0; i <itemcnt; i++) {
+                selitems[i] = VendedoresObj.items.get(i).nombre;
+                selcod[i] = VendedoresObj.items.get(i).codigo_vendedor;
+            }
+
+            ExDialog menudlg = new ExDialog(this);
+            menudlg.setTitle("tit");
+
+            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    idmesero=selcod[item];
+                    listaOrdenes();
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            final AlertDialog Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+    }
+
+
+    //endregion
+
     //region Aux
 
     private boolean ventaVacia() {
@@ -536,6 +630,26 @@ public class ResCaja extends PBase {
         } catch (Exception e) {
             toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private void getURL() {
+        gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
+        gl.timeout = 20000;
+
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
+            if (file1.exists()) {
+                FileInputStream fIn = new FileInputStream(file1);
+                BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+
+                gl.wsurl = myReader.readLine();
+                String line = myReader.readLine();
+                if(line.isEmpty()) gl.timeout = 20000; else gl.timeout = Integer.valueOf(line);
+                myReader.close();
+            }
+        } catch (Exception e) {}
+
     }
 
     //endregion

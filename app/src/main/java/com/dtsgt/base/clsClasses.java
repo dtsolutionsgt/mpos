@@ -1339,7 +1339,7 @@ public class clsClasses {
 
 	public class clsMenu {
 		public int ID,Icon,icod,cant;
-		public String Name,Cod,Pass;
+		public String Name,Cod,Pass,val;
 	}	
 	
 	public class clsVenta {

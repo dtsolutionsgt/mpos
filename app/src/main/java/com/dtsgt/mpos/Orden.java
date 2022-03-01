@@ -1377,7 +1377,6 @@ public class Orden extends PBase {
         }
     }
 
-
     //endregion
 
     //region Precuenta
@@ -1501,6 +1500,7 @@ public class Orden extends PBase {
                 item.Cod=P_lineaObj.items.get(i).codigo+"";
                 item.Name=P_lineaObj.items.get(i).nombre;
                 item.icod=P_lineaObj.items.get(i).codigo_linea;
+                item.val=P_lineaObj.items.get(i).marca;
                 fitems.add(item);
             }
 
@@ -1599,13 +1599,11 @@ public class Orden extends PBase {
         try {
 
             if (gl.peImpOrdCos) {
-
                 item = clsCls.new clsMenu();
                 item.ID=66;
                 item.Name="Comandas";
                 item.Icon=66;
                 mitems.add(item);
-
             }
 
             item = clsCls.new clsMenu();
@@ -1621,16 +1619,14 @@ public class Orden extends PBase {
                     item.Name = "Precuenta caja";
                     item.Icon = 68;
                     mitems.add(item);
-                }
+               }
             }
 
-            //if (gl.pelMeseroCaja | app.modoSinInternet()) {
-                item = clsCls.new clsMenu();
-                item.ID = 1;
-                item.Name = "Pago";
-                item.Icon = 67;
-                mitems.add(item);
-            //}
+            item = clsCls.new clsMenu();
+            item.ID = 1;
+            item.Name = "Pago";
+            item.Icon = 67;
+            mitems.add(item);
 
             if (gl.peImpOrdCos) {
                if (!gl.pelComandaBT) {
@@ -1647,6 +1643,16 @@ public class Orden extends PBase {
             item.Name = "Borrar cuentas";
             item.Icon = 74;
             mitems.add(item);
+
+            if (gl.pelMeseroCaja) {
+                if (!app.modoSinInternet()) {
+                    item = clsCls.new clsMenu();
+                    item.ID = 76;
+                    item.Name = "Enviar cuentas a caja";
+                    item.Icon = 10;
+                    mitems.add(item);
+                }
+            }
 
             adaptergrid=new ListAdaptMenuOrden(this, mitems,horiz);
             gridView.setAdapter(adaptergrid);
@@ -1678,12 +1684,12 @@ public class Orden extends PBase {
                     }
 
                     if (modo_emerg) {
-                        msgAskPrecuentaCaja("Enviar solicitud de pago a la caja");
+                        msgAskPagoCaja("Enviar solicitud de pago a la caja");
                     } else {
                         if (enviarorden) {
                             actualizaEstadoOrden(1);
                         } else {
-                            msgAskPrecuentaCaja("Enviar solicitud de pago a la caja");
+                            msgAskPagoCaja("Enviar solicitud de pago a la caja");
                         }
                     }
 
@@ -1745,6 +1751,10 @@ public class Orden extends PBase {
 
                 case 75:
                     msgAskImpresora("Este proceso redirecciona impresión de una impresora que dejo funcionar a otra.\n¿Continuar?");
+                    break;
+
+                case 76:
+                    msgAskEnvioCaja("Enviar cuentas a la caja");
                     break;
             }
         } catch (Exception e) {
@@ -2068,14 +2078,14 @@ public class Orden extends PBase {
     private void envioMesa(int estado) {
        String cmd="";
 
-       estadoMesa(estado);
+       if (estado!=1) estadoMesa(estado);
 
        if (modo_emerg) return;
        if (!gl.pelMeseroCaja) return;
 
        try {
 
-           if (estado>1) {
+           if (estado>=1) {
 
                cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
                cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
@@ -2152,7 +2162,7 @@ public class Orden extends PBase {
                     if (pendientesCuentas()) {
                         msgbox("Existe cuenta pendiente de completar pago, por favor espere . . .");return;
                     }
-                    msgAskPrecuentaCaja("Enviar solicitud de pago a la caja");break;
+                    msgAskPagoCaja("Enviar solicitud de pago a la caja");break;
                 case 2:
                     msgAskPrint("Imprimír precuenta");break;
             }
@@ -2305,7 +2315,7 @@ public class Orden extends PBase {
             grdprod.setNumColumns(3);
         } else {
             grdfam.setNumColumns(2);
-            grdprod.setNumColumns(1);
+            grdprod.setNumColumns(2);
         }
 
         if (!horiz) {
@@ -3165,7 +3175,7 @@ public class Orden extends PBase {
 
     }
 
-    private void msgAskPrecuentaCaja(String msg) {
+    private void msgAskPagoCaja(String msg) {
 
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
@@ -3173,6 +3183,25 @@ public class Orden extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 aplicarPago();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskEnvioCaja(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                envioMesa(1);
             }
         });
 

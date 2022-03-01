@@ -828,10 +828,10 @@ public class clsDocument {
     // Aux
 	
 	private boolean loadHeadLines() {
-
         clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
 		Cursor DT;	
 		String s,sucur;
+		int frIVA,frISR;
 		
 		try {
 
@@ -846,16 +846,18 @@ public class clsDocument {
             if (DT.getCount()>0) {
                 DT.moveToFirst();
                 textofin=DT.getString(0);
+                frIVA=DT.getInt(1);
+                frISR=DT.getInt(2);
 
                 if (DT.getInt(1)>0) {
-                    P_fraseObj.fill("WHERE Codigo_Frase="+DT.getInt(1));
+                    P_fraseObj.fill("WHERE Codigo_Frase="+frIVA);
                     if (P_fraseObj.count>0) {
                         felIVA=P_fraseObj.first().texto;
                     } else felIVA="";
                 } else felIVA="";
 
                 if (DT.getInt(2)>0) {
-                    P_fraseObj.fill("WHERE Codigo_Frase="+DT.getInt(2));
+                    P_fraseObj.fill("WHERE Codigo_Frase="+frISR);
                     if (P_fraseObj.count>0) {
                         felISR=P_fraseObj.first().texto;
                     } else felISR="";
