@@ -84,6 +84,7 @@ public class clsP_proveedorObj {
         ins.add("CODIGO",item.codigo);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
+        ins.add("CORREO",item.correo);
 
         db.execSQL(ins.sql());
 
@@ -96,6 +97,7 @@ public class clsP_proveedorObj {
         upd.add("CODIGO",item.codigo);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
+        upd.add("CORREO",item.correo);
 
         upd.Where("(CODIGO_PROVEEDOR="+item.codigo_proveedor+")");
 
@@ -133,6 +135,7 @@ public class clsP_proveedorObj {
             item.codigo=dt.getString(1);
             item.nombre=dt.getString(2);
             item.activo=(dt.getInt(3)==1?true:false);
+            item.correo=dt.getString(4);
 
             items.add(item);
 
@@ -168,6 +171,7 @@ public class clsP_proveedorObj {
         ins.add("CODIGO",item.codigo);
         ins.add("NOMBRE",item.nombre);
         ins.add("ACTIVO",item.activo);
+        ins.add("CORREO",item.correo);
 
         return ins.sql();
 
@@ -180,6 +184,7 @@ public class clsP_proveedorObj {
         upd.add("CODIGO",item.codigo);
         upd.add("NOMBRE",item.nombre);
         upd.add("ACTIVO",item.activo);
+        upd.add("CORREO",item.activo);
 
         upd.Where("(CODIGO_PROVEEDOR="+item.codigo_proveedor+")");
 

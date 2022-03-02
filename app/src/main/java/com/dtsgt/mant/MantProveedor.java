@@ -12,10 +12,12 @@ import com.dtsgt.classes.clsP_proveedorObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
+import java.util.regex.Pattern;
+
 public class MantProveedor extends PBase {
 
     private ImageView imgstat,imgadd;
-    private EditText txt1,txt2;
+    private EditText txt1,txt2, txtCorreo;
 
     private clsP_proveedorObj holder;
     private clsClasses.clsP_proveedor item=clsCls.new clsP_proveedor();
@@ -32,6 +34,7 @@ public class MantProveedor extends PBase {
 
         txt1 = (EditText) findViewById(R.id.txt1);
         txt2 = (EditText) findViewById(R.id.txt2);
+        txtCorreo = (EditText) findViewById(R.id.txt18);
         imgstat = (ImageView) findViewById(R.id.imageView31);
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -134,6 +137,7 @@ public class MantProveedor extends PBase {
     private void showItem() {
         if(newitem) txt1.setText(""); else txt1.setText(""+item.codigo);
         txt2.setText(item.nombre);
+        txtCorreo.setText(item.correo);
     }
 
     private boolean validaDatos() {
@@ -161,6 +165,23 @@ public class MantProveedor extends PBase {
                 return false;
             } else {
                 item.nombre=ss;
+            }
+
+            ss=txtCorreo.getText().toString();
+            if (!mu.emptystr(ss)) {
+                String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                        "[a-zA-Z0-9_+&*-]+)*@" +
+                        "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                        "A-Z]{2,7}$";
+
+                Pattern pat = Pattern.compile(emailRegex);
+
+                if (pat.matcher(ss).matches()) {
+                    item.correo = ss;
+                } else {
+                    msgbox("¡El correo no es válido!");
+                    return false;
+                }
             }
 
             return true;

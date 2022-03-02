@@ -377,15 +377,15 @@ public class clsDocument {
             }
         }
 
-        rep.add("Fecha: "+fsfecha);
+        rep.add("Fecha : "+fsfecha);
 
         if (docfactura){
 
-            if (!emptystr(nit_cliente)) rep.add("NIT: "+nit_cliente);
+            if (!emptystr(nit_cliente)) rep.add("NIT : "+nit_cliente);
 
             if (!emptystr(clidir)) {
 
-                clidir="Dir: "+clidir;
+                clidir="Dir : "+clidir;
 
                 if (clidir.length()>prw) {
 
@@ -433,13 +433,13 @@ public class clsDocument {
 			}
 
 			if (pagoefectivo==1){
-                rep.add("Condiciones de pago: Efectivo");
+                rep.add("Condiciones de pago : Efectivo");
 			} else {
 
 			    if(!TipoCredito.isEmpty()){
-                    rep.add("Condiciones de pago: " + TipoCredito + " Aut#: " + NoAutorizacion);
+                    rep.add("Condiciones de pago : " + TipoCredito + " Aut#: " + NoAutorizacion);
                 }else{
-                    rep.add("Condiciones de pago: Crédito");
+                    rep.add("Condiciones de pago : Crédito");
                 }
 
 			}
@@ -525,7 +525,7 @@ public class clsDocument {
                 } else l=numero;
 
                 if (facturaflag) {
-                    l="%%%Serie : "+serie +" No.: "+l;
+                    l="%%%Serie : "+serie +" No. : "+l;
                 } else {
                     sfticket=serie+l;l="";
                 }
@@ -881,8 +881,8 @@ public class clsDocument {
 
                 if (val.equalsIgnoreCase("INFILE")) {
                     banderafel=true;
-                    felcert="CERTIFICADOR: INFILE, S.A.";
-                    felnit="NIT: 12521337";
+                    felcert="CERTIFICADOR : INFILE, S.A.";
+                    felnit="NIT : 12521337";
                 }
 
            } catch (Exception e) {

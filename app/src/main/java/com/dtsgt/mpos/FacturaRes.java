@@ -3168,7 +3168,7 @@ public class FacturaRes extends PBase {
         try {
             clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
-            if (app.impresora()) {
+            if (true) {
 
                 try {
                     db.execSQL("UPDATE P_RES_SESION SET ESTADO=3 WHERE ID='"+ gl.ordcorel+"'");

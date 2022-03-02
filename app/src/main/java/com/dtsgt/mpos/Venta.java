@@ -192,7 +192,7 @@ public class Venta extends PBase {
         clearItem();
 
         if (P_nivelprecioObj.count==0) {
-            toastlong("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");finish();return;
+            mu.msgbox("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");finish();return;
         }
 
         imgflag=gl.peMImg;
@@ -2728,7 +2728,7 @@ public class Venta extends PBase {
             rep.empty();
             rep.add("ORDEN MESA : "+mesa);
             rep.empty();
-            rep.add("Hora : "+du.shora(du.getActDateTime()));
+            rep.add("Hora       : "+du.shora(du.getActDateTime()));
             rep.line();
             rep.empty();
 

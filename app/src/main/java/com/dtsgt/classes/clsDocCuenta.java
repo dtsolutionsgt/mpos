@@ -312,8 +312,7 @@ public class clsDocCuenta extends clsDocument {
         rep.line();
         rep.add("");
         rep.add("Mesa : "+mesa);
-        rep.add("");
-        rep.add("Cuenta #"+cuenta);
+        rep.add("Cuenta : "+cuenta);
         rep.add("");
         rep.add3sss("Cantidad ","Precio","Total");
         rep.line();
@@ -341,18 +340,18 @@ public class clsDocCuenta extends clsDocument {
 
         if (pdesc!=0 | propfija) {
             if (pprop!=0 | propfija) {
-                rep.addtotsp("Subtotal", (ptotal + pdesc-propvalor));
-                if (pdesc != 0)  rep.addtotsp("Descuento", -pdesc);
+                rep.addtotsp("Subtotal : ", (ptotal + pdesc-propvalor));
+                if (pdesc != 0)  rep.addtotsp("Descuento : ", -pdesc);
                 rep.addtotsp("Propina : ",propvalor);
             } else {
                 if (pdesc != 0) {
-                    rep.addtotsp("Subtotal", (ptotal + pdesc));
-                    rep.addtotsp("Descuento", -pdesc);
+                    rep.addtotsp("Subtotal : ", (ptotal + pdesc));
+                    rep.addtotsp("Descuento : ", -pdesc);
                 }
             }
         }
 
-        rep.addtotsp("TOTAL A PAGAR ", ptotal);
+        rep.addtotsp("TOTAL A PAGAR : ", ptotal);
         rep.add("");
         rep.add("Les atendio : ");
         rep.add(vendedor);
@@ -368,16 +367,16 @@ public class clsDocCuenta extends clsDocument {
         }
 
         rep.add("");
-        rep.add("Nombre cliente :");
+        rep.add("Nombre cliente : ");
         rep.add("");
         rep.line();
         rep.add("");
-        rep.add("NIT : _________________");
+        rep.add("NIT.: _________________");
         rep.add("");
-        rep.add("Direccion :");
+        rep.add("Direccion : ");
         rep.add("");
         rep.line();
-        rep.add("Correo :");
+        rep.add("Correo : ");
         rep.add("");
         rep.line();
         rep.add(""); rep.add(""); rep.add(""); rep.add(""); rep.add("");

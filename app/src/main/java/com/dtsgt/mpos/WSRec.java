@@ -2295,6 +2295,7 @@ public class WSRec extends PBase {
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
                 var.activo = item.ACTIVO;
+                var.correo = item.CORREO;
 
                 script.add(handler.addItemSql(var));
             }

@@ -876,6 +876,7 @@ public class clsClasses {
         public int  codigo_proveedor;
         public String codigo;
         public String nombre;
+        public String correo;
         public Boolean  activo;
     }
 

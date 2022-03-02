@@ -360,7 +360,7 @@ public class MainActivity extends PBase {
                         spinlabel.setTextSize(21);
                         spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                        usr = spincode.get(position);
+                        //usr = spincode.get(position);
                     } catch (Exception e) {
                     }
                 }
@@ -558,17 +558,23 @@ public class MainActivity extends PBase {
 
             gl.idmesero = 0;
 
-            if (usr.isEmpty()) {
-
+            // KM 20220216 Ingreso sin usuario
+            /*if (usr.isEmpty()) {
                 mu.msgbox("Usuario incorrecto.");
                 return false;
-            }
+            }*/
+
             if (pwd.isEmpty()) {
                 mu.msgbox("Contraseña incorrecta.");
                 return false;
             }
 
-            sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO,CODIGO_VENDEDOR FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
+            if (usr.isEmpty()) {
+                sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO,CODIGO_VENDEDOR,CODIGO FROM VENDEDORES WHERE CLAVE='" + pwd + "' COLLATE NOCASE";
+            } else {
+                sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO,CODIGO_VENDEDOR,CODIGO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
+            }
+
             DT = Con.OpenDT(sql);
 
             if (DT.getCount() == 0) {
@@ -581,6 +587,10 @@ public class MainActivity extends PBase {
             if (!pwd.equalsIgnoreCase(dpwd)) {
                 mu.msgbox("Contraseña incorrecta!");
                 return false;
+            } else {
+                if (usr.isEmpty()) {
+                    usr = DT.getString(5);
+                }
             }
 
             gl.nivel = gl.nivel_sucursal;

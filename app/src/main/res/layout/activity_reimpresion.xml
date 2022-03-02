@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -75,9 +76,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/relRoad"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="10dp"
-        android:layout_toStartOf="@+id/imgImg">
+        android:layout_toStartOf="@+id/imgImg"
+        android:layout_toEndOf="@+id/prevReimpresion">
 
         <RelativeLayout
             android:id="@+id/llFechaIni"
@@ -211,5 +214,22 @@
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/prevReimpresion"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignTop="@+id/imgImg"
+        android:layout_alignBottom="@+id/imgImg"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:onClick="regresar"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
+        android:src="@drawable/prev48" />
 
 </RelativeLayout>

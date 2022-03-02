@@ -162,9 +162,9 @@ public class clsDocFactura extends clsDocument {
 			
 			resol="Resolucion No. : "+DT.getString(0);
 			ff=DT.getLong(1);
-			resfecha="De Fecha: "+sfecha_dos(ff);
+			resfecha="De Fecha : "+sfecha_dos(ff);
 			ff=DT.getLong(2);
-			resvence="Vigente hasta: "+sfecha_dos(ff);
+			resvence="Vigente hasta : "+sfecha_dos(ff);
 			//#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
 //			ff=DT.getInt(2);resvence="Resolucion vence : "+sfecha(ff);
 			resrango="Serie : "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
@@ -664,19 +664,19 @@ public class clsDocFactura extends clsDocument {
             stot = stot - propina;
             tot = tot - propina;
             if (desc != 0) {
-                rep.addtotsp("Subtotal", stot);
-                rep.addtotsp("Descuento", -desc);
+                rep.addtotsp("Subtotal : ", stot);
+                rep.addtotsp("Descuento : ", -desc);
             }
         } else {
             if (desc != 0 | propina != 0) {
                 stot = stot - propina;
-                rep.addtotsp("Subtotal", stot);
+                rep.addtotsp("Subtotal : ", stot);
             }
-            if (desc != 0) rep.addtotsp("Descuento", -desc);
-            if (propina != 0) rep.addtotsp("Propina", propina);
+            if (desc != 0) rep.addtotsp("Descuento : ", -desc);
+            if (propina != 0) rep.addtotsp("Propina : ", propina);
         }
 
-        rep.addtotsp("TOTAL A PAGAR ", tot);
+        rep.addtotsp("TOTAL A PAGAR : ", tot);
         rep.add("");
 
         rep.add("Detalle pago : ");
@@ -708,11 +708,11 @@ public class clsDocFactura extends clsDocument {
             totperc=stot*(percep/100);totperc=round2(totperc);
             totimp=imp-totperc;
 
-            rep.addtotsp("Subtotal", stot);
-            rep.addtotsp("Impuesto", totimp);
-            if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion", totperc);
-            rep.addtotsp("Descuento", -desc);
-            rep.addtotsp("TOTAL", tot);
+            rep.addtotsp("Subtotal : ", stot);
+            rep.addtotsp("Impuesto : ", totimp);
+            if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion : ", totperc);
+            rep.addtotsp("Descuento : ", -desc);
+            rep.addtotsp("TOTAL : ", tot);
 
         } else {
 
@@ -720,19 +720,19 @@ public class clsDocFactura extends clsDocument {
                 stot = stot - propina;
                 tot = tot - propina;
                 if (desc != 0) {
-                    rep.addtotsp("Subtotal", stot);
-                    rep.addtotsp("Descuento", -desc);
+                    rep.addtotsp("Subtotal : ", stot);
+                    rep.addtotsp("Descuento : ", -desc);
                 }
             } else {
                 if (desc != 0 | propina != 0) {
                     stot = stot - propina;
-                    rep.addtotsp("Subtotal", stot);
+                    rep.addtotsp("Subtotal : ", stot);
                 }
-                if (desc != 0) rep.addtotsp("Descuento", -desc);
-                if (propina != 0) rep.addtotsp("Propina "+ffrmnodec.format(propperc)+" % ", propina);
+                if (desc != 0) rep.addtotsp("Descuento : ", -desc);
+                if (propina != 0) rep.addtotsp("Propina : "+ffrmnodec.format(propperc)+" % ", propina);
             }
 
-            rep.addtotsp("TOTAL A PAGAR ", tot);
+            rep.addtotsp("TOTAL A PAGAR : ", tot);
         }
 
         if (modorest) {
@@ -770,9 +770,9 @@ public class clsDocFactura extends clsDocument {
 
             if (!feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
-                rep.add("Número de autorización: ");
+                rep.add("Número de autorización : ");
                 rep.add(feluuid);
-                rep.add("Fecha de certificación: "+feldcert);
+                rep.add("Fecha de certificación : "+feldcert);
             }
 
             if (!felIVA.isEmpty()) {

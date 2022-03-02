@@ -545,7 +545,8 @@ public class BaseDatosScript {
                     "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
                     "CODIGO TEXT NOT NULL,"+
                     "NOMBRE TEXT NOT NULL,"+
-                    "ACTIVO INTEGER NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL," +
+                    "CORREO TEXT,"+
                     "PRIMARY KEY ([CODIGO_PROVEEDOR])"+
                     ");";
             database.execSQL(sql);

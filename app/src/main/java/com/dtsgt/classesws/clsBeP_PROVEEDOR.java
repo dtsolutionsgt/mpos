@@ -8,6 +8,7 @@ public class clsBeP_PROVEEDOR {
     @Element(required=false) public String CODIGO;
     @Element(required=false) public String EMPRESA;
     @Element(required=false) public String NOMBRE;
+    @Element(required=false) public String CORREO;
     @Element(required=false) public Boolean ACTIVO;
 
 
@@ -15,13 +16,14 @@ public class clsBeP_PROVEEDOR {
     }
 
     public clsBeP_PROVEEDOR(int CODIGO_PROVEEDOR,String CODIGO,String EMPRESA,String NOMBRE,
-                            Boolean ACTIVO) {
+                            Boolean ACTIVO, String Correo) {
 
         this.CODIGO_PROVEEDOR=CODIGO_PROVEEDOR;
         this.CODIGO=CODIGO;
         this.EMPRESA=EMPRESA;
         this.NOMBRE=NOMBRE;
         this.ACTIVO=ACTIVO;
+        this.CORREO=CORREO;
 
     }
 

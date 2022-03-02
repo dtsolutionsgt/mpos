@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsDocCanastaBod;
 import com.dtsgt.classes.clsDocCobro;
@@ -966,5 +967,41 @@ public class Reimpresion extends PBase {
 		return uniqueID;
 	}
 
+	public void regresar(View v) {
+
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("¿Salir?");
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
+
+	private void msgAskExit(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("¿" + msg + "?");
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
 
 }
