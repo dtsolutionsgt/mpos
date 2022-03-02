@@ -53,6 +53,7 @@ import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
@@ -3174,9 +3175,31 @@ public class FacturaRes extends PBase {
                     db.execSQL("UPDATE P_RES_SESION SET ESTADO=3 WHERE ID='"+ gl.ordcorel+"'");
                 } catch (SQLException e) { }
 
+				clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+				P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
+
+				if (P_res_sesionObj.count>0){
+					clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+				}
+
+				//#EJC20220302: Get the names of each table and put on variables.
+
+				if(gl.vendnom == null){
+					gl.vendnom="";
+				}
+
+				if (gl.mesanom == null){
+					gl.mesanom="";
+				}
+
+				if (gl.nocuenta_precuenta == null){
+					gl.nocuenta_precuenta="";
+				}
+
                 fdoc.vendedor=gl.vendnom;
                 fdoc.rutanombre=gl.tiendanom;
                 fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
+
                 gl.QRCodeStr="";
                 app.doPrint(1,0);
 
