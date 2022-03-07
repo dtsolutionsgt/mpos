@@ -1570,9 +1570,9 @@ public class CierreX extends PBase {
             } catch (Exception ee) {}
         }
 
-        msgAskReset("Ocurrio error en impresion del cierre del dia.\n" +
-                    "La aplicacion se reinicializará.\n" +
-                    "Para la impresión utilize opcion - Reportes / Ultimo cierre");
+        msgAskReset("Ocurrió error en impresión del cierre del dia.\n" +
+                    "La aplicación se reiniciará.\n" +
+                    "Para re-impresión de cierre, utilice opción: Menú Principal - Reportes / Último cierre");
         return false;
     }
 
