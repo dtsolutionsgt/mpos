@@ -19,7 +19,7 @@ public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin;
-	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felcont,contacc,nitsuc,sfticket;
+	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
@@ -848,6 +848,7 @@ public class clsDocument {
                 textofin=DT.getString(0);
                 frIVA=DT.getInt(1);
                 frISR=DT.getInt(2);
+                felISR2="";
 
                 if (DT.getInt(1)>0) {
                     P_fraseObj.fill("WHERE Codigo_Frase="+frIVA);
@@ -860,6 +861,7 @@ public class clsDocument {
                     P_fraseObj.fill("WHERE Codigo_Frase="+frISR);
                     if (P_fraseObj.count>0) {
                         felISR=P_fraseObj.first().texto;
+                        if (frISR==4) felISR2="Sujeto a pagos trimestrales ISR";
                     } else felISR="";
                  } else felISR="";
 

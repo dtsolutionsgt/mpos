@@ -95,7 +95,8 @@ public class BaseDatos extends SQLiteOpenHelper {
 			  }
 
 		  } catch(Exception ex){
-		  	 msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage()+" : "+ pSQL);
+		  	 msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage()+" : "+ pSQL +"\n\n" +
+                     "REINICIE EL EQUIPO Y REPITE LA OPERACION");
 			  vError = ex.getMessage();
 		  }
 

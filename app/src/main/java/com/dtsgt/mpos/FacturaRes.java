@@ -53,6 +53,7 @@ import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
@@ -3177,24 +3178,15 @@ public class FacturaRes extends PBase {
 
 				clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
 				P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
+         		clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
 
-				if (P_res_sesionObj.count>0){
-					clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
-				}
+                clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+                VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
+                if (VendedoresObj.count>0) gl.vendnom=VendedoresObj.first().nombre;else gl.vendnom="";
 
-				//#EJC20220302: Get the names of each table and put on variables.
-
-				if(gl.vendnom == null){
-					gl.vendnom="";
-				}
-
-				if (gl.mesanom == null){
-					gl.mesanom="";
-				}
-
-				if (gl.nocuenta_precuenta == null){
-					gl.nocuenta_precuenta="";
-				}
+                clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
+                P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
+                if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
 
                 fdoc.vendedor=gl.vendnom;
                 fdoc.rutanombre=gl.tiendanom;

@@ -394,8 +394,10 @@ public class ResMesero extends PBase {
                 cor=ws.openDTCursor.getString(1);
                 est=ws.openDTCursor.getInt(2);
 
-                sql="UPDATE T_ORDEN SET ESTADO="+est+" WHERE (COREL='"+cor+"') AND (EMPRESA="+iid+")";
-                db.execSQL(sql);
+                if (est<0 | est>1) {
+                    sql = "UPDATE T_ORDEN SET ESTADO=" + est + " WHERE (COREL='" + cor + "') AND (EMPRESA=" + iid + ")";
+                    db.execSQL(sql);
+                }
 
                 validaCompleto(cor);
 

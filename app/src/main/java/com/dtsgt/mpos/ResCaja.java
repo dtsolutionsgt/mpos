@@ -33,13 +33,15 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_ResCaja;
 import com.dtsgt.webservice.srvCommit;
-import com.dtsgt.webservice.startOrdenImport;
-import com.dtsgt.webservice.wsOrdenImport;
+import com.dtsgt.webservice.wsOrdenRecall;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -60,7 +62,7 @@ public class ResCaja extends PBase {
     private clsT_ventaObj T_ventaObj;
     private clsT_comboObj T_comboObj;
 
-    private wsOrdenImport wsoi;
+    private wsOrdenRecall wsor;
 
     private clsClasses.clsT_orden oitem;
 
@@ -76,6 +78,8 @@ public class ResCaja extends PBase {
     private TimerTask ptask;
     private int period=10000,delay=50;
     private boolean horiz;
+
+    private String orddir= Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +148,8 @@ public class ResCaja extends PBase {
                 adapter.setSelectedIndex(position);
 
                 corel=item.f1;mesa=item.f2;cuenta=item.pk;
-                gl.ordcorel=corel;gl.primesa=mesa;gl.pricuenta=""+cuenta;
+                gl.ordcorel=corel;gl.primesa=mesa;
+                gl.pricuenta=""+cuenta;gl.nocuenta_precuenta= gl.pricuenta;
 
                 showMenuMesa();
             };
@@ -456,20 +461,81 @@ public class ResCaja extends PBase {
 
     private void listaOrdenes() {
         try {
-            wsoi =new wsOrdenImport(gl.wsurl,gl.emp,gl.tienda);
-            wsoi.execute(rnOrdenesNuevos);
+            wsor =new wsOrdenRecall(gl.wsurl,gl.emp,idmesero);
+            wsor.execute(rnOrdenesNuevos);
+            toastcentlong("Actualizando, espere por favor . . .");
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private void procesaOrdenes() {
-        try {
+        FileWriter wfile=null;
+        BufferedWriter writer=null;
+        File file;
+        String s="",corel="",fname;
+        int pp,ppe;
+        boolean flag=false;
 
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        if (wsor.items.size()==0) {
+            return;
         }
 
+        try {
+
+            for (int i = 0; i < wsor.items.size(); i++) {
+
+                s= wsor.items.get(i);
+                pp=s.indexOf("FILE");ppe=s.indexOf("ENDFILE");
+
+                if (pp == 0) {
+                    corel = s.substring(4);fname = orddir + "/" + corel + ".txt";
+                    file = new File(fname);flag = !file.exists();
+
+                    if (flag) {
+
+                        try {
+                            wfile = new FileWriter(fname, false);
+                            writer = new BufferedWriter(wfile);
+
+                            s="DELETE FROM P_RES_SESION WHERE ID='"+corel+"'";
+                            writer.write(s);writer.write("\r\n");
+                            s="DELETE FROM T_ORDEN WHERE COREL='"+corel+"'";
+                            writer.write(s);writer.write("\r\n");
+                            s="DELETE FROM T_ORDENCUENTA WHERE COREL='"+corel+"'";
+                            writer.write(s);writer.write("\r\n");
+
+                        } catch (IOException e) {
+                            msgbox("MPos recall error : "+e.getMessage());flag=false;
+                        }
+                    } else {
+                        //items.add(corel);
+                    }
+                } else if (ppe == 0) {
+                    if (flag) {
+                        try {
+                            writer.close();writer = null;wfile = null;
+                            //items.add(corel);
+                        } catch (IOException e) {
+                             msgbox("MPos recall error : "+e.getMessage());
+                        }
+                    }
+                } else {
+                    if (flag) {
+                        try {
+                            writer.write(s);writer.write("\r\n");
+                        } catch (IOException e) {
+                            msgbox("MPos recall error : "+e.getMessage());flag=false;
+                        }
+                    }
+                }
+
+            }
+
+            msgbox("Lista de ordenes actualizada");
+        } catch (Exception e) {
+            msgbox("MPos recall error : "+e.getMessage());
+        }
     }
 
     public void listaMeseros() {

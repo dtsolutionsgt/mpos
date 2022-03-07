@@ -476,7 +476,7 @@ public class FELVerificacion extends PBase {
         ftot=0;
 
         try {
-            long flim=du.addDays(du.getActDate(),-4);
+            long flim=du.addDays(du.getActDate(),-5);
 
             //D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
             //   "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");

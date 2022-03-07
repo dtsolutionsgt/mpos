@@ -156,7 +156,7 @@ public class Orden extends PBase {
         emp=gl.emp;
         gl.nivel_sucursal=nivelSucursal();
         gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
-        idorden=gl.idorden;
+        idorden=gl.idorden;gl.ordcorel=gl.idorden;
 
         enviarorden= gl.pelMeseroCaja;
         gl.mesero_lista=true;
@@ -1741,7 +1741,12 @@ public class Orden extends PBase {
                     if (!hasProducts()) {
                         msgbox("La venta está vacia.");return;
                     }
-                    if (ventaVacia()) showListaCuentas();
+                    if (pendienteImpresion()) {
+                        msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
+                    } else {
+                        if (ventaVacia()) showListaCuentas();
+                    }
+
                     break;
 
                 case 74:
@@ -1907,7 +1912,7 @@ public class Orden extends PBase {
                 rep.add("Hora : "+du.shora(du.getActDateTime()));
                 rep.add("Mesero : "+gl.nombre_mesero_sel);
 
-                rep.line();
+                rep.line16();
 
                 T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
                 //T_comandaObj.fillSelect("SELECT COUNT(ID),ID,TEXTO WHERE ID="+printid+" GROUP BY ID,TEXTO");
@@ -1934,7 +1939,7 @@ public class Orden extends PBase {
                 //    rep.add(T_comandaObj.items.get(j).texto);
                 //}
 
-                rep.line();
+                rep.line16();
                 rep.add("");rep.add("");rep.add("");
 
                 rep.save();rep.clear();
@@ -2164,7 +2169,7 @@ public class Orden extends PBase {
                     }
                     msgAskPagoCaja("Enviar solicitud de pago a la caja");break;
                 case 2:
-                    msgAskPrint("Imprimír precuenta");break;
+                    msgAskPrint("Enviar impresión de precuenta a la caja");break;
             }
 
         } catch (Exception e) {
@@ -2185,8 +2190,10 @@ public class Orden extends PBase {
                 iid=ws.openDTCursor.getInt(0);
                 est=ws.openDTCursor.getInt(1);
 
-                sql="UPDATE T_ORDEN SET ESTADO="+est+" WHERE (COREL='"+idorden+"') AND (EMPRESA="+iid+")";
-                db.execSQL(sql);
+                if (est<0 | est>1) {
+                    sql="UPDATE T_ORDEN SET ESTADO="+est+" WHERE (COREL='"+idorden+"') AND (EMPRESA="+iid+")";
+                    db.execSQL(sql);
+                }
 
                 ws.openDTCursor.moveToNext();
             }

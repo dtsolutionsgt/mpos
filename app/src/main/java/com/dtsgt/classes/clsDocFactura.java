@@ -780,6 +780,9 @@ public class clsDocFactura extends clsDocument {
             }
             if (!felISR.isEmpty()) {
                 rep.add(felISR);
+                if (!felISR2.isEmpty()) {
+                    rep.add(felISR2);
+                }
             }
 
             rep.add("");

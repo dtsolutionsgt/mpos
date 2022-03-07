@@ -192,6 +192,14 @@ public class clsRepBuilder {
 		
 		items.add(s);
 	}
+
+    public void line16() {
+        char[] fill = new char[16];
+        Arrays.fill(fill, '-');
+        String s = new String(fill);
+
+        items.add(s);
+    }
 	
 	public String ltrim(String ss,int sw) {
 		int l=ss.length();
