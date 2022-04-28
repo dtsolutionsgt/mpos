@@ -21,6 +21,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsP_Producto_TipoObj;
+import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
 import com.dtsgt.classes.clsP_bonifObj;
@@ -69,103 +70,7 @@ import com.dtsgt.classes.clsP_usgrupoObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsP_usopcionObj;
 import com.dtsgt.classes.clsVendedoresObj;
-import com.dtsgt.classesws.clsBeP_ARCHIVOCONF;
-import com.dtsgt.classesws.clsBeP_ARCHIVOCONFList;
-import com.dtsgt.classesws.clsBeP_BANCO;
-import com.dtsgt.classesws.clsBeP_BANCOList;
-import com.dtsgt.classesws.clsBeP_BONIF;
-import com.dtsgt.classesws.clsBeP_BONIFList;
-import com.dtsgt.classesws.clsBeP_CAJA_IMPRESORA;
-import com.dtsgt.classesws.clsBeP_CAJA_IMPRESORAList;
-import com.dtsgt.classesws.clsBeP_CLIENTE;
-import com.dtsgt.classesws.clsBeP_CLIENTEList;
-import com.dtsgt.classesws.clsBeP_CONCEPTOPAGO;
-import com.dtsgt.classesws.clsBeP_CONCEPTOPAGOList;
-import com.dtsgt.classesws.clsBeP_COREL;
-import com.dtsgt.classesws.clsBeP_CORELList;
-import com.dtsgt.classesws.clsBeP_DEPARTAMENTO;
-import com.dtsgt.classesws.clsBeP_DEPARTAMENTOList;
-import com.dtsgt.classesws.clsBeP_DESCUENTO;
-import com.dtsgt.classesws.clsBeP_DESCUENTOList;
-import com.dtsgt.classesws.clsBeP_EMPRESA;
-import com.dtsgt.classesws.clsBeP_ENCABEZADO_REPORTESHH;
-import com.dtsgt.classesws.clsBeP_ENCABEZADO_REPORTESHHList;
-import com.dtsgt.classesws.clsBeP_ESTACION;
-import com.dtsgt.classesws.clsBeP_ESTACIONList;
-import com.dtsgt.classesws.clsBeP_FACTORCONV;
-import com.dtsgt.classesws.clsBeP_FACTORCONVList;
-import com.dtsgt.classesws.clsBeP_FRASE;
-import com.dtsgt.classesws.clsBeP_FRASEList;
-import com.dtsgt.classesws.clsBeP_IMPRESORA;
-import com.dtsgt.classesws.clsBeP_IMPRESORAList;
-import com.dtsgt.classesws.clsBeP_IMPRESORA_MARCA;
-import com.dtsgt.classesws.clsBeP_IMPRESORA_MARCAList;
-import com.dtsgt.classesws.clsBeP_IMPRESORA_MODELO;
-import com.dtsgt.classesws.clsBeP_IMPRESORA_MODELOList;
-import com.dtsgt.classesws.clsBeP_IMPUESTO;
-import com.dtsgt.classesws.clsBeP_IMPUESTOList;
-import com.dtsgt.classesws.clsBeP_LINEA;
-import com.dtsgt.classesws.clsBeP_LINEAList;
-import com.dtsgt.classesws.clsBeP_LINEA_ESTACION;
-import com.dtsgt.classesws.clsBeP_LINEA_ESTACIONList;
-import com.dtsgt.classesws.clsBeP_LINEA_IMPRESORA;
-import com.dtsgt.classesws.clsBeP_LINEA_IMPRESORAList;
-import com.dtsgt.classesws.clsBeP_MEDIAPAGO;
-import com.dtsgt.classesws.clsBeP_MEDIAPAGOList;
-import com.dtsgt.classesws.clsBeP_MONEDA;
-import com.dtsgt.classesws.clsBeP_MONEDAList;
-import com.dtsgt.classesws.clsBeP_MOTIVO_AJUSTE;
-import com.dtsgt.classesws.clsBeP_MOTIVO_AJUSTEList;
-import com.dtsgt.classesws.clsBeP_MUNICIPIO;
-import com.dtsgt.classesws.clsBeP_MUNICIPIOList;
-import com.dtsgt.classesws.clsBeP_NIVELPRECIO;
-import com.dtsgt.classesws.clsBeP_NIVELPRECIOList;
-import com.dtsgt.classesws.clsBeP_NIVELPRECIO_SUCURSAL;
-import com.dtsgt.classesws.clsBeP_NIVELPRECIO_SUCURSALList;
-import com.dtsgt.classesws.clsBeP_PARAMEXT;
-import com.dtsgt.classesws.clsBeP_PARAMEXTList;
-import com.dtsgt.classesws.clsBeP_PRODCOMBO;
-import com.dtsgt.classesws.clsBeP_PRODCOMBOList;
-import com.dtsgt.classesws.clsBeP_PRODMENU;
-import com.dtsgt.classesws.clsBeP_PRODMENUList;
-import com.dtsgt.classesws.clsBeP_PRODMENUOPC;
-import com.dtsgt.classesws.clsBeP_PRODMENUOPCList;
-import com.dtsgt.classesws.clsBeP_PRODMENUOPC_DET;
-import com.dtsgt.classesws.clsBeP_PRODMENUOPC_DETList;
-import com.dtsgt.classesws.clsBeP_PRODPRECIO;
-import com.dtsgt.classesws.clsBeP_PRODPRECIOList;
-import com.dtsgt.classesws.clsBeP_PRODRECETA;
-import com.dtsgt.classesws.clsBeP_PRODRECETAList;
-import com.dtsgt.classesws.clsBeP_PRODUCTO;
-import com.dtsgt.classesws.clsBeP_PRODUCTOList;
-import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPO;
-import com.dtsgt.classesws.clsBeP_PRODUCTO_TIPOList;
-import com.dtsgt.classesws.clsBeP_PROVEEDOR;
-import com.dtsgt.classesws.clsBeP_PROVEEDORList;
-import com.dtsgt.classesws.clsBeP_REGLA_COSTO;
-import com.dtsgt.classesws.clsBeP_REGLA_COSTOList;
-import com.dtsgt.classesws.clsBeP_RES_GRUPO;
-import com.dtsgt.classesws.clsBeP_RES_GRUPOList;
-import com.dtsgt.classesws.clsBeP_RES_MESA;
-import com.dtsgt.classesws.clsBeP_RES_MESAList;
-import com.dtsgt.classesws.clsBeP_RES_SALA;
-import com.dtsgt.classesws.clsBeP_RES_SALAList;
-import com.dtsgt.classesws.clsBeP_RUTA;
-import com.dtsgt.classesws.clsBeP_RUTAList;
-import com.dtsgt.classesws.clsBeP_SUCURSAL;
-import com.dtsgt.classesws.clsBeP_SUCURSALList;
-import com.dtsgt.classesws.clsBeP_UNIDAD;
-import com.dtsgt.classesws.clsBeP_UNIDADList;
-import com.dtsgt.classesws.clsBeP_UNIDAD_CONV;
-import com.dtsgt.classesws.clsBeP_UNIDAD_CONVList;
-import com.dtsgt.classesws.clsBeP_USGRUPO;
-import com.dtsgt.classesws.clsBeP_USGRUPOList;
-import com.dtsgt.classesws.clsBeP_USGRUPOOPC;
-import com.dtsgt.classesws.clsBeP_USGRUPOOPCList;
-import com.dtsgt.classesws.clsBeP_USOPCION;
-import com.dtsgt.classesws.clsBeP_USOPCIONList;
-import com.dtsgt.classesws.clsBeVENDEDORES;
-import com.dtsgt.classesws.clsBeVENDEDORESList;
+import com.dtsgt.classesws.*;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -462,6 +367,9 @@ public class WSRec extends PBase {
                     case 51:
                         callMethod("GetP_REGLA_COSTO", "EMPRESA", gl.emp);
                         break;
+                    case 52:
+                        callMethod("GetP_ALMACEN","SUCURSAL",gl.tienda);
+                        break;
 
                 }
             } catch (Exception e) {
@@ -490,173 +398,148 @@ public class WSRec extends PBase {
                     break;
                 case 3:
                     processConfig();
-                    execws(4);
-                    break;
+                    execws(4);break;
                 case 4:
                     //processBonif();if (ws.errorflag) { processComplete();break;}
-                    execws(5);
-                    break;
+                    execws(5);break;
                 case 5:
                     processCorel();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(6);
-                    break;
+                    execws(6);break;
                 case 6:
                     processDescuento();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(7);
-                    break;
+                    execws(7);break;
                 case 7:
                     processFactor();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(8);
-                    break;
+                    execws(8);break;
                 case 8:
                     processImpuesto();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(9);
-                    break;
+                    execws(9);break;
                 case 9:
                     processLinea();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(10);
-                    break;
+                    execws(10);break;
                 case 10:
                     processCliente();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(11);
-                    break;
+                    execws(11);break;
                 case 11:
                     processEncabezado();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(12);
-                    break;
+                    execws(12);break;
                 case 12:
                     processMedia();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(13);
-                    break;
+                    execws(13);break;
                 case 13:
                     processMoneda();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(14);
-                    break;
+                    execws(14);break;
                 case 14:
                     processNivel();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(15);
-                    break;
+                    execws(15);break;
                 case 15:
                     processCombo();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(16);
-                    break;
+                    execws(16);break;
                 case 16:
                     processProdMenu();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(17);
-                    break;
+                    execws(17);break;
                 case 17:
                     processPrecios();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(18);
-                    break;
+                    execws(18);break;
                 case 18:
                     processOpciones();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(28);
-                    break;
+                    execws(28);break;
                 case 28:
                     processOpcionesdet();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(20);
-                    break;
+                    execws(20);break;
                 case 20:
                     processProveedores();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(21);
-                    break;
+                    execws(21);break;
                 case 21:
                     processProductos();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(22);
-                    break;
+                    execws(22);break;
                 case 22:
                     processRutas();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(23);
-                    break;
+                    execws(23);break;
                 case 23:
                     processSucursales();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(24);
-                    break;
+                    execws(24);break;
                 case 24:
                     processUsrGrupos();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(25);
-                    break;
+                    execws(25);break;
                 case 25:
                     processUsrGrOpc();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(26);
-                    break;
+                    execws(26);break;
                 case 26:
                     processGrOpciones();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(27);
-                    break;
+                    execws(27);break;
                 case 27:
                     processVendedores();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                   execws(29);
-                   break;
+                   execws(29);break;
                 case 29:
                     processConceptoPago();
                     if (ws.errorflag) {
@@ -669,154 +552,142 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(31);
-                    break;
+                    execws(31);break;
                 case 31:
                     processBancos();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(32);
-                    break;
+                    execws(32);break;
                 case 32:
                     processMotivoAjustes();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(33);
-                    break;
+                    execws(33);break;
                 case 33:
                     processDepartamentos();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(34);
-                    break;
+                    execws(34);break;
                 case 34:
                     processMunicipios();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(36);
-                    //processComplete();
-                    break;
+                    execws(36);break;
                 case 35:
                     processProductoTipo();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(36);
-                    break;
+                    execws(36);break;
                 case 36:
                     processFrases();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(37);
-                    break;
+                    execws(37);break;
                 case 37:
                     processResSala();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(38);
-                    break;
+                    execws(38);break;
                 case 38:
                     processResMesa();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(39);
-                    break;
+                    execws(39);break;
                 case 39:
                     processResGrupo();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(40);
-                    break;
+                    execws(40);break;
                 case 40:
                     processLineaImpresora();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(41);
-                    break;
+                    execws(41);break;
                 case 41:
                     processImpresora();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(42);
-                    break;
+                    execws(42);break;
                 case 42:
                     processMarcaImpresora();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(43);
-                    break;
+                    execws(43);break;
                 case 43:
                     processModeloImpresora();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(44);
-                    break;
+                    execws(44);break;
                 case 44:
                     processVersion();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(45);
-                    break;
+                    execws(45);break;
                 case 45:
                     processCajaImpresora();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(46);
-                    break;
+                    execws(46);break;
                 case 46:
                     processUnidad();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(47);
-                    break;
+                    execws(47);break;
                 case 47:
                     processUnidadConv();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(48);
-                    break;
+                    execws(48);break;
                 case 48:
                     processProdReceta();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(49);
-                    break;
+                    execws(49);break;
                 case 49:
                     processNivelSucursal();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(50);
-                    break;
+                    execws(50);break;
                 case 50:
                     processParametrosExtraRuta();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    execws(51);
+                    execws(51);break;
                 case 51:
                     processReglaCosto();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
                     processComplete();
+                    //execws(52);
+                    break;
+                case 52:
+                    processAlmacen();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    processComplete();
+                    break;
             }
 
         } catch (Exception e) {
@@ -2294,7 +2165,7 @@ public class WSRec extends PBase {
                 var.codigo_proveedor = item.CODIGO_PROVEEDOR;
                 var.codigo = item.CODIGO;
                 var.nombre = item.NOMBRE;
-                var.activo = item.ACTIVO;
+                var.activo = mu.bool(item.ACTIVO);
                 var.correo = item.CORREO;
 
                 script.add(handler.addItemSql(var));
@@ -3318,7 +3189,6 @@ public class WSRec extends PBase {
     }
 
     private void processReglaCosto() {
-
         try {
             clsP_regla_costoObj handler = new clsP_regla_costoObj(this, Con, db);
             clsBeP_REGLA_COSTOList items = new clsBeP_REGLA_COSTOList();
@@ -3344,6 +3214,45 @@ public class WSRec extends PBase {
                 var.codigo_empresa=item.CODIGO_EMPRESA;
                 var.codigo_tipo=item.CODIGO_TIPO;
                 var.dias=item.DIAS;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage();
+            ws.errorflag = true;
+        }
+    }
+
+    private void processAlmacen() {
+        try {
+            clsP_almacenObj handler = new clsP_almacenObj(this, Con, db);
+            clsBeP_ALMACENList items = new clsBeP_ALMACENList();
+            clsBeP_ALMACEN item = new clsBeP_ALMACEN();
+            clsClasses.clsP_almacen var;
+
+            script.add("DELETE FROM P_ALMACEN");
+
+            items = xobj.getresult(clsBeP_ALMACENList.class, "GetP_ALMACEN");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_almacen();
+
+                var.codigo_almacen=item.CODIGO_ALMACEN;
+                var.empresa=item.EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.activo=mu.bool(item.ACTIVO);
+                var.nombre=item.NOMBRE;
+                var.es_principal=mu.bool(item.ES_PRINCIPAL);
 
                 script.add(handler.addItemSql(var));
             }

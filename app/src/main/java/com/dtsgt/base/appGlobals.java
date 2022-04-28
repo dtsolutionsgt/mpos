@@ -33,15 +33,16 @@ public class appGlobals extends Application {
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,
-                comensales, cliente_dom, idclidir;
+                comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred ;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
-                codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel, corelmov;
-	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,caja_est_pago;
+                codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
+                corelmov, linea_sel="";
+	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,caja_est_pago,nom_alm,nom_alm2;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
-                   impresion_comanda, modo_domicilio, cf_domicilio,cierra_clave, mesero_lista ,
+                   impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta;
 
 	//Tamaño de pantalla

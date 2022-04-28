@@ -224,5 +224,25 @@ public class clsP_stock_almacenObj {
 
     }
 
+    public String addItemSqlBOF(clsClasses.clsP_stock_almacen item) {
+
+        ins.init("P_stock_almacen");
+
+        ins.add("EMPRESA",item.empresa);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO_ALMACEN",item.codigo_almacen);
+        ins.add("CODIGO_PRODUCTO",item.codigo_producto);
+        ins.add("UNIDADMEDIDA",item.unidadmedida);
+        ins.add("LOTE",item.lote);
+        ins.add("CANT",item.cant);
+        ins.add("CANTM",item.cantm);
+        ins.add("PESO",item.peso);
+        ins.add("PESOM",item.pesom);
+        ins.add("ANULADO",item.anulado);
+
+        return ins.sql();
+
+    }
+
 }
 

@@ -67,6 +67,8 @@ public class LA_T_movr extends BaseAdapter {
             holder = new ViewHolder();
 
             holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
+            holder.lbl5 = (TextView) convertView.findViewById(R.id.textView258);
+            holder.lbl6 = (TextView) convertView.findViewById(R.id.textView259);
             holder.lbl7 = (TextView) convertView.findViewById(R.id.lblV7);
             holder.lbl8 = (TextView) convertView.findViewById(R.id.lblV8);
             holder.lbl9 = (TextView) convertView.findViewById(R.id.textView234);
@@ -77,6 +79,8 @@ public class LA_T_movr extends BaseAdapter {
         }
 
         holder.lbl4.setText(mu.frmdecno(items.get(position).cant)+" "+items.get(position).unidadmedida);
+        holder.lbl5.setText(""+items.get(position).val1+" "+items.get(position).unidadmedida);
+        holder.lbl6.setText(""+items.get(position).val2+" "+items.get(position).unidadmedida);
         holder.lbl7.setText(mu.frmcur(items.get(position).pesom));
         holder.lbl8.setText(""+items.get(position).lote);
         holder.lbl9.setText(""+items.get(position).srazon);
@@ -91,7 +95,7 @@ public class LA_T_movr extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl4,lbl7,lbl8,lbl9;
+        TextView lbl4,lbl7,lbl8,lbl9,lbl5,lbl6;
     }
 
 }

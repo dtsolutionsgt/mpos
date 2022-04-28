@@ -57,9 +57,9 @@
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/lblProd"
-        android:layout_marginTop="45dp">
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="55dp">
 
     </ListView>
 
@@ -67,13 +67,13 @@
         android:id="@+id/lblProd"
         android:layout_width="wrap_content"
         android:layout_height="42dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignRight="@+id/lblBU"
         android:layout_below="@+id/lblBU"
+        android:layout_alignRight="@+id/lblBU"
+        android:layout_alignParentLeft="true"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
-        android:paddingRight="5dp"
         android:paddingTop="10dp"
+        android:paddingRight="5dp"
         android:text="Filtro"
         android:textSize="18sp" />
 
@@ -117,12 +117,14 @@
         android:id="@+id/editText1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/spinner1"
         android:layout_alignLeft="@+id/spinner1"
-        android:layout_alignBottom="@+id/lblProd"
+        android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/btnImp"
         android:ems="10"
         android:maxLines="1"
-        android:singleLine="true">
+        android:singleLine="true"
+        android:textSize="24sp">
 
         <requestFocus />
     </EditText>
@@ -146,12 +148,11 @@
         android:id="@+id/textView27"
         android:layout_width="153dp"
         android:layout_height="32dp"
-        android:layout_alignParentStart="false"
         android:layout_below="@+id/lblProd"
+        android:layout_alignParentStart="false"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:layout_toLeftOf="@+id/textView29"
-        android:background="@layout/frame_rect"
         android:clickable="true"
         android:gravity="center"
         android:onClick="porCodigo"
@@ -163,7 +164,7 @@
         android:layout_width="139dp"
         android:layout_height="31dp"
         android:layout_below="@+id/lblProd"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:layout_toEndOf="@+id/textView29"
         android:background="@layout/frame_rect"
         android:clickable="true"

@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -30,7 +31,9 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
@@ -68,10 +71,10 @@ public class Menu extends PBase {
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
     private clsP_paramextObj P_paramextObj;
 
-    private int selId,selIdx,menuid,iicon;
+    private int selId,selIdx,menuid,iicon,idalm,idalmdpred;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje,modo_emerg;
-	private boolean listo=true;
+	private boolean listo=true,almacenes;
 	private long contcorini,contcorult,fhoy,fayer;
 
     private final int mRequestCode = 1001;
@@ -107,6 +110,7 @@ public class Menu extends PBase {
 			sdoc="Venta";iicon=102;
 			rutapos=true;gl.rutapos=true;
 			selId=-1;selIdx=-1;
+			almacenes=tieneAlmacenes();
 
 			setHandlers();
 
@@ -306,7 +310,9 @@ public class Menu extends PBase {
 						gl.gNITCliente ="C.F.";gl.gDirCliente ="Ciudad";
                         gl.cliposflag=false;gl.rutatipo="V";gl.rutatipog="V";
 
-						if (!validaVenta()) return;//Se valida si hay correlativos de factura para la venta
+						if (!validaVenta()) {
+							return;//Se valida si hay correlativos de factura para la venta
+						}
 
                         gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
                         gl.preimpresion=false;
@@ -689,6 +695,8 @@ public class Menu extends PBase {
 	
 	public void showInvMenuVenta() 	{
 
+        idalm=0;
+
 		try{
 			final AlertDialog Dialog;
 			int itemcnt=1,itempos=0;
@@ -711,27 +719,36 @@ public class Menu extends PBase {
 			if (gl.peSolicInv) itemcnt++;
 
 			itemcnt=3;itemcnt++;
+			if (almacenes) itemcnt+=2;
 			final String[] selitems = new String[itemcnt];
 
 			selitems[itempos]="Existencias";itempos++;
+            selitems[itempos]="Ingreso de mercancía";itempos++;
 			selitems[itempos]="Ajuste de inventario";itempos++;
-			selitems[itempos]="Ingreso de mercancía";itempos++;
+            if (almacenes) {
+                selitems[itempos]="Traslado entre almacenes";itempos++;
+                selitems[itempos]="Egreso de almacen";itempos++;
+            }
             //selitems[itempos]="Inventario inicial";itempos++;
             selitems[itempos]="Orden de compra";itempos++;
 
-			menudlg = new ExDialog (this);
+            ExDialogT menudlg = new ExDialogT (this);
+            menudlg.setTitle("Menu inventario");
 
 			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
+				@SuppressLint("SuspiciousIndentation")
 				public void onClick(DialogInterface dialog, int item) {
 					String mt=selitems[item];
 
 					if (mt.equalsIgnoreCase("Existencias")) {
 					    menuExist();
                     }
-					if (mt.equalsIgnoreCase("Ajuste de inventario")) menuDevBod();
+					if (mt.equalsIgnoreCase("Ajuste de inventario")) menuAjuste();
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
                     if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
                     if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
+                    if (mt.equalsIgnoreCase("Traslado entre almacenes")) menuTraslado();
+                    if (mt.equalsIgnoreCase("Egreso de almacen")) menuEgreso();
 
                     dialog.cancel();
 				}
@@ -757,42 +774,33 @@ public class Menu extends PBase {
 	}
 
 	private void menuExist() {
-		try{
-			gl.tipo=0;
+		try {
+			gl.tipo=0;gl.idalm=0;gl.nom_alm="";
 			Intent intent = new Intent(this,Exist.class);
 			startActivity(intent);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
+		} catch (Exception e){}
 	}
-	
+
 	private void menuRecarga() {
-		try{
-            gl.invregular=true;
-			gl.tipo = 0;
-			Intent intent = new Intent(this,lista_ingreso_inventario.class);
+		try {
+			gl.invregular=true;gl.tipo = 0;gl.idalm=0;gl.nom_alm="";
+			Intent intent = new Intent(Menu.this, ListaInventario.class);
 			startActivity(intent);
-
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
+		} catch (Exception e){}
 	}
 
-	private void menuDevBod() {
+	private void menuAjuste() {
 		try {
-			gl.tipo = 1;
-			Intent intent = new Intent(this,lista_ingreso_inventario.class);
+			gl.tipo = 1;gl.idalm=0;gl.nom_alm="";
+			Intent intent = new Intent(Menu.this, ListaInventario.class);
 			startActivity(intent);
-		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
+		} catch (Exception e){}
 	}
 
     private void menuInvIni() {
         try {
             gl.tipo = 2;
-            Intent intent = new Intent(this,lista_ingreso_inventario.class);
+            Intent intent = new Intent(this, ListaInventario.class);
             startActivity(intent);
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -800,13 +808,145 @@ public class Menu extends PBase {
     }
 
     private void menuCompra() {
+	    toast("Pendiente implementación");
+	    /*
         try{
             gl.tipo = 3;
-            Intent intent = new Intent(this,lista_ingreso_inventario.class);
+            Intent intent = new Intent(this, ListaInventario.class);
             startActivity(intent);
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
+	    */
+    }
+
+	private void menuTraslado() {
+		try {
+			gl.tipo=8;
+			Intent intent = new Intent(Menu.this, ListaInventarioT.class);
+			startActivity(intent);
+		} catch (Exception e){}
+    }
+
+    private void menuEgreso() {
+		try {
+
+			gl.tipo=6;
+			Intent intent = new Intent(Menu.this, ListaInventario.class);
+			startActivity(intent);
+		} catch (Exception e){}
+    }
+
+    public void listaAlmacenes(int modosel) {
+	    String titulo="Seleccione un almacen";
+
+        switch (modosel) {
+            case 1:
+                titulo="Seleccione un almacen";break;
+            case 2:
+                titulo="Seleccione un almacen";break;
+            case 3:
+                titulo="Seleccione un almacen";break;
+            case 4:
+                titulo="Seleccione un almacen";break;
+            case 5:
+                titulo="Seleccione almacen origen";break;
+        }
+
+        try {
+            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+            P_almacenObj.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
+
+            int itemcnt=P_almacenObj.count;
+            String[] selitems = new String[itemcnt];
+            int[] selcod = new int[itemcnt];
+
+            for (int i = 0; i <itemcnt; i++) {
+                selitems[i] = P_almacenObj.items.get(i).nombre;
+                selcod[i] = P_almacenObj.items.get(i).codigo_almacen;
+            }
+
+            ExDialogT menudlg = new ExDialogT(this);
+            menudlg.setTitle(titulo);
+
+            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    idalm=selcod[item];gl.nom_alm=selitems[item];
+
+                    switch (modosel) {
+                        case 1:
+                            try {
+                                gl.invregular=true;
+								gl.idalm=idalm;
+                                if (idalm==idalmdpred) {
+                                    gl.tipo=0;
+                                } else gl.tipo=4;
+
+								gl.idalm=0;
+
+                                Intent intent = new Intent(Menu.this, ListaInventario.class);
+                                startActivity(intent);
+                            } catch (Exception e){}
+                            ;break;
+                        case 2:
+                            try {
+                                gl.idalm=idalm;
+                                if (idalm==idalmdpred) {
+                                    gl.tipo=1;
+                                } else gl.tipo=5;
+                                Intent intent = new Intent(Menu.this, ListaInventario.class);
+                                startActivity(intent);
+                            } catch (Exception e){}
+                            ;break;
+                        case 3:
+                            try {
+                                gl.tipo=0;
+                                gl.idalm=idalm;
+                                Intent intent = new Intent(Menu.this,Exist.class);
+                                startActivity(intent);
+                            } catch (Exception e){}
+                            ;break;
+                        case 4:
+                            try {
+                                gl.idalm=idalm;
+                                if (idalm==idalmdpred) {
+                                    gl.tipo=6;
+                                } else gl.tipo=7;
+                                Intent intent = new Intent(Menu.this, ListaInventario.class);
+                                startActivity(intent);
+                            } catch (Exception e){}
+                            ;break;
+                        case 5:
+                            try {
+                                gl.idalm=idalm;
+                                gl.tipo=8;
+                                Intent intent = new Intent(Menu.this, ListaInventarioT.class);
+                                startActivity(intent);
+                            } catch (Exception e){}
+                            ;break;
+                    }
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            final AlertDialog Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
     }
 
 	//endregion
@@ -1851,6 +1991,7 @@ public class Menu extends PBase {
 		return true;
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	private boolean validaVenta() {
 		Cursor DT;
 		int ci,cf,ca1,ca2;
@@ -1963,6 +2104,7 @@ public class Menu extends PBase {
 		
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	private int getPrinterType() {
 
 		Cursor DT;
@@ -2234,6 +2376,29 @@ public class Menu extends PBase {
         menuid=1;
         toast("Validando ingreso . . .");
         showMenuItem();
+    }
+
+    public boolean tieneAlmacenes() {
+        idalmdpred=0;gl.idalmpred =0;
+
+        try {
+            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+            P_almacenObj.fill("WHERE ACTIVO=1");
+
+            if (P_almacenObj.count<2) return false;
+
+            idalmdpred=P_almacenObj.first().codigo_almacen;gl.idalmpred =idalmdpred;
+
+            P_almacenObj.fill("WHERE ACTIVO=1 AND ES_PRINCIPAL=1");
+            if (P_almacenObj.count>0) {
+                idalmdpred=P_almacenObj.first().codigo_almacen;
+                gl.idalmpred =idalmdpred;
+            }
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
     }
 
     //endregion

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -15,10 +16,12 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +30,10 @@ import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsExist;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsDocument;
+import com.dtsgt.classes.clsP_almacenObj;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.ladapt.ListAdaptExist;
@@ -44,15 +50,17 @@ public class Exist extends PBase {
 
 	private ListView listView;
 	private EditText txtFilter;
-	private TextView lblReg,lblSync,lblCor;
+	private TextView lblReg,lblSync,lblCor,lblTit,lblTotal,lblalm;
 	private ImageView imgSync;
 	private ProgressBar pbar;
+    private RelativeLayout relalm;
 
     private AppMethods app;
 
 	private ArrayList<clsClasses.clsExist> items= new ArrayList<clsClasses.clsExist>();
 	private ListAdaptExist adapter;
 	private clsClasses.clsExist selitem;
+    private clsP_almacenObj P_almacenObj;
 
     private wsInventCompartido wsi;
     private wsInventEnvio wsie;
@@ -67,9 +75,9 @@ public class Exist extends PBase {
     private Runnable rnInventEnvio;
     private Runnable rnInventRecibir;
 
-	private int tipo,lns, cantExistencia;
+	private int tipo,lns, cantExistencia, idalmdpred,idalm;
 	private String itemid,prodid,savecant;
-	private boolean bloqueado=false;
+	private boolean bloqueado=false,almacenes;
     private double cantT,disp,dispm,dispT;
 
 	@Override
@@ -78,29 +86,35 @@ public class Exist extends PBase {
 		setContentView(R.layout.activity_exist);
 		
 		super.InitBase();
-		addlog("Exist",""+du.getActDateTime(),String.valueOf(gl.vend));
-		
-		tipo=((appGlobals) vApp).tipo;
 
+		tipo=((appGlobals) vApp).tipo;
 		app = new AppMethods(this, gl, Con, db);
 		gl.validimp=app.validaImpresora();
 		if (!gl.validimp) msgbox("¡La impresora no está autorizada!");
 
-		listView = (ListView) findViewById(R.id.listView1);
-		txtFilter = (EditText) findViewById(R.id.txtFilter);
- 		lblReg = (TextView) findViewById(R.id.textView1);lblReg.setText("");
-        lblSync = (TextView) findViewById(R.id.textView186);lblSync.setVisibility(View.INVISIBLE);
-        lblCor= (TextView) findViewById(R.id.textView245);lblCor.setVisibility(View.INVISIBLE);
-
-        imgSync = (ImageView) findViewById(R.id.imageView77);imgSync.setVisibility(View.INVISIBLE);
+		listView = findViewById(R.id.listView1);
+		txtFilter = findViewById(R.id.txtFilter);
+ 		lblReg = findViewById(R.id.textView1);lblReg.setText("");
+        lblSync = findViewById(R.id.textView186);lblSync.setVisibility(View.INVISIBLE);
+        lblCor= findViewById(R.id.textView245);lblCor.setVisibility(View.INVISIBLE);
+        lblTit= findViewById(R.id.lblTit);lblTit.setText("Existencias bodega: "+gl.nom_alm.toUpperCase());
+        lblTotal = findViewById(R.id.lblTit7);
+        lblalm = findViewById(R.id.textView268);
+        relalm= findViewById(R.id.relalm1);
+        imgSync = findViewById(R.id.imageView77);imgSync.setVisibility(View.INVISIBLE);
         pbar=findViewById(R.id.progressBar5);pbar.setVisibility(View.INVISIBLE);
 
 		setHandlers();
 
         rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp,"");
-		
-		listItems();	
-		
+
+        P_almacenObj=new clsP_almacenObj(this,Con,db);
+        almacenes=tieneAlmacenes();
+        if (!almacenes) {
+            gl.idalm=0;gl.idalmpred=0;relalm.setVisibility(View.GONE);
+            listItems();
+        }
+
 		printclose= new Runnable() {
 		    public void run() {
 		    	Exist.super.finish();
@@ -183,7 +197,11 @@ public class Exist extends PBase {
     }
 
 	//region Events
-	
+
+    public void doAlmacenes(View view){
+        listaAlmacenes();
+    }
+
 	public void printDoc(View view) {
 		try{
 			if(items.size()==0){
@@ -303,7 +321,7 @@ public class Exist extends PBase {
 		Cursor dt, dp;
 		clsClasses.clsExist item,itemm,itemt;
 		String vF,pcod, cod, name, um, ump, sc, scm, sct="", sp, spm, spt="";
-		double val, valm, valt, peso, pesot;
+		double val, valm, valt, peso, pesot, costo, total,gtotal=0;
 		int icnt;
 
 		items.clear();lblReg.setText(" ( 0 ) ");
@@ -311,15 +329,25 @@ public class Exist extends PBase {
 		vF = txtFilter.getText().toString().replace("'", "");
 
         try {
+            clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
 
-			sql = "SELECT P_STOCK.CODIGO, P_PRODUCTO.DESCLARGA, P_PRODUCTO.CODIGO " +
-					"FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK.CODIGO  WHERE 1=1 ";
-			if (vF.length() > 0) sql = sql + "AND ((P_PRODUCTO.DESCLARGA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
-			sql += "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA ";
-			sql += "ORDER BY P_PRODUCTO.DESCLARGA";
+            if (gl.idalm==gl.idalmpred) {
+                sql = "SELECT P_STOCK.CODIGO, P_PRODUCTO.DESCLARGA, P_PRODUCTO.CODIGO " +
+                        "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK.CODIGO  WHERE 1=1 ";
+                if (vF.length() > 0) sql = sql + "AND ((P_PRODUCTO.DESCLARGA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
+                sql += "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA ";
+                sql += "ORDER BY P_PRODUCTO.DESCLARGA";
 
-			dp = Con.OpenDT(sql);
+            } else {
+                sql = "SELECT P_STOCK_ALMACEN.CODIGO_PRODUCTO, P_PRODUCTO.DESCLARGA, P_PRODUCTO.CODIGO " +
+                      "FROM P_STOCK_ALMACEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK_ALMACEN.CODIGO_PRODUCTO  " +
+                      "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ";
+                if (vF.length() > 0) sql = sql + "AND ((P_PRODUCTO.DESCLARGA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
+                sql += "GROUP BY P_STOCK_ALMACEN.CODIGO_PRODUCTO,P_PRODUCTO.DESCLARGA ";
+                sql += "ORDER BY P_PRODUCTO.DESCLARGA";
+            }
 
+            dp = Con.OpenDT(sql);
 			if (dp.getCount() == 0) {
 				adapter = new ListAdaptExist(this, items,gl.usarpeso);
 				listView.setAdapter(adapter);
@@ -327,20 +355,33 @@ public class Exist extends PBase {
 			}
 
 			lblReg.setText(" ( " + dp.getCount() + " ) ");
-			dp.moveToFirst();
-
+			dp.moveToFirst();gtotal=0;
 
 			while (!dp.isAfterLast()) {
 
 				pcod=dp.getString(0);
                 valt=0;pesot=0;
 
-				sql =  "SELECT P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA,SUM(P_STOCK.CANT) AS TOTAL,SUM(P_STOCK.CANTM)," +
-					   "P_STOCK.UNIDADMEDIDA,P_STOCK.LOTE,P_STOCK.DOCUMENTO,P_STOCK.CENTRO,P_STOCK.STATUS,SUM(P_STOCK.PESO),P_PRODUCTO.CODIGO   " +
-					   "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK.CODIGO  " +
-					   "WHERE (P_PRODUCTO.CODIGO_PRODUCTO='"+pcod+"') " +
-                       "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA,P_STOCK.UNIDADMEDIDA,P_STOCK.LOTE,P_STOCK.DOCUMENTO,P_STOCK.CENTRO,P_STOCK.STATUS ";
-           		sql+=  "ORDER BY TOTAL ";
+                P_productoObj.fill("WHERE CODIGO_PRODUCTO='"+pcod+"'");
+                costo=P_productoObj.first().costo;
+
+                if (gl.idalm==gl.idalmpred) {
+                    sql =  "SELECT P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA,SUM(P_STOCK.CANT) AS TOTAL,SUM(P_STOCK.CANTM)," +
+                           "P_STOCK.UNIDADMEDIDA,P_STOCK.LOTE,P_STOCK.DOCUMENTO,P_STOCK.CENTRO,P_STOCK.STATUS,SUM(P_STOCK.PESO),P_PRODUCTO.CODIGO   " +
+                           "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK.CODIGO  " +
+                           "WHERE (P_PRODUCTO.CODIGO_PRODUCTO='"+pcod+"') " +
+                           "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA,P_STOCK.UNIDADMEDIDA,P_STOCK.LOTE,P_STOCK.DOCUMENTO,P_STOCK.CENTRO,P_STOCK.STATUS ";
+                    sql+=  "ORDER BY TOTAL ";
+                } else {
+                    sql =  "SELECT P_STOCK_ALMACEN.CODIGO_PRODUCTO, P_PRODUCTO.DESCLARGA, SUM(P_STOCK_ALMACEN.CANT) AS TOTAL, " +
+                           "SUM(P_STOCK_ALMACEN.CANTM), P_STOCK_ALMACEN.UNIDADMEDIDA, P_STOCK_ALMACEN.LOTE, " +
+                           "P_STOCK_ALMACEN.LOTE, 0, 0, SUM(P_STOCK_ALMACEN.PESO),P_PRODUCTO.CODIGO   " +
+                           "FROM P_STOCK_ALMACEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK_ALMACEN.CODIGO_PRODUCTO  " +
+                           "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (P_PRODUCTO.CODIGO_PRODUCTO='"+pcod+"') " +
+                           "GROUP BY P_STOCK_ALMACEN.CODIGO_PRODUCTO, P_PRODUCTO.DESCLARGA, " +
+                           "P_STOCK_ALMACEN.UNIDADMEDIDA, P_STOCK_ALMACEN.LOTE ";
+                    sql+=  "ORDER BY TOTAL ";
+                }
 
 				dt = Con.OpenDT(sql);
 				icnt=dt.getCount();
@@ -406,6 +447,10 @@ public class Exist extends PBase {
 					item.Centro = dt.getString(7);itemm.Centro = dt.getString(7);
 					item.Stat = dt.getString(8);itemm.Stat = dt.getString(8);
 
+					total=item.cant*costo;gtotal+=total;
+					item.precio=mu.frmdecimal(costo, gl.peDecImp);
+                    item.total=mu.frmdecimal(total, gl.peDecImp);
+
 					if (val>0) {
 						item.flag = 1;
 						items.add(item);
@@ -439,7 +484,7 @@ public class Exist extends PBase {
 
 		adapter = new ListAdaptExist(this, items, gl.usarpeso);
 		listView.setAdapter(adapter);
-
+        lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
 	}
 
 	private void itemDetail(clsClasses.clsExist item) {
@@ -1106,6 +1151,86 @@ public class Exist extends PBase {
         }
 
         listItems();
+    }
+
+    public boolean tieneAlmacenes() {
+
+        gl.idalmpred =0;gl.idalm=0;
+        idalmdpred=0;
+
+        try {
+            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+            P_almacenObj.fill("WHERE ACTIVO=1");
+
+            if (P_almacenObj.count<2) return false;
+
+            idalmdpred=P_almacenObj.first().codigo_almacen;gl.idalmpred =idalmdpred;
+
+            P_almacenObj.fill("WHERE ACTIVO=1 AND ES_PRINCIPAL=1");
+            if (P_almacenObj.count>0) {
+                idalmdpred=P_almacenObj.first().codigo_almacen;
+                gl.idalmpred =idalmdpred;
+            }
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    public void listaAlmacenes() {
+        String titulo="Seleccione un almacen";
+
+        try {
+            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+            P_almacenObj.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
+
+            int itemcnt=P_almacenObj.count;
+            String[] selitems = new String[itemcnt];
+            int[] selcod = new int[itemcnt];
+
+            for (int i = 0; i <itemcnt; i++) {
+                selitems[i] = P_almacenObj.items.get(i).nombre;
+                selcod[i] = P_almacenObj.items.get(i).codigo_almacen;
+            }
+
+            ExDialogT menudlg = new ExDialogT(this);
+            menudlg.setTitle(titulo);
+
+            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+
+                    try {
+                        idalm=selcod[item];gl.idalm=idalm;
+                        gl.nom_alm=selitems[item];
+                        lblalm.setText(gl.nom_alm);
+                        listItems();
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            final AlertDialog Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
     }
 
     //endregion

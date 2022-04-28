@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.dtsgt.base.BaseDatos;
+import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.clsClasses;
 
 public class clsD_mov_almacenObj {
@@ -17,6 +18,7 @@ public class clsD_mov_almacenObj {
     public BaseDatos.Insert ins;
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
+    private DateUtils du = new DateUtils();
 
     private String sel="SELECT * FROM D_mov_almacen";
     private String sql;
@@ -231,6 +233,31 @@ public class clsD_mov_almacenObj {
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
+
+    }
+
+    public String addMovHeader(clsClasses.clsD_mov_almacen item) {
+
+        String fs=""+du.univfechalong(item.fecha);
+
+        ins.init("D_mov_almacen");
+
+        ins.add("COREL",item.corel);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("ALMACEN_ORIGEN",item.almacen_origen);
+        ins.add("ALMACEN_DESTINO",item.almacen_destino);
+        ins.add("ANULADO",item.anulado);
+        ins.add("FECHA",fs);
+        ins.add("TIPO",item.tipo);
+        ins.add("USUARIO",item.usuario);
+        ins.add("REFERENCIA",item.referencia);
+        ins.add("STATCOM",item.statcom);
+        ins.add("IMPRES",item.impres);
+        ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
+        ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
+        ins.add("TOTAL",item.total);
+
+        return ins.sql();
 
     }
 

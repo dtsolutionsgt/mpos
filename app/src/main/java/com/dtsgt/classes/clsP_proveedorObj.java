@@ -134,8 +134,8 @@ public class clsP_proveedorObj {
             item.codigo_proveedor=dt.getInt(0);
             item.codigo=dt.getString(1);
             item.nombre=dt.getString(2);
-            item.activo=(dt.getInt(3)==1?true:false);
-            item.correo=dt.getString(4);
+            item.activo=dt.getInt(3);
+            //item.correo=dt.getString(4);
 
             items.add(item);
 

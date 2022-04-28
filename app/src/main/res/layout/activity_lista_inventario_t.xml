@@ -4,22 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".lista_ingreso_inventario">
+    tools:context=".ListaInventarioT">
 
     <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
         android:layout_height="48dp">
+        lblCFact29
 
         <TextView
             android:id="@+id/lblDescrip2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentTop="false"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="80dp"
+            android:layout_marginEnd="10dp"
             android:layout_toStartOf="@+id/imgTitLogo"
-            android:layout_toLeftOf="@+id/imgImg"
             android:layout_toEndOf="@+id/imgRoadTit"
             android:gravity="center_vertical|center_horizontal"
             android:paddingTop="5dp"
@@ -64,7 +64,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/relbotpan"
         android:layout_below="@id/relRoad"
+        android:layout_marginBottom="5dp"
         android:fillViewport="true">
 
 
@@ -82,18 +84,95 @@
                 <RelativeLayout
                     android:id="@+id/llFechaIni"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+                    <RelativeLayout
+                        android:id="@+id/relalm1"
+                        android:layout_width="match_parent"
+                        android:layout_height="85dp">
+
+                        <TextView
+                            android:id="@+id/textView269"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_alignTop="@+id/lblCFact73"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="110dp"
+                            android:layout_toEndOf="@+id/lblCFact72"
+                            android:background="@drawable/spinner_style"
+                            android:clickable="true"
+                            android:maxWidth="200dp"
+                            android:onClick="doAlmacenes2"
+                            android:paddingStart="10dp"
+                            android:text="Seleccione almacen destino . . ."
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/lblCFact73"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:layout_below="@+id/lblCFact72"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="5dp"
+                            android:text="Destino :"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF"
+                            android:textSize="21sp"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/textView268"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="110dp"
+                            android:layout_toEndOf="@+id/lblCFact72"
+                            android:background="@drawable/spinner_style"
+                            android:clickable="true"
+                            android:maxWidth="200dp"
+                            android:onClick="doAlmacenes1"
+                            android:paddingStart="10dp"
+                            android:text="Seleccione almacen origen . . ."
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/lblCFact72"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="0dp"
+                            android:background="@drawable/blue_strip"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="5dp"
+                            android:text="Origen :"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="#FFFFFF"
+                            android:textSize="21sp"
+                            android:textStyle="normal" />
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/lblCFact30"
-                        android:layout_width="80dp"
+                        android:layout_width="100dp"
                         android:layout_height="40dp"
+                        android:layout_below="@+id/relalm1"
                         android:layout_alignParentStart="true"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/blue_strip"
-                        android:gravity="center"
-                        android:paddingLeft="10dp"
+                        android:gravity="center_vertical"
+                        android:paddingStart="5dp"
                         android:text="Inicio :"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="#FFFFFF"
@@ -104,8 +183,9 @@
                         android:id="@+id/lblDateini2"
                         android:layout_width="150dp"
                         android:layout_height="40dp"
+                        android:layout_alignTop="@+id/lblCFact30"
                         android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="0dp"
                         android:layout_marginBottom="5dp"
                         android:layout_toEndOf="@+id/lblCFact30"
                         android:background="@drawable/frame_btn"
@@ -117,14 +197,15 @@
 
                     <TextView
                         android:id="@+id/lblCFact29"
-                        android:layout_width="80dp"
+                        android:layout_width="100dp"
                         android:layout_height="40dp"
                         android:layout_below="@+id/lblCFact30"
                         android:layout_alignParentStart="true"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/blue_strip"
-                        android:gravity="center"
+                        android:gravity="center_vertical"
+                        android:paddingStart="5dp"
                         android:text="Fin :    "
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="#FFFFFF"
@@ -153,20 +234,21 @@
             <ListView
                 android:id="@+id/listView1"
                 android:layout_width="wrap_content"
-                android:layout_height="553dp"
-                android:layout_above="@+id/relbotpan"
-                android:layout_alignTop="@+id/llFechas"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/llFechas"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="105dp"
-                android:layout_marginEnd="5dp">
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="0dp">
 
             </ListView>
 
             <ImageView
                 android:id="@+id/imgImg5"
-                android:layout_width="117dp"
+                android:layout_width="105dp"
                 android:layout_height="80dp"
                 android:layout_below="@+id/relRoad"
                 android:layout_alignParentTop="false"

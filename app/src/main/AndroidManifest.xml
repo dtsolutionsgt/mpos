@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.dtsgt.mpos"
     android:hardwareAccelerated="true"
     android:installLocation="preferExternal"
     android:largeHeap="true"
@@ -60,9 +59,7 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        <activity
-            android:name="com.dtsgt.mant.MantRepCierre"
-            android:screenOrientation="landscape" />
+
 
         <service
             android:name="com.dtsgt.webservice.srvInventConfirm"
@@ -102,6 +99,16 @@
             android:name="com.dtsgt.webservice.srvCommit"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name="com.dtsgt.firebase.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service> <!-- [END firebase_service] -->
+        <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
 
         <activity
             android:name=".Menu"
@@ -549,19 +556,27 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".InvSalida"
+            android:name=".InvAjuste"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".lista_ingreso_inventario"
+            android:name=".ListaInventario"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".InvInicial"
+            android:name=".ListaInventarioT"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".InvRecep"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".InvVista"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".InvTrans"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -574,6 +589,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".PedidoDet"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".InvEgreso"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
@@ -669,26 +688,17 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name="com.dtsgt.mant.MantRepCierre"
+            android:screenOrientation="landscape" />
+        <activity
             android:name=".CliDirDom"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
-            android:name=".DescMonto"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:name=".PrintView"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
-
-        <!-- [START firebase_service] -->
-        <service
-            android:name="com.dtsgt.firebase.MyFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service> <!-- [END firebase_service] -->
-        <meta-data
-            android:name="firebase_performance_logcat_enabled"
-            android:value="true" />
     </application>
 
 </manifest>

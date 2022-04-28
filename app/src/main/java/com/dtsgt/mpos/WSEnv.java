@@ -24,6 +24,8 @@ import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_fel_bitacoraObj;
+import com.dtsgt.classes.clsD_mov_almacenObj;
+import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_cajapagosObj;
@@ -31,6 +33,7 @@ import com.dtsgt.classes.clsP_cajareporteObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_stock_almacenObj;
 import com.dtsgt.classes.clsP_stockbofObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_costoObj;
@@ -58,6 +61,8 @@ public class WSEnv extends PBase {
     private clsD_factura_felObj D_factura_felObj;
     private clsD_MovObj D_MovObj;
     private clsD_MovDObj D_MovDObj;
+    private clsD_mov_almacenObj D_mov_almacenObj;
+    private clsD_movd_almacenObj D_movd_almacenObj;
     private clsP_cajacierreObj P_cjCierreObj;
     private clsP_cajapagosObj P_cjPagosObj;
     private clsP_cajareporteObj P_cjReporteObj;
@@ -68,6 +73,7 @@ public class WSEnv extends PBase {
     private ArrayList<String> fact = new ArrayList<String>();
     private ArrayList<String> fact_sc = new ArrayList<String>();
     private ArrayList<String> mov = new ArrayList<String>();
+    private ArrayList<String> movalm = new ArrayList<String>();
     private ArrayList<String> cjCierre = new ArrayList<String>();
     private ArrayList<String> cjReporte = new ArrayList<String>();
     private ArrayList<String> cjPagos = new ArrayList<String>();
@@ -77,8 +83,9 @@ public class WSEnv extends PBase {
 
     private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
-    private int ftot,fsend,fidx,fTotMov,fIdxMov, mSend,cjCierreTot, cjCierreSend, cjAsist,fTotAnul,
-                cjReporteTot, cjReporteSend,cjPagosTot, cjPagosSend,cjFelBita, cStockTot, cStockSend, cCosto;
+    private int ftot,fsend,fidx,fTotMov,fIdxMov,fTotMovAlm, fIdxMovAlm,
+            mSend,cjCierreTot, cjCierreSend, cjAsist,fTotAnul,cjReporteTot, cjReporteSend,
+            cjPagosTot, cjPagosSend,cjFelBita, cStockTot, cStockSend, cCosto;
     private boolean factsend, movSend, cjCierreSendB,cjReporteSendB,cjPagosSendB,cStockSendB;
 
     @Override
@@ -108,6 +115,8 @@ public class WSEnv extends PBase {
         D_factura_felObj=new clsD_factura_felObj(this,Con,db);
         D_MovObj=new clsD_MovObj(this,Con,db);
         D_MovDObj=new clsD_MovDObj(this,Con,db);
+        D_mov_almacenObj=new clsD_mov_almacenObj(this,Con,db);
+        D_movd_almacenObj=new clsD_movd_almacenObj(this,Con,db);
         T_costoObj=new clsT_costoObj(this,Con,db);
 
         P_cjCierreObj = new clsP_cajacierreObj(this,Con,db);
@@ -132,7 +141,6 @@ public class WSEnv extends PBase {
 
         }
     }
-
 
     //region Events
 
@@ -211,6 +219,10 @@ public class WSEnv extends PBase {
                             callMethod("Commit", "SQL", CSQL);
                         }
                         break;
+                    case 11:
+                        processMovAlmacen();
+                        if (fTotMovAlm>0) callMethod("Commit", "SQL", CSQL);
+                        break;
                 }
             } catch (Exception e) {
                 error = e.getMessage();errorflag=true;
@@ -277,7 +289,15 @@ public class WSEnv extends PBase {
                     break;
                 case 10:
                     statusCosto();
-                    processComplete();
+                    execws(11);//processComplete();
+                    break;
+                case 11:
+                    if (fTotMovAlm>0) statusMovAlmacen();
+                    if (fIdxMovAlm>=fTotMovAlm-1) {
+                        processComplete();
+                    } else {
+                        execws(11);
+                    }
                     break;
             }
 
@@ -299,7 +319,7 @@ public class WSEnv extends PBase {
             case 2:
                 plabel = "Enviando Facturas";break;
             case 3:
-                plabel = "Enviando Movimientos de inventario";break;
+                plabel = "Enviando Movimientos de inventario ( "+(fIdxMov+1)+" )" ;break;
             case 4:
                 plabel = "Enviando Caja Cierre";break;
             case 5:
@@ -308,6 +328,8 @@ public class WSEnv extends PBase {
                 plabel = "Enviando Caja Reporte";break;
             case 7:
                 plabel = "Enviando Stock";break;
+            case 11:
+                plabel = "Enviando Movimientos de almacenes ( "+(fIdxMovAlm+1)+" )" ;break;
         }
 
         updateLabel();
@@ -349,7 +371,7 @@ public class WSEnv extends PBase {
                 ss+="Facturas sin envio: "+(ftot-fsend)+"\n";
 
                 ss+="Movimientos total: "+fTotMov+"\n";
-                ss+="Movimientos sin envio: "+(fTotMov-mSend)+"\n";
+                ss+="Movimientos sin envio: "+(fTotMov+fTotMovAlm-mSend)+"\n";
 
                 ss+="Caja cierre total: "+cjCierreTot+"\n";
                 ss+="Caja cierre sin envio: "+(cjCierreTot-cjCierreSend)+"\n";
@@ -758,27 +780,84 @@ public class WSEnv extends PBase {
 
     private void statusMov() {
         try {
+            rs =(String) xobj.getSingle("CommitResult",String.class);
+            if (!rs.equalsIgnoreCase("#")) {
+                movErr=rs;
+                movSend=true;
+                return;
+            } else {
+                movSend=true;
+            }
+            mSend++;
+
+            try {
+                sql="UPDATE D_MOV SET STATCOM='S' WHERE COREL='"+corelMov+"'";
+                db.execSQL(sql);
+            } catch (SQLException e) {
+                msgbox2(e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
+    private void processMovAlmacen() {
+        String vsql ="",tipomov;
+        int uruta;
+        double ucant;
+
+        //try {
+
+        if (fTotMovAlm==0) {
+            fIdxMovAlm++;return;
+        }
+
+        fIdxMovAlm++;
+        corelMov=movalm.get(fIdxMovAlm);
+        movSend=false;
+
+        D_mov_almacenObj.fill("WHERE COREL='"+corelMov+"'");
+        D_movd_almacenObj.fill("WHERE COREL='"+corelMov+"'");
+
+        idMov=D_mov_almacenObj.first().corel;
+
+        CSQL="DELETE FROM D_MOV_ALMACEN WHERE COREL='"+corelMov+"';";
+        CSQL=CSQL+"DELETE FROM D_MOVD_ALMACEN WHERE COREL='"+corelMov+"';";
+
+        CSQL=CSQL+D_mov_almacenObj.addMovHeader(D_mov_almacenObj.first())+ ";";
+
+        clsClasses.clsD_movd_almacen item;
+
+        for (int i = 0; i <D_movd_almacenObj.count; i++) {
+            item =D_movd_almacenObj.items.get(i);
+            CSQL=CSQL+D_movd_almacenObj.addItemSqlWS(item) + ";";
+        }
+
+        String ss=CSQL;
+
+        //} catch (Exception e) {
+        //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        //}
+    }
+
+    private void statusMovAlmacen() {
+        try {
 
             rs =(String) xobj.getSingle("CommitResult",String.class);
 
             if (!rs.equalsIgnoreCase("#")) {
-
                 movErr=rs;
                 movSend=true;
-
                 return;
-
             } else {
                 movSend=true;
             }
-
             mSend++;
 
             try {
-
-                sql="UPDATE D_MOV SET STATCOM='S' WHERE COREL='"+corelMov+"'";
+                sql="UPDATE D_MOV_ALMACEN SET STATCOM='S' WHERE COREL='"+corelMov+"'";
                 db.execSQL(sql);
-
             } catch (SQLException e) {
                 msgbox2(e.getMessage());
             }
@@ -996,13 +1075,16 @@ public class WSEnv extends PBase {
         cjReporte.clear();
 
         try {
+
+            cStock.clear();
+
             clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
             clsP_stockbofObj P_stockbofObj=new clsP_stockbofObj(this,Con,db);
+            clsP_stock_almacenObj P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
 
-            P_stockObj.fill("WHERE enviado=1");
-
+            //P_stockObj.fill("WHERE enviado=1");
+            P_stockObj.fill();
             CSQL="DELETE FROM P_STOCK WHERE SUCURSAL="+gl.tienda+";";
-            cStock.clear();
 
             for (int i = 0; i <P_stockObj.count; i++) {
 
@@ -1028,6 +1110,16 @@ public class WSEnv extends PBase {
                 cStock.add(""+i);
             }
 
+
+            P_stock_almacenObj.fill();
+            CSQL=CSQL + "DELETE FROM P_stock_almacen WHERE CODIGO_SUCURSAL="+gl.tienda+";";
+
+            for (int i = 0; i <P_stock_almacenObj.count; i++) {
+                ss=P_stock_almacenObj.addItemSqlBOF(P_stock_almacenObj.items.get(i));
+                CSQL = CSQL + ss + ";";
+                //cStock.add(""+i);
+            }
+
         } catch (Exception e) {
             String ss=e.getMessage();
         //    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1036,16 +1128,12 @@ public class WSEnv extends PBase {
 
     private void statusStock() {
         try {
-
             rs =(String) xobj.getSingle("CommitResult",String.class);
 
             if (!rs.equalsIgnoreCase("#")) {
-
                 cStockError=rs;
                 cStockSendB=true;
-
                 return;
-
             } else {
                 cStockSendB=true;
             }
@@ -1053,10 +1141,8 @@ public class WSEnv extends PBase {
             cStockSend++;
 
             try {
-
-                sql="UPDATE P_STOCK SET ENVIADO=1 WHERE ENVIADO=0";
-                db.execSQL(sql);
-
+                //sql="UPDATE P_STOCK SET ENVIADO=1 WHERE ENVIADO=0";
+                //db.execSQL(sql);
             } catch (SQLException e) {
                 msgbox2(e.getMessage());
             }
@@ -1246,13 +1332,23 @@ public class WSEnv extends PBase {
             fTotMov=D_MovObj.count;
             total_enviar+=fTotMov;
 
-            mSend=0;
-
-            fIdxMov=(fTotMov>0?-1:0);
+            fIdxMov=(fTotMov>0?-1:0);mSend=0;
 
             mov.clear();
             for (int i = 0; i <fTotMov; i++) {
                 mov.add(D_MovObj.items.get(i).COREL);
+            }
+
+            clsD_mov_almacenObj D_mov_almacenObj=new clsD_mov_almacenObj(this,Con,db);
+            D_mov_almacenObj.fill("WHERE STATCOM = 'N'");
+            fTotMovAlm=D_mov_almacenObj.count;
+            total_enviar+=fTotMovAlm;
+
+            fIdxMovAlm=(fTotMovAlm>0?-1:0);
+
+            movalm.clear();
+            for (int i = 0; i <fTotMovAlm; i++) {
+                movalm.add(D_mov_almacenObj.items.get(i).corel);
             }
 
             clsP_cajacierreObj P_cjCierreObj=new clsP_cajacierreObj(this,Con,db);
@@ -1295,7 +1391,7 @@ public class WSEnv extends PBase {
 
                 lbl1.setText("Pendientes envio : \nFacturas: "+ftot+
                             "\nClientes: "+ccant+
-                            "\nMovimientos inventario: "+fTotMov+
+                            "\nMovimientos inventario: "+(fTotMov+fTotMovAlm)+
                             "\nCierres de caja: "+cjCierreTot+
                             "\nPagos de caja: "+cjPagosTot+
                             "\nReportes caja: "+cjReporteTot+

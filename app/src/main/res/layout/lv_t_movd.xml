@@ -56,6 +56,45 @@
         android:text="TextView"
         android:textSize="18sp" />
 
+    <TextView
+        android:id="@+id/textView257"
+        android:layout_width="10dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lblV4"
+        android:layout_alignParentStart="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"
+        android:text="T"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/textView258"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lblV4"
+        android:layout_alignParentStart="false"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@+id/textView257"
+        android:gravity="right"
+        android:text="TextView"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView259"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lblV4"
+        android:layout_alignParentEnd="false"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/textView257"
+        android:gravity="right"
+        android:text="TextView"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
 
 </RelativeLayout>
 

@@ -457,6 +457,16 @@ public class clsRepBuilder {
 		items.add(ts);
 	}
 
+	public void add3lrre(String s1, double v2, double v3) {
+		String s2,s3;
+
+		s2=cursym+decfrm.format(v2);
+		s3=cursym+decfrm.format(v3);
+
+		ts=ltrim(s1,prwt-4)+rtrim(s2,prwt+2)+rtrim(s3,prwt+4);
+		items.add(ts);
+	}
+
     public void add3sss(String s1,String s2,String s3) {
         ts=ltrim(s1,prwt)+rtrim(s2,prwt)+rtrim(s3,prwt);
         items.add(ts);
@@ -488,7 +498,12 @@ public class clsRepBuilder {
 		items.add(ts);
 	}
 
-    public void addtot2(String s1,String val) {
+	public void addtote(String s1,String val) {
+		ts=ltrim(s1,prw-17)+"  "+rtrim(val,15);
+		items.add(ts);
+	}
+
+	public void addtot2(String s1, String val) {
 		ts=ltrim(s1,prwt-2)+" "+ltrim(val,prw);
         items.add(ts);
     }

@@ -122,9 +122,10 @@ public class MantProducto extends PBase {
         if (id.isEmpty()) newItem(); else loadItem();
         showPrices();
 
+        /*
         if (gl.peMCent) {
             //if (!app.grant(13,gl.rol)) {
-                imgadd.setVisibility(View.INVISIBLE);
+                imgadd.setVisibility(View.VISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);
                 imgfotoadd.setVisibility(View.INVISIBLE);
                 imgfotodel.setVisibility(View.INVISIBLE);
@@ -132,6 +133,7 @@ public class MantProducto extends PBase {
                 btnprec.setVisibility(View.INVISIBLE);
             //}
         }
+        */
 
     }
 

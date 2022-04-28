@@ -39,7 +39,7 @@ public class Producto extends PBase {
 	private ListAdaptProd adapter;
 	private AppMethods app;
 	
-	private String famid,itemid,pname,prname,um,ubas;
+	private String famid="",itemid,pname,prname,um,ubas;
 	private int act,prodtipo;
 	private double disp_und;
 	private double disp_peso;
@@ -67,6 +67,9 @@ public class Producto extends PBase {
         items = new ArrayList<clsCD>();
 		
 		act=0;ordPorNombre=gl.peOrdPorNombre;
+        if (!gl.linea_sel.isEmpty()) {
+            famid=gl.linea_sel;
+        }
 
         setHandlers();
 
@@ -113,14 +116,11 @@ public class Producto extends PBase {
 						adapter.setSelectedIndex(position);
 
 						switch (prodtipo) {
-
 							case  1:
-
 								if (prodBarra(item.Cod)) {
 									toastcent("Producto tipo barra, no se puede ingresar la cantidad");
 									finish();return;
 								}
-
 						}
 
 						itemid = item.Cod;
@@ -202,7 +202,7 @@ public class Producto extends PBase {
 						spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
 						scod = spincode.get(position);
-						famid = scod;
+						famid = scod;gl.linea_sel=scod;
 						listItems();
 
 						act += 1;
@@ -220,7 +220,7 @@ public class Producto extends PBase {
 
 			});
 
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
@@ -235,7 +235,7 @@ public class Producto extends PBase {
 		clsCD vItem;
 		int cantidad;
 		double disp;
-		String vF,cod,name,exist,um;
+		String vF,cod,name,exist,um,fam;
 
 		ArrayList<clsCD> vitems = new ArrayList<clsCD>();;
 
@@ -244,6 +244,7 @@ public class Producto extends PBase {
 		vF=txtFilter.getText().toString().replace("'","");
 
 		String sql = "";
+		fam=famid;if (!vF.isEmpty()) fam="0";if (fam.isEmpty())fam="0";
 
         try {
 
@@ -251,9 +252,8 @@ public class Producto extends PBase {
 
                 case 0: // Preventa
                     sql="SELECT CODIGO,DESCCORTA,UNIDBAS,ACTIVO, CODIGO_PRODUCTO, COSTO FROM P_PRODUCTO WHERE 1=1 ";
-                    if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
-                    if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
-
+                    if (!fam.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+fam+"') ";
+                    if (vF.length()>0) sql=sql+"AND ((DESCCORTA LIKE '%"+vF+"%') OR (CODIGO LIKE '%"+vF+"%')) ";
                     if (ordPorNombre) sql+="ORDER BY DESCCORTA"; else sql+="ORDER BY CODIGO";
                     break;
 
@@ -265,44 +265,49 @@ public class Producto extends PBase {
                             "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
                             "WHERE (P_STOCK.CANT > 0) AND (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
 
-                    if (!mu.emptystr(famid)) {
-                        if (!famid.equalsIgnoreCase("0"))  sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
-                    }
-
-                    if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
+                    if (!fam.equalsIgnoreCase("0"))  sql=sql+"AND (P_PRODUCTO.LINEA="+fam+") ";
+                    if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%"+vF+"%') OR (P_PRODUCTO.CODIGO LIKE '%"+vF+"%')) ";
 
                     sql += "UNION ";
                     sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA," +
-                            "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO, COSTO " +
-                            "FROM P_PRODUCTO  INNER JOIN " +
+                            "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO, COSTO FROM P_PRODUCTO  INNER JOIN " +
                             "P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
                             "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) AND (P_PRODUCTO.ACTIVO=1)";
+                        if (!fam.equalsIgnoreCase("0")) sql=sql+"AND (P_PRODUCTO.LINEA="+fam+") ";
 
-                    if (!mu.emptystr(famid)) {
-                        if (!famid.equalsIgnoreCase("0"))
-                            sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
-                    }
-
-                    if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
-
-                    if (ordPorNombre) {
-                        sql += "ORDER BY P_PRODUCTO.DESCCORTA";
-                    } else {
-                        sql += "ORDER BY P_PRODUCTO.CODIGO";
-                    }
-
-                    sql=sql+"";
-
+                    if (vF.length()>0) sql=sql+"AND ((P_PRODUCTO.DESCCORTA LIKE '%"+vF+"%') OR (P_PRODUCTO.CODIGO LIKE '%"+vF+"%')) ";
+                    if (ordPorNombre) sql += "ORDER BY P_PRODUCTO.DESCCORTA"; else sql+="ORDER BY P_PRODUCTO.CODIGO";
                     break;
 
                 case 2: // Recarga
                     sql="SELECT CODIGO,DESCCORTA,UNIDBAS,CODIGO_TIPO, CODIGO_PRODUCTO, COSTO FROM P_PRODUCTO WHERE CODIGO_TIPO='P' ";
-                    if (!famid.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+famid+"') ";
-                    if (vF.length()>0) {sql=sql+"AND ((DESCCORTA LIKE '%" + vF + "%') OR (CODIGO LIKE '%" + vF + "%')) ";}
-
+                    if (!fam.equalsIgnoreCase("0")) sql=sql+"AND (LINEA='"+fam+"') ";
+                    if (vF.length()>0) sql=sql+"AND ((DESCCORTA LIKE '%"+vF+"%') OR (CODIGO LIKE '%"+vF+"%')) ";
                     if (ordPorNombre) sql+="ORDER BY DESCCORTA"; else sql+="ORDER BY CODIGO";
                     break;
 
+                case 4: // Egreso , Traslado
+                    if (gl.idalm!=gl.idalmpred) {
+                        sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK_ALMACEN.UNIDADMEDIDA, " +
+                                "P_PRODUCTO.ACTIVO, P_STOCK_ALMACEN.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
+                                "FROM P_STOCK_ALMACEN INNER JOIN " +
+                                "P_PRODUCTO ON P_STOCK_ALMACEN.CODIGO_PRODUCTO=P_PRODUCTO.CODIGO_PRODUCTO " +
+                                "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ";
+
+                        if (!fam.equalsIgnoreCase("0"))  sql+="AND (P_PRODUCTO.LINEA="+fam+") ";
+                        if (vF.length()>0) sql+="AND ((P_PRODUCTO.DESCCORTA LIKE '%"+vF+"%') OR (P_PRODUCTO.CODIGO LIKE '%"+vF+"%')) ";
+                        sql+="ORDER BY P_PRODUCTO.DESCCORTA";
+
+                    } else {
+                        sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK.UNIDADMEDIDA, " +
+                                "P_PRODUCTO.ACTIVO, P_STOCK.CODIGO, P_PRODUCTO.COSTO " +
+                                "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO " +
+                                "WHERE (1=1) ";
+                        if (!fam.equalsIgnoreCase("0"))  sql+="AND (P_PRODUCTO.LINEA="+fam+") ";
+                        if (vF.length()>0) sql+="AND ((P_PRODUCTO.DESCCORTA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
+                        sql+="ORDER BY P_PRODUCTO.DESCCORTA";
+                    }
+                    break;
             }
 
             DT=Con.OpenDT(sql);
@@ -311,11 +316,8 @@ public class Producto extends PBase {
 			if (cantidad==0) {
                 items.clear();vitems.clear();
             } else {
-
                 DT.moveToFirst();
-
                 while (!DT.isAfterLast()) {
-
                     cod = DT.getString(0);
                     name = DT.getString(1);
                     um = DT.getString(2);
@@ -324,7 +326,8 @@ public class Producto extends PBase {
                     vItem = clsCls.new clsCD();
 
                     vItem.Cod = cod;
-                    vItem.prec="Precio : "+gl.peMon+prodPrecioBase(cod);if (prodtipo==2) vItem.prec="";
+                    vItem.prec="Precio : "+gl.peMon+prodPrecioBase(cod);
+                    if (prodtipo!=1) vItem.prec="";
                     vItem.Desc = name;
                     vItem.codInt=DT.getInt(4);
                     vItem.costo = DT.getDouble(5);
@@ -339,22 +342,16 @@ public class Producto extends PBase {
                 }
 
                 if (DT!=null) DT.close();
-
-
             }
-
         } catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-			Log.d("prods",e.getMessage());
 	    }
 
 	    items = (ArrayList<clsCD>) vitems.clone();
 
 		adapter=new ListAdaptProd(this,vitems);
 		listView.setAdapter(adapter);
-		
-		//if (prodtipo==1) dispUmCliente();
-		
+
 	}
 	
 	private void appProd(){
@@ -505,10 +502,11 @@ public class Producto extends PBase {
 	private void fillSpinner(){
 		Cursor DT;
 		String icode,iname;
+		int ssel=0;
 
         try {
-            spincode.clear();
-            spinlist.clear();
+            spincode.clear();spinlist.clear();
+            spincode.add("0");spinlist.add("TODOS LOS PRODUCTOS");
         } catch (Exception e) {}
 
         try {
@@ -532,10 +530,26 @@ public class Producto extends PBase {
                     sql="SELECT CODIGO_LINEA,Nombre FROM P_LINEA ORDER BY Nombre";break;
                 case 3:  // Mercadeo comp
                     break;
+                case 4:  // Egreso , Traslado
+                    if (gl.idalm==gl.idalmpred) {
+                        sql = "SELECT DISTINCT P_LINEA.CODIGO_LINEA, P_LINEA.NOMBRE " +
+                                "FROM P_STOCK INNER JOIN " +
+                                "P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO  " +
+                                "INNER JOIN P_LINEA ON P_PRODUCTO.LINEA= P_LINEA.CODIGO_LINEA " +
+                                "ORDER BY P_LINEA.NOMBRE ";
+                    } else {
+                        sql = "SELECT DISTINCT P_LINEA.CODIGO_LINEA, P_LINEA.NOMBRE " +
+                                "FROM P_STOCK_ALMACEN INNER JOIN " +
+                                "P_PRODUCTO ON P_STOCK_ALMACEN.CODIGO_PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO  " +
+                                "INNER JOIN P_LINEA ON P_PRODUCTO.LINEA = P_LINEA.CODIGO_LINEA " +
+                                "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ORDER BY P_LINEA.NOMBRE ";
+                    }
+                    break;
             }
 
             DT=Con.OpenDT(sql);
 
+            int pos=1;
             if (DT.getCount()>0) {
                 DT.moveToFirst();
                 while (!DT.isAfterLast()) {
@@ -543,10 +557,18 @@ public class Producto extends PBase {
                     icode=DT.getString(0);
                     iname=DT.getString(1);
 
+                    if (!famid.isEmpty()) {
+                        if (!gl.linea_sel.isEmpty()) {
+                            if (icode.equalsIgnoreCase(gl.linea_sel)) {
+                                ssel=pos;famid=gl.linea_sel;
+                            }
+                        }
+                    }
+
                     spincode.add(icode);
                     spinlist.add(iname);
 
-                    DT.moveToNext();
+                    DT.moveToNext();pos++;
                 }
             }
 
@@ -561,9 +583,13 @@ public class Producto extends PBase {
 		spinFam.setAdapter(dataAdapter);
 
 		try {
-			spinFam.setSelection(0);
-			String scod = spincode.get(0);
-			famid = scod;
+		    if (famid.isEmpty()) {
+                spinFam.setSelection(0);
+                String scod = spincode.get(0);
+                famid = scod;
+            } else {
+                spinFam.setSelection(ssel);
+            }
 		} catch (Exception e) {
 			spinFam.setSelection(0);
 	    }

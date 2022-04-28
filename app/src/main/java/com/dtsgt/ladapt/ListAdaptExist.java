@@ -87,10 +87,11 @@ public class ListAdaptExist extends BaseAdapter {
 		holder.lblDesc.setText(items.get(position).Cod);
 		holder.lblCod.setText(items.get(position).Desc);
 
-		holder.lblLote.setText(items.get(position).Lote);
+		holder.lblLote.setText(items.get(position).Valor);
         holder.lblLotem.setText(items.get(position).Lote);
-		holder.lblPeso.setText(items.get(position).Valor);
-		holder.lblValor.setText(items.get(position).Peso);
+		holder.lblPeso.setText(items.get(position).precio);
+		holder.lblValor.setText(items.get(position).precio);
+        holder.lblValor2.setText(items.get(position).total);
 
 		holder.lblPesoM.setText(items.get(position).ValorM);
 		holder.lblValorM.setText(items.get(position).PesoM);
@@ -102,7 +103,7 @@ public class ListAdaptExist extends BaseAdapter {
 		holder.relbueno.setVisibility(View.GONE);
 		holder.relmalo.setVisibility(View.GONE);
 		holder.reltot.setVisibility(View.GONE);
-		holder.lblValor2.setVisibility(View.GONE);
+
 
 		ic=items.get(position).items;
 		lote=items.get(position).Lote;

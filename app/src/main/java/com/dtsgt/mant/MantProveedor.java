@@ -63,7 +63,7 @@ public class MantProveedor extends PBase {
     }
 
     public void doStatus(View view) {
-        if (item.activo) {
+        if (item.activo==1) {
             msgAskStatus("Deshabilitar registro");
         } else {
             msgAskStatus("Habilitar registro");
@@ -88,7 +88,7 @@ public class MantProveedor extends PBase {
             txt1.setEnabled(false);
             txt2.requestFocus();
             imgstat.setVisibility(View.VISIBLE);
-            if (item.activo) {
+            if (item.activo==1) {
                 imgstat.setImageResource(R.drawable.delete_64);
             } else {
                 imgstat.setImageResource(R.drawable.mas);
@@ -106,7 +106,7 @@ public class MantProveedor extends PBase {
 
         item.codigo="";
         item.nombre="";
-        item.activo=true;
+        item.activo=1;
 
         showItem();
     }
@@ -238,10 +238,10 @@ public class MantProveedor extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                if (item.activo) {
-                    item.activo=false;
+                if (item.activo==1) {
+                    item.activo=0;
                 } else {
-                    item.activo=true;
+                    item.activo=1;
                 };
                 updateItem();
                 finish();

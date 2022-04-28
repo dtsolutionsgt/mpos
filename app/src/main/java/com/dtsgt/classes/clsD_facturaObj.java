@@ -180,7 +180,7 @@ public class clsD_facturaObj {
         Cursor dt;
         clsClasses.clsD_factura item;
 
-        items.clear();
+        items.clear();count=1;
 
         dt=Con.OpenDT(sq);
 

@@ -478,13 +478,13 @@ public class FELVerificacion extends PBase {
         try {
             long flim=du.addDays(du.getActDate(),-5);
 
-            //D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
-            //   "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
+            D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
+              "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
             //sql="where feelcontingencia>0  and anulado=0 and " +
             //        "feelfechaprocesado=0 and feeluuid=' ' and fecha>2009230000";
-            sql="where anulado=0 and feelfechaprocesado=0 and feeluuid=' ' and fecha>2009230000";
+            //sql="where anulado=0 and feelfechaprocesado=0 and feeluuid=' ' and fecha>2203090000";
 
-            D_facturaObj.fill(sql);
+            //D_facturaObj.fill(sql);
 
             facts.clear();
 

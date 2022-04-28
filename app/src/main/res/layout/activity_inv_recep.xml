@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:clickable="true"
-    tools:context=".InvInicial">
+    tools:context=".InvRecep">
 
     <TextView
         android:id="@+id/textView155"
@@ -72,9 +72,11 @@
             android:paddingTop="3dp"
             android:paddingRight="10dp"
             android:paddingBottom="3dp"
-            android:text="INVENTARIO INICIAL"
+            android:text="INGRESO DE MERCANCIA"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
             android:visibility="visible" />
 
     </RelativeLayout>
@@ -95,7 +97,7 @@
         <RelativeLayout
             android:id="@+id/rellaytot"
             android:layout_width="1232dp"
-            android:layout_height="58dp"
+            android:layout_height="52dp"
             android:layout_marginLeft="3dp"
             android:layout_marginTop="0dp"
             android:layout_marginRight="3dp"
@@ -107,10 +109,10 @@
                 android:id="@+id/editText10"
                 android:layout_width="1dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
                 android:ems="10"
                 android:inputType="number"
-                android:text="abcd"
                 android:textColor="#FFFFFF" />
 
             <TextView
@@ -120,10 +122,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="50dp"
-                android:layout_marginLeft="50dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginRight="0dp"
+                android:layout_marginEnd="2dp"
                 android:layout_marginBottom="5dp"
                 android:background="#F4B39C"
                 android:clickable="true"
@@ -672,7 +672,9 @@
             android:layout_below="@+id/rellaytot"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
             android:background="@drawable/frame_rect_whitestrip">
 
             <TextView
@@ -698,11 +700,11 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/textView157"
                 android:layout_alignTop="@+id/editTextNumber"
+                android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="false"
-                android:layout_centerHorizontal="false"
-                android:layout_marginStart="220dp"
+                android:layout_marginStart="150dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/frame_rect"
                 android:clickable="true"
                 android:gravity="center_vertical"
@@ -724,7 +726,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="center_vertical"
-                android:text="Costo unitario"
+                android:text="Costo"
                 android:textColor="#000000"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -752,12 +754,12 @@
                 android:id="@+id/textView160"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/textView158"
                 android:layout_alignParentEnd="false"
                 android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="false"
-                android:layout_marginStart="220dp"
+                android:layout_marginStart="0dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/frame_rect"
                 android:clickable="true"
                 android:maxLines="1"
@@ -786,6 +788,23 @@
                 android:text="UN"
                 android:textSize="36sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView265"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/textView159"
+                android:layout_alignStart="@+id/textView158"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="-30dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="11dp"
+                android:text="Disponible: "
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
         </RelativeLayout>
 
     </RelativeLayout>
@@ -853,9 +872,9 @@
         android:layout_width="635dp"
         android:layout_height="542dp"
         android:layout_above="@+id/textView150"
-        android:layout_below="@+id/lblDocumento"
+        android:layout_below="@+id/textView267"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="25dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="5dp"
         android:layout_toStartOf="@+id/relVenta"
@@ -876,29 +895,6 @@
         android:textColor="#1B76B9"
         android:textSize="30sp"
         android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/lblDocumento"
-        android:layout_width="478dp"
-        android:layout_height="42dp"
-        android:layout_below="@id/relRoad"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_toStartOf="@+id/relVenta"
-        android:background="#F4B39C"
-        android:gravity="center|center_horizontal|center_vertical"
-        android:hint="Ingrese el número de documento"
-        android:paddingLeft="10dp"
-        android:paddingTop="3dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="3dp"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000"
-        android:textSize="30sp"
-        android:visibility="visible" />
 
     <TextView
         android:id="@+id/textView239"
@@ -977,5 +973,88 @@
             android:onClick="doAdd"
             android:src="@drawable/add" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relheader"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@+id/textView267"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/textView72">
+
+        <TextView
+            android:id="@+id/textView261"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:text="Cant"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView260"
+            android:layout_width="10dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="TextView"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/textView262"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:text="Precio" />
+
+        <TextView
+            android:id="@+id/textView264"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_toEndOf="@+id/textView260"
+            android:text="Exist. nueva" />
+
+        <TextView
+            android:id="@+id/textView263"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:layout_toStartOf="@+id/textView260"
+            android:text="Exist. actual" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageView124"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_above="@+id/listView1"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="-3dp"
+        android:layout_toStartOf="@+id/relSepar"
+        android:clickable="true"
+        android:onClick="doDoc"
+        android:padding="3dp"
+        android:src="@drawable/btn_del_line" />
+
+    <TextView
+        android:id="@+id/textView267"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toStartOf="@+id/imageView124"
+        android:background="@drawable/frame_rect"
+        android:clickable="true"
+        android:gravity="center"
+        android:onClick="doDoc"
+        android:text="TextView"
+        android:textSize="30sp" />
 
 </RelativeLayout>

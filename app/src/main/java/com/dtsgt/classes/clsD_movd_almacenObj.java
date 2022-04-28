@@ -200,6 +200,26 @@ public class clsD_movd_almacenObj {
 
     }
 
+    public String addItemSqlWS(clsClasses.clsD_movd_almacen item) {
+
+        ins.init("D_movd_almacen");
+
+        ins.add("COREL",item.corel);
+        ins.add("PRODUCTO",item.producto);
+        ins.add("CANT",item.cant);
+        ins.add("CANTM",item.cantm);
+        ins.add("PESO",item.peso);
+        ins.add("PESOM",item.pesom);
+        ins.add("LOTE",item.lote);
+        ins.add("CODIGOLIQUIDACION",item.codigoliquidacion);
+        ins.add("UNIDADMEDIDA",item.unidadmedida);
+        ins.add("PRECIO",item.precio);
+        ins.add("MOTIVO_AJUSTE",item.motivo_ajuste);
+
+        return ins.sql();
+
+    }
+
     public String updateItemSql(clsClasses.clsD_movd_almacen item) {
 
         upd.init("D_movd_almacen");

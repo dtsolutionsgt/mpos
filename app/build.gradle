@@ -24,7 +24,9 @@ android {
         }
     }
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
     }
 
     buildTypes {
@@ -46,17 +48,17 @@ android {
     }
 
     //#HS_20181127_1734 Agregue lintOptions porque no deja generar APK.
-    lintOptions {
-        checkReleaseBuilds false
-    }
 
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
 
-    buildToolsVersion '26.0.0'
     ndkVersion '23.1.7779620'
+    lint {
+        checkReleaseBuilds false
+    }
+    namespace 'com.dtsgt.mpos'
 
 }
 

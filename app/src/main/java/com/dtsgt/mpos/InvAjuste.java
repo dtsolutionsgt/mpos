@@ -1,13 +1,17 @@
 package com.dtsgt.mpos;
 
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,41 +21,48 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_mov_almacenObj;
+import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_motivoajusteObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stockObj;
+import com.dtsgt.classes.clsP_stock_almacenObj;
+import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
-import com.dtsgt.ladapt.LA_T_movd;
 import com.dtsgt.ladapt.LA_T_movr;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 
 import java.util.ArrayList;
 
-public class InvSalida extends PBase {
+public class InvAjuste extends PBase {
 
     private ListView listView;
     private GridView grdbtn;
-    private TextView lblBar,lblKeyDP,lblProd,lblCant, lblRazon,lblCosto,lblTCant,lblTCosto,lblTit;
+    private EditText txtBarra;
+    private TextView lblBar,lblKeyDP,lblProd,lblCant, lblRazon,lblCosto,lblTCant;
+    private TextView lblTCosto,lblTit,lblDisp;
 
     private clsKeybHandler khand;
     private LA_T_movr adapterr;
     private ListAdaptMenuVenta adapterb;
+    private clsRepBuilder rep;
 
     private clsT_movdObj T_movdObj;
     private clsT_movrObj T_movrObj;
     private clsP_productoObj P_productoObj;
     private clsP_motivoajusteObj P_motivoajusteObj;
     private clsP_stockObj P_stockObj;
+    private clsP_stock_almacenObj P_stock_almacenObj;
 
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
     private clsClasses.clsT_movr selitemr;
 
-    private String barcode,prodname,um,invtext;
+    private String barcode,prodname,um,invtext,corel;
     private int prodid,selidx, motivo,selcant;
-    private double exist,cantt,costot;
-    private boolean ingreso;
+    private double exist,cantt,costot,htot;
+    private boolean almpr,almacen,scanning=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,23 +74,28 @@ public class InvSalida extends PBase {
         }
         super.InitBase();
 
-        listView = (ListView) findViewById(R.id.listView1);
-        grdbtn = (GridView) findViewById(R.id.grdbtn);
-        lblTit = (TextView) findViewById(R.id.lblTit3);
-        lblBar = (TextView) findViewById(R.id.lblCant);lblBar.setText("");
-        lblKeyDP = (TextView) findViewById(R.id.textView110);
-        lblProd = (TextView) findViewById(R.id.textView156);lblProd.setText("");
-        lblCant = (TextView) findViewById(R.id.textView158);
-        lblRazon = (TextView) findViewById(R.id.textView161);
-        lblCosto = (TextView) findViewById(R.id.textView163);
-        lblTCant = (TextView) findViewById(R.id.textView155);
-        lblTCosto = (TextView) findViewById(R.id.textView150);
+        listView = findViewById(R.id.listView1);
+        grdbtn = findViewById(R.id.grdbtn);
+        lblTit = findViewById(R.id.lblTit3);
+        lblBar = findViewById(R.id.lblCant);lblBar.setText("");
+        lblKeyDP = findViewById(R.id.textView110);
+        lblProd = findViewById(R.id.textView156);lblProd.setText("");
+        lblCant = findViewById(R.id.textView158);
+        lblRazon = findViewById(R.id.textView161);
+        lblCosto = findViewById(R.id.textView163);
+        lblTCant = findViewById(R.id.textView155);
+        lblTCosto = findViewById(R.id.textView150);
+        lblDisp= findViewById(R.id.textView266);
+        txtBarra = findViewById(R.id.editText10);
+
+        corel=gl.ruta+"_"+mu.getCorelBase();
+        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="Almacen: "+na+ " -";
+        invtext=na+" Ajuste de inventario - #"+corel;
+        lblTit.setText(invtext);
 
         prodid=0;
-
-        /*ingreso=gl.invregular;
-        if (ingreso) invtext="Ingreso de mercancía";else invtext="Inventario inicial";
-        lblTit.setText(invtext);*/
+        almpr=gl.idalm==gl.idalmpred;
+        almacen=gl.tipo==5;if (almpr) almacen=false;
 
         khand=new clsKeybHandler(this, lblBar,lblKeyDP);
         khand.clear(true);khand.enable();
@@ -89,12 +105,17 @@ public class InvSalida extends PBase {
         P_productoObj=new clsP_productoObj(this,Con,db);
         P_motivoajusteObj=new clsP_motivoajusteObj(this,Con,db);
         P_stockObj=new clsP_stockObj(this,Con,db);
+        P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
+
+        rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
+
 
         setHandlers();
 
         iniciaProceso();
 
         listItems();
+        txtBarra.requestFocus();
     }
 
     //region Events
@@ -111,6 +132,7 @@ public class InvSalida extends PBase {
         lblProd.setText("");lblBar.setText("");lblCant.setText("");
         lblRazon.setText("");lblCosto.setText("");
         motivo=-1;
+        txtBarra.requestFocus();
     }
 
     public void doFocusCant(View view) {
@@ -167,6 +189,27 @@ public class InvSalida extends PBase {
                 };
             });
 
+            txtBarra.addTextChangedListener(new TextWatcher() {
+
+                public void afterTextChanged(Editable s) {}
+
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    final CharSequence ss = s;
+
+                    if (!scanning) {
+                        scanning = true;
+                        Handler handlerTimer = new Handler();
+                        handlerTimer.postDelayed(new Runnable() {
+                            public void run() {
+                                compareSC(ss);
+                            }
+                        }, 500);
+                    }
+                }
+            });
+
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
@@ -177,7 +220,7 @@ public class InvSalida extends PBase {
     //region Main
 
     private void listItems() {
-        double tc,can;
+        double tc,can,ex1,ex2;
         String ss;
 
         selidx=-1;
@@ -191,8 +234,9 @@ public class InvSalida extends PBase {
             T_movrObj.fill();
 
             for (int i = 0; i <T_movrObj.count; i++) {
+
                 can=T_movrObj.items.get(i).cant;cantt+=can;
-                tc=can*T_movrObj.items.get(i).precio; costot+=tc;
+                tc=Math.abs(can*T_movrObj.items.get(i).precio); costot+=tc;
                 T_movrObj.items.get(i).pesom=tc;
 
                 P_motivoajusteObj.fill("WHERE (CODIGO_MOTIVO_AJUSTE="+T_movrObj.items.get(i).razon+")");
@@ -201,6 +245,10 @@ public class InvSalida extends PBase {
                 } else {
                     T_movrObj.items.get(i).srazon="";
                 }
+
+                ex1=dispProd(T_movrObj.items.get(i).producto);ex2=ex1+can;
+                T_movrObj.items.get(i).val1=""+mu.frmdecno(ex1);
+                T_movrObj.items.get(i).val2=""+mu.frmdecno(ex2);
             }
 
             adapterr=new LA_T_movr(this,this,T_movrObj.items);
@@ -275,7 +323,7 @@ public class InvSalida extends PBase {
             listItems();
 
             prodid=0;khand.setLabel(lblBar,true);
-            lblProd.setText("");lblBar.setText("");lblCant.setText("");
+            lblProd.setText("");lblBar.setText("");lblCant.setText("");lblDisp.setText("Disponible:");
             lblRazon.setText("");
 
         } catch (Exception e) {
@@ -288,7 +336,6 @@ public class InvSalida extends PBase {
         clsClasses.clsD_MovD item;
         clsClasses.clsT_movd imov;
         clsClasses.clsT_movr imovr;
-        String corel=gl.ruta+"_"+mu.getCorelBase();
 
         try {
 
@@ -359,6 +406,82 @@ public class InvSalida extends PBase {
         }
     }
 
+    private void savealmacen() {
+        clsClasses.clsD_mov_almacen header;
+        clsClasses.clsD_movd_almacen item;
+        clsClasses.clsT_movr imovr;
+
+        try {
+
+            clsD_mov_almacenObj mov=new clsD_mov_almacenObj(this,Con,db);
+            clsD_movd_almacenObj movd=new clsD_movd_almacenObj(this,Con,db);
+
+            db.beginTransaction();
+
+            header =clsCls.new clsD_mov_almacen();
+
+            header.corel=corel;
+            header.codigo_sucursal=gl.tienda;
+            header.almacen_origen=0;
+            header.almacen_destino=gl.idalm;
+            header.anulado=0;
+            header.fecha=du.getActDateTime();
+            header.tipo="D";
+            header.usuario=gl.codigo_vendedor;
+            header.referencia=" ";
+            header.statcom="N";
+            header.impres=0;
+            header.codigoliquidacion=0;
+            header.codigo_proveedor= gl.codigo_proveedor;
+            header.total=costot;
+
+            mov.add(header);
+
+            int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD_ALMACEN");
+
+            for (int i = 0; i <T_movrObj.count; i++) {
+
+                imovr=T_movrObj.items.get(i);
+
+                item =clsCls.new clsD_movd_almacen();
+
+                item.coreldet=corm+i+1;
+                item.corel=corel;
+                item.producto=imovr.producto;
+                item.cant=imovr.cant;
+                item.cantm=0;
+                item.peso=0;
+                item.pesom=0;
+                item.lote="";
+                item.codigoliquidacion=0;
+                item.unidadmedida=imovr.unidadmedida;
+                item.precio=imovr.precio;
+                item.motivo_ajuste=imovr.razon;
+
+                movd.add(item);
+
+                adjustStockAlmacen(imovr.producto,imovr.cant,imovr.unidadmedida);
+            }
+
+            db.execSQL("DELETE FROM T_MOVR");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            toastlong("Existencias actualizadas");
+
+            if (gl.peInvCompart) {
+                gl.autocom = 1;
+                startActivity(new Intent(this,WSEnv.class));
+            }
+            finish();
+
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     private void addBarcode() {
         if (barraProducto()) {
             return;
@@ -371,35 +494,50 @@ public class InvSalida extends PBase {
     }
 
     private boolean barraProducto() {
-        double tdisp=0;
+        double costo;
 
         try {
             khand.clear(true);khand.enable();khand.focus();
             selidx=-1;
 
-            sql ="WHERE (CODBARRA='"+barcode+"') OR (CODIGO='"+barcode+"') COLLATE NOCASE";
+            if (gl.idalm!=gl.idalmpred) {
+                sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK_ALMACEN.UNIDADMEDIDA, " +
+                        "P_PRODUCTO.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
+                        "FROM P_STOCK_ALMACEN INNER JOIN " +
+                        "P_PRODUCTO ON P_STOCK_ALMACEN.CODIGO_PRODUCTO=P_PRODUCTO.CODIGO_PRODUCTO " +
+                        "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ";
+            } else {
+                sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK.UNIDADMEDIDA, " +
+                        "P_PRODUCTO.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
+                        "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO " +
+                        "WHERE (1=1) ";
+            }
 
-            P_productoObj.fill(sql);
+            sql+="AND (P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"') COLLATE NOCASE";
 
-            if (P_productoObj.count==0) {
+            Cursor dt=Con.OpenDT(sql);
+            if (dt.getCount()==0) {
                 toast("¡El producto "+barcode+" no existe!");return false;
             }
 
-            prodid=P_productoObj.first().codigo_producto;
-            prodname=P_productoObj.first().codigo+" - "+P_productoObj.first().desclarga;
-            um=P_productoObj.first().unidbas;
+            dt.moveToFirst();
+            prodid=dt.getInt(3);
+            prodname=dt.getString(0)+" - "+dt.getString(1);
+            um=dt.getString(2);
+            costo=dt.getDouble(4);
 
             lblProd.setText(prodname);
             khand.setLabel(lblCant,true);khand.val="";
-            lblCant.setText("");
+            lblCant.setText("");txtBarra.setText("");
 
-            if (P_productoObj.first().costo>0) {
-                lblCosto.setText(""+P_productoObj.first().costo);
+            if (costo>0) {
+                lblCosto.setText(""+costo);
             } else {
                 lblCosto.setText("");
             }
 
             motivo=-1;
+            lblDisp.setText("Disponible: "+dispProdUni(prodid));
 
             return true;
         } catch (Exception e) {
@@ -444,6 +582,13 @@ public class InvSalida extends PBase {
         db.execSQL(sql);
     }
 
+    private void adjustStockAlmacen(int pcod,double pcant,String um) {
+
+        sql="UPDATE P_stock_almacen SET CANT=CANT+"+pcant+" " +
+                "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+        db.execSQL(sql);
+    }
+
     //endregion
 
     //region Menu
@@ -459,6 +604,10 @@ public class InvSalida extends PBase {
 
             item = clsCls.new clsMenu();
             item.ID=50;item.Name="Buscar ";item.Icon=50;
+            mmitems.add(item);
+
+            item = clsCls.new clsMenu();
+            item.ID=56;item.Name="Imprimir ";item.Icon=62;
             mmitems.add(item);
 
             item = clsCls.new clsMenu();
@@ -499,6 +648,8 @@ public class InvSalida extends PBase {
                     borraLinea();break;
                 case 55:
                     borraTodo();break;
+                case 56:
+                    imprimir();break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
@@ -523,6 +674,74 @@ public class InvSalida extends PBase {
 
     //endregion
 
+    //region Impresion
+
+    private void imprimir(){
+        int aid=0;
+
+        try {
+
+            rep.clear();
+            if (gl.tipo==5) aid=gl.idalm;
+
+            impresionEncabezado(aid);
+            impresionDetalle(aid);
+
+            rep.line();
+            rep.empty();
+            rep.addtote("Valor total: ",mu.frmcur(costot));
+            rep.empty();
+            rep.empty();
+            rep.empty();
+
+            rep.save();
+
+            app.printView();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void impresionEncabezado(int aid) {
+
+        rep.empty();
+        rep.empty();
+        rep.addc(gl.empnom);
+        rep.addc(gl.tiendanom);
+        rep.empty();
+        rep.addc("PREIMPRESION");
+        rep.addc("INGRESO DE MERCANCIA");
+        rep.empty();
+        rep.add("Numero: "+corel+" ");
+        rep.add("Fecha: "+du.sfecha(du.getActDate()));
+        rep.add("Operador: "+gl.vendnom);
+        if (gl.tipo==5) rep.add("Almacen: "+gl.nom_alm);
+        rep.empty();
+        rep.add3lrr("Cantidad","Costo","Valor");
+        rep.line();
+    }
+
+    private void impresionDetalle(int aid) {
+        String dum;
+        double dcant,dprec,dtot;
+
+        T_movrObj.fill();
+
+        for (int i = 0; i <T_movrObj.count; i++) {
+
+            dum=T_movrObj.items.get(i).unidadmedida;
+            dcant=T_movrObj.items.get(i).cant;
+            dprec=T_movrObj.items.get(i).precio;
+            dtot=Math.abs(dcant*dprec);
+
+            rep.add(app.prodNombre(T_movrObj.items.get(i).producto));
+            rep.add3lrre(mu.frmdecno(dcant)+" "+dum,dprec,dtot);
+        }
+
+    }
+
+    //endregion
+
     //region Aux
 
     private String nombreMotivo(int mot) {
@@ -543,6 +762,69 @@ public class InvSalida extends PBase {
             return true;
         }
     }
+
+    public String dispProdUni(int prodid) {
+        double val=0;
+        String uum="";
+
+        try {
+            if (almacen) {
+                P_stock_almacenObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+") AND (CODIGO_ALMACEN="+gl.idalm+")");
+                if (P_stock_almacenObj.count>0) {
+                    val=P_stock_almacenObj.first().cant;
+                    uum=P_stock_almacenObj.first().unidadmedida;
+                }
+            } else {
+                P_stockObj.fill("WHERE CODIGO="+prodid);
+                if (P_stockObj.count>0) {
+                    val=P_stockObj.first().cant;
+                    uum=P_stockObj.first().unidadmedida;
+                }
+            }
+            return mu.frmdecno(val)+" "+uum;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return "";
+    }
+
+    public double dispProd(int prodid) {
+        double val=0;
+        try {
+            if (almacen) {
+                P_stock_almacenObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+") AND (CODIGO_ALMACEN="+gl.idalm+")");
+                if (P_stock_almacenObj.count>0) val=P_stock_almacenObj.first().cant;
+            } else {
+                P_stockObj.fill("WHERE CODIGO="+prodid);
+                if (P_stockObj.count>0) val=P_stockObj.first().cant;
+            }
+            return val;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return 0;
+    }
+
+    private void compareSC(CharSequence s) {
+        String os,bc;
+
+        bc=txtBarra.getText().toString();
+        if (bc.isEmpty() || bc.length()<2) {
+            txtBarra.setText("");
+            scanning=false;
+            return;
+        }
+        os=s.toString();
+
+        if (bc.equalsIgnoreCase(os)) {
+            barcode=bc;gl.barra=barcode;
+            if (!barraProducto()) toastlong("¡La barra "+barcode+" no existe!");
+        }
+
+        txtBarra.setText("");txtBarra.requestFocus();
+        scanning=false;
+    }
+
 
     //endregion
 
@@ -620,7 +902,7 @@ public class InvSalida extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    if (ingreso) save();else msgAskSave2("Está seguro de continuar");
+                    msgAskSave2("Está seguro de continuar");
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
@@ -643,7 +925,7 @@ public class InvSalida extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    save();
+                    if (almacen) savealmacen();else save();
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
@@ -691,6 +973,7 @@ public class InvSalida extends PBase {
             P_productoObj.reconnect(Con,db);
             P_motivoajusteObj.reconnect(Con,db);
             P_stockObj.reconnect(Con,db);
+            P_stock_almacenObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

@@ -7,6 +7,64 @@
     tools:context=".Exist" >
 
     <RelativeLayout
+        android:id="@+id/relalm1"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/relRoad"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/textView268"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/lblCFact72"
+            android:background="@drawable/spinner_style"
+            android:clickable="true"
+            android:maxWidth="200dp"
+            android:onClick="doAlmacenes"
+            android:paddingStart="10dp"
+            android:text="Seleccione un almacen . . ."
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/lblCFact72"
+            android:layout_width="120dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/blue_strip"
+            android:gravity="center"
+            android:paddingLeft="2dp"
+            android:text="Almacen :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF"
+            android:textSize="21sp"
+            android:textStyle="normal" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/lblTit7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="0dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="Total valor : 0.00"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#1A8AC6"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
         android:id="@+id/relRoad"
         android:layout_width="match_parent"
         android:layout_height="48dp">
@@ -45,14 +103,16 @@
         <TextView
             android:id="@+id/lblTit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/imgRoadTit"
+            android:gravity="center_vertical"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="Existencias"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6" />
+            android:textColor="#1A8AC6"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/textView245"
@@ -73,10 +133,9 @@
         android:id="@+id/txtFilter"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/relRoad"
+        android:layout_below="@+id/relalm1"
         android:layout_alignLeft="@+id/listView1"
-        android:layout_alignParentTop="false"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="0dp"
         android:layout_toStartOf="@+id/imageView78"
         android:maxLines="1">
@@ -90,10 +149,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtFilter"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/frame_rect">
 
     </ListView>
 
@@ -163,7 +224,8 @@
         android:gravity="center_horizontal"
         android:onClick="doRecibir"
         android:text="Actualizar"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/imageView77"
@@ -179,7 +241,8 @@
         android:layout_marginBottom="0dp"
         android:clickable="true"
         android:onClick="doRecibir"
-        android:src="@drawable/recibir_rapido" />
+        android:src="@drawable/recibir_rapido"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/textView187"
@@ -195,7 +258,8 @@
         android:gravity="center_horizontal"
         android:onClick="doEnviar"
         android:text="Enviar"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/imageView78"
@@ -211,7 +275,45 @@
         android:layout_marginBottom="0dp"
         android:clickable="true"
         android:onClick="doEnviar"
-        android:src="@drawable/enviar_archivos" />
+        android:src="@drawable/enviar_archivos"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/textView254"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtFilter"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="0dp"
+        android:gravity="right"
+        android:text="Costo"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView255"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtFilter"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Cantidad"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView256"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtFilter"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="Total"
+        android:textSize="18sp" />
 
 </RelativeLayout>
 

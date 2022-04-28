@@ -877,7 +877,7 @@ public class clsClasses {
         public String codigo;
         public String nombre;
         public String correo;
-        public Boolean  activo;
+        public int  activo;
     }
 
     public class clsP_regla_costo {
@@ -1171,6 +1171,8 @@ public class clsClasses {
         public String unidadmedida;
         public double precio;
         public int  razon;
+
+        public String val1,val2;
     }
 
     public class clsT_movr {
@@ -1187,7 +1189,7 @@ public class clsClasses {
         public double precio;
         public int  razon;
 
-        public String srazon;
+        public String srazon,val1,val2;
     }
 
     public class clsT_orden {
@@ -1321,13 +1323,14 @@ public class clsClasses {
 	}
 	
 	public class clsCFDV {
-		public int id;
+		public int id,ival;
 		public String Cod,Desc,Fecha,Valor,Sid, UUID, FechaFactura;
 		public double val, precio;
 	}
 	
 	public class clsExist {
-		public String Cod,Desc,Fecha,Valor,ValorM,ValorT,Peso,PesoM,PesoT,Lote,Doc,Centro,Stat;
+		public String Cod,Desc,Fecha,Valor,ValorM,ValorT,Peso,PesoM,PesoT;
+		public String Lote,Doc,Centro,Stat,precio,total;
 		public double cant,cantm;
 		public int id,flag,items;
 	}

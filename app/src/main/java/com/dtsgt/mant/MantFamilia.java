@@ -87,7 +87,7 @@ public class MantFamilia extends PBase {
 
         if (gl.peMCent) {
             //if (!app.grant(13,gl.rol)) {
-                imgadd.setVisibility(View.INVISIBLE);
+                imgadd.setVisibility(View.VISIBLE);
                 imgstat.setVisibility(View.INVISIBLE);
                 imgfotoadd.setVisibility(View.INVISIBLE);
                 imgfotodel.setVisibility(View.INVISIBLE);

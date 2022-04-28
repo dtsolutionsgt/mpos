@@ -68,7 +68,7 @@
             android:text="Código"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textSize="18sp"
-            android:textStyle="normal" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/lblepeso"
@@ -80,8 +80,7 @@
             android:gravity="right"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/lblPValor"

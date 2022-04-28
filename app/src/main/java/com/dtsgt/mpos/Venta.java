@@ -1474,7 +1474,7 @@ public class Venta extends PBase {
         Cursor dt;
 
         try {
-
+/*
             sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO INNER JOIN " +
                     "P_PRODPRECIO ON (P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO)  " +
@@ -1483,6 +1483,11 @@ public class Venta extends PBase {
             sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA FROM P_PRODUCTO " +
                     "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) " +
                     "AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"'))  COLLATE NOCASE";
+ */
+            sql="";
+            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA FROM P_PRODUCTO " +
+                   "WHERE (P_PRODUCTO.ACTIVO = 1) " +
+                   "AND ((P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"'))  COLLATE NOCASE";
 
             dt=Con.OpenDT(sql);
 
@@ -3553,8 +3558,8 @@ public class Venta extends PBase {
 
          try {
              flim=du.addDays(du.getActDate(),-5);
-             f1=du.getActDate();f1=du.cfecha(du.getyear(f1),du.getmonth(f1),1);
-             if (f1<flim) flim=f1;
+             //f1=du.getActDate();f1=du.cfecha(du.getyear(f1),du.getmonth(f1),1);
+             //if (f1<flim) flim=f1;
 
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";

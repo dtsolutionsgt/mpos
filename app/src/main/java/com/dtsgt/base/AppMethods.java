@@ -30,6 +30,7 @@ import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
+import com.dtsgt.mpos.PrintView;
 
 import org.apache.commons.io.FileUtils;
 
@@ -1563,6 +1564,14 @@ public class AppMethods {
             return true;
         }
     }
+
+	public void printView() {
+		try {
+			cont.startActivity(new Intent(cont, PrintView.class));
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
 
     //endregion
 
