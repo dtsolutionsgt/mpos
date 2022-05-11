@@ -1940,7 +1940,6 @@ public class Orden extends PBase {
                 //    rep.add(T_comandaObj.items.get(j).texto);
                 //}
 
-
                 rep.line16();
                 rep.add("");
                 if (gl.mesa_grupo==19) rep.addc("PARA LLEVAR");
