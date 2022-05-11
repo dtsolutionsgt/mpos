@@ -726,8 +726,8 @@ public class Menu extends PBase {
             selitems[itempos]="Ingreso de mercancía";itempos++;
 			selitems[itempos]="Ajuste de inventario";itempos++;
             if (almacenes) {
-                selitems[itempos]="Traslado entre almacenes";itempos++;
-                selitems[itempos]="Egreso de almacen";itempos++;
+                selitems[itempos]="Traslado entre almacénes";itempos++;
+                selitems[itempos]="Egreso de almacén";itempos++;
             }
             //selitems[itempos]="Inventario inicial";itempos++;
             selitems[itempos]="Orden de compra";itempos++;
@@ -747,8 +747,8 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
                     if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
                     if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
-                    if (mt.equalsIgnoreCase("Traslado entre almacenes")) menuTraslado();
-                    if (mt.equalsIgnoreCase("Egreso de almacen")) menuEgreso();
+                    if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
+                    if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
 
                     dialog.cancel();
 				}
@@ -783,7 +783,9 @@ public class Menu extends PBase {
 
 	private void menuRecarga() {
 		try {
-			gl.invregular=true;gl.tipo = 0;gl.idalm=0;gl.nom_alm="";
+			gl.invregular=true;
+			gl.tipo = 0;if (almacenes) gl.tipo=4;
+			gl.idalm=0;gl.nom_alm="";
 			Intent intent = new Intent(Menu.this, ListaInventario.class);
 			startActivity(intent);
 		} catch (Exception e){}
@@ -808,16 +810,13 @@ public class Menu extends PBase {
     }
 
     private void menuCompra() {
-	    toast("Pendiente implementación");
-	    /*
-        try{
-            gl.tipo = 3;
-            Intent intent = new Intent(this, ListaInventario.class);
-            startActivity(intent);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-	    */
+	    //toast("Pendiente implementación");
+		try {
+			Intent intent = new Intent(this, ListaCompras.class);
+			startActivity(intent);
+		} catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
     }
 
 	private void menuTraslado() {
@@ -838,19 +837,19 @@ public class Menu extends PBase {
     }
 
     public void listaAlmacenes(int modosel) {
-	    String titulo="Seleccione un almacen";
+	    String titulo="Seleccione un almacén";
 
         switch (modosel) {
             case 1:
-                titulo="Seleccione un almacen";break;
+                titulo="Seleccione un almacén";break;
             case 2:
-                titulo="Seleccione un almacen";break;
+                titulo="Seleccione un almacén";break;
             case 3:
-                titulo="Seleccione un almacen";break;
+                titulo="Seleccione un almacén";break;
             case 4:
-                titulo="Seleccione un almacen";break;
+                titulo="Seleccione un almacén";break;
             case 5:
-                titulo="Seleccione almacen origen";break;
+                titulo="Seleccione almacén origen";break;
         }
 
         try {
@@ -1163,10 +1162,10 @@ public class Menu extends PBase {
             double freeStorage=(statInternal. getAvailableBlocksLong()*statInternal.getBlockSizeLong())/ 0x100000L;
             int  availStorage=(int) (100*freeStorage/totalStorage );
 
-            sd="Almacenamiento disponible  :  "+availStorage+" %   ,   "+mu.round(freeStorage/1024,1)+" / "+mu.round(totalStorage/1024,1)+" [ GB ]";
+            sd="almacénamiento disponible  :  "+availStorage+" %   ,   "+mu.round(freeStorage/1024,1)+" / "+mu.round(totalStorage/1024,1)+" [ GB ]";
         } catch (Exception e) {
             msgbox(e.getMessage());
-            sd="Almacenamiento disponible  :  -";
+            sd="almacénamiento disponible  :  -";
         }
 
         ss=sb+"\n"+sm+"\n"+sd;
@@ -1590,7 +1589,7 @@ public class Menu extends PBase {
 
                     ss=selitems[item];
 
-                    if (ss.equalsIgnoreCase("Almacen")) gl.mantid=0;
+                    if (ss.equalsIgnoreCase("almacén")) gl.mantid=0;
                     if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
                     if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
                     if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;

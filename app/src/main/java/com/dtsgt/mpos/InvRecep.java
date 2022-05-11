@@ -103,8 +103,9 @@ public class InvRecep extends PBase {
 
         prodid=0;
         ingreso=gl.invregular;
+        almacen=true;
+        if (gl.tipo==0) almacen=false;
         almpr=gl.idalm==gl.idalmpred;
-        almacen=gl.tipo==4;
         if (almpr) almacen=false;
 
         khand=new clsKeybHandler(this, lblBar,lblKeyDP);
@@ -136,7 +137,7 @@ public class InvRecep extends PBase {
         }
         if (readonly) txtBarra.setEnabled(false);
 
-        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="Almacen: "+na+ " -";
+        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="Almacén: "+na+ " -";
         invtext=na+" Ingreso de mercancía - "+ gl.nombre_proveedor.toUpperCase()+"  #"+corel;
         lblTit.setText(invtext);
 

@@ -289,6 +289,13 @@ public class Tablas extends PBase {
                     } catch (Exception e) {
                         ss="?";
                     }
+
+                    try {
+                        if (ss.length()>100) ss=ss.substring(0,99)+" ... ";
+                    } catch (Exception e) {
+                        ss="?";
+                    }
+
                     dvalues.add(ss);
                 }
                 dt.moveToNext();

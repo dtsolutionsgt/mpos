@@ -2006,7 +2006,7 @@ public class Venta extends PBase {
                     "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
                     "WHERE (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
             if (famid !=-1) {
-                if (famid!=0) sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
+                if (famid!=0) sql = sql + " AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
 
             sql += "UNION ";
@@ -2016,14 +2016,14 @@ public class Venta extends PBase {
                     "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M')) AND (P_PRODUCTO.ACTIVO=1)";
             if (famid !=-1) {
                 if (famid!=0)
-                    sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
+                    sql = sql + " AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
 
             sql += "ORDER BY P_PRODUCTO.DESCCORTA";
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()==0){
-                msgbox("¡Ningún artículo de la familia tiene existencia disponible!");return;
+                msgbox("¡No está definido el precio o ningúno artículo de la familia tiene existencia disponible!");return;
             }
 
             dt.moveToFirst();
@@ -2078,7 +2078,8 @@ public class Venta extends PBase {
                 if (meseros && gl.peRest) {
                     item = clsCls.new clsMenu();
                     item.ID=63;item.Name="Mesero";item.Icon=63;
-                    if (!gl.pelCajaRecep) mmitems.add(item);
+                    //if (!gl.pelCajaRecep)
+                    mmitems.add(item);
                 }
 
                 if (pedidos) {

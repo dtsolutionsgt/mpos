@@ -1909,6 +1909,7 @@ public class Orden extends PBase {
                 rep.add("");rep.add("");rep.add("");
                 rep.add("ORDEN : "+ordennum);
                 rep.add("MESA : "+mesa);
+                if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
                 rep.add("Hora : "+du.shora(du.getActDateTime()));
                 rep.add("Mesero : "+gl.nombre_mesero_sel);
 
@@ -1940,7 +1941,9 @@ public class Orden extends PBase {
                 //}
 
                 rep.line16();
-                rep.add("");rep.add("");rep.add("");
+                rep.add("");
+                if (gl.mesa_grupo==19) rep.addc("PARA LLEVAR");
+                rep.add("");rep.add("");
 
                 rep.save();rep.clear();
             }

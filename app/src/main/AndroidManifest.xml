@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.2.10">
+    android:versionName="4.2.11">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -59,7 +59,6 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-
 
         <service
             android:name="com.dtsgt.webservice.srvInventConfirm"
@@ -568,6 +567,10 @@
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".ListaCompras"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
             android:name=".InvRecep"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -698,7 +701,6 @@
             android:name=".PrintView"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
     </application>
 
 </manifest>

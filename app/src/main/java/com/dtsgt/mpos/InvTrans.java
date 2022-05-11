@@ -103,7 +103,7 @@ public class InvTrans extends PBase {
         if (almpr) almacen=false;else almacen=true;
 
         corel=gl.ruta+"_"+mu.getCorelBase();
-        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="Almacen: "+na+ " -";
+        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="almacén: "+na+ " -";
         invtext=na+" Traslado de: "+ gl.nom_alm + " a: " + gl.nom_alm2+"  - #"+corel;
         lblTit.setText(invtext);
 
@@ -291,7 +291,7 @@ public class InvTrans extends PBase {
                 T_movrObj.items.get(i).pesom=tc;
                 T_movrObj.items.get(i).srazon=" ";
 
-                ex1=dispProd(T_movrObj.items.get(i).producto);ex2=ex1+can;
+                ex1=dispProd(T_movrObj.items.get(i).producto);ex2=ex1-can;
                 T_movrObj.items.get(i).val1=""+mu.frmdecno(ex1);
                 T_movrObj.items.get(i).val2=""+mu.frmdecno(ex2);
             }

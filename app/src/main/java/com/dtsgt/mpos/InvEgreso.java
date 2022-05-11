@@ -89,7 +89,7 @@ public class InvEgreso extends PBase {
         lblDisp = (TextView) findViewById(R.id.textView265);
 
         corel=gl.ruta+"_"+mu.getCorelBase();
-        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="Almacen: "+na+ " -";
+        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="Almacén: "+na+ " -";
         invtext=na+" Egreso de almacen - #"+corel;
         lblTit.setText(invtext);
 
@@ -528,6 +528,10 @@ public class InvEgreso extends PBase {
         try {
             khand.clear(true);khand.enable();khand.focus();
             selidx=-1;
+
+            if (!almacen) {
+                gl.idalm=0;gl.idalmpred=0;
+            }
 
             if (gl.idalm!=gl.idalmpred) {
                 sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK_ALMACEN.UNIDADMEDIDA, " +

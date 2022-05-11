@@ -1342,6 +1342,9 @@ public class WSEnv extends PBase {
             clsD_mov_almacenObj D_mov_almacenObj=new clsD_mov_almacenObj(this,Con,db);
             D_mov_almacenObj.fill("WHERE STATCOM = 'N'");
             fTotMovAlm=D_mov_almacenObj.count;
+            //*************************
+            fTotMovAlm=0;
+
             total_enviar+=fTotMovAlm;
 
             fIdxMovAlm=(fTotMovAlm>0?-1:0);

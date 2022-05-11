@@ -29,10 +29,10 @@ public class DateUtils {
 	}
 
 	public String shora(long vValue) {
-		long h,m;
+		int h,m;
 		String sh,sm;
 			
-		h=vValue % 10000;
+		h=(int) (vValue % 10000);
 		m=h % 100;if (m>9) {sm=String.valueOf(m);} else {sm="0"+String.valueOf(m);}
 		h=(int) h/100;if (h>9) {sh=String.valueOf(h);} else {sh="0"+String.valueOf(h);}
 			

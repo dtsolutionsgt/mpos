@@ -89,7 +89,7 @@ public class InvAjuste extends PBase {
         txtBarra = findViewById(R.id.editText10);
 
         corel=gl.ruta+"_"+mu.getCorelBase();
-        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="Almacen: "+na+ " -";
+        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="almacén: "+na+ " -";
         invtext=na+" Ajuste de inventario - #"+corel;
         lblTit.setText(invtext);
 
@@ -500,6 +500,10 @@ public class InvAjuste extends PBase {
             khand.clear(true);khand.enable();khand.focus();
             selidx=-1;
 
+            if (!almacen) {
+                gl.idalm=0;gl.idalmpred=0;
+            }
+
             if (gl.idalm!=gl.idalmpred) {
                 sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK_ALMACEN.UNIDADMEDIDA, " +
                         "P_PRODUCTO.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
@@ -507,10 +511,9 @@ public class InvAjuste extends PBase {
                         "P_PRODUCTO ON P_STOCK_ALMACEN.CODIGO_PRODUCTO=P_PRODUCTO.CODIGO_PRODUCTO " +
                         "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ";
             } else {
-                sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK.UNIDADMEDIDA, " +
+                sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS, " +
                         "P_PRODUCTO.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
-                        "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO " +
-                        "WHERE (1=1) ";
+                        "FROM P_PRODUCTO WHERE (1=1) ";
             }
 
             sql+="AND (P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"') COLLATE NOCASE";
@@ -578,8 +581,40 @@ public class InvAjuste extends PBase {
     }
 
     private void adjustStock(int pcod,double pcant,String um) {
+
+        try {
+
+            ins.init("P_STOCK");
+
+            ins.add("CODIGO",pcod);
+            ins.add("CANT",pcant);
+            ins.add("CANTM",0);
+            ins.add("PESO",0);
+            ins.add("plibra",0);
+            ins.add("LOTE","");
+            ins.add("DOCUMENTO","");
+
+            ins.add("FECHA",0);
+            ins.add("ANULADO",0);
+            ins.add("CENTRO","");
+            ins.add("STATUS","");
+            ins.add("ENVIADO",1);
+            ins.add("CODIGOLIQUIDACION",0);
+            ins.add("COREL_D_MOV","");
+            ins.add("UNIDADMEDIDA",um);
+
+            String sp=ins.sql();
+
+            db.execSQL(ins.sql());
+        } catch (Exception e) {
+            sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+            db.execSQL(sql);
+        }
+
+        /*
         sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO="+pcod+" ";
         db.execSQL(sql);
+        */
     }
 
     private void adjustStockAlmacen(int pcod,double pcant,String um) {
@@ -925,7 +960,11 @@ public class InvAjuste extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    if (almacen) savealmacen();else save();
+                    if (almacen) {
+                        savealmacen();
+                    } else {
+                        save();
+                    }
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

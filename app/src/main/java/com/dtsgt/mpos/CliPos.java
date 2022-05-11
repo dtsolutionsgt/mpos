@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsD_pedidoObj;
+import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
 import com.dtsgt.classes.clsP_sucursalObj;
@@ -564,10 +565,21 @@ public class CliPos extends PBase {
     //region Pedidos Telefono
 
     private void crearPedido() {
+        String ss="";
 
         try {
             peditems.clear();
-            if (crearPedidoEncabezado()) crearPedidoDetalle();
+            if (crearPedidoEncabezado()) {
+                crearPedidoDetalle();
+
+                try {
+                    if(sNITCliente.isEmpty()) sNITCliente="C.F.";
+                } catch (Exception e) {
+                    sNITCliente="C.F.";
+                }
+
+                agregaClientePedido(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente);
+            }
         } catch (Exception e) {
             msgbox(e.getMessage());return;
         }
@@ -576,6 +588,7 @@ public class CliPos extends PBase {
             db.beginTransaction();
 
             for (int i = 0; i <peditems.size(); i++) {
+                ss=peditems.get(i);
                 db.execSQL(peditems.get(i));
             }
 
@@ -591,9 +604,10 @@ public class CliPos extends PBase {
                 mu.msgbox("Error : " + e.getMessage());
             }
 
-            finish();
+            //finish();
         } catch (Exception e) {
-            db.endTransaction();msgbox(e.getMessage());
+            db.endTransaction();
+            msgbox(e.getMessage()+" : "+ss);
         }
     }
 
@@ -603,7 +617,9 @@ public class CliPos extends PBase {
 
         pedcorel=mu.getCorelBase();
 
-        item.empresa=gl.emp;
+        int pedcor=D_pedidoObj.newID("SELECT MAX(EMPRESA) FROM D_PEDIDO");
+
+        item.empresa=pedcor;
         item.corel=pedcorel;
         item.fecha_sistema=du.getActDateTime();
         item.fecha_pedido=du.getActDateTime();
@@ -680,6 +696,29 @@ public class CliPos extends PBase {
             }
 
             corid++;
+        }
+    }
+
+    private boolean agregaClientePedido(String NIT,String Nom,String dir, String Correo,String tel) {
+
+        try {
+            clsD_pedidocObj D_pedidocObj=new clsD_pedidocObj(this,Con,db);
+            clsClasses.clsD_pedidoc item = clsCls.new clsD_pedidoc();
+
+            if (NIT.isEmpty()) NIT="C.F.";
+
+            item.corel=pedcorel;
+            item.nombre=Nom;
+            item.telefono=tel;
+            item.direccion=dir;
+            item.referencia=Correo;
+            item.nit=NIT;
+
+            D_pedidocObj.add(item);
+
+            return true;
+        } catch (Exception e) {
+            mu.msgbox2(e.getMessage());return false;
         }
     }
 

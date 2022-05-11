@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsP_mesa_nombreObj;
 import com.dtsgt.classes.clsP_mesero_grupoObj;
 import com.dtsgt.classes.clsP_res_grupoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
@@ -46,6 +47,7 @@ public class ResMesero extends PBase {
     private clsP_res_sesionObj P_res_sesionObj;
     private clsT_ordenObj T_ordenObj;
     private clsP_mesero_grupoObj P_mesero_grupoObj;
+    private clsP_mesa_nombreObj P_mesa_nombreObj;
 
     private WebService ws;
 
@@ -84,6 +86,7 @@ public class ResMesero extends PBase {
         P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
         T_ordenObj=new clsT_ordenObj(this,Con,db);
         P_mesero_grupoObj=new clsP_mesero_grupoObj(this,Con,db);
+        P_mesa_nombreObj=new clsP_mesa_nombreObj(this,Con,db);
 
         setHandlers();
         cargaConfig();
@@ -93,7 +96,6 @@ public class ResMesero extends PBase {
         ws=new WebService(ResMesero.this,gl.wsurl);
 
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
-
 
     }
 
@@ -131,6 +133,24 @@ public class ResMesero extends PBase {
                 abrirOrden();
             };
         });
+
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                try {
+                    Object lvObj = gridView.getItemAtPosition(position);
+                    mesa = (clsClasses.clsRes_mesa)lvObj;
+
+                    adapter.setSelectedIndex(position);
+                    opcionesMesa();
+                } catch (Exception e) {
+                }
+                return true;
+            }
+        });
+
+
     }
 
     //endregion
@@ -139,6 +159,7 @@ public class ResMesero extends PBase {
 
     private void listItems() {
         int idmesa;
+        String amesa;
 
         corels.clear();
 
@@ -153,7 +174,13 @@ public class ResMesero extends PBase {
                 mesa= clsCls.new clsRes_mesa();
 
                 mesa.codigo_mesa=idmesa;
-                mesa.nombre=P_res_mesaObj.items.get(i).nombre;
+                mesa.nombre=P_res_mesaObj.items.get(i).nombre;mesa.mesanum=mesa.nombre;
+                mesa.alias=" ";
+
+                amesa=aliasMesa(idmesa);
+                if (!amesa.isEmpty()) {
+                    mesa.alias=mesa.nombre+" - "+amesa;mesa.nombre=" ";
+                }
 
                 P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
 
@@ -187,7 +214,11 @@ public class ResMesero extends PBase {
 
     private void abrirOrden() {
         try {
-            gl.mesanom=mesa.nombre;
+
+            gl.mesa_grupo=idgrupo;
+            gl.mesa_alias=aliasMesa(mesa.codigo_mesa);
+            gl.mesanom=mesa.mesanum;
+
             P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
             if (P_res_sesionObj.count>0) {
                 gl.idorden=P_res_sesionObj.first().id;
@@ -592,6 +623,30 @@ public class ResMesero extends PBase {
 
     }
 
+    private String aliasMesa(int idm) {
+        try {
+            P_mesa_nombreObj.fill("WHERE CODIGO_MESA="+idm);
+            if (P_mesa_nombreObj.count>0) {
+                return P_mesa_nombreObj.first().nombre;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return "";
+    }
+
+    private void borraNombreMesa() {
+        clsClasses.clsP_mesa_nombre nitem;
+
+        try {
+            P_mesa_nombreObj.fill("WHERE CODIGO_MESA="+mesa.codigo_mesa);
+            nitem=P_mesa_nombreObj.first();
+            P_mesa_nombreObj.delete(nitem);
+            listItems();
+        } catch (Exception e) {
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -837,6 +892,83 @@ public class ResMesero extends PBase {
         alert.show();
     }
 
+    private void opcionesMesa() {
+        final AlertDialog Dialog;
+        //final String[] selitems = {"Cambiar nombre","Borrar nombre","Trasladar cuentas"};
+        final String[] selitems = {"Cambiar nombre","Borrar nombre"};
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Mesa");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        ingresaNombreMesa();break;
+                    case 1:
+                        borraNombreMesa();break;
+                    case 2:
+                        ;break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+
+    private void ingresaNombreMesa() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Nombre mesa");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setText("");
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                clsClasses.clsP_mesa_nombre nitem;
+                String s=input.getText().toString();
+
+                if (s.isEmpty()) {
+                    mu.msgbox("Nombre incorrecto");return;
+                }
+
+                nitem = clsCls.new clsP_mesa_nombre();
+                try {
+                    nitem.codigo_mesa=mesa.codigo_mesa;
+                    nitem.nombre=s;
+
+                    P_mesa_nombreObj.add(nitem);
+                } catch (Exception e) {
+                    P_mesa_nombreObj.update(nitem);
+                }
+
+                listItems();
+                return;
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
     //endregion
 
     //region Activity Events
@@ -851,6 +983,7 @@ public class ResMesero extends PBase {
             P_res_sesionObj.reconnect(Con,db);
             T_ordenObj.reconnect(Con,db);
             P_mesero_grupoObj.reconnect(Con,db);
+            P_mesa_nombreObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

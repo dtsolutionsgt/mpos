@@ -267,6 +267,48 @@ public class clsClasses {
         public String modif;
     }
 
+    public class clsD_orden_compra {
+        public String codigo_compra;
+        public int  codigo_empresa;
+        public int  anulado;
+        public int  codigo_sucursal;
+        public String estatus;
+        public long fecha_emision;
+        public long fecha_recepcion;
+        public int  codigo_usuario;
+        public int  codigo_proveedor;
+        public int  codigo_almacen;
+        public String serie;
+        public int  numero;
+        public int  correlativo;
+        public double total;
+        public int  creado_en_bof;
+        public int  enviado;
+        public String nota;
+    }
+
+    public class clsD_orden_compra_detalle {
+        public String codigo_compra;
+        public int  codigo_producto;
+        public double cantidad;
+        public String unidad_medida;
+        public double costo;
+        public double total;
+        public int  anulado;
+    }
+
+    public class clsD_orden_compra_recepcion {
+        public String codigo_compra;
+        public int  correlativo;
+        public int  codigo_producto;
+        public double cantidad;
+        public long fecha_recepcion;
+        public String correl_d_movd;
+        public String referencia;
+        public int  codigo_almacen;
+        public int  bandera;
+    }
+
     public class clsD_pedido {
         public int  empresa;
         public String corel;
@@ -697,6 +739,11 @@ public class clsClasses {
         public float propina;
     }
 
+    public class clsP_mesa_nombre {
+        public int  codigo_mesa;
+        public String nombre;
+    }
+
     public class clsP_nivelprecio {
         public int codigo;
         public String nombre;
@@ -1068,6 +1115,7 @@ public class clsClasses {
         public int  cuentas;
         public long fecha;
         public int  pendiente;
+        public String alias,mesanum;
     }
 
     public class clsP_res_sesion {

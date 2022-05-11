@@ -75,8 +75,9 @@ public class LA_Res_mesa  extends BaseAdapter {
 
             holder = new ViewHolder();
 
-            holder.lbl1 = (TextView) convertView.findViewById(R.id.lblV1);
-            holder.lbl5 = (TextView) convertView.findViewById(R.id.lblV5);
+            holder.lbl1 = convertView.findViewById(R.id.lblV1);
+            holder.lbl5 = convertView.findViewById(R.id.lblV5);
+            holder.lbl6 = convertView.findViewById(R.id.textView270);
             holder.img1 =  convertView.findViewById(R.id.imageView97);
             holder.rel1 =  convertView.findViewById(R.id.relcolor);
 
@@ -89,6 +90,7 @@ public class LA_Res_mesa  extends BaseAdapter {
         pend=items.get(position).pendiente;
 
         holder.lbl1.setText(""+items.get(position).nombre);
+        holder.lbl6.setText(""+items.get(position).alias);
         holder.img1.setImageResource(R.drawable.blank48);
 
         if (est==0) {
@@ -129,7 +131,7 @@ public class LA_Res_mesa  extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl1,lbl5;
+        TextView lbl1,lbl5,lbl6;
         ImageView img1;
         RelativeLayout rel1;
     }

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.os.Handler;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,7 +15,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialogT;
@@ -33,13 +31,10 @@ import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.ListAdaptMovInv;
 import com.dtsgt.mant.Lista;
-import com.dtsgt.webservice.srvInventConfirm;
-import com.dtsgt.webservice.wsInventCompartido;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class ListaInventario extends PBase {
+public class ListaCompras extends PBase {
 
     private ListView listView;
     private TextView lblTipo,lblalm;
@@ -50,20 +45,16 @@ public class ListaInventario extends PBase {
     private ListAdaptMovInv adapter;
     private clsClasses.clsCFDV selitem;
     private clsClasses.clsCFDV sitem;
-    private clsP_almacenObj P_almacenObj;
 
     private AppMethods app;
-    private wsInventCompartido wsi;
-    private Runnable recibeInventario;
     private clsRepBuilder rep;
 
     private int tipo,idalmdpred,idalm;
     private String itemid;
-    double htot;
-    boolean almacenes;
+    private double htot;
 
     //Fecha
-    private boolean dateTxt,report,bloqueado=false;
+    private boolean dateTxt,report;
     private TextView lblDateini,lblDatefin;
     public final Calendar c = Calendar.getInstance();
     private static final String BARRA = "/";
@@ -76,7 +67,7 @@ public class ListaInventario extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_inventario);
+        setContentView(R.layout.activity_lista_compras);
 
         super.InitBase();
 
@@ -90,24 +81,7 @@ public class ListaInventario extends PBase {
 
         app = new AppMethods(this, gl, Con, db);
 
-        tipo=gl.tipo;
-        if (tipo==0) lblTipo.setText("Ingreso de mercancía");
-        if (tipo==1) lblTipo.setText("Ajuste de inventario");
-        if (tipo==2) lblTipo.setText("Inventario Inicial");
-        if (tipo==3) lblTipo.setText("Orden de compra");
-        if (tipo==4) lblTipo.setText("Ingreso de mercancía");
-        if (tipo==5) lblTipo.setText("Ajuste de inventario");
-        if (tipo==6) lblTipo.setText("Egreso de almacen");
-        if (tipo==7) lblTipo.setText("Egreso de almacen");
-        if (tipo==8) lblTipo.setText("Traslado entre almacenes");
 
-        /*
-        if (tipo==4) lblTipo.setText("Ingreso de mercancía - "+gl.nom_alm);
-        if (tipo==5) lblTipo.setText("Ajuste de inventario - "+gl.nom_alm);
-        if (tipo==6) lblTipo.setText("Egreso de almacen - "+gl.nom_alm);
-        if (tipo==7) lblTipo.setText("Egreso de almacen - "+gl.nom_alm);
-        if (tipo==8) lblTipo.setText("Traslado entre almacenes - "+gl.nom_alm);
-        */
 
         gl.corelmov="";
 
@@ -115,98 +89,18 @@ public class ListaInventario extends PBase {
         setFechaAct();
 
         app.getURL();
-        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
-
-        P_almacenObj=new clsP_almacenObj(this,Con,db);
-        almacenes=tieneAlmacenes();if (!almacenes) relalm.setVisibility(View.GONE);
-
-        if (almacenes) {
-            if (tipo==0) tipo=4;
-            if (tipo==1) tipo=5;
-            if (tipo==6) tipo=7;
-        }
 
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
-        recibeInventario = new Runnable() {
-            public void run() {
-                bloqueado=false;
-                if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
-                pbar.setVisibility(View.INVISIBLE);
-            }
-        };
-
-        bloqueado=false;
-        if (gl.peInvCompart) {
-            pbar.setVisibility(View.VISIBLE);
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    bloqueado=true;
-                    wsi.execute(recibeInventario);
-                }
-            };
-            mtimer.postDelayed(mrunner,200);
-        }
-
     }
 
-    private void confirmaInventario() {
-        try {
-            Intent intent = new Intent(ListaInventario.this, srvInventConfirm.class);
-            intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("idstock",wsi.idstock);
-            startService(intent);
-        } catch (Exception e) {}
-    }
 
     //region Events
 
     public void nuevo(View view){
         Intent intent;
 
-        if (bloqueado) {
-           //toast("Actualizando inventario . . .");return;
-        }
-
         gl.corelmov="";
-
-        if (almacenes) {
-
-            if (gl.idalm==0) {
-                toast("Falta seleccionar un almacen");
-                listaAlmacenes();
-                return;
-            }
-
-            if (tipo==7) tipo=6;
-
-            switch (tipo) {
-                case 4:
-                    if (gl.idalm==idalmdpred) {
-                        gl.tipo=0;
-                    } else {
-                        gl.tipo=4;
-                    }
-                    break;
-                case 5:
-                    if (gl.idalm==idalmdpred) gl.tipo=1;else gl.tipo=5;
-                    break;
-                case 6:
-                    if (gl.idalm==idalmdpred) {
-                        gl.tipo=6;
-                    } else {
-                        gl.tipo=7;
-                    }
-                    if (!almacenes) {
-                        gl.tipo=6;
-                    }
-                    int itipo=gl.tipo;
-                    break;
-            }
-
-        }
 
         tipo=gl.tipo;
 
@@ -257,7 +151,7 @@ public class ListaInventario extends PBase {
                     finish();
                     break;
                 case 8:
-                    listaAlmacenes();
+                    listaEstados();
                     break;
             }
 
@@ -269,7 +163,7 @@ public class ListaInventario extends PBase {
     }
 
     public void doAlmacenes(View view){
-        listaAlmacenes();
+        listaEstados();
     }
 
     private void setHandlers(){
@@ -307,10 +201,6 @@ public class ListaInventario extends PBase {
             listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    if (bloqueado) {
-                        toast("Actualizando inventario . . .");return true;
-                    }
 
                     try {
                         /*
@@ -353,26 +243,14 @@ public class ListaInventario extends PBase {
 
         try {
 
-            if (almacenes) {
-                if (tipo==4 && gl.idalm==idalmdpred) tipo=0;
-                if (tipo==0 && gl.idalm!=idalmdpred) tipo=4;
-                if (tipo==5 && gl.idalm==idalmdpred) tipo=1;
-                if (tipo==1 && gl.idalm!=idalmdpred) tipo=5;
-                //if (tipo==7 && gl.idalm==idalmdpred) tipo=6;
-                //if (tipo==6 && gl.idalm!=idalmdpred) tipo=7;
-                if (tipo==6) tipo=7;
-            } else {
-                if (tipo==7) tipo=6;
-            }
 
-            if (tipo==8) P_almacenObj.fill();
 
             switch (tipo){
 
                 case 0:
                     sql="SELECT COREL, REFERENCIA, FECHA,0,IMPRES, CODIGO_PROVEEDOR, ANULADO, 0 "+
-                        "FROM D_MOV WHERE (TIPO='R') AND (ANULADO<1) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
-                        "ORDER BY FECHA DESC ";
+                            "FROM D_MOV WHERE (TIPO='R') AND (ANULADO<1) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+                            "ORDER BY FECHA DESC ";
                     break;
                 case 1:
                     sql="SELECT COREL,REFERENCIA,FECHA,0,IMPRES,0, 0, 0 "+
@@ -453,12 +331,6 @@ public class ListaInventario extends PBase {
                             if (P_proveedorObj.count>0) vItem.UUID+="- Proveedor: "+P_proveedorObj.first().nombre;
                         }
                     } catch (Exception e) {}
-
-                    if (tipo==8) {
-                        idalm=DT.getInt(6);
-                        idalm2=DT.getInt(7);
-                        vItem.UUID="De: "+nombreAlmacen(idalm)+" a: "+nombreAlmacen(idalm2);
-                    }
 
                     items.add(vItem);vP+=1;
 
@@ -697,27 +569,8 @@ public class ListaInventario extends PBase {
         rep.add("Fecha: "+du.sfecha(hfecha)+" "+du.shora(hfecha));
         rep.add("Operador: "+nombreOperador(huser));
 
-
-        switch (tipo) {
-            case 0: // Ingreso de mercancía
-                rep.add("Proveedor: "+nombreProveedor(hidprov));
-                rep.add("Ref: "+href);break;
-            case 1: // Ajuste de inventario
-                break;
-            case 4: // Ingreso de mercancía
-                rep.add("Almacen: "+nombreAlmacen(hidad));
-                rep.add("Proveedor: "+nombreProveedor(hidprov));
-                rep.add("Ref: "+href);break;
-            case 5: // Ajuste de inventario
-                rep.add("Almacen: "+nombreAlmacen(hidad));break;
-            case 6: // Egreso de almacen
-                break;
-            case 7: // Egreso de almacen
-                rep.add("Almacen: "+nombreAlmacen(hidad));break;
-            case 8: // Traslado entre almacenes
-                rep.add("Almacen origen: "+nombreAlmacen(hidao));
-                rep.add("Almacen destino: "+nombreAlmacen(hidad));break;
-        }
+        rep.add("Proveedor: "+nombreProveedor(hidprov));
+        rep.add("Ref: "+href);
 
         rep.empty();
         rep.add3lrr("Cantidad","Costo  ","Valor");
@@ -771,13 +624,6 @@ public class ListaInventario extends PBase {
         dialog.setTitle("Ingreso de mercancia");
         dialog.setMessage("¿" + msg + "?");
 
-        dialog.setPositiveButton("Reanundar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                browse=2;
-                startActivity(new Intent(ListaInventario.this, InvRecep.class));
-            }
-        });
-
         dialog.setNeutralButton("Imprimir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 generarImpresion();
@@ -818,13 +664,6 @@ public class ListaInventario extends PBase {
 
         dialog.setTitle("Inventario");
         dialog.setMessage(msg);
-
-        dialog.setPositiveButton("Ver", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                browse=2;
-                startActivity(new Intent(ListaInventario.this, InvRecep.class));
-            }
-        });
 
         dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {}
@@ -958,19 +797,6 @@ public class ListaInventario extends PBase {
     }
     */
 
-    private String nombreAlmacen(int idalm) {
-        try {
-            P_almacenObj.fill("WHERE ACTIVO=1");
-
-            for (int i = 0; i <P_almacenObj.count; i++) {
-                if (P_almacenObj.items.get(i).codigo_almacen==idalm) {
-                    return P_almacenObj.items.get(i).nombre;
-                }
-            }
-        } catch (Exception e) { }
-        return " ";
-    }
-
     private String nombreProveedor(int idprov) {
         try {
             clsP_proveedorObj P_proveedorObj=new clsP_proveedorObj(this,Con,db);
@@ -991,48 +817,17 @@ public class ListaInventario extends PBase {
         }
     }
 
-    public boolean tieneAlmacenes() {
-
-        gl.idalmpred =0;gl.idalm=0;
-        idalmdpred=0;
+    public void listaEstados() {
+        String titulo="Seleccione un estado";
 
         try {
-            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
-            P_almacenObj.fill("WHERE ACTIVO=1");
 
-            if (P_almacenObj.count<2) return false;
-
-            idalmdpred=P_almacenObj.first().codigo_almacen;gl.idalmpred =idalmdpred;
-
-            P_almacenObj.fill("WHERE ACTIVO=1 AND ES_PRINCIPAL=1");
-            if (P_almacenObj.count>0) {
-                idalmdpred=P_almacenObj.first().codigo_almacen;
-                gl.idalmpred =idalmdpred;
-            }
-
-
-
-            return true;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
-        }
-    }
-
-    public void listaAlmacenes() {
-        String titulo="Seleccione un almacen";
-
-        try {
-            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
-            P_almacenObj.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
-
-            int itemcnt=P_almacenObj.count;
+            int itemcnt=3;
             String[] selitems = new String[itemcnt];
             int[] selcod = new int[itemcnt];
 
-            for (int i = 0; i <itemcnt; i++) {
-                selitems[i] = P_almacenObj.items.get(i).nombre;
-                selcod[i] = P_almacenObj.items.get(i).codigo_almacen;
-            }
+            selitems[0]="NUEVO"; selitems[1]="EN PROCESO"; selitems[2]="COMPLETO";
+
 
             ExDialogT menudlg = new ExDialogT(this);
             menudlg.setTitle(titulo);
@@ -1080,12 +875,6 @@ public class ListaInventario extends PBase {
     protected void onResume() {
         super.onResume();
 
-        try {
-            P_almacenObj.reconnect(Con,db);
-        } catch (Exception e) {
-            msgbox(e.getMessage());
-        }
-
         if (browse==1) {
             browse=0;
             if (!gl.pickcode.isEmpty()) {
@@ -1102,11 +891,6 @@ public class ListaInventario extends PBase {
         }
 
         listItems();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (bloqueado) toast("Actualizando inventario . . .");else super.onBackPressed();
     }
 
     //endregion

@@ -143,78 +143,85 @@ public class CajaPagosPend extends PBase {
         clsClasses.clsCFDV vItem;
         int vP,f;
         double val;
-        String id,sf,sval;
+        String id,sf,sval,ccor;
 
         items.clear();
         selidx=-1;vP=0;
 
         try {
 
-                sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
-                        "D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
-                        "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-                        "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.KILOMETRAJE=0)  " +
-                        "ORDER BY D_FACTURA.COREL DESC ";
+            sql="SELECT P.COREL FROM D_FACTURAP P " +
+                    "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                    "WHERE (P.TIPO='E') AND (F.FECHA>2009230000) AND (F.PEDCOREL<>'') AND (F.ANULADO=0) AND (P.VALOR=0) ";
+            Cursor dt=Con.OpenDT(sql);
+            if (dt.getCount()>0) {
 
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
 
-            //#CKFK 20200520 Quité la anulación de NC porque aquí no existe la tabla
+                    ccor=dt.getString(0);
 
-            DT=Con.OpenDT(sql);
+                    sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
+                            "D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+                            "FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
+                            "WHERE (D_FACTURA.COREL='"+ccor+"')  ";
 
-            if (DT.getCount()>0) {
+                    DT=Con.OpenDT(sql);
 
-                DT.moveToFirst();
+                    if (DT.getCount()>0) {
+                        DT.moveToFirst();
 
-                while (!DT.isAfterLast()) {
+                        while (!DT.isAfterLast()) {
 
-                    id=DT.getString(0);
+                            id=DT.getString(0);
+                            vItem =clsCls.new clsCFDV();
 
-                    vItem =clsCls.new clsCFDV();
+                            vItem.Cod=DT.getString(0);
+                            vItem.Desc=DT.getString(1);
+                            if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 
-                    vItem.Cod=DT.getString(0);
-                    vItem.Desc=DT.getString(1);
-                    if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
+                            if (tipo==3) {
+                                 sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
+                            }else if(tipo==1||tipo==6){
+                                sf=DT.getString(0);
+                            }else{
+                                f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
+                            }
 
-                    if (tipo==3) {
-                        //sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
-                        //#CKFK 20200617 Modifique el formato en el que muestra el documento
-                        sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
-                    }else if(tipo==1||tipo==6){
-                        sf=DT.getString(0);
-                    }else{
-                        f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
+                            vItem.Fecha=sf;
+                            val=DT.getDouble(3);vItem.val=val;
+                            try {
+                                sval=mu.frmcur(val);
+                            } catch (Exception e) {
+                                sval=""+val;
+                            }
+
+                            vItem.Valor=sval;
+                            if (tipo==4 || tipo==5) vItem.Valor="";
+
+                            items.add(vItem);
+
+                            if (id.equalsIgnoreCase(selid)) selidx=vP;vP+=1;
+
+                            if (tipo==3) {
+                                vItem.UUID=DT.getString(5);
+                                vItem.FechaFactura=du.univfechalong(DT.getLong(6));
+                            }else{
+                                vItem.UUID="";
+                                vItem.FechaFactura="";
+                            }
+
+                            DT.moveToNext();
+                        }
                     }
 
-                    vItem.Fecha=sf;
-                    val=DT.getDouble(3);
-                    try {
-                        sval=mu.frmcur(val);
-                    } catch (Exception e) {
-                        sval=""+val;
-                    }
+                    if (DT!=null) DT.close();
 
-                    vItem.Valor=sval;
-
-                    if (tipo==4 || tipo==5) vItem.Valor="";
-
-                    items.add(vItem);
-
-                    if (id.equalsIgnoreCase(selid)) selidx=vP;
-                    vP+=1;
-
-                    if (tipo==3) {
-                        vItem.UUID=DT.getString(5);
-                        vItem.FechaFactura=du.univfechalong(DT.getLong(6));
-                    }else{
-                        vItem.UUID="";
-                        vItem.FechaFactura="";
-                    }
-
-                    DT.moveToNext();
+                    dt.moveToNext();
                 }
             }
 
-            if (DT!=null) DT.close();
+            if (dt!=null) dt.close();
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -234,7 +241,7 @@ public class CajaPagosPend extends PBase {
 
     private void pagarDocumento() {
         try {
-            aplicarPago(itemid);
+            aplicarPago();
             listItems();
         } catch (Exception e) {
             mu.msgbox(e.getMessage());
@@ -245,90 +252,16 @@ public class CajaPagosPend extends PBase {
 
     //region Documents
 
-    private void aplicarPago(String itemid) {
-        Cursor DT;
-        String um;
-        int prcant,prod;
-
-        try{
-            sql="SELECT PRODUCTO,UMSTOCK,CANT FROM D_FACTURAD WHERE Corel='"+itemid+"'";
-            DT=Con.OpenDT(sql);
-
-            if (DT.getCount()>0) {
-                DT.moveToFirst();
-                while (!DT.isAfterLast()) {
-                    prod=DT.getInt(0);
-                    um=DT.getString(1);
-                    prcant=DT.getInt(2);
-
-                    DT.moveToNext();
-                }
-            }
-
-            sql="SELECT PRODUCTO,UMSTOCK,CANT FROM D_FACTURAS WHERE Corel='"+itemid+"'";
-            DT=Con.OpenDT(sql);
-
-            if (DT.getCount()>0) {
-
-                DT.moveToFirst();
-
-                while (!DT.isAfterLast()) {
-
-                    prod=DT.getInt(0);
-                    um=DT.getString(1);
-                    prcant=DT.getInt(2);
-
-                    if (app.prodTipo(prod).equalsIgnoreCase("P")) {
-                        revertProd(prod,um,prcant);
-                    }
-
-                    DT.moveToNext();
-                }
-            }
+    private void aplicarPago() {
+        try {
+            sql="UPDATE D_FACTURAP SET Valor="+sitem.val+" WHERE COREL='"+sitem.Cod+"'";
+            db.execSQL(sql);
 
             mu.msgbox("Pago aplicado.");
-
             listItems();
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" : "+e.getMessage());
         }
-    }
-
-    private void revertProd(int pcod,String um,int pcant) {
-
-        try {
-
-            ins.init("P_STOCK");
-
-            ins.add("CODIGO",""+pcod);
-            ins.add("CANT",0);
-            ins.add("CANTM",0);
-            ins.add("PESO",0);
-            ins.add("plibra",0);
-            ins.add("LOTE","");
-            ins.add("DOCUMENTO","");
-
-            ins.add("FECHA",0);
-            ins.add("ANULADO",0);
-            ins.add("CENTRO","");
-            ins.add("STATUS","");
-            ins.add("ENVIADO",1);
-            ins.add("CODIGOLIQUIDACION",0);
-            ins.add("COREL_D_MOV", "");
-            ins.add("UNIDADMEDIDA", um);
-
-            db.execSQL(ins.sql());
-
-        } catch (Exception e){
-            try {
-                sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO='"+pcod+"') AND (UNIDADMEDIDA='"+um+"')";
-                db.execSQL(sql);
-            } catch (Exception ee){
-                msgbox(ee.getMessage());
-            }
-        }
-
     }
 
     //endregion
@@ -359,6 +292,5 @@ public class CajaPagosPend extends PBase {
     }
 
     //endregion
-
 
 }

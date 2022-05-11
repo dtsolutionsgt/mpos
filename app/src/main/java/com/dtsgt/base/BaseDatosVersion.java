@@ -824,6 +824,73 @@ public class BaseDatosVersion {
         } catch (Exception e) {}
 
         try {
+            sql="CREATE TABLE [D_orden_compra] ("+
+                    "CODIGO_COMPRA TEXT NOT NULL,"+
+                    "CODIGO_EMPRESA INTEGER NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "ESTATUS TEXT NOT NULL,"+
+                    "FECHA_EMISION INTEGER NOT NULL,"+
+                    "FECHA_RECEPCION INTEGER NOT NULL,"+
+                    "CODIGO_USUARIO INTEGER NOT NULL,"+
+                    "CODIGO_PROVEEDOR INTEGER NOT NULL,"+
+                    "CODIGO_ALMACEN INTEGER NOT NULL,"+
+                    "SERIE TEXT NOT NULL,"+
+                    "NUMERO INTEGER NOT NULL,"+
+                    "CORRELATIVO INTEGER NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "CREADO_EN_BOF INTEGER NOT NULL,"+
+                    "ENVIADO INTEGER NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_COMPRA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_orden_compra_idx1 ON D_orden_compra(ESTATUS)";db.execSQL(sql);
+            sql="CREATE INDEX D_orden_compra_idx2 ON D_orden_compra(ENVIADO)";db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [D_orden_compra_detalle] ("+
+                    "CODIGO_COMPRA TEXT NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANTIDAD REAL NOT NULL,"+
+                    "UNIDAD_MEDIDA TEXT NOT NULL,"+
+                    "COSTO REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "ANULADO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_COMPRA],[CODIGO_PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [D_orden_compra_recepcion] ("+
+                    "CODIGO_COMPRA TEXT NOT NULL,"+
+                    "CORRELATIVO INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANTIDAD REAL NOT NULL,"+
+                    "FECHA_RECEPCION INTEGER NOT NULL,"+
+                    "CORREL_D_MOVD TEXT NOT NULL,"+
+                    "REFERENCIA TEXT NOT NULL,"+
+                    "CODIGO_ALMACEN INTEGER NOT NULL,"+
+                    "BANDERA INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_COMPRA],[CORRELATIVO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [P_mesa_nombre] ("+
+                    "CODIGO_MESA INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MESA])"+
+                    ");";
+            db.execSQL(sql);
+
+        } catch (Exception e) {}
+
+        try {
 
         } catch (Exception e) {}
 

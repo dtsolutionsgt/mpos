@@ -180,7 +180,21 @@ public class BaseDatos extends SQLiteOpenHelper {
 			  } catch (Exception e) { }
 			  
 		  }
-		  
+
+		  public void add(String pField, long pValue) {
+			  String SV;
+
+			  try   {
+				  if (pField == "") {return;}
+				  SV= ""+pValue;
+
+				  clFList.add(pField);
+				  clVList.add(SV);
+
+			  } catch (Exception e) { }
+
+		  }
+
 		  public void add(String pField, double pValue) {
 			  String SV;
 			  

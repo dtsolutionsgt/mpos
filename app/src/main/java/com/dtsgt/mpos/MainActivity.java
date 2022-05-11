@@ -76,7 +76,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.2.10"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.2.11"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -360,7 +360,7 @@ public class MainActivity extends PBase {
                         spinlabel.setTextSize(21);
                         spinlabel.setTypeface(spinlabel.getTypeface(), Typeface.BOLD);
 
-                        //usr = spincode.get(position);
+                        usr = spincode.get(position);
                     } catch (Exception e) {
                     }
                 }
@@ -538,7 +538,7 @@ public class MainActivity extends PBase {
             toasttop("Captura de ordenes activada");
         }
 
-        ubicacion();
+        //ubicacion();
     }
 
     private void processLogIn() {

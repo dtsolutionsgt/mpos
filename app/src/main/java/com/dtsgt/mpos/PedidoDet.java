@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,13 +22,21 @@ import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
+import com.dtsgt.classes.clsP_impresoraObj;
+import com.dtsgt.classes.clsP_linea_impresoraObj;
+import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_ordenObj;
+import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_D_pedidod;
 import com.dtsgt.webservice.srvPedidoEstado;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,12 +48,16 @@ public class PedidoDet extends PBase {
     private RelativeLayout rel1,rel2,rel3,rel4,rel5;
 
     private LA_D_pedidod adapter;
+
     private clsD_pedidoObj D_pedidoObj;
     private clsD_pedidodObj D_pedidodObj;
     private clsD_pedidocomboObj D_pedidocomboObj;
     private clsP_productoObj P_productoObj;
     private clsT_ventaObj T_ventaObj;
     private clsT_comboObj T_comboObj;
+    private clsT_comandaObj T_comandaObj;
+    private clsP_linea_impresoraObj P_linea_impresoraObj;
+    private clsP_impresoraObj P_impresoraObj;
 
     private clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
     private clsClasses.clsD_pedidod pitem=clsCls.new clsD_pedidod();
@@ -52,11 +65,13 @@ public class PedidoDet extends PBase {
 
     private clsRepBuilder rep;
 
+    private ArrayList<String> tl=new ArrayList<String>();
+
     private TimerTask ptask;
     private int period=10000,delay=50;
 
     private String pedid,corelfact;
-    private int est,modo,counter;
+    private int est,modo,counter,ordennum,prodlinea;
     private double monto=0;
     private boolean horiz;
 
@@ -93,6 +108,9 @@ public class PedidoDet extends PBase {
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
         T_ventaObj=new clsT_ventaObj(this,Con,db);
         T_comboObj = new clsT_comboObj(this, Con, db);
+        T_comandaObj=new clsT_comandaObj(this,Con,db);
+        P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
+        P_impresoraObj=new clsP_impresoraObj(this,Con,db);
 
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
@@ -271,6 +289,7 @@ public class PedidoDet extends PBase {
         if ((est>=4) && (app.pendientesPago(pedid)==0)) rel5.setVisibility(View.VISIBLE);
 
         if (item.empresa>0) lblID.setText("#"+item.empresa % 1000);else lblID.setText("");
+        ordennum=item.empresa % 1000;
 
         if (item.anulado==1) lblAnul.setVisibility(View.INVISIBLE);
 
@@ -389,29 +408,6 @@ public class PedidoDet extends PBase {
         }
     }
 
-    private void imprimirOrden() {
-
-        if (!gl.peImpOrdCos) return;
-
-        try {
-            rep.empty();
-            rep.line();
-            rep.add("Hora : "+du.shora(du.getActDateTime()));
-            rep.line();
-            rep.empty();
-            rep.empty();
-            rep.empty();
-            rep.save();
-
-            app.doPrint();
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-        //gl.closePedido=true;
-        finish();
-    }
-
     //endregion
 
     //region Venta
@@ -459,6 +455,7 @@ public class PedidoDet extends PBase {
     }
 
     private void crearTicketEntrega() {
+        clsClasses.clsD_pedidoc item;
         String s;
         String[] sp;
         int sps=gl.prw-2;
@@ -467,7 +464,24 @@ public class PedidoDet extends PBase {
 
             clsD_pedidocObj D_pedidocObj=new clsD_pedidocObj(this,Con,db);
             D_pedidocObj.fill("WHERE (corel='"+pedid+"')");
-            clsClasses.clsD_pedidoc item=D_pedidocObj.first();
+
+            try {
+                item=D_pedidocObj.first();
+            } catch (Exception e) {
+                item = clsCls.new clsD_pedidoc();
+
+                item.corel=pedid;
+                item.nombre="C.F.";
+                item.telefono="";
+                item.direccion="Ciudad";
+                item.referencia="";
+                item.nit="C.F.";
+            }
+
+            gl.gNombreCliente=item.nombre;
+            gl.gNITCliente=item.nit;
+            gl.gDirCliente=item.direccion;
+            gl.gCorreoCliente="";
 
             rep.clear();
             rep.empty();
@@ -577,12 +591,212 @@ public class PedidoDet extends PBase {
 
     //endregion
 
+    //region Comandas
+
+    private void imprimirOrden() {
+
+        if (!gl.peImpOrdCos) return;
+
+        if (gl.pelComandaBT) {
+
+            try {
+                rep.empty();
+                rep.line();
+                rep.add("Hora : "+du.shora(du.getActDateTime()));
+                rep.line();
+                rep.empty();
+                rep.empty();
+                rep.empty();
+                rep.save();
+
+                app.doPrint();
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+        } else {
+            imprimeComanda();
+        }
+
+        finish();
+    }
+
+    private void imprimeComanda() {
+        if (!divideComanda()) return;
+        if (!generaArchivos()) return;
+        app.print3nstarw();
+    }
+
+    private boolean divideComanda() {
+        clsClasses.clsD_pedidod  pedido;
+        String prname,cname,nn;
+        int prodid,prid,iddet,linea=1;
+
+        try {
+
+            db.execSQL("DELETE FROM T_comanda");
+
+            D_pedidodObj.fill("WHERE (COREL='"+pedid+"')");
+
+            for (int i = 0; i <D_pedidodObj.count; i++) {
+                pedido=D_pedidodObj.items.get(i);
+
+                prodid = pedido.codigo_producto;
+                iddet = pedido.corel_det;
+                prname=getProd(prodid);
+                s = mu.frmdecno(pedido.cant) + " x " + prname;
+                nn="";
+
+                if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
+
+                    P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
+                    for (int k = 0; k <P_linea_impresoraObj.count; k++) {
+                        prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
+                        agregaComanda(linea,prid,s);linea++;
+                        if (!nn.isEmpty()) {
+                            agregaComanda(linea,prid,nn);linea++;
+                        }
+                    }
+
+                } else {
+
+                    D_pedidocomboObj.fill("WHERE (COREL_DET=" + iddet+") ");
+                    cname=s;//+" [#"+idcomb+"]";
+
+                    for (int j = 0; j < D_pedidocomboObj.count; j++) {
+                        prodid=D_pedidocomboObj.items.get(j).codigo_producto;
+                        s = " -  " + getProd(prodid);
+                        P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
+
+                        for (int k = 0; k <P_linea_impresoraObj.count; k++) {
+                            prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
+                            agregaComanda(linea,prid,cname);linea++;
+                            agregaComanda(linea,prid,s);linea++;
+                            if (!nn.isEmpty()) {
+                                agregaComanda(linea,prid,nn);linea++;
+                            }
+                        }
+                    }
+                }
+
+            }
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean agregaComanda(int linea,int prid,String texto) {
+        try {
+            clsClasses.clsT_comanda item = clsCls.new clsT_comanda();
+
+            item.linea=linea;
+            item.id=prid;
+            item.texto=texto;
+
+            T_comandaObj.add(item);
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    private boolean generaArchivos() {
+        clsRepBuilder rep;
+        int printid;
+        String fname,ss;
+        File file;
+
+        try {
+
+            P_impresoraObj.fill();
+
+            for (int i = 0; i <P_impresoraObj.count; i++) {
+                fname = Environment.getExternalStorageDirectory()+"/comanda_"+P_impresoraObj.items.get(i).codigo_impresora+".txt";
+                file=new File(fname);
+                try {
+                    file.delete();
+                } catch (Exception e) { }
+            }
+        } catch (Exception e) {
+        }
+
+        try {
+            clsViewObj ViewObj=new clsViewObj(this,Con,db);
+            ViewObj.fillSelect("SELECT DISTINCT ID, '','','','', '','','','' FROM T_comanda ORDER BY ID");
+
+            for (int i = 0; i <ViewObj.count; i++) {
+                printid=ViewObj.items.get(i).pk;
+                P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA="+printid+")");
+
+                rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"comanda_"+printid+".txt");
+
+                rep.add(P_impresoraObj.first().tipo_impresora);
+                rep.add(P_impresoraObj.first().nombre);
+                rep.add(P_impresoraObj.first().ip);
+
+                rep.add("");rep.add("");rep.add("");
+                rep.add("ORDEN : "+ordennum);
+                //rep.add("MESA : "+mesa);
+                rep.add("Hora : "+du.shora(du.getActDateTime()));
+                rep.add("Mesero : "+gl.nombre_mesero_sel);
+
+                rep.line16();
+
+                T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
+                //T_comandaObj.fillSelect("SELECT COUNT(ID),ID,TEXTO WHERE ID="+printid+" GROUP BY ID,TEXTO");
+
+                tl.clear();
+                for (int j = 0; j <T_comandaObj.count; j++) {
+                    ss=T_comandaObj.items.get(j).texto;
+                    if (ss.indexOf(" - ")==0) {
+                        tl.add(ss.toUpperCase());
+                    } else {
+                        if (gl.emp==14) {
+                            //if (!itemexists(ss)) tl.add(ss.toUpperCase());
+                        } else {
+                            tl.add(ss.toUpperCase());
+                        }
+                    }
+                };
+
+                for (int j = 0; j <tl.size(); j++) {
+                    rep.add(tl.get(j));
+                }
+
+                //for (int j = 0; j <T_comandaObj.count; j++) {
+                //    rep.add(T_comandaObj.items.get(j).texto);
+                //}
+
+                rep.line16();
+                rep.add("");rep.add("");rep.add("");
+
+                rep.save();rep.clear();
+            }
+
+            //mesa
+            //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
+
+
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+    }
+
+    //endregion
+
+
     //region Aux
 
     private String getProd(int prodid) {
         try {
             for (int i = 0; i <P_productoObj.count; i++) {
-                if (P_productoObj.items.get(i).codigo_producto==prodid) return P_productoObj.items.get(i).desclarga;
+                if (P_productoObj.items.get(i).codigo_producto==prodid) {
+                    prodlinea=P_productoObj.items.get(i).linea;
+                    return P_productoObj.items.get(i).desclarga;
+                }
             }
         } catch (Exception e) {}
         return ""+prodid;
@@ -827,6 +1041,9 @@ public class PedidoDet extends PBase {
             P_productoObj.reconnect(Con,db);
             T_ventaObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
+            T_comandaObj.reconnect(Con,db);
+            P_linea_impresoraObj.reconnect(Con,db);
+            P_impresoraObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

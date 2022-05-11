@@ -152,11 +152,11 @@ public class clsD_pedidoObj {
 
             item.empresa=dt.getInt(0);
             item.corel=dt.getString(1);
-            item.fecha_sistema=dt.getInt(2);
-            item.fecha_pedido=dt.getInt(3);
-            item.fecha_recepcion_suc=dt.getInt(4);
-            item.fecha_salida_suc=dt.getInt(5);
-            item.fecha_entrega=dt.getInt(6);
+            item.fecha_sistema=dt.getLong(2);
+            item.fecha_pedido=dt.getLong(3);
+            item.fecha_recepcion_suc=dt.getLong(4);
+            item.fecha_salida_suc=dt.getLong(5);
+            item.fecha_entrega=dt.getLong(6);
             item.codigo_cliente=dt.getInt(7);
             item.firma_cliente=dt.getInt(8);
             item.codigo_direccion=dt.getInt(9);
