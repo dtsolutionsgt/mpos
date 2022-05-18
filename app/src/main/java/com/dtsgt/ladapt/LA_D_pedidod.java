@@ -65,7 +65,12 @@ public class LA_D_pedidod  extends BaseAdapter {
 
         if (convertView == null) {
 
-            convertView = l_Inflater.inflate(R.layout.lv_d_pedidod, null);
+            if (horiz) {
+                convertView = l_Inflater.inflate(R.layout.lv_d_pedidod, null);
+            } else {
+                convertView = l_Inflater.inflate(R.layout.lv_d_pedidod_ver, null);
+            }
+
             holder = new ViewHolder();
 
             holder.lbl1 = (TextView) convertView.findViewById(R.id.lblV1);

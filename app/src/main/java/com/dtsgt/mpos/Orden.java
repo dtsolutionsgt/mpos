@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -70,6 +71,7 @@ public class Orden extends PBase {
     private GridView gridView,grdbtn,grdfam,grdprod;
     private TextView lblTot,lblCant,lblTit,lblAlm,lblVend,lblCent;
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
+    private EditText txtbarra;
     private ImageView imgroad,imgrefr,imgnowifi;
     private RelativeLayout relprod,relsep,relsep2;
 
@@ -178,7 +180,8 @@ public class Orden extends PBase {
         modo_emerg=app.modoSinInternet();
 
         setPrintWidth();
-        rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
+        rep=new clsRepBuilder(this,24,true,gl.peMon,gl.peDecImp,"");
+        //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
         counter=1;
 
@@ -318,6 +321,19 @@ public class Orden extends PBase {
                     }
 
                     return true;
+                }
+            });
+
+            txtbarra.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                        barcode=txtbarra.getText().toString();
+                        if (!barcode.isEmpty()) addBarcode();
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             });
 
@@ -1876,7 +1892,7 @@ public class Orden extends PBase {
 
     private boolean generaArchivos() {
         clsRepBuilder rep;
-        int printid;
+        int printid,ln;
         String fname,ss;
         File file;
 
@@ -1906,14 +1922,20 @@ public class Orden extends PBase {
                 rep.add(P_impresoraObj.first().nombre);
                 rep.add(P_impresoraObj.first().ip);
 
-                rep.add("");rep.add("");rep.add("");
+                rep.clear();
+                rep.empty();
+                rep.empty();
+                rep.empty();
+                rep.empty();
+                rep.empty();
+                rep.empty();
                 rep.add("ORDEN : "+ordennum);
                 rep.add("MESA : "+mesa);
                 if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
                 rep.add("Hora : "+du.shora(du.getActDateTime()));
                 rep.add("Mesero : "+gl.nombre_mesero_sel);
 
-                rep.line16();
+                rep.line24();
 
                 T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
                 //T_comandaObj.fillSelect("SELECT COUNT(ID),ID,TEXTO WHERE ID="+printid+" GROUP BY ID,TEXTO");
@@ -1940,17 +1962,23 @@ public class Orden extends PBase {
                 //    rep.add(T_comandaObj.items.get(j).texto);
                 //}
 
-                rep.line16();
+                rep.line24();
                 rep.add("");
-                if (gl.mesa_grupo==19) rep.addc("PARA LLEVAR");
+                if (gl.mesa_grupo==19) rep.add("PARA LLEVAR");
                 rep.add("");rep.add("");
+
+                ln=rep.items.size();
+                if (ln<20) {
+                    for (int ii = 0; ii <20-ln; ii++) {
+                        rep.empty();
+                    }
+                }
 
                 rep.save();rep.clear();
             }
 
             //mesa
             //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
-
 
             return true;
         } catch (Exception e) {
@@ -2292,14 +2320,16 @@ public class Orden extends PBase {
             grdbtn =  findViewById(R.id.grdbtn);
 
             lblTot=  findViewById(R.id.lblTot);
-            lblCant=  findViewById(R.id.textView252);
-            lblDesc=  findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
-            lblStot=  findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
+            lblCant= findViewById(R.id.textView252);
+            lblDesc= findViewById(R.id.textView115);lblDesc.setText( "Desc : "+mu.frmcur(0));
+            lblStot= findViewById(R.id.textView103); lblStot.setText("Subt : "+mu.frmcur(0));
             lblTit=  findViewById(R.id.lblTit);
             lblAlm=  findViewById(R.id.lblTit2);
-            lblVend=  findViewById(R.id.lblTit4);
-            lblPokl=  findViewById(R.id.lblTit5);
-            lblCent=  findViewById(R.id.textView72);
+            lblVend= findViewById(R.id.lblTit4);
+            lblPokl= findViewById(R.id.lblTit5);
+            lblCent= findViewById(R.id.textView72);
+
+            txtbarra= findViewById(R.id.txtbarra);
 
             lblKeyDP= findViewById(R.id.textView110);
             lblDir= findViewById(R.id.lblDir);
@@ -2866,6 +2896,45 @@ public class Orden extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    private void addBarcode() {
+        gl.barra=barcode;
+
+        if (barraProducto()) {
+            txtbarra.setText("");return;
+        } else {
+            toastlong("¡El producto "+barcode+" no existe!");
+            txtbarra.setText("");
+        }
+    }
+
+    private boolean barraProducto() {
+        Cursor dt;
+
+        try {
+
+            sql="SELECT DISTINCT CODIGO,DESCCORTA,CODIGO_PRODUCTO FROM P_PRODUCTO " +
+                "WHERE (ACTIVO=1) AND ((CODBARRA='"+barcode+"') OR (CODIGO='"+barcode+"')) COLLATE NOCASE";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+
+                gl.gstr=dt.getString(0);gl.um="UN";
+                gl.pprodname=dt.getString(1);
+                gl.prodcod=dt.getInt(2);
+                if (dt!=null) dt.close();
+
+                processItem(false);
+                return true;
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
     }
 
     //endregion

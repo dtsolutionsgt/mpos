@@ -1,5 +1,6 @@
 package com.dtsgt.base;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -178,7 +179,9 @@ public class MiscUtils {
 		if (n>9) { return String.valueOf(n);} else {return "0"+String.valueOf(n);}	
 	}
 	
+	@SuppressLint("SuspiciousIndentation")
 	public void msgbox(String msg) {
+
 	    if (msg.isEmpty()) return;
 
         try {

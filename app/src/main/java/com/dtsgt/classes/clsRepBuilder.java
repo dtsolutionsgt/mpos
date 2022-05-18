@@ -193,11 +193,10 @@ public class clsRepBuilder {
 		items.add(s);
 	}
 
-    public void line16() {
-        char[] fill = new char[16];
+    public void line24() {
+        char[] fill = new char[24];
         Arrays.fill(fill, '-');
         String s = new String(fill);
-
         items.add(s);
     }
 	

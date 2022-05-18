@@ -41,7 +41,7 @@ public class appGlobals extends Application {
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
-                   recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,
+                   recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta;
 
@@ -74,6 +74,7 @@ public class appGlobals extends Application {
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
     public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
     public Boolean peAgregarCombo,peComboLimite,peComboDet,peFactSinPropina;
+	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas;
     public double  pePropinaPerc,pePropinaCarta;
 
     // Parametros Extra Local
@@ -112,4 +113,7 @@ public class appGlobals extends Application {
 	public int isOnWifi = 0;
 
 	public String felUsuarioCertificacion, felLlaveCertificacion;
+
+	public ArrayList<String> peditems = new ArrayList<String>();
+
 }

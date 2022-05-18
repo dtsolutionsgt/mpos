@@ -88,7 +88,7 @@
         <RelativeLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="605dp"
-            android:layout_height="1100dp"
+            android:layout_height="1320dp"
             android:layout_above="@+id/relbotpan"
             android:layout_below="@+id/relRoad"
             android:layout_centerHorizontal="true"
@@ -99,6 +99,26 @@
             android:layout_toStartOf="@+id/imgImg2"
             android:layout_toEndOf="@+id/imageView30"
             android:background="@drawable/frame_rect">
+
+            <TextView
+                android:id="@+id/lblCFact74"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_below="@+id/lblCFact70"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Venta - Ordenes a domicilio"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
 
             <CheckBox
                 android:id="@+id/chkEnvio24"
@@ -115,6 +135,66 @@
                 android:clickable="true"
                 android:enabled="true" />
 
+            <CheckBox
+                android:id="@+id/chkEnvio28"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio27"
+                android:layout_alignStart="@+id/chkEnvio22"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <CheckBox
+                android:id="@+id/chkEnvio27"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio26"
+                android:layout_alignStart="@+id/chkEnvio22"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <CheckBox
+                android:id="@+id/chkEnvio26"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chkEnvio11"
+                android:layout_alignStart="@+id/chkEnvio22"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
+            <CheckBox
+                android:id="@+id/chkEnvio11"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/chkEnvio22"
+                android:layout_alignTop="@+id/lblCFact74"
+                android:layout_alignEnd="@id/checkBox24"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toRightOf="@id/textView2"
+                android:clickable="true"
+                android:enabled="true" />
+
             <TextView
                 android:id="@+id/lblCFact70"
                 android:layout_width="wrap_content"
@@ -125,7 +205,7 @@
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="0dp"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="0dp"
                 android:background="@drawable/blue_strip"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
@@ -201,6 +281,66 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:text="Comandas con impresora BT"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact78"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_below="@+id/lblCFact77"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="No cerrar ventana de mesas"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact77"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_below="@+id/lblCFact76"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Domicilio / Entrega envio a caja"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/lblCFact76"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_below="@+id/lblCFact74"
+                android:layout_alignStart="@+id/lblCFact39"
+                android:layout_alignEnd="@+id/textView2"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/blue_strip"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Venta - Entrega de ordenes"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"

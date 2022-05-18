@@ -60,6 +60,14 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
+        <receiver
+            android:name=".PedidoDet"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name="com.dtsgt.webservice.srvInventConfirm"
             android:enabled="true"
@@ -598,15 +606,10 @@
             android:name=".InvEgreso"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <receiver
-            android:name=".PedidoDet"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
-            </intent-filter>
-        </receiver>
-
+        <activity
+            android:name=".PedidoEnviar"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".PedidoCli"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"

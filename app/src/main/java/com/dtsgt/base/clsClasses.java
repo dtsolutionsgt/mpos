@@ -309,6 +309,17 @@ public class clsClasses {
         public int  bandera;
     }
 
+    public class clsD_orden_bitacora {
+        public long fecha;
+        public int  codigo_sucursal;
+        public int  codigo_vendedor;
+        public int  cant_ordenes;
+        public int  cant_retrasados;
+        public double tppo;
+        public double eficiencia;
+        public int  statcom;
+    }
+
     public class clsD_pedido {
         public int  empresa;
         public String corel;
@@ -330,17 +341,6 @@ public class clsClasses {
 
         public String nombre;
         public long tini,tdif,lim;
-    }
-
-    public class clsD_orden_bitacora {
-        public long fecha;
-        public int  codigo_sucursal;
-        public int  codigo_vendedor;
-        public int  cant_ordenes;
-        public int  cant_retrasados;
-        public double tppo;
-        public double eficiencia;
-        public int  statcom;
     }
 
     public class clsD_pedidod {
@@ -370,6 +370,12 @@ public class clsClasses {
         public String direccion;
         public String referencia;
         public String nit;
+    }
+
+    public class clsD_pedidoorden {
+        public String corel;
+        public String orden;
+        public int  tipo;
     }
 
     public class clsD_usuario_asistencia {
@@ -1395,7 +1401,7 @@ public class clsClasses {
 	}	
 	
 	public class clsVenta {
-		public String Cod,Nombre,um,val,valp,sdesc,emp;
+		public String Cod,Nombre,um,val,valp,sdesc,emp,nota;
 		public double Cant,Peso,Prec,Desc,Total,imp,percep;
 		
 	}

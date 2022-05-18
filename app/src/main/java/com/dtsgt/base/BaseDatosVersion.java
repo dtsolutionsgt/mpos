@@ -891,6 +891,16 @@ public class BaseDatosVersion {
         } catch (Exception e) {}
 
         try {
+            sql="CREATE TABLE [D_pedidoorden] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "ORDEN TEXT NOT NULL,"+
+                    "TIPO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
 
         } catch (Exception e) {}
 

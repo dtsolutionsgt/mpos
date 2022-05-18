@@ -641,11 +641,13 @@ public class FacturaRes extends PBase {
 				} else {
 					propina=gl.propina_valor;
 				}
-
 				propina=mu.round2(propina+propinaext);
 			}else{
 				propina=0;
 			}
+
+			if (gl.parallevar) propina=0;
+			if (gl.pickup) propina=0;
 
 			fillTotals();
 

@@ -1,5 +1,6 @@
 package com.dtsgt.base;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -846,7 +847,57 @@ public class AppMethods {
             gl.pelMeseroCaja = false;
         }
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=138";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
 
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peVentaDomicilio = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peVentaDomicilio = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=139";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peVentaEntrega = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peVentaEntrega = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=140";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peDomEntEnvio = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peDomEntEnvio = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=141";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peNoCerrarMesas = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peNoCerrarMesas = false;
+		}
 
     }
 
@@ -1392,7 +1443,8 @@ public class AppMethods {
         doPrint(0,prtipo);
     }
 
-    public void doPrint(int copies,int tipoimpr) {
+    @SuppressLint("SuspiciousIndentation")
+	public void doPrint(int copies, int tipoimpr) {
 
 	    if (copies<1) copies=1;
 
@@ -1676,6 +1728,24 @@ public class AppMethods {
             return -1;
         }
     }
+
+	public String prefijoCaja() {
+		Cursor dt;
+		String val;
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE (ID=130) ";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+			val=dt.getString(0);
+
+			val = val+"-";
+		} catch (Exception e) {
+			val = gl.codigo_ruta+"-";
+		}
+
+		return val;
+	}
 
     //endregion
 

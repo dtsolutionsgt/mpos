@@ -926,7 +926,6 @@ public class ResMesero extends PBase {
         Dialog.show();
     }
 
-
     private void ingresaNombreMesa() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
@@ -1000,7 +999,7 @@ public class ResMesero extends PBase {
         }
 
         if (gl.cerrarmesero) {
-            finish();
+            if (!gl.peNoCerrarMesas) finish();
         } else {
             listItems();
             if (gl.pelMeseroCaja) {
@@ -1015,7 +1014,9 @@ public class ResMesero extends PBase {
     @Override
     public void onBackPressed() {
         try{
-            msgAskExit("Salir");
+            //msgAskExit("Salir");
+            app.logoutUser(du.getActDateTime());
+            finish();
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }

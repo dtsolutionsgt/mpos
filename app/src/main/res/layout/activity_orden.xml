@@ -325,7 +325,7 @@
         <TextView
             android:id="@+id/lblDir"
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="50dp"
             android:layout_alignTop="@id/textView88"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="-1dp"
@@ -335,11 +335,42 @@
             android:gravity="left|center_vertical"
             android:maxLines="2"
             android:paddingLeft="10dp"
-            android:text="Pr"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#1B76B9"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/relbarra"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignTop="@id/lblDir"
+            android:layout_marginTop="2dp">
+
+            <EditText
+                android:id="@+id/txtbarra"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="1dp"
+                android:layout_toStartOf="@+id/imageView126"
+                android:ems="10"
+                android:inputType="number"
+                android:textColor="#FFFFFF"
+                android:textSize="28sp" />
+
+            <ImageView
+                android:id="@+id/imageView126"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:padding="8dp"
+                android:src="@drawable/erase" />
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/relPTop"
