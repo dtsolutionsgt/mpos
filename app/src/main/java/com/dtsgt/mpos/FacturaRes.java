@@ -648,6 +648,7 @@ public class FacturaRes extends PBase {
 
 			if (gl.parallevar) propina=0;
 			if (gl.pickup) propina=0;
+			if (gl.sin_propina) propina=0;
 
 			fillTotals();
 
@@ -780,6 +781,7 @@ public class FacturaRes extends PBase {
         gl.InvCompSend=false;
         gl.delivery =false;
         gl.pickup = false;
+		gl.sin_propina=false;
 
         if (gl.pelDespacho) generaOrdenDespacho();
 

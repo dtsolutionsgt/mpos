@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.2.11">
+    android:versionName="4.2.12">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -68,14 +68,16 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name="com.dtsgt.webservice.srvInventConfirm"
-            android:enabled="true"
-            android:exported="true" />
+
         <service
             android:name="com.dtsgt.webservice.srvBase"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name="com.dtsgt.webservice.srvTimerService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
             android:name="com.dtsgt.webservice.srvPedidosImport"
             android:enabled="true"
@@ -104,6 +106,10 @@
             android:exported="true" />
         <service
             android:name="com.dtsgt.webservice.srvCommit"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name="com.dtsgt.webservice.srvInventConfirm"
             android:enabled="true"
             android:exported="true" />
         <service

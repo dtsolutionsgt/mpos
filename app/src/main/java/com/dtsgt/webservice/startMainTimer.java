@@ -6,11 +6,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.PersistableBundle;
 
-public class startPedidosImport {
+public class startMainTimer {
 
     public static void startService(Context context, String params) {
         try {
-            ComponentName serviceComponent = new ComponentName(context, srvPedidosImport.class);
+            ComponentName serviceComponent = new ComponentName(context, srvTimerService.class);
             PersistableBundle extras = new PersistableBundle();
             extras.putString("params",params);
             JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent).setOverrideDeadline(0L).setExtras(extras);
@@ -24,4 +24,5 @@ public class startPedidosImport {
             String ss=e.getMessage();
         }
     }
+
 }

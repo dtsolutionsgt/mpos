@@ -302,8 +302,8 @@
         android:layout_height="64dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="-3dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="0dp"
         android:background="@drawable/frame_rect_blue">
 
         <TextView
@@ -341,5 +341,20 @@
             android:adjustViewBounds="true"
             android:padding="6dp"
             android:src="@drawable/stat_arr_up" />
+
+        <ImageView
+            android:id="@+id/imageView128"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:clickable="true"
+            android:onClick="doRefresh"
+            android:scaleX="1.25"
+            android:scaleY="1.25"
+            android:src="@drawable/recibir_rapido" />
     </RelativeLayout>
 </RelativeLayout>

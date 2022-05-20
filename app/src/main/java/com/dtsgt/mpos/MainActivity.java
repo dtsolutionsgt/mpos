@@ -37,7 +37,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,8 +49,7 @@ import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Login;
-import com.dtsgt.webservice.startOrdenImport;
-import com.dtsgt.webservice.startPedidosImport;
+import com.dtsgt.webservice.startMainTimer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ import java.util.ArrayList;
 public class MainActivity extends PBase {
 
     private GridView gridView;
-    private TextView lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
+    private TextView lblDts,lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
     private ImageView imgLogo;
     private Spinner spin;
 
@@ -76,7 +74,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.2.11"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.2.12"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
 
     private Typeface typeface;
 
@@ -174,16 +172,18 @@ public class MainActivity extends PBase {
             this.setTitle("MPos");
             gl.parVer = parVer;
 
-            lblRuta = (TextView) findViewById(R.id.lblCDisp);
+            lblRuta =  findViewById(R.id.lblCDisp);
             lblRuta.setText("");
-            lblRTit = (TextView) findViewById(R.id.lblCUsed);
+            lblDts=  findViewById(R.id.textView9);
+            if (modopantalla == 2) lblDts.setVisibility(View.GONE);
+            lblRTit = findViewById(R.id.lblCUsed);
             lblRTit.setText("");
-            lblVer = (TextView) findViewById(R.id.textView10);
-            lblEmp = (TextView) findViewById(R.id.textView82);
+            lblVer =  findViewById(R.id.textView10);
+            lblEmp =  findViewById(R.id.textView82);
             lblEmp.setText("");
-            lblPass = (TextView) findViewById(R.id.lblPass);
-            lblKeyDP = (TextView) findViewById(R.id.textView110);
-            imgLogo = (ImageView) findViewById(R.id.imgNext);
+            lblPass = findViewById(R.id.lblPass);
+            lblKeyDP = findViewById(R.id.textView110);
+            imgLogo = findViewById(R.id.imgNext);
 
             gridView = (GridView) findViewById(R.id.listView1);
             spin = (Spinner) findViewById(R.id.spinner22);
@@ -431,8 +431,7 @@ public class MainActivity extends PBase {
             }
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
         }
 
         try {
@@ -526,10 +525,16 @@ public class MainActivity extends PBase {
 
         llenaUsuarios();
 
+        if (gl.pePedidos | gl.pelCajaRecep) {
+            String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
+            startMainTimer.startService(this, params);
+        }
+
+        /*
         if (gl.pePedidos) {
             String params = gl.wsurl + "#" + gl.emp + "#" + gl.tienda;
             startPedidosImport.startService(this, params);
-            //toasttop("Captura de ordenes activada");
+            toasttop("Captura de pedidos activada");
         }
 
         if (gl.pelCajaRecep) {
@@ -537,6 +542,7 @@ public class MainActivity extends PBase {
             startOrdenImport.startService(this, params);
             toasttop("Captura de ordenes activada");
         }
+        */
 
         //ubicacion();
     }

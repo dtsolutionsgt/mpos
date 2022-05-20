@@ -339,8 +339,9 @@ public class clsClasses {
         public int  codigo_usuario_entrego;
         public int  anulado;
 
-        public String nombre;
+        public String nombre,idorden;
         public long tini,tdif,lim;
+        public boolean internet,domicilio;
     }
 
     public class clsD_pedidod {

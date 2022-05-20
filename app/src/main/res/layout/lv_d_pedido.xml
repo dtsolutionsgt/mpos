@@ -49,7 +49,7 @@
                 android:layout_marginEnd="5dp"
                 android:text="Tiempo"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -63,7 +63,7 @@
                 android:layout_marginEnd="5dp"
                 android:text="Meta"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -77,7 +77,7 @@
                 android:layout_marginEnd="5dp"
                 android:text="Inicio"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -88,6 +88,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
+                android:ellipsize="end"
                 android:maxLines="2"
                 android:paddingLeft="5dp"
                 android:text="Medium Text"
@@ -120,6 +121,19 @@
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
                 android:src="@drawable/warning" />
+
+            <ImageView
+                android:id="@+id/imageView127"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/imageView72"
+                android:layout_below="@+id/lblV1"
+                android:layout_alignStart="@+id/imageView72"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:padding="5dp"
+                android:src="@drawable/btn_pedido" />
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

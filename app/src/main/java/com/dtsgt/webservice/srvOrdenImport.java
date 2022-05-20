@@ -1,7 +1,6 @@
 package com.dtsgt.webservice;
 
 import android.os.Environment;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

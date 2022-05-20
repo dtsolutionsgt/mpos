@@ -306,6 +306,16 @@
         android:layout_marginBottom="-3dp"
         android:background="@drawable/frame_rect_blue">
 
+        <ImageView
+            android:id="@+id/imageView129"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:onClick="doRefresh"
+            android:src="@drawable/recibir_rapido" />
+
         <TextView
             android:id="@+id/textView196"
             android:layout_width="wrap_content"

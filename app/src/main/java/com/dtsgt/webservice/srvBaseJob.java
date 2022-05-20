@@ -35,7 +35,9 @@ public class srvBaseJob extends JobService {
     public boolean onStartJob(JobParameters params) {
         try {
             String paramstr=params.getExtras().getString("params");
-            if (initSession(paramstr)) execute();
+            if (initSession(paramstr)) {
+                execute();
+            }
         } catch (Exception e) {
             error=e.getMessage();
         }

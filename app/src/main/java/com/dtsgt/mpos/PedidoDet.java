@@ -22,6 +22,7 @@ import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
+import com.dtsgt.classes.clsD_pedidoordenObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_productoObj;
@@ -67,7 +68,7 @@ public class PedidoDet extends PBase {
     private TimerTask ptask;
     private int period=10000,delay=50;
 
-    private String pedid,corelfact;
+    private String pedid,corelfact,idorden="";
     private int est,modo,counter,ordennum,prodlinea;
     private double monto=0;
     private boolean horiz;
@@ -140,7 +141,12 @@ public class PedidoDet extends PBase {
     }
 
     public void doPago(View view) {
-        msgAskPago("Aplicar pago de monto "+mu.frmcur(monto)+" ");
+        if (monto>0) {
+            msgAskPago("Aplicar pago de monto "+mu.frmcur(monto)+" ");
+        } else {
+            msgAskPago("Marcar orden como pagado");
+        }
+
     }
 
     public void doCliente(View view) {
@@ -257,13 +263,23 @@ public class PedidoDet extends PBase {
     }
 
     private void loadItem() {
+        String tdev="DOMICILIO";
 
         D_pedidoObj.fill("WHERE Corel='"+pedid+"'");
         item=D_pedidoObj.first();
 
-        lblFecha.setText(du.shora(item.fecha_pedido)+"   -   Fecha : "+du.sfecha(item.fecha_pedido));
 
-        est=1;
+        clsD_pedidoordenObj D_pedidoordenObj=new clsD_pedidoordenObj(this,Con,db);
+        D_pedidoordenObj.fill("WHERE COREL='"+pedid+"'");
+        if (D_pedidoordenObj.count>0) {
+            if (D_pedidoordenObj.first().tipo==0) tdev="ENTREGA";
+            idorden=D_pedidoordenObj.first().orden;
+        }
+
+        lblFecha.setText(du.shora(item.fecha_pedido)+" - Fecha : "+du.sfechash(item.fecha_pedido)+"  "+tdev);
+
+        //est=1;
+        est=item.codigo_estado;
         if (item.codigo_usuario_creo>0) est=2;
         if (item.codigo_usuario_proceso>0) est=3;
         if (item.fecha_salida_suc>0) est=4;
@@ -282,7 +298,9 @@ public class PedidoDet extends PBase {
         rel4.setVisibility(View.INVISIBLE);
         rel5.setVisibility(View.INVISIBLE);
         if (est>=2) rel3.setVisibility(View.VISIBLE);
-        if (est>=3) rel4.setVisibility(View.VISIBLE);
+        if (est>=3) {
+            rel4.setVisibility(View.VISIBLE);rel5.setVisibility(View.VISIBLE);
+        }
         if ((est>=4) && (app.pendientesPago(pedid)==0)) rel5.setVisibility(View.VISIBLE);
 
         if (item.empresa>0) lblID.setText("#"+item.empresa % 1000);else lblID.setText("");
@@ -362,7 +380,7 @@ public class PedidoDet extends PBase {
 
         if (modo==2) {
             imprimirOrden();return;
-        } else  if (modo==3) {
+        } else if (modo==3) {
             if (ventaVacia()) {
                 crearVenta();
             } else {
@@ -445,6 +463,8 @@ public class PedidoDet extends PBase {
             crearTicketEntrega();
 
             gl.ventalock=true;
+            gl.sin_propina=true;
+
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -484,7 +504,7 @@ public class PedidoDet extends PBase {
             rep.empty();
             rep.line();
             rep.empty();
-            rep.add("ENTREGA ORDEN "+lblID.getText().toString());
+            rep.add("ENTREGA ORDEN "+idorden);
             rep.empty();
             rep.line();
             rep.empty();
@@ -734,7 +754,7 @@ public class PedidoDet extends PBase {
                 rep.add(P_impresoraObj.first().ip);
 
                 rep.add("");rep.add("");rep.add("");
-                rep.add("ORDEN : "+ordennum);
+                rep.add("ORDEN : "+idorden);
                 //rep.add("MESA : "+mesa);
                 rep.add("Hora : "+du.shora(du.getActDateTime()));
                 rep.add("Mesero : "+gl.nombre_mesero_sel);

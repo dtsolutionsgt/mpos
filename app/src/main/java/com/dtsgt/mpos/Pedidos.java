@@ -18,6 +18,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_orden_bitacoraObj;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
+import com.dtsgt.classes.clsD_pedidoordenObj;
 import com.dtsgt.ladapt.LA_D_pedido;
 import com.dtsgt.webservice.srvPedidoEstado;
 import com.dtsgt.webservice.srvPedidosBitacora;
@@ -35,6 +36,7 @@ public class Pedidos extends PBase {
     private LA_D_pedido adapter;
     private clsD_pedidoObj D_pedidoObj;
     private clsD_pedidocObj D_pedidocObj;
+    private clsD_pedidoordenObj D_pedidoordenObj;
     private clsD_orden_bitacoraObj D_orden_bitacoraObj;
 
     private int cnue,cpen,ccomp;
@@ -67,6 +69,7 @@ public class Pedidos extends PBase {
 
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         D_pedidocObj=new clsD_pedidocObj(this,Con,db);
+        D_pedidoordenObj=new clsD_pedidoordenObj(this,Con,db);
         D_orden_bitacoraObj=new clsD_orden_bitacoraObj(this,Con,db);
 
         if (horiz) {
@@ -94,6 +97,11 @@ public class Pedidos extends PBase {
 
     public void doExit(View view) {
         finish();
+    }
+
+    public void doRefresh(View view) {
+        toast("Actualizando . . .");
+        recibePedidos();
     }
 
     private void setHandlers() {
@@ -163,6 +171,17 @@ public class Pedidos extends PBase {
                 } else {
                     if (item.codigo_usuario_creo>0) cpen++;else cnue++;
                 }
+
+                item.internet=true;item.domicilio=true;item.idorden="";item.nombre="DOMICILIO";
+
+                D_pedidoordenObj.fill("WHERE COREL='"+item.corel+"'");
+                if (D_pedidoordenObj.count>0) {
+                    item.internet=false;
+                    if (D_pedidoordenObj.first().tipo==0) item.domicilio=false;
+                    item.idorden=D_pedidoordenObj.first().orden;
+                    if (item.domicilio) item.nombre="DOMICILIO";else item.nombre="ENTREGA";
+                }
+
             }
 
             lblNue.setText(""+cnue);lblPen.setText(""+cpen);lblComp.setText(""+ccomp);
@@ -178,6 +197,7 @@ public class Pedidos extends PBase {
     }
 
     private void iniciaPedidos() {
+
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(ptask=new TimerTask() {
                 public void run() {
@@ -213,12 +233,12 @@ public class Pedidos extends PBase {
                 pp=fname.indexOf(".txt");
                 if (pp>0){
                     if (!app.agregaPedido(path+"/"+fname,path+"/error/"+fname,du.getActDateTime(),fname)) {
-                        msgbox2("Ocurrio error en recepción de orden :\n"+app.errstr);
+                       //msgbox2("Ocurrio error en recepción de orden :\n"+app.errstr);
                     }
                 }
             }
         } catch (Exception e) {
-            msgbox2("recibePedidos : "+e.getMessage());
+            //msgbox2("recibePedidos : "+e.getMessage());
         }
 
         listItems();
@@ -496,6 +516,7 @@ public class Pedidos extends PBase {
         super.onResume();
         try {
             D_pedidocObj.reconnect(Con,db);
+            D_pedidoordenObj.reconnect(Con,db);
             D_orden_bitacoraObj.reconnect(Con,db);
         } catch (Exception e) { }
 

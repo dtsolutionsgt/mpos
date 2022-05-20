@@ -73,29 +73,33 @@ public class LA_D_pedido  extends BaseAdapter {
             convertView = l_Inflater.inflate(R.layout.lv_d_pedido, null);
             holder = new ViewHolder();
 
-            holder.lbl1 = (TextView) convertView.findViewById(R.id.lblV1);
-            holder.lbl2 = (TextView) convertView.findViewById(R.id.lblV2);
-            holder.lbl3 = (TextView) convertView.findViewById(R.id.lblV3);
-            holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
-            holder.lbl5 = (TextView) convertView.findViewById(R.id.lblV);
-            holder.img1 = (ImageView) convertView.findViewById(R.id.imageView72);
-            holder.img2 = (ImageView) convertView.findViewById(R.id.imageView81);
-            holder.rel1 = (RelativeLayout) convertView.findViewById(R.id.relfill);
+            holder.lbl1 = convertView.findViewById(R.id.lblV1);
+            holder.lbl2 = convertView.findViewById(R.id.lblV2);
+            holder.lbl3 = convertView.findViewById(R.id.lblV3);
+            holder.lbl4 = convertView.findViewById(R.id.lblV4);
+            holder.lbl5 = convertView.findViewById(R.id.lblV);
+            holder.img1 = convertView.findViewById(R.id.imageView72);
+            holder.img2 = convertView.findViewById(R.id.imageView81);
+            holder.img3 = convertView.findViewById(R.id.imageView127);
+            holder.rel1 = convertView.findViewById(R.id.relfill);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        /*
         if (idlargo) {
             corel=(int) items.get(position).empresa;
         } else {
             corel=(int) items.get(position).empresa % 1000;
         }
+        if (corel>0) holder.lbl1.setText(""+corel);else holder.lbl1.setText("");
+        */
+        holder.lbl1.setText(items.get(position).idorden);
 
         tdif=items.get(position).tdif;tlim=items.get(position).lim;
 
-        if (corel>0) holder.lbl1.setText(""+corel);else holder.lbl1.setText("");
         if (tdif>=0) {
             st="Tiempo : "+tdif+" m";stl="Meta : "+tlim+" m";
         } else {
@@ -134,6 +138,11 @@ public class LA_D_pedido  extends BaseAdapter {
 
         holder.rel1.setBackgroundColor(color);
         holder.img1.setImageResource(resid);
+        if (items.get(position).domicilio) {
+            holder.img3.setImageResource(R.drawable.btn_pedido);
+        } else {
+            holder.img3.setImageResource(R.drawable.btn_mesero);
+        }
 
         if(selectedIndex!= -1 && position == selectedIndex) {
             convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -146,7 +155,7 @@ public class LA_D_pedido  extends BaseAdapter {
 
     static class ViewHolder {
         TextView lbl1,lbl2,lbl3,lbl4,lbl5;
-        ImageView img1,img2;
+        ImageView img1,img2,img3;
         RelativeLayout rel1;
     }
 

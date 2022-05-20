@@ -643,7 +643,7 @@ public class CliPos extends PBase {
             item.codigo_direccion=0;
             item.codigo_sucursal=gl.tienda;
             item.total=gl.dom_total;
-            item.codigo_estado=0;
+            item.codigo_estado=1;
             item.codigo_usuario_creo=gl.codigo_vendedor;
             item.codigo_usuario_proceso=gl.codigo_vendedor;
             item.codigo_usuario_entrego=0;

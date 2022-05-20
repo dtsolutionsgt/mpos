@@ -183,7 +183,8 @@
                 android:text="@string/c_dtsolutions_s_a"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#FFFFFF"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView10"

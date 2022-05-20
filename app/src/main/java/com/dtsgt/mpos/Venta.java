@@ -198,6 +198,7 @@ public class Venta extends PBase {
         }
 
         imgflag=gl.peMImg;
+        gl.sin_propina=false;
         setVisual();
 
         checkLock();

@@ -28,6 +28,26 @@ public class DateUtils {
 		return s;
 	}
 
+	public String sfechash(long f) {
+		long vy,vm,vd;
+		String s;
+
+		if (f==0) return "";
+
+		vy=(long) f/100000000;
+		f=f % 100000000;
+		vm=(long) f/1000000;
+		f=f % 1000000;
+		vd=(long) f/10000;
+		f=f % 10000;
+
+		s="";
+		if (vd>9) s=s+String.valueOf(vd)+"/"; else s=s+"0"+String.valueOf(vd)+"/";
+		if (vm>9) s=s+String.valueOf(vm); else s=s+"0"+String.valueOf(vm);
+
+		return s;
+	}
+
 	public String shora(long vValue) {
 		int h,m;
 		String sh,sm;
@@ -144,7 +164,7 @@ public class DateUtils {
 		return s;
 	}
 
-    public String univfechahora(long f) {
+	public String univfechahora(long f) {
         long vy,vm,vd,m,h;
         String s;
 

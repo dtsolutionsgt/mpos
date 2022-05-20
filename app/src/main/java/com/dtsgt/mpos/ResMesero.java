@@ -399,7 +399,6 @@ public class ResMesero extends PBase {
                 if (i<corels.size()-1) ss+=",";else ss+=")";
             }
 
-
             sql="SELECT ID,COREL,ESTADO FROM T_ORDEN  WHERE COREL "+ss;
             ws.openDT(sql);
 
@@ -975,6 +974,7 @@ public class ResMesero extends PBase {
     @Override
     protected void onResume() {
         super.onResume();
+
         try {
             P_res_grupoObj.reconnect(Con,db);
             P_res_turnoObj.reconnect(Con,db);

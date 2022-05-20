@@ -24,6 +24,7 @@ import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
+import com.dtsgt.classes.clsD_pedidoordenObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_productoObj;
@@ -74,7 +75,7 @@ public class PedidoEnviar extends PBase {
     private TimerTask ptask;
     private int period=10000,delay=50;
 
-    private String pedid,corelfact,cmd="",corelorden,nombrecli;
+    private String pedid,corelfact,cmd="",corelorden,nombrecli,idorden="";
     private int est,modo,counter,ordennum,prodlinea;
     private double monto=0;
     private boolean horiz;
@@ -280,7 +281,15 @@ public class PedidoEnviar extends PBase {
         D_pedidoObj.fill("WHERE Corel='"+pedid+"'");
         item=D_pedidoObj.first();
 
-        lblFecha.setText(du.shora(item.fecha_pedido)+"   -   Fecha : "+du.sfecha(item.fecha_pedido));
+        lblFecha.setText(du.shora(item.fecha_pedido)+"  -  Fecha : "+du.sfecha(item.fecha_pedido));
+
+        clsD_pedidoordenObj D_pedidoordenObj=new clsD_pedidoordenObj(this,Con,db);
+        D_pedidoordenObj.fill("WHERE COREL='"+pedid+"'");
+        if (D_pedidoordenObj.count>0) {
+            idorden=D_pedidoordenObj.first().orden;
+        } else {
+            idorden="";
+        }
 
         est=1;
         if (item.codigo_usuario_creo>0) est=2;
@@ -345,6 +354,7 @@ public class PedidoEnviar extends PBase {
             item=D_pedidoObj.first();
 
             corelorden=app.prefijoCaja()+(item.empresa % 1000);
+            item.codigo_estado=1;
 
             cmd=addItemSqlNoImage(item)+ ";";
 
@@ -367,7 +377,7 @@ public class PedidoEnviar extends PBase {
     }
 
     public String addItemSqlNoImage(clsClasses.clsD_pedido item) {
-        String fs=""+du.univfecha(item.fecha_sistema);
+        String fs=""+du.univfechahora(item.fecha_sistema);
 
         ins.init("D_pedido");
 
@@ -382,7 +392,8 @@ public class PedidoEnviar extends PBase {
         ins.add("CODIGO_DIRECCION",item.codigo_direccion);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("TOTAL",item.total);
-        ins.add("CODIGO_ESTADO",item.codigo_estado);
+        //ins.add("CODIGO_ESTADO",item.codigo_estado);
+        ins.add("CODIGO_ESTADO",2);
         ins.add("CODIGO_USUARIO_CREO",item.codigo_usuario_creo);
         ins.add("CODIGO_USUARIO_PROCESO",item.codigo_usuario_proceso);
         ins.add("CODIGO_USUARIO_ENTREGO",item.codigo_usuario_entrego);
