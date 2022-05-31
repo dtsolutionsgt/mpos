@@ -161,10 +161,10 @@ public class ResMesero extends PBase {
         int idmesa;
         String amesa;
 
-        corels.clear();
-
         try {
+            corels.clear();
             mesas.clear();
+
             P_res_mesaObj.fill("WHERE CODIGO_GRUPO="+idgrupo);
 
             for (int i = 0; i <P_res_mesaObj.count; i++) {
@@ -541,33 +541,38 @@ public class ResMesero extends PBase {
                 idgrupo=0;
                 showGrupoMenu();
             }
+
+            setGrupo();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-        setGrupo();
+
     }
 
     private void setGrupo() {
         clsClasses.clsP_res_turno item=clsCls.new clsP_res_turno();
 
         try {
-            item.codigo_grupo=idgrupo;
-            item.vendedor=gl.idmesero;
-            item.fecha=du.getActDate();
-            P_res_turnoObj.add(item);
-        } catch (Exception e) {
-            P_res_turnoObj.update(item);
-        }
-
-        if (idgrupo>0) {
             try {
+                item.codigo_grupo=idgrupo;
+                item.vendedor=gl.idmesero;
+                item.fecha=du.getActDate();
+                P_res_turnoObj.add(item);
+            } catch (Exception e) {
+                P_res_turnoObj.update(item);
+            }
+        } catch (Exception e) {}
+
+
+        try {
+            if (idgrupo>0) {
                 P_res_grupoObj.fill("WHERE CODIGO_GRUPO="+idgrupo);
                 lblgrupo.setText(P_res_grupoObj.items.get(P_res_grupoObj.count-1).nombre);
-            } catch (Exception e) {
-            }
-        } else lblgrupo.setText("Seleccione una area");
+            } else lblgrupo.setText("Seleccione una area");
 
-        listItems();
+            listItems();
+        } catch (Exception e) {}
+
     }
 
     private void calibraPantalla() {

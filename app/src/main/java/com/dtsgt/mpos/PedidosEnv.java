@@ -21,14 +21,14 @@ import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidoordenObj;
 import com.dtsgt.ladapt.LA_D_pedido;
 import com.dtsgt.webservice.srvCommit;
-import com.dtsgt.webservice.srvPedidoEstado;
+import com.dtsgt.webservice.srvOrdenEnvio;
 import com.dtsgt.webservice.srvPedidosBitacora;
 
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Pedidos extends PBase {
+public class PedidosEnv extends PBase {
 
     private GridView gridView;
     private TextView lblNue,lblPen,lblComp,lblHora,lblStat,lblPend;
@@ -44,7 +44,7 @@ public class Pedidos extends PBase {
 
     private int cnue,cpen,ccomp;
     private String sql,sql1,sql2,sql3;
-    private boolean modo=false,horiz,wsidle=true;;
+    private boolean modo=false,horiz,wsidle=true;
     private long tbot;
 
     private TimerTask ptask;
@@ -53,19 +53,17 @@ public class Pedidos extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (pantallaHorizontal()) {
-            setContentView(R.layout.activity_pedidos);horiz=true;
-        } else {
-            setContentView(R.layout.activity_pedidos_ver);horiz=false;
-        }
+        setContentView(R.layout.activity_pedidos_envv);
 
         super.InitBase();
+
+        horiz=pantallaHorizontal();
 
         gridView =(GridView) findViewById(R.id.gridView1);
         lblNue = (TextView) findViewById(R.id.textView179);lblNue.setText("");
         lblPen = (TextView) findViewById(R.id.textView181);lblPen.setText("");
         lblComp = (TextView) findViewById(R.id.textView182);lblComp.setText("");
-        lblHora = (TextView) findViewById(R.id.textView194);lblHora.setText(du.shora(du.getActDateTime()));
+        lblHora = (TextView) findViewById(R.id.textView194);lblHora.setText("Ordenes "+app.prefijoCaja().toUpperCase());
         lblStat = (TextView) findViewById(R.id.textView199);lblStat.setText("");
         lblPend = (TextView) findViewById(R.id.textView179a);lblPend.setText("");
         img1 = (ImageView) findViewById(R.id.imageView86);img1.setImageResource(R.drawable.blank32);
@@ -89,7 +87,7 @@ public class Pedidos extends PBase {
         setHandlers();
 
         app.getURL();
-        ws=new WebService(Pedidos.this,gl.wsurl);
+        ws=new WebService(PedidosEnv.this,gl.wsurl);
 
         sql=sql1;modo=false;
         listItems();
@@ -122,7 +120,7 @@ public class Pedidos extends PBase {
                 gl.pedid=item.corel;
 
                 browse=1;
-                startActivity(new Intent(Pedidos.this,PedidoDet.class));
+                startActivity(new Intent(PedidosEnv.this,PedidoEnv.class));
             };
         });
 
@@ -160,9 +158,11 @@ public class Pedidos extends PBase {
 
                 D_pedidocObj.fill("WHERE COREL='"+item.corel+"'");
                 if (D_pedidocObj.count>0) cli=D_pedidocObj.first().nombre;else cli="";
+                cli="";
                 item.nombre=cli;
 
-                item.tdif=du.timeDiff(tact,item.fecha_recepcion_suc);
+                //item.tdif=du.timeDiff(tact,item.fecha_recepcion_suc);
+                item.tdif=-1;
                 if (item.fecha_salida_suc!=0) item.tdif=du.timeDiff(item.fecha_salida_suc,item.fecha_recepcion_suc);
                 if (item.anulado==1) item.tdif=-1;
 
@@ -231,9 +231,8 @@ public class Pedidos extends PBase {
         int pp;
         String fname;
 
-        lblHora.setText(du.shora(du.getActDateTime()));
+        //lblHora.setText(du.shora(du.getActDateTime()));
 
-        /*
         try {
             String path = Environment.getExternalStorageDirectory().getPath() + "/mposordser";
             File directory = new File(path);
@@ -252,8 +251,6 @@ public class Pedidos extends PBase {
             //msgbox2("recibePedidos : "+e.getMessage());
         }
 
-         */
-
         listItems();
         procesaEstados();
     }
@@ -271,7 +268,6 @@ public class Pedidos extends PBase {
             toastlong("wsCallBack "+e.getMessage());toastlong("wsCallBack "+e.getMessage());
             //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
-
         wsidle=true;
     }
 
@@ -281,7 +277,7 @@ public class Pedidos extends PBase {
         try {
             wsidle=false;
             sql="SELECT CODIGO,COREL_PEDIDO,COMANDA,COREL_LINEA " +
-                    "FROM D_PEDIDOCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") ORDER BY CODIGO";
+                "FROM D_PEDIDOCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") ORDER BY CODIGO";
             ws.openDT(sql);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -347,7 +343,7 @@ public class Pedidos extends PBase {
 
     private void enviaConfirmacion(String cmd) {
         try {
-            Intent intent = new Intent(Pedidos.this, srvCommit.class);
+            Intent intent = new Intent(PedidosEnv.this, srvCommit.class);
             intent.putExtra("URL",gl.wsurl);
             intent.putExtra("command",cmd);
             startService(intent);
@@ -469,7 +465,7 @@ public class Pedidos extends PBase {
             ss=""+stat.tppo;s+=ss+";";
             ss=""+stat.eficiencia;s+=ss+";";
 
-            Intent intent = new Intent(Pedidos.this, srvPedidosBitacora.class);
+            Intent intent = new Intent(PedidosEnv.this, srvPedidosBitacora.class);
 
             intent.putExtra("URL",gl.wsurl);
             intent.putExtra("params",s);
@@ -528,7 +524,7 @@ public class Pedidos extends PBase {
 
     private void showItemMenu() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Ordenes Activos","Ordenes Pagados","Ordenes Anulados","Borrar Ordenes"};
+        final String[] selitems = {"Borrar Ordenes"};
 
         ExDialog menudlg = new ExDialog(this);
 
@@ -536,14 +532,8 @@ public class Pedidos extends PBase {
             public void onClick(DialogInterface dialog, int item) {
                 switch (item) {
                     case 0:
-                        sql=sql1;modo=false;break;
-                    case 1:
-                        sql=sql2;modo=true;break;
-                    case 2:
-                        sql=sql3;modo=true;break;
-                    case 3:
                         browse=2;
-                        startActivity(new Intent(Pedidos.this,ValidaSuper.class));
+                        startActivity(new Intent(PedidosEnv.this,ValidaSuper.class));
                 }
 
                 listItems();

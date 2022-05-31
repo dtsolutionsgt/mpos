@@ -150,7 +150,7 @@ public class CliPos extends PBase {
 
     public void consFinal(View view) {
         String ss=txtNIT.getText().toString();
-        String ddnom,ddir;
+        String ddnom,ddir,dcor;
 
         if (ss.length()>4) {
             msgAskCF("Está seguro de continuar con el consumidor final");
@@ -158,10 +158,11 @@ public class CliPos extends PBase {
             try {
                 ddnom =txtNom.getText().toString();if (ddnom.isEmpty()) ddnom="Consumidor final";
                 ddir =txtRef.getText().toString();if (ddir.isEmpty()) ddir="Ciudad";
+                dcor="consumidorfinal@gmail.com";
 
                 consFinal=true;
                 if (agregaCliente("C.F.",ddnom,ddir,
-                        ""+txtCorreo.getText().toString(),""+txtTel.getText().toString())) procesaCF() ;
+                        dcor,""+txtTel.getText().toString())) procesaCF() ;
             } catch (Exception e) {
                 msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -184,26 +185,27 @@ public class CliPos extends PBase {
 
             sDireccionCliente=sDireccionCliente+" ";
 
-			if (!existeCliente()){
+            if (!validaNIT(sNITCliente)) {
+                msgbox("NIT incorrecto");return;
+            }
 
-			    if (!validaNIT(sNITCliente)) {
-					msgbox("NIT incorrecto");return;
-				}
+            if (mu.emptystr(sNombreCliente)) {
+                msgbox("Nombre incorrecto");return;
+            }
 
-				if (mu.emptystr(sNombreCliente)) {
-                    msgbox("Nombre incorrecto");return;
-				}
-
-                if (!sCorreoCliente.isEmpty()) {
-                    if (sCorreoCliente.indexOf("@")<3) {
-                        msgbox("Correo incorrecto");return;
-                    }
+            if (!sCorreoCliente.isEmpty()) {
+                if (sCorreoCliente.indexOf("@")<3) {
+                    msgbox2("Correo incorrecto, falta '@' ");return;
                 }
+                if (sCorreoCliente.indexOf(".")<0) {
+                    msgbox2("Correo incorrecto falta '.' ");return;
+                }
+            }
 
-                if (sTelCliente.isEmpty()) sTelCliente="";
+            if (sTelCliente.isEmpty()) sTelCliente="";
 
-				if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
-
+			if (!existeCliente()){
+        		if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
 			} else {
                 actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente);
                 procesaNIT(sNITCliente);
@@ -565,7 +567,7 @@ public class CliPos extends PBase {
         });
     }
 
-    //endregion
+    //endregiong
 
     //region Pedidos Telefono
 
@@ -643,7 +645,7 @@ public class CliPos extends PBase {
             item.codigo_direccion=0;
             item.codigo_sucursal=gl.tienda;
             item.total=gl.dom_total;
-            item.codigo_estado=1;
+            if (gl.pelCajaRecep) item.codigo_estado=0;else item.codigo_estado=1;
             item.codigo_usuario_creo=gl.codigo_vendedor;
             item.codigo_usuario_proceso=gl.codigo_vendedor;
             item.codigo_usuario_entrego=0;
@@ -780,7 +782,7 @@ public class CliPos extends PBase {
 
     public void menuPedidos() {
         try {
-            if (gl.peDomEntEnvio) {
+            if (gl.peDomEntEnvio | gl.pePedidos) {
                 gl.pedid=pedcorel;
                 startActivity(new Intent(this, PedidoEnviar.class));
             } else {

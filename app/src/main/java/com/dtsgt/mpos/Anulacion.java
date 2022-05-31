@@ -355,6 +355,15 @@ public class Anulacion extends PBase {
 					"WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.KILOMETRAJE=0)  " +
          			"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					"ORDER BY D_FACTURA.COREL DESC ";
+/*
+				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
+						"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+						"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
+						"WHERE (D_FACTURA.ANULADO=0)   " +
+						"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+						"ORDER BY D_FACTURA.COREL DESC ";
+
+ */
 			}
 			
 			if (tipo==4) {
@@ -1515,7 +1524,7 @@ public class Anulacion extends PBase {
 						long fecha_menor=du.addDays(du.getActDate(),-gl.dias_anul);
 
 						if (fechaSel<fecha_menor){
-							msgbox("La fecha de anulación debe ser mayor a la seleccionada");
+							msgbox("La fecha permitida de anulación es 5 días atras");
 							return;
 						}
 					}

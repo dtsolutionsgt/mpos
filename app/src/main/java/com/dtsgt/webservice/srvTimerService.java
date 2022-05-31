@@ -51,8 +51,10 @@ public class srvTimerService extends srvBaseJob {
         wsoi =new wsOrdenImport(URL,idempresa,idsucursal);
         wsoi.execute(rnOrdenesNuevos);
 
+        /*
         wspi=new wsPedidosImport(URL,idempresa,idsucursal);
         wspi.execute(rnPedidosNuevos);
+        */
 
         startMainTimer.startService(getApplicationContext(),params);
 

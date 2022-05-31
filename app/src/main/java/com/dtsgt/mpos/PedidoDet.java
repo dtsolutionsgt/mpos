@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,12 +27,14 @@ import com.dtsgt.classes.clsD_pedidoordenObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_D_pedidod;
+import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvPedidoEstado;
 
 import java.io.File;
@@ -44,18 +47,22 @@ public class PedidoDet extends PBase {
     private ListView listView;
     private TextView lblID,lblAnul,lblFecha,lblTiempo,lblPend,lblTot;
     private RelativeLayout rel1,rel2,rel3,rel4,rel5;
+    private CheckBox cbtipo;
 
     private LA_D_pedidod adapter;
 
     private clsD_pedidoObj D_pedidoObj;
     private clsD_pedidodObj D_pedidodObj;
     private clsD_pedidocomboObj D_pedidocomboObj;
+    private clsD_pedidoordenObj D_pedidoordenObj;
     private clsP_productoObj P_productoObj;
     private clsT_ventaObj T_ventaObj;
     private clsT_comboObj T_comboObj;
     private clsT_comandaObj T_comandaObj;
     private clsP_linea_impresoraObj P_linea_impresoraObj;
     private clsP_impresoraObj P_impresoraObj;
+
+    private WebService ws;
 
     private clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
     private clsClasses.clsD_pedidod pitem=clsCls.new clsD_pedidod();
@@ -68,10 +75,10 @@ public class PedidoDet extends PBase {
     private TimerTask ptask;
     private int period=10000,delay=50;
 
-    private String pedid,corelfact,idorden="";
+    private String pedid,corelfact,idorden="",corelorden;
     private int est,modo,counter,ordennum,prodlinea;
     private double monto=0;
-    private boolean horiz;
+    private boolean horiz,wsidle=true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +103,7 @@ public class PedidoDet extends PBase {
         lblTiempo=findViewById(R.id.textView195);
         lblPend=findViewById(R.id.textView198);lblPend.setVisibility(View.INVISIBLE);
         lblTot=findViewById(R.id.textView200);
+        cbtipo = findViewById(R.id.checkBox26);
 
         pedid=gl.pedid;
         gl.closePedido=false;
@@ -103,6 +111,7 @@ public class PedidoDet extends PBase {
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         D_pedidodObj=new clsD_pedidodObj(this,Con,db);
         D_pedidocomboObj=new clsD_pedidocomboObj(this,Con,db);
+        D_pedidoordenObj=new clsD_pedidoordenObj(this,Con,db);
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
         T_ventaObj=new clsT_ventaObj(this,Con,db);
         T_comboObj = new clsT_comboObj(this, Con, db);
@@ -113,6 +122,9 @@ public class PedidoDet extends PBase {
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
         setHandlers();
+
+        app.getURL();
+        ws=new WebService(PedidoDet.this,gl.wsurl);
 
         loadItem();
         listItems();
@@ -199,6 +211,12 @@ public class PedidoDet extends PBase {
 
         try {
 
+            D_pedidodObj.fill("WHERE Corel='"+pedid+"'");
+            if (D_pedidodObj.count==0) {
+                cargaDetallePedido();
+                return;
+            }
+
             rep.clear();
             rep.empty();
             rep.line();
@@ -208,7 +226,6 @@ public class PedidoDet extends PBase {
             rep.line();
             rep.empty();
 
-            D_pedidodObj.fill("WHERE Corel='"+pedid+"'");
 
             for (int i = 0; i <D_pedidodObj.count; i++) {
 
@@ -264,10 +281,28 @@ public class PedidoDet extends PBase {
 
     private void loadItem() {
         String tdev="DOMICILIO";
+        clsClasses.clsD_pedidoorden itemord;
 
         D_pedidoObj.fill("WHERE Corel='"+pedid+"'");
         item=D_pedidoObj.first();
+        corelorden=app.prefijoCaja()+(item.empresa % 1000);
 
+        try {
+            D_pedidoordenObj.fill("WHERE Corel='"+pedid+"'");
+            if (D_pedidoordenObj.first().tipo==1) cbtipo.setChecked(true); else cbtipo.setChecked(false);
+        } catch (Exception e) {
+            try {
+                itemord = clsCls.new clsD_pedidoorden();
+                itemord.corel=pedid;
+                itemord.orden=corelorden;
+                itemord.tipo=0;
+                D_pedidoordenObj.add(itemord);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                String ss=ex.getMessage();
+                ss=ss+"";
+            }
+        }
 
         clsD_pedidoordenObj D_pedidoordenObj=new clsD_pedidoordenObj(this,Con,db);
         D_pedidoordenObj.fill("WHERE COREL='"+pedid+"'");
@@ -276,24 +311,30 @@ public class PedidoDet extends PBase {
             idorden=D_pedidoordenObj.first().orden;
         }
 
-        lblFecha.setText(du.shora(item.fecha_pedido)+" - Fecha : "+du.sfechash(item.fecha_pedido)+"  "+tdev);
+        lblFecha.setText(du.shora(item.fecha_pedido)+" - Fecha : "+du.sfechash(item.fecha_pedido));
 
         //est=1;
         est=item.codigo_estado;
+        /*
         if (item.codigo_usuario_creo>0) est=2;
         if (item.codigo_usuario_proceso>0) est=3;
         if (item.fecha_salida_suc>0) est=4;
         if (item.fecha_entrega>0) est=5;
         if (item.anulado==1) est=0;
+         */
 
-        if (est==1) rel1.setBackgroundResource(R.drawable.frame_stat);
-        if (est==2) rel2.setBackgroundResource(R.drawable.frame_stat);
-        if (est==3) rel3.setBackgroundResource(R.drawable.frame_stat);
-        if (est==4) rel4.setBackgroundResource(R.drawable.frame_stat);
-        if (est==5) rel5.setBackgroundResource(R.drawable.frame_stat);
+        if (est==0) rel1.setBackgroundResource(R.drawable.frame_stat);
+        if (est==1) rel2.setBackgroundResource(R.drawable.frame_stat);
+        if (est==2) rel3.setBackgroundResource(R.drawable.frame_stat);
+        if (est==3) rel4.setBackgroundResource(R.drawable.frame_stat);
+        if (est==4) rel5.setBackgroundResource(R.drawable.frame_stat);
 
         rel1.setVisibility(View.VISIBLE);
         rel2.setVisibility(View.VISIBLE);
+        rel3.setVisibility(View.VISIBLE);
+        rel4.setVisibility(View.VISIBLE);
+        rel5.setVisibility(View.VISIBLE);
+        /*
         rel3.setVisibility(View.INVISIBLE);
         rel4.setVisibility(View.INVISIBLE);
         rel5.setVisibility(View.INVISIBLE);
@@ -302,6 +343,7 @@ public class PedidoDet extends PBase {
             rel4.setVisibility(View.VISIBLE);rel5.setVisibility(View.VISIBLE);
         }
         if ((est>=4) && (app.pendientesPago(pedid)==0)) rel5.setVisibility(View.VISIBLE);
+        */
 
         if (item.empresa>0) lblID.setText("#"+item.empresa % 1000);else lblID.setText("");
         ordennum=item.empresa % 1000;
@@ -322,6 +364,13 @@ public class PedidoDet extends PBase {
 
         D_pedidoObj.fill("ORDER BY Empresa DESC");
         if (D_pedidoObj.count>0) ordid=D_pedidoObj.first().empresa+1;
+
+        try {
+            D_pedidoordenObj.fill("WHERE Corel='"+pedid+"'");
+            clsClasses.clsD_pedidoorden itemord=D_pedidoordenObj.first();
+            if (cbtipo.isChecked()) itemord.tipo=1;else itemord.tipo=0;
+            D_pedidoordenObj.update(itemord);
+        } catch (Exception e) { }
 
         if (modo==1) {
             item.codigo_estado=0;
@@ -365,6 +414,9 @@ public class PedidoDet extends PBase {
         try {
             D_pedidoObj.update(item);
 
+            broadCast();
+
+            /*
             Intent intent = new Intent(PedidoDet.this, srvPedidoEstado.class);
 
             intent.putExtra("URL",gl.wsurl);
@@ -373,13 +425,15 @@ public class PedidoDet extends PBase {
             intent.putExtra("valor_estado",gl.codigo_vendedor);
 
             startService(intent);
+            */
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         if (modo==2) {
-            imprimirOrden();return;
+            imprimirOrden();
+            return;
         } else if (modo==3) {
             if (ventaVacia()) {
                 crearVenta();
@@ -390,6 +444,45 @@ public class PedidoDet extends PBase {
         } else {
             finish();
         }
+    }
+
+    private void broadCast() {
+        clsClasses.clsD_pedidocom pitem;
+        int idruta;
+
+        try {
+
+            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+            P_rutaObj.fill();
+
+            String cmd="";
+
+            for (int i = 0; i <P_rutaObj.count; i++) {
+
+                idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+                if (idruta!=gl.codigo_ruta) {
+                    pitem= clsCls.new clsD_pedidocom();
+
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_pedido=pedid;
+                    pitem.corel_linea=0;
+                    pitem.comanda= addItemSqlAndroid(item);
+
+                    cmd+=addItemPedidoCom(pitem) + ";";
+                }
+
+            }
+
+            Intent intent = new Intent(PedidoDet.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",cmd);
+            startService(intent);
+
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     private void anular() {
@@ -611,31 +704,44 @@ public class PedidoDet extends PBase {
     //region Comandas
 
     private void imprimirOrden() {
+        int tipo;
 
         if (!gl.peImpOrdCos) return;
 
-        if (gl.pelComandaBT) {
+        try {
 
-            try {
-                rep.empty();
-                rep.line();
-                rep.add("Hora : "+du.shora(du.getActDateTime()));
-                rep.line();
-                rep.empty();
-                rep.empty();
-                rep.empty();
-                rep.save();
+            if (cbtipo.isChecked()) tipo=1;else tipo=0;
 
-                app.doPrint();
+            D_pedidoObj.fill("WHERE Corel='"+pedid+"'");
+            item=D_pedidoObj.first();
 
-            } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            if (gl.pelComandaBT) {
+
+                try {
+                    rep.empty();
+                    rep.line();
+                    rep.add("Hora : "+du.shora(du.getActDateTime()));
+                    rep.line();
+                    rep.empty();
+                    rep.empty();
+                    rep.empty();
+                    rep.save();
+
+                    app.doPrint();
+
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            } else {
+                imprimeComanda();
             }
-        } else {
-            imprimeComanda();
+
+            finish();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        finish();
     }
 
     private void imprimeComanda() {
@@ -647,6 +753,7 @@ public class PedidoDet extends PBase {
     private boolean divideComanda() {
         clsClasses.clsD_pedidod  pedido;
         String prname,cname,nn;
+        String[] sp;
         int prodid,prid,iddet,linea=1;
 
         try {
@@ -662,7 +769,7 @@ public class PedidoDet extends PBase {
                 iddet = pedido.corel_det;
                 prname=getProd(prodid);
                 s = mu.frmdecno(pedido.cant) + " x " + prname;
-                nn="";
+                nn=pedido.nota;
 
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
 
@@ -671,7 +778,10 @@ public class PedidoDet extends PBase {
                         prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
                         agregaComanda(linea,prid,s);linea++;
                         if (!nn.isEmpty()) {
-                            agregaComanda(linea,prid,nn);linea++;
+                            sp=splitByLen(nn,20);
+                            for (int ii = 0; ii <sp.length; ii++) {
+                                agregaComanda(linea,prid," - "+sp[ii]);linea++;
+                            }
                         }
                     }
 
@@ -690,7 +800,10 @@ public class PedidoDet extends PBase {
                             agregaComanda(linea,prid,cname);linea++;
                             agregaComanda(linea,prid,s);linea++;
                             if (!nn.isEmpty()) {
-                                agregaComanda(linea,prid,nn);linea++;
+                                sp=splitByLen(nn,20);
+                                for (int ii = 0; ii <sp.length; ii++) {
+                                    agregaComanda(linea,prid," - "+sp[ii]);linea++;
+                                }
                             }
                         }
                     }
@@ -721,7 +834,7 @@ public class PedidoDet extends PBase {
 
     private boolean generaArchivos() {
         clsRepBuilder rep;
-        int printid;
+        int printid,ln;
         String fname,ss;
         File file;
 
@@ -753,13 +866,15 @@ public class PedidoDet extends PBase {
                 rep.add(P_impresoraObj.first().nombre);
                 rep.add(P_impresoraObj.first().ip);
 
-                rep.add("");rep.add("");rep.add("");
-                rep.add("ORDEN : "+idorden);
+                rep.add("");rep.add("");rep.add("");rep.add("");
+                rep.add("");rep.add("");rep.add("");rep.add("");
+
+                rep.add("ORDEN : "+corelorden);
                 //rep.add("MESA : "+mesa);
                 rep.add("Hora : "+du.shora(du.getActDateTime()));
                 rep.add("Mesero : "+gl.nombre_mesero_sel);
 
-                rep.line24();
+                rep.line24();ln=13;
 
                 T_comandaObj.fill("WHERE ID="+printid+" ORDER BY LINEA");
                 //T_comandaObj.fillSelect("SELECT COUNT(ID),ID,TEXTO WHERE ID="+printid+" GROUP BY ID,TEXTO");
@@ -779,16 +894,21 @@ public class PedidoDet extends PBase {
                 };
 
                 for (int j = 0; j <tl.size(); j++) {
-                    rep.add(tl.get(j));
+                    rep.add(tl.get(j));ln++;
                 }
 
                 //for (int j = 0; j <T_comandaObj.count; j++) {
                 //    rep.add(T_comandaObj.items.get(j).texto);
                 //}
 
-                rep.line24();
-                rep.add("");rep.add("");rep.add("");
+                rep.line24();rep.add("");rep.add("LLEVAR");rep.add("");
+                rep.add("");rep.add("");rep.add("");rep.add("");
+                ln+=8;
 
+                if (ln<20) {
+                    for (int ii = 0; ii <20-ln; ii++) rep.add("");
+                }
+                rep.line24();
                 rep.save();rep.clear();
             }
 
@@ -800,6 +920,101 @@ public class PedidoDet extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
+    }
+
+    //endregion
+
+    //region Pedidos locales
+
+    @Override
+    protected void wsCallBack(Boolean throwing,String errmsg) {
+        try {
+            super.wsCallBack(throwing, errmsg);
+            agregaDetallePedido();
+        } catch (Exception e) {
+            //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+        wsidle=true;
+    }
+
+    private void cargaDetallePedido() {
+        if (!wsidle) return;
+
+        try {
+            wsidle=false;
+            sql="SELECT COREL,COREL_DET,CODIGO_PRODUCTO,UMVENTA,CANT,TOTAL,NOTA,CODIGO_TIPO_PRODUCTO " +
+                "FROM D_PEDIDOD WHERE (COREL='"+pedid+"')";
+            ws.openDT(sql);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            wsidle=true;
+        }
+    }
+
+    private void agregaDetallePedido() {
+        clsClasses.clsD_pedidod pitem;
+        ArrayList<String> pl=new ArrayList<String>();
+        String cmd;
+        int ii=1;
+
+        if (ws.openDTCursor.getCount()==0) return;
+
+        try {
+            pl.clear();
+
+            try {
+                Cursor dt=Con.OpenDT("SELECT MAX(COREL_DET) FROM D_PEDIDOD");
+
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    ii=dt.getInt(0)+1;
+                } else ii=1;
+            } catch (Exception ex) {
+                ii=1;
+            }
+
+            D_pedidodObj=new clsD_pedidodObj(this,Con,db);
+
+            ws.openDTCursor.moveToFirst();
+            while (!ws.openDTCursor.isAfterLast()) {
+
+                pitem = clsCls.new clsD_pedidod();
+
+                pitem.corel=ws.openDTCursor.getString(0);
+                pitem.corel_det=ii;
+                pitem.codigo_producto=ws.openDTCursor.getInt(2);
+                pitem.umventa=ws.openDTCursor.getString(3);
+                pitem.cant=ws.openDTCursor.getDouble(4);
+                pitem.total=ws.openDTCursor.getDouble(5);
+                pitem.nota=ws.openDTCursor.getString(6);
+                pitem.codigo_tipo_producto=ws.openDTCursor.getString(7);
+
+                cmd=D_pedidodObj.addItemSql(pitem);
+                pl.add(cmd);
+
+                ws.openDTCursor.moveToNext();ii++;
+            }
+
+            try {
+                db.beginTransaction();
+
+                for (int i = 0; i < pl.size(); i++) {
+                    db.execSQL(pl.get(i));
+                }
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (Exception e) {
+                db.endTransaction();
+                String ss=e.getMessage();
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            listItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     //endregion
@@ -940,6 +1155,46 @@ public class PedidoDet extends PBase {
         }
     }
 
+    public String addItemSqlAndroid(clsClasses.clsD_pedido item) {
+        String corr="<>"+item.corel+"<>";
+
+        ins.init("D_pedido");
+
+        ins.add("EMPRESA",gl.emp);
+        ins.add("COREL",corr);
+        ins.add("FECHA_SISTEMA",item.fecha_sistema);
+        ins.add("FECHA_PEDIDO",item.fecha_sistema);
+        ins.add("FECHA_RECEPCION_SUC",item.fecha_recepcion_suc);
+        ins.add("FECHA_SALIDA_SUC",item.fecha_salida_suc);
+        ins.add("FECHA_ENTREGA",item.fecha_entrega);
+        ins.add("CODIGO_CLIENTE",item.codigo_cliente);
+        ins.add("FIRMA_CLIENTE",0);
+        ins.add("CODIGO_DIRECCION",item.codigo_direccion);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("TOTAL",item.total);
+        ins.add("CODIGO_ESTADO",item.codigo_estado);
+        ins.add("CODIGO_USUARIO_CREO",item.codigo_usuario_creo);
+        ins.add("CODIGO_USUARIO_PROCESO",item.codigo_usuario_proceso);
+        ins.add("CODIGO_USUARIO_ENTREGO",item.codigo_usuario_entrego);
+        ins.add("ANULADO",item.anulado);
+
+        return ins.sql();
+
+    }
+
+    public String addItemPedidoCom(clsClasses.clsD_pedidocom item) {
+
+        ins.init("D_pedidocom");
+
+        ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("COREL_PEDIDO",item.corel_pedido);
+        ins.add("COREL_LINEA",item.corel_linea);
+        ins.add("COMANDA",item.comanda);
+
+        return ins.sql();
+
+    }
+
     //endregion
 
     //region Dialogs
@@ -1054,6 +1309,7 @@ public class PedidoDet extends PBase {
             D_pedidoObj.reconnect(Con,db);
             D_pedidodObj.reconnect(Con,db);
             D_pedidocomboObj.reconnect(Con,db);
+            D_pedidoordenObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
             T_ventaObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);

@@ -355,6 +355,14 @@ public class clsClasses {
         public String codigo_tipo_producto;
     }
 
+    public class clsD_pedidocom {
+        public int  codigo;
+        public int  codigo_ruta;
+        public String corel_pedido;
+        public int  corel_linea;
+        public String comanda;
+    }
+
     public class clsD_pedidocombo {
         public int  corel_det;
         public int  corel_combo;
@@ -576,6 +584,12 @@ public class clsClasses {
         public int  valor1;
     }
 
+    public class clsP_departamento   {
+        public String codigo;
+        public String codigo_area;
+        public String nombre;
+    }
+
     public class clsP_descuento {
         public int  codigo_descuento;
         public int cliente;
@@ -718,24 +732,6 @@ public class clsClasses {
         public int  codigo_impresora;
     }
 
-    public class clsP_Producto_Tipo   {
-        public String codigo_tipo_producto;
-        public String nombre;
-        public boolean  utiliza_stock;
-    }
-
-    public class clsP_departamento   {
-        public String codigo;
-        public String codigo_area;
-        public String nombre;
-    }
-
-    public class clsP_municipio   {
-        public String codigo;
-        public String codigo_departamento;
-        public String nombre;
-    }
-
     public class clsP_mediapago {
         public int  codigo;
         public int  empresa;
@@ -748,6 +744,25 @@ public class clsClasses {
 
     public class clsP_mesa_nombre {
         public int  codigo_mesa;
+        public String nombre;
+    }
+
+    public class clsP_modificador {
+        public int  codigo_modif;
+        public int  empresa;
+        public int  codigo_grupo;
+        public String nombre;
+    }
+
+    public class clsP_modificador_grupo {
+        public int  codigo_grupo;
+        public int  empresa;
+        public String nombre;
+    }
+
+    public class clsP_municipio   {
+        public String codigo;
+        public String codigo_departamento;
         public String nombre;
     }
 
@@ -836,6 +851,12 @@ public class clsClasses {
         public String um;
     }
 
+    public class clsP_Producto_Tipo   {
+        public String codigo_tipo_producto;
+        public String nombre;
+        public boolean  utiliza_stock;
+    }
+
     public class clsP_nivelpreciolist {
         public String codigo;
         public int  nivel;
@@ -869,6 +890,12 @@ public class clsClasses {
         public int codigo_menuopc_det;
         public int codigo_menu_opcion;
         public int codigo_producto;
+    }
+
+    public class clsP_prodmodificador {
+        public int  codigo_producto;
+        public int  empresa;
+        public int  codigo_modif;
     }
 
     public class clsP_producto {

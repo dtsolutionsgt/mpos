@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".PedidoEnv">
+
+    <CheckBox
+        android:id="@+id/checkBox26"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="false"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:button="@drawable/checkboxbig"
+        android:clickable="false"
+        android:enabled="false"
+        android:scaleX="0.9"
+        android:scaleY="0.9"
+        android:text="  DOMICILIO  "
+        android:textColor="#000000"
+        android:textSize="38sp"
+        android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView200"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignEnd="@+id/listView1"
+            android:layout_alignParentStart="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:text="0.00"
+            android:textColor="#000000"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/relRoad"
+            android:layout_width="match_parent"
+            android:layout_height="92dp"
+            android:background="@drawable/frame_rect_blue">
+
+            <ImageView
+                android:id="@+id/imageView69"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:onClick="doExit"
+                android:padding="10dp"
+                android:src="@drawable/break_w" />
+
+            <TextView
+                android:id="@+id/textView188"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="false"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="19dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toEndOf="@+id/textView190"
+                android:background="@drawable/frame_rect_white"
+                android:clickable="true"
+                android:onClick="doCliente"
+                android:paddingStart="20dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="10dp"
+                android:text="INFO CLIENTE"
+                android:textColor="#FFFFFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView190"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="2dp"
+                android:layout_toEndOf="@+id/imageView69"
+                android:text="000"
+                android:textColor="#FFFFFF"
+                android:textSize="64dp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relestado"
+            android:layout_width="250dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/frame_rect">
+
+            <RelativeLayout
+                android:id="@+id/rel06"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/frame_btn"
+                android:clickable="true"
+                android:onClick="doDel">
+
+                <ImageView
+                    android:id="@+id/imageView75"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="24dp"
+                    android:adjustViewBounds="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ped_5" />
+
+                <TextView
+                    android:id="@+id/textView185"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="3dp"
+                    android:text="Borrar"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel05"
+                android:layout_width="wrap_content"
+                android:layout_height="110dp"
+                android:layout_below="@id/rel02"
+                android:layout_alignParentTop="false"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/frame_btn"
+                android:clickable="true"
+                android:onClick="doComp">
+
+                <ImageView
+                    android:id="@+id/imageView74a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="24dp"
+                    android:adjustViewBounds="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ped_3" />
+
+                <TextView
+                    android:id="@+id/textView183a"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/textView182"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="3dp"
+                    android:text="Completo"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel02"
+                android:layout_width="wrap_content"
+                android:layout_height="110dp"
+                android:layout_below="@id/rel01"
+                android:layout_alignParentTop="false"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/frame_btn"
+                android:clickable="true"
+                android:onClick="doPend">
+
+                <ImageView
+                    android:id="@+id/imageView73"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="24dp"
+                    android:adjustViewBounds="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ped_2" />
+
+                <TextView
+                    android:id="@+id/textView180"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="3dp"
+                    android:text="Preparando"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel04"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:layout_below="@id/rel05"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="false"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/frame_btn"
+                android:clickable="true"
+                android:onClick="doEnt">
+
+                <ImageView
+                    android:id="@+id/imageView75"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="24dp"
+                    android:adjustViewBounds="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ped_4" />
+
+                <TextView
+                    android:id="@+id/textView185"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:paddingBottom="3dp"
+                    android:text="Entregando"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="75dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_toStartOf="@+id/relestado" />
+
+        <TextView
+            android:id="@+id/textView193"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relRoad"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_toEndOf="@+id/checkBox26"
+            android:text="FECHA PEDIDO"
+            android:textColor="#000000"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+    </RelativeLayout>

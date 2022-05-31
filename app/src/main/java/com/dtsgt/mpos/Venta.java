@@ -126,10 +126,11 @@ public class Venta extends PBase {
     private int nivel,dweek,clidia,counter,menuitemid;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
+    private boolean horiz=true,domenvio;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
-    private boolean horiz=true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +169,8 @@ public class Venta extends PBase {
         getURL();
 
         pedidos=gl.pePedidos;
+        domenvio=gl.peDomEntEnvio;
+
         D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
         MeserosObj =new clsVendedoresObj(this,Con,db);
@@ -2263,11 +2266,12 @@ public class Venta extends PBase {
                 }
             }
 
-            if (pedidos) {
+            if (pedidos | domenvio) {
                 item = clsCls.new clsMenu();
                 item.ID=16;item.Name="Para llevar";item.Icon=16;
                 item.cant=pedidoscant;
-                if (!gl.peDomEntEnvio) mitems.add(item);
+                //if (!gl.peDomEntEnvio) mitems.add(item);
+                mitems.add(item);
             }
 
             item = clsCls.new clsMenu();
@@ -2570,10 +2574,12 @@ public class Venta extends PBase {
         try{
             gl.closePedido=false;
             browse=9;
-            Intent intent = new Intent(this,Pedidos.class);
-            startActivity(intent);
+            if (pedidos) startActivity(new Intent(this,Pedidos.class));
+            if (domenvio) {
+                startActivity(new Intent(this,PedidosEnv.class));
+            }
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            //addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 

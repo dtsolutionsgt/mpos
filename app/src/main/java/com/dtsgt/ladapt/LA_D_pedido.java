@@ -66,7 +66,7 @@ public class LA_D_pedido  extends BaseAdapter {
         ViewHolder holder;
         int corel,color,resid,warn;
         long tdif,tlim;
-        String st,stl;
+        String st,stl,cn;
 
         if (convertView == null) {
 
@@ -96,7 +96,8 @@ public class LA_D_pedido  extends BaseAdapter {
         }
         if (corel>0) holder.lbl1.setText(""+corel);else holder.lbl1.setText("");
         */
-        holder.lbl1.setText(items.get(position).idorden);
+        cn=items.get(position).idorden;
+        holder.lbl1.setText(cn);
 
         tdif=items.get(position).tdif;tlim=items.get(position).lim;
 
@@ -115,16 +116,20 @@ public class LA_D_pedido  extends BaseAdapter {
         holder.lbl4.setText(items.get(position).nombre);
 
         color=Color.parseColor("#FFFFFF");resid=R.drawable.ped_1;
-        if (items.get(position).codigo_usuario_creo>0) {
+        //if (items.get(position).codigo_usuario_creo>0) {
+            if (items.get(position).codigo_estado==1) {
             color=Color.parseColor("#E2D176");resid=R.drawable.ped_2;
         }
-        if (items.get(position).codigo_usuario_proceso>0)  {
+        //if (items.get(position).codigo_usuario_proceso>0)  {
+        if (items.get(position).codigo_estado==2) {
             color=Color.parseColor("#8DDF8F");resid=R.drawable.ped_3;
         }
-        if (items.get(position).fecha_salida_suc>0)  {
+        //if (items.get(position).fecha_salida_suc>0)  {
+        if (items.get(position).codigo_estado==3) {
             color=Color.parseColor("#57CAD7");resid=R.drawable.ped_4;
         }
-        if (items.get(position).fecha_entrega>0)  {
+        //if (items.get(position).fecha_entrega>0)  {
+        if (items.get(position).codigo_estado>3) {
             color=Color.parseColor("#A9A5A9");resid=R.drawable.ped_6;
         }
         if (items.get(position).anulado==1)  {

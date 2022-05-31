@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Pedidos">
+
+    <RelativeLayout
+        android:id="@+id/relRoad"
+        android:layout_width="match_parent"
+        android:layout_height="92dp"
+        android:background="@drawable/frame_rect_blue">
+
+        <RelativeLayout
+            android:id="@+id/rel00"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/imageView69"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/textView178a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/textView179a"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="1dp"
+                android:layout_marginTop="34dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="2dp"
+                android:gravity="center_horizontal"
+                android:text="Pago pendiente"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/imageView71a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="false"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="18dp"
+                android:adjustViewBounds="true"
+                android:paddingLeft="15dp"
+                android:paddingTop="15dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp"
+                android:src="@drawable/pago_pendiente" />
+
+            <TextView
+                android:id="@+id/textView179a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_toEndOf="@+id/imageView71a"
+                android:text="00"
+                android:textColor="#FFFFFF"
+                android:textSize="52sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView69"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:onClick="doExit"
+            android:padding="10dp"
+            android:src="@drawable/break_w" />
+
+        <RelativeLayout
+            android:id="@+id/relPed"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/imageView69"
+            android:visibility="invisible">
+
+            <RelativeLayout
+                android:id="@+id/rel01"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true">
+
+                <TextView
+                    android:id="@+id/textView178"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/textView179"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="Nuevos"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:id="@+id/imageView71"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="18dp"
+                    android:adjustViewBounds="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ped_1" />
+
+                <TextView
+                    android:id="@+id/textView179"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_toEndOf="@+id/imageView71"
+                    android:text="00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="52sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel02"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="40dp"
+                android:layout_toEndOf="@+id/rel01">
+
+                <ImageView
+                    android:id="@+id/imageView73"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="18dp"
+                    android:adjustViewBounds="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ped_2" />
+
+                <TextView
+                    android:id="@+id/textView181"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_toEndOf="@+id/imageView73"
+                    android:text="00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="52sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView180"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/textView181"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="Pendientes"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel03"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="40dp"
+                android:layout_toEndOf="@+id/rel02">
+
+                <ImageView
+                    android:id="@+id/imageView74"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="18dp"
+                    android:adjustViewBounds="true"
+                    android:padding="4dp"
+                    android:src="@drawable/ped_3" />
+
+                <TextView
+                    android:id="@+id/textView182"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_toEndOf="@+id/imageView74"
+                    android:text="00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="52sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView183"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/textView182"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="34dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="Completos"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView70"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:onClick="doMenu"
+            android:padding="20dp"
+            android:src="@drawable/menu"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/imageView79"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_toEndOf="@+id/relPed"
+            android:padding="10dp"
+            android:src="@drawable/add_white"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/textView194"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/imageView70"
+            android:gravity="center_vertical"
+            android:text="Ordenes"
+            android:textColor="#FFFFFF"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+    <GridView
+        android:id="@+id/gridView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/relbotpan"
+        android:layout_below="@+id/relRoad"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:numColumns="4" />
+
+    <RelativeLayout
+        android:id="@+id/relbotpan"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="-3dp"
+        android:background="@drawable/frame_rect_blue">
+
+        <ImageView
+            android:id="@+id/imageView129"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:onClick="doRefresh"
+            android:src="@drawable/recibir_rapido" />
+
+        <TextView
+            android:id="@+id/textView196"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="17dp"
+            android:text="TextView"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/textView199"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="14dp"
+            android:gravity="center_horizontal"
+            android:text="Eficiencia "
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/imageView86"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toStartOf="@+id/textView199"
+            android:adjustViewBounds="true"
+            android:padding="6dp"
+            android:src="@drawable/stat_arr_up"
+            android:visibility="invisible" />
+    </RelativeLayout>
+</RelativeLayout>

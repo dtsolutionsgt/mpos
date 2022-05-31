@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.2.12">
+    android:versionName="4.2.14">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -40,7 +40,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
-
+        <activity
+            android:name=".PedidoEnv"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -67,7 +69,6 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
         </receiver>
-
 
         <service
             android:name="com.dtsgt.webservice.srvBase"
@@ -602,6 +603,10 @@
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
             android:name=".Pedidos"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".PedidosEnv"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity

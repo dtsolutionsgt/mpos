@@ -1922,7 +1922,6 @@ public class Orden extends PBase {
                 rep.add(P_impresoraObj.first().nombre);
                 rep.add(P_impresoraObj.first().ip);
 
-                rep.clear();
                 rep.empty();
                 rep.empty();
                 rep.empty();

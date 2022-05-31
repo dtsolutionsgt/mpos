@@ -901,6 +901,50 @@ public class BaseDatosVersion {
         } catch (Exception e) {}
 
         try {
+            sql="CREATE TABLE [P_modificador] ("+
+                    "CODIGO_MODIF INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_GRUPO INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_MODIF])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [P_modificador_grupo] ("+
+                    "CODIGO_GRUPO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_GRUPO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [P_prodmodificador] ("+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_MODIF INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [D_pedidocom] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "CODIGO_RUTA INTEGER NOT NULL,"+
+                    "COREL_PEDIDO TEXT NOT NULL,"+
+                    "COREL_LINEA INTEGER NOT NULL,"+
+                    "COMANDA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+
+        try {
 
         } catch (Exception e) {}
 
