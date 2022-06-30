@@ -27,6 +27,16 @@
             android:layout_marginBottom="4dp"
             android:background="#D0D0D0">
 
+            <ImageView
+                android:id="@+id/imageView130"
+                android:layout_width="32dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lblV1"
+                android:layout_alignBottom="@+id/lblV5"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/ic_nosync" />
+
             <TextView
                 android:id="@+id/textView270"
                 android:layout_width="match_parent"

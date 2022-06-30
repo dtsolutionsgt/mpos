@@ -55,12 +55,14 @@ import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
+import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_factrecetaObj;
+import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
@@ -776,6 +778,7 @@ public class FacturaRes extends PBase {
             }
         }
 
+		completaEstadoOrden();
 
         gl.cliposflag=false;
         gl.InvCompSend=false;
@@ -3214,7 +3217,121 @@ public class FacturaRes extends PBase {
         }
     }
 
-    private void enviaAvizo() {
+	private void completaEstadoOrden() {
+		if (!gl.peActOrdenMesas) return;
+		if (!todasCuentasPagadas()) return;
+
+		try {
+			try {
+				db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
+			} catch (SQLException ee) {
+				String ss=ee.getMessage();
+			}
+			broadcastJournalFlag(99);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+	private void broadcastJournalFlag(int flag) {
+		clsClasses.clsT_ordencom pitem;
+		int idruta;
+
+		try {
+
+			clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+			P_rutaObj.fill();
+
+			String cmd="";
+
+			for (int i = 0; i <P_rutaObj.count; i++) {
+
+				idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+				//if (idruta!=gl.codigo_ruta) {
+
+				pitem= clsCls.new clsT_ordencom();
+
+				pitem.codigo_ruta=idruta;
+				pitem.corel_orden=gl.ordcorel;
+				pitem.corel_linea=flag;
+				pitem.comanda="";
+
+				if (flag==99) pitem.comanda=updItemSqlAndroid();
+
+				cmd+=addItemSqlOrdenCom(pitem) + ";";
+				//}
+
+			}
+
+			try {
+				Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+				intent.putExtra("URL",gl.wsurl);
+				intent.putExtra("command",cmd);
+				startService(intent);
+			} catch (Exception e) {
+				toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				app.addToOrdenLog(du.getActDateTime(),
+						"FacturaRes."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
+			}
+
+		} catch (Exception e) {
+			toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+	private boolean todasCuentasPagadas() {
+		int cc=1,cp=0,nc;
+
+		try {
+			clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+			T_ordencuentaObj.fill("WHERE COREL='"+gl.ordcorel+"'");
+			cc=T_ordencuentaObj.count;
+
+			for (int i = 0; i <cc; i++) {
+				nc=i+1;
+				if (cuentaPagada(gl.ordcorel,nc)) cp++;
+			}
+
+			return cp==cc;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			return false;
+		}
+
+	}
+
+	private Boolean cuentaPagada(String corr,int id) {
+		try {
+			clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+			D_facturaObj.fill("WHERE (FACTLINK='"+corr+"_"+id+"') AND (ANULADO=0)");
+			return D_facturaObj.count!=0;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+		}
+	}
+
+	public String updItemSqlAndroid() {
+		String corr="<>"+gl.ordcorel+"<>";
+		return "UPDATE P_res_sesion SET ESTADO=-1 WHERE ID='"+corr+"'";
+	}
+
+	public String addItemSqlOrdenCom(clsClasses.clsT_ordencom item) {
+
+		ins.init("T_ordencom");
+
+		ins.add("CODIGO_RUTA",item.codigo_ruta);
+		ins.add("COREL_ORDEN",item.corel_orden);
+		ins.add("COREL_LINEA",item.corel_linea);
+		ins.add("COMANDA",item.comanda);
+
+		return ins.sql();
+
+	}
+
+	private void enviaAvizo() {
         String subject,body;
 
         try {

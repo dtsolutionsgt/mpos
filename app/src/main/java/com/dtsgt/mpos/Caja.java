@@ -295,7 +295,7 @@ public class Caja extends PBase {
             montoDif = tot - pago;
             montoDif = montoFin - montoDif;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("Error montoDif: "+e);return;
         }

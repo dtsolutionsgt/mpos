@@ -81,6 +81,7 @@ public class LA_Res_mesa  extends BaseAdapter {
                 holder.lbl5 = convertView.findViewById(R.id.lblV5);
                 holder.lbl6 = convertView.findViewById(R.id.textView270);
                 holder.img1 =  convertView.findViewById(R.id.imageView97);
+                holder.img2 =  convertView.findViewById(R.id.imageView130);
                 holder.rel1 =  convertView.findViewById(R.id.relcolor);
 
                 convertView.setTag(holder);
@@ -94,10 +95,11 @@ public class LA_Res_mesa  extends BaseAdapter {
             holder.lbl1.setText(""+items.get(position).nombre);
             holder.lbl6.setText(""+items.get(position).alias);
             holder.img1.setImageResource(R.drawable.blank48);
+            holder.img1.setVisibility(View.INVISIBLE);
 
             if (est==0) {
                 holder.lbl5.setText("");
-                holder.img1.setVisibility(View.INVISIBLE);
+                //holder.img1.setVisibility(View.INVISIBLE);
                 holder.rel1.setBackgroundColor(Color.parseColor("#D0D0D0"));
 
             } else {
@@ -118,10 +120,13 @@ public class LA_Res_mesa  extends BaseAdapter {
                         holder.img1.setImageResource(R.drawable.pago_pendiente);
                         break;
                 }
-
             }
 
-            //icon_cooking2
+            if (items.get(position).est_envio==1) {
+                holder.img2.setVisibility(View.INVISIBLE);
+            } else {
+                holder.img2.setVisibility(View.VISIBLE);
+            }
 
             if(selectedIndex!= -1 && position == selectedIndex) {
                 convertView.setBackgroundColor(Color.rgb(26,138,198));
@@ -140,7 +145,7 @@ public class LA_Res_mesa  extends BaseAdapter {
 
     static class ViewHolder {
         TextView lbl1,lbl5,lbl6;
-        ImageView img1;
+        ImageView img1,img2;
         RelativeLayout rel1;
     }
 

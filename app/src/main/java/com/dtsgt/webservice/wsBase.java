@@ -10,6 +10,7 @@ public class wsBase {
     public Runnable callBack=null;
     public String error="";
     public boolean errflag;
+    public int level;
     public ArrayList<String> items=new ArrayList<String>();
 
     public String URL, NAMESPACE ="http://tempuri.org/";
@@ -49,7 +50,10 @@ public class wsBase {
             wstask.execute();
         } catch (Exception e) {
             error=e.getMessage();errflag=true;
-        }
+            try {
+                runCallBack();
+            } catch (Exception ee) { }
+         }
     }
 
     private void runCallBack() {

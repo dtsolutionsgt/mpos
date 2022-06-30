@@ -678,8 +678,8 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    processComplete();
-                    //execws(52);
+                    //processComplete();
+                    execws(52);
                     break;
                 case 52:
                     processAlmacen();
@@ -1004,6 +1004,13 @@ public class WSRec extends PBase {
         } else {
             processData();
             browse = 1;
+        }
+
+        try {
+            long ff=du.getActDate();ff=du.addDays(ff,-7);
+            db.execSQL("DELETE FROM D_orden_log WHERE FECHA<"+ff);
+        } catch (Exception e) {
+            //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }

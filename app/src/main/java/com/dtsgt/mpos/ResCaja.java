@@ -116,7 +116,6 @@ public class ResCaja extends PBase {
         rnOrdenesNuevos = new Runnable() {
             public void run() {
                 procesaOrdenes();
-
             }
         };
 
@@ -297,7 +296,8 @@ public class ResCaja extends PBase {
                 venta.precio=T_ordencomboprecioObj.first().prectotal;
                 venta.preciodoc=venta.precio;
                 tt=venta.cant*venta.precio;tt=mu.round2(tt);
-                venta.total=oitem.total=tt;
+                venta.total=tt;
+                oitem.total=tt;
             }
 
             //T_ventaObj.add(venta);
@@ -331,7 +331,6 @@ public class ResCaja extends PBase {
 
                 T_ordencomboObj.fill("WHERE (COREL='"+corel+"') AND (IDCOMBO="+oitem.empresa+")");
                 for (int j = 0; j <T_ordencomboObj.count; j++) {
-
                     citem=T_ordencomboObj.items.get(j);
                     combo=clsCls.new clsT_combo();
                     combo.codigo_menu=citem.codigo_menu;
@@ -465,6 +464,9 @@ public class ResCaja extends PBase {
             wsor.execute(rnOrdenesNuevos);
             toastcentlong("Actualizando, espere por favor . . .");
         } catch (Exception e) {
+            app.addToOrdenLog(du.getActDateTime(),
+                    "ResCaja."+new Object(){}.getClass().getEnclosingMethod().getName(),
+                    e.getMessage(),gl.wsurl+"::"+gl.emp+"::"+idmesero);
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
@@ -476,6 +478,14 @@ public class ResCaja extends PBase {
         String s="",corel="",fname;
         int pp,ppe;
         boolean flag=false;
+
+
+        if (wsor.errflag) {
+            toastlong("wsCallBack " + wsor.error);
+            app.addToOrdenLog(du.getActDateTime(),
+                    "ResCaja." + new Object() {}.getClass().getEnclosingMethod().getName(),
+                    wsor.error, gl.wsurl + "::" + gl.emp + "::" + idmesero);
+        }
 
         if (wsor.items.size()==0) {
             return;

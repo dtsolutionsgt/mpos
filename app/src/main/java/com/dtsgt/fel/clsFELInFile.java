@@ -1099,6 +1099,7 @@ public class clsFELInFile {
         String stt=pCorreo;
 
         pCorreo=pCorreo.replace(" ","");
+        if (pCorreo.indexOf(".")<3)  pCorreo="";
         if (pCorreo.indexOf("@")<3)  pCorreo="";
         if (pCorreo.isEmpty())  pCorreo = correo_sucursal;
         if (pCorreo.length()<8) pCorreo = correo_sucursal;

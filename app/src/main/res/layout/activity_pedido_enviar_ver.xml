@@ -6,7 +6,40 @@
         android:layout_height="match_parent"
         tools:context=".PedidoEnviar">
 
-    <TextView
+    <RadioGroup
+        android:id="@+id/rgroup1"
+        android:layout_width="600dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:background="#FFFFFF"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioButton6"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="DOMICILIO"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/radioButton5"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="ENTREGA"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </RadioGroup>
+
+        <TextView
         android:id="@+id/textView200"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -165,8 +198,51 @@
         android:background="@drawable/frame_rect">
 
         <RelativeLayout
+            android:id="@+id/rel04"
+            android:layout_width="100dp"
+            android:layout_height="110dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/frame_btn"
+            android:clickable="true"
+            android:onClick="doReSend">
+
+            <ImageView
+                android:id="@+id/imageView74a"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="24dp"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:src="@drawable/recibir_archivos" />
+
+            <TextView
+                android:id="@+id/textView183a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:gravity="center_horizontal"
+                android:paddingBottom="3dp"
+                android:text="Reenviar"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/rel03"
-            android:layout_width="160dp"
+            android:layout_width="100dp"
             android:layout_height="110dp"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="5dp"
@@ -175,7 +251,7 @@
             android:layout_marginBottom="5dp"
             android:background="@drawable/frame_btn"
             android:clickable="true"
-            android:onClick="doPago">
+            android:onClick="doRePrint">
 
             <ImageView
                 android:id="@+id/imageView74"
@@ -189,7 +265,7 @@
                 android:layout_marginBottom="24dp"
                 android:adjustViewBounds="true"
                 android:padding="2dp"
-                android:src="@drawable/fotos_neg" />
+                android:src="@drawable/btn_print2" />
 
             <TextView
                 android:id="@+id/textView183"
@@ -200,7 +276,7 @@
                 android:layout_marginBottom="0dp"
                 android:gravity="center_horizontal"
                 android:paddingBottom="3dp"
-                android:text="Repetir"
+                android:text="Reimprimir"
                 android:textColor="#000000"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -283,21 +359,4 @@
         android:textStyle="bold"
         android:visibility="invisible" />
 
-    <CheckBox
-        android:id="@+id/checkBox26"
-        android:layout_width="wrap_content"
-        android:layout_height="64dp"
-        android:layout_below="@id/relRoad"
-        android:layout_marginStart="-40dp"
-        android:layout_marginTop="-10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="0dp"
-        android:button="@drawable/checkboxbig"
-        android:gravity="center_horizontal|center_vertical"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:text="  DOMICILIO  "
-        android:textColor="#000000"
-        android:textSize="34sp"
-        android:textStyle="bold" />
 </RelativeLayout>

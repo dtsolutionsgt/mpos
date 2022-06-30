@@ -271,6 +271,7 @@ public class FELVerificacion extends PBase {
 
             fel.mpos_identificador_fact =fact.serie+fact.corelativo;
 
+            //fact.fecha=(long) (2206071000f);
             fel.iniciar(fact.fecha,""+fel.idcontingencia);
             fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
                     fel.fel_nit,fel.fel_nombre_comercial, fel.fel_usuario_firma);

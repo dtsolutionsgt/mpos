@@ -1,7 +1,6 @@
 package com.dtsgt.mant;
 
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -16,13 +15,14 @@ import com.dtsgt.mpos.R;
 public class MantConfigRes extends PBase {
 
     private CheckBox cb101,cb117,cb123,cb124,cb125;
-    private CheckBox cb131, cb132, cb135, cb136, cb137;
+    private CheckBox cb131, cb132, cb135, cb136, cb137, cb142;
     private EditText txt120,txt122,txt127;
     private ImageView imgadd;
 
     private clsP_paramextObj holder;
 
-    private boolean value101,value117,value123,value124,value125,value131,value132,val135,val136,val137;
+    private boolean value101,value117,value123,value124,value125,value131,value132,value135,value136;
+    private boolean value137,value142;
     private double  value120,value127;
     private String  value122;
 
@@ -48,6 +48,7 @@ public class MantConfigRes extends PBase {
         cb136 = findViewById(R.id.chkEnvio20);
         cb135 = findViewById(R.id.chkEnvio21);
         cb137 = findViewById(R.id.chkEnvio25);
+        cb142 = findViewById(R.id.chkEnvio29);
 
         imgadd = (ImageView) findViewById(R.id.imgImg2);
 
@@ -159,33 +160,41 @@ public class MantConfigRes extends PBase {
 
         try {
             holder.fill("WHERE ID="+135);
-            val135 =holder.first().valor.equalsIgnoreCase("S");
+            value135 =holder.first().valor.equalsIgnoreCase("S");
         } catch (Exception e) {
-            val135 =false;
+            value135 =false;
         }
-        cb135.setChecked(val135);
+        cb135.setChecked(value135);
 
         try {
             holder.fill("WHERE ID="+136);
-            val136 =holder.first().valor.equalsIgnoreCase("S");
+            value136 =holder.first().valor.equalsIgnoreCase("S");
         } catch (Exception e) {
-            val136 =false;
+            value136 =false;
         }
-        cb136.setChecked(val136);
+        cb136.setChecked(value136);
 
         try {
             holder.fill("WHERE ID="+137);
-            val137 =holder.first().valor.equalsIgnoreCase("S");
+            value137 =holder.first().valor.equalsIgnoreCase("S");
         } catch (Exception e) {
-            val137 =false;
+            value137 =false;
         }
-        cb137.setChecked(val137);
+        cb137.setChecked(value137);
+
+        try {
+            holder.fill("WHERE ID="+142);
+            value142=holder.first().valor.equalsIgnoreCase("S");
+        } catch (Exception e) {
+            value142 =false;
+        }
+        cb142.setChecked(value142);
 
     }
 
     private void updateItem() {
         String s101="N",s117="S",s120="0",s122="NO APLICA",s123="N",s124="N",s125="N",s127="0",s131="0";
-        String s132="N",s135="N",s136="N",s137="N";
+        String s132="N",s135="N",s136="N",s137="N",s142="N";
         double dval120,dval127;
 
         try {
@@ -217,6 +226,7 @@ public class MantConfigRes extends PBase {
             if (cb135.isChecked()) s135 = "S";
             if (cb136.isChecked()) s136 = "S";
             if (cb137.isChecked()) s137 = "S";
+            if (cb142.isChecked()) s142 = "S";
 
             db.beginTransaction();
 
@@ -233,6 +243,7 @@ public class MantConfigRes extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=135");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=136");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=137");
+            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=142");
 
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (101,'Imprimir orden para la cocina','"+s101+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (117,'Propina fija','"+s117+"')");
@@ -247,6 +258,7 @@ public class MantConfigRes extends PBase {
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (135,'Pide contraseña para ingreso del mesero','"+s135+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (136,'Pide contraseña para ingreso a la caja','"+s136+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (137,'Envia ordenes a la caja','"+s137+"')");
+            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (142,'Actualizar ordenes de mesas','"+s142+"')");
 
             db.setTransactionSuccessful();
             db.endTransaction();

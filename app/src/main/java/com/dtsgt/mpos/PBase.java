@@ -27,7 +27,6 @@ import java.io.FileWriter;
 
 public class PBase extends Activity {
 
-	protected int active;
 	protected SQLiteDatabase db;
 	protected BaseDatos Con;
 	protected BaseDatos.Insert ins;
@@ -252,7 +251,6 @@ public class PBase extends Activity {
 		try {
 			Con.close();
 		} catch (Exception e) { }
-		active= 0;
 	    super.onPause();
 	}
 	
@@ -266,15 +264,11 @@ public class PBase extends Activity {
 			db = Con.getWritableDatabase();
 			if (db!= null) {
 				Con.vDatabase=db;
-                //Con.vDatabase.enableWriteAheadLogging();
-				active=1;
-			} else {
-				active = 0;
+  			} else {
 			}
 	    } catch (Exception e) {
-	    	mu.msgbox(e.getMessage());active= 0;
+	    	//mu.msgbox(e.getMessage());
 	    }
 	}			
-	
-	
+
 }

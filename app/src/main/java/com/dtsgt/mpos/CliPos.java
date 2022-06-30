@@ -438,8 +438,13 @@ public class CliPos extends PBase {
 
             String ss=gl.gNombreCliente;
 
+            if (!hasProducts()) {
+                finish();return;
+            }
+
             if (domicilio) {
-                msgAskOrden("Convertir a órden");
+                crearPedido();
+                //msgAskOrden("Convertir a órden");
             } else {
                 finish();
             }
@@ -605,13 +610,14 @@ public class CliPos extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-
+            /*
             try  {
                 db.execSQL("DELETE FROM T_VENTA");
                 db.execSQL("DELETE FROM T_COMBO");
             } catch (SQLException e){
                 mu.msgbox2("Error : " + e.getMessage());
             }
+           */
 
             menuPedidos();
 

@@ -12,8 +12,8 @@ import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +36,6 @@ import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_D_pedidod;
 import com.dtsgt.webservice.srvCommit;
-import com.dtsgt.webservice.srvPedidoEstado;
 import com.dtsgt.webservice.wsOrdenEnvio;
 
 import java.io.File;
@@ -48,8 +47,8 @@ public class PedidoEnviar extends PBase {
 
     private ListView listView;
     private TextView lblID,lblAnul,lblFecha,lblTiempo,lblPend,lblTot;
-    private RelativeLayout rel2;
-    private CheckBox cbtipo;
+    private RelativeLayout rel2,rel3,rel4;
+    private RadioButton rbDom,rbEnt;
 
     private LA_D_pedidod adapter;
 
@@ -80,22 +79,24 @@ public class PedidoEnviar extends PBase {
     private String pedid,corelfact,cmd="",corelorden,nombrecli,idorden="",ordensql;
     private int est,modo,counter,ordennum,prodlinea;
     private double monto=0;
-    private boolean horiz;
+    private boolean horiz,sendok=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (pantallaHorizontal()) {
-            setContentView(R.layout.activity_pedido_enviar);
+            setContentView(R.layout.activity_pedido_enviar);horiz=true;
         } else {
-            setContentView(R.layout.activity_pedido_enviar_ver);
+            setContentView(R.layout.activity_pedido_enviar_ver);horiz=false;
         }
 
         super.InitBase();
 
         listView = findViewById(R.id.listView1);
-        rel2 = findViewById(R.id.rel02);
+        rel2 = findViewById(R.id.rel02);rel2.setVisibility(View.VISIBLE);
+        rel3 = findViewById(R.id.rel03);rel3.setVisibility(View.INVISIBLE);
+        rel4 = findViewById(R.id.rel04);rel4.setVisibility(View.INVISIBLE);
         lblID = findViewById(R.id.textView190);
         lblAnul = findViewById(R.id.textView191);
         lblFecha = findViewById(R.id.textView193);
@@ -103,7 +104,8 @@ public class PedidoEnviar extends PBase {
         lblPend = findViewById(R.id.textView198);
         lblPend.setVisibility(View.INVISIBLE);
         lblTot = findViewById(R.id.textView200);
-        cbtipo = findViewById(R.id.checkBox26);
+        rbDom = findViewById(R.id.radioButton6);
+        rbEnt = findViewById(R.id.radioButton5);
 
         pedid = gl.pedid;
         gl.closePedido = false;
@@ -144,8 +146,12 @@ public class PedidoEnviar extends PBase {
         msgAsk("Completar orden");
     }
 
-    public void doRetry(View view) {
-        showRetryMenu();
+    public void doRePrint(View view) {
+        msgAskRePrint("Reimprimir comanda");
+    }
+
+    public void doReSend(View view) {
+        msgAskReSend("Reenviar orden");
     }
 
     public void doCliente(View view) {
@@ -350,7 +356,7 @@ public class PedidoEnviar extends PBase {
         int tipo;
 
         try {
-            if (cbtipo.isChecked()) tipo=1;else tipo=0;
+            if (rbDom.isChecked()) tipo=1;else tipo=0;
 
             D_pedidoObj.fill("WHERE Corel='"+pedid+"'");
             item=D_pedidoObj.first();
@@ -358,11 +364,15 @@ public class PedidoEnviar extends PBase {
             corelorden=app.prefijoCaja()+(item.empresa % 1000);
             item.codigo_estado=1;
 
-            cmd=addItemSqlNoImage(item)+ ";";
+            cmd="DELETE FROM D_PEDIDO WHERE COREL='"+pedid+"';";
+            cmd+="DELETE FROM D_PEDIDOD WHERE COREL='"+pedid+"';";
+            cmd+="DELETE FROM D_PEDIDOC WHERE COREL='"+pedid+"';";
+            cmd+="DELETE FROM D_PEDIDOORDEN WHERE COREL='"+pedid+"';";
+
+            cmd+=addItemSqlNoImage(item)+ ";";
 
             ordensql=addOrdenItemSql(corelorden,tipo);
             cmd+=ordensql+ ";";
-
             try {
                 sql=ordensql.replaceAll("<>", "");
                 db.execSQL(sql);
@@ -457,9 +467,14 @@ public class PedidoEnviar extends PBase {
         try {
             if (wsoe.errflag) {
                 msgbox2(" Error conexión a internet : \n"+wsoe.error);
+                rel3.setVisibility(View.VISIBLE);
             } else {
+                sendok=true;
                 broadCast();
-                msgAskExit("Continuar");
+                rel2.setVisibility(View.INVISIBLE);
+                rel3.setVisibility(View.INVISIBLE);
+                rel4.setVisibility(View.VISIBLE);
+                msgAskFinish("Continuar");
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1155,7 +1170,7 @@ public class PedidoEnviar extends PBase {
 
     }
 
-    private void msgAskExit(String msg) {
+    private void msgAskFinish(String msg) {
         try{
 
             ExDialog dialog = new ExDialog(this);
@@ -1164,7 +1179,49 @@ public class PedidoEnviar extends PBase {
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                     finish();
+                    try  {
+                        db.execSQL("DELETE FROM T_VENTA");
+                        db.execSQL("DELETE FROM T_COMBO");
+                    } catch (SQLException e){
+                        mu.msgbox2("Error : " + e.getMessage());
+                    }
+
+                    finish();
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskReturn(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    try  {
+                        if (!sendok) {
+                            db.execSQL("DELETE FROM D_PEDIDO WHERE COREL='" + pedid + "'");
+                            db.execSQL("DELETE FROM D_PEDIDOD WHERE COREL='" + pedid + "'");
+                            db.execSQL("DELETE FROM D_PEDIDOORDEN WHERE COREL='" + pedid + "'");
+                        } else {
+                            db.execSQL("DELETE FROM T_VENTA");
+                            db.execSQL("DELETE FROM T_COMBO");
+                        }
+                    } catch (SQLException e){
+                        mu.msgbox2("Error : " + e.getMessage());
+                    }
+                    finish();
                 }
             });
 
@@ -1197,42 +1254,55 @@ public class PedidoEnviar extends PBase {
         }
     }
 
-    private void showRetryMenu() {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Reimpresion","Envio a caja"};
+    private void msgAskRePrint(String msg) {
+        try{
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("");
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        imprimirOrden();
-                        msgAskExit("Impresión correcta");
-                        break;
-                    case 1:
-                        try {
-                            wsoe.execute(cmd,rnOrdenCallback);
-                        } catch (Exception e) {
-                            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                        }
-                        break;
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    imprimirOrden();
+                    msgAskFinish("Impresión correcta");
                 }
+            });
 
-                dialog.cancel();
-            }
-        });
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
-        Dialog = menudlg.create();
-        Dialog.show();
+    private void msgAskReSend(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+                        wsoe.execute(cmd,rnOrdenCallback);
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
     }
 
     //endregion
@@ -1274,7 +1344,7 @@ public class PedidoEnviar extends PBase {
 
     public void onBackPressed() {
         try {
-            msgAskExit("Salir sin enviar pedido");
+            msgAskReturn("Salir sin enviar pedido");
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }

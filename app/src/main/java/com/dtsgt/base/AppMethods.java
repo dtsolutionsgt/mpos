@@ -23,11 +23,11 @@ import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_orden_logObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
@@ -899,6 +899,18 @@ public class AppMethods {
 			gl.peNoCerrarMesas = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=142";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peActOrdenMesas = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peActOrdenMesas = false;
+		}
     }
 
     public boolean paramCierre(int pid) {
@@ -1627,7 +1639,7 @@ public class AppMethods {
 
     //endregion
 
-    //region Pedidos
+    //region Pedidos / Mesas
 
     public boolean agregaPedido(String fname,String ename,long fa,String cor) {
         File file=null;
@@ -1747,6 +1759,26 @@ public class AppMethods {
 		return val;
 	}
 
+	public void addToOrdenLog(long fecha,String metodo,String error,String nota) {
+		try {
+			clsClasses clsCls = new clsClasses();
+			clsClasses.clsD_orden_log item = clsCls.new clsD_orden_log();
+			clsD_orden_logObj D_orden_logObj=new clsD_orden_logObj(cont,Con,db);
+
+			int newid=D_orden_logObj.newID("SELECT MAX(COREL) FROM D_orden_log");
+
+			item.corel=newid;
+			item.fecha=fecha;
+			item.metodo=metodo;
+			item.error=error;
+			item.nota=nota;
+
+			D_orden_logObj.add(item);
+		} catch (Exception e) {
+			toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
     //endregion
 
     //region Caja
@@ -1797,7 +1829,19 @@ public class AppMethods {
         }
     }
 
-    private void agregarCuenta(String corel) {
+	public void primeraCuenta(String corel) {
+		try {
+			clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
+			T_ordencuentaObj.fill("WHERE (COREL='"+corel+"') ");
+
+			if (T_ordencuentaObj.count==0) agregarCuenta(corel);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+
+	private void agregarCuenta(String corel) {
         try {
             clsClasses clsCls = new clsClasses();
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);

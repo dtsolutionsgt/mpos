@@ -88,7 +88,7 @@
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
                 android:layout_width="605dp"
-                android:layout_height="600dp"
+                android:layout_height="650dp"
                 android:layout_above="@+id/relbotpan"
                 android:layout_below="@+id/relRoad"
                 android:layout_centerHorizontal="true"
@@ -114,6 +114,20 @@
                     android:clickable="true"
                     android:enabled="true" />
 
+                <CheckBox
+                    android:id="@+id/chkEnvio29"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chkEnvio25"
+                    android:layout_alignStart="@+id/chkEnvio8"
+                    android:layout_alignEnd="@+id/chkEnvio8"
+                    android:layout_alignParentBottom="false"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:clickable="true"
+                    android:enabled="true" />
+
                 <TextView
                     android:id="@+id/lblCFact71"
                     android:layout_width="wrap_content"
@@ -128,6 +142,25 @@
                     android:gravity="center_vertical"
                     android:paddingLeft="10dp"
                     android:text="Enviar ordenes a la caja"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/lblCFact75"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_below="@+id/lblCFact71"
+                    android:layout_alignStart="@+id/lblCFact48"
+                    android:layout_alignEnd="@+id/lblCFact48"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/blue_strip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:text="Actualizar ordenes de mesas"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"

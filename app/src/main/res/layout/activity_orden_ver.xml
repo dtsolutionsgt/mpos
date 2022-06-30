@@ -350,7 +350,8 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="false"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="1dp">
+            android:layout_marginTop="1dp"
+            android:focusableInTouchMode="false">
 
             <GridView
                 android:id="@+id/grdFam"
@@ -360,7 +361,9 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
-                android:numColumns="1" />
+                android:clickable="true"
+                android:numColumns="1"
+                android:visibility="visible" />
         </RelativeLayout>
 
         <RelativeLayout

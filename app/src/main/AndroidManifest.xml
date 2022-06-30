@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.2.14">
+    android:versionName="4.2.16">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -40,9 +40,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
-        <activity
-            android:name=".PedidoEnv"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -630,6 +628,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity
+            android:name=".ValidaSuper2"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
             android:name=".SalaDis"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
@@ -715,6 +717,10 @@
             android:name=".PrintView"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".PedidoEnv"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -2574,9 +2574,12 @@ public class Venta extends PBase {
         try{
             gl.closePedido=false;
             browse=9;
-            if (pedidos) startActivity(new Intent(this,Pedidos.class));
-            if (domenvio) {
-                startActivity(new Intent(this,PedidosEnv.class));
+            if (pedidos) {
+                startActivity(new Intent(this,Pedidos.class));
+            } else {
+                if (domenvio) {
+                    startActivity(new Intent(this, PedidosEnv.class));
+                }
             }
         } catch (Exception e){
             //addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -2856,6 +2859,7 @@ public class Venta extends PBase {
 
             menuPedidos();
 
+            /*
             try  {
                 db.execSQL("DELETE FROM T_VENTA");
                 db.execSQL("DELETE FROM T_COMBO");
@@ -2863,6 +2867,8 @@ public class Venta extends PBase {
             } catch (SQLException e){
                 mu.msgbox("Error : " + e.getMessage());
             }
+            */
+
         } catch (Exception e) {
             db.endTransaction();msgbox(e.getMessage());
         }

@@ -138,8 +138,11 @@ public class PedidoEnv extends PBase {
     }
 
     public void doComp(View view) {
+        msgbox("Unicamente el cajero puede marcar orden como completo");
+        /*
         modo=3;
         msgAsk("Marcar como Completo");
+        */
     }
 
     public void doEnt(View view) {
@@ -434,7 +437,7 @@ public class PedidoEnv extends PBase {
             startService(intent);
 
         } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -886,7 +889,7 @@ public class PedidoEnv extends PBase {
             super.wsCallBack(throwing, errmsg);
             agregaDetallePedido();
         } catch (Exception e) {
-            //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            toastlong(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
         wsidle=true;
     }
@@ -900,7 +903,7 @@ public class PedidoEnv extends PBase {
                 "FROM D_PEDIDOD WHERE (COREL='"+pedid+"')";
             ws.openDT(sql);
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             wsidle=true;
         }
     }
@@ -962,12 +965,12 @@ public class PedidoEnv extends PBase {
             } catch (Exception e) {
                 db.endTransaction();
                 String ss=e.getMessage();
-                //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
 
             listItems();
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }

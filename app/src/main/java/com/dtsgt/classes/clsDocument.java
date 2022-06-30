@@ -26,7 +26,7 @@ public class clsDocument {
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
 	public boolean parallevar,factsinpropina,modorest;
 	public long ffecha;
-    public int pendiente,diacred,pagoefectivo;
+    public int pendiente,diacred,pagoefectivo,empid;
 	//#EJC20210705
 	public String TipoCredito, NoAutorizacion;
 	public double ptotal,pdesc,pprop,propvalor,propperc;
@@ -863,7 +863,14 @@ public class clsDocument {
                         felISR=P_fraseObj.first().texto;
                         if (frISR==4) felISR2="Sujeto a pagos trimestrales ISR";
                     } else felISR="";
-                 } else felISR="";
+                } else felISR="";
+
+                switch (empid) {
+                    case 33:
+                        felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                    case 34:
+                        felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                }
 
             } else {
                 textofin="";

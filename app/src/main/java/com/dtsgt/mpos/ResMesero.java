@@ -25,15 +25,20 @@ import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_res_turnoObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
+import com.dtsgt.classes.clsT_ordenpendObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Res_mesa;
+import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
+import com.dtsgt.webservice.wsOpenDT;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ResMesero extends PBase {
 
@@ -48,8 +53,12 @@ public class ResMesero extends PBase {
     private clsT_ordenObj T_ordenObj;
     private clsP_mesero_grupoObj P_mesero_grupoObj;
     private clsP_mesa_nombreObj P_mesa_nombreObj;
+    private clsT_ordenpendObj T_ordenpendObj;
 
     private WebService ws;
+    private wsOpenDT wso;
+
+    private Runnable rnBroadcastCallback;
 
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -62,7 +71,10 @@ public class ResMesero extends PBase {
 
     private int idgrupo,cantpers;
     private String nommes,nmesa,idmesa;
-    private boolean horiz;
+    private boolean horiz,actorden,wsidle=false;
+
+    private TimerTask ptask;
+    private int period=10000,delay=50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,16 +99,25 @@ public class ResMesero extends PBase {
         T_ordenObj=new clsT_ordenObj(this,Con,db);
         P_mesero_grupoObj=new clsP_mesero_grupoObj(this,Con,db);
         P_mesa_nombreObj=new clsP_mesa_nombreObj(this,Con,db);
+        T_ordenpendObj=new clsT_ordenpendObj(this,Con,db);
 
         setHandlers();
         cargaConfig();
         gl.ventalock=false;
 
+        actorden=gl.peActOrdenMesas;
+
         getURL();
         ws=new WebService(ResMesero.this,gl.wsurl);
 
-        if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
+        wso=new wsOpenDT(gl.wsurl);wsidle=true;
+        rnBroadcastCallback = new Runnable() {
+            public void run() {
+                broadcastCallback();
+            }
+        };
 
+        if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
     }
 
     //region Events
@@ -110,7 +131,7 @@ public class ResMesero extends PBase {
     }
 
     public void doRec(View view) {
-        procesaEstadoMesas();
+        //procesaEstadoMesas();
     }
 
     public void doExit(View view) {
@@ -129,8 +150,10 @@ public class ResMesero extends PBase {
                 Object lvObj = gridView.getItemAtPosition(position);
                 mesa = (clsClasses.clsRes_mesa)lvObj;
 
-                adapter.setSelectedIndex(position);
-                abrirOrden();
+                if (wsidle) {
+                    adapter.setSelectedIndex(position);
+                    abrirOrden();
+                } else toast("Actualizando, espere . . .");
             };
         });
 
@@ -158,6 +181,7 @@ public class ResMesero extends PBase {
     //region Main
 
     private void listItems() {
+        clsClasses.clsP_res_sesion last;
         int idmesa;
         String amesa;
 
@@ -176,6 +200,7 @@ public class ResMesero extends PBase {
                 mesa.codigo_mesa=idmesa;
                 mesa.nombre=P_res_mesaObj.items.get(i).nombre;mesa.mesanum=mesa.nombre;
                 mesa.alias=" ";
+                mesa.est_envio=1;
 
                 amesa=aliasMesa(idmesa);
                 if (!amesa.isEmpty()) {
@@ -185,15 +210,23 @@ public class ResMesero extends PBase {
                 P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
 
                 if (P_res_sesionObj.count>0) {
-                    corels.add(P_res_sesionObj.first().id);
 
-                    mesa.estado=P_res_sesionObj.first().estado;
-                    mesa.pers=P_res_sesionObj.first().cantp;
-                    mesa.cuentas=P_res_sesionObj.first().cantc;
-                    mesa.fecha=P_res_sesionObj.first().fechault;
+                    last=P_res_sesionObj.items.get(P_res_sesionObj.count-1);
 
-                    T_ordenObj.fill("WHERE (COREL='"+P_res_sesionObj.first().id+"') AND (ESTADO=1)");
+                    corels.add(last.id);
+
+                    mesa.estado=last.estado;
+                    mesa.pers=last.cantp;
+                    mesa.cuentas=last.cantc;
+                    mesa.fecha=last.fechault;
+                    mesa.idorden=last.id;
+
+                    T_ordenObj.fill("WHERE (COREL='"+last.id+"') AND (ESTADO=1)");
                     mesa.pendiente=T_ordenObj.count;
+
+                    T_ordenpendObj.fill("WHERE GODIGO_ORDEN='"+last.id+"'");
+                    if (T_ordenpendObj.count>0) mesa.est_envio=0;
+
                 } else {
                     mesa.estado=0;
                     mesa.pers=0;
@@ -221,7 +254,8 @@ public class ResMesero extends PBase {
 
             P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
             if (P_res_sesionObj.count>0) {
-                gl.idorden=P_res_sesionObj.first().id;
+                //gl.idorden=P_res_sesionObj.first().id;
+                gl.idorden=mesa.idorden;
                 startActivity(new Intent(this,Orden.class));
             } else {
                 //inputPersonas();
@@ -371,6 +405,124 @@ public class ResMesero extends PBase {
 
     //endregion
 
+    //region Broadcast
+
+    private void broadcastCallback() {
+        wsidle=true;
+        if (wso.errflag) {
+            toastlong("wsCallBack "+wso.error);
+            app.addToOrdenLog(du.getActDateTime(),
+                    "ResMesero."+new Object(){}.getClass().getEnclosingMethod().getName(),wso.error,sql);
+        } else {
+            procesaOrdenes();
+        }
+    }
+
+    private void iniciaOrdenes() {
+        try {
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(ptask=new TimerTask() {
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public synchronized void run() {
+                            recibeOrdenes();
+                        }
+                    });
+                }
+            }, delay, period);
+        } catch (Exception e) { }
+    }
+
+    private void cancelaOrdenes() {
+        try {
+            ptask.cancel();
+        } catch (Exception e) {}
+    }
+
+    private void recibeOrdenes() {
+        if (!wsidle) return;
+
+        try {
+            wsidle=false;
+            sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA " +
+                "FROM T_ORDENCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND " +
+                "((COREL_LINEA=1) OR (COREL_LINEA=99)) " +
+                "ORDER BY COREL_ORDEN,CODIGO";
+            wso.execute(sql,rnBroadcastCallback);
+        } catch (Exception e) {
+            app.addToOrdenLog(du.getActDateTime(),
+                    "ResMesero."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            wsidle=true;
+        }
+    }
+
+    private void procesaOrdenes() {
+        int iid,trtipo;
+        String cor,cmd,del="",ins="";
+
+        try {
+            if (wso.openDTCursor.getCount()==0) {
+                return;
+            }
+
+            wso.openDTCursor.moveToFirst();
+            cmd = "";
+
+            while (!wso.openDTCursor.isAfterLast()) {
+
+                iid = wso.openDTCursor.getInt(0);
+                cor = wso.openDTCursor.getString(1);
+                sql = wso.openDTCursor.getString(2);
+                trtipo = wso.openDTCursor.getInt(3);
+
+                del = "DELETE FROM P_res_sesion WHERE ID='" + cor + "'";
+                ins = sql.replaceAll("<>", "'");
+
+                try {
+                    db.beginTransaction();
+
+                    if (trtipo==1) {
+                        db.execSQL(del);
+                    }
+                    db.execSQL(ins);
+
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+
+                    cmd += "DELETE FROM T_ORDENCOM WHERE CODIGO=" + iid + ";";
+                } catch (Exception e) {
+                    db.endTransaction();
+                    //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage() + "\n" + del + "\n" + ins);
+                    return;
+                }
+
+                wso.openDTCursor.moveToNext();
+            }
+
+            if (!cmd.isEmpty()) confirmaOrdenes(cmd);
+        } catch (Exception e) {
+            //msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+
+        listItems();
+    }
+
+    private void confirmaOrdenes(String cmd) {
+        try {
+            Intent intent = new Intent(ResMesero.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",cmd);
+            startService(intent);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
+    /*
     //region Estado
 
     @Override
@@ -522,6 +674,7 @@ public class ResMesero extends PBase {
     }
 
     //endregion
+    */
 
     //region Aux
 
@@ -988,9 +1141,12 @@ public class ResMesero extends PBase {
             T_ordenObj.reconnect(Con,db);
             P_mesero_grupoObj.reconnect(Con,db);
             P_mesa_nombreObj.reconnect(Con,db);
+            T_ordenpendObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
+
+        if (actorden) iniciaOrdenes();
 
         if (browse==1) {
             browse=0;
@@ -1007,19 +1163,28 @@ public class ResMesero extends PBase {
             if (!gl.peNoCerrarMesas) finish();
         } else {
             listItems();
+            /*
             if (gl.pelMeseroCaja) {
                 procesaEstadoMesas();
             } else {
                 actualizaEstadosOrdenes();
             }
+            */
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        if (actorden) cancelaOrdenes();
+        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
         try{
             //msgAskExit("Salir");
+            if (actorden) cancelaOrdenes();
             app.logoutUser(du.getActDateTime());
             finish();
         } catch (Exception e){

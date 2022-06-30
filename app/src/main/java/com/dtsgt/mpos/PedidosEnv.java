@@ -63,7 +63,7 @@ public class PedidosEnv extends PBase {
         lblNue = (TextView) findViewById(R.id.textView179);lblNue.setText("");
         lblPen = (TextView) findViewById(R.id.textView181);lblPen.setText("");
         lblComp = (TextView) findViewById(R.id.textView182);lblComp.setText("");
-        lblHora = (TextView) findViewById(R.id.textView194);lblHora.setText("Ordenes "+app.prefijoCaja().toUpperCase());
+        lblHora = (TextView) findViewById(R.id.textView194);lblHora.setText("Ordenes "+app.prefijoCaja().replaceAll("-","").toUpperCase());
         lblStat = (TextView) findViewById(R.id.textView199);lblStat.setText("");
         lblPend = (TextView) findViewById(R.id.textView179a);lblPend.setText("");
         img1 = (ImageView) findViewById(R.id.imageView86);img1.setImageResource(R.drawable.blank32);
@@ -277,7 +277,7 @@ public class PedidosEnv extends PBase {
         try {
             wsidle=false;
             sql="SELECT CODIGO,COREL_PEDIDO,COMANDA,COREL_LINEA " +
-                "FROM D_PEDIDOCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") ORDER BY CODIGO";
+                "FROM D_PEDIDOCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") ORDER BY COREL_PEDIDO,CODIGO";
             ws.openDT(sql);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -287,30 +287,44 @@ public class PedidosEnv extends PBase {
 
     private void aplicaEstados() {
         int iid,lin;
-        String cor,cmd,del="",ins="",ord="";
+        String cor,fcor,cmd,del="",delo="",ins="",ord="";
 
-        if (ws.openDTCursor.getCount()==0) return;
+        if (ws.openDTCursor.getCount()==0) {
+            return;
+        }
 
         try {
-            ws.openDTCursor.moveToFirst();cmd="";
+            ws.openDTCursor.moveToFirst();cmd="";fcor="";
 
             while (!ws.openDTCursor.isAfterLast()) {
 
-                iid=ws.openDTCursor.getInt(0);cmd+="DELETE FROM D_PEDIDOCOM WHERE CODIGO="+iid+";";
+                iid=ws.openDTCursor.getInt(0);
                 cor=ws.openDTCursor.getString(1);
                 sql=ws.openDTCursor.getString(2);
                 lin=ws.openDTCursor.getInt(3);
 
+                if (fcor.isEmpty()) {
+                    fcor=cor;
+                }
+                if (!cor.equalsIgnoreCase(fcor)) {
+                    break;
+                };
+
                 if (lin==1) {
                     del="DELETE FROM D_PEDIDO WHERE COREL='"+cor+"'";
                     ins=sql.replaceAll("<>", "'");
+                    delo="";ord="";
                 } else if (lin==2) {
+                    delo="DELETE FROM D_PEDIDOORDEN WHERE COREL='"+cor+"'";
                     ord = sql.replaceAll("<>", "'");
                 } else if (lin==0) {
                     del="DELETE FROM D_PEDIDO WHERE COREL='"+cor+"'";
                     ins=sql.replaceAll("<>", "'");
-                    ord="";
+                    delo="";ord="";
                 }
+
+
+                cmd+="DELETE FROM D_PEDIDOCOM WHERE CODIGO="+iid+";";
 
                 ws.openDTCursor.moveToNext();
             }
@@ -320,25 +334,23 @@ public class PedidosEnv extends PBase {
 
                 db.execSQL(del);
                 db.execSQL(ins);
-                if (!ord.isEmpty()) {
-                    db.execSQL(ord);
-                }
+                if (!delo.isEmpty()) db.execSQL(delo);
+                if (!ord.isEmpty()) db.execSQL(ord);
 
                 db.setTransactionSuccessful();
                 db.endTransaction();
             } catch (Exception e) {
                 db.endTransaction();
                 String ss=e.getMessage();
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage()+"\n"+del+"\n"+ins);
             }
 
             enviaConfirmacion(cmd);
 
             listItems();
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     private void enviaConfirmacion(String cmd) {

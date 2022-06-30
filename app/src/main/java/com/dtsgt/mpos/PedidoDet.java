@@ -143,9 +143,24 @@ public class PedidoDet extends PBase {
     }
 
     public void doComp(View view) {
-        modo=3;
-        msgAsk("Marcar como Completo");
-    }
+        monto=montoPago(pedid);
+        if (monto==0) {
+            msgbox("El orden ya está pagado");
+        } else {
+            modo=3;
+            msgAsk("Marcar como Completo");
+        }
+        /*
+        if (monto>0) {
+            modo=3;
+            msgAsk("Marcar como Completo");
+        } else if (monto==0) {
+            msgAskPago("El orden ya está pagado");
+        } if (monto==-1) {
+            msgbox("No se puede validar estado de pago");
+        }
+        */
+     }
 
     public void doEnt(View view) {
         modo=4;
@@ -153,12 +168,14 @@ public class PedidoDet extends PBase {
     }
 
     public void doPago(View view) {
+        monto=montoPago(pedid);
         if (monto>0) {
             msgAskPago("Aplicar pago de monto "+mu.frmcur(monto)+" ");
-        } else {
+        } else if (monto==0) {
             msgAskPago("Marcar orden como pagado");
+        } if (monto==-1) {
+            msgbox("El orden no está pagado");
         }
-
     }
 
     public void doCliente(View view) {
@@ -334,6 +351,7 @@ public class PedidoDet extends PBase {
         rel3.setVisibility(View.VISIBLE);
         rel4.setVisibility(View.VISIBLE);
         rel5.setVisibility(View.VISIBLE);
+
         /*
         rel3.setVisibility(View.INVISIBLE);
         rel4.setVisibility(View.INVISIBLE);
@@ -344,6 +362,15 @@ public class PedidoDet extends PBase {
         }
         if ((est>=4) && (app.pendientesPago(pedid)==0)) rel5.setVisibility(View.VISIBLE);
         */
+
+        rel3.setVisibility(View.INVISIBLE);
+        rel4.setVisibility(View.INVISIBLE);
+        rel5.setVisibility(View.INVISIBLE);
+        if (est>=1) rel3.setVisibility(View.VISIBLE);
+        if (est>=2) {
+            rel4.setVisibility(View.VISIBLE);rel5.setVisibility(View.VISIBLE);
+        }
+        if (est>=3) rel5.setVisibility(View.VISIBLE);
 
         if (item.empresa>0) lblID.setText("#"+item.empresa % 1000);else lblID.setText("");
         ordennum=item.empresa % 1000;
@@ -356,6 +383,8 @@ public class PedidoDet extends PBase {
             lblTot.setText("Total : "+mu.frmcur(monto));
             if (monto>0) lblPend.setVisibility(View.VISIBLE);
         }
+
+        if (monto>0) lblPend.setVisibility(View.VISIBLE);else lblPend.setVisibility(View.INVISIBLE);
     }
 
     private void estado() {
@@ -480,7 +509,7 @@ public class PedidoDet extends PBase {
             startService(intent);
 
         } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -552,6 +581,8 @@ public class PedidoDet extends PBase {
             }
 
             gl.closePedido=true;
+
+            gl.pedcorel=pedid;
 
             crearTicketEntrega();
 
@@ -932,7 +963,7 @@ public class PedidoDet extends PBase {
             super.wsCallBack(throwing, errmsg);
             agregaDetallePedido();
         } catch (Exception e) {
-            //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            toastlong(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
         wsidle=true;
     }
@@ -1123,16 +1154,32 @@ public class PedidoDet extends PBase {
     }
 
     public double montoPago(String pcor) {
+        double monto,pago;
+
         try {
             sql="SELECT Total,Corel FROM D_FACTURA WHERE PEDCOREL='"+pcor+"'";
             Cursor dt=Con.OpenDT(sql);
 
             dt.moveToFirst();
+            monto=dt.getDouble(0);
             corelfact=dt.getString(1);
-            return dt.getDouble(0);
+
         } catch (Exception e) {
-            return 0;
+            String ee=e.getMessage();
+            return -1;
         }
+
+        try {
+            sql="SELECT Valor FROM D_FACTURAP WHERE COREL='"+corelfact+"'";
+            Cursor dtt=Con.OpenDT(sql);
+
+            dtt.moveToFirst();
+            pago=dtt.getDouble(0);
+        } catch (Exception e) {
+            pago=0;
+        }
+
+        return monto-pago;
     }
 
     private String[] splitByLen(String s, int size) {

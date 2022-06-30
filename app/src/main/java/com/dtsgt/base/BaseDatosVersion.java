@@ -945,12 +945,51 @@ public class BaseDatosVersion {
 
 
         try {
+            db.execSQL("ALTER TABLE P_PRODUCTO ADD CLASIFICACION INTEGER DEFAULT 0");
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [T_ordenpend] ("+
+                    "GODIGO_ORDEN TEXT NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "TIPO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([GODIGO_ORDEN])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [T_ordenerror] ("+
+                    "GODIGO_ORDEN TEXT NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "TIPO INTEGER NOT NULL,"+
+                    "ERROR TEXT NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([GODIGO_ORDEN],[FECHA])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
+            sql="CREATE TABLE [D_orden_log] ("+
+                    "COREL INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "METODO TEXT NOT NULL,"+
+                    "ERROR TEXT NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) {}
+
+        try {
 
         } catch (Exception e) {}
 
         try {
 
         } catch (Exception e) {}
+
     }
 
 	private boolean update01() {

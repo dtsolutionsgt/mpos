@@ -320,6 +320,14 @@ public class clsClasses {
         public int  statcom;
     }
 
+    public class clsD_orden_log {
+        public int  corel;
+        public long fecha;
+        public String metodo;
+        public String error;
+        public String nota;
+    }
+
     public class clsD_pedido {
         public int  empresa;
         public String corel;
@@ -1150,6 +1158,9 @@ public class clsClasses {
         public long fecha;
         public int  pendiente;
         public String alias,mesanum;
+        public int est_envio;
+
+        public String idorden;
     }
 
     public class clsP_res_sesion {
@@ -1303,6 +1314,12 @@ public class clsClasses {
         public int  id;
     }
 
+    public class clsT_orden_nota {
+        public int  id;
+        public String corel;
+        public String nota;
+    }
+
     public class clsT_ordencombo {
         public String corel;
         public int  codigo_menu;
@@ -1329,6 +1346,14 @@ public class clsClasses {
         public String corel;
     }
 
+    public class clsT_ordencom {
+        public int  codigo;
+        public int  codigo_ruta;
+        public String corel_orden;
+        public int  corel_linea;
+        public String comanda;
+    }
+
     public class clsT_ordencuenta {
         public String corel;
         public int  id;
@@ -1348,10 +1373,18 @@ public class clsClasses {
         public double prectotal;
     }
 
-    public class clsT_orden_nota {
-        public int  id;
-        public String corel;
-        public String nota;
+    public class clsT_ordenerror {
+        public String godigo_orden;
+        public long fecha;
+        public int  tipo;
+        public String error;
+        public int  estado;
+    }
+
+    public class clsT_ordenpend {
+        public String godigo_orden;
+        public long fecha;
+        public int  tipo;
     }
 
     public class clsT_venta {
