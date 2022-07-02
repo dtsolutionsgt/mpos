@@ -1746,9 +1746,12 @@ public class Menu extends PBase {
 
 					gl.titReport = ss;
 
+					//msgbox("Caja 1");
+
 					if(valida()){
 
-						if(gl.cajaid!=2){
+						if (gl.cajaid!=2) {
+							//msgbox("Caja 2");
 							gl.inicio_caja_correcto =false;
 							browse=1;
 							startActivity(new Intent(Menu.this,Caja.class));
@@ -1757,6 +1760,7 @@ public class Menu extends PBase {
 						}
 
 					} else {
+						//msgbox("Caja 3");
 						String txt="";
 
 						if(gl.cajaid==0 || gl.cajaid==2) txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";

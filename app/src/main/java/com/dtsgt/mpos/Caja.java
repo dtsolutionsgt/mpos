@@ -95,6 +95,8 @@ public class Caja extends PBase {
 
         if (gl.cajaid==1){ //Inicio de Caja
 
+            //msgbox("Inicio caja");
+
             lblMontoFin.setVisibility(View.INVISIBLE);
             MontoFin.setVisibility(View.INVISIBLE);
             MontoIni.requestFocus();
@@ -102,7 +104,7 @@ public class Caja extends PBase {
             validacionesInicio();
 
         } else if(gl.cajaid==3) { // Cierre de Caja
-
+            //msgbox("Cierre caja");
             try {
                 clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
                 caja.fill(" WHERE ESTADO=0 ORDER BY COREL");
@@ -129,6 +131,8 @@ public class Caja extends PBase {
         setHandlers();
 
         validaFacturas();
+
+        msgbox("Caja - OK");
     }
 
     //region Events
