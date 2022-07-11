@@ -30,6 +30,7 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.ladapt.LA_Res_mesa;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
+import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
 import java.io.BufferedReader;
@@ -57,8 +58,9 @@ public class ResMesero extends PBase {
 
     private WebService ws;
     private wsOpenDT wso;
+    private wsCommit wscom;
 
-    private Runnable rnBroadcastCallback;
+    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback;
 
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -69,8 +71,8 @@ public class ResMesero extends PBase {
     private ArrayList<clsClasses.clsRes_mesa> mesas= new ArrayList<clsClasses.clsRes_mesa>();
     private clsClasses.clsRes_mesa mesa= clsCls.new clsRes_mesa();
 
-    private int idgrupo,cantpers;
-    private String nommes,nmesa,idmesa;
+    private int idgrupo,cantpers,numorden,codigomesa;
+    private String nommes,nmesa,idmesa,corcorel;
     private boolean horiz,actorden,wsidle=false;
 
     private TimerTask ptask;
@@ -110,10 +112,25 @@ public class ResMesero extends PBase {
         getURL();
         ws=new WebService(ResMesero.this,gl.wsurl);
 
+        wscom =new wsCommit(gl.wsurl);
+
+        rnCorelPutCallback = new Runnable() {
+            public void run() {
+                PutCorelCallback();
+            }
+        };
+
         wso=new wsOpenDT(gl.wsurl);wsidle=true;
+
         rnBroadcastCallback = new Runnable() {
             public void run() {
                 broadcastCallback();
+            }
+        };
+
+        rnCorelGetCallback = new Runnable() {
+            public void run() {
+                GetCorelCallback();
             }
         };
 
@@ -132,9 +149,14 @@ public class ResMesero extends PBase {
 
     public void doRec(View view) {
         //procesaEstadoMesas();
+        recibeOrdenes();
     }
 
     public void doExit(View view) {
+        if (!wsidle) {
+            toast("Actualizando , espere por favor . . .");return;
+        }
+
         if (gl.meserodir) {
             msgAskExit("Salir");
         } else {
@@ -184,6 +206,7 @@ public class ResMesero extends PBase {
         clsClasses.clsP_res_sesion last;
         int idmesa;
         String amesa;
+        boolean espedido;
 
         try {
             corels.clear();
@@ -194,6 +217,7 @@ public class ResMesero extends PBase {
             for (int i = 0; i <P_res_mesaObj.count; i++) {
 
                 idmesa=P_res_mesaObj.items.get(i).codigo_mesa;
+                espedido=app.esmesapedido(gl.emp,""+P_res_mesaObj.items.get(i).codigo_grupo);
 
                 mesa= clsCls.new clsRes_mesa();
 
@@ -201,6 +225,8 @@ public class ResMesero extends PBase {
                 mesa.nombre=P_res_mesaObj.items.get(i).nombre;mesa.mesanum=mesa.nombre;
                 mesa.alias=" ";
                 mesa.est_envio=1;
+                mesa.numorden="";
+                mesa.idgrupo=P_res_mesaObj.items.get(i).codigo_grupo;
 
                 amesa=aliasMesa(idmesa);
                 if (!amesa.isEmpty()) {
@@ -220,6 +246,8 @@ public class ResMesero extends PBase {
                     mesa.cuentas=last.cantc;
                     mesa.fecha=last.fechault;
                     mesa.idorden=last.id;
+
+                    if (espedido) mesa.numorden="#"+last.cantc;
 
                     T_ordenObj.fill("WHERE (COREL='"+last.id+"') AND (ESTADO=1)");
                     mesa.pendiente=T_ordenObj.count;
@@ -251,6 +279,7 @@ public class ResMesero extends PBase {
             gl.mesa_grupo=idgrupo;
             gl.mesa_alias=aliasMesa(mesa.codigo_mesa);
             gl.mesanom=mesa.mesanum;
+            codigomesa=mesa.codigo_mesa;
 
             P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
             if (P_res_sesionObj.count>0) {
@@ -260,6 +289,7 @@ public class ResMesero extends PBase {
             } else {
                 //inputPersonas();
                 browse=1;
+                gl.idorden="";
                 startActivity(new Intent(this,Comensales.class));
             }
         } catch (Exception e) {
@@ -274,11 +304,11 @@ public class ResMesero extends PBase {
             clsClasses.clsP_res_sesion item = clsCls.new clsP_res_sesion();
 
             item.id=gl.codigo_ruta+"_"+mu.getCorelBase();
-            item.codigo_mesa=mesa.codigo_mesa;
+            item.codigo_mesa=codigomesa;
             item.vendedor=gl.idmesero;
             item.estado=1;
             item.cantp=cantpers;
-            item.cantc=1;
+            item.cantc=numorden;
             item.fechaini=du.getActDateTime();
             item.fechafin=0;
             item.fechault=du.getActDateTime();
@@ -522,6 +552,68 @@ public class ResMesero extends PBase {
 
     //endregion
 
+    //region Corel global
+
+    private void agregaOrden() {
+        numorden=0;
+
+        boolean espedido=app.esmesapedido(gl.emp,""+mesa.idgrupo);
+
+        if (!espedido) {
+            addOrden();return;
+        }
+
+        corcorel=gl.codigo_ruta+"_"+mu.getCorelBase();
+
+        try{
+            sql="INSERT INTO D_ORDEN_COREL (CODIGO_SUCURSAL,COREL,ID) " +
+                "SELECT "+gl.tienda+",ISNULL(MAX(COREL)+1,1),'"+corcorel+"' " +
+                "FROM D_ORDEN_COREL WHERE CODIGO_SUCURSAL="+gl.tienda;
+            wscom.execute(sql,rnCorelPutCallback);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void PutCorelCallback() {
+        try {
+            if (wso.errflag) {
+                toastlong("1. No se pudo asignar numero de orden\n"+wso.error);
+                addOrden();return;
+            }
+
+            sql="SELECT MAX(COREL) FROM D_ORDEN_COREL WHERE ID='"+corcorel+"'";
+            wso.execute(sql,rnCorelGetCallback);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void GetCorelCallback() {
+        try {
+            if (wso.errflag) {
+                toastlong("2. No se pudo asignar numero de orden\n"+wso.error);
+                addOrden();return;
+            }
+
+            if (wso.openDTCursor.getCount() == 0) {
+                toastlong("3. No se pudo asignar numero de orden");
+                addOrden();return;
+            }
+
+            wso.openDTCursor.moveToFirst();
+            numorden = wso.openDTCursor.getInt(0);
+            numorden=numorden % 1000;
+
+            toastlong("Numero : "+numorden);
+            addOrden();
+        } catch (Exception e) {
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+    }
+
+    //endregion
+
     /*
     //region Estado
 
@@ -744,8 +836,8 @@ public class ResMesero extends PBase {
         try {
             cantpers=gl.comensales;
             if (cantpers<1 | cantpers>50) throw new Exception();
-            addOrden();
-        } catch (Exception e) {
+            agregaOrden();
+       } catch (Exception e) {
             mu.msgbox("Cantidad incorrecta");return;
         }
     }
@@ -923,6 +1015,11 @@ public class ResMesero extends PBase {
 
                         gl.exitflag=true;
                         gl.cliposflag=false;
+
+                        if (!wsidle) {
+                            toast("Actualizando , espere por favor . . .");return;
+                        }
+
                         finish();
                     } catch (Exception e) {
                         db.endTransaction();
@@ -975,7 +1072,11 @@ public class ResMesero extends PBase {
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                   app.logoutUser(du.getActDateTime());
+                    if (!wsidle) {
+                        toast("Actualizando , espere por favor . . .");return;
+                    }
+
+                    app.logoutUser(du.getActDateTime());
                    finish();
                 }
             });
@@ -1016,37 +1117,6 @@ public class ResMesero extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-    }
-
-    private void inputPersonas() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("Mesa "+mesa.nombre+" , cantidad de personas :");
-
-        final EditText input = new EditText(this);
-        alert.setView(input);
-
-        input.setInputType(InputType.TYPE_CLASS_NUMBER );
-        input.setText("2");
-        input.requestFocus();
-
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    cantpers=Integer.parseInt(input.getText().toString());
-                    if (cantpers<1 | cantpers>50) throw new Exception();
-                    addOrden();
-                } catch (Exception e) {
-                    mu.msgbox("Valor incorrecto");return;
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
-        alert.show();
     }
 
     private void opcionesMesa() {
@@ -1146,7 +1216,10 @@ public class ResMesero extends PBase {
             msgbox(e.getMessage());
         }
 
-        if (actorden) iniciaOrdenes();
+        if (actorden) {
+            //recibeOrdenes();
+            iniciaOrdenes();
+        }
 
         if (browse==1) {
             browse=0;
@@ -1160,7 +1233,11 @@ public class ResMesero extends PBase {
         }
 
         if (gl.cerrarmesero) {
-            if (!gl.peNoCerrarMesas) finish();
+            if (!gl.peNoCerrarMesas) {
+                if (!wsidle) {
+                    toast("Actualizando , espere por favor . . .");return;
+                }finish();
+            }
         } else {
             listItems();
             /*
@@ -1182,6 +1259,10 @@ public class ResMesero extends PBase {
 
     @Override
     public void onBackPressed() {
+        if (!wsidle) {
+            toast("Actualizando , espere por favor . . .");return;
+        }
+
         try{
             //msgAskExit("Salir");
             if (actorden) cancelaOrdenes();

@@ -1805,6 +1805,23 @@ public class AppMethods {
         }
     }
 
+	public boolean esmesapedido(int idemp,String idgrupomesa) {
+		boolean rslt=false;
+		int idgrupo;
+
+		try {
+			idgrupo=Integer.parseInt(idgrupomesa);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+
+		if (idemp==31) {
+			if (idgrupo==27) rslt=true;
+		}
+
+		return rslt;
+	}
+
 
     //endregion
 

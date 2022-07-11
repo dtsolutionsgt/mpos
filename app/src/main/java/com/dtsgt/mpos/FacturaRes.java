@@ -852,7 +852,11 @@ public class FacturaRes extends PBase {
 			if (app.impresora()) {
 
 			    fdoc.impresionorden=gl.pelOrdenComanda;
-			    fdoc.parallevar=gl.parallevar;
+				fdoc.parallevar=gl.parallevar;
+				if (!gl.nummesapedido.equalsIgnoreCase("0")) {
+					fdoc.impresionorden=true;
+					fdoc.parallevar=true;
+				}
 			    fdoc.factsinpropina=gl.peFactSinPropina;
 			    fdoc.propperc=gl.pePropinaPerc;
                 fdoc.modorest=gl.peRest;
@@ -983,8 +987,8 @@ public class FacturaRes extends PBase {
 			ins.add("CORELATIVO",fcorel);
 			ins.add("IMPRES",0);
 
-            ins.add("ADD1",gl.ref1);
-            ins.add("ADD2",gl.ref2);
+			if (gl.nummesapedido.equalsIgnoreCase("0")) ins.add("ADD1",gl.ref1);else  ins.add("ADD1",gl.nummesapedido);
+		    ins.add("ADD2",gl.ref2);
             if (pendiente) ins.add("ADD3","P"); else ins.add("ADD3","");
 
 			ins.add("DEPOS",false);
@@ -3218,15 +3222,17 @@ public class FacturaRes extends PBase {
     }
 
 	private void completaEstadoOrden() {
+
+		try {
+			db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
 		if (!gl.peActOrdenMesas) return;
 		if (!todasCuentasPagadas()) return;
 
 		try {
-			try {
-				db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
-			} catch (SQLException ee) {
-				String ss=ee.getMessage();
-			}
 			broadcastJournalFlag(99);
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

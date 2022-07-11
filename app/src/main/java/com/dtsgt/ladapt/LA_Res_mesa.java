@@ -80,6 +80,7 @@ public class LA_Res_mesa  extends BaseAdapter {
                 holder.lbl1 = convertView.findViewById(R.id.lblV1);
                 holder.lbl5 = convertView.findViewById(R.id.lblV5);
                 holder.lbl6 = convertView.findViewById(R.id.textView270);
+                holder.lbl7 = convertView.findViewById(R.id.textView272);
                 holder.img1 =  convertView.findViewById(R.id.imageView97);
                 holder.img2 =  convertView.findViewById(R.id.imageView130);
                 holder.rel1 =  convertView.findViewById(R.id.relcolor);
@@ -94,6 +95,7 @@ public class LA_Res_mesa  extends BaseAdapter {
 
             holder.lbl1.setText(""+items.get(position).nombre);
             holder.lbl6.setText(""+items.get(position).alias);
+            holder.lbl7.setText(items.get(position).numorden);
             holder.img1.setImageResource(R.drawable.blank48);
             holder.img1.setVisibility(View.INVISIBLE);
 
@@ -104,7 +106,7 @@ public class LA_Res_mesa  extends BaseAdapter {
 
             } else {
                 holder.lbl5.setText(""+du.shora(items.get(position).fecha));
-                holder.rel1.setBackgroundColor(Color.WHITE);
+                 holder.rel1.setBackgroundColor(Color.WHITE);
 
                 switch (est) {
                     case 1:
@@ -144,7 +146,7 @@ public class LA_Res_mesa  extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl1,lbl5,lbl6;
+        TextView lbl1,lbl5,lbl6,lbl7;
         ImageView img1,img2;
         RelativeLayout rel1;
     }

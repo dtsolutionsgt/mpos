@@ -69,9 +69,10 @@ public class LA_ResCaja extends BaseAdapter {
             convertView = l_Inflater.inflate(R.layout.lv_res_caja, null);
             holder = new ViewHolder();
 
-            holder.lbl2 = (TextView) convertView.findViewById(R.id.lblV2);
-            holder.lbl4 = (TextView) convertView.findViewById(R.id.lblV4);
-            holder.lbl5 = (TextView) convertView.findViewById(R.id.lblV5);
+            holder.lbl2 = convertView.findViewById(R.id.lblV2);
+            holder.lbl4 = convertView.findViewById(R.id.lblV4);
+            holder.lbl5 = convertView.findViewById(R.id.lblV5);
+            holder.lbl6 = convertView.findViewById(R.id.textView273);
             holder.img1 =  convertView.findViewById(R.id.imageView102);
 
             convertView.setTag(holder);
@@ -82,6 +83,7 @@ public class LA_ResCaja extends BaseAdapter {
         holder.lbl2.setText(""+items.get(position).f2);
         holder.lbl4.setText(""+items.get(position).f4);
         holder.lbl5.setText(""+items.get(position).pk);
+        holder.lbl6.setText(""+items.get(position).f7);
 
         holder.img1.setImageResource(R.drawable.mesa_ocupada);
         if (items.get(position).f3.equalsIgnoreCase("2")) {
@@ -102,7 +104,7 @@ public class LA_ResCaja extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl2,lbl4,lbl5;
+        TextView lbl2,lbl4,lbl5,lbl6;
         ImageView img1;
     }
 

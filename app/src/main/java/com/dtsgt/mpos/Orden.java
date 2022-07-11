@@ -139,10 +139,10 @@ public class Orden extends PBase {
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
     private boolean enviarorden,actorden,modo_emerg;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
-    private boolean prodflag=true,listflag=true,horiz,wsoidle=true;
+    private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2;
     private String idorden,cliid,saveprodid, brtcorel;
-    private int famid = -1,statenv,estado_modo,brtid;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +174,9 @@ public class Orden extends PBase {
         emp=gl.emp;
         gl.nivel_sucursal=nivelSucursal();
         gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
+
+        //msgbox("id orden "+gl.idorden);
+
         idorden=gl.idorden;
         gl.ordcorel=gl.idorden;
 
@@ -1999,11 +2002,25 @@ public class Orden extends PBase {
                 rep.empty();
                 rep.empty();
                 rep.empty();
-                rep.add("ORDEN : "+ordennum);
-                rep.add("MESA : "+mesa);
-                if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
-                rep.add("Hora : "+du.shora(du.getActDateTime()));
-                rep.add("Mesero : "+gl.nombre_mesero_sel);
+
+                //ordenpedido=numpedido>0;
+
+                if (ordenpedido) {
+                    rep.add("ORDEN : #"+numpedido);
+                    rep.empty();
+                    if (numpedido==0) rep.add("MESA : "+mesa);
+                    if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
+                    rep.add("Hora : "+du.shora(du.getActDateTime()));
+                    rep.add("Mesero : "+gl.nombre_mesero_sel);
+                } else {
+                    rep.add("ORDEN : "+ordennum);
+                    rep.empty();
+                    rep.add("MESA : "+mesa);
+                    if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
+                    rep.add("Hora : "+du.shora(du.getActDateTime()));
+                    rep.add("Mesero : "+gl.nombre_mesero_sel);
+                }
+
 
                 rep.line24();
 
@@ -2035,6 +2052,7 @@ public class Orden extends PBase {
                 rep.line24();
                 rep.add("");
                 if (gl.mesa_grupo==19) rep.add("PARA LLEVAR");
+                if (ordenpedido) rep.add("PARA LLEVAR");
                 rep.add("");rep.add("");
 
                 ln=rep.items.size();
@@ -3101,6 +3119,15 @@ public class Orden extends PBase {
 
         app.primeraCuenta(idorden);
 
+        try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            numpedido=P_res_sesionObj.first().cantc;
+        } catch (Exception e) {
+            numpedido=0;
+        }
+        ordenpedido=numpedido>0;
+
     }
 
     private void nombreMesa() {
@@ -3434,11 +3461,18 @@ public class Orden extends PBase {
     public void agregarCuenta() {
         try {
 
+            msgbox("agregar cuenta");
+
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
 
+            sql="SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+idorden+"')";
+            msgbox(sql);
             int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+idorden+"')");
+
             cantcuentas=newcid;
+
+            msgbox("  cuenta 1");
 
             cuenta.corel=idorden;
             cuenta.id=newcid;
@@ -3448,9 +3482,15 @@ public class Orden extends PBase {
             cuenta.direccion="Ciudad";
             cuenta.correo="";
 
+            msgbox("  cuenta 2");
+
             T_ordencuentaObj.add(cuenta);
 
+            msgbox("  cuenta 3");
+
             asignaCuenta(newcid);
+
+            msgbox("  cuenta 4");
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

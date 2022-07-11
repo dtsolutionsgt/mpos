@@ -1161,6 +1161,8 @@ public class clsClasses {
         public int est_envio;
 
         public String idorden;
+        public String numorden;
+        public int idgrupo;
     }
 
     public class clsP_res_sesion {

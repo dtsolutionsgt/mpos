@@ -1302,12 +1302,12 @@ public class Venta extends PBase {
                 //#EJC20210705: Agregué validación de propina por media_pago.
                 gl.delivery = hasProductsDelivery();
                 gl.EsNivelPrecioDelivery = (gl.delivery || gl.pickup);
+                if (gl.EsVentaDelivery) gl.EsNivelPrecioDelivery=true;
             } catch (Exception e){
                 gridViewOpciones.setEnabled(true);
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                 mu.msgbox("finishOrder: "+e.getMessage());
             }
-
 
             if (gl.codigo_cliente==0) {
                 toast("Falta definir cliente");

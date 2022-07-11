@@ -17,7 +17,7 @@ public class appGlobals extends Application {
 			ayudanteID, vehiculo, vehiculoID;
 	public String bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel,CodDev,tipoprodcod;
 	public int prodcod,prodmenu,itemid,gint,tipo,nivel,nivel_sucursal,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
-	public boolean EsNivelPrecioDelivery = false;
+	public boolean EsVentaDelivery,EsNivelPrecioDelivery = false;
 	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid;
 	public long nuevaFecha,atentini,lastDate;
 	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp,fondoCaja,FinMonto;
@@ -36,7 +36,7 @@ public class appGlobals extends Application {
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo ;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
-                corelmov, linea_sel="",mesa_alias;
+                corelmov, linea_sel="",mesa_alias,nummesapedido;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,caja_est_pago,nom_alm,nom_alm2;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,

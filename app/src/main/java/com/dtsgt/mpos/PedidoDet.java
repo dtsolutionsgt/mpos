@@ -340,11 +340,19 @@ public class PedidoDet extends PBase {
         if (item.anulado==1) est=0;
          */
 
+        /*
         if (est==0) rel1.setBackgroundResource(R.drawable.frame_stat);
         if (est==1) rel2.setBackgroundResource(R.drawable.frame_stat);
         if (est==2) rel3.setBackgroundResource(R.drawable.frame_stat);
         if (est==3) rel4.setBackgroundResource(R.drawable.frame_stat);
         if (est==4) rel5.setBackgroundResource(R.drawable.frame_stat);
+         */
+
+        if (est==0) rel1.setBackgroundResource(R.drawable.frame_stat);
+        if (est==1) rel2.setBackgroundResource(R.drawable.frame_stat);
+        if (est==2) rel3.setBackgroundResource(R.drawable.frame_stat);
+        if (est==3) rel4.setBackgroundResource(R.drawable.frame_stat);
+        if (est>=4) rel5.setBackgroundResource(R.drawable.frame_stat);
 
         rel1.setVisibility(View.VISIBLE);
         rel2.setVisibility(View.VISIBLE);
