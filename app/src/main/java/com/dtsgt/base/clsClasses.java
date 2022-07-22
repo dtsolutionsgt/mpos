@@ -811,6 +811,14 @@ public class clsClasses {
 		public double cambio;
 	}
 
+    public class clsP_nivelpreciolist {
+        public String codigo;
+        public int  nivel;
+        public String nombre;
+        public double precio;
+        public String unidadmedida;
+    }
+
     public class clsP_nivelprecio_sucursal {
         public int  codigo_nivel_sucursal;
         public int  codigo_empresa;
@@ -865,13 +873,11 @@ public class clsClasses {
         public boolean  utiliza_stock;
     }
 
-    public class clsP_nivelpreciolist {
-        public String codigo;
-        public int  nivel;
-        public String nombre;
-        public double precio;
-        public String unidadmedida;
-	}
+    public class clsP_prodclasifmodif {
+        public int  codigo_clasificacion;
+        public int  empresa;
+        public int  codigo_grupo;
+    }
 
     public class clsP_prodmenu {
         public int  codigo_menu;
@@ -1161,6 +1167,8 @@ public class clsClasses {
         public int est_envio;
 
         public String idorden;
+        public String numorden;
+        public int idgrupo;
     }
 
     public class clsP_res_sesion {

@@ -1,11 +1,13 @@
 package com.dtsgt.mpos;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -26,6 +29,7 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsOrden;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsBonFiltro;
 import com.dtsgt.classes.clsBonif;
 import com.dtsgt.classes.clsBonifGlob;
@@ -33,11 +37,13 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsDeGlob;
 import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
+import com.dtsgt.classes.clsListaObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
+import com.dtsgt.classes.clsP_prodclasifmodifObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_rutaObj;
@@ -88,6 +94,7 @@ public class Orden extends PBase {
     private clsClasses.clsT_orden oitem;
     private clsClasses.clsP_res_sesion rsitem;
     private Precio prc;
+    private clsListaObj ViewObj;
 
     private ListAdaptMenuOrden adaptergrid;
     private ListAdaptMenuVenta adapterb;
@@ -135,14 +142,14 @@ public class Orden extends PBase {
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
-    private int nivel,dweek,clidia,counter,prodlinea,cuenta;
+    private int nivel,dweek,clidia,counter,prodlinea,cuenta,idcuentamov;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
     private boolean enviarorden,actorden,modo_emerg;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
-    private boolean prodflag=true,listflag=true,horiz,wsoidle=true;
+    private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2;
     private String idorden,cliid,saveprodid, brtcorel;
-    private int famid = -1,statenv,estado_modo,brtid;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,11 +176,15 @@ public class Orden extends PBase {
         T_comboObj = new clsT_comboObj(this, Con, db);
         P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
         P_nivelprecioObj.fill("ORDER BY Nombre");
+        ViewObj=new clsListaObj(this,Con,db);
 
         gl.scancliente="";
         emp=gl.emp;
         gl.nivel_sucursal=nivelSucursal();
         gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
+
+        //msgbox("id orden "+gl.idorden);
+
         idorden=gl.idorden;
         gl.ordcorel=gl.idorden;
 
@@ -358,11 +369,16 @@ public class Orden extends PBase {
                         }
 
                         statenv=(int) item.percep;
+                        gl.idmodgr=codigoModificador(app.codigoProducto(gl.prodid));
 
                         if (item.estado==1) {
                             showItemPopMenu();
                         } else {
-                            showItemPopMenuLock();
+                            if (gl.emp!=31)  {
+                                showItemPopMenuLock();
+                            } else {
+                                showItemPopMenuLockCeleste();
+                            }
                         }
                     } catch (Exception e) {
                         mu.msgbox( e.getMessage());
@@ -372,22 +388,18 @@ public class Orden extends PBase {
                 }
             });
 
-            try {
-                txtbarra.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-                            barcode=txtbarra.getText().toString();
-                            if (!barcode.isEmpty()) addBarcode();
-                            return true;
-                        } else {
-                            return false;
-                        }
+            txtbarra.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                        barcode=txtbarra.getText().toString();
+                        if (!barcode.isEmpty()) addBarcode();
+                        return true;
+                    } else {
+                        return false;
                     }
-                });
-            } catch (Exception e) {
-
-            }
+                }
+            });
 
             grdfam.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -1393,7 +1405,9 @@ public class Orden extends PBase {
 
             envioMesa(-1);
 
-            if (actorden)  broadcastJournalFlag(99);
+            P_res_sesionObj.update(sess);
+
+            if (actorden)  broadcastJournalFlagAll(99);
 
             if (modo>0) {
                 msgAskExit("La mesa fue pagada");
@@ -1999,11 +2013,25 @@ public class Orden extends PBase {
                 rep.empty();
                 rep.empty();
                 rep.empty();
-                rep.add("ORDEN : "+ordennum);
-                rep.add("MESA : "+mesa);
-                if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
-                rep.add("Hora : "+du.shora(du.getActDateTime()));
-                rep.add("Mesero : "+gl.nombre_mesero_sel);
+
+                //ordenpedido=numpedido>0;
+
+                if (ordenpedido) {
+                    rep.add("ORDEN : #"+numpedido);
+                    rep.empty();
+                    if (numpedido==0) rep.add("MESA : "+mesa);
+                    if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
+                    rep.add("Hora : "+du.shora(du.getActDateTime()));
+                    rep.add("Mesero : "+gl.nombre_mesero_sel);
+                } else {
+                    rep.add("ORDEN : "+ordennum);
+                    rep.empty();
+                    rep.add("MESA : "+mesa);
+                    if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
+                    rep.add("Hora : "+du.shora(du.getActDateTime()));
+                    rep.add("Mesero : "+gl.nombre_mesero_sel);
+                }
+
 
                 rep.line24();
 
@@ -2035,6 +2063,7 @@ public class Orden extends PBase {
                 rep.line24();
                 rep.add("");
                 if (gl.mesa_grupo==19) rep.add("PARA LLEVAR");
+                if (ordenpedido) rep.add("PARA LLEVAR");
                 rep.add("");rep.add("");
 
                 ln=rep.items.size();
@@ -2288,6 +2317,51 @@ public class Orden extends PBase {
         }
     }
 
+    private void envioOrdenDestino(String idordendest) {
+        String cmd="";
+
+        if (modo_emerg) return;
+
+        try {
+
+            cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idordendest + "')" + ";";
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idordendest + "')" + ";";
+            cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idordendest + "')" + ";";
+
+            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+            P_res_sesionObj.fill("WHERE ID='" + idordendest + "'");
+            cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+
+            clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
+            T_ordenObj.fill("WHERE (COREL='" + idordendest + "')");
+            for (int i = 0; i < T_ordenObj.count; i++) {
+                cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
+            }
+
+            clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
+            T_ordencuentaObj.fill("WHERE (COREL='" + idordendest + "')");
+            for (int i = 0; i < T_ordencuentaObj.count; i++) {
+                cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
+            }
+
+            cmd+=buildDetailJournalTodasCajas();
+
+            try {
+                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                app.addToOrdenLog(du.getActDateTime(),
+                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 
@@ -2443,6 +2517,51 @@ public class Orden extends PBase {
 
     }
 
+    private void broadcastJournalFlagAll(int flag) {
+        clsClasses.clsT_ordencom pitem;
+        int idruta;
+
+        try {
+
+            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+            P_rutaObj.fill();
+
+            String cmd="";
+
+            for (int i = 0; i <P_rutaObj.count; i++) {
+
+                idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+                pitem= clsCls.new clsT_ordencom();
+
+                pitem.codigo_ruta=idruta;
+                pitem.corel_orden=idorden;
+                pitem.corel_linea=flag;
+                pitem.comanda="";
+
+                if (flag==99) pitem.comanda=updItemSqlAndroid();
+
+                cmd+=addItemSqlOrdenCom(pitem) + ";";
+
+            }
+
+            try {
+                Intent intent = new Intent(Orden.this, srvCommit.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                app.addToOrdenLog(du.getActDateTime(),
+                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
+            }
+
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
     private String buildDetailJournal() {
         clsClasses.clsT_ordencom pitem;
         int idruta;
@@ -2479,6 +2598,49 @@ public class Orden extends PBase {
 
                     ss+=addItemSqlOrdenCom(pitem) + ";";
                 }
+
+            }
+
+            return ss;
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return "";
+        }
+    }
+
+    private String buildDetailJournalTodasCajas() {
+        clsClasses.clsT_ordencom pitem;
+        int idruta;
+        String ss="";
+
+        try {
+
+            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+            P_rutaObj.fill();
+
+            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+            P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
+            rsitem=P_res_sesionObj.first();
+
+            for (int i = 0; i <P_rutaObj.count; i++) {
+
+                idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+                pitem= clsCls.new clsT_ordencom();
+
+                pitem.codigo_ruta=idruta;
+                pitem.corel_orden=idorden;
+                pitem.corel_linea=1;
+                pitem.comanda=addItemSqlAndroid(rsitem,gl.emp);
+
+                ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                pitem.codigo_ruta=idruta;
+                pitem.corel_orden=idorden;
+                pitem.corel_linea=2;
+                pitem.comanda="";
+
+                ss+=addItemSqlOrdenCom(pitem) + ";";
 
             }
 
@@ -2945,6 +3107,159 @@ public class Orden extends PBase {
 
     //endregion
 
+    //region Mover cuentas Celeste imperio
+
+    private void listaMesasCeleste() {
+        final AlertDialog Dialog;
+        long ff=du.ffecha00(du.getActDate());
+
+        try {
+            sql="SELECT P_RES_MESA.CODIGO_MESA,  P_RES_MESA.NOMBRE, P_RES_SESION.ID,'','',  '','','','' " +
+                    "FROM P_RES_SESION INNER JOIN P_RES_MESA ON P_RES_SESION.CODIGO_MESA=P_RES_MESA.CODIGO_MESA " +
+                    "WHERE (P_RES_SESION.ESTADO>0) AND (P_RES_MESA.CODIGO_GRUPO=26) AND " +
+                    "(P_RES_SESION.FECHAINI>"+ff+") AND (P_RES_MESA.CODIGO_MESA<>"+gl.mesacodigo+") " +
+                    "ORDER BY P_RES_MESA.NOMBRE";
+            ViewObj.fillSelect(sql,0);
+
+            if (ViewObj.count==0) {
+                msgbox("No hay ninguna mesa disponible");return;
+            }
+
+            final String[] selitems = new String[ViewObj.count];
+            for (int i = 0; i <ViewObj.count; i++) {
+                selitems[i]=ViewObj.items.get(i).f1;
+            }
+
+            ExDialogT menudlg = new ExDialogT (this);
+            menudlg.setTitle("Seleccione una mesa");
+
+            menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
+                @SuppressLint("SuspiciousIndentation")
+                public void onClick(DialogInterface dialog, int item) {
+                    validaCuenta(ViewObj.items.get(item).pk,ViewObj.items.get(item).f2);
+                    dialog.cancel();
+                }
+            });
+
+            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            Dialog = menudlg.create();
+            Dialog.show();
+
+            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
+            nbutton.setTextColor(Color.WHITE);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void validaCuenta(int idmesa,String idsession) {
+        idcuentamov=0;
+
+        try {
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+
+            T_ordencuentaObj.fill("WHERE (COREL='"+idsession+"') ORDER BY ID");
+            if (T_ordencuentaObj.count==0) {
+                msgbox("La mesa no tiene ninguna cuenta disponible");return;
+            }
+            idcuentamov=T_ordencuentaObj.first().id;
+
+            /*
+            for (int i = T_ordencuentaObj.count-1; i>=0; i--) {
+                if (!cuentaPendientePago(idsession, T_ordencuentaObj.items.get(i).id)) {
+                    idcuentamov=T_ordencuentaObj.items.get(i).id;break;
+                }
+            }
+            if (idcuentamov==0) {
+                msgbox("La mesa no tiene ninguna cuenta disponible");return;
+            }
+            */
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage("¿Mover las cuentas?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    aplicaCuentas(idmesa,idsession,idcuentamov);
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            dialog.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void aplicaCuentas(int idmesa,String idsession,int idcuenta) {
+        Cursor dt;
+        int id,mid=1;
+
+        try {
+            sql="SELECT MAX(ID) FROM T_orden WHERE COREL='"+idsession+"'";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                mid=dt.getInt(0)+1;
+            } else {
+                msgbox("No se puede mover la cuenta");return;
+            }
+
+            sql="SELECT ID FROM T_orden WHERE COREL='"+idorden+"'";;
+            dt=Con.OpenDT(sql);
+            if (dt.getCount()==0) {
+                msgbox("La cuenta está vacía");return;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
+        }
+
+        //P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+        try {
+            db.beginTransaction();
+
+            dt.moveToFirst();
+            while (!dt.isAfterLast()) {
+                id=dt.getInt(0);
+
+                sql="UPDATE T_ORDEN SET ID="+mid+",COREL='"+idsession+"',CUENTA="+idcuenta+" " +
+                        "WHERE (COREL='"+idorden+"') AND (ID="+id+")";
+                db.execSQL(sql);
+
+                dt.moveToNext();mid++;
+            }
+
+            // mesa destino broadcast
+            if (actorden) {
+                envioOrdenDestino(idsession);
+            }
+
+            // P.res_session  idorden estado=-1  broadcast
+            cerrarCuentas(-1);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void showItemMenu() {
@@ -3100,6 +3415,15 @@ public class Orden extends PBase {
         nombreMesa();
 
         app.primeraCuenta(idorden);
+
+        try {
+            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            numpedido=P_res_sesionObj.first().cantc;
+        } catch (Exception e) {
+            numpedido=0;
+        }
+        ordenpedido=numpedido>0;
 
     }
 
@@ -3437,7 +3761,9 @@ public class Orden extends PBase {
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
 
+            sql="SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+idorden+"')";
             int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+idorden+"')");
+
             cantcuentas=newcid;
 
             cuenta.corel=idorden;
@@ -3451,6 +3777,7 @@ public class Orden extends PBase {
             T_ordencuentaObj.add(cuenta);
 
             asignaCuenta(newcid);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -3626,6 +3953,26 @@ public class Orden extends PBase {
         }
 
         return false;
+    }
+
+    private int codigoModificador(int idproducto) {
+        int idclas,idmod;
+        try {
+            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+idproducto);
+            if (P_productoObj.count==0) return 0;
+            idclas=(int) P_productoObj.first().precio_vineta_o_tubo;
+
+            clsP_prodclasifmodifObj P_prodclasifmodifObj=new clsP_prodclasifmodifObj(this,Con,db);
+            P_prodclasifmodifObj.fill("WHERE (CODIGO_CLASIFICACION="+idclas+")");
+            if (P_prodclasifmodifObj.count==0) return 0;
+            idmod=P_prodclasifmodifObj.first().codigo_grupo;
+
+            return idmod;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return 0;
     }
 
     //endregion
@@ -3829,7 +4176,13 @@ public class Orden extends PBase {
 
     private void showItemPopMenu() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Modificar","Nota","Cambiar cuenta","Borrar","Dividir"};
+        int scnt=5;
+        if (gl.idmodgr>0) scnt++;
+        final String[] selitems = new String[scnt];
+        //final String[] selitems = {"Modificar","Nota","Cambiar cuenta","Borrar","Dividir"};
+        selitems[0]="Cambiar";selitems[1]="Nota";selitems[2]="Cambiar cuenta";
+        selitems[3]="Borrar";selitems[4]="Dividir";
+        if (gl.idmodgr>0) selitems[5]="Modificadores";
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Articulo del orden");
@@ -3862,6 +4215,9 @@ public class Orden extends PBase {
                             toastcent("No se puede dividir articulo con cantidad 1 ");
                         }
                         break;
+                    case 5:
+                        startActivity(new Intent(Orden.this,ModifProd.class));
+                        break;
                 }
 
                 dialog.cancel();
@@ -3881,7 +4237,11 @@ public class Orden extends PBase {
 
     private void showItemPopMenuLock() {
         final AlertDialog Dialog;
-        final String[] selitems = {"Cambiar cuenta","Borrar","Dividir"};
+        int scnt=2;if (gl.idmodgr>0) scnt++;
+        //final String[] selitems = {"Cambiar cuenta","Dividir"};
+        final String[] selitems = new String[scnt];
+        selitems[0]="Cambiar cuenta";selitems[1]="Dividir";
+        if (gl.idmodgr>0) selitems[2]="Modificadores";
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Articulo del orden");
@@ -3892,22 +4252,60 @@ public class Orden extends PBase {
                     case 0:
                         showMenuCuenta();break;
                     case 1:
-                        if (statenv==1) {
-                            msgbox("El artículo es parte de una cuenta enviada a pagar, no se puede borrar");
-                        } else {
-                            //msgAskDel("Está seguro de borrar");
-                            //browse=10;
-                            //startActivity(new Intent(Orden.this,ValidaSuper2.class));
-                            msgBorrarOrden("Cerrar todas las cuentas del orden");
-                        }
-
-                        break;
-                    case 2:
                         if (selitem.Cant>1) {
                             msgAskDividir("Dividir articulo");
                         } else {
                             toastcent("Articulo con cantidad 1 no se puede dividir");
                         }
+                        break;
+                    case 2:
+                        startActivity(new Intent(Orden.this,ModifProd.class));
+                        break;
+                }
+
+                dialog.cancel();
+            }
+        });
+
+        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        Dialog = menudlg.create();
+        Dialog.show();
+    }
+
+    private void showItemPopMenuLockCeleste() {
+        final AlertDialog Dialog;
+        int scnt=3;if (gl.idmodgr>0) scnt++;
+        //final String[] selitems = {"Cambiar cuenta","Dividir","Mover cuentas a otra mesa"};
+        final String[] selitems = new String[scnt];
+        selitems[0]="Cambiar cuenta";selitems[1]="Dividir";selitems[2]="Mover cuentas a otra mesa";
+        if (gl.idmodgr>0) selitems[3]="Modificadores";
+
+        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
+        menudlg.setTitle("Articulo del orden");
+
+        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        showMenuCuenta();break;
+                    case 1:
+                        if (selitem.Cant>1) {
+                            msgAskDividir("Dividir articulo");
+                        } else {
+                            toastcent("Articulo con cantidad 1 no se puede dividir");
+                        }
+                        break;
+                    case 2:
+                        listaMesasCeleste();
+                        break;
+                    case 3:
+                        startActivity(new Intent(Orden.this,ModifProd.class));
                         break;
                 }
 
@@ -4561,6 +4959,13 @@ public class Orden extends PBase {
         } catch (Exception e){
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        gl.cerrarmesero=true;
+        super.onBackPressed();
+    }
+
 
     //endregion
 

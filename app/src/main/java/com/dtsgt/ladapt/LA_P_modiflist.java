@@ -1,15 +1,14 @@
 package com.dtsgt.ladapt;
 
+
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.DateUtils;
@@ -20,17 +19,17 @@ import com.dtsgt.mpos.R;
 
 import java.util.ArrayList;
 
-public class LA_ResCaja extends BaseAdapter {
+public class LA_P_modiflist extends BaseAdapter {
 
     private MiscUtils mu;
     private DateUtils du;
     private AppMethods app;
 
-    private ArrayList<clsClasses.clsView> items= new ArrayList<clsClasses.clsView>();
+    private ArrayList<clsClasses.clsP_usopcion> items= new ArrayList<clsClasses.clsP_usopcion>();
     private int selectedIndex;
     private LayoutInflater l_Inflater;
 
-    public LA_ResCaja(Context context, PBase owner, ArrayList<clsClasses.clsView> results) {
+    public LA_P_modiflist(Context context, PBase owner, ArrayList<clsClasses.clsP_usopcion> results) {
         items = results;
         l_Inflater = LayoutInflater.from(context);
         selectedIndex = -1;
@@ -66,32 +65,23 @@ public class LA_ResCaja extends BaseAdapter {
 
         if (convertView == null) {
 
-            convertView = l_Inflater.inflate(R.layout.lv_res_caja, null);
+            convertView = l_Inflater.inflate(R.layout.lv_p_modiflist, null);
             holder = new ViewHolder();
 
-            holder.lbl2 = convertView.findViewById(R.id.lblV2);
-            holder.lbl4 = convertView.findViewById(R.id.lblV4);
-            holder.lbl5 = convertView.findViewById(R.id.lblV5);
-            holder.lbl6 = convertView.findViewById(R.id.textView273);
-            holder.img1 =  convertView.findViewById(R.id.imageView102);
+            holder.lbl2 = (TextView) convertView.findViewById(R.id.lblV2);
+            holder.img1 = (ImageView) convertView.findViewById(R.id.imageView54);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.lbl2.setText(""+items.get(position).f2);
-        holder.lbl4.setText(""+items.get(position).f4);
-        holder.lbl5.setText(""+items.get(position).pk);
-        holder.lbl6.setText(""+items.get(position).f7);
+        holder.lbl2.setText(""+items.get(position).menugroup);
 
-        holder.img1.setImageResource(R.drawable.mesa_ocupada);
-        if (items.get(position).f3.equalsIgnoreCase("2")) {
-            holder.img1.setImageResource(R.drawable.preimpresion);
-        } else if (items.get(position).f3.equalsIgnoreCase("3")) {
-            holder.img1.setImageResource(R.drawable.pago_caja);
-        } else if (items.get(position).f3.equalsIgnoreCase("4")) {
-            holder.img1.setImageResource(R.drawable.mesa_pago_completo);
+        if (items.get(position).nombre.isEmpty()) {
+            holder.img1.setVisibility(View.INVISIBLE);
+        } else {
+            holder.img1.setVisibility(View.VISIBLE);
         }
 
         if(selectedIndex!= -1 && position == selectedIndex) {
@@ -104,7 +94,7 @@ public class LA_ResCaja extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl2,lbl4,lbl5,lbl6;
+        TextView lbl2;
         ImageView img1;
     }
 

@@ -132,7 +132,6 @@ public class Caja extends PBase {
 
         validaFacturas();
 
-        msgbox("Caja - OK");
     }
 
     //region Events

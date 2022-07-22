@@ -334,6 +334,9 @@ public class PedidoEnviar extends PBase {
         item.fecha_entrega=0;
         item.anulado=0;
 
+        if (gl.pePedidos)  D_pedidoObj.update(item);
+
+
         lblID.setText("#"+item.empresa % 1000);
 
         enviaOrden();

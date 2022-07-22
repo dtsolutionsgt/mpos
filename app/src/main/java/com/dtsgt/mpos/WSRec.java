@@ -44,12 +44,15 @@ import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_estacionObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
+import com.dtsgt.classes.clsP_modificadorObj;
+import com.dtsgt.classes.clsP_modificador_grupoObj;
 import com.dtsgt.classes.clsP_monedaObj;
 import com.dtsgt.classes.clsP_motivoajusteObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_nivelprecio_sucursalObj;
 import com.dtsgt.classes.clsP_paramextObj;
+import com.dtsgt.classes.clsP_prodclasifmodifObj;
 import com.dtsgt.classes.clsP_prodcomboObj;
 import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
@@ -370,6 +373,15 @@ public class WSRec extends PBase {
                     case 52:
                         callMethod("GetP_ALMACEN","SUCURSAL",gl.tienda);
                         break;
+                    case 53:
+                        callMethod("GetP_MODIFICADOR", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
+                    case 54:
+                        callMethod("GetP_MODIFICADOR_GRUPO", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
+                    case 55:
+                        callMethod("GetP_PRODCLASIFMODIF", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
 
                 }
             } catch (Exception e) {
@@ -678,18 +690,35 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    //processComplete();
-                    execws(52);
-                    break;
+                    execws(52);break;
                 case 52:
                     processAlmacen();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
                     processComplete();
+                    //execws(53);
+                    break;
+                case 53:
+                    processModificador();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(54);break;
+                case 54:
+                    processModificadorGrupo();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(55);break;
+                case 55:
+                    processProdClasifModif();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    processComplete();
                     break;
             }
-
         } catch (Exception e) {
             msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             processComplete();
@@ -2266,6 +2295,13 @@ public class WSRec extends PBase {
                 var.activo = 1;
                 var.tiempo_preparacion = item.TIEMPO_PREPARACION;
 
+                try {
+
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+
+
                 script.add(handler.addItemSql(var));
 
                 String img = var.imagen;
@@ -3267,6 +3303,112 @@ public class WSRec extends PBase {
         } catch (Exception e) {
             ws.error = e.getMessage();
             ws.errorflag = true;
+        }
+    }
+
+    private void processModificador() {
+        try {
+            clsP_modificadorObj handler = new clsP_modificadorObj(this, Con, db);
+            clsBeP_MODIFICADORList items = new clsBeP_MODIFICADORList();
+            clsBeP_MODIFICADOR item = new clsBeP_MODIFICADOR();
+            clsClasses.clsP_modificador var;
+
+            script.add("DELETE FROM P_MODIFICADOR");
+
+            items = xobj.getresult(clsBeP_MODIFICADORList.class, "GetP_MODIFICADOR");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_modificador();
+
+                var.codigo_modif=item.CODIGO_MODIF;
+                var.empresa=item.EMPRESA;
+                var.codigo_grupo=item.CODIGO_GRUPO;
+                var.nombre=item.NOMBRE;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+    private void processModificadorGrupo() {
+        try {
+            clsP_modificador_grupoObj handler = new clsP_modificador_grupoObj(this, Con, db);
+            clsBeP_MODIFICADOR_GRUPOList items = new clsBeP_MODIFICADOR_GRUPOList();
+            clsBeP_MODIFICADOR_GRUPO item = new clsBeP_MODIFICADOR_GRUPO();
+            clsClasses.clsP_modificador_grupo var;
+
+            script.add("DELETE FROM P_MODIFICADOR_GRUPO");
+
+            items = xobj.getresult(clsBeP_MODIFICADOR_GRUPOList.class, "GetP_MODIFICADOR_GRUPO");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_modificador_grupo();
+
+                var.codigo_grupo=item.CODIGO_GRUPO;
+                var.empresa=item.EMPRESA;
+                var.nombre=item.NOMBRE;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+    private void processProdClasifModif() {
+        try {
+            clsP_prodclasifmodifObj handler = new clsP_prodclasifmodifObj(this, Con, db);
+            clsBeP_PRODCLASIFMODIFList items = new clsBeP_PRODCLASIFMODIFList();
+            clsBeP_PRODCLASIFMODIF item = new clsBeP_PRODCLASIFMODIF();
+            clsClasses.clsP_prodclasifmodif var;
+
+            script.add("DELETE FROM P_PRODCLASIFMODIF");
+
+            items = xobj.getresult(clsBeP_PRODCLASIFMODIFList.class, "GetP_PRODCLASIFMODIF");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_prodclasifmodif();
+
+                var.codigo_clasificacion=item.CODIGO_CLASIFICACION;
+                var.empresa=item.EMPRESA;
+                var.codigo_grupo=item.CODIGO_GRUPO;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
         }
     }
 

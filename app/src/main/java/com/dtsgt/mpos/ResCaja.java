@@ -71,13 +71,13 @@ public class ResCaja extends PBase {
 
     private Precio prc;
 
-    private String corel,mesa;
+    private String corel,mesa,numpedido;
     private int cuenta,counter,idmesero;
     private boolean idle=true,exitflag=false,loading=false;
 
     private TimerTask ptask;
     private int period=10000,delay=50;
-    private boolean horiz;
+    private boolean horiz,espedido;
 
     private String orddir= Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
 
@@ -149,6 +149,9 @@ public class ResCaja extends PBase {
                 corel=item.f1;mesa=item.f2;cuenta=item.pk;
                 gl.ordcorel=corel;gl.primesa=mesa;
                 gl.pricuenta=""+cuenta;gl.nocuenta_precuenta= gl.pricuenta;
+                espedido=app.esmesapedido(gl.emp,item.f5);
+                gl.EsVentaDelivery=espedido;
+                numpedido=item.f6;
 
                 showMenuMesa();
             };
@@ -164,7 +167,8 @@ public class ResCaja extends PBase {
         String fs,ssa;
 
         try {
-            sql="SELECT T_ORDENCUENTA.ID AS Cuenta, P_RES_SESION.ID AS Corel, P_RES_MESA.NOMBRE, P_RES_SESION.ESTADO, P_RES_SESION.FECHAULT ,   '','','','' " +
+            sql="SELECT T_ORDENCUENTA.ID AS Cuenta, P_RES_SESION.ID AS Corel, P_RES_MESA.NOMBRE, P_RES_SESION.ESTADO, P_RES_SESION.FECHAULT , " +
+                    "  P_RES_MESA.CODIGO_GRUPO,P_RES_SESION.CANTC,'','' " +
                     "FROM P_RES_SESION INNER JOIN " +
                     "T_ORDENCUENTA ON P_RES_SESION.ID =T_ORDENCUENTA.COREL INNER JOIN " +
                     "P_RES_MESA ON P_RES_SESION.CODIGO_MESA = P_RES_MESA.CODIGO_MESA " +
@@ -185,6 +189,11 @@ public class ResCaja extends PBase {
                 if (cuentaPagada(ViewObj.items.get(i).f1,ViewObj.items.get(i).pk)) {
                     ViewObj.items.get(i).f3="4";
                 }
+
+                if (app.esmesapedido(gl.emp,ViewObj.items.get(i).f5)) {
+                    ViewObj.items.get(i).f7="#"+ViewObj.items.get(i).f6;
+                } else ViewObj.items.get(i).f7="";
+                //ViewObj.items.get(i).f7="#"+ViewObj.items.get(i).f6;
             }
 
             for (int  i=ViewObj.count-1; i>=0; i--) {
@@ -194,7 +203,7 @@ public class ResCaja extends PBase {
             adapter=new LA_ResCaja(this,this,ViewObj.items);
             gridView.setAdapter(adapter);
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -235,7 +244,10 @@ public class ResCaja extends PBase {
             P_res_sesionObj.fill("WHERE ID='"+corel+"'");
             gl.mesero_venta=P_res_sesionObj.first().vendedor;
 
+
             gl.numero_orden=corel+"_"+cuenta;
+            gl.nummesapedido=numpedido;
+
             T_ordenObj.fill("WHERE COREL='"+corel+"'");
             counter=0;
 
