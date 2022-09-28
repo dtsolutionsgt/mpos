@@ -6,15 +6,19 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.dtsgt.classes.clsP_cortesiaObj;
+import com.dtsgt.classes.clsP_mediapagoObj;
+import com.dtsgt.classes.extListDlg;
 
 public class PagoTarjeta extends PBase {
 
     private EditText txtMonto, txtAut;
     private TextView lblTipo;
 
-        final String[] selitems = new String[7];
 
     private double monto;
     private String tipo="Visa",aut;
@@ -33,8 +37,6 @@ public class PagoTarjeta extends PBase {
         monto=gl.total_pago;
         txtMonto.setText(""+monto);
         lblTipo.setText(tipo);txtAut.setText("");txtAut.requestFocus();
-
-        llenaTipos();
 
         setHandlers();
     }
@@ -152,41 +154,56 @@ public class PagoTarjeta extends PBase {
 
     //region Aux
 
-    private void llenaTipos() {
-        selitems[0]="Visa";
-        selitems[1]="American Express";
-        selitems[2]="Mastercard";
-        selitems[3]="Discover";
-        selitems[4]="Citibank";
-        selitems[5]="Transferencia";
-        selitems[6]="Cheque";
-    }
-
     private void listaTipos() {
-        final AlertDialog Dialog;
-        int sidx=-1;
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Tipo tarjeta");
+        try {
+            clsP_mediapagoObj P_mediapagoObj=new clsP_mediapagoObj(this,Con,db);
+            P_mediapagoObj.fill("WHERE (NIVEL=6) AND (ACTIVO=1)");
 
-        menudlg.setSingleChoiceItems(selitems,sidx,  new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                tipo=selitems[item];
-                lblTipo.setText(tipo);
-                txtAut.requestFocus();
-                dialog.cancel();
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(PagoTarjeta.this,"Media pago");
+            listdlg.setLines(6);
+
+            listdlg.add(0,"Visa");
+            if (P_mediapagoObj.count>0) {
+                listdlg.add(1,P_mediapagoObj.first().nombre);
             }
-        });
+            listdlg.add(0,"American Express");
+            listdlg.add(0,"Mastercard");
+            listdlg.add(0,"Discover");
+            listdlg.add(0,"Citibank");
+            listdlg.add(0,"Transferencia");
+            listdlg.add(0,"Cheque");
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                 dialog.cancel();
-            }
-        });
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        tipo=listdlg.getText(position);
+                        lblTipo.setText(tipo);
+                        txtAut.requestFocus();
 
-        Dialog = menudlg.create();
-        Dialog.show();
+                        if (listdlg.getCodigoInt(position)==1) {
+                            gl.modo_cortesia=true;
+                            finish();
+                        }
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     //endregion

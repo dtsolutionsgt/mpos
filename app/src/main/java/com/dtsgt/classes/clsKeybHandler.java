@@ -29,6 +29,16 @@ public class clsKeybHandler {
         clear(true);
     }
 
+    public clsKeybHandler(Context context, TextView outputlabel, TextView decpointlabel,boolean blank){
+        cont=context;
+        label=outputlabel;
+        declabel=decpointlabel;
+
+        clear(true);
+        if (blank) label.setBackgroundResource(R.drawable.frame_btn);
+
+    }
+
     public void setLabel(TextView actlabel,Boolean decpoint) {
         label.setBackgroundResource(R.drawable.frame_label_unfocus);
         label=actlabel;
@@ -119,7 +129,7 @@ public class clsKeybHandler {
 
         isValid=value>=0;
         label.setText(val);
-
+        if (val.isEmpty()) label.setText("");
 
     }
 

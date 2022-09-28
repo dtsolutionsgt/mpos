@@ -238,23 +238,10 @@ public class Clientes extends PBase {
 
                         //fotoCliente();
 
-                        showEditMenu();
+                        //showEditMenu();
 
-                        /*
-						pedit = puedeeditarse();
-						pbor = puedeborrarse();
-
-						if (pbor && pedit) {
-							showItemMenu();
-						} else {
-							if (pbor) msgAskBor("Eliminar cliente nuevo");
-							if (pedit) msgAskEdit("Cambiar datos de cliente nuevo");
-						}
-
-                         */
 					} catch (Exception e) {
-						addlog(new Object() {
-						}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+						addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
 					}
 					return true;
 				}
@@ -592,81 +579,6 @@ public class Clientes extends PBase {
 
 		return true;
 	}
-
-	private void showItemMenu() {
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Eliminar cliente","Cambiar datos"};
-
-			AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-			menudlg.setTitle("Cliente nuevo");
-
-			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-					switch (item) {
-						case 0:
-							msgAskBor("Eliminar cliente");break;
-						case 1:
-							break;
-					}
-
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
-				}
-			});
-
-			Dialog = menudlg.create();
-			Dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-    }
-
-    private void showEditMenu() {
-        try{
-            final AlertDialog Dialog;
-            final String[] selitems = {"Cambiar datos","Ver foto"};
-
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Cliente");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    switch (item) {
-                        case 0:
-                            gl.gcods=gl.cliente;
-                            browse=2;
-                            startActivity(new Intent(Clientes.this, MantCli.class));
-                            break;
-                        case 1:
-                            fotoCliente();break;
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
 
 	private void fillSpinners(){
 		try{

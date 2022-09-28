@@ -35,10 +35,14 @@ import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsT_cierreObj;
+import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.classes.extListDlg;
+import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -341,7 +345,9 @@ public class Menu extends PBase {
 				case 3:  // Reimpresion
 			        showPrintMenuTodo();break;
 				case 4:  // Anulacion
-				    showVoidMenuTodo();break;
+				    //showVoidMenuTodo();
+					validaSupervisor();
+					break;
 				case 5:  // Consultas
 					//#HS_20181206 Verifica el usuario si es DTS.
 					if(gl.vendnom.equalsIgnoreCase("DTS") && gl.vend.equalsIgnoreCase("DTS")) {
@@ -400,51 +406,47 @@ public class Menu extends PBase {
 	//region Reimpresion
 	
 	public void showPrintMenuTodo() {
-
 		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Impresión");
 
-			final AlertDialog Dialog;
-			final String[] selitems  = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Pagos","Recarga","Devolución a bodega"};;
+     		listdlg.add((gl.peMFact?"Factura":"Ticket"));
+			listdlg.add("Depósito");
+			listdlg.add("Pagos");
+			listdlg.add("Recarga");
+			listdlg.add("Devolución a bodega");
 
-			menudlg = new ExDialog(this);
-
-
-			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							menuImprDoc(3);break;
-						case 1:
-							menuImprDoc(2);break;
-						case 2:
-							menuImprDoc(7);break;
-						case 3:
-							menuImprDoc(4);break;
-						case 4:
-							menuImprDoc(5);break;
-					}
-
-					dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						switch (position) {
+							case 0:
+								menuImprDoc(3);break;
+							case 1:
+								menuImprDoc(2);break;
+							case 2:
+								menuImprDoc(7);break;
+							case 3:
+								menuImprDoc(4);break;
+							case 4:
+								menuImprDoc(5);break;
+						}
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
 				}
 			});
 
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 
 	}
@@ -464,51 +466,101 @@ public class Menu extends PBase {
 	//endregion
 	
 	//region Anulacion
-	
+
+	private void validaSupervisor() {
+		clsClasses.clsVendedores item;
+
+		try {
+		    clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
+
+			listdlg.onEnterClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (listdlg.getInput().isEmpty()) return;
+
+					if (listdlg.validPassword()) {
+						showVoidMenuTodo();
+						listdlg.dismiss();
+					} else {
+						toast("Contraseña incorrecta");
+					}
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	public void showVoidMenuTodo() {
-		try{
-			final AlertDialog Dialog;
-			//final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega", "Nota crédito"};
-            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Depósito","Ingreso de mercancía","Ajuste de inventario"};
 
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Anulación");
 
-			menudlg = new ExDialog(this);
+			listdlg.add((gl.peMFact?"Factura":"Ticket"));
+			listdlg.add("Depósito");
+			listdlg.add("Ingreso de mercancía");
+			listdlg.add("Ajuste de inventario");
 
-			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							gl.tipo=3;break;
-						case 1:
-							gl.tipo=2;break;
-						case 2:
-							gl.tipo=4;break;
-						case 3:
-							gl.tipo=5;break;
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						switch (position) {
+							case 0:
+								gl.tipo=3;break;
+							case 1:
+								gl.tipo=2;break;
+							case 2:
+								gl.tipo=4;break;
+							case 3:
+								gl.tipo=5;break;
 						}
 
-					menuAnulDoc();
-					dialog.cancel();
-				}
+						menuAnulDoc();
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
 			});
 
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+			listdlg.setOnLeftClick(new View.OnClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
+				public void onClick(View v) {
+					listdlg.dismiss();
 				}
 			});
 
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+
 	}	
 
 	private void menuAnulDoc() {
@@ -525,43 +577,49 @@ public class Menu extends PBase {
     //region Comunicacion
 
     private void showMenuCom() {
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Comunicación");
 
-        final AlertDialog Dialog;
-        final String[] selitems = {"Envío de datos","Recepción de parámetros"};
-        //final String[] selitems = {"Envío de datos","Recepción de parámetros","Envío de huellas"};
+			listdlg.add("Envío de datos");
+			listdlg.add("Recepción de parámetros");
 
-        ExDialog menudlg = new ExDialog(this);
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						switch (position) {
+							case 0:
+								gl.autocom = 0;
+								startActivity(new Intent(Menu.this,WSEnv.class));
+								break;
+							case 1:
+								gl.autocom = 0;
+								startActivity(new Intent(Menu.this,WSRec.class));
+								break;
+							case 2:
+								;break;
+							case 3:
+								comEnterior();break;
+						}
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        gl.autocom = 0;
-                        startActivity(new Intent(Menu.this,WSEnv.class));
-                        break;
-                    case 1:
-                        gl.autocom = 0;
-                        startActivity(new Intent(Menu.this,WSRec.class));
-                        break;
-                    case 2:
-                        ;break;
-                    case 3:
-                        comEnterior();break;
-                }
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
 
-                dialog.cancel();
-            }
-        });
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void comEnterior() {
@@ -580,45 +638,50 @@ public class Menu extends PBase {
 	
 	public void showConsMenu() {
 
-		try{
-			final AlertDialog Dialog;
-			final String[] selitems = {"Objetivos por producto","Objetivos por familia","Objetivo por ruta","Objetivo por cobro","Inventario bodega","Consulta de precios"};
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Consultas");
 
-			menudlg = new ExDialog(this);
+			listdlg.add("Objetivos por producto");
+			listdlg.add("Objetivos por familia");
+			listdlg.add("Objetivo por ruta");
+			listdlg.add("Objetivo por cobro");
+			listdlg.add("Inventario bodega");
+			listdlg.add("Consulta de precios");
 
-			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
-
-					switch (item) {
-						case 0:
-							menuObjProd();break;
-						case 1:
-							menuObjFamilia();break;
-						case 2:
-							menuObjRuta();break;
-						case 3:
-							menuObjCobro();break;
-						case 4:
-							menuInvBod();dialog.cancel();break;
-						case 5:
-							menuPrecios();dialog.cancel();break;
-					}
-
-					//dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						switch (position) {
+							case 0:
+								menuObjProd();break;
+							case 1:
+								menuObjFamilia();break;
+							case 2:
+								menuObjRuta();break;
+							case 3:
+								menuObjCobro();break;
+							case 4:
+								menuInvBod();listdlg.dismiss();break;
+							case 5:
+								menuPrecios();listdlg.dismiss();break;
+						}
+
+					} catch (Exception e) {}
+				};
+			});
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
 				}
 			});
 
-			Dialog = menudlg.create();
-			Dialog.show();
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 
 	}
@@ -694,81 +757,52 @@ public class Menu extends PBase {
 	//region Inventario
 	
 	public void showInvMenuVenta() 	{
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Menu inventario");
 
-        idalm=0;
-
-		try{
-			final AlertDialog Dialog;
-			int itemcnt=1,itempos=0;
-
-			if (gl.peAceptarCarga) 	{
-				itemcnt+=1;
-			} else {
-				if (gl.peStockItf) {
-					if (gl.peModal.equalsIgnoreCase("TOL")) {
-						itemcnt+=1;
-					} else {
-						itemcnt+=1;
-					}
-				} else {
-					itemcnt+=2;
-				}
-
+			listdlg.add("Existencias");
+			listdlg.add("Ingreso de mercancía");
+			listdlg.add("Ajuste de inventario");
+			if (almacenes) {
+				listdlg.add("Traslado entre almacénes");
+				listdlg.add("Egreso de almacén");
 			}
-            itemcnt++;
-			if (gl.peSolicInv) itemcnt++;
+			listdlg.add("Orden de compra");
+			listdlg.add("Barril");
 
-			itemcnt=3;itemcnt++;
-			if (almacenes) itemcnt+=2;
-			final String[] selitems = new String[itemcnt];
-
-			selitems[itempos]="Existencias";itempos++;
-            selitems[itempos]="Ingreso de mercancía";itempos++;
-			selitems[itempos]="Ajuste de inventario";itempos++;
-            if (almacenes) {
-                selitems[itempos]="Traslado entre almacénes";itempos++;
-                selitems[itempos]="Egreso de almacén";itempos++;
-            }
-            //selitems[itempos]="Inventario inicial";itempos++;
-            selitems[itempos]="Orden de compra";itempos++;
-
-            ExDialogT menudlg = new ExDialogT (this);
-            menudlg.setTitle("Menu inventario");
-
-			menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
-				@SuppressLint("SuspiciousIndentation")
-				public void onClick(DialogInterface dialog, int item) {
-					String mt=selitems[item];
-
-					if (mt.equalsIgnoreCase("Existencias")) {
-					    menuExist();
-                    }
-					if (mt.equalsIgnoreCase("Ajuste de inventario")) menuAjuste();
-					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
-                    if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
-                    if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
-                    if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
-                    if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
-
-                    dialog.cancel();
-				}
-			});
-
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						String mt=listdlg.items.get(position).text;
+
+						if (mt.equalsIgnoreCase("Existencias")) {
+							menuExist();
+						}
+						if (mt.equalsIgnoreCase("Ajuste de inventario")) menuAjuste();
+						if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
+						if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
+						if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
+						if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
+						if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
+						if (mt.equalsIgnoreCase("Barril")) menuBarril();
+
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
 				}
 			});
 
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 
 	}
@@ -836,181 +870,85 @@ public class Menu extends PBase {
 		} catch (Exception e){}
     }
 
-    public void listaAlmacenes(int modosel) {
-	    String titulo="Seleccione un almacén";
-
-        switch (modosel) {
-            case 1:
-                titulo="Seleccione un almacén";break;
-            case 2:
-                titulo="Seleccione un almacén";break;
-            case 3:
-                titulo="Seleccione un almacén";break;
-            case 4:
-                titulo="Seleccione un almacén";break;
-            case 5:
-                titulo="Seleccione almacén origen";break;
-        }
-
-        try {
-            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
-            P_almacenObj.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
-
-            int itemcnt=P_almacenObj.count;
-            String[] selitems = new String[itemcnt];
-            int[] selcod = new int[itemcnt];
-
-            for (int i = 0; i <itemcnt; i++) {
-                selitems[i] = P_almacenObj.items.get(i).nombre;
-                selcod[i] = P_almacenObj.items.get(i).codigo_almacen;
-            }
-
-            ExDialogT menudlg = new ExDialogT(this);
-            menudlg.setTitle(titulo);
-
-            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    idalm=selcod[item];gl.nom_alm=selitems[item];
-
-                    switch (modosel) {
-                        case 1:
-                            try {
-                                gl.invregular=true;
-								gl.idalm=idalm;
-                                if (idalm==idalmdpred) {
-                                    gl.tipo=0;
-                                } else gl.tipo=4;
-
-								gl.idalm=0;
-
-                                Intent intent = new Intent(Menu.this, ListaInventario.class);
-                                startActivity(intent);
-                            } catch (Exception e){}
-                            ;break;
-                        case 2:
-                            try {
-                                gl.idalm=idalm;
-                                if (idalm==idalmdpred) {
-                                    gl.tipo=1;
-                                } else gl.tipo=5;
-                                Intent intent = new Intent(Menu.this, ListaInventario.class);
-                                startActivity(intent);
-                            } catch (Exception e){}
-                            ;break;
-                        case 3:
-                            try {
-                                gl.tipo=0;
-                                gl.idalm=idalm;
-                                Intent intent = new Intent(Menu.this,Exist.class);
-                                startActivity(intent);
-                            } catch (Exception e){}
-                            ;break;
-                        case 4:
-                            try {
-                                gl.idalm=idalm;
-                                if (idalm==idalmdpred) {
-                                    gl.tipo=6;
-                                } else gl.tipo=7;
-                                Intent intent = new Intent(Menu.this, ListaInventario.class);
-                                startActivity(intent);
-                            } catch (Exception e){}
-                            ;break;
-                        case 5:
-                            try {
-                                gl.idalm=idalm;
-                                gl.tipo=8;
-                                Intent intent = new Intent(Menu.this, ListaInventarioT.class);
-                                startActivity(intent);
-                            } catch (Exception e){}
-                            ;break;
-                    }
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            final AlertDialog Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
+	private void menuBarril() {
+		try {
+			Intent intent = new Intent(Menu.this, ListaBarril.class);
+			startActivity(intent);
+		} catch (Exception e){}
+	}
 
 	//endregion
 
 	//region Utilerias
 
     public void showInvMenuUtils() {
-        try{
-            final AlertDialog Dialog;
-            final String[] selitems = {"Configuración de impresora","Tablas","Actualizar versión","Enviar base de datos","Prueba de bluetooth","Marcar facturas certificadas","Actualizar correlativos contingencia","Información de sistema","Impresion","Consumidor final", "Actualizar fechas erroneas","Inicio de caja"};
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Utilerias");
+			listdlg.setLines(6);
 
-            menudlg = new ExDialog (this);
+			listdlg.add("Configuración de impresora");
+			listdlg.add("Tablas");
+			listdlg.add("Actualizar versión");
+			listdlg.add("Enviar base de datos");
+			listdlg.add("Prueba de bluetooth");
+			listdlg.add("Marcar facturas certificadas");
+			listdlg.add("Actualizar correlativos contingencia");
+			listdlg.add("Información de sistema");
+			listdlg.add("Impresion");
+			listdlg.add("Consumidor final");
+			listdlg.add("Actualizar fechas erroneas");
+			listdlg.add("Inicio de caja");
 
-            menudlg.setItems(selitems ,	new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						switch (position) {
+							case 0:
+								//startActivity(new Intent(Menu.this,UtilPrint.class));
+								configuracionImpresora();
+								break;
+							case 1:
+								startActivity(new Intent(Menu.this,Tablas.class));break;
+							case 2:
+								actualizaVersion();break;
+							case 3:
+								enviarBaseDeDatos();break;
+							case 4:
+								estadoBluTooth();break;
+							case 5:
+								startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+							case 6:
+								msgAskActualizar("Actualizar correlativos de contingencia");break;
+							case 7:
+								infoSystem();break;
+							case 8:
+								msgAskImprimir();break;
+							case 9:
+								msgAskCF();break;
+							case 10:
+								msgAskCorregirFechas();break;
+							case 11:
+								inicioDia();break;
+						}
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
 
-                    switch (item) {
-                        case 0:
-                            //startActivity(new Intent(Menu.this,UtilPrint.class));
-                            configuracionImpresora();
-                            break;
-                        case 1:
-                            startActivity(new Intent(Menu.this,Tablas.class));break;
-                        case 2:
-                            actualizaVersion();break;
-                        case 3:
-                            enviarBaseDeDatos();break;
-                        case 4:
-                            estadoBluTooth();break;
-                        case 5:
-                            startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
-                        case 6:
-                            msgAskActualizar("Actualizar correlativos de contingencia");break;
-                        case 7:
-                            infoSystem();break;
-                        case 8:
-                            msgAskImprimir();break;
-                        case 9:
-                            msgAskCF();break;
-						case 10:
-							msgAskCorregirFechas();break;
-                        case 11:
-                            inicioDia();break;
-                    }
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
 
-                    dialog.cancel();
-                }
-            });
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
     }
 
     private void configuracionImpresora() {
@@ -1413,237 +1351,205 @@ public class Menu extends PBase {
 	    gl.climode=false;
 	    gl.listaedit=true;
 
-        try {
-            final AlertDialog Dialog;
-            final String[] selitems;
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Mantenimientos");
+			listdlg.setLines(10);
 
-            final String[] selitems1 = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
-					                   "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
-					                   "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
-                                       "Impresora","Impresora marca","Impresora modelo",
-					                   "Resolución de facturas", "Configuración","Configuración reportes Cierre"};
+			listdlg.add("Banco");
+			listdlg.add("Caja");
+			listdlg.add("Cliente");
+			listdlg.add("Empresa");
+			listdlg.add("Familia");
+			listdlg.add("Forma pago");
+			listdlg.add("Impuesto");
+			listdlg.add("Concepto pago");
+			listdlg.add("Nivel precio");
+			listdlg.add("Motivo ajuste");
+			listdlg.add("Producto");
+			listdlg.add("Proveedor");
+			listdlg.add("Tienda");
+			listdlg.add("Usuario");
+			listdlg.add("Roles");
+			listdlg.add("Impresora");
+			listdlg.add("Impresora marca");
+			listdlg.add("Impresora modelo");
+			listdlg.add("Resolución de facturas");
+			if (gl.peRest) listdlg.add("Restaurante");
+			listdlg.add("Configuración");
+			listdlg.add("Configuración reportes Cierre");
 
-            final String[] selitems2 = {"Banco", "Caja", "Cliente", "Empresa", "Familia",
-                    "Forma pago", "Impuesto", "Concepto pago", "Nivel precio",
-                    "Motivo ajuste","Producto", "Proveedor", "Tienda", "Usuario","Roles",
-                    "Impresora","Impresora marca","Impresora modelo",
-                    "Resolución de facturas","Restaurante","Configuración","Configuración reportes Cierre"};
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						ss = listdlg.items.get(position).text;
 
-            if (gl.peRest) selitems=selitems2;else selitems=selitems1;
+						if (ss.equalsIgnoreCase("Almacén")) gl.mantid = 0;
+						if (ss.equalsIgnoreCase("Banco")) gl.mantid = 1;
+						if (ss.equalsIgnoreCase("Caja")) gl.mantid = 13;
+						if (ss.equalsIgnoreCase("Cliente")) gl.mantid = 2;
+						if (ss.equalsIgnoreCase("Combo")) gl.mantid = 17;
+						if (ss.equalsIgnoreCase("Combo opción")) gl.mantid = 18;
+						if (ss.equalsIgnoreCase("Descuento")) gl.mantid = 15;
+						if (ss.equalsIgnoreCase("Empresa")) gl.mantid = 3;
+						if (ss.equalsIgnoreCase("Familia")) gl.mantid = 4;
+						if (ss.equalsIgnoreCase("Forma pago")) gl.mantid = 5;
+						if (ss.equalsIgnoreCase("Impuesto")) gl.mantid = 6;
+						if (ss.equalsIgnoreCase("Moneda")) gl.mantid = 7;
+						if (ss.equalsIgnoreCase("Concepto pago")) gl.mantid = 19;
+						if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid = 14;
+						if (ss.equalsIgnoreCase("Motivo ajuste")) gl.mantid = 22;
+						if (ss.equalsIgnoreCase("Producto")) gl.mantid = 8;
+						if (ss.equalsIgnoreCase("Proveedor")) gl.mantid = 9;
+						if (ss.equalsIgnoreCase("Tienda")) gl.mantid = 12;
+						if (ss.equalsIgnoreCase("Usuario")) gl.mantid = 11;
+						if (ss.equalsIgnoreCase("Resolución de facturas")) gl.mantid = 20;
+						if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 16;
+						if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
+						if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
+						if (ss.equalsIgnoreCase("Configuración reportes Cierre")) gl.mantid = 23;
+						if (ss.equalsIgnoreCase("Restaurante")) gl.mantid = 24;
+						if (ss.equalsIgnoreCase("Impresora marca")) gl.mantid = 32;
+						if (ss.equalsIgnoreCase("Impresora modelo")) gl.mantid = 33;
+						if (ss.equalsIgnoreCase("Impresora")) gl.mantid = 34;
 
-            menudlg = new ExDialog(this);
+						if (gl.mantid == 16) {
+							startActivity(new Intent(Menu.this, MantConfig.class));
+						} else if (gl.mantid == 15) {
+							startActivity(new Intent(Menu.this, Lista.class));
+						} else if (gl.mantid == 20) {
+							startActivity(new Intent(Menu.this, MantCorel.class));
+						} else if (gl.mantid == 21) {
+							startActivity(new Intent(Menu.this, MantRol.class));
+						} else if (gl.mantid == 23) {
+							startActivity(new Intent(Menu.this, MantRepCierre.class));
+						} else if (gl.mantid == 24) {
+							showMantRestMenu();
+							//startActivity(new Intent(Menu.this, SalaDis.class));
+						} else {
+							startActivity(new Intent(Menu.this, Lista.class));
+						}
 
-            menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
 
-                    ss = selitems[item];
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
 
-                    if (ss.equalsIgnoreCase("Almacén")) gl.mantid = 0;
-                    if (ss.equalsIgnoreCase("Banco")) gl.mantid = 1;
-                    if (ss.equalsIgnoreCase("Caja")) gl.mantid = 13;
-                    if (ss.equalsIgnoreCase("Cliente")) gl.mantid = 2;
-                    if (ss.equalsIgnoreCase("Combo")) gl.mantid = 17;
-                    if (ss.equalsIgnoreCase("Combo opción")) gl.mantid = 18;
-                    if (ss.equalsIgnoreCase("Descuento")) gl.mantid = 15;
-                    if (ss.equalsIgnoreCase("Empresa")) gl.mantid = 3;
-                    if (ss.equalsIgnoreCase("Familia")) gl.mantid = 4;
-                    if (ss.equalsIgnoreCase("Forma pago")) gl.mantid = 5;
-                    if (ss.equalsIgnoreCase("Impuesto")) gl.mantid = 6;
-                    if (ss.equalsIgnoreCase("Moneda")) gl.mantid = 7;
-                    if (ss.equalsIgnoreCase("Concepto pago")) gl.mantid = 19;
-                    if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid = 14;
-					if (ss.equalsIgnoreCase("Motivo ajuste")) gl.mantid = 22;
-                    if (ss.equalsIgnoreCase("Producto")) gl.mantid = 8;
-                    if (ss.equalsIgnoreCase("Proveedor")) gl.mantid = 9;
-                    if (ss.equalsIgnoreCase("Tienda")) gl.mantid = 12;
-                    if (ss.equalsIgnoreCase("Usuario")) gl.mantid = 11;
-                    if (ss.equalsIgnoreCase("Resolución de facturas")) gl.mantid = 20;
-                    if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 16;
-                    if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
-                    if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
-                    if (ss.equalsIgnoreCase("Configuración reportes Cierre")) gl.mantid = 23;
-                    if (ss.equalsIgnoreCase("Restaurante")) gl.mantid = 24;
-                    if (ss.equalsIgnoreCase("Impresora marca")) gl.mantid = 32;
-                    if (ss.equalsIgnoreCase("Impresora modelo")) gl.mantid = 33;
-                    if (ss.equalsIgnoreCase("Impresora")) gl.mantid = 34;
-
-                    if (gl.mantid == 16) {
-                        startActivity(new Intent(Menu.this, MantConfig.class));
-                    } else if (gl.mantid == 15) {
-                        startActivity(new Intent(Menu.this, Lista.class));
-                    } else if (gl.mantid == 20) {
-                        startActivity(new Intent(Menu.this, MantCorel.class));
-                    } else if (gl.mantid == 21) {
-                        startActivity(new Intent(Menu.this, MantRol.class));
-                    } else if (gl.mantid == 23) {
-                        startActivity(new Intent(Menu.this, MantRepCierre.class));
-                    } else if (gl.mantid == 24) {
-                        showMantRestMenu();
-                        //startActivity(new Intent(Menu.this, SalaDis.class));
-                    } else {
-                        startActivity(new Intent(Menu.this, Lista.class));
-                    }
-
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbuttonp.setTextColor(Color.WHITE);
-
-        } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
 	}
 
     public void showMantRestMenu() {
 
-        try {
-            final AlertDialog Dialog;
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Restaurante");
 
-            final String[] selitems = {"Configuración", "Sala", "Mesa", "Grupo de mesas"};
-            //final String[] selitems = { "Sala", "Mesa", "Grupo de mesas", "Diseño de sala"};
+			listdlg.add("Configuración");
+			listdlg.add("Sala");
+			listdlg.add("Mesa");
+			listdlg.add("Grupo de mesas");
 
-            menudlg = new ExDialog(this);
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						ss = listdlg.items.get(position).text;
 
-            menudlg.setItems(selitems, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
+						if (ss.equalsIgnoreCase("Sala")) gl.mantid = 26;
+						if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
+						if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
+						if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
+						if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 29;
+						if (ss.equalsIgnoreCase("Estación cocina")) gl.mantid = 31;
 
-                    ss = selitems[item];
+						if (gl.mantid == 24) {
+							startActivity(new Intent(Menu.this, SalaDis.class));
+						} else if (gl.mantid == 29) {
+							startActivity(new Intent(Menu.this, MantConfigRes.class));
+						} else {
+							startActivity(new Intent(Menu.this, Lista.class));
+						}
 
-                    if (ss.equalsIgnoreCase("Sala")) gl.mantid = 26;
-                    if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
-                    if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
-                    if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
-                    if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 29;
-                    if (ss.equalsIgnoreCase("Estación cocina")) gl.mantid = 31;
+						//listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
 
-                    if (gl.mantid == 24) {
-                        startActivity(new Intent(Menu.this, SalaDis.class));
-                    } else if (gl.mantid == 29) {
-                        startActivity(new Intent(Menu.this, MantConfigRes.class));
-                    } else {
-                        startActivity(new Intent(Menu.this, Lista.class));
-                    }
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
 
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbuttonp.setTextColor(Color.WHITE);
-
-        } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
     }
 
     public void showMantCliente() {
 
         gl.climode=false;
-
         gl.listaedit=true;
 
-        try{
-            final AlertDialog Dialog;
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Cliente");
 
-            //final String[] selitems = {"Banco","Caja","Cliente","Combo","Combo Opción","Descuento","Empresa","Familia","Forma pago","Impuesto","Moneda","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración"};
-            //final String[] selitems = {"Banco","Caja","Cliente","Empresa","Familia","Forma pago","Impuesto","Nivel precio","Producto","Proveedor","Tienda","Usuario","Configuración","Formato de impresión"};
-            final String[] selitems = {"Cliente","Proveedor","Familia","Producto"};
+			listdlg.add("Cliente");
+			listdlg.add("Proveedor");
+			listdlg.add("Familia");
+			listdlg.add("Producto");
 
-            menudlg = new ExDialog(this);
-            menudlg.setTitle("Mantenimientos");
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						ss = listdlg.items.get(position).text;
 
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
+						if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+						if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
+						if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
+						if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
 
-                    ss=selitems[item];
+						if (gl.mantid==16) {
+							startActivity(new Intent(Menu.this, MantConfig.class));
+						} else if (gl.mantid==15) {
+							startActivity(new Intent(Menu.this, Lista.class));
+						} else {
+							startActivity(new Intent(Menu.this, Lista.class));
+						}
 
-                    if (ss.equalsIgnoreCase("almacén")) gl.mantid=0;
-                    if (ss.equalsIgnoreCase("Banco")) gl.mantid=1;
-                    if (ss.equalsIgnoreCase("Caja")) gl.mantid=13;
-                    if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
-                    if (ss.equalsIgnoreCase("Combo")) gl.mantid=17;
-                    if (ss.equalsIgnoreCase("Combo Opción")) gl.mantid=18;
-                    if (ss.equalsIgnoreCase("Descuento")) gl.mantid=15;
-                    if (ss.equalsIgnoreCase("Empresa")) gl.mantid=3;
-                    if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
-                    if (ss.equalsIgnoreCase("Forma pago")) gl.mantid=5;
-                    if (ss.equalsIgnoreCase("Impuesto")) gl.mantid=6;
-                    if (ss.equalsIgnoreCase("Moneda")) gl.mantid=7;
-                    if (ss.equalsIgnoreCase("Concepto Pago")) gl.mantid=19;
-                    if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid=14;
-					if (ss.equalsIgnoreCase("Motivo ajuste")) gl.mantid = 22;
-                    if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
-                    if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
-                    if (ss.equalsIgnoreCase("Tienda")) gl.mantid=12;
-                    if (ss.equalsIgnoreCase("Usuario")) gl.mantid=11;
-                    if (ss.equalsIgnoreCase("Correlativos")) gl.mantid=20;
-                    if (ss.equalsIgnoreCase("Configuración")) gl.mantid=16;
-                    if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid=17;
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
 
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
 
-                    if (gl.mantid==16) {
-                        startActivity(new Intent(Menu.this, MantConfig.class));
-                    } else if (gl.mantid==15) {
-                        startActivity(new Intent(Menu.this, Lista.class));
-                    } else {
-                        startActivity(new Intent(Menu.this, Lista.class));
-                    }
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbuttonp.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
     }
 
 	//endregion
@@ -1652,71 +1558,72 @@ public class Menu extends PBase {
 
 	public void showReportMenu() {
 
-		try{
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Reportes");
 
-			final AlertDialog Dialog;
+			listdlg.add("Reporte de Documentos por Día");
+			listdlg.add("Reporte Venta por Día");
+			listdlg.add("Reporte Venta por Producto");
+			listdlg.add("Reporte por Forma de Pago");
+			listdlg.add("Reporte por Familia");
+			listdlg.add("Reporte Ventas por Vendedor");
+			listdlg.add("Consumo materia prima");
+			listdlg.add("Reporte de Ventas por Cliente");
+			listdlg.add("Margen y Beneficio por Producto");
+			listdlg.add("Margen y Beneficio por Familia");
+			listdlg.add("Cierre X");
+			listdlg.add("Cierre Z");
+			listdlg.add("Ultimo cierre");
 
-			final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto",
-                    "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor",
-                    "Consumo materia prima","Reporte de Ventas por Cliente",
-                    "Margen y Beneficio por Producto", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z","Ultimo cierre"};
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						ss = listdlg.items.get(position).text;
 
-            menudlg = new ExDialog(this);
-            menudlg.setTitle("Reportes");
+						if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
+						if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
+						if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
+						if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
+						if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
+						if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
+						if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
+						if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
+						if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
+						if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
+						if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
+						if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
+						if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
+						//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
 
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
+						gl.titReport = ss;
 
-                    ss=selitems[item];
+						if (gl.reportid == 9 || gl.reportid == 10) {
+							startActivity(new Intent(Menu.this, CierreX.class));
+						} else if (gl.reportid == 12) {
+							msgAskUltimoCierre();
+						} else {
+							startActivity(new Intent(Menu.this,Reportes.class));
+						}
 
-					if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
-					if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
-					if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
-					if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
-					if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
-					if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
-					if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
-					if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
-					if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
-					if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
-					if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
-                    if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
-                    if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
-                    //if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
 
-					gl.titReport = ss;
-
-					if (gl.reportid == 9 || gl.reportid == 10) {
-                        startActivity(new Intent(Menu.this, CierreX.class));
-                    } else if (gl.reportid == 12) {
-                        msgAskUltimoCierre();
-					} else {
-						startActivity(new Intent(Menu.this,Reportes.class));
-					}
-
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
 				}
 			});
 
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbuttonp.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
     }
 
     //endregion
@@ -1724,76 +1631,68 @@ public class Menu extends PBase {
     //region Caja
 
 	public void showCajaMenu() {
-		try{
 
-			final AlertDialog Dialog;
+		try {
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Caja");
 
-			final String[] selitems = {"Inicio de Caja", "Pagos de Caja", "Depósitos","Cierre de Caja"};
+			listdlg.add("Inicio de Caja");
+			listdlg.add("Pagos de Caja");
+			listdlg.add("Depósitos");
+			listdlg.add("Cierre de Caja");
 
-			menudlg = new ExDialog(this);
-			menudlg.setTitle("Caja");
-			menudlg.setCancelable(false);
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						ss = listdlg.items.get(position).text;
 
-			menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int item) {
+						if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
+						if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
+						if (ss.equalsIgnoreCase("Depósitos")) gl.cajaid=4;
+						if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
 
-					ss=selitems[item];
+						gl.titReport = ss;
 
-					if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
-					if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
-					if (ss.equalsIgnoreCase("Depósitos")) gl.cajaid=4;
-					if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
+						if(valida()){
 
-					gl.titReport = ss;
+							if (gl.cajaid!=2) {
+								//msgbox("Caja 2");
+								gl.inicio_caja_correcto =false;
+								browse=1;
+								startActivity(new Intent(Menu.this,Caja.class));
+							} else {
+								startActivity(new Intent(Menu.this,CajaPagos.class));
+							}
 
-					//msgbox("Caja 1");
-
-					if(valida()){
-
-						if (gl.cajaid!=2) {
-							//msgbox("Caja 2");
-							gl.inicio_caja_correcto =false;
-							browse=1;
-							startActivity(new Intent(Menu.this,Caja.class));
 						} else {
-							startActivity(new Intent(Menu.this,CajaPagos.class));
+							//msgbox("Caja 3");
+							String txt="";
+
+							if(gl.cajaid==0 || gl.cajaid==2) txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
+							if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
+							if(gl.cajaid==4) txt = "Pendiente implementación.";
+							if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
+							msgAskValid(txt);
 						}
 
-					} else {
-						//msgbox("Caja 3");
-						String txt="";
-
-						if(gl.cajaid==0 || gl.cajaid==2) txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
-						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
-						//if(gl.cajaid==2) txt = "Pendiente implementación.";
-						if(gl.cajaid==4) txt = "Pendiente implementación.";
-						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
-						msgAskValid(txt);
-					}
-
-				}
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
 			});
 
-			menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+			listdlg.setOnLeftClick(new View.OnClickListener() {
 				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.cancel();
+				public void onClick(View v) {
+					listdlg.dismiss();
 				}
 			});
 
-			Dialog = menudlg.create();
-			Dialog.show();
-
-			Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-			nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbutton.setTextColor(Color.WHITE);
-
-			Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-			nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-			nbuttonp.setTextColor(Color.WHITE);
-		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+
 	}
 
 	//endregion

@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
@@ -347,7 +348,13 @@ public class WSEnv extends PBase {
 
     private void processComplete() {
 
-        try{
+        try {
+
+            try {
+                db.execSQL("DELETE FROM D_barril_trans WHERE STATCOM=1");
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
 
             pbar.setVisibility(View.INVISIBLE);
             //lbl3.setVisibility(View.VISIBLE);
@@ -359,11 +366,17 @@ public class WSEnv extends PBase {
                 msgboxwait(ws.error);
             } else {
 
+                /*
                 if (gl.autocom==1) {
                     if (ferr.isEmpty() && movErr.isEmpty()) {
+                        if (app.pendienteBarrilEnvio()) {
+                            startActivity(new Intent(this,BarrilPendientes.class));
+                        }
                         finish();return;
                     }
                 }
+
+                 */
 
                 ss ="Envío completo\n";
 
@@ -398,6 +411,13 @@ public class WSEnv extends PBase {
                         msgbox2("Movimientos : "+idMov+"\n"+movErr);
                     }
                 }
+
+                /*
+                if (app.pendienteBarrilEnvio()) {
+                    startActivity(new Intent(this,BarrilPendientes.class));
+                }
+
+                 */
 
             }
 
@@ -1402,6 +1422,12 @@ public class WSEnv extends PBase {
 
             } else {
                 msgboxwait("No hay datos pendientes de envío");
+                /*
+                if (app.pendienteBarrilEnvio()) {
+                    startActivity(new Intent(this,BarrilPendientes.class));
+                }
+
+                 */
             }
 
 

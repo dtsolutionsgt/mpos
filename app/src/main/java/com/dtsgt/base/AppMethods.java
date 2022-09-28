@@ -32,6 +32,7 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.mpos.PrintView;
+import com.dtsgt.mpos.R;
 
 import org.apache.commons.io.FileUtils;
 
@@ -911,6 +912,22 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peActOrdenMesas = false;
 		}
+
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=143";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peLineaIngred = Integer.parseInt(val);
+		} catch (Exception e) {
+			gl.peLineaIngred = 0;
+		}
+
+
     }
 
     public boolean paramCierre(int pid) {
@@ -1037,7 +1054,24 @@ public class AppMethods {
         }
     }
 
-    public boolean prodBarra(String cod) {
+	public double prodPrecio(int cod) {
+		double prec;
+
+		try {
+			String sql = "SELECT PRECIO FROM P_PRODPRECIO WHERE CODIGO_PRODUCTO =" + cod + " AND NIVEL="+gl.nivel;
+			Cursor DT = Con.OpenDT(sql);
+			DT.moveToFirst();
+			prec=DT.getDouble(0);
+
+			if (DT!=null) DT.close();
+
+			return  prec;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	public boolean prodBarra(String cod) {
         Cursor DT;
 
         try {
@@ -1063,7 +1097,7 @@ public class AppMethods {
             DT.moveToFirst();
 
             result = DT.getString(0);
-
+			if (DT!=null) DT.close();
         } catch (Exception e) {
             throw e;
         }
@@ -1084,7 +1118,7 @@ public class AppMethods {
             DT.moveToFirst();
 
             result = DT.getString(0);
-
+			if (DT!=null) DT.close();
         } catch (Exception e) {
             throw e;
         }
@@ -1102,12 +1136,12 @@ public class AppMethods {
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
-            return DT.getInt(0);
+			int val=DT.getInt(0);
+			if (DT!=null) DT.close();
+            return val;
         } catch (Exception e) {
             return 0;
         }
-
-
 
     }
 
@@ -1119,6 +1153,7 @@ public class AppMethods {
 			String sql = "SELECT VENTA_POR_PESO FROM P_PRODUCTO WHERE CODIGO='" + cod + "'";
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
+
 			return  DT.getInt(0)==1;
 		} catch (Exception e) {
 			//toast(e.getMessage());
@@ -1220,8 +1255,7 @@ public class AppMethods {
 			sumaCant=DT.getDouble(0);
 		}
 
-		DT.close();
-
+		if (DT!=null) DT.close();
 		return sumaCant;
 	}
 
@@ -1283,7 +1317,7 @@ public class AppMethods {
 
             umm=DT.getString(0);
 
-             if (DT!=null) DT.close();
+            if (DT!=null) DT.close();
 
             return  umm;
         } catch (Exception e) {
@@ -1322,6 +1356,7 @@ public class AppMethods {
 
 			DT.moveToFirst();
 			umm=DT.getString(0);
+			if (DT!=null) DT.close();
 
 			return  umm;
 		} catch (Exception e) {
@@ -1361,6 +1396,7 @@ public class AppMethods {
             DT.moveToFirst();
 
             umm=DT.getString(0);
+			if (DT!=null) DT.close();
             return  umm;
         } catch (Exception e) {
             //toast(e.getMessage());
@@ -1378,6 +1414,7 @@ public class AppMethods {
             DT.moveToFirst();
 
             umm=DT.getString(0);
+			if (DT!=null) DT.close();
             return  umm;
         } catch (Exception e) {
              return "";
@@ -1436,6 +1473,7 @@ public class AppMethods {
             DT.moveToFirst();
 
             niv=DT.getInt(0);
+			if (DT!=null) DT.close();
         } catch (Exception e) {
             niv=1;
         }
@@ -1516,6 +1554,7 @@ public class AppMethods {
     private void printEpsonTMBT(int copies) {
 
         try {
+
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
             intent.putExtra("mac","BT:"+gl.prpar);
             intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
@@ -1524,7 +1563,8 @@ public class AppMethods {
 			intent.putExtra("QRCodeStr",""+gl.QRCodeStr);
             cont.startActivity(intent);
 
-        } catch (Exception e) {
+
+		} catch (Exception e) {
             toastlong("El controlador de Epson TM BT no está instalado");
 
             String fname = Environment.getExternalStorageDirectory()+"/print.txt";
@@ -1591,6 +1631,7 @@ public class AppMethods {
                 gl.prpar=DT.getString(1);
             }
 
+			if (DT!=null) DT.close();
         } catch (Exception e) {
             gl.prtipo="SIN IMPRESORA";gl.prpar="00:00:00:00:00:00";
         }
@@ -1612,6 +1653,7 @@ public class AppMethods {
                 gl.prtipo=DT.getString(0);
                 gl.prpar=DT.getString(1);
             }
+			if (DT!=null) DT.close();
         } catch (Exception e) {
             gl.prtipo="SIN IMPRESORA";gl.prpar="00:00:00:00:00:00";
         }
@@ -1752,6 +1794,7 @@ public class AppMethods {
 			val=dt.getString(0);
 
 			val = val+"-";
+			if (dt!=null) dt.close();
 		} catch (Exception e) {
 			val = gl.codigo_ruta+"-";
 		}
@@ -1911,6 +1954,98 @@ public class AppMethods {
 
     //endregion
 
+	//region Barriles
+
+	public boolean barrilAbierto(String codprod) {
+		Cursor dt=null;
+		boolean rslt=false;
+
+		try {
+			dt=Con.OpenDT("SELECT PRODUCTO_PADRE FROM P_PRODUCTO WHERE (CODIGO='"+codprod+"') ");
+			if (dt.getCount()>0) {
+				dt.moveToFirst();
+				int idprod=dt.getInt(0);
+
+				dt=Con.OpenDT("SELECT CODIGO_PRODUCTO FROM D_BARRIL WHERE (CODIGO_PRODUCTO="+idprod+") AND (ACTIVO=1)");
+				rslt=dt.getCount()>0;
+			}
+		} catch (Exception e){
+			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		if (dt!=null) dt.close();
+		return rslt;
+	}
+
+	public boolean esProductoBarril(int idprod) {
+		Cursor dt=null;
+		boolean rslt=false;
+		gl.bar_prod=0;gl.bar_cant=0;
+
+		try {
+			dt=Con.OpenDT("SELECT CODIGO_TIPO,PRODUCTO_PADRE,FACTOR_PADRE FROM P_PRODUCTO WHERE (CODIGO_PRODUCTO="+idprod+")");
+			if (dt.getCount()>0) {
+				dt.moveToFirst();
+
+				rslt=dt.getString(0).equalsIgnoreCase("PB");
+				gl.bar_prod=dt.getInt(1);
+				gl.bar_cant=dt.getInt(2);
+			}
+		} catch (Exception e){
+			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		if (dt!=null) dt.close();
+		return rslt;
+	}
+
+	public String barrilProd(int idprod) {
+		Cursor dt=null;
+
+		gl.bar_um="";gl.bar_idbarril="";
+		try {
+			dt=Con.OpenDT("SELECT UNIDBAS FROM P_PRODUCTO WHERE (CODIGO_PRODUCTO="+idprod+") ");
+			dt.moveToFirst();
+			gl.bar_um=dt.getString(0);
+
+			dt=Con.OpenDT("SELECT CODIGO_BARRIL FROM D_BARRIL WHERE (CODIGO_PRODUCTO="+idprod+") AND (ACTIVO=1)");
+			dt.moveToFirst();
+			gl.bar_idbarril=dt.getString(0);
+
+		} catch (Exception e){
+			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			String ss=e.getMessage();
+			gl.bar_um="";gl.bar_idbarril="";
+		}
+
+		if (dt!=null) dt.close();
+
+		return gl.bar_idbarril;
+	}
+
+	public boolean pendienteBarrilEnvio() {
+		Cursor dt;
+		int pb=0,pt=0;
+
+		try {
+			dt=Con.OpenDT("SELECT STATCOM FROM D_BARRIL WHERE (STATCOM=0)");
+			pb=dt.getCount();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		try {
+			dt=Con.OpenDT("SELECT STATCOM FROM D_BARRIL_TRANS WHERE (STATCOM=0)");
+			pt=dt.getCount();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		return (pb+pt)>0;
+	}
+
+	//endregion
+
 	//region Aux
 
     public int getDocCount(String ss,String pps) {
@@ -1929,6 +2064,7 @@ public class AppMethods {
                 sp=sp+st+"\n";
             }
 
+			if (DT!=null) DT.close();
             return cnt;
         } catch (Exception e) {
             //mu.msgbox(sql+"\n"+e.getMessage());
@@ -1988,8 +2124,8 @@ public class AppMethods {
             st=pps+" "+cnt;
             sp=sp+st+"\n";
 
+			if (DT!=null) DT.close();
         } catch (Exception e) {
-
         }
 
         return cnt;
@@ -2006,12 +2142,10 @@ public class AppMethods {
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()>0){
-
 				dt.moveToFirst();
-
 				resultado = dt.getLong(0);
 			}
-
+			if (dt!=null) dt.close();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             resultado= 0;
@@ -2039,6 +2173,7 @@ public class AppMethods {
             DT.moveToFirst();
 
             umm=DT.getString(0);
+			if (DT!=null) DT.close();
             return  umm;
         } catch (Exception e) {
             return "";
@@ -2130,6 +2265,34 @@ public class AppMethods {
         }
     }
 
+	public void setGradResource(int iditem) {
+		int pos, rr=R.drawable.frame_btn2,ss=R.drawable.frame_btn4;
+
+		try {
+			pos=iditem % 6;
+
+			switch (pos) {
+				case 0:
+					rr=R.drawable.br0;ss=R.drawable.br0s;break;
+				case 1:
+					rr=R.drawable.br1;ss=R.drawable.br1s;break;
+				case 2:
+					rr=R.drawable.br2;ss=R.drawable.br2s;break;
+				case 3:
+					rr=R.drawable.br3;ss=R.drawable.br3s;break;
+				case 4:
+					rr=R.drawable.br4;ss=R.drawable.br4s;break;
+				case 5:
+					rr=R.drawable.br5;ss=R.drawable.br5s;break;
+			}
+
+
+		} catch (Exception e) {
+			rr=R.drawable.frame_btn2;ss=R.drawable.frame_btn4;
+		}
+
+		gl.idgrres=rr;gl.idgrsel=ss;
+	}
 
     //endregion
 

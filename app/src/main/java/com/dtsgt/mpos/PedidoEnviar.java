@@ -32,7 +32,10 @@ import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_pedidodObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsT_venta_ingObj;
+import com.dtsgt.classes.clsT_venta_modObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.ladapt.LA_D_pedidod;
 import com.dtsgt.webservice.srvCommit;
@@ -61,6 +64,8 @@ public class PedidoEnviar extends PBase {
     private clsT_comandaObj T_comandaObj;
     private clsP_linea_impresoraObj P_linea_impresoraObj;
     private clsP_impresoraObj P_impresoraObj;
+    private clsT_venta_modObj T_venta_modObj;
+    private clsT_venta_ingObj T_venta_ingObj;
 
     private clsClasses.clsD_pedido item=clsCls.new clsD_pedido();
     private clsClasses.clsD_pedidod pitem=clsCls.new clsD_pedidod();
@@ -120,6 +125,8 @@ public class PedidoEnviar extends PBase {
         T_comandaObj = new clsT_comandaObj(this, Con, db);
         P_linea_impresoraObj = new clsP_linea_impresoraObj(this, Con, db);
         P_impresoraObj = new clsP_impresoraObj(this, Con, db);
+        T_venta_ingObj=new clsT_venta_ingObj(this,Con,db);
+        T_venta_modObj=new clsT_venta_modObj(this,Con,db);
 
         //rep = new clsRepBuilder(this, gl.prw, true, gl.peMon, gl.peDecImp, "");
         rep = new clsRepBuilder(this, 24, true, gl.peMon, gl.peDecImp, "");
@@ -205,7 +212,7 @@ public class PedidoEnviar extends PBase {
             for (int i = 0; i <D_pedidodObj.count; i++) {
 
                 item=D_pedidodObj.items.get(i);
-                s=mu.frmdecno(item.cant)+" x "+getProd(item.codigo_producto);
+                s=mu.frmdecno(item.cant)+"  "+getProd(item.codigo_producto);
                 item.umventa=s;
                 rep.add(s);
 
@@ -750,10 +757,106 @@ public class PedidoEnviar extends PBase {
     }
 
     private boolean divideComanda() {
+        clsClasses.clsT_pedidod  pedido;
+        String prname,cname,nn;
+        String[] sp;
+        int prodid,prid,iddet,pruid,linea=1;
+
+        try {
+
+            db.execSQL("DELETE FROM T_comanda");
+
+            D_pedidodObj.fill("WHERE (COREL='"+pedid+"')");
+
+            clsT_pedidodObj T_pedidodObj=new clsT_pedidodObj(this,Con,db);
+            T_pedidodObj.fill();
+
+            for (int i = 0; i <T_pedidodObj.count; i++) {
+                pedido=T_pedidodObj.items.get(i);
+
+                pruid=pedido.corel_det;
+                prodid = pedido.codigo_producto;
+                iddet = D_pedidodObj.items.get(i).corel_det;
+                prname=getProd(prodid);
+                s = mu.frmdecno(pedido.cant) + "  " + prname;
+                nn=pedido.nota;
+
+                if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
+
+                    P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
+                    for (int k = 0; k <P_linea_impresoraObj.count; k++) {
+
+                        if (!esIngrediente(prodid)) {
+
+                            prid = P_linea_impresoraObj.items.get(k).codigo_impresora;
+                            agregaComanda(linea, prid, s);
+                            linea++;
+                            if (!nn.isEmpty()) {
+                                sp = splitByLen(nn, 20);
+                                for (int ii = 0; ii < sp.length; ii++) {
+                                    agregaComanda(linea, prid, " - " + sp[ii]);
+                                    linea++;
+                                }
+                            }
+
+                            T_venta_modObj.fill("WHERE (ID=" + pruid + ")");
+                            for (int ii = 0; ii < T_venta_modObj.count; ii++) {
+                                nn = "  " + T_venta_modObj.items.get(ii).nombre;
+                                agregaComanda(linea, prid, nn);
+                                linea++;
+                            }
+
+                            T_venta_ingObj.fill("WHERE (Id="+pruid+") ORDER BY Nombre");
+                            for (int ii = 0;ii <T_venta_ingObj.count; ii++) {
+                                nn = "  " + T_venta_ingObj.items.get(ii).nombre;
+                                agregaComanda(linea, prid, nn);
+                                linea++;
+                            }
+
+
+
+                        }
+
+                    }
+
+                } else {
+
+                    D_pedidocomboObj.fill("WHERE (COREL_DET=" + iddet+") ");
+                    cname=s;//+" [#"+idcomb+"]";
+
+                    for (int j = 0; j < D_pedidocomboObj.count; j++) {
+                        prodid=D_pedidocomboObj.items.get(j).codigo_producto;
+                        s = " -  " + getProd(prodid);
+                        P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
+
+                        for (int k = 0; k <P_linea_impresoraObj.count; k++) {
+                            prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
+                            agregaComanda(linea,prid,cname);linea++;
+                            agregaComanda(linea,prid,s);linea++;
+                            if (!nn.isEmpty()) {
+                                nn=" - "+nn;
+                                sp=splitByLen(nn,20);
+                                for (int ii = 0; ii <sp.length; ii++) {
+                                    agregaComanda(linea,prid," - "+sp[ii]);linea++;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean divideComandaOld() {
         clsClasses.clsD_pedidod  pedido;
         String prname,cname,nn;
         String[] sp;
-        int prodid,prid,iddet,linea=1;
+        int prodid,prid,iddet,pruid,linea=1;
 
         try {
 
@@ -764,24 +867,49 @@ public class PedidoEnviar extends PBase {
             for (int i = 0; i <D_pedidodObj.count; i++) {
                 pedido=D_pedidodObj.items.get(i);
 
+                pruid=pedido.corel_det;
                 prodid = pedido.codigo_producto;
                 iddet = pedido.corel_det;
                 prname=getProd(prodid);
-                s = mu.frmdecno(pedido.cant) + " x " + prname;
+                s = mu.frmdecno(pedido.cant) + "  " + prname;
                 nn=pedido.nota;
 
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
 
                     P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
                     for (int k = 0; k <P_linea_impresoraObj.count; k++) {
-                        prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
-                        agregaComanda(linea,prid,s);linea++;
-                        if (!nn.isEmpty()) {
-                            sp=splitByLen(nn,20);
-                            for (int ii = 0; ii <sp.length; ii++) {
-                                agregaComanda(linea,prid," - "+sp[ii]);linea++;
+
+                        if (!esIngrediente(prodid)) {
+
+                            prid = P_linea_impresoraObj.items.get(k).codigo_impresora;
+                            agregaComanda(linea, prid, s);
+                            linea++;
+                            if (!nn.isEmpty()) {
+                                sp = splitByLen(nn, 20);
+                                for (int ii = 0; ii < sp.length; ii++) {
+                                    agregaComanda(linea, prid, " - " + sp[ii]);
+                                    linea++;
+                                }
                             }
+
+                            T_venta_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
+                            for (int ii = 0; ii < T_venta_modObj.count; ii++) {
+                                nn = "  " + T_venta_modObj.items.get(ii).nombre;
+                                agregaComanda(linea, prid, nn);
+                                linea++;
+                            }
+
+                            T_venta_ingObj.fill("WHERE (Corel='"+gl.ordcorel+"') AND (Id="+pruid+") ORDER BY Nombre");
+                            for (int ii = 0;ii <T_venta_ingObj.count; ii++) {
+                                nn = "  " + T_venta_ingObj.items.get(ii).nombre;
+                                agregaComanda(linea, prid, nn);
+                                linea++;
+                            }
+
+
+
                         }
+
                     }
 
                 } else {
@@ -1074,6 +1202,26 @@ public class PedidoEnviar extends PBase {
 
     }
 
+    private boolean esIngrediente() {
+        try {
+            T_venta_ingObj.fill("WHERE  (Puid="+gl.produid+") ");
+            if (T_venta_ingObj.count>0) return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return false;
+    }
+
+    private boolean esIngrediente(int pruid) {
+        try {
+            T_venta_ingObj.fill("WHERE  (IdIng="+pruid+") ");
+            if (T_venta_ingObj.count>0) return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return false;
+    }
+
     //endregion
 
     //region Dialogs
@@ -1328,6 +1476,8 @@ public class PedidoEnviar extends PBase {
             T_comandaObj.reconnect(Con,db);
             P_linea_impresoraObj.reconnect(Con,db);
             P_impresoraObj.reconnect(Con,db);
+            T_venta_modObj.reconnect(Con,db);
+            T_venta_ingObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

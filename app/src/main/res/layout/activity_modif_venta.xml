@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D0000000"
+        tools:context=".ModifVenta">
+
+        <RelativeLayout
+            android:layout_width="400dp"
+            android:layout_height="700dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/frame_rect_edit">
+
+            <ListView
+                android:id="@+id/listView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/relmbot"
+                android:layout_below="@id/relmtop"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="3dp"
+                android:layout_marginTop="10dp">
+
+            </ListView>
+
+            <RelativeLayout
+                android:id="@+id/relmtop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/blue_strip">
+
+                <TextView
+                    android:id="@+id/textView274"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:maxLines="2"
+                    android:text="TextView"
+                    android:textColor="#F0F0F0"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/relmbot"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/blue_strip">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/frame_rect_edit">
+
+                    <ImageView
+                        android:id="@+id/imgImg6"
+                        android:layout_width="68dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:clickable="true"
+                        android:onClick="doApply"
+                        android:padding="5dp"
+                        android:src="@drawable/icok" />
+
+                    <ImageView
+                        android:id="@+id/imageView131"
+                        android:layout_width="78dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:clickable="true"
+                        android:onClick="doExit"
+                        android:padding="5dp"
+                        android:src="@drawable/prev48" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>

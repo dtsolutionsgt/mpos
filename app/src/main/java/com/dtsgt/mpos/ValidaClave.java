@@ -145,6 +145,10 @@ public class ValidaClave extends PBase {
                 item.Cod =""+VendedoresObj.items.get(i).codigo_vendedor;
                 item.Name = VendedoresObj.items.get(i).nombre;
                 item.Pass = VendedoresObj.items.get(i).clave;
+                app.setGradResource(i);
+                item.idres=gl.idgrres;
+                item.idressel=gl.idgrsel;
+
                 mitems.add(item);
             }
 

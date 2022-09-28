@@ -360,7 +360,6 @@ public class MantDescuento extends PBase {
 
     //endregion
 
-
     //region Date
 
     public void showDateDialog1(View view) {

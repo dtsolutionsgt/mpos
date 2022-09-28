@@ -296,7 +296,12 @@ public class Caja extends PBase {
             if(dt!=null) dt.close();
 
             montoDif = tot - pago;
+
+            montoDif=mu.round2(montoDif);
+            montoFin=mu.round2(montoFin);
+
             montoDif = montoFin - montoDif;
+            if (montoDif<0.01) montoDif=0;
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

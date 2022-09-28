@@ -225,10 +225,11 @@ public class MantEstacion extends PBase {
     private void listaImpresoras() {
         final AlertDialog Dialog;
 
+        /*
         try {
             P_impresoraObj.fill("WHERE NOTA_CREDITO=0 ORDER BY TIPO_HH");
 
-            final String[] selitems = new String[P_impresoraObj.count];
+            //final String[] xselitems = new String[P_impresoraObj.count];
 
             for (int i = 0; i <P_impresoraObj.count; i++) {
                 selitems[i]=P_impresoraObj.items.get(i).tipo_hh;
@@ -267,6 +268,8 @@ public class MantEstacion extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+         */
     }
 
     private String nombreImpresora() {

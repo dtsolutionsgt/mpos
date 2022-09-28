@@ -19,6 +19,7 @@ import com.dtsgt.classes.clsD_orden_bitacoraObj;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidoordenObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_D_pedido;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
@@ -535,33 +536,41 @@ public class PedidosEnv extends PBase {
     //region Dialogs
 
     private void showItemMenu() {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Borrar Ordenes"};
 
-        ExDialog menudlg = new ExDialog(this);
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(PedidosEnv.this,"Ordenes");
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        browse=2;
-                        startActivity(new Intent(PedidosEnv.this,ValidaSuper.class));
+            listdlg.add("Borrar Ordenes");
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        switch (position) {
+                            case 0:
+                                browse=2;
+                                startActivity(new Intent(PedidosEnv.this,ValidaSuper.class));
+                        }
+
+                        listItems();
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
+            });
 
-                listItems();
-                dialog.cancel();
-            }
-        });
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void msgAskDelete(String msg) {

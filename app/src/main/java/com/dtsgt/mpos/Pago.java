@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.ListAdaptPago;
 
 public class Pago extends PBase {
@@ -422,9 +423,10 @@ public class Pago extends PBase {
 	}
 	
 	public void showPagoDialog() {
+		/*
 		final AlertDialog Dialog;
 		   
-	    final String[] selitems = new String[lname.size()];
+	    final String[] xselitems = new String[lname.size()];
 	    for (int i = 0; i < lname.size(); i++) {
 	    	selitems[i] = lname.get(i);
 	    }
@@ -460,6 +462,8 @@ public class Pago extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
+
+		 */
 
 		
 	}
@@ -505,9 +509,11 @@ public class Pago extends PBase {
 	}
 	
 	public void showBancoDialog() {
+
+		/*
 		final AlertDialog Dialog;
 		   
-	    final String[] selitems = new String[bname.size()];
+	    final String[] xselitems = new String[bname.size()];
 	    for (int i = 0; i < bname.size(); i++) {
 	    	selitems[i] = bname.get(i);
 	    }
@@ -545,6 +551,8 @@ public class Pago extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
+
+		 */
 	}
 	
 	private void inputNumero() {

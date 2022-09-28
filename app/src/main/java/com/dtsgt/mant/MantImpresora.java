@@ -15,6 +15,8 @@ import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_impresora_marcaObj;
 import com.dtsgt.classes.clsP_impresora_modeloObj;
 import com.dtsgt.classes.clsP_lineaObj;
+import com.dtsgt.classes.extListDlg;
+import com.dtsgt.mpos.Orden;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import android.widget.AdapterView;
@@ -301,69 +303,71 @@ public class MantImpresora extends PBase {
 
 
     private void showMarcaList() {
-        final AlertDialog Dialog;
+         try {
 
-        clsP_impresora_marcaObj marcas =new clsP_impresora_marcaObj(this,Con,db);
-        marcas.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
-        String[] selitems = new String[marcas.count];
-        for (int i = 0; i <marcas.count; i++) {
-            selitems[i]=marcas.items.get(i).nombre;
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(MantImpresora.this,"Marca de impresora");
+            listdlg.setLines(6);
+
+            clsP_impresora_marcaObj marcas =new clsP_impresora_marcaObj(this,Con,db);
+            marcas.fill("WHERE ACTIVO=1 ORDER BY NOMBRE");
+            for (int i = 0; i <marcas.count; i++) {
+                listdlg.add(marcas.items.get(i).nombre);
+            }
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        idmarca=marcas.items.get(position).codigo_impresora_marca;
+                        nmarca=marcas.items.get(position).nombre;
+                        showModeloList();
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Marca de impresora");
-
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                idmarca=marcas.items.get(item).codigo_impresora_marca;
-                nmarca=marcas.items.get(item).nombre;
-                showModeloList();
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void showModeloList() {
-        final AlertDialog Dialog;
 
-        clsP_impresora_modeloObj modelos =new clsP_impresora_modeloObj(this,Con,db);
-        modelos.fill("WHERE CODIGO_IMPRESORA_MARCA="+idmarca+" ORDER BY NOMBRE");
+        try {
 
-        String[] selitems = new String[modelos.count];
-        for (int i = 0; i <modelos.count; i++) {
-            selitems[i]=modelos.items.get(i).nombre;
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(MantImpresora.this,nmarca);
+
+            clsP_impresora_modeloObj modelos =new clsP_impresora_modeloObj(this,Con,db);
+            modelos.fill("WHERE CODIGO_IMPRESORA_MARCA="+idmarca+" ORDER BY NOMBRE");
+
+            for (int i = 0; i <modelos.count; i++) {
+                listdlg.add(modelos.items.get(i).nombre);
+            }
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        item.codigo_modelo=modelos.items.get(position).codigo_impresora_modelo;
+                        setMarca(item.codigo_modelo);
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle(nmarca);
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int idx) {
-                item.codigo_modelo=modelos.items.get(idx).codigo_impresora_modelo;
-                setMarca(item.codigo_modelo);
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void setMarca(int idmodelo) {

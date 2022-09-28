@@ -24,7 +24,7 @@ public class appGlobals extends Application {
 	public boolean CellCom,closeDevBod,modoinicial,newmenuitem,validDate,comquickrec;
 	public String ref1,ref2,ref3,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente;
-	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom;
+	public String felcorel,felserie,felnum,feluuid,prodid,pedid,pedcorel,idorden,mesanom,nom_est;
 	public String tiendanom,cajanom,urlglob,menuitemid,titReport,pickcode,pickname,wsurl;
 	public int tiponcredito,validarCred,gpsdist,gcodi,savemantid,salaid,idmesero,modoclave;
     public boolean vcredito,vcheque,vchequepost,validimp,dev,banco,disc,iniciaVenta,listaedit,exitflag;
@@ -33,17 +33,20 @@ public class appGlobals extends Application {
 	            banderaCobro, cliposflag, forcedclose, cierreDiario,invregular,checksuper,gNITcf;
 	public int  mpago, corelZ,codigo_cliente,codigo_ruta,codigo_vendedor,codigo_proveedor,idmodgr,
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,mesacodigo,
-                comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo ;
+                comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
+			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
-                corelmov, linea_sel="",mesa_alias,nummesapedido;
+                corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,caja_est_pago,nom_alm,nom_alm2;
-	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,dom_total;
+	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
+			      dom_total,bar_cant;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
-                   ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina;
+                   ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,
+			       modo_cortesia,modo_apertura;
 
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;
@@ -68,7 +71,7 @@ public class appGlobals extends Application {
 
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peComNoAplic;
-    public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp;
+    public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp,peLineaIngred;
     public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;

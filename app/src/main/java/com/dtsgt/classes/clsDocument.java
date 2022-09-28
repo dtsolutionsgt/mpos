@@ -195,7 +195,6 @@ public class clsDocument {
         return true;
     }
 
-
     public boolean buildPrintAppend(String corel,int reimpres,String modo) {
 		int flag;
 
@@ -303,6 +302,13 @@ public class clsDocument {
 
         rep.empty();rep.empty();
 
+        if (docfactura) {
+            if (!facturaflag) {
+                rep.addc("TICKET");
+                rep.add("");
+            }
+        }
+
         for (int i = 0; i <lines.size(); i++) 		{
 
             s=lines.get(i);if (s.isEmpty()) s=" ";
@@ -372,7 +378,6 @@ public class clsDocument {
                             }
                         }
                     }
-
                 }
             }
         }
@@ -432,16 +437,23 @@ public class clsDocument {
 
 			}
 
+            if (docfactura) {
+                if (!facturaflag) {
+                    rep.add("");
+                    rep.add("Esto no es una factura fiscal");
+                    rep.add("");
+                }
+            }
+
 			if (pagoefectivo==1){
                 rep.add("Condiciones de pago : Efectivo");
 			} else {
-
 			    if(!TipoCredito.isEmpty()){
-                    rep.add("Condiciones de pago : " + TipoCredito + " Aut#: " + NoAutorizacion);
-                }else{
+                    rep.add("Condiciones de pago : ");
+                    rep.add("Aut#: " + NoAutorizacion);
+                } else {
                     rep.add("Condiciones de pago : Crédito");
                 }
-
 			}
 		}
 

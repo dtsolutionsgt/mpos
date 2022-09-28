@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_barrilObj;
 import com.dtsgt.classes.clsP_mesa_nombreObj;
 import com.dtsgt.classes.clsP_mesero_grupoObj;
 import com.dtsgt.classes.clsP_res_grupoObj;
@@ -28,6 +29,8 @@ import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ordenpendObj;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.classes.extListChkDlg;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_Res_mesa;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
@@ -45,8 +48,8 @@ import java.util.TimerTask;
 public class ResMesero extends PBase {
 
     private GridView gridView;
-    private TextView lblcuenta, lblgrupo,lblmes;
-    private ImageView imgwsref,imgnowifi;
+    private TextView lblcuenta, lblgrupo,lblmes,lblbarril;
+    private ImageView imgwsref,imgnowifi,imgbarril;
 
     private clsP_res_grupoObj P_res_grupoObj;
     private clsP_res_turnoObj P_res_turnoObj;
@@ -76,8 +79,8 @@ public class ResMesero extends PBase {
     private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2;
     private boolean horiz,actorden,wsidle=false,wcoridle=true;
 
-    private TimerTask ptask;
-    private int period=10000,delay=50;
+    private TimerTask ptask,etask;
+    private int period=15000,delay=50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,8 @@ public class ResMesero extends PBase {
         lblcuenta =findViewById(R.id.textView179a);
         lblgrupo =findViewById(R.id.textView179b);
         lblmes =findViewById(R.id.textView179b2);
+        lblbarril =findViewById(R.id.textView221);
+        imgbarril =findViewById(R.id.imageView106);
         imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
         imgnowifi=findViewById(R.id.imageView71a);
 
@@ -136,6 +141,13 @@ public class ResMesero extends PBase {
         };
 
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
+
+        clsD_barrilObj D_barrilObj=new clsD_barrilObj(this,Con,db);
+        D_barrilObj.fill();
+        if (D_barrilObj.count==0) {
+            lblbarril.setVisibility(View.INVISIBLE);
+            imgbarril.setVisibility(View.INVISIBLE);
+        }
     }
 
     //region Events
@@ -150,7 +162,15 @@ public class ResMesero extends PBase {
 
     public void doRec(View view) {
         //procesaEstadoMesas();
-        recibeOrdenes();
+        //recibeOrdenes();
+    }
+
+    public void doBarril(View view) {
+        try {
+            startActivity(new Intent(this,Barriles.class));
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     public void doExit(View view) {
@@ -220,7 +240,7 @@ public class ResMesero extends PBase {
 
                 mesa.codigo_mesa=idmesa;
                 mesa.nombre=P_res_mesaObj.items.get(i).nombre;mesa.mesanum=mesa.nombre;
-                mesa.alias=" ";
+                mesa.alias=" ";mesa.alias2=" ";
                 mesa.est_envio=1;
                 mesa.numorden="";
                 mesa.idgrupo=P_res_mesaObj.items.get(i).codigo_grupo;
@@ -228,7 +248,8 @@ public class ResMesero extends PBase {
                 amesa=aliasMesa(idmesa);
                 if (!amesa.isEmpty()) {
                     mesa.alias=mesa.nombre+" - "+amesa;mesa.nombre=" ";
-                }
+                    mesa.alias2=amesa;
+               }
 
                 P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
 
@@ -338,45 +359,28 @@ public class ResMesero extends PBase {
     }
 
     private void listMesa() {
-
         try {
-            lcode.clear();lname.clear();
+
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResMesero.this,"Mesas");
 
             for (int i = 0; i <mesas.size(); i++) {
                 if (mesas.get(i).estado==0) {
-                    lcode.add(""+mesas.get(i).codigo_mesa);
-                    lname.add(mesas.get(i).nombre);
+                    listdlg.add(""+mesas.get(i).codigo_mesa,mesas.get(i).nombre);
                 }
             }
 
-            final String[] selitems = new String[lname.size()];
-
-            for (int i = 0; i < lname.size(); i++) {
-                selitems[i] = "Mesa "+lname.get(i);
-            }
-
-            ExDialog mMenuDlg = new ExDialog(this);
-
-            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    try {
-                        idmesa=lcode.get(item);
-                        nmesa=lname.get(item);
-                        listComp();
-                    } catch (Exception e) {
-                        toast(e.getMessage());
-                    }
-                }
-            });
-
-            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) { }
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    idmesa=listdlg.items.get(position).codigo;
+                    nmesa=listdlg.items.get(position).text;
+                    listComp();
+                    listdlg.dismiss();
+                };
             });
 
-            AlertDialog Dialog = mMenuDlg.create();
-            Dialog.show();
-
+            listdlg.show();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -384,6 +388,7 @@ public class ResMesero extends PBase {
 
     private void listComp() {
 
+        /*
         try {
             lcode.clear();lname.clear();
 
@@ -398,7 +403,7 @@ public class ResMesero extends PBase {
                 lname.add("Mesa : "+nmesa+"  "+du.shora(P_res_sesionObj.items.get(i).fechault));
             }
 
-            final String[] selitems = new String[lname.size()];
+            final String[] xselitems = new String[lname.size()];
 
             for (int i = 0; i < lname.size(); i++) {
                 selitems[i] = lname.get(i);
@@ -429,6 +434,8 @@ public class ResMesero extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+         */
     }
 
     //endregion
@@ -660,8 +667,29 @@ public class ResMesero extends PBase {
 
     //endregion
 
-    /*
     //region Estado
+
+    private void iniciaEstados() {
+        try {
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(etask=new TimerTask() {
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public synchronized void run() {
+                            procesaEstadoMesas();
+                        }
+                    });
+                }
+            }, delay, period);
+        } catch (Exception e) { }
+    }
+
+    private void cancelaEstados() {
+        try {
+            etask.cancel();
+        } catch (Exception e) {}
+    }
 
     @Override
     protected void wsCallBack(Boolean throwing,String errmsg) {
@@ -701,9 +729,10 @@ public class ResMesero extends PBase {
         int iid,est;
         String cor;
 
-        if (ws.openDTCursor.getCount()==0) return;
-
         try {
+
+            if (ws.openDTCursor.getCount()==0) return;
+
             db.beginTransaction();
 
             ws.openDTCursor.moveToFirst();
@@ -812,7 +841,6 @@ public class ResMesero extends PBase {
     }
 
     //endregion
-    */
 
     //region Aux
 
@@ -885,7 +913,8 @@ public class ResMesero extends PBase {
 
             agregaOrden();
         } catch (Exception e) {
-            mu.msgbox("Cantidad incorrecta");return;
+            //mu.msgbox("Cantidad incorrecta");
+            return;
         }
     }
 
@@ -1007,93 +1036,82 @@ public class ResMesero extends PBase {
     //region Dialogs
 
     private void showGrupoMenu() {
-        final AlertDialog Dialog;
 
         try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResMesero.this,"Grupos de mesas","Salir","Configurar");
+
             sql="WHERE (CODIGO_GRUPO IN (SELECT CODIGO_GRUPO FROM P_mesero_grupo " +
                     "WHERE (CODIGO_MESERO="+gl.idmesero+")) ) ORDER BY Nombre";
             P_res_grupoObj.fill(sql);
 
-            final String[] selitems = new String[P_res_grupoObj.count];
-            for (int i = 0; i <P_res_grupoObj.count; i++) {
-                selitems[i]=P_res_grupoObj.items.get(i).nombre;
+            if (P_res_grupoObj.count==0) {
+                browse=2;
+                startActivity(new Intent(ResMesero.this,ValidaSuper.class));
+                return;
             }
 
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Grupos de mesas");
+            for (int i = 0; i <P_res_grupoObj.count; i++) {
+                listdlg.add(P_res_grupoObj.items.get(i).nombre);
+            }
 
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    idgrupo=P_res_grupoObj.items.get(item).codigo_grupo;
-                    setGrupo();
-                    dialog.cancel();
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        idgrupo=P_res_grupoObj.items.get(position).codigo_grupo;
+                        setGrupo();
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnMiddleClick(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setPositiveButton("Configurar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(View v) {
                     browse=2;
                     startActivity(new Intent(ResMesero.this,ValidaSuper.class));
-                    dialog.cancel();
+                    listdlg.dismiss();
                 }
             });
 
-            Dialog = menudlg.create();
-            Dialog.show();
-
+            listdlg.show();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     private void showGrupoChecks() {
-        final AlertDialog Dialog;
 
         try {
+            extListChkDlg listdlg = new extListChkDlg();
+            listdlg.buildDialog(ResMesero.this,"Grupos asignados","Salir","","Aplicar");
+            listdlg.setWidth(350);listdlg.setLines(5);
+
             P_res_grupoObj.fill("ORDER BY Nombre");
-
-            final String[] selitems = new String[P_res_grupoObj.count];
-            final boolean[] checked = new boolean[P_res_grupoObj.count];
-
             for (int i = 0; i <P_res_grupoObj.count; i++) {
-                selitems[i]=P_res_grupoObj.items.get(i).nombre;
                 P_mesero_grupoObj.fill("WHERE (CODIGO_MESERO="+gl.idmesero+") AND (CODIGO_GRUPO="+P_res_grupoObj.items.get(i).codigo_grupo+")");
-                checked[i]=P_mesero_grupoObj.count>0;
+                listdlg.add(P_res_grupoObj.items.get(i).nombre,P_mesero_grupoObj.count>0);
             }
 
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-
-            menudlg.setTitle("Grupos asignados");
-
-            menudlg.setMultiChoiceItems(selitems, checked ,
-                    new DialogInterface.OnMultiChoiceClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton, boolean isChecked) {
-                            if (isChecked) {
-                                checked[whichButton]=true;
-                            } else {
-                                checked[whichButton]=false;
-                            }
-                        }
-                    });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnExitListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            menudlg.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            listdlg.setOnAddListener(new View.OnClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
+                public void onClick(View v) {
                     clsClasses.clsP_mesero_grupo item;
 
                     try {
@@ -1102,7 +1120,7 @@ public class ResMesero extends PBase {
                         db.execSQL("DELETE FROM P_mesero_grupo WHERE (CODIGO_MESERO="+gl.idmesero+")");
 
                         for (int i = 0; i <P_res_grupoObj.count; i++) {
-                            if (checked[i]) {
+                            if (listdlg.items.get(i).checked) {
                                 item = clsCls.new clsP_mesero_grupo();
 
                                 item.codigo_mesero=gl.idmesero;
@@ -1115,12 +1133,13 @@ public class ResMesero extends PBase {
                         db.setTransactionSuccessful();
                         db.endTransaction();
 
-                        dialog.cancel();
+                        listdlg.dismiss();
 
                         db.execSQL("DELETE FROM P_res_turno WHERE vendedor="+gl.idmesero);
 
                         gl.exitflag=true;
                         gl.cliposflag=false;
+
                         finish();
                     } catch (Exception e) {
                         db.endTransaction();
@@ -1129,12 +1148,13 @@ public class ResMesero extends PBase {
                 }
             });
 
-            Dialog = menudlg.create();
-            Dialog.show();
+
+            listdlg.show();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     public void showQuickRecep() {
@@ -1217,37 +1237,33 @@ public class ResMesero extends PBase {
     }
 
     private void opcionesMesa() {
-        final AlertDialog Dialog;
-        //final String[] selitems = {"Cambiar nombre","Borrar nombre","Trasladar cuentas"};
-        final String[] selitems = {"Cambiar nombre","Borrar nombre"};
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResMesero.this,"Nombre de mesa");
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Mesa");
+            listdlg.add(R.drawable.btn_complete,"Cambiar nombre");
+            listdlg.add(R.drawable.btn_del_line,"Borrar nombre");
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        ingresaNombreMesa();break;
-                    case 1:
-                        borraNombreMesa();break;
-                    case 2:
-                        ;break;
-                }
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        switch (position) {
+                            case 0:
+                                ingresaNombreMesa();break;
+                            case 1:
+                                borraNombreMesa();break;
+                        }
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
 
-                dialog.cancel();
-            }
-        });
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void ingresaNombreMesa() {
@@ -1258,7 +1274,7 @@ public class ResMesero extends PBase {
         final EditText input = new EditText(this);
         alert.setView(input);
 
-        input.setText("");
+        input.setText(mesa.alias2);
         input.requestFocus();
 
         alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
@@ -1270,6 +1286,7 @@ public class ResMesero extends PBase {
                     mu.msgbox("Nombre incorrecto");return;
                 }
 
+                s=mu.Capitalize(s);
                 nitem = clsCls.new clsP_mesa_nombre();
                 try {
                     nitem.codigo_mesa=mesa.codigo_mesa;
@@ -1316,7 +1333,7 @@ public class ResMesero extends PBase {
 
         if (actorden) {
             //recibeOrdenes();
-            iniciaOrdenes();
+            //iniciaOrdenes();
         }
 
         if (browse==1) {
@@ -1334,13 +1351,14 @@ public class ResMesero extends PBase {
             if (!gl.peNoCerrarMesas) finish();
         } else {
             listItems();
-            /*
+
             if (gl.pelMeseroCaja) {
-                procesaEstadoMesas();
+                //procesaEstadoMesas();
+                iniciaEstados();
             } else {
-                actualizaEstadosOrdenes();
+                //actualizaEstadosOrdenes();
             }
-            */
+            actualizaEstadosOrdenes();
         }
 
     }
@@ -1356,6 +1374,7 @@ public class ResMesero extends PBase {
         try{
             //msgAskExit("Salir");
             if (actorden) cancelaOrdenes();
+            cancelaEstados();
             app.logoutUser(du.getActDateTime());
             finish();
         } catch (Exception e){

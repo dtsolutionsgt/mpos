@@ -336,9 +336,9 @@ public class ProdCant extends PBase {
 			lblBU.setText(umstock);
 			upres = umstock;
 
-			lblPrec.setText(mu.frmcur(prec)+" x "+gl.umpeso);
+			lblPrec.setText(mu.frmcur(prec)+"  "+gl.umpeso);
 		} else {
-			lblPrec.setText(mu.frmcur(prec)+" x "+upres);
+			lblPrec.setText(mu.frmcur(prec)+"  "+upres);
 		}
 
 		if (pexist) lblDisp.setText(""+((int) idisp)); else lblDisp.setText("");

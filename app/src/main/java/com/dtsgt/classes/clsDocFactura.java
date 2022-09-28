@@ -227,25 +227,25 @@ public class clsDocFactura extends clsDocument {
         //#EJC20210705: TipoCredito, NoAutorizacion;
         try {
 
-            sql="SELECT A.DESC2 AS Tipo, A.DESC1 AS Autorizacion FROM T_PAGO A\n" +
-                    "INNER JOIN P_MEDIAPAGO B\n" +
+            /*
+            sql="SELECT A.DESC2 AS Tipo, A.DESC1 AS Autorizacion FROM T_PAGO A" +
+                    "INNER JOIN P_MEDIAPAGO B" +
                     "ON A.CODPAGO = B.CODIGO\n" +
                     "INNER JOIN D_FACTURAP P\n" +
                     "ON A.ITEM = P.ITEM\n" +
                     "AND B.NIVEL = 4 AND (P.COREL='" +corel+ "')";
+             */
+
+            sql="SELECT DESC2,DESC1 FROM D_FACTURAP WHERE (TIPO='K') AND (COREL='" +corel+ "')";
             DT=Con.OpenDT(sql);
-
-            if(DT!=null){
+            if (DT.getCount()>0) {
                 DT.moveToFirst();
-                if (DT.getCount()>0) {
-                    TipoCredito=DT.getString(0);
-                    NoAutorizacion=DT.getString(1);
-                } else {
-                    TipoCredito="";
-                    NoAutorizacion="";
-                }
+                TipoCredito=DT.getString(0);
+                NoAutorizacion=DT.getString(1);
+            } else {
+                TipoCredito="";
+                NoAutorizacion="";
             }
-
         } catch (Exception e) {
             TipoCredito="";
             NoAutorizacion="";
@@ -687,11 +687,11 @@ public class clsDocFactura extends clsDocument {
 
         //rep.addc("----------------------");
         //rep.addc("Firma cliente  ");
-         rep.add("");
-        rep.addc("ESTE DOCUMENTO ");
-        rep.addc("NO ES UNA FACTURA COMERCIAL");
         rep.add("");
-        rep.addc(sfticket);
+        //rep.addc("ESTE DOCUMENTO ");
+        //rep.addc("NO ES UNA FACTURA COMERCIAL");
+        //rep.add("");
+        //rep.addc(sfticket);
         rep.add("");
         rep.add("");
         rep.add("");

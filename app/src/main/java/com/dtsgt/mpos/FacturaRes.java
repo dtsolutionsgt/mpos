@@ -35,6 +35,8 @@ import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
+import com.dtsgt.classes.clsD_MovDObj;
+import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_facturaprObj;
@@ -48,6 +50,7 @@ import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_corelObj;
+import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
@@ -66,6 +69,7 @@ import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
+import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.ladapt.ListAdaptTotals;
 import com.dtsgt.webservice.srvCommit;
@@ -106,9 +110,10 @@ public class FacturaRes extends PBase {
 	private clsDocDevolucion fdev;
 	private AppMethods app;
     private clsKeybHandler khand;
+	private clsRepBuilder rep;
 
 	private long fecha,fechae;
-	private int fcorel,clidia, Nivel_Media_Pago;
+	private int fcorel,clidia, Nivel_Media_Pago,idtransbar;
 	private boolean EsNivelPrecioDelivery =false;
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea;
@@ -179,6 +184,8 @@ public class FacturaRes extends PBase {
         P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
         P_impresoraObj=new clsP_impresoraObj(this,Con,db);
         T_comandaObj=new clsT_comandaObj(this,Con,db);
+
+		rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
 		lblVuelto = new TextView(this,null);
 		txtVuelto = new EditText(this,null);
@@ -381,11 +388,10 @@ public class FacturaRes extends PBase {
 	}
 
     public void payCard(View view) {
-
         pendiente=false;
+		gl.modo_cortesia=false;
 
-        try{
-
+        try {
             if (fcorel==0) {
                 msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
             }
@@ -662,7 +668,7 @@ public class FacturaRes extends PBase {
 
 			fillTotals();
 
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("totalOrder: " + e.getMessage());
 		}
@@ -872,7 +878,7 @@ public class FacturaRes extends PBase {
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
 
-                app.doPrint(gl.peNumImp,0);
+             	app.doPrint(gl.peNumImp,0);
 
             }
 
@@ -899,7 +905,23 @@ public class FacturaRes extends PBase {
                 }
             }
 
-            super.finish();
+			try {
+				db.execSQL("DELETE FROM T_ORDEN_MOD WHERE COREL='"+gl.ordcorel+"'");
+			} catch (Exception e) {}
+
+			try {
+				db.execSQL("DELETE FROM T_ORDEN_ING WHERE COREL='"+gl.ordcorel+"'");
+			} catch (Exception e) {}
+
+			try {
+				db.execSQL("DELETE FROM T_VENTA_MOD");
+			} catch (Exception e) {}
+
+			try {
+				db.execSQL("DELETE FROM T_VENTA_ING");
+			} catch (Exception e) {}
+
+			super.finish();
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -910,7 +932,33 @@ public class FacturaRes extends PBase {
 		}
 	}
 
- 	private void singlePrint() {
+	private void askPrintSegunda() {
+		try{
+			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+			dialog.setTitle("Pos");
+			dialog.setMessage("Imprimír copia?");
+
+			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					app.doPrint(1,0);
+					finish();
+				}
+			});
+
+			dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+
+			dialog.show();
+		} catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
+
+	private void singlePrint() {
 		try{
 			prn.printask(printcallback);
 
@@ -951,8 +999,15 @@ public class FacturaRes extends PBase {
         }else{
             mitem=0;
         }
-
 		mitem++;
+
+		try {
+			dt=Con.OpenDT("SELECT MAX(CODIGO_TRANS) FROM D_barril_trans");
+			dt.moveToFirst();
+			idtransbar=dt.getInt(0)+1;
+		} catch (Exception e) {
+			idtransbar=1;
+		}
 
 		try {
 
@@ -1044,6 +1099,13 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAD
 
+
+            if (gl.numero_orden.isEmpty() || gl.numero_orden.equalsIgnoreCase(" ")) {
+                //toastlong("Venta directa ");
+            } else {
+                //toastlong("Venta orden ");
+            }
+
 			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
 			dt=Con.OpenDT(sql);
 
@@ -1096,6 +1158,10 @@ public class FacturaRes extends PBase {
                     rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
 				}
 
+				if (app.esProductoBarril(app.codigoProducto(vprod))) {
+					agregaRegistroBarril(gl.bar_prod,gl.bar_cant, vcant);
+				}
+
 			    dt.moveToNext();counter++;ss="";
 
                 try {
@@ -1132,6 +1198,10 @@ public class FacturaRes extends PBase {
                                     rebajaStockUM(dtc.getInt(4),app.umVenta2(dtc.getInt(4)),dtc.getInt(3));
                                 }
                             }
+
+							if (app.esProductoBarril(dtc.getInt(4))) {
+								agregaRegistroBarril(gl.bar_prod,gl.bar_cant, dtc.getInt(3));
+							}
 
                             dtc.moveToNext();cuid++;
                         }
@@ -1984,10 +2054,10 @@ public class FacturaRes extends PBase {
             dt.moveToFirst();
             int newfrid=D_facturarObj.newID("SELECT MAX(EMPRESA) FROM D_facturar");
 
-
             while (!dt.isAfterLast()) {
 
                 clsClasses.clsD_facturar item = clsCls.new clsD_facturar();
+
 
                 item.empresa=newfrid;
                 item.corel=corel;
@@ -2019,6 +2089,398 @@ public class FacturaRes extends PBase {
     }
 
     //endregion
+
+	//region Cortesia
+
+	private void listaCortesias() {
+		clsClasses.clsP_cortesia item;
+
+		gl.modo_cortesia=false;
+		gl.usuario_cortesia=0;
+
+		try {
+
+			clsP_cortesiaObj P_cortesiaObj=new clsP_cortesiaObj(this,Con,db);
+			P_cortesiaObj.fill("WHERE (ACTIVO=1) ORDER BY NOMBRE");
+			if (P_cortesiaObj.count==0) {
+				msgbox("No está definido ningúno usuario con credenciales de cortesia");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(FacturaRes.this,"Cortesia","Salir");
+
+			for (int i = 0; i <P_cortesiaObj.count; i++) {
+				item=P_cortesiaObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
+
+			listdlg.onEnterClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (listdlg.getInput().isEmpty()) return;
+
+					if (listdlg.validPassword()) {
+						gl.usuario_cortesia=listdlg.validUserId();
+						gl.nombre_cortesia=listdlg.validUserName();
+						aplicaCortesia();
+						listdlg.dismiss();
+					} else {
+						toast("Contraseña incorrecta");
+					}
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void aplicaCortesia() {
+
+		if (gl.usuario_cortesia==0) {
+			msgbox("No está definido quién aplica la cortesia");return;
+		}
+
+		totalOrderCortesia();
+		if (!guardaCortesia()) return;
+
+		completaEstadoOrdenCortesia();
+
+		gl.cliposflag=false;
+		gl.InvCompSend=false;
+		gl.delivery =false;
+		gl.pickup = false;
+		gl.sin_propina=false;
+		gl.InvCompSend=true;
+
+		impresionCortesia();
+
+	}
+
+	private void completaEstadoOrdenCortesia() {
+
+		try {
+			db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		if (!gl.peActOrdenMesas) return;
+
+		try {
+			broadcastJournalFlag(99);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+	private void totalOrderCortesia(){
+
+		double dmaxmon;
+
+		cleandprod=false;
+
+		try{
+
+			if (acum) {
+				descimp=descgmon;
+				dfinmon=descpmon+descgmon;
+				cleandprod=false;
+			} else {
+				if (descpmon>=descgmon) {
+					dfinmon=descpmon;
+					cleandprod=false;
+				} else {
+					dfinmon=descgmon;
+					cleandprod=true;
+				}
+			}
+
+			dmaxmon=(double) (stot0*dmax/100);
+			if (dmax>0) {
+				if (dfinmon>dmaxmon) dfinmon=dmax;
+			}
+
+			descmon=mu.round2(dfinmon);
+			stot=mu.round2(stot0);
+
+			propinaperc=0;
+			propina=0;
+
+			fillTotals();
+
+		} catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			mu.msgbox("totalOrder: " + e.getMessage());
+		}
+
+	}
+
+	private boolean guardaCortesia() {
+		Cursor dt,dtc;
+		String vprod,vumstock;
+		double vcant;
+		int itemuid,cuid;
+
+		try {
+			clsClasses.clsD_Mov header;
+			clsClasses.clsD_MovD item;
+
+			db.beginTransaction();
+
+			clsD_MovObj mov=new clsD_MovObj(this,Con,db);
+			clsD_MovDObj movd=new clsD_MovDObj(this,Con,db);
+
+			String cortcorel=gl.ruta+"_"+mu.getCorelBase();corel=cortcorel;
+
+			header =clsCls.new clsD_Mov();
+
+			header.COREL=cortcorel;
+			header.RUTA=gl.codigo_ruta;
+			header.ANULADO=0;
+			header.FECHA=du.getActDateTime();
+			header.TIPO="C";
+			header.USUARIO=gl.usuario_cortesia;
+			header.REFERENCIA= gl.nombre_cortesia;
+			header.STATCOM="N";
+			header.IMPRES=0;
+			header.CODIGOLIQUIDACION=0;
+			header.CODIGO_PROVEEDOR=3;
+			header.TOTAL=tot;
+
+			mov.add(header);
+
+			int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD");
+
+			sql="SELECT PRODUCTO,CANT,PRECIO,IMP,DES,DESMON,TOTAL,PRECIODOC,PESO,VAL2,VAL4,UM,FACTOR,UMSTOCK,EMPRESA FROM T_VENTA";
+			dt=Con.OpenDT(sql);
+
+			dt.moveToFirst();
+
+			while (!dt.isAfterLast()) {
+
+				porpeso=false;
+				vumstock=dt.getString(11);
+				itemuid=dt.getInt(14);
+
+				item =clsCls.new clsD_MovD();
+
+				corm++;
+				item.coreldet=corm;
+				item.corel=cortcorel;
+				item.producto=app.codigoProducto(dt.getString(0));
+				item.cant=-dt.getDouble(1);
+				item.cantm=0;
+				item.peso=0;
+				item.pesom=0;
+				item.lote="";
+				item.codigoliquidacion=0;
+				item.unidadmedida=vumstock;
+				item.precio=dt.getDouble(2);
+				item.motivo_ajuste=0;
+
+				movd.add(item);
+
+				vprod=dt.getString(0);
+				vcant=dt.getDouble(1);
+
+				if (esProductoConStock(dt.getString(0))) {
+					rebajaStockUM(app.codigoProducto(vprod),vumstock,vcant);
+				}
+
+				dt.moveToNext();ss="";
+
+				try {
+
+					sql="SELECT CODIGO_MENU,IDCOMBO,UNID,CANT,IDSELECCION,ORDEN FROM T_COMBO WHERE IDCOMBO="+itemuid;
+					dtc=Con.OpenDT(sql);
+
+					if (dtc.getCount()>0) {
+
+						dtc.moveToFirst();cuid=0;
+
+						while (!dtc.isAfterLast()) {
+
+							ins.init("D_facturac");
+							ins.add("EMPRESA",cuid);
+							ins.add("COREL",corel);
+							ins.add("CODIGO_MENU",dtc.getInt(0));
+							ins.add("IDCOMBO",dtc.getInt(1));
+							ins.add("UNID",dtc.getInt(2));
+							ins.add("CANT",dtc.getInt(3));
+							ins.add("IDSELECCION",dtc.getInt(4));
+							ins.add("ORDEN",dtc.getInt(5));
+							ins.add("NOMBRE",app.prodNombre(dtc.getInt(4)));
+
+							String sn=app.prodNombre(dtc.getInt(4));
+
+							ss+=ins.sql()+"\n";
+
+							db.execSQL(ins.sql());
+
+							if (esProductoConStock(dtc.getInt(4))) {
+								P_prodrecetaObj.fill("WHERE (CODIGO_PRODUCTO="+dtc.getInt(4)+")");
+								if (P_prodrecetaObj.count==0) {
+									rebajaStockUM(dtc.getInt(4),app.umVenta2(dtc.getInt(4)),dtc.getInt(3));
+								}
+							}
+
+							dtc.moveToNext();cuid++;
+						}
+					}
+
+				} catch (Exception e) {
+					//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . FACTURAC : "+e.getMessage());
+				}
+
+			}
+
+			procesaInventario();
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			return true;
+		} catch (Exception e) {
+			db.endTransaction();
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		return false;
+	}
+
+	private void impresionCortesia() {
+
+		try {
+			gl.nombre_mesero="";
+
+			fdoc.es_pickup=gl.pickup;
+			fdoc.es_delivery=gl.delivery;
+
+			if (gl.mesero_venta>0) {
+				clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+				VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.mesero_venta);
+				if (VendedoresObj.count>0) gl.nombre_mesero=VendedoresObj.first().nombre;
+			}
+
+			rl_facturares.setVisibility(View.INVISIBLE);
+
+			if(gl.dvbrowse!=0) gl.dvbrowse =0;
+
+			impres=0;
+
+			try {
+				rep.clear();
+
+				impresionEncabezado(0);
+				impresionDetalle(0);
+
+				rep.line();
+				rep.empty();
+				rep.addtote("Valor total: ",mu.frmcur(tot));
+				rep.empty();
+				rep.empty();
+				rep.empty();
+
+				rep.save();
+
+				app.doPrint(gl.peNumImp,0);
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
+
+			gl.iniciaVenta=true;
+			gl.ventalock=false;
+
+			try {
+				db.execSQL("DELETE FROM T_ORDEN_MOD WHERE COREL='"+gl.ordcorel+"'");
+			} catch (Exception e) {}
+
+			try {
+				db.execSQL("DELETE FROM T_ORDEN_ING WHERE COREL='"+gl.ordcorel+"'");
+			} catch (Exception e) {}
+
+			try {
+				db.execSQL("DELETE FROM T_VENTA_MOD");
+			} catch (Exception e) {}
+
+			try {
+				db.execSQL("DELETE FROM T_VENTA_ING");
+			} catch (Exception e) {}
+
+			super.finish();
+
+		} catch (Exception e){
+			mu.msgbox("impresionCortesia: "  + e.getMessage());
+			gl.ventalock=false;
+			super.finish();
+		}
+	}
+
+	private void impresionEncabezado(int aid) {
+
+		rep.empty();
+		rep.empty();
+		//rep.addc(gl.empnom);
+		//rep.addc(gl.tiendanom);
+		rep.empty();
+		rep.addc("CONSUMO CORTESIA");
+		rep.empty();
+		//rep.add("Numero: "+corel+" ");
+
+		rep.add("Fecha: "+du.sfecha(du.getActDate())+" "+du.shora(du.getActDate()));
+		//rep.add("Operador: "+gl.vendnom);
+		rep.add("Cortesia autorizo: ");
+		rep.add(gl.nombre_cortesia);
+		rep.empty();
+		rep.add3lrr("Cantidad","Precio","Total");
+		rep.line();
+
+	}
+
+	private void impresionDetalle(int aid) {
+		Cursor dt;
+		String dum;
+		double dcant,dprec,dtot;
+
+		try {
+
+			sql="SELECT PRODUCTO,CANT,PRECIO,TOTAL,UM FROM T_VENTA";
+			dt=Con.OpenDT(sql);
+
+			dt.moveToFirst();
+			while (!dt.isAfterLast()) {
+				dum =  dt.getString(4);
+				dcant = dt.getDouble(1);
+				dprec = dt.getDouble(2);
+				dtot = dt.getDouble(3);
+
+				rep.add(app.prodNombre(app.codigoProducto(dt.getString(0))));
+				rep.add3lrre(mu.frmdecno(dcant) + " " + dum, dprec, dtot);
+
+				dt.moveToNext();
+			}
+
+		} catch (Exception e) {
+			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+e.getMessage());
+		}
+	}
+
+
+	//endregion
 
 	//region Pago
 
@@ -2789,7 +3251,7 @@ public class FacturaRes extends PBase {
 
                 prodid = app.codigoProducto(venta.producto);
                 prname=getProd(prodid);
-                s = mu.frmdecno(venta.cant) + " x " + prname;
+                s = mu.frmdecno(venta.cant) + "  " + prname;
 
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
 
@@ -2987,7 +3449,7 @@ public class FacturaRes extends PBase {
 
             pp++;
             prid=app.codigoProducto(venta.producto);
-            s=mu.frmdecno(venta.cant)+" x "+getProd(prid);
+            s=mu.frmdecno(venta.cant)+"  "+getProd(prid);
             if (app.prodTipo(prid).equalsIgnoreCase("M")) s+="  [ #"+venta.empresa+" ]";
 
             sql=addProducto(pp,s);osql+=sql+";";
@@ -3426,7 +3888,38 @@ public class FacturaRes extends PBase {
         }
     }
 
-    //endregion
+	private void agregaRegistroBarril(int idprod,double factor,double cant) {
+
+		if (app.barrilProd(idprod).isEmpty()) return;
+
+		try {
+			ins.init("D_barril_trans");
+
+			ins.add("CODIGO_TRANS",idtransbar);
+			ins.add("EMPRESA",gl.emp);
+			ins.add("CODIGO_SUCURSAL",gl.tienda);
+			ins.add("FECHAHORA",du.getActDateTime());
+			ins.add("CODIGO_BARRIL",gl.bar_idbarril);
+			ins.add("CODIGO_PRODUCTO",idprod);
+			ins.add("CANTIDAD",factor*cant);
+			ins.add("UM",gl.bar_um);
+			ins.add("MESERO",gl.codigo_vendedor);
+			ins.add("TIPO_MOV",2);
+			ins.add("IDTRANS",corel);
+			ins.add("STATCOM",0);
+
+			db.execSQL(ins.sql());
+
+		} catch (Exception e) {
+			String ee=e.getMessage()+"\n"+ins.sql();
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		idtransbar++;
+	}
+
+
+	//endregion
 
     //region Dialogs
 
@@ -3715,6 +4208,12 @@ public class FacturaRes extends PBase {
             }
         });
 
+		alert.setNeutralButton("Sin propina", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				msgAskSinPropina("Anular la propina");
+			}
+		});
+
         alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {}
         });
@@ -3722,7 +4221,25 @@ public class FacturaRes extends PBase {
         alert.show();
     }
 
-    private void valorDescuentoMonto() {
+	private void msgAskSinPropina(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("¿" + msg + "?");
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				totalOrderCortesia();
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
+
+	private void valorDescuentoMonto() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setTitle("Monto descuento");
@@ -3802,9 +4319,14 @@ public class FacturaRes extends PBase {
             }
 
             if (browse==3) {
-                browse=0;
-                checkPago();
-                return;
+				browse=0;
+				if (gl.modo_cortesia) {
+					listaCortesias();
+				} else {
+					checkPago();
+				}
+
+				return;
             }
 
             if (browse==2) {

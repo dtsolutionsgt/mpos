@@ -19,6 +19,7 @@ import com.dtsgt.classes.clsD_orden_bitacoraObj;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidoordenObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_D_pedido;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvPedidoEstado;
@@ -540,39 +541,49 @@ public class Pedidos extends PBase {
     //region Dialogs
 
     private void showItemMenu() {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Ordenes Activos","Ordenes Pagados","Ordenes Anulados","Borrar Ordenes"};
 
-        ExDialog menudlg = new ExDialog(this);
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Pedidos.this,"Filtro ordenes");
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        sql=sql1;modo=false;break;
-                    case 1:
-                        sql=sql2;modo=true;break;
-                    case 2:
-                        sql=sql3;modo=true;break;
-                    case 3:
-                        browse=2;
-                        startActivity(new Intent(Pedidos.this,ValidaSuper.class));
+            listdlg.add("Ordenes Activas");
+            listdlg.add("Ordenes Pagadas");
+            listdlg.add("Ordenes Anuladas");
+            listdlg.add("Borrar Ordenes");
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        switch (position) {
+                            case 0:
+                                sql=sql1;modo=false;break;
+                            case 1:
+                                sql=sql2;modo=true;break;
+                            case 2:
+                                sql=sql3;modo=true;break;
+                            case 3:
+                                browse=2;
+                                startActivity(new Intent(Pedidos.this,ValidaSuper.class));
+                        }
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
+            });
 
-                listItems();
-                dialog.cancel();
-            }
-        });
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
 
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void msgAskDelete(String msg) {

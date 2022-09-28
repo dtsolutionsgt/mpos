@@ -102,11 +102,11 @@ public class LA_Res_mesa  extends BaseAdapter {
             if (est==0) {
                 holder.lbl5.setText("");
                 //holder.img1.setVisibility(View.INVISIBLE);
-                holder.rel1.setBackgroundColor(Color.parseColor("#D0D0D0"));
-
+                //holder.rel1.setBackgroundColor(Color.parseColor("#D0D0D0"));
+                holder.rel1.setBackgroundColor(Color.parseColor("#CCE6F3"));
             } else {
                 holder.lbl5.setText(""+du.shora(items.get(position).fecha));
-                 holder.rel1.setBackgroundColor(Color.WHITE);
+                holder.rel1.setBackgroundColor(Color.WHITE);
 
                 switch (est) {
                     case 1:

@@ -22,6 +22,7 @@ import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencombodetObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.ListAdaptOpcion;
 
 import java.util.ArrayList;
@@ -502,7 +503,10 @@ public class OrdenMenu extends PBase {
         clsT_ordencombodetObj T_ordencombodetObj=new clsT_ordencombodetObj(this,Con,db);
         int cod;
 
+
         try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(OrdenMenu.this,"Opciones");
 
             lcode.clear();lname.clear();mname.clear();
 
@@ -527,52 +531,55 @@ public class OrdenMenu extends PBase {
                 lname.add(getProdName(cod)+" ["+mu.frmdec(prodPrecioItem(cod))+"]");
             }
 
-            final String[] selitems = new String[lname.size()];
-
             for (int i = 0; i < lname.size(); i++) {
-                selitems[i] = lname.get(i);
+                listdlg.add(lname.get(i));
             }
 
-            ExDialog mMenuDlg = new ExDialog(this);
 
-            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int position) {
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
+                        try {
 
-                        clsClasses.clsOpcion item=items.get(selidx);
+                            clsClasses.clsOpcion item=items.get(selidx);
 
-                        item.cod=Integer.parseInt(lcode.get(position));
-                        item.Name=mname.get(position);
-                        item.bandera=1;
-                        item.precio=prodPrecioItem(item.cod);
-                        item.sprec=mu.frmdec(item.precio);
-                        if (item.precio==0) item.sprec="";
+                            item.cod=Integer.parseInt(lcode.get(position));
+                            item.Name=mname.get(position);
+                            item.bandera=1;
+                            item.precio=prodPrecioItem(item.cod);
+                            item.sprec=mu.frmdec(item.precio);
+                            if (item.precio==0) item.sprec="";
 
-                        if (item.cod==0) {
-                            item.modo=0;
-                            doAdd(null);
-                        } else item.modo=1;
+                            if (item.cod==0) {
+                                item.modo=0;
+                                doAdd(null);
+                            } else item.modo=1;
 
-                        adapter.notifyDataSetChanged();
-                        precioFinal();
-                        validaStock();
-                    } catch (Exception e) {
-                        toast(e.getMessage());
-                    }
+                            adapter.notifyDataSetChanged();
+                            precioFinal();
+                            validaStock();
+                        } catch (Exception e) {
+                            toast(e.getMessage());
+                        }
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            Dialog = mMenuDlg.create();
-            Dialog.show();
-
+            listdlg.show();
         } catch (Exception e) {
-            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     private void deleteItem() {
@@ -987,6 +994,7 @@ public class OrdenMenu extends PBase {
     }
 
     private void msgAskExit(String msg) {
+
         try{
             AlertDialog.Builder dialog = new ExDialog(this);
             dialog.setMessage(msg);
@@ -1069,31 +1077,35 @@ public class OrdenMenu extends PBase {
     }
 
     private void mostrarLista() {
-        final String[] selitems = new String[app.citems.size()];
-        for (int i = 0; i <app.citems.size(); i++) {
-            selitems[i]=app.citems.get(i);
+
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(OrdenMenu.this,"Producto de combo inactivo");
+
+            for (int i = 0; i <app.citems.size(); i++) {
+                listdlg.add(app.citems.get(i));
+            }
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        final AlertDialog Dialog;
-
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Producto de combo inactivo");
-
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
 
     }
 

@@ -62,7 +62,7 @@ public class PBase extends Activity {
 	    ins=Con.Ins;upd=Con.Upd;
 
 		vApp=this.getApplication();
-		gl=((appGlobals) this.getApplication());
+		gl=(appGlobals) this.getApplication();
 
 		mu=new MiscUtils(this,gl.peMon);
 		du=new DateUtils();

@@ -33,6 +33,7 @@ import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_costoObj;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_T_movd;
 import com.dtsgt.ladapt.LA_T_movr;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
@@ -1052,40 +1053,38 @@ public class InvTrans extends PBase {
     }
 
     private void listUnits() {
-        final AlertDialog Dialog;
-
         try {
-            P_unidad_convObj.fill("WHERE (CODIGO_UNIDAD1='"+um+"') AND (CODIGO_UNIDAD2<>'"+um+"')");
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(InvTrans.this,"Unidad de medida");
 
-            final String[] selitems = new String[P_unidad_convObj.count+1];
-            selitems[0]=um;
+            P_unidad_convObj.fill("WHERE (CODIGO_UNIDAD1='"+um+"') AND (CODIGO_UNIDAD2<>'"+um+"')");
+            listdlg.add(um);
             for (int i = 0; i <P_unidad_convObj.count; i++) {
-                selitems[i+1]=P_unidad_convObj.items.get(i).codigo_unidad2;
+                listdlg.add(P_unidad_convObj.items.get(i).codigo_unidad2);
             }
 
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Unidad de medida");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    lblUni.setText(selitems[item]);
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        lblUni.setText(listdlg.getText(position));
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            Dialog = menudlg.create();
-            Dialog.show();
-
+            listdlg.show();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     public boolean pantallaHorizontal() {

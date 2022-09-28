@@ -28,7 +28,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="55dp"
         android:layout_marginTop="3dp"
-        android:text="999"
+        android:text="MODIFICADO"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#1B76B9"
         android:textSize="12sp"

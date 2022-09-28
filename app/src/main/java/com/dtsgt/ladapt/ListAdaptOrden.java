@@ -65,6 +65,7 @@ public class ListAdaptOrden extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
 		double val;
+		int tcolor;
 	
 		if (convertView == null) {
 
@@ -92,7 +93,9 @@ public class ListAdaptOrden extends BaseAdapter {
 							
 		holder.lblCod.setText(""+items.get(position).cuenta);
 		holder.lblNombre.setText(items.get(position).Nombre);
-		holder.lblCant.setText(items.get(position).icant+" x "+items.get(position).sdesc);
+		if (items.get(position).indent) holder.lblNombre.setPadding(50,0,0,0);else holder.lblNombre.setPadding(0,0,0,0);
+		//holder.lblCant.setText(items.get(position).icant+" x "+cursym+items.get(position).sdesc);
+		if (items.get(position).modif) holder.lblCant.setVisibility(View.VISIBLE);else holder.lblCant.setVisibility(View.INVISIBLE);
 		holder.lblPrec.setText("");
         val=items.get(position).Total;
 		holder.lblDesc.setText(cursym+" "+frmdec.format(val));
@@ -118,13 +121,14 @@ public class ListAdaptOrden extends BaseAdapter {
             holder.lblPeso.setTextColor(Color.WHITE);
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
-            holder.lblCod.setTextColor(Color.parseColor("#1B76B9"));
-            holder.lblNombre.setTextColor(Color.parseColor("#1B76B9"));
-            holder.lblCant.setTextColor(Color.parseColor("#1B76B9"));
-            holder.lblPrec.setTextColor(Color.parseColor("#1B76B9"));
-            holder.lblDesc.setTextColor(Color.parseColor("#1B76B9"));
-            holder.lblTot.setTextColor(Color.parseColor("#1B76B9"));
-            holder.lblPeso.setTextColor(Color.parseColor("#1B76B9"));
+			tcolor=Color.parseColor("#202020");  //Color.parseColor("#1B76B9")
+            holder.lblCod.setTextColor(tcolor);
+            holder.lblNombre.setTextColor(tcolor);
+            holder.lblCant.setTextColor(tcolor);
+            holder.lblPrec.setTextColor(tcolor);
+            holder.lblDesc.setTextColor(tcolor);
+            holder.lblTot.setTextColor(tcolor);
+            holder.lblPeso.setTextColor(tcolor);
 		}
 		
 		return convertView;

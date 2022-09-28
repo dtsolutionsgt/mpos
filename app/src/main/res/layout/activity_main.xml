@@ -13,16 +13,16 @@
         android:layout_above="@+id/textView127"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="-60dp">
 
         <ImageView
             android:id="@+id/imgNext"
             android:layout_width="400dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/lblCDisp"
+            android:layout_below="@+id/relstrip"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
             android:clickable="true"
@@ -31,60 +31,76 @@
             android:src="@drawable/logo"
             tools:ignore="SpeakableTextPresentCheck" />
 
-        <TextView
-            android:id="@+id/lblCUsed"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/relstrip"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView82"
-            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="10dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:text="@string/tienda"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#000000"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:visibility="invisible" />
+            android:background="@drawable/top_strip"
+            android:paddingBottom="5dp">
 
-        <TextView
-            android:id="@+id/lblCDisp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView82"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:ellipsize="end"
-            android:gravity="clip_vertical|center_horizontal"
-            android:maxLines="1"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:text="@string/nombre_caja"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/lblCDisp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView82"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="0dp"
+                android:ellipsize="end"
+                android:gravity="clip_vertical|center_horizontal"
+                android:maxLines="1"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text="@string/nombre_caja"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView82"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="5dp"
-            android:ellipsize="end"
-            android:gravity="center_horizontal"
-            android:maxLines="1"
-            android:text="@string/nombre_empresa"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView82"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
+                android:maxLines="1"
+                android:text="@string/nombre_empresa"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/lblCUsed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text="@string/tienda"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/imageView134"
+                android:layout_width="128dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/lblCDisp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="0dp"
+                android:src="@drawable/mpos_blanco" />
+        </RelativeLayout>
 
     </RelativeLayout>
 
@@ -116,7 +132,8 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/spinner_style" />
+            android:background="@drawable/spinner_style"
+            android:visibility="invisible" />
 
         <RelativeLayout
             android:id="@+id/relbotpan"
@@ -125,11 +142,9 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="1dp"
             android:layout_marginTop="1dp"
-            android:layout_marginEnd="1dp"
             android:layout_marginBottom="1dp"
-            android:background="@drawable/blue_strip">
+            android:background="#FFFFFF">
 
             <ImageView
                 android:id="@+id/imgPFoto"
@@ -150,6 +165,7 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="5dp"
                 android:src="@drawable/icono2"
+                android:visibility="invisible"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
             <ImageView
@@ -171,10 +187,11 @@
             <TextView
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentTop="false"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="0dp"
                 android:clickable="true"
                 android:gravity="center_vertical"
                 android:minHeight="32dp"
@@ -182,9 +199,9 @@
                 android:paddingBottom="5dp"
                 android:text="@string/c_dtsolutions_s_a"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textColor="#575757"
+                android:textSize="20sp"
+                android:textStyle="normal" />
 
             <TextView
                 android:id="@+id/textView10"
@@ -193,12 +210,13 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerHorizontal="false"
+                android:layout_marginBottom="0dp"
                 android:gravity="center_vertical"
                 android:paddingEnd="10dp"
                 android:text="MPos ver. X.X  -  XX/XX/XXXX"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textColor="#575757"
+                android:textSize="20sp"
+                android:textStyle="normal" />
 
         </RelativeLayout>
 
@@ -311,7 +329,7 @@
                                     android:onClick="doKey"
                                     android:tag="7"
                                     android:text="@string/_7"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -329,7 +347,7 @@
                                     android:onClick="doKey"
                                     android:tag="8"
                                     android:text="8"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -347,7 +365,7 @@
                                     android:onClick="doKey"
                                     android:tag="4"
                                     android:text="4"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -365,7 +383,7 @@
                                     android:onClick="doKey"
                                     android:tag="5"
                                     android:text="@string/_5"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -401,7 +419,7 @@
                                     android:onClick="doKey"
                                     android:tag="1"
                                     android:text="1"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -419,7 +437,7 @@
                                     android:onClick="doKey"
                                     android:tag="2"
                                     android:text="2"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -437,7 +455,7 @@
                                     android:onClick="doKey"
                                     android:tag="0"
                                     android:text="@string/_0"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -492,7 +510,7 @@
                                     android:onClick="doKey"
                                     android:tag="9"
                                     android:text="9"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -510,7 +528,7 @@
                                     android:onClick="doKey"
                                     android:tag="6"
                                     android:text="@string/_6"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -529,7 +547,7 @@
                                     android:onClick="doKey"
                                     android:tag="C"
                                     android:text="C"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -616,7 +634,7 @@
                                     android:onClick="doKey"
                                     android:tag="3"
                                     android:text="3"
-                                    android:textColor="#000000"
+                                    android:textColor="#575757"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -677,12 +695,26 @@
             android:layout_marginTop="100dp"
             android:layout_marginBottom="0dp"
             android:gravity="bottom"
+            android:horizontalSpacing="5dp"
+            android:numColumns="1"
             android:stackFromBottom="true"
             android:transcriptMode="alwaysScroll"
-            android:numColumns="1">
+            android:verticalSpacing="5dp">
 
 
         </GridView>
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/spinner22"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:onClick="doDialog"
+            android:text="Button"
+            android:visibility="invisible" />
 
 
     </RelativeLayout>

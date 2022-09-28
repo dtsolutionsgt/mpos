@@ -26,6 +26,7 @@ import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_pedidodObj;
 import com.dtsgt.classes.clsT_ventaObj;
 
 import java.io.BufferedReader;
@@ -702,13 +703,18 @@ public class CliPos extends PBase {
         clsD_pedidodObj D_pedidodObj=new clsD_pedidodObj(this,Con,db);
         clsD_pedidocomboObj D_pedidocomboObj=new clsD_pedidocomboObj(this,Con,db);
         clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
+        clsT_pedidodObj T_pedidodObj=new clsT_pedidodObj(this,Con,db);
         clsClasses.clsT_venta venta;
         clsClasses.clsD_pedidod item;
         clsClasses.clsD_pedidocombo combo;
+        clsClasses.clsT_pedidod tpitem;
         int corid,comboid;
         String ss,pt,comid,nt;
 
+
+        db.execSQL("DELETE FROM T_pedidod");
         T_ventaObj.fill();
+
         corid=D_pedidodObj.newID("SELECT MAX(COREL_DET) FROM D_pedidod");
         comboid=D_pedidocomboObj.newID("SELECT MAX(COREL_COMBO) FROM D_pedidocombo");
 
@@ -735,6 +741,19 @@ public class CliPos extends PBase {
             peditems.add(ss);
             gl.peditems.add(ss);
 
+            tpitem = clsCls.new clsT_pedidod();
+
+            tpitem.corel=" ";
+            tpitem.corel_det=Integer.parseInt(venta.empresa);
+            tpitem.codigo_producto=item.codigo_producto;
+            tpitem.umventa=item.umventa;
+            tpitem.cant=item.cant;
+            tpitem.total=item.total;
+            tpitem.nota=item.nota;
+            tpitem.codigo_tipo_producto=item.codigo_tipo_producto;
+
+            T_pedidodObj.add(tpitem);
+
             if (pt.equalsIgnoreCase("M")) {
                 comid=venta.empresa;
                 T_comboObj.fill("WHERE (IDCOMBO="+comid+")");
@@ -755,6 +774,7 @@ public class CliPos extends PBase {
                     gl.peditems.add(ss);
                 }
             }
+
 
             corid++;
         }
@@ -1281,6 +1301,7 @@ public class CliPos extends PBase {
     }
 
     private void consultaNITInfile() {
+
         if (gl.codigo_pais.trim() == "GT" && !mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
 
             JSONObject params = new JSONObject();

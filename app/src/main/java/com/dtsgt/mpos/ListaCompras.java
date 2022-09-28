@@ -5,11 +5,9 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -17,18 +15,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_mov_almacenObj;
 import com.dtsgt.classes.clsD_movd_almacenObj;
-import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_proveedorObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.ListAdaptMovInv;
 import com.dtsgt.mant.Lista;
 import java.util.ArrayList;
@@ -37,7 +34,7 @@ import java.util.Calendar;
 public class ListaCompras extends PBase {
 
     private ListView listView;
-    private TextView lblTipo,lblalm;
+    private TextView lblTipo, lblest;
     private ProgressBar pbar;
     private RelativeLayout relalm;
 
@@ -49,7 +46,7 @@ public class ListaCompras extends PBase {
     private AppMethods app;
     private clsRepBuilder rep;
 
-    private int tipo,idalmdpred,idalm;
+    private int tipo,idalmdpred,idalm,idest;
     private String itemid;
     private double htot;
 
@@ -73,7 +70,7 @@ public class ListaCompras extends PBase {
 
         listView = findViewById(R.id.listView1);
         lblTipo = findViewById(R.id.lblDescrip2);
-        lblalm = findViewById(R.id.textView268);
+        lblest = findViewById(R.id.textView268);
         lblDateini = findViewById(R.id.lblDateini2);
         lblDatefin = findViewById(R.id.lblDatefin2);
         relalm= findViewById(R.id.relalm1);
@@ -742,61 +739,6 @@ public class ListaCompras extends PBase {
         }
     }
 
-    /*
-    private void listaAlmacenes() {
-
-        try {
-            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
-            P_almacenObj.fill("WHERE (ACTIVO=1) AND (CODIGO_ALMACEN<>"+gl.idalm+") ORDER BY NOMBRE");
-
-            int itemcnt=P_almacenObj.count;
-            String[] selitems = new String[itemcnt];
-            int[] selcod = new int[itemcnt];
-
-            for (int i = 0; i <itemcnt; i++) {
-                selitems[i] = P_almacenObj.items.get(i).nombre;
-                selcod[i] = P_almacenObj.items.get(i).codigo_almacen;
-            }
-
-            ExDialogT menudlg = new ExDialogT(this);
-            menudlg.setTitle("Almacen destino");
-
-            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    gl.idalm2=selcod[item];gl.nom_alm2=selitems[item];
-
-                    if (gl.idalm!=gl.idalm2) {
-                        Intent intent = new Intent(ListaInventario.this, InvTrans.class);
-                        startActivity(intent);
-                    } else {
-                        msgbox("Almacen destino incorrecto");
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            final AlertDialog Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-    */
-
     private String nombreProveedor(int idprov) {
         try {
             clsP_proveedorObj P_proveedorObj=new clsP_proveedorObj(this,Con,db);
@@ -818,51 +760,41 @@ public class ListaCompras extends PBase {
     }
 
     public void listaEstados() {
-        String titulo="Seleccione un estado";
 
         try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ListaCompras.this,"Seleccione un estado");
 
-            int itemcnt=3;
-            String[] selitems = new String[itemcnt];
-            int[] selcod = new int[itemcnt];
+            listdlg.add("NUEVO");
+            listdlg.add("EN PROCESO");
+            listdlg.add("COMPLETO");
 
-            selitems[0]="NUEVO"; selitems[1]="EN PROCESO"; selitems[2]="COMPLETO";
-
-
-            ExDialogT menudlg = new ExDialogT(this);
-            menudlg.setTitle(titulo);
-
-            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    try {
-                        idalm=selcod[item];gl.idalm=idalm;
-                        gl.nom_alm=selitems[item];
-                        lblalm.setText(gl.nom_alm);
-                        listItems();
-                    } catch (Exception e) {
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        try {
+                            gl.nom_est=listdlg.getText(position);
+                            lblest.setText(gl.nom_est);
+                            listItems();
+                        } catch (Exception e) {
+                            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                        }
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            final AlertDialog Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }

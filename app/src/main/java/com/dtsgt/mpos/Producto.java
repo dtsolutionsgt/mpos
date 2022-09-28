@@ -467,7 +467,8 @@ public class Producto extends PBase {
 			if (dt.getCount()>0) {
 				dt.moveToFirst();			
 				umf2=dt.getDouble(0);
-			} else {	
+			} else {
+				if (dt!=null) dt.close();
 				return 0;
 			}
 

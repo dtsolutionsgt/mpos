@@ -30,6 +30,7 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -48,6 +49,9 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.classes.extListChkDlg;
+import com.dtsgt.classes.extListDlg;
+import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startMainTimer;
 
@@ -74,7 +78,8 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.2.22"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.2.28.4"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+                                        // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;
 
@@ -100,8 +105,7 @@ public class MainActivity extends PBase {
             //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
 
         } catch (Exception e) {
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -134,33 +138,60 @@ public class MainActivity extends PBase {
     }
 
     private void grantPermissions() {
+        //"android.permission.BLUETOOTH_CONNECT"
+
         try {
             if (Build.VERSION.SDK_INT >= 20) {
 
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                if (Build.VERSION.SDK_INT > 30) {
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
                         && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission("android.permission.BLUETOOTH_CONNECT") == PackageManager.PERMISSION_GRANTED
                         && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                    startApplication();
+                        startApplication();
+                    } else {
+                        ActivityCompat.requestPermissions(this, new String[]{
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.CALL_PHONE,
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.WAKE_LOCK,
+                                Manifest.permission.BLUETOOTH,
+                                "android.permission.BLUETOOTH_CONNECT",
+                                Manifest.permission.READ_PHONE_STATE
+                        }, 1);
+                    }
+
                 } else {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.CALL_PHONE,
-                                    Manifest.permission.CAMERA,
-                                    Manifest.permission.WAKE_LOCK,
-                                    Manifest.permission.READ_PHONE_STATE
-                            }, 1);
+
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                        && checkCallingOrSelfPermission(Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                        startApplication();
+                    } else {
+                        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.CALL_PHONE,
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.WAKE_LOCK,
+                                Manifest.permission.BLUETOOTH,
+                                Manifest.permission.READ_PHONE_STATE
+                        }, 1);
+                    }
                 }
             }
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
     }
 
@@ -196,7 +227,7 @@ public class MainActivity extends PBase {
 
             setHandlers();
 
-            khand = new clsKeybHandler(this, lblPass, lblKeyDP);
+            khand = new clsKeybHandler(this, lblPass, lblKeyDP,true);
             khand.enable();
 
             gl.peMCent = false;
@@ -231,21 +262,39 @@ public class MainActivity extends PBase {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
         try {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                    && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                startApplication();
+
+            if (Build.VERSION.SDK_INT > 30) {
+
+                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission("android.permission.BLUETOOTH_CONNECT") == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    startApplication();
+                } else {
+                    super.finish();
+                }
+
             } else {
-                super.finish();
+
+                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    startApplication();
+                } else {
+                    super.finish();
+                }
+
             }
+
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }
@@ -706,6 +755,7 @@ public class MainActivity extends PBase {
                 gridView.setVisibility(View.INVISIBLE);
                 spin.setVisibility(View.VISIBLE);
             }
+
         } catch (Exception e) {
             msgbox(new Object() {
             }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -1043,8 +1093,13 @@ public class MainActivity extends PBase {
 
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();
+
                 item.Cod = VendedoresObj.items.get(i).codigo;
                 item.Name = item.Cod + " - " + VendedoresObj.items.get(i).nombre;// estaba .ruta #CKFK 20200517
+                app.setGradResource(i);
+                item.idres=gl.idgrres;
+                item.idressel=gl.idgrsel;
+
                 mitems.add(item);
 
                 spincode.add(item.Cod);
@@ -1171,8 +1226,9 @@ public class MainActivity extends PBase {
     }
 
     private void showOrientMenu() {
+        /*
         final AlertDialog Dialog;
-        final String[] selitems = {"Tableta","Telefono"};
+        final String[] xselitems = {"Tableta","Telefono"};
 
         AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
         menudlg.setTitle("Calibracion de pantalla");
@@ -1199,6 +1255,241 @@ public class MainActivity extends PBase {
 
         Dialog = menudlg.create();
         Dialog.show();
+
+         */
+    }
+
+    //endregion
+
+    //region Custom dialog
+
+    public void doDialog(View view) {
+        PassDlg();
+    }
+
+    private void PassDlg() {
+        try {
+            extListPassDlg listdlg = new extListPassDlg();
+            listdlg.buildDialog(MainActivity.this,"Lista","Salir");
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón Salir");
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Enter "+listdlg.getInput()+"  --  "+listdlg.validPassword());
+                    listdlg.dismiss();
+                }
+            });
+
+
+            listdlg.addpassword(1,"Pass 1","1");
+            listdlg.addpassword(2,"Pass 2","2");
+            listdlg.addpassword(3,"Pass 123","123");
+
+            listdlg.setWidth(350);
+            //listdlg.setLines(3);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void ListDlg() {
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(MainActivity.this,"Lista","Salir","Borrar","Agregar");
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón Salir");
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.setOnMiddleClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón borrar");
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.setOnRightClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón Agregar");
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        toast("Linea #"+position);
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.add(R.drawable.del_48,"Item1"); //imagen , texto - si imagen=0 no se despliega
+            listdlg.add(R.drawable.user,"Item2");
+            listdlg.add(0,"Item3");
+            listdlg.add(R.drawable.user,"Item4");
+
+            listdlg.setWidth(350);
+            listdlg.setLines(3);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void ListDlgOld() {
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(MainActivity.this,"Lista");
+
+            /*
+            listdlg.setOnExitListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón Salir");
+                    listdlg.dismiss();
+                }
+            });
+
+             */
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        toast("Linea #"+position);
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.add(R.drawable.del_48,"Item1"); //imagen , texto - si imagen=0 no se despliega
+            listdlg.add(R.drawable.user,"Item2");
+            listdlg.add(0,"Item3");
+            listdlg.add(R.drawable.user,"Item4");
+
+            listdlg.setWidth(350);
+            listdlg.setLines(3);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void ListDlgChk() {
+        try {
+            extListChkDlg listdlg = new extListChkDlg();
+            listdlg.buildDialog(MainActivity.this,"Lista","Salir","Borrar","Agregar");
+
+            listdlg.setOnExitListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón Salir");
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.setOnDelListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón Borrar");
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.setOnAddListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toastlong("Botón Agregar");
+                    listdlg.dismiss();
+                }
+            });
+
+            /*
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        toast("Linea #"+position);
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+             */
+
+            listdlg.add("Item1");
+            listdlg.add("Item2");
+            listdlg.add("Item4");
+
+            listdlg.setWidth(350);
+            listdlg.setLines(3);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    private void dlgTemplate() {
+
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(MainActivity.this,"XXXX");
+
+            for (int i = 0; i <0; i++) {
+                listdlg.add("","");
+            }
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     //endregion

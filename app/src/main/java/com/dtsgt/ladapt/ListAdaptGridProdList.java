@@ -69,8 +69,9 @@ public class ListAdaptGridProdList extends BaseAdapter {
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
-        if (horiz) holder.lblName.setTextSize(21F);else holder.lblName.setTextSize(14F);
+        if (horiz) holder.lblName.setTextSize(28F);else holder.lblName.setTextSize(14F);
 
+		/*
        	if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
             holder.lblName.setTextColor(Color.WHITE);
@@ -78,6 +79,13 @@ public class ListAdaptGridProdList extends BaseAdapter {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
             holder.lblName.setTextColor(Color.parseColor("#1B76B9"));
         }
+ 		*/
+
+		if (selectedIndex!= -1 && position == selectedIndex) {
+			convertView.setBackgroundResource(items.get(position).idressel);
+		} else {
+			convertView.setBackgroundResource(items.get(position).idres);
+		}
 
 		return convertView;
 	}

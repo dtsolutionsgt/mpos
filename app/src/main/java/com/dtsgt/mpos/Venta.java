@@ -47,6 +47,7 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
+import com.dtsgt.classes.clsP_prodclasifmodifObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
@@ -55,6 +56,7 @@ import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -331,6 +333,11 @@ public class Venta extends PBase {
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
                         uid=vitem.emp;gl.menuitemid=uid;seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
+                        try {
+                            gl.produid=Integer.parseInt(uid);
+                        } catch (Exception e) {
+                            gl.produid=0;
+                        }
                         adapter.setSelectedIndex(position);
 
                         gl.gstr=vitem.Nombre;
@@ -342,7 +349,10 @@ public class Venta extends PBase {
                             //tipo=prodTipo(gl.prodcod);
                             tipo=prodTipo(prodid);
                             gl.tipoprodcod=tipo;
-                            if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
+                            gl.idmodgr=codigoModificador(app.codigoProducto(gl.prodid));
+
+
+                            if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
                                 browse=6;
                                 gl.menuitemid=prodid;
                                 showVentaItemMenu(0);
@@ -675,19 +685,23 @@ public class Venta extends PBase {
                 } else if (tipo.equalsIgnoreCase("S")) {
                     if (exists) descflag=false;
                     processCant(updateitem);
+                } else if (tipo.equalsIgnoreCase("PB")) {
+                    if (!app.barrilAbierto(prodid)) {
+                        msgbox("El producto no tiene abierto el barril");return;
+                    }
+                    if (exists) descflag=false;
+                    processCant(updateitem);
                 }
             } else if (tipo.equalsIgnoreCase("M")){
                 processMenuItem();
             }
        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
+       }
     }
 
     private void processItem(int prcant){
-
-        try{
-
+        try {
             String pid=gl.gstr;
             if (mu.emptystr(pid)) return;
 
@@ -879,7 +893,7 @@ public class Venta extends PBase {
 
             tipo=prodTipo(gl.prodcod);
 
-            if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
+            if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
                 if (updateitem) {
                     if (updateItemUID()) clearItem();
                 } else {
@@ -987,7 +1001,7 @@ public class Venta extends PBase {
 
         tipo=prodTipo(gl.prodcod);
 
-        if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
+        if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB") ) {
             try {
                 sql="SELECT Empresa,Cant FROM T_VENTA WHERE (PRODUCTO='"+prodid+"')";
                 dt=Con.OpenDT(sql);
@@ -1608,45 +1622,6 @@ public class Venta extends PBase {
 
     //region No atencion
 
-    public void showAtenDialog() {
-        try{
-            final AlertDialog Dialog;
-
-            final String[] selitems = new String[lname.size()];
-            for (int i = 0; i < lname.size(); i++) {
-                selitems[i] = lname.get(i);
-            }
-
-            mMenuDlg = new ExDialog(this);
-
-            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    try {
-                        String s=lcode.get(item);
-                        setNoAtt(s);
-                        doExit();
-                    } catch (Exception e) {
-                    }
-                }
-            });
-
-            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-
-            Dialog = mMenuDlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
     private void setNoAtt(String scna){
         int cna;
 
@@ -1937,39 +1912,53 @@ public class Venta extends PBase {
     }
 
     private void showVentaItemMenu(int mmodo) {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Modificar","Nota"};
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Venta");
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Venta.this,"Venta");
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        if (mmodo==0) {
-                            startActivity(new Intent(Venta.this,VentaEdit.class));
-                        } else {
-                            startActivity(new Intent(Venta.this,ProdMenu.class));
+            listdlg.add("Cambiar cantidad");
+            listdlg.add("Nota");
+            listdlg.add("Ingredientes adicionales");
+            if (gl.idmodgr>0) listdlg.add("Modificadores");
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        switch (position) {
+                            case 0:
+                                if (mmodo==0) {
+                                    startActivity(new Intent(Venta.this,VentaEdit.class));
+                                } else {
+                                    startActivity(new Intent(Venta.this,ProdMenu.class));
+                                }
+                                break;
+                            case 1:
+                                ingresoNota();break;
+                            case 2:
+                                //Ingredientes();
+                                break;
+                            case 3:
+                                startActivity(new Intent(Venta.this,ModifVenta.class));break;
                         }
-                        break;
-                    case 1:
-                        ingresoNota();break;
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
+            });
 
-                dialog.cancel();
-            }
-        });
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     //endregion
@@ -1984,7 +1973,7 @@ public class Venta extends PBase {
         try {
 
             fitems.clear();
-            P_lineaObj.fill("WHERE Activo=1");
+            P_lineaObj.fill("WHERE (Activo=1) ORDER BY NOMBRE ");
 
             for (int i = 0; i <P_lineaObj.count; i++) {
                 item=clsCls.new clsMenu();
@@ -2019,6 +2008,7 @@ public class Venta extends PBase {
         try {
             pitems.clear();pcodes.clear();
 
+            /*
             sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
                     "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
@@ -2039,6 +2029,31 @@ public class Venta extends PBase {
             }
 
             sql += "ORDER BY P_PRODUCTO.DESCCORTA";
+             */
+
+            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
+                    "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
+                    "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
+                    "P_PRODPRECIO ON P_STOCK.CODIGO=P_PRODPRECIO.CODIGO_PRODUCTO  " +
+                    "WHERE (P_PRODUCTO.ACTIVO=1) AND (P_PRODUCTO.CODIGO_TIPO ='P')";
+            if (famid !=-1) {
+                if (famid!=0) sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
+            }
+
+            sql += "UNION ";
+            sql += "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA,P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
+                    "FROM P_PRODUCTO  INNER JOIN " +
+                    "P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
+                    "WHERE ((P_PRODUCTO.CODIGO_TIPO ='S') OR (P_PRODUCTO.CODIGO_TIPO ='M') OR (P_PRODUCTO.CODIGO_TIPO ='PB')) " +
+                    "AND (P_PRODUCTO.ACTIVO=1)";
+            if (famid !=-1) {
+                if (famid!=0)
+                    sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
+            }
+
+            sql += "ORDER BY P_PRODUCTO.DESCCORTA";
+
+
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()==0){
@@ -2380,63 +2395,66 @@ public class Venta extends PBase {
 
     public void showReportMenu() {
 
-        try{
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Venta.this,"Reportes");
 
-            final AlertDialog Dialog;
+            listdlg.add("Reporte de Documentos por Día");
+            listdlg.add("Reporte Venta por Día");
+            listdlg.add("Reporte Venta por Producto");
+            listdlg.add("Reporte por Forma de Pago");
+            listdlg.add("Reporte por Familia");
+            listdlg.add("Reporte Ventas por Vendedor");
+            listdlg.add("Reporte de Ventas por Cliente");
+            listdlg.add("Margen y Beneficio por Productos");
+            listdlg.add("Margen y Beneficio por Familia");
+            listdlg.add("Cierre X");
+            listdlg.add("Cierre Z");
 
-            final String[] selitems = {"Reporte de Documentos por Día", "Reporte Venta por Día", "Reporte Venta por Producto", "Reporte por Forma de Pago", "Reporte por Familia", "Reporte Ventas por Vendedor", "Reporte de Ventas por Cliente", "Margen y Beneficio por Productos", "Margen y Beneficio por Familia", "Cierre X", "Cierre Z"};
-
-            ExDialog  menudlg = new ExDialog(this);
-            menudlg.setTitle("Reportes");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    ss=selitems[item];
-
-                    if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
-                    if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
-                    if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
-                    if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
-                    if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
-                    if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
-                    if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
-                    if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
-                    if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
-                    if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
-                    if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
-
-                    gl.titReport = ss;
-
-                    if (gl.reportid == 9 || gl.reportid == 10) {
-                        startActivity(new Intent(Venta.this,CierreX.class));
-                    }else{
-                        startActivity(new Intent(Venta.this,Reportes.class));
-                    }
-
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        ss=listdlg.getText(position);
+
+                        if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
+                        if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
+                        if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
+                        if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
+                        if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
+                        if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
+                        if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
+                        if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
+                        if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
+                        if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
+                        if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
+
+                        gl.titReport = ss;
+
+                        if (gl.reportid == 9 || gl.reportid == 10) {
+                            startActivity(new Intent(Venta.this,CierreX.class));
+                        }else{
+                            startActivity(new Intent(Venta.this,Reportes.class));
+                        }
+
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-            Button nbuttonp = Dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            nbuttonp.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbuttonp.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     public boolean valida(){
@@ -2512,53 +2530,6 @@ public class Venta extends PBase {
 
     }
 
-    public void showPrintMenuTodo() {
-
-        try {
-            final AlertDialog Dialog;
-            //final String[] selitems = {"Factura","Pedido","Recibo","Deposito","Recarga","Devolución a bodega","Cierre de dia", "Nota crédito"};
-            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
-
-
-            ExDialog menudlg = new ExDialog(this);
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    switch (item) {
-                        case 0:
-                            menuImprDoc(3);break;
-                        case 1:
-                            menuImprDoc(2);break;
-                        case 2:
-                            menuImprDoc(4);break;
-                        case 3:
-                            menuImprDoc(5);break;
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-
-    }
-
     public void menuImprDoc(int doctipo) {
         try{
             gl.tipo=doctipo;
@@ -2587,9 +2558,10 @@ public class Venta extends PBase {
     }
 
     public void showVoidMenuTodo() {
+        /*
         try{
             final AlertDialog Dialog;
-            final String[] selitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
+            final String[] xselitems = {(gl.peMFact?"Factura":"Ticket"),"Deposito","Recarga","Devolución a bodega"};
 
             ExDialog menudlg = new ExDialog(this);
 
@@ -2628,6 +2600,8 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
+
+         */
     }
 
     public void showQuickRecep() {
@@ -2683,42 +2657,38 @@ public class Venta extends PBase {
     }
 
     private void showMenuSwitch() {
-
         try {
-            final AlertDialog Dialog;
-            final String[] selitems = {"Iniciar nueva venta","Cambiar venta"};
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Venta.this,"Ventas");
 
-            ExDialog menudlg = new ExDialog(this);
+            listdlg.add("Iniciar nueva venta");
+            listdlg.add("Cambiar venta");
 
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-
-                    switch (item) {
-                        case 0:
-                            ;break;
-                        case 1:
-                            ;break;
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        switch (position) {
+                            case 0:
+                                ;break;
+                            case 1:
+                                ;break;
+                        }
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -2773,7 +2743,7 @@ public class Venta extends PBase {
 
                 venta=T_ventaObj.items.get(i);
                 prid=app.codigoProducto(venta.producto);
-                s=mu.frmdecno(venta.cant)+" x "+getProd(prid);
+                s=mu.frmdecno(venta.cant)+"  "+getProd(prid);
                 rep.add(s);
 
                 if (app.prodTipo(prid).equalsIgnoreCase("M")) {
@@ -2986,41 +2956,6 @@ public class Venta extends PBase {
     //endregion
     
     //region Aux
-
-    private void showItemMenu() {
-        try{
-            final AlertDialog Dialog;
-            final String[] selitems = {"Repesaje","Borrar"};
-
-            ExDialog menudlg = new ExDialog(this);
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    switch (item) {
-                        case 0:
-                            browse=4;
-                            startActivity(new Intent(Venta.this,RepesajeLista.class));break;
-                        case 1:
-                            msgAskDel("Borrar producto");break;
-                    }
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
 
     private void setControls(){
 
@@ -3848,6 +3783,26 @@ public class Venta extends PBase {
         }
     }
 
+    private int codigoModificador(int idproducto) {
+        int idclas,idmod;
+        try {
+            P_productoObj.fill("WHERE CODIGO_PRODUCTO="+idproducto);
+            if (P_productoObj.count==0) return 0;
+            idclas=(int) P_productoObj.first().precio_vineta_o_tubo;
+
+            clsP_prodclasifmodifObj P_prodclasifmodifObj=new clsP_prodclasifmodifObj(this,Con,db);
+            P_prodclasifmodifObj.fill("WHERE (CODIGO_CLASIFICACION="+idclas+")");
+            if (P_prodclasifmodifObj.count==0) return 0;
+            idmod=P_prodclasifmodifObj.first().codigo_grupo;
+
+            return idmod;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return 0;
+    }
+
     //endregion
 
     //region Dialogs
@@ -3925,23 +3880,56 @@ public class Venta extends PBase {
     }
 
     private void showNivelMenu() {
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Venta.this,"Nivel de precio");
+
+            clsViewObj ViewObj=new clsViewObj(this,Con,db);
+
+            sql="SELECT P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE ,'','','','','','','' " +
+                    "FROM P_NIVELPRECIO INNER JOIN P_NIVELPRECIO_SUCURSAL ON P_NIVELPRECIO.CODIGO = P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO " +
+                    "WHERE (P_NIVELPRECIO_SUCURSAL.CODIGO_SUCURSAL="+gl.tienda+") " +
+                    "UNION " +
+                    "SELECT P_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE,'','','','','','','' " +
+                    "FROM P_SUCURSAL INNER JOIN P_NIVELPRECIO ON P_SUCURSAL.CODIGO_NIVEL_PRECIO = P_NIVELPRECIO.CODIGO " +
+                    "WHERE (P_SUCURSAL.CODIGO_SUCURSAL ="+gl.tienda+") " +
+                    "ORDER BY NNOMBRE";
+
+            ViewObj.fillSelect(sql);
+
+            for (int i = 0; i <ViewObj.count; i++) {
+                listdlg.add(ViewObj.items.get(i).f1);
+            }
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        int niv=ViewObj.items.get(position).pk;
+                        gl.nivel=niv;
+                        setNivel();
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        /*
         final AlertDialog Dialog;
         int nivuser=0;
 
         try {
-
-            /*
-            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-            VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+gl.codigo_vendedor);
-            if (VendedoresObj.count>0) nivuser=(int) VendedoresObj.first().nivelprecio;
-
-            P_nivelprecioObj.fill("WHERE (CODIGO="+gl.nivel_sucursal+") OR (CODIGO="+nivuser+") ORDER BY Nombre");
-
-            final String[] selitems = new String[P_nivelprecioObj.count];
-            for (int i = 0; i <P_nivelprecioObj.count; i++) {
-                selitems[i]=P_nivelprecioObj.items.get(i).nombre;
-            }
-            */
 
             clsViewObj ViewObj=new clsViewObj(this,Con,db);
 
@@ -3988,6 +3976,8 @@ public class Venta extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+         */
     }
 
     private void inputMesa() {
@@ -4019,48 +4009,6 @@ public class Venta extends PBase {
         });
 
         alert.show();
-    }
-
-    private void listaMeseros() {
-        final AlertDialog Dialog;
-
-        try {
-            sql="WHERE CODIGO_VENDEDOR IN (SELECT VENDEDORES.CODIGO_VENDEDOR " +
-                    "FROM VENDEDORES INNER JOIN P_RUTA ON VENDEDORES.RUTA=P_RUTA.CODIGO_RUTA " +
-                    "WHERE (P_RUTA.SUCURSAL="+gl.tienda+") AND (VENDEDORES.NIVEL=4)) ORDER BY VENDEDORES.NOMBRE";
-            MeserosObj.fill(sql);
-
-            final String[] selitems = new String[MeserosObj.count];
-            for (int i = 0; i <MeserosObj.count; i++) {
-                selitems[i]=MeserosObj.items.get(i).nombre;
-            }
-
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Mesero");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    gl.idmesero=MeserosObj.items.get(item).codigo_vendedor;
-                    gl.meserodir=false;
-                    gl.cerrarmesero=false;
-                    startActivity(new Intent(Venta.this,ResMesero.class));
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
     }
 
     private void msgAskSend(String msg) {
@@ -4133,6 +4081,9 @@ public class Venta extends PBase {
 
                 try  {
                     db.execSQL("DELETE FROM T_VENTA");
+                    db.execSQL("DELETE FROM T_VENTA_MOD");
+                    db.execSQL("DELETE FROM T_VENTA_ING");
+
                     listItems();
                 } catch (SQLException e){
                     mu.msgbox("Error : " + e.getMessage());

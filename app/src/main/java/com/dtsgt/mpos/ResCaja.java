@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_ResCaja;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.wsOrdenRecall;
@@ -562,48 +563,39 @@ public class ResCaja extends PBase {
 
     public void listaMeseros() {
         try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResCaja.this,"Mesero");
 
             clsVendedoresObj VendedoresObj = new clsVendedoresObj(this, Con, db);
             sql = "WHERE (RUTA IN (SELECT CODIGO_RUTA FROM P_RUTA WHERE SUCURSAL="+gl.tienda+")) AND " +
-                  "(NIVEL=4) AND (ACTIVO=1) ORDER BY NOMBRE";
+                    "(NIVEL=4) AND (ACTIVO=1) ORDER BY NOMBRE";
             VendedoresObj.fill(sql);
 
-            int itemcnt=VendedoresObj.count;
-            String[] selitems = new String[itemcnt];
-            int[] selcod = new int[itemcnt];
-
-            for (int i = 0; i <itemcnt; i++) {
-                selitems[i] = VendedoresObj.items.get(i).nombre;
-                selcod[i] = VendedoresObj.items.get(i).codigo_vendedor;
+            for (int i = 0; i <VendedoresObj.count; i++) {
+                listdlg.add(VendedoresObj.items.get(i).nombre);
             }
 
-            ExDialog menudlg = new ExDialog(this);
-            menudlg.setTitle("tit");
-
-            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    idmesero=selcod[item];
-                    listaOrdenes();
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        idmesero=VendedoresObj.items.get(position).codigo_vendedor;
+                        listaOrdenes();
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            final AlertDialog Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -760,84 +752,68 @@ public class ResCaja extends PBase {
     }
 
     private void showMenuMesaPendiente() {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Precuenta","Datos cliente","Pagar","Borrar"}; // cuenta
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResCaja.this,"Mesa "+mesa+" , Cuenta #"+cuenta);
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Mesa "+mesa+" , Cuenta #"+cuenta);
+            listdlg.add("Precuenta");
+            listdlg.add("Datos cliente");
+            listdlg.add("Pagar");
+            listdlg.add("Borrar");
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        if (ventaVacia()) {
-                            crearVenta();
-                        } else msgbox("Antes de imprimir precuenta debe terminar la venta actual");
-                        //msgAskPreimpresion("Imprimir la cuenta "+cuenta);
-                        break;
-                    case 1:
-                        datosCuenta();break;
-                    case 2:
-                        if (ventaVacia()) {
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        switch (position) {
+                            case 0:
+                                if (ventaVacia()) {
+                                    crearVenta();
+                                } else msgbox("Antes de imprimir precuenta debe terminar la venta actual");
+                                break;
+                            case 1:
+                                datosCuenta();break;
+                            case 2:
+                                if (ventaVacia()) {
 
-                            if (gl.pePropinaFija) {
-                                crearVenta();
-                            } else {
-                                inputPropina();
-                            }
+                                    if (gl.pePropinaFija) {
+                                        crearVenta();
+                                    } else {
+                                        inputPropina();
+                                    }
 
-                        } else msgbox("Antes de pagar la cuenta debe terminar la venta actual");
-                        //msgAskPago("Pagar la cuenta "+cuenta);
-                        break;
-                    case 3:
-                        browse=1;
-                        startActivity(new Intent(ResCaja.this,ValidaSuper.class));
-                        break;
+                                } else msgbox("Antes de pagar la cuenta debe terminar la venta actual");
+                                //msgAskPago("Pagar la cuenta "+cuenta);
+                                break;
+                            case 3:
+                                browse=1;
+                                startActivity(new Intent(ResCaja.this,ValidaSuper.class));
+                                break;
+                        }
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
+            });
 
-                dialog.cancel();
-            }
-        });
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void showMenuMesaCompleta() {
-        final AlertDialog Dialog;
-        final String[] selitems = {"Completar"};
 
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Mesa "+mesa+" , Cuenta #"+cuenta);
+        //msgAskCompletar("Completar mesa "+mesa);
 
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                switch (item) {
-                    case 0:
-                        msgAskCompletar("Completar la mesa "+mesa);
-                        break;
-                }
-
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void inputPropina() {

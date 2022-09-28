@@ -2,6 +2,42 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
+    public class clsD_barril {
+        public String codigo_barril;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  codigo_tipo;
+        public String codigo_interno;
+        public int  activo;
+        public int  codigo_producto;
+        public String lote;
+        public long fecha_inicio;
+        public long fecha_cierre;
+        public long fecha_vence;
+        public long fecha_entrada;
+        public long fecha_salida;
+        public int  usuario_inicio;
+        public int  usuario_cierre;
+        public int  statcom;
+
+        public String nprod,ntipo,nest,nfecha,nfabrir;
+    }
+
+    public class clsD_barril_trans {
+        public int  codigo_trans;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public long fechahora;
+        public String codigo_barril;
+        public int  codigo_producto;
+        public double cantidad;
+        public String um;
+        public int  mesero;
+        public int  tipo_mov;
+        public String idtrans;
+        public int  statcom;
+    }
+
     public class clsD_costo {
         public int  codigo_costo;
         public int  codigo_empresa;
@@ -438,6 +474,24 @@ public class clsClasses {
 		public int activo;
 	}
 
+    public class clsP_barril_tipo {
+        public int  codigo_tipo;
+        public int  empresa;
+        public String descripcion;
+        public double capacidad;
+        public double mermamin;
+        public double mermamax;
+        public int  activo;
+    }
+
+    public class clsP_barril_barra {
+        public int  codigo_barra;
+        public int  empresa;
+        public String barra;
+        public int  codigo_tipo;
+        public String codigo_interno;
+    }
+
     public class clsP_bonif {
         public String cliente;
         public int  ctipo;
@@ -590,6 +644,15 @@ public class clsClasses {
         public long fechavig;
         public int  resguardo;
         public int  valor1;
+    }
+
+    public class clsP_cortesia {
+        public int  codigo_cortesia;
+        public int  empresa;
+        public String nombre;
+        public int  codigo_vendedor;
+        public int  activo;
+        public String clave;
     }
 
     public class clsP_departamento   {
@@ -1163,7 +1226,7 @@ public class clsClasses {
         public int  cuentas;
         public long fecha;
         public int  pendiente;
-        public String alias,mesanum;
+        public String alias,alias2,mesanum;
         public int est_envio;
 
         public String idorden;
@@ -1322,6 +1385,22 @@ public class clsClasses {
         public int  id;
     }
 
+    public class clsT_orden_ing {
+        public int  codigo_ing;
+        public String corel;
+        public int  id;
+        public int  iding;
+        public String nombre;
+        public int  puid;
+    }
+
+    public class clsT_orden_mod {
+        public String corel;
+        public int  id;
+        public int  idmod;
+        public String nombre;
+    }
+
     public class clsT_orden_nota {
         public int  id;
         public String corel;
@@ -1395,6 +1474,17 @@ public class clsClasses {
         public int  tipo;
     }
 
+    public class clsT_pedidod {
+        public String corel;
+        public int  corel_det;
+        public int  codigo_producto;
+        public String umventa;
+        public double cant;
+        public double total;
+        public String nota;
+        public String codigo_tipo_producto;
+    }
+
     public class clsT_venta {
         public String producto;
         public String empresa;
@@ -1415,6 +1505,21 @@ public class clsClasses {
         public String val4;
         public double percep;
     }
+
+    public class clsT_venta_ing {
+        public int  codigo_ing;
+        public int  id;
+        public int  iding;
+        public String nombre;
+        public int  puid;
+    }
+
+    public class clsT_venta_mod {
+        public int  id;
+        public int  idmod;
+        public String nombre;
+    }
+
 
     //
 
@@ -1467,6 +1572,8 @@ public class clsClasses {
 	public class clsMenu {
 		public int ID,Icon,icod,cant;
 		public String Name,Cod,Pass,val;
+        public int idres,idressel;
+        public double valor;
 	}	
 	
 	public class clsVenta {
@@ -1479,6 +1586,7 @@ public class clsClasses {
         public String Cod,Nombre,um,val,valp,sdesc,emp;
         public double Cant,Peso,Prec,Desc,Total,imp,percep;
         public int id,icant,cuenta,estado;
+        public boolean indent,modif;
     }
 	
 	public class clsPromoItem {

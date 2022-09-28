@@ -30,6 +30,7 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.ListAdaptMovInv;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.webservice.srvInventConfirm;
@@ -138,6 +139,7 @@ public class ListaInventarioT extends PBase {
             mtimer.postDelayed(mrunner,200);
         }
 
+        gl.idalm=0;
     }
 
     private void confirmaInventario() {
@@ -787,45 +789,39 @@ public class ListaInventarioT extends PBase {
     private void listaAlmacenes1() {
 
         try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ListaInventarioT.this,"Almacen origen");
+
             clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
             P_almacenObj.fill("WHERE (ACTIVO=1) ORDER BY NOMBRE");
 
             int itemcnt=P_almacenObj.count;
-            String[] selitems = new String[itemcnt];
-            int[] selcod = new int[itemcnt];
-
             for (int i = 0; i <itemcnt; i++) {
-                selitems[i] = P_almacenObj.items.get(i).nombre;
-                selcod[i] = P_almacenObj.items.get(i).codigo_almacen;
+                listdlg.add(P_almacenObj.items.get(i).codigo_almacen+"",P_almacenObj.items.get(i).nombre);
             }
 
-            ExDialogT menudlg = new ExDialogT(this);
-            menudlg.setTitle("Almacen origen");
-
-            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    gl.idalm=selcod[item];gl.nom_alm=selitems[item];
-                    lblalm1.setText(gl.nom_alm);
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        gl.idalm=listdlg.getCodigoInt(position);
+                        gl.nom_alm=listdlg.getText(position);
+                        lblalm1.setText(gl.nom_alm);
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            final AlertDialog Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -833,45 +829,40 @@ public class ListaInventarioT extends PBase {
     private void listaAlmacenes2() {
 
         try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ListaInventarioT.this,"Almacen destino");
+
             clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
             P_almacenObj.fill("WHERE (ACTIVO=1) AND (CODIGO_ALMACEN<>"+gl.idalm+") ORDER BY NOMBRE");
 
-            int itemcnt=P_almacenObj.count;
-            String[] selitems = new String[itemcnt];
-            int[] selcod = new int[itemcnt];
 
+            int itemcnt=P_almacenObj.count;
             for (int i = 0; i <itemcnt; i++) {
-                selitems[i] = P_almacenObj.items.get(i).nombre;
-                selcod[i] = P_almacenObj.items.get(i).codigo_almacen;
+                listdlg.add(P_almacenObj.items.get(i).codigo_almacen+"",P_almacenObj.items.get(i).nombre);
             }
 
-            ExDialogT menudlg = new ExDialogT(this);
-            menudlg.setTitle("Almacen destino");
-
-            menudlg.setItems(selitems ,new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    gl.idalm2=selcod[item];gl.nom_alm2=selitems[item];
-                    lblalm2.setText(gl.nom_alm2);
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        gl.idalm2=listdlg.getCodigoInt(position);
+                        gl.nom_alm2=listdlg.getText(position);
+                        lblalm2.setText(gl.nom_alm2);
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
                 }
             });
 
-            final AlertDialog Dialog = menudlg.create();
-            Dialog.show();
-
-            Button nbutton = Dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-            nbutton.setBackgroundColor(Color.parseColor("#1A8AC6"));
-            nbutton.setTextColor(Color.WHITE);
-
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }

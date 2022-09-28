@@ -56,7 +56,7 @@ public class ListAdaptMenuOrden extends BaseAdapter {
 
 		if (convertView == null) {
 			if (horiz) {
-                convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa, null);
+                convertView = l_Inflater.inflate(R.layout.activity_list_view_menuorden, null);
             } else {
                 convertView = l_Inflater.inflate(R.layout.activity_list_view_menuventa_h, null);
             }
@@ -82,9 +82,13 @@ public class ListAdaptMenuOrden extends BaseAdapter {
         }
 			
 		holder.imgEst.setImageResource(R.drawable.blank256);
+		holder.imgEst.setMaxHeight(100);
 
+		holder.lblName.setVisibility(View.VISIBLE);
+		if (items.get(position).Icon==0) {
+			holder.lblName.setVisibility(View.GONE);holder.imgEst.setMaxHeight(50);
+		}
 
-		
 		if (items.get(position).Icon==1) holder.imgEst.setImageResource(R.drawable.pedidos_3);
 		if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.pedidos_3);
 		if (items.get(position).Icon==102) holder.imgEst.setImageResource(R.drawable.pedidos_2);
@@ -120,7 +124,7 @@ public class ListAdaptMenuOrden extends BaseAdapter {
         if (items.get(position).Icon==63) holder.imgEst.setImageResource(R.drawable.btn_mesero);
         if (items.get(position).Icon==64) holder.imgEst.setImageResource(R.drawable.btn_lupa2);
         if (items.get(position).Icon==65) holder.imgEst.setImageResource(R.drawable.btn_caja1);
-        if (items.get(position).Icon==66) holder.imgEst.setImageResource(R.drawable.comandas);
+        if (items.get(position).Icon==66) holder.imgEst.setImageResource(R.drawable.btn_comanda);
         if (items.get(position).Icon==67) holder.imgEst.setImageResource(R.drawable.pago2);
         if (items.get(position).Icon==68) holder.imgEst.setImageResource(R.drawable.pago_caja);
         if (items.get(position).Icon==69) holder.imgEst.setImageResource(R.drawable.btn_complete);
@@ -130,6 +134,7 @@ public class ListAdaptMenuOrden extends BaseAdapter {
         if (items.get(position).Icon==73) holder.imgEst.setImageResource(R.drawable.preimpresion);
         if (items.get(position).Icon==74) holder.imgEst.setImageResource(R.drawable.btn_del_all);
         if (items.get(position).Icon==75) holder.imgEst.setImageResource(R.drawable.cambio_impresora);
+		if (items.get(position).Icon==78) holder.imgEst.setImageResource(R.drawable.barril);
 
         if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 

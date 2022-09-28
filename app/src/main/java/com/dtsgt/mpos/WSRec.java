@@ -13,6 +13,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,11 +25,14 @@ import com.dtsgt.classes.clsP_Producto_TipoObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_archivoconfObj;
 import com.dtsgt.classes.clsP_bancoObj;
+import com.dtsgt.classes.clsP_barril_barraObj;
+import com.dtsgt.classes.clsP_barril_tipoObj;
 import com.dtsgt.classes.clsP_bonifObj;
 import com.dtsgt.classes.clsP_caja_impresoraObj;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_conceptopagoObj;
 import com.dtsgt.classes.clsP_corelObj;
+import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
@@ -73,6 +77,7 @@ import com.dtsgt.classes.clsP_usgrupoObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsP_usopcionObj;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
 
 import java.io.BufferedOutputStream;
@@ -382,7 +387,15 @@ public class WSRec extends PBase {
                     case 55:
                         callMethod("GetP_PRODCLASIFMODIF", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
                         break;
-
+                    case 56:
+                        callMethod("GetP_BARRIL_TIPO", "EMPRESA", gl.emp);
+                        break;
+                    case 57:
+                        callMethod("GetP_BARRIL_BARRA", "EMPRESA", gl.emp);
+                        break;
+                    case 58:
+                        callMethod("GetP_CORTESIA", "EMPRESA", gl.emp);
+                        break;
                 }
             } catch (Exception e) {
                 error=e.getMessage();errorflag=true;
@@ -696,8 +709,9 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    processComplete();
-                    //execws(53);
+                    //processComplete();
+                    execws(53);
+                    //execws(56);
                     break;
                 case 53:
                     processModificador();
@@ -716,6 +730,30 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(56);
+                    //processComplete();
+                    break;
+                case 56:
+                    processBarrilTipo();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(57);
+                    //processComplete();
+                    break;
+                case 57:
+                    processBarrilBarra();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(58);
+                    //processComplete();
+                    break;
+                case 58:
+                    processCortesia();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
                     break;
             }
@@ -729,38 +767,27 @@ public class WSRec extends PBase {
 
         switch (callbackvalue) {
             case 1:
-                plabel = "Cargando empresas";
-                break;
+                plabel = "Cargando empresas";break;
             case 2:
-                plabel = "Cargando bancos";
-                break;
+                plabel = "Cargando bancos";break;
             case 3:
-                plabel = "Cargando Configuración";
-                break;
+                plabel = "Cargando Configuración";break;
             case 4:
-                plabel = "Cargando bonificaciones";
-                break;
+                plabel = "Cargando bonificaciones";break;
             case 5:
-                plabel = "Cargando correlativos";
-                break;
+                plabel = "Cargando correlativos";break;
             case 6:
-                plabel = "Cargando descuentos";
-                break;
+                plabel = "Cargando descuentos";break;
             case 7:
-                plabel = "Cargando factores";
-                break;
+                plabel = "Cargando factores";break;
             case 8:
-                plabel = "Cargando impuestos";
-                break;
+                plabel = "Cargando impuestos";break;
             case 9:
-                plabel = "Cargando familias";
-                break;
+                plabel = "Cargando familias";break;
             case 10:
-                plabel = "Cargando clientes";
-                break;
+                plabel = "Cargando clientes";break;
             case 11:
-                plabel = "Cargando encabezados";
-                break;
+                plabel = "Cargando encabezados";break;
             case 12:
                 plabel = "Cargando medias pago ";
                 break;
@@ -852,27 +879,39 @@ public class WSRec extends PBase {
                 plabel = "Impresoras";
                 break;
             case 42:
-                plabel = "Marcas de impresora";
-                break;
+                plabel = "Marcas de impresora";break;
             case 43:
-                plabel = "Modelo de impresora";
-                break;
+                plabel = "Modelo de impresora";break;
             case 44:
-                plabel = "Version";
-                break;
+                plabel = "Version";break;
             case 45:
-                plabel = "Impresoras";
-                break;
+                plabel = "Impresoras";break;
             case 46:
-                plabel = "Unidades";
-                break;
+                plabel = "Unidades";break;
             case 47:
-                plabel = "Conversion";
-                break;
+                plabel = "Conversion";break;
             case 48:
-                plabel = "Recetas";
-                break;
-
+                plabel = "Recetas";break;
+            case 49:
+                plabel = "NIVELPRECIO SUCURSAL";break;
+            case 50:
+                plabel = "PARAMEXT RUTA";break;
+            case 51:
+                plabel = "REGLA COSTO";break;
+            case 52:
+                plabel = "ALMACEN";break;
+            case 53:
+                plabel = "MODIFICADOR";break;
+            case 54:
+                plabel = "MODIFICADOR GRUPO";break;
+            case 55:
+                plabel = "PRODUCTO MODIFICADOR";break;
+            case 56:
+                plabel = "BARRIL TIPO";break;
+            case 57:
+                plabel = "BARRIL BARRA";break;
+            case 58:
+                plabel = "CORTESIA";break;
         }
 
         updateLabel();
@@ -990,7 +1029,7 @@ public class WSRec extends PBase {
                 }
             });
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
@@ -1109,31 +1148,35 @@ public class WSRec extends PBase {
     }
 
     private void mostrarLista() {
-        final String[] selitems = new String[app.citems.size()];
-        for (int i = 0; i <app.citems.size(); i++) {
-            selitems[i]=app.citems.get(i);
+
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(WSRec.this,"Producto de combo inactivo");
+
+            for (int i = 0; i <app.citems.size(); i++) {
+                listdlg.add(app.citems.get(i));
+            }
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        final AlertDialog Dialog;
-
-        AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-        menudlg.setTitle("Producto de combo inactivo");
-
-        menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
 
     }
 
@@ -2284,7 +2327,14 @@ public class WSRec extends PBase {
                 var.venta_por_factor_conv = mu.bool(item.VENTA_POR_FACTOR_CONV);
                 var.es_serializado = mu.bool(item.ES_SERIALIZADO);
                 var.param_caducidad = item.PARAM_CADUCIDAD;
-                var.producto_padre = 0;
+
+                try {
+                    var.producto_padre = Integer.parseInt(item.PRODUCTO_PADRE);
+                } catch (Exception e) {
+                    var.producto_padre=0;
+                }
+
+
                 var.factor_padre = item.FACTOR_PADRE;
                 var.tiene_inv = mu.bool(item.TIENE_INV);
                 var.tiene_vineta_o_tubo = mu.bool(item.TIENE_VINETA_O_TUBO);
@@ -3412,6 +3462,121 @@ public class WSRec extends PBase {
         }
     }
 
+    private void processBarrilTipo() {
+        try {
+            clsP_barril_tipoObj handler = new clsP_barril_tipoObj(this, Con, db);
+            clsBeP_BARRIL_TIPOList items = new clsBeP_BARRIL_TIPOList();
+            clsBeP_BARRIL_TIPO item = new clsBeP_BARRIL_TIPO();
+            clsClasses.clsP_barril_tipo var;
+
+            script.add("DELETE FROM P_BARRIL_TIPO");
+
+            items = xobj.getresult(clsBeP_BARRIL_TIPOList.class, "GetP_BARRIL_TIPO");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_barril_tipo();
+
+                var.codigo_tipo=item.CODIGO_TIPO;
+                var.empresa=item.EMPRESA;
+                var.descripcion=item.DESCRIPCION;
+                var.capacidad=item.CAPACIDAD;
+                var.mermamin=item.MERMAMIN;
+                var.mermamax=item.MERMAMAX;
+                var.activo=item.ACTIVO;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+    private void processBarrilBarra() {
+        try {
+            clsP_barril_barraObj handler = new clsP_barril_barraObj(this, Con, db);
+            clsBeP_BARRIL_BARRAList items = new clsBeP_BARRIL_BARRAList();
+            clsBeP_BARRIL_BARRA item = new clsBeP_BARRIL_BARRA();
+            clsClasses.clsP_barril_barra var;
+
+            script.add("DELETE FROM P_BARRIL_BARRA");
+
+            items = xobj.getresult(clsBeP_BARRIL_BARRAList.class, "GetP_BARRIL_BARRA");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_barril_barra();
+
+                var.codigo_barra=item.CODIGO_BARRA;
+                var.empresa=item.EMPRESA;
+                var.barra=item.BARRA;
+                var.codigo_tipo=item.CODIGO_TIPO;
+                var.codigo_interno=item.CODIGO_INTERNO;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+    private void processCortesia() {
+        try {
+            clsP_cortesiaObj handler = new clsP_cortesiaObj(this, Con, db);
+            clsBeP_CORTESIAList items = new clsBeP_CORTESIAList();
+            clsBeP_CORTESIA item = new clsBeP_CORTESIA();
+            clsClasses.clsP_cortesia var;
+
+            script.add("DELETE FROM P_CORTESIA");
+
+            items = xobj.getresult(clsBeP_CORTESIAList.class, "GetP_CORTESIA");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_cortesia();
+
+                var.codigo_cortesia=item.CODIGO_CORTESIA;
+                var.empresa=item.EMPRESA;
+                var.nombre=item.NOMBRE;
+                var.codigo_vendedor=item.CODIGO_VENDEDOR;
+                var.activo=item.ACTIVO;
+                var.clave=item.CLAVE;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+
     //endregion
 
     //region Aux
@@ -3440,7 +3605,7 @@ public class WSRec extends PBase {
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 if (nueva_version) {
-                    msgAskVersion("¿Existe nueva version, proceder con la instalación?");
+                    //msgAskVersion("¿Existe nueva version, proceder con la instalación?");
                 } else
                     finish();
             }

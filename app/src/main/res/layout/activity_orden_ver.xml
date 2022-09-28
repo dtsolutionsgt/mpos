@@ -20,6 +20,18 @@
         android:layout_height="36dp"
         android:background="@drawable/frame_rect_blue">
 
+        <TextView
+            android:id="@+id/textView275"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/lblTit4"
+            android:gravity="center_vertical"
+            android:text="0"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
         <ImageView
             android:id="@+id/imageView121"
             android:layout_width="38dp"
@@ -91,9 +103,9 @@
 
         <TextView
             android:id="@+id/lblTit4"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_centerVertical="true"
+            android:layout_centerInParent="true"
             android:layout_marginBottom="0dp"
             android:ellipsize="middle"
             android:gravity="center"
@@ -108,12 +120,12 @@
 
         <ImageView
             android:id="@+id/imageView119"
-            android:layout_width="80dp"
+            android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:layout_alignEnd="@+id/lblTit4"
             android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="5dp"
             android:padding="3dp"
             android:src="@drawable/ws_refresh" />
 

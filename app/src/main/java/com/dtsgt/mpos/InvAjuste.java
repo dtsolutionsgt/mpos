@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsP_stock_almacenObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
+import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_T_movr;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 
@@ -866,42 +867,45 @@ public class InvAjuste extends PBase {
     //region Dialogs
 
     private void listaMotivos() {
-        final AlertDialog Dialog;
         int sidx=-1;
 
-        P_motivoajusteObj.fill("WHERE ACTIVO=1 ORDER BY Nombre");
-        final String[] selitems = new String[P_motivoajusteObj.count];
+        try {
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(InvAjuste.this,"Motivo de ajuste");
 
-        for (int i = 0; i <P_motivoajusteObj.count; i++) {
-            selitems[i]= P_motivoajusteObj.items.get(i).nombre;
-            if (P_motivoajusteObj.items.get(i).codigo_motivo_ajuste== motivo) sidx=i;
+            P_motivoajusteObj.fill("WHERE ACTIVO=1 ORDER BY Nombre");
+
+            for (int i = 0; i <P_motivoajusteObj.count; i++) {
+                listdlg.add(P_motivoajusteObj.items.get(i).nombre);
+                if (P_motivoajusteObj.items.get(i).codigo_motivo_ajuste== motivo) sidx=i;
+            }
+
+            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        motivo=P_motivoajusteObj.items.get(position).codigo_motivo_ajuste;
+                        lblRazon.setText(nombreMotivo(motivo));
+                        //valcant=false;
+                        addItem();
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    motivo=-1;
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        ExDialog menudlg = new ExDialog(this);
-        menudlg.setTitle("Motivo de ajuste");
-
-        menudlg.setItems(selitems,  new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                int ii=item;
-
-                motivo=P_motivoajusteObj.items.get(item).codigo_motivo_ajuste;
-                lblRazon.setText(nombreMotivo(motivo));
-
-                addItem();
-                dialog.cancel();
-            }
-        });
-
-        menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                motivo=-1;
-                dialog.cancel();
-            }
-        });
-
-        Dialog = menudlg.create();
-        Dialog.show();
     }
 
     private void msgAskTodo(String msg) {

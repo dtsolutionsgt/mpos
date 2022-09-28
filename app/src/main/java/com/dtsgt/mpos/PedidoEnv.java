@@ -231,7 +231,7 @@ public class PedidoEnv extends PBase {
             for (int i = 0; i <D_pedidodObj.count; i++) {
 
                 item=D_pedidodObj.items.get(i);
-                s=mu.frmdecno(item.cant)+" x "+getProd(item.codigo_producto);
+                s=mu.frmdecno(item.cant)+"  "+getProd(item.codigo_producto);
                 item.umventa=s;
                 rep.add(s);
 
@@ -725,7 +725,7 @@ public class PedidoEnv extends PBase {
                 prodid = pedido.codigo_producto;
                 iddet = pedido.corel_det;
                 prname=getProd(prodid);
-                s = mu.frmdecno(pedido.cant) + " x " + prname;
+                s = mu.frmdecno(pedido.cant) + "  " + prname;
                 nn=pedido.nota;
 
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {

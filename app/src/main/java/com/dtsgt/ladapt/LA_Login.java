@@ -69,6 +69,8 @@ public class LA_Login extends BaseAdapter {
 		}
 			
 		holder.lblName.setText(items.get(position).Name);
+
+		/*
 		String fotoVend = Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + items.get(position).Cod + ".jpg";
 
 		File file = new File(fotoVend);
@@ -76,7 +78,7 @@ public class LA_Login extends BaseAdapter {
 		if (file.exists()) {
 			Bitmap bmImg = BitmapFactory.decodeFile(fotoVend);
 			holder.imgVend.setImageBitmap(bmImg);
-		}else{
+		} else {
 			fotoVend = Environment.getExternalStorageDirectory() + "/mPosFotos/Vendedor/" + items.get(position).Cod + ".png";
 
 			file = new File(fotoVend);
@@ -86,12 +88,21 @@ public class LA_Login extends BaseAdapter {
 				holder.imgVend.setImageBitmap(bmImg);
 			}
 		}
+		*/
 
-		if(selectedIndex!= -1 && position == selectedIndex) {
+		/*
+		if (selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));
         } else {
         	convertView.setBackgroundColor(Color.TRANSPARENT);
         }
+        */
+
+		if (selectedIndex!= -1 && position == selectedIndex) {
+			convertView.setBackgroundResource(items.get(position).idressel);
+		} else {
+			convertView.setBackgroundResource(items.get(position).idres);
+		}
 
 		return convertView;
 	}

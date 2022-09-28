@@ -352,7 +352,8 @@ public class Anulacion extends PBase {
 				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
 					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-					"WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.KILOMETRAJE=0)  " +
+					//"WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.KILOMETRAJE=0)  " +
+						"WHERE (D_FACTURA.ANULADO=0)   " +
          			"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					"ORDER BY D_FACTURA.COREL DESC ";
 /*
@@ -478,9 +479,10 @@ public class Anulacion extends PBase {
                 if (idfel.isEmpty() || idfel.equalsIgnoreCase("SIN FEL")) {
                     anulFactura(itemid);
                 } else {
-                	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
-                	if (uuid!=null){
-						anulacionFEL();
+		          	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
+                	if (uuid!=null) {
+						msgAskFacturaSAT("La factura está anulada en portalSAT");
+						//anulacionFEL();
 					} else {
 						anulFactura(itemid);
 					}
@@ -510,6 +512,36 @@ public class Anulacion extends PBase {
 		   	mu.msgbox(e.getMessage());
 		}
 	}
+
+
+	private void msgAskFacturaSAT(String msg) {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Anular factura");
+		dialog.setMessage("¿" + msg + "?");
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				anulFactura(itemid);
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				anulacionFEL();
+			}
+		});
+
+		dialog.setNeutralButton("Salir", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
+
+
+
 
 	//endregion
 
@@ -574,6 +606,7 @@ public class Anulacion extends PBase {
 			//#EJC20200527: Quitar estos caracteres del NIT.
 			NITReceptor = NITReceptor.replace("-","");
 			NITReceptor = NITReceptor.replace(".","");
+
 
             fel.anulfact(uuid, fel.fel_nit,NITReceptor, fact.fechaentr, fact.fechaentr);
 
@@ -1470,6 +1503,7 @@ public class Anulacion extends PBase {
 	public void showDateDialog1(View view) {
 		try{
 			obtenerFecha();
+			listItems();
 			dateTxt=false;
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1480,6 +1514,7 @@ public class Anulacion extends PBase {
 	public void showDateDialog2(View view) {
 		try{
 			obtenerFecha();
+			listItems();
 			dateTxt=true;
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

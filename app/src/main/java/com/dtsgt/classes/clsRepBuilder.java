@@ -287,8 +287,8 @@ public class clsRepBuilder {
         sval=cursym+decfrm.format(v3);
 
         val=sval.length()-2;
-
-        ts=ltrim(s1,prwt)+ltrim(s2,prwt-2)+ltrim(s3,prwt-val)+ltrim(sval,prwt);
+        //ts=ltrim(s1,prwt)+ltrim(s2,prwt-2)+ltrim(s3,prwt-val)+ltrim(sval,prwt);
+		ts=ltrim(s1,prwt)+ltrim(s2,prwt-4)+ltrim(s3,prwt-val+2)+ltrim(sval,prwt);
         items.add(ts);
     }
 

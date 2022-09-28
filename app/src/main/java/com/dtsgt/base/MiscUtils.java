@@ -183,7 +183,9 @@ public class MiscUtils {
 	public void msgbox(String msg) {
 
 	    if (msg.isEmpty()) return;
+		msgbox2(msg);
 
+		/*
         try {
             ExDialog dialog = new ExDialog(cCont);
 
@@ -199,6 +201,7 @@ public class MiscUtils {
         } catch (Exception ex) {
             toast(ex.getMessage());
         }
+        */
 
 	}
 
@@ -316,6 +319,28 @@ public class MiscUtils {
 		}
 
 	}
-	
+
+	public String Capitalize(String words) {
+		String str="";
+		boolean isCap=false;
+
+		for (int i=0; i<words.length(); i++) {
+			if (isCap){
+				str+=words.toUpperCase().charAt(i);
+			} else {
+				if(i==0){
+					str+=words.toUpperCase().charAt(i);
+				} else {
+					str+=words.toLowerCase().charAt(i);
+				}
+			}
+
+			if (words.charAt(i)==' ') isCap=true;else isCap=false;
+		}
+
+		return str;
+	}
+
+
 }
 

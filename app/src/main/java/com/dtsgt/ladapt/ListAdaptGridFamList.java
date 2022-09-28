@@ -77,21 +77,30 @@ public class ListAdaptGridFamList extends BaseAdapter {
 			
 		holder.lblName.setText(items.get(position).Name);
 
-        if(selectedIndex!= -1 && position == selectedIndex) {
-            holder.lblName.setTextColor(Color.WHITE);
-            convertView.setBackgroundColor(Color.rgb(26,138,198));
-        } else {
-            holder.lblName.setTextColor(Color.parseColor("#1B76B9"));
+		/*
+		if (selectedIndex!= -1 && position == selectedIndex) {
+			holder.lblName.setTextColor(Color.WHITE);
+			convertView.setBackgroundColor(Color.rgb(26,138,198));
+		} else {
+			holder.lblName.setTextColor(Color.parseColor("#1B76B9"));
 
-            convertView.setBackgroundColor(Color.TRANSPARENT);
-            try {
-                cstr=items.get(position).val;
-                col=Color.parseColor(cstr);
-                convertView.setBackgroundColor(col);
-            } catch (Exception e) {
-                convertView.setBackgroundColor(Color.TRANSPARENT);
-            }
-        }
+			convertView.setBackgroundColor(Color.TRANSPARENT);
+			try {
+				cstr=items.get(position).val;
+				col=Color.parseColor(cstr);
+				convertView.setBackgroundColor(col);
+			} catch (Exception e) {
+				convertView.setBackgroundColor(Color.TRANSPARENT);
+			}
+		}
+		*/
+
+		if (selectedIndex!= -1 && position == selectedIndex) {
+			convertView.setBackgroundResource(items.get(position).idressel);
+		} else {
+			convertView.setBackgroundResource(items.get(position).idres);
+		}
+
 
 		return convertView;
 	}
