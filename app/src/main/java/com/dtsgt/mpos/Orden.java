@@ -65,6 +65,7 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.firebase.fbP_res_sesion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -124,6 +125,8 @@ public class Orden extends PBase {
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
 
+    private WebService ws;
+
     private wsCommit wscom;
     private wsOpenDT wso;
     private wsCommit wsbtr;
@@ -131,6 +134,8 @@ public class Orden extends PBase {
     private Runnable rnBroadcastCallback;
     private Runnable rnDetailCallback;
     private Runnable rnBarTrans;
+
+    private fbP_res_sesion fbs;
 
     private AppMethods app;
 
@@ -147,8 +152,6 @@ public class Orden extends PBase {
     private clsT_orden_modObj T_orden_modObj;
     private clsT_orden_ingObj T_orden_ingObj;
     private clsD_barril_transObj D_barril_transObj;
-
-    private WebService ws;
 
     private clsRepBuilder rep;
 
@@ -294,6 +297,8 @@ public class Orden extends PBase {
             }
         };
         mtimer.postDelayed(mrunner,500);
+
+        fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
 
     }
 
@@ -2182,7 +2187,7 @@ public class Orden extends PBase {
     private boolean generaArchivos() {
         clsRepBuilder rep;
         int printid,ln;
-        String fname,ss;
+        String fname,ss,narea;
         File file;
 
         try {
@@ -2214,30 +2219,34 @@ public class Orden extends PBase {
                         rep.add(P_impresoraObj.first().ip);
 
                         rep.empty();
-                        rep.empty();
-                        rep.empty();
-                        rep.empty();
-                        rep.empty();
-                        rep.empty();
+                        //rep.empty();
+                        //rep.empty();
+                        //rep.empty();
+                        //rep.empty();
+                        //rep.empty();
 
                         //ordenpedido=numpedido>0;
+
+                        narea="";
+                        if (gl.emp==30) {
+                            narea = " " + gl.mesa_area;
+                        }
 
                         if (ordenpedido) {
                             rep.add("ORDEN : #" + numpedido);
                             rep.empty();
-                            if (numpedido == 0) rep.add("MESA : " + mesa);
+                            if (numpedido == 0) rep.add("MESA : " + mesa+narea);
                             if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
-                            rep.add("Hora : " + du.shora(du.getActDateTime()));
+                            rep.add("Hora : " + du.shora(du.getActDateTime())+ "   "+du.sfecha(du.getActDateTime()));
                             rep.add("Mesero : " + gl.nombre_mesero_sel);
                         } else {
                             rep.add("ORDEN : " + ordennum);
                             rep.empty();
-                            rep.add("MESA : " + mesa);
+                            rep.add("MESA : " + mesa+narea);
                             if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
-                            rep.add("Hora : " + du.shora(du.getActDateTime()));
+                            rep.add("Hora : " + du.shora(du.getActDateTime())+ "   "+du.sfecha(du.getActDateTime()));
                             rep.add("Mesero : " + gl.nombre_mesero_sel);
                         }
-
 
                         rep.line24();
 
@@ -2668,6 +2677,56 @@ public class Orden extends PBase {
         String cmd="";
 
         if (modo_emerg) return;
+        if (!actorden) {
+            envioOrdenOrig();return;
+        }
+
+        try {
+
+            //cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
+            cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
+
+            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+            P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
+            //cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+
+            fbs.setItem(idorden,P_res_sesionObj.first());
+
+            clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
+            T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
+            for (int i = 0; i < T_ordenObj.count; i++) {
+                cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
+            }
+
+            clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
+            T_ordencuentaObj.fill("WHERE (COREL='" + idorden + "')");
+            for (int i = 0; i < T_ordencuentaObj.count; i++) {
+                cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
+            }
+
+            cmd+=buildDetailJournal();
+
+            try {
+                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                app.addToOrdenLog(du.getActDateTime(),
+                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void envioOrdenOrig() {
+        String cmd="";
+
+        if (modo_emerg) return;
 
         try {
 
@@ -2753,7 +2812,6 @@ public class Orden extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     //endregion
 
@@ -3401,12 +3459,24 @@ public class Orden extends PBase {
     private void actualizaEstadoOrden(int modo) {
         estado_modo=modo;
         if (items.size()>0) {
-            try {
-                sql="SELECT ID,ESTADO FROM T_ORDEN WHERE (COREL='"+idorden+"')";
-                ws.openDT(sql);
-            } catch (Exception e) {
-                //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+
+            if (actorden) {
+                try {
+                    sql="SELECT ID,ESTADO FROM T_ORDEN WHERE (COREL='"+idorden+"')";
+                    ws.openDT(sql);
+                } catch (Exception e) {
+                    //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            } else {
+                try {
+                    sql="SELECT ID,ESTADO FROM T_ORDEN WHERE (COREL='"+idorden+"')";
+                    ws.openDT(sql);
+                } catch (Exception e) {
+                    //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
             }
+
+
         } else imgrefr.setVisibility(View.INVISIBLE);
 
     }
@@ -4766,10 +4836,8 @@ public class Orden extends PBase {
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     actualizaEstadoOrden(3);
+                    if (actorden) envioOrden();
                     imprimeComanda();
-                    if (actorden) {
-                        envioOrden();
-                    }
                 }
             });
 

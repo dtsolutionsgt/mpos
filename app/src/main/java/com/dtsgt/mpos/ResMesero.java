@@ -22,6 +22,7 @@ import com.dtsgt.classes.clsP_mesa_nombreObj;
 import com.dtsgt.classes.clsP_mesero_grupoObj;
 import com.dtsgt.classes.clsP_res_grupoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
+import com.dtsgt.classes.clsP_res_salaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_res_turnoObj;
 import com.dtsgt.classes.clsP_rutaObj;
@@ -31,6 +32,7 @@ import com.dtsgt.classes.clsT_ordenpendObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.firebase.fbP_res_sesion;
 import com.dtsgt.ladapt.LA_Res_mesa;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
@@ -65,6 +67,9 @@ public class ResMesero extends PBase {
     private wsCommit wscom;
 
     private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback;
+
+    private fbP_res_sesion fbs;
+    private Runnable rnfbCallBack;
 
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -109,11 +114,13 @@ public class ResMesero extends PBase {
         P_mesa_nombreObj=new clsP_mesa_nombreObj(this,Con,db);
         T_ordenpendObj=new clsT_ordenpendObj(this,Con,db);
 
+        actorden=gl.peActOrdenMesas;
+
         setHandlers();
         cargaConfig();
         gl.ventalock=false;
 
-        actorden=gl.peActOrdenMesas;
+
 
         getURL();
         ws=new WebService(ResMesero.this,gl.wsurl);
@@ -148,6 +155,14 @@ public class ResMesero extends PBase {
             lblbarril.setVisibility(View.INVISIBLE);
             imgbarril.setVisibility(View.INVISIBLE);
         }
+
+        rnfbCallBack = new Runnable() {
+            public void run() {
+                buildItems();
+            }
+        };
+        fbs=new fbP_res_sesion("P_RES_SESION/"+gl.tienda);
+
     }
 
     //region Events
@@ -220,6 +235,14 @@ public class ResMesero extends PBase {
     //region Main
 
     private void listItems() {
+        if (actorden) {
+            fbs.listItems("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/",rnfbCallBack);
+        } else {
+            showItems();
+        }
+    }
+
+    private void showItems() {
         clsClasses.clsP_res_sesion last;
         int idmesa;
         String amesa;
@@ -228,6 +251,8 @@ public class ResMesero extends PBase {
         try {
             corels.clear();
             mesas.clear();
+
+            clsP_res_salaObj P_res_salaObj=new clsP_res_salaObj(this,Con,db);
 
             P_res_mesaObj.fill("WHERE CODIGO_GRUPO="+idgrupo);
 
@@ -245,11 +270,16 @@ public class ResMesero extends PBase {
                 mesa.numorden="";
                 mesa.idgrupo=P_res_mesaObj.items.get(i).codigo_grupo;
 
+                P_res_salaObj.fill("WHERE (CODIGO_SALA="+P_res_mesaObj.items.get(i).codigo_sala+")");
+                if (P_res_salaObj.count>0) {
+                    mesa.area=P_res_salaObj.first().nombre;
+                } else mesa.area="";
+
                 amesa=aliasMesa(idmesa);
                 if (!amesa.isEmpty()) {
                     mesa.alias=mesa.nombre+" - "+amesa;mesa.nombre=" ";
                     mesa.alias2=amesa;
-               }
+                }
 
                 P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
 
@@ -291,6 +321,26 @@ public class ResMesero extends PBase {
         }
     }
 
+    private void buildItems() {
+        try {
+            fbs.orderByCodigo_mesa();
+
+            db.execSQL("DELETE FROM P_res_sesion");
+
+            if (fbs.items.size()>0) {
+                P_res_sesionObj.fill();
+
+                for (int i = 0; i <fbs.items.size(); i++) {
+                    P_res_sesionObj.add(fbs.items.get(i));
+                }
+            }
+
+            showItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     private void abrirOrden() {
         try {
 
@@ -299,6 +349,7 @@ public class ResMesero extends PBase {
             gl.mesanom=mesa.mesanum;
             codigomesa=mesa.codigo_mesa;
             gl.mesacodigo=codigomesa;
+            gl.mesa_area=mesa.area;
 
             P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
             if (P_res_sesionObj.count>0) {
@@ -949,6 +1000,8 @@ public class ResMesero extends PBase {
     }
 
     private String aliasMesa(int idm) {
+
+
         try {
             P_mesa_nombreObj.fill("WHERE CODIGO_MESA="+idm);
             if (P_mesa_nombreObj.count>0) {
@@ -1332,7 +1385,7 @@ public class ResMesero extends PBase {
         }
 
         if (actorden) {
-            //recibeOrdenes();
+            recibeOrdenes();
             //iniciaOrdenes();
         }
 

@@ -1232,6 +1232,7 @@ public class clsClasses {
         public String idorden;
         public String numorden;
         public int idgrupo;
+        public String area;
     }
 
     public class clsP_res_sesion {

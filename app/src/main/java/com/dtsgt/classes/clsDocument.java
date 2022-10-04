@@ -450,7 +450,10 @@ public class clsDocument {
 			} else {
 			    if(!TipoCredito.isEmpty()){
                     rep.add("Condiciones de pago : ");
+                    rep.add(TipoCredito);
                     rep.add("Aut#: " + NoAutorizacion);
+
+                    //rep.add("Aut#: " + NoAutorizacion);
                 } else {
                     rep.add("Condiciones de pago : Crédito");
                 }

@@ -174,6 +174,9 @@ public class PagoTarjeta extends PBase {
             listdlg.add(0,"Citibank");
             listdlg.add(0,"Transferencia");
             listdlg.add(0,"Cheque");
+            listdlg.add(0,"Credito 15 dias");
+            listdlg.add(0,"Credito 30 dias");
+            listdlg.add(0,"Credito 60 dias");
 
             listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
