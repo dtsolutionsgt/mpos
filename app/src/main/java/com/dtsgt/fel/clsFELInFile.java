@@ -45,6 +45,8 @@ public class clsFELInFile {
     public String fact_uuid,fact_serie,fact_numero;
     public String ret_uuid,ret_serie,ret_numero;
 
+    public int timeout=6000;
+
     public long ftime1=1,ftime2=-1,ftime3=-1;
 
     // Parametrizacion FEL
@@ -81,7 +83,7 @@ public class clsFELInFile {
     // Configuracion
 
     private double iva=12;
-    private int timeout=6000;
+
     private String WSURL="https://signer-emisores.feel.com.gt/sign_solicitud_firmas/firma_xml";
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";

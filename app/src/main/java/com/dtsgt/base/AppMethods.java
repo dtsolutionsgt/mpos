@@ -111,7 +111,7 @@ public class AppMethods {
 			if (ival<1)  ival=1;
 			gl.peLimiteGPS =ival;
 		} catch (Exception e) {
-			gl.peLimiteGPS =0;
+			gl.peLimiteGPS =6000;
 		}
 
 		try {
@@ -983,7 +983,7 @@ public class AppMethods {
 
     public void getURL() {
         gl.wsurl = "http://52.41.114.122/MPosWS_QA/Mposws.asmx";
-        gl.timeout = 20000;
+        gl.timeout = 6000;
 
         try {
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
@@ -994,7 +994,7 @@ public class AppMethods {
 
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
-                if(line.isEmpty()) gl.timeout = 20000;else gl.timeout = Integer.valueOf(line);
+                if(line.isEmpty()) gl.timeout = 6000;else gl.timeout = Integer.valueOf(line);
                 myReader.close();
             } else {
                 BufferedWriter writer = null;
