@@ -362,6 +362,12 @@ public class CliPos extends PBase {
             if (sDireccionCliente.isEmpty()) gl.gDirCliente ="Ciudad";else gl.gDirCliente=sDireccionCliente;
             if (sTelCliente.isEmpty()) gl.gTelCliente =""; else gl.gTelCliente=sTelCliente;
 
+            gl.gNombreCliente ="Consumidor final";
+            gl.gDirCliente ="Ciudad";
+            gl.gTelCliente ="";
+            gl.gNITCliente ="CF";
+
+
             gl.dom_nit= gl.gNITCliente;
             gl.dom_nom=sNombreCliente;
             gl.dom_dir =sDireccionCliente;gl.dom_ref="";

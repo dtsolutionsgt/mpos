@@ -172,6 +172,12 @@ public class clsFELInFile {
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
+            try {
+                connection.connect();
+            } catch (IOException e) {
+                return;
+            }
+
             DataOutputStream wr = null;
 
             try {
@@ -186,6 +192,7 @@ public class clsFELInFile {
             wr.close ();
 
             InputStream is;
+
             try {
                 is= connection.getInputStream();
             } catch (IOException e) {
