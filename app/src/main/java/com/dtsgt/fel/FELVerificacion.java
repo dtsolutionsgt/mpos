@@ -343,7 +343,7 @@ public class FELVerificacion extends PBase {
                         factd.cant,
                         "UNI",
                         factd.precio,
-                        factd.total,
+                        mu.round2(factd.total),
                         factd.desmon,
                         lcombo);
             }

@@ -744,16 +744,15 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
 
         try {
-            if (!textofin.isEmpty()) {
-
-//                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
-//                    textofin=textofin+" S.A.";
-//                }
-//
-//                String[] sp = textofin.split(",");
-//                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
-
-                rep.add(textofin);
+            if (!textopie.isEmpty()) {
+                rep.add(textopie);
+                /*
+                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
+                    textofin=textofin+" S.A.";
+                }
+                String[] sp = textofin.split(",");
+                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
+                */
             }
         } catch (Exception e) {}
 
@@ -766,6 +765,7 @@ public class clsDocFactura extends clsDocument {
                 rep.add("Numero de Acceso : "+contacc);
                 rep.add("Su factura pueden encontrar en el portal");
                 rep.add("SAT bajo identificacion : "+serie+numero);
+
 
             }
 

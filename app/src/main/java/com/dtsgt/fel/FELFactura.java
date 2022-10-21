@@ -528,7 +528,9 @@ public class FELFactura extends PBase {
                 factd=D_facturadObj.items.get(i);
                 if (gl.peComboDet) lcombo=listaCombo(factd.corel,factd.val2); else lcombo="";
                 fel.detalle(prodName(factd.producto),factd.cant,"UNI",
-                        factd.precio,factd.total,factd.desmon,lcombo);
+                        factd.precio,
+                        mu.round2(factd.total),
+                        factd.desmon,lcombo);
             }
 
             fel.completar(fact.serie,fact.corelativo);

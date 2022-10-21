@@ -928,6 +928,17 @@ public class AppMethods {
 		}
 
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=147";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			gl.peTextoPie =val;
+		} catch (Exception e) {
+			gl.peTextoPie = "";
+		}
+
     }
 
     public boolean paramCierre(int pid) {

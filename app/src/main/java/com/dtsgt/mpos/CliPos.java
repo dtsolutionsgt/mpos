@@ -65,7 +65,7 @@ public class CliPos extends PBase {
 	private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente,
             sTelCliente,wspnerror,pedcorel,corelorden;
 	private boolean consFinal=false,idleped=true;
-	private boolean request_exit=false,bloqueado,domicilio;
+	private boolean request_exit=false,bloqueado,domicilio,nrslt;
 	private int cantped;
 
     private TimerTask ptask;
@@ -292,26 +292,13 @@ public class CliPos extends PBase {
 			txtNIT.setOnKeyListener(new View.OnKeyListener() {
 				@Override
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    int i=0;
 					if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-
                         consultaNITInfile();
-
-						if (!existeCliente()) txtNom.requestFocus();
 						return true;
 					} else {
-                        existeCliente();
-   					    return false;
+         			    return false;
 					}
-				}
-			});
-
-			txtNIT.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-				public void onFocusChange(View v, boolean hasFocus) {
-                    existeCliente();
-					/*if(hasFocus) return;
-						if (!txtNIT.getText().toString().isEmpty()){
-							if (!existeCliente()) 	txtNom.requestFocus();
-						}*/
 				}
 			});
 
@@ -1307,12 +1294,15 @@ public class CliPos extends PBase {
     }
 
     private void consultaNITInfile() {
+        nrslt=false;
 
-        if (gl.codigo_pais.trim() == "GT" && !mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
+        if (!gl.codigo_pais.trim().equalsIgnoreCase("GT")) return ;
+
+        if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
 
             JSONObject params = new JSONObject();
             try {
-                String nit = txtNIT.getText().toString().replace("-", "");
+                String nit = txtNIT.getText().toString().replace("-", "").toUpperCase();
                 params.put("emisor_codigo", gl.felUsuarioCertificacion);
                 params.put("emisor_clave", gl.felLlaveCertificacion);
                 params.put("nit_consulta", nit);
@@ -1320,15 +1310,18 @@ public class CliPos extends PBase {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             RequestQueue queue = Volley.newRequestQueue(CliPos.this);
+
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, urlNit, params, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
                         if (!response.getString("nombre").equals("")) {
                             txtNom.setText(response.getString("nombre").replace(",", " ").trim());
+                            nrslt=true;
                         } else {
-                            Toast.makeText(CliPos.this, "No se obtuvieron datos del cliente en Infile con el NIT proporcionado", Toast.LENGTH_LONG).show();
+                            toast("No se obtuvieron datos del cliente en Infile con el NIT proporcionado");
                             txtNom.setText("");
                         }
                     } catch (JSONException e) {
@@ -1344,6 +1337,7 @@ public class CliPos extends PBase {
 
             queue.add(request);
         }
+
     }
 
     //endregion

@@ -170,6 +170,7 @@ public class PagoTarjeta extends PBase {
             }
             listdlg.add(0,"American Express");
             listdlg.add(0,"Mastercard");
+            listdlg.add(0,"Visa link");
             listdlg.add(0,"Discover");
             listdlg.add(0,"Citibank");
             listdlg.add(0,"Transferencia");

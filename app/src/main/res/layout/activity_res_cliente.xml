@@ -249,6 +249,7 @@
             android:layout_marginRight="10dp"
             android:ems="10"
             android:inputType="textEmailAddress"
+            android:selectAllOnFocus="true"
             android:singleLine="true" />
 
         <RelativeLayout

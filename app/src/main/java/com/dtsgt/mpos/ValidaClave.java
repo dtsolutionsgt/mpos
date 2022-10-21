@@ -135,7 +135,7 @@ public class ValidaClave extends PBase {
 
             sql = "WHERE CODIGO_VENDEDOR IN (SELECT VENDEDORES.CODIGO_VENDEDOR " +
                     "FROM VENDEDORES INNER JOIN P_RUTA ON VENDEDORES.RUTA=P_RUTA.CODIGO_RUTA " +
-                    "WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND (VENDEDORES.NIVEL="+nivel+") " +
+                    "WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND ((VENDEDORES.NIVEL="+nivel+") OR (VENDEDORES.NIVEL=6)) " +
                     "AND (VENDEDORES.ACTIVO=1)) ORDER BY VENDEDORES.NOMBRE";
 
             VendedoresObj.fill(sql);

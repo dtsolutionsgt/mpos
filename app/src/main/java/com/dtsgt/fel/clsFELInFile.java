@@ -1017,6 +1017,7 @@ public class clsFELInFile {
 
         serie=serie+"-"+numero;
 
+
         xml+="</dte:Items>";
 
         xml+="<dte:Totales>";

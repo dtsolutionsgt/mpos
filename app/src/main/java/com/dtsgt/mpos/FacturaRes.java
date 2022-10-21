@@ -874,7 +874,9 @@ public class FacturaRes extends PBase {
 			    fdoc.factsinpropina=gl.peFactSinPropina;
 			    fdoc.propperc=gl.pePropinaPerc;
                 fdoc.modorest=gl.peRest;
+				fdoc.textopie=gl.peTextoPie;
                 fdoc.nommesero=gl.nombre_mesero;
+
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
 
