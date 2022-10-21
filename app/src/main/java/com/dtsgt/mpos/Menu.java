@@ -2121,8 +2121,10 @@ public class Menu extends PBase {
             if (fc==0) {
                 return true;
             } else {
-                msgAskSend("Existen facturas pendientes de certificacion de mas que 3 días. Por favor envie siguente correo al soporte.");
-                return false;
+				if (gl.emp!=7) {
+					msgAskSend("Existen facturas pendientes de certificacion de mas que 3 días. Por favor envie siguente correo al soporte.");
+					return false;
+				} else return true;
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;

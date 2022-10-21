@@ -100,6 +100,7 @@ public class FELFactura extends PBase {
 
         getURL();
         fel=new clsFELInFile(this,this,gl.timeout);
+        fel.halt=false;
 
         ws = new WebServiceHandler(FELFactura.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
@@ -187,6 +188,8 @@ public class FELFactura extends PBase {
     public void doHalt(View viev) {
         fel.halt=true;
         lblHalt.setVisibility(View.INVISIBLE);
+        //marcaFacturaContingencia();
+        //finish();
     }
 
     //endregion
@@ -445,9 +448,9 @@ public class FELFactura extends PBase {
     }
 
     private void buildFactXML() {
-
         String dir,muni,dep,iddep,idmuni,lcombo;
         int idcont;
+        double ldesc;
 
         corel=facts.get(fidx);
 
@@ -527,6 +530,11 @@ public class FELFactura extends PBase {
             for (int i = 0; i <D_facturadObj.count; i++) {
                 factd=D_facturadObj.items.get(i);
                 if (gl.peComboDet) lcombo=listaCombo(factd.corel,factd.val2); else lcombo="";
+
+                factd.total=mu.round2(factd.total);
+                ldesc=factd.cant*factd.precio-factd.total;
+                factd.desmon=ldesc;
+
                 fel.detalle(prodName(factd.producto),factd.cant,"UNI",
                         factd.precio,
                         mu.round2(factd.total),
@@ -611,6 +619,7 @@ public class FELFactura extends PBase {
     }
 
     //endregion
+
 
     //region Envio una factura
 

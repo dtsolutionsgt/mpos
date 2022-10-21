@@ -246,9 +246,9 @@ public class FELVerificacion extends PBase {
     }
 
     private void buildFactXML() {
-
         String dir,muni,dep,iddep,idmuni;
         int idcont;
+        double lprec,ltot,ldesc;
 
         corel=facts.get(fidx);
 
@@ -338,6 +338,10 @@ public class FELVerificacion extends PBase {
                 factd=D_facturadObj.items.get(i);
 
                 if (gl.peComboDet) lcombo=listaCombo(factd.corel,factd.val2); else lcombo="";
+
+                factd.total=mu.round2(factd.total);
+                ldesc=factd.cant*factd.precio-factd.total;
+                factd.desmon=ldesc;
 
                 fel.detalle(prodName(factd.producto),
                         factd.cant,

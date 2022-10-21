@@ -1016,7 +1016,7 @@ public class clsFELInFile {
         String totIvaStr = String.format("%.2f", totiva);
 
         serie=serie+"-"+numero;
-
+        totmonto=round2(totmonto);
 
         xml+="</dte:Items>";
 
@@ -1257,6 +1257,19 @@ public class clsFELInFile {
         Toast toast= Toast.makeText(cont,msg,Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    public double round2(double val){
+        int ival;
+
+        val=(double) (100*val);
+        double rslt=Math.round(val);
+        rslt=Math.floor(rslt);
+
+        ival=(int) rslt;
+        rslt=(double) ival;
+
+        return (double) (rslt/100);
     }
 
     //endregion
