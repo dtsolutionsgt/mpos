@@ -151,17 +151,14 @@ public class ResCliente extends PBase {
 
         try{
 
-            txtNIT.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-                        //if (!existeCliente()) txtNom.requestFocus();
-                        consultaNITInfile();
-                        return true;
-                    } else {
-                        //existeCliente();
-                        return false;
-                    }
+            txtNIT.setOnKeyListener((v, keyCode, event) -> {
+                if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    //if (!existeCliente()) txtNom.requestFocus();
+                    consultaNITInfile();
+                    return true;
+                } else {
+                    //existeCliente();
+                    return false;
                 }
             });
 
@@ -290,15 +287,21 @@ public class ResCliente extends PBase {
         }
     }
 
+    private boolean NitValidadoInfile =false;
+
     private void consultaNITInfile() {
+
         nrslt=false;
+        NitValidadoInfile= false;
 
         if (!gl.codigo_pais.trim().equalsIgnoreCase("GT")) return ;
 
         if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
 
             JSONObject params = new JSONObject();
+
             try {
+
                 String nit = txtNIT.getText().toString().replace("-", "").toUpperCase();
                 params.put("emisor_codigo", gl.felUsuarioCertificacion);
                 params.put("emisor_clave", gl.felLlaveCertificacion);
@@ -317,6 +320,7 @@ public class ResCliente extends PBase {
                         if (!response.getString("nombre").equals("")) {
                             txtNom.setText(response.getString("nombre").replace(",", " ").trim());
                             nrslt=true;
+                            NitValidadoInfile=true;
                         } else {
                             toast("No se obtuvieron datos del cliente en Infile con el NIT proporcionado");
                             txtNom.setText("");
@@ -344,9 +348,11 @@ public class ResCliente extends PBase {
     private boolean validaNIT(String N)  {
 
         if (N.isEmpty()) return false;
+        if (NitValidadoInfile) return true;
         if (!N.contains("-")) return false;
 
         try{
+
             String P, C, s, NC;
             int[] v = {0,0,0,0,0,0,0,0,0,0};
             int j, mp, sum, d11, m11, r11, cn, ll;
@@ -394,7 +400,6 @@ public class ResCliente extends PBase {
                 }
 
                 NC = P+"-"+s;
-                //mu.msgbox(NC);
 
                 if (N.equalsIgnoreCase(NC)) {
                     return true;
@@ -414,6 +419,7 @@ public class ResCliente extends PBase {
     }
 
     private boolean existeCliente() {
+
         Cursor DT;
         boolean resultado=false;
 
@@ -611,20 +617,29 @@ public class ResCliente extends PBase {
     }
 
     private int nitnum(String nit) {
+
         int pp;
 
         try {
+
+            //#EJC202210222150
+            int nnit =0;
+
             nit=nit.toUpperCase();
             pp=nit.indexOf("-");
-            if (pp<0) return 0;
 
-            int A=(int) nit.charAt(pp+1);
-            String snit=nit.substring(0,pp)+A;
-            int nnit=Integer.parseInt(snit);
+            if (pp<0){
+                nnit=Integer.parseInt(nit);
+            }else{
+                int A=(int) nit.charAt(pp+1);
+                String snit=nit.substring(0,pp)+A;
+                nnit=Integer.parseInt(snit);
+            }
 
             return nnit;
+
         } catch (Exception e) {
-            return -1;
+            return gl.emp*10;
         }
     }
 

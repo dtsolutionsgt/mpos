@@ -3741,10 +3741,11 @@ public class WSRec extends PBase {
     }
 
     protected void guardaDatosConexion() {
+
         BufferedWriter writer = null;
         FileWriter wfile;
 
-        if (gl.timeout==0) gl.timeout=20000;
+        if (gl.timeout==0) gl.timeout=6000;
 
         try {
 

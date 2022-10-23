@@ -21,7 +21,7 @@ public class PagoTarjeta extends PBase {
 
 
     private double monto;
-    private String tipo="Visa",aut;
+    private String tipo="Mastercard",aut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +35,25 @@ public class PagoTarjeta extends PBase {
         txtAut = (EditText) findViewById(R.id.editText1);
 
         monto=gl.total_pago;
-        txtMonto.setText(""+monto);
+        txtMonto.setText(""+round2(monto));
         lblTipo.setText(tipo);txtAut.setText("");txtAut.requestFocus();
 
         setHandlers();
     }
 
+    public double round2(double val){
+
+        int ival;
+
+        val=(double) (100*val);
+        double rslt=Math.round(val);
+        rslt=Math.floor(rslt);
+
+        ival=(int) rslt;
+        rslt=(double) ival;
+
+        return (double) (rslt/100);
+    }
     //region Events
 
     public void doSave(View view) {
@@ -70,15 +83,15 @@ public class PagoTarjeta extends PBase {
                 }
             });
 
-            txtAut.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        if (!txtAut.getText().toString().isEmpty()) save();
-                        return true;
+            txtAut.setOnKeyListener((v, keyCode, event) -> {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    if (txtAut.getText().toString().isEmpty()){
+                        txtAut.setText("No_Aut_20221022");
                     }
-                    return false;
+                    save();
+                    return true;
                 }
+                return false;
             });
 
         } catch (Exception e){
@@ -107,7 +120,11 @@ public class PagoTarjeta extends PBase {
         }
 
         if (txtAut.getText().toString().isEmpty()) {
-            toast("Falta # autorización");txtAut.requestFocus();return;
+//            toast("Falta # autorización");
+//            txtAut.requestFocus();
+//            return;
+            //#EJC20221022:No requerir número de autorización obligatorio
+            txtAut.setText("NO_AUT_20221022");
         }
 
         try {

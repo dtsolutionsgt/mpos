@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -120,11 +121,9 @@ public class ResMesero extends PBase {
         cargaConfig();
         gl.ventalock=false;
 
-
-
         getURL();
-        ws=new WebService(ResMesero.this,gl.wsurl);
 
+        ws=new WebService(ResMesero.this,gl.wsurl);
         wscom =new wsCommit(gl.wsurl);
 
         rnCorelPutCallback = new Runnable() {
@@ -135,17 +134,9 @@ public class ResMesero extends PBase {
 
         wso=new wsOpenDT(gl.wsurl);wsidle=true;
 
-        rnBroadcastCallback = new Runnable() {
-            public void run() {
-                broadcastCallback();
-            }
-        };
+        rnBroadcastCallback = () -> broadcastCallback();
 
-        rnCorelGetCallback = new Runnable() {
-            public void run() {
-                GetCorelCallback();
-            }
-        };
+        rnCorelGetCallback = () -> GetCorelCallback();
 
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
 
@@ -639,6 +630,7 @@ public class ResMesero extends PBase {
     //region Corel global
 
     private void agregaOrden() {
+
         numorden=0;
 
         boolean espedido=app.esmesapedido(gl.emp,""+mesa.idgrupo);
@@ -654,12 +646,14 @@ public class ResMesero extends PBase {
         corcorel=gl.codigo_ruta+"_"+mu.getCorelBase();
 
         try{
+
             wcoridle=false;
 
             sql="INSERT INTO D_ORDEN_COREL (CODIGO_SUCURSAL,COREL,ID) " +
                 "SELECT "+gl.tienda+",ISNULL(MAX(COREL)+1,1),'"+corcorel+"' " +
                 "FROM D_ORDEN_COREL WHERE CODIGO_SUCURSAL="+gl.tienda;dbg1=sql;
             wscom.execute(sql,rnCorelPutCallback);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             wcoridle=true;
@@ -754,6 +748,7 @@ public class ResMesero extends PBase {
     }
 
     private void procesaEstadoMesas() {
+
         String ss=" IN (";
 
         imgwsref.setVisibility(View.INVISIBLE);
@@ -777,6 +772,7 @@ public class ResMesero extends PBase {
     }
 
     private void aplicaEstados() {
+
         int iid,est;
         String cor;
 
@@ -816,7 +812,9 @@ public class ResMesero extends PBase {
     }
 
     private void validaCompleto(String idorden) {
+
         try {
+
             clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
 
             T_ordenObj.fill("WHERE (COREL='"+idorden+"')");
@@ -837,7 +835,9 @@ public class ResMesero extends PBase {
     }
 
     private void cerrarCuentas(String idorden) {
+
         try {
+
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
@@ -867,11 +867,14 @@ public class ResMesero extends PBase {
     }
 
     private void estadoMesa(String idorden,int est) {
+
         try {
+
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             P_res_sesionObj.first().estado=est;
             P_res_sesionObj.update(P_res_sesionObj.first());
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -880,12 +883,15 @@ public class ResMesero extends PBase {
     private void actualizaEstadosOrdenes() {
 
         try {
+
             if (corels.size()==0) return;
 
             for (int i = 0; i <corels.size(); i++) {
                 validaCompleto(corels.get(i));
             }
+
             listItems();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -896,15 +902,19 @@ public class ResMesero extends PBase {
     //region Aux
 
     private void cargaConfig() {
+
         gl.salaid=0;
 
         try {
+
             clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
             VendedoresObj.fill("WHERE codigo_vendedor="+gl.idmesero);
+
             nommes=VendedoresObj.first().nombre;
             lblmes.setText(nommes);
 
             P_res_turnoObj.fill("WHERE vendedor="+gl.idmesero);
+
             if (P_res_turnoObj.count>0) {
                 idgrupo=P_res_turnoObj.items.get(P_res_turnoObj.count-1).codigo_grupo;
             } else {
@@ -913,6 +923,7 @@ public class ResMesero extends PBase {
             }
 
             setGrupo();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -920,6 +931,7 @@ public class ResMesero extends PBase {
     }
 
     private void setGrupo() {
+
         clsClasses.clsP_res_turno item=clsCls.new clsP_res_turno();
 
         try {
@@ -946,6 +958,7 @@ public class ResMesero extends PBase {
     }
 
     private void calibraPantalla() {
+
         if (pantallaHorizontal()) horiz=true; else horiz=false;
 
         if (horiz) {
@@ -958,11 +971,15 @@ public class ResMesero extends PBase {
     }
 
     private void cantidadComensales() {
+
         try {
+
             cantpers=gl.comensales;
+
             if (cantpers<1 | cantpers>50) throw new Exception();
 
             agregaOrden();
+
         } catch (Exception e) {
             //mu.msgbox("Cantidad incorrecta");
             return;
@@ -980,22 +997,28 @@ public class ResMesero extends PBase {
     }
 
     private void getURL() {
+
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-        gl.timeout = 20000;
+        gl.timeout = 6000;
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
 
             if (file1.exists()) {
+
                 FileInputStream fIn = new FileInputStream(file1);
                 BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
 
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
-                if(line.isEmpty()) gl.timeout = 20000; else gl.timeout = Integer.valueOf(line);
+                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
                 myReader.close();
             }
-        } catch (Exception e) {}
+
+        } catch (Exception e) {
+            Log.d("Error: ", e.getMessage());
+        }
 
     }
 
@@ -1091,6 +1114,7 @@ public class ResMesero extends PBase {
     private void showGrupoMenu() {
 
         try {
+
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(ResMesero.this,"Grupos de mesas","Salir","Configurar");
 
@@ -1119,23 +1143,16 @@ public class ResMesero extends PBase {
                 };
             });
 
-            listdlg.setOnLeftClick(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listdlg.dismiss();
-                }
-            });
+            listdlg.setOnLeftClick(v -> listdlg.dismiss());
 
-            listdlg.setOnMiddleClick(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    browse=2;
-                    startActivity(new Intent(ResMesero.this,ValidaSuper.class));
-                    listdlg.dismiss();
-                }
+            listdlg.setOnMiddleClick(v -> {
+                browse=2;
+                startActivity(new Intent(ResMesero.this,ValidaSuper.class));
+                listdlg.dismiss();
             });
 
             listdlg.show();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1145,6 +1162,7 @@ public class ResMesero extends PBase {
     private void showGrupoChecks() {
 
         try {
+
             extListChkDlg listdlg = new extListChkDlg();
             listdlg.buildDialog(ResMesero.this,"Grupos asignados","Salir","","Aplicar");
             listdlg.setWidth(350);listdlg.setLines(5);
@@ -1155,12 +1173,7 @@ public class ResMesero extends PBase {
                 listdlg.add(P_res_grupoObj.items.get(i).nombre,P_mesero_grupoObj.count>0);
             }
 
-            listdlg.setOnExitListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listdlg.dismiss();
-                }
-            });
+            listdlg.setOnExitListener(v -> listdlg.dismiss());
 
             listdlg.setOnAddListener(new View.OnClickListener() {
                 @Override
@@ -1168,17 +1181,17 @@ public class ResMesero extends PBase {
                     clsClasses.clsP_mesero_grupo item;
 
                     try {
-                        db.beginTransaction();
 
+                        db.beginTransaction();
                         db.execSQL("DELETE FROM P_mesero_grupo WHERE (CODIGO_MESERO="+gl.idmesero+")");
 
                         for (int i = 0; i <P_res_grupoObj.count; i++) {
-                            if (listdlg.items.get(i).checked) {
-                                item = clsCls.new clsP_mesero_grupo();
 
+                            if (listdlg.items.get(i).checked) {
+
+                                item = clsCls.new clsP_mesero_grupo();
                                 item.codigo_mesero=gl.idmesero;
                                 item.codigo_grupo=P_res_grupoObj.items.get(i).codigo_grupo;
-
                                 P_mesero_grupoObj.add(item);
                             }
                         }
@@ -1194,13 +1207,13 @@ public class ResMesero extends PBase {
                         gl.cliposflag=false;
 
                         finish();
+
                     } catch (Exception e) {
                         db.endTransaction();
                         msgbox(e.getMessage());
                     }
                 }
             });
-
 
             listdlg.show();
 

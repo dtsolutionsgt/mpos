@@ -759,6 +759,7 @@ public class ComWSExist extends PBase {
 	}
 	
 	public void getWSURL() {
+
 		Cursor DT;
 		String wsurl;
 		
@@ -766,6 +767,7 @@ public class ComWSExist extends PBase {
 		txtEmp.setText(gEmpresa);
 		
 		try {
+
 			sql="SELECT WLFOLD,FTPFOLD FROM P_RUTA WHERE CODIGO='"+ruta+"'";
 			DT=Con.OpenDT(sql);
 			DT.moveToFirst();

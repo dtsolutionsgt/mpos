@@ -226,7 +226,7 @@ public class Anulacion extends PBase {
 				String line = myReader.readLine();
 
 				if(line.isEmpty()) {
-					gl.timeout = 20000;
+					gl.timeout = 6000;
 				}
 				else {
 					gl.timeout = Integer.valueOf(line);

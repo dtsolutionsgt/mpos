@@ -303,6 +303,7 @@ public class MantImpresora extends PBase {
 
 
     private void showMarcaList() {
+
          try {
 
             extListDlg listdlg = new extListDlg();
@@ -315,17 +316,15 @@ public class MantImpresora extends PBase {
                 listdlg.add(marcas.items.get(i).nombre);
             }
 
-            listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        idmarca=marcas.items.get(position).codigo_impresora_marca;
-                        nmarca=marcas.items.get(position).nombre;
-                        showModeloList();
+            listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-                        listdlg.dismiss();
-                    } catch (Exception e) {}
-                };
+                try {
+                    idmarca=marcas.items.get(position).codigo_impresora_marca;
+                    nmarca=marcas.items.get(position).nombre;
+                    showModeloList();
+
+                    listdlg.dismiss();
+                } catch (Exception e) {}
             });
 
             listdlg.show();
@@ -371,7 +370,9 @@ public class MantImpresora extends PBase {
     }
 
     private void setMarca(int idmodelo) {
+
         try {
+
             clsP_impresora_modeloObj modelos =new clsP_impresora_modeloObj(this,Con,db);
             clsP_impresora_marcaObj marcas =new clsP_impresora_marcaObj(this,Con,db);
 
@@ -380,6 +381,7 @@ public class MantImpresora extends PBase {
 
             marcas.fill("WHERE CODIGO_IMPRESORA_MARCA="+modelos.first().codigo_impresora_marca);
             lbl1.setText(marcas.first().nombre);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -390,6 +392,7 @@ public class MantImpresora extends PBase {
     //region Dialogs
 
     private void msgAskAdd(String msg) {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
@@ -408,6 +411,7 @@ public class MantImpresora extends PBase {
     }
 
     private void msgAskUpdate(String msg) {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 

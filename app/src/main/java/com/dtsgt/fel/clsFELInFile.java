@@ -101,9 +101,25 @@ public class clsFELInFile {
     }
 
     public void certificacion() {
-        fact_uuid="";fact_serie="";fact_numero="";
-        errlevel=1;error="";errorflag=false;constat=true;errorcon=false;duplicado=false;
-        sendJSONFirm();
+
+        try {
+
+            fact_uuid="";
+            fact_serie="";
+            fact_numero="";
+            errlevel=1;
+            error="";
+            errorflag=false;
+            constat=true;
+            errorcon=false;
+            duplicado=false;
+
+            sendJSONFirm();
+
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+        }
+
     }
 
     public void anulacion(String fuuid) {

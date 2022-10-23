@@ -150,6 +150,7 @@ public class CliPos extends PBase {
 	//region  Events
 
     public void consFinal(View view) {
+
         String ss=txtNIT.getText().toString();
         String ddnom,ddir,dcor;
 
@@ -410,6 +411,7 @@ public class CliPos extends PBase {
 			limpiaCampos();
 
             gl.cf_domicilio=false;
+
             terminaCliente();
 
 		}catch (Exception e){
@@ -458,6 +460,7 @@ public class CliPos extends PBase {
     }
 
     private void cargaCliente() {
+
         Cursor DT;
 
         try{
@@ -481,6 +484,7 @@ public class CliPos extends PBase {
     private void iniciaPedidos() {
 
         if (gl.pePedidos) {
+
             lblPed.setText("-");
             relped.setVisibility(View.VISIBLE);
 
@@ -506,6 +510,7 @@ public class CliPos extends PBase {
     }
 
     private void recibePedidos() {
+
         int pp;
         String fname;
         long tact,tlim,tbot;
@@ -817,10 +822,13 @@ public class CliPos extends PBase {
 	//region Aux
 
 	private boolean validaNIT(String N)  {
+
         if (N.isEmpty()) return false;
+        if (NitValidadoInfile) return true;
         if (!N.contains("-")) return false;
 
         try{
+
             String P, C, s, NC;
             int[] v = {0,0,0,0,0,0,0,0,0,0};
             int j, mp, sum, d11, m11, r11, cn, ll;
@@ -834,7 +842,6 @@ public class CliPos extends PBase {
             if (N.equalsIgnoreCase("C/F")) N="C.F.";
             if (N.equalsIgnoreCase("C.F")) N="C.F.";
             if (N.equalsIgnoreCase("CF.")) N="C.F.";
-
             if (N.equalsIgnoreCase("C.F.")) return true;
 
             ll = N.length();
@@ -884,6 +891,7 @@ public class CliPos extends PBase {
 	}
 	
 	private void buscaCliente() {
+
 		Cursor DT;
 
 		try{
@@ -921,6 +929,7 @@ public class CliPos extends PBase {
 	}
 
 	private boolean existeCliente() {
+
 		Cursor DT;
         boolean resultado=false;
 
@@ -1127,18 +1136,27 @@ public class CliPos extends PBase {
     }
 
 	private int nitnum(String nit) {
+
         int pp;
 
         try {
+
+            //#EJC202210222150
+            int nnit =0;
+
             nit=nit.toUpperCase();
             pp=nit.indexOf("-");
-            if (pp<0) return 0;
 
-            int A=(int) nit.charAt(pp+1);
-            String snit=nit.substring(0,pp)+A;
-            int nnit=Integer.parseInt(snit);
+            if (pp<0){
+                nnit=Integer.parseInt(nit);
+            }else{
+                int A=(int) nit.charAt(pp+1);
+                String snit=nit.substring(0,pp)+A;
+                nnit=Integer.parseInt(snit);
+            }
 
             return nnit;
+
         } catch (Exception e) {
             return gl.emp*10;
         }
@@ -1156,7 +1174,7 @@ public class CliPos extends PBase {
 
     private void getURL() {
         gl.wsurl = "http://192.168.0.12/mposws/mposws.asmx";
-        gl.timeout = 20000;
+        gl.timeout = 6000;
 
         try {
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
@@ -1167,7 +1185,7 @@ public class CliPos extends PBase {
 
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
-                if(line.isEmpty()) gl.timeout = 20000; else gl.timeout = Integer.valueOf(line);
+                if(line.isEmpty()) gl.timeout = 6000; else gl.timeout = Integer.valueOf(line);
                 myReader.close();
             }
         } catch (Exception e) {}
@@ -1293,15 +1311,21 @@ public class CliPos extends PBase {
         dialog.show();
     }
 
+    private boolean NitValidadoInfile =false;
+
     private void consultaNITInfile() {
+
         nrslt=false;
+        NitValidadoInfile = false;
 
         if (!gl.codigo_pais.trim().equalsIgnoreCase("GT")) return ;
 
         if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
 
             JSONObject params = new JSONObject();
+
             try {
+
                 String nit = txtNIT.getText().toString().replace("-", "").toUpperCase();
                 params.put("emisor_codigo", gl.felUsuarioCertificacion);
                 params.put("emisor_clave", gl.felLlaveCertificacion);
@@ -1320,6 +1344,7 @@ public class CliPos extends PBase {
                         if (!response.getString("nombre").equals("")) {
                             txtNom.setText(response.getString("nombre").replace(",", " ").trim());
                             nrslt=true;
+                            NitValidadoInfile= true;
                         } else {
                             toast("No se obtuvieron datos del cliente en Infile con el NIT proporcionado");
                             txtNom.setText("");

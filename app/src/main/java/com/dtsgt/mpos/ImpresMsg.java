@@ -16,6 +16,7 @@ public class ImpresMsg extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_impres_msg);
 
@@ -25,6 +26,7 @@ public class ImpresMsg extends PBase {
         txt1 = findViewById(R.id.editText2);
 
         gl.pelComandaBT=true;
+
         cargaImpresoras();
 
     }

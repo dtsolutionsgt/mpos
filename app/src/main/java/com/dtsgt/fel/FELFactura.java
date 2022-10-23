@@ -99,6 +99,7 @@ public class FELFactura extends PBase {
         gl.feluuid="";
 
         getURL();
+
         fel=new clsFELInFile(this,this,gl.timeout);
         fel.halt=false;
 
@@ -448,6 +449,7 @@ public class FELFactura extends PBase {
     }
 
     private void buildFactXML() {
+
         String dir,muni,dep,iddep,idmuni,lcombo;
         int idcont;
         double ldesc;
@@ -528,6 +530,7 @@ public class FELFactura extends PBase {
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 
             for (int i = 0; i <D_facturadObj.count; i++) {
+
                 factd=D_facturadObj.items.get(i);
                 if (gl.peComboDet) lcombo=listaCombo(factd.corel,factd.val2); else lcombo="";
 
@@ -535,10 +538,13 @@ public class FELFactura extends PBase {
                 ldesc=factd.cant*factd.precio-factd.total;
                 factd.desmon=ldesc;
 
-                fel.detalle(prodName(factd.producto),factd.cant,"UNI",
-                        factd.precio,
-                        mu.round2(factd.total),
-                        factd.desmon,lcombo);
+                fel.detalle(prodName(factd.producto),
+                            factd.cant,
+                            "UNI",
+                            factd.precio,
+                            mu.round2(factd.total),
+                            factd.desmon,
+                            lcombo);
             }
 
             fel.completar(fact.serie,fact.corelativo);
@@ -800,9 +806,9 @@ public class FELFactura extends PBase {
         Log.i("FEL_FINISH: ", currentTime.toString());
 
         if (ws.errorflag) {
-            toast("Error de envio");
+            toastlong("Error de envio");
         } else {
-            toast("Envio completo "+ gl.feluuid);
+            toastlong("Envio completo "+ gl.feluuid);
         }
         finish();
     }

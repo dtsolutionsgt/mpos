@@ -78,14 +78,16 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.2.29.1"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.2.29.4"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
                                         // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         try {
+
             super.onCreate(savedInstanceState);
 
             if (pantallaHorizontal()) {
@@ -1305,7 +1307,9 @@ public class MainActivity extends PBase {
     }
 
     private void ListDlg() {
+
         try {
+
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(MainActivity.this,"Lista","Salir","Borrar","Agregar");
 

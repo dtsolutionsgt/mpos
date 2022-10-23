@@ -732,6 +732,7 @@ public class AppMethods {
         }
 
 		try {
+
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=129";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -740,6 +741,7 @@ public class AppMethods {
 			if (emptystr(val)) throw new Exception();
 
 			gl.pelComandaBT = val.equalsIgnoreCase("S");
+
 		} catch (Exception e) {
 			gl.pelComandaBT = false;
 		}
@@ -758,6 +760,7 @@ public class AppMethods {
 		}
 
 		try {
+
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=131";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -766,11 +769,13 @@ public class AppMethods {
 			if (emptystr(val)) throw new Exception();
 
 			gl.pelCaja = val.equalsIgnoreCase("S");
+
 		} catch (Exception e) {
 			gl.pelCaja = false;
 		}
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=132";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -779,11 +784,13 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
 
             gl.pelCajaRecep = val.equalsIgnoreCase("S");
+
         } catch (Exception e) {
             gl.pelCajaRecep = false;
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=133";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -792,11 +799,13 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
 
             gl.pelDespacho = val.equalsIgnoreCase("S");
+
         } catch (Exception e) {
             gl.pelDespacho = false;
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=134";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -810,6 +819,7 @@ public class AppMethods {
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=135";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -823,6 +833,7 @@ public class AppMethods {
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=136";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -831,11 +842,13 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
 
             gl.pelClaveCaja = val.equalsIgnoreCase("S");
+
         } catch (Exception e) {
             gl.pelClaveCaja = false;
         }
 
         try {
+
             sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=137";
             dt=Con.OpenDT(sql);
             dt.moveToFirst();
@@ -844,11 +857,13 @@ public class AppMethods {
             if (emptystr(val)) throw new Exception();
 
             gl.pelMeseroCaja = val.equalsIgnoreCase("S");
+
         } catch (Exception e) {
             gl.pelMeseroCaja = false;
         }
 
 		try {
+
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=138";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -857,11 +872,13 @@ public class AppMethods {
 			if (emptystr(val)) throw new Exception();
 
 			gl.peVentaDomicilio = val.equalsIgnoreCase("S");
+
 		} catch (Exception e) {
 			gl.peVentaDomicilio = false;
 		}
 
 		try {
+
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=139";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -870,11 +887,13 @@ public class AppMethods {
 			if (emptystr(val)) throw new Exception();
 
 			gl.peVentaEntrega = val.equalsIgnoreCase("S");
+
 		} catch (Exception e) {
 			gl.peVentaEntrega = false;
 		}
 
 		try {
+
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=140";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
@@ -883,6 +902,7 @@ public class AppMethods {
 			if (emptystr(val)) throw new Exception();
 
 			gl.peDomEntEnvio = val.equalsIgnoreCase("S");
+
 		} catch (Exception e) {
 			gl.peDomEntEnvio = false;
 		}
@@ -993,20 +1013,23 @@ public class AppMethods {
 	}
 
     public void getURL() {
+
         gl.wsurl = "http://52.41.114.122/MPosWS_QA/Mposws.asmx";
         gl.timeout = 6000;
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
 
             if (file1.exists()) {
+
                 FileInputStream fIn = new FileInputStream(file1);
                 BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
-
                 gl.wsurl = myReader.readLine();
                 String line = myReader.readLine();
                 if(line.isEmpty()) gl.timeout = 6000;else gl.timeout = Integer.valueOf(line);
                 myReader.close();
+
             } else {
                 BufferedWriter writer = null;
                 FileWriter wfile;
@@ -1014,7 +1037,7 @@ public class AppMethods {
                 wfile=new FileWriter(file1,false);
                 writer = new BufferedWriter(wfile);
                 writer.write(gl.wsurl);writer.write("\r\n");
-                writer.write("20000");writer.write("\r\n");
+                writer.write(String.valueOf(gl.timeout));writer.write("\r\n");
                 writer.close();
 
                 toast("Creado archivo de conexion");
@@ -2370,7 +2393,6 @@ public class AppMethods {
 				if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
 					activo = 2;
 				}
-
 			}
 
 		} catch (Exception ex){

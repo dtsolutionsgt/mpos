@@ -330,6 +330,8 @@ public class Menu extends PBase {
 
                         writeCorelLog(103,gl.cajaid,"showMenuItem gl.cajaid");
 
+						//gl.cierreDiario=false;
+
                         if(gl.cajaid==5) msgAskIniciarCaja("La caja está cerrada. ¿Realizar el inicio de caja?");
 						//msgAskValid("La caja está cerrada, si desea iniciar operaciones debe realizar el inicio de caja");
 						//#CKFK 20200521 Se modificó lo del cierre a través de un parámetro, si se utiliza FEL es obligatorio hacer el cierre de caja diario
@@ -1700,11 +1702,14 @@ public class Menu extends PBase {
     //region Modo emergencia
 
     public void modoSinInternet() {
+
         try {
+
             P_modo_emergenciaObj.fill();
             modo_emerg=P_modo_emergenciaObj.count==0;
 
             if (modo_emerg) msgAskEmerg("Activar modo de emergencia");else msgAskEmerg("Desactivar modo de emergencia");
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1714,8 +1719,8 @@ public class Menu extends PBase {
         clsP_paramextObj P_paramextObj=new clsP_paramextObj(this,Con,db);
 
         try {
-            db.beginTransaction();
 
+            db.beginTransaction();
             db.execSQL("DELETE FROM P_modo_emergencia");
 
             activarItem(131,"S"); // 131  Modulo caja
@@ -1723,14 +1728,17 @@ public class Menu extends PBase {
             //activarItem(136,"S"); // 136 Ingresar contraseña cajero
             //activarItem(135,"S"); // 135 Ingresar contraseña mesero
             activarItem(137,"N"); // 137 Enviar ordenes a la caja
-            activarItem(129,"S"); // 129 Comandas con impresora BT
+			//#EJC2022210222107: No redireccionar impresiones.
+            //activarItem(129,"S"); // 129 Comandas con impresora BT
             activarItem(133,"N"); // 133 Generar ordenes para despacho
 
             db.setTransactionSuccessful();
             db.endTransaction();
 
             doLogOff();
+
             toastcentlong("Modo de emergencia ACTIVADO");
+
         } catch (Exception e) {
             db.endTransaction();msgbox(e.getMessage());
         }
@@ -1739,10 +1747,12 @@ public class Menu extends PBase {
     }
 
     private void desactivarSinInternet() {
+
         clsClasses.clsP_paramext item = clsCls.new clsP_paramext();
         clsP_paramextObj P_paramextObj=new clsP_paramextObj(this,Con,db);
 
         try {
+
             db.beginTransaction();
 
             restaurarItem(131);
@@ -1759,7 +1769,9 @@ public class Menu extends PBase {
             db.endTransaction();
 
             doLogOff();
+
             toastcentlong("Modo de emergencia desactivado");
+
         } catch (Exception e) {
             db.endTransaction();msgbox(e.getMessage());
         }
@@ -2604,6 +2616,7 @@ public class Menu extends PBase {
 	}
 
     private void msgAskEmerg(String msg) {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
@@ -2623,6 +2636,7 @@ public class Menu extends PBase {
     }
 
     private void msgAskEmerg2() {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿Está seguro?");
         dialog.setCancelable(false);

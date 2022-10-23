@@ -102,15 +102,19 @@ public class ValidaSuper extends PBase {
     }
 
     private void checkUser() {
+
          try {
 
             VendedoresObj.fill("WHERE CODIGO_VENDEDOR=" + usr);
+
             if (VendedoresObj.count>0) {
                 if (pwd.equalsIgnoreCase(VendedoresObj.first().clave)) {
                     gl.checksuper=true;finish();return;
                 }
             }
-            msgbox("Contraseña incorrecta");
+
+            msgbox("Contraseña incorrecta en validación de supervisor.");
+
         } catch (Exception e) {
              String ee=e.getMessage();
             msgbox(e.getMessage());

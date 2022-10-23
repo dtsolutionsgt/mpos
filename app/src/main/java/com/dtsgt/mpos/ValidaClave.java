@@ -3,7 +3,6 @@ package com.dtsgt.mpos;
 import android.content.Intent;
 import android.graphics.Point;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 public class ValidaClave extends PBase {
 
     private ListView listView;
-    private TextView lbl1,lbl2,lblKeyDP;
+    private TextView lblClave,lbl2,lblKeyDP;
 
     private LA_Login adapter;
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<clsClasses.clsMenu>();
@@ -32,7 +31,9 @@ public class ValidaClave extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         if (pantallaHorizontal()) {
             setContentView(R.layout.activity_valida_clave);
         } else {
@@ -42,11 +43,11 @@ public class ValidaClave extends PBase {
         super.InitBase();
 
         listView = findViewById(R.id.listView1);
-        lbl1 = findViewById(R.id.lblPass);
+        lblClave = findViewById(R.id.lblPass);
         lbl2 = findViewById(R.id.lblTit);
         lblKeyDP = findViewById(R.id.textView110);
 
-        khand = new clsKeybHandler(this, lbl1, lblKeyDP);
+        khand = new clsKeybHandler(this, lblClave, lblKeyDP);
         khand.enable();
         khand.clear(false);
 
@@ -66,7 +67,12 @@ public class ValidaClave extends PBase {
             if (khand.val.isEmpty()) {
                 toast("Clave incorrecta");
             } else {
-                if (khand.isValid) validaClave(khand.val);
+                if (khand.isValid){
+                    if (!validaClave(khand.val)){
+                        lblClave.setText("");
+                        khand.val ="";
+                    };
+                }
             }
         }
     }
@@ -124,6 +130,7 @@ public class ValidaClave extends PBase {
     //region Main
 
     private void listItems() {
+
         clsVendedoresObj VendedoresObj = new clsVendedoresObj(this, Con, db);
         clsClasses.clsMenu item;
         int nivel;
@@ -168,13 +175,22 @@ public class ValidaClave extends PBase {
         }
     }
 
-    private void validaClave(String clave) {
+    private boolean validaClave(String clave) {
+
         if (usr.isEmpty()) {
-            msgbox("Debe seleccionar un usuario");return;
+            msgbox("Debe seleccionar un usuario.");
+            return false;
         }
 
         if (!selitem.Pass.equalsIgnoreCase(clave)) {
-            msgbox("Clave incorrecta");return;
+
+            if (gl.modoclave==0) {
+                msgbox("Clave incorrecta en validación de cajero.");
+            }else{
+                msgbox("Clave incorrecta en validación de mesero.");
+            }
+
+            return false;
         }
 
         if (gl.modoclave==0) {
@@ -186,6 +202,8 @@ public class ValidaClave extends PBase {
         }
 
         finish();
+
+        return true;
     }
 
     //endregion
