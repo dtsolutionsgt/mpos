@@ -29,6 +29,7 @@ public class DateUtils {
 	}
 
 	public String sfechash(long f) {
+
 		long vy,vm,vd;
 		String s;
 
@@ -49,6 +50,7 @@ public class DateUtils {
 	}
 
 	public String shora(long vValue) {
+
 		int h,m;
 		String sh,sm;
 			
@@ -125,6 +127,7 @@ public class DateUtils {
     }
 
 	public String sSecond(){
+
 		long cs;
 		String sss;
 		
@@ -141,9 +144,7 @@ public class DateUtils {
 
 		long vy,vm,vd,m,h;
 		String s;
-		
-		//yyyyMMdd hh:mm:ss
-		//#KM20211230 Se quita (int) para corregir las fechas a partir de 2022
+
 		vy= (long) f/100000000;f=f % 100000000;
 		vm= (long) f/1000000;f=f % 1000000;
 		vd= (long) f/10000;f=f % 10000;
@@ -156,21 +157,15 @@ public class DateUtils {
 		if (vd>9) s=s+vd; else s=s+"0"+vd;  
 		s=s+" ";
 		s=s+"00:00:00";
-		//if (h>9)  s=s+h;  else s=s+"0"+h;
-		//s=s+":";
-		//if (m>9)  s=s+m;  else s=s+"0"+m;
-		//s=s+":00";
-		
+
 		return s;
 	}
 
 	public String univfechahora(long f) {
+
         long vy,vm,vd,m,h;
         String s;
 
-        //yyyyMMdd hh:mm:ss
-
-		//#KM20211230 Se quita (int) para corregir las fechas a partir de 2022
         vy= f/100000000;f=f % 100000000;
         vm= f/1000000;f=f % 1000000;
         vd= f/10000;f=f % 10000;
@@ -191,10 +186,9 @@ public class DateUtils {
     }
 
     public String univfecha_vb_net(long f) {
+
         long vy,vm,vd,m,h;
         String s;
-
-        //yyyyMMdd hh:mm:ss
 
         vy=(int) f/100000000;f=f % 100000000;
         vm=(int) f/1000000;f=f % 1000000;
@@ -216,10 +210,9 @@ public class DateUtils {
     }
 
 	public String univfechasinhora(long f) {
+
 		int vy,vm,vd;
 		String s;
-
-		//yyyyMMdd
 
 		vy=(int) f/10000;f=f % 10000;
 		vm=(int) f/100;f=f % 100;
@@ -247,8 +240,6 @@ public class DateUtils {
 		cm=c.get(Calendar.MINUTE);
 		cs=c.get(Calendar.SECOND);
 
-		//yyyyMMdd hh:mm:ss
-		
 		vy=cyear;
 		vm=cmonth;
 		vd=cday;
@@ -265,10 +256,9 @@ public class DateUtils {
 	}
 
 	public String univfechalong(long f) {
+
 		long vy,vm,vd;
 		String s;
-
-		//yyyyMMdd hh:mm:ss
 
 		vy=(long) f/10000;f=f % 10000;
 		vm=(long) f/100;f=f % 100;
@@ -277,17 +267,15 @@ public class DateUtils {
 		s="20"+vy;
 		if (vm>9) s=s+vm; else s=s+"0"+vm;
 		if (vd>9) s=s+vd; else s=s+"0"+vd;
-		//s=vy+" "+vm+":"+vd+":00"; //#HS_20181128_1102 Agregue " "+vm+":"+vd+":00" para que devolviera la hora.
         s="20"+vy+" "+vm+":"+vd+":00";
 
 		return s;
 	}
 
     public String univfechaext(long f) {
+
         long vy,vm,vd;
         String s;
-
-        //yyyyMMdd hh:mm:ss
 
         vy=(long) f/10000;f=f % 10000;
         vm=(long) f/100;f=f % 100;
@@ -296,16 +284,15 @@ public class DateUtils {
         s=""+vy;
         if (vm>9) s=s+vm; else s=s+"0"+vm;
         if (vd>9) s=s+vd; else s=s+"0"+vd;
-        s=vy+" "+vm+":"+vd+":00"; //#HS_20181128_1102 Agregue " "+vm+":"+vd+":00" para que devolviera la hora.
+        s=vy+" "+vm+":"+vd+":00";
 
         return s;
     }
 
 	public String univfechasql(long f) {
+
 		long vy,vm,vd;
 		String sy,sm,sd;
-
-		//yyyy-MM-dd
 
 		vy=(long) f/100000000;f=f % 100000000;
 		vm=(long) f/1000000;f=f % 1000000;
@@ -319,10 +306,9 @@ public class DateUtils {
 	}
 
 	public String univfechaReport(long f) {
+
 		long vy,vm,vd;
 		String sy,sm,sd;
-
-		//yyyy-MM-dd
 
 		vy=(long) f/100000000;
 		f=f % 100000000;
@@ -359,16 +345,13 @@ public class DateUtils {
 		long c;
 		c=year % 100;
 		c=c*10000+month*100+day;
-
-		//return	c;
-		return c; //*10000;
+		return c;
 	}
 	  
 	public long cfecha(long year, long month, long day) {
 		long c;
 		c=year % 100;
 		c=c*10000+month*100+day;
-
 		return c*10000;
 	}
 
@@ -462,20 +445,16 @@ public class DateUtils {
 	
 	public long getmonth(long f) {
 		long vy,vm;
-				
 		vy=(long) f/100000000;f=f % 100000000;
 		vm=(long) f/1000000;f=f % 1000000;
-				
 		return vm;
 	}
 	
 	public long getday(long f) {
 		long vy,vm,vd;
-				
 		vy=(long) f/100000000;f=f % 100000000;
 		vm=(long) f/1000000;f=f % 1000000;
 		vd=(long) f/10000;f=f % 10000;
-		
 		return vd;
 	}
 	
@@ -531,7 +510,6 @@ public class DateUtils {
 		String sdia = getday(f)+"";
 
 		try {
-			//#EJC20220102: Si el mes es enero, la resta devuelve 0, debe devolver diciembre (12)
 			if (smes.equals("0")){
 				smes ="12";
 				saño = (Integer.parseInt(saño) - 1) + "";
@@ -552,9 +530,6 @@ public class DateUtils {
 
 		c.set(año,mes,dia);
 
-		//#EJC20220102: Anteriormente se hacía así.
-		//c.set(getyear(f), getmonth(f)-1, getday(f));
-
 	    dw=c.get(Calendar.DAY_OF_WEEK);
 	    
 	    if (dw==1) dw=7;else dw=dw-1;
@@ -563,6 +538,7 @@ public class DateUtils {
 	}
 	
 	public long getActDate(){
+
 		long f;
 		int cyear,cmonth,cday;
 		
@@ -577,6 +553,7 @@ public class DateUtils {
 	}
 
 	public long getFechaActual(){
+
 		long f,fecha;
 		String fechaS;
 		int cyear,cmonth,cday,ch,cm;
@@ -586,7 +563,6 @@ public class DateUtils {
 		cmonth = c.get(Calendar.MONTH)+1;
 		cday = c.get(Calendar.DAY_OF_MONTH);
 
-		//#HS_20181120_1725 Campo de fecha sin hora.
 		f=cfechaSinHora(cyear,cmonth,cday);
 		fechaS=f+"0000";
 		fecha= Long.parseLong(fechaS);
@@ -595,6 +571,7 @@ public class DateUtils {
 	}
 
 	public long getFechaActualReport(){
+
 		long f,fecha;
 		int cyear,cmonth,cday,ch,cm;
 
@@ -603,7 +580,6 @@ public class DateUtils {
 		cmonth = c.get(Calendar.MONTH)+1;
 		cday = c.get(Calendar.DAY_OF_MONTH);
 
-		//#HS_20181120_1725 Campo de fecha sin hora.
 		f=cfechaSinHora(cyear,cmonth,cday);
 		fecha=f*10000;
 
@@ -611,6 +587,7 @@ public class DateUtils {
 	}
 
 	public long getFechaActualReport(boolean inicial){
+
 		long f,fecha;
 		int cyear,cmonth,cday,ch,cm;
 
@@ -619,7 +596,6 @@ public class DateUtils {
 		cmonth = c.get(Calendar.MONTH)+1;
 		cday = c.get(Calendar.DAY_OF_MONTH);
 
-		//#HS_20181120_1725 Campo de fecha sin hora.
 		f=cfechaSinHora(cyear,cmonth,cday);
 
 		if (inicial){
@@ -635,6 +611,7 @@ public class DateUtils {
 	}
 	
 	public long getActDateTime(){
+
 		long f,fecha;
 		int cyear,cmonth,cday,ch,cm;
 		
@@ -652,6 +629,7 @@ public class DateUtils {
 	}
 
 	public String getActDateStr(){
+
 		long f;
 		int cyear,cmonth,cday;
 		
@@ -666,6 +644,7 @@ public class DateUtils {
 	}
 	
 	public long getCorelBase(){
+
 		long f;
 		int cyear,cmonth,cday,ch,cm,cs,vd,vh;
 		
@@ -688,10 +667,10 @@ public class DateUtils {
 	}
 
 	public String getCorelBaseLong(long f) {
+
 		long vy,vm,vd,m,h,sec;
 		String s;
 
-		//yyyyMMddhhmmss
 		final Calendar c = Calendar.getInstance();
 
 		vy = c.get(Calendar.YEAR);
@@ -712,10 +691,10 @@ public class DateUtils {
 	}
 
     public String getCorelBaseLong() {
+
         long vy,vm,vd,m,h,sec;
         String s;
 
-        //yyyyMMddhhmmss
         final Calendar c = Calendar.getInstance();
 
         vy = c.get(Calendar.YEAR);
@@ -739,13 +718,13 @@ public class DateUtils {
 
     public long fechalarga(int year,int month, int day) {
         long c;
-
         c=year % 10000;
         c=c*10000+month*100+day;
         return c;
     }
 
     public String sfechaLarga(long f) {
+
         long vy,vm,vd;
         String sy,sm,sd;
 
@@ -763,6 +742,4 @@ public class DateUtils {
         return sd+"/"+sm+"/"+sy;
     }
 
-
-    //endregion
 }

@@ -74,7 +74,6 @@ public class clsD_barrilObj {
     private void addItem(clsClasses.clsD_barril item) {
 
         ins.init("D_barril");
-
         ins.add("CODIGO_BARRIL",item.codigo_barril);
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
@@ -91,7 +90,6 @@ public class clsD_barrilObj {
         ins.add("USUARIO_INICIO",item.usuario_inicio);
         ins.add("USUARIO_CIERRE",item.usuario_cierre);
         ins.add("STATCOM",item.statcom);
-
         db.execSQL(ins.sql());
 
     }
@@ -99,7 +97,6 @@ public class clsD_barrilObj {
     private void updateItem(clsClasses.clsD_barril item) {
 
         upd.init("D_barril");
-
         upd.add("EMPRESA",item.empresa);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("CODIGO_TIPO",item.codigo_tipo);
@@ -115,9 +112,7 @@ public class clsD_barrilObj {
         upd.add("USUARIO_INICIO",item.usuario_inicio);
         upd.add("USUARIO_CIERRE",item.usuario_cierre);
         upd.add("STATCOM",item.statcom);
-
         upd.Where("(CODIGO_BARRIL='"+item.codigo_barril+"')");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -135,6 +130,7 @@ public class clsD_barrilObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsD_barril item;
 
@@ -142,12 +138,12 @@ public class clsD_barrilObj {
 
         dt=Con.OpenDT(sq);
         count =dt.getCount();
+
         if (dt.getCount()>0) dt.moveToFirst();
 
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_barril();
-
             item.codigo_barril=dt.getString(0);
             item.empresa=dt.getInt(1);
             item.codigo_sucursal=dt.getInt(2);
@@ -164,9 +160,7 @@ public class clsD_barrilObj {
             item.usuario_inicio=dt.getInt(13);
             item.usuario_cierre=dt.getInt(14);
             item.statcom=dt.getInt(15);
-
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -175,6 +169,7 @@ public class clsD_barrilObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -194,7 +189,6 @@ public class clsD_barrilObj {
     public String addItemSql(clsClasses.clsD_barril item) {
 
         ins.init("D_barril");
-
         ins.add("CODIGO_BARRIL",item.codigo_barril);
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
@@ -211,7 +205,6 @@ public class clsD_barrilObj {
         ins.add("USUARIO_INICIO",item.usuario_inicio);
         ins.add("USUARIO_CIERRE",item.usuario_cierre);
         ins.add("STATCOM",item.statcom);
-
         return ins.sql();
 
     }
@@ -219,7 +212,6 @@ public class clsD_barrilObj {
     public String updateItemSql(clsClasses.clsD_barril item) {
 
         upd.init("D_barril");
-
         upd.add("EMPRESA",item.empresa);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("CODIGO_TIPO",item.codigo_tipo);
@@ -235,12 +227,8 @@ public class clsD_barrilObj {
         upd.add("USUARIO_INICIO",item.usuario_inicio);
         upd.add("USUARIO_CIERRE",item.usuario_cierre);
         upd.add("STATCOM",item.statcom);
-
         upd.Where("(CODIGO_BARRIL='"+item.codigo_barril+"')");
-
         return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 

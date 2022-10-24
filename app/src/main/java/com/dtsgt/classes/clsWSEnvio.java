@@ -88,7 +88,7 @@ public class clsWSEnvio {
 
             if (networkInfo != null && networkInfo.isConnected()){
 
-                if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI || networkInfo.getType() == ConnectivityManager.TYPE_ETHERNET) {
                     activo=1;
                 }
 
@@ -107,25 +107,30 @@ public class clsWSEnvio {
     }
 
     public void opendb() {
+
         try {
+
             db = Con.getWritableDatabase();
+
             if (db!= null) {
                 Con.vDatabase=db;
                 active=1;
             } else {
                 active = 0;
             }
+
         } catch (Exception e) {
             ferr=e.getMessage();	active= 0;
         }
     }
 
     public void getWSURL() {
+
         Cursor DT;
         String wsurl;
 
-
         try {
+
             sql="SELECT WLFOLD,FTPFOLD FROM P_RUTA WHERE CODIGO='"+ruta+"'";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
@@ -140,7 +145,6 @@ public class clsWSEnvio {
                 Toast.makeText(Cont,"No hay configurada ruta para transferencia de datos",Toast.LENGTH_SHORT).show();
             }
 
-            //URL=wsurl;
         } catch (Exception e) {
             ferr=e.getMessage();
             URL="*";
@@ -175,6 +179,7 @@ public class clsWSEnvio {
             sstr = response.toString()+"..";
 
             return 1;
+
         } catch (Exception e) {
             sstr=e.getMessage();
         }
@@ -226,15 +231,16 @@ public class clsWSEnvio {
     public void wsFinished(){
 
         try{
+
             if (fstr.equalsIgnoreCase("Envío OK")) {
                 Toast.makeText(Cont, "Envio correcto", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(Cont, "Ocurrió error : \n"+fstr, Toast.LENGTH_SHORT).show();
             }
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
-
 
     }
 
@@ -305,10 +311,8 @@ public class clsWSEnvio {
             String fname = Environment.getExternalStorageDirectory()+"/roadlog.txt";
             wfile=new FileWriter(fname,true);
             writer = new BufferedWriter(wfile);
-
             writer.write("Método: " + methodname + " Mensaje: " +msg + " Info: "+ info );
             writer.write("\r\n");
-
             writer.close();
 
         } catch (Exception e) {
@@ -317,6 +321,7 @@ public class clsWSEnvio {
     }
 
     private boolean envio_D_MOV_en_dev() {
+
         Cursor DT;
         String cor;
         int i, pc = 0, pcc = 0;
@@ -351,7 +356,6 @@ public class clsWSEnvio {
                     wsEtask.onProgressUpdate();
 
                     dbld.clear();
-
                     dbld.insert("D_MOV", "WHERE COREL='" + cor + "'");
                     dbld.insert("D_MOVD", "WHERE COREL='" + cor + "'");
                     dbld.insert("D_MOVDB", "WHERE COREL='" + cor + "'");
@@ -411,6 +415,7 @@ public class clsWSEnvio {
 
     //#CKFK 20190522 Función creada para enviar los rating
     public boolean envio_Rating() {
+
         Cursor DT;
         String ruta, vendedor, comentario, fecha,ss;
         int id, idtranserror;
@@ -430,6 +435,7 @@ public class clsWSEnvio {
             dbld.clear();
 
             DT.moveToFirst();
+
             while (!DT.isAfterLast()) {
 
                 id = DT.getInt(0);
@@ -475,6 +481,7 @@ public class clsWSEnvio {
     }
 
     public int commitSQL() {
+
         int rc;
         String s, ss;
 
@@ -514,7 +521,9 @@ public class clsWSEnvio {
             if (s.equalsIgnoreCase("#")) return 1;
 
             sstr = s;
+
             return 0;
+
         } catch (Exception e) {
             addlog(new Object() {
             }.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
@@ -522,6 +531,7 @@ public class clsWSEnvio {
         }
 
         return 0;
+
     }
 
 }

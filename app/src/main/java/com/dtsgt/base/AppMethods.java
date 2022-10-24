@@ -1046,8 +1046,8 @@ public class AppMethods {
     }
 
     public void logoutUser(long ff) {
-        try {
 
+        try {
 
             long f0=ff / 10000;
             f0=f0*10000;
@@ -1070,28 +1070,33 @@ public class AppMethods {
     //region Productos
 
     public boolean ventaPeso(String cod) {
+
         Cursor DT;
         String umm;
 
         try {
+
      		String sql = "SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE CODIGO_PRODUCTO ='" + cod + "' AND NIVEL="+gl.nivel;
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
 
 			umm=DT.getString(0);
 
-            if (DT!=null) DT.close();
+	         if (DT!=null) DT.close();
 
 			return  umm.equalsIgnoreCase(gl.umpeso);
+
         } catch (Exception e) {
             return false;
         }
     }
 
 	public double prodPrecio(int cod) {
+
 		double prec;
 
 		try {
+
 			String sql = "SELECT PRECIO FROM P_PRODPRECIO WHERE CODIGO_PRODUCTO =" + cod + " AND NIVEL="+gl.nivel;
 			Cursor DT = Con.OpenDT(sql);
 			DT.moveToFirst();
@@ -1100,20 +1105,24 @@ public class AppMethods {
 			if (DT!=null) DT.close();
 
 			return  prec;
+
 		} catch (Exception e) {
 			return 0;
 		}
 	}
 
 	public boolean prodBarra(String cod) {
+
         Cursor DT;
 
         try {
+
             String sql = "SELECT ES_PROD_BARRA FROM P_PRODUCTO WHERE CODIGO='" + cod + "'";
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
             return  DT.getInt(0)==1;
+
         } catch (Exception e) {
             //toast(e.getMessage());
             return false;
@@ -1121,23 +1130,24 @@ public class AppMethods {
     }
 
     public String prodTipo(int cod) {
+
         Cursor DT;
         String result="";
 
-        try {
+	      try {
 
             String sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
-            result = DT.getString(0);
+		    result = DT.getString(0);
 			if (DT!=null) DT.close();
+
         } catch (Exception e) {
             throw e;
         }
 
 		return result;
-
     }
 
     public String prodTipo(String cod) {
@@ -1153,6 +1163,7 @@ public class AppMethods {
 
             result = DT.getString(0);
 			if (DT!=null) DT.close();
+
         } catch (Exception e) {
             throw e;
         }
@@ -1162,6 +1173,7 @@ public class AppMethods {
     }
 
     public int codigoCombo(int cod) {
+
         Cursor DT;
 
         try {
@@ -1173,6 +1185,7 @@ public class AppMethods {
 			int val=DT.getInt(0);
 			if (DT!=null) DT.close();
             return val;
+
         } catch (Exception e) {
             return 0;
         }
@@ -1180,22 +1193,25 @@ public class AppMethods {
     }
 
     public boolean ventaRepesaje(String cod) {
+
 		Cursor DT;
 		String umm;
 
 		try {
+
 			String sql = "SELECT VENTA_POR_PESO FROM P_PRODUCTO WHERE CODIGO='" + cod + "'";
 			DT = Con.OpenDT(sql);
 			DT.moveToFirst();
 
 			return  DT.getInt(0)==1;
+
 		} catch (Exception e) {
-			//toast(e.getMessage());
 			return false;
 		}
 	}
 
 	public void estandartInventario()  {
+
 		Cursor dt,df;
 		String cod,ub,us,lote,doc,stat;
 		double cant,cantm,fact,fact1,fact2;
@@ -1210,6 +1226,7 @@ public class AppMethods {
 			if (dt.getCount()==0) return;
 
 			dt.moveToFirst();
+
 			while (!dt.isAfterLast()) {
 
 				cod=dt.getString(0);
@@ -1225,6 +1242,7 @@ public class AppMethods {
 
 					sql="SELECT FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO='"+cod+"') AND (UNIDADSUPERIOR='"+us+"') ";
 					df=Con.OpenDT(sql);
+
 					if (df.getCount()==0) {
 						msgbox("No existe factor conversion para el producto : " + cod);
 						sql = "DELETE FROM P_STOCK WHERE CODIGO='" + cod + "'";
@@ -1276,6 +1294,7 @@ public class AppMethods {
 	}
 
 	public double getCantidad() {
+
 		Cursor DT;
 		double sumaCant=0;
 
@@ -1294,10 +1313,12 @@ public class AppMethods {
 	}
 
 	public String umVenta(String cod) {
+
 		Cursor DT;
 		String umm="";
 
 		try {
+
 			String sql = "SELECT P_PRODPRECIO.UNIDADMEDIDA " +
 					     "FROM P_PRODPRECIO INNER JOIN P_PRODUCTO ON P_PRODPRECIO.CODIGO_PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
 					     "WHERE P_PRODUCTO.CODIGO ='" + cod + "' AND P_PRODPRECIO.NIVEL="+gl.nivel;
@@ -1314,6 +1335,7 @@ public class AppMethods {
             if (DT!=null) DT.close();
 
 			return  umm;
+
 		} catch (Exception e) {
 			//toast(e.getMessage());
 			return "";
@@ -2243,11 +2265,13 @@ public class AppMethods {
     }
 
     public boolean validaCombo(int idcombo) {
+
 	    int idopc,idprod;
 	    String prname="",opname;
 	    boolean flag;
 
         try {
+
             clsP_prodmenuopcObj P_prodmenuopcObj=new clsP_prodmenuopcObj(cont,Con,db);
             clsP_prodmenuopcdetObj P_prodmenuopc_detObj=new clsP_prodmenuopcdetObj(cont,Con,db);
             clsP_productoObj P_productoObj=new clsP_productoObj(cont,Con,db);
@@ -2257,6 +2281,7 @@ public class AppMethods {
             if (P_productoObj.count==0) return false;
 
             P_prodmenuopcObj.fill("WHERE (CODIGO_MENU="+idcombo+")");
+
             for (int i = 0; i <P_prodmenuopcObj.count; i++) {
 
                 idopc=P_prodmenuopcObj.items.get(i).codigo_menu_opcion;
@@ -2285,24 +2310,31 @@ public class AppMethods {
             }
 
             return citems.size()==0;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return true;
         }
     }
 
     public boolean modoSinInternet() {
+
         try {
+
             Cursor DT=Con.OpenDT("SELECT * FROM P_modo_emergencia");
             return DT.getCount()>0;
+
         } catch (Exception e) {
             return false;
         }
+
     }
 
 	public void setGradResource(int iditem) {
+
 		int pos, rr=R.drawable.frame_btn2,ss=R.drawable.frame_btn4;
 
 		try {
+
 			pos=iditem % 6;
 
 			switch (pos) {
@@ -2319,7 +2351,6 @@ public class AppMethods {
 				case 5:
 					rr=R.drawable.br5;ss=R.drawable.br5s;break;
 			}
-
 
 		} catch (Exception e) {
 			rr=R.drawable.frame_btn2;ss=R.drawable.frame_btn4;
@@ -2355,6 +2386,7 @@ public class AppMethods {
 	public void msgbox(String msg) {
 
 		try {
+
 			if (!emptystr(msg)){
 
                 ExDialog dialog = new ExDialog(cont);
@@ -2367,7 +2399,6 @@ public class AppMethods {
 					}
 				});
 				dialog.show();
-
 			}
 
 		} catch (Exception ex) {
@@ -2404,18 +2435,22 @@ public class AppMethods {
 	}
 
     public void zip(String file, String zipFile) throws IOException {
+
         BufferedInputStream origin = null;
         ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
         int BUFFER_SIZE = 6 * 1024;
 
         try {
+
             String[] files = new String[1];files[0]=file;
 
             byte data[] = new byte[BUFFER_SIZE];
 
             for (int i = 0; i < files.length; i++) {
+
                 FileInputStream fi = new FileInputStream(files[i]);
                 origin = new BufferedInputStream(fi, BUFFER_SIZE);
+
                 try {
                     ZipEntry entry = new ZipEntry(files[i].substring(files[i].lastIndexOf("/") + 1));
                     out.putNextEntry(entry);
@@ -2426,12 +2461,12 @@ public class AppMethods {
                 } finally {
                     origin.close();
                 }
+
             }
+
         } finally {
             out.close();
         }
     }
-
     //endregion
-
 }

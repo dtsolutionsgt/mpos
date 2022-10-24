@@ -42,6 +42,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 	    
 	    Created=0;
 	    vcontext=context;
+
 	  }
 
 	  @Override
@@ -81,10 +82,12 @@ public class BaseDatos extends SQLiteOpenHelper {
 	  }
 	  
 	  public Cursor OpenDT(String pSQL) {
+
 	  	Cursor vCursor = null;
         String vError="";
 
 		  try {
+
 		  	  if (!vDatabase.isOpen()) vDatabase = getWritableDatabase();
 
 			  vCursor = vDatabase.rawQuery(pSQL, null);
@@ -122,9 +125,9 @@ public class BaseDatos extends SQLiteOpenHelper {
 		      clVList.clear();
 		      clTable = TableName;
 		  }
-	 
-		  
+
 		  public void add(String pField, String pValue , String pTipo) {
+
 			  String SV;
 			  
 			  try  {
@@ -146,6 +149,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  }
 		  
 		  public void add(String pField, String pValue ) {
+
 			  String SV;
 			  
 			  try  {
@@ -167,6 +171,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  }
 
 		  public void add(String pField, int pValue) {
+
 			  String SV;
 			  
 			  try 
@@ -182,9 +187,11 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  }
 
 		  public void add(String pField, long pValue) {
+
 			  String SV;
 
-			  try   {
+			  try{
+
 				  if (pField == "") {return;}
 				  SV= ""+pValue;
 
@@ -196,6 +203,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  }
 
 		  public void add(String pField, double pValue) {
+
 			  String SV;
 			  
 			  try 
@@ -211,15 +219,20 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  }
 
           public void add(String pField, boolean pValue) {
+
               String SV;
 
               try  {
+
                   clFList.add(pField);
                   if (pValue) clVList.add("1");else clVList.add("0");
+
               } catch (Exception e) { }
+
           }
 		   
 		  public String sql() {
+
 			  String sVal, S, SF, SV;
 			  			  
 			  if (clTable == "") {return "";}
@@ -273,6 +286,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 	 
 		  
 		  public void add(String pField, String pValue , String pTipo) {
+
 			  String SV;
 			  
 			  try  {
@@ -293,6 +307,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  }
 		  
 		  public void add(String pField, String pValue) {
+
 			  String SV;
 			  
 			  try 
@@ -302,11 +317,13 @@ public class BaseDatos extends SQLiteOpenHelper {
 				  pValue=pValue.replace("'", "");
 				  SV="'" + pValue + "'";
 				  clFList.add(pField + " = "+ SV);
+
 			  } catch (Exception e) { }
 			  
 		  }
 
 		  public void add(String pField, boolean pValue ) {
+
               String SV;
 
               try  {
@@ -318,6 +335,7 @@ public class BaseDatos extends SQLiteOpenHelper {
           }
 
           public void add(String pField, int pValue ) {
+
               String SV;
 
               try  {
@@ -329,6 +347,7 @@ public class BaseDatos extends SQLiteOpenHelper {
           }
 		  
 		  public void add(String pField, double pValue ) {
+
 			  String SV;
 			  
 			  try  {
@@ -344,6 +363,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		  }
 	      	  
 		  public String sql() {
+
 			  String sVal,vUpDate;
 			  			  
 			  if (clTable == "") return "";
@@ -372,6 +392,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 	} 
 
 	  private void msgbox(String msg) {
+
 		    ExDialog dialog = new ExDialog(vcontext);
 		    dialog.setMessage(msg);
 
@@ -385,6 +406,7 @@ public class BaseDatos extends SQLiteOpenHelper {
 		}   
 
 	  private void dbCreated() {
+
             ExDialog dialog = new ExDialog(vcontext);
 			dialog.setMessage("La base de datos ha sido creada.");
 
@@ -392,8 +414,6 @@ public class BaseDatos extends SQLiteOpenHelper {
 	    	    public void onClick(DialogInterface dialog, int which) {
 	    	    }
 	    	});
-			//dialog.show();
-		
 		}   	  
 }
 

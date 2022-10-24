@@ -74,7 +74,6 @@ public class clsD_barril_transObj {
     private void addItem(clsClasses.clsD_barril_trans item) {
 
         ins.init("D_barril_trans");
-
         ins.add("CODIGO_TRANS",item.codigo_trans);
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
@@ -87,7 +86,6 @@ public class clsD_barril_transObj {
         ins.add("TIPO_MOV",item.tipo_mov);
         ins.add("IDTRANS",item.idtrans);
         ins.add("STATCOM",item.statcom);
-
         db.execSQL(ins.sql());
 
     }
@@ -95,7 +93,6 @@ public class clsD_barril_transObj {
     private void updateItem(clsClasses.clsD_barril_trans item) {
 
         upd.init("D_barril_trans");
-
         upd.add("EMPRESA",item.empresa);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("FECHAHORA",item.fechahora);
@@ -107,9 +104,7 @@ public class clsD_barril_transObj {
         upd.add("TIPO_MOV",item.tipo_mov);
         upd.add("IDTRANS",item.idtrans);
         upd.add("STATCOM",item.statcom);
-
         upd.Where("(CODIGO_TRANS="+item.codigo_trans+")");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -139,7 +134,6 @@ public class clsD_barril_transObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_barril_trans();
-
             item.codigo_trans=dt.getInt(0);
             item.empresa=dt.getInt(1);
             item.codigo_sucursal=dt.getInt(2);
@@ -152,9 +146,7 @@ public class clsD_barril_transObj {
             item.tipo_mov=dt.getInt(9);
             item.idtrans=dt.getString(10);
             item.statcom=dt.getInt(11);
-
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -182,7 +174,6 @@ public class clsD_barril_transObj {
     public String addItemSql(clsClasses.clsD_barril_trans item) {
 
         ins.init("D_barril_trans");
-
         ins.add("CODIGO_TRANS",item.codigo_trans);
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
@@ -195,7 +186,6 @@ public class clsD_barril_transObj {
         ins.add("TIPO_MOV",item.tipo_mov);
         ins.add("IDTRANS",item.idtrans);
         ins.add("STATCOM",item.statcom);
-
         return ins.sql();
 
     }
@@ -203,7 +193,6 @@ public class clsD_barril_transObj {
     public String updateItemSql(clsClasses.clsD_barril_trans item) {
 
         upd.init("D_barril_trans");
-
         upd.add("EMPRESA",item.empresa);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("FECHAHORA",item.fechahora);
@@ -215,12 +204,8 @@ public class clsD_barril_transObj {
         upd.add("TIPO_MOV",item.tipo_mov);
         upd.add("IDTRANS",item.idtrans);
         upd.add("STATCOM",item.statcom);
-
         upd.Where("(CODIGO_TRANS="+item.codigo_trans+")");
-
         return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 

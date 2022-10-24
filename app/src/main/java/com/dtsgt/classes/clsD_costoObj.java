@@ -74,7 +74,6 @@ public class clsD_costoObj {
     private void addItem(clsClasses.clsD_costo item) {
 
         ins.init("D_costo");
-
         ins.add("CODIGO_COSTO",item.codigo_costo);
         ins.add("CODIGO_EMPRESA",item.codigo_empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
@@ -82,7 +81,6 @@ public class clsD_costoObj {
         ins.add("FECHA",item.fecha);
         ins.add("COSTO",item.costo);
         ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
-
         db.execSQL(ins.sql());
 
     }
@@ -90,19 +88,14 @@ public class clsD_costoObj {
     private void updateItem(clsClasses.clsD_costo item) {
 
         upd.init("D_costo");
-
         upd.add("CODIGO_EMPRESA",item.codigo_empresa);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("CODIGO_PRODUCTO",item.codigo_producto);
         upd.add("FECHA",item.fecha);
         upd.add("COSTO",item.costo);
         upd.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
-
         upd.Where("(CODIGO_COSTO="+item.codigo_costo+")");
-
         db.execSQL(upd.sql());
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 
@@ -129,7 +122,6 @@ public class clsD_costoObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_costo();
-
             item.codigo_costo=dt.getInt(0);
             item.codigo_empresa=dt.getInt(1);
             item.codigo_sucursal=dt.getInt(2);
@@ -137,9 +129,7 @@ public class clsD_costoObj {
             item.fecha=dt.getLong(4);
             item.costo=dt.getDouble(5);
             item.codigo_proveedor=dt.getInt(6);
-
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -148,6 +138,7 @@ public class clsD_costoObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -167,7 +158,6 @@ public class clsD_costoObj {
     public String addItemSql(clsClasses.clsD_costo item) {
 
         ins.init("D_costo");
-
         ins.add("CODIGO_COSTO",item.codigo_costo);
         ins.add("CODIGO_EMPRESA",item.codigo_empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
@@ -175,7 +165,6 @@ public class clsD_costoObj {
         ins.add("FECHA",item.fecha);
         ins.add("COSTO",item.costo);
         ins.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
-
         return ins.sql();
 
     }
@@ -183,20 +172,14 @@ public class clsD_costoObj {
     public String updateItemSql(clsClasses.clsD_costo item) {
 
         upd.init("D_costo");
-
         upd.add("CODIGO_EMPRESA",item.codigo_empresa);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("CODIGO_PRODUCTO",item.codigo_producto);
         upd.add("FECHA",item.fecha);
         upd.add("COSTO",item.costo);
         upd.add("CODIGO_PROVEEDOR",item.codigo_proveedor);
-
         upd.Where("(CODIGO_COSTO="+item.codigo_costo+")");
-
         return upd.sql();
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
-
     }
 
 }

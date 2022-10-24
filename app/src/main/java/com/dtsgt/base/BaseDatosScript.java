@@ -18,6 +18,7 @@ public class BaseDatosScript {
     }
 
     public int scriptDatabase(SQLiteDatabase database) {
+
         String vSQL;
 
         try {
@@ -66,7 +67,6 @@ public class BaseDatosScript {
                     "RUTA INT);";
             database.execSQL(vSQL);
 
-
             if (scriptTablasD(database)==0) {return 0;}
 
             if (scriptTablasP(database)==0) {return 0;}
@@ -74,6 +74,7 @@ public class BaseDatosScript {
             if (scriptTablasT(database)==0) {return 0;}
 
             return 1;
+
         } catch (SQLiteException e) {
             msgbox(e.getMessage());
             return 0;
@@ -82,6 +83,7 @@ public class BaseDatosScript {
     }
 
     private int scriptTablasP(SQLiteDatabase database) {
+
         String sql;
 
         try {
@@ -726,6 +728,7 @@ public class BaseDatosScript {
     }
 
     private int scriptTablasD(SQLiteDatabase database) {
+
         String sql;
 
         try {
@@ -866,9 +869,6 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
-
-            // ****************
-
             sql="CREATE TABLE [D_MOV] ("+
                     "[COREL] TEXT NOT NULL,"+
                     "[RUTA] INTEGER NOT NULL,"+
@@ -909,14 +909,6 @@ public class BaseDatosScript {
                     "PRIMARY KEY ([CORELDET])"+
                     ");";
             database.execSQL(sql);
-
-            //#CKFK 20200526 Modifiqué la llave primaria de la tabla D_MOVD
-            // por un código único "PRIMARY KEY ([COREL],[PRODUCTO],[LOTE])"+
-
-
-            // JP 20200615 - UIDX no aplica por razon de ajustes de inventario donde ouede ingresar mismo codigo con diferente motivo de ajuste
-            //sql="CREATE UNIQUE INDEX IX_D_MOVD on D_MOVD ([COREL],[PRODUCTO],[LOTE])";
-            //database.execSQL(sql);
 
             sql="CREATE TABLE [D_DEPOS] ("+
                     "[COREL] TEXT NOT NULL,"+
@@ -1055,6 +1047,7 @@ public class BaseDatosScript {
              database.execSQL(sql);
 
             return 1;
+
         } catch (SQLiteException e) {
             msgbox(e.getMessage());
             return 0;
@@ -1062,6 +1055,7 @@ public class BaseDatosScript {
     }
 
     private int scriptTablasT(SQLiteDatabase database) {
+
         String sql;
 
         try {
@@ -1336,18 +1330,14 @@ public class BaseDatosScript {
     public int scriptData(SQLiteDatabase db) {
 
         try {
+
             db.execSQL("INSERT INTO Params VALUES (0,0,0,0,0, '','','','',''," +
                     "'http://192.168.1.137/wsMPos/wsandr.asmx','','');");
+
             db.execSQL("INSERT INTO FinDia VALUES (0,0, 0,0,0,0, 0,0,0,0);");
 
-            //db.execSQL("INSERT INTO P_EMPRESA VALUES (" +
-            //        "'2','Nombre Empresa','','',0,'','','',  '',0,0,'GUA',0,0,0,36,  0,0,0,0,0,0,0,0,  0,0,'','','',0);");
-            //db.execSQL("INSERT INTO P_SUCURSAL VALUES ('1','1','Nombre Negocio','Nombre Negocio','', '','','',1);");
-            //db.execSQL("INSERT INTO VENDEDORES VALUES ('1','Gerente','1','1', 3,1,'','',1);");
-
-            //datosIniciales(db);
-
             return 1;
+
         } catch (Exception e) {
             msgbox(e.getMessage());return 0;
         }
@@ -1359,7 +1349,6 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('2','CHEQUE','N',2,'N');");
         db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('5','TARJETA CREDITO','S',4,'N');");
         db.execSQL("INSERT INTO P_MEDIAPAGO VALUES ('6','DOLLAR','N',1,'N');");
-
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (1,'GPS Margen ( Metros )','50',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (2,'Stock Interfaz','N',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (3,'Modalidad','TOL',0)");
@@ -1379,7 +1368,6 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (17,'Pregunta si es correcta la impresion de la factura','S',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (18,'Restringir venta por GPS margen','P',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (19,'Margen de error de GPS','10',0)");
-
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (100,'Configuración centralizada','S',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (101,'Imprimir orden para cocina','N',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (102,'Lista con imagenes','S',0)");
@@ -1389,13 +1377,9 @@ public class BaseDatosScript {
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (106,'Mostrar foto de cliente para biometrico','S',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (107,'Cierre diario','S',0)");
         db.execSQL("INSERT INTO P_PARAMEXT VALUES (108,'Días anulación permitida','3',0)");
-
         db.execSQL("INSERT INTO P_usgrupo VALUES (1,'Cajero','S')");
         db.execSQL("INSERT INTO P_usgrupo VALUES (2,'Supervisor','S')");
         db.execSQL("INSERT INTO P_usgrupo VALUES (3,'Gerente','S')");
-        //db.execSQL("INSERT INTO P_usgrupo VALUES (4,'Mesero','S')");
-        //db.execSQL("INSERT INTO P_usgrupo VALUES (5,'Vendedor','S')");
-
         db.execSQL("INSERT INTO P_usopcion VALUES ( 1,'Venta','Ingreso')");
         db.execSQL("INSERT INTO P_usopcion VALUES ( 2,'Caja','Ingreso')");
         db.execSQL("INSERT INTO P_usopcion VALUES ( 3,'Reimpresion','Ingreso')");
@@ -1458,10 +1442,8 @@ public class BaseDatosScript {
 
         dialog.setIcon(R.drawable.ic_error);
 
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                //Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
-            }
+        dialog.setNeutralButton("OK", (dialog1, which) -> {
+            //Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
         });
         dialog.show();
 

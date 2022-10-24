@@ -225,6 +225,7 @@ public class ComWSExist extends PBase {
 	}
 	
 	public int OpenDTt(String sql) {
+
 		int rc;
 	
 		METHOD_NAME = "OpenDT";
@@ -268,6 +269,7 @@ public class ComWSExist extends PBase {
 	        }
 	 
 	        return 1;
+
 	    } catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 	    	sstr=e.getMessage(); 
@@ -303,6 +305,7 @@ public class ComWSExist extends PBase {
 	        sstr = response.toString()+"..";
 	        	        
 	        return 1;
+
 	    } catch (Exception e) {
 			 sstr=e.getMessage();
 	    }
@@ -314,6 +317,7 @@ public class ComWSExist extends PBase {
 	// WEB SERVICE - RECEPCION
 
 	private boolean getData() 	{
+
 		Cursor DT;
 		int rc,prn,jj;
 		String s,val="";
@@ -342,6 +346,7 @@ public class ComWSExist extends PBase {
 				
 		
 		listItems.clear();
+
 		idbg="";
 		
 		try {
@@ -365,7 +370,6 @@ public class ComWSExist extends PBase {
 			}
 
 			DT.close();
-
 
 			sql = "SELECT CODIGO FROM P_PRODUCTO";
 			DT=Con.OpenDT(sql);
@@ -517,6 +521,7 @@ public class ComWSExist extends PBase {
 	}
 
 	public int commitSQL() {
+
 		int rc;
 		String s,ss;
 
@@ -565,6 +570,7 @@ public class ComWSExist extends PBase {
 	}
 
 	private boolean AddTable(String TN) {
+
 		String SQL;
 		
 		try {
@@ -573,6 +579,7 @@ public class ComWSExist extends PBase {
 			wsRtask.onProgressUpdate();
 
 			SQL=getTableSQL(TN);
+
 			if (fillTable(SQL,"DELETE FROM "+TN)==1) {
 				idbg=idbg +SQL+"#"+"PASS OK";
 				return true;	
@@ -581,6 +588,7 @@ public class ComWSExist extends PBase {
 				fstr=sstr;
 				return false;	
 			}
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			fstr="Tab:"+TN+", "+ e.getMessage();idbg=idbg + e.getMessage();
@@ -681,7 +689,9 @@ public class ComWSExist extends PBase {
 			
 		barInfo.setVisibility(View.INVISIBLE);
 		lblParam.setVisibility(View.INVISIBLE);
+
 		 try{
+
 			 if (fstr.equalsIgnoreCase("Sync OK")) {
 				 lblInfo.setText(" ");
 				 s="Actualización completa.";
@@ -705,6 +715,7 @@ public class ComWSExist extends PBase {
 
 		@Override
         protected Void doInBackground(String... params) {
+
 			try {
 				wsExecute();
 			} catch (Exception e) {
@@ -713,7 +724,6 @@ public class ComWSExist extends PBase {
 				}
 				msgbox(fstr);
 			}
-            
             return null;
         }
  
@@ -742,12 +752,10 @@ public class ComWSExist extends PBase {
 				Log.d("onProgressUpdate",e.getMessage());
     		}
         }
- 
     }	
 	
 		
 	// Aux
-	
 	public void comManual(View view) {
 		try{
 			Intent intent = new Intent(this,ComDrop.class);
@@ -796,31 +804,36 @@ public class ComWSExist extends PBase {
 	}
 	
 	private boolean setComParams() {
+
 		String ss;
 		
 		ss=txtRuta.getText().toString().trim();
 
 		try{
+
 			if (mu.emptystr(ss)) {
 				mu.msgbox("La ruta no está definida.");return false;
 			}
 
 			ss=txtEmp.getText().toString().trim();
+
 			if (mu.emptystr(ss)) {
 				mu.msgbox("La empresa no está definida.");return false;
 			}
+
 			gEmpresa=Integer.valueOf(ss);
 
 			ss=txtWS.getText().toString().trim();
+
 			if (mu.emptystr(ss) || ss.equalsIgnoreCase("*")) {
 				mu.msgbox("La dirección de Web service no está definida.");return false;
 			}
+
 			URL=ss;
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
-
-		
 		return true;
 	}
 	
@@ -836,7 +849,5 @@ public class ComWSExist extends PBase {
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 		}
-
-	}	
-		
+	}
 }

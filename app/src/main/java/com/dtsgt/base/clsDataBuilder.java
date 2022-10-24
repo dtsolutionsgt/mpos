@@ -38,6 +38,7 @@ public class clsDataBuilder {
 		MU=new MiscUtils(cCont);
 		
 		Con = new BaseDatos(cCont);
+
 		try {
 			db = Con.getWritableDatabase();
 		 	Con.vDatabase =db;
@@ -143,7 +144,7 @@ public class clsDataBuilder {
 			    DT.moveToNext();
 			}
 		} catch (Exception e) {
-			err=e.getMessage();//return false;
+			err=e.getMessage();
 			throw new RuntimeException(err);
 		}
 		
@@ -159,6 +160,7 @@ public class clsDataBuilder {
 	}
 
 	public int save(){
+
 		String s;
 		
 		if (items.size()==0) {return 1;}
@@ -183,7 +185,9 @@ public class clsDataBuilder {
 	}
 
 	public int saveArchivo(String fecha){
+
 		String s;
+
 		if (items.size()==0) return 1;
 
 		try {
@@ -211,6 +215,7 @@ public class clsDataBuilder {
 	}
 
 	public void savelog() {
+
 		String s;
 
 		if (sendlog.size()==0) return ;
@@ -236,6 +241,7 @@ public class clsDataBuilder {
 	// Private
 	
 	private int getCType(String cn,String ct) {
+
 		int c=0;
 		
 		if (cn.equalsIgnoreCase("FECHA") || cn.equalsIgnoreCase("FECHAENTR") || cn.equalsIgnoreCase("FECHANAC")) {

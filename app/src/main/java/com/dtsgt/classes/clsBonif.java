@@ -48,6 +48,7 @@ public class clsBonif {
 	// Bonif local
 	
 	public boolean tieneBonif(){
+
 		double dval=0;
 		
 		items.clear();
@@ -64,12 +65,14 @@ public class clsBonif {
 	}
 	
 	private void listaDescRangoCant() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
 		double val;
 		
 		try {
+
 			vSQL="SELECT PRODUCTO,PTIPO,VALOR,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,PORCANT "+
 				 "FROM T_BONIF WHERE  ("+cant+">=RANGOINI) AND ("+cant+"<=RANGOFIN) "+
 				 "AND (PTIPO<4) AND (TIPOCANT='U') AND (TIPOBON='R') AND (GLOBBON='N') AND (PORCANT='S')";
@@ -79,6 +82,7 @@ public class clsBonif {
 			if (DT.getCount()==0) return;
 			
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 				  
 				iid=DT.getString(0);
@@ -126,6 +130,7 @@ public class clsBonif {
 	}
 	
 	private void listaDescRangoMonto() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
@@ -140,6 +145,7 @@ public class clsBonif {
 			if (DT.getCount()==0) return;
 			
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 				  
 				iid=DT.getString(0);
@@ -187,12 +193,14 @@ public class clsBonif {
 	}
 	
 	private void listaDescMultCant() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
 		double val,mcant,mul;
 		
 		try {
+
 			vSQL="SELECT PRODUCTO,PTIPO,RANGOINI,RANGOFIN,VALOR,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,PORCANT "+
 				 "FROM T_BONIF WHERE ("+cant+">=RANGOINI) "+
 				 "AND (PTIPO<4) AND (TIPOCANT='U') AND (TIPOBON='M') AND (GLOBBON='N') AND (PORCANT='S')";
@@ -230,19 +238,15 @@ public class clsBonif {
 					if (val > 0) {
 
 						item = clsCls.new clsBonifItem();
-
 						item.prodid = prodid;
 						item.lista = DT.getString(7);
 						item.cantexact = DT.getString(8);
 						item.globbon = "N";
 						item.porcant = DT.getString(9);
-
 						item.tipolista = DT.getInt(5);
 						item.tipocant = DT.getString(6);
-
 						item.valor = val;
 						item.mul = mcant;
-
 						items.add(item);
 
 					}
@@ -258,12 +262,14 @@ public class clsBonif {
 	}
 	
 	private void listaDescMultMonto() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
 		double val,mcant,mul;
 		
 		try {
+
 			vSQL="SELECT PRODUCTO,PTIPO,RANGOINI,RANGOFIN,VALOR,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,PORCANT "+
 				 "FROM T_BONIF WHERE ("+monto+">=RANGOINI) "+
 				 "AND (PTIPO<4) AND (TIPOCANT='V') AND (TIPOBON='M') AND (GLOBBON='N') AND (PORCANT='N')";
@@ -272,6 +278,7 @@ public class clsBonif {
 			if (DT.getCount()==0) return;
 						
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 					
 				iid=DT.getString(0);
@@ -300,20 +307,17 @@ public class clsBonif {
 					}
 
 					if (val > 0) {
-						item = clsCls.new clsBonifItem();
 
+						item = clsCls.new clsBonifItem();
 						item.prodid = prodid;
 						item.lista = DT.getString(7);
 						item.cantexact = DT.getString(8);
 						item.globbon = "N";
 						item.porcant = DT.getString(9);
-
 						item.tipolista = DT.getInt(5);
 						item.tipocant = DT.getString(6);
-
 						item.valor = val;
 						item.mul = mcant;
-
 						items.add(item);
 					}
 				}
@@ -326,14 +330,13 @@ public class clsBonif {
 	    }	
 		
 	}	
-	
-	
-	// Aux
-	
+
  	private boolean validaPermisos(){
+
 		Cursor DT;
 		
 		try {
+
 			vSQL="SELECT BONIFICACION,LINEA,'' as SUBLINEA,MARCA FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();

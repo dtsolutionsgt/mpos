@@ -30,6 +30,7 @@ public class MiscUtils {
 	private PBase pB;
 	
 	public MiscUtils(Context context,String currsymb) {
+
 		cCont=context; 
 		curr=currsymb;
 		
@@ -38,9 +39,11 @@ public class MiscUtils {
         ffrmint2 = new DecimalFormat("###0");
         ffrmdec2 = new DecimalFormat("#,##0.##");
 		ffrmgps = new DecimalFormat("##0.0000000");
+
 	}
 	
 	public MiscUtils(Context context) {
+
 		cCont=context; 
 		curr="";
 		
@@ -105,6 +108,7 @@ public class MiscUtils {
 	}
 	
 	public String frmdecimal(double val,int ndec) {
+
 		String ss="",ff="#,##0.";
 		
 		if (ndec<=0) {		
@@ -122,6 +126,7 @@ public class MiscUtils {
 	}
 	
 	public double round2(double val){
+
 	int ival;
 		
 		val=(double) (100*val);
@@ -147,6 +152,7 @@ public class MiscUtils {
     }
 
 	public int dayofweek() {
+
 		Calendar calendar = Calendar.getInstance();
 		int day = calendar.get(Calendar.DAY_OF_WEEK);
 		
@@ -160,6 +166,7 @@ public class MiscUtils {
 	}
 	
 	public String getCorelBase(){
+
 		int cyear,cmonth,cday,ch,cm,cs,vd,vh;
 		String s;
 		
@@ -185,27 +192,10 @@ public class MiscUtils {
 	    if (msg.isEmpty()) return;
 		msgbox2(msg);
 
-		/*
-        try {
-            ExDialog dialog = new ExDialog(cCont);
-
-            dialog.setMessage(msg);
-            dialog.setCancelable(false);
-
-            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
-
-            AlertDialog adg=dialog.show();
-
-        } catch (Exception ex) {
-            toast(ex.getMessage());
-        }
-        */
-
 	}
 
     public void msgbox2(String msg) {
+
         if (msg.isEmpty()) return;
 
         try {
@@ -239,6 +229,7 @@ public class MiscUtils {
 	}
 	  
 	public double round(double val,int ndec) {
+
 		double v,pw;
 		
 		if (ndec>10)return val;
@@ -254,6 +245,7 @@ public class MiscUtils {
 	}
 
 	public double roundr(double val,int ndec) {
+
 		double v,pw;
 
 		if (ndec>10)return val;
@@ -269,6 +261,7 @@ public class MiscUtils {
 	}
 
 	public double trunc(double val) {
+
 		double v,pw;
 
 		v=val;

@@ -66,6 +66,7 @@ public class clsBonifGlob {
 	}
 	
 	private void listBonTipo(int ptipo) {
+
 		clsBonifItem item;
 		int cbon;
 		double cnt;
@@ -79,22 +80,16 @@ public class clsBonifGlob {
 
 			ccod=codes.get(i);
 			cnt=cantVenta(ptipo,ccod);
-			//Toast.makeText(cont,ptipo+"    "+ccod+"  // cant "+cnt, Toast.LENGTH_SHORT).show();
 			
 			if (cnt>0) {
 		
 				cbon=bontipo.cantBonif(ptipo,ccod,vcnt,vmonto);
-				
-				//Toast.makeText(cont,"PTipo  "+ptipo+"    "+ccod+"  // cant "+cnt +"  ,  res "+cbon, Toast.LENGTH_SHORT).show();
-				
+
 				if (cbon==0) return;
 
 				for (int n = 0; n<cbon; n++) {
 					item=bontipo.items.get(n);
-
 					s=item.valor+"  "+item.lista+"   "+item.prodid;
-					//Toast.makeText(cont,s, Toast.LENGTH_SHORT).show();
-
 					items.add(item);
 				}			
 			}
@@ -104,14 +99,14 @@ public class clsBonifGlob {
 	}
 		
 	private void listaCodigos(int ptipo) {
+
 		Cursor DT;
 		String iid;
 		
 		codes.clear();
 		
 		try {
-			
-			//vSQL="SELECT PRODUCTO FROM T_BONIF WHERE (PTIPO="+ptipo+") AND (GLOBBON='S') AND (PORCANT='S')";
+
 			vSQL="SELECT DISTINCT PRODUCTO FROM T_BONIF WHERE (PTIPO="+ptipo+") AND (GLOBBON='S')";
 			DT=Con.OpenDT(vSQL);
 			
@@ -131,6 +126,7 @@ public class clsBonifGlob {
 	}
 	
 	private double cantVenta(int ptipo, String codigo) {
+
 		Cursor DT;
 		double cnt=0,monto=0;
 	

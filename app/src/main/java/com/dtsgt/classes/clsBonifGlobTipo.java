@@ -31,11 +31,9 @@ public class clsBonifGlobTipo {
 	public clsBonifGlobTipo(Context context) {
 		
 		cont=context;
-		
 		active=0;
 		Con = new BaseDatos(context);
 	    opendb();
-	    
 	    MU=new MiscUtils(context);
 		
 	}
@@ -60,12 +58,14 @@ public class clsBonifGlobTipo {
 	}
 		
 	private void listaDescRango() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
 		double val;
 		
 		try {
+
 			vSQL="SELECT PRODUCTO,PTIPO,VALOR,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,PORCANT "+
 				 "FROM T_BONIF WHERE  ("+cant+">=RANGOINI) AND ("+cant+"<=RANGOFIN) "+
 				 "AND (PTIPO="+tipo+") AND (TIPOBON='R') AND (GLOBBON='S') AND (PORCANT='S')";
@@ -75,12 +75,11 @@ public class clsBonifGlobTipo {
 			if (DT.getCount()==0) return;
 			
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 				  
 				iid=DT.getString(0);
 				val=0;
-				
-				//Toast.makeText(cont,""+iid, Toast.LENGTH_LONG).show();
 				
 				switch (DT.getInt(1)) {
 					case 1: 
@@ -98,22 +97,16 @@ public class clsBonifGlobTipo {
 				if (val>0) {
 					
 					item=clsCls.new clsBonifItem();
-					
 					item.prodid=idid;
 					item.lista=DT.getString(5);
 					item.cantexact=DT.getString(6);
 					item.globbon="S";
 					item.porcant=DT.getString(7);
-					
 					item.tipolista=DT.getInt(3);
 					item.tipocant=DT.getString(4);
-					
 					item.valor=val;
-					
 					items.add(item);
-					
-					
-					//Toast.makeText(cont,tipo+" )) "+item.tipolista+ "   "+item.lista+"  // "+item.valor, Toast.LENGTH_SHORT).show();
+
 				}
 				
 				DT.moveToNext();
@@ -126,12 +119,14 @@ public class clsBonifGlobTipo {
 	}
 	
 	private void listaDescRangoMonto() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
 		double val;
 		
 		try {
+
 			vSQL="SELECT PRODUCTO,PTIPO,VALOR,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,PORCANT "+
 				 "FROM T_BONIF WHERE  ("+monto+">=RANGOINI) AND ("+monto+"<=RANGOFIN) "+
 				 "AND (PTIPO="+tipo+") AND (TIPOBON='R') AND (GLOBBON='S') AND (PORCANT='N')";
@@ -140,12 +135,11 @@ public class clsBonifGlobTipo {
 			if (DT.getCount()==0) return;
 			
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 				  
 				iid=DT.getString(0);
 				val=0;
-				
-				//Toast.makeText(cont,""+iid, Toast.LENGTH_LONG).show();
 				
 				switch (DT.getInt(1)) {
 					case 1: 
@@ -163,22 +157,16 @@ public class clsBonifGlobTipo {
 				if (val>0) {
 					
 					item=clsCls.new clsBonifItem();
-					
 					item.prodid=idid;
 					item.lista=DT.getString(5);
 					item.cantexact=DT.getString(6);
 					item.globbon="S";
 					item.porcant=DT.getString(7);
-					
 					item.tipolista=DT.getInt(3);
 					item.tipocant=DT.getString(4);
-					
 					item.valor=val;
-					
 					items.add(item);
-					
-					
-					//Toast.makeText(cont,tipo+" )) "+item.tipolista+ "   "+item.lista+"  // "+item.valor, Toast.LENGTH_SHORT).show();
+
 				}
 				
 				DT.moveToNext();
@@ -191,12 +179,14 @@ public class clsBonifGlobTipo {
 	}
 	
 	private void listaDescMult() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
 		double val,mcant,mul;
 		
 		try {
+
 			vSQL="SELECT PRODUCTO,PTIPO,RANGOINI,RANGOFIN,VALOR,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,PORCANT "+
 				 "FROM T_BONIF WHERE ("+cant+">=RANGOINI) "+
 				 "AND (PTIPO="+tipo+") AND (TIPOBON='M') AND (GLOBBON='S') AND (PORCANT='S')";
@@ -205,6 +195,7 @@ public class clsBonifGlobTipo {
 			if (DT.getCount()==0) return;
 						
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 					
 				iid=DT.getString(0);
@@ -221,7 +212,8 @@ public class clsBonifGlobTipo {
 						if (iid.equalsIgnoreCase(idid)) val=DT.getDouble(2);break;						
 				}
 				
-				if (val>0) {				
+				if (val>0) {
+
 					mcant=cant-DT.getDouble(2);
 					mul=DT.getDouble(3);
 
@@ -234,18 +226,14 @@ public class clsBonifGlobTipo {
 
 
 					item=clsCls.new clsBonifItem();
-
 					item.prodid=idid;
 					item.lista=DT.getString(5);
 					item.cantexact=DT.getString(6);
 					item.globbon="S";
 					item.porcant=DT.getString(9);
-
 					item.tipolista=DT.getInt(3);
 					item.tipocant=DT.getString(6);
-
 					item.valor=val;
-
 					items.add(item);
 				}
 
@@ -259,12 +247,14 @@ public class clsBonifGlobTipo {
 	}
 	
 	private void listaDescMultMonto() {
+
 		clsBonifItem item;
 		Cursor DT;
 		String iid;
 		double val,mcant,mul;
 		
 		try {
+
 			vSQL="SELECT PRODUCTO,PTIPO,RANGOINI,RANGOFIN,VALOR,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,PORCANT "+
 				 "FROM T_BONIF WHERE ("+monto+">=RANGOINI) "+
 				 "AND (PTIPO="+tipo+") AND (TIPOBON='M') AND (GLOBBON='S') AND (PORCANT='N')";
@@ -273,6 +263,7 @@ public class clsBonifGlobTipo {
 			if (DT.getCount()==0) return;
 						
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 					
 				iid=DT.getString(0);
@@ -289,7 +280,8 @@ public class clsBonifGlobTipo {
 						if (iid.equalsIgnoreCase(idid)) val=DT.getDouble(2);break;						
 				}
 				
-				if (val>0) {				
+				if (val>0) {
+
 					mcant=cant-DT.getDouble(2);
 					mul=DT.getDouble(3);
 
@@ -301,18 +293,14 @@ public class clsBonifGlobTipo {
 					}
 
 					item=clsCls.new clsBonifItem();
-
 					item.prodid=idid;
 					item.lista=DT.getString(5);
 					item.cantexact=DT.getString(6);
 					item.globbon="S";
 					item.porcant=DT.getString(9);
-
 					item.tipolista=DT.getInt(3);
 					item.tipocant=DT.getString(6);
-
 					item.valor=val;
-
 					items.add(item);
 				}
 

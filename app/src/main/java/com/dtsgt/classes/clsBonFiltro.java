@@ -62,23 +62,16 @@ public class clsBonFiltro {
 	}
 	
 	private void filtrarBonif() {
+
 		Cursor DT;
 		int i,NivelPrec;
-		//String  CTipoNeg,CTipo,CSubTipo,CCanal,CSubCanal,CSucursal;
 		
 		try {
-			//#CKFK20200524_FIX_BY_OPENDT Quité  TIPO,SUBTIPO,CANAL,SUBCANAL,SUCURSAL,TIPONEGO del select
 
 			vSQL="SELECT NIVELPRECIO FROM P_CLIENTE WHERE CODIGO='"+cliid+"'";
            	DT=Con.OpenDT(vSQL);
 			DT.moveToFirst();
-			
-			/*CTipoNeg = DT.getString(0);
-			CTipo = DT.getString(1);
-			CSubTipo = DT.getString(2);
-			CCanal = DT.getString(3);
-			CSubCanal = DT.getString(4);
-			CSucursal = DT.getString(5);*/
+
 			NivelPrec = DT.getInt(0);
 			
 		} catch (Exception e) {
@@ -93,12 +86,6 @@ public class clsBonFiltro {
 			vSQL="SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,TIPOBON,VALOR,GLOBBON,PORCANT,FECHAINI,FECHAFIN,CODDESC,NOMBRE,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,EMP,UMPRODUCTO,UMBONIFICACION "+
 					"FROM P_BONIF WHERE (CTIPO=0) OR "+
 					"((CTIPO=1) AND (CLIENTE='" + cliid + "')) OR "+
-					/*"((CTIPO=2) AND (CLIENTE='" + CTipoNeg + "')) OR "+
-					"((CTIPO=3) AND (CLIENTE='" + CTipo + "')) OR "+
-					"((CTIPO=4) AND (CLIENTE='" + CSubTipo + "')) OR "+
-					"((CTIPO=5) AND (CLIENTE='" + CCanal + "')) OR "+
-					"((CTIPO=6) AND (CLIENTE='" + CSubCanal + "')) OR "+
-					"((CTIPO=8) AND (CLIENTE='" + CSucursal + "')) OR "+*/
 					"((CTIPO=9) AND (CLIENTE='" + NivelPrec + "')) "+
 					" AND ((FECHAINI<="+fecha+") AND (FECHAFIN>="+fecha+")) ";
 			
@@ -112,25 +99,21 @@ public class clsBonFiltro {
 					try {
 						
 						ins.init("T_BONIF");
-						
 						ins.add("ID",i);
 						ins.add("PRODUCTO",DT.getString(2));
 						ins.add("PTIPO",DT.getInt(3));
 						ins.add("RANGOINI",DT.getDouble(5));
 						ins.add("RANGOFIN",DT.getDouble(6));
 						ins.add("TIPOBON",DT.getString(7));
-						
 						ins.add("VALOR",DT.getDouble(8));
 						ins.add("GLOBBON",DT.getString(9));
 						ins.add("PORCANT",DT.getString(10));
 						ins.add("NOMBRE",DT.getString(14));
-						
 						ins.add("TIPOLISTA",DT.getInt(15));
 						ins.add("TIPOCANT",DT.getString(16));
 						ins.add("LISTA",DT.getString(17));
 						ins.add("CANTEXACT",DT.getString(18));
 						ins.add("EMP",DT.getString(19));
-
 						ins.add("UMPRODUCTO",DT.getString(20));
 						ins.add("UMBONIFICACION",DT.getString(21));
 						
@@ -154,6 +137,7 @@ public class clsBonFiltro {
 		
 		
 		try {
+
 			vSQL="SELECT CLIENTE,CTIPO,PRODUCTO,PTIPO,TIPORUTA,RANGOINI,RANGOFIN,TIPOBON,VALOR,GLOBBON,PORCANT,FECHAINI,FECHAFIN,CODDESC,NOMBRE,TIPOLISTA,TIPOCANT,LISTA,CANTEXACT,EMP,UMPRODUCTO,UMBONIFICACION "+
 			     "FROM P_BONIF WHERE (CTIPO=10) "+
 				 " AND ((FECHAINI<="+fecha+") AND (FECHAFIN>="+fecha+")) ";
@@ -165,30 +149,27 @@ public class clsBonFiltro {
 			if (DT.getCount()>0) {
 			
 				DT.moveToFirst();
+
 				while (!DT.isAfterLast()) {
 				  
 					try {
 						
 						ins.init("T_BONIF");
-						
 						ins.add("ID",i);
 						ins.add("PRODUCTO",DT.getString(2));
 						ins.add("PTIPO",DT.getInt(3));
 						ins.add("RANGOINI",DT.getDouble(5));
 						ins.add("RANGOFIN",DT.getDouble(6));
 						ins.add("TIPOBON",DT.getString(7));
-						
 						ins.add("VALOR",DT.getDouble(8));
 						ins.add("GLOBBON",DT.getString(9));
 						ins.add("PORCANT",DT.getString(10));
 						ins.add("NOMBRE",DT.getString(14));
-						
 						ins.add("TIPOLISTA",DT.getInt(15));
 						ins.add("TIPOCANT",DT.getString(16));
 						ins.add("LISTA",DT.getString(17));
 						ins.add("CANTEXACT",DT.getString(18));
 						ins.add("EMP",DT.getString(19));
-
 						ins.add("UMPRODUCTO",DT.getString(20));
 						ins.add("UMBONIFICACION",DT.getString(21));
 						
@@ -216,6 +197,7 @@ public class clsBonFiltro {
 	// Aux
 	
 	private boolean validaPermisos(){
+
 		Cursor DT;
 	
 		try {
