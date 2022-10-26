@@ -1944,9 +1944,9 @@ public class Orden extends PBase {
                         msgbox("No existe cuenta pendiente de pago.");return;
                     }
 
-                    if (pendienteImpresion()) {
-                        msgbox("Existen articulos pendientes de impresion, no se puede proceder con pago.");return;
-                    }
+                    //if (pendienteImpresion()) {
+                    //    msgbox("Existen articulos pendientes de impresion, no se puede proceder con pago.");return;
+                    //}
 
                     if (modo_emerg) {
                         msgAskPagoCaja("Enviar solicitud de pago a la caja");
@@ -1976,15 +1976,15 @@ public class Orden extends PBase {
                     if (!hasProducts()) {
                         msgbox("La venta está vacia.");return;
                     }
-                    if (pendienteImpresion()) {
-                        msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
-                    } else {
+                    //if (pendienteImpresion()) {
+                    //    msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
+                    //} else {
                         if (enviarorden) {
                             actualizaEstadoOrden(2);
                         } else {
                             msgAskPrint("Enviar impresión de precuenta a la caja");
                         }
-                    }
+                    //}
                     break;
 
                 case 5:
