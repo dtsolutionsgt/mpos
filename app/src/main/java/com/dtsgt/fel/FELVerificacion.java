@@ -246,6 +246,7 @@ public class FELVerificacion extends PBase {
     }
 
     private void buildFactXML() {
+
         String dir,muni,dep,iddep,idmuni;
         int idcont;
         double lprec,ltot,ldesc;
@@ -258,6 +259,7 @@ public class FELVerificacion extends PBase {
             fact=D_facturaObj.first();
 
             fel.idcontingencia=0;
+
             try {
                 idcont=Integer.parseInt(D_facturaObj.first().feelcontingencia);
                 if (idcont>0) fel.idcontingencia=idcont;
@@ -273,8 +275,13 @@ public class FELVerificacion extends PBase {
 
             //fact.fecha=(long) (2206071000f);
             fel.iniciar(fact.fecha,""+fel.idcontingencia);
-            fel.emisor(fel.fel_afiliacion_iva,fel.fel_codigo_establecimiento,fel.fel_correo,
-                    fel.fel_nit,fel.fel_nombre_comercial, fel.fel_usuario_firma);
+
+            fel.emisor(fel.fel_afiliacion_iva,
+                       fel.fel_codigo_establecimiento,
+                       fel.fel_correo,
+                       fel.fel_nit,
+                       fel.fel_nombre_comercial,
+                       fel.fel_usuario_firma);
 
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
@@ -302,7 +309,11 @@ public class FELVerificacion extends PBase {
                 muni=" ";dep=" ";
             }
 
-            fel.emisorDireccion(dir,fel.codigo_postal,muni,dep,gl.codigo_pais);
+            fel.emisorDireccion(dir,
+                                fel.codigo_postal,
+                                muni,
+                                dep,
+                                gl.codigo_pais);
 
             //#EJC20200527: Quitar "-" del nit
             factf.nit=factf.nit.trim();
@@ -329,7 +340,21 @@ public class FELVerificacion extends PBase {
             if(fel.fraseISR==4) fel.fraseISR=2;
             */
 
-            fel.receptor(factf.nit, factf.nombre, factf.direccion, factf.correo, fel.codigo_postal,muni,dep,gl.codigo_pais);
+            //#EJC202210261721:Hot Fix por error al guardar el Cliente.
+            if(factf.nit.contains("Consumidor final")){
+                factf.nit ="C.F.";
+                factf.nombre = "Consumidor Final";
+                factf.direccion = "Ciudad";
+            }
+
+            fel.receptor(factf.nit,
+                         factf.nombre,
+                         factf.direccion,
+                         factf.correo,
+                         fel.codigo_postal,
+                         muni,
+                         dep,
+                         gl.codigo_pais);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 

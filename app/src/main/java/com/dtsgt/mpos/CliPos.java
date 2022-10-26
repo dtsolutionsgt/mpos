@@ -123,6 +123,7 @@ public class CliPos extends PBase {
         if (!gl.peVentaDomicilio) cbllevar.setEnabled(false);
         if (!gl.peVentaEntrega)   cbpickup.setEnabled(false);
 
+        NitValidadoInfile =false;
 
         /*
         if (gl.InvCompSend) {

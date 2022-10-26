@@ -128,7 +128,11 @@ public class ResCliente extends PBase {
                     }
                 }
 
-                if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente)) procesaNIT(sNITCliente);
+                if (agregaCliente(sNITCliente,
+                                  sNombreCliente,
+                                  sDireccionCliente,
+                                   sCorreoCliente))
+                    procesaNIT(sNITCliente);
 
             } else {
                 actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente);
@@ -233,6 +237,7 @@ public class ResCliente extends PBase {
             limpiaCampos();
 
             guardaDatos(0);
+
             finish();
 
         }catch (Exception e){

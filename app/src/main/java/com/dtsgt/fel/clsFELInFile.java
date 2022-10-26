@@ -375,7 +375,7 @@ public class clsFELInFile {
             url = new URL(WSURLCert);
             connection = (HttpsURLConnection)url.openConnection();
             connection.setConnectTimeout(timeout);
-            connection.setReadTimeout(timeout *2);
+            connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("usuario",fel_usuario_certificacion);

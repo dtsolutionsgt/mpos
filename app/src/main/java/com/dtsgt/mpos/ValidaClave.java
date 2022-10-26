@@ -136,6 +136,7 @@ public class ValidaClave extends PBase {
         int nivel;
 
         try {
+
             mitems.clear();
 
             if (gl.modoclave == 0) nivel=4; else nivel=5;
