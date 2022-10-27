@@ -64,7 +64,6 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
-import com.dtsgt.firebase.fbP_res_sesion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -133,8 +132,6 @@ public class Orden extends PBase {
     private Runnable rnBroadcastCallback;
     private Runnable rnDetailCallback;
     private Runnable rnBarTrans;
-
-    private fbP_res_sesion fbs;
 
     private AppMethods app;
 
@@ -300,7 +297,7 @@ public class Orden extends PBase {
         };
         mtimer.postDelayed(mrunner,500);
 
-        fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
+        //fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
 
     }
 
@@ -1692,7 +1689,7 @@ public class Orden extends PBase {
 
     //endregion
 
-     //region Menu
+    //region Menu
 
     private void listFamily() {
         int ii,pos;
@@ -2694,21 +2691,23 @@ public class Orden extends PBase {
 
         //if (modo_emerg) return;
 
+        /*
         if (!actorden) {
             envioOrdenOrig();return;
         }
+        */
 
         try {
 
-            //cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
+            cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
             cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
             cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
 
             clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
             P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
+            cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
             //cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
 
-            fbs.setItem(idorden,P_res_sesionObj.first());
 
             clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
             T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
@@ -3501,6 +3500,25 @@ public class Orden extends PBase {
 
 
         } else imgrefr.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void aplicaImpresion() {
+        clsClasses.clsT_orden oitem;
+
+        try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+
+            for (int i = 0; i <T_ordenObj.count; i++) {
+                oitem=T_ordenObj.items.get(i);
+                oitem.estado=0;
+                T_ordenObj.update(oitem);
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
     }
 
@@ -4875,6 +4893,7 @@ public class Orden extends PBase {
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Si", (dialog12, which) -> {
+                aplicaImpresion();
                 actualizaEstadoOrden(3);
                 if (actorden) envioOrden();
                 imprimeComanda();

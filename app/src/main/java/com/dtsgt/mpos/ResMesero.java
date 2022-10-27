@@ -3,11 +3,9 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,7 +31,6 @@ import com.dtsgt.classes.clsT_ordenpendObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
-import com.dtsgt.firebase.fbP_res_sesion;
 import com.dtsgt.ladapt.LA_Res_mesa;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
@@ -68,9 +65,6 @@ public class ResMesero extends PBase {
     private wsCommit wscom;
 
     private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback;
-
-    private fbP_res_sesion fbs;
-    private Runnable rnfbCallBack;
 
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -147,12 +141,7 @@ public class ResMesero extends PBase {
             imgbarril.setVisibility(View.INVISIBLE);
         }
 
-        rnfbCallBack = new Runnable() {
-            public void run() {
-                buildItems();
-            }
-        };
-        fbs=new fbP_res_sesion("P_RES_SESION/"+gl.tienda);
+
 
     }
 
@@ -226,11 +215,7 @@ public class ResMesero extends PBase {
     //region Main
 
     private void listItems() {
-        if (actorden) {
-            fbs.listItems("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/",rnfbCallBack);
-        } else {
-            showItems();
-        }
+        showItems();
     }
 
     private void showItems() {
@@ -307,26 +292,6 @@ public class ResMesero extends PBase {
 
             adapter=new LA_Res_mesa(this,this,mesas,horiz);
             gridView.setAdapter(adapter);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void buildItems() {
-        try {
-            fbs.orderByCodigo_mesa();
-
-            db.execSQL("DELETE FROM P_res_sesion");
-
-            if (fbs.items.size()>0) {
-                P_res_sesionObj.fill();
-
-                for (int i = 0; i <fbs.items.size(); i++) {
-                    P_res_sesionObj.add(fbs.items.get(i));
-                }
-            }
-
-            showItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
