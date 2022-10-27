@@ -341,10 +341,11 @@ public class FELVerificacion extends PBase {
             */
 
             //#EJC202210261721:Hot Fix por error al guardar el Cliente.
-            if(factf.nit.contains("Consumidor final")){
-                factf.nit ="C.F.";
+            if(factf.nit.contains("Consumidor final")|| factf.nit.contains("CONSUMIDORFINAL")){
+                factf.nit ="CF";
                 factf.nombre = "Consumidor Final";
                 factf.direccion = "Ciudad";
+                factf.correo =fel.correo_sucursal;
             }
 
             fel.receptor(factf.nit,
@@ -369,12 +370,12 @@ public class FELVerificacion extends PBase {
                 factd.desmon=ldesc;
 
                 fel.detalle(prodName(factd.producto),
-                        factd.cant,
-                        "UNI",
-                        factd.precio,
-                        mu.round2(factd.total),
-                        factd.desmon,
-                        lcombo);
+                            factd.cant,
+                            "UNI",
+                            factd.precio,
+                            mu.round2(factd.total),
+                            factd.desmon,
+                            lcombo);
             }
 
             fel.completar(fact.serie,

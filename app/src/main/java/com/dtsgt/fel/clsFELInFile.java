@@ -191,7 +191,8 @@ public class clsFELInFile {
             try {
                 connection.connect();
             } catch (IOException e) {
-                return;
+                error=e.getMessage();
+                errorcon=true;errorflag=true;constat=false;return;
             }
 
             DataOutputStream wr = null;
