@@ -341,7 +341,7 @@ public class FELVerificacion extends PBase {
             */
 
             //#EJC202210261721:Hot Fix por error al guardar el Cliente.
-            if(factf.nit.contains("Consumidor final")|| factf.nit.contains("CONSUMIDORFINAL")){
+            if(factf.nit.contains("Consumidor final")|| factf.nit.contains("CONSUMIDORFINAL") || factf.nit.equalsIgnoreCase("1")){
                 factf.nit ="CF";
                 factf.nombre = "Consumidor Final";
                 factf.direccion = "Ciudad";

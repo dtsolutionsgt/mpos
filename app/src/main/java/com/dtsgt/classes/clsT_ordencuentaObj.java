@@ -90,15 +90,12 @@ public class clsT_ordencuentaObj {
     private void updateItem(clsClasses.clsT_ordencuenta item) {
 
         upd.init("T_ordencuenta");
-
         upd.add("CF",item.cf);
         upd.add("NOMBRE",item.nombre);
         upd.add("NIT",item.nit);
         upd.add("DIRECCION",item.direccion);
         upd.add("CORREO",item.correo);
-
         upd.Where("(COREL='"+item.corel+"') AND (ID="+item.id+")");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -116,6 +113,7 @@ public class clsT_ordencuentaObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsT_ordencuenta item;
 

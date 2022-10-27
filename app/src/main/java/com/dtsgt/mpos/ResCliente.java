@@ -196,18 +196,19 @@ public class ResCliente extends PBase {
             gl.percepcion=0;
             gl.contrib="";
             gl.scancliente=gl.cliente;
-
             gl.gNombreCliente ="Consumidor final";
             gl.gNITCliente ="CF";
             gl.gDirCliente ="Ciudad";
             gl.gCorreoCliente ="Ciudad";
             gl.media=1;
-
             consFinal=false;
+
             guardaDatos(1);
+
             limpiaCampos();
 
             finish();
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -247,7 +248,9 @@ public class ResCliente extends PBase {
     }
 
     private void cargaCliente() {
+
         try {
+
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             T_ordencuentaObj.fill("WHERE (COREL='"+gl.ordcorel+"') AND (ID="+gl.pricuenta+")");
 
@@ -276,7 +279,9 @@ public class ResCliente extends PBase {
     }
 
     private void guardaDatos(int iscf) {
+
         try {
+
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             T_ordencuentaObj.fill("WHERE (COREL='"+gl.ordcorel+"') AND (ID="+gl.pricuenta+")");
 
@@ -285,8 +290,8 @@ public class ResCliente extends PBase {
             T_ordencuentaObj.first().direccion=gl.gDirCliente;
             T_ordencuentaObj.first().correo=gl.gCorreoCliente;
             T_ordencuentaObj.first().cf=iscf;
-
             T_ordencuentaObj.update(T_ordencuentaObj.first());
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
