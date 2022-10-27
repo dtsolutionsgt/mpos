@@ -262,7 +262,7 @@ public class ResCliente extends PBase {
                 gl.gNITcf=T_ordencuentaObj.first().cf==1;
             } else {
                 gl.gNombreCliente = "Consumidor final";
-                gl.gNITCliente ="C.F.";
+                gl.gNITCliente ="CF";
                 gl.gDirCliente = "Ciudad";
                 gl.gCorreoCliente = "";
                 gl.gNITcf=true;

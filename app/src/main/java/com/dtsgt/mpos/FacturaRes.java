@@ -1036,7 +1036,6 @@ public class FacturaRes extends PBase {
 			ins.add("RUTA",gl.codigo_ruta);
 			ins.add("VENDEDOR",gl.codigo_vendedor);
 			ins.add("CLIENTE",gl.codigo_cliente);
-
 			ins.add("KILOMETRAJE",0);
 			ins.add("FECHAENTR",fecha);
 			ins.add("FACTLINK",""+gl.numero_orden);
@@ -1044,7 +1043,6 @@ public class FacturaRes extends PBase {
 			ins.add("DESMONTO",descmon);
 			ins.add("IMPMONTO",totimp);//ins.add("IMPMONTO",totimp+totperc);
 			ins.add("PESO",peso);
-
 			ins.add("BANDERA","N");
 			ins.add("STATCOM","N");
 			ins.add("CALCOBJ",false);
@@ -1261,16 +1259,26 @@ public class FacturaRes extends PBase {
                 gl.gDirCliente=" ";
             }
 
-			ins.init("D_FACTURAF");
-			ins.add("COREL",corel);
-			ins.add("NOMBRE",gl.gNombreCliente);
-			ins.add("NIT",gl.gNITCliente);
-			ins.add("DIRECCION",gl.gDirCliente);
-
 			if (gl.gNITCliente.equalsIgnoreCase("CF")) {
-                //ins.add("CORREO",gl.gTelCliente);
-                ins.add("CORREO"," ");
+
+				clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+				P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+				String vCorreoDefecto =P_sucursalObj.first().correo;
+
+				ins.init("D_FACTURAF");
+				ins.add("COREL",corel);
+				ins.add("NOMBRE","Consumidor Final");
+				ins.add("NIT","CF");
+				ins.add("DIRECCION","Ciudad");
+                ins.add("CORREO",vCorreoDefecto);
+
             } else {
+
+				ins.init("D_FACTURAF");
+				ins.add("COREL",corel);
+				ins.add("NOMBRE",gl.gNombreCliente);
+				ins.add("NIT",gl.gNITCliente);
+				ins.add("DIRECCION",gl.gDirCliente);
                 ins.add("CORREO",gl.gCorreoCliente);
             }
 
