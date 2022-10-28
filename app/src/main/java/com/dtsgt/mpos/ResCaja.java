@@ -34,6 +34,8 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_ResCaja;
 import com.dtsgt.webservice.srvCommit;
+import com.dtsgt.webservice.wsCommit;
+import com.dtsgt.webservice.wsOpenDT;
 import com.dtsgt.webservice.wsOrdenRecall;
 
 import java.io.BufferedReader;
@@ -63,12 +65,16 @@ public class ResCaja extends PBase {
     private clsT_ventaObj T_ventaObj;
     private clsT_comboObj T_comboObj;
 
-    private wsOrdenRecall wsor;
+    private wsOpenDT wso;
+
+    //private wsOrdenRecall wsor;
 
     private clsClasses.clsT_orden oitem;
 
-    private Runnable rnCargaOrdenes;
-    private Runnable rnOrdenesNuevos;
+    //private Runnable rnCargaOrdenes;
+    //private Runnable rnOrdenesNuevos;
+
+    private Runnable rnBroadcastCallback;
 
     private Precio prc;
 
@@ -78,7 +84,7 @@ public class ResCaja extends PBase {
 
     private TimerTask ptask;
     private int period=10000,delay=50;
-    private boolean horiz,espedido;
+    private boolean horiz,espedido,actorden,wsidle=false;
 
     private String orddir= Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
 
@@ -103,35 +109,33 @@ public class ResCaja extends PBase {
         T_ventaObj=new clsT_ventaObj(this,Con,db);
         T_comboObj = new clsT_comboObj(this, Con, db);
 
+        actorden=gl.peActOrdenMesas;
+
         prc=new Precio(this,mu,2);
 
-        if (!gl.pelCajaRecep) {
-            lblRec.setVisibility(View.INVISIBLE);imgRec.setVisibility(View.INVISIBLE);
-        }
+        lblRec.setVisibility(View.INVISIBLE);imgRec.setVisibility(View.INVISIBLE);
 
         setHandlers();
         listItems();
         gl.ventalock=false;
 
         getURL();
+        wso=new wsOpenDT(gl.wsurl);wsidle=true;
+        rnBroadcastCallback = () -> broadcastCallback();
+
+        /*
         rnOrdenesNuevos = new Runnable() {
-            public void run() {
-                procesaOrdenes();
-            }
-        };
+            public void run() { procesaOrdenes(); }
+        };*/
 
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
     }
 
     //region Events
 
-    public void doRec(View view) {
-        recibeOrdenes();
-    }
+    public void doRec(View view) { }
 
-    public void doOrden(View view) {
-        listaMeseros();
-    }
+    public void doOrden(View view) { }
 
     public void doExit(View view) {
         finish();
@@ -367,6 +371,106 @@ public class ResCaja extends PBase {
 
     //region Recepcion
 
+    private void broadcastCallback() {
+        wsidle=true;
+        if (wso.errflag) {
+            toastlong("wsCallBack "+wso.error);
+        } else {
+            procesaOrdenes();
+        }
+    }
+
+    private void recibeMesas() {
+        if (!wsidle) return;
+
+        try {
+            wsidle=false;
+            sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA " +
+                    "FROM T_ORDENCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND " +
+                    "((COREL_LINEA=1) OR (COREL_LINEA=99) OR (COREL_LINEA=100)) " +
+                    "ORDER BY COREL_ORDEN,CODIGO";
+            wso.execute(sql,rnBroadcastCallback);
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            wsidle=true;
+        }
+    }
+
+    private void procesaOrdenes() {
+        int iid,trtipo;
+        String cor,cmd,del="",ins="";
+
+        try {
+            if (wso.openDTCursor.getCount()==0) {
+                return;
+            }
+
+            wso.openDTCursor.moveToFirst();
+            cmd = "";
+
+            while (!wso.openDTCursor.isAfterLast()) {
+
+                iid = wso.openDTCursor.getInt(0);
+                cor = wso.openDTCursor.getString(1);
+                sql = wso.openDTCursor.getString(2);
+                trtipo = wso.openDTCursor.getInt(3);
+
+                del = "DELETE FROM P_res_sesion WHERE ID='" + cor + "'";
+                ins = sql.replaceAll("<>", "'");
+
+                try {
+                    db.beginTransaction();
+
+                    if (trtipo==1) {
+                        db.execSQL(del);
+                    }
+
+                    if (trtipo==100) {
+                        //aplicaNombreMesa(cor,sql);
+                    } else {
+                        db.execSQL(ins);
+                    }
+
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+
+                    cmd += "DELETE FROM T_ORDENCOM WHERE CODIGO=" + iid + ";";
+                } catch (Exception e) {
+                    db.endTransaction();
+                    //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage() + "\n" + del + "\n" + ins);
+                    return;
+                }
+
+                wso.openDTCursor.moveToNext();
+            }
+
+            if (!cmd.isEmpty()) confirmaOrdenes(cmd);
+        } catch (Exception e) {
+            //msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+        }
+
+        listItems();
+    }
+
+    private void confirmaOrdenes(String cmd) {
+        try {
+            Intent intent = new Intent(ResCaja.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",cmd);
+            startService(intent);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
+    //endregion
+
+    /*
+    //region Recepcion Vieja
+
+    //region Recepcion orig
+
     private void recibeOrdenes() {
         int pp;
         String fname;
@@ -473,9 +577,9 @@ public class ResCaja extends PBase {
 
     private void listaOrdenes() {
         try {
-            wsor =new wsOrdenRecall(gl.wsurl,gl.emp,idmesero);
-            wsor.execute(rnOrdenesNuevos);
-            toastcentlong("Actualizando, espere por favor . . .");
+            //wsor =new wsOrdenRecall(gl.wsurl,gl.emp,idmesero);
+            //wsor.execute(rnOrdenesNuevos);
+            //("Actualizando, espere por favor . . .");
         } catch (Exception e) {
             app.addToOrdenLog(du.getActDateTime(),
                     "ResCaja."+new Object(){}.getClass().getEnclosingMethod().getName(),
@@ -491,7 +595,6 @@ public class ResCaja extends PBase {
         String s="",corel="",fname;
         int pp,ppe;
         boolean flag=false;
-
 
         if (wsor.errflag) {
             toastlong("wsCallBack " + wsor.error);
@@ -559,6 +662,8 @@ public class ResCaja extends PBase {
         } catch (Exception e) {
             msgbox("MPos recall error : "+e.getMessage());
         }
+
+
     }
 
     public void listaMeseros() {
@@ -601,6 +706,9 @@ public class ResCaja extends PBase {
     }
 
     //endregion
+
+    //endregion
+    */
 
     //region Aux
 
@@ -940,7 +1048,7 @@ public class ResCaja extends PBase {
     protected void onResume() {
         super.onResume();
 
-        iniciaOrdenes();
+        //iniciaOrdenes();
 
         try {
             ViewObj.reconnect(Con,db);
@@ -954,6 +1062,10 @@ public class ResCaja extends PBase {
             msgbox(e.getMessage());
         }
 
+        if (actorden) {
+            recibeMesas();
+        }
+
         if (browse==1) {
             browse=0;
             if (gl.checksuper) msgAskBorrar("Borrar todas las cuentas de la mesa "+mesa);
@@ -963,7 +1075,7 @@ public class ResCaja extends PBase {
 
     @Override
     protected void onPause() {
-        cancelaOrdenes();
+        //cancelaOrdenes();
         super.onPause();
     }
 

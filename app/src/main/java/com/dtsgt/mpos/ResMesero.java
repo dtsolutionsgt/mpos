@@ -1188,7 +1188,7 @@ public class ResMesero extends PBase {
 
     }
 
-    public void showQuickRecep() {
+    private void showQuickRecep() {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿Actualizar parametros de venta?");
 

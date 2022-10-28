@@ -2906,7 +2906,7 @@ public class Orden extends PBase {
                     pitem.codigo_ruta=idruta;
                     pitem.corel_orden=idorden;
                     pitem.corel_linea=1;
-                    pitem.comanda=addItemSqlAndroid(rsitem,gl.emp);
+                    pitem.comanda= addP_res_sesionSqlAndroid(rsitem,gl.emp);
 
                     cmd+=addItemSqlOrdenCom(pitem) + ";";
 
@@ -3033,6 +3033,7 @@ public class Orden extends PBase {
 
     private String buildDetailJournal() {
         clsClasses.clsT_ordencom pitem;
+        clsClasses.clsT_ordencuenta citem;
         int idruta;
         String ss="";
 
@@ -3045,6 +3046,9 @@ public class Orden extends PBase {
             P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
             rsitem=P_res_sesionObj.first();
 
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+            T_ordencuentaObj.fill("WHERE COREL='" + idorden + "'");
+
             for (int i = 0; i <P_rutaObj.count; i++) {
 
                 idruta=P_rutaObj.items.get(i).codigo_ruta;
@@ -3056,7 +3060,7 @@ public class Orden extends PBase {
                     pitem.codigo_ruta=idruta;
                     pitem.corel_orden=idorden;
                     pitem.corel_linea=1;
-                    pitem.comanda=addItemSqlAndroid(rsitem,gl.emp);
+                    pitem.comanda= addP_res_sesionSqlAndroid(rsitem,gl.emp);
 
                     ss+=addItemSqlOrdenCom(pitem) + ";";
 
@@ -3066,8 +3070,20 @@ public class Orden extends PBase {
                     pitem.comanda="";
 
                     ss+=addItemSqlOrdenCom(pitem) + ";";
-                }
 
+
+                    for (int c = 0; i <T_ordencuentaObj.count; i++) {
+                        citem=T_ordencuentaObj.items.get(c);
+
+                        pitem.codigo_ruta=idruta;
+                        pitem.corel_orden=idorden;
+                        pitem.corel_linea=3;
+                        pitem.comanda= addsT_ordencuentaSqlAndroid(citem);
+
+                        ss+=addItemSqlOrdenCom(pitem) + ";";
+                    }
+
+                }
             }
 
             return ss;
@@ -3100,7 +3116,7 @@ public class Orden extends PBase {
                 pitem.codigo_ruta=idruta;
                 pitem.corel_orden=idorden;
                 pitem.corel_linea=1;
-                pitem.comanda=addItemSqlAndroid(rsitem,gl.emp);
+                pitem.comanda= addP_res_sesionSqlAndroid(rsitem,gl.emp);
 
                 ss+=addItemSqlOrdenCom(pitem) + ";";
 
@@ -3120,7 +3136,7 @@ public class Orden extends PBase {
         }
     }
 
-    public String addItemSqlAndroid(clsClasses.clsP_res_sesion item,int idemp) {
+    public String addP_res_sesionSqlAndroid(clsClasses.clsP_res_sesion item, int idemp) {
         String corr="<>"+item.id+"<>";
 
         ins.init("P_res_sesion");
@@ -3135,6 +3151,23 @@ public class Orden extends PBase {
         ins.add("FECHAINI",item.fechaini);
         ins.add("FECHAFIN",item.fechafin);
         ins.add("FECHAULT",item.fechault);
+
+        return ins.sql();
+
+    }
+
+    public String addsT_ordencuentaSqlAndroid(clsClasses.clsT_ordencuenta item) {
+        String corr="<>"+item.id+"<>";
+
+        ins.init("T_ordencuenta");
+
+        ins.add("COREL",corr);
+        ins.add("ID",item.id);
+        ins.add("CF",item.cf);
+        ins.add("NOMBRE",item.nombre);
+        ins.add("NIT",item.nit);
+        ins.add("DIRECCION",item.direccion);
+        ins.add("CORREO",item.correo);
 
         return ins.sql();
 

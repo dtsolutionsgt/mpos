@@ -354,29 +354,18 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <RelativeLayout
-            android:id="@+id/relPTop"
+
+        <GridView
+            android:id="@+id/grdFam"
             android:layout_width="120dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="false"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="1dp"
-            android:focusableInTouchMode="false">
-
-            <GridView
-                android:id="@+id/grdFam"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:clickable="true"
-                android:numColumns="1"
-                android:visibility="visible" />
-        </RelativeLayout>
+            android:layout_marginTop="0dp"
+            android:clickable="true"
+            android:numColumns="1"
+            android:visibility="visible" />
 
         <RelativeLayout
             android:id="@+id/relPBot"
@@ -385,7 +374,7 @@
             android:layout_alignParentLeft="false"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="120dp"
             android:layout_marginBottom="0dp"
             android:layout_toEndOf="@+id/lblDir">
 
