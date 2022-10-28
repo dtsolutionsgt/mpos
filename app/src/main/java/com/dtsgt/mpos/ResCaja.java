@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,14 +12,12 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsT_comboObj;
@@ -29,25 +26,16 @@ import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
-import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_ResCaja;
 import com.dtsgt.webservice.srvCommit;
-import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
-import com.dtsgt.webservice.wsOrdenRecall;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class ResCaja extends PBase {
@@ -380,14 +368,14 @@ public class ResCaja extends PBase {
         }
     }
 
-    private void recibeMesas() {
+    private void recibeOrdenes() {
         if (!wsidle) return;
 
         try {
             wsidle=false;
             sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA " +
                     "FROM T_ORDENCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND " +
-                    "((COREL_LINEA=1) OR (COREL_LINEA=99) OR (COREL_LINEA=100)) " +
+                    "(COREL_LINEA IN (1,3,99,100)) " +
                     "ORDER BY COREL_ORDEN,CODIGO";
             wso.execute(sql,rnBroadcastCallback);
         } catch (Exception e) {
@@ -425,10 +413,19 @@ public class ResCaja extends PBase {
                         db.execSQL(del);
                     }
 
-                    if (trtipo==100) {
-                        //aplicaNombreMesa(cor,sql);
-                    } else {
-                        db.execSQL(ins);
+                    switch (trtipo) {
+                        case 3:
+                            try {
+                                db.execSQL(ins);
+                            } catch (SQLException e) {
+                                String ee=e.getMessage();
+                            }
+                            break;
+                        case 100:
+                            //aplicaNombreMesa(cor,sql)
+                            break;
+                        default:
+                            db.execSQL(ins);break;
                     }
 
                     db.setTransactionSuccessful();
@@ -436,6 +433,7 @@ public class ResCaja extends PBase {
 
                     cmd += "DELETE FROM T_ORDENCOM WHERE CODIGO=" + iid + ";";
                 } catch (Exception e) {
+                    String se=e.getMessage();
                     db.endTransaction();
                     //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage() + "\n" + del + "\n" + ins);
                     return;
@@ -1063,7 +1061,7 @@ public class ResCaja extends PBase {
         }
 
         if (actorden) {
-            recibeMesas();
+            recibeOrdenes();
         }
 
         if (browse==1) {

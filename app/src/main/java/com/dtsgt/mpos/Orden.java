@@ -2042,6 +2042,7 @@ public class Orden extends PBase {
 
     private void exitBtn() {
         if (cantRegBarril()==0) {
+            if (actorden) envioOrden();
             gl.cerrarmesero=true;gl.mesero_lista=true;
             finish();
         } else {
@@ -2686,16 +2687,12 @@ public class Orden extends PBase {
     }
 
     private void envioOrden() {
-
         String cmd="";
 
         //if (modo_emerg) return;
-
-        /*
-        if (!actorden) {
+        /*  if (!actorden) {
             envioOrdenOrig();return;
-        }
-        */
+        }    */
 
         try {
 
@@ -2707,7 +2704,6 @@ public class Orden extends PBase {
             P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
             cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
             //cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
-
 
             clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
             T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
@@ -2884,60 +2880,6 @@ public class Orden extends PBase {
         }
     }
 
-    private void broadcastJournal() {
-        clsClasses.clsT_ordencom pitem;
-        int idruta;
-
-        try {
-
-            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
-            P_rutaObj.fill();
-
-            String cmd="";
-
-            for (int i = 0; i <P_rutaObj.count; i++) {
-
-                idruta=P_rutaObj.items.get(i).codigo_ruta;
-
-                if (idruta!=gl.codigo_ruta) {
-
-                    pitem= clsCls.new clsT_ordencom();
-
-                    pitem.codigo_ruta=idruta;
-                    pitem.corel_orden=idorden;
-                    pitem.corel_linea=1;
-                    pitem.comanda= addP_res_sesionSqlAndroid(rsitem,gl.emp);
-
-                    cmd+=addItemSqlOrdenCom(pitem) + ";";
-
-                    pitem.codigo_ruta=idruta;
-                    pitem.corel_orden=idorden;
-                    pitem.corel_linea=2;
-                    pitem.comanda="";
-
-                    cmd+=addItemSqlOrdenCom(pitem) + ";";
-                }
-
-            }
-
-            try {
-                Intent intent = new Intent(Orden.this, srvCommit.class);
-                intent.putExtra("URL",gl.wsurl);
-                intent.putExtra("command",cmd);
-                startService(intent);
-            } catch (Exception e) {
-                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
-            }
-
-            finish();
-        } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-    }
-
     private void broadcastJournalFlag(int flag) {
         clsClasses.clsT_ordencom pitem;
         int idruta;
@@ -3031,6 +2973,76 @@ public class Orden extends PBase {
 
     }
 
+    private void broadcastJournal() {
+        clsClasses.clsT_ordencom pitem;
+        clsClasses.clsT_ordencuenta citem;
+        int idruta;
+
+        try {
+
+            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+            P_rutaObj.fill();
+
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+            T_ordencuentaObj.fill("WHERE COREL='" + idorden + "'");
+
+            String cmd="";
+
+            for (int i = 0; i <P_rutaObj.count; i++) {
+
+                idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+                if (idruta!=gl.codigo_ruta) {
+
+                    pitem= clsCls.new clsT_ordencom();
+
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_orden=idorden;
+                    pitem.corel_linea=1;
+                    pitem.comanda= addP_res_sesionSqlAndroid(rsitem,gl.emp);
+
+                    cmd+=addItemSqlOrdenCom(pitem) + ";";
+
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_orden=idorden;
+                    pitem.corel_linea=2;
+                    pitem.comanda="";
+
+                    cmd+=addItemSqlOrdenCom(pitem) + ";";
+
+                    for (int c = 0; c <T_ordencuentaObj.count; c++) {
+                        citem=T_ordencuentaObj.items.get(c);
+
+                        pitem.codigo_ruta=idruta;
+                        pitem.corel_orden=idorden;
+                        pitem.corel_linea=3;
+                        pitem.comanda= addsT_ordencuentaSqlAndroid(citem);
+
+                        ss+=addItemSqlOrdenCom(pitem) + ";";
+                    }
+
+                }
+
+            }
+
+            try {
+                Intent intent = new Intent(Orden.this, srvCommit.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                app.addToOrdenLog(du.getActDateTime(),
+                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
+            }
+
+            finish();
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
     private String buildDetailJournal() {
         clsClasses.clsT_ordencom pitem;
         clsClasses.clsT_ordencuenta citem;
@@ -3072,7 +3084,7 @@ public class Orden extends PBase {
                     ss+=addItemSqlOrdenCom(pitem) + ";";
 
 
-                    for (int c = 0; i <T_ordencuentaObj.count; i++) {
+                    for (int c = 0; c <T_ordencuentaObj.count; c++) {
                         citem=T_ordencuentaObj.items.get(c);
 
                         pitem.codigo_ruta=idruta;
@@ -3095,6 +3107,7 @@ public class Orden extends PBase {
 
     private String buildDetailJournalTodasCajas() {
         clsClasses.clsT_ordencom pitem;
+        clsClasses.clsT_ordencuenta citem;
         int idruta;
         String ss="";
 
@@ -3106,6 +3119,10 @@ public class Orden extends PBase {
             clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
             P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
             rsitem=P_res_sesionObj.first();
+
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+            T_ordencuentaObj.fill("WHERE COREL='" + idorden + "'");
+
 
             for (int i = 0; i <P_rutaObj.count; i++) {
 
@@ -3126,6 +3143,17 @@ public class Orden extends PBase {
                 pitem.comanda="";
 
                 ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                for (int c = 0; c <T_ordencuentaObj.count; c++) {
+                    citem=T_ordencuentaObj.items.get(c);
+
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_orden=idorden;
+                    pitem.corel_linea=3;
+                    pitem.comanda= addsT_ordencuentaSqlAndroid(citem);
+
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+                }
 
             }
 
@@ -3157,17 +3185,17 @@ public class Orden extends PBase {
     }
 
     public String addsT_ordencuentaSqlAndroid(clsClasses.clsT_ordencuenta item) {
-        String corr="<>"+item.id+"<>";
+        String corr="<>"+idorden+"<>";
 
         ins.init("T_ordencuenta");
 
         ins.add("COREL",corr);
         ins.add("ID",item.id);
         ins.add("CF",item.cf);
-        ins.add("NOMBRE",item.nombre);
-        ins.add("NIT",item.nit);
-        ins.add("DIRECCION",item.direccion);
-        ins.add("CORREO",item.correo);
+        ins.add("NOMBRE","<>"+item.nombre+"<>");
+        ins.add("NIT","<>"+item.nit+"<>");
+        ins.add("DIRECCION","<>"+item.direccion+"<>");
+        ins.add("CORREO","<>"+item.correo+"<>");
 
         return ins.sql();
 
@@ -5831,6 +5859,7 @@ public class Orden extends PBase {
 
     @Override
     public void onBackPressed() {
+        if (actorden) envioOrden();
         gl.cerrarmesero=true;
         super.onBackPressed();
     }

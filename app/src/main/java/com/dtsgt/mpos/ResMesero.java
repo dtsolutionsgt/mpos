@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.SQLException;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -490,7 +491,7 @@ public class ResMesero extends PBase {
             wsidle=false;
             sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA " +
                 "FROM T_ORDENCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND " +
-                "((COREL_LINEA=1) OR (COREL_LINEA=99) OR (COREL_LINEA=100)) " +
+                "(COREL_LINEA IN (1,3,99,100)) " +
                 "ORDER BY COREL_ORDEN,CODIGO";
             wso.execute(sql,rnBroadcastCallback);
         } catch (Exception e) {
@@ -529,10 +530,16 @@ public class ResMesero extends PBase {
                         db.execSQL(del);
                     }
 
-                    if (trtipo==100) {
-                       aplicaNombreMesa(cor,sql);
-                    } else {
-                        db.execSQL(ins);
+                    switch (trtipo) {
+                        case 3:
+                            try {
+                                db.execSQL(ins);
+                            } catch (SQLException e) { }
+                            break;
+                        case 100:
+                            aplicaNombreMesa(cor,sql);;break;
+                        default:
+                            db.execSQL(ins);break;
                     }
 
                     db.setTransactionSuccessful();
