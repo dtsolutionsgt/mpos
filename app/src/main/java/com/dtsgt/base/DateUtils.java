@@ -116,7 +116,6 @@ public class DateUtils {
 		//c.set(getyear(f), getmonth(f)-1, getday(f));
 		c.set(año,mes,dia);
         c.add(Calendar.DATE, days);
-
         cyear = c.get(Calendar.YEAR);
         cmonth = c.get(Calendar.MONTH)+1;
         cday = c.get(Calendar.DAY_OF_MONTH);
@@ -125,6 +124,23 @@ public class DateUtils {
 
         return f;
     }
+
+	public long addHours(int hours){
+		long f,cyear,cmonth,cday,chour,cmin;
+
+		final Calendar c = Calendar.getInstance();
+		c.add(Calendar.HOUR_OF_DAY, hours);
+
+		cyear = c.get(Calendar.YEAR);
+		cmonth = c.get(Calendar.MONTH)+1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+		chour = c.get(Calendar.HOUR_OF_DAY);
+		cmin = c.get(Calendar.MINUTE);
+
+		f=cfecha(cyear,cmonth,cday)+100*chour+cmin;
+
+		return f;
+	}
 
 	public String sSecond(){
 

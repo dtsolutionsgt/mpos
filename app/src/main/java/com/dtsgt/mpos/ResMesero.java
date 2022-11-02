@@ -221,6 +221,7 @@ public class ResMesero extends PBase {
 
     private void showItems() {
         clsClasses.clsP_res_sesion last;
+        long flim=du.addHours(-12);
         int idmesa;
         String amesa;
         boolean espedido;
@@ -258,7 +259,7 @@ public class ResMesero extends PBase {
                     mesa.alias2=amesa;
                 }
 
-                P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
+                P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+") AND (FECHAINI>="+flim+")");
 
                 if (P_res_sesionObj.count>0) {
 
@@ -311,8 +312,24 @@ public class ResMesero extends PBase {
             P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
             if (P_res_sesionObj.count>0) {
                 //gl.idorden=P_res_sesionObj.first().id;
-                gl.idorden=mesa.idorden;
-                startActivity(new Intent(this,Orden.class));
+                try {
+                    gl.idorden=mesa.idorden;
+                    if (!gl.idorden.isEmpty()) {
+                        startActivity(new Intent(this,Orden.class));
+                    } else {
+                        throw new Exception();
+                    }
+                } catch (Exception ed) {
+                    try {
+                        P_res_sesionObj.first().estado=-1;
+                        P_res_sesionObj.update(P_res_sesionObj.first());
+                        browse = 1;
+                        gl.idorden = "";
+                        startActivity(new Intent(this, Comensales.class));
+                    } catch (Exception ee) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
+                    }
+                }
             } else {
                 //inputPersonas();
                 browse=1;

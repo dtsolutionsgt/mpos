@@ -3606,6 +3606,7 @@ public class WSRec extends PBase {
             public void onClick(DialogInterface dialog, int which) {
                 if (nueva_version) {
                     //msgAskVersion("¿Existe nueva version, proceder con la instalación?");
+                    finish();
                 } else
                     finish();
             }

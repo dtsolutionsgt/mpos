@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
+import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
@@ -30,12 +31,14 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_ResCaja;
 import com.dtsgt.webservice.srvCommit;
+import com.dtsgt.webservice.srvOrdenEnvio;
 import com.dtsgt.webservice.wsOpenDT;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.TimerTask;
 
 public class ResCaja extends PBase {
@@ -57,16 +60,19 @@ public class ResCaja extends PBase {
 
     //private wsOrdenRecall wsor;
 
+    private ArrayList<String> brtitems = new ArrayList<String>();
+
     private clsClasses.clsT_orden oitem;
 
     //private Runnable rnCargaOrdenes;
     //private Runnable rnOrdenesNuevos;
 
     private Runnable rnBroadcastCallback;
+    private Runnable rnDetailCallback;
 
     private Precio prc;
 
-    private String corel,mesa,numpedido;
+    private String corel,mesa,numpedido,brtcorel;
     private int cuenta,counter,idmesero;
     private boolean idle=true,exitflag=false,loading=false;
 
@@ -110,6 +116,12 @@ public class ResCaja extends PBase {
         getURL();
         wso=new wsOpenDT(gl.wsurl);wsidle=true;
         rnBroadcastCallback = () -> broadcastCallback();
+
+        rnDetailCallback = new Runnable() {
+            public void run() {
+                detailCallback();
+            }
+        };
 
         /*
         rnOrdenesNuevos = new Runnable() {
@@ -156,16 +168,16 @@ public class ResCaja extends PBase {
     //region Main
 
     private void listItems() {
-        long ff;
+        long ff,flim=du.addHours(-12);
         String fs,ssa;
 
         try {
             sql="SELECT T_ORDENCUENTA.ID AS Cuenta, P_RES_SESION.ID AS Corel, P_RES_MESA.NOMBRE, P_RES_SESION.ESTADO, P_RES_SESION.FECHAULT , " +
-                    "  P_RES_MESA.CODIGO_GRUPO,P_RES_SESION.CANTC,'','' " +
+                    "P_RES_MESA.CODIGO_GRUPO,P_RES_SESION.CANTC,'','' " +
                     "FROM P_RES_SESION INNER JOIN " +
                     "T_ORDENCUENTA ON P_RES_SESION.ID =T_ORDENCUENTA.COREL INNER JOIN " +
                     "P_RES_MESA ON P_RES_SESION.CODIGO_MESA = P_RES_MESA.CODIGO_MESA " +
-                    "WHERE (P_RES_SESION.ESTADO IN (1, 2, 3)) " +
+                    "WHERE (P_RES_SESION.ESTADO IN (1, 2, 3)) AND (P_RES_SESION.FECHAINI>="+flim+") " +
                     "ORDER BY P_RES_MESA.NOMBRE, CUENTA ";
             ViewObj.fillSelect(sql);
 
@@ -213,13 +225,106 @@ public class ResCaja extends PBase {
         }
     }
 
-    private void hideItem() {
+    private void anulaItem() {
+
         try {
-            db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1,FECHAULT="+du.getActDateTime()+" WHERE ID='"+corel+"'");
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM P_RES_SESION WHERE (ID='"+corel+"')");
+            db.execSQL("DELETE FROM T_orden WHERE (COREL='" + corel + "')");
+            db.execSQL("DELETE FROM T_ordencuenta WHERE (COREL='" + corel + "')");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            anulaOrden();
             listItems();
         } catch (Exception e) {
+            db.endTransaction();
             msgbox(e.getMessage());
         }
+
+    }
+
+    private void anulaOrden() {
+        String cmd="";
+
+        try {
+
+            cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + corel + "')" + ";";
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + corel + "')" + ";";
+            cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + corel + "')" + ";";
+
+            cmd+=buildAnulJournal();
+
+            try {
+                Intent intent = new Intent(ResCaja.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            finish();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private String buildAnulJournal() {
+        clsClasses.clsT_ordencom pitem;
+        clsClasses.clsT_ordencuenta citem;
+        int idruta;
+        String ss="";
+
+        try {
+
+            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+            P_rutaObj.fill();
+
+            for (int i = 0; i <P_rutaObj.count; i++) {
+
+                idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+                if (idruta!=gl.codigo_ruta) {
+
+                    pitem= clsCls.new clsT_ordencom();
+
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_orden=corel;
+                    pitem.corel_linea=1;
+
+                    pitem.comanda="DELETE FROM P_RES_SESION WHERE (ID=<>"+corel+"<>)";
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                    pitem.comanda="DELETE FROM T_orden WHERE (COREL=<>" + corel + "<>)";
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                    pitem.comanda="DELETE FROM T_ordencuenta WHERE (COREL=<>" + corel + "<>)" ;
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                }
+            }
+
+            return ss;
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return "";
+        }
+    }
+
+    public String addItemSqlOrdenCom(clsClasses.clsT_ordencom item) {
+
+        ins.init("T_ordencom");
+
+        ins.add("CODIGO_RUTA",item.codigo_ruta);
+        ins.add("COREL_ORDEN",item.corel_orden);
+        ins.add("COREL_LINEA",item.corel_linea);
+        ins.add("COMANDA",item.comanda);
+
+        return ins.sql();
+
     }
 
     //endregion
@@ -227,6 +332,14 @@ public class ResCaja extends PBase {
     //region Venta
 
     private void crearVenta() {
+        if (actorden) {
+            ordenDetail();
+        } else {
+            buildVenta();
+        }
+    }
+
+    private void buildVenta() {
 
         try {
 
@@ -357,6 +470,129 @@ public class ResCaja extends PBase {
 
     //endregion
 
+    //region Detalle
+
+
+    private void ordenDetail() {
+
+        try {
+            brtcorel=corel;
+
+            sql="SELECT ID, COREL, PRODUCTO, EMPRESA, UM, CANT, UMSTOCK, FACTOR, PRECIO, IMP, " +
+                    "DES, DESMON, TOTAL, PRECIODOC, PESO, VAL1, VAL2, VAL3, VAL4, PERCEP, CUENTA, ESTADO " +
+                    "FROM T_ORDEN WHERE (COREL='"+ brtcorel +"') AND (CUENTA="+cuenta+")";
+            wso.execute(sql,rnDetailCallback);
+        } catch (Exception e) {
+             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void detailCallback() {
+
+        clsClasses.clsT_orden btitem;
+
+        try {
+
+            brtitems.clear();
+
+            if (wso.errflag) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+wso.error);
+                return;
+            }
+
+            if (wso.openDTCursor.getCount()==0) return;
+
+            brtitems.add("DELETE FROM T_orden WHERE COREL='"+brtcorel+"'");
+
+            wso.openDTCursor.moveToFirst();
+            while (!wso.openDTCursor.isAfterLast()) {
+
+                btitem = clsCls.new clsT_orden();
+
+                btitem.id=wso.openDTCursor.getInt(0);
+                btitem.corel=wso.openDTCursor.getString(1);
+                btitem.producto=wso.openDTCursor.getString(2);
+                btitem.empresa=wso.openDTCursor.getString(3);
+                btitem.um=wso.openDTCursor.getString(4);
+                btitem.cant=wso.openDTCursor.getDouble(5);
+                btitem.umstock=wso.openDTCursor.getString(6);
+                btitem.factor=wso.openDTCursor.getDouble(7);
+                btitem.precio=wso.openDTCursor.getDouble(8);
+                btitem.imp=wso.openDTCursor.getDouble(9);
+
+                btitem.des=wso.openDTCursor.getDouble(10);
+                btitem.desmon=wso.openDTCursor.getDouble(11);
+                btitem.total=wso.openDTCursor.getDouble(12);
+                btitem.preciodoc=wso.openDTCursor.getDouble(13);
+                btitem.peso=wso.openDTCursor.getDouble(14);
+                btitem.val1=wso.openDTCursor.getDouble(15);
+                btitem.val2=wso.openDTCursor.getString(16);
+                btitem.val3=wso.openDTCursor.getDouble(17);
+                btitem.val4=wso.openDTCursor.getString(18);
+                btitem.percep=wso.openDTCursor.getDouble(19);
+                btitem.cuenta=wso.openDTCursor.getInt(20);
+                btitem.estado=wso.openDTCursor.getInt(21);
+
+                brtitems.add(addTordenItemSql(btitem));
+
+                wso.openDTCursor.moveToNext();
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
+        }
+
+        try {
+            db.beginTransaction();
+
+            for (int i = 0; i <brtitems.size(); i++) {
+                sql=brtitems.get(i);
+                db.execSQL(sql);
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            buildVenta();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public String addTordenItemSql(clsClasses.clsT_orden item) {
+
+        ins.init("T_orden");
+
+        ins.add("ID",item.id);
+        ins.add("COREL",item.corel);
+        ins.add("PRODUCTO",item.producto);
+        ins.add("EMPRESA",item.empresa);
+        ins.add("UM",item.um);
+        ins.add("CANT",item.cant);
+        ins.add("UMSTOCK",item.umstock);
+        ins.add("FACTOR",item.factor);
+        ins.add("PRECIO",item.precio);
+        ins.add("IMP",item.imp);
+        ins.add("DES",item.des);
+        ins.add("DESMON",item.desmon);
+        ins.add("TOTAL",item.total);
+        ins.add("PRECIODOC",item.preciodoc);
+        ins.add("PESO",item.peso);
+        ins.add("VAL1",item.val1);
+        ins.add("VAL2",item.val2);
+        ins.add("VAL3",item.val3);
+        ins.add("VAL4",item.val4);
+        ins.add("PERCEP",item.percep);
+        ins.add("CUENTA",item.cuenta);
+        ins.add("ESTADO",item.estado);
+
+        return ins.sql();
+
+    }
+
+    //endregion
+
     //region Recepcion
 
     private void broadcastCallback() {
@@ -369,14 +605,15 @@ public class ResCaja extends PBase {
     }
 
     private void recibeOrdenes() {
+
         if (!wsidle) return;
 
         try {
             wsidle=false;
-            sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA " +
-                    "FROM T_ORDENCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND " +
-                    "(COREL_LINEA IN (1,3,99,100)) " +
-                    "ORDER BY COREL_ORDEN,CODIGO";
+            sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA FROM T_ORDENCOM " +
+                "WHERE (CODIGO_RUTA="+gl.codigo_ruta+") " +
+                "AND (COREL_LINEA IN (1,3,99,100)) " +
+                "ORDER BY COREL_ORDEN,CODIGO";
             wso.execute(sql,rnBroadcastCallback);
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1027,7 +1264,7 @@ public class ResCaja extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                hideItem();
+                anulaItem();
             }
         });
 
