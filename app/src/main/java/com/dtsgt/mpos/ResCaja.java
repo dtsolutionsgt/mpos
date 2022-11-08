@@ -8,6 +8,7 @@ import android.database.SQLException;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
@@ -78,7 +79,7 @@ public class ResCaja extends PBase {
 
     private TimerTask ptask;
     private int period=10000,delay=50;
-    private boolean horiz,espedido,actorden,wsidle=false;
+    private boolean horiz,espedido,actorden,wsidle=true;
 
     private String orddir= Environment.getExternalStorageDirectory().getPath() + "/mposordcaja";
 
@@ -107,8 +108,6 @@ public class ResCaja extends PBase {
 
         prc=new Precio(this,mu,2);
 
-        lblRec.setVisibility(View.INVISIBLE);imgRec.setVisibility(View.INVISIBLE);
-
         setHandlers();
         listItems();
         gl.ventalock=false;
@@ -133,7 +132,9 @@ public class ResCaja extends PBase {
 
     //region Events
 
-    public void doRec(View view) { }
+    public void doRec(View view) {
+        recibeOrdenes();
+    }
 
     public void doOrden(View view) { }
 
@@ -496,7 +497,8 @@ public class ResCaja extends PBase {
             brtitems.clear();
 
             if (wso.errflag) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+wso.error);
+                //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+wso.error);
+                msgAskPagar("No se logró conectar al servidor.\nEs posible que la cuenta NO ESTÁ actualizada.");
                 return;
             }
 
@@ -599,6 +601,7 @@ public class ResCaja extends PBase {
         wsidle=true;
         if (wso.errflag) {
             toastlong("wsCallBack "+wso.error);
+            showButton();
         } else {
             procesaOrdenes();
         }
@@ -610,6 +613,8 @@ public class ResCaja extends PBase {
 
         try {
             wsidle=false;
+            lblRec.setVisibility(View.INVISIBLE);imgRec.setVisibility(View.INVISIBLE);
+
             sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA FROM T_ORDENCOM " +
                 "WHERE (CODIGO_RUTA="+gl.codigo_ruta+") " +
                 "AND (COREL_LINEA IN (1,3,99,100)) " +
@@ -617,6 +622,7 @@ public class ResCaja extends PBase {
             wso.execute(sql,rnBroadcastCallback);
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            showButton();
             wsidle=true;
         }
     }
@@ -627,6 +633,7 @@ public class ResCaja extends PBase {
 
         try {
             if (wso.openDTCursor.getCount()==0) {
+                showButton();
                 return;
             }
 
@@ -684,7 +691,20 @@ public class ResCaja extends PBase {
             //msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
+        showButton();
+
         listItems();
+    }
+
+    private void showButton() {
+        Handler mtimer = new Handler();
+        Runnable mrunner=new Runnable() {
+            @Override
+            public void run() {
+                lblRec.setVisibility(View.VISIBLE);imgRec.setVisibility(View.VISIBLE);
+            }
+        };
+        mtimer.postDelayed(mrunner,2000);
     }
 
     private void confirmaOrdenes(String cmd) {
@@ -1151,6 +1171,25 @@ public class ResCaja extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void msgAskPagar(String msg) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Mesa "+mesa);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Pagar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                buildVenta();
+            }
+        });
+
+        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
     }
 
     private void showMenuMesaCompleta() {

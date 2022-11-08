@@ -38,6 +38,7 @@ public class clsFELInFile {
     public String error,fecha_factura;
     public Boolean errorflag,errorcon,constat,duplicado,errcert,errfirma,modoiduni,iduniflag;
     public Boolean halt=false;
+    public boolean autocancel=false;
     public int errlevel,response;
     public long idcontingencia;
 
@@ -46,6 +47,7 @@ public class clsFELInFile {
     public String ret_uuid,ret_serie,ret_numero;
 
     public int timeout=6000;
+    public FELFactura owner;
 
     public long ftime1=1,ftime2=-1,ftime3=-1;
 
@@ -76,9 +78,15 @@ public class clsFELInFile {
     private JSONObject jsona = new JSONObject();
     private JSONObject jsoniu = new JSONObject();
 
+    private AsyncCallWS wstask;
+
+    private Handler  halttimer;
+    private Runnable haltrunner;
+
     private String s64, jsfirm,jscert,jsanul,jsidu,firma;
     private double imp,totmonto,totiva;
     private int linea;
+    private boolean firmcomplete,certcomplete;
 
     // Configuracion
 
@@ -144,7 +152,6 @@ public class clsFELInFile {
             jsonf.put("es_anulacion","N");
 
             Date currentTime = Calendar.getInstance().getTime();
-            Log.i("FEL_FIRM: ", currentTime.toString());
 
             executeWSFirm();
 
@@ -158,8 +165,46 @@ public class clsFELInFile {
         jsfirm = jsonf.toString();
         errorflag=false;error="";
 
-        AsyncCallWS wstask = new AsyncCallWS();
+        firmcomplete=false;halt=false;
+        wstask = new AsyncCallWS();
         wstask.execute();
+
+        /*
+        if (!autocancel) {
+            wstask.execute();
+        } else {
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    wstask.execute();
+                }
+            };
+            mtimer.postDelayed(mrunner,20000);
+        }
+
+        if (autocancel) {
+
+            halttimer = new Handler();
+            haltrunner = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (!firmcomplete) {
+                            halt = true;
+                            wstask.cancel(true);
+                        }
+                    } catch (Exception e) {
+                        toastlong("No se logro certificar. Timeout: " + timeout + "\n" + e.getMessage());
+                    }
+                }
+            };
+            //halttimer.postDelayed(haltrunner,timeout);
+            halttimer.postDelayed(haltrunner, 5000);
+        }
+
+         */
+
     }
 
     private void wsExecuteF(){
@@ -270,13 +315,14 @@ public class clsFELInFile {
     private void wsFinishedF() {
         try  {
 
+            firmcomplete=true;
+
             if (halt) {
                 errorflag=true;error="Interrupido por usuario";
                 parent.felCallBack();
             } else {
                 if (!errorflag) {
                     Date currentTime = Calendar.getInstance().getTime();
-                    Log.i("FEL_CERT: ", currentTime.toString());
                     sendJSONCert();
 
                     try {
@@ -314,6 +360,22 @@ public class clsFELInFile {
 
         @Override
         protected void onProgressUpdate(Void... values) {}
+
+        @Override
+        protected void onCancelled() {
+            try {
+                firmcomplete=true;
+                errorflag=true;error="Se agotó tiempo de certificación";
+                parent.felCallBack();
+            } catch (Exception e) {
+                String ss=e.getMessage();
+                ss=ss+"";
+            }
+
+
+            super.onCancelled();
+
+        }
 
     }
 
@@ -1276,6 +1338,12 @@ public class clsFELInFile {
         toast.show();
     }
 
+    protected void toastlong(String msg) {
+        Toast toast= Toast.makeText(cont,msg,Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
     public double round2(double val){
         int ival;
 
@@ -1290,4 +1358,5 @@ public class clsFELInFile {
     }
 
     //endregion
+
 }

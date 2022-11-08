@@ -18,6 +18,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="5dp"
+                android:padding="10dp"
                 android:src="@drawable/ws_refresh" />
 
             <ImageView
@@ -196,7 +197,7 @@
         android:gravity="center_horizontal"
         android:text="Actualizar"
         android:textSize="10sp"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/imageView87"
@@ -206,13 +207,13 @@
         android:layout_alignTop="@+id/gridView1"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="false"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="0dp"
         android:clickable="true"
         android:onClick="doRec"
         android:padding="10dp"
         android:src="@drawable/recibir_rapido"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/imageView96"
@@ -252,7 +253,7 @@
         android:layout_alignParentTop="false"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="200dp"
         android:layout_marginEnd="0dp"
         android:adjustViewBounds="true"
         android:clickable="true"

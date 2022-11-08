@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +25,8 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.webservice.wsCommit;
+import com.dtsgt.webservice.wsOpenDT;
 
 import org.apache.commons.io.FileUtils;
 
@@ -35,7 +38,11 @@ public class Caja extends PBase {
 
     private TextView lblTit, lblMontoIni, lblMontoFin,lblMontoCred;
     private EditText Vendedor, Fecha, MontoIni, MontoFin, MontoCred;
+    private TextView FechaB;
     private ImageView imgpend;
+
+    private wsOpenDT wso;
+    private Runnable rnDateCallback;
 
     private clsClasses.clsP_cajacierre itemC;
     private clsClasses.clsP_cajahora itemH;
@@ -56,6 +63,7 @@ public class Caja extends PBase {
         lblMontoIni = (TextView) findViewById(R.id.textView133);
         MontoIni = (EditText) findViewById(R.id.editText19);
         Fecha = (EditText) findViewById(R.id.editText16);
+        FechaB = findViewById(R.id.textView302);
         Vendedor = (EditText) findViewById(R.id.editText18);
         lblMontoFin = (TextView) findViewById(R.id.textView134);
         MontoFin = (EditText) findViewById(R.id.editText20);
@@ -64,8 +72,10 @@ public class Caja extends PBase {
         imgpend=findViewById(R.id.imageView107);
 
         Vendedor.setText(gl.vendnom);
-        Fecha.setText(du.getActDateStr());
         lblTit.setText(gl.titReport);
+
+        String sf=du.sfecha(du.getActDate());
+        Fecha.setText(sf);FechaB.setText(sf);
 
         try{
             Cursor dt;
@@ -132,12 +142,34 @@ public class Caja extends PBase {
 
         validaFacturas();
 
+        rnDateCallback = new Runnable() {
+            public void run() {
+                dateCallback();
+            }
+        };
+
+        app.getURL();
+        wso=new wsOpenDT(gl.wsurl);
+
     }
 
     //region Events
 
-    public void save(View view){
-        guardar();
+    public void save(View view) {
+        if (gl.cajaid==1) {
+            try {
+                fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
+            } catch (Exception e) {
+                fondoCaja=0;
+            }
+            if (fondoCaja==0){
+                msgbox("El monto inicial incorrecto");return;
+            }
+            msgAskFecha("¿La fecha "+FechaB.getText().toString()+" está correcta?");
+            //guardar();
+        } else {
+            guardar();
+        }
     }
 
     public void doExit(View view) {
@@ -372,7 +404,7 @@ public class Caja extends PBase {
 
                 writeCorelLog(6,gl.corelZ,"");
 
-                itemC.fecha = du.getFechaActual();
+                itemC.fecha = du.getActDate();
 
                 itemC.estado = 0;
                 itemC.codpago = 0;
@@ -569,6 +601,53 @@ public class Caja extends PBase {
 
     //endregion
 
+    //region Web service
+
+    private void checkDate() {
+        try {
+            sql="select Day(getdate()), Month(getdate()), Year(getdate())";
+            wso.execute(sql,rnDateCallback);
+            toast("Validando fecha, espere . . . ");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+
+        }
+    }
+
+    private void dateCallback() {
+        long fa,fserv;
+
+        if (wso.errflag) {
+            msgbox("dateCallback: "+wso.error);return;
+        } else {
+            try {
+                if (wso.openDTCursor.getCount()==0) {
+                    msgAskNoFecha("No so logró validar la fecha.\nPuede ser que el dispositivo tiene una fecha incorrecta.\n¿Continuar?");
+                    return;
+                }
+
+                wso.openDTCursor.moveToFirst();
+                long fd=wso.openDTCursor.getInt(0);
+                long fm=wso.openDTCursor.getInt(1);
+                long fy=wso.openDTCursor.getInt(2);
+
+                fserv=du.cfecha(fy,fm,fd);
+                fa=du.getActDate();
+
+                if (fserv==fa) {
+                    guardar();
+                } else {
+                    msgAskNoFecha("La fecha del dispositivo incorrecta.\nLa fecha correcta deberia ser "+du.sfecha(fserv)+".\nContinuar puede causar serios problemas.\n¿Continuar?");
+                }
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+        }
+    }
+
+
+    //endregion
+
     //region Dialogs
 
     private void msgAskExit(String msg) {
@@ -664,6 +743,78 @@ public class Caja extends PBase {
         } catch (Exception ex) {
             msgbox("Error msgboxValidaMonto: "+ex);return;
         }
+    }
+
+    private void msgAskFecha(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                checkDate();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgText("Por favor informe soporte");
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskNoFecha(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgAskFechaContinuar("¿Está seguro?");
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgText("Por favor informe soporte");
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgAskFechaContinuar(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                guardar();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                msgText("Por favor informe soporte");
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    private void msgText(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) { }
+        });
+
+        dialog.show();
+
     }
 
     /*

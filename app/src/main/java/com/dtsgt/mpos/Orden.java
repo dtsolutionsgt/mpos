@@ -164,10 +164,12 @@ public class Orden extends PBase {
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel;
-    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo;
 
     //#EJC202210221616:
     private int IdCuentaAMover =0;
+
+    private int maxitems=100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -971,6 +973,11 @@ public class Orden extends PBase {
         tipo=prodTipo(gl.prodcod);
         gl.uidingrediente=0;
 
+        if (items.size()>=maxitems) {
+            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");
+            return false;
+        }
+
         /*
          if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
             try {
@@ -1080,6 +1087,11 @@ public class Orden extends PBase {
         double precdoc,fact,cantbas,peso;
         String umb;
         int nid1,nid2,newid;
+
+        if (items.size()>=maxitems) {
+            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");
+            return false;
+        }
 
         try {
             int icod=app.codigoProducto(prodid);
@@ -1425,6 +1437,43 @@ public class Orden extends PBase {
             db.endTransaction();
             msgbox(e.getMessage());
         }
+
+    }
+
+    private void borrarItemComanda() {
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBOAD WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBODET WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBOPRECIO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+
+            db.execSQL("DELETE FROM T_ORDEN_ING WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+            db.execSQL("DELETE FROM T_ORDEN_ING WHERE (COREL='"+idorden+"') AND (PUID="+gl.produid+")");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            try {
+                String cmd = "DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")" + ";";
+
+                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
 
     }
 
@@ -2016,6 +2065,7 @@ public class Orden extends PBase {
                     //browse=11;
                     //startActivity(new Intent(Orden.this,ValidaSuper2.class));
                     //msgBorrarOrden("Cerrar todas las cuentas del orden");
+                    valsupermodo=0;
                     validaSupervisor();
                     break;
 
@@ -5014,6 +5064,33 @@ public class Orden extends PBase {
         }
     }
 
+    private void msgAskDelCom(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (esIngrediente()) {
+                        msgbox("Artículo es un ingrediente, no se puede borrar");
+                    } else {
+                        borrarItemComanda();
+                    }
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
     private void msgAskAdd(String msg) {
         try{
 
@@ -5242,7 +5319,6 @@ public class Orden extends PBase {
     private void showItemPopMenuLock() {
 
         try {
-
             extListDlg listdlg = new extListDlg();
 
             listdlg.buildDialog(Orden.this,gl.gstr2);
@@ -5250,6 +5326,7 @@ public class Orden extends PBase {
             listdlg.add(R.drawable.cambio_usuario,"Cambiar cuenta");//imagen , texto - si imagen=0 no se despliega
             listdlg.add(R.drawable.recibir_archivos,"Dividir");
             listdlg.add(R.drawable.avanzar,"Mover cuenta a otra mesa");
+            listdlg.add(R.drawable.avanzar,"Borrar");
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -5267,6 +5344,10 @@ public class Orden extends PBase {
                                 break;
                             case 2:
                                 listaMesasParaMover();
+                                break;
+                            case 3:
+                                valsupermodo=1;
+                                validaSupervisor();
                                 break;
                         }
                         listdlg.dismiss();
@@ -5810,7 +5891,12 @@ public class Orden extends PBase {
                     if (listdlg.getInput().isEmpty()) return;
 
                     if (listdlg.validPassword()) {
-                        msgBorrarOrden("Cerrar todas las cuentas de la órden");
+                        if (valsupermodo==0) {
+                            msgBorrarOrden("Cerrar todas las cuentas de la órden");
+                        } else if (valsupermodo==1) {
+                            msgAskDelCom("Borrar artículo");
+                        }
+
                         listdlg.dismiss();
                     } else {
                         toast("Contraseña incorrecta");
@@ -5962,6 +6048,7 @@ public class Orden extends PBase {
                 browse=0;if (gl.checksuper) msgBorrarOrden("Cerrar todas las cuentas del orden");
                 return;
             }
+
 
         } catch (Exception e){
         }

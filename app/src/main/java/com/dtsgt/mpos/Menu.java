@@ -2585,12 +2585,48 @@ public class Menu extends PBase {
 		dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface dialog, int which) {
+				Long fActual;
+				int ccorel;
 
 				try {
 
-					Long fActual = du.getFechaActual();
+
+					fActual = du.getFechaActual();
 					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<=0";
 					db.execSQL(sql);
+
+
+					/*
+					fActual = du.getFechaActual();
+					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<=0";
+					db.execSQL(sql);
+					*/
+
+
+					/*
+					fActual = du.getActDate()+10;
+					try {
+
+						sql="SELECT COREL FROM P_CAJACIERRE  WHERE FECHA<=0";
+						Cursor dt=Con.OpenDT(sql);
+
+						if (dt.getCount()>0) {
+							dt.moveToFirst();
+							while (!dt.isAfterLast()) {
+								ccorel=dt.getInt(0);
+								sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE COREL="+ccorel;
+								db.execSQL(sql);
+
+								dt.moveToNext();
+							}
+						}
+
+					} catch (Exception e) {
+						msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+					}
+ */
+
+
 
 					fActual = du.getActDateTime();
 

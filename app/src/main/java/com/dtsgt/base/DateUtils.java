@@ -363,13 +363,6 @@ public class DateUtils {
 		c=c*10000+month*100+day;
 		return c;
 	}
-	  
-	public long cfecha(long year, long month, long day) {
-		long c;
-		c=year % 100;
-		c=c*10000+month*100+day;
-		return c*10000;
-	}
 
 	public long cfechaDesc(long year, long month, long day) {
 
@@ -552,21 +545,6 @@ public class DateUtils {
 	    
 	    return dw;
 	}
-	
-	public long getActDate(){
-
-		long f;
-		int cyear,cmonth,cday;
-		
-		final Calendar c = Calendar.getInstance();
-		cyear = c.get(Calendar.YEAR);
-		cmonth = c.get(Calendar.MONTH)+1;
-		cday = c.get(Calendar.DAY_OF_MONTH);
-		
-		f=cfecha(cyear,cmonth,cday);
-		
-		return f;
-	}
 
 	public long getFechaActual(){
 
@@ -642,6 +620,28 @@ public class DateUtils {
 		fecha=f+ch*100+cm;
 		
 		return fecha;
+	}
+
+	public long getActDate(){
+
+		long f;
+		int cyear,cmonth,cday;
+
+		final Calendar c = Calendar.getInstance();
+		cyear = c.get(Calendar.YEAR);
+		cmonth = c.get(Calendar.MONTH)+1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+
+		f=cfecha(cyear,cmonth,cday);
+
+		return f;
+	}
+
+	public long cfecha(long year, long month, long day) {
+		long c;
+		c=year % 100;
+		c=c*10000+month*100+day;
+		return c*10000;
 	}
 
 	public String getActDateStr(){

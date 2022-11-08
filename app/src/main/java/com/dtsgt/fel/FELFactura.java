@@ -102,6 +102,8 @@ public class FELFactura extends PBase {
 
         fel=new clsFELInFile(this,this,gl.timeout);
         fel.halt=false;
+        fel.autocancel=true;
+        fel.owner=FELFactura.this;
 
         ws = new WebServiceHandler(FELFactura.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
@@ -189,8 +191,16 @@ public class FELFactura extends PBase {
     public void doHalt(View viev) {
         fel.halt=true;
         lblHalt.setVisibility(View.INVISIBLE);
-        //marcaFacturaContingencia();
-        //finish();
+
+        Handler mtimer = new Handler();
+        Runnable mrunner=new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        };
+        mtimer.postDelayed(mrunner,200);
+
     }
 
     //endregion
@@ -430,21 +440,23 @@ public class FELFactura extends PBase {
     }
 
     private void callBackSingle() {
+        try {
+            if (!fel.errorflag) {
+                gl.feluuid=fel.fact_uuid;
 
-        if (!fel.errorflag) {
-            gl.feluuid=fel.fact_uuid;
-
-            if (gl.peEnvio) {
-                envioFactura(felcorel);
+                if (gl.peEnvio) {
+                    envioFactura(felcorel);
+                } else {
+                    finish();
+                }
             } else {
+                gl.feluuid="";
+                gl.FELmsg="Ocurrió error en FEL :\n\n"+ fel.error;
+                startActivity(new Intent(this,FELmsgbox.class));
                 finish();
             }
-        } else {
-
-            gl.feluuid="";
-            gl.FELmsg="Ocurrió error en FEL :\n\n"+ fel.error;
-            startActivity(new Intent(this,FELmsgbox.class));
-            finish();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -632,7 +644,6 @@ public class FELFactura extends PBase {
     }
 
     //endregion
-
 
     //region Envio una factura
 
@@ -1193,6 +1204,15 @@ public class FELFactura extends PBase {
             return lc;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return "";
+        }
+    }
+
+    public void closeForm() {
+        toast("closeForm");
+        try {
+            finish();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

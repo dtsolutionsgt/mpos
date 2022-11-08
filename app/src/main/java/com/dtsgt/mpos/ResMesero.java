@@ -141,9 +141,6 @@ public class ResMesero extends PBase {
             lblbarril.setVisibility(View.INVISIBLE);
             imgbarril.setVisibility(View.INVISIBLE);
         }
-
-
-
     }
 
     //region Events
@@ -157,8 +154,7 @@ public class ResMesero extends PBase {
     }
 
     public void doRec(View view) {
-        //procesaEstadoMesas();
-        //recibeOrdenes();
+        recibeOrdenes();
     }
 
     public void doBarril(View view) {
@@ -471,8 +467,7 @@ public class ResMesero extends PBase {
         wsidle=true;
         if (wso.errflag) {
             toastlong("wsCallBack "+wso.error);
-            app.addToOrdenLog(du.getActDateTime(),
-                    "ResMesero."+new Object(){}.getClass().getEnclosingMethod().getName(),wso.error,sql);
+            imgwsref.setVisibility(View.INVISIBLE);
         } else {
             procesaOrdenes();
         }
@@ -486,7 +481,7 @@ public class ResMesero extends PBase {
                     runOnUiThread(new Runnable() {
                         @Override
                         public synchronized void run() {
-                            recibeOrdenes();
+                            //recibeOrdenes();
                         }
                     });
                 }
@@ -506,15 +501,17 @@ public class ResMesero extends PBase {
 
         try {
             wsidle=false;
+            imgwsref.setVisibility(View.VISIBLE);
+
             sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA " +
                 "FROM T_ORDENCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND " +
-                "(COREL_LINEA IN (1,3,99,100)) " +
-                "ORDER BY COREL_ORDEN,CODIGO";
+                "(COREL_LINEA IN (1,3,99,100)) ORDER BY COREL_ORDEN,CODIGO";
             wso.execute(sql,rnBroadcastCallback);
+
         } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),"ResMesero."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             wsidle=true;
+            imgwsref.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -524,6 +521,7 @@ public class ResMesero extends PBase {
 
         try {
             if (wso.openDTCursor.getCount()==0) {
+                imgwsref.setVisibility(View.INVISIBLE);wsidle=true;
                 return;
             }
 
@@ -554,7 +552,7 @@ public class ResMesero extends PBase {
                             } catch (SQLException e) { }
                             break;
                         case 100:
-                            aplicaNombreMesa(cor,sql);;break;
+                            aplicaNombreMesa(cor,sql);break;
                         default:
                             db.execSQL(ins);break;
                     }
@@ -565,6 +563,7 @@ public class ResMesero extends PBase {
                     cmd += "DELETE FROM T_ORDENCOM WHERE CODIGO=" + iid + ";";
                 } catch (Exception e) {
                     db.endTransaction();
+                    imgwsref.setVisibility(View.INVISIBLE);wsidle=true;
                     //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage() + "\n" + del + "\n" + ins);
                     return;
                 }
@@ -577,6 +576,7 @@ public class ResMesero extends PBase {
             //msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
+        imgwsref.setVisibility(View.INVISIBLE);wsidle=true;
         listItems();
     }
 

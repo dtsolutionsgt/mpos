@@ -198,7 +198,6 @@ public class FacturaRes extends PBase {
 		credito=gl.credito;
         idfel=gl.peFEL;
 
-
 		try {
 			if (!gl.nummesapedido.equalsIgnoreCase("0")) {
 			}
@@ -826,15 +825,18 @@ public class FacturaRes extends PBase {
             }
             */
         } else {
-            if (isNetworkAvailable()) {
+            //if (isNetworkAvailable()) {
                 browse=2;
                 gl.felcorel=corel;gl.feluuid="";
                 startActivity(new Intent(this, FELFactura.class));
+				/*
             } else {
                 marcaFacturaContingencia();
                 toast("No hay conexion a internet");
                 impresionDocumento();
             }
+            */
+
         }
 
 	}
