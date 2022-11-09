@@ -174,27 +174,40 @@ public class PagoTarjeta extends PBase {
     private void listaTipos() {
 
         try {
+
             clsP_mediapagoObj P_mediapagoObj=new clsP_mediapagoObj(this,Con,db);
-            P_mediapagoObj.fill("WHERE (NIVEL=6) AND (ACTIVO=1)");
+            P_mediapagoObj.fill("WHERE (ACTIVO=1)");
 
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(PagoTarjeta.this,"Media pago");
             listdlg.setLines(6);
 
-            listdlg.add(0,"Visa");
+            //#AT20221109114: Listar formas de pago desde tabla local.
+            //listdlg.add(0,"Visa");
+            String vNombreFormaPago="";
+            int vCodigoFormaPago=0;
+
             if (P_mediapagoObj.count>0) {
-                listdlg.add(1,P_mediapagoObj.first().nombre);
+
+                for (int i = 0; i <P_mediapagoObj.count; i++) {
+
+                    vCodigoFormaPago=P_mediapagoObj.items.get(i).codigo;
+                    vNombreFormaPago=P_mediapagoObj.items.get(i).nombre;
+                    listdlg.add(vCodigoFormaPago,vNombreFormaPago);
+                }
+
             }
-            listdlg.add(0,"American Express");
-            listdlg.add(0,"Mastercard");
-            listdlg.add(0,"Visa link");
-            listdlg.add(0,"Discover");
-            listdlg.add(0,"Citibank");
-            listdlg.add(0,"Transferencia");
-            listdlg.add(0,"Cheque");
-            listdlg.add(0,"Credito 15 dias");
-            listdlg.add(0,"Credito 30 dias");
-            listdlg.add(0,"Credito 60 dias");
+
+//            listdlg.add(0,"American Express");
+//            listdlg.add(0,"Mastercard");
+//            listdlg.add(0,"Visa link");
+//            listdlg.add(0,"Discover");
+//            listdlg.add(0,"Citibank");
+//            listdlg.add(0,"Transferencia");
+//            listdlg.add(0,"Cheque");
+//            listdlg.add(0,"Credito 15 dias");
+//            listdlg.add(0,"Credito 30 dias");
+//            listdlg.add(0,"Credito 60 dias");
 
             listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
