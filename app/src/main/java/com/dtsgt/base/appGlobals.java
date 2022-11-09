@@ -90,7 +90,7 @@ public class appGlobals extends Application {
 	public String promprod;
 	public double promcant,promdesc,prommdesc,descglob,descgtotal,desc_monto;
 	public int prommodo;
-	
+	public double total_factura_previo_descuento=0;
 	// Bonificaciones
 	public ArrayList<clsBonifItem> bonus = new ArrayList<clsBonifItem>();
 	public clsDemoDlg clsDemo;

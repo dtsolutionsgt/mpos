@@ -37,8 +37,12 @@ public class DescMonto extends PBase {
                 toast("Monto incorrecto");
             } else {
                 if (khand.isValid) {
-                    gl.desc_monto= khand.value;
-                    finish();
+                    if (khand.value >= gl.total_factura_previo_descuento) {
+                        toastlong("Monto de descuento superior al total de la factura.");
+                    } else {
+                        gl.desc_monto = khand.value;
+                        finish();
+                    }
                 }
             }
         }

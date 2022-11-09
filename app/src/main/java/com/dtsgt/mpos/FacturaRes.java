@@ -439,6 +439,7 @@ public class FacturaRes extends PBase {
 
 	public void doDesc(View view) {
 		browse=6;
+		gl.total_factura_previo_descuento = stot;
 		startActivity(new Intent(this,DescMonto.class));
 		/*
         browse=5;
