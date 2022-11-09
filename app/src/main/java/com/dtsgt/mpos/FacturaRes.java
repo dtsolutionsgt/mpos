@@ -328,7 +328,7 @@ public class FacturaRes extends PBase {
 
         //if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
 
-        if (gl.mesero_precuenta) prnCuenta(null);
+        //if (gl.mesero_precuenta) prnCuenta(null);
 
     }
 
@@ -438,8 +438,12 @@ public class FacturaRes extends PBase {
 	}
 
 	public void doDesc(View view) {
+		browse=6;
+		startActivity(new Intent(this,DescMonto.class));
+		/*
         browse=5;
         startActivity(new Intent(this,ValidaSuper.class));
+        */
     }
 
     public void prnCuenta(View view) {
@@ -628,17 +632,18 @@ public class FacturaRes extends PBase {
 		try{
 
 			if (acum) {
-                descimp=descgmon;
+                descimp=descgmon+descaddmonto;
 				dfinmon=descpmon+descgmon;
 				cleandprod=false;
 			} else {
 				if (descpmon>=descgmon) {
-					dfinmon=descpmon;
+					dfinmon=descpmon+descaddmonto;
 					cleandprod=false;
 				} else {
-					dfinmon=descgmon;
+					dfinmon=descgmon+descaddmonto;
 					cleandprod=true;
 				}
+				descimp=descaddmonto;
 			}
 
 			dmaxmon=(double) (stot0*dmax/100);
@@ -3691,7 +3696,9 @@ public class FacturaRes extends PBase {
 
                 fdoc.vendedor=gl.vendnom;
                 fdoc.rutanombre=gl.tiendanom;
-                fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
+				fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
+						descimp,propinaperc,gl.pePropinaFija,propina);
+				//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
 
                 gl.QRCodeStr="";
                 app.doPrint(1,0);
