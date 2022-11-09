@@ -97,9 +97,10 @@
                 android:layout_height="96dp"
                 android:layout_alignTop="@+id/imgImg4"
                 android:layout_alignBottom="@+id/imageView39"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="0dp"
+                android:layout_marginEnd="101dp"
                 android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/imgImg4"
                 android:clickable="true"
                 android:onClick="pendiente"
                 android:src="@drawable/pago_pendiente" />
@@ -275,6 +276,23 @@
                 android:ems="10"
                 android:inputType="numberDecimal"
                 android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView302"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imageView39"
+                android:layout_alignBottom="@+id/imageView39"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/imageView107"
+                android:layout_toEndOf="@+id/imageView39"
+                android:gravity="center_vertical"
+                android:text="TextView"
+                android:textSize="48sp"
                 android:textStyle="bold" />
 
         </RelativeLayout>

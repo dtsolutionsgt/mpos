@@ -87,6 +87,8 @@ public class FELVerificacion extends PBase {
         getURL();
 
         fel=new clsFELInFile(this,this,gl.timeout);
+        fel.halt=false;
+        fel.autocancel=false;
 
         ffel=new wsFacturasFEL(gl.wsurl);
 

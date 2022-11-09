@@ -164,10 +164,12 @@ public class Orden extends PBase {
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel;
-    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo;
 
     //#EJC202210221616:
     private int IdCuentaAMover =0;
+
+    private int maxitems=100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -332,7 +334,7 @@ public class Orden extends PBase {
     }
 
     public void doExit(View view){
-        exitBtn();
+        exitBtn(true);
     }
 
     public void doAdd(View view) {
@@ -971,6 +973,11 @@ public class Orden extends PBase {
         tipo=prodTipo(gl.prodcod);
         gl.uidingrediente=0;
 
+        if (items.size()>=maxitems) {
+            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");
+            return false;
+        }
+
         /*
          if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
             try {
@@ -1081,6 +1088,11 @@ public class Orden extends PBase {
         String umb;
         int nid1,nid2,newid;
 
+        if (items.size()>=maxitems) {
+            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");
+            return false;
+        }
+
         try {
             int icod=app.codigoProducto(prodid);
 
@@ -1190,6 +1202,140 @@ public class Orden extends PBase {
     }
 
     private boolean addItemVenta(){
+        clsClasses.clsT_venta venta,ventau=null;
+        clsClasses.clsT_combo combo;
+        clsClasses.clsT_ordencombo citem;
+
+        double tt;
+        String sv;
+        int itemid,vv,mv;
+
+        try {
+            T_ventaObj.fill();
+            if (T_ventaObj.count>0) {
+                mv=0;
+                for (int i = 0; i <T_ventaObj.count; i++) {
+                    sv=T_ventaObj.items.get(i).empresa;
+                    try {
+                        vv=Integer.parseInt(sv);
+                        if (vv>mv) mv=vv;
+                    } catch (Exception e) { }
+                }
+                if (mv>0) itemid=mv+1;else itemid=100;
+            } else {
+                itemid=100;
+            }
+
+            //itemid=T_ventaObj.newID("SELECT MAX(EMPRESA) FROM T_VENTA");
+
+            venta=clsCls.new clsT_venta();
+            venta.producto=oitem.producto;
+            venta.empresa=""+itemid;
+            venta.um=oitem.um;
+            venta.cant=oitem.cant;
+            venta.umstock=oitem.umstock;
+            venta.factor=oitem.factor;
+            venta.precio=oitem.precio;
+            venta.imp=oitem.imp;
+            venta.des=oitem.des;
+            venta.desmon=oitem.desmon;
+            venta.total=oitem.total;
+            venta.preciodoc=oitem.preciodoc;
+            venta.peso=oitem.peso;
+            venta.val1=oitem.val1;
+            venta.val2=oitem.val2;
+            venta.val3=oitem.val3;
+            venta.val4=oitem.val4;
+            venta.percep=oitem.percep;
+
+            T_ordencomboprecioObj.fill("WHERE (COREL='"+idorden+"') AND (IDCOMBO="+oitem.empresa+")");
+
+            if (T_ordencomboprecioObj.count>0) {
+                venta.precio=T_ordencomboprecioObj.first().prectotal;
+                venta.preciodoc=venta.precio;
+                tt=venta.cant*venta.precio;tt=mu.round2(tt);
+                venta.total=tt;
+                oitem.total=tt;
+            }
+
+            //#EJC20210708: Corrección en T_VENTA, consultar antes si el producto ya existe e incrementar la cantidad
+            //para evitar que devuelva error de llave.
+            Cursor dt;
+            double prodtot=0;
+
+            try {
+
+                //#jp20220209
+                T_ventaObj.fill("WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')");
+                if (T_ventaObj.count>0) ventau=T_ventaObj.first();
+
+                if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
+                    T_ventaObj.add(venta);
+                } else {
+                    if (T_ventaObj.count==0) {
+                        T_ventaObj.add(venta);
+                    } else {
+                        ventau.cant+= oitem.cant;
+                        ventau.total = ventau.total+mu.round(oitem.total,2);
+                        T_ventaObj.update(ventau);
+                    }
+                }
+
+
+                /*
+                String vsql="SELECT CANT FROM T_venta WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')";
+                dt=Con.OpenDT(vsql);
+
+                if (dt!=null){
+                    //#ejc20210712: condición agregada con Jaros, para validar productos de tipo combo.
+                    if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
+                        T_ventaObj.add(venta);
+                    }else{
+                        if (dt.getCount()==0) {
+                            T_ventaObj.add(venta);
+                        } else {
+                            venta.cant+= oitem.cant;
+                            //prodtot=mu.round(venta.precio*venta.cant,2);
+                            prodtot=venta.total+mu.round(oitem.total,2);
+                            venta.total = prodtot;
+                            T_ventaObj.update(venta);
+                        }
+                    }
+                };
+                */
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+
+            if (app.prodTipo(venta.producto).equalsIgnoreCase("M")) {
+
+                T_ordencomboObj.fill("WHERE (COREL='"+idorden+"') AND (IDCOMBO="+oitem.empresa+")");
+                for (int j = 0; j <T_ordencomboObj.count; j++) {
+
+                    citem=T_ordencomboObj.items.get(j);
+                    combo=clsCls.new clsT_combo();
+                    combo.codigo_menu=citem.codigo_menu;
+                    combo.idcombo=citem.idcombo;
+                    combo.cant=citem.cant;
+                    combo.unid=citem.unid;
+                    combo.idseleccion=citem.idseleccion;
+                    combo.orden=citem.orden;
+
+                    T_comboObj.add(combo);
+                }
+            }
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());return false;
+        }
+
+        return true;
+    }
+
+    private boolean addItemVentaOrig(){
         clsClasses.clsT_venta venta,ventau=null;
         clsClasses.clsT_combo combo;
         clsClasses.clsT_ordencombo citem;
@@ -1428,6 +1574,43 @@ public class Orden extends PBase {
 
     }
 
+    private void borrarItemComanda() {
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBOAD WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBODET WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+            db.execSQL("DELETE FROM T_ORDENCOMBOPRECIO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
+
+            db.execSQL("DELETE FROM T_ORDEN_ING WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+            db.execSQL("DELETE FROM T_ORDEN_ING WHERE (COREL='"+idorden+"') AND (PUID="+gl.produid+")");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            try {
+                String cmd = "DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")" + ";";
+
+                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
+
+    }
+
     private void delItemIng(){
         int puid;
 
@@ -1588,6 +1771,7 @@ public class Orden extends PBase {
     //region Precuenta
 
     private void crearVenta() {
+
         int prdcnt=0;
 
         try {
@@ -2007,7 +2191,7 @@ public class Orden extends PBase {
                     if (pendienteImpresion()) {
                         msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
-                        if (ventaVacia()) showListaCuentas();
+                        if (limpiaVenta()) showListaCuentas();
                     }
 
                     break;
@@ -2016,6 +2200,7 @@ public class Orden extends PBase {
                     //browse=11;
                     //startActivity(new Intent(Orden.this,ValidaSuper2.class));
                     //msgBorrarOrden("Cerrar todas las cuentas del orden");
+                    valsupermodo=0;
                     validaSupervisor();
                     break;
 
@@ -2040,13 +2225,19 @@ public class Orden extends PBase {
         }
     }
 
-    private void exitBtn() {
-        if (cantRegBarril()==0) {
-            if (actorden) envioOrden();
-            gl.cerrarmesero=true;gl.mesero_lista=true;
-            finish();
-        } else {
-            evnioBarril(true);
+    private void exitBtn(boolean enviar) {
+        try {
+            if (cantRegBarril()==0) {
+                if (enviar) {
+                    if (actorden) envioOrden();
+                }
+                gl.cerrarmesero=true;gl.mesero_lista=true;
+                finish();
+            } else {
+                evnioBarril(true);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -2064,12 +2255,135 @@ public class Orden extends PBase {
             if (!generaArchivos()) return;
             generaRegistrosBarril();
             ejecutaImpresion();
-            exitBtn();
+            exitBtn(false);
         }
 
      }
 
     private boolean divideComanda() {
+        clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+        clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
+        clsClasses.clsT_orden venta;
+        clsClasses.clsT_ordencombo combo;
+
+        String prname,cname,nn;
+        int prodid,prid=0,idcomb,pruid,linea=1,paso=0;
+
+        try {
+
+            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+            ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+            clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
+            ord.id=ordennum;
+            P_orden_numeroObj.add(ord);
+
+            db.execSQL("DELETE FROM T_comanda");
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+            if (T_ordenObj.count>0) {
+                for (int i = 0; i < T_ordenObj.count; i++) {
+                    paso=1;
+                    venta = T_ordenObj.items.get(i);
+
+                    pruid = venta.id;
+                    prodid = app.codigoProducto(venta.producto);
+                    prname = getProd(prodid);
+                    s = mu.frmdecno(venta.cant) + "  " + prname;
+
+                    nn = "";
+                    T_orden_notaObj.fill("WHERE (id=" + venta.id + ") AND (corel='" + idorden + "')");
+                    if (T_orden_notaObj.count > 0) nn = T_orden_notaObj.first().nota + "";
+
+                    paso=2;
+                    if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
+
+                        P_linea_impresoraObj.fill("WHERE CODIGO_LINEA=" + prodlinea);
+
+                        if (P_linea_impresoraObj.count > 0) {
+                            paso=3;
+                            for (int k = 0; k < P_linea_impresoraObj.count; k++) {
+
+                                if (!esIngrediente(prodid)) {
+
+                                    prid = P_linea_impresoraObj.items.get(k).codigo_impresora;
+                                    agregaComanda(linea, prid, s);
+                                    linea++;
+                                    if (!nn.isEmpty()) {
+                                        agregaComanda(linea, prid, nn);
+                                        linea++;
+                                    }
+
+                                    T_orden_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
+                                    paso=4;
+                                    if (T_orden_modObj.count > 0) {
+                                        for (int ii = 0; ii < T_orden_modObj.count; ii++) {
+                                            nn = "   " + T_orden_modObj.items.get(ii).nombre;
+                                            agregaComanda(linea, prid, nn);
+                                            linea++;
+                                        }
+                                    }
+
+                                    T_orden_ingObj.fill("WHERE (Corel='" + gl.ordcorel + "') AND (Id=" + pruid + ") ORDER BY Nombre");
+                                    paso=5;
+                                    if (T_orden_ingObj.count > 0) {
+                                        for (int ii = 0; ii < T_orden_ingObj.count; ii++) {
+                                            nn = "   " + T_orden_ingObj.items.get(ii).nombre;
+                                            agregaComanda(linea, prid, nn);
+                                            linea++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        paso=10;
+                        T_comboObj.fill("WHERE (IdCombo=" + venta.val4 + ") AND (IdSeleccion<>0)");
+                        idcomb = mu.CInt(venta.val4);
+                        idcomb = idcomb % 100;
+                        //cname=s+" [#"+idcomb+"]";
+                        cname = s;
+
+                        for (int j = 0; j < T_comboObj.count; j++) {
+                            prodid = T_comboObj.items.get(j).idseleccion;
+                            //s = " - " + getProd(prodid);
+                            s = " " + getProd(prodid);
+                            P_linea_impresoraObj.fill("WHERE CODIGO_LINEA=" + prodlinea);
+
+                            for (int k = 0; k < P_linea_impresoraObj.count; k++) {
+                                prid = P_linea_impresoraObj.items.get(k).codigo_impresora;
+                                if (j == 0) {
+                                    agregaComanda(linea, prid, cname);
+                                    linea++;
+                                }
+                                agregaComanda(linea, prid, s);
+                                linea++;
+                                if (!nn.isEmpty()) {
+                                    agregaComanda(linea, prid, nn);
+                                    linea++;
+                                }
+
+                                if (k == P_linea_impresoraObj.count - 1) {
+                                    T_orden_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
+                                    for (int ii = 0; ii < T_orden_modObj.count; ii++) {
+                                        nn = "  " + T_orden_modObj.items.get(ii).nombre;
+                                        agregaComanda(linea, prid, nn);
+                                        linea++;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage()+"\nPaso: "+paso);return false;
+        }
+    }
+
+    private boolean divideComandaOrig() {
         clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
         clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
         clsClasses.clsT_orden venta;
@@ -2726,8 +3040,6 @@ public class Orden extends PBase {
                 startService(intent);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
             }
 
         } catch (Exception e) {
@@ -3076,13 +3388,14 @@ public class Orden extends PBase {
 
                     ss+=addItemSqlOrdenCom(pitem) + ";";
 
+                    /*
                     pitem.codigo_ruta=idruta;
                     pitem.corel_orden=idorden;
                     pitem.corel_linea=2;
                     pitem.comanda="";
 
                     ss+=addItemSqlOrdenCom(pitem) + ";";
-
+                    */
 
                     for (int c = 0; c <T_ordencuentaObj.count; c++) {
                         citem=T_ordencuentaObj.items.get(c);
@@ -3295,6 +3608,10 @@ public class Orden extends PBase {
 
     private void broadcastDetail() {
         wsoidle=false;
+
+        broadcastDetailCallback();
+
+        /*
         wso.level=1;
         brtcorel ="";brtid=0;brtitems.clear();
 
@@ -3311,6 +3628,8 @@ public class Orden extends PBase {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             wsoidle=true;
         }
+        */
+
     }
 
     private void broadcastDetailCallback() {
@@ -3318,6 +3637,7 @@ public class Orden extends PBase {
         wso.level=2;
 
         try {
+            /*
             if (wso.errflag) {
                 app.addToOrdenLog(du.getActDateTime(),
                         "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),wso.error,sql);
@@ -3325,15 +3645,19 @@ public class Orden extends PBase {
             }
 
             if (wso.openDTCursor.getCount()==0) {
-                wsoidle=true;return;
+                //wsoidle=true;return;
             }
 
             wso.openDTCursor.moveToFirst();
             brtcorel=wso.openDTCursor.getString(1);brtid=wso.openDTCursor.getInt(0);
+             */
+
+            brtcorel=idorden;
 
             sql="SELECT ID, COREL, PRODUCTO, EMPRESA, UM, CANT, UMSTOCK, FACTOR, PRECIO, IMP, " +
                 "DES, DESMON, TOTAL, PRECIODOC, PESO, VAL1, VAL2, VAL3, VAL4, PERCEP, CUENTA, ESTADO " +
                 "FROM T_ORDEN WHERE COREL='"+ brtcorel +"'";
+
             wso.execute(sql,rnDetailCallback);
         } catch (Exception e) {
             app.addToOrdenLog(du.getActDateTime(),
@@ -3452,13 +3776,13 @@ public class Orden extends PBase {
         try {
             db.beginTransaction();
 
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
             for (int i = 0; i <brtitems.size(); i++) {
                 sql=brtitems.get(i);
                 db.execSQL(sql);
             }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
 
             broadcastConfirmDetail();
 
@@ -4118,6 +4442,99 @@ public class Orden extends PBase {
 
     //endregion
 
+    //region Anular
+
+    private void anulaItem() {
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM P_RES_SESION WHERE (ID='"+idorden+"')");
+            db.execSQL("DELETE FROM T_orden WHERE (COREL='" + idorden + "')");
+            db.execSQL("DELETE FROM T_ordencuenta WHERE (COREL='" + idorden + "')");
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            anulaOrden();
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
+    }
+
+    private void anulaOrden() {
+        String cmd="";
+
+        try {
+
+            cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
+            cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
+
+            cmd+=buildAnulJournal();
+
+            try {
+                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                startService(intent);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            gl.cerrarmesero=true;gl.mesero_lista=true;
+            finish();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private String buildAnulJournal() {
+        clsClasses.clsT_ordencom pitem;
+        int idruta;
+        String ss="";
+
+        try {
+
+            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+            P_rutaObj.fill();
+
+            for (int i = 0; i <P_rutaObj.count; i++) {
+
+                idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+                if (idruta!=gl.codigo_ruta) {
+
+                    pitem= clsCls.new clsT_ordencom();
+
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_orden=idorden;
+                    pitem.corel_linea=1;
+
+                    pitem.comanda="DELETE FROM P_RES_SESION WHERE (ID=<>"+idorden+"<>)";
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                    pitem.comanda="DELETE FROM T_orden WHERE (COREL=<>" + idorden + "<>)";
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                    pitem.comanda="DELETE FROM T_ordencuenta WHERE (COREL=<>" + idorden + "<>)" ;
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                }
+            }
+
+            return ss;
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return "";
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void setControls(){
@@ -4724,7 +5141,7 @@ public class Orden extends PBase {
         }
     }
 
-    private boolean ventaVacia() {
+    private boolean limpiaVenta() {
         try {
             db.beginTransaction();
 
@@ -4891,6 +5308,33 @@ public class Orden extends PBase {
                         delItem();
                     } else {
                         delItemIng();
+                    }
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskDelCom(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  + " ?");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (esIngrediente()) {
+                        msgbox("Artículo es un ingrediente, no se puede borrar");
+                    } else {
+                        borrarItemComanda();
                     }
                 }
             });
@@ -5133,7 +5577,6 @@ public class Orden extends PBase {
     private void showItemPopMenuLock() {
 
         try {
-
             extListDlg listdlg = new extListDlg();
 
             listdlg.buildDialog(Orden.this,gl.gstr2);
@@ -5141,6 +5584,7 @@ public class Orden extends PBase {
             listdlg.add(R.drawable.cambio_usuario,"Cambiar cuenta");//imagen , texto - si imagen=0 no se despliega
             listdlg.add(R.drawable.recibir_archivos,"Dividir");
             listdlg.add(R.drawable.avanzar,"Mover cuenta a otra mesa");
+            listdlg.add(R.drawable.avanzar,"Borrar");
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -5158,6 +5602,10 @@ public class Orden extends PBase {
                                 break;
                             case 2:
                                 listaMesasParaMover();
+                                break;
+                            case 3:
+                                valsupermodo=1;
+                                validaSupervisor();
                                 break;
                         }
                         listdlg.dismiss();
@@ -5361,7 +5809,8 @@ public class Orden extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                cerrarCuentas(-9);
+                //cerrarCuentas(-9);
+                anulaItem();
             }
         });
 
@@ -5700,7 +6149,12 @@ public class Orden extends PBase {
                     if (listdlg.getInput().isEmpty()) return;
 
                     if (listdlg.validPassword()) {
-                        msgBorrarOrden("Cerrar todas las cuentas de la órden");
+                        if (valsupermodo==0) {
+                            msgBorrarOrden("Cerrar todas las cuentas de la órden");
+                        } else if (valsupermodo==1) {
+                            msgAskDelCom("Borrar artículo");
+                        }
+
                         listdlg.dismiss();
                     } else {
                         toast("Contraseña incorrecta");

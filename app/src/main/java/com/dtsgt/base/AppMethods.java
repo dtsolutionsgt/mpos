@@ -1860,6 +1860,7 @@ public class AppMethods {
 	}
 
 	public void addToOrdenLog(long fecha,String metodo,String error,String nota) {
+		/*
 		try {
 			clsClasses clsCls = new clsClasses();
 			clsClasses.clsD_orden_log item = clsCls.new clsD_orden_log();
@@ -1877,6 +1878,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+		*/
 	}
 
     //endregion

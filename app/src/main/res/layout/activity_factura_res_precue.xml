@@ -42,15 +42,14 @@
         <RelativeLayout
             android:id="@+id/listViewRel"
             android:layout_width="650dp"
-            android:layout_height="106dp"
-            android:layout_above="@id/textView137"
+            android:layout_height="350dp"
             android:layout_below="@+id/TextView01"
             android:layout_alignParentStart="false"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="-80dp"
             android:background="#FFFFFF">
 
             <RelativeLayout
@@ -82,11 +81,10 @@
                 <ImageView
                     android:id="@+id/imageView105"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="80dp"
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:onClick="prnCuenta"
-                    android:padding="5dp"
                     android:src="@drawable/preimpresion" />
 
                 <TextView
@@ -100,16 +98,16 @@
                     android:layout_marginTop="0dp"
                     android:layout_marginEnd="0dp"
                     android:gravity="center_horizontal"
-                    android:text="Precuenta"
+                    android:text="Imprimir"
                     android:textSize="12sp" />
 
                 <ImageView
                     android:id="@+id/imageView111"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_alignParentTop="true"
+                    android:layout_height="80dp"
+                    android:layout_below="@+id/textView246"
                     android:layout_alignParentEnd="false"
-                    android:layout_marginTop="155dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="0dp"
                     android:clickable="true"
                     android:onClick="doPropina"
@@ -119,11 +117,11 @@
                 <ImageView
                     android:id="@+id/imageView117"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="80dp"
+                    android:layout_below="@+id/textView220"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:layout_marginStart="1dp"
-                    android:layout_marginTop="77dp"
+                    android:layout_marginTop="40dp"
                     android:clickable="true"
                     android:onClick="doDesc"
                     android:src="@drawable/bot_desc" />
@@ -996,7 +994,7 @@
             android:layout_marginLeft="0dp"
             android:layout_marginTop="58dp"
             android:layout_marginEnd="0dp"
-            android:background="@drawable/blue_strip"
+            android:background="@drawable/frame_rect_blue"
             android:gravity="center"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
