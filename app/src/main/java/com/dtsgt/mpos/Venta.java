@@ -57,6 +57,7 @@ import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -1364,6 +1365,7 @@ public class Venta extends PBase {
             gridViewOpciones.setEnabled(false);
 
             gl.mesero_precuenta=false;
+            gl.descadd=0;
             Intent intent = new Intent(this,FacturaRes.class);
             startActivity(intent);
 
@@ -2341,7 +2343,8 @@ public class Venta extends PBase {
                 case 3:
                     menuImprDoc(3);break;
                 case 4:
-                    gl.tipo=3;menuAnulDoc();break;
+                    validaSupervisor();break;
+                    //gl.tipo=3;menuAnulDoc();break;
                 case 14:
                     showQuickRecep();break;
                 case 15:
@@ -2360,6 +2363,57 @@ public class Venta extends PBase {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
+
+    private void validaSupervisor() {
+        clsClasses.clsVendedores item;
+
+        try {
+            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+            VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
+
+            if (VendedoresObj.count==0) {
+                msgbox("No está definido ningún supervisor");return;
+            }
+
+            extListPassDlg listdlg = new extListPassDlg();
+            listdlg.buildDialog(Venta.this,"Autorización","Salir");
+
+            for (int i = 0; i <VendedoresObj.count; i++) {
+                item=VendedoresObj.items.get(i);
+                listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+            }
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listdlg.getInput().isEmpty()) return;
+
+                    if (listdlg.validPassword()) {
+                        gl.tipo=3;menuAnulDoc();
+                        listdlg.dismiss();
+                    } else {
+                        toast("Contraseña incorrecta");
+                    }
+                }
+            });
+
+            listdlg.setWidth(350);
+            listdlg.setLines(4);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     public void cierreCaja(){
         try{
@@ -3688,8 +3742,8 @@ public class Venta extends PBase {
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
 
-            String[] TO = {"jpospichal@dtsguatemala.onmicrosoft.com"};if (!cor.isEmpty()) TO[0]=cor;
-            String[] CC = {"jpospichal@dtsguatemala.onmicrosoft.com"};
+            String[] TO = {"dtsolutionsgt@gmail.com"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"dtsolutionsgt@gmail.com"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
 

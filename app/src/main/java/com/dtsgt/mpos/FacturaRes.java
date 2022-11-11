@@ -390,6 +390,11 @@ public class FacturaRes extends PBase {
         pendiente=false;
 		gl.modo_cortesia=false;
 
+		if (tot<=0) {
+			msgbox("Total incorrecto");return;
+		}
+
+
         try {
             if (fcorel==0) {
                 msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
@@ -403,10 +408,8 @@ public class FacturaRes extends PBase {
             } else {
                 checkPago();
             }
-
-         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            mu.msgbox("payCard: " + e.getMessage());
+        } catch (Exception e){
+             mu.msgbox("payCard: " + e.getMessage());
         }
     }
 
@@ -439,7 +442,7 @@ public class FacturaRes extends PBase {
 
 	public void doDesc(View view) {
 		browse=6;
-		gl.total_factura_previo_descuento = stot;
+		gl.total_factura_previo_descuento=tot+gl.descadd;
 		startActivity(new Intent(this,DescMonto.class));
 		/*
         browse=5;
@@ -448,6 +451,9 @@ public class FacturaRes extends PBase {
     }
 
     public void prnCuenta(View view) {
+		if (tot<=0) {
+			msgbox("Total incorrecto");return;
+		}
         askPrecuenta();
     }
 
@@ -473,26 +479,41 @@ public class FacturaRes extends PBase {
     }
 
     public void pago100(View view){
+		if (tot<=0) {
+			msgbox("Total incorrecto");return;
+		}
         khand.val="100";
         validaPagoEfectivo();
     }
 
     public void pago50(View view){
+		if (tot<=0) {
+			msgbox("Total incorrecto");return;
+		}
         khand.val="50";
         validaPagoEfectivo();
     }
 
     public void pago20(View view){
+		if (tot<=0) {
+			msgbox("Total incorrecto");return;
+		}
         khand.val="20";
         validaPagoEfectivo();
     }
 
     public void pago10(View view){
+		if (tot<=0) {
+			msgbox("Total incorrecto");return;
+		}
         khand.val="10";
         validaPagoEfectivo();
     }
 
     public void pago5(View view){
+		if (tot<=0) {
+			msgbox("Total incorrecto");return;
+		}
         khand.val="5";
         validaPagoEfectivo();
     }
@@ -500,6 +521,9 @@ public class FacturaRes extends PBase {
     public void doKey(View view) {
         khand.handleKey(view.getTag().toString());
         if (khand.isEnter) {
+			if (tot<=0) {
+				msgbox("Total incorrecto");return;
+			}
             validaPagoEfectivo();
         }
     }
@@ -665,6 +689,10 @@ public class FacturaRes extends PBase {
 				propina=mu.round2(propina+propinaext);
 			}else{
 				propina=0;
+			}
+
+			if (gl.peRedondPropina) {
+				propina=mu.roundtoint(propina);
 			}
 
 			if (gl.parallevar) propina=0;
@@ -3113,7 +3141,6 @@ public class FacturaRes extends PBase {
 
             if (gl.mesero_precuenta) lblPago.setText("");
         } catch (Exception e) {
-           addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
         }
 
@@ -3721,7 +3748,12 @@ public class FacturaRes extends PBase {
 
 	private void completaEstadoOrden() {
 
-		if (!todasCuentasPagadas()) return;
+		if (!todasCuentasPagadas()) {
+			broadcastJournalCuenta(gl.cuenta_borrar);
+			return;
+		}
+
+		broadcastJournalCuenta(gl.cuenta_borrar);
 
 		try {
 			db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
@@ -3730,7 +3762,6 @@ public class FacturaRes extends PBase {
 		}
 
 		if (!gl.peActOrdenMesas) return;
-
 
 		try {
 			broadcastJournalFlag(99);
@@ -3780,6 +3811,62 @@ public class FacturaRes extends PBase {
 				toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 				app.addToOrdenLog(du.getActDateTime(),
 						"FacturaRes."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
+			}
+
+		} catch (Exception e) {
+			toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+	private void broadcastJournalCuenta(int idcuenta) {
+		clsClasses.clsT_ordencom pitem;
+		int idruta;
+
+		if (gl.ordcorel.isEmpty()) return;
+		if (gl.caja_est_pago_cmd.isEmpty()) return;
+
+		try {
+
+			clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+			P_rutaObj.fill();
+
+			String cmd="";
+
+			for (int i = 0; i <P_rutaObj.count; i++) {
+
+				idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+				if (idruta!=gl.codigo_ruta) {
+
+					pitem= clsCls.new clsT_ordencom();
+					pitem.codigo_ruta=idruta;
+					pitem.corel_orden=gl.ordcorel;
+					pitem.corel_linea=3;
+					pitem.comanda=gl.caja_est_pago_cmd;
+
+					cmd+=addItemSqlOrdenCom(pitem) + ";";
+
+
+					pitem= clsCls.new clsT_ordencom();
+					pitem.codigo_ruta=idruta;
+					pitem.corel_orden=gl.ordcorel;
+					pitem.corel_linea=3;
+					pitem.comanda=gl.caja_est_pago_cue;
+
+					cmd+=addItemSqlOrdenCom(pitem) + ";";
+
+				}
+
+			}
+
+			try {
+				Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+				intent.putExtra("URL",gl.wsurl);
+				intent.putExtra("command",cmd);
+				startService(intent);
+			} catch (Exception e) {
+				toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
 
 		} catch (Exception e) {
@@ -3843,7 +3930,7 @@ public class FacturaRes extends PBase {
         try {
             subject="Correlativo inconsistente : "+gl.rutanom+" ID : "+gl.codigo_ruta;
             body="  ";
-            String[] TO = {"jpospichal@dtsguatemala.onmicrosoft.com"};
+            String[] TO = {"dtsolutionsgt@gmail.com"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
@@ -4317,6 +4404,7 @@ public class FacturaRes extends PBase {
                 browse=0;
                 if (gl.desc_monto>=0) {
                     descaddmonto=gl.desc_monto;
+					gl.descadd=gl.desc_monto;
                     totalOrder();
                 }
                 return;

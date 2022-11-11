@@ -165,7 +165,7 @@ public class Caja extends PBase {
             if (fondoCaja==0){
                 msgbox("El monto inicial incorrecto");return;
             }
-            msgAskFecha("¿La fecha "+FechaB.getText().toString()+" está correcta?");
+            msgAskFecha("¿Iniciar caja con fecha\n"+FechaB.getText().toString()+"?");
             //guardar();
         } else {
             guardar();
@@ -905,8 +905,8 @@ public class Caja extends PBase {
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
             String cor=P_sucursalObj.first().correo;if (cor.indexOf("@")<2) cor="";
 
-            String[] TO = {"jpospichal@dtsguatemala.onmicrosoft.com"};if (!cor.isEmpty()) TO[0]=cor;
-            String[] CC = {"jpospichal@dtsguatemala.onmicrosoft.com"};
+            String[] TO = {"dtsolutionsgt@gmail.com"};if (!cor.isEmpty()) TO[0]=cor;
+            String[] CC = {"dtsolutionsgt@gmail.com"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
 

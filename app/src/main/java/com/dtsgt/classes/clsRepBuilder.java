@@ -338,7 +338,26 @@ public class clsRepBuilder {
 		items.add(ts);
 	}
 
-    public void add4lrrTotPorc2(String s1,String s2,double s3,double v3) {
+	public void add4rrrTotPorc(String s1,String s2,double s3,double v3) {
+		String stot;
+		int tot;
+		String sval;
+
+		if(v3==0.0){
+			sval="";
+		}else {
+			sval = aproxDec(v3);
+		}
+
+		stot=cursym+decfrm.format(s3);
+
+		tot=sval.length();
+		ts=ltrim(s1,prwt)+rtrim(s2,prwt-5)+rtrim(stot,prwt+1)+rtrim(sval,prwt-5);
+		items.add(ts);
+	}
+
+
+	public void add4lrrTotPorc2(String s1,String s2,double s3,double v3) {
         String stot;
         int tot;
         String sval;

@@ -1,9 +1,11 @@
 package com.dtsgt.mpos;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsKeybHandler;
 
 public class DescMonto extends PBase {
@@ -38,13 +40,32 @@ public class DescMonto extends PBase {
             } else {
                 if (khand.isValid) {
                     if (khand.value >= gl.total_factura_previo_descuento) {
-                        toastlong("Monto de descuento superior al total de la factura.");
+                        msgbox("Monto de descuento superior al total de la factura.");
                     } else {
                         gl.desc_monto = khand.value;
                         finish();
                     }
                 }
             }
+        }
+    }
+
+    private void msgMonto(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  );
+
+            dialog.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    finish();
+                }
+            });
+
+            dialog.show();
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 

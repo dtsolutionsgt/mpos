@@ -227,7 +227,17 @@ public class MiscUtils {
 	public void toast(String msg) {
 		Toast.makeText(cCont,msg, Toast.LENGTH_SHORT).show();
 	}
-	  
+
+	public int roundtoint(double val) {
+		val=val*100;
+		int ival=(int) Math.floor(val);
+		int tval=ival % 100;
+		int rval=ival-tval;
+		if (tval>=50) rval=rval+100;
+		rval=(int) rval/100;
+		return rval;
+	}
+
 	public double round(double val,int ndec) {
 
 		double v,pw;

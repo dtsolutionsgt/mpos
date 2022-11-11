@@ -459,11 +459,19 @@ public class CierreX extends PBase {
                             condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
+                        /*
                         sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(DISTINCT P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
                                 "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                                 "WHERE P.COREL IN (SELECT COREL FROM D_FACTURA "+
                                 condition+")" +
                                 " GROUP BY M.NOMBRE";
+                         */
+
+                        sql="SELECT '', '', 0, '', P.DESC2, '', COUNT(DISTINCT P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
+                                "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                                "WHERE P.COREL IN (SELECT COREL FROM D_FACTURA "+
+                                condition+")" +
+                                " GROUP BY P.DESC2";
 
                         /*
                         if(gl.reportid==9){
@@ -1217,13 +1225,14 @@ public class CierreX extends PBase {
                         }
 
                         porcentaje = (100 /totF) * itemR.get(i).total;
-                        rep.add4lrrTotPorc(itemR.get(i).descrip, Integer.toString(itemR.get(i).cant),itemR.get(i).total,porcentaje);
+                        if (itemR.get(i).descrip.isEmpty()) itemR.get(i).descrip="Contado";
+                        rep.add4rrrTotPorc(itemR.get(i).descrip, Integer.toString(itemR.get(i).cant),itemR.get(i).total,porcentaje);
 
                         SumaCant = SumaCant + itemR.get(i).cant;
 
                         if(i+1==count4){
                             rep.line();
-                            rep.add4lrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
+                            rep.add4rrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
                             rep.empty();
                         }
 

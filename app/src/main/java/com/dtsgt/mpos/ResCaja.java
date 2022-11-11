@@ -28,8 +28,10 @@ import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.ladapt.LA_ResCaja;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
@@ -363,7 +365,10 @@ public class ResCaja extends PBase {
                 if (oitem.cuenta==cuenta) addItem();
             }
 
-            gl.caja_est_pago="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL='"+corel+"') AND (CUENTA="+cuenta+"))";
+            gl.cuenta_borrar=cuenta;
+            gl.caja_est_pago    ="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL='"+corel+"') AND (CUENTA="+cuenta+"))";
+            gl.caja_est_pago_cmd="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL=<>"+corel+"<>) AND (CUENTA="+cuenta+"))";
+            gl.caja_est_pago_cue="DELETE FROM T_ORDENCUENTA WHERE ((COREL=<>"+corel+"<>) AND (ID="+cuenta+"))";
 
             cargaCliente();
 
@@ -1149,8 +1154,8 @@ public class ResCaja extends PBase {
                                 //msgAskPago("Pagar la cuenta "+cuenta);
                                 break;
                             case 3:
-                                browse=1;
-                                startActivity(new Intent(ResCaja.this,ValidaSuper.class));
+                                validaSupervisor();
+                                //browse=1;startActivity(new Intent(ResCaja.this,ValidaSuper.class));
                                 break;
                         }
 
@@ -1312,6 +1317,56 @@ public class ResCaja extends PBase {
         });
 
         dialog.show();
+    }
+
+    private void validaSupervisor() {
+        clsClasses.clsVendedores item;
+
+        try {
+            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+            VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
+
+            if (VendedoresObj.count==0) {
+                msgbox("No está definido ningún supervisor");return;
+            }
+
+            extListPassDlg listdlg = new extListPassDlg();
+            listdlg.buildDialog(ResCaja.this,"Autorización","Salir");
+
+            for (int i = 0; i <VendedoresObj.count; i++) {
+                item=VendedoresObj.items.get(i);
+                listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+            }
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listdlg.getInput().isEmpty()) return;
+
+                    if (listdlg.validPassword()) {
+                        msgAskBorrar("Borrar todas las cuentas de la mesa "+mesa);
+                        listdlg.dismiss();
+                    } else {
+                        toast("Contraseña incorrecta");
+                    }
+                }
+            });
+
+            listdlg.setWidth(350);
+            listdlg.setLines(4);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion

@@ -933,7 +933,6 @@ public class AppMethods {
 			gl.peActOrdenMesas = false;
 		}
 
-
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=143";
 			dt=Con.OpenDT(sql);
@@ -947,7 +946,6 @@ public class AppMethods {
 			gl.peLineaIngred = 0;
 		}
 
-
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=147";
 			dt=Con.OpenDT(sql);
@@ -958,6 +956,20 @@ public class AppMethods {
 		} catch (Exception e) {
 			gl.peTextoPie = "";
 		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=148";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peRedondPropina = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peRedondPropina = false;
+		}
+
 
     }
 

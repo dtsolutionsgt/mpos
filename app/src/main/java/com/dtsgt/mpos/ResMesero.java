@@ -842,12 +842,16 @@ public class ResMesero extends PBase {
         }
     }
 
-    private void envioMesa(String idorden) {
+    private void envioMesa(String orden) {
 
-        estadoMesa(idorden,-1);
+        estadoMesa(orden,-1);
         if (!gl.pelMeseroCaja) return;
 
-        String cmd = "UPDATE P_res_sesion SET Estado=-1 WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
+        if (orden.isEmpty()) {
+            msgbox("envioMesa : idorden vacio");
+        }
+
+        String cmd = "UPDATE P_res_sesion SET Estado=-1 WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + orden + "')" + ";";
 
         Intent intent = new Intent(ResMesero.this, srvOrdenEnvio.class);
         intent.putExtra("URL",gl.wsurl);

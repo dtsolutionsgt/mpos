@@ -21,7 +21,7 @@ public class PagoTarjeta extends PBase {
 
 
     private double monto;
-    private String tipo="Mastercard",aut;
+    private String tipo="",aut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,8 @@ public class PagoTarjeta extends PBase {
         lblTipo.setText(tipo);txtAut.setText("");txtAut.requestFocus();
 
         setHandlers();
+
+        listaTipos();
     }
 
     public double round2(double val){
@@ -174,40 +176,24 @@ public class PagoTarjeta extends PBase {
     private void listaTipos() {
 
         try {
-
             clsP_mediapagoObj P_mediapagoObj=new clsP_mediapagoObj(this,Con,db);
-            P_mediapagoObj.fill("WHERE (ACTIVO=1)");
+            P_mediapagoObj.fill("WHERE (NIVEL>1) AND (ACTIVO=1) ORDER BY NOMBRE");
 
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(PagoTarjeta.this,"Media pago");
             listdlg.setLines(6);
 
-            //#AT20221109114: Listar formas de pago desde tabla local.
-            //listdlg.add(0,"Visa");
-            String vNombreFormaPago="";
-            int vCodigoFormaPago=0;
-
             if (P_mediapagoObj.count>0) {
-
+                tipo="";
                 for (int i = 0; i <P_mediapagoObj.count; i++) {
-
-                    vCodigoFormaPago=P_mediapagoObj.items.get(i).codigo;
-                    vNombreFormaPago=P_mediapagoObj.items.get(i).nombre;
-                    listdlg.add(vCodigoFormaPago,vNombreFormaPago);
+                    if (i==0) tipo=P_mediapagoObj.items.get(i).nombre;
+                    listdlg.add(0,P_mediapagoObj.items.get(i).nombre);
                 }
-
+            } else {
+                listdlg.add(0,"Tarjeta credito");tipo="Tarjeta credito";
             }
 
-//            listdlg.add(0,"American Express");
-//            listdlg.add(0,"Mastercard");
-//            listdlg.add(0,"Visa link");
-//            listdlg.add(0,"Discover");
-//            listdlg.add(0,"Citibank");
-//            listdlg.add(0,"Transferencia");
-//            listdlg.add(0,"Cheque");
-//            listdlg.add(0,"Credito 15 dias");
-//            listdlg.add(0,"Credito 30 dias");
-//            listdlg.add(0,"Credito 60 dias");
+            lblTipo.setText(tipo);
 
             listdlg.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

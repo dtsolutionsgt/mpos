@@ -557,6 +557,7 @@ public class Reportes extends PBase {
                         condition = " AND M.CODIGO = '"+ id_item +"' ";
                     }
 
+                    /*
                     sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(DISTINCT F.COREL), 0,SUM(P.VALOR), 0 " +
                         "FROM P_MEDIAPAGO M " +
                         "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
@@ -564,6 +565,15 @@ public class Reportes extends PBase {
                         "WHERE F.ANULADO=0 AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
                         "AND F.ANULADO=0 " +
                         "GROUP BY M.NOMBRE";
+                     */
+
+                    sql="SELECT '', '', 0, '', P.DESC2, '', COUNT(DISTINCT F.COREL), 0,SUM(P.VALOR), 0 " +
+                        "FROM P_MEDIAPAGO M " +
+                        "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                        "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
+                        "WHERE F.ANULADO=0 AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "AND F.ANULADO=0 GROUP BY P.DESC2";
+
                     break;
 
                 case 5:
@@ -982,7 +992,8 @@ public class Reportes extends PBase {
                         }
 
                         porcentaje = (100 /totF) * itemR.get(i).total;
-                        rep.add4lrrTotPorc(itemR.get(i).descrip, Integer.toString(itemR.get(i).cant),itemR.get(i).total,porcentaje);
+                        if (itemR.get(i).descrip.isEmpty()) itemR.get(i).descrip="Contado";
+                        rep.add4rrrTotPorc(itemR.get(i).descrip, Integer.toString(itemR.get(i).cant),itemR.get(i).total,porcentaje);
 
                         SumaCant = SumaCant + itemR.get(i).cant;
                     } else if(gl.reportid==5) {
@@ -1211,7 +1222,7 @@ public class Reportes extends PBase {
                     }
 
                 }
-                if(gl.reportid==4 || gl.reportid==5) rep.add4lrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
+                if(gl.reportid==4 || gl.reportid==5) rep.add4rrrTotPorc("",Integer.toString(SumaCant),totF,0.0);
                 if(gl.reportid==6) {
                     if(validCB==0){
                         rep.add4lrrTotV(""+SumaCant, "",totF, totSinImpF);

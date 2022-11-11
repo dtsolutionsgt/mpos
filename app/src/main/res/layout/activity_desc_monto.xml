@@ -504,6 +504,7 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -552,7 +553,7 @@
                     android:gravity="center_horizontal"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
-                    android:text="MONTO DESCUENTO"
+                    android:text="MONTO DESCUENTO ADICIONAL"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#1A8AC6"
                     android:textSize="24sp"
@@ -560,4 +561,5 @@
             </RelativeLayout>
 
         </RelativeLayout>
-    </RelativeLayout>
+
+</RelativeLayout>
