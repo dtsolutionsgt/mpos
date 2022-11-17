@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,7 +24,6 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_sucursalObj;
-import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
 import org.apache.commons.io.FileUtils;
@@ -604,13 +602,17 @@ public class Caja extends PBase {
     //region Web service
 
     private void checkDate() {
-        try {
-            sql="select Day(getdate()), Month(getdate()), Year(getdate())";
-            wso.execute(sql,rnDateCallback);
-            toast("Validando fecha, espere . . . ");
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 
+        if (app.isOnWifi()==1) {
+            try {
+                sql="select Day(getdate()), Month(getdate()), Year(getdate())";
+                wso.execute(sql,rnDateCallback);
+                toast("Validando fecha, espere . . . ");
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+        } else {
+            msgAskNoFecha("No so logró validar la fecha.\nPuede ser que el dispositivo tiene una fecha incorrecta.\n¿Continuar?");
         }
     }
 
@@ -618,7 +620,9 @@ public class Caja extends PBase {
         long fa,fserv;
 
         if (wso.errflag) {
-            msgbox("dateCallback: "+wso.error);return;
+            msgbox("dateCallback: "+wso.error);
+            msgAskNoFecha("No so logró validar la fecha.\nPuede ser que el dispositivo tiene una fecha incorrecta.\n¿Continuar?");
+            return;
         } else {
             try {
                 if (wso.openDTCursor.getCount()==0) {

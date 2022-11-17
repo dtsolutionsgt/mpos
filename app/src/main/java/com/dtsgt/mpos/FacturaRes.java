@@ -404,6 +404,7 @@ public class FacturaRes extends PBase {
 
             if (gl.total_pago>0) {
                 browse=3;
+				gl.modo_cortesia=false;
                 startActivity(new Intent(this,PagoTarjeta.class));
             } else {
                 checkPago();
@@ -687,7 +688,7 @@ public class FacturaRes extends PBase {
 					propina=gl.propina_valor;
 				}
 				propina=mu.round2(propina+propinaext);
-			}else{
+			} else {
 				propina=0;
 			}
 
@@ -810,44 +811,45 @@ public class FacturaRes extends PBase {
 	}
 
  	private void finishOrder() {
+		try {
 
-        if (gl.rol==4) {
-            toast("El mesero no puede realizar venta en esta pantalla");return;
-        }
+			if (gl.rol==4) {
+				toast("El mesero no puede realizar venta en esta pantalla");return;
+			}
 
-        if (!saved) {
-			if (!saveOrder()) return;
-		}
+			if (!saved) {
+				if (!saveOrder()) return;
+			}
 
-		if (!gl.numero_orden.isEmpty()) {
-		    if (gl.numero_orden.length()>3) {
-		        enviaPago(gl.caja_est_pago);
-            }
-        }
+			if (!gl.numero_orden.isEmpty()) {
+				if (gl.numero_orden.length()>3) {
+					enviaPago(gl.caja_est_pago);
+				}
+			}
 
-		completaEstadoOrden();
+			completaEstadoOrden();
 
-        gl.cliposflag=false;
-        gl.InvCompSend=false;
-        gl.delivery =false;
-        gl.pickup = false;
-		gl.sin_propina=false;
+			gl.cliposflag=false;
+			gl.InvCompSend=false;
+			gl.delivery =false;
+			gl.pickup = false;
+			gl.sin_propina=false;
 
-        if (gl.pelDespacho) generaOrdenDespacho();
+			if (gl.pelDespacho) generaOrdenDespacho();
 
-        if (!app.usaFEL()) {
+			if (!app.usaFEL()) {
 
-            if ( gl.peEnvio) {
-                if (isNetworkAvailable()) {
-                    impresionDocumento();
-                } else {
-                    toast("No hay conexion a internet");
-                    impresionDocumento();
-                }
-            } else {
-                gl.InvCompSend=true;
-                impresionDocumento();
-            }
+				if ( gl.peEnvio) {
+					if (isNetworkAvailable()) {
+						impresionDocumento();
+					} else {
+						toast("No hay conexion a internet");
+						impresionDocumento();
+					}
+				} else {
+					gl.InvCompSend=true;
+					impresionDocumento();
+				}
 
             /*
             gl.InvCompSend=true;
@@ -858,11 +860,12 @@ public class FacturaRes extends PBase {
                 startActivity(new Intent(this,WSEnv.class));
             }
             */
-        } else {
-            //if (isNetworkAvailable()) {
-                browse=2;
-                gl.felcorel=corel;gl.feluuid="";
-                startActivity(new Intent(this, FELFactura.class));
+			} else {
+				//if (isNetworkAvailable()) {
+				browse=2;
+				gl.felcorel=corel;gl.feluuid="";
+				gl.codigo_cliente=0;
+				startActivity(new Intent(this, FELFactura.class));
 				/*
             } else {
                 marcaFacturaContingencia();
@@ -871,7 +874,10 @@ public class FacturaRes extends PBase {
             }
             */
 
-        }
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
 	}
 
@@ -959,6 +965,7 @@ public class FacturaRes extends PBase {
 				db.execSQL("DELETE FROM T_VENTA_ING");
 			} catch (Exception e) {}
 
+			gl.codigo_cliente=0;
 			super.finish();
 
 		} catch (Exception e){
@@ -966,6 +973,7 @@ public class FacturaRes extends PBase {
 			mu.msgbox("impresionDocumento : "  + e.getMessage());
 
             gl.ventalock=false;
+			gl.codigo_cliente=0;
 			super.finish();
 		}
 	}
@@ -2676,7 +2684,7 @@ public class FacturaRes extends PBase {
                 checkPago();
                 if (!app.usaFEL()) {
                     gl.ventalock=false;
-                    finish();
+                    //finish();
                 }
             }
         });
@@ -3141,9 +3149,8 @@ public class FacturaRes extends PBase {
 
             if (gl.mesero_precuenta) lblPago.setText("");
         } catch (Exception e) {
-            mu.msgbox( e.getMessage());
-        }
-
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
     }
 
     private void checkPagoNF() {
@@ -3747,24 +3754,28 @@ public class FacturaRes extends PBase {
     }
 
 	private void completaEstadoOrden() {
+		try {
 
-		if (!todasCuentasPagadas()) {
+			if (!todasCuentasPagadas()) {
+				broadcastJournalCuenta(gl.cuenta_borrar);
+				return;
+			}
+
 			broadcastJournalCuenta(gl.cuenta_borrar);
-			return;
-		}
 
-		broadcastJournalCuenta(gl.cuenta_borrar);
+			try {
+				db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
 
-		try {
-			db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
-		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
+			if (!gl.peActOrdenMesas) return;
 
-		if (!gl.peActOrdenMesas) return;
-
-		try {
-			broadcastJournalFlag(99);
+			try {
+				broadcastJournalFlag(99);
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -3823,8 +3834,12 @@ public class FacturaRes extends PBase {
 		clsClasses.clsT_ordencom pitem;
 		int idruta;
 
-		if (gl.ordcorel.isEmpty()) return;
-		if (gl.caja_est_pago_cmd.isEmpty()) return;
+		try {
+			if (gl.ordcorel.isEmpty()) return;
+			if (gl.caja_est_pago_cmd.isEmpty()) return;
+		} catch (Exception e) {
+			return;
+		}
 
 		try {
 

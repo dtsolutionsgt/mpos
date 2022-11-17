@@ -78,21 +78,21 @@ public class AppMethods {
 		gl=global;
 		Con=dbconnection;
 		db=database;
-		
+
 		ins=Con.Ins;
 		upd=Con.Upd;
 	}
-	
+
 	public void reconnect(BaseDatos dbconnection, SQLiteDatabase database) 	{
 		Con=dbconnection;
 		db=database;
-		
+
 		ins=Con.Ins;
 		upd=Con.Upd;
 	}
 
 	//region Public
-	
+
 	public void parametrosExtra() {
 		Cursor dt;
 		String sql,val="";
@@ -129,7 +129,7 @@ public class AppMethods {
 		// gl.peModal
 		try {
 
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=3";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=3";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -137,10 +137,10 @@ public class AppMethods {
 
 		} catch (Exception e) {
 			gl.peModal="-";
-		}	
+		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=4";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=4";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -152,17 +152,17 @@ public class AppMethods {
 
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=5";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=5";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
 			gl.peAceptarCarga=dt.getString(0).equalsIgnoreCase("S");
 		} catch (Exception e) {
 			gl.peAceptarCarga=false;
-		}	
+		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=6";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=6";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -172,7 +172,7 @@ public class AppMethods {
 		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=7";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=7";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -182,7 +182,7 @@ public class AppMethods {
 		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=8";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=8";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -192,7 +192,7 @@ public class AppMethods {
 		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=9";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=9";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -206,7 +206,7 @@ public class AppMethods {
 		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=10";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=10";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -220,7 +220,7 @@ public class AppMethods {
 		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=11";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=11";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -233,7 +233,7 @@ public class AppMethods {
 		}
 
 		try {
-			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=12";	
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=12";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 
@@ -244,7 +244,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			Locale defaultLocale = Locale.getDefault();
 			Currency currency = Currency.getInstance(defaultLocale);
-			gl.peMon=currency.getSymbol();		
+			gl.peMon=currency.getSymbol();
 		}
 
 		try {
@@ -970,6 +970,19 @@ public class AppMethods {
 			gl.peRedondPropina = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=149";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			ival=Integer.parseInt(val);
+
+			gl.peCajaPricipal = ival;
+		} catch (Exception e) {
+			gl.peCajaPricipal = 34;
+		}
+
 
     }
 
@@ -1595,7 +1608,8 @@ public class AppMethods {
 
     }
 
-    private boolean estadoBluTooth() {
+    @SuppressLint("MissingPermission")
+	private boolean estadoBluTooth() {
         final int REQUEST_ENABLE_BT = 1;
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

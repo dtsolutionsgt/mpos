@@ -6,6 +6,12 @@
         android:layout_height="match_parent"
         tools:context=".ResMesero">
 
+    <RelativeLayout
+        android:id="@+id/relmmain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
+
         <RelativeLayout
             android:id="@+id/relRoad"
             android:layout_width="match_parent"
@@ -277,4 +283,5 @@
         android:textSize="14sp"
         android:textStyle="bold"
         android:visibility="visible" />
+</RelativeLayout>
 </RelativeLayout>

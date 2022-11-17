@@ -73,7 +73,8 @@ public class appGlobals extends Application {
 
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peComNoAplic,peTextoPie;
-    public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL,peNumImp,peLineaIngred;
+    public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL;
+	public int peCajaPricipal,peNumImp,peLineaIngred;
     public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;

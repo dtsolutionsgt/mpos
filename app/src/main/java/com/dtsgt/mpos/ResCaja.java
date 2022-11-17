@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,9 +17,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_rutaObj;
@@ -49,6 +52,7 @@ public class ResCaja extends PBase {
     private GridView gridView;
     private TextView lblRec;
     private ImageView imgRec,imgnowifi;
+    private RelativeLayout relmain;
 
     private LA_ResCaja adapter;
     private clsViewObj ViewObj;
@@ -96,6 +100,7 @@ public class ResCaja extends PBase {
         lblRec = findViewById(R.id.textView212);
         imgRec = findViewById(R.id.imageView87);
         imgnowifi=findViewById(R.id.imageView71a);
+        relmain=findViewById(R.id.relcmain);
 
         calibraPantalla();
 
@@ -129,7 +134,9 @@ public class ResCaja extends PBase {
             public void run() { procesaOrdenes(); }
         };*/
 
-        if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
+        //if (!app.modoSinInternet())
+        imgnowifi.setVisibility(View.INVISIBLE);
+
     }
 
     //region Events
@@ -503,7 +510,9 @@ public class ResCaja extends PBase {
 
             if (wso.errflag) {
                 //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+wso.error);
-                msgAskPagar("No se logró conectar al servidor.\nEs posible que la cuenta NO ESTÁ actualizada.");
+                //msgAskPagar("No se logró conectar al servidor.\nEs posible que la cuenta NO ESTÁ actualizada.");
+                msgAskPagar("Por favor revise la cuenta.");
+
                 return;
             }
 
@@ -605,11 +614,14 @@ public class ResCaja extends PBase {
     private void broadcastCallback() {
         wsidle=true;
         if (wso.errflag) {
-            toastlong("wsCallBack "+wso.error);
+            //toastlong("wsCallBack "+wso.error);
             showButton();
+            msgBoxWifi("No hay conexíon al internet");
+            relmain.setBackgroundColor(Color.parseColor("#F4C6D0"));
         } else {
             procesaOrdenes();
         }
+        cierraPantalla();
     }
 
     private void recibeOrdenes() {
@@ -1099,6 +1111,21 @@ public class ResCaja extends PBase {
 
     }
 
+    private void cierraPantalla() {
+        try {
+            Handler ctimer = new Handler();
+            Runnable crunner=new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            };
+            ctimer.postDelayed(crunner,20000);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -1179,6 +1206,31 @@ public class ResCaja extends PBase {
     }
 
     private void msgAskPagar(String msg) {
+        try {
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Pagar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    buildVenta();
+                }
+            });
+
+            dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+
+            dialog.show();
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+        }
+    }
+
+    private void msgAskPagarOrig(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         dialog.setTitle("Mesa "+mesa);
@@ -1366,6 +1418,25 @@ public class ResCaja extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void msgBoxWifi(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  );
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (gl.peCajaPricipal!=gl.codigo_ruta) finish();
+                }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 

@@ -4,15 +4,18 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
@@ -51,6 +54,7 @@ public class ResMesero extends PBase {
     private GridView gridView;
     private TextView lblcuenta, lblgrupo,lblmes,lblbarril;
     private ImageView imgwsref,imgnowifi,imgbarril;
+    private RelativeLayout relmain;
 
     private clsP_res_grupoObj P_res_grupoObj;
     private clsP_res_turnoObj P_res_turnoObj;
@@ -98,6 +102,7 @@ public class ResMesero extends PBase {
         imgbarril =findViewById(R.id.imageView106);
         imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
         imgnowifi=findViewById(R.id.imageView71a);
+        relmain=findViewById(R.id.relmmain);
 
         calibraPantalla();
 
@@ -141,6 +146,8 @@ public class ResMesero extends PBase {
             lblbarril.setVisibility(View.INVISIBLE);
             imgbarril.setVisibility(View.INVISIBLE);
         }
+
+        imgwsref.setVisibility(View.INVISIBLE);
     }
 
     //region Events
@@ -466,11 +473,14 @@ public class ResMesero extends PBase {
     private void broadcastCallback() {
         wsidle=true;
         if (wso.errflag) {
-            toastlong("wsCallBack "+wso.error);
-            imgwsref.setVisibility(View.INVISIBLE);
+            msgBoxWifi("No hay conexíon al internet");
+            relmain.setBackgroundColor(Color.parseColor("#F4C6D0"));
+            //toastlong("wsCallBack "+wso.error);
         } else {
             procesaOrdenes();
         }
+
+        cierraPantalla();
     }
 
     private void iniciaOrdenes() {
@@ -1100,6 +1110,21 @@ public class ResMesero extends PBase {
 
     }
 
+    private void cierraPantalla() {
+        try {
+            Handler ctimer = new Handler();
+            Runnable crunner=new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            };
+            ctimer.postDelayed(crunner,20000);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -1368,6 +1393,25 @@ public class ResMesero extends PBase {
 
         alert.show();
     }
+
+    private void msgBoxWifi(String msg) {
+        try{
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                   if (gl.peCajaPricipal!=gl.codigo_ruta) finish();
+                }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
 
     //endregion
 

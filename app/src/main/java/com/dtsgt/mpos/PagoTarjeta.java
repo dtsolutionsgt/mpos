@@ -19,6 +19,7 @@ public class PagoTarjeta extends PBase {
     private EditText txtMonto, txtAut;
     private TextView lblTipo;
 
+    private clsP_mediapagoObj P_mediapagoObj;
 
     private double monto;
     private String tipo="",aut;
@@ -176,7 +177,8 @@ public class PagoTarjeta extends PBase {
     private void listaTipos() {
 
         try {
-            clsP_mediapagoObj P_mediapagoObj=new clsP_mediapagoObj(this,Con,db);
+            gl.modo_cortesia=false;
+            P_mediapagoObj=new clsP_mediapagoObj(this,Con,db);
             P_mediapagoObj.fill("WHERE (NIVEL>1) AND (ACTIVO=1) ORDER BY NOMBRE");
 
             extListDlg listdlg = new extListDlg();
@@ -203,7 +205,7 @@ public class PagoTarjeta extends PBase {
                         lblTipo.setText(tipo);
                         txtAut.requestFocus();
 
-                        if (listdlg.getCodigoInt(position)==1) {
+                        if (P_mediapagoObj.items.get(position).nivel==6) {
                             gl.modo_cortesia=true;
                             finish();
                         }

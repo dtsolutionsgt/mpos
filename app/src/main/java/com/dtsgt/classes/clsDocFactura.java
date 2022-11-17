@@ -24,7 +24,17 @@ public class clsDocFactura extends clsDocument {
 	private String 	contrib,corelNotaC,asignacion,ccorel,corelF;
 	private int decimp,totitems;
 
+    private ArrayList<String> plines = new ArrayList<String>();
+
     private DecimalFormat ffrmnodec = new DecimalFormat("#,##0.##");
+
+    Bitmap bitmap;  //QRGEncoder qrgEncoder;
+    ImageView qrImage;
+    String TAG = "GenerateQRCode";
+    //String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
+    String qrpath = Environment.getExternalStorageDirectory().getPath() + "/";
+
+
 
     public clsDocFactura(Context context,int printwidth,String cursymbol,int decimpres, String archivo,boolean detallecombo) {
 		super(context, printwidth,cursymbol,decimpres, archivo);
@@ -36,13 +46,6 @@ public class clsDocFactura extends clsDocument {
 		decimp=decimpres;
         detcombo=detallecombo;
 	}
-
-    Bitmap bitmap;
-    //QRGEncoder qrgEncoder;
-    ImageView qrImage;
-    String TAG = "GenerateQRCode";
-    //String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
-    String qrpath = Environment.getExternalStorageDirectory().getPath() + "/";
 
     protected boolean loadHeadData(String corel) {
 
@@ -175,9 +178,7 @@ public class clsDocFactura extends clsDocument {
 	    }	
 		
 		try {
-
             sinimp=false;
-			
 		} catch (Exception e) {
 			sinimp=false;
 	    }	
@@ -251,8 +252,29 @@ public class clsDocFactura extends clsDocument {
             NoAutorizacion="";
         }
 
-        propina=0;
+        plines.clear();
 
+        sql="SELECT P.DESC2, SUM(P.VALOR) " +
+                "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                "WHERE (COREL='" +corel+ "') GROUP BY P.DESC2";
+
+        try {
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                while (!DT.isAfterLast()) {
+                    s1=DT.getString(0);if (s1.isEmpty()) s1="Contado";
+                    plines.add(addtotsp(s1,DT.getDouble(1)));
+                    DT.moveToNext();
+                }
+            }
+
+        } catch (Exception e) {
+        }
+
+
+        propina=0;
         try {
             sql="SELECT PROPINA FROM D_FACTURAPR WHERE (COREL='"+corel+"')";
             DT=Con.OpenDT(sql);
@@ -736,6 +758,14 @@ public class clsDocFactura extends clsDocument {
             rep.addtotsp("TOTAL A PAGAR : ", tot);
         }
 
+        if (plines.size()>0) {
+            rep.add("");
+            rep.add("Desglose de pago:");
+            for (int ii= 0; ii <plines.size(); ii++) {
+                rep.add(plines.get(ii));
+            }
+        }
+
         if (modorest) {
             rep.add("");
             rep.add("Le atendio : "+nommesero);
@@ -826,57 +856,6 @@ public class clsDocFactura extends clsDocument {
 
         return super.buildFooter();
     }
-
-//    private boolean footerBase() {
-//
-//		double totimp,totperc;
-//
-//		if (sinimp) {
-//			stot=stot-imp;
-//			totperc=stot*(percep/100);totperc=round2(totperc);
-//			totimp=imp-totperc;
-//
-//			rep.addtotsp("Subtotal", stot);
-//			rep.addtotsp("Impuesto", totimp);
-//			if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion", totperc);
-//			rep.addtotsp("Descuento", -desc);
-//			rep.addtotsp("TOTAL", tot);
-//		} else {
-//			if (desc!=0) {
-//				rep.addtotsp("Subtotal", stot);
-//				rep.addtotsp("Descuento", -desc);
-//			}
-//			rep.addtotsp("TOTAL A PAGAR ", tot);
-//		}
-//
-//		rep.add("");
-//
-//        try {
-//            if (!textofin.isEmpty()) {
-//                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
-//                    rep.add("Sujeto a Retención Definitiva");
-//                }else{
-//                    rep.add("Sujeto a Pagos Trimestrales");
-//                }
-//            }else{
-//                rep.add("Sujeto a Pagos Trimestrales");
-//            }
-//        } catch (Exception e) {}
-//
-//
-//
-//		rep.add("");
-//
-//		//#HS_20181212 Validación para factura pendiente de pago
-//		if(pendiente == 4){
-//			rep.add("");
-//			rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
-//			rep.add("EXIJA SU FACTURA ORIGINAL");
-//			rep.add("");
-//		}
-//
-//		return super.buildFooter();
-//	}
 
 	private boolean footerToledano() {
 		double totimp, totperc,totalNotaC;
@@ -972,6 +951,42 @@ public class clsDocFactura extends clsDocument {
     private boolean esPendientePago(String corel){
         boolean vPendiente=false;
         return vPendiente;
+    }
+
+    private String addtotsp(String s1,double val) {
+        String sval;
+
+        sval=cursymbol+decfrm.format(val);
+        return ltrim(s1,prw-14)+""+rtrim(sval,12)+"  ";
+    }
+
+    private String ltrim(String ss,int sw) {
+        int l=ss.length();
+        if (l>sw) {
+            ss=ss.substring(0,sw);
+        } else {
+            String frmstr="%-"+sw+"s";
+            ss=String.format(frmstr,ss);
+        }
+
+        return ss;
+    }
+
+    private String rtrim(String ss,int sw) {
+        int sl,l;
+        String sp="";
+
+        ss=ss.trim();
+        l=ss.length();
+
+        if (l>=sw) {
+            ss=ss.substring(0,sw);
+        } else {
+            String frmstr="%"+sw+"s";
+            ss=String.format(frmstr,ss);
+        }
+
+        return ss;
     }
 
     //endregion

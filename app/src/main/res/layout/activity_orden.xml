@@ -6,6 +6,12 @@
     android:background="#FFFFFF"
     tools:context=".Orden">
 
+    <RelativeLayout
+        android:id="@+id/relomain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
+
     <GridView
         android:id="@+id/gridView2"
         android:layout_width="120dp"
@@ -529,4 +535,6 @@
         android:onClick="doExit"
         android:padding="5dp"
         android:src="@drawable/btn_exit" />
+</RelativeLayout>
+
 </RelativeLayout>

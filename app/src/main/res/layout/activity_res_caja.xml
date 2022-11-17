@@ -6,6 +6,12 @@
         android:layout_height="match_parent"
         tools:context=".ResCaja">
 
+    <RelativeLayout
+        android:id="@+id/relcmain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF">
+
     <TextView
         android:id="@+id/textView253"
         android:layout_width="wrap_content"
@@ -168,3 +174,4 @@
             android:gravity="center_horizontal"
             android:text="Salir" />
     </RelativeLayout>
+</RelativeLayout>

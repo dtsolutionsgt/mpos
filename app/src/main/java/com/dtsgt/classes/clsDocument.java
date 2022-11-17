@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
-	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin,textopie;
+	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
 	public clsRepBuilder rep;
@@ -52,6 +52,7 @@ public class clsDocument {
 	public clsDocument(Context context,int printwidth,String cursym,int decimpres, String archivo) {
 		cont=context;
 		prw=printwidth;
+        cursymbol=cursym;
 		
 		rep=new clsRepBuilder(cont,prw,true,cursym,decimpres, archivo);
 		DU=new DateUtils();
@@ -445,6 +446,7 @@ public class clsDocument {
                 }
             }
 
+            /*
 			if (pagoefectivo==1){
                 rep.add("Condiciones de pago : Efectivo");
 			} else {
@@ -458,6 +460,7 @@ public class clsDocument {
                     rep.add("Condiciones de pago : Crédito");
                 }
 			}
+            */
 		}
 
         rep.add("");

@@ -98,15 +98,12 @@ public class WebService {
                    "soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
                    "<soap:Body>" +
                    "<" + methodName + " xmlns=\"http://tempuri.org/\">";
-
            body += buildArgs(args);
            body += "</" + methodName + ">" +
                    "</soap:Body>" +
                    "</soap:Envelope>";
            wr.write(body);
            wr.flush();
-
-
 
            int responsecode = ((HttpURLConnection) conn).getResponseCode();
 
@@ -117,7 +114,7 @@ public class WebService {
                throw new Exception("Error 500: Esto es poco usual pero algún problema ocurrió del lado del motor de BD al ejecutar sentencia SQL: \n" +
                        "\n[" +methodName+"] , "+ args[1].toString());
                */
-           }else if (responsecode!=299 && responsecode!=404 && responsecode!=500) {
+           } else if (responsecode!=299 && responsecode!=400  && responsecode!=404 && responsecode!=500) {
 
                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                while ((line = rd.readLine()) != null) mResult += line;
@@ -140,8 +137,9 @@ public class WebService {
            } if (responsecode==404) {
                throw new Exception("Error 404: No se obtuvo acceso a: \n" + mUrl.toURI() +
                        "\n" + "Verifique que el WS Existe y es accesible desde el explorador.");
+           } if (responsecode==400) {
+               throw new Exception("Error 400:  \n\n" + mUrl.toURI()  );
            }
-
        } catch (Exception e) {
            errorflag=true;error=e.getMessage();
            throw new Exception(error);
@@ -248,4 +246,5 @@ public class WebService {
             return "";
         }
     }
+
 }

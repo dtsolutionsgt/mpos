@@ -90,7 +90,7 @@ public class Orden extends PBase {
     private TextView lblProd,lblDesc,lblStot,lblKeyDP,lblPokl,lblDir;
     private EditText txtbarra;
     private ImageView imgroad,imgrefr,imgnowifi;
-    private RelativeLayout relprod,relsep,relsep2;
+    private RelativeLayout relprod,relsep,relsep2,relback;
 
     private ArrayList<clsClasses.clsOrden> items= new ArrayList<clsOrden>();
     private ArrayList<String> tl=new ArrayList<String>();
@@ -163,7 +163,7 @@ public class Orden extends PBase {
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
-    private String idorden,cliid,saveprodid, brtcorel;
+    private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest;
     private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo;
 
     //#EJC202210221616:
@@ -200,7 +200,6 @@ public class Orden extends PBase {
         T_orden_modObj=new clsT_orden_modObj(this,Con,db);
         T_orden_ingObj=new clsT_orden_ingObj(this,Con,db);
         D_barril_transObj=new clsD_barril_transObj(this,Con,db);
-
 
         gl.scancliente="";
         emp=gl.emp;
@@ -301,7 +300,23 @@ public class Orden extends PBase {
 
         //fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
 
+        /*
+        Handler ctimer = new Handler();
+        Runnable crunner=new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    finish();
+                } catch (Exception e) {
+                    //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+        };
+        ctimer.postDelayed(crunner,60000);
+        */
+
     }
+
 
     //region Events
 
@@ -706,6 +721,14 @@ public class Orden extends PBase {
             //listView.smoothScrollToPosition(selidx);
         } else seluid="";
 
+
+        try {
+            if (adapter.getCount()>0) {
+                adapter.setSelectedIndex(adapter.getCount()-1);
+                listView.smoothScrollToPosition(adapter.getCount()-1);
+            }
+        } catch (Exception e) { }
+
     }
 
     private void processItem(boolean updateitem){
@@ -926,6 +949,7 @@ public class Orden extends PBase {
     }
 
     private void processCantMenu() {
+        envioCuentas();
         listItems();
     }
 
@@ -1759,6 +1783,7 @@ public class Orden extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+            envioCuentas();
             listItems();
         } catch (Exception e) {
             db.endTransaction();
@@ -2033,11 +2058,13 @@ public class Orden extends PBase {
             }
             */
 
+            /*
             item = clsCls.new clsMenu();
             item.ID = 1;
             item.Name = "Pago";
             item.Icon = 67;
             mitems.add(item);
+             */
 
             item = clsCls.new clsMenu();
             item.ID = 0;
@@ -2053,12 +2080,25 @@ public class Orden extends PBase {
                 mitems.add(item);
             }
 
-
+            /*
             item = clsCls.new clsMenu();
             item.ID = 1;
             item.Name = "Buscar";
             item.Icon = 5;
             mitems.add(item);
+
+             */
+
+            /*
+            if (actorden) {
+                item = clsCls.new clsMenu();
+                item.ID = 77;
+                item.Name = "Actualizar cuenta";
+                item.Icon = 10;
+                mitems.add(item);
+            }
+
+             */
 
             if (gl.peImpOrdCos) {
                if (!gl.pelComandaBT) {
@@ -2087,13 +2127,7 @@ public class Orden extends PBase {
                 }
             }
 
-            if (actorden) {
-                item = clsCls.new clsMenu();
-                item.ID = 77;
-                item.Name = "Reenviar orden";
-                item.Icon = 10;
-                mitems.add(item);
-            }
+
             */
 
             adaptergrid=new ListAdaptMenuOrden(this, mitems,horiz);
@@ -2213,7 +2247,7 @@ public class Orden extends PBase {
                     break;
 
                 case 77:
-                    msgAskReenvio("Reenviar orden");
+                    msgAskReenvio("Actualizar cuentas");
                     break;
 
                 case 78:
@@ -3846,6 +3880,11 @@ public class Orden extends PBase {
         wso.level=2;
 
         try {
+            if (wso.errflag) {
+                msgBoxWifi("No hay conexíon al internet");
+                relback.setBackgroundColor(Color.parseColor("#F4C6D0"));
+                wsoidle=true;return;
+            }
             /*
             if (wso.errflag) {
                 app.addToOrdenLog(du.getActDateTime(),
@@ -4278,11 +4317,12 @@ public class Orden extends PBase {
             */
 
             ExDialog dialog = new ExDialog(this);
-            dialog.setMessage("¿Mover las cuentas?");
+            dialog.setMessage("¿Mover la cuenta?");
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
+                    idresdest=idsession;
                     aplicaCuentas(idsession, IdcuentamovDestino,IdCuentaAMover);
                 }
             });
@@ -4345,10 +4385,11 @@ public class Orden extends PBase {
             sql="DELETE FROM T_ORDENcuenta WHERE COREL='" + idorden + "' AND ID =" + IdCuentaOrigen;
             db.execSQL(sql);
 
-            // mesa destino broadcast
+            /*
             if (actorden) {
                 envioOrdenDestino(idsession);
             }
+            */
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -4359,7 +4400,10 @@ public class Orden extends PBase {
             //#EJC202210221638: Si la mesa ya no tiene items, cerrar la mesa y la cuenta.
             if (dt.getCount()==0) {
                 cerrarCuentas(-1);
+                envioOrdenDestino(idresdest);
             }else{
+                envioOrdenDestino(idorden);
+                envioOrdenDestino(idresdest);
                 finish();
             }
 
@@ -4781,6 +4825,7 @@ public class Orden extends PBase {
             relprod=findViewById(R.id.relProd);
             relsep=findViewById(R.id.relSepar);
             relsep2=findViewById(R.id.relSep2);
+            relback=findViewById(R.id.relomain);
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -5812,7 +5857,7 @@ public class Orden extends PBase {
                                 }
                                 break;
                             case 2:
-                                listaMesasParaMover();
+                                //listaMesasParaMover();
                                 break;
                             case 3:
                                 valsupermodo=1;
@@ -6380,6 +6425,25 @@ public class Orden extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void msgBoxWifi(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  );
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (gl.peCajaPricipal!=gl.codigo_ruta) finish();
+                }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 

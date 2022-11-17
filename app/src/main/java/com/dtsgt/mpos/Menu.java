@@ -319,7 +319,7 @@ public class Menu extends PBase {
 						}
 
                         gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
-                        gl.preimpresion=false;
+                        gl.preimpresion=false;gl.codigo_cliente=0;
 
 						if (impresoraInstalada()) {
                             startActivity(new Intent(this, Venta.class));
@@ -1324,7 +1324,8 @@ public class Menu extends PBase {
         }
     }
 
-    private void estadoBluTooth() {
+    @SuppressLint("MissingPermission")
+	private void estadoBluTooth() {
         final int REQUEST_ENABLE_BT = 1;
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

@@ -1325,7 +1325,7 @@ public class Venta extends PBase {
             }
 
             if (gl.codigo_cliente==0) {
-                toast("Falta definir cliente");
+                toast("Falta definir cliente "+gl.codigo_cliente);
                 browse=8;
                 startActivity(new Intent(this,Clientes.class));
                 return;
@@ -2413,7 +2413,6 @@ public class Venta extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     public void cierreCaja(){
         try{
