@@ -3138,8 +3138,6 @@ public class Orden extends PBase {
                if (actorden) startService(intent);
            } catch (Exception e) {
                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-               app.addToOrdenLog(du.getActDateTime(),
-                       "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
            }
 
        } catch (Exception e) {

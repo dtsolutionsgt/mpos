@@ -398,6 +398,8 @@ public class WSEnv extends PBase {
                 ss+="Stock total: "+cStockTot+"\n";
                 ss+="Stock sin envio: "+(cStockTot-cStockSend)+"\n";
 
+                msgboxwait(ss);
+
                 if (!ferr.isEmpty()) {
                     if (!idfact.isEmpty()){
                         msgbox2("Factura : "+idfact+"\n"+ferr);
@@ -408,13 +410,6 @@ public class WSEnv extends PBase {
                     if(!idMov.isEmpty()){
                         msgbox2("Movimientos : "+idMov+"\n"+movErr);
                     }
-                }
-
-
-                if (gl.autocom == 0) {
-                    msgboxwait(ss);
-                } else {
-                    finish();
                 }
 
                 /*

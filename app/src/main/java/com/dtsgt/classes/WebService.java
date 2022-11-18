@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.dtsgt.mpos.PBase;
 
+import org.kobjects.util.Strings;
 import org.w3c.dom.Node;
 
 import java.io.BufferedReader;
@@ -99,6 +100,7 @@ public class WebService {
                    "<soap:Body>" +
                    "<" + methodName + " xmlns=\"http://tempuri.org/\">";
            body += buildArgs(args);
+           body= Strings.replace(body,"&","Y");
            body += "</" + methodName + ">" +
                    "</soap:Body>" +
                    "</soap:Envelope>";
