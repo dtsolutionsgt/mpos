@@ -1193,6 +1193,12 @@ public class clsFELInFile {
         if (pCorreo.isEmpty())  pCorreo = correo_sucursal;
         if (pCorreo.length()<8) pCorreo = correo_sucursal;
 
+        try {
+            if (pNITCliente.length()<6) pNITCliente="CF";
+        } catch (Exception e) {
+            pNITCliente="CF";
+        }
+
         pNombreCliente=pNombreCliente.trim();
         if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase("\n") |
             pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
