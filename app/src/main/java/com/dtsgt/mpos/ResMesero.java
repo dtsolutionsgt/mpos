@@ -1141,9 +1141,12 @@ public class ResMesero extends PBase {
             P_res_grupoObj.fill(sql);
 
             if (P_res_grupoObj.count==0) {
+                showGrupoChecks();
+                /*
                 browse=2;
                 startActivity(new Intent(ResMesero.this,ValidaSuper.class));
                 return;
+                */
             }
 
             for (int i = 0; i <P_res_grupoObj.count; i++) {
@@ -1164,8 +1167,11 @@ public class ResMesero extends PBase {
             listdlg.setOnLeftClick(v -> listdlg.dismiss());
 
             listdlg.setOnMiddleClick(v -> {
+                showGrupoChecks();
+                /*
                 browse=2;
                 startActivity(new Intent(ResMesero.this,ValidaSuper.class));
+                                 */
                 listdlg.dismiss();
             });
 

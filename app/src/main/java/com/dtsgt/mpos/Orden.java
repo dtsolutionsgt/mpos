@@ -132,6 +132,7 @@ public class Orden extends PBase {
     private Runnable rnBroadcastCallback;
     private Runnable rnDetailCallback;
     private Runnable rnBarTrans;
+    private Runnable rnClose;
 
     private AppMethods app;
 
@@ -159,7 +160,7 @@ public class Orden extends PBase {
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
     private int nivel,dweek,clidia,counter,prodlinea,cuenta, IdcuentamovDestino,lineaingred;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
-    private boolean enviarorden,actorden,modo_emerg,exit_mode;
+    private boolean enviarorden,actorden,modo_emerg,exit_mode,close_flag;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
@@ -264,7 +265,14 @@ public class Orden extends PBase {
                 broadcastCallback();
             }
         };
+
         wscom =new wsCommit(gl.wsurl);
+
+        rnClose = new Runnable() {
+            public void run() {
+                closeAction();
+            }
+        };
 
         rnDetailCallback = new Runnable() {
             public void run() {
@@ -1613,12 +1621,11 @@ public class Orden extends PBase {
 
             try {
                 String cmd = "DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")" + ";";
-
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
-
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -1674,7 +1681,7 @@ public class Orden extends PBase {
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
 
-            envioMesa(2);
+            envioMesa(2,true);
             gl.cerrarmesero=true;gl.mesero_lista=true;
             finish();
             //gl.cerrarmesero=true;
@@ -1702,7 +1709,7 @@ public class Orden extends PBase {
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
 
-            envioMesa(3);
+            envioMesa(3,true);
 
             gl.cerrarmesero=true;gl.mesero_lista=true;
             finish();
@@ -1725,16 +1732,15 @@ public class Orden extends PBase {
             sess.fechault=du.getActDateTime();
             P_res_sesionObj.update(sess);
 
-            envioMesa(-1);
-
-            P_res_sesionObj.update(sess);
-
-            if (actorden)  broadcastJournalFlagAll(99);
-
             if (modo>0) {
-                //msgAskExit("La mesa fue pagada");
+                envioMesa(-1,false);
+                P_res_sesionObj.update(sess);
+                if (actorden)  broadcastJournalFlagAll(99,false);
                 toast("La mesa fue pagada");
             } else {
+                envioMesa(-1,false);
+                P_res_sesionObj.update(sess);
+                if (actorden)  broadcastJournalFlagAll(99,true);
                 gl.cerrarmesero=true;gl.mesero_lista=true;
                 if (modo==-9) toastcentlong("Las cuentas de la órden han sido cerradas");
                 finish();
@@ -3090,7 +3096,7 @@ public class Orden extends PBase {
 
     //region Envio
 
-    private void envioMesa(int estado) {
+    private void envioMesa(int estado,boolean cerrar) {
 
        String cmd="";
 
@@ -3132,10 +3138,13 @@ public class Orden extends PBase {
            }
 
            try {
+               /*
                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                intent.putExtra("URL",gl.wsurl);
                intent.putExtra("command",cmd);
                if (actorden) startService(intent);
+                */
+               enviaCommit(cerrar,cmd);
            } catch (Exception e) {
                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
            }
@@ -3190,10 +3199,13 @@ public class Orden extends PBase {
             cmd+=buildDetailJournal();
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -3228,10 +3240,13 @@ public class Orden extends PBase {
             cmd+=buildDetailJournal();
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -3272,10 +3287,13 @@ public class Orden extends PBase {
             cmd+=buildDetailJournal();
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -3316,10 +3334,13 @@ public class Orden extends PBase {
             cmd+=buildDetailJournal();
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 app.addToOrdenLog(du.getActDateTime(),
@@ -3363,16 +3384,39 @@ public class Orden extends PBase {
             cmd+=buildDetailJournalTodasCajas();
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 app.addToOrdenLog(du.getActDateTime(),
                         "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
             }
 
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void enviaCommit(boolean cerrar,String cmd) {
+        if (!actorden) return;
+
+        close_flag=cerrar;
+        wscom.execute(cmd,rnClose);
+    }
+
+    private void closeAction() {
+        try {
+            if (wscom.errflag) {
+                toastlong("SIN CONEXIÓN A INTERNET");
+            }
+            if (close_flag) {
+                finish();
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -3462,10 +3506,13 @@ public class Orden extends PBase {
             }
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvCommit.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 app.addToOrdenLog(du.getActDateTime(),
@@ -3478,7 +3525,7 @@ public class Orden extends PBase {
 
     }
 
-    private void broadcastJournalFlagAll(int flag) {
+    private void broadcastJournalFlagAll(int flag,boolean cerrar) {
         clsClasses.clsT_ordencom pitem;
         int idruta;
 
@@ -3507,10 +3554,14 @@ public class Orden extends PBase {
             }
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvCommit.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(cerrar,cmd);
+
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 app.addToOrdenLog(du.getActDateTime(),
@@ -3578,10 +3629,13 @@ public class Orden extends PBase {
             }
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvCommit.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                */
+                enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 app.addToOrdenLog(du.getActDateTime(),
@@ -4046,15 +4100,16 @@ public class Orden extends PBase {
         String cmd="DELETE FROM T_ordencom WHERE CODIGO="+brtid;
 
         try {
+            /*
             Intent intent = new Intent(Orden.this, srvCommit.class);
             intent.putExtra("URL",gl.wsurl);
             intent.putExtra("command",cmd);
             if (actorden) startService(intent);
+            */
+            enviaCommit(false,cmd);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            app.addToOrdenLog(du.getActDateTime(),
-                    "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
-        }
+         }
     }
 
     public String addTordenItemSql(clsClasses.clsT_orden item) {
@@ -4726,10 +4781,13 @@ public class Orden extends PBase {
             cmd+=buildAnulJournal();
 
             try {
+                /*
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
+                 */
+                enviaCommit(true,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -5928,7 +5986,7 @@ public class Orden extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                envioMesa(1);
+                envioMesa(1,true);
             }
         });
 
