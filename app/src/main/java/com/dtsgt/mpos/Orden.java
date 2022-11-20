@@ -1621,10 +1621,12 @@ public class Orden extends PBase {
 
             try {
                 String cmd = "DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")" + ";";
+                /*
                 Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
                 intent.putExtra("URL",gl.wsurl);
                 intent.putExtra("command",cmd);
-                if (actorden) startService(intent);
+                if (actorden) startService(intent)
+                 */
                 enviaCommit(false,cmd);
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
