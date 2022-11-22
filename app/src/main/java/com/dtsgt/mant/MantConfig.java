@@ -519,7 +519,8 @@ public class MantConfig extends PBase {
         try {
             items16.clear();
             items16.add("GUA");if (value16.equalsIgnoreCase("GUA")) selidx=0;
-            items16.add("TICKET");if (value16.equalsIgnoreCase("TICKET")) selidx=1;
+            items16.add("HON");if (value16.equalsIgnoreCase("HON")) selidx=1;
+            //items16.add("TICKET");if (value16.equalsIgnoreCase("TICKET")) selidx=1;
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, items16);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
