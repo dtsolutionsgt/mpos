@@ -767,6 +767,7 @@ public class Reportes extends PBase {
             report=false;
 
             recogerFecha.show();
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -832,6 +833,7 @@ public class Reportes extends PBase {
             double costo;
 
             try {
+
                 tot=0;
                 totF=0;
                 sinImp=0;
@@ -839,13 +841,9 @@ public class Reportes extends PBase {
                 impF=0;
                 SumaCant=0;
                 cantF=0;
-                rep.line();
-                rep.add("Vesion MPos : "+gl.parVer);
-                rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
-                rep.line();
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
-                rep.add(fecharango);
-                rep.empty();
+                /*rep.empty();
+                rep.line();*/
 
                 for (int i = 0; i <itemR.size(); i++) {
 
@@ -853,17 +851,20 @@ public class Reportes extends PBase {
                     if (gl.reportid==1){
 
                         if(acc==1){
-                            rep.add("    REPORTE DOCUMENTOS POR DIA  ");
-                            //rep.add("Cant.Fact   Costo  Impuesto    Total");
-                            rep.add("Co. SubTotal   Impuesto    Total");
-                            rep.line();
-                            rep.empty();
-                            rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
-                            acc = 2;
-                        }
+                            rep.addc("REPORTE DOCUMENTOS POR DIA");
+                            rep.addc(fecharango);
+                            setDatosVersion();
 
-                        if(!series.equals(itemR.get(i).serie)){
-                            rep.add("------(    Serie "+itemR.get(i).serie+"    )------------");
+                            if(!series.equals(itemR.get(i).serie)){
+                                rep.addc("Serie documentos: "+itemR.get(i).serie);
+                            }
+                            rep.empty();
+                            //rep.add("Cant.Fact   Costo  Impuesto    Total");
+                            rep.add("No. SubTotal   Impuesto    Total");
+                            rep.line();
+                            //#EJC202211211358, PARA QUE ESTA FECHA?
+                            //rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
+                            acc = 2;
                         }
 
                         series=itemR.get(i).serie;
@@ -878,10 +879,9 @@ public class Reportes extends PBase {
                         cantF += itemR.get(i).cant;
 
                         if(i+1==itemR.size()){
-                            rep.line();
-                            rep.add3Tot(cantF, sinImp, impF, tot);
+                            //rep.line();
+                            //rep.add3Tot(cantF, sinImp, impF, tot);
                             totF += tot;
-                            SumaCant += cantF;
                             totSinImpF += sinImp;
 
                         } else {
@@ -891,9 +891,8 @@ public class Reportes extends PBase {
 
                             if (!fecha1.equals(fecha2)) {
                                 rep.line();
-                                rep.add3Tot(cantF, sinImp, impF, tot);
+                                //rep.add3Tot(cantF, sinImp, impF, tot);
                                 totF += tot;
-                                SumaCant += cantF;
                                 totSinImpF += sinImp;
 
                                 cantF = 0;
@@ -905,12 +904,15 @@ public class Reportes extends PBase {
                             }
                         }
 
+                        SumaCant += 1;
                         //Reporte 2
                     } else if(gl.reportid==2){
 
                         fecha = du.sfecha(itemR.get(i).fecha*10000);
                         if(acc==1){
-                            rep.add("      REPORTE DE VENTAS POR DIA");
+                            rep.addc("REPORTE DE VENTAS POR DIA");
+                            rep.addc(fecharango);
+                            setDatosVersion();
                             rep.add("Fecha      Serie   Cant.Fact   Total");
                             rep.line();
                             acc = 2;
@@ -955,8 +957,10 @@ public class Reportes extends PBase {
                             for (int a = 0; a <itemR.size(); a++) {
                                 totF += itemR.get(a).total;
                             }
-                            
-                            rep.add("   REPORTE VENTA POR PRODUCTO   ");
+
+                            rep.addc("REPORTE VENTA POR PRODUCTO");
+                            rep.addc(fecharango);
+                            setDatosVersion();
                             if(validCB==1) rep.add("            CONSOLIDADO");
                             if(validCB==0) rep.add("Cod   Descripcion");
                             if(validCB==0) rep.add("Cant       UM       Total      %");
@@ -984,7 +988,10 @@ public class Reportes extends PBase {
                                 totF += itemR.get(a).total;
                             }
 
-                            rep.add("     REPORTE POR FORMA DE PAGO");
+                            rep.addc("REPORTE POR FORMA DE PAGO");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            rep.empty();
                             rep.add("Forma    Cantidad");
                             rep.add("Pago      Factura     Total     %");
                             rep.line();
@@ -1004,7 +1011,9 @@ public class Reportes extends PBase {
                                 totF += itemR.get(a).total;
                             }
 
-                            rep.add("      REPORTE VENTA POR FAMILIA");
+                            rep.addc("REPORTE VENTA POR FAMILIA");
+                            rep.addc(fecharango);
+                            setDatosVersion();
                             rep.add("Seccion   Cant.Art    Total      %");
                             rep.line();
                             acc = 2;
@@ -1026,8 +1035,10 @@ public class Reportes extends PBase {
                             }
 
 
-                            rep.add("    REPORTE VENTAS POR VENDEDOR");
-                            if(validCB==1) rep.add("              CONSOLIDADO");
+                            rep.addc("REPORTE VENTAS POR VENDEDOR");
+                            rep.addc(fecharango);
+                            setDatosVersion();
+                            if(validCB==1) rep.addc("CONSOLIDADO");
                             if(validCB==0) rep.add("Codigo     Nombre");
                             if(validCB==0) rep.add("Cant       %       Total    Comision");
                             if(validCB==1) rep.add("Codigo     Nombre             Total");
@@ -1060,6 +1071,8 @@ public class Reportes extends PBase {
 
                             if(itemR.get(i).tipo==7) rep.add("MARGEN Y BENEFICIO POR PRODUCTO");
                             if(itemR.get(i).tipo==8) rep.add("MARGEN Y BENEFICIO POR FAMILIA");
+                            rep.addc(fecharango);
+                            setDatosVersion();
                             rep.add("Codigo   Nombre");
                             rep.add("Venta    Costo    Beneficio   %");
                             rep.line();
@@ -1078,7 +1091,9 @@ public class Reportes extends PBase {
 
                         if(acc==1){
 
-                            rep.add("REPORTE VENTAS POR CLIENTE CONSOLIDADO");
+                            rep.addc("REPORTE VENTAS POR CLIENTE CONSOLIDADO");
+                            rep.addc(fecharango);
+                            setDatosVersion();
                             rep.add("Codigo        Nombre");
                             rep.add("Fecha       Cant.Fact       Total");
                             rep.line();
@@ -1103,10 +1118,12 @@ public class Reportes extends PBase {
 
                         if(acc==1){
 
-                            rep.add("REPORTE VENTAS POR CLIENTE DETALLE");
+                            rep.addc("REPORTE VENTAS POR CLIENTE DETALLE");
+                            rep.addc(fecharango);
+                            setDatosVersion();
                             // rep.add("Codigo Cliente: "+itemR.get(i).serie);
                             // rep.add("Nombre Cliente: "+itemR.get(i).um);
-                            rep.empty();
+                            //rep.empty();
 
                             rep.add("Fecha        Corelativo");
                             rep.add("Producto   Cant    Precio    Total");
@@ -1180,8 +1197,9 @@ public class Reportes extends PBase {
 
                         if(acc==1){
                             tot=0;
-                            rep.add("  REPORTE CONSUMO MATERIA PRIMA ");
-                            rep.line();
+                            rep.addc("REPORTE CONSUMO MATERIA PRIMA ");
+                            rep.addc(fecharango);
+                            setDatosVersion();
                             rep.add("Nombre    Cantidad  UM     Costo");
                             rep.line();
                             acc = 2;
@@ -1200,6 +1218,7 @@ public class Reportes extends PBase {
                 rep.line();
 
                 return true;
+
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                 msgbox(e.getMessage());
@@ -1208,11 +1227,28 @@ public class Reportes extends PBase {
 
         }
 
+        //#AT20221121 Función para mostrar Sucursal, caja, impresión y ver mpos
+        private void setDatosVersion() {
+            rep.empty();
+            rep.line();
+            rep.add("Empresa: " + gl.empnom);
+            rep.add("Sucursal: " + gl.tiendanom);
+            rep.add("Caja: " + gl.rutanom);
+            rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+            rep.add("Vesión MPos: "+gl.parVer);
+            rep.add("Generó: "+gl.vendnom);
+            rep.line();
+            rep.empty();
+        }
+
         protected boolean buildFooter() {
 
             try {
 
-                if(gl.reportid==1) rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+                if(gl.reportid==1){
+                    rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+                }
+
                 if(gl.reportid==2) rep.add4lrrTot("Total: ","",Integer.toString(cantfF),totF);
                 if(gl.reportid==3) {
                     if(validCB==0){

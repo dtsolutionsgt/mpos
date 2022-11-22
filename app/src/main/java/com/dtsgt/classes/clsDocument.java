@@ -383,15 +383,15 @@ public class clsDocument {
             }
         }
 
-        rep.add("Fecha : "+fsfecha);
-
         if (docfactura){
 
-            if (!emptystr(nit_cliente)) rep.add("NIT : "+nit_cliente);
+            rep.add("Fecha: "+fsfecha);
+
+            if (!emptystr(nit_cliente)) rep.add("NIT: "+nit_cliente);
 
             if (!emptystr(clidir)) {
 
-                clidir="Dir : "+clidir;
+                clidir="Dir.: "+clidir;
 
                 if (clidir.length()>prw) {
 
@@ -495,7 +495,7 @@ public class clsDocument {
 
 		if (doccanastabod && !(modofact.equalsIgnoreCase("TOL"))){
 			rep.add("");
-			if (doccanastabod && (reimpres==1)) rep.add("-------  R E I M P R E S I O N  -------");
+			if (doccanastabod && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
 			rep.add("");
 		}
 
