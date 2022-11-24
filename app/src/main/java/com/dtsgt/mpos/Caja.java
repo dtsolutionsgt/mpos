@@ -237,14 +237,14 @@ public class Caja extends PBase {
 
                     if(montoDif!=0){
                         if(acc==1){
-                            msgboxValidaMonto("El monto de efectivo no cuadra");
+                            msgboxValidaMonto("El monto de efectivo no cuadra: diferencia (" + montoDif + ")");
                             //acc=0;
                         } else saveMontoIni();
                     } else {
                         if(cred==1){
                             if(montoDifCred!=0){
                                 if(acc==1){
-                                    msgboxValidaMonto("El monto de crédito no cuadra,");
+                                    msgboxValidaMonto("El monto de crédito no cuadra diferencia: (" + montoDifCred + ")");
                                     //acc=0;
                                 } else saveMontoIni();
                            } else saveMontoIni();
@@ -275,9 +275,11 @@ public class Caja extends PBase {
 
             venta_total=-1;
 
-            sql="SELECT P.CODPAGO, SUM(P.VALOR) FROM D_FACTURAP P " +
-                "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                "WHERE F.KILOMETRAJE=0 AND P.TIPO='E' AND F.ANULADO=0 GROUP BY P.TIPO";
+            sql=" SELECT P.CODPAGO, SUM(P.VALOR) FROM D_FACTURAP P " +
+                " INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                " WHERE F.KILOMETRAJE=0 AND P.TIPO='E' AND F.ANULADO=0 " +
+                " AND F.FECHA >= " + gl.lastDate +
+                " GROUP BY P.TIPO ";
 
             dt=Con.OpenDT(sql);
 
@@ -296,9 +298,10 @@ public class Caja extends PBase {
 
             if(cred==1){
                 sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
-                        "FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                        "WHERE F.KILOMETRAJE=0 AND P.TIPO='K' AND F.ANULADO=0 " +
-                        "GROUP BY P.CODPAGO";
+                    " FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                    " WHERE F.KILOMETRAJE=0 AND P.TIPO='K' AND F.ANULADO=0 " +
+                    " AND F.FECHA >= " + gl.lastDate +
+                    " GROUP BY P.CODPAGO";
 
                 dt=Con.OpenDT(sql);
 
@@ -312,7 +315,7 @@ public class Caja extends PBase {
 
                 venta_total+=totCred;
 
-                montoDifCred = montoCred - totCred;
+                montoDifCred = mu.round2(montoCred - totCred);
             }
 
 
@@ -331,7 +334,8 @@ public class Caja extends PBase {
             montoDif=mu.round2(montoDif);
             montoFin=mu.round2(montoFin);
 
-            montoDif = montoFin - montoDif;
+            montoDif = mu.round2(montoFin - montoDif);
+
             if (montoDif<0.01) montoDif=0;
 
         } catch (Exception e) {
@@ -429,6 +433,7 @@ public class Caja extends PBase {
 
                 gl.inicio_caja_correcto = true;
 
+                //#EJC20221124: Commit de transacción en inicio de caja.
                 db.setTransactionSuccessful();
                 db.endTransaction();
 
@@ -439,12 +444,13 @@ public class Caja extends PBase {
                 writeCorelLog(7,gl.corelZ,"");
 
                 //#CKFK 20200711 Agregué la condicion de que sume las que no están anuladas AND F.ANULADO = 0
-                sql="SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +
-                    "FROM D_FACTURAP P " +
-                    "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
-                    "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO "+
-                    "WHERE F.KILOMETRAJE=0 AND F.ANULADO = 0  " +
-                    "GROUP BY P.CODPAGO, P.TIPO, M.NIVEL";
+                sql=" SELECT P.CODPAGO, P.TIPO, SUM(P.VALOR),M.NIVEL " +
+                    " FROM D_FACTURAP P " +
+                    " INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                    " INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO "+
+                    " WHERE F.KILOMETRAJE=0 AND F.ANULADO = 0  " +
+                    " AND F.FECHA >= " + gl.lastDate +
+                    " GROUP BY P.CODPAGO, P.TIPO, M.NIVEL";
 
                 dt=Con.OpenDT(sql);
 
@@ -472,7 +478,6 @@ public class Caja extends PBase {
                                     itemC.montofin = montoFin;
                                     itemC.montodif = mu.round2(montoFin-montoIni);
                                     itemC.codigo_cajacierre =caja_inicio_contado.last().codigo_cajacierre;
-                                    //if (itemC.codpago==0) itemC.codpago=7;
                                     caja.update(itemC);
                                 }
                             }
@@ -482,7 +487,6 @@ public class Caja extends PBase {
 
                             if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
 
-                                //itemC.codigo_cajacierre=itemC.codigo_cajacierre+"C";
                                 itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C";
                                 montoIni = dt.getDouble(2);
                                 itemC.montoini = montoIni;
@@ -527,10 +531,10 @@ public class Caja extends PBase {
 
                 }
 
-                sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
+                sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0 AND FECHA >= " + gl.lastDate;
                 db.execSQL(sql);
 
-                sql="UPDATE P_CAJACIERRE SET ESTADO=1 WHERE COREL<" + gl.corelZ;
+                sql="UPDATE P_CAJACIERRE SET ESTADO=1 WHERE COREL < " + gl.corelZ;
                 db.execSQL(sql);
 
                 writeCorelLog(9,gl.corelZ,"");
@@ -547,20 +551,21 @@ public class Caja extends PBase {
 
                 writeCorelLog(10,gl.corelZ,sql);
 
+                Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();
+
                 Cursor dtk=Con.OpenDT("SELECT KILOMETRAJE FROM D_FACTURA WHERE KILOMETRAJE=0");
                 if (dtk.getCount()>0) {
                     writeCorelLog(11,gl.corelZ,"KILOMETRAJE=0 DESPUES de UPDATE");
                     setAddlog("saveMontoIni", "KILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
-                    msgbox("NO se puede realizar fin del dia. Existen facturas sin codigo de cierre. Por favor, informe soporte.");
+                    msgAskExit2("El cierre se realizó correctamente, pero no fue posible asociar algunas facturas al cierre de caja. Por favor envíe la base de datos y notifique a soporte.");
                     return;
                 }
 
                 writeCorelLog(12,gl.corelZ,"");
 
-                Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();
-
                 gl.reportid=10;
                 gl.FinMonto=montoFin;
+
                 startActivity(new Intent(this, CierreX.class));
 
                 Handler mtimer = new Handler();
@@ -661,7 +666,6 @@ public class Caja extends PBase {
     //endregion
 
     //region Dialogs
-
     private void msgAskExit(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
@@ -672,26 +676,18 @@ public class Caja extends PBase {
         dialog.setCancelable(false);
 
         if(msgAcc==0){
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    finish();
-                }
-            });
+            dialog.setPositiveButton("Si", (dialog1, which) -> finish());
 
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
+            dialog.setNegativeButton("No", (dialog12, which) -> {});
         } else if(msgAcc==1) {
-            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    if (isNetworkAvailable()) {
-                        gl.recibir_automatico = true;
-                        startActivity(new Intent(Caja.this,WSRec.class));
-                    } else {
-                        toast("No hay conexión a internet");
-                    }
-                    finish();
+            dialog.setNeutralButton("OK", (dialog13, which) -> {
+                if (isNetworkAvailable()) {
+                    gl.recibir_automatico = true;
+                    startActivity(new Intent(Caja.this,WSRec.class));
+                } else {
+                    toast("No hay conexión a internet");
                 }
+                finish();
             });
             msgAcc=0;
         }
@@ -699,6 +695,32 @@ public class Caja extends PBase {
 
         dialog.show();
 
+    }
+
+    private void msgAskExit2(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setCancelable(false);
+        dialog.setNeutralButton("OK", (dialog13, which) -> {
+
+            writeCorelLog(12,gl.corelZ,"");
+
+            gl.reportid=10;
+            gl.FinMonto=montoFin;
+
+            startActivity(new Intent(this, CierreX.class));
+
+            Handler mtimer = new Handler();
+            Runnable mrunner= () -> {
+                gl.autocom = 1;
+                startActivity(new Intent(Caja.this,WSEnv.class));
+            };
+            mtimer.postDelayed(mrunner,200);
+
+            super.finish();
+
+        });
+        dialog.show();
     }
 
     private void msgAskSend(String msg) {

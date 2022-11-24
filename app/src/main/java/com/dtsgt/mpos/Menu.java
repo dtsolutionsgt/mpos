@@ -35,6 +35,7 @@ import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
@@ -1886,11 +1887,27 @@ public class Menu extends PBase {
                     writeCorelLog(104,gl.cajaid,"valida gl.cajaid==5");
 
                     if(fc!=fa){
+
                         writeCorelLog(105,0,"fc: "+fc+"  fa:"+fa);
 
                         gl.validDate=true;
                         gl.cajaid=6;
-  						if (gl.lastDate==0) gl.lastDate=caja.last().fecha;
+  						if (gl.lastDate==0){
+
+							clsP_cajahoraObj caja_hora = new clsP_cajahoraObj(this,Con,db);
+							//#EJC202211240844: Obtener la fecha con hora a partir de la que se empezó a facturar.
+							caja_hora.fill("order by corel desc");
+
+							if (caja_hora!=null){
+								if (caja_hora.count>1){
+									gl.lastDate=caja_hora.items.get(1).fechaini;
+									gl.cajaid=6;
+									return false;
+								}
+							}
+
+							gl.lastDate=caja.last().fecha;
+						}
   						return false;
                     }
 				}

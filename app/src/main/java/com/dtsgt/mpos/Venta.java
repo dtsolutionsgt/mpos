@@ -44,6 +44,7 @@ import com.dtsgt.classes.clsDescFiltro;
 import com.dtsgt.classes.clsDescuento;
 import com.dtsgt.classes.clsKeybHandler;
 import com.dtsgt.classes.clsP_cajacierreObj;
+import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_nivelprecioObj;
 import com.dtsgt.classes.clsP_orden_numeroObj;
@@ -1260,6 +1261,7 @@ public class Venta extends PBase {
     }
 
     private boolean updateMenuItemUID(){
+
         double precdoc;
 
         try {
@@ -1276,7 +1278,6 @@ public class Venta extends PBase {
             upd.add("DESMON",descmon);
             upd.add("TOTAL",prodtot);
             upd.add("PRECIODOC",precdoc);
-
             upd.Where("EMPRESA='"+uid+"'");
 
             db.execSQL(upd.sql());
@@ -2527,8 +2528,12 @@ public class Venta extends PBase {
         try{
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
+            clsP_cajahoraObj caja_hora = new clsP_cajahoraObj(this,Con,db);
 
             caja.fill();
+
+            //#EJC202211240844: Obtener la fecha con hora a partir de la que se empezó a facturar.
+            caja_hora.fill("order by corel desc");
 
            if(gl.cajaid==3){
 
@@ -2544,7 +2549,16 @@ public class Venta extends PBase {
                     if (gl.lastDate!=0){
 
                         if(caja.last().fecha!=gl.lastDate){
+
                             gl.validDate=true;
+
+                            if (caja_hora!=null){
+                                if (caja_hora.count>1){
+                                    gl.lastDate=caja_hora.items.get(1).fechaini;
+                                    gl.cajaid=6;
+                                    return false;
+                                }
+                            }
                             gl.lastDate=caja.last().fecha;
                             gl.cajaid=6; return false;
                         }
