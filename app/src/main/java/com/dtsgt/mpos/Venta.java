@@ -1305,6 +1305,7 @@ public class Venta extends PBase {
     public void finalizarOrden(){
 
         try{
+
             clsBonifGlob clsBonG;
             clsDeGlob clsDeG;
             String s,ss;
@@ -1314,10 +1315,16 @@ public class Venta extends PBase {
             }
 
             try{
+
                 //#EJC20210705: Agregué validación de propina por media_pago.
                 gl.delivery = hasProductsDelivery();
                 gl.EsNivelPrecioDelivery = (gl.delivery || gl.pickup);
                 if (gl.EsVentaDelivery) gl.EsNivelPrecioDelivery=true;
+
+                //#EJC202211232059: Limpiar tablas antes de procesar pago.
+                db.execSQL("DELETE FROM T_PAGO");
+                db.execSQL("DELETE FROM T_BONITEM WHERE PRODID='*'");
+
             } catch (Exception e){
                 gridViewOpciones.setEnabled(true);
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

@@ -1116,7 +1116,6 @@ public class FacturaRes extends PBase {
 			ins.add("AYUDANTE"," ");
 			ins.add("CODIGOLIQUIDACION",0);
 			ins.add("RAZON_ANULACION","");
-
             ins.add("FEELSERIE"," ");
             ins.add("FEELNUMERO"," ");
             ins.add("FEELUUID"," ");
@@ -2766,9 +2765,9 @@ public class FacturaRes extends PBase {
         if (!svuelt.equalsIgnoreCase("")){
 
             double vuel=Double.parseDouble(svuelt);
-            aplcash=vuel;
-            //vuel=vuel-gl.total_pago+descaddmonto;
-            vuel=vuel-gl.total_pago;
+			aplcash=vuel;
+			vuel=vuel-tot;
+
             lblMonto.setText("");khand.val="";
 
             if (vuel<0.00) {
@@ -2839,7 +2838,6 @@ public class FacturaRes extends PBase {
             }
 
 			ins.init("T_PAGO");
-
 			ins.add("ITEM",item);
 			ins.add("CODPAGO",codpago);
 			ins.add("TIPO","E");
@@ -3100,6 +3098,7 @@ public class FacturaRes extends PBase {
 	}
 
 	private void checkPago() {
+
 		Cursor DT;
 		double tpago;
 
@@ -3121,6 +3120,7 @@ public class FacturaRes extends PBase {
             if (pendiente) {
                 tpago=tot;
             }
+
             s=mu.frmcur(tpago);
 
             pend=tot-tpago;if (pend<0) pend=0;
@@ -3131,7 +3131,6 @@ public class FacturaRes extends PBase {
                     lblPago.setText("Pago COMPLETO.\n"+s);
                     pago=true;
                     pagocompleto=true;
-                    //if (rutapos) askSavePos(); else askSave();
                     finishOrder();
                 }
             }	else{
@@ -3142,18 +3141,19 @@ public class FacturaRes extends PBase {
                     lblPago.setText("Pago COMPLETO."+s);
                     pago=true;
                     pagocompleto=true;
-                    //if (rutapos) askSavePos(); else askSave();
                     finishOrder();
                 }
             }
 
             if (gl.mesero_precuenta) lblPago.setText("");
+
         } catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
     }
 
     private void checkPagoNF() {
+
         Cursor DT;
         double tpago;
 
@@ -3191,11 +3191,11 @@ public class FacturaRes extends PBase {
                     lblPago.setText("Pago COMPLETO."+s);
                     pago=true;
                     pagocompleto=true;
-                    //if (rutapos) askSavePos(); else askSave();
                 }
             }
 
             if (gl.mesero_precuenta) lblPago.setText("");
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox( e.getMessage());
@@ -3204,6 +3204,7 @@ public class FacturaRes extends PBase {
     }
 
     private void pagoPendiente() {
+
         Cursor DT;
         double tpago,pef,pcard;
 
@@ -3604,7 +3605,6 @@ public class FacturaRes extends PBase {
 		try {
 
 			db.execSQL("DELETE FROM T_PAGO");
-
 			db.execSQL("DELETE FROM T_BONITEM WHERE PRODID='*'");
 
 			//#CKFK 20210706

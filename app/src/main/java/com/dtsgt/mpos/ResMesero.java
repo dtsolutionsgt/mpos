@@ -345,7 +345,9 @@ public class ResMesero extends PBase {
     }
 
     private void addOrden() {
+
         try {
+
             db.beginTransaction();
 
             clsClasses.clsP_res_sesion item = clsCls.new clsP_res_sesion();
@@ -379,11 +381,14 @@ public class ResMesero extends PBase {
             db.endTransaction();
 
             gl.idorden=item.id;
+
             startActivity(new Intent(this,Orden.class));
+
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     private void listMesa() {

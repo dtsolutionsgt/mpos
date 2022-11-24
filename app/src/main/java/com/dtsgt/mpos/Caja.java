@@ -260,6 +260,7 @@ public class Caja extends PBase {
     }
 
     public void montoDif(){
+
         Cursor dt;
         double tot,totCred,pago;
 
@@ -340,11 +341,14 @@ public class Caja extends PBase {
     }
 
     public void saveMontoIni(){
+
         Cursor dt, dt2, dt3;
         int codpago=0;
         Long fecha=0L;
 
         try{
+
+            db.beginTransaction();
 
             clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
             clsP_cajahoraObj cajah = new clsP_cajahoraObj(this,Con,db);
@@ -375,7 +379,6 @@ public class Caja extends PBase {
 
                 caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
                 gl.corelZ = caja.last().corel;
-                db.execSQL("UPDATE P_CAJACIERRE SET ESTADO=1 WHERE COREL<" + gl.corelZ);
 
                 caja.fill(" WHERE ESTADO = 0  ORDER BY COREL");
                 gl.corelZ = caja.last().corel;
@@ -384,7 +387,7 @@ public class Caja extends PBase {
 
                 fecha = caja.last().fecha;
                 fondoCaja = caja.last().fondocaja;
-                //itemC.codigo_cajacierre =  caja.first().codigo_cajacierre;
+
                 itemC.codigo_cajacierre =  caja.last().codigo_cajacierre;
             }
 
@@ -418,12 +421,16 @@ public class Caja extends PBase {
                     itemH.fechafin=0;
                     cajah.add(itemH);
                 } catch (Exception e) {
-                    msgbox("Error saveMontoIni: "+e.getMessage());
+                    //msgbox("Error saveMontoIni: "+e.getMessage());
+                    throw new Exception(e.getMessage());
                 }
 
                 msgAcc=1;
 
                 gl.inicio_caja_correcto = true;
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
 
                 msgAskExit("Inicio de caja correcto");
 
@@ -455,17 +462,20 @@ public class Caja extends PBase {
 
                         if(dt.getInt(3)==1){ //#CKFK 20200623 Cuando la forma de pago es Contado
 
-                            montoIni = fondoCaja+dt.getDouble(2);
-                            itemC.montoini = montoIni;
-                            itemC.montofin = montoFin;
-                            itemC.montodif = montoFin-montoIni;
-                            //itemC.codpago=1;
+                            clsP_cajacierreObj caja_inicio_contado = new clsP_cajacierreObj(this,Con,db);
+                            caja_inicio_contado.fill(" WHERE ESTADO = 0 AND CODPAGO =0 ORDER BY COREL");
 
-                            //sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
-                            //db.execSQL(sql);
-
-                            if (itemC.codpago==0) itemC.codpago=7;
-                            caja.update(itemC);
+                            if (caja_inicio_contado !=null){
+                                if (caja_inicio_contado.count >0){
+                                    montoIni = fondoCaja+dt.getDouble(2);
+                                    itemC.montoini = montoIni;
+                                    itemC.montofin = montoFin;
+                                    itemC.montodif = mu.round2(montoFin-montoIni);
+                                    itemC.codigo_cajacierre =caja_inicio_contado.last().codigo_cajacierre;
+                                    //if (itemC.codpago==0) itemC.codpago=7;
+                                    caja.update(itemC);
+                                }
+                            }
                         }
 
                         if(cred==1){
@@ -477,9 +487,8 @@ public class Caja extends PBase {
                                 montoIni = dt.getDouble(2);
                                 itemC.montoini = montoIni;
                                 itemC.montofin = montoCred;
-                                itemC.montodif = montoCred - montoIni;
+                                itemC.montodif = mu.round2(montoCred - montoIni);
                                 itemC.estado=1;
-                                //itemC.codpago=5;
 
                                 caja.add(itemC);
                             }
@@ -511,14 +520,18 @@ public class Caja extends PBase {
                     montoIni = fondoCaja;
                     itemC.montoini = montoIni;
                     itemC.montofin = montoFin;
-                    itemC.montodif = montoFin-montoIni;
-
-                    //sql="UPDATE P_CAJACIERRE SET CODPAGO="+itemC.codpago+" WHERE (SUCURSAL="+itemC.sucursal+") AND (RUTA="+itemC.ruta+") AND (COREL="+itemC.corel+")";
-                    //db.execSQL(sql);
+                    itemC.montodif = mu.round2(montoFin-montoIni);
 
                     if (itemC.codpago==0) itemC.codpago=7;
                     caja.update(itemC);
+
                 }
+
+                sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
+                db.execSQL(sql);
+
+                sql="UPDATE P_CAJACIERRE SET ESTADO=1 WHERE COREL<" + gl.corelZ;
+                db.execSQL(sql);
 
                 writeCorelLog(9,gl.corelZ,"");
 
@@ -529,8 +542,8 @@ public class Caja extends PBase {
                     return;
                 }
 
-                sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0";
-                db.execSQL(sql);
+                db.setTransactionSuccessful();
+                db.endTransaction();
 
                 writeCorelLog(10,gl.corelZ,sql);
 
@@ -544,9 +557,6 @@ public class Caja extends PBase {
 
                 writeCorelLog(12,gl.corelZ,"");
 
-                //sql="UPDATE D_MOV SET CODIGOLIQUIDACION = "+ gl.corelZ +" WHERE CODIGOLIQUIDACION = 0";
-                //db.execSQL(sql);
-
                 Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();
 
                 gl.reportid=10;
@@ -554,12 +564,9 @@ public class Caja extends PBase {
                 startActivity(new Intent(this, CierreX.class));
 
                 Handler mtimer = new Handler();
-                Runnable mrunner=new Runnable() {
-                    @Override
-                    public void run() {
-                        gl.autocom = 1;
-                        startActivity(new Intent(Caja.this,WSEnv.class));
-                    }
+                Runnable mrunner= () -> {
+                    gl.autocom = 1;
+                    startActivity(new Intent(Caja.this,WSEnv.class));
                 };
                 mtimer.postDelayed(mrunner,200);
 
@@ -567,6 +574,7 @@ public class Caja extends PBase {
             }
 
         } catch (Exception e){
+            db.endTransaction();
             setAddlog("Error saveMontoIni", e.getMessage(), "");
             toastlong("Error saveMontoIni: "+e.getMessage());
             msgbox("Error saveMontoIni: "+e.getMessage());return;

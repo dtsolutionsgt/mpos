@@ -1208,8 +1208,11 @@ public class AppMethods {
             DT.moveToFirst();
 
 			int val=DT.getInt(0);
-			if (DT!=null)
+
+			if (DT!=null){
 				DT.close();
+			}
+
             return val;
 
         } catch (Exception e) {

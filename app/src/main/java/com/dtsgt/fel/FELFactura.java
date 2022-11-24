@@ -538,13 +538,13 @@ public class FELFactura extends PBase {
             factf.nit=factf.nit.toUpperCase();
 
             fel.receptor(factf.nit,
-                        factf.nombre,
-                        factf.direccion,
-                        factf.correo,
-                        fel.codigo_postal,
-                        muni,
-                        dep,
-                        gl.codigo_pais);
+                         factf.nombre,
+                         factf.direccion,
+                         factf.correo,
+                         fel.codigo_postal,
+                         muni,
+                         dep,
+                         gl.codigo_pais);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 
