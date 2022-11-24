@@ -393,7 +393,6 @@ public class MantConfig extends PBase {
 
     }
 
-
     private void updateItem() {
         String s100="N",s102="N",s103="N",s104="N",s105="",s106="S", s107="S",
                s108="5", s109="S", s110="3", s111="N", s112="N", s113="N", s114="1",
@@ -519,7 +518,8 @@ public class MantConfig extends PBase {
         try {
             items16.clear();
             items16.add("GUA");if (value16.equalsIgnoreCase("GUA")) selidx=0;
-            items16.add("TICKET");if (value16.equalsIgnoreCase("TICKET")) selidx=1;
+            items16.add("HON");if (value16.equalsIgnoreCase("HON")) selidx=1;
+            //items16.add("TICKET");if (value16.equalsIgnoreCase("TICKET")) selidx=1;
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, items16);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

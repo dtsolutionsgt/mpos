@@ -737,6 +737,8 @@ public class clsDocFactura extends clsDocument {
             rep.addtotsp("Descuento : ", -desc);
             rep.addtotsp("TOTAL : ", tot);
 
+            rep.add("Honduras");
+
         } else {
 
             if (factsinpropina) {

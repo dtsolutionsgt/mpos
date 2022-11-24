@@ -40,8 +40,10 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_costoObj;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -81,6 +83,9 @@ public class WSEnv extends PBase {
     private ArrayList<String> cStock= new ArrayList<String>();
     private ArrayList<String> cBita= new ArrayList<String>();
     private ArrayList<String> cAsist= new ArrayList<String>();
+
+    private ArrayList<String> items= new ArrayList<String>();
+
 
     private String CSQL,plabel,rs, corel,ferr,idfact,corelMov, movErr, idMov,
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError,corelCjPagos, cjPagosError,cStockError;
@@ -146,7 +151,43 @@ public class WSEnv extends PBase {
     //region Events
 
     public void doStart(View view) {
+
+        //toast("Pass 1 ");
+
         preparaEnvio();
+
+        /*
+        try {
+
+
+            toastlong("scripting .... ");
+
+            for (int i = 0; i <ftot; i++) {
+                processFacturaSave();
+                if (i % 1000==0) toast(":: "+i);
+            }
+
+            toast("Saving .... ");
+
+            System.setProperty("line.separator","\r\n");
+            BufferedWriter writer = null,lwriter = null;
+            FileWriter wfile,lfile;
+
+            String fname = Environment.getExternalStorageDirectory()+"/script.txt";
+            wfile=new FileWriter(fname,false);
+            writer = new BufferedWriter(wfile);
+
+            for (int i = 0; i <items.size(); i++) {
+                writer.write(items.get(i));
+            }
+            writer.close();
+
+            msgbox("Done");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+*/
+
         pbar.setVisibility(View.VISIBLE);
         lbl3.setVisibility(View.INVISIBLE);
         execws(1);
@@ -430,6 +471,114 @@ public class WSEnv extends PBase {
 
     //region Envío
 
+    private void processFacturaSave() {
+
+        clsClasses.clsD_facturad item;
+        String tipo_producto,vsql;
+        int contingencia,uruta;
+
+        if (ftot==0) {
+            fidx++;return;
+        }
+
+        fidx++;
+        if (fidx>=ftot) return;
+
+        corel=fact.get(fidx);
+        factsend=false;
+
+        clients.clear();
+
+        clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
+
+
+        D_facturaObj.fill("WHERE COREL='"+corel+"'");
+        D_facturadObj.fill("WHERE (COREL='"+corel+"') AND (PRODUCTO<>0)");
+        D_facturapObj.fill("WHERE COREL='"+corel+"'");
+        D_facturarObj.fill("WHERE COREL='"+corel+"'");
+        D_facturacObj.fill("WHERE COREL='"+corel+"'");
+        D_facturaprObj.fill("WHERE COREL='"+corel+"'");
+        D_factura_felObj.fill("WHERE COREL='"+corel+"'");
+
+        idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
+        int cliid=D_facturaObj.first().cliente;
+
+        try {
+            contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
+            if (contingencia<1) contingencia=0;
+        } catch (Exception e) {
+            contingencia=0;
+        }
+
+        items.add("DELETE FROM D_FACTURA WHERE COREL='"+corel+"'");
+        items.add("DELETE FROM D_FACTURAD WHERE COREL='"+corel+"'");
+        items.add("DELETE FROM D_FACTURAP WHERE COREL='"+corel+"'");
+        items.add("DELETE FROM D_FACTURAC WHERE COREL='"+corel+"'");
+        items.add("DELETE FROM D_FACTURAPR WHERE COREL='"+corel+"'");
+
+        items.add(addFactheader(D_facturaObj.first()));
+
+        String UpdateToStock = "";
+
+        for (int i = 0; i <D_facturadObj.count; i++) {
+
+            item=D_facturadObj.items.get(i);
+
+            items.add("D_facturadObj.addItemSql(D_facturadObj.items.get(i)");
+
+            tipo_producto = app.prodTipo(D_facturadObj.items.get(i).producto);
+
+            if (tipo_producto.equalsIgnoreCase("P")) {
+
+                UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
+
+                if (gl.peInvCompart){
+
+                    for (int r = 0; r <rutas.size(); r++) {
+                        uruta=Integer.parseInt(rutas.get(r));
+
+                        vsql=addUpdateItem(uruta,item.producto,-item.cant,item.umstock);
+                        items.add(vsql);
+                    }
+                }
+            }
+
+        }
+
+        for (int i = 0; i < D_facturapObj.count; i++) {
+            items.add(D_facturapObj.addItemSql(D_facturapObj.items.get(i)));
+        }
+
+        for (int i = 0; i < D_facturarObj.count; i++) {
+            items.add(D_factRaddItemSql(D_facturarObj.items.get(i)));
+        }
+
+        for (int i = 0; i < D_facturacObj.count; i++) {
+            items.add(D_factCaddItemSql(D_facturacObj.items.get(i)));
+        }
+
+        for (int i = 0; i < D_facturaprObj.count; i++) {
+            items.add(addPropinaItem(D_facturaprObj.items.get(i)));
+        }
+
+        for (int i = 0; i < D_factura_felObj.count; i++) {
+            items.add(D_factura_felObj.addItemSql(D_factura_felObj.items.get(i)) );
+        }
+
+        items.add("UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
+                "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ")");
+
+        if (contingencia>0) {
+            items.add("UPDATE P_COREL SET CORELULT="+contingencia+"  " +
+                    "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ")");
+        }
+
+        items.add("");
+    }
+
+
+
     private void processFactura() {
 
         clsClasses.clsD_facturad item;
@@ -448,7 +597,7 @@ public class WSEnv extends PBase {
 
         //try {
 
-        AppMethods f = new AppMethods(this,null,Con,db);
+        //AppMethods f = new AppMethods(this,null,Con,db);
         clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
 
 
@@ -486,7 +635,7 @@ public class WSEnv extends PBase {
 
             CSQL=CSQL+D_facturadObj.addItemSql(D_facturadObj.items.get(i)) + ";";
 
-            tipo_producto = f.prodTipo(D_facturadObj.items.get(i).producto);
+            tipo_producto = app.prodTipo(D_facturadObj.items.get(i).producto);
 
             if (tipo_producto.equalsIgnoreCase("P")) {
 

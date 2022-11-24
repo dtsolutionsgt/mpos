@@ -134,6 +134,9 @@ public class Orden extends PBase {
     private Runnable rnBarTrans;
     private Runnable rnClose;
 
+    private Handler ctimer;
+    private Runnable crunner;
+
     private AppMethods app;
 
     private clsP_nivelprecioObj P_nivelprecioObj;
@@ -299,28 +302,27 @@ public class Orden extends PBase {
         Runnable mrunner=new Runnable() {
             @Override
             public void run() {
-                broadcastDetail();
+                if (actorden) {
+                    broadcastDetail();
+                } else {
+                    cierraPantalla();
+                }
             }
         };
         mtimer.postDelayed(mrunner,500);
 
         //fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
 
-        /*
-        Handler ctimer = new Handler();
-        Runnable crunner=new Runnable() {
+        ctimer = new Handler();
+        crunner=new Runnable() {
             @Override
             public void run() {
-                try {
-                    finish();
-                } catch (Exception e) {
-                    //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+                gl.cerrarmesero=true;
+                gl.mesero_lista=true;
+
+                finish();
             }
         };
-        ctimer.postDelayed(crunner,60000);
-        */
-
     }
 
     //region Events
@@ -354,7 +356,7 @@ public class Orden extends PBase {
     }
 
     public void doExit(View view){
-        exitBtn(true);
+        exitBtn(false);
     }
 
     public void doAdd(View view) {
@@ -451,6 +453,8 @@ public class Orden extends PBase {
                     } catch (Exception e) {
                         mu.msgbox( e.getMessage());
                     }
+
+                    cierraPantalla();
                 };
             });
 
@@ -465,6 +469,7 @@ public class Orden extends PBase {
                     } else {
                         msgAskState("Marcar como preparado",0,position);
                     }
+                    cierraPantalla();
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
@@ -502,6 +507,7 @@ public class Orden extends PBase {
                         }
 
                         listProduct();
+                        cierraPantalla();
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
@@ -543,6 +549,8 @@ public class Orden extends PBase {
                 } catch (Exception e) {
                     String ss=e.getMessage();
                 }
+
+                cierraPantalla();
             });
 
             grdprod.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -560,6 +568,7 @@ public class Orden extends PBase {
 
                         msgAskAdd(item.Name);
                     } catch (Exception e) {}
+                    cierraPantalla();
                     return true;
                 }
             });
@@ -576,6 +585,7 @@ public class Orden extends PBase {
                     } catch (Exception e) {
                         String ss=e.getMessage();
                     }
+                    cierraPantalla();
                 };
             });
 
@@ -948,6 +958,8 @@ public class Orden extends PBase {
             gl.dval=gl.retcant;
             gl.limcant=getDisp(prodid);
             processCant(true);
+
+            envioCuentas();
             listItems();
         }
 
@@ -1106,6 +1118,7 @@ public class Orden extends PBase {
             mu.msgbox("Error : " + e.getMessage());
         }
 
+        if (actorden) envioOrden();
         listItems();
 
         return true;
@@ -1225,6 +1238,7 @@ public class Orden extends PBase {
             mu.msgbox("Error : " + e.getMessage());
         }
 
+        if (actorden) envioOrden();
         listItems();
 
         return true;
@@ -2144,7 +2158,6 @@ public class Orden extends PBase {
     }
 
     private void processMenuTools(int menuid) {
-
         String s="";
 
         try {
@@ -2266,15 +2279,19 @@ public class Orden extends PBase {
 
     private void exitBtn(boolean enviar) {
         try {
-            if (cantRegBarril()==0) {
-                if (enviar) {
-                    //if (actorden) envioOrden();
-                }
-                gl.cerrarmesero=true;gl.mesero_lista=true;
-                finish();
-            } else {
-                evnioBarril(true);
-            }
+            //if (cantRegBarril()==0) {
+
+            gl.cerrarmesero=true;
+            gl.mesero_lista=true;
+
+            try {
+                ctimer.removeCallbacks(crunner);
+            } catch (Exception e) {}
+
+            finish();
+            //} else {
+            //  evnioBarril(true);
+            //}
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -3223,7 +3240,6 @@ public class Orden extends PBase {
         if (!actorden) return;
 
         try {
-
             cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
             cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
 
@@ -3265,6 +3281,7 @@ public class Orden extends PBase {
 
         try {
 
+
             cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
             cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
             cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
@@ -3298,55 +3315,6 @@ public class Orden extends PBase {
                 enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            }
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void envioOrdenOrig() {
-
-        String cmd="";
-
-        //if (modo_emerg) return;
-
-        try {
-
-            cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idorden + "')" + ";";
-            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
-            cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
-
-            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
-            P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
-            cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
-
-            clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
-            T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
-            for (int i = 0; i < T_ordenObj.count; i++) {
-                cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
-            }
-
-            clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
-            T_ordencuentaObj.fill("WHERE (COREL='" + idorden + "')");
-            for (int i = 0; i < T_ordencuentaObj.count; i++) {
-                cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
-            }
-
-            cmd+=buildDetailJournal();
-
-            try {
-                /*
-                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
-                intent.putExtra("URL",gl.wsurl);
-                intent.putExtra("command",cmd);
-                if (actorden) startService(intent);
-                */
-                enviaCommit(false,cmd);
-            } catch (Exception e) {
-                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
             }
 
         } catch (Exception e) {
@@ -3392,11 +3360,100 @@ public class Orden extends PBase {
                 intent.putExtra("command",cmd);
                 if (actorden) startService(intent);
                 */
+                enviaCommit(true,cmd);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void envioOrdenDestinoBorrar(String idordendest) {
+        String cmd="";
+
+        try {
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
+
+            cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idordendest + "')" + ";";
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idordendest + "')" + ";";
+            cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idordendest + "')" + ";";
+
+            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+            P_res_sesionObj.fill("WHERE ID='" + idordendest + "'");
+            cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+
+            clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
+            T_ordenObj.fill("WHERE (COREL='" + idordendest + "')");
+            for (int i = 0; i < T_ordenObj.count; i++) {
+                cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
+            }
+
+            clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
+            T_ordencuentaObj.fill("WHERE (COREL='" + idordendest + "')");
+            for (int i = 0; i < T_ordencuentaObj.count; i++) {
+                cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
+            }
+
+            cmd+=buildDetailJournalTodasCajas();
+
+            try {
+                /*
+                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                if (actorden) startService(intent);
+                */
+                enviaCommit(true,cmd);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void envioOrdenDestinoBorrar(String idordendest,int idcuentaorig) {
+        String cmd="";
+
+        try {
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") " +
+                   "AND (COREL='" + idorden + "')  AND (CUENTA="+idcuentaorig+")" + ";";
+
+            cmd += "DELETE FROM P_res_sesion WHERE (EMPRESA=" + gl.emp + ") AND (ID='" + idordendest + "')" + ";";
+            cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idordendest + "')" + ";";
+            cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idordendest + "')" + ";";
+
+            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+            P_res_sesionObj.fill("WHERE ID='" + idordendest + "'");
+            cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+
+            clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
+            T_ordenObj.fill("WHERE (COREL='" + idordendest + "')");
+            for (int i = 0; i < T_ordenObj.count; i++) {
+                cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
+            }
+
+            clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
+            T_ordencuentaObj.fill("WHERE (COREL='" + idordendest + "')");
+            for (int i = 0; i < T_ordencuentaObj.count; i++) {
+                cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
+            }
+
+            cmd+=buildDetailJournalTodasCajas();
+
+            try {
+                /*
+                Intent intent = new Intent(Orden.this, srvOrdenEnvio.class);
+                intent.putExtra("URL",gl.wsurl);
+                intent.putExtra("command",cmd);
+                if (actorden) startService(intent);
+                */
                 enviaCommit(false,cmd);
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
             }
 
         } catch (Exception e) {
@@ -3566,9 +3623,7 @@ public class Orden extends PBase {
 
             } catch (Exception e) {
                 toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
-            }
+             }
 
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -3689,7 +3744,6 @@ public class Orden extends PBase {
                     pitem.corel_orden=idorden;
                     pitem.corel_linea=2;
                     pitem.comanda="";
-
                     ss+=addItemSqlOrdenCom(pitem) + ";";
                     */
 
@@ -3936,6 +3990,7 @@ public class Orden extends PBase {
             if (wso.errflag) {
                 msgBoxWifi("No hay conexíon al internet");
                 relback.setBackgroundColor(Color.parseColor("#F4C6D0"));
+                cierraPantalla();
                 wsoidle=true;return;
             }
             /*
@@ -3961,8 +4016,6 @@ public class Orden extends PBase {
 
             wso.execute(sql,rnDetailCallback);
         } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),
-                    "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             wsoidle=true;
         }
@@ -3977,12 +4030,12 @@ public class Orden extends PBase {
         try {
 
             if (wso.errflag) {
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),wso.error,sql);
+                cierraPantalla();
                 wsoidle=true;return;
             }
 
             if (wso.openDTCursor.getCount()==0) {
+                cierraPantalla();
                 wsoidle=true;return;
             }
 
@@ -4026,8 +4079,6 @@ public class Orden extends PBase {
                 "FROM T_ORDENCUENTA WHERE (COREL='"+brtcorel+"')";
             wso.execute(sql,rnDetailCallback);
         } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),
-                    "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             wsoidle=true;
         }
@@ -4038,8 +4089,7 @@ public class Orden extends PBase {
 
         try {
             if (wso.errflag) {
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),wso.error,sql);
+                cierraPantalla();
                 wsoidle=true;return;
             }
 
@@ -4067,11 +4117,8 @@ public class Orden extends PBase {
             }
 
         } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),
-                    "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsoidle=true;
-            return;
+            wsoidle=true; return;
         }
 
         try {
@@ -4089,12 +4136,11 @@ public class Orden extends PBase {
 
             listItems();
         } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),
-                    "Orden."+new Object(){}.getClass().getEnclosingMethod().getName()+".trans",e.getMessage(),sql);
             db.endTransaction();
             msgbox(e.getMessage());
         }
 
+        cierraPantalla();
         wsoidle=true;
     }
 
@@ -4453,11 +4499,11 @@ public class Orden extends PBase {
             //#EJC202210221638: Si la mesa ya no tiene items, cerrar la mesa y la cuenta.
             if (dt.getCount()==0) {
                 cerrarCuentas(-1);
-                //envioOrdenDestino(idresdest);
+                envioOrdenDestinoBorrar(idsession);
             }else{
-                //envioOrdenDestino(idorden);
-                //envioOrdenDestino(idresdest);
-                finish();
+                envioOrdenDestinoBorrar(idorden,IdCuentaOrigen);
+                envioOrdenDestino(idsession);
+                //finish();
             }
 
         } catch (Exception e) {
@@ -4763,7 +4809,7 @@ public class Orden extends PBase {
             db.endTransaction();
 
             anulaOrden();
-            listItems();
+            //listItems();
         } catch (Exception e) {
             db.endTransaction();
             msgbox(e.getMessage());
@@ -5576,6 +5622,19 @@ public class Orden extends PBase {
         return 0;
     }
 
+    private void cierraPantalla() {
+        try {
+            ctimer.removeCallbacks(crunner);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        try {
+            ctimer.postDelayed(crunner,20000);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
@@ -5792,12 +5851,14 @@ public class Orden extends PBase {
 
                     adapter.setSelectedIndex(position);
                     adapter.notifyDataSetChanged();
-
+                    cierraPantalla();
                 }
             });
 
             dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
+                public void onClick(DialogInterface dialog, int which) {
+                    cierraPantalla();
+                }
             });
 
             dialog.show();
@@ -5867,6 +5928,7 @@ public class Orden extends PBase {
                                 break;
                         }
 
+                        cierraPantalla();
                         listdlg.dismiss();
                     } catch (Exception e) {}
                 };
@@ -5875,6 +5937,7 @@ public class Orden extends PBase {
             listdlg.setOnLeftClick(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    cierraPantalla();
                     listdlg.dismiss();
                 }
             });
@@ -5920,6 +5983,8 @@ public class Orden extends PBase {
                                 validaSupervisor();
                                 break;
                         }
+
+                        cierraPantalla();
                         listdlg.dismiss();
                     } catch (Exception e) {}
                 };
@@ -6638,17 +6703,23 @@ public class Orden extends PBase {
                 return;
             }
 
-        } catch (Exception e){
-        }
+        } catch (Exception e){ }
+    }
+
+    @Override
+    protected void onPause() {
+        try {
+            ctimer.removeCallbacks(crunner);
+        } catch (Exception e) {}
+        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
-        if (actorden) envioOrden();
-        gl.cerrarmesero=true;
-        super.onBackPressed();
+        //if (actorden) envioOrden();
+        //gl.cerrarmesero=true;
+        //super.onBackPressed();
     }
-
 
     //endregion
 

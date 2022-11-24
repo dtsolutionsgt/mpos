@@ -781,6 +781,8 @@ public class clsDocument {
 				loadHeadData(corel);
 			}
 
+
+
 			loadHeadLines();
 
 			try {

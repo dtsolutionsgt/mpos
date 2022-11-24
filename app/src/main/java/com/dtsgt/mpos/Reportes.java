@@ -853,6 +853,9 @@ public class Reportes extends PBase {
                     if (gl.reportid==1){
 
                         if(acc==1){
+                            rep.add("Sucursal:"+gl.tiendanom);
+                            rep.add("Caja:"+gl.rutanom);
+                            rep.empty();
                             rep.add("    REPORTE DOCUMENTOS POR DIA  ");
                             //rep.add("Cant.Fact   Costo  Impuesto    Total");
                             rep.add("Co. SubTotal   Impuesto    Total");
@@ -927,12 +930,12 @@ public class Reportes extends PBase {
                         }
 
                         if(i!=0){
-                            if(itemR.get(i).fecha==itemR.get(i-1).fecha){
+                            if (itemR.get(i).fecha==itemR.get(i-1).fecha){
                                 rep.add4lrrTot("",itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
-                            }else {
+                            } else {
                                 rep.add4lrrTot(fecha,itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
                             }
-                        }else {
+                        } else {
                             rep.add4lrrTot(fecha,itemR.get(i).serie,Integer.toString(itemR.get(i).correl),itemR.get(i).total);
                         }
 
