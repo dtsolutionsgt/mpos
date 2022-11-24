@@ -69,7 +69,7 @@ public class ResMesero extends PBase {
     private wsOpenDT wso;
     private wsCommit wscom;
 
-    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback;
+    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback,rnOrden;
 
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -81,7 +81,7 @@ public class ResMesero extends PBase {
     private clsClasses.clsRes_mesa mesa= clsCls.new clsRes_mesa();
 
     private int idgrupo,cantpers,numorden,codigomesa;
-    private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2;
+    private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2,idorden;
     private boolean horiz,actorden,wsidle=false,wcoridle=true;
 
     private TimerTask ptask,etask;
@@ -137,6 +137,13 @@ public class ResMesero extends PBase {
         rnBroadcastCallback = () -> broadcastCallback();
 
         rnCorelGetCallback = () -> GetCorelCallback();
+
+        rnOrden = new Runnable() {
+            public void run() {
+                ordenAction();
+            }
+        };
+
 
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
 
@@ -378,8 +385,13 @@ public class ResMesero extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            gl.idorden=item.id;
-            startActivity(new Intent(this,Orden.class));
+            gl.idorden=item.id;idorden=item.id;
+
+            if (actorden) {
+                envioOrden();
+            } else {
+                startActivity(new Intent(this,Orden.class));
+            }
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -464,6 +476,159 @@ public class ResMesero extends PBase {
         }
 
          */
+    }
+
+    //endregion
+
+    //region Envio
+
+    private void envioOrden() {
+        String cmd="";
+
+        try {
+            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+            P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
+            cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+
+            clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
+            T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
+            for (int i = 0; i < T_ordenObj.count; i++) {
+                cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
+            }
+
+            clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
+            T_ordencuentaObj.fill("WHERE (COREL='" + idorden + "')");
+            for (int i = 0; i < T_ordencuentaObj.count; i++) {
+                cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
+            }
+
+            cmd+=buildDetailJournal();
+
+            try {
+                enviaCommit(cmd);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void enviaCommit(String cmd) {
+        if (!actorden) return;
+        wscom.execute(cmd,rnOrden);
+    }
+
+    private void ordenAction() {
+        try {
+            if (wscom.errflag) {
+                toastlong("SIN CONEXIÓN A INTERNET");
+            }
+
+            startActivity(new Intent(this,Orden.class));
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private String buildDetailJournal() {
+        clsClasses.clsT_ordencom pitem;
+        clsClasses.clsT_ordencuenta citem;
+        int idruta;
+        String ss="";
+
+        try {
+
+            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
+            P_rutaObj.fill();
+
+            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+            P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
+            clsClasses.clsP_res_sesion rsitem=P_res_sesionObj.first();
+
+            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
+            T_ordencuentaObj.fill("WHERE COREL='" + idorden + "'");
+
+            for (int i = 0; i <P_rutaObj.count; i++) {
+
+                idruta=P_rutaObj.items.get(i).codigo_ruta;
+
+                if (idruta!=gl.codigo_ruta) {
+
+                    pitem= clsCls.new clsT_ordencom();
+
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_orden=idorden;
+                    pitem.corel_linea=1;
+                    pitem.comanda= addP_res_sesionSqlAndroid(rsitem,gl.emp);
+
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+
+                    /*
+                    pitem.codigo_ruta=idruta;
+                    pitem.corel_orden=idorden;
+                    pitem.corel_linea=2;
+                    pitem.comanda="";
+                    ss+=addItemSqlOrdenCom(pitem) + ";";
+                     */
+
+                    for (int c = 0; c <T_ordencuentaObj.count; c++) {
+                        citem=T_ordencuentaObj.items.get(c);
+
+                        pitem.codigo_ruta=idruta;
+                        pitem.corel_orden=idorden;
+                        pitem.corel_linea=3;
+                        pitem.comanda= addsT_ordencuentaSqlAndroid(citem);
+
+                        ss+=addItemSqlOrdenCom(pitem) + ";";
+                    }
+
+                }
+            }
+
+            return ss;
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return "";
+        }
+    }
+
+    public String addP_res_sesionSqlAndroid(clsClasses.clsP_res_sesion item, int idemp) {
+        String corr="<>"+item.id+"<>";
+
+        ins.init("P_res_sesion");
+
+        //ins.add("EMPRESA",idemp);
+        ins.add("ID",corr);
+        ins.add("CODIGO_MESA",item.codigo_mesa);
+        ins.add("VENDEDOR",item.vendedor);
+        ins.add("ESTADO",item.estado);
+        ins.add("CANTP",item.cantp);
+        ins.add("CANTC",item.cantc);
+        ins.add("FECHAINI",item.fechaini);
+        ins.add("FECHAFIN",item.fechafin);
+        ins.add("FECHAULT",item.fechault);
+
+        return ins.sql();
+
+    }
+
+    public String addsT_ordencuentaSqlAndroid(clsClasses.clsT_ordencuenta item) {
+        String corr="<>"+idorden+"<>";
+
+        ins.init("T_ordencuenta");
+
+        ins.add("COREL",corr);
+        ins.add("ID",item.id);
+        ins.add("CF",item.cf);
+        ins.add("NOMBRE","<>"+item.nombre+"<>");
+        ins.add("NIT","<>"+item.nit+"<>");
+        ins.add("DIRECCION","<>"+item.direccion+"<>");
+        ins.add("CORREO","<>"+item.correo+"<>");
+
+        return ins.sql();
+
     }
 
     //endregion
@@ -631,7 +796,6 @@ public class ResMesero extends PBase {
     private void agregaOrden() {
 
         numorden=0;
-
         boolean espedido=app.esmesapedido(gl.emp,""+mesa.idgrupo);
 
         if (!espedido) {
@@ -974,15 +1138,10 @@ public class ResMesero extends PBase {
     }
 
     private void cantidadComensales() {
-
         try {
-
             cantpers=gl.comensales;
-
             if (cantpers<1 | cantpers>50) throw new Exception();
-
             agregaOrden();
-
         } catch (Exception e) {
             //mu.msgbox("Cantidad incorrecta");
             return;
@@ -1347,6 +1506,13 @@ public class ResMesero extends PBase {
                         listdlg.dismiss();
                     } catch (Exception e) {}
                 };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
             });
 
             listdlg.show();

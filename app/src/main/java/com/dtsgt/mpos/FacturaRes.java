@@ -442,20 +442,25 @@ public class FacturaRes extends PBase {
 	}
 
 	public void doDesc(View view) {
-		browse=6;
 		gl.total_factura_previo_descuento=tot+gl.descadd;
+		validaSupervisor();
+
+		/*
+		browse=6;
 		startActivity(new Intent(this,DescMonto.class));
+    	*/
 		/*
         browse=5;
         startActivity(new Intent(this,ValidaSuper.class));
-        */
+		*/
     }
 
     public void prnCuenta(View view) {
 		if (tot<=0) {
 			msgbox("Total incorrecto");return;
 		}
-        askPrecuenta();
+        //askPrecuenta();
+		impresionCuenta();
     }
 
     public void showBon(View view) {
@@ -1302,6 +1307,14 @@ public class FacturaRes extends PBase {
             } catch (Exception e) {
                 gl.gDirCliente=" ";
             }
+
+			if (gl.gNITCliente.isEmpty()) {
+				gl.gNITCliente="CF";
+			} else {
+				if (gl.gNITCliente.length()<6) gl.gNITCliente="CF";
+			}
+
+			gl.gNITCliente=gl.gNITCliente.replace(".","");
 
 			if (gl.gNITCliente.equalsIgnoreCase("CF")) {
 
@@ -4396,7 +4409,58 @@ public class FacturaRes extends PBase {
         alert.show();
     }
 
-    //endregion
+	private void validaSupervisor() {
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(FacturaRes.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
+
+			listdlg.onEnterClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (listdlg.getInput().isEmpty()) return;
+
+					if (listdlg.validPassword()) {
+						browse=6;
+						startActivity(new Intent(FacturaRes.this,DescMonto.class));
+						listdlg.dismiss();
+					} else {
+						toast("Contraseña incorrecta");
+					}
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	//endregion
 	
 	//region Activity Events
 
