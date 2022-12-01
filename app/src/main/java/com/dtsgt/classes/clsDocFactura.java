@@ -543,8 +543,38 @@ public class clsDocFactura extends clsDocument {
             return detailBase();
         }
         */
-        return detailBaseGUA();
+        if (pais.equalsIgnoreCase("GUA")) {
+            return detailBaseGUA();
+        } else if (pais.equalsIgnoreCase("HON")) {
+            return detailBaseHON();
+        } else {
+            return detailBaseGUA();
+        }
 	}
+
+    protected boolean detailBaseHON() {
+
+        itemData item;
+        String cu,cp;
+
+        rep.add("HONDURAS");
+        rep.add3sss("Cantidad ","Precio","Total");
+        rep.line();
+
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+                rep.add(item.nombre);
+                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
 
     protected boolean detailBaseGUA() {
 
@@ -667,13 +697,25 @@ public class clsDocFactura extends clsDocument {
 	//region Pie por empresa
 
 	protected boolean buildFooter() {
-        if (modofact.isEmpty()) {
+        /*if (modofact.isEmpty()) {
         //if (modofact.equalsIgnoreCase("GUA")) {
             if (facturaflag) { // Factura
                 return footerBaseGUA();
             } else { // Ticket
                 return footerBaseGUATicket();
             }
+        } else {
+            return footerBaseGUA();
+        }*/
+
+        if (pais.equalsIgnoreCase("GUA")) {
+            if (facturaflag) {
+                return footerBaseGUA();
+            } else {
+                return footerBaseGUATicket();
+            }
+        } else if (pais.equalsIgnoreCase("HON")) {
+            return footerBaseHON();
         } else {
             return footerBaseGUA();
         }
@@ -872,8 +914,6 @@ public class clsDocFactura extends clsDocument {
             rep.addtotsp("Descuento : ", -desc);
             rep.addtotsp("TOTAL : ", tot);
 
-            rep.add("HONDURAS");
-
         } else {
 
             if (factsinpropina) {
@@ -894,6 +934,8 @@ public class clsDocFactura extends clsDocument {
 
             rep.addtotsp("TOTAL A PAGAR : ", tot);
         }
+
+        rep.add("HONDURAS");
 
         if (plines.size()>0) {
             rep.add("");

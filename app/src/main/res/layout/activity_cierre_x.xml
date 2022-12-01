@@ -171,6 +171,21 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/btnEnviarCorreo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtBtn"
+            android:layout_alignStart="@+id/txtBtn"
+            android:layout_alignEnd="@+id/txtBtn"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-1dp"
+            android:background="@drawable/br2"
+            android:onClick="EnviarCierre"
+            android:text="Enviar"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
     <RelativeLayout

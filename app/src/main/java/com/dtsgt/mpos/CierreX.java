@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -20,6 +23,8 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsRepBuilder;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -41,6 +46,7 @@ public class CierreX extends PBase {
     private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8,
             bClienteCon=9, bClienteDet=10,bFactAnuxDia=11, sw=0,counter=0;
     private boolean report, enc=true;
+    private Button btnEnviarCorreo;
 
     private clsClasses.clsReport item;
     private clsClasses.clsBonifProd itemZ;
@@ -81,6 +87,7 @@ public class CierreX extends PBase {
         ClienteDet = (CheckBox) findViewById(R.id.checkBox20); ClienteDet.setChecked(true);
         FactAnuladas = (CheckBox)findViewById(R.id.checkBox25); FactAnuladas.setChecked(true);
         lblFact = (TextView) findViewById(R.id.txtFact2);
+        btnEnviarCorreo = findViewById(R.id.btnEnviarCorreo);
 
         datefin = du.getActDateTime();
         dateini = du.getActDate();
@@ -186,6 +193,7 @@ public class CierreX extends PBase {
                     respaldoReporte();
                     txtbtn.setText("IMPRIMIR");
                     report = true;
+                    btnEnviarCorreo.setVisibility(View.VISIBLE);
                 } else {
                     return;
                 }
@@ -1556,6 +1564,37 @@ public class CierreX extends PBase {
             ss="INSERT INTO T_BARRA_BONIF VALUES ('"+du.getActDateTime()+"','"+id+"',"+corel+",0,0,'"+text+"')";
             db.execSQL(ss);
         } catch (Exception e) {
+        }
+    }
+
+    public void EnviarCierre(View view) {
+        String subject,body;
+        String dir=Environment.getExternalStorageDirectory()+"";
+
+        try {
+            File f1 = new File(dir + "/print.txt");
+            Uri uri = Uri.fromFile(f1);
+
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+
+            subject= "Tienda : "+gl.tiendanom+" caja : "+gl.codigo_ruta;
+            body="Adjunto reporte de cierre";
+
+            String[] TO = {"dtsolutionsgt@gmail.com"};
+
+            Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+            emailIntent.setData(Uri.parse("mailto:"));
+            emailIntent.setType("application/pdf");
+            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
+            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(emailIntent);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

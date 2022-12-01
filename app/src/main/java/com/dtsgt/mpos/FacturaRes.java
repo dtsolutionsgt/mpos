@@ -918,6 +918,7 @@ public class FacturaRes extends PBase {
                 fdoc.modorest=gl.peRest;
 				fdoc.textopie=gl.peTextoPie;
                 fdoc.nommesero=gl.nombre_mesero;
+				fdoc.pais = gl.peFormatoFactura;
 
                 fdoc.buildPrint(corel, 0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
