@@ -215,13 +215,14 @@ public class clsP_cajacierreObj {
 
     }
 
-    public String addItemSqlFecha(clsClasses.clsP_cajacierre item) {
+    public String addItemSqlFecha(clsClasses.clsP_cajacierre item,int cemp) {
 
         String fs=""+du.univfechalong(item.fecha);
 
         ins.init("P_cajacierre");
 
-        ins.add("EMPRESA",item.empresa);
+        //ins.add("EMPRESA",item.empresa);
+        ins.add("EMPRESA",cemp);
         ins.add("SUCURSAL",item.sucursal);
         ins.add("RUTA",item.ruta);
         ins.add("COREL",item.corel);

@@ -16,10 +16,13 @@ import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_facturacObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
+import com.dtsgt.classes.clsD_facturaprObj;
+import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsDocFactura;
@@ -59,6 +62,10 @@ public class FELFactura extends PBase {
     private clsD_facturadObj D_facturadObj;
     private clsD_facturafObj D_facturafObj;
     private clsD_facturapObj D_facturapObj;
+    private clsD_facturacObj D_facturacObj;
+    private clsD_facturarObj D_facturarObj;
+    private clsD_facturaprObj D_facturaprObj;
+    private clsD_factura_felObj D_factura_felObj;
     private clsP_productoObj prod;
     private clsD_fel_bitacoraObj D_fel_bitacoraObj;
 
@@ -147,7 +154,13 @@ public class FELFactura extends PBase {
         D_facturadObj=new clsD_facturadObj(this,Con,db);
         D_facturafObj=new clsD_facturafObj(this,Con,db);
         D_facturapObj=new clsD_facturapObj(this,Con,db);
+        D_facturarObj=new clsD_facturarObj(this,Con,db);
+        D_facturacObj=new clsD_facturacObj(this,Con,db);
+        D_facturaprObj=new clsD_facturaprObj(this,Con,db);
+        D_factura_felObj=new clsD_factura_felObj(this,Con,db);
+
         D_fel_bitacoraObj=new clsD_fel_bitacoraObj(this,Con,db);
+
         prod=new clsP_productoObj(this,Con,db);
 
         app.parametrosExtra();
@@ -445,7 +458,13 @@ public class FELFactura extends PBase {
                 gl.feluuid=fel.fact_uuid;
 
                 if (gl.peEnvio) {
-                    envioFactura(felcorel);
+                    if (!gl.feluuid.isEmpty()) {
+                        if (gl.feluuid.length()>10) {
+                            if (gl.feluuid.indexOf("-")>1) {
+                                envioFactura(felcorel);
+                            }
+                        }
+                    }
                 } else {
                     finish();
                 }
@@ -586,6 +605,7 @@ public class FELFactura extends PBase {
             fact.feelnumero=""+fel.fact_numero;
             fact.feeluuid=fel.fact_uuid;
             fact.feelfechaprocesado=du.getActDateTime();
+            fact.statcom="N";
 
             D_facturaObj.update(fact);
 
@@ -628,6 +648,7 @@ public class FELFactura extends PBase {
             fact=D_facturaObj.first();
 
             fact.feelcontingencia=""+corcont;
+            fact.statcom="N";
 
             D_facturaObj.update(fact);
 
@@ -670,13 +691,20 @@ public class FELFactura extends PBase {
 
         try {
 
-            AppMethods f = new AppMethods(this,null,Con,db);
+            corel=scorel;
 
-            D_facturaObj.fill("WHERE COREL='"+scorel+"'");
-            D_facturadObj.fill("WHERE COREL='"+scorel+"'");
-            D_facturapObj.fill("WHERE COREL='"+scorel+"'");
+            AppMethods f = new AppMethods(this,null,Con,db);
             clsP_clienteObj P_clienteObj=new clsP_clienteObj(this,Con,db);
 
+            D_facturaObj.fill("WHERE COREL='"+corel+"'");
+            D_facturadObj.fill("WHERE (COREL='"+corel+"') AND (PRODUCTO<>0)");
+            D_facturapObj.fill("WHERE COREL='"+corel+"'");
+            D_facturarObj.fill("WHERE COREL='"+corel+"'");
+            D_facturacObj.fill("WHERE COREL='"+corel+"'");
+            D_facturaprObj.fill("WHERE COREL='"+corel+"'");
+            D_factura_felObj.fill("WHERE COREL='"+corel+"'");
+
+            idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
             cliid=D_facturaObj.first().cliente;
             try {
                 contingencia=Integer.parseInt(D_facturaObj.first().feelcontingencia);
@@ -687,9 +715,14 @@ public class FELFactura extends PBase {
 
             //idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
 
-            CSQL="DELETE FROM D_FACTURA WHERE COREL='"+scorel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+scorel+"';";
-            CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+scorel+"';";
+
+            CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"';";
+            CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"';";
+            CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
+            CSQL=CSQL+"DELETE FROM D_FACTURAC WHERE COREL='"+corel+"';";
+            CSQL=CSQL+"DELETE FROM D_FACTURAPR WHERE COREL='"+corel+"';";
+
+
             CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
             String UpdateToStock = "";
@@ -725,6 +758,19 @@ public class FELFactura extends PBase {
             for (int i = 0; i < D_facturapObj.count; i++) {
                 CSQL=CSQL+D_facturapObj.addItemSql(D_facturapObj.items.get(i)) + ";";
             }
+
+            for (int i = 0; i < D_facturarObj.count; i++) {
+                CSQL=CSQL+D_factRaddItemSql(D_facturarObj.items.get(i)) + ";";
+            }
+
+            for (int i = 0; i < D_facturacObj.count; i++) {
+                CSQL=CSQL+D_factCaddItemSql(D_facturacObj.items.get(i)) + ";";
+            }
+
+            for (int i = 0; i < D_facturaprObj.count; i++) {
+                CSQL=CSQL+addPropinaItem(D_facturaprObj.items.get(i)) + ";";
+            }
+
 
             CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
                     "WHERE (SERIE='"+D_facturaObj.first().serie+"') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
@@ -794,6 +840,52 @@ public class FELFactura extends PBase {
         ins.add("FEELFECHAPROCESADO",fst);
         ins.add("FEELCONTINGENCIA",item.feelcontingencia);
 
+        return ins.sql();
+
+    }
+
+    public String addPropinaItem(clsClasses.clsD_facturapr item) {
+
+        String fs=""+du.univfecha(item.fecha);
+
+        ins.init("D_facturapr");
+        ins.add("EMPRESA",item.empresa);
+        ins.add("COREL",item.corel);
+        ins.add("ANULADO",item.anulado);
+        ins.add("FECHA",fs);
+        ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
+        ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
+        ins.add("PROPINA",item.propina);
+        ins.add("PROPPERC",item.propperc);
+        ins.add("PROPEXTRA",item.propextra);
+        return ins.sql();
+
+    }
+
+    public String D_factCaddItemSql(clsClasses.clsD_facturac item) {
+
+        ins.init("D_facturac");
+        ins.add("EMPRESA",gl.emp);
+        ins.add("COREL",item.corel);
+        ins.add("CODIGO_MENU",item.codigo_menu);
+        ins.add("IDCOMBO",item.idcombo);
+        ins.add("UNID",item.unid);
+        ins.add("CANT",item.cant);
+        ins.add("IDSELECCION",item.idseleccion);
+        ins.add("ORDEN",item.orden);
+        ins.add("NOMBRE",item.nombre);
+        return ins.sql();
+
+    }
+
+    public String D_factRaddItemSql(clsClasses.clsD_facturar item) {
+
+        ins.init("D_facturar");
+        ins.add("EMPRESA",gl.emp);
+        ins.add("COREL",item.corel);
+        ins.add("PRODUCTO",item.producto);
+        ins.add("CANT",item.cant);
+        ins.add("UM",item.um);
         return ins.sql();
 
     }

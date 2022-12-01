@@ -296,7 +296,8 @@ public class Caja extends PBase {
             }
             if(dt!=null) dt.close();
 
-            if(cred==1){
+
+            if (cred==1){
                 sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
                     " FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                     " WHERE F.KILOMETRAJE=0 AND P.TIPO='K' AND F.ANULADO=0 " +
@@ -345,9 +346,8 @@ public class Caja extends PBase {
     }
 
     public void saveMontoIni(){
-
         Cursor dt, dt2, dt3;
-        int codpago=0;
+        int codpago=0,ecor;
         Long fecha=0L;
 
         try{
@@ -487,6 +487,25 @@ public class Caja extends PBase {
 
                             if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
 
+                                try {
+                                    sql="DROP INDEX IX_P_CAJACIERRE ";
+                                    db.execSQL(sql);
+                                } catch (Exception e) {
+                                    String ss=e.getMessage();
+                                    ss=ss+"";
+                                }
+
+                                sql="SELECT EMPRESA FROM P_cajacierre";
+                                dt2=Con.OpenDT(sql);
+                                if (dt2.getCount()>0) {
+                                    sql="SELECT MAX(EMPRESA) FROM P_cajacierre";
+                                    dt2=Con.OpenDT(sql);
+                                    ecor=dt2.getInt(0)+1;
+                                } else {
+                                    ecor=1;
+                                }
+
+                                itemC.empresa=ecor;
                                 itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C";
                                 montoIni = dt.getDouble(2);
                                 itemC.montoini = montoIni;

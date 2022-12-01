@@ -554,26 +554,24 @@ public class Reportes extends PBase {
                     if(id_item.equals("Todos")){
                         condition = " AND 1=1 ";
                     }else{
-                        condition = " AND M.CODIGO = '"+ id_item +"' ";
+                        condition = " AND P_MEDIAPAGO.CODIGO= '"+ id_item +"' ";
                     }
 
                     /*
-                    sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(DISTINCT F.COREL), 0,SUM(P.VALOR), 0 " +
-                        "FROM P_MEDIAPAGO M " +
-                        "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                        "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
-                        "WHERE F.ANULADO=0 AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
-                        "AND F.ANULADO=0 " +
-                        "GROUP BY M.NOMBRE";
-                     */
-
                     sql="SELECT '', '', 0, '', P.DESC2, '', COUNT(DISTINCT F.COREL), 0,SUM(P.VALOR), 0 " +
                         "FROM P_MEDIAPAGO M " +
                         "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                         "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+//AND M.EMPRESA = F.EMPRESA " +
-                        "WHERE F.ANULADO=0 AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+")"+condition+
+                        "WHERE F.ANULADO=0 AND (F.FECHA BETWEEN "+ dateini +" AND "+datefin+") "+condition+
                         "AND F.ANULADO=0 GROUP BY P.DESC2";
+                     */
 
+                    sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                        "FROM D_FACTURA INNER JOIN " +
+                        "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL INNER JOIN " +
+                        "P_MEDIAPAGO ON D_FACTURAP.CODPAGO = P_MEDIAPAGO.CODIGO " +
+                        "WHERE D_FACTURA.ANULADO=0 AND (D_FACTURA.FECHA BETWEEN "+ dateini +" AND "+datefin+") "+condition+" " +
+                        "GROUP BY P_MEDIAPAGO.NOMBRE";
                     break;
 
                 case 5:

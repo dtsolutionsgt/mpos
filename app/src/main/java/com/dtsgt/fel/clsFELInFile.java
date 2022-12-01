@@ -1093,9 +1093,12 @@ public class clsFELInFile {
         //totiva=totiva/100;
 
         String totIvaStr = String.format("%.2f", totiva);
+        totIvaStr=totIvaStr.replaceAll(",",".");
 
         serie=serie+"-"+numero;
         totmonto=round2(totmonto);
+        String totmontoStr=String.format("%.2f", totmonto);
+        totmontoStr=totmontoStr.replaceAll(",",".");
 
         xml+="</dte:Items>";
 
@@ -1103,7 +1106,8 @@ public class clsFELInFile {
         xml+="<dte:TotalImpuestos>";
         xml+="<dte:TotalImpuesto NombreCorto=\"IVA\" TotalMontoImpuesto=\""+totIvaStr+"\"></dte:TotalImpuesto>";
         xml+="</dte:TotalImpuestos>";
-        xml+="<dte:GranTotal>"+totmonto+"</dte:GranTotal>";
+        //xml+="<dte:GranTotal>"+totmonto+"</dte:GranTotal>";
+        xml+="<dte:GranTotal>"+totmontoStr+"</dte:GranTotal>";
         xml+="</dte:Totales>";
 
         xml+="</dte:DatosEmision>";
@@ -1264,16 +1268,27 @@ public class clsFELInFile {
 
         //precuni=precuni+desc;
 
+        String cantstr = String.format("%.2f",cant);
+        cantstr=cantstr.replaceAll(",",".");
+        String precunistr = String.format("%.2f",precuni);
+        precunistr=precunistr.replaceAll(",",".");
+        String tottotstr = String.format("%.2f",tottot);
+        tottotstr=tottotstr.replaceAll(",",".");
+        String descstr = String.format("%.2f",desc);
+        descstr=descstr.replaceAll(",",".");
+
         xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
-        xml+="<dte:Cantidad>"+cant+"</dte:Cantidad>";
+        xml+="<dte:Cantidad>"+cantstr+"</dte:Cantidad>";
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";
-        xml+="<dte:PrecioUnitario>"+precuni+"</dte:PrecioUnitario>";
-        xml+="<dte:Precio>"+tottot+"</dte:Precio>";
-        xml+="<dte:Descuento>"+desc+"</dte:Descuento>";
+        xml+="<dte:PrecioUnitario>"+precunistr+"</dte:PrecioUnitario>";
+        xml+="<dte:Precio>"+tottotstr+"</dte:Precio>";
+        xml+="<dte:Descuento>"+descstr+"</dte:Descuento>";
 
         String impbasestr = String.format("%.2f",impbase);
-         String impstr = String.format("%.2f",imp);
+        impbasestr=impbasestr.replaceAll(",",".");
+        String impstr = String.format("%.2f",imp);
+        impstr=impstr.replaceAll(",",".");
 
         xml+="<dte:Impuestos>";
         xml+="<dte:Impuesto>";
@@ -1284,7 +1299,10 @@ public class clsFELInFile {
         xml+="</dte:Impuesto>";
         xml+="</dte:Impuestos>";
 
-        xml+="<dte:Total>"+total+"</dte:Total>";
+        String totalstr = String.format("%.2f",total);
+        totalstr=totalstr.replaceAll(",",".");
+
+        xml+="<dte:Total>"+totalstr+"</dte:Total>";
         xml+="</dte:Item>";
 
         totiva+=Double.valueOf(impstr);

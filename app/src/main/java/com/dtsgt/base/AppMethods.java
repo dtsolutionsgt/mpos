@@ -1176,9 +1176,8 @@ public class AppMethods {
     }
 
     public String prodTipo(String cod) {
-
         Cursor DT;
-        String result="";
+        String result="S";
 
         try {
 
@@ -1194,7 +1193,6 @@ public class AppMethods {
         }
 
         return result;
-
     }
 
     public int codigoCombo(int cod) {

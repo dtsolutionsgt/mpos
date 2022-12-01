@@ -124,7 +124,7 @@ public class Venta extends PBase {
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
-    private double px,py,cpx,cpy,cdist,savetot,saveprec;
+    private double px,py,cpx,cpy,cdist,savetot,saveprec,prodtotlin;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
     private int nivel,dweek,clidia,counter,menuitemid;
@@ -334,6 +334,7 @@ public class Venta extends PBase {
                         prodid=vitem.Cod;gl.prodid=prodid;
                         gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
                         uprodid=prodid;
+                        prodtotlin=vitem.Total;
                         uid=vitem.emp;gl.menuitemid=uid;seluid=uid;// identificador unico de linea de T_VENTA ( Campo EMPRESA )
                         try {
                             gl.produid=Integer.parseInt(uid);
@@ -3619,7 +3620,7 @@ public class Venta extends PBase {
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
              //sql="SELECT COREL FROM D_factura WHERE (FEELUUID=' ') AND (ANULADO=0)";
              sql="select * from d_factura  where anulado=0 and " +
-                 "feelfechaprocesado=0 and feeluuid=' ' and fecha>="+flim+";";
+                 "(feelfechaprocesado=0 OR feeluuid=' ') and fecha>="+flim+";";
 
              Cursor DT=Con.OpenDT(sql);
              int i=DT.getCount();
@@ -4270,6 +4271,7 @@ public class Venta extends PBase {
                 browse=0;
                 if (gl.checksuper) {
                     browse=13;
+                    gl.total_factura_previo_descuento=prodtotlin;
                     startActivity(new Intent(this,DescMonto.class));
                 }
                 return;

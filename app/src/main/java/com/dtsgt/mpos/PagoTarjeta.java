@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.extListDlg;
@@ -23,6 +24,7 @@ public class PagoTarjeta extends PBase {
 
     private double monto;
     private String tipo="",aut;
+    private int cpago;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +135,7 @@ public class PagoTarjeta extends PBase {
         try {
             int codpago=0;
 
+            /*
             sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 4";
             dt = Con.OpenDT(sql);
             if(dt!=null) {
@@ -142,12 +145,19 @@ public class PagoTarjeta extends PBase {
                 }
                 dt.close();
             }
+            */
 
-            int item=1;
+            if (cpago==0) {
+                msgAskExit("No se logro aplicar pago.\nPor favor repite el pago.");return;
+            }
+
+            codpago=cpago;
+            P_mediapagoObj.fill("WHERE (codigo="+cpago+")");
+            if (P_mediapagoObj.count>0) tipo=P_mediapagoObj.first().nombre;
 
             sql="SELECT MAX(ITEM) FROM T_PAGO";
             dt=Con.OpenDT(sql);
-
+            int item=1;
             if (dt.getCount()>0) {
                 dt.moveToFirst();
                 item=dt.getInt(0)+1;
@@ -188,8 +198,9 @@ public class PagoTarjeta extends PBase {
             if (P_mediapagoObj.count>0) {
                 tipo="";
                 for (int i = 0; i <P_mediapagoObj.count; i++) {
-                    if (i==0) tipo=P_mediapagoObj.items.get(i).nombre;
-                    listdlg.add(0,P_mediapagoObj.items.get(i).nombre);
+                    //if (i==0) tipo=P_mediapagoObj.items.get(i).nombre;
+                    //listdlg.add(0,P_mediapagoObj.items.get(i).nombre);
+                    listdlg.add(P_mediapagoObj.items.get(i).codigo,P_mediapagoObj.items.get(i).nombre);
                 }
             } else {
                 listdlg.add(0,"Tarjeta credito");tipo="Tarjeta credito";
@@ -201,6 +212,7 @@ public class PagoTarjeta extends PBase {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
+                        cpago=listdlg.getCodigoInt(position);
                         tipo=listdlg.getText(position);
                         lblTipo.setText(tipo);
                         txtAut.requestFocus();
@@ -232,6 +244,23 @@ public class PagoTarjeta extends PBase {
 
     //region Dialogs
 
+    private void msgAskExit(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg  );
+
+            dialog.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
 
     //endregion
 

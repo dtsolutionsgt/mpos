@@ -1349,14 +1349,23 @@ public class BaseDatosVersion {
         } catch (Exception e) {}
 
         try {
-
             sql="ALTER TABLE P_cortesia ADD COLUMN CLAVE TEXT;";
             db.execSQL(sql);
+        } catch (Exception e) {  }
 
-        } catch (Exception e) {
+        try {
+            sql="DROP INDEX IX_P_CAJACIERRE ";
+            db.execSQL(sql);
+        } catch (Exception e) { }
 
-        }
 
+        try {
+
+        } catch (Exception e) { }
+
+        try {
+
+        } catch (Exception e) { }
     }
 
 	private boolean update01() {

@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
+import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
@@ -934,6 +935,7 @@ public class Menu extends PBase {
 								msgAskCorregirFechas();break;
 							case 11:
 								inicioDia();break;
+
 						}
 						listdlg.dismiss();
 					} catch (Exception e) {}
@@ -1346,6 +1348,9 @@ public class Menu extends PBase {
 
     }
 
+
+
+
 	//endregion
 
 	//region Mantenimientos
@@ -1658,19 +1663,15 @@ public class Menu extends PBase {
 
 						gl.titReport = ss;
 
-						if(valida()){
+						if (valida()) {
 
 							if (gl.cajaid!=2) {
-								//msgbox("Caja 2");
-								gl.inicio_caja_correcto =false;
-								browse=1;
-								startActivity(new Intent(Menu.this,Caja.class));
+								validaCaja();
 							} else {
 								startActivity(new Intent(Menu.this,CajaPagos.class));
 							}
 
 						} else {
-							//msgbox("Caja 3");
 							String txt="";
 
 							if(gl.cajaid==0 || gl.cajaid==2) txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
@@ -1698,6 +1699,46 @@ public class Menu extends PBase {
 		}
 
 	}
+
+	private void validaCaja() {
+		try {
+			long flim = du.addHours(-12);
+			clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
+			P_res_sesionObj.fill("WHERE (Estado>0) AND (FECHAINI>=" + flim + ")");
+
+			if (P_res_sesionObj.count>0) {
+				msgAskMesas("Existen mesas abiertas.\n¿Continuar?");
+			} else {
+				gl.inicio_caja_correcto = false;
+				browse = 1;
+				startActivity(new Intent(Menu.this, Caja.class));
+			}
+			} catch (Exception e) {
+			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+		}
+	}
+
+	private void msgAskMesas(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+
+		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				gl.inicio_caja_correcto = false;
+				browse = 1;
+				startActivity(new Intent(Menu.this, Caja.class));
+			}
+		});
+
+		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+		});
+
+		dialog.show();
+
+	}
+
 
 	//endregion
 
@@ -2608,11 +2649,12 @@ public class Menu extends PBase {
 
 				try {
 
-
 					fActual = du.getFechaActual();
 					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<=0";
 					db.execSQL(sql);
 
+					sql="UPDATE D_FACTURA SET FECHA=2201010000 WHERE FECHA>6900000000";
+					db.execSQL(sql);
 
 					/*
 					fActual = du.getFechaActual();

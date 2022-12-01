@@ -591,9 +591,11 @@ public class BaseDatosScript {
                     ");";
             database.execSQL(sql);
 
+            /*
             sql="CREATE UNIQUE INDEX IX_P_CAJACIERRE "+
                     " on P_CAJACIERRE ([EMPRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])";
             database.execSQL(sql);
+            */
 
             //#CKFK 20200516 Modifiqué la llave primaria de la tabla P_CAJACIERRE
             // por un correlativo único "PRIMARY KEY ([EMRESA],[SUCURSAL],[RUTA],[COREL],[CODPAGO])"+

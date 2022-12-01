@@ -1269,9 +1269,11 @@ public class Orden extends PBase {
                 itemid=100;
             }
 
-            //itemid=T_ventaObj.newID("SELECT MAX(EMPRESA) FROM T_VENTA");
+            int itemmax=T_ventaObj.newID("SELECT MAX(EMPRESA) FROM T_VENTA");
+            if (itemid<itemmax) itemid=itemmax;
 
             venta=clsCls.new clsT_venta();
+
             venta.producto=oitem.producto;
             venta.empresa=""+itemid;
             venta.um=oitem.um;
@@ -1292,7 +1294,6 @@ public class Orden extends PBase {
             venta.percep=oitem.percep;
 
             T_ordencomboprecioObj.fill("WHERE (COREL='"+idorden+"') AND (IDCOMBO="+oitem.empresa+")");
-
             if (T_ordencomboprecioObj.count>0) {
                 venta.precio=T_ordencomboprecioObj.first().prectotal;
                 venta.preciodoc=venta.precio;
@@ -1323,29 +1324,6 @@ public class Orden extends PBase {
                         T_ventaObj.update(ventau);
                     }
                 }
-
-
-                /*
-                String vsql="SELECT CANT FROM T_venta WHERE (PRODUCTO='"+venta.producto+"') AND (UM='"+venta.um+"')";
-                dt=Con.OpenDT(vsql);
-
-                if (dt!=null){
-                    //#ejc20210712: condición agregada con Jaros, para validar productos de tipo combo.
-                    if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
-                        T_ventaObj.add(venta);
-                    }else{
-                        if (dt.getCount()==0) {
-                            T_ventaObj.add(venta);
-                        } else {
-                            venta.cant+= oitem.cant;
-                            //prodtot=mu.round(venta.precio*venta.cant,2);
-                            prodtot=venta.total+mu.round(oitem.total,2);
-                            venta.total = prodtot;
-                            T_ventaObj.update(venta);
-                        }
-                    }
-                };
-                */
 
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1836,6 +1814,10 @@ public class Orden extends PBase {
 
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
+            if (P_res_sesionObj.count==0) {
+                msgbox("No se puede crear factura. Por favor anule la e ingrese la de nuevo.");return;
+            }
+
             gl.mesero_venta=P_res_sesionObj.first().vendedor;
 
             gl.numero_orden=idorden+"_"+cuenta;

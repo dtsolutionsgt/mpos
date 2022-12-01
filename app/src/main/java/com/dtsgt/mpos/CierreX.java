@@ -454,9 +454,11 @@ public class CierreX extends PBase {
 
                     case 4:
                         if(gl.reportid==9){
-                            condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
-                        }else if(gl.reportid==10){
-                            condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
+                            //condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
+                            condition =" AND D_FACTURA.KILOMETRAJE = 0 ";
+                        } else if(gl.reportid==10){
+                            //condition=" WHERE ANULADO=0 AND KILOMETRAJE = "+gl.corelZ+" ";
+                            condition =" AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
                         /*
@@ -467,11 +469,20 @@ public class CierreX extends PBase {
                                 " GROUP BY M.NOMBRE";
                          */
 
+                        /*
                         sql="SELECT '', '', 0, '', P.DESC2, '', COUNT(DISTINCT P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
                                 "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                                 "WHERE P.COREL IN (SELECT COREL FROM D_FACTURA "+
                                 condition+")" +
                                 " GROUP BY P.DESC2";
+                         */
+
+                        sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
+                                "FROM D_FACTURA INNER JOIN " +
+                                "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL INNER JOIN " +
+                                "P_MEDIAPAGO ON D_FACTURAP.CODPAGO = P_MEDIAPAGO.CODIGO " +
+                                "WHERE D_FACTURA.ANULADO=0  "+condition+" " +
+                                "GROUP BY P_MEDIAPAGO.NOMBRE";
 
                         /*
                         if(gl.reportid==9){

@@ -48,7 +48,8 @@ public class clsDataBuilder {
 		
 		System.setProperty("line.separator","\r\n");
 		
-		fname = Environment.getExternalStorageDirectory()+"/SyncFold/rd_data.txt";
+		//fname = Environment.getExternalStorageDirectory()+"/SyncFold/rd_data.txt";
+		fname = Environment.getExternalStorageDirectory()+"/data.txt";
 		logname = Environment.getExternalStorageDirectory()+"/roadenvio.txt";
 		namefile = Environment.getExternalStorageDirectory()+"/data.txt";
 

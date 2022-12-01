@@ -116,7 +116,7 @@ public class FacturaRes extends PBase {
 	private int fcorel,clidia, Nivel_Media_Pago,idtransbar;
 	private boolean EsNivelPrecioDelivery =false;
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
-	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea;
+	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext,pend,stot,stot0;
 	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito,descaddmonto;
@@ -443,6 +443,7 @@ public class FacturaRes extends PBase {
 
 	public void doDesc(View view) {
 		gl.total_factura_previo_descuento=tot+gl.descadd;
+		modo_super=0;
 		validaSupervisor();
 
 		/*
@@ -707,6 +708,8 @@ public class FacturaRes extends PBase {
 
 			fillTotals();
 
+			if (gl.propina_valor>0 && propina==0) msgbox("No se aplico propina!");
+
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("totalOrder: " + e.getMessage());
@@ -799,6 +802,8 @@ public class FacturaRes extends PBase {
 					items.add(item);
 				}
 			}
+
+			gl.monto_propina=propina;
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -1028,7 +1033,7 @@ public class FacturaRes extends PBase {
 
 		Cursor dt,dtc;
 		String vprod,vumstock,vumventa,vbarra,ssq;
-		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1;
+		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp;
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid;
 		boolean flag,pagocarta=false;
 
@@ -1062,7 +1067,27 @@ public class FacturaRes extends PBase {
 
 		try {
 
-            String ss="WHERE anulado=0 AND feelfechaprocesado=0 AND feeluuid=' ' AND fecha>2010010000";
+			//region Consistencia de Factura
+
+			double tott,totpg=0;
+
+			sql = "SELECT VALOR FROM T_PAGO";
+			dt = Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			while (!dt.isAfterLast()) {
+				totpg+=dt.getDouble(0);
+				dt.moveToNext();
+			}
+
+			tott=mu.round2(tot);totpg=mu.round2(totpg);
+			if (tott!=totpg) {
+				msgbox("Monto de pago no coincide con total de factura.");return false;
+			}
+
+			//endregion
+
+  			String ss="WHERE anulado=0 AND feelfechaprocesado=0 AND feeluuid=' ' AND fecha>2010010000";
             D_fact.fill(ss);
             fpend=D_fact.count;
 
@@ -1083,7 +1108,19 @@ public class FacturaRes extends PBase {
 			//if(gl.validDate) ins.add("FECHA",gl.lastDate); else ins.add("FECHA",fecha);
             ins.add("FECHA",fecha);
 			ins.add("RUTA",gl.codigo_ruta);
-			ins.add("VENDEDOR",gl.codigo_vendedor);
+
+			if (gl.numero_orden.isEmpty()) {
+				ins.add("VENDEDOR",gl.codigo_vendedor);
+			} else {
+				if (gl.mesero_venta==0) {
+					ins.add("VENDEDOR",gl.codigo_vendedor);
+				} else {
+					ins.add("VENDEDOR",gl.mesero_venta);
+				}
+			}
+
+			if (gl.codigo_cliente<=0) gl.codigo_cliente=gl.emp*10;
+
 			ins.add("CLIENTE",gl.codigo_cliente);
 			ins.add("KILOMETRAJE",0);
 			ins.add("FECHAENTR",fecha);
@@ -1273,6 +1310,7 @@ public class FacturaRes extends PBase {
             while (!dt.isAfterLast()) {
 
                 if (dt.getString(2).equalsIgnoreCase("K")) pagocarta=true;
+				valp=dt.getDouble(3);
 
                 ins.init("D_FACTURAP");
                 ins.add("COREL", corel);
@@ -1295,16 +1333,20 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAF
 
+			clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+			P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+			String vCorreoDefecto =P_sucursalObj.first().correo;
+
             try {
-                if (gl.gCorreoCliente.isEmpty()) gl.gCorreoCliente=" ";
+                if (gl.gCorreoCliente.isEmpty()) gl.gCorreoCliente=vCorreoDefecto;
             } catch (Exception e) {
-                gl.gCorreoCliente=" ";
+                gl.gCorreoCliente=vCorreoDefecto;
             }
 
             try {
-                if (gl.gDirCliente.isEmpty()) gl.gDirCliente=" ";
+                if (gl.gDirCliente.isEmpty()) gl.gDirCliente="Ciudad";
             } catch (Exception e) {
-                gl.gDirCliente=" ";
+                gl.gDirCliente="Ciudad";
             }
 
 			if (gl.gNITCliente.isEmpty()) {
@@ -1313,13 +1355,15 @@ public class FacturaRes extends PBase {
 				if (gl.gNITCliente.length()<6) gl.gNITCliente="CF";
 			}
 
+			if (gl.codigo_cliente<=0) {
+				gl.codigo_cliente=gl.emp*10;
+			}
+
+			if (gl.codigo_cliente==gl.emp*10) gl.gNITCliente="CF";
+
 			gl.gNITCliente=gl.gNITCliente.replace(".","");
 
 			if (gl.gNITCliente.equalsIgnoreCase("CF")) {
-
-				clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
-				P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
-				String vCorreoDefecto =P_sucursalObj.first().correo;
 
 				ins.init("D_FACTURAF");
 				ins.add("COREL",corel);
@@ -1394,44 +1438,46 @@ public class FacturaRes extends PBase {
 
             //region D_FACTURAPR Propina por factura - solo modulo restaurante
 
-            if (gl.peRest) {
+			if (gl.peRest) {
 
-                if (propina>0) {
+				propina=mu.round2(propina);
 
-                    propina=mu.round2(propina);
+				if (propina==0 && gl.monto_propina>0) {
+					propina=gl.monto_propina;
+					toastlong("Se corregio monto de propina");
+				}
 
-                    try {
+				try {
 
-                        clsD_facturaprObj D_facturaprObj = new clsD_facturaprObj(this, Con, db);
-                        clsClasses.clsD_facturapr itempr = clsCls.new clsD_facturapr();
+					clsD_facturaprObj D_facturaprObj = new clsD_facturaprObj(this, Con, db);
+					clsClasses.clsD_facturapr itempr = clsCls.new clsD_facturapr();
 
-                        itempr.empresa = gl.emp;
-                        itempr.corel = corel;
-                        itempr.anulado = 0;
-                        itempr.fecha = fecha;
-                        itempr.codigo_sucursal = gl.tienda;
-                        itempr.codigo_vendedor = gl.mesero_venta;
-                        if (itempr.codigo_vendedor==0) itempr.codigo_vendedor=gl.codigo_vendedor;
-                        itempr.propina = propina;
-                        itempr.propperc =propinaperc;
-                        itempr.propextra =propinaext;
+					itempr.empresa = gl.emp;
+					itempr.corel = corel;
+					itempr.anulado = 0;
+					itempr.fecha = fecha;
+					itempr.codigo_sucursal = gl.tienda;
+					itempr.codigo_vendedor = gl.mesero_venta;
+					if (itempr.codigo_vendedor==0) itempr.codigo_vendedor=gl.codigo_vendedor;
+					itempr.propina = propina;
+					itempr.propperc =propinaperc;
+					itempr.propextra =propinaext;
 
-                        if (pagocarta) {
-                            if (gl.pePropinaCarta>0 && gl.pePropinaPerc>0) {
-                                if (gl.pePropinaCarta>gl.pePropinaPerc) gl.pePropinaCarta=gl.pePropinaPerc;
-                                itempr.propina = propina*gl.pePropinaCarta/gl.pePropinaPerc;
-                                propinaperc=gl.pePropinaCarta; itempr.propperc =propinaperc;
-                            }
-                        }
+					if (pagocarta) {
+						if (gl.pePropinaCarta>0 && gl.pePropinaPerc>0) {
+							if (gl.pePropinaCarta>gl.pePropinaPerc) gl.pePropinaCarta=gl.pePropinaPerc;
+							itempr.propina = propina*gl.pePropinaCarta/gl.pePropinaPerc;
+							propinaperc=gl.pePropinaCarta; itempr.propperc =propinaperc;
+						}
+					}
 
-                        D_facturaprObj.add(itempr);
+					D_facturaprObj.add(itempr);
 
-                    } catch (Exception e) {
-                        msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-                    }
+				} catch (Exception e) {
+					msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+				}
 
-                }
-            }
+			}
 
             //endregion
 
@@ -1440,7 +1486,6 @@ public class FacturaRes extends PBase {
             clsD_factura_felObj D_factura_felObj=new clsD_factura_felObj(this,Con,db);
             clsClasses.clsD_factura_fel ffel=clsCls.new clsD_factura_fel();
 
-            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
 
             ffel.corel=corel;
@@ -2770,7 +2815,7 @@ public class FacturaRes extends PBase {
 	}
 
     private void validaPagoEfectivo() {
-        double aplcash;
+        double aplcash,ppd;
 
         svuelt= khand.val;
         sefect="0";
@@ -2781,11 +2826,18 @@ public class FacturaRes extends PBase {
 			aplcash=vuel;
 			vuel=vuel-tot;
 
+			double ppgp=gl.total_pago;
+
             lblMonto.setText("");khand.val="";
 
             if (vuel<0.00) {
                 toast("Pago insuficiente, falta "+mu.frmcur(-vuel));
-                sefect=svuelt;
+
+				if (gl.total_pago<aplcash) {
+					vuel=gl.total_pago;
+					svuelt=""+vuel;
+				}
+				sefect=svuelt;
                 applyCash();
                 checkPago();
                 return;
@@ -2817,7 +2869,7 @@ public class FacturaRes extends PBase {
     private void applyCash() {
 
 	    Cursor dt;
-		double epago;
+		double epago,ppd;
         int codpago=0;
 
 		try {
@@ -2828,6 +2880,8 @@ public class FacturaRes extends PBase {
 			if (epago==0) return;
 
 			if (epago<0) throw new Exception();
+
+
 
 			sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 1";
 			dt = Con.OpenDT(sql);
@@ -3165,7 +3219,30 @@ public class FacturaRes extends PBase {
 		}
     }
 
-    private void checkPagoNF() {
+	private double totalPago() {
+		Cursor DT;
+		double tpago;
+
+		try {
+			sql="SELECT SUM(VALOR) FROM T_PAGO";
+			DT=Con.OpenDT(sql);
+
+			if (DT.getCount()>0){
+				DT.moveToFirst();
+				tpago=DT.getDouble(0);
+				if (DT!=null) DT.close();
+			} else {
+				tpago=0;
+			}
+
+			return tpago;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			return -1;
+		}
+	}
+
+	private void checkPagoNF() {
 
         Cursor DT;
         double tpago;
@@ -3217,7 +3294,6 @@ public class FacturaRes extends PBase {
     }
 
     private void pagoPendiente() {
-
         Cursor DT;
         double tpago,pef,pcard;
 
@@ -3767,6 +3843,10 @@ public class FacturaRes extends PBase {
     }
 
 	private void completaEstadoOrden() {
+
+		gl.numero_orden="";
+		gl.mesero_venta=0;
+
 		try {
 
 			if (!todasCuentasPagadas()) {
@@ -4345,7 +4425,8 @@ public class FacturaRes extends PBase {
 
 		alert.setNeutralButton("Sin propina", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				msgAskSinPropina("Anular la propina");
+				modo_super=1;
+				validaSupervisor();
 			}
 		});
 
@@ -4441,8 +4522,13 @@ public class FacturaRes extends PBase {
 					if (listdlg.getInput().isEmpty()) return;
 
 					if (listdlg.validPassword()) {
-						browse=6;
-						startActivity(new Intent(FacturaRes.this,DescMonto.class));
+						if (modo_super==0) {
+							browse=6;
+							startActivity(new Intent(FacturaRes.this,DescMonto.class));
+						} else if (modo_super==1) {
+							msgAskSinPropina("Anular la propina");
+						}
+
 						listdlg.dismiss();
 					} else {
 						toast("Contraseña incorrecta");

@@ -387,7 +387,7 @@ public class CliPos extends PBase {
             gl.cliente_dom=codigo;
 
 			gl.rutatipo="V";
-			gl.cliente=""+codigo; if (codigo==-1) gl.cliente=gl.emp+"0";
+			gl.cliente=""+codigo; if (codigo<=0) gl.cliente=gl.emp+"0";
 			gl.nivel=gl.nivel_sucursal;
             gl.percepcion=0;
             gl.contrib="";
@@ -822,6 +822,7 @@ public class CliPos extends PBase {
 
 	//region Aux
 
+
 	private boolean validaNIT(String N)  {
 
         if (N.isEmpty()) return false;
@@ -1148,13 +1149,15 @@ public class CliPos extends PBase {
             nit=nit.toUpperCase();
             pp=nit.indexOf("-");
 
-            if (pp<0){
+            if (pp<=0){
                 nnit=Integer.parseInt(nit);
             }else{
                 int A=(int) nit.charAt(pp+1);
                 String snit=nit.substring(0,pp)+A;
                 nnit=Integer.parseInt(snit);
             }
+
+            if (nnit<=0) nnit=gl.emp*10;
 
             return nnit;
 
