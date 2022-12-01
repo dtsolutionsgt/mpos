@@ -47,7 +47,7 @@ public class Caja extends PBase {
 
     private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoDifCred=0, montoCred=0,venta_total;
     private String cap;
-    private int acc=1,msgAcc=0,cred=0;
+    private int acc=1,msgAcc=0,cred=0,corelidx=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -487,6 +487,8 @@ public class Caja extends PBase {
 
                             if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
 
+                                corelidx++;
+
                                 try {
                                     sql="DROP INDEX IX_P_CAJACIERRE ";
                                     db.execSQL(sql);
@@ -506,7 +508,7 @@ public class Caja extends PBase {
                                 }
 
                                 itemC.empresa=ecor;
-                                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C";
+                                itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C"+corelidx;
                                 montoIni = dt.getDouble(2);
                                 itemC.montoini = montoIni;
                                 itemC.montofin = montoCred;
