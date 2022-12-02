@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,24 +8,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Point;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsRepBuilder;
-
-import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,6 +32,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 public class CierreX extends PBase {
 
@@ -60,6 +72,9 @@ public class CierreX extends PBase {
     private Double Fondo;
 
     private String condition,stampstr;
+    private Session session;
+    private boolean exito;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -1568,30 +1583,10 @@ public class CierreX extends PBase {
     }
 
     public void EnviarCierre(View view) {
-        String subject,body;
-        String dir=Environment.getExternalStorageDirectory()+"";
-
         try {
-            File f1 = new File(dir + "/print.txt");
-            Uri uri = Uri.fromFile(f1);
 
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            StrictMode.setVmPolicy(builder.build());
-
-            subject= "Tienda : "+gl.tiendanom+" caja : "+gl.codigo_ruta;
-            body="Adjunto reporte de cierre";
-
-            String[] TO = {"dtsolutionsgt@gmail.com"};
-
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-
-            emailIntent.setData(Uri.parse("mailto:"));
-            emailIntent.setType("application/pdf");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-            emailIntent.putExtra(Intent.EXTRA_TEXT,body);
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            startActivity(emailIntent);
+            AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
+            enviar.execute();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1646,6 +1641,79 @@ public class CierreX extends PBase {
             return point.x>point.y;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    public class AsyncEnviaCorreo extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(CierreX.this,"Enviando reporte","Espere por favor...",false,false);
+        }
+
+        @Override
+        protected String doInBackground(Void... vd) {
+
+            exito = false;
+
+            Properties props = new Properties();
+            props.setProperty("mail.transport.protocol", "smtp");
+            props.setProperty("mail.host", "smtp.office365.com");
+            props.setProperty("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+
+            session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication("soportesw@dts.com.gt", "Dts2021#");
+                }
+            });
+
+            try {
+
+                String dir= Environment.getExternalStorageDirectory()+"";
+                File f1 = new File(dir + "/print.txt");
+
+                MimeMessage mm = new MimeMessage(session);
+                mm.setFrom(new InternetAddress("soportesw@dts.com.gt"));
+                mm.addRecipient(Message.RecipientType.TO, new InternetAddress("dtsolutionsgt@gmail.com"));
+                mm.setSubject("Tienda : "+gl.tiendanom+" caja : "+gl.codigo_ruta);
+
+                BodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setText("Adjunto reporte de cierre");
+
+                MimeBodyPart attachmentPart = new MimeBodyPart();
+                attachmentPart.attachFile(f1);
+
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(messageBodyPart);
+                multipart.addBodyPart(attachmentPart);
+
+                mm.setContent(multipart);
+                Transport.send(mm);
+                exito = true;
+            }
+
+            catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String vdata){
+            super.onPostExecute(vdata);
+            progressDialog.dismiss();
+
+            if (exito) {
+                Toast.makeText(CierreX.this, "Reporte enviado", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(CierreX.this, "Error al enviar reporte", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
