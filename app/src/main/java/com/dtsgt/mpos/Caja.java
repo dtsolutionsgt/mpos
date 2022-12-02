@@ -4,12 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.text.InputType;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -215,7 +217,7 @@ public class Caja extends PBase {
                     msgbox("El monto inicial debe ser mayor a 0");
                 }
             } else if(gl.cajaid==3 && !MontoFin.getText().toString().trim().isEmpty()){
-                montoFin = Double.parseDouble(MontoFin.getText().toString().trim());
+                montoFin = mu.round2(Double.parseDouble(MontoFin.getText().toString().trim()));
                 gl.monto_final_ingresado=montoFin;
 
                 if(montoFin>=0){
@@ -262,7 +264,9 @@ public class Caja extends PBase {
     public void montoDif(){
 
         Cursor dt;
-        double tot,totCred,pago;
+        double tot =0;
+        double totCred =0;
+        double pago=0;
 
         try{
 
@@ -283,7 +287,7 @@ public class Caja extends PBase {
 
             dt=Con.OpenDT(sql);
 
-            if(dt==null) throw new Exception();
+            if(dt==null) throw new Exception("ERROR_202212020719: No se encontraron ventas al contado.");
 
             venta_total=0;
 
@@ -294,10 +298,11 @@ public class Caja extends PBase {
                 venta_total=vval;
                 tot = fondoCaja+vval;
             }
+
             if(dt!=null) dt.close();
 
-
             if (cred==1){
+
                 sql="SELECT P.CODPAGO, SUM(P.VALOR) " +
                     " FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                     " WHERE F.KILOMETRAJE=0 AND P.TIPO='K' AND F.ANULADO=0 " +
@@ -306,12 +311,24 @@ public class Caja extends PBase {
 
                 dt=Con.OpenDT(sql);
 
-                if(dt==null) throw new Exception();
+                if(dt==null) throw new Exception("ERROR_202212020717: No se encontraron las ventas al crédito.");
+
                 if(dt.getCount()==0) {
                     totCred=0;
                 } else{
-                    totCred = dt.getDouble(1);
+
+                    //#EJC202212020745: Ciclo para sumar las diferentes formas de crédito.
+                    dt.moveToFirst();
+
+                    while(!dt.isAfterLast()){
+
+                        totCred += mu.round2(dt.getDouble(1));
+                        dt.moveToNext();
+
+                    }
+
                 }
+
                 if(dt!=null) dt.close();
 
                 venta_total+=totCred;
@@ -331,10 +348,8 @@ public class Caja extends PBase {
             if(dt!=null) dt.close();
 
             montoDif = tot - pago;
-
             montoDif=mu.round2(montoDif);
             montoFin=mu.round2(montoFin);
-
             montoDif = mu.round2(montoFin - montoDif);
 
             if (montoDif<0.01) montoDif=0;
@@ -346,9 +361,11 @@ public class Caja extends PBase {
     }
 
     public void saveMontoIni(){
+
         Cursor dt, dt2, dt3;
         int codpago=0,ecor;
         Long fecha=0L;
+        boolean finalizo_transaccion =false;
 
         try{
 
@@ -473,7 +490,7 @@ public class Caja extends PBase {
 
                             if (caja_inicio_contado !=null){
                                 if (caja_inicio_contado.count >0){
-                                    montoIni = fondoCaja+dt.getDouble(2);
+                                    montoIni = mu.round2(fondoCaja+dt.getDouble(2));
                                     itemC.montoini = montoIni;
                                     itemC.montofin = montoFin;
                                     itemC.montodif = mu.round2(montoFin-montoIni);
@@ -509,7 +526,7 @@ public class Caja extends PBase {
 
                                 itemC.empresa=ecor;
                                 itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C"+corelidx;
-                                montoIni = dt.getDouble(2);
+                                montoIni = mu.round2(dt.getDouble(2));
                                 itemC.montoini = montoIni;
                                 itemC.montofin = montoCred;
                                 itemC.montodif = mu.round2(montoCred - montoIni);
@@ -542,7 +559,7 @@ public class Caja extends PBase {
                     itemC.codpago=codpago;
                     itemC.fecha = fecha;
                     itemC.estado = 1;
-                    montoIni = fondoCaja;
+                    montoIni = mu.round2(fondoCaja);
                     itemC.montoini = montoIni;
                     itemC.montofin = montoFin;
                     itemC.montodif = mu.round2(montoFin-montoIni);
@@ -570,17 +587,14 @@ public class Caja extends PBase {
                 db.setTransactionSuccessful();
                 db.endTransaction();
 
+                finalizo_transaccion =true;
+
                 writeCorelLog(10,gl.corelZ,sql);
 
                 Toast.makeText(this, "Fin de turno correcto", Toast.LENGTH_LONG).show();
 
-                Cursor dtk=Con.OpenDT("SELECT KILOMETRAJE FROM D_FACTURA WHERE KILOMETRAJE=0");
-                if (dtk.getCount()>0) {
-                    writeCorelLog(11,gl.corelZ,"KILOMETRAJE=0 DESPUES de UPDATE");
-                    setAddlog("saveMontoIni", "KILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
-                    msgAskExit2("El cierre se realizó correctamente, pero no fue posible asociar algunas facturas al cierre de caja. Por favor envíe la base de datos y notifique a soporte.");
-                    return;
-                }
+                //#EJC20221202101: Función recursiva para actualizar las facturas que se quedaron sin su número de cierre.
+                Actualizar_Facturas_Sin_Corel_Cierre2();
 
                 writeCorelLog(12,gl.corelZ,"");
 
@@ -600,11 +614,197 @@ public class Caja extends PBase {
             }
 
         } catch (Exception e){
-            db.endTransaction();
+            if (!finalizo_transaccion) db.endTransaction();
             setAddlog("Error saveMontoIni", e.getMessage(), "");
             toastlong("Error saveMontoIni: "+e.getMessage());
             msgbox("Error saveMontoIni: "+e.getMessage());return;
         }
+    }
+
+//    private void Actualizar_Facturas_Sin_Corel_Cierre(){
+//
+//        try {
+//
+//            Cursor dtk=Con.OpenDT("SELECT COUNT(KILOMETRAJE) AS CANTIDAD_FACTURAS_SIN_CIERRE FROM D_FACTURA WHERE KILOMETRAJE=0");
+//            if(dtk!=null) {
+//                if (dtk.getCount()>0) {
+//
+//                    dtk.moveToFirst();
+//                    int cant_facturas_sin_km=dtk.getInt(0);
+//
+//                    if  (cant_facturas_sin_km>0) {
+//
+//                        Long fecha_inicial= Long.valueOf(0);
+//                        String sfecha_final="0";
+//                        String sfecha_inicial_sin_hora="0";
+//                        double fecha_final =0;
+//                        Long corel_cierre = Long.valueOf(0);
+//
+//                        Cursor dtk_upd=Con.OpenDT("SELECT * FROM D_FACTURA WHERE KILOMETRAJE=0 ORDER BY FECHA");
+//
+//                        if(dtk_upd!=null) {
+//
+//                            if (dtk_upd.getCount()>0) {
+//
+//                                dtk_upd.moveToFirst();
+//
+//                                while (!dtk_upd.isAfterLast()) {
+//
+//                                    fecha_inicial = dtk_upd.getLong(3);
+//                                    sfecha_final =String.valueOf(fecha_inicial);
+//                                    sfecha_final = sfecha_final.substring(0,6);
+//                                    sfecha_inicial_sin_hora = sfecha_final + "0000";
+//                                    sfecha_final = sfecha_final + "235959";
+//                                    Log.d("fecha_sin_hora", sfecha_final);
+//
+//                                    String sql_get_cierre = "SELECT * FROM P_CAJACIERRE WHERE FECHA=" + sfecha_inicial_sin_hora;
+//                                    Cursor dt_cierre=Con.OpenDT(sql_get_cierre);
+//                                    if(dt_cierre!=null) {
+//                                        if (dt_cierre.getCount()>0) {
+//                                            corel_cierre =dt_cierre.getLong(3);
+//                                            String sql_fact_sin_cierre_by_fecha = "SELECT * FROM D_FACTURA WHERE FECHA BETWEEN '" + fecha_inicial + "' AND '" +  sfecha_final + "'";
+//                                            Cursor dtk_facturas_sin_cierre=Con.OpenDT(sql_fact_sin_cierre_by_fecha);
+//                                            if(dtk_facturas_sin_cierre!=null) {
+//                                                if (dtk_facturas_sin_cierre.getCount()>0) {
+//                                                    String sql_update_cierre = "UPDATE D_FACTURA SET KILOMETRAJE = " + corel_cierre + " WHERE FECHA BETWEEN '" + fecha_inicial + "' AND '" +  sfecha_final + "'";
+//                                                    db.execSQL(sql_update_cierre);
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                    dtk_upd.moveToNext();
+//                                }
+//                            }
+//                        }
+//
+//                        String vsql2 = "SELECT * FROM D_FACTURA WHERE KILOMETRAJE=0 ORDER BY FECHA";
+//                        Cursor dtk_upd1=Con.OpenDT(vsql2);
+//
+//                        if(dtk_upd1!=null) {
+//                            if (dtk_upd1.getCount()>0) {
+//                                writeCorelLog(11,gl.corelZ,"KILOMETRAJE=0 DESPUES de UPDATE");
+//                                setAddlog("saveMontoIni", "KILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
+//                                msgAskExit2("El cierre se realizó correctamente, pero no fue posible asociar algunas facturas al cierre de caja. Por favor envíe la base de datos y notifique a soporte.");
+//                                return;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
+    private void Actualizar_Facturas_Sin_Corel_Cierre2(){
+
+        try {
+
+            String vsql_cant_facturas_sin_cierre ="SELECT COUNT(KILOMETRAJE) AS CANTIDAD_FACTURAS_SIN_CIERRE FROM D_FACTURA WHERE KILOMETRAJE=0";
+            Cursor dt_cant_facturas_sin_cierre=Con.OpenDT(vsql_cant_facturas_sin_cierre);
+
+            if(dt_cant_facturas_sin_cierre!=null) {
+
+                if (dt_cant_facturas_sin_cierre.getCount()>0) {
+
+                    Log.d("Cantidad_Facturas_Sin_Cierre: ", String.valueOf(dt_cant_facturas_sin_cierre.getCount()));
+
+                    dt_cant_facturas_sin_cierre.moveToFirst();
+
+                    int vcant_facturas_sin_cierre=dt_cant_facturas_sin_cierre.getInt(0);
+
+                    if  (vcant_facturas_sin_cierre>0) {
+
+                        Cursor dtk_facturas_con_km_0=Con.OpenDT("SELECT * FROM D_FACTURA WHERE KILOMETRAJE=0 ORDER BY FECHA ");
+
+                        if(dtk_facturas_con_km_0!=null) {
+
+                            if (dtk_facturas_con_km_0.getCount()>0) {
+
+                                Long fecha_inicial= Long.valueOf(0);
+                                String sfecha_final="0";
+                                String Ant_fecha_final="0";
+                                String aux_sfecha_final="0";
+                                String sfecha_inicial="0";
+                                String sfecha_inicial_sin_hora="0";
+                                double fecha_final =0;
+                                Long corel_cierre = Long.valueOf(0);
+                                String dia = "0";
+                                String dia_sig="0";
+                                int contador =0;
+
+                                dtk_facturas_con_km_0.moveToFirst();
+
+                                while (!dtk_facturas_con_km_0.isAfterLast()) {
+
+                                    if (contador==0){
+                                        fecha_inicial = dtk_facturas_con_km_0.getLong(3);
+                                        sfecha_inicial = String.valueOf(fecha_inicial);
+                                        sfecha_inicial = sfecha_inicial.substring(0,6);
+                                        sfecha_inicial_sin_hora = sfecha_inicial + "0000";
+                                    }
+
+                                    Ant_fecha_final=String.valueOf(dtk_facturas_con_km_0.getLong(3));
+                                    aux_sfecha_final = Ant_fecha_final.substring(0,6);
+                                    dia = aux_sfecha_final.substring(4);
+                                    //sfecha_final = sfecha_final + "235959";
+
+                                    Log.d("fecha_sin_hora", sfecha_final);
+                                    if (dia_sig.equalsIgnoreCase("0")){
+                                        dia_sig=dia;
+                                    }else if(!dia_sig.equalsIgnoreCase(dia)){
+                                        break;
+                                    }
+
+                                    sfecha_final =Ant_fecha_final;
+
+                                    contador+=1;
+
+                                    dtk_facturas_con_km_0.moveToNext();
+                                }
+
+                                String sql_get_cierre = "SELECT * FROM P_CAJACIERRE WHERE FECHA=" + sfecha_inicial_sin_hora;
+                                Cursor dt_cierre=Con.OpenDT(sql_get_cierre);
+                                if(dt_cierre!=null) {
+                                    if (dt_cierre.getCount()>0) {
+                                        corel_cierre =dt_cierre.getLong(3);
+                                        String sql_fact_sin_cierre_by_fecha = "SELECT * FROM D_FACTURA WHERE FECHA BETWEEN '" + fecha_inicial + "' AND '" +  sfecha_final + "' AND KILOMETRAJE =0";
+                                        Cursor dtk_facturas_sin_cierre=Con.OpenDT(sql_fact_sin_cierre_by_fecha);
+                                        if(dtk_facturas_sin_cierre!=null) {
+                                            if (dtk_facturas_sin_cierre.getCount()>0) {
+                                                Log.d("Cantidad_Facturas_Rango_Fechas: ", String.valueOf(dtk_facturas_sin_cierre.getCount()));
+                                                String sql_update_cierre = "UPDATE D_FACTURA SET KILOMETRAJE = " + corel_cierre + " WHERE FECHA BETWEEN '" + fecha_inicial + "' AND '" +  sfecha_final + "' AND KILOMETRAJE=0";
+                                                db.execSQL(sql_update_cierre);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        String vsql2 = "SELECT * FROM D_FACTURA WHERE KILOMETRAJE=0 ORDER BY FECHA";
+                        Cursor dtk_upd1=Con.OpenDT(vsql2);
+
+//                        else{
+//                            writeCorelLog(11,gl.corelZ,"KILOMETRAJE=0 DESPUES de UPDATE");
+//                            setAddlog("saveMontoIni", "KILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dt_cant_facturas_sin_cierre.getCount());
+//                            msgAskExit2("El cierre se realizó correctamente, pero no fue posible asociar algunas facturas al cierre de caja. Por favor envíe la base de datos y notifique a soporte.");
+//                            return;
+//                        }
+
+                        if(dtk_upd1!=null) {
+                            if (dtk_upd1.getCount()>0) {
+                                Actualizar_Facturas_Sin_Corel_Cierre2();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void validacionesInicio() {
@@ -719,6 +919,7 @@ public class Caja extends PBase {
     }
 
     private void msgAskExit2(String msg) {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);

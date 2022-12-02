@@ -381,9 +381,11 @@ public class CierreX extends PBase {
     }
 
     private boolean fillItems(){
+
         Cursor dt;
 
         try{
+
             itemR.clear();
 
             if(gl.reportid==10) reporteZ();
@@ -404,11 +406,14 @@ public class CierreX extends PBase {
                 if(i==10) sw=bFactAnuxDia;
 
                 switch (sw){
+
                     case 0:
+
                         sql="00";
                         break;
 
                     case 1:
+
                         if(gl.reportid==9){
                             condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";
                         }else if(gl.reportid==10){
@@ -421,6 +426,7 @@ public class CierreX extends PBase {
                                 "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
                                 "ORDER BY CAST(FECHA/10000 AS INTEGER)";
                         break;
+
                     case 2:
                         if(gl.reportid==9){
                             condition =" WHERE ANULADO=0 AND KILOMETRAJE = 0 ";

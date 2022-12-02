@@ -297,6 +297,7 @@ public class Reportes extends PBase {
     //region Main
 
     private void listItems() {
+
         Cursor DT;
         clsClasses.clsCD vItem;
         String vF,cod,name,condi="";
@@ -312,6 +313,7 @@ public class Reportes extends PBase {
             if(!vF.isEmpty()) condi = " WHERE CODIGO LIKE '%"+vF+"%'";
 
             switch(gl.reportid){
+
                 case 3:
                     sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
                     break;
@@ -664,15 +666,6 @@ public class Reportes extends PBase {
                     break;
 
                 case 13:
-
-                    /*
-                    sql="SELECT '','',0,'',P_PRODUCTO.DESCLARGA, D_FACTURAR.UM,0,P_PRODUCTO.COSTO,SUM(D_FACTURAR.CANT),0  " +
-                        "FROM  D_FACTURAR INNER JOIN " +
-                        "P_PRODUCTO ON D_FACTURAR.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
-                        "D_FACTURA ON D_FACTURAR.EMPRESA = D_FACTURA.EMPRESA AND D_FACTURAR.COREL = D_FACTURA.COREL " +
-                        "WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.FECHA >= 2101010000) AND (D_FACTURA.FECHA <=2105010000) " +
-                        "GROUP BY P_PRODUCTO.DESCLARGA, D_FACTURAR.UM  ORDER BY P_PRODUCTO.DESCLARGA ";
-                     */
 
                     sql="SELECT '','',0,'',P_PRODUCTO.DESCLARGA, D_FACTURAR.UM,0,P_PRODUCTO.COSTO,SUM(D_FACTURAR.CANT),0  " +
                             "FROM  D_FACTURAR INNER JOIN " +
