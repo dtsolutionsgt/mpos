@@ -46,7 +46,7 @@ public class CierreX extends PBase {
     private clsClasses.clsBonifProd itemZ;
 
     private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
-    private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<clsClasses.clsBonifProd>();
+    private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<>();
     public  ArrayList<String> repl=new ArrayList<String>();
 
     private Long dateini, datefin;
@@ -58,6 +58,7 @@ public class CierreX extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (pantallaHorizontal()) {
             setContentView(R.layout.activity_cierre_x);
         } else {
@@ -126,6 +127,7 @@ public class CierreX extends PBase {
     //region Events
 
     public void GeneratePrintCierre(View view){
+
         long cfi;
 
         try {
@@ -184,8 +186,10 @@ public class CierreX extends PBase {
                     getTXT();
 
                     respaldoReporte();
+
                     txtbtn.setText("IMPRIMIR");
                     report = true;
+
                 } else {
                     return;
                 }
@@ -200,12 +204,14 @@ public class CierreX extends PBase {
     }
 
     private void respaldoReporte() {
+
         String ss;
 
         try {
-            db.beginTransaction();
 
+            db.beginTransaction();
             db.execSQL("DELETE FROM T_cierre");
+
             for (int i = 0; i <repl.size(); i++) {
                 ss=repl.get(i);
                 db.execSQL("INSERT INTO T_cierre VALUES ("+i+",0,'"+ss+"')");
@@ -213,6 +219,7 @@ public class CierreX extends PBase {
 
             db.setTransactionSuccessful();
             db.endTransaction();
+
         } catch (Exception e) {
             db.endTransaction();
             msgbox("No se pudo generar respaldo de impresion del cierre.\n"+e.getMessage());
@@ -680,6 +687,7 @@ public class CierreX extends PBase {
     }
 
     private void reporteZ(){
+
         Cursor dt;
         String ss;
 
@@ -698,6 +706,7 @@ public class CierreX extends PBase {
             itemRZ.clear();
 
             if(dt.getCount()!=0){
+
                 dt.moveToFirst();
 
                 Fondo = dt.getDouble(2);
@@ -708,7 +717,6 @@ public class CierreX extends PBase {
                 while(!dt.isAfterLast()){
 
                     itemZ = clsCls.new clsBonifProd();
-
                     itemZ.id=dt.getString(0);
                     itemZ.nombre=dt.getString(1);
                     itemZ.prstr="";
@@ -718,9 +726,7 @@ public class CierreX extends PBase {
                     itemZ.disp=dt.getDouble(6);
                     itemZ.precio=dt.getDouble(7);
                     itemZ.costo=dt.getDouble(8);
-
                     itemRZ.add(itemZ);
-
                     dt.moveToNext();
                 }
 
@@ -904,10 +910,10 @@ public class CierreX extends PBase {
                 if(gl.reportid==10){
                     rep.add("Fondo caja : Q."+Fondo);
                     rep.empty();
-                    rep.add("         REPORTE DE CUADRE");
+                    rep.addc("REPORTE DE CUADRE");
                     rep.line();
-                    rep.add("Vesion MPos : "+gl.parVer);
-                    rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                    rep.add("Vesion MPos: "+gl.parVer);
+                    rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                     rep.line();
                     rep.add("CODIGO  M.PAGO");
                     rep.add("MONT.INI        MONT.FIN       DIF.");
@@ -916,13 +922,11 @@ public class CierreX extends PBase {
                     tot=0;totF=0;totSinImp=0;
 
                     for(int j=0; j<itemRZ.size(); j++){
-
                         rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
                         rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
-
-                        tot+=itemRZ.get(j).cantmin;
-                        totF+=itemRZ.get(j).disp;
-                        totSinImp+=itemRZ.get(j).precio;
+                        tot+= mu.round2(itemRZ.get(j).cantmin);
+                        totF+=mu.round2(itemRZ.get(j).disp);
+                        totSinImp+=mu.round2(itemRZ.get(j).precio);
                     }
 
                     for(int a=0; a<itemRZ.size(); a++){
@@ -1183,7 +1187,7 @@ public class CierreX extends PBase {
                             }
 
                             rep.empty();
-                            rep.add("      REPORTE VENTA POR PRODUCTO");
+                            rep.addc("REPORTE VENTA POR PRODUCTO");
                             rep.line();
                             rep.add("Vesion MPos : "+gl.parVer);
                             rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));

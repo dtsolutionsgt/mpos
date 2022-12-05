@@ -950,7 +950,7 @@ public class Reportes extends PBase {
                                 totF += itemR.get(a).total;
                             }
                             
-                            rep.add("   REPORTE VENTA POR PRODUCTO   ");
+                            rep.addc("REPORTE VENTA POR PRODUCTO");
                             if(validCB==1) rep.add("            CONSOLIDADO");
                             if(validCB==0) rep.add("Cod   Descripcion");
                             if(validCB==0) rep.add("Cant       UM       Total      %");
