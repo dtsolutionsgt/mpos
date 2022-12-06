@@ -808,9 +808,6 @@ public class CierreX extends PBase {
                 rep.add("Impresion : "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                 rep.add("Caja : "+gl.cajanom);
                 rep.add("Inicio : "+horaini);
-
-                //fecharango="Fecha cierre : "+du.univfechaReport(dateini);
-                //fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
                 rep.add(fecharango);
                 rep.empty();
                 rep.add(stampstr);
