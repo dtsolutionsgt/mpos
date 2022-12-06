@@ -1654,7 +1654,7 @@ public class CierreX extends PBase {
                 mm.setSubject("Tienda : "+gl.tiendanom+" caja : "+gl.codigo_ruta);
 
                 BodyPart messageBodyPart = new MimeBodyPart();
-                messageBodyPart.setText("Adjunto reporte de cierre");
+                messageBodyPart.setText("Adjunto reporte de cierre de tienda :" +gl.tiendanom + " caja :"+gl.codigo_ruta);
 
                 MimeBodyPart attachmentPart = new MimeBodyPart();
                 attachmentPart.attachFile(f1);
