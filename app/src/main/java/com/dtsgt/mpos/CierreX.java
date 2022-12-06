@@ -68,6 +68,7 @@ public class CierreX extends PBase {
     private String condition,stampstr;
     private boolean exito;
     private ProgressDialog progressDialog;
+    private String CorreoSucursal="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,6 +184,11 @@ public class CierreX extends PBase {
 
                     txtbtn.setText(R.string.res_imprimir);
                     report = true;
+
+                    SetCorreoCliente();
+
+                    AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
+                    enviar.execute();
                     btnEnviarCorreo.setVisibility(View.VISIBLE);
                 }
 
@@ -1511,6 +1517,10 @@ public class CierreX extends PBase {
     public void EnviarCierre(View view) {
         try {
 
+            if (CorreoSucursal.isEmpty()) {
+                SetCorreoCliente();
+            }
+
             AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
             enviar.execute();
 
@@ -1583,8 +1593,24 @@ public class CierreX extends PBase {
         }
     }
 
-    public class AsyncEnviaCorreo extends AsyncTask<Void, Void, String> {
+    private void SetCorreoCliente() {
+        Cursor DT;
+        try {
 
+            sql = "SELECT CORREO FROM P_SUCURSAL";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount() == 0) return;
+
+            DT.moveToFirst();
+            CorreoSucursal = DT.getString(0);
+
+        } catch (Exception e) {
+            msgbox(new Object() {} .getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
+        }
+    }
+
+    public class AsyncEnviaCorreo extends AsyncTask<Void, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -1619,7 +1645,7 @@ public class CierreX extends PBase {
 
                 MimeMessage mm = new MimeMessage(session);
                 mm.setFrom(new InternetAddress("soportesw@dts.com.gt"));
-                mm.addRecipient(Message.RecipientType.TO, new InternetAddress("dtsolutionsgt@gmail.com"));
+                mm.addRecipient(Message.RecipientType.TO, new InternetAddress(CorreoSucursal));
                 mm.setSubject("Tienda : "+gl.tiendanom+" caja : "+gl.codigo_ruta);
 
                 BodyPart messageBodyPart = new MimeBodyPart();
@@ -1658,6 +1684,7 @@ public class CierreX extends PBase {
             }
         }
     }
+
 
     //endregion
 

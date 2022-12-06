@@ -164,14 +164,14 @@ public class clsDocFactura extends clsDocument {
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
 			
-			resol="Resolucion No. : "+DT.getString(0);
+			resol="Resolucion No.: "+DT.getString(0);
 			ff=DT.getLong(1);
-			resfecha="De Fecha : "+sfecha_dos(ff);
+			resfecha="De Fecha: "+sfecha_dos(ff);
 			ff=DT.getLong(2);
-			resvence="Vigente hasta : "+sfecha_dos(ff);
+			resvence="Vigente hasta: "+sfecha_dos(ff);
 			//#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
 //			ff=DT.getInt(2);resvence="Resolucion vence : "+sfecha(ff);
-			resrango="Serie : "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
+			resrango="Serie: "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
 			
 		} catch (Exception e) {
 			//Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
@@ -819,7 +819,7 @@ public class clsDocFactura extends clsDocument {
 
         try {
             if (!textopie.isEmpty()) {
-                rep.add(textopie);
+                rep.addc(textopie);
                 /*
                 if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
                     textofin=textofin+" S.A.";
@@ -897,6 +897,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
+        rep.addc("Powered by: dts.com.gt");
 
         return super.buildFooter();
     }
@@ -956,7 +957,7 @@ public class clsDocFactura extends clsDocument {
 
         try {
             if (!textopie.isEmpty()) {
-                rep.add(textopie);
+                rep.addc(textopie);
                 /*
                 if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
                     textofin=textofin+" S.A.";

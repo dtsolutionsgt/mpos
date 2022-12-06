@@ -324,8 +324,8 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO ELECTRONICO");
-                rep.add(nombre);
+                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
+                rep.addc(nombre);
                 s=s.replace("%%%","");
             }
 
@@ -530,8 +530,8 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO ELECTRONICO");
-                rep.add(nombre);
+                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
+                rep.addc(nombre);
                 s=s.replace("%%%","");
             }
 
@@ -749,7 +749,7 @@ public class clsDocument {
                 } else l=numero;
 
                 if (facturaflag) {
-                    l="%%%Serie : "+serie +" No. : "+l;
+                    l="%%%Serie: "+serie +" No.: "+l;
                 } else {
                     sfticket=serie+l;l="";
                 }
@@ -929,7 +929,7 @@ public class clsDocument {
                 if (l.indexOf("@Serie")>=0) {
                     l = StringUtils.replace(l,"@Serie","");
                 }
-                l="%%%Serie : "+serie +" No.: "+numero;
+                l="%%%Serie: "+serie +" No.: "+numero;
             } else {
                 l="##";
             }
