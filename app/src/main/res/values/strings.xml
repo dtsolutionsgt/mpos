@@ -79,5 +79,6 @@
     <string name="punto">.</string>
     <string name="nombre_caja">Nombre caja</string>
     <string name="nombre_empresa">Nombre empresa</string>
+    <string name="res_imprimir">IMPRIMIR</string>
 
 </resources>

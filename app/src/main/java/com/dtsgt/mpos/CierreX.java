@@ -3,7 +3,6 @@ package com.dtsgt.mpos;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -15,7 +14,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,12 +46,10 @@ import javax.mail.internet.MimeMultipart;
 
 public class CierreX extends PBase {
 
-    private clsRepBuilder rep;
-    private Runnable printclose;
-    private printer prn;
     private CierreX.clsDocExist doc;
 
-    private TextView txtbtn,lblFact,lblTit;
+    private TextView txtbtn;
+    private TextView lblFact;
     private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet, FactAnuladas;
     private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8,
             bClienteCon=9, bClienteDet=10,bFactAnuxDia=11, sw=0,counter=0;
@@ -63,16 +59,13 @@ public class CierreX extends PBase {
     private clsClasses.clsReport item;
     private clsClasses.clsBonifProd itemZ;
 
-    private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
+    private ArrayList<clsClasses.clsReport> itemR= new ArrayList<>();
     private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<>();
-    public  ArrayList<String> repl=new ArrayList<String>();
-
-    private Long dateini, datefin;
+    public  ArrayList<String> repl= new ArrayList<>();
 
     private Double Fondo;
 
     private String condition,stampstr;
-    private Session session;
     private boolean exito;
     private ProgressDialog progressDialog;
 
@@ -89,25 +82,21 @@ public class CierreX extends PBase {
         super.InitBase();
         addlog("Cierres",""+du.getActDateTime(),String.valueOf(gl.vend));
 
-        lblTit = (TextView) findViewById(R.id.lblTit);
-        txtbtn = (TextView) findViewById(R.id.txtBtn);
-        FactxDia = (CheckBox) findViewById(R.id.checkBox11); FactxDia.setChecked(true);
-        VentaxDia = (CheckBox) findViewById(R.id.checkBox12); VentaxDia.setChecked(true);
-        VentaxProd = (CheckBox) findViewById(R.id.checkBox13); VentaxProd.setChecked(true);
-        xFPago = (CheckBox) findViewById(R.id.checkBox14); xFPago.setChecked(true);
-        xFam = (CheckBox) findViewById(R.id.checkBox15); xFam.setChecked(true);
-        VentaxVend = (CheckBox) findViewById(R.id.checkBox16); VentaxVend.setChecked(true);
-        MBxProd = (CheckBox) findViewById(R.id.checkBox17); MBxProd.setChecked(true);
-        MBxFam = (CheckBox) findViewById(R.id.checkBox18); MBxFam.setChecked(true);
-        ClienteCon = (CheckBox) findViewById(R.id.checkBox19); ClienteCon.setChecked(true);
-        ClienteDet = (CheckBox) findViewById(R.id.checkBox20); ClienteDet.setChecked(true);
-        FactAnuladas = (CheckBox)findViewById(R.id.checkBox25); FactAnuladas.setChecked(true);
-        lblFact = (TextView) findViewById(R.id.txtFact2);
+        TextView lblTit = findViewById(R.id.lblTit);
+        txtbtn = findViewById(R.id.txtBtn);
+        FactxDia = findViewById(R.id.checkBox11); FactxDia.setChecked(true);
+        VentaxDia = findViewById(R.id.checkBox12); VentaxDia.setChecked(true);
+        VentaxProd = findViewById(R.id.checkBox13); VentaxProd.setChecked(true);
+        xFPago = findViewById(R.id.checkBox14); xFPago.setChecked(true);
+        xFam = findViewById(R.id.checkBox15); xFam.setChecked(true);
+        VentaxVend = findViewById(R.id.checkBox16); VentaxVend.setChecked(true);
+        MBxProd = findViewById(R.id.checkBox17); MBxProd.setChecked(true);
+        MBxFam = findViewById(R.id.checkBox18); MBxFam.setChecked(true);
+        ClienteCon = findViewById(R.id.checkBox19); ClienteCon.setChecked(true);
+        ClienteDet = findViewById(R.id.checkBox20); ClienteDet.setChecked(true);
+        FactAnuladas = findViewById(R.id.checkBox25); FactAnuladas.setChecked(true);
+        lblFact = findViewById(R.id.txtFact2);
         btnEnviarCorreo = findViewById(R.id.btnEnviarCorreo);
-
-        datefin = du.getActDateTime();
-        dateini = du.getActDate();
-
         FactxDia.setChecked(app.paramCierre(500));
         VentaxDia.setChecked(app.paramCierre(501));
         VentaxProd.setChecked(app.paramCierre(502));
@@ -132,16 +121,12 @@ public class CierreX extends PBase {
 
         txtbtn.setText("GENERAR");
 
-        rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp, "");
+        clsRepBuilder rep = new clsRepBuilder(this, gl.prw, false, gl.peMon, gl.peDecImp, "");
 
-        printclose= new Runnable() {
-            public void run() {
-                CierreX.super.finish();
-            }
-        };
+        Runnable printclose = () -> CierreX.super.finish();
 
-        prn=new printer(this,printclose,gl.validimp);
-        doc=new CierreX.clsDocExist(this,prn.prw,"");
+        printer prn = new printer(this, printclose, gl.validimp);
+        doc=new CierreX.clsDocExist(this, prn.prw,"");
 
         lblFact.setMovementMethod(new ScrollingMovementMethod());
     }
@@ -185,21 +170,8 @@ public class CierreX extends PBase {
                     bFactAnuxDia=11;
                 }
 
-                /*
-                if (FactxDia.isChecked()) bFactxDia=1;
-                if (VentaxDia.isChecked()) bVentaxDia=2;
-                if (VentaxProd.isChecked()) bVentaxProd=3;
-                if (xFPago.isChecked()) bxFPago=4;
-                if (xFam.isChecked()) bxFam=5;
-                if (FactAnuladas.isChecked()) bVentaxVend=6;
-                if (VentaxVend.isChecked()) bMBxProd=7;
-                if (ClienteCon.isChecked()) bMBxFam=8;
-                if (ClienteDet.isChecked()) bClienteCon=9;
-                if (MBxProd.isChecked()) bClienteDet=10;
-                if (MBxFam.isChecked()) bFactAnuxDia=11;
-                */
-
                 if(fillItems()){
+
                     if (itemR.size() == 0) {
                         toastlong("No ha realizado ninguna venta desde el último cierre Z.");
                         //return;
@@ -209,16 +181,15 @@ public class CierreX extends PBase {
 
                     respaldoReporte();
 
-                    txtbtn.setText("IMPRIMIR");
+                    txtbtn.setText(R.string.res_imprimir);
                     report = true;
                     btnEnviarCorreo.setVisibility(View.VISIBLE);
-                } else {
-                    return;
                 }
 
             } else {
                 printDoc();
             }
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("GeneratePrint: "+e);
@@ -265,147 +236,125 @@ public class CierreX extends PBase {
 
     private void setHandlers(){
 
-        FactxDia.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(FactxDia.isChecked()){
-                    bFactxDia = 1;
-                } else {
-                    bFactxDia = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        FactxDia.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(FactxDia.isChecked()){
+                bFactxDia = 1;
+            } else {
+                bFactxDia = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        VentaxDia.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(VentaxDia.isChecked())  {
-                    bVentaxDia = 2;
-                } else {
-                    bVentaxDia = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        VentaxDia.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(VentaxDia.isChecked())  {
+                bVentaxDia = 2;
+            } else {
+                bVentaxDia = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        VentaxProd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(VentaxProd.isChecked()){
-                    bVentaxProd = 3;
-                } else{
-                    bVentaxProd = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        VentaxProd.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(VentaxProd.isChecked()){
+                bVentaxProd = 3;
+            } else{
+                bVentaxProd = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        xFPago.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(xFPago.isChecked()){
-                    bxFPago = 4;
-                } else{
-                    bxFPago = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        xFPago.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(xFPago.isChecked()){
+                bxFPago = 4;
+            } else{
+                bxFPago = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        xFam.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(xFam.isChecked()){
-                    bxFam = 5;
-                } else{
-                    bxFam = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        xFam.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(xFam.isChecked()){
+                bxFam = 5;
+            } else{
+                bxFam = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        VentaxVend.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(VentaxVend.isChecked()){
-                    bVentaxVend = 6;
-                } else{
-                    bVentaxVend = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        VentaxVend.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(VentaxVend.isChecked()){
+                bVentaxVend = 6;
+            } else{
+                bVentaxVend = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        MBxProd.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(MBxProd.isChecked()){
-                    bMBxProd = 7;
-                } else{
-                    bMBxProd = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        MBxProd.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(MBxProd.isChecked()){
+                bMBxProd = 7;
+            } else{
+                bMBxProd = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        MBxFam.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(MBxFam.isChecked()){
-                    bMBxFam = 8;
-                } else{
-                    bMBxFam = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        MBxFam.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(MBxFam.isChecked()){
+                bMBxFam = 8;
+            } else{
+                bMBxFam = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        ClienteCon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(ClienteCon.isChecked()){
-                    bClienteCon = 9;
-                } else{
-                    bClienteCon = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        ClienteCon.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(ClienteCon.isChecked()){
+                bClienteCon = 9;
+            } else{
+                bClienteCon = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        ClienteDet.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(ClienteDet.isChecked()){
-                    bClienteDet = 10;
-                } else{
-                    bClienteDet = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        ClienteDet.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(ClienteDet.isChecked()){
+                bClienteDet = 10;
+            } else{
+                bClienteDet = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
 
-        FactAnuladas.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(FactAnuladas.isChecked()){
-                    bFactAnuxDia = 11;
-                } else{
-                    bFactAnuxDia = 0;
-                }
-                report = false;
-                txtbtn.setText("GENERAR");
-                lblFact.setText("");
+        FactAnuladas.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(FactAnuladas.isChecked()){
+                bFactAnuxDia = 11;
+            } else{
+                bFactAnuxDia = 0;
             }
+            report = false;
+            txtbtn.setText("GENERAR");
+            lblFact.setText("");
         });
     }
 
@@ -496,22 +445,6 @@ public class CierreX extends PBase {
                             condition =" AND KILOMETRAJE = "+gl.corelZ+" ";
                         }
 
-                        /*
-                        sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(DISTINCT P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
-                                "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                                "WHERE P.COREL IN (SELECT COREL FROM D_FACTURA "+
-                                condition+")" +
-                                " GROUP BY M.NOMBRE";
-                         */
-
-                        /*
-                        sql="SELECT '', '', 0, '', P.DESC2, '', COUNT(DISTINCT P.COREL), 0,SUM(P.VALOR), 0 FROM P_MEDIAPAGO M " +
-                                "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                                "WHERE P.COREL IN (SELECT COREL FROM D_FACTURA "+
-                                condition+")" +
-                                " GROUP BY P.DESC2";
-                         */
-
                         sql="SELECT '', '', 0, '', P_MEDIAPAGO.NOMBRE, '', COUNT(DISTINCT D_FACTURA.COREL), 0,SUM(D_FACTURAP.VALOR), 0 " +
                                 "FROM D_FACTURA INNER JOIN " +
                                 "D_FACTURAP ON D_FACTURA.COREL = D_FACTURAP.COREL INNER JOIN " +
@@ -519,20 +452,6 @@ public class CierreX extends PBase {
                                 "WHERE D_FACTURA.ANULADO=0  "+condition+" " +
                                 "GROUP BY P_MEDIAPAGO.NOMBRE";
 
-                        /*
-                        if(gl.reportid==9){
-                            condition =" WHERE F.ANULADO=0 AND F.KILOMETRAJE = 0 ";
-                        }else if(gl.reportid==10){
-                            condition=" WHERE F.ANULADO=0 AND F.KILOMETRAJE = "+gl.corelZ+" ";
-                        }
-
-                        sql="SELECT '', '', 0, '', M.NOMBRE, '', COUNT(F.COREL), 0,SUM(F.TOTAL), 0 FROM P_MEDIAPAGO M " +
-                                "INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
-                                "INNER JOIN D_FACTURA F ON F.COREL = P.COREL "+
-                                condition+
-                                " GROUP BY M.NOMBRE";
-
-                         */
 
                         break;
 
@@ -647,54 +566,54 @@ public class CierreX extends PBase {
 
                     if(dt==null) {
                         msgbox("Ocurrió un error, vuelva a intentarlo");return false;
+                    }else{
+                        if(dt.getCount()!=0){
+
+                            dt.moveToFirst();
+
+                            while(!dt.isAfterLast()){
+
+                                item = clsCls.new clsReport();
+
+                                item.corel = dt.getString(0);
+                                item.serie = dt.getString(1);
+                                item.correl = dt.getInt(2);
+                                item.codProd = dt.getString(3);
+                                item.descrip = dt.getString(4);
+                                item.um = dt.getString(5);
+                                item.cant = dt.getInt(6);
+                                item.imp = dt.getDouble(7);
+                                item.total = dt.getDouble(8);
+                                item.fecha = dt.getLong(9);
+                                item.tipo = sw;
+
+                                itemR.add(item);
+
+                                dt.moveToNext();
+                            }
+                        } else {
+                            if (sw==11 ) {
+                                item = clsCls.new clsReport();
+
+                                item.corel = "";
+                                item.serie = "";
+                                item.correl = 0;
+                                item.codProd = "";
+                                item.descrip = "";
+                                item.um = "";
+                                item.cant = 0;
+                                item.imp = 0;
+                                item.total = 0;
+                                item.fecha = 0;
+                                item.tipo = sw;
+
+                                itemR.add(item);
+                            }
+                        }
                     }
 
-                    //if (i==11 && dt.getCount()==0)
+                    dt.close();
 
-                    if(dt.getCount()!=0){
-                        dt.moveToFirst();
-
-                        while(!dt.isAfterLast()){
-
-                            item = clsCls.new clsReport();
-
-                            item.corel = dt.getString(0);
-                            item.serie = dt.getString(1);
-                            item.correl = dt.getInt(2);
-                            item.codProd = dt.getString(3);
-                            item.descrip = dt.getString(4);
-                            item.um = dt.getString(5);
-                            item.cant = dt.getInt(6);
-                            item.imp = dt.getDouble(7);
-                            item.total = dt.getDouble(8);
-                            item.fecha = dt.getLong(9);
-                            item.tipo = sw;
-
-                            itemR.add(item);
-
-                            dt.moveToNext();
-                        }
-                    } else {
-                        if (sw==11 ) {
-                            item = clsCls.new clsReport();
-
-                            item.corel = "";
-                            item.serie = "";
-                            item.correl = 0;
-                            item.codProd = "";
-                            item.descrip = "";
-                            item.um = "";
-                            item.cant = 0;
-                            item.imp = 0;
-                            item.total = 0;
-                            item.fecha = 0;
-                            item.tipo = sw;
-
-                            itemR.add(item);
-                        }
-                    }
-
-                    if (dt!=null) dt.close();
                 }
 
             }
@@ -721,9 +640,14 @@ public class CierreX extends PBase {
                     "GROUP BY M.CODIGO";
 
             dt = Con.OpenDT(sql);
-            if(dt==null) msgbox("Ocurrió un error en reporte Z, vuelva a intentarlo");
 
-            writeCorelLog(201,dt.getCount(),sql);
+            if(dt==null) {
+
+                msgbox("Ocurrió un error en reporte Z, vuelva a intentarlo");
+
+                writeCorelLog(201,dt.getCount(),sql);
+
+            }
 
             itemRZ.clear();
 
@@ -1561,31 +1485,15 @@ public class CierreX extends PBase {
     private void msgAskExit(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> finish());
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
-
     }
 
     private void msgAskReset(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-
-        dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                restartApp();
-            }
-        });
-
+        dialog.setPositiveButton("Continuar", (dialog1, which) -> restartApp());
         dialog.show();
     }
 
@@ -1599,6 +1507,7 @@ public class CierreX extends PBase {
             ss="INSERT INTO T_BARRA_BONIF VALUES ('"+du.getActDateTime()+"','"+id+"',"+corel+",0,0,'"+text+"')";
             db.execSQL(ss);
         } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 
@@ -1614,23 +1523,36 @@ public class CierreX extends PBase {
     }
 
     private boolean checkPrintFile() {
+
         FileInputStream fIn = null;
         BufferedReader myReader = null;
 
         try {
+
             File file1 = new File(Environment.getExternalStorageDirectory(), "/print.txt");
 
             fIn = new FileInputStream(file1);
             myReader = new BufferedReader(new InputStreamReader(fIn));
 
             String line = myReader.readLine();
-            myReader.close();fIn.close();
+            if (!line.equalsIgnoreCase("")){
+                myReader.close();
+                fIn.close();
+            }
 
             return true;
+
         } catch (Exception e) {
             try {
-                myReader.close();fIn.close();
-            } catch (Exception ee) {}
+                if (myReader!=null){
+                    myReader.close();
+                }
+                if (fIn!=null){
+                    fIn.close();
+                }
+            } catch (Exception ee) {
+                addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            }
         }
 
         msgAskReset("Ocurrió error en impresión del cierre del dia.\n" +
@@ -1684,7 +1606,7 @@ public class CierreX extends PBase {
             props.put("mail.smtp.port", "587");
             props.put("mail.smtp.auth", "true");
 
-            session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+            Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication("soportesw@dts.com.gt", "Dts2021#");
                 }
