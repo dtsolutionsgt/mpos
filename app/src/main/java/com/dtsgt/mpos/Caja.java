@@ -59,16 +59,16 @@ public class Caja extends PBase {
         super.InitBase();
         addlog("Caja",""+du.getActDateTime(), String.valueOf(gl.vend));
 
-        lblTit = (TextView) findViewById(R.id.lblTit);
-        lblMontoIni = (TextView) findViewById(R.id.textView133);
-        MontoIni = (EditText) findViewById(R.id.editText19);
-        Fecha = (EditText) findViewById(R.id.editText16);
+        lblTit = findViewById(R.id.lblTit);
+        lblMontoIni = findViewById(R.id.textView133);
+        MontoIni = findViewById(R.id.editText19);
+        Fecha = findViewById(R.id.editText16);
         FechaB = findViewById(R.id.textView302);
-        Vendedor = (EditText) findViewById(R.id.editText18);
-        lblMontoFin = (TextView) findViewById(R.id.textView134);
-        MontoFin = (EditText) findViewById(R.id.editText20);
-        MontoCred = (EditText) findViewById(R.id.editText17);
-        lblMontoCred = (TextView) findViewById(R.id.textView130);
+        Vendedor = findViewById(R.id.editText18);
+        lblMontoFin = findViewById(R.id.textView134);
+        MontoFin = findViewById(R.id.editText20);
+        MontoCred = findViewById(R.id.editText17);
+        lblMontoCred = findViewById(R.id.textView130);
         imgpend=findViewById(R.id.imageView107);
 
         Vendedor.setText(gl.vendnom);
@@ -142,11 +142,7 @@ public class Caja extends PBase {
 
         validaFacturas();
 
-        rnDateCallback = new Runnable() {
-            public void run() {
-                dateCallback();
-            }
-        };
+        rnDateCallback = () -> dateCallback();
 
         app.getURL();
         wso=new wsOpenDT(gl.wsurl);
@@ -188,15 +184,12 @@ public class Caja extends PBase {
     private void setHandlers(){
 
         try{
-            MontoIni.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                        guardar();
-                        return true;
-                    }
-                    return false;
+            MontoIni.setOnKeyListener((v, keyCode, event) -> {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    guardar();
+                    return true;
                 }
+                return false;
             });
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -232,10 +225,6 @@ public class Caja extends PBase {
 
                     fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
                     montoDif();
-
-                    if (venta_total>0 && montoFin==fondoCaja) {
-
-                    }
 
                     if(montoDif!=0){
                         if(acc==1){
@@ -299,7 +288,7 @@ public class Caja extends PBase {
                 tot = fondoCaja+vval;
             }
 
-            if(dt!=null) dt.close();
+            dt.close();
 
             if (cred==1){
 
@@ -329,7 +318,7 @@ public class Caja extends PBase {
 
                 }
 
-                if(dt!=null) dt.close();
+                dt.close();
 
                 venta_total+=totCred;
 
@@ -345,7 +334,8 @@ public class Caja extends PBase {
             } else {
                 pago = dt.getDouble(0);
             }
-            if(dt!=null) dt.close();
+
+            dt.close();
 
             montoDif = tot - pago;
             montoDif=mu.round2(montoDif);
@@ -356,13 +346,13 @@ public class Caja extends PBase {
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-            msgbox("Error montoDif: "+e);return;
+            msgbox("Error montoDif: "+e);
         }
     }
 
     public void saveMontoIni(){
 
-        Cursor dt, dt2, dt3;
+        Cursor dt, dt2;
         int codpago=0,ecor;
         Long fecha=0L;
         boolean finalizo_transaccion =false;
@@ -617,85 +607,9 @@ public class Caja extends PBase {
             if (!finalizo_transaccion) db.endTransaction();
             setAddlog("Error saveMontoIni", e.getMessage(), "");
             toastlong("Error saveMontoIni: "+e.getMessage());
-            msgbox("Error saveMontoIni: "+e.getMessage());return;
+            msgbox("Error saveMontoIni: "+e.getMessage());
         }
     }
-
-//    private void Actualizar_Facturas_Sin_Corel_Cierre(){
-//
-//        try {
-//
-//            Cursor dtk=Con.OpenDT("SELECT COUNT(KILOMETRAJE) AS CANTIDAD_FACTURAS_SIN_CIERRE FROM D_FACTURA WHERE KILOMETRAJE=0");
-//            if(dtk!=null) {
-//                if (dtk.getCount()>0) {
-//
-//                    dtk.moveToFirst();
-//                    int cant_facturas_sin_km=dtk.getInt(0);
-//
-//                    if  (cant_facturas_sin_km>0) {
-//
-//                        Long fecha_inicial= Long.valueOf(0);
-//                        String sfecha_final="0";
-//                        String sfecha_inicial_sin_hora="0";
-//                        double fecha_final =0;
-//                        Long corel_cierre = Long.valueOf(0);
-//
-//                        Cursor dtk_upd=Con.OpenDT("SELECT * FROM D_FACTURA WHERE KILOMETRAJE=0 ORDER BY FECHA");
-//
-//                        if(dtk_upd!=null) {
-//
-//                            if (dtk_upd.getCount()>0) {
-//
-//                                dtk_upd.moveToFirst();
-//
-//                                while (!dtk_upd.isAfterLast()) {
-//
-//                                    fecha_inicial = dtk_upd.getLong(3);
-//                                    sfecha_final =String.valueOf(fecha_inicial);
-//                                    sfecha_final = sfecha_final.substring(0,6);
-//                                    sfecha_inicial_sin_hora = sfecha_final + "0000";
-//                                    sfecha_final = sfecha_final + "235959";
-//                                    Log.d("fecha_sin_hora", sfecha_final);
-//
-//                                    String sql_get_cierre = "SELECT * FROM P_CAJACIERRE WHERE FECHA=" + sfecha_inicial_sin_hora;
-//                                    Cursor dt_cierre=Con.OpenDT(sql_get_cierre);
-//                                    if(dt_cierre!=null) {
-//                                        if (dt_cierre.getCount()>0) {
-//                                            corel_cierre =dt_cierre.getLong(3);
-//                                            String sql_fact_sin_cierre_by_fecha = "SELECT * FROM D_FACTURA WHERE FECHA BETWEEN '" + fecha_inicial + "' AND '" +  sfecha_final + "'";
-//                                            Cursor dtk_facturas_sin_cierre=Con.OpenDT(sql_fact_sin_cierre_by_fecha);
-//                                            if(dtk_facturas_sin_cierre!=null) {
-//                                                if (dtk_facturas_sin_cierre.getCount()>0) {
-//                                                    String sql_update_cierre = "UPDATE D_FACTURA SET KILOMETRAJE = " + corel_cierre + " WHERE FECHA BETWEEN '" + fecha_inicial + "' AND '" +  sfecha_final + "'";
-//                                                    db.execSQL(sql_update_cierre);
-//                                                }
-//                                            }
-//                                        }
-//                                    }
-//                                    dtk_upd.moveToNext();
-//                                }
-//                            }
-//                        }
-//
-//                        String vsql2 = "SELECT * FROM D_FACTURA WHERE KILOMETRAJE=0 ORDER BY FECHA";
-//                        Cursor dtk_upd1=Con.OpenDT(vsql2);
-//
-//                        if(dtk_upd1!=null) {
-//                            if (dtk_upd1.getCount()>0) {
-//                                writeCorelLog(11,gl.corelZ,"KILOMETRAJE=0 DESPUES de UPDATE");
-//                                setAddlog("saveMontoIni", "KILOMETRAJE=0 DESPUES de UPDATE", "Cant :"+dtk.getCount());
-//                                msgAskExit2("El cierre se realizó correctamente, pero no fue posible asociar algunas facturas al cierre de caja. Por favor envíe la base de datos y notifique a soporte.");
-//                                return;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
 
     private void Actualizar_Facturas_Sin_Corel_Cierre2(){
 
@@ -949,19 +863,17 @@ public class Caja extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
 
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                //enviaAvizo();
-            }
+        dialog.setNeutralButton("OK", (dialog1, which) -> {
+            //enviaAvizo();
         });
 
         dialog.show();
     }
 
     public void msgboxValidaMonto(String msg) {
-        String mm=msg;
 
         try{
+
             captcha();
 
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -975,18 +887,16 @@ public class Caja extends PBase {
             input.setText("");
             input.requestFocus();
 
-            alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    try {
-                        String s=input.getText().toString();
-                        if (!s.equalsIgnoreCase(cap)) throw new Exception();
+            alert.setPositiveButton("Aplicar", (dialog, whichButton) -> {
+                try {
+                    String s=input.getText().toString();
+                    if (!s.equalsIgnoreCase(cap)) throw new Exception();
 
-                        acc=0;
-                        saveMontoIni();
-                    } catch (Exception e) {
-                        acc=1;
-                        mu.msgbox("Valor incorrecto");
-                    }
+                    acc=0;
+                    saveMontoIni();
+                } catch (Exception e) {
+                    acc=1;
+                    mu.msgbox("Valor incorrecto");
                 }
             });
 
@@ -1004,19 +914,8 @@ public class Caja extends PBase {
     private void msgAskFecha(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                checkDate();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                msgText("Por favor informe soporte");
-            }
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> checkDate());
+        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
         dialog.show();
 
     }
@@ -1024,39 +923,16 @@ public class Caja extends PBase {
     private void msgAskNoFecha(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                msgAskFechaContinuar("¿Está seguro?");
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                msgText("Por favor informe soporte");
-            }
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> msgAskFechaContinuar("¿Está seguro?"));
+        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
         dialog.show();
-
     }
 
     private void msgAskFechaContinuar(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                guardar();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                msgText("Por favor informe soporte");
-            }
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> guardar());
+        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
         dialog.show();
 
     }
@@ -1064,55 +940,23 @@ public class Caja extends PBase {
     private void msgText(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) { }
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> { });
         dialog.show();
 
     }
-
-    /*
-    public void msgboxValidaMonto(String msg) {
-
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg);
-            dialog.setCancelable(false);
-
-            dialog.setPositiveButton("SI", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    saveMontoIni();
-                }
-            });
-
-            dialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    return;
-                }
-            });
-            dialog.show();
-
-
-        } catch (Exception ex) {
-            msgbox("Error msgboxValidaMonto: "+ex);return;
-        }
-    }
-
-     */
 
     //endregion
 
     //region Aux
 
     private void validaFacturas() {
+
         long fi,ff;
 
         if (!app.usaFEL()) return;
 
         try {
+
             ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
             fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
             ff=du.addDays(ff,-1);ff=du.ffecha00(ff);
@@ -1130,6 +974,7 @@ public class Caja extends PBase {
     }
 
     private void enviaAvizo() {
+
         String subject,body;
         String dir=Environment.getExternalStorageDirectory()+"";
 
@@ -1141,7 +986,9 @@ public class Caja extends PBase {
                     "Saludos\nDT Solutions S.A.\n";
 
             Uri uri=null;
+
             try {
+
                 File f1 = new File(dir + "/posdts.db");
                 File f2 = new File(dir + "/posdts_"+gl.codigo_ruta+".db");
                 File f3 = new File(dir + "/posdts_"+gl.codigo_ruta+".zip");
@@ -1150,9 +997,9 @@ public class Caja extends PBase {
 
                 app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
 
-
                 StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
                 StrictMode.setVmPolicy(builder.build());
+
             } catch (IOException e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -1165,9 +1012,7 @@ public class Caja extends PBase {
             String[] CC = {"dtsolutionsgt@gmail.com"};
 
             Intent emailIntent = new Intent(Intent.ACTION_SEND);
-
-            emailIntent.setData(Uri.parse("mailto:"));
-            emailIntent.setType("text/plain");
+            emailIntent.setDataAndType(Uri.parse("mailto:"),"text/plain");
             emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
             if (!cor.isEmpty()) emailIntent.putExtra(Intent.EXTRA_CC, CC);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
@@ -1211,7 +1056,7 @@ public class Caja extends PBase {
 
         if (browse==1) {
             browse=0;
-            validaPendiente();return;
+            validaPendiente();
         }
     }
 
