@@ -12,8 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,12 +49,12 @@ public class CierreX extends PBase {
     private CierreX.clsDocExist doc;
 
     private TextView txtbtn;
-    private TextView lblFact;
+    private TextView lblFact, txtEnviarCorreo;
     private CheckBox FactxDia, VentaxDia, VentaxProd, xFPago, xFam, VentaxVend, MBxProd, MBxFam, ClienteCon, ClienteDet, FactAnuladas;
     private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8,
             bClienteCon=9, bClienteDet=10,bFactAnuxDia=11, sw=0,counter=0;
     private boolean report, enc=true;
-    private Button btnEnviarCorreo;
+    private ImageView btnEnviarCorreo;
 
     private clsClasses.clsReport item;
     private clsClasses.clsBonifProd itemZ;
@@ -66,7 +66,7 @@ public class CierreX extends PBase {
     private Double Fondo;
 
     private String condition,stampstr;
-    private boolean exito;
+    private boolean exito, reimpresion=false;
     private ProgressDialog progressDialog;
     private String CorreoSucursal="";
 
@@ -85,6 +85,7 @@ public class CierreX extends PBase {
 
         TextView lblTit = findViewById(R.id.lblTit);
         txtbtn = findViewById(R.id.txtBtn);
+        txtEnviarCorreo = findViewById(R.id.txtEnviarCorreo);
         FactxDia = findViewById(R.id.checkBox11); FactxDia.setChecked(true);
         VentaxDia = findViewById(R.id.checkBox12); VentaxDia.setChecked(true);
         VentaxProd = findViewById(R.id.checkBox13); VentaxProd.setChecked(true);
@@ -153,7 +154,7 @@ public class CierreX extends PBase {
             stampstr="Generado : "+du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime())+" ("+gl.corelZ+")";
 
             if (!report) {
-
+                reimpresion = false;
                 bFactxDia=0; bVentaxDia=0; bVentaxProd=0; bxFPago=0; bxFam=0; bVentaxVend=0;
                 bMBxProd=0; bMBxFam=0;bClienteCon=0; bClienteDet=0;bFactAnuxDia=0;
 
@@ -183,17 +184,20 @@ public class CierreX extends PBase {
                     respaldoReporte();
 
                     txtbtn.setText(R.string.res_imprimir);
-                    report = true;
-
-                    SetCorreoCliente();
-
-                    AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
-                    enviar.execute();
+                    txtEnviarCorreo.setVisibility(View.VISIBLE);
                     btnEnviarCorreo.setVisibility(View.VISIBLE);
+                    report = true;
                 }
 
             } else {
+                reimpresion = true;
                 printDoc();
+            }
+
+            if (report && !reimpresion) {
+                SetCorreoCliente();
+                AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
+                enviar.execute();
             }
 
         }catch (Exception e){
@@ -860,9 +864,10 @@ public class CierreX extends PBase {
                     rep.add("Fondo caja : Q."+Fondo);
                     rep.empty();
                     rep.addc("REPORTE DE CUADRE");
-                    rep.line();
-                    rep.add("Vesion MPos: "+gl.parVer);
-                    rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+                    //#AT20221206 Se duplica el encabezado
+                    //rep.line();
+                    //rep.add("Vesion MPos: "+gl.parVer);
+                    //rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
                     rep.line();
                     rep.add("CODIGO  M.PAGO");
                     rep.add("MONT.INI        MONT.FIN       DIF.");
