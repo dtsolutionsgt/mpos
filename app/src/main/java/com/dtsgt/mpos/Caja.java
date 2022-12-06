@@ -47,7 +47,7 @@ public class Caja extends PBase {
     private clsClasses.clsP_cajacierre itemC;
     private clsClasses.clsP_cajahora itemH;
 
-    private double fondoCaja=0, montoIni=0, montoFin=0, montoDif=0, montoDifCred=0, montoCred=0,venta_total;
+    private double fondoCaja=0, montoIni=0, montoFin=0, gmontoDif =0, montoDifCred=0, montoCred=0,venta_total;
     private String cap;
     private int acc=1,msgAcc=0,cred=0,corelidx=0;
 
@@ -224,11 +224,12 @@ public class Caja extends PBase {
                     }
 
                     fondoCaja = Double.parseDouble(MontoIni.getText().toString().trim());
+
                     montoDif();
 
-                    if(montoDif!=0){
+                    if(gmontoDif !=0){
                         if(acc==1){
-                            msgboxValidaMonto("El monto de efectivo no cuadra: diferencia (" + montoDif + ")");
+                            msgboxValidaMonto("El monto de efectivo no cuadra: diferencia (" + gmontoDif + ")");
                             //acc=0;
                         } else saveMontoIni();
                     } else {
@@ -321,7 +322,6 @@ public class Caja extends PBase {
                 dt.close();
 
                 venta_total+=totCred;
-
                 montoDifCred = mu.round2(montoCred - totCred);
             }
 
@@ -337,12 +337,15 @@ public class Caja extends PBase {
 
             dt.close();
 
-            montoDif = tot - pago;
-            montoDif=mu.round2(montoDif);
+            gmontoDif = tot - pago;
+            gmontoDif =mu.round2(gmontoDif);
             montoFin=mu.round2(montoFin);
-            montoDif = mu.round2(montoFin - montoDif);
+            gmontoDif = mu.round2(montoFin - gmontoDif);
 
-            if (montoDif<0.01) montoDif=0;
+            //#EJC202212060953: Un cagadal!
+            //if (gmontoDif <0.01) gmontoDif =0;
+
+            Log.d("MontoDif",String.valueOf(gmontoDif));
 
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

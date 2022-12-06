@@ -1614,6 +1614,9 @@ public class CierreX extends PBase {
                 String dir= Environment.getExternalStorageDirectory()+"";
                 File f1 = new File(dir + "/print.txt");
 
+                session.getProperties().put("mail.smtp.ssl.trust", "smtp.office365.com");
+                session.getProperties().put("mail.smtp.starttls.enable", "true");
+
                 MimeMessage mm = new MimeMessage(session);
                 mm.setFrom(new InternetAddress("soportesw@dts.com.gt"));
                 mm.addRecipient(Message.RecipientType.TO, new InternetAddress("dtsolutionsgt@gmail.com"));
