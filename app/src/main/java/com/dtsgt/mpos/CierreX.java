@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,13 +8,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
@@ -28,6 +32,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 public class CierreX extends PBase {
 
@@ -41,6 +58,7 @@ public class CierreX extends PBase {
     private int bFactxDia=1, bVentaxDia=2, bVentaxProd=3, bxFPago=4, bxFam=5, bVentaxVend=6, bMBxProd=7, bMBxFam=8,
             bClienteCon=9, bClienteDet=10,bFactAnuxDia=11, sw=0,counter=0;
     private boolean report, enc=true;
+    private Button btnEnviarCorreo;
 
     private clsClasses.clsReport item;
     private clsClasses.clsBonifProd itemZ;
@@ -54,6 +72,9 @@ public class CierreX extends PBase {
     private Double Fondo;
 
     private String condition,stampstr;
+    private Session session;
+    private boolean exito;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +103,7 @@ public class CierreX extends PBase {
         ClienteDet = (CheckBox) findViewById(R.id.checkBox20); ClienteDet.setChecked(true);
         FactAnuladas = (CheckBox)findViewById(R.id.checkBox25); FactAnuladas.setChecked(true);
         lblFact = (TextView) findViewById(R.id.txtFact2);
+        btnEnviarCorreo = findViewById(R.id.btnEnviarCorreo);
 
         datefin = du.getActDateTime();
         dateini = du.getActDate();
@@ -189,7 +211,7 @@ public class CierreX extends PBase {
 
                     txtbtn.setText("IMPRIMIR");
                     report = true;
-
+                    btnEnviarCorreo.setVisibility(View.VISIBLE);
                 } else {
                     return;
                 }
@@ -1580,6 +1602,17 @@ public class CierreX extends PBase {
         }
     }
 
+    public void EnviarCierre(View view) {
+        try {
+
+            AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
+            enviar.execute();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     private boolean checkPrintFile() {
         FileInputStream fIn = null;
         BufferedReader myReader = null;
@@ -1628,6 +1661,79 @@ public class CierreX extends PBase {
             return point.x>point.y;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    public class AsyncEnviaCorreo extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(CierreX.this,"Enviando reporte","Espere por favor...",false,false);
+        }
+
+        @Override
+        protected String doInBackground(Void... vd) {
+
+            exito = false;
+
+            Properties props = new Properties();
+            props.setProperty("mail.transport.protocol", "smtp");
+            props.setProperty("mail.host", "smtp.office365.com");
+            props.setProperty("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.auth", "true");
+
+            session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication("soportesw@dts.com.gt", "Dts2021#");
+                }
+            });
+
+            try {
+
+                String dir= Environment.getExternalStorageDirectory()+"";
+                File f1 = new File(dir + "/print.txt");
+
+                MimeMessage mm = new MimeMessage(session);
+                mm.setFrom(new InternetAddress("soportesw@dts.com.gt"));
+                mm.addRecipient(Message.RecipientType.TO, new InternetAddress("dtsolutionsgt@gmail.com"));
+                mm.setSubject("Tienda : "+gl.tiendanom+" caja : "+gl.codigo_ruta);
+
+                BodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setText("Adjunto reporte de cierre");
+
+                MimeBodyPart attachmentPart = new MimeBodyPart();
+                attachmentPart.attachFile(f1);
+
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(messageBodyPart);
+                multipart.addBodyPart(attachmentPart);
+
+                mm.setContent(multipart);
+                Transport.send(mm);
+                exito = true;
+            }
+
+            catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String vdata){
+            super.onPostExecute(vdata);
+            progressDialog.dismiss();
+
+            if (exito) {
+                Toast.makeText(CierreX.this, "Reporte enviado", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(CierreX.this, "Error al enviar reporte", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

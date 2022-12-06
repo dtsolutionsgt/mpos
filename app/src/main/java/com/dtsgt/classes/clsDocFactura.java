@@ -543,8 +543,38 @@ public class clsDocFactura extends clsDocument {
             return detailBase();
         }
         */
-        return detailBaseGUA();
+        if (pais.equalsIgnoreCase("GUA")) {
+            return detailBaseGUA();
+        } else if (pais.equalsIgnoreCase("HON")) {
+            return detailBaseHON();
+        } else {
+            return detailBaseGUA();
+        }
 	}
+
+    protected boolean detailBaseHON() {
+
+        itemData item;
+        String cu,cp;
+
+        rep.add("HONDURAS");
+        rep.add3sss("Cantidad ","Precio","Total");
+        rep.line();
+
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+                rep.add(item.nombre);
+                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
 
     protected boolean detailBaseGUA() {
 
@@ -667,13 +697,25 @@ public class clsDocFactura extends clsDocument {
 	//region Pie por empresa
 
 	protected boolean buildFooter() {
-        if (modofact.isEmpty()) {
+        /*if (modofact.isEmpty()) {
         //if (modofact.equalsIgnoreCase("GUA")) {
             if (facturaflag) { // Factura
                 return footerBaseGUA();
             } else { // Ticket
                 return footerBaseGUATicket();
             }
+        } else {
+            return footerBaseGUA();
+        }*/
+
+        if (pais.equalsIgnoreCase("GUA")) {
+            if (facturaflag) {
+                return footerBaseGUA();
+            } else {
+                return footerBaseGUATicket();
+            }
+        } else if (pais.equalsIgnoreCase("HON")) {
+            return footerBaseHON();
         } else {
             return footerBaseGUA();
         }
@@ -759,6 +801,143 @@ public class clsDocFactura extends clsDocument {
 
             rep.addtotsp("TOTAL A PAGAR : ", tot);
         }
+
+        if (plines.size()>0) {
+            rep.add("");
+            rep.add("Desglose de pago:");
+            for (int ii= 0; ii <plines.size(); ii++) {
+                rep.add(plines.get(ii));
+            }
+        }
+
+        if (modorest) {
+            rep.add("");
+            rep.add("Le atendio : "+nommesero);
+        }
+
+        rep.add("");
+
+        try {
+            if (!textopie.isEmpty()) {
+                rep.add(textopie);
+                /*
+                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
+                    textofin=textofin+" S.A.";
+                }
+                String[] sp = textofin.split(",");
+                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
+                */
+            }
+        } catch (Exception e) {}
+
+        //banderafel=true;
+        if (banderafel) {
+
+            if (feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Factura generada en modo de contingencia");
+                rep.add("Numero de Acceso : "+contacc);
+                rep.add("Su factura pueden encontrar en el portal");
+                rep.add("SAT bajo identificacion : "+serie+numero);
+
+
+            }
+
+            if (!feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Número de autorización : ");
+                rep.add(feluuid);
+                rep.add("Fecha de certificación : "+feldcert);
+            }
+
+            if (!felIVA.isEmpty()) {
+                rep.add(felIVA);
+            }
+            if (!felISR.isEmpty()) {
+                rep.add(felISR);
+                if (!felISR2.isEmpty()) {
+                    rep.add(felISR2);
+                }
+            }
+
+            rep.add("");
+            rep.add(felcert);
+            rep.add(felnit);
+        }
+
+        //#HS_20181212 Validación para factura pendiente de pago
+        if(pendiente == 4){
+            rep.add("");
+            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
+            rep.add("EXIJA SU FACTURA ORIGINAL");
+            rep.add("");
+        }
+
+        if (parallevar){
+            rep.add("");
+            rep.addc("PARA LLEVAR");
+            rep.add("");
+        }
+
+
+        if (impresionorden) {
+            String sod=add1;
+            if (!sod.isEmpty()) {
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+                rep.addc("ORDEN # "+sod.toUpperCase());
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+            }
+
+        } else {
+            rep.add("");
+        }
+
+        rep.add("");
+
+        return super.buildFooter();
+    }
+
+    private boolean footerBaseHON() {
+
+        double totimp,totperc;
+
+        if (sinimp) {
+            stot=stot-imp;
+            totperc=stot*(percep/100);totperc=round2(totperc);
+            totimp=imp-totperc;
+
+            rep.addtotsp("Subtotal : ", stot);
+            rep.addtotsp("Impuesto : ", totimp);
+            if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion : ", totperc);
+            rep.addtotsp("Descuento : ", -desc);
+            rep.addtotsp("TOTAL : ", tot);
+
+        } else {
+
+            if (factsinpropina) {
+                stot = stot - propina;
+                tot = tot - propina;
+                if (desc != 0) {
+                    rep.addtotsp("Subtotal : ", stot);
+                    rep.addtotsp("Descuento : ", -desc);
+                }
+            } else {
+                if (desc != 0 | propina != 0) {
+                    stot = stot - propina;
+                    rep.addtotsp("Subtotal : ", stot);
+                }
+                if (desc != 0) rep.addtotsp("Descuento : ", -desc);
+                if (propina != 0) rep.addtotsp("Propina : "+ffrmnodec.format(propperc)+" % ", propina);
+            }
+
+            rep.addtotsp("TOTAL A PAGAR : ", tot);
+        }
+
+        rep.add("HONDURAS");
 
         if (plines.size()>0) {
             rep.add("");

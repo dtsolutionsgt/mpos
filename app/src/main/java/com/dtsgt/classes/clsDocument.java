@@ -20,7 +20,7 @@ public class clsDocument {
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,felcont,contacc,nitsuc,sfticket;
-	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
+	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero, pais="";
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
@@ -383,15 +383,15 @@ public class clsDocument {
             }
         }
 
-        rep.add("Fecha : "+fsfecha);
-
         if (docfactura){
 
-            if (!emptystr(nit_cliente)) rep.add("NIT : "+nit_cliente);
+            rep.add("Fecha: "+fsfecha);
+
+            if (!emptystr(nit_cliente)) rep.add("NIT: "+nit_cliente);
 
             if (!emptystr(clidir)) {
 
-                clidir="Dir : "+clidir;
+                clidir="Dir.: "+clidir;
 
                 if (clidir.length()>prw) {
 
@@ -495,9 +495,215 @@ public class clsDocument {
 
 		if (doccanastabod && !(modofact.equalsIgnoreCase("TOL"))){
 			rep.add("");
-			if (doccanastabod && (reimpres==1)) rep.add("-------  R E I M P R E S I O N  -------");
+			if (doccanastabod && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
 			rep.add("");
 		}
+
+    }
+
+    protected void saveHeadLinesHON(int reimpres) {
+        String s,ss,ss2,su;
+        String[] s2;
+        int nidx;
+
+        rep.empty();rep.empty();
+        rep.addc("HONDURAS");
+
+        if (docfactura) {
+            if (!facturaflag) {
+                rep.addc("TICKET");
+                rep.add("");
+            }
+        }
+
+        for (int i = 0; i <lines.size(); i++) 		{
+
+            s=lines.get(i);if (s.isEmpty()) s=" ";
+
+            try {
+                s=encabezado(s);
+                ss=s.toUpperCase();
+                nidx=ss.indexOf("NIT");
+                //if (nidx>=0) s="NIT : "+nitsuc;
+            } catch (Exception e) {
+                s="##";
+            }
+
+            if (s.contains("%%")) {
+                if (banderafel) rep.add("DOCUMENTO TRIBUTARIO ELECTRONICO");
+                rep.add(nombre);
+                s=s.replace("%%%","");
+            }
+
+            if (docpedido) {
+                s=s.replace("Factura serie","Pedido");
+                s=s.replace("numero : 0","");
+            }
+
+            if (docrecibo) {
+                s=s.replace("Factura","Recibo");
+            }
+
+            if (docdevolucion) {
+                s=s.replace("Factura","Recibo");
+            }
+
+            if (doccanastabod){
+                s=s.replace("Factura","Recibo");
+            }
+
+            if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
+                su=s.toUpperCase();
+                if (su.contains("CLIENTE") ) {
+                    if (su.contains("<<") ) {
+                        s2=s.split("<<");
+                        for (int j = 1; j <s2.length; j++) {
+                            ss2=s2[j];
+                            rep.add(ss2);
+                        }
+                    } else {
+                        rep.add(s);
+                    }
+                } else {
+                    s=rep.ctrim(s);
+                    rep.add(s);
+                }
+            }
+
+            if (docfactura) {
+
+                //if (!modofact.equalsIgnoreCase("TICKET")) {
+                if (facturaflag) {
+                    if (i==7){
+                        if (!banderafel) {
+                            rep.add("");
+                            if (docfactura) {
+                                rep.add(resol);
+                                rep.add(resfecha);
+                                rep.add(resvence);
+                                rep.add(resrango);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (docfactura){
+
+            rep.add("Fecha: "+fsfecha);
+
+            if (!emptystr(nit_cliente)) rep.add("NIT: "+nit_cliente);
+
+            if (!emptystr(clidir)) {
+
+                clidir="Dir.: "+clidir;
+
+                if (clidir.length()>prw) {
+
+                    String nuevaCadena = "", cadena = "";
+
+                    cadena = clidir;
+                    nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                    cadena = cadena.substring(prw);
+                    if (cadena.length() > prw) {
+                        nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                        cadena = cadena.substring(prw);
+                        if (cadena.length() > prw) {
+                            nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                        } if (cadena.length()>0) rep.add(cadena);
+                    } else {
+                        if (cadena.length()>0) rep.add(cadena);
+                    }
+                } else rep.add(clidir);
+
+
+                /*
+				String nuevaCadena="", cadena="";
+				int vMod=0;
+				double division =0.0;
+
+				cadena = "Dir : "+clidir;
+				vMod = (cadena.length() / 40)+1;
+
+				if (cadena.length() > 39){
+
+					for (int i = 0; i <vMod; i++) {
+						if (cadena.length()>=40*(i+1)){
+							nuevaCadena += cadena.substring((i*40),40) + "\n";
+						}else{
+							nuevaCadena += cadena.substring((i*40)-1,cadena.length());
+						}
+					}
+				} else {
+					nuevaCadena = cadena;
+				}
+
+            	rep.add(nuevaCadena);
+            	*/
+
+            }
+
+            if (docfactura) {
+                if (!facturaflag) {
+                    rep.add("");
+                    rep.add("Esto no es una factura fiscal");
+                    rep.add("");
+                }
+            }
+
+            /*
+			if (pagoefectivo==1){
+                rep.add("Condiciones de pago : Efectivo");
+			} else {
+			    if(!TipoCredito.isEmpty()){
+                    rep.add("Condiciones de pago : ");
+                    rep.add(TipoCredito);
+                    rep.add("Aut#: " + NoAutorizacion);
+
+                    //rep.add("Aut#: " + NoAutorizacion);
+                } else {
+                    rep.add("Condiciones de pago : Crédito");
+                }
+			}
+            */
+        }
+
+        rep.add("");
+        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+
+        if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
+
+            rep.add("");
+            if (docfactura && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            if (docfactura && (reimpres==10)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            if (docfactura && (reimpres==2)) rep.add("------  C O P I A  ------");
+            if (docfactura && (reimpres==3)) rep.add("------       A N U L A D O      ------");
+            //#HS_20181212 condición para factura pendiente de pago
+            if(docfactura && (reimpres==4)) {
+                rep.add("- P E N D I E N T E  D E  P A G O -");
+                pendiente = reimpres;
+            }
+            if (docfactura && (reimpres==5)) rep.add("------  C O N T A B I L I D A D  ------");
+            rep.add("");
+
+        }else if ((docdevolucion || docpedido) && !(modofact.equalsIgnoreCase("TOL"))){
+
+            //CKFK 2019-04-23 Consultar con Aaron
+            rep.add("");
+            if ((docdevolucion && (reimpres==1)) || (docpedido && (reimpres==1))) rep.add("-------  R E I M P R E S I O N  -------");
+            if ((docdevolucion && (reimpres==2)) || (docpedido && (reimpres==2))) rep.add("------  C O P I A  ------");
+            if ((docdevolucion && (reimpres==3)) || (docpedido && (reimpres==3))) rep.add("------       A N U L A D O      ------");
+            rep.add("");
+
+        }
+
+        if (doccanastabod && !(modofact.equalsIgnoreCase("TOL"))){
+            rep.add("");
+            if (doccanastabod && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            rep.add("");
+        }
 
     }
 
@@ -796,7 +1002,14 @@ public class clsDocument {
 			Toast.makeText(cont,"buildheader: "+e.getMessage(), Toast.LENGTH_SHORT).show();return false;
 		}
 
-		saveHeadLines(reimpres);
+        //#AT20221123 SaveHeadLines por país
+        if (pais.equalsIgnoreCase("GUA")) {
+            saveHeadLines(reimpres);
+        } else if (pais.equalsIgnoreCase("HON")) {
+            saveHeadLinesHON(reimpres);
+        } else {
+            saveHeadLines(reimpres);
+        }
 		
 		return true;
 	}
