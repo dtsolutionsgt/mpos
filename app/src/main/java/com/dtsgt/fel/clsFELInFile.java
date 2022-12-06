@@ -774,6 +774,7 @@ public class clsFELInFile {
     }
 
     private void executeWSFirmAnul() {
+
         jsfirm = jsonf.toString();
         errorflag=false;error="";
 
@@ -909,6 +910,7 @@ public class clsFELInFile {
     //region Anulacion
 
     public void sendJSONAnul() {
+
         try {
 
             s64= anulToBase64();
@@ -935,6 +937,7 @@ public class clsFELInFile {
     }
 
     public void wsExecuteA(){
+
         URL url;
         HttpsURLConnection connection = null;
         JSONObject jObj = null;
@@ -1062,14 +1065,6 @@ public class clsFELInFile {
 
         imp=0;linea=0;totmonto=0;totiva=0;
 
-        //#EJC20200527: Funciona para la versión 1 de fel con el url https://certificador.feel.com.gt/fel/certificacion/dte/
-//        xml="";
-//        xml+="<dte:GTDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.4\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0 \">";
-//        xml+="<dte:SAT ClaseDocumento=\"dte\">";
-//        xml+="<dte:DTE ID=\"DatosCertificados\">";
-//        xml+="<dte:DatosEmision ID=\"DatosEmision\">";
-//        xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
-
         //#EJC20200527: Versión 1.5.3 de FEL
         xml="";
         xml+="<dte:GTDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.2.0 \">";
@@ -1137,12 +1132,14 @@ public class clsFELInFile {
     }
 
     public String anulToBase64() {
+
         String s64;
         byte[] bytes= new byte[0];
 
         bytes = xmlanul.getBytes(StandardCharsets.UTF_8);
         s64= Base64.encodeToString(bytes, Base64.DEFAULT);
         return s64;
+
     }
 
     public void emisor(String afiliacionIVA,
@@ -1189,56 +1186,57 @@ public class clsFELInFile {
                          String departamento,
                          String pais) {
 
-        String stt=pCorreo;
-
-        pCorreo=pCorreo.replace(" ","");
-        if (pCorreo.indexOf(".")<3)  pCorreo="";
-        if (pCorreo.indexOf("@")<3)  pCorreo="";
-        if (pCorreo.isEmpty())  pCorreo = correo_sucursal;
-        if (pCorreo.length()<8) pCorreo = correo_sucursal;
-
         try {
-            if (pNITCliente.length()<6) pNITCliente="CF";
+
+            String stt=pCorreo;
+
+            pCorreo=pCorreo.replace(" ","");
+            if (pCorreo.indexOf(".")<3)  pCorreo="";
+            if (pCorreo.indexOf("@")<3)  pCorreo="";
+            if (pCorreo.isEmpty())  pCorreo = correo_sucursal;
+            if (pCorreo.length()<8) pCorreo = correo_sucursal;
+
+            try {
+                if (pNITCliente.length()<6) pNITCliente="CF";
+            } catch (Exception e) {
+                pNITCliente="CF";
+            }
+
+            pNombreCliente=pNombreCliente.trim();
+            if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase("\n") |
+                pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
+
+            xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
+            xml+="<dte:DireccionReceptor>";
+            xml+="<dte:Direccion>"+pDireccionCliente+"</dte:Direccion>";
+            xml+="<dte:CodigoPostal>"+codigoPostal+"</dte:CodigoPostal>";
+            xml+="<dte:Municipio>"+municipio+"</dte:Municipio>";
+            xml+="<dte:Departamento>"+departamento+"</dte:Departamento>";
+            xml+="<dte:Pais>"+pais+"</dte:Pais>";
+            xml+="</dte:DireccionReceptor>";
+            xml+="</dte:Receptor>";
+
+            xml+="<dte:Frases>";
+
+            if (fraseISR==4) {
+                xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
+                xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"2\"></dte:Frase>";
+            } else {
+                if (fraseISR!=0) {
+                    xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"" + fraseISR +"\"></dte:Frase>";
+                }
+                if (fraseIVA!=0) {
+                    xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"" + fraseIVA +"\"></dte:Frase>";
+                }
+            }
+
+            xml+="</dte:Frases>";
+            xml+="<dte:Items>";
+
         } catch (Exception e) {
-            pNITCliente="CF";
+            error=e.getMessage();errorflag=true;
+            e.printStackTrace();
         }
-
-        pNombreCliente=pNombreCliente.trim();
-        if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase("\n") |
-            pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
-
-        xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
-        xml+="<dte:DireccionReceptor>";
-        xml+="<dte:Direccion>"+pDireccionCliente+"</dte:Direccion>";
-        xml+="<dte:CodigoPostal>"+codigoPostal+"</dte:CodigoPostal>";
-        xml+="<dte:Municipio>"+municipio+"</dte:Municipio>";
-        xml+="<dte:Departamento>"+departamento+"</dte:Departamento>";
-        xml+="<dte:Pais>"+pais+"</dte:Pais>";
-        xml+="</dte:DireccionReceptor>";
-        xml+="</dte:Receptor>";
-
-        xml+="<dte:Frases>";
-        //xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
-        //xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"2\"></dte:Frase>";
-
-        if (fraseISR==4) {
-            xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
-            xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"2\"></dte:Frase>";
-        } else {
-            if (fraseISR!=0) {
-                xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"" + fraseISR +"\"></dte:Frase>";
-            }
-            if (fraseIVA!=0) {
-                xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"" + fraseIVA +"\"></dte:Frase>";
-            }
-        }
-
-//        if (fraseIVA!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseIVA+"\" TipoFrase=\"1\"></dte:Frase>";
-//        if (fraseISR!=0) xml+="<dte:Frase CodigoEscenario=\""+fraseISR+"\" TipoFrase=\"2\"></dte:Frase>";
-
-        xml+="</dte:Frases>";
-
-        xml+="<dte:Items>";
 
     }
 
@@ -1247,26 +1245,17 @@ public class clsFELInFile {
 
         linea++;
 
-//        impbase=total/(1+0.01*iva);
-//        impbase=Math.floor(impbase*100);impbase=impbase/100;
-//        imp=total-impbase;
-//        imp=Math.round(imp*100);imp=imp/100;
-
         desc=Math.round(desc*100);desc=desc/100;
 
         double parametroiva1 =(iva/100);
         double parametroiva2 = (1+parametroiva1);
         impbase=total/parametroiva2;
-        //impbase=cant*precuni/parametroiva2;
         imp=impbase*parametroiva1;
         if (!lcombo.isEmpty()) descrip+=lcombo;
 
         tottot=total+desc;
 
         totmonto+=total;
-        //totiva+=imp;
-
-        //precuni=precuni+desc;
 
         String cantstr = String.format("%.2f",cant);
         cantstr=cantstr.replaceAll(",",".");
@@ -1310,6 +1299,7 @@ public class clsFELInFile {
     }
 
     public void guardar(String filename) throws IOException {
+
         BufferedWriter writer = null,lwriter = null;
         FileWriter wfile,lfile;
 
@@ -1317,6 +1307,7 @@ public class clsFELInFile {
         writer = new BufferedWriter(wfile);
         writer.write(xml);
         writer.close();
+
     }
 
     public void anulfact(String uuid,String NITEmisor,String Idreceptor,long fechaemis,long fechaanul) {
