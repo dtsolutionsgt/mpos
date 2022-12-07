@@ -26,9 +26,12 @@ import com.dtsgt.classes.clsRepBuilder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -68,7 +71,7 @@ public class CierreX extends PBase {
     private String condition,stampstr;
     private boolean exito, reimpresion=false;
     private ProgressDialog progressDialog;
-    private String CorreoSucursal="";
+    private String CorreoSucursal="", nombrecopia="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +183,7 @@ public class CierreX extends PBase {
                     }
                     doc.buildPrint("0", 0);
                     getTXT();
+                    GenerarCopiaReporte();
 
                     respaldoReporte();
 
@@ -745,6 +749,33 @@ public class CierreX extends PBase {
             msgbox("getTXT setText: "+e);
         }
 
+    }
+
+    private void GenerarCopiaReporte() {
+        try {
+            File Storage = Environment.getExternalStorageDirectory();
+            File fileOrig= new File(Storage,"print.txt");
+
+            //cierre_fecha_tienda_sucursal_caja
+            nombrecopia = "Cierre_Caja_" + du.getFechaActualSinHora() + "_" +gl.tiendanom+"_"+gl.codigo_ruta+"_"+gl.cajanom+".txt";
+            File fileDest = new File(Storage, nombrecopia);
+
+            InputStream in = new FileInputStream(fileOrig);
+            OutputStream out = new FileOutputStream(fileDest);
+
+            byte[] buf = new byte[1024];
+            int len;
+
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+
+            in.close();
+            out.close();
+
+        } catch (Exception e) {
+            msgbox(new Object() {} .getClass().getEnclosingMethod().getName() +" - "+ e.getMessage());
+        }
     }
 
     public void printDoc() {
@@ -1521,9 +1552,16 @@ public class CierreX extends PBase {
 
     public void EnviarCierre(View view) {
         try {
+            String dir= Environment.getExternalStorageDirectory()+"";
+            String nombrereporte = "Cierre_Caja_" + du.getFechaActualSinHora() + "_" +gl.tiendanom+"_"+gl.codigo_ruta+"_"+gl.cajanom+".txt";
+            File f1 = new File(dir + "/"+nombrereporte);
 
             if (CorreoSucursal.isEmpty()) {
                 SetCorreoCliente();
+            }
+
+            if (!f1.exists()) {
+                GenerarCopiaReporte();
             }
 
             AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
@@ -1643,7 +1681,8 @@ public class CierreX extends PBase {
             try {
 
                 String dir= Environment.getExternalStorageDirectory()+"";
-                File f1 = new File(dir + "/print.txt");
+                String nombrereporte = "Cierre_Caja_" + du.getFechaActualSinHora() + "_" +gl.tiendanom+"_"+gl.codigo_ruta+"_"+gl.cajanom+".txt";
+                File f1 = new File(dir + "/"+nombrereporte);
 
                 session.getProperties().put("mail.smtp.ssl.trust", "smtp.office365.com");
                 session.getProperties().put("mail.smtp.starttls.enable", "true");
@@ -1666,9 +1705,10 @@ public class CierreX extends PBase {
                 mm.setContent(multipart);
                 Transport.send(mm);
                 exito = true;
-            }
 
-            catch (MessagingException e) {
+                f1.delete();
+
+            } catch (MessagingException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();

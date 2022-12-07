@@ -603,7 +603,22 @@ public class DateUtils {
 
 		return fecha;
 	}
-	
+
+	public long getFechaActualSinHora(){
+
+		long f;
+		int cyear,cmonth,cday;
+
+		final Calendar c = Calendar.getInstance();
+		cyear = c.get(Calendar.YEAR);
+		cmonth = c.get(Calendar.MONTH)+1;
+		cday = c.get(Calendar.DAY_OF_MONTH);
+
+		f=cfechaSinHora(cyear,cmonth,cday);
+
+		return f;
+	}
+
 	public long getActDateTime(){
 
 		long f,fecha;
