@@ -83,6 +83,7 @@ public class PedidoDet extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (pantallaHorizontal()) {
             setContentView(R.layout.activity_pedido_det);horiz=true;
         } else {
@@ -124,9 +125,11 @@ public class PedidoDet extends PBase {
         setHandlers();
 
         app.getURL();
+
         ws=new WebService(PedidoDet.this,gl.wsurl);
 
         loadItem();
+
         listItems();
     }
 
@@ -297,6 +300,7 @@ public class PedidoDet extends PBase {
     }
 
     private void loadItem() {
+
         String tdev="DOMICILIO";
         clsClasses.clsD_pedidoorden itemord;
 
@@ -332,21 +336,6 @@ public class PedidoDet extends PBase {
 
         //est=1;
         est=item.codigo_estado;
-        /*
-        if (item.codigo_usuario_creo>0) est=2;
-        if (item.codigo_usuario_proceso>0) est=3;
-        if (item.fecha_salida_suc>0) est=4;
-        if (item.fecha_entrega>0) est=5;
-        if (item.anulado==1) est=0;
-         */
-
-        /*
-        if (est==0) rel1.setBackgroundResource(R.drawable.frame_stat);
-        if (est==1) rel2.setBackgroundResource(R.drawable.frame_stat);
-        if (est==2) rel3.setBackgroundResource(R.drawable.frame_stat);
-        if (est==3) rel4.setBackgroundResource(R.drawable.frame_stat);
-        if (est==4) rel5.setBackgroundResource(R.drawable.frame_stat);
-         */
 
         if (est==0) rel1.setBackgroundResource(R.drawable.frame_stat);
         if (est==1) rel2.setBackgroundResource(R.drawable.frame_stat);
@@ -360,21 +349,12 @@ public class PedidoDet extends PBase {
         rel4.setVisibility(View.VISIBLE);
         rel5.setVisibility(View.VISIBLE);
 
-        /*
-        rel3.setVisibility(View.INVISIBLE);
-        rel4.setVisibility(View.INVISIBLE);
-        rel5.setVisibility(View.INVISIBLE);
-        if (est>=2) rel3.setVisibility(View.VISIBLE);
-        if (est>=3) {
-            rel4.setVisibility(View.VISIBLE);rel5.setVisibility(View.VISIBLE);
-        }
-        if ((est>=4) && (app.pendientesPago(pedid)==0)) rel5.setVisibility(View.VISIBLE);
-        */
 
         rel3.setVisibility(View.INVISIBLE);
         rel4.setVisibility(View.INVISIBLE);
         rel5.setVisibility(View.INVISIBLE);
         if (est>=1) rel3.setVisibility(View.VISIBLE);
+
         if (est>=2) {
             rel4.setVisibility(View.VISIBLE);rel5.setVisibility(View.VISIBLE);
         }
@@ -396,6 +376,7 @@ public class PedidoDet extends PBase {
     }
 
     private void estado() {
+
         int ordid=1;
         gl.pedcorel="";
 
@@ -449,21 +430,9 @@ public class PedidoDet extends PBase {
         }
 
         try {
+
             D_pedidoObj.update(item);
-
             broadCast();
-
-            /*
-            Intent intent = new Intent(PedidoDet.this, srvPedidoEstado.class);
-
-            intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("correlativo",item.corel);
-            intent.putExtra("estado_pedido",modo);
-            intent.putExtra("valor_estado",gl.codigo_vendedor);
-
-            startService(intent);
-            */
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -484,6 +453,7 @@ public class PedidoDet extends PBase {
     }
 
     private void broadCast() {
+
         clsClasses.clsD_pedidocom pitem;
         int idruta;
 
@@ -499,8 +469,8 @@ public class PedidoDet extends PBase {
                 idruta=P_rutaObj.items.get(i).codigo_ruta;
 
                 if (idruta!=gl.codigo_ruta) {
-                    pitem= clsCls.new clsD_pedidocom();
 
+                    pitem= clsCls.new clsD_pedidocom();
                     pitem.codigo_ruta=idruta;
                     pitem.corel_pedido=pedid;
                     pitem.corel_linea=0;
@@ -523,7 +493,9 @@ public class PedidoDet extends PBase {
     }
 
     private void anular() {
+
        try {
+
             item.anulado=1;
             D_pedidoObj.update(item);
 
@@ -604,6 +576,7 @@ public class PedidoDet extends PBase {
     }
 
     private void crearTicketEntrega() {
+
         clsClasses.clsD_pedidoc item;
         String s;
         String[] sp;
@@ -671,6 +644,7 @@ public class PedidoDet extends PBase {
     }
 
     private boolean addItem(){
+
         clsClasses.clsT_combo combo;
         clsClasses.clsD_pedidocombo citem;
         double prodtot,precdoc,fact,cantbas,peso;
@@ -679,6 +653,7 @@ public class PedidoDet extends PBase {
         counter++;
 
         try {
+
             umb=pitem.umventa;
             fact=1;
             cantbas=pitem.cant*fact;
@@ -687,7 +662,6 @@ public class PedidoDet extends PBase {
             precdoc=prodtot/cantbas;precdoc=mu.round2(precdoc);
 
             ins.init("T_VENTA");
-
             ins.add("PRODUCTO",app.prodCod(pitem.codigo_producto));
             ins.add("EMPRESA",""+counter);
             ins.add("UM",umb);
@@ -706,7 +680,6 @@ public class PedidoDet extends PBase {
             ins.add("VAL3",0);
             ins.add("VAL4","0");
             ins.add("PERCEP",0);
-
             db.execSQL(ins.sql());
 
             if (pitem.codigo_tipo_producto.equalsIgnoreCase("M")) {
@@ -715,16 +688,13 @@ public class PedidoDet extends PBase {
                 for (int j = 0; j <D_pedidocomboObj.count; j++) {
 
                     citem=D_pedidocomboObj.items.get(j);
-
                     combo=clsCls.new clsT_combo();
-
                     combo.codigo_menu=citem.seleccion;
                     combo.idcombo=counter;
                     combo.cant=citem.cant;
                     combo.unid=citem.cant;
                     combo.idseleccion=citem.codigo_producto;
                     combo.orden=0;
-
                     T_comboObj.add(combo);
 
                 }
@@ -790,6 +760,7 @@ public class PedidoDet extends PBase {
     }
 
     private boolean divideComanda() {
+
         clsClasses.clsD_pedidod  pedido;
         String prname,cname,nn;
         String[] sp;
@@ -936,10 +907,6 @@ public class PedidoDet extends PBase {
                     rep.add(tl.get(j));ln++;
                 }
 
-                //for (int j = 0; j <T_comandaObj.count; j++) {
-                //    rep.add(T_comandaObj.items.get(j).texto);
-                //}
-
                 rep.line24();rep.add("");rep.add("LLEVAR");rep.add("");
                 rep.add("");rep.add("");rep.add("");rep.add("");
                 ln+=8;
@@ -951,11 +918,8 @@ public class PedidoDet extends PBase {
                 rep.save();rep.clear();
             }
 
-            //mesa
-            //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
-
-
             return true;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
@@ -977,6 +941,7 @@ public class PedidoDet extends PBase {
     }
 
     private void cargaDetallePedido() {
+
         if (!wsidle) return;
 
         try {
@@ -991,17 +956,20 @@ public class PedidoDet extends PBase {
     }
 
     private void agregaDetallePedido() {
+
         clsClasses.clsD_pedidod pitem;
-        ArrayList<String> pl=new ArrayList<String>();
+        ArrayList<String> pl= new ArrayList<>();
         String cmd;
         int ii=1;
 
         if (ws.openDTCursor.getCount()==0) return;
 
         try {
+
             pl.clear();
 
             try {
+
                 Cursor dt=Con.OpenDT("SELECT MAX(COREL_DET) FROM D_PEDIDOD");
 
                 if (dt.getCount()>0) {
@@ -1015,6 +983,7 @@ public class PedidoDet extends PBase {
             D_pedidodObj=new clsD_pedidodObj(this,Con,db);
 
             ws.openDTCursor.moveToFirst();
+
             while (!ws.openDTCursor.isAfterLast()) {
 
                 pitem = clsCls.new clsD_pedidod();
@@ -1043,6 +1012,7 @@ public class PedidoDet extends PBase {
 
                 db.setTransactionSuccessful();
                 db.endTransaction();
+
             } catch (Exception e) {
                 db.endTransaction();
                 String ss=e.getMessage();

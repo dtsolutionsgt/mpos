@@ -264,16 +264,27 @@ public class FELFactura extends PBase {
 
         fel.errcert=false;fel.errfirma=false;
 
-        buildFactXML();
+        try {
 
-        fel.certificacion();
+            buildFactXML();
+            fel.certificacion();
+
+        } catch (Exception e) {
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
     }
 
     private void contingencia() {
-        lbl1.setText("Certificando factura  . . ."); lbl3.setText("");ffail=0;
-        contmode=true;
-        procesafactura();
+        try {
+            lbl1.setText("Certificando factura  . . .");
+            lbl3.setText("");
+            ffail=0;
+            contmode=true;
+            procesafactura();
+        } catch (Exception e) {
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     @Override
@@ -287,6 +298,7 @@ public class FELFactura extends PBase {
         double tsec;
 
         try {
+
             Date systemTime=Calendar.getInstance().getTime();
             fel.ftime3=systemTime.getTime();
 
@@ -358,6 +370,7 @@ public class FELFactura extends PBase {
 
                 if (fel.duplicado) {
                     //toastcentlong("Documento enviado previamente." + fel.mpos_identificador_fact);
+                    marcaFactura();
                     msgbox("Documento enviado previamente.");
                     finish();
                     return;
@@ -418,12 +431,7 @@ public class FELFactura extends PBase {
     @Override
     public void felProgress(String msg) {
         Handler mtimer = new Handler();
-        Runnable mrunner = new Runnable() {
-            @Override
-            public void run() {
-                lbl1.setText(msg);
-            }
-        };
+        Runnable mrunner = () -> lbl1.setText(msg);
         mtimer.postDelayed(mrunner,50);
     }
 
@@ -449,10 +457,12 @@ public class FELFactura extends PBase {
     }
 
     private void callBackSingle() {
+
         try {
+
             if (!fel.errorflag) {
                 gl.feluuid=fel.fact_uuid;
-
+                toastlong("Envio completo "+ gl.feluuid);
                 if (gl.peEnvio) {
                     if (!gl.feluuid.isEmpty()) {
                         if (gl.feluuid.length()>10) {
@@ -464,12 +474,14 @@ public class FELFactura extends PBase {
                 } else {
                     finish();
                 }
+
             } else {
                 gl.feluuid="";
                 gl.FELmsg="Ocurrió error en FEL :\n\n"+ fel.error;
                 startActivity(new Intent(this,FELmsgbox.class));
                 finish();
             }
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -669,12 +681,9 @@ public class FELFactura extends PBase {
         scorel=cor;
 
         Handler mtimer = new Handler();
-        Runnable mrunner = new Runnable() {
-            @Override
-            public void run() {
-                ws.callback = 1;
-                ws.execute();
-            }
+        Runnable mrunner = () -> {
+            ws.callback = 1;
+            ws.execute();
         };
         mtimer.postDelayed(mrunner, 200);
     }
@@ -1056,7 +1065,9 @@ public class FELFactura extends PBase {
 
     @Override
     public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
+
         try {
+
             if (throwing) throw new Exception(errmsg);
 
             if (ws.errorflag) {
@@ -1068,7 +1079,6 @@ public class FELFactura extends PBase {
                 case 1:
                     statusFactura();
                     processComplete();
-                    //#EJC20200622: Fin single FEL
                     break;
                 case 2:
                     if (ftot>0) statusFactura();

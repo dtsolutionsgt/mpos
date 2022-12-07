@@ -508,7 +508,8 @@ public class clsFELInFile {
                 if (duplidx>1) {
                     //#EJC20200710: No firmar factura con un identificador previamente enviado...
                     duplicado=true;
-                    errorflag =true;
+                    errorflag =false;
+                    errcert =false;
                     error ="El identificador interno: "+ mpos_identificador_fact + " fue enviado previamente.";
                     return errcert;
                 }
@@ -538,6 +539,8 @@ public class clsFELInFile {
                 fact_numero =jObj.getString("numero");
 
                 errorflag=false;
+                errcert=false;
+                duplicado=false;
 
             } else {
                 error=""+response;errorflag=true;errcert=true;
@@ -716,7 +719,7 @@ public class clsFELInFile {
                 errorflag=true;return;
             }
         } catch (Exception e) {
-            errorflag=true;
+            //errorflag=true;
         } finally {
             //if (connection!=null) connection.disconnect();
         }
