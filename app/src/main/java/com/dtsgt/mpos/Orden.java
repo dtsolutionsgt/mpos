@@ -263,30 +263,20 @@ public class Orden extends PBase {
         ws=new WebService(Orden.this,gl.wsurl);
         actualizaEstadoOrden(0);
 
-        rnBroadcastCallback = new Runnable() {
-            public void run() {
-                broadcastCallback();
-            }
-        };
+        rnBroadcastCallback = () -> broadcastCallback();
 
         wscom =new wsCommit(gl.wsurl);
 
-        rnClose = new Runnable() {
-            public void run() {
-                closeAction();
-            }
-        };
+        rnClose = () -> closeAction();
 
-        rnDetailCallback = new Runnable() {
-            public void run() {
-                switch (wso.level) {
-                    case 1:
-                        broadcastDetailCallback();;break;
-                    case 2:
-                        broadcastAccountCallback();;break;
-                    case 3:
-                        broadcastCompleteCallback();break;
-                }
+        rnDetailCallback = () -> {
+            switch (wso.level) {
+                case 1:
+                    broadcastDetailCallback();;break;
+                case 2:
+                    broadcastAccountCallback();;break;
+                case 3:
+                    broadcastCompleteCallback();break;
             }
         };
         wso=new wsOpenDT(gl.wsurl);
@@ -365,10 +355,9 @@ public class Orden extends PBase {
     }
 
     public void doBarcode(View view) {
+
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
         alert.setTitle("Ingrese codigo");
-
         final EditText input = new EditText(this);
         alert.setView(input);
 
@@ -376,22 +365,16 @@ public class Orden extends PBase {
         input.setText("");
         input.requestFocus();
 
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    int bci=Integer.parseInt(input.getText().toString());
-                    barcode=""+bci;
-                    addBarcode();
-                } catch (Exception e) {
-                    mu.msgbox("Codigo incorrecto");return;
-                }
+        alert.setPositiveButton("Aplicar", (dialog, whichButton) -> {
+            try {
+                int bci=Integer.parseInt(input.getText().toString());
+                barcode=""+bci;
+                addBarcode();
+            } catch (Exception e) {
+                mu.msgbox("Codigo incorrecto");return;
             }
         });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
+        alert.setNegativeButton("Cancelar", (dialog, whichButton) -> {});
         alert.show();
     }
 
@@ -402,60 +385,57 @@ public class Orden extends PBase {
 
         try {
 
-            listView.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+            listView.setOnItemClickListener((parent, view, position, id) -> {
 
-                    try {
+                try {
 
-                        Object lvObj = listView.getItemAtPosition(position);
-                        clsOrden item = (clsOrden)lvObj;selitem=item;
+                    Object lvObj = listView.getItemAtPosition(position);
+                    clsOrden item = (clsOrden)lvObj;selitem=item;
 
-                        prodid=item.Cod;gl.prodid=prodid;
-                        gl.produid=item.id;
-                        cbui=item.emp;
-                        gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
-                        uprodid=prodid;
-                        uid=""+item.id;gl.menuitemid=uid;seluid=uid;
-                        adapter.setSelectedIndex(position);
-                        //#EJC202210221616:Set the splited account to move.
-                        IdCuentaAMover = item.cuenta;
-                        gl.gstr2=item.Nombre;
-                        //gl.gstr=item.Nombre+" \n[ "+gl.peMon+prodPrecioBase(app.codigoProducto(gl.prodid))+" ]";;
-                        gl.gstr=item.Nombre+" \n[ "+gl.peMon+app.prodPrecio(app.codigoProducto(gl.prodid))+" ]";;
+                    prodid=item.Cod;gl.prodid=prodid;
+                    gl.produid=item.id;
+                    cbui=item.emp;
+                    gl.prodmenu=app.codigoProducto(prodid);//gl.prodmenu=prodid;
+                    uprodid=prodid;
+                    uid=""+item.id;gl.menuitemid=uid;seluid=uid;
+                    adapter.setSelectedIndex(position);
+                    //#EJC202210221616:Set the splited account to move.
+                    IdCuentaAMover = item.cuenta;
+                    gl.gstr2=item.Nombre;
+                    //gl.gstr=item.Nombre+" \n[ "+gl.peMon+prodPrecioBase(app.codigoProducto(gl.prodid))+" ]";;
+                    gl.gstr=item.Nombre+" \n[ "+gl.peMon+app.prodPrecio(app.codigoProducto(gl.prodid))+" ]";;
 
-                        gl.retcant=(int) item.Cant;
-                        gl.limcant=getDisp(prodid);
-                        menuitemadd=false;
+                    gl.retcant=(int) item.Cant;
+                    gl.limcant=getDisp(prodid);
+                    menuitemadd=false;
 
-                        //tipo=prodTipo(gl.prodcod);
-                        tipo=prodTipo(prodid);
-                        gl.tipoprodcod=tipo;
+                    //tipo=prodTipo(gl.prodcod);
+                    tipo=prodTipo(prodid);
+                    gl.tipoprodcod=tipo;
 
-                        if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
-                            browse=6;
-                            gl.menuitemid=prodid;
-                        } else if (tipo.equalsIgnoreCase("M")) {
-                            gl.newmenuitem=false;
-                            gl.menuitemid=item.emp;
-                            browse=7;
-                        }
-
-                        statenv=(int) item.percep;
-                        gl.idmodgr=codigoModificador(app.codigoProducto(gl.prodid));
-
-                        if (item.estado==1) {
-                            showItemPopMenu();
-                        } else {
-                            showItemPopMenuLock();
-                        }
-
-                    } catch (Exception e) {
-                        mu.msgbox( e.getMessage());
+                    if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
+                        browse=6;
+                        gl.menuitemid=prodid;
+                    } else if (tipo.equalsIgnoreCase("M")) {
+                        gl.newmenuitem=false;
+                        gl.menuitemid=item.emp;
+                        browse=7;
                     }
 
-                    cierraPantalla();
-                };
+                    statenv=(int) item.percep;
+                    gl.idmodgr=codigoModificador(app.codigoProducto(gl.prodid));
+
+                    if (item.estado==1) {
+                        showItemPopMenu();
+                    } else {
+                        showItemPopMenuLock();
+                    }
+
+                } catch (Exception e) {
+                    mu.msgbox( e.getMessage());
+                }
+
+                cierraPantalla();
             });
 
             listView.setOnItemLongClickListener((parent, view, position, id) -> {
@@ -476,42 +456,36 @@ public class Orden extends PBase {
                 return true;
             });
 
-            txtbarra.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-                        barcode=txtbarra.getText().toString();
-                        if (!barcode.isEmpty()) addBarcode();
-                        return true;
-                    } else {
-                        return false;
-                    }
+            txtbarra.setOnKeyListener((v, keyCode, event) -> {
+                if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    barcode=txtbarra.getText().toString();
+                    if (!barcode.isEmpty()) addBarcode();
+                    return true;
+                } else {
+                    return false;
                 }
             });
 
-            grdfam.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        Object lvObj = grdfam.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+            grdfam.setOnItemClickListener((parent, view, position, id) -> {
+                try {
+                    Object lvObj = grdfam.getItemAtPosition(position);
+                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
-                        famid=item.icod;
-                        gl.idgrres=item.idres;
-                        gl.idgrsel=item.idressel;
+                    famid=item.icod;
+                    gl.idgrres=item.idres;
+                    gl.idgrsel=item.idressel;
 
-                        if (imgflag) {
-                            adapterf.setSelectedIndex(position);
-                        } else {
-                            adapterfl.setSelectedIndex(position);
-                        }
-
-                        listProduct();
-                        cierraPantalla();
-                    } catch (Exception e) {
-                        String ss=e.getMessage();
+                    if (imgflag) {
+                        adapterf.setSelectedIndex(position);
+                    } else {
+                        adapterfl.setSelectedIndex(position);
                     }
-                };
+
+                    listProduct();
+                    cierraPantalla();
+                } catch (Exception e) {
+                    String ss=e.getMessage();
+                }
             });
 
             grdprod.setOnItemClickListener((parent, view, position, id) -> {
@@ -553,40 +527,34 @@ public class Orden extends PBase {
                 cierraPantalla();
             });
 
-            grdprod.setOnItemLongClickListener(new OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    try {
-                        Object lvObj = grdprod.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+            grdprod.setOnItemLongClickListener((parent, view, position, id) -> {
+                try {
+                    Object lvObj = grdprod.getItemAtPosition(position);
+                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
-                        adapterp.setSelectedIndex(position);
+                    adapterp.setSelectedIndex(position);
 
-                        prodid=item.Cod;
-                        gl.gstr=prodid;//gl.prodmenu=prodid;
-                        gl.pprodname=item.Name;
+                    prodid=item.Cod;
+                    gl.gstr=prodid;//gl.prodmenu=prodid;
+                    gl.pprodname=item.Name;
 
-                        msgAskAdd(item.Name);
-                    } catch (Exception e) {}
-                    cierraPantalla();
-                    return true;
-                }
+                    msgAskAdd(item.Name);
+                } catch (Exception e) {}
+                cierraPantalla();
+                return true;
             });
 
-            gridView.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        Object lvObj = gridView.getItemAtPosition(position);
-                        clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+            gridView.setOnItemClickListener((parent, view, position, id) -> {
+                try {
+                    Object lvObj = gridView.getItemAtPosition(position);
+                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
 
-                        adaptergrid.setSelectedIndex(position);
-                        processMenuTools(item.ID);
-                    } catch (Exception e) {
-                        String ss=e.getMessage();
-                    }
-                    cierraPantalla();
-                };
+                    adaptergrid.setSelectedIndex(position);
+                    processMenuTools(item.ID);
+                } catch (Exception e) {
+                    String ss=e.getMessage();
+                }
+                cierraPantalla();
             });
 
         } catch (Exception e){
@@ -628,12 +596,12 @@ public class Orden extends PBase {
             if (DT.getCount()>0) {
 
                 DT.moveToFirst();
+
                 while (!DT.isAfterLast()) {
 
                     tt=DT.getDouble(2);
 
                     item = clsCls.new clsOrden();
-
                     item.Cod=DT.getString(0);idpr=app.codigoProducto(item.Cod);
                     item.id=DT.getInt(15);
                     item.Cant=DT.getDouble(3);
@@ -648,24 +616,15 @@ public class Orden extends PBase {
                     item.sdesc=mu.frmdec(item.Prec);
                     item.imp=DT.getDouble(6);
                     item.percep=DT.getDouble(7);
-
-                    /*
-                    if (prodPorPeso(item.Cod)) 	{
-                        item.um=DT.getString(10);
-                    } else {
-                        //item.um=DT.getString(8);
-                        item.um=app.umVenta(item.Cod);
-                    }
-                    */
-
                     item.um=DT.getString(8);
-
                     item.Peso=DT.getDouble(9);
                     item.emp=DT.getString(12);
+
                     if (item.emp.equalsIgnoreCase(uid)) {
                         selidx=ii;
                         seluid=uid;
                     }
+
                     desc=DT.getDouble(11);tdesc+=desc;
 
                     item.cuenta=DT.getInt(13);
@@ -986,6 +945,7 @@ public class Orden extends PBase {
         double sdesc=desc;
 
         try {
+
             if (prodPorPeso(prodid)) {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
                 if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
@@ -999,13 +959,14 @@ public class Orden extends PBase {
             }
 
             prec=mu.round(prec,2);
-            //desc=sdesc;
+
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
     }
 
     private boolean addItem(){
+
         Cursor dt;
         double precdoc,fact,cantbas,peso;
         String umb;
@@ -1019,23 +980,8 @@ public class Orden extends PBase {
             return false;
         }
 
-        /*
-         if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S")) {
-            try {
-                sql="SELECT Empresa,Cant FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (PRODUCTO='"+prodid+"')";
-                dt=Con.OpenDT(sql);
-                if (dt.getCount()>0) {
-                    if (dt!=null) dt.close();
-                    openItem();return true;
-                }
-                if (dt!=null) dt.close();
-            } catch (SQLException e) {
-                mu.msgbox("Error : " + e.getMessage());return false;
-            }
-        }
-        */
-
         try {
+
             int icod=app.codigoProducto(prodid);
 
             sql="SELECT UNIDADMINIMA,FACTORCONVERSION FROM P_FACTORCONV WHERE (PRODUCTO="+icod+") AND (UNIDADSUPERIOR='"+gl.um+"')";
@@ -1046,6 +992,7 @@ public class Orden extends PBase {
             fact=dt.getDouble(1);
 
             if (dt!=null) dt.close();
+
         } catch (Exception e) {
             umb=um;fact=1;
         }

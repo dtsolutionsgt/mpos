@@ -763,21 +763,22 @@ public class Caja extends PBase {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
         } else {
-            msgAskNoFecha("No so logró validar la fecha.\nPuede ser que el dispositivo tiene una fecha incorrecta.\n¿Continuar?");
+            msgAskNoFecha("No se logró validar la fecha.\nPuede ser que el dispositivo tenga una fecha incorrecta.\n¿Continuar?");
         }
     }
 
     private void dateCallback() {
+
         long fa,fserv;
 
         if (wso.errflag) {
             msgbox("dateCallback: "+wso.error);
-            msgAskNoFecha("No so logró validar la fecha.\nPuede ser que el dispositivo tiene una fecha incorrecta.\n¿Continuar?");
+            msgAskNoFecha("No se logró validar la fecha.\nPuede ser que el dispositivo tenga una fecha incorrecta.\n¿Continuar?");
             return;
         } else {
             try {
                 if (wso.openDTCursor.getCount()==0) {
-                    msgAskNoFecha("No so logró validar la fecha.\nPuede ser que el dispositivo tiene una fecha incorrecta.\n¿Continuar?");
+                    msgAskNoFecha("No se logró validar la fecha.\nPuede ser que el dispositivo tenga una fecha incorrecta.\n¿Continuar?");
                     return;
                 }
 
@@ -792,7 +793,7 @@ public class Caja extends PBase {
                 if (fserv==fa) {
                     guardar();
                 } else {
-                    msgAskNoFecha("La fecha del dispositivo incorrecta.\nLa fecha correcta deberia ser "+du.sfecha(fserv)+".\nContinuar puede causar serios problemas.\n¿Continuar?");
+                    msgAskNoFecha("Fecha de dispositivo incorrecta.\nLa fecha correcta deberia ser "+du.sfecha(fserv)+".\nContinuar puede causar serios problemas.\n¿Continuar?");
                 }
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -815,7 +816,6 @@ public class Caja extends PBase {
 
         if(msgAcc==0){
             dialog.setPositiveButton("Si", (dialog1, which) -> finish());
-
             dialog.setNegativeButton("No", (dialog12, which) -> {});
         } else if(msgAcc==1) {
             dialog.setNeutralButton("OK", (dialog13, which) -> {
@@ -926,7 +926,7 @@ public class Caja extends PBase {
     private void msgAskNoFecha(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-        dialog.setPositiveButton("Si", (dialog1, which) -> msgAskFechaContinuar("¿Está seguro?"));
+        dialog.setPositiveButton("Si", (dialog1, which) -> guardar());
         dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
         dialog.show();
     }

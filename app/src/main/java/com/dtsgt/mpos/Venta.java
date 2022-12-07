@@ -147,6 +147,7 @@ public class Venta extends PBase {
         }
 
         super.InitBase();
+
         addlog("Venta",""+du.getActDateTime(),String.valueOf(gl.vend));
 
         setControls();
@@ -213,22 +214,21 @@ public class Venta extends PBase {
         if(!gl.exitflag) {
 
             Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    gl.scancliente="";
-                    browse=8;
 
-                    gl.iniciaVenta=false;
+            Runnable mrunner= () -> {
 
-                    if (usarbio) {
-                        startActivity(new Intent(Venta.this,Clientes.class));
-                    } else {
-                        if (!gl.cliposflag) {
-                            gl.cliposflag=true;
-                            if (!gl.exitflag) {
-                                if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
-                            }
+                gl.scancliente="";
+                browse=8;
+
+                gl.iniciaVenta=false;
+
+                if (usarbio) {
+                    startActivity(new Intent(Venta.this,Clientes.class));
+                } else {
+                    if (!gl.cliposflag) {
+                        gl.cliposflag=true;
+                        if (!gl.exitflag) {
+                            if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
                         }
                     }
                 }
@@ -3908,9 +3908,7 @@ public class Venta extends PBase {
             }
         });
 
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
 
         dialog.show();
 
@@ -3920,21 +3918,16 @@ public class Venta extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
 
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    gl.felcorel="";gl.feluuid="";
-                    //startActivity(new Intent(Venta.this, FelFactura.class));
-                    startActivity(new Intent(Venta.this, FELVerificacion.class));
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+        dialog.setPositiveButton("Si", (dialog1, which) -> {
+            try {
+                gl.felcorel="";gl.feluuid="";
+                startActivity(new Intent(Venta.this, FELVerificacion.class));
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
         });
 
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
 
         dialog.show();
 
@@ -3948,23 +3941,17 @@ public class Venta extends PBase {
 
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                crearPedido();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
+        dialog.setPositiveButton("Si", (dialog1, which) -> crearPedido());
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
 
         dialog.show();
 
     }
 
     private void showNivelMenu() {
+
         try {
+
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(Venta.this,"Nivel de precio");
 
@@ -3985,90 +3972,30 @@ public class Venta extends PBase {
                 listdlg.add(ViewObj.items.get(i).f1);
             }
 
-            listdlg.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        int niv=ViewObj.items.get(position).pk;
-                        gl.nivel=niv;
-                        setNivel();
-                        listdlg.dismiss();
-                    } catch (Exception e) {}
-                };
+            listdlg.setOnItemClickListener((parent, view, position, id) -> {
+                try {
+                    int niv=ViewObj.items.get(position).pk;
+                    gl.nivel=niv;
+                    setNivel();
+                    listdlg.dismiss();
+                } catch (Exception e) {}
             });
 
-            listdlg.setOnLeftClick(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listdlg.dismiss();
-                }
-            });
+            listdlg.setOnLeftClick(v -> listdlg.dismiss());
 
             listdlg.show();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        /*
-        final AlertDialog Dialog;
-        int nivuser=0;
-
-        try {
-
-            clsViewObj ViewObj=new clsViewObj(this,Con,db);
-
-            sql="SELECT P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE ,'','','','','','','' " +
-            "FROM P_NIVELPRECIO INNER JOIN P_NIVELPRECIO_SUCURSAL ON P_NIVELPRECIO.CODIGO = P_NIVELPRECIO_SUCURSAL.CODIGO_NIVEL_PRECIO " +
-            "WHERE (P_NIVELPRECIO_SUCURSAL.CODIGO_SUCURSAL="+gl.tienda+") " +
-            "UNION " +
-            "SELECT P_SUCURSAL.CODIGO_NIVEL_PRECIO AS NIVEL,P_NIVELPRECIO.NOMBRE AS NNOMBRE,'','','','','','','' " +
-            "FROM P_SUCURSAL INNER JOIN P_NIVELPRECIO ON P_SUCURSAL.CODIGO_NIVEL_PRECIO = P_NIVELPRECIO.CODIGO " +
-            "WHERE (P_SUCURSAL.CODIGO_SUCURSAL ="+gl.tienda+") " +
-            "ORDER BY NNOMBRE";
-
-            ViewObj.fillSelect(sql);
-
-            final String[] selitems = new String[ViewObj.count];
-            for (int i = 0; i <ViewObj.count; i++) {
-                selitems[i]=ViewObj.items.get(i).f1;
-            }
-
-            AlertDialog.Builder menudlg = new AlertDialog.Builder(this);
-            menudlg.setTitle("Nivel de precio");
-
-            menudlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    //int niv=P_nivelprecioObj.items.get(item).codigo;
-                    int niv=ViewObj.items.get(item).pk;
-                    gl.nivel=niv;
-                    setNivel();
-
-                    dialog.cancel();
-                }
-            });
-
-            menudlg.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            Dialog = menudlg.create();
-            Dialog.show();
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-         */
     }
 
     private void inputMesa() {
+
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        alert.setTitle("Impresion de comanda");
-        alert.setMessage("MESA NUMERO : ");
+        alert.setTitle("Impresión de comanda");
+        alert.setMessage("MESA NUMERO: ");
 
         final EditText input = new EditText(this);
         alert.setView(input);
@@ -4117,6 +4044,7 @@ public class Venta extends PBase {
     protected void onResume() {
 
         try {
+
             super.onResume();
 
             gridViewOpciones.setEnabled(true);
