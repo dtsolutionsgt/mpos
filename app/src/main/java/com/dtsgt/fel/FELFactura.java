@@ -225,12 +225,7 @@ public class FELFactura extends PBase {
         updateLabel();
 
         Handler mtimer = new Handler();
-        Runnable mrunner = new Runnable() {
-            @Override
-            public void run() {
-                contingenciaFactura();
-            }
-        };
+        Runnable mrunner = () -> contingenciaFactura();
         mtimer.postDelayed(mrunner, 200);
     }
 
@@ -272,6 +267,7 @@ public class FELFactura extends PBase {
         buildFactXML();
 
         fel.certificacion();
+
     }
 
     private void contingencia() {
@@ -713,16 +709,11 @@ public class FELFactura extends PBase {
                 contingencia=0;
             }
 
-            //idfact=D_facturaObj.first().serie+"-"+D_facturaObj.first().corelativo;
-
-
             CSQL="DELETE FROM D_FACTURA WHERE COREL='"+corel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAD WHERE COREL='"+corel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAP WHERE COREL='"+corel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAC WHERE COREL='"+corel+"';";
             CSQL=CSQL+"DELETE FROM D_FACTURAPR WHERE COREL='"+corel+"';";
-
-
             CSQL=CSQL+addFactheader(D_facturaObj.first())+ ";";
 
             String UpdateToStock = "";
@@ -749,10 +740,6 @@ public class FELFactura extends PBase {
                         }
                     }
                 }
-
-                //UpdateToStock =D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
-                //if (!UpdateToStock.isEmpty()) CSQL=CSQL+ UpdateToStock;
-
             }
 
             for (int i = 0; i < D_facturapObj.count; i++) {
@@ -891,7 +878,9 @@ public class FELFactura extends PBase {
     }
 
     private void statusFactura() {
+
         try {
+
             String rs =(String) xobj.getSingle("CommitResult",String.class);
             if (!rs.equalsIgnoreCase("#")) {
                 factsend=false;return;
@@ -947,15 +936,10 @@ public class FELFactura extends PBase {
         updateLabelSend();
 
         Handler mtimer = new Handler();
-        Runnable mrunner = new Runnable() {
-            @Override
-            public void run() {
-                //ws.callback = 2;
-                //ws.execute();
-                gl.autocom = 1;
-                startActivity(new Intent(FELFactura.this, WSEnv.class));
-                finish();
-            }
+        Runnable mrunner = () -> {
+            gl.autocom = 1;
+            startActivity(new Intent(FELFactura.this, WSEnv.class));
+            finish();
         };
         mtimer.postDelayed(mrunner, 200);
     }
@@ -1007,16 +991,6 @@ public class FELFactura extends PBase {
                 CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+contingencia+"  " +
                         "WHERE (ACTIVA=1) AND (RESGUARDO=1) AND (RUTA=" + gl.codigo_ruta + ");";
             }
-
-            /*
-            if (contingencia==0) {
-                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+"  " +
-                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
-            } else {
-                CSQL = CSQL+"UPDATE P_COREL SET CORELULT="+D_facturaObj.first().corelativo+",RESGUARDO="+contingencia+"  " +
-                        "WHERE SERIE='"+D_facturaObj.first().serie+"' AND ACTIVA=1 AND RUTA=" + gl.codigo_ruta + ";";
-            }
-            */
 
             P_clienteObj.fill("WHERE CODIGO_CLIENTE="+cliid);
 
@@ -1117,6 +1091,7 @@ public class FELFactura extends PBase {
     //region Aux
 
     private void buildList() {
+
         String cor;
         ftot=0;
 
@@ -1154,29 +1129,17 @@ public class FELFactura extends PBase {
 
     private void updateLabel() {
         Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            public void run() {
-                handler.post(new Runnable(){
-                    public void run() {
-                        lbl1.setText("Certificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
-                    }
-                });
-            }
-        };
+        Runnable runnable = () -> handler.post(() -> {
+            lbl1.setText("Certificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
+        });
         new Thread(runnable).start();
     }
 
     private void updateLabelSend() {
         Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            public void run() {
-                handler.post(new Runnable(){
-                    public void run() {
-                        lbl1.setText("Enviando factura "+(fidx+2)+" / "+ftot);lbl3.setText("");
-                    }
-                });
-            }
-        };
+        Runnable runnable = () -> handler.post(() -> {
+            lbl1.setText("Enviando factura "+(fidx+2)+" / "+ftot);lbl3.setText("");
+        });
         new Thread(runnable).start();
     }
 
@@ -1330,14 +1293,10 @@ public class FELFactura extends PBase {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage(msg);
             dialog.setCancelable(false);
-
-            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    gl.feluuid="";finish();
-                }
+            dialog.setNeutralButton("OK", (dialog1, which) -> {
+                gl.feluuid="";finish();
             });
             dialog.show();
-
         } catch (Exception ex) {
         }
     }

@@ -6,10 +6,7 @@ package com.dtsgt.fel;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -36,7 +33,9 @@ import javax.net.ssl.HttpsURLConnection;
 public class clsFELInFile {
 
     public String error,fecha_factura;
-    public Boolean errorflag,errorcon,constat,duplicado,errcert,errfirma,modoiduni,iduniflag;
+    public Boolean errorflag,errorcon,constat,duplicado,modoiduni,iduniflag;
+    public Boolean errfirma = false;
+    public Boolean errcert =false;
     public Boolean halt=false;
     public boolean autocancel=false;
     public int errlevel,response;
@@ -162,59 +161,33 @@ public class clsFELInFile {
 
     private void executeWSFirm() {
 
-        jsfirm = jsonf.toString();
-        errorflag=false;error="";
+        try {
 
-        firmcomplete=false;halt=false;
-        wstask = new AsyncCallWS();
-        wstask.execute();
+            jsfirm = jsonf.toString();
+            errorflag=false;
+            error="";
 
-        /*
-        if (!autocancel) {
+            firmcomplete=false;
+            halt=false;
+            wstask = new AsyncCallWS();
             wstask.execute();
-        } else {
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    wstask.execute();
-                }
-            };
-            mtimer.postDelayed(mrunner,20000);
+
+        } catch (Exception e) {
+            throw e;
         }
-
-        if (autocancel) {
-
-            halttimer = new Handler();
-            haltrunner = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (!firmcomplete) {
-                            halt = true;
-                            wstask.cancel(true);
-                        }
-                    } catch (Exception e) {
-                        toastlong("No se logro certificar. Timeout: " + timeout + "\n" + e.getMessage());
-                    }
-                }
-            };
-            //halttimer.postDelayed(haltrunner,timeout);
-            halttimer.postDelayed(haltrunner, 5000);
-        }
-
-         */
 
     }
 
-    private void wsExecuteF(){
+    private Boolean wsExecuteF(){
 
         URL url;
         HttpURLConnection connection = null;
         JSONObject jObj = null;
         response=0;
-
-        errfirma=false;modoiduni=false;
+        error = "";
+        errfirma=false;
+        errorflag = false;
+        modoiduni=false;
 
         try {
 
@@ -237,7 +210,8 @@ public class clsFELInFile {
                 connection.connect();
             } catch (IOException e) {
                 error=e.getMessage();
-                errorcon=true;errorflag=true;constat=false;return;
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             }
 
             DataOutputStream wr = null;
@@ -246,7 +220,8 @@ public class clsFELInFile {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
                 error=e.getMessage();
-                errorcon=true;errorflag=true;constat=false;return;
+                errorcon=true;errorflag=true;constat=false;
+                return null;
             }
 
             wr.writeBytes (jsfirm);
@@ -283,7 +258,9 @@ public class clsFELInFile {
                     errorflag=false;
                     firma=jObj.getString("archivo");
                 } else {
+
                     errorflag=true;
+
                     try {
 
                         //#EJC20200707: Obtener mensaje de error específico en respuesta.
@@ -302,17 +279,21 @@ public class clsFELInFile {
                 }
 
             } else {
-                error=""+response;errorflag=true;errfirma=true;return;
+                error=""+response;errorflag=true;errfirma=true;
+                return errorflag;
             }
 
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;errfirma=true;
+            return errorflag;
         } finally {
             //if (connection!=null) connection.disconnect();
         }
+        return errorflag;
     }
 
     private void wsFinishedF() {
+
         try  {
 
             firmcomplete=true;
@@ -321,8 +302,11 @@ public class clsFELInFile {
                 errorflag=true;error="Interrupido por usuario";
                 parent.felCallBack();
             } else {
-                if (!errorflag) {
+
+                if (!errorflag && !errcert) {
+
                     Date currentTime = Calendar.getInstance().getTime();
+
                     sendJSONCert();
 
                     try {
@@ -335,24 +319,34 @@ public class clsFELInFile {
                     parent.felCallBack();
                 }
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private class AsyncCallWS extends AsyncTask<String, Void, Void> {
+    private class AsyncCallWS extends AsyncTask<String, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(String... params)  {
+        protected Boolean doInBackground(String... params)  {
             try  {
                 wsExecuteF();
-            } catch (Exception e) { }
-            return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return errorflag;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean result) {
             try {
-                wsFinishedF();
-            } catch (Exception e)  {}
+                if (!errorflag){
+                    wsFinishedF();
+                }else{
+                    parent.felCallBack();
+                }
+            } catch (Exception e)  {
+               e.printStackTrace();
+            }
         }
 
         @Override
@@ -400,14 +394,7 @@ public class clsFELInFile {
             jsonc.put("xml_dte",firma);
 
             Handler mtimer = new Handler();
-
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    executeWSCert();
-                }
-            };
-
+            Runnable mrunner= () -> executeWSCert();
             mtimer.postDelayed(mrunner,1000);
 
         } catch (Exception e) {
@@ -417,14 +404,21 @@ public class clsFELInFile {
 
     public void executeWSCert() {
 
-        jscert = jsonc.toString();
-        errorflag=false;error="";
+        try {
 
-        AsyncCallWSCert wstask = new AsyncCallWSCert();
-        wstask.execute();
+            jscert = jsonc.toString();
+            errorflag=false;
+            error="";
+
+            AsyncCallWSCert wstask = new AsyncCallWSCert();
+            wstask.execute();
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
-    public void wsExecuteC(){
+    public Boolean wsExecuteC(){
 
         URL url;
         HttpsURLConnection connection = null;
@@ -432,6 +426,7 @@ public class clsFELInFile {
         response=0;
 
         errcert=false;
+        errorflag =false;
 
         try {
 
@@ -455,7 +450,8 @@ public class clsFELInFile {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (IOException e) {
                 error="No hay conexión al internet";
-                errorcon=true;errorflag=true;constat=false;return;
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             }
 
             wr.writeBytes (jscert);
@@ -463,6 +459,7 @@ public class clsFELInFile {
             wr.close ();
 
             InputStream is=null;
+
             try {
                 is= connection.getInputStream();
             } catch (IOException e) {
@@ -479,11 +476,7 @@ public class clsFELInFile {
 
             response=connection.getResponseCode();
 
-            //JP20200918 - para emular error de transmision
-            //response=199;
-            //errcert=true;
-
-            if (errcert) return;
+            if (errcert) return errcert;
 
             if (response==200) {
 
@@ -507,21 +500,24 @@ public class clsFELInFile {
                 fact_uuid =jObj.getString("uuid");
                 fact_serie =jObj.getString("serie");
                 fact_numero =jObj.getString("numero");
-
                 ret_uuid=jObj.getString("uuid");
                 ret_serie=jObj.getString("serie");
                 ret_numero=jObj.getString("numero");
+                errcert = false;
+                errorflag =false;
 
                 if (duplidx>1) {
                     //#EJC20200710: No firmar factura con un identificador previamente enviado...
                     duplicado=true;
                     errorflag =true;
                     error ="El identificador interno: "+ mpos_identificador_fact + " fue enviado previamente.";
-                    return;
+                    return errcert;
                 }
 
                 if (!jObj.getBoolean("resultado")) {
+
                     errorflag=true;
+                    errcert=true;
 
                     try {
                         //#EJC20200707: Obtener mensaje de error específico en respuesta.
@@ -535,7 +531,7 @@ public class clsFELInFile {
                         e.printStackTrace();
                     }
 
-                    return;
+                    return errorflag;
                 }
 
                 fact_uuid =jObj.getString("uuid");
@@ -545,40 +541,56 @@ public class clsFELInFile {
                 errorflag=false;
 
             } else {
-                error=""+response;errorflag=true;errcert=true;return;
+                error=""+response;errorflag=true;errcert=true;
+                return errorflag;
             }
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;errcert=true;
         } finally {
             //if (connection!=null) connection.disconnect();
         }
+        return errorflag;
     }
 
-    public void wsFinishedC() {
+    public void wsFinishedC() throws Exception {
+
         try  {
-            if (errcert) {
+            if (!errcert) {
                 sendJSONIDUnico();
-            } else {
+            } else if(errorflag||errcert) {
                 parent.felCallBack();
+                throw new Exception("Error al certificar documento: " + error);
             }
-        } catch (Exception e)  { }
+        } catch (Exception e)  {
+            throw e;
+        }
     }
 
-    private class AsyncCallWSCert extends AsyncTask<String, Void, Void> {
+    private class AsyncCallWSCert extends AsyncTask<String, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(String... params)  {
+        protected Boolean doInBackground(String... params)  {
+
             try  {
                 wsExecuteC();
-            } catch (Exception e) { }
-            return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return errorflag;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean result) {
             try {
-                wsFinishedC();
-            } catch (Exception e)  {}
+                if (!errcert && !result){
+                    wsFinishedC();
+                }else{
+                    parent.felCallBack();
+                }
+            } catch (Exception e)  {
+                errcert = result;
+                errorflag = result;
+            }
         }
 
         @Override
@@ -594,6 +606,7 @@ public class clsFELInFile {
     //region ID Unico
 
     public void sendJSONIDUnico() {
+
         String fnit=fel_nit.replace("-","");
 
         errlevel=4;
@@ -615,16 +628,8 @@ public class clsFELInFile {
 
             Handler mtimer = new Handler();
 
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    executeWSIDUnico();
-                }
-            };
+            Runnable mrunner= () -> executeWSIDUnico();
             mtimer.postDelayed(mrunner,1000);
-
-
-            //executeWSIDUnico();
 
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
@@ -632,6 +637,7 @@ public class clsFELInFile {
     }
 
     public void executeWSIDUnico() {
+
         jsidu = jsoniu.toString();
         errorflag=false;error="";
 
@@ -705,7 +711,6 @@ public class clsFELInFile {
                 fact_uuid =jObj.getString("uuid");
                 fact_serie =jObj.getString("serie");
                 fact_numero =jObj.getString("numero");
-
                 errorflag=false;
 
             } else {

@@ -51,7 +51,7 @@ public class Anulacion extends PBase {
 	private TextView lblTipo;
     private ProgressBar pbar;
 	
-	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<clsClasses.clsCFDV>();
+	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<>();
 	private ListAdaptCFDV adapter;
 	private clsClasses.clsCFDV selitem;
 
@@ -107,10 +107,10 @@ public class Anulacion extends PBase {
 		super.InitBase();
 		addlog("Anulacion",""+du.getActDateTime(),String.valueOf(gl.vend));
 		
-		listView = (ListView) findViewById(R.id.listView1);
-		lblTipo= (TextView) findViewById(R.id.lblDescrip);
-		lblDateini = (TextView) findViewById(R.id.lblDateini2);
-		lblDatefin = (TextView) findViewById(R.id.lblDatefin2);
+		listView = findViewById(R.id.listView1);
+		lblTipo= findViewById(R.id.lblDescrip);
+		lblDateini = findViewById(R.id.lblDateini2);
+		lblDatefin = findViewById(R.id.lblDatefin2);
         pbar=findViewById(R.id.progressBar7);pbar.setVisibility(View.INVISIBLE);
 
 		app = new AppMethods(this, gl, Con, db);
@@ -150,15 +150,9 @@ public class Anulacion extends PBase {
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
 
-        printotrodoc = new Runnable() {
-		    public void run() {
-				askPrint();
-		    }
-		};
+        printotrodoc = () -> askPrint();
 		
-		printclose= new Runnable() {
-		    public void run() {}
-		};
+		printclose= () -> {};
 		
 		prn=new printer(this,printclose,gl.validimp);
         prn_nc=new printer(this,printclose,gl.validimp);
@@ -177,25 +171,20 @@ public class Anulacion extends PBase {
 
         wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,gl.codigo_ruta,db,Con);
 
-        recibeInventario = new Runnable() {
-            public void run() {
-                bloqueado=false;
-                if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
-                pbar.setVisibility(View.INVISIBLE);
-            }
-        };
+        recibeInventario = () -> {
+			bloqueado=false;
+			if (wsi.errflag) msgbox(wsi.error); else confirmaInventario();
+			pbar.setVisibility(View.INVISIBLE);
+		};
 
         bloqueado=false;
         if (gl.peInvCompart) {
             pbar.setVisibility(View.VISIBLE);
             Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    bloqueado=true;
-                    wsi.execute(recibeInventario);
-                }
-            };
+            Runnable mrunner= () -> {
+				bloqueado=true;
+				wsi.execute(recibeInventario);
+			};
             mtimer.postDelayed(mrunner,200);
         }
 	}
@@ -216,7 +205,9 @@ public class Anulacion extends PBase {
 		gl.timeout = 6000;
 
 		try {
+
 			File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
+
 			if (file1.exists()) {
 
 				FileInputStream fIn = new FileInputStream(file1);
@@ -241,17 +232,19 @@ public class Anulacion extends PBase {
 	}
 
 	public void anulDoc(View view) {
+
         if (bloqueado) {
             toast("Actualizando inventario . . .");return;
         }
 
         try {
+
 			if (itemid.equalsIgnoreCase("*")) {
 				mu.msgbox("Debe seleccionar un documento.");return;
 			}
 
 			boolean flag=gl.peAnulSuper;
-			if (gl.rol==2 | gl.rol==3) flag=false;
+			if (gl.rol==2 || gl.rol==3) flag=false;
 
             if (flag) {
                 browse=1;
@@ -275,44 +268,38 @@ public class Anulacion extends PBase {
 				public void onSwipeLeft() {}
 			});
 
-			listView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+			listView.setOnItemClickListener((parent, view, position, id) -> {
 
-					try {
-						Object lvObj = listView.getItemAtPosition(position);
-						clsClasses.clsCFDV vItem = (clsClasses.clsCFDV)lvObj;
+				try {
+					Object lvObj = listView.getItemAtPosition(position);
+					clsClasses.clsCFDV vItem = (clsClasses.clsCFDV)lvObj;
 
-						itemid=vItem.Cod;
-						adapter.setSelectedIndex(position);
+					itemid=vItem.Cod;
+					adapter.setSelectedIndex(position);
 
-						sitem=vItem;
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-						mu.msgbox( e.getMessage());
-					}
-				};
+					sitem=vItem;
+				} catch (Exception e) {
+					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					mu.msgbox( e.getMessage());
+				}
 			});
 
-			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			listView.setOnItemLongClickListener((parent, view, position, id) -> {
 
-					try {
-						Object lvObj = listView.getItemAtPosition(position);
-						clsClasses.clsCFDV vItem = (clsClasses.clsCFDV)lvObj;
+				try {
+					Object lvObj = listView.getItemAtPosition(position);
+					clsClasses.clsCFDV vItem = (clsClasses.clsCFDV)lvObj;
 
-						itemid=vItem.Cod;
-						adapter.setSelectedIndex(position);
-						sitem=vItem;
+					itemid=vItem.Cod;
+					adapter.setSelectedIndex(position);
+					sitem=vItem;
 
-						anulDoc(view);
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-						mu.msgbox( e.getMessage());
-					}
-					return true;
+					anulDoc(view);
+				} catch (Exception e) {
+					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					mu.msgbox( e.getMessage());
 				}
+				return true;
 			});
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -356,15 +343,6 @@ public class Anulacion extends PBase {
 						"WHERE (D_FACTURA.ANULADO=0)   " +
          			"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
 					"ORDER BY D_FACTURA.COREL DESC ";
-/*
-				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
-						"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
-						"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-						"WHERE (D_FACTURA.ANULADO=0)   " +
-						"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
-						"ORDER BY D_FACTURA.COREL DESC ";
-
- */
 			}
 			
 			if (tipo==4) {
@@ -516,28 +494,12 @@ public class Anulacion extends PBase {
 
 	private void msgAskFacturaSAT(String msg) {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
 		dialog.setTitle("Anular factura");
 		dialog.setMessage("¿" + msg + "?");
-
-		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				anulFactura(itemid);
-			}
-		});
-
-		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				anulacionFEL();
-			}
-		});
-
-		dialog.setNeutralButton("Salir", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-
+		dialog.setPositiveButton("Si", (dialog1, which) -> anulFactura(itemid));
+		dialog.setNegativeButton("No", (dialog12, which) -> anulacionFEL());
+		dialog.setNeutralButton("Salir", (dialog13, which) -> {});
 		dialog.show();
-
 	}
 
 
@@ -555,7 +517,9 @@ public class Anulacion extends PBase {
     public void felCallBack()  {
 
         if (!fel.errorflag) {
+
 			try {
+
 				anulFactura(itemid);
 
 				//#EJC20200706: Commit transaction from Anuldocument.
@@ -563,7 +527,9 @@ public class Anulacion extends PBase {
 				db.endTransaction();
 
 				envioFactura();
+
 				toast(String.format("Se anuló la factura %d correctamente",itemid));
+
 				listItems();
 
 			} catch (SQLException e) {
@@ -762,6 +728,7 @@ public class Anulacion extends PBase {
 	}	
 	
 	private boolean anulFactura(String itemid) {
+
         clsD_facturarObj D_facturarObj=new clsD_facturarObj(this,Con,db);
         clsD_facturasObj D_facturasObj=new clsD_facturasObj(this,Con,db);
 
@@ -848,6 +815,7 @@ public class Anulacion extends PBase {
 	}
 	
 	private void anulBonif(String itemid) {
+
 		Cursor DT;
 		String prod,um;
 
@@ -856,12 +824,6 @@ public class Anulacion extends PBase {
 			sql = "UPDATE D_BONIF SET Anulado=1 WHERE COREL='" + itemid + "'";
 			db.execSQL(sql);
 
-			//sql = "UPDATE D_BONIFFALT SET Anulado='S' WHERE COREL='" + itemid + "'";
-			//db.execSQL(sql);
-
-			//sql="DELETE FROM D_REL_PROD_BON WHERE COREL='"+itemid+"'";
-			//db.execSQL(sql);
-
 		} catch (Exception e) {
 			addlog(new Object() {
 			}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
@@ -869,6 +831,7 @@ public class Anulacion extends PBase {
 	}
 	
 	private void revertStock(String corel,String pcod,String um) {
+
 		Cursor dt;
 		String doc,stat,lot;
 		double cant,ppeso;
@@ -903,7 +866,6 @@ public class Anulacion extends PBase {
 					ins.add("plibra", dt.getDouble(3));
 					ins.add("LOTE", lot);
 					ins.add("DOCUMENTO", doc);
-
 					ins.add("FECHA", dt.getInt(6));
 					ins.add("ANULADO", dt.getInt(7));
 					ins.add("CENTRO", dt.getString(8));
@@ -939,7 +901,6 @@ public class Anulacion extends PBase {
         try {
 
             ins.init("P_STOCK");
-
             ins.add("CODIGO",""+pcod);
             ins.add("CANT",pcant);
             ins.add("CANTM",0);
@@ -947,7 +908,6 @@ public class Anulacion extends PBase {
             ins.add("plibra",0);
             ins.add("LOTE","");
             ins.add("DOCUMENTO","");
-
             ins.add("FECHA",0);
             ins.add("ANULADO",0);
             ins.add("CENTRO","");
@@ -975,7 +935,6 @@ public class Anulacion extends PBase {
         try {
 
             ins.init("P_STOCK");
-
             ins.add("CODIGO",""+pcod);
             ins.add("CANT",pcant);
             ins.add("CANTM",0);
@@ -983,7 +942,6 @@ public class Anulacion extends PBase {
             ins.add("plibra",0);
             ins.add("LOTE","");
             ins.add("DOCUMENTO","");
-
             ins.add("FECHA",0);
             ins.add("ANULADO",0);
             ins.add("CENTRO","");
@@ -1007,6 +965,7 @@ public class Anulacion extends PBase {
     }
 
 	private void revertStockBonif(String corel,String pcod,String um) {
+
 		Cursor dt;
 		String doc,stat,lot;
 		double cant,ppeso;
@@ -1032,7 +991,6 @@ public class Anulacion extends PBase {
 				try {
 
 					ins.init("P_STOCK");
-
 					ins.add("CODIGO", pcod);
 					ins.add("CANT", 0);
 					ins.add("CANTM", dt.getDouble(1));
@@ -1040,7 +998,6 @@ public class Anulacion extends PBase {
 					ins.add("plibra", dt.getDouble(3));
 					ins.add("LOTE", lot);
 					ins.add("DOCUMENTO", doc);
-
 					ins.add("FECHA", dt.getInt(6));
 					ins.add("ANULADO", dt.getInt(7));
 					ins.add("CENTRO", dt.getString(8));
@@ -1072,6 +1029,7 @@ public class Anulacion extends PBase {
 	}
 
 	private void anulDepos(String itemid) {
+
 		Cursor DT;
 		String tdoc;
 
@@ -1136,6 +1094,7 @@ public class Anulacion extends PBase {
 	}	
 	
 	private void anulRecarga(String itemid) {
+
 		Cursor DT;
 		String prod;
 		double cant,cantm;
@@ -1148,6 +1107,7 @@ public class Anulacion extends PBase {
 			DT=Con.OpenDT(sql);
 
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 
 				prod=DT.getString(0);
@@ -1175,6 +1135,7 @@ public class Anulacion extends PBase {
 	}
 
 	private boolean anulDevol(String itemid) {
+
 		Cursor DT;
 		String prod;
 		double cant,cantm;
@@ -1199,8 +1160,6 @@ public class Anulacion extends PBase {
 
 			sql="SELECT PRODUCTO,UNIDADMEDIDA FROM D_MOVDB WHERE (COREL='"+itemid+"')";
 			DT=Con.OpenDT(sql);
-
-
 
 			sql="UPDATE FinDia SET val5 = 0";
 			db.execSQL(sql);
@@ -1401,27 +1360,19 @@ public class Anulacion extends PBase {
 	}
 
 	private void askPrint() {
+
 		try{
+
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("Road");
+			dialog.setTitle("mPos");
 			dialog.setMessage("¿Impresión correcta?");
-
-			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					if (tipo==3 || tipo==6){
-						ImprimeNC_Fact();
-					}
-
+			dialog.setPositiveButton("Si", (dialog1, which) -> {
+				if (tipo==3 || tipo==6){
+					ImprimeNC_Fact();
 				}
 			});
-
-			dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-
-				}
+			dialog.setNegativeButton("No", (dialog12, which) -> {
 			});
-
 			dialog.show();
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1453,6 +1404,7 @@ public class Anulacion extends PBase {
 		protected boolean buildFooter() {
 
 			try {
+
 				rep.add("");rep.add("");
 				rep.addc("ANULACION");
 				rep.add("");
@@ -1523,50 +1475,50 @@ public class Anulacion extends PBase {
 	}
 
 	private void obtenerFecha(){
+
 		try{
-			DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-				@Override
-				public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-					final int mesActual = month + 1;
+			DatePickerDialog recogerFecha = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
 
-					String diaFormateado = (dayOfMonth < 10)? "0" + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
-					String mesFormateado = (mesActual < 10)? "0" + String.valueOf(mesActual):String.valueOf(mesActual);
+				final int mesActual = month + 1;
 
-					if(dateTxt) {
-						lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
-					}
+				String diaFormateado = (dayOfMonth < 10)? "0" + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
+				String mesFormateado = (mesActual < 10)? "0" + String.valueOf(mesActual):String.valueOf(mesActual);
 
-					if(!dateTxt) {
-						lblDateini.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
-					}
-
-					cyear = year;
-					cmonth = Integer.parseInt(mesFormateado);
-					cday = Integer.parseInt(diaFormateado);
-
-					if(dateTxt) {
-						datefin = du.cfechaRep(cyear, cmonth, cday, false);
-					}
-
-					if(!dateTxt){
-						dateini  = du.cfechaRep(cyear, cmonth, cday, true);
-					}
-
-					long fechaSel=du.cfechaSinHora(cyear, cmonth, cday)*10000;
-
-					if (tipo==3){
-						long fecha_menor=du.addDays(du.getActDate(),-gl.dias_anul);
-
-						if (fechaSel<fecha_menor){
-							msgbox("La fecha permitida de anulación es 5 días atras");
-							return;
-						}
-					}
-
-					//listar nuevamente los documentos
-					listItems();
+				if(dateTxt) {
+					lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
 				}
+
+				if(!dateTxt) {
+					lblDateini.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);
+				}
+
+				cyear = year;
+				cmonth = Integer.parseInt(mesFormateado);
+				cday = Integer.parseInt(diaFormateado);
+
+				if(dateTxt) {
+					datefin = du.cfechaRep(cyear, cmonth, cday, false);
+				}
+
+				if(!dateTxt){
+					dateini  = du.cfechaRep(cyear, cmonth, cday, true);
+				}
+
+				long fechaSel=du.cfechaSinHora(cyear, cmonth, cday)*10000;
+
+				if (tipo==3){
+					long fecha_menor=du.addDays(du.getActDate(),-gl.dias_anul);
+
+					if (fechaSel<fecha_menor){
+						msgbox("La fecha permitida de anulación es 5 días atras");
+						return;
+					}
+				}
+
+				//listar nuevamente los documentos
+				listItems();
+
 			},anio, mes, dia);
 
 			report=false;
@@ -1580,12 +1532,13 @@ public class Anulacion extends PBase {
 	}
 
 	private void setFechaAct(){
+
 		Long fecha;
 		String date;
 
 		try{
-			fecha = du.getFechaActualReport();
 
+			fecha = du.getFechaActualReport();
 			date = du.univfechaReport(fecha);
 
 			lblDateini.setText(date);
@@ -1604,12 +1557,15 @@ public class Anulacion extends PBase {
 	//region Aprofam
 
 	private boolean aprLoadHeadData(String corel) {
+
 		Cursor DT;
 		int ff;
 					
 		try {
+
 			sql="SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL FROM D_NOTACRED WHERE COREL='"+corel+"'";
-			DT=Con.OpenDT(sql);	
+			DT=Con.OpenDT(sql);
+
 			DT.moveToFirst();
 			
 			pserie=DT.getString(0);
@@ -1667,14 +1623,18 @@ public class Anulacion extends PBase {
 	}
 
 	private void saveHeadLines(int reimpres) {
+
 		String s;
 
 		rep.empty();rep.empty();
 
 		try{
+
 			for (int i = 0; i <lines.size(); i++) {
+
 				s=lines.get(i);
 				s=encabezado(s);
+
 				if (residx==1) {
 					rep.add(presol);
 					rep.add(presfecha);
@@ -1691,12 +1651,14 @@ public class Anulacion extends PBase {
 			if (reimpres==3) rep.add("--------  A N U L A C I O N  --------");
 			if (reimpres==1) rep.add("------  R E I M P R E S I O N  ------");
 			if (reimpres==2) rep.add("-----  C O N T A B I L I D A D  -----");
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
 
 	private String encabezado(String l) {
+
 		String s,lu;
 		int idx;
 
@@ -1704,7 +1666,9 @@ public class Anulacion extends PBase {
 
 		//lu=l.toUpperCase().trim();
 		lu=l.trim();
+
 		try{
+
 			if (lu.length()==1 && lu.equalsIgnoreCase("N")) {
 				s="NOTA CREDITO";s=rep.ctrim(s);return s;
 			}
@@ -1720,7 +1684,9 @@ public class Anulacion extends PBase {
 			}
 
 			idx=lu.indexOf("SS");
+
 			if (idx>=0) {
+
 				if (mu.emptystr(pserie)) return "@@";
 				if (mu.emptystr(pnumero)) return "@@";
 
@@ -1755,12 +1721,15 @@ public class Anulacion extends PBase {
 	}
 	
 	private boolean loadHeadLines() {
+
 		Cursor DT;	
 		String s;
 		
 		try {
+
 			sql="SELECT TEXTO FROM P_ENCABEZADO_REPORTESHH ORDER BY CODIGO";
 			DT=Con.OpenDT(sql);
+
 			if (DT.getCount()==0) return false;
 
 			DT.moveToFirst();
@@ -1773,6 +1742,7 @@ public class Anulacion extends PBase {
             if (DT!=null) DT.close();
 
 			return true;
+
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			msgbox(e.getMessage());return false;
@@ -1787,17 +1757,10 @@ public class Anulacion extends PBase {
 
 		try{
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-			dialog.setTitle("ROAD");
+			dialog.setTitle("mPos");
 			dialog.setMessage("¿" + msg  + "?");
-
 			dialog.setIcon(R.drawable.ic_quest);
-
-			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					anulDocument();
-				}
-			});
+			dialog.setPositiveButton("Si", (dialog1, which) -> anulDocument());
 			dialog.setNegativeButton("No", null);
 			dialog.show();
 		}catch (Exception e){
@@ -1807,6 +1770,7 @@ public class Anulacion extends PBase {
 	}
 	
 	private boolean checkFactDepos() {
+
 		Cursor dt;
 
 		try {
@@ -1828,6 +1792,7 @@ public class Anulacion extends PBase {
 	}
 	
 	private boolean valexist(String prcodd) {
+
 		Cursor DT;
 		
 		try {
@@ -1846,9 +1811,11 @@ public class Anulacion extends PBase {
 	}
 
     private boolean valexist2(int prcodd) {
+
         Cursor DT;
 
         try {
+
             sql="SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prcodd;
             DT=Con.OpenDT(sql);
             if (DT.getCount()==0) return false;
@@ -1856,6 +1823,7 @@ public class Anulacion extends PBase {
             DT.moveToFirst();
 
             return DT.getString(0).equalsIgnoreCase("P");
+
         } catch (Exception e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             return false;

@@ -88,6 +88,7 @@ public class Menu extends PBase {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 	{
+
 		try {
 
 			super.onCreate(savedInstanceState);
@@ -95,10 +96,10 @@ public class Menu extends PBase {
 
 			super.InitBase();
 
-			gridView = (GridView) findViewById(R.id.gridView1);
-			relbotpan = (RelativeLayout) findViewById(R.id.relbotpan);
-			lblVendedor = (TextView) findViewById(R.id.lblVendedor);
-			lblRuta = (TextView) findViewById(R.id.textView9);
+			gridView = findViewById(R.id.gridView1);
+			relbotpan = findViewById(R.id.relbotpan);
+			lblVendedor = findViewById(R.id.lblVendedor);
+			lblRuta = findViewById(R.id.textView9);
             imgnowifi = findViewById(R.id.imageView122);
 
             P_modo_emergenciaObj=new clsP_modo_emergenciaObj(this,Con,db);
@@ -128,7 +129,7 @@ public class Menu extends PBase {
 				gridView.setNumColumns(3);relbotpan.setVisibility(View.VISIBLE);
 			}
 
-			this.setTitle("ROAD");
+			this.setTitle("mPos");
 
 			listItems();
 
@@ -152,6 +153,7 @@ public class Menu extends PBase {
 	//region  Main
 	
 	public void showClients(View view) {
+
 		try{
 			Intent intent;
 			intent = new Intent(this,Clientes.class);
@@ -221,6 +223,7 @@ public class Menu extends PBase {
             adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
             gridView.setAdapter(adaptergrid);
             adaptergrid.setSelectedIndex(selIdx);
+
         } catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -240,22 +243,22 @@ public class Menu extends PBase {
 	}
 		
 	public void setHandlers(){
+
 	    try{
-			gridView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
 
-					clsMenu vItem = (clsMenu) adaptergrid.getItem(position);
-					menuid=vItem.ID;
+			gridView.setOnItemClickListener((parent, view, position, id) -> {
 
-					adaptergrid.setSelectedIndex(position);
+				clsMenu vItem = (clsMenu) adaptergrid.getItem(position);
+				menuid=vItem.ID;
 
-					if (menuid==1) {
-                        if (validaFacturas()) showMenuItem();
-                    } else {
-                        showMenuItem();
-                    }
-				}
+				adaptergrid.setSelectedIndex(position);
+
+				if (menuid==1) {
+					if (validaFacturas())
+						showMenuItem();
+					} else {
+						showMenuItem();
+					}
 			});
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -273,12 +276,7 @@ public class Menu extends PBase {
 
 		listo=false;
         Handler mtimer = new Handler();
-        Runnable mrunner=new Runnable() {
-            @Override
-            public void run() {
-                listo=true;
-            }
-        };
+        Runnable mrunner= () -> listo=true;
         mtimer.postDelayed(mrunner,1000);
         //JP fin del cambio
 
@@ -304,6 +302,7 @@ public class Menu extends PBase {
 			switch (menuid) {
 
 				case 1:
+
 					gl.cajaid=5;
                     gl.InvCompSend=false;
                     gl.ventalock=false;
@@ -410,7 +409,9 @@ public class Menu extends PBase {
 	//region Reimpresion
 	
 	public void showPrintMenuTodo() {
+
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Impresión");
 
@@ -420,35 +421,29 @@ public class Menu extends PBase {
 			listdlg.add("Recarga");
 			listdlg.add("Devolución a bodega");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						switch (position) {
-							case 0:
-								menuImprDoc(3);break;
-							case 1:
-								menuImprDoc(2);break;
-							case 2:
-								menuImprDoc(7);break;
-							case 3:
-								menuImprDoc(4);break;
-							case 4:
-								menuImprDoc(5);break;
-						}
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
-			});
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+				try {
+
+					switch (position) {
+						case 0:
+							menuImprDoc(3);break;
+						case 1:
+							menuImprDoc(2);break;
+						case 2:
+							menuImprDoc(7);break;
+						case 3:
+							menuImprDoc(4);break;
+						case 4:
+							menuImprDoc(5);break;
+					}
 					listdlg.dismiss();
-				}
+				} catch (Exception e) {}
 			});
 
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 			listdlg.show();
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -472,9 +467,11 @@ public class Menu extends PBase {
 	//region Anulacion
 
 	private void validaSupervisor() {
+
 		clsClasses.clsVendedores item;
 
 		try {
+
 		    clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
 			VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
 
@@ -490,24 +487,17 @@ public class Menu extends PBase {
 				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
 			}
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					showVoidMenuTodo();
 					listdlg.dismiss();
-				}
-			});
-
-			listdlg.onEnterClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (listdlg.getInput().isEmpty()) return;
-
-					if (listdlg.validPassword()) {
-						showVoidMenuTodo();
-						listdlg.dismiss();
-					} else {
-						toast("Contraseña incorrecta");
-					}
+				} else {
+					toast("Contraseña incorrecta");
 				}
 			});
 
@@ -581,45 +571,41 @@ public class Menu extends PBase {
     //region Comunicacion
 
     private void showMenuCom() {
+
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Comunicación");
 
 			listdlg.add("Envío de datos");
 			listdlg.add("Recepción de parámetros");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						switch (position) {
-							case 0:
-								gl.autocom = 0;
-								startActivity(new Intent(Menu.this,WSEnv.class));
-								break;
-							case 1:
-								gl.autocom = 0;
-								startActivity(new Intent(Menu.this,WSRec.class));
-								break;
-							case 2:
-								;break;
-							case 3:
-								comEnterior();break;
-						}
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
-			});
+				try {
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+					switch (position) {
+						case 0:
+							gl.autocom = 0;
+							startActivity(new Intent(Menu.this,WSEnv.class));
+							break;
+						case 1:
+							gl.autocom = 0;
+							startActivity(new Intent(Menu.this,WSRec.class));
+							break;
+						case 2:
+							;break;
+						case 3:
+							comEnterior();break;
+					}
+
 					listdlg.dismiss();
-				}
+				} catch (Exception e) {}
 			});
 
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 			listdlg.show();
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -653,35 +639,29 @@ public class Menu extends PBase {
 			listdlg.add("Inventario bodega");
 			listdlg.add("Consulta de precios");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						switch (position) {
-							case 0:
-								menuObjProd();break;
-							case 1:
-								menuObjFamilia();break;
-							case 2:
-								menuObjRuta();break;
-							case 3:
-								menuObjCobro();break;
-							case 4:
-								menuInvBod();listdlg.dismiss();break;
-							case 5:
-								menuPrecios();listdlg.dismiss();break;
-						}
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-					} catch (Exception e) {}
-				};
+				try {
+
+					switch (position) {
+						case 0:
+							menuObjProd();break;
+						case 1:
+							menuObjFamilia();break;
+						case 2:
+							menuObjRuta();break;
+						case 3:
+							menuObjCobro();break;
+						case 4:
+							menuInvBod();listdlg.dismiss();break;
+						case 5:
+							menuPrecios();listdlg.dismiss();break;
+					}
+
+				} catch (Exception e) {}
 			});
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					listdlg.dismiss();
-				}
-			});
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 
 			listdlg.show();
 		} catch (Exception e) {
@@ -761,7 +741,9 @@ public class Menu extends PBase {
 	//region Inventario
 	
 	public void showInvMenuVenta() 	{
+
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Menu inventario");
 
@@ -775,34 +757,28 @@ public class Menu extends PBase {
 			listdlg.add("Orden de compra");
 			listdlg.add("Barril");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						String mt=listdlg.items.get(position).text;
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-						if (mt.equalsIgnoreCase("Existencias")) {
-							menuExist();
-						}
-						if (mt.equalsIgnoreCase("Ajuste de inventario")) menuAjuste();
-						if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
-						if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
-						if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
-						if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
-						if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
-						if (mt.equalsIgnoreCase("Barril")) menuBarril();
+				try {
 
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
-			});
+					String mt=listdlg.items.get(position).text;
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+					if (mt.equalsIgnoreCase("Existencias")) {
+						menuExist();
+					}
+					if (mt.equalsIgnoreCase("Ajuste de inventario")) menuAjuste();
+					if (mt.equalsIgnoreCase("Ingreso de mercancía")) menuRecarga();
+					if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
+					if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
+					if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
+					if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
+					if (mt.equalsIgnoreCase("Barril")) menuBarril();
+
 					listdlg.dismiss();
-				}
+				} catch (Exception e) {}
 			});
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 
 			listdlg.show();
 		} catch (Exception e) {
@@ -886,7 +862,9 @@ public class Menu extends PBase {
 	//region Utilerias
 
     public void showInvMenuUtils() {
+
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Utilerias");
 			listdlg.setLines(6);
@@ -904,52 +882,44 @@ public class Menu extends PBase {
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						switch (position) {
-							case 0:
-								//startActivity(new Intent(Menu.this,UtilPrint.class));
-								configuracionImpresora();
-								break;
-							case 1:
-								startActivity(new Intent(Menu.this,Tablas.class));break;
-							case 2:
-								actualizaVersion();break;
-							case 3:
-								enviarBaseDeDatos();break;
-							case 4:
-								estadoBluTooth();break;
-							case 5:
-								startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
-							case 6:
-								msgAskActualizar("Actualizar correlativos de contingencia");break;
-							case 7:
-								infoSystem();break;
-							case 8:
-								msgAskImprimir();break;
-							case 9:
-								msgAskCF();break;
-							case 10:
-								msgAskCorregirFechas();break;
-							case 11:
-								inicioDia();break;
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
+				try {
+					switch (position) {
+						case 0:
+							//startActivity(new Intent(Menu.this,UtilPrint.class));
+							configuracionImpresora();
+							break;
+						case 1:
+							startActivity(new Intent(Menu.this,Tablas.class));break;
+						case 2:
+							actualizaVersion();break;
+						case 3:
+							enviarBaseDeDatos();break;
+						case 4:
+							estadoBluTooth();break;
+						case 5:
+							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+						case 6:
+							msgAskActualizar("Actualizar correlativos de contingencia");break;
+						case 7:
+							infoSystem();break;
+						case 8:
+							msgAskImprimir();break;
+						case 9:
+							msgAskCF();break;
+						case 10:
+							msgAskCorregirFechas();break;
+						case 11:
+							inicioDia();break;
 
-						}
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
-			});
-
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+					}
 					listdlg.dismiss();
-				}
+				} catch (Exception e) {}
 			});
 
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 			listdlg.show();
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -958,25 +928,6 @@ public class Menu extends PBase {
 
     private void configuracionImpresora() {
         startActivity(new Intent(Menu.this, UtilPrint.class));
-        /*
-        try {
-            gl.climode=false;
-            gl.listaedit=true;
-            gl.mantid =30;
-
-            try {
-                gl.climode=false;
-                if (gl.codigo_ruta>0) db.execSQL("DELETE FROM P_archivoconf WHERE RUTA<>'"+gl.codigo_ruta+"'");
-            } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            }
-
-            startActivity(new Intent(Menu.this, Lista.class));
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-        */
-
     }
 
     private void actualizaVersion() {
@@ -988,34 +939,22 @@ public class Menu extends PBase {
             msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
         }
 
-        /*
-        String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-        try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-        } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-        }
-        */
     }
 
     private void askCambUsuario() {
+
         try{
+
             ExDialog dialog = new ExDialog(this);
             dialog.setMessage("¿Cambiar usuario?");
-
-            dialog.setPositiveButton("Cambiar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    app.logoutUser(du.getActDateTime());
-                    Menu.super.finish();
-                }
-            });
-
-            dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            });
-
+            dialog.setPositiveButton("Cambiar", (dialog1, whichButton) -> {
+				app.logoutUser(du.getActDateTime());
+				Menu.super.finish();
+			});
+            dialog.setNegativeButton("Cancelar", (dialog12, whichButton) -> {
+			});
             dialog.show();
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -1026,6 +965,7 @@ public class Menu extends PBase {
     }
 
     private void sendDB() {
+
         String subject,body;
         String dir=Environment.getExternalStorageDirectory()+"";
 
@@ -1056,22 +996,13 @@ public class Menu extends PBase {
             emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
             startActivity(emailIntent);
 
-            /*
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:dtsolutionsgt@gmail.com"));
-            emailIntent.setType("text/plain");
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Base de datos : "+gl.tiendanom+" caja : "+gl.codigo_ruta);
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Adjunto base de datos");
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-            startActivity(emailIntent);
-            */
-
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private void infoSystem() {
+
         String ss,sb="",sm="",sd="";
 
         try {
@@ -1098,6 +1029,7 @@ public class Menu extends PBase {
         }
 
         try {
+
             File pathInternal = Environment.getDataDirectory();// Internal Storage
             StatFs statInternal = new StatFs(pathInternal.getPath());
 
@@ -1116,34 +1048,26 @@ public class Menu extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(ss);
         dialog.setCancelable(false);
-
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
+        dialog.setNeutralButton("OK", (dialog1, which) -> {});
         dialog.show();
 
     }
 
     private void actualizarCont() {
+
         long cact,flim,ncont;
         clsClasses.clsD_factura fact;
-
 
         if (!validaCorel()) {
             msgAskActualizar2("Correlativo actual incorrecto. Por favor actualice los datos");return;
         }
 
         try {
+
             flim=du.addDays(du.getActDate(),-4);
-            //flim=2009260000;
 
             cact=contcorult;
             if (cact<contcorini) cact=contcorini;
-            /*
-            long cini=200000000+100000*gl.codigo_ruta;
-            contcorini=cini;
-            cact=cini;
-             */
 
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             sql="WHERE (FEELUUID=' ') AND (ANULADO=0) AND (FECHA>="+flim+")";
@@ -1175,6 +1099,7 @@ public class Menu extends PBase {
             db.execSQL(sql);
 
             msgbox("Proceso completo, por favor certifique las facturas pendientes");
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1182,10 +1107,13 @@ public class Menu extends PBase {
     }
 
     private boolean validaCorel() {
+
         Cursor dt;
+
         long cini=100000000+100000*gl.codigo_ruta;
 
         try {
+
             sql="SELECT CORELINI,CORELULT FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)";
             dt=Con.OpenDT(sql);
 
@@ -1206,6 +1134,7 @@ public class Menu extends PBase {
     private void inicioDia() {
 
         try {
+
             fhoy=du.getActDate();
             fayer=du.addDays(fhoy,-1);
 
@@ -1234,24 +1163,18 @@ public class Menu extends PBase {
                 }
             });
 
-            alert.setNeutralButton("Caja de ayer", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    double monto;
-                    try {
-                        String s=input.getText().toString();
-                        monto=Double.parseDouble(s);
-                        if (monto<0) throw new Exception();
-                        msgAskValor(monto,fayer);
-                    } catch (Exception e) {
-                        mu.msgbox("Monto incorrecto");return;
-                    }
-                }
-            });
-
-            alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {}
-            });
-
+            alert.setNeutralButton("Caja de ayer", (dialog, whichButton) -> {
+				double monto;
+				try {
+					String s=input.getText().toString();
+					monto=Double.parseDouble(s);
+					if (monto<0) throw new Exception();
+					msgAskValor(monto,fayer);
+				} catch (Exception e) {
+					mu.msgbox("Monto incorrecto");return;
+				}
+			});
+            alert.setNegativeButton("Cancelar", (dialog, whichButton) -> {});
             alert.show();
 
         } catch (Exception e) {
@@ -1274,20 +1197,10 @@ public class Menu extends PBase {
 
         try {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
             dialog.setTitle("Inicio de caja");
             dialog.setMessage("¿Iniciar caja dia "+du.sfecha(ff)+"?");
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    procesaInicioCaja(monto,ff);
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
-
+            dialog.setPositiveButton("Si", (dialog12, which) -> procesaInicioCaja(monto,ff));
+            dialog.setNegativeButton("No", (dialog1, which) -> {});
             dialog.show();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1295,16 +1208,16 @@ public class Menu extends PBase {
     }
 
     private void procesaInicioCaja(double monto,long ff) {
+
         clsClasses.clsP_cajacierre itemC;
 
         try {
+
             caja.fill();
             gl.corelZ = caja.last().corel + 1;
 
             itemC = clsCls.new clsP_cajacierre();
-
             itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase();
-
             itemC.empresa=gl.emp;
             itemC.sucursal =  gl.tienda;
             itemC.ruta = gl.codigo_ruta;
@@ -1329,7 +1242,9 @@ public class Menu extends PBase {
 
     @SuppressLint("MissingPermission")
 	private void estadoBluTooth() {
+
         final int REQUEST_ENABLE_BT = 1;
+
         try {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (bluetoothAdapter == null) {
@@ -1349,8 +1264,6 @@ public class Menu extends PBase {
     }
 
 
-
-
 	//endregion
 
 	//region Mantenimientos
@@ -1361,6 +1274,7 @@ public class Menu extends PBase {
 	    gl.listaedit=true;
 
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Mantenimientos");
 			listdlg.setLines(10);
@@ -1388,71 +1302,64 @@ public class Menu extends PBase {
 			listdlg.add("Configuración");
 			listdlg.add("Configuración reportes Cierre");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						ss = listdlg.items.get(position).text;
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-						if (ss.equalsIgnoreCase("Almacén")) gl.mantid = 0;
-						if (ss.equalsIgnoreCase("Banco")) gl.mantid = 1;
-						if (ss.equalsIgnoreCase("Caja")) gl.mantid = 13;
-						if (ss.equalsIgnoreCase("Cliente")) gl.mantid = 2;
-						if (ss.equalsIgnoreCase("Combo")) gl.mantid = 17;
-						if (ss.equalsIgnoreCase("Combo opción")) gl.mantid = 18;
-						if (ss.equalsIgnoreCase("Descuento")) gl.mantid = 15;
-						if (ss.equalsIgnoreCase("Empresa")) gl.mantid = 3;
-						if (ss.equalsIgnoreCase("Familia")) gl.mantid = 4;
-						if (ss.equalsIgnoreCase("Forma pago")) gl.mantid = 5;
-						if (ss.equalsIgnoreCase("Impuesto")) gl.mantid = 6;
-						if (ss.equalsIgnoreCase("Moneda")) gl.mantid = 7;
-						if (ss.equalsIgnoreCase("Concepto pago")) gl.mantid = 19;
-						if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid = 14;
-						if (ss.equalsIgnoreCase("Motivo ajuste")) gl.mantid = 22;
-						if (ss.equalsIgnoreCase("Producto")) gl.mantid = 8;
-						if (ss.equalsIgnoreCase("Proveedor")) gl.mantid = 9;
-						if (ss.equalsIgnoreCase("Tienda")) gl.mantid = 12;
-						if (ss.equalsIgnoreCase("Usuario")) gl.mantid = 11;
-						if (ss.equalsIgnoreCase("Resolución de facturas")) gl.mantid = 20;
-						if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 16;
-						if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
-						if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
-						if (ss.equalsIgnoreCase("Configuración reportes Cierre")) gl.mantid = 23;
-						if (ss.equalsIgnoreCase("Restaurante")) gl.mantid = 24;
-						if (ss.equalsIgnoreCase("Impresora marca")) gl.mantid = 32;
-						if (ss.equalsIgnoreCase("Impresora modelo")) gl.mantid = 33;
-						if (ss.equalsIgnoreCase("Impresora")) gl.mantid = 34;
+				try {
 
-						if (gl.mantid == 16) {
-							startActivity(new Intent(Menu.this, MantConfig.class));
-						} else if (gl.mantid == 15) {
-							startActivity(new Intent(Menu.this, Lista.class));
-						} else if (gl.mantid == 20) {
-							startActivity(new Intent(Menu.this, MantCorel.class));
-						} else if (gl.mantid == 21) {
-							startActivity(new Intent(Menu.this, MantRol.class));
-						} else if (gl.mantid == 23) {
-							startActivity(new Intent(Menu.this, MantRepCierre.class));
-						} else if (gl.mantid == 24) {
-							showMantRestMenu();
-							//startActivity(new Intent(Menu.this, SalaDis.class));
-						} else {
-							startActivity(new Intent(Menu.this, Lista.class));
-						}
+					ss = listdlg.items.get(position).text;
+					if (ss.equalsIgnoreCase("Almacén")) gl.mantid = 0;
+					if (ss.equalsIgnoreCase("Banco")) gl.mantid = 1;
+					if (ss.equalsIgnoreCase("Caja")) gl.mantid = 13;
+					if (ss.equalsIgnoreCase("Cliente")) gl.mantid = 2;
+					if (ss.equalsIgnoreCase("Combo")) gl.mantid = 17;
+					if (ss.equalsIgnoreCase("Combo opción")) gl.mantid = 18;
+					if (ss.equalsIgnoreCase("Descuento")) gl.mantid = 15;
+					if (ss.equalsIgnoreCase("Empresa")) gl.mantid = 3;
+					if (ss.equalsIgnoreCase("Familia")) gl.mantid = 4;
+					if (ss.equalsIgnoreCase("Forma pago")) gl.mantid = 5;
+					if (ss.equalsIgnoreCase("Impuesto")) gl.mantid = 6;
+					if (ss.equalsIgnoreCase("Moneda")) gl.mantid = 7;
+					if (ss.equalsIgnoreCase("Concepto pago")) gl.mantid = 19;
+					if (ss.equalsIgnoreCase("Nivel precio")) gl.mantid = 14;
+					if (ss.equalsIgnoreCase("Motivo ajuste")) gl.mantid = 22;
+					if (ss.equalsIgnoreCase("Producto")) gl.mantid = 8;
+					if (ss.equalsIgnoreCase("Proveedor")) gl.mantid = 9;
+					if (ss.equalsIgnoreCase("Tienda")) gl.mantid = 12;
+					if (ss.equalsIgnoreCase("Usuario")) gl.mantid = 11;
+					if (ss.equalsIgnoreCase("Resolución de facturas")) gl.mantid = 20;
+					if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 16;
+					if (ss.equalsIgnoreCase("Formato de impresión")) gl.mantid = 17;
+					if (ss.equalsIgnoreCase("Roles")) gl.mantid = 21;
+					if (ss.equalsIgnoreCase("Configuración reportes Cierre")) gl.mantid = 23;
+					if (ss.equalsIgnoreCase("Restaurante")) gl.mantid = 24;
+					if (ss.equalsIgnoreCase("Impresora marca")) gl.mantid = 32;
+					if (ss.equalsIgnoreCase("Impresora modelo")) gl.mantid = 33;
+					if (ss.equalsIgnoreCase("Impresora")) gl.mantid = 34;
 
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
-			});
+					if (gl.mantid == 16) {
+						startActivity(new Intent(Menu.this, MantConfig.class));
+					} else if (gl.mantid == 15) {
+						startActivity(new Intent(Menu.this, Lista.class));
+					} else if (gl.mantid == 20) {
+						startActivity(new Intent(Menu.this, MantCorel.class));
+					} else if (gl.mantid == 21) {
+						startActivity(new Intent(Menu.this, MantRol.class));
+					} else if (gl.mantid == 23) {
+						startActivity(new Intent(Menu.this, MantRepCierre.class));
+					} else if (gl.mantid == 24) {
+						showMantRestMenu();
+						//startActivity(new Intent(Menu.this, SalaDis.class));
+					} else {
+						startActivity(new Intent(Menu.this, Lista.class));
+					}
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
 					listdlg.dismiss();
-				}
+				} catch (Exception e) {}
 			});
 
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 			listdlg.show();
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -1462,6 +1369,7 @@ public class Menu extends PBase {
     public void showMantRestMenu() {
 
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Restaurante");
 
@@ -1470,40 +1378,33 @@ public class Menu extends PBase {
 			listdlg.add("Mesa");
 			listdlg.add("Grupo de mesas");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						ss = listdlg.items.get(position).text;
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-						if (ss.equalsIgnoreCase("Sala")) gl.mantid = 26;
-						if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
-						if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
-						if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
-						if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 29;
-						if (ss.equalsIgnoreCase("Estación cocina")) gl.mantid = 31;
+				try {
+					ss = listdlg.items.get(position).text;
 
-						if (gl.mantid == 24) {
-							startActivity(new Intent(Menu.this, SalaDis.class));
-						} else if (gl.mantid == 29) {
-							startActivity(new Intent(Menu.this, MantConfigRes.class));
-						} else {
-							startActivity(new Intent(Menu.this, Lista.class));
-						}
+					if (ss.equalsIgnoreCase("Sala")) gl.mantid = 26;
+					if (ss.equalsIgnoreCase("Mesa")) gl.mantid = 27;
+					if (ss.equalsIgnoreCase("Grupo de mesas")) gl.mantid = 28;
+					if (ss.equalsIgnoreCase("Diseño de sala")) gl.mantid = 24;
+					if (ss.equalsIgnoreCase("Configuración")) gl.mantid = 29;
+					if (ss.equalsIgnoreCase("Estación cocina")) gl.mantid = 31;
 
-						//listdlg.dismiss();
-					} catch (Exception e) {}
-				};
+					if (gl.mantid == 24) {
+						startActivity(new Intent(Menu.this, SalaDis.class));
+					} else if (gl.mantid == 29) {
+						startActivity(new Intent(Menu.this, MantConfigRes.class));
+					} else {
+						startActivity(new Intent(Menu.this, Lista.class));
+					}
+
+					//listdlg.dismiss();
+				} catch (Exception e) {}
 			});
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					listdlg.dismiss();
-				}
-			});
-
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 			listdlg.show();
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -1516,6 +1417,7 @@ public class Menu extends PBase {
         gl.listaedit=true;
 
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Cliente");
 
@@ -1524,28 +1426,26 @@ public class Menu extends PBase {
 			listdlg.add("Familia");
 			listdlg.add("Producto");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						ss = listdlg.items.get(position).text;
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-						if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
-						if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
-						if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
-						if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
+				try {
+					ss = listdlg.items.get(position).text;
 
-						if (gl.mantid==16) {
-							startActivity(new Intent(Menu.this, MantConfig.class));
-						} else if (gl.mantid==15) {
-							startActivity(new Intent(Menu.this, Lista.class));
-						} else {
-							startActivity(new Intent(Menu.this, Lista.class));
-						}
+					if (ss.equalsIgnoreCase("Cliente")) gl.mantid=2;
+					if (ss.equalsIgnoreCase("Familia")) gl.mantid=4;
+					if (ss.equalsIgnoreCase("Producto")) gl.mantid=8;
+					if (ss.equalsIgnoreCase("Proveedor")) gl.mantid=9;
 
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
+					if (gl.mantid==16) {
+						startActivity(new Intent(Menu.this, MantConfig.class));
+					} else if (gl.mantid==15) {
+						startActivity(new Intent(Menu.this, Lista.class));
+					} else {
+						startActivity(new Intent(Menu.this, Lista.class));
+					}
+
+					listdlg.dismiss();
+				} catch (Exception e) {}
 			});
 
 			listdlg.setOnLeftClick(new View.OnClickListener() {
@@ -1568,6 +1468,7 @@ public class Menu extends PBase {
 	public void showReportMenu() {
 
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Reportes");
 
@@ -1585,50 +1486,44 @@ public class Menu extends PBase {
 			listdlg.add("Cierre Z");
 			listdlg.add("Ultimo cierre");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						ss = listdlg.items.get(position).text;
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-						if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
-						if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
-						if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
-						if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
-						if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
-						if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
-						if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
-						if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
-						if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
-						if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
-						if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
-						if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
-						if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
-						//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
+				try {
 
-						gl.titReport = ss;
+					ss = listdlg.items.get(position).text;
 
-						if (gl.reportid == 9 || gl.reportid == 10) {
-							startActivity(new Intent(Menu.this, CierreX.class));
-						} else if (gl.reportid == 12) {
-							msgAskUltimoCierre();
-						} else {
-							startActivity(new Intent(Menu.this,Reportes.class));
-						}
+					if (ss.equalsIgnoreCase("Reporte de Documentos por Día")) gl.reportid=1;
+					if (ss.equalsIgnoreCase("Reporte Venta por Día")) gl.reportid=2;
+					if (ss.equalsIgnoreCase("Reporte Venta por Producto")) gl.reportid=3;
+					if (ss.equalsIgnoreCase("Reporte por Forma de Pago")) gl.reportid=4;
+					if (ss.equalsIgnoreCase("Reporte por Familia")) gl.reportid=5;
+					if (ss.equalsIgnoreCase("Reporte Ventas por Vendedor")) gl.reportid=6;
+					if (ss.equalsIgnoreCase("Margen y Beneficio por Productos")) gl.reportid=7;
+					if (ss.equalsIgnoreCase("Margen y Beneficio por Familia")) gl.reportid=8;
+					if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
+					if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
+					if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
+					if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
+					if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
+					//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
 
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
-			});
+					gl.titReport = ss;
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+					if (gl.reportid == 9 || gl.reportid == 10) {
+						startActivity(new Intent(Menu.this, CierreX.class));
+					} else if (gl.reportid == 12) {
+						msgAskUltimoCierre();
+					} else {
+						startActivity(new Intent(Menu.this,Reportes.class));
+					}
+
 					listdlg.dismiss();
-				}
+				} catch (Exception e) {}
 			});
 
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 			listdlg.show();
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -1642,6 +1537,7 @@ public class Menu extends PBase {
 	public void showCajaMenu() {
 
 		try {
+
 			extListDlg listdlg = new extListDlg();
 			listdlg.buildDialog(Menu.this,"Caja");
 
@@ -1650,40 +1546,39 @@ public class Menu extends PBase {
 			listdlg.add("Depósitos");
 			listdlg.add("Cierre de Caja");
 
-			listdlg.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-					try {
-						ss = listdlg.items.get(position).text;
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
-						if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
-						if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
-						if (ss.equalsIgnoreCase("Depósitos")) gl.cajaid=4;
-						if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
+				try {
 
-						gl.titReport = ss;
+					ss = listdlg.items.get(position).text;
 
-						if (valida()) {
+					if (ss.equalsIgnoreCase("Inicio de Caja")) gl.cajaid=1;
+					if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
+					if (ss.equalsIgnoreCase("Depósitos")) gl.cajaid=4;
+					if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
 
-							if (gl.cajaid!=2) {
-								validaCaja();
-							} else {
-								startActivity(new Intent(Menu.this,CajaPagos.class));
-							}
+					gl.titReport = ss;
 
+					if (valida()) {
+
+						if (gl.cajaid!=2) {
+							validaCaja();
 						} else {
-							String txt="";
-
-							if(gl.cajaid==0 || gl.cajaid==2) txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
-							if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
-							if(gl.cajaid==4) txt = "Pendiente implementación.";
-							if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
-							msgAskValid(txt);
+							startActivity(new Intent(Menu.this,CajaPagos.class));
 						}
 
-						listdlg.dismiss();
-					} catch (Exception e) {}
-				};
+					} else {
+						String txt="";
+
+						if(gl.cajaid==0 || gl.cajaid==2) txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
+						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
+						if(gl.cajaid==4) txt = "Pendiente implementación.";
+						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
+						msgAskValid(txt);
+					}
+
+					listdlg.dismiss();
+				} catch (Exception e) {}
 			});
 
 			listdlg.setOnLeftClick(new View.OnClickListener() {
@@ -1701,7 +1596,9 @@ public class Menu extends PBase {
 	}
 
 	private void validaCaja() {
+
 		try {
+
 			long flim = du.addHours(-12);
 			clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
 			P_res_sesionObj.fill("WHERE (Estado>0) AND (FECHAINI>=" + flim + ")");
@@ -1719,24 +1616,17 @@ public class Menu extends PBase {
 	}
 
 	private void msgAskMesas(String msg) {
+
 		ExDialog dialog = new ExDialog(this);
 		dialog.setMessage(msg);
 		dialog.setCancelable(false);
-
-		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				gl.inicio_caja_correcto = false;
-				browse = 1;
-				startActivity(new Intent(Menu.this, Caja.class));
-			}
+		dialog.setPositiveButton("Si", (dialog12, which) -> {
+			gl.inicio_caja_correcto = false;
+			browse = 1;
+			startActivity(new Intent(Menu.this, Caja.class));
 		});
-
-		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-
+		dialog.setNegativeButton("No", (dialog1, which) -> {});
 		dialog.show();
-
 	}
 
 
@@ -1966,6 +1856,7 @@ public class Menu extends PBase {
 
 	@SuppressLint("SuspiciousIndentation")
 	private boolean validaVenta() {
+
 		Cursor DT;
 		int ci,cf,ca1,ca2;
 		double dd;
@@ -2058,6 +1949,7 @@ public class Menu extends PBase {
 	}
 
 	private void setPrintWidth() {
+
 		Cursor DT;
 		int prwd=32;
 		
@@ -2165,19 +2057,12 @@ public class Menu extends PBase {
     }
 
     private boolean validaFacturas() {
+
         long fi,ff;
 
         if (!app.usaFEL()) return true;
 
         try {
-            /*
-            ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
-            fi=du.ffecha00(fi);
-            ff=du.addDays(ff,-3);ff=du.ffecha24(ff);
-            if (fi>ff) {
-                fi=du.addDays(ff,-2);fi=du.ffecha00(fi);
-            }
-            */
 
             ff=du.getActDate();fi=du.cfecha(du.getyear(ff),du.getmonth(ff),1);
             fi=du.addDays(du.getActDate(),-5);fi=du.ffecha00(fi);
@@ -2193,7 +2078,7 @@ public class Menu extends PBase {
                 return true;
             } else {
 				if (gl.emp!=7) {
-					msgAskSend("Existen facturas pendientes de certificacion de mas que 3 días. Por favor envie siguente correo al soporte.");
+					msgAskSend("Existen facturas pendientes de certificacion con más de 3 días. Por favor envie siguente correo al soporte.");
 					return false;
 				} else return true;
             }
@@ -2204,6 +2089,7 @@ public class Menu extends PBase {
     }
 
     private void enviaAvizo() {
+
         String subject,body;
         String dir=Environment.getExternalStorageDirectory()+"";
 
@@ -2255,6 +2141,7 @@ public class Menu extends PBase {
     }
 
     private void enviaImpresion() {
+
         String subject,body;
         String dir=Environment.getExternalStorageDirectory()+"";
 
@@ -2298,6 +2185,7 @@ public class Menu extends PBase {
     }
 
     private void imprimirCierre(boolean envio) {
+
         String fname = Environment.getExternalStorageDirectory()+"/print.txt";
 
         try {
@@ -2354,6 +2242,7 @@ public class Menu extends PBase {
     }
 
     public boolean tieneAlmacenes() {
+
         idalmdpred=0;gl.idalmpred =0;
 
         try {
@@ -2384,45 +2273,36 @@ public class Menu extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
-
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNeutralButton("OK", (dialog1, which) -> {});
         dialog.show();
-
     }
 
     private void msgAskIniciarCaja(String msg) {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog12, which) -> {
 
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
+			if(gl.cajaid==5){
 
-                if(gl.cajaid==5){
+				gl.cajaid=1;
 
-                    gl.cajaid=1;
+				if (valida()){
 
-                    if (valida()){
+					if (gl.cajaid!=2){
 
-                        if (gl.cajaid!=2){
+						gl.inicio_caja_correcto =false;
 
-                            gl.inicio_caja_correcto =false;
+						startActivity(new Intent(Menu.this,Caja.class));
 
-                            startActivity(new Intent(Menu.this,Caja.class));
+					}
 
-                        }
+				}
+			}
+		});
 
-                    }
-                }
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
 
         dialog.show();
 
@@ -2433,18 +2313,8 @@ public class Menu extends PBase {
         dialog.setMessage(msg);
         dialog.setCancelable(false);
 
-        dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                VentaDate();
-            }
-        });
-
-        dialog.setNegativeButton("Realizar Cierre Z", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                CierreZ();
-            }
-        });
-
+        dialog.setPositiveButton("Continuar Venta", (dialog12, which) -> VentaDate());
+        dialog.setNegativeButton("Realizar Cierre Z", (dialog1, which) -> CierreZ());
         dialog.show();
 
     }
@@ -2453,100 +2323,53 @@ public class Menu extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                CierreZ();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> CierreZ());
+        dialog.setNegativeButton("No", (dialog12, which) -> {
+		});
         dialog.show();
-
     }
 
     private void msgAskImpresora() {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(gl.prndrvmsg);
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Continuar Venta", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(Menu.this, Venta.class));
-            }
-        });
-
-        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Continuar Venta", (dialog1, which) -> startActivity(new Intent(Menu.this, Venta.class)));
+        dialog.setNegativeButton("Salir", (dialog12, which) -> {});
         dialog.show();
-
     }
 
     private void msgAskDatabase(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                sendDB();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> sendDB());
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
-
     }
 
     private void msgAskActualizar(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                actualizarCont();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> actualizarCont());
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
-
     }
 
     private void msgAskActualizar2(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
+        dialog.setPositiveButton("Si", (dialog12, which) -> {
+			if (isNetworkAvailable()) {
+				gl.recibir_automatico = true;
+				startActivity(new Intent(Menu.this,WSRec.class));
+			} else {
+				toast("No hay conexión a internet");
+			}
+		});
 
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if (isNetworkAvailable()) {
-                    gl.recibir_automatico = true;
-                    startActivity(new Intent(Menu.this,WSRec.class));
-                } else {
-                    toast("No hay conexión a internet");
-                }
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
         dialog.show();
 
     }
@@ -2554,159 +2377,89 @@ public class Menu extends PBase {
     private void msgAskSend(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                showMenuItem();
-                enviaAvizo();
-            }
-        });
-
+        dialog.setNeutralButton("OK", (dialog1, which) -> {
+			showMenuItem();
+			enviaAvizo();
+		});
         dialog.show();
-
     }
 
     private void msgAskUltimoCierre() {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("Ultimo cierre");
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                imprimirCierre(false);
-            }
-        });
-
-        dialog.setNeutralButton("Enviar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                imprimirCierre(true);
-            }
-        });
-
-        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Imprimir", (dialog1, which) -> imprimirCierre(false));
+        dialog.setNeutralButton("Enviar", (dialog12, which) -> imprimirCierre(true));
+        dialog.setNegativeButton("Salir", (dialog13, which) -> {});
         dialog.show();
-
     }
 
     private void msgAskImprimir() {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("Imprimir documento");
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                app.doPrint(1);
-            }
-        });
-
-        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Imprimir", (dialog1, which) -> app.doPrint(1));
+        dialog.setNegativeButton("Salir", (dialog12, which) -> {});
         dialog.show();
 
     }
 
     private void msgAskCF() {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("Corregir consumidor final");
         dialog.setCancelable(false);
+        dialog.setPositiveButton("Corregir", (dialog12, which) -> {
+			try {
+				String ccf=gl.emp+"0";
+				sql="UPDATE P_CLIENTE SET NOMBRE='Consumidor final',NIT='C.F.' WHERE CODIGO_CLIENTE="+ccf;
+				db.execSQL(sql);
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
 
-        dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    String ccf=gl.emp+"0";
-                    sql="UPDATE P_CLIENTE SET NOMBRE='Consumidor final',NIT='C.F.' WHERE CODIGO_CLIENTE="+ccf;
-                    db.execSQL(sql);
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+		});
 
-            }
-        });
-
-        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("Salir", (dialog1, which) -> {});
         dialog.show();
 
     }
 
     public void msgAskCorregirFechas() {
+
 		ExDialog dialog = new ExDialog(this);
 		dialog.setMessage("¿Corregir  fechas erroneas por la fecha actual?");
 		dialog.setCancelable(false);
 
-		dialog.setPositiveButton("Corregir", new DialogInterface.OnClickListener() {
+		dialog.setPositiveButton("Corregir", (dialog12, which) -> {
 
-			public void onClick(DialogInterface dialog, int which) {
-				Long fActual;
-				int ccorel;
+			Long fActual;
+			int ccorel;
 
-				try {
+			try {
 
-					fActual = du.getFechaActual();
-					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<=0";
-					db.execSQL(sql);
+				fActual = du.getFechaActual();
+				sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<=0";
+				db.execSQL(sql);
 
-					sql="UPDATE D_FACTURA SET FECHA=2201010000 WHERE FECHA>6900000000";
-					db.execSQL(sql);
+				sql="UPDATE D_FACTURA SET FECHA=2201010000 WHERE FECHA>6900000000";
+				db.execSQL(sql);
 
-					/*
-					fActual = du.getFechaActual();
-					sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE FECHA<=0";
-					db.execSQL(sql);
-					*/
+				fActual = du.getActDateTime();
 
+				sql="UPDATE D_FACTURA SET FECHA="+fActual+" WHERE FECHA<=0";
+				db.execSQL(sql);
 
-					/*
-					fActual = du.getActDate()+10;
-					try {
+				sql="UPDATE D_FACTURA SET FEELFECHAPROCESADO="+fActual+" WHERE FEELFECHAPROCESADO<=0";
+				db.execSQL(sql);
 
-						sql="SELECT COREL FROM P_CAJACIERRE  WHERE FECHA<=0";
-						Cursor dt=Con.OpenDT(sql);
-
-						if (dt.getCount()>0) {
-							dt.moveToFirst();
-							while (!dt.isAfterLast()) {
-								ccorel=dt.getInt(0);
-								sql="UPDATE P_CAJACIERRE SET FECHA="+fActual+" WHERE COREL="+ccorel;
-								db.execSQL(sql);
-
-								dt.moveToNext();
-							}
-						}
-
-					} catch (Exception e) {
-						msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-					}
- */
-
-
-
-					fActual = du.getActDateTime();
-
-					sql="UPDATE D_FACTURA SET FECHA="+fActual+" WHERE FECHA<=0";
-					db.execSQL(sql);
-
-					sql="UPDATE D_FACTURA SET FEELFECHAPROCESADO="+fActual+" WHERE FEELFECHAPROCESADO<=0";
-					db.execSQL(sql);
-
-				} catch (Exception e) {
-					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-				}
-
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
 
 		});
 
-		dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
+		dialog.setNegativeButton("Salir", (dialog1, which) -> {});
 
 		dialog.show();
 	}
@@ -2716,17 +2469,8 @@ public class Menu extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                msgAskEmerg2();
-            }
-        });
-
-        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Continuar", (dialog1, which) -> msgAskEmerg2());
+        dialog.setNegativeButton("Salir", (dialog12, which) -> {});
         dialog.show();
 
     }
@@ -2736,17 +2480,10 @@ public class Menu extends PBase {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿Está seguro?");
         dialog.setCancelable(false);
-
-        dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if (modo_emerg) activarSinInternet();else desactivarSinInternet();
-            }
-        });
-
-        dialog.setNegativeButton("Salir", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Confirmar", (dialog1, which) -> {
+			if (modo_emerg) activarSinInternet();else desactivarSinInternet();
+		});
+        dialog.setNegativeButton("Salir", (dialog12, which) -> {});
         dialog.show();
     }
 
@@ -2769,16 +2506,6 @@ public class Menu extends PBase {
 
 			if(browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
 				gl.recibir_automatico = false;
-				/*if (gl.peCajaRec) {
-					if (isNetworkAvailable()) {
-						gl.recibir_automatico = true;
-						startActivity(new Intent(Menu.this,WSRec.class));
-					} else {
-						if (!ms.isEmpty()) ms+="\n\n";
-						ms+="No hay conexión a internet";
-					}
-				}*/
-
 				browse=0;
 			}
 

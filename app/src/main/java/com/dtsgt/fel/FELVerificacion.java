@@ -74,10 +74,10 @@ public class FELVerificacion extends PBase {
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.msgHeader);lbl1.setText("");
-        lbl2 = (TextView) findViewById(R.id.lblWS);lbl2.setText("");
-        lbl3 = (TextView) findViewById(R.id.textView152);lbl3.setText("");
-        pbar = (ProgressBar) findViewById(R.id.progressBar);
+        lbl1 = findViewById(R.id.msgHeader);lbl1.setText("");
+        lbl2 = findViewById(R.id.lblWS);lbl2.setText("");
+        lbl3 = findViewById(R.id.textView152);lbl3.setText("");
+        pbar = findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
         felcorel=gl.felcorel;ffcorel=felcorel;
@@ -130,23 +130,31 @@ public class FELVerificacion extends PBase {
         buildList();
 
         ffail=0;fidx=0;conerrflag=false;
-        fel.errorflag=false;fel.halt=false;
+        fel.errorflag=false;fel.halt=false; fel.errcert=false;
 
-        rnFacturasFEL=new Runnable() {
-            @Override
-            public void run() {
+        try {
+
+            rnFacturasFEL= () -> {
                 if (ffel.items.size()>0) {
                     actualizaValidadas();
                 } else {
-                    contingencia();
+                    if(!fel.errorflag && !fel.errcert){
+                        contingencia();
+                    }else{
+                        msgexit(fel.error);
+                        return;
+                    }
                 }
-            }
-        };
+            };
 
-        if (facts.size()>0) {
-            procesaValidacion();
-        } else {
-            msgexit("No existen facturas pendientes de certificación");
+            if (facts.size()>0) {
+                procesaValidacion();
+            } else {
+                msgexit("No existen facturas pendientes de certificación");
+            }
+
+        } catch (Exception e) {
+            msgexit(e.getMessage());
         }
 
     }
@@ -157,30 +165,57 @@ public class FELVerificacion extends PBase {
 
     //region Main
 
-    private void procesafactura() {
+    private void procesafactura()  {
 
-        updateLabel();
+        try {
 
-        Handler mtimer = new Handler();
-        Runnable mrunner = new Runnable() {
-            @Override
-            public void run() {
-                contingenciaFactura();
-            }
-        };
-        mtimer.postDelayed(mrunner, 200);
+            Handler mtimer = new Handler();
+            Runnable mrunner = () -> {
+                if(!fel.errcert){
+                    updateLabel();
+                    contingenciaFactura();
+                }else{
+                    msgexit(fel.error);
+                    return;
+                }
+            };
+            mtimer.postDelayed(mrunner, 200);
+
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 
     private void contingenciaFactura() {
-        buildFactXML();
-        fel.certificacion();
+
+        try {
+            if(!fel.errcert){
+                buildFactXML();
+                fel.certificacion();
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 
     private void contingencia() {
 
-        lbl1.setText("Verificando factura  . . ."); lbl3.setText("");ffail=0;
-        contmode=true;
-        procesafactura();
+        try {
+
+            lbl1.setText("Verificando factura  . . .");
+            lbl3.setText("");
+            ffail=0;
+            contmode=true;
+
+            if(!fel.errcert){
+                procesafactura();
+            }
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     @Override
@@ -215,6 +250,7 @@ public class FELVerificacion extends PBase {
             }
 
             callBackMulti();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -223,12 +259,7 @@ public class FELVerificacion extends PBase {
     @Override
     public void felProgress(String msg) {
         Handler mtimer = new Handler();
-        Runnable mrunner = new Runnable() {
-            @Override
-            public void run() {
-                lbl1.setText(msg);
-            }
-        };
+        Runnable mrunner = () -> lbl1.setText(msg);
         mtimer.postDelayed(mrunner,50);
     }
 
@@ -336,11 +367,6 @@ public class FELVerificacion extends PBase {
             if(fel.fraseIVA==3){
                 fel.fraseIVA=1;
             }
-
-            /*
-            if(fel.fraseIVA==4) fel.fraseIVA=2;
-            if(fel.fraseISR==4) fel.fraseISR=2;
-            */
 
             //#EJC202210261721:Hot Fix por error al guardar el Cliente.
             if(factf.nit.contains("Consumidor final")|| factf.nit.contains("CONSUMIDORFINAL") || factf.nit.equalsIgnoreCase("1")){
@@ -505,6 +531,7 @@ public class FELVerificacion extends PBase {
     //region Aux
 
     private void buildList() {
+
         String cor;
         ftot=0;
 
@@ -513,11 +540,6 @@ public class FELVerificacion extends PBase {
 
             D_facturaObj.fill("WHERE (FEELUUID=' ') AND (ANULADO=0) " +
               "AND (FECHA>="+flim+") ORDER BY FEELCONTINGENCIA");
-            //sql="where feelcontingencia>0  and anulado=0 and " +
-            //        "feelfechaprocesado=0 and feeluuid=' ' and fecha>2009230000";
-            //sql="where anulado=0 and feelfechaprocesado=0 and feeluuid=' ' and fecha>2203090000";
-
-            //D_facturaObj.fill(sql);
 
             facts.clear();
 
@@ -594,10 +616,12 @@ public class FELVerificacion extends PBase {
     }
 
     private String listaCombo(String ccorel,String idcombo) {
+
         clsD_facturacObj D_facturacObj=new clsD_facturacObj(this,Con,db);
         String lc,nombre;
 
         try {
+
             D_facturacObj.fill("WHERE (COREL='"+ccorel+"') AND (IDCombo="+idcombo+")");
 
             lc="";
@@ -607,6 +631,7 @@ public class FELVerificacion extends PBase {
             }
 
             return lc;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return "";
         }
@@ -619,29 +644,37 @@ public class FELVerificacion extends PBase {
     public void msgexit(String msg) {
 
         Handler mtimer = new Handler();
-        Runnable mrunner=new Runnable() {
-            @Override
-            public void run() {
-                showMsgExit("Ocurrio error en FEL :\n\n"+ fel.error);
-            }
-        };
+        Runnable mrunner= () -> msgexit3("Ocurrio error en FEL :\n\n"+ fel.error);
         mtimer.postDelayed(mrunner,500);
 
     }
 
     public void showMsgExit(String msg) {
+
         try {
+
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setMessage(msg);
             dialog.setCancelable(false);
-
-            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    gl.feluuid="";finish();
-                }
+            dialog.setNeutralButton("OK", (dialog1, which) -> {
+                gl.feluuid="";finish();
             });
             dialog.show();
 
+        } catch (Exception ex) {
+        }
+    }
+
+    public void msgexit3(String msg) {
+
+        try {
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setCancelable(false);
+            dialog.setNeutralButton("OK", (dialog1, which) -> {
+                gl.feluuid="";finish();
+            });
+            dialog.show();
         } catch (Exception ex) {
         }
     }
@@ -651,16 +684,13 @@ public class FELVerificacion extends PBase {
             ExDialog dialog = new ExDialog(this);
             dialog.setMessage(msg);
             dialog.setCancelable(false);
-
-            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    gl.feluuid="";finish();
-                }
+            dialog.setNeutralButton("OK", (dialog1, which) -> {
+                gl.feluuid="";finish();
             });
             dialog.show();
-
         } catch (Exception ex) {
         }
+
     }
 
     //endregion

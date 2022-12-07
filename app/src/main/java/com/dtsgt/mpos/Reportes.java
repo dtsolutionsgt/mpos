@@ -722,7 +722,9 @@ public class Reportes extends PBase {
     }
 
     private void obtenerFecha(){
+
         try{
+
             DatePickerDialog recogerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -766,12 +768,13 @@ public class Reportes extends PBase {
     }
 
     private void getFechaAct(){
+
         Long fecha;
         String date;
 
         try{
-            fecha = du.getFechaActualReport();
 
+            fecha = du.getFechaActualReport();
             date = du.univfechaReport(fecha);
 
             lblDateini.setText(date);
@@ -790,6 +793,7 @@ public class Reportes extends PBase {
     //region clase clsDocExist
 
     private class clsDocExist extends clsDocument {
+        
         String fechaR="";
         int cantF,cantfF;
         double tot,totF;
