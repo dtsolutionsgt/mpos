@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -200,8 +201,7 @@ public class CierreX extends PBase {
 
             if (report && !reimpresion) {
                 SetCorreoCliente();
-                AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
-                enviar.execute();
+                msgAsk("Enviar correo a: "+CorreoSucursal);
             }
 
         }catch (Exception e){
@@ -1564,8 +1564,7 @@ public class CierreX extends PBase {
                 GenerarCopiaReporte();
             }
 
-            AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
-            enviar.execute();
+            msgAsk("Enviar correo a: "+CorreoSucursal);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -1728,9 +1727,27 @@ public class CierreX extends PBase {
                 Toast.makeText(CierreX.this, "Error al enviar reporte", Toast.LENGTH_LONG).show();
             }
         }
+
     }
 
+    private void msgAsk(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿" + msg + "?");
 
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                AsyncEnviaCorreo enviar = new AsyncEnviaCorreo();
+                enviar.execute();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
     //endregion
 
 }
