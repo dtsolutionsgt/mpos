@@ -67,6 +67,7 @@ public class WebService {
     }
 
     public void OpenDT(String sql) {
+
         String str;
         int rc;
 
@@ -119,13 +120,16 @@ public class WebService {
     }
 
     private void createCursor() {
+
         String[] mRow = new String[odt_cols];
         MatrixCursor cursor = new MatrixCursor(mRow);
         int pos;
         String ss;
 
         try {
+
             createVoidCursor();
+
             if (odt_rows==0) return;
 
             pos=2;
@@ -154,6 +158,7 @@ public class WebService {
     }
 
     private void createVoidCursor() {
+
         String[] mRow = new String[odt_cols];
         MatrixCursor cursor = new MatrixCursor(mRow);
 
@@ -228,6 +233,7 @@ public class WebService {
         errflag=false;status=false;error="";
 
         try {
+
             switch (mode) {
                 case 1:
                     processOpenDT();break;
@@ -236,6 +242,7 @@ public class WebService {
             }
 
             status=errflag;
+
         } catch (Exception e) {
             error=e.getMessage();
             status=false;
@@ -243,12 +250,14 @@ public class WebService {
     }
 
     public void wsFinished()  {
+
         status=!errflag;
-        //
+
         try {
             parent.wsCallBack(errflag,error);
         } catch (Exception e) {
         }
+
     }
 
     private class AsyncCallWS extends AsyncTask<String, Void, Void> {

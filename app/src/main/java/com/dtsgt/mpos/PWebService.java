@@ -40,9 +40,7 @@ public class PWebService {
 		
 		items.clear();
 		results.clear();
-		
 		istr="";
-		
 		return true;
 		
 	}
@@ -77,6 +75,7 @@ public class PWebService {
 	}
 	
 	public void wsFinished(){
+
 		running=0;
 		
 		if (fstr.equalsIgnoreCase("Sync OK")) {

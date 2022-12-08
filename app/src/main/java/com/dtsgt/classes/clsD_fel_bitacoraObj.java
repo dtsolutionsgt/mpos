@@ -19,6 +19,8 @@ public class clsD_fel_bitacoraObj {
     private clsClasses clsCls = new clsClasses();
 
     private String sel="SELECT * FROM D_fel_bitacora";
+    private String del="DELETE FROM D_fel_bitacora WHERE STATCOM=0";
+
     private String sql;
     public ArrayList<clsClasses.clsD_fel_bitacora> items= new ArrayList<clsClasses.clsD_fel_bitacora>();
 
@@ -74,7 +76,6 @@ public class clsD_fel_bitacoraObj {
     private void addItem(clsClasses.clsD_fel_bitacora item) {
 
         ins.init("D_fel_bitacora");
-
         ins.add("EMPRESA",item.empresa);
         ins.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         ins.add("CODIGO_RUTA",item.codigo_ruta);
@@ -85,7 +86,6 @@ public class clsD_fel_bitacoraObj {
         ins.add("ESTADO",item.estado);
         ins.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         ins.add("STATCOM",item.statcom);
-
         db.execSQL(ins.sql());
 
     }
@@ -93,7 +93,6 @@ public class clsD_fel_bitacoraObj {
     private void updateItem(clsClasses.clsD_fel_bitacora item) {
 
         upd.init("D_fel_bitacora");
-
         upd.add("EMPRESA",item.empresa);
         upd.add("CODIGO_SUCURSAL",item.codigo_sucursal);
         upd.add("CODIGO_RUTA",item.codigo_ruta);
@@ -103,12 +102,8 @@ public class clsD_fel_bitacoraObj {
         upd.add("ESTADO",item.estado);
         upd.add("CODIGO_VENDEDOR",item.codigo_vendedor);
         upd.add("STATCOM",item.statcom);
-
         upd.Where("(COREL='"+item.corel+"')");
-
         db.execSQL(upd.sql());
-
-        //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
 
     }
 
@@ -122,7 +117,12 @@ public class clsD_fel_bitacoraObj {
         db.execSQL(sql);
     }
 
+    public void delete_all() {
+        db.execSQL(del);
+    }
+
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsD_fel_bitacora item;
 
@@ -135,7 +135,6 @@ public class clsD_fel_bitacoraObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_fel_bitacora();
-
             item.empresa=dt.getInt(0);
             item.codigo_sucursal=dt.getInt(1);
             item.codigo_ruta=dt.getInt(2);

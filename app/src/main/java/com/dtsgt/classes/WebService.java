@@ -6,14 +6,12 @@ import android.util.Log;
 import com.dtsgt.mpos.PBase;
 
 import org.kobjects.util.Strings;
-import org.w3c.dom.Node;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -24,12 +22,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 public class WebService {
 
@@ -65,7 +57,9 @@ public class WebService {
     public void wsFinished() {
         try {
             parent.wsCallBack(errorflag,error,0);
-        } catch (Exception e)  {}
+        } catch (Exception e)  {
+            e.printStackTrace();
+        }
     }
 
     public void callEmptyMethod()  {
@@ -154,8 +148,10 @@ public class WebService {
     }
 
     private String buildArgs(Object... args) throws IllegalArgumentException, IllegalAccessException    {
+
         String result = "";
         String argName = "";
+
         for (int i = 0; i < args.length; i++)   {
             if (i % 2 == 0) {
                 argName = args[i].toString();
@@ -215,20 +211,20 @@ public class WebService {
         return result;
     }
 
-    private class AsyncCallWS extends AsyncTask<String, Void, Void> {
+    private class AsyncCallWS extends AsyncTask<String, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(String... params)  {
+        protected Boolean doInBackground(String... params)  {
             try  {
                 wsExecute();
             } catch (Exception e) {
                 Log.e("wsExecute", e.getMessage());
             }
-            return null;
+            return errorflag;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean result) {
             try {
                 wsFinished();
             } catch (Exception e)  {

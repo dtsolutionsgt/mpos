@@ -1,7 +1,6 @@
 package com.dtsgt.fel;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
@@ -25,7 +24,6 @@ import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
-import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
@@ -33,7 +31,6 @@ import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
-import com.dtsgt.mpos.Caja;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import com.dtsgt.mpos.WSEnv;
@@ -167,29 +164,18 @@ public class FELFactura extends PBase {
         lbl2.setText("Certificador : "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
 
-        /*
-        if (felcorel.isEmpty()) {
-            buildList();
-        } else {
-            facts.add(felcorel);
-        }
-        */
-
         facts.add(felcorel);
 
         ffail=0;fidx=0;
 
         if (facts.size()>0) {
             Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    if (multiflag) {
-                        contingencia();
-                    } else {
-                        Date currentTime = Calendar.getInstance().getTime();
-                        certificacion();
-                    }
+            Runnable mrunner= () -> {
+                if (multiflag) {
+                    contingencia();
+                } else {
+                    Date currentTime = Calendar.getInstance().getTime();
+                    certificacion();
                 }
             };
             mtimer.postDelayed(mrunner,200);
@@ -230,8 +216,12 @@ public class FELFactura extends PBase {
     }
 
     private void contingenciaFactura() {
-        buildFactXML();
-        fel.certificacion();
+        try {
+            buildFactXML();
+            fel.certificacion();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void certificacion() {

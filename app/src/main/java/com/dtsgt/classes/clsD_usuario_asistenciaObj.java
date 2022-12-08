@@ -119,6 +119,7 @@ public class clsD_usuario_asistenciaObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsD_usuario_asistencia item;
 
@@ -131,7 +132,6 @@ public class clsD_usuario_asistenciaObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsD_usuario_asistencia();
-
             item.codigo_asistencia=dt.getInt(0);
             item.empresa=dt.getInt(1);
             item.codigo_sucursal=dt.getInt(2);
@@ -140,7 +140,6 @@ public class clsD_usuario_asistenciaObj {
             item.inicio=dt.getLong(5);
             item.fin=dt.getLong(6);
             item.bandera=dt.getInt(7);
-
             items.add(item);
 
             dt.moveToNext();

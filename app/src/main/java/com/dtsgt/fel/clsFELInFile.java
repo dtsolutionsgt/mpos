@@ -15,6 +15,8 @@ import com.dtsgt.mpos.PBase;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -263,13 +265,28 @@ public class clsFELInFile {
 
                     try {
 
-                        //#EJC20200707: Obtener mensaje de error específico en respuesta.
-                        JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+                        String vResultado="";
+                        String vDescripcion="";
 
-                        for (int i=0; i<ArrayError.length(); i++) {
-                            JSONObject theJsonObject = ArrayError.getJSONObject(i);
-                            String name = theJsonObject.getString("mensaje_error");
-                            error = name;
+                        try {
+                            vResultado =jObj.getString("resultado");
+                            vDescripcion =jObj.getString("descripcion");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
+                            error+=vDescripcion;
+                        }else{
+                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                            JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                            for (int i=0; i<ArrayError.length(); i++) {
+                                JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                                String name = theJsonObject.getString("mensaje_error");
+                                error = name;
+                            }
+
                         }
 
                     } catch (JSONException e) {
@@ -342,7 +359,9 @@ public class clsFELInFile {
                 if (!errorflag){
                     wsFinishedF();
                 }else{
+                    errcert = errorflag;;
                     parent.felCallBack();
+                    return;
                 }
             } catch (Exception e)  {
                e.printStackTrace();
@@ -359,7 +378,7 @@ public class clsFELInFile {
         protected void onCancelled() {
             try {
                 firmcomplete=true;
-                errorflag=true;error="Se agotó tiempo de certificación";
+                errorflag=true;error+="Se agotó tiempo de certificación";
                 parent.felCallBack();
             } catch (Exception e) {
                 String ss=e.getMessage();
@@ -884,7 +903,9 @@ public class clsFELInFile {
             } else {
                 parent.felCallBack();
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class AsyncCallWSFA extends AsyncTask<String, Void, Void> {
@@ -893,7 +914,9 @@ public class clsFELInFile {
         protected Void doInBackground(String... params)  {
             try  {
                 wsExecuteFA();
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
@@ -901,7 +924,9 @@ public class clsFELInFile {
         protected void onPostExecute(Void result) {
             try {
                 wsFinishedFA();
-            } catch (Exception e)  {}
+            } catch (Exception e)  {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -1079,7 +1104,7 @@ public class clsFELInFile {
         xml+="<dte:DTE ID=\"DatosCertificados\">";
         xml+="<dte:DatosEmision ID=\"DatosEmision\">";
 
-        if (idconting.isEmpty()) { // sin contingencia
+        if (idconting.isEmpty() || idconting.equalsIgnoreCase("0") ) { // sin contingencia
             xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
         } else { // con contingencia
             xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
@@ -1212,6 +1237,9 @@ public class clsFELInFile {
             pNombreCliente=pNombreCliente.trim();
             if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase("\n") |
                 pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
+
+            String characterFilter = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]";
+            pDireccionCliente = pDireccionCliente.replaceAll(characterFilter,"");
 
             xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
             xml+="<dte:DireccionReceptor>";

@@ -4187,7 +4187,9 @@ public class Orden extends PBase {
     @Override
     protected void wsCallBack(Boolean throwing,String errmsg) {
         imgrefr.setVisibility(View.INVISIBLE);
+
         try {
+
             super.wsCallBack(throwing, errmsg);
 
             aplicaEstadoCaja();

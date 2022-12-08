@@ -33,6 +33,7 @@ import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
@@ -881,6 +882,7 @@ public class Menu extends PBase {
 			listdlg.add("Consumidor final");
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
+			listdlg.add("Limpiar tablas");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 				try {
@@ -911,6 +913,8 @@ public class Menu extends PBase {
 							msgAskCorregirFechas();break;
 						case 11:
 							inicioDia();break;
+						case 12:
+							Limpiar_Tablas_No_Criticas();break;
 
 					}
 					listdlg.dismiss();
@@ -1181,6 +1185,34 @@ public class Menu extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+	private void Limpiar_Tablas_No_Criticas() {
+
+		try {
+
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage("¿Borrar registros?");
+			dialog.setCancelable(false);
+			dialog.setPositiveButton("Si", (dialog12, which) -> {
+
+				try {
+
+					clsD_fel_bitacoraObj D_fel_bitacoraObj = new clsD_fel_bitacoraObj(this, Con, db);
+					D_fel_bitacoraObj.delete_all();
+					mu.msgbox("Registros eliminados.");
+
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+
+			});
+			dialog.setNegativeButton("No", (dialog1, which) -> {});
+			dialog.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
 
     private void msgAskValor(double monto,long ff) {
 

@@ -59,6 +59,7 @@ public class PBase extends Activity {
 		Con = new BaseDatos(this);
 
 	    opendb();
+
 	    ins=Con.Ins;upd=Con.Upd;
 
 		vApp=this.getApplication();
@@ -88,7 +89,9 @@ public class PBase extends Activity {
 		if (throwing) throw new Exception(errmsg);
 	}
 
-    public void wsCallBack(Boolean throwing,String errmsg,int errlevel) throws Exception { }
+    public void wsCallBack(Boolean throwing,String errmsg,int errlevel) throws Exception {
+		if (throwing) throw new Exception(errmsg);
+	}
 
     public void felCallBack() throws Exception {}
 
@@ -200,10 +203,12 @@ public class PBase extends Activity {
 	}
 
 	protected void setAddlog(String methodname,String msg,String info) {
+
 		BufferedWriter writer = null;
 		FileWriter wfile;
 
 		try {
+
 			String fname = Environment.getExternalStorageDirectory()+"/roadlog.txt";
 			wfile=new FileWriter(fname,true);
 			writer = new BufferedWriter(wfile);
