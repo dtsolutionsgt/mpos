@@ -5181,6 +5181,7 @@ public class Orden extends PBase {
     }
 
     private void cargaCliente() {
+
         try {
 
             gl.codigo_cliente=gl.emp*10;

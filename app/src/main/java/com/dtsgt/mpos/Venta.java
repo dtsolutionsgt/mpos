@@ -2891,13 +2891,16 @@ public class Venta extends PBase {
     private void crearPedido() {
 
         try {
+
             peditems.clear();
             if (crearPedidoEncabezado()) crearPedidoDetalle();
+
         } catch (Exception e) {
             msgbox(e.getMessage());return;
         }
 
         try {
+
             db.beginTransaction();
 
             for (int i = 0; i <peditems.size(); i++) {
@@ -2909,22 +2912,13 @@ public class Venta extends PBase {
 
             menuPedidos();
 
-            /*
-            try  {
-                db.execSQL("DELETE FROM T_VENTA");
-                db.execSQL("DELETE FROM T_COMBO");
-                listItems();
-            } catch (SQLException e){
-                mu.msgbox("Error : " + e.getMessage());
-            }
-            */
-
         } catch (Exception e) {
             db.endTransaction();msgbox(e.getMessage());
         }
     }
     
     private boolean crearPedidoEncabezado() {
+
         clsD_pedidoObj D_pedidoObj=new clsD_pedidoObj(this,Con,db);
         clsClasses.clsD_pedido item = clsCls.new clsD_pedido();
 

@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.webservice.srvInventConfirm;
@@ -280,6 +282,9 @@ public class ResCliente extends PBase {
 
     private void guardaDatos(int iscf) {
 
+        clsClasses.clsD_facturaf item;
+        clsD_facturafObj D_facturafObj = new clsD_facturafObj(this, Con, db);
+
         try {
 
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
@@ -291,6 +296,34 @@ public class ResCliente extends PBase {
             T_ordencuentaObj.first().correo=gl.gCorreoCliente;
             T_ordencuentaObj.first().cf=iscf;
             T_ordencuentaObj.update(T_ordencuentaObj.first());
+
+            //#EJC202212092141:Validar si ya existe o no el registro en D_FACTURAF si no existe lo inserta.
+            Cursor dt;
+
+            try {
+
+               String vSQL = "SELECT * FROM D_FACTURAF WHERE COREL='"+gl.ordcorel+"'";
+               dt = Con.OpenDT(sql);
+
+               if(dt!=null){
+
+                   dt.moveToFirst();
+
+               }else{
+
+                   item = clsCls.new clsD_facturaf();
+                   item.corel = gl.ordcorel;
+                   item.nombre=gl.gNombreCliente;
+                   item.nit=gl.gNITCliente;
+                   item.direccion=gl.gDirCliente;
+                   item.correo=gl.gCorreoCliente;
+                   D_facturafObj.add(item);
+               }
+
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

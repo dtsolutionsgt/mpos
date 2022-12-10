@@ -66,15 +66,15 @@ public class MainActivity extends PBase {
     private Spinner spin;
     private BaseDatosVersion dbVers;
     private LA_Login adapter;
-    private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<clsClasses.clsMenu>();
-    private ArrayList<String> spincode = new ArrayList<String>();
-    private ArrayList<String> spinlist = new ArrayList<String>();
+    private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<>();
+    private ArrayList<String> spincode = new ArrayList<>();
+    private ArrayList<String> spinlist = new ArrayList<>();
     private clsKeybHandler khand;
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.3.0.6"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.3.0.8"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
                                          // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;

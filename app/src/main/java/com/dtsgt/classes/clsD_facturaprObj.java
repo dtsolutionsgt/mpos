@@ -115,6 +115,7 @@ public class clsD_facturaprObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsD_facturapr item;
 
@@ -136,7 +137,6 @@ public class clsD_facturaprObj {
             item.propina=dt.getDouble(6);
             item.propperc=dt.getDouble(7);
             item.propextra=dt.getDouble(8);
-
             items.add(item);
 
             dt.moveToNext();

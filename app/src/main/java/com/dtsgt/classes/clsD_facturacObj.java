@@ -74,7 +74,6 @@ public class clsD_facturacObj {
     private void addItem(clsClasses.clsD_facturac item) {
 
         ins.init("D_facturac");
-
         ins.add("EMPRESA",item.empresa);
         ins.add("COREL",item.corel);
         ins.add("CODIGO_MENU",item.codigo_menu);
@@ -84,7 +83,6 @@ public class clsD_facturacObj {
         ins.add("IDSELECCION",item.idseleccion);
         ins.add("ORDEN",item.orden);
         ins.add("NOMBRE",item.nombre);
-
         db.execSQL(ins.sql());
 
     }

@@ -360,7 +360,6 @@ public class ResCaja extends PBase {
             P_res_sesionObj.fill("WHERE ID='"+corel+"'");
             gl.mesero_venta=P_res_sesionObj.first().vendedor;
 
-
             gl.numero_orden=corel+"_"+cuenta;
             gl.nummesapedido=numpedido;
 
@@ -388,7 +387,55 @@ public class ResCaja extends PBase {
         }
     }
 
+    private boolean existeCliente(String NIT) {
+
+        Cursor DT;
+        boolean resultado=false;
+
+        try{
+
+            if (mu.emptystr(NIT)) {
+                resultado=false;
+            } else {
+
+                sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL FROM P_CLIENTE " +
+                        "WHERE NIT = '" + NIT + "'";
+                DT=Con.OpenDT(sql);
+
+                if (DT != null){
+
+                    if (DT.getCount()>0){
+
+                        DT.moveToFirst();
+
+                        gl.rutatipo="V";
+                        gl.cliente=DT.getString(0);
+                        gl.nivel=gl.nivel_sucursal;
+                        gl.percepcion=0;
+                        gl.contrib=DT.getString(6);;
+                        gl.scancliente = gl.cliente;
+                        gl.gNombreCliente =DT.getString(1);
+                        gl.gNITCliente =NIT;
+                        gl.gDirCliente =DT.getString(4);
+                        gl.media=DT.getInt(5);
+                        gl.codigo_cliente=DT.getInt(7);
+
+                        resultado=true;
+
+                    }
+                }
+                if (DT!=null) DT.close();
+            }
+
+        } catch (Exception e){
+            mu.toast("Ocurrió un error buscando al cliente");
+            resultado=false;
+        }
+        return resultado;
+    }
+
     private boolean addItem(){
+
         clsClasses.clsT_venta venta,ventau=null;
         clsClasses.clsT_combo combo;
         clsClasses.clsT_ordencombo citem;
@@ -1012,6 +1059,7 @@ public class ResCaja extends PBase {
     }
 
     private void cargaCliente() {
+
         try {
 
             gl.codigo_cliente=gl.emp*10;
@@ -1025,6 +1073,7 @@ public class ResCaja extends PBase {
                 gl.gDirCliente = T_ordencuentaObj.first().direccion;
                 gl.gCorreoCliente = T_ordencuentaObj.first().correo;
                 gl.gNITcf=T_ordencuentaObj.first().cf==1;
+                existeCliente(gl.gNITCliente);
             } else {
                 gl.gNombreCliente = "Consumidor final";
                 gl.gNITCliente ="C.F.";
@@ -1147,7 +1196,9 @@ public class ResCaja extends PBase {
     }
 
     private void showMenuMesaPendiente() {
+
         try {
+
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(ResCaja.this,"Mesa "+mesa+" , Cuenta #"+cuenta);
 

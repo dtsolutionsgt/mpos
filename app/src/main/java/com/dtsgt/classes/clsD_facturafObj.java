@@ -20,7 +20,7 @@ public class clsD_facturafObj {
 
     private String sel="SELECT * FROM D_FACTURAF";
     private String sql;
-    public ArrayList<clsClasses.clsD_facturaf> items= new ArrayList<clsClasses.clsD_facturaf>();
+    public ArrayList<clsClasses.clsD_facturaf> items= new ArrayList<>();
 
     public clsD_facturafObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
         cont=context;
@@ -113,19 +113,25 @@ public class clsD_facturafObj {
         items.clear();
 
         dt=Con.OpenDT(sq);
-        count =dt.getCount();
-        if (dt.getCount()>0) dt.moveToFirst();
 
-        while (!dt.isAfterLast()) {
+        if (dt!=null){
 
-            item = clsCls.new clsD_facturaf();
-            item.corel=dt.getString(0);
-            item.nombre=dt.getString(1);
-            item.nit=dt.getString(2);
-            item.direccion=dt.getString(3);
-            item.correo = dt.getString(4);
-            items.add(item);
-            dt.moveToNext();
+            count =dt.getCount();
+
+            if (dt.getCount()>0) dt.moveToFirst();
+
+            while (!dt.isAfterLast()) {
+
+                item = clsCls.new clsD_facturaf();
+                item.corel=dt.getString(0);
+                item.nombre=dt.getString(1);
+                item.nit=dt.getString(2);
+                item.direccion=dt.getString(3);
+                item.correo = dt.getString(4);
+                items.add(item);
+                dt.moveToNext();
+            }
+
         }
 
         if (dt!=null) dt.close();

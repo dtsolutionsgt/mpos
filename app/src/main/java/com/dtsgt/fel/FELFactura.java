@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import com.dtsgt.mpos.WSEnv;

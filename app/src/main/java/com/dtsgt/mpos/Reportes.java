@@ -169,10 +169,9 @@ public class Reportes extends PBase {
     //region Events
 
     public void printDoc() {
+
         try{
             printEpson();
-            //prn.printask();
-
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -410,7 +409,9 @@ public class Reportes extends PBase {
     }
 
     public void GeneratePrint(View view){
+
         try{
+
             if(!report) {
                 AskReport();
                 return;
@@ -421,6 +422,7 @@ public class Reportes extends PBase {
                 app.doPrint();
                 return;
             }
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("GeneratePrint: "+e);
@@ -428,6 +430,7 @@ public class Reportes extends PBase {
     }
 
     private void AskReport() {
+
         try{
 
             if(dateini <= 0){

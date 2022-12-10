@@ -116,22 +116,14 @@ public class FELContAnul extends PBase {
 
         if (facts.size()>0) {
             Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    contingencia();
-                }
-            };
+            Runnable mrunner= () -> contingencia();
             mtimer.postDelayed(mrunner,200);
         } else {
             Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    gl.felcorel="";gl.feluuid="";
-                    startActivity(new Intent(FELContAnul.this,FELFactura.class));
-                    finish();return;
-                }
+            Runnable mrunner= () -> {
+                gl.felcorel="";gl.feluuid="";
+                startActivity(new Intent(FELContAnul.this,FELFactura.class));
+                finish();return;
             };
             mtimer.postDelayed(mrunner,500);
         }
