@@ -3,19 +3,23 @@ package com.dtsgt.fel;
 
 // InFile FEL Factura
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.view.Gravity;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dtsgt.base.DateUtils;
 import com.dtsgt.mpos.PBase;
+import com.dtsgt.mpos.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
@@ -40,17 +45,19 @@ public class clsFELInFile {
     public Boolean errcert =false;
     public Boolean halt=false;
     public boolean autocancel=false;
-    public int errlevel,response;
+    public int errlevel, responsecode;
     public long idcontingencia;
 
     public String xml,xmlanul;
     public String fact_uuid,fact_serie,fact_numero;
     public String ret_uuid,ret_serie,ret_numero;
 
-    public int timeout=6000;
+    public int timeout=2000;
     public FELFactura owner;
 
     public long ftime1=1,ftime2=-1,ftime3=-1;
+
+    private DateUtils DU = new DateUtils();;
 
     // Parametrizacion FEL
 
@@ -97,16 +104,44 @@ public class clsFELInFile {
     private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/v2/dte/";
     private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/v2/dte/";
     private String WSURLIdUni="https://certificador.feel.com.gt/fel/consulta/dte/v2/identificador_unico";
-
-    //#EJC20200527:Versión ant (1)
-    //private String WSURLCert="https://certificador.feel.com.gt/fel/certificacion/dte/";
-    //private String WSURLAnul="https://certificador.feel.com.gt/fel/anulacion/dte/";
+    private TextView lblProgress;
 
     public clsFELInFile(Context context, PBase Parent,int conTimeout) {
         cont=context;
         parent=Parent;
         timeout=conTimeout;
         errlevel=0;error="";errorflag=false;errorcon=false;
+
+        //#EJC202212131153:Tratar de compartir el label que se actualiza.
+        try {
+            lblProgress = ((Activity)context).findViewById(R.id.msgHeader);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateLabel(String msg) {
+
+        try {
+
+            Handler handler = new Handler(Looper.getMainLooper());
+            Runnable runnable = () -> handler.postDelayed(() -> {
+                if (lblProgress!=null){
+                    try {
+                        lblProgress.setText(msg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            },200);
+            new Thread(runnable).start();
+
+            //Looper.loop();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void certificacion() {
@@ -132,9 +167,16 @@ public class clsFELInFile {
     }
 
     public void anulacion(String fuuid) {
-        fact_uuid=fuuid;
-        errlevel=3;error="";errorflag=false;constat=true;
-        sendJSONFirmAnul();
+        try {
+            fact_uuid=fuuid;
+            errlevel=3;
+            error="";
+            errorflag=false;
+            constat=true;
+            sendJSONFirmAnul();
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+        }
     }
 
     //region Firma
@@ -161,7 +203,7 @@ public class clsFELInFile {
         }
     }
 
-    private void executeWSFirm() {
+    private void executeWSFirm() throws Exception {
 
         try {
 
@@ -171,6 +213,9 @@ public class clsFELInFile {
 
             firmcomplete=false;
             halt=false;
+
+            updateLabel("Firmando documento ...");
+
             wstask = new AsyncCallWS();
             wstask.execute();
 
@@ -185,7 +230,7 @@ public class clsFELInFile {
         URL url;
         HttpURLConnection connection = null;
         JSONObject jObj = null;
-        response=0;
+        responsecode =0;
         error = "";
         errfirma=false;
         errorflag = false;
@@ -199,17 +244,23 @@ public class clsFELInFile {
             connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
-            connection.setRequestProperty("Content-Length",""+Integer.toString(jsfirm.getBytes().length));
+            connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
-
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
+            //#EJC202212131029: Agregué SocketTimeoutException.
+            updateLabel("Firma: Conectando a Infile...");
+
             try {
                 connection.connect();
+            } catch (SocketTimeoutException s){
+                error=s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             } catch (IOException e) {
                 error=e.getMessage();
                 errorcon=true;errorflag=true;constat=false;
@@ -218,8 +269,14 @@ public class clsFELInFile {
 
             DataOutputStream wr = null;
 
+            updateLabel("Firma: Procesando respuesta...");
+
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (SocketTimeoutException s){
+                error=s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             } catch (IOException e) {
                 error=e.getMessage();
                 errorcon=true;errorflag=true;constat=false;
@@ -232,15 +289,23 @@ public class clsFELInFile {
 
             InputStream is;
 
+            updateLabel("Firma: Respuesta obtenida...");
+
             try {
                 is= connection.getInputStream();
+            } catch (SocketTimeoutException s){
+                error=s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             } catch (IOException e) {
                 is= connection.getInputStream();
             }
 
-            response=connection.getResponseCode();
+            responsecode =connection.getResponseCode();
 
-            if (response==200) {
+            if (responsecode ==200) {
+
+                updateLabel("Firma: Respuesta: Ok.");
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
@@ -296,18 +361,151 @@ public class clsFELInFile {
                 }
 
             } else {
-                error=""+response;errorflag=true;errfirma=true;
+                error=""+ responsecode;errorflag=true;errfirma=true;
+                updateLabel("Firma: Error en respuesta: " + responsecode);
                 return errorflag;
             }
 
+        } catch (SocketTimeoutException s){
+            error=s.getMessage();
+            errorcon=true;errorflag=true;constat=false;
+            return errorflag;
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;errfirma=true;
             return errorflag;
         } finally {
-            //if (connection!=null) connection.disconnect();
+
         }
         return errorflag;
     }
+
+//    private Boolean wsExecuteF(){
+//
+//        URL url;
+//        HttpURLConnection connection = null;
+//        JSONObject jObj = null;
+//        response=0;
+//        error = "";
+//        errfirma=false;
+//        errorflag = false;
+//        modoiduni=false;
+//
+//        try {
+//
+//            url = new URL(WSURL);
+//            connection = (HttpURLConnection)url.openConnection();
+//            connection.setConnectTimeout(timeout);
+//            connection.setReadTimeout(timeout);
+//            connection.setRequestMethod("POST");
+//            connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
+//            connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
+//            connection.setRequestProperty("usuario",fel_usuario_certificacion);
+//            connection.setRequestProperty("llave", fel_llave_certificacion);
+//            connection.setRequestProperty("identificador", mpos_identificador_fact);
+//            connection.setUseCaches (false);
+//            connection.setDoInput(true);
+//            connection.setDoOutput(true);
+//
+//            try {
+//                connection.connect();
+//            } catch (IOException e) {
+//                error=e.getMessage();
+//                errorcon=true;errorflag=true;constat=false;
+//                return errorflag;
+//            }
+//
+//            DataOutputStream wr = null;
+//
+//            try {
+//                wr = new DataOutputStream(connection.getOutputStream ());
+//            } catch (IOException e) {
+//                error=e.getMessage();
+//                errorcon=true;errorflag=true;constat=false;
+//                return null;
+//            }
+//
+//            wr.writeBytes (jsfirm);
+//            wr.flush ();
+//            wr.close ();
+//
+//            InputStream is;
+//
+//            try {
+//                is= connection.getInputStream();
+//            } catch (IOException e) {
+//                is= connection.getInputStream();
+//            }
+//
+//            response=connection.getResponseCode();
+//
+//            if (response==200) {
+//
+//                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+//                String line;
+//                StringBuilder sb = new StringBuilder();
+//
+//                while((line = rd.readLine()) != null) {
+//                    sb.append(line + "\n");
+//                }
+//                rd.close();
+//
+//                String jstr=sb.toString();
+//                jObj = new JSONObject(jstr);
+//
+//                error= jObj.getString("descripcion");
+//
+//                if (jObj.getBoolean("resultado")) {
+//                    errorflag=false;
+//                    firma=jObj.getString("archivo");
+//                } else {
+//
+//                    errorflag=true;
+//
+//                    try {
+//
+//                        String vResultado="";
+//                        String vDescripcion="";
+//
+//                        try {
+//                            vResultado =jObj.getString("resultado");
+//                            vDescripcion =jObj.getString("descripcion");
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
+//                            error+=vDescripcion;
+//                        }else{
+//                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
+//                            JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+//
+//                            for (int i=0; i<ArrayError.length(); i++) {
+//                                JSONObject theJsonObject = ArrayError.getJSONObject(i);
+//                                String name = theJsonObject.getString("mensaje_error");
+//                                error = name;
+//                            }
+//
+//                        }
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//
+//            } else {
+//                error=""+response;errorflag=true;errfirma=true;
+//                return errorflag;
+//            }
+//
+//        } catch (Exception e) {
+//            error=e.getMessage();errorflag=true;errfirma=true;
+//            return errorflag;
+//        } finally {
+//            //if (connection!=null) connection.disconnect();
+//        }
+//        return errorflag;
+//    }
 
     private void wsFinishedF() {
 
@@ -324,10 +522,12 @@ public class clsFELInFile {
 
                     Date currentTime = Calendar.getInstance().getTime();
 
+                    updateLabel("Enviando documento firmado");
+
                     sendJSONCert();
 
                     try {
-                        parent.felProgress("Certificando factura ...");
+                        updateLabel("Enviando Certificación ...");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -369,10 +569,22 @@ public class clsFELInFile {
         }
 
         @Override
-        protected void onPreExecute() {}
+        protected void onPreExecute() {
+            try {
+                updateLabel("Procesando Certificación: " + DU.sfecha(DU.getActDateTime())+" "+DU.shora(DU.getActDateTime()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         @Override
-        protected void onProgressUpdate(Void... values) {}
+        protected void onProgressUpdate(Void... values) {
+            try {
+                updateLabel("Certificando: "+ DU.getActDateTime());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         @Override
         protected void onCancelled() {
@@ -412,21 +624,29 @@ public class clsFELInFile {
             jsonc.put("xml_dte",firma);
 
             Handler mtimer = new Handler();
-            Runnable mrunner= () -> executeWSCert();
-            mtimer.postDelayed(mrunner,1000);
+            Runnable mrunner= () -> {
+                try {
+                    executeWSCert();
+                } catch (Exception e) {
+                    error=e.getMessage();errorflag=true;;
+                }
+            };
+            mtimer.postDelayed(mrunner,100);
 
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
         }
     }
 
-    public void executeWSCert() {
+    public void executeWSCert() throws Exception {
 
         try {
 
             jscert = jsonc.toString();
             errorflag=false;
             error="";
+
+            updateLabel("Certificando Factura...");
 
             AsyncCallWSCert wstask = new AsyncCallWSCert();
             wstask.execute();
@@ -441,7 +661,7 @@ public class clsFELInFile {
         URL url;
         HttpsURLConnection connection = null;
         JSONObject jObj = null;
-        response=0;
+        responsecode =0;
 
         errcert=false;
         errorflag =false;
@@ -457,20 +677,27 @@ public class clsFELInFile {
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
-
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
 
             DataOutputStream wr = null;
 
+            updateLabel("Cert: Conectando a Infile.");
+
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (SocketTimeoutException s){
+                error=s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             } catch (IOException e) {
                 error="No hay conexión al internet";
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             }
+
+            updateLabel("Cert: Enviando documento.");
 
             wr.writeBytes (jscert);
             wr.flush ();
@@ -478,8 +705,14 @@ public class clsFELInFile {
 
             InputStream is=null;
 
+            updateLabel("Cert: Respuesta obtenida.");
+
             try {
                 is= connection.getInputStream();
+            } catch (SocketTimeoutException s){
+                error=s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             } catch (IOException e) {
                 try {
                     is= connection.getInputStream();
@@ -492,11 +725,13 @@ public class clsFELInFile {
                 }
             }
 
-            response=connection.getResponseCode();
+            responsecode =connection.getResponseCode();
 
             if (errcert) return errcert;
 
-            if (response==200) {
+            if (responsecode ==200) {
+
+                updateLabel("Cert: Respuesta: OK." );
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
@@ -523,6 +758,8 @@ public class clsFELInFile {
                 ret_numero=jObj.getString("numero");
                 errcert = false;
                 errorflag =false;
+
+                updateLabel("Factura Certificada: " + fact_numero);
 
                 if (duplidx>1) {
                     //#EJC20200710: No firmar factura con un identificador previamente enviado...
@@ -562,9 +799,14 @@ public class clsFELInFile {
                 duplicado=false;
 
             } else {
-                error=""+response;errorflag=true;errcert=true;
+                updateLabel("Error al certificar: " + responsecode);
+                error=""+ responsecode;errorflag=true;errcert=true;
                 return errorflag;
             }
+        } catch (SocketTimeoutException s){
+            error=s.getMessage();
+            errorcon=true;errorflag=true;constat=false;
+            return errorflag;
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;errcert=true;
         } finally {
@@ -577,7 +819,10 @@ public class clsFELInFile {
 
         try  {
             if (!errcert) {
-                sendJSONIDUnico();
+                //#EJC202212131330:Redundancia en la consulta, de todas formas da error dentro.
+                //sendJSONIDUnico();
+                errorflag=errcert;error="";
+                parent.felCallBack();
             } else if(errorflag||errcert) {
                 parent.felCallBack();
                 throw new Exception("Error al certificar documento: " + error);
@@ -615,10 +860,14 @@ public class clsFELInFile {
         }
 
         @Override
-        protected void onPreExecute() {}
+        protected void onPreExecute() {
+
+        }
 
         @Override
-        protected void onProgressUpdate(Void... values) {}
+        protected void onProgressUpdate(Void... values) {
+
+        }
 
     }
 
@@ -671,7 +920,7 @@ public class clsFELInFile {
         URL url;
         HttpsURLConnection connection = null;
         JSONObject jObj = null;
-        response=0;
+        responsecode =0;
 
         errcert=false;
 
@@ -686,7 +935,6 @@ public class clsFELInFile {
             connection.setRequestProperty("usuario",fel_usuario_certificacion);
             connection.setRequestProperty("llave", fel_llave_certificacion);
             connection.setRequestProperty("identificador", mpos_identificador_fact);
-
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -706,9 +954,9 @@ public class clsFELInFile {
 
             InputStream is= connection.getInputStream();
 
-            response=connection.getResponseCode();
+            responsecode =connection.getResponseCode();
 
-            if (response==202) {
+            if (responsecode ==202) {
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;

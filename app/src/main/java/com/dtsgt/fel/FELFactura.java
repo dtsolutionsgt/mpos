@@ -31,7 +31,6 @@ import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
-import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import com.dtsgt.mpos.WSEnv;
@@ -92,11 +91,11 @@ public class FELFactura extends PBase {
 
         super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.msgHeader);lbl1.setText("");
-        lbl2 = (TextView) findViewById(R.id.lblWS);lbl2.setText("");
-        lbl3 = (TextView) findViewById(R.id.textView152);lbl3.setText("");
-        lblHalt = (TextView) findViewById(R.id.textView218);lblHalt.setVisibility(View.VISIBLE);
-        pbar = (ProgressBar) findViewById(R.id.progressBar);
+        lbl1 = findViewById(R.id.msgHeader);lbl1.setText("");
+        lbl2 = findViewById(R.id.lblWS);lbl2.setText("");
+        lbl3 = findViewById(R.id.textView152);lbl3.setText("");
+        lblHalt = findViewById(R.id.textView218);lblHalt.setVisibility(View.VISIBLE);
+        pbar = findViewById(R.id.progressBar);
         pbar.setVisibility(View.INVISIBLE);
 
         felcorel=gl.felcorel;ffcorel=felcorel;
@@ -140,11 +139,6 @@ public class FELFactura extends PBase {
             fel.fraseIVA=1;
         }
 
-        /*
-        if(fel.fraseIVA==4) fel.fraseIVA=2;
-        if(fel.fraseISR==4) fel.fraseISR=2;
-        */
-
         fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
         fel.iduniflag=false;fel.halt=false;
 
@@ -169,19 +163,26 @@ public class FELFactura extends PBase {
 
         ffail=0;fidx=0;
 
-        if (facts.size()>0) {
-            Handler mtimer = new Handler();
-            Runnable mrunner= () -> {
-                if (multiflag) {
-                    contingencia();
-                } else {
-                    Date currentTime = Calendar.getInstance().getTime();
-                    certificacion();
-                }
-            };
-            mtimer.postDelayed(mrunner,200);
-        } else {
-            finish();return;
+        try {
+
+            if (facts.size()>0) {
+                Handler mtimer = new Handler();
+                Runnable mrunner= () -> {
+                    if (multiflag) {
+                        contingencia();
+                    } else {
+                        Date currentTime = Calendar.getInstance().getTime();
+                        certificacion();
+                    }
+                };
+                mtimer.postDelayed(mrunner,100);
+            } else {
+                finish();
+                return;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -193,12 +194,7 @@ public class FELFactura extends PBase {
         lblHalt.setVisibility(View.INVISIBLE);
 
         Handler mtimer = new Handler();
-        Runnable mrunner=new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        };
+        Runnable mrunner= () -> finish();
         mtimer.postDelayed(mrunner,200);
 
     }
@@ -211,14 +207,23 @@ public class FELFactura extends PBase {
 
         updateLabel();
 
-        Handler mtimer = new Handler();
-        Runnable mrunner = () -> contingenciaFactura();
-        mtimer.postDelayed(mrunner, 200);
+        try {
+
+            Handler mtimer = new Handler();
+            Runnable mrunner = () -> contingenciaFactura();
+            mtimer.postDelayed(mrunner, 200);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void contingenciaFactura() {
         try {
+            lbl1.setText("Construyendo XML...");
             buildFactXML();
+            lbl1.setText("Certificando Factura...");
             fel.certificacion();
         } catch (Exception e) {
             e.printStackTrace();
@@ -227,7 +232,8 @@ public class FELFactura extends PBase {
 
     private void certificacion() {
 
-        lbl1.setText("Procesando firma . . .");lbl3.setText("");
+        lbl1.setText("Procesando firma . . .");
+        lbl3.setText("");
 
         try {
 
@@ -257,7 +263,9 @@ public class FELFactura extends PBase {
 
         try {
 
+            lbl1.setText("Construyendo XML...");
             buildFactXML();
+            lbl1.setText("Certificando Factura...");
             fel.certificacion();
 
         } catch (Exception e) {
@@ -268,7 +276,7 @@ public class FELFactura extends PBase {
 
     private void contingencia() {
         try {
-            lbl1.setText("Certificando factura  . . .");
+            lbl1.setText("Guardando factura  . . .");
             lbl3.setText("");
             ffail=0;
             contmode=true;
@@ -294,10 +302,13 @@ public class FELFactura extends PBase {
             fel.ftime3=systemTime.getTime();
 
             if (fel.ftime1>0) {
+
                 if (fel.ftime2>0) {
+
                     tdiff=fel.ftime2-fel.ftime1;
                     tsec=((double) tdiff)/1000;
                     fbita.tiempo_firma=tsec;
+
                     if (fel.ftime3>0) {
                         tdiff=fel.ftime3-fel.ftime2;
                         tsec=((double) tdiff)/1000;
@@ -305,12 +316,16 @@ public class FELFactura extends PBase {
                     }
 
                     fbita.estado=1;
+
                     if (fel.halt) fbita.estado=0;
 
                     D_fel_bitacoraObj.update(fbita);
                 }
             }
-        } catch (Exception e) {}
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         try {
@@ -1188,7 +1203,7 @@ public class FELFactura extends PBase {
         clsD_fel_errorObj D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
         clsClasses.clsD_fel_error item=clsCls.new clsD_fel_error();
 
-        String err=fel.response+" "+fel.error;
+        String err=fel.responsecode +" "+fel.error;
         String cor=ffcorel;
         int nivel=fel.errlevel; // nivel=1 - firma  , 2 - certificacion
 

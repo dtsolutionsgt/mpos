@@ -563,15 +563,9 @@ public class FELVerificacion extends PBase {
 
     private void updateLabel() {
         Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            public void run() {
-                handler.post(new Runnable(){
-                    public void run() {
-                        lbl1.setText("Certificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
-                    }
-                });
-            }
-        };
+        Runnable runnable = () -> handler.post(() -> {
+            lbl1.setText("Certificando factura "+(fidx+1)+" / "+ftot);lbl3.setText("");
+        });
         new Thread(runnable).start();
     }
 

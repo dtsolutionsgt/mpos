@@ -126,11 +126,24 @@ public class PedidoDet extends PBase {
 
         app.getURL();
 
-        ws=new WebService(PedidoDet.this,gl.wsurl);
+        try {
 
-        loadItem();
+            ws=new WebService(PedidoDet.this,gl.wsurl);
 
-        listItems();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+
+            loadItem();
+
+            listItems();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     //region Events

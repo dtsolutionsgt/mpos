@@ -52,10 +52,10 @@ public class Reportes extends PBase {
     private String prodid,savecant;
 
     private ArrayList<clsClasses.clsCD> itemsFill;
-    private ArrayList<clsClasses.clsVenta> items= new ArrayList<clsClasses.clsVenta>();
-    private ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
-    private ArrayList<String> spinlist = new ArrayList<String>();
-    private ArrayList<String> spincode = new ArrayList<String>();
+    private final ArrayList<clsClasses.clsVenta> items= new ArrayList<clsClasses.clsVenta>();
+    private final ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
+    private final ArrayList<String> spinlist = new ArrayList<String>();
+    private final ArrayList<String> spincode = new ArrayList<String>();
     private ListAdaptExist adapter;
     private ListAdaptProd adaptFill;
     private ListReportVenta adapt;
@@ -71,7 +71,10 @@ public class Reportes extends PBase {
     private clsP_clienteObj cli;
 
     private int tipo, cantExistencia,validCli;
-    private String CERO="0", nameProd, nameVend, id_item;
+    private final String CERO="0";
+    private String nameProd;
+    private String nameVend;
+    private String id_item;
     private clsClasses.clsVenta itemV;
 
     private Reportes.clsDocExist doc;
@@ -100,17 +103,17 @@ public class Reportes extends PBase {
 
         super.InitBase();
 
-        lvReport = (ListView) findViewById(R.id.listViewReport);lvReport.setVisibility(View.INVISIBLE);
-        txtFill = (TextView) findViewById(R.id.txtFill);txtFill.setVisibility(View.INVISIBLE);
-        lblProd = (TextView) findViewById(R.id.txtProdName);
-        lblDateini = (TextView) findViewById(R.id.lblDateini);
-        lblDatefin = (TextView) findViewById(R.id.lblDatefin);
-        lblImp = (TextView) findViewById(R.id.txtBtn);
-        lblFact = (TextView) findViewById(R.id.txtFact);
-        lblTit = (TextView) findViewById(R.id.lblTit);
-        txtTitle = (TextView) findViewById(R.id.txtTitle);txtTitle.setVisibility(View.INVISIBLE);
-        btnClear = (ImageView) findViewById(R.id.imageView37);btnClear.setVisibility(View.INVISIBLE);
-        cbDet = (CheckBox) findViewById(R.id.cbDet);
+        lvReport = findViewById(R.id.listViewReport);lvReport.setVisibility(View.INVISIBLE);
+        txtFill = findViewById(R.id.txtFill);txtFill.setVisibility(View.INVISIBLE);
+        lblProd = findViewById(R.id.txtProdName);
+        lblDateini = findViewById(R.id.lblDateini);
+        lblDatefin = findViewById(R.id.lblDatefin);
+        lblImp = findViewById(R.id.txtBtn);
+        lblFact = findViewById(R.id.txtFact);
+        lblTit = findViewById(R.id.lblTit);
+        txtTitle = findViewById(R.id.txtTitle);txtTitle.setVisibility(View.INVISIBLE);
+        btnClear = findViewById(R.id.imageView37);btnClear.setVisibility(View.INVISIBLE);
+        cbDet = findViewById(R.id.cbDet);
 
         lblProd.setVisibility(View.INVISIBLE);
 
@@ -129,7 +132,7 @@ public class Reportes extends PBase {
 
         lblTit.setText(gl.titReport);
         getFechaAct();
-        itemsFill= new ArrayList<clsClasses.clsCD>();
+        itemsFill= new ArrayList<>();
 
         report = false;
 
@@ -734,8 +737,8 @@ public class Reportes extends PBase {
 
                     final int mesActual = month + 1;
 
-                    String diaFormateado = (dayOfMonth < 10)? CERO + String.valueOf(dayOfMonth):String.valueOf(dayOfMonth);
-                    String mesFormateado = (mesActual < 10)? CERO + String.valueOf(mesActual):String.valueOf(mesActual);
+                    String diaFormateado = (dayOfMonth < 10)? CERO + dayOfMonth :String.valueOf(dayOfMonth);
+                    String mesFormateado = (mesActual < 10)? CERO + mesActual :String.valueOf(mesActual);
 
                     if(dateTxt){
                         lblDatefin.setText(diaFormateado + BARRA + mesFormateado + BARRA + year);

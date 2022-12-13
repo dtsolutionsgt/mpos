@@ -57,17 +57,20 @@ public class clsRepBuilder {
 	// Main
 	
 	public String build() {
+
 		String s,ss="";
 		
 		if (items.size()==0) return "";
 		
 		try {
+
 		    for (int i = 0; i < items.size(); i++) {
 			   	s=items.get(i);
 			   	ss=ss+s+"\r\n";
 			}
 		    
 		    return ss;
+
 		} catch(Exception e){
 			return "";
 		}
@@ -83,6 +86,7 @@ public class clsRepBuilder {
 	}
 
 	public boolean saverep(boolean append){
+
 		String s;
 		int lns=0;
 

@@ -93,9 +93,15 @@ public class PBase extends Activity {
 		if (throwing) throw new Exception(errmsg);
 	}
 
-    public void felCallBack() throws Exception {}
+    public void felCallBack() throws Exception {
 
-    public void felProgress(String msg) throws Exception {}
+	}
+
+    public void felProgress(String msg) throws Exception {
+//		Handler mtimer = new Handler();
+//		Runnable mrunner = () -> lbl1.setText(msg);
+//		mtimer.postDelayed(mrunner,50);
+	}
 
 
     // Aux
@@ -235,10 +241,17 @@ public class PBase extends Activity {
 	}
 
 	public boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager
-				= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+
+		boolean TieneConexion =false;
+
+		try {
+			ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+			return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return  TieneConexion;
 	}
 
 	// Activity Events

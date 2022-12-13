@@ -164,7 +164,9 @@ public class printEpson extends printBase{
 	    }
 	 
         @Override
-        protected void onPreExecute() {}
+        protected void onPreExecute() {
+
+		}
 	 
         @Override
         protected void onProgressUpdate(Void... values) {}

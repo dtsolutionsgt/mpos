@@ -4118,15 +4118,9 @@ public class Venta extends PBase {
 
                 if (gl.impresion_comanda) {
                     gl.impresion_comanda=false;
-
                     Handler mtimerc = new Handler();
-                    Runnable mrunnerc=new Runnable() {
-                        @Override
-                        public void run() {
-                            ejecutaImpresionComanda();
-                        }
-                    };
-                    mtimerc.postDelayed(mrunnerc,1500);
+                    Runnable mrunnerc= () -> ejecutaImpresionComanda();
+                    mtimerc.postDelayed(mrunnerc,1000);
                 }
             } else {}
 

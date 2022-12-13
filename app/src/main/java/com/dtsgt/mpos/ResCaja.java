@@ -120,14 +120,12 @@ public class ResCaja extends PBase {
         gl.ventalock=false;
 
         getURL();
+
         wso=new wsOpenDT(gl.wsurl);wsidle=true;
+
         rnBroadcastCallback = () -> broadcastCallback();
 
-        rnDetailCallback = new Runnable() {
-            public void run() {
-                detailCallback();
-            }
-        };
+        rnDetailCallback = () -> detailCallback();
 
         /*
         rnOrdenesNuevos = new Runnable() {
@@ -762,11 +760,8 @@ public class ResCaja extends PBase {
 
     private void showButton() {
         Handler mtimer = new Handler();
-        Runnable mrunner=new Runnable() {
-            @Override
-            public void run() {
-                lblRec.setVisibility(View.VISIBLE);imgRec.setVisibility(View.VISIBLE);
-            }
+        Runnable mrunner= () -> {
+            lblRec.setVisibility(View.VISIBLE);imgRec.setVisibility(View.VISIBLE);
         };
         mtimer.postDelayed(mrunner,2000);
     }

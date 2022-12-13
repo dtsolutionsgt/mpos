@@ -43,6 +43,7 @@ public class clsDisTouchHandler {
 
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+
                 longclick=false;
                 handler.postDelayed(mLongPressed, 500);
 
@@ -53,6 +54,7 @@ public class clsDisTouchHandler {
                 break;
 
             case MotionEvent.ACTION_UP:
+
                 handler.removeCallbacks(mLongPressed);
 
                 RelativeLayout.LayoutParams layoutParamssn = (RelativeLayout.LayoutParams) view.getLayoutParams();

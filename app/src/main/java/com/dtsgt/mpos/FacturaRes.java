@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Color;
@@ -286,17 +287,13 @@ public class FacturaRes extends PBase {
 		    }
 		};
 
-		printclose= new Runnable() {
-		    public void run() {
-		    	//FacturaRes.super.finish();
-		    }
+		printclose= () -> {
+			//FacturaRes.super.finish();
 		};
 
-		printexit= new Runnable() {
-			public void run() {
-                gl.ventalock=false;
-			    FacturaRes.super.finish();
-			}
+		printexit= () -> {
+			gl.ventalock=false;
+			FacturaRes.super.finish();
 		};
 
 		prn=new printer(this,printexit,gl.validimp);
@@ -821,10 +818,12 @@ public class FacturaRes extends PBase {
 	}
 
  	private void finishOrder() {
+
 		try {
 
 			if (gl.rol==4) {
-				toast("El mesero no puede realizar venta en esta pantalla");return;
+				toast("El mesero no puede realizar venta en esta pantalla");
+				return;
 			}
 
 			if (!saved) {
@@ -845,10 +844,11 @@ public class FacturaRes extends PBase {
 			gl.pickup = false;
 			gl.sin_propina=false;
 
-			if (gl.pelDespacho) generaOrdenDespacho();
+			if (gl.pelDespacho) {
+				generaOrdenDespacho();
+			}
 
 			if (!app.usaFEL()) {
-
 				if ( gl.peEnvio) {
 					if (isNetworkAvailable()) {
 						impresionDocumento();
@@ -861,30 +861,13 @@ public class FacturaRes extends PBase {
 					impresionDocumento();
 				}
 
-            /*
-            gl.InvCompSend=true;
-            impresionDocumento();
-            if ( gl.peEnvio) {
-                browse=4;
-                gl.autocom = 1;
-                startActivity(new Intent(this,WSEnv.class));
-            }
-            */
 			} else {
-				//if (isNetworkAvailable()) {
 				browse=2;
 				gl.felcorel=corel;gl.feluuid="";
 				gl.codigo_cliente=0;
 				startActivity(new Intent(this, FELFactura.class));
-				/*
-            } else {
-                marcaFacturaContingencia();
-                toast("No hay conexion a internet");
-                impresionDocumento();
-            }
-            */
-
 			}
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -919,10 +902,12 @@ public class FacturaRes extends PBase {
 
 			    fdoc.impresionorden=gl.pelOrdenComanda;
 				fdoc.parallevar=gl.parallevar;
+
 				if (!gl.nummesapedido.equalsIgnoreCase("0")) {
 					fdoc.impresionorden=true;
 					fdoc.parallevar=true;
 				}
+
 			    fdoc.factsinpropina=gl.peFactSinPropina;
 			    fdoc.propperc=gl.pePropinaPerc;
                 fdoc.modorest=gl.peRest;
@@ -938,6 +923,7 @@ public class FacturaRes extends PBase {
             }
 
             gl.impresion_comanda=false;
+
 			if (gl.pelOrdenComanda) {
                 gl.impresion_comanda=true;
 			    imprimeComanda();
@@ -945,20 +931,6 @@ public class FacturaRes extends PBase {
 
 	        gl.iniciaVenta=true;
             gl.ventalock=false;
-
-            if (!app.usaFEL()) {
-                if ( gl.peEnvio) {
-                    Handler mtimer = new Handler();
-                    Runnable mrunner=new Runnable() {
-                        @Override
-                        public void run() {
-                            gl.autocom = 1;
-                            startActivity(new Intent(FacturaRes.this,WSEnv.class));;
-                        }
-                    };
-                    mtimer.postDelayed(mrunner,5000);
-                }
-            }
 
 			try {
 				db.execSQL("DELETE FROM T_ORDEN_MOD WHERE COREL='"+gl.ordcorel+"'");
@@ -977,48 +949,54 @@ public class FacturaRes extends PBase {
 			} catch (Exception e) {}
 
 			gl.codigo_cliente=0;
+
+			if (!app.usaFEL()) {
+				if (gl.peEnvio) {
+					Handler mtimer = new Handler();
+					Runnable mrunner= () -> {
+						gl.autocom = 1;
+						startActivity(new Intent(FacturaRes.this,WSEnv.class));;
+					};
+					mtimer.postDelayed(mrunner,2000);
+				}
+			}
+
 			super.finish();
 
 		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			mu.msgbox("impresionDocumento : "  + e.getMessage());
 
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+			mu.msgbox("ImpresiónDocumento : "  + e.getMessage());
             gl.ventalock=false;
 			gl.codigo_cliente=0;
 			super.finish();
+
 		}
 	}
 
 	private void askPrintSegunda() {
+
 		try{
+
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
 			dialog.setTitle("Pos");
-			dialog.setMessage("Imprimír copia?");
-
-			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					app.doPrint(1,0);
-					finish();
-				}
+			dialog.setMessage("Imprimir copia?");
+			dialog.setPositiveButton("Si", (dialog1, which) -> {
+				app.doPrint(1,0);
+				finish();
 			});
-
-			dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					finish();
-				}
-			});
-
+			dialog.setNegativeButton("No", (dialog12, which) -> finish());
 			dialog.show();
+
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
 
 	private void singlePrint() {
+
 		try{
 			prn.printask(printcallback);
-
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -1039,7 +1017,6 @@ public class FacturaRes extends PBase {
 		boolean flag,pagocarta=false;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
-		//corel=gl.ruta+"_"+mu.getCorelBase();
 
         try {
             if (gl.numero_orden.isEmpty()) gl.numero_orden=" ";
@@ -2084,27 +2061,35 @@ public class FacturaRes extends PBase {
     //region Inventario
 
     private void procesaInventario() {
-        clsT_ventaObj T_ventaObj = new clsT_ventaObj(this, Con, db);
-        int prodid;
 
-        db.execSQL("DELETE FROM T_factreceta");
+		try {
 
-        recid=0;
+			clsT_ventaObj T_ventaObj = new clsT_ventaObj(this, Con, db);
+			int prodid;
 
-        T_ventaObj.fill("WHERE (VAL4='0')"); // Productos individuales
-        for (int i = 0; i < T_ventaObj.count; i++) {
-            prodid=app.codigoProducto(T_ventaObj.items.get(i).producto);
-            agregaReceta(prodid,T_ventaObj.items.get(i).cant);
-        }
+			db.execSQL("DELETE FROM T_factreceta");
 
-        T_ventaObj.fill("WHERE (VAL4<>'0')"); // Combos
-        for (int i = 0; i < T_ventaObj.count; i++) {
-            agregaCombo(T_ventaObj.items.get(i).val4,T_ventaObj.items.get(i).cant);
-        }
+			recid=0;
 
-        inventarioRecetas();
+			T_ventaObj.fill("WHERE (VAL4='0')"); // Productos individuales
 
-    }
+			for (int i = 0; i < T_ventaObj.count; i++) {
+				prodid=app.codigoProducto(T_ventaObj.items.get(i).producto);
+				agregaReceta(prodid,T_ventaObj.items.get(i).cant);
+			}
+
+			T_ventaObj.fill("WHERE (VAL4<>'0')"); // Combos
+			for (int i = 0; i < T_ventaObj.count; i++) {
+				agregaCombo(T_ventaObj.items.get(i).val4,T_ventaObj.items.get(i).cant);
+			}
+
+			inventarioRecetas();
+
+		} catch (SQLException e) {
+			throw e;
+		}
+
+	}
 
     private void agregaCombo(String comboid,double ccant) {
         T_comboObj.fill("WHERE (IDCOMBO="+comboid+")");
@@ -2732,33 +2717,31 @@ public class FacturaRes extends PBase {
 
     private void msgAskVuelto(String msg) {
 
-        ExDialog dialog = new ExDialog(this);
+		try {
 
-        dialog.setMessage(msg);
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage(msg);
+			dialog.setPositiveButton("OK", (dialog1, which) -> {
+				applyCash();
+				checkPago();
+				if (!app.usaFEL()) {
+					gl.ventalock=false;
+				}
+			});
 
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                applyCash();
-                checkPago();
-                if (!app.usaFEL()) {
-                    gl.ventalock=false;
-                    //finish();
-                }
-            }
-        });
+			AlertDialog adg=dialog.show();
+			TextView textView = adg.getWindow().findViewById(android.R.id.message);
+			textView.setTextColor(Color.BLACK);
+			textView.setTextSize(40);
+			Typeface tf = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
+			textView.setTypeface(tf, Typeface.NORMAL);
+			textView.setGravity(Gravity.CENTER);
 
-        //dialog.show();
+		} catch (Resources.NotFoundException e) {
+			e.printStackTrace();
+		}
 
-		AlertDialog adg=dialog.show();
-
-		TextView textView = (TextView) adg.getWindow().findViewById(android.R.id.message);
-		textView.setTextColor(Color.BLACK);
-		textView.setTextSize(50);
-		Typeface tf = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
-		textView.setTypeface(tf, Typeface.NORMAL);
-		textView.setGravity(Gravity.CENTER);
-
-    }
+	}
 
     public void Davuelto(){
         double pg,vuel;
@@ -2882,8 +2865,6 @@ public class FacturaRes extends PBase {
 
 			if (epago<0) throw new Exception();
 
-
-
 			sql="SELECT CODIGO FROM P_MEDIAPAGO WHERE NIVEL = 1";
 			dt = Con.OpenDT(sql);
 			if(dt!=null) {
@@ -2920,7 +2901,6 @@ public class FacturaRes extends PBase {
 			ins.add("DESC1","");
 			ins.add("DESC2","");
 			ins.add("DESC3","");
-
 		    db.execSQL(ins.sql());
 
 		} catch (Exception e) {
@@ -3196,7 +3176,7 @@ public class FacturaRes extends PBase {
 
             if (gl.dvbrowse==1){
                 if (gl.brw>0){
-                    lblPago.setText("Pago COMPLETO.\n"+s);
+                    lblPago.setText("Pago completo.\n"+s);
                     pago=true;
                     pagocompleto=true;
                     finishOrder();
@@ -3206,7 +3186,7 @@ public class FacturaRes extends PBase {
                     lblPago.setText("Pago incompleto."+s);
                     pago=false;
                 } else {
-                    lblPago.setText("Pago COMPLETO."+s);
+                    lblPago.setText("Pago completo."+s);
                     pago=true;
                     pagocompleto=true;
                     finishOrder();
@@ -3370,7 +3350,6 @@ public class FacturaRes extends PBase {
     private void imprimeComanda() {
         if (!divideComanda()) return;
         if (!generaArchivos()) return;
-        //ejecutaImpresion();
     }
 
     private boolean divideComanda() {
@@ -3528,6 +3507,7 @@ public class FacturaRes extends PBase {
     private void generaOrdenDespacho() {
 
         try {
+
             P_productoObj.fill();
 
             generaOrdenEncabezado();
@@ -3870,6 +3850,7 @@ public class FacturaRes extends PBase {
 			} catch (Exception e) {
 				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -3925,6 +3906,7 @@ public class FacturaRes extends PBase {
 	}
 
 	private void broadcastJournalCuenta(int idcuenta) {
+
 		clsClasses.clsT_ordencom pitem;
 		int idruta;
 
@@ -3956,7 +3938,6 @@ public class FacturaRes extends PBase {
 
 					cmd+=addItemSqlOrdenCom(pitem) + ";";
 
-
 					pitem= clsCls.new clsT_ordencom();
 					pitem.codigo_ruta=idruta;
 					pitem.corel_orden=gl.ordcorel;
@@ -3970,10 +3951,12 @@ public class FacturaRes extends PBase {
 			}
 
 			try {
+
 				Intent intent = new Intent(FacturaRes.this, srvCommit.class);
 				intent.putExtra("URL",gl.wsurl);
 				intent.putExtra("command",cmd);
 				startService(intent);
+
 			} catch (Exception e) {
 				toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
@@ -3985,9 +3968,11 @@ public class FacturaRes extends PBase {
 	}
 
 	private boolean todasCuentasPagadas() {
+
 		int cc=1,cp=0,nc;
 
 		try {
+
 			clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
 			T_ordencuentaObj.fill("WHERE COREL='"+gl.ordcorel+"'");
 			cc=T_ordencuentaObj.count;
@@ -3998,6 +3983,7 @@ public class FacturaRes extends PBase {
 			}
 
 			return cp==cc;
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			return false;
@@ -4023,20 +4009,20 @@ public class FacturaRes extends PBase {
 	public String addItemSqlOrdenCom(clsClasses.clsT_ordencom item) {
 
 		ins.init("T_ordencom");
-
 		ins.add("CODIGO_RUTA",item.codigo_ruta);
 		ins.add("COREL_ORDEN",item.corel_orden);
 		ins.add("COREL_LINEA",item.corel_linea);
 		ins.add("COMANDA",item.comanda);
-
 		return ins.sql();
 
 	}
 
-	private void enviaAvizo() {
+	private void enviaAviso() {
+
         String subject,body;
 
         try {
+
             subject="Correlativo inconsistente : "+gl.rutanom+" ID : "+gl.codigo_ruta;
             body="  ";
             String[] TO = {"dtsolutionsgt@gmail.com"};
@@ -4109,8 +4095,8 @@ public class FacturaRes extends PBase {
 		if (app.barrilProd(idprod).isEmpty()) return;
 
 		try {
-			ins.init("D_barril_trans");
 
+			ins.init("D_barril_trans");
 			ins.add("CODIGO_TRANS",idtransbar);
 			ins.add("EMPRESA",gl.emp);
 			ins.add("CODIGO_SUCURSAL",gl.tienda);
@@ -4123,7 +4109,6 @@ public class FacturaRes extends PBase {
 			ins.add("TIPO_MOV",2);
 			ins.add("IDTRANS",corel);
 			ins.add("STATCOM",0);
-
 			db.execSQL(ins.sql());
 
 		} catch (Exception e) {
@@ -4148,21 +4133,16 @@ public class FacturaRes extends PBase {
     }
 
     private void askSave() {
+
         try{
+
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Road");
-            dialog.setMessage("¿Guardar la factura?");
-
-            dialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    finishOrder();
-                }
-            });
-
+            dialog.setTitle("mPos");
+            dialog.setMessage("¿Guardar Factura?");
+            dialog.setPositiveButton("Guardar", (dialog1, which) -> finishOrder());
             dialog.setNegativeButton("Salir", null);
-
             dialog.show();
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -4171,11 +4151,14 @@ public class FacturaRes extends PBase {
     }
 
     private void askSavePos() {
+
         double vuel;
         String sv="";
 
         try{
+
             try {
+
                 vuel=Double.parseDouble(svuelt);
 
                 if (vuel<tot) throw new Exception();
@@ -4193,19 +4176,12 @@ public class FacturaRes extends PBase {
             }
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Road");
-            dialog.setMessage(sv+"¿Guardar la factura?");
-
-            dialog.setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    finishOrder();
-                }
-            });
-
+            dialog.setTitle("mPos");
+            dialog.setMessage(sv+"¿Guardar factura?");
+            dialog.setPositiveButton("Guardar", (dialog1, which) -> finishOrder());
             dialog.setNegativeButton("Salir", null);
-
             dialog.show();
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -4214,22 +4190,21 @@ public class FacturaRes extends PBase {
     }
 
     private void askPendientePago() {
+
         try{
+
             ExDialog dialog = new ExDialog(this);
 
-            dialog.setMessage("Esta factura quedará PENDIENTE DE PAGO. ¿Continuar?");
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    pendiente = true;
-                    applyPendiente();
-                    checkPago();
-                }
-            });
-
-            dialog.setNegativeButton("Cancelar", null);
+            dialog.setMessage("¿Dejar factura pendiente de pago?.");
+			dialog.setPositiveButton("Si", (dialog1, which) -> {
+				pendiente = true;
+				applyPendiente();
+				checkPago();
+			});
+            dialog.setNegativeButton("No", null);
             dialog.setCancelable(false);
             dialog.show();
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -4238,128 +4213,119 @@ public class FacturaRes extends PBase {
     }
 
     private void askPrint() {
+
         try{
+
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("Road");
+            dialog.setTitle("mPos");
             dialog.setMessage("¿Impresión correcta?");
+            dialog.setPositiveButton("Si", (dialog1, which) -> {
 
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
+				impres++;toast("Impres "+impres);
 
-                    impres++;toast("Impres "+impres);
+				try {
 
-                    try {
-                        if (!gl.cobroPendiente){
-                            sql="UPDATE D_FACTURA SET IMPRES=IMPRES+1 WHERE COREL='"+corel+"'";
-                            db.execSQL(sql);
-                        }
-                    } catch (Exception e) {
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                    }
+					if (!gl.cobroPendiente){
+						sql="UPDATE D_FACTURA SET IMPRES=IMPRES+1 WHERE COREL='"+corel+"'";
+						db.execSQL(sql);
+					}
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
 
-                    try {
-                        sql="UPDATE D_NOTACRED SET IMPRES=IMPRES+1 WHERE COREL='"+corelNC+"'";
-                        db.execSQL(sql);
-                    } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                    }
+				try {
+					sql="UPDATE D_NOTACRED SET IMPRES=IMPRES+1 WHERE COREL='"+corelNC+"'";
+					db.execSQL(sql);
+				} catch (Exception e) {
+					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+				}
 
-                    if (impres>1) {
+				if (impres>1) {
 
-                        try {
-                            if (!gl.cobroPendiente){
-                                sql="UPDATE D_FACTURA SET IMPRES=IMPRES+1 WHERE COREL='"+corel+"'";
-                                db.execSQL(sql);
-                            }
-                        } catch (Exception e) {
-                            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                        }
+					try {
 
-                        try {
-                            sql="UPDATE D_NOTACRED SET IMPRES=IMPRES+1 WHERE COREL='"+corelNC+"'";
-                            db.execSQL(sql);
-                        } catch (Exception e) {
-                            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-                        }
+						if (!gl.cobroPendiente){
+							sql="UPDATE D_FACTURA SET IMPRES=IMPRES+1 WHERE COREL='"+corel+"'";
+							db.execSQL(sql);
+						}
+					} catch (Exception e) {
+						msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+					}
 
-                        gl.brw=0;
+					try {
+						sql="UPDATE D_NOTACRED SET IMPRES=IMPRES+1 WHERE COREL='"+corelNC+"'";
+						db.execSQL(sql);
+					} catch (Exception e) {
+						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					}
 
-                        gl.ventalock=false;
-                        FacturaRes.super.finish();
-                    } else {
+					gl.brw=0;
 
-                        if (!gl.cobroPendiente) {
-                            fdoc.buildPrint(corel, 10,gl.peFormatoFactura);
-                        }else{
-                            fdoc.buildPrint(corel,4,gl.peFormatoFactura);
-                        }
+					gl.ventalock=false;
 
-                        prn.printask(printcallback);
+					FacturaRes.super.finish();
 
-                    }
-                }
-            });
+				} else {
 
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    //singlePrint();
-                    prn.printask(printcallback);
-                    //finish();
-                }
-            });
+					if (!gl.cobroPendiente) {
+						fdoc.buildPrint(corel, 10,gl.peFormatoFactura);
+					}else{
+						fdoc.buildPrint(corel,4,gl.peFormatoFactura);
+					}
 
+					prn.printask(printcallback);
+
+				}
+			});
+            dialog.setNegativeButton("No", (dialog12, which) -> {
+				prn.printask(printcallback);
+			});
             dialog.show();
+
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 
     private void askDelPago() {
+
         try{
+
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
             dialog.setTitle("Pagos");
             dialog.setMessage("¿Borrar todos los pagos?");
-
-            dialog.setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        db.execSQL("DELETE FROM T_PAGO");
-                        checkPago();
-                    } catch (SQLException e) {
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                    }
-                }
-            });
-
-            dialog.setNegativeButton("Salir", null);
-
+            dialog.setPositiveButton("Borrar", (dialog1, which) -> {
+				try {
+					db.execSQL("DELETE FROM T_PAGO");
+					checkPago();
+				} catch (SQLException e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+			});
+            dialog.setNegativeButton("No", null);
             dialog.show();
+
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 
     private void askPrecuenta() {
-        try{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
+        try{
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle("Precuenta");
             dialog.setMessage("¿Imprimir precuenta?");
-
-            dialog.setPositiveButton("Imprimir", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        impresionCuenta();
-                    } catch (Exception e) {
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                    }
-                }
-            });
-
-            dialog.setNegativeButton("Salir", null);
-
+            dialog.setPositiveButton("Imprimir", (dialog1, which) -> {
+				try {
+					impresionCuenta();
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+			});
+            dialog.setNegativeButton("No", null);
             dialog.show();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -4367,134 +4333,95 @@ public class FacturaRes extends PBase {
     }
 
     private void msgAskComanda(String msg) {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                imprimeComandaSimple();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> imprimeComandaSimple());
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
 
     }
 
     private void msgAskSend(String msg) {
+
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
-
-        dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                enviaAvizo();
-            }
-        });
-
+        dialog.setNeutralButton("OK", (dialog1, which) -> enviaAviso());
         dialog.show();
 
     }
 
     private void ingresaPropina() {
+
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
         alert.setTitle("Monto propina extra");
-
         final EditText input = new EditText(this);
         alert.setView(input);
-
         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         input.setText(mu.frmdecno(propinaext));
         input.requestFocus();
 
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    String s=input.getText().toString();
-                    propinaext=Double.parseDouble(s);
-                    if (propinaext<0) throw new Exception();
-                    totalOrder();
-                    pagoPendiente();
-                } catch (Exception e) {
-                    mu.msgbox("Valor incorrecto");return;
-                }
-            }
-        });
-
-		alert.setNeutralButton("Sin propina", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				modo_super=1;
-				validaSupervisor();
+        alert.setPositiveButton("Aplicar", (dialog, whichButton) -> {
+			try {
+				String s=input.getText().toString();
+				propinaext=Double.parseDouble(s);
+				if (propinaext<0) throw new Exception();
+				totalOrder();
+				pagoPendiente();
+			} catch (Exception e) {
+				mu.msgbox("Valor incorrecto");return;
 			}
 		});
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
+		alert.setNeutralButton("Sin propina", (dialog, whichButton) -> {
+			modo_super=1;
+			validaSupervisor();
+		});
+        alert.setNegativeButton("Cancelar", (dialog, whichButton) -> {});
         alert.show();
     }
 
 	private void msgAskSinPropina(String msg) {
+
 		ExDialog dialog = new ExDialog(this);
 		dialog.setMessage("¿" + msg + "?");
-
-		dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				totalOrderCortesia();
-			}
-		});
-
-		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		});
-
+		dialog.setPositiveButton("Si", (dialog1, which) -> totalOrderCortesia());
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
 		dialog.show();
 
 	}
 
 	private void valorDescuentoMonto() {
+
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
         alert.setTitle("Monto descuento");
-
         final EditText input = new EditText(this);
         alert.setView(input);
-
         input.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         input.setText("");
         input.requestFocus();
+        alert.setPositiveButton("Aplicar", (dialog, whichButton) -> {
+			try {
+				String s=input.getText().toString();
+				double val=Double.parseDouble(s);
+				if (val<0) throw new Exception();
+				if (val>tot) throw new Exception();
 
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    String s=input.getText().toString();
-                    double val=Double.parseDouble(s);
-                    if (val<0) throw new Exception();
-                    if (val>tot) throw new Exception();
-
-                    descaddmonto=val;
-                    totalOrder();
-                } catch (Exception e) {
-                    mu.msgbox("Monto incorrecto");return;
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
+				descaddmonto=val;
+				totalOrder();
+			} catch (Exception e) {
+				mu.msgbox("Monto incorrecto");return;
+			}
+		});
+        alert.setNegativeButton("Cancelar", (dialog, whichButton) -> {});
         alert.show();
     }
 
 	private void validaSupervisor() {
+
 		clsClasses.clsVendedores item;
 
 		try {
+
 			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
 			VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
 
@@ -4510,36 +4437,26 @@ public class FacturaRes extends PBase {
 				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
 			}
 
-			listdlg.setOnLeftClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					listdlg.dismiss();
-				}
-			});
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+			listdlg.onEnterClick(v -> {
+				if (listdlg.getInput().isEmpty()) return;
 
-			listdlg.onEnterClick(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (listdlg.getInput().isEmpty()) return;
-
-					if (listdlg.validPassword()) {
-						if (modo_super==0) {
-							browse=6;
-							startActivity(new Intent(FacturaRes.this,DescMonto.class));
-						} else if (modo_super==1) {
-							msgAskSinPropina("Anular la propina");
-						}
-
-						listdlg.dismiss();
-					} else {
-						toast("Contraseña incorrecta");
+				if (listdlg.validPassword()) {
+					if (modo_super==0) {
+						browse=6;
+						startActivity(new Intent(FacturaRes.this,DescMonto.class));
+					} else if (modo_super==1) {
+						msgAskSinPropina("Anular la propina");
 					}
+
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
 				}
 			});
 
 			listdlg.setWidth(350);
 			listdlg.setLines(4);
-
 			listdlg.show();
 
 		} catch (Exception e) {

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
+    public String nombre_reporte="";
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero, pais="";
@@ -61,6 +62,7 @@ public class clsDocument {
 	}
 
 	public boolean buildPrint(String corel,int reimpres) {
+
 		setAddlog("Build print",""+DU.getActDateTime(),"");
 
 		modofact="*";
@@ -297,6 +299,7 @@ public class clsDocument {
 	}
 
     protected void saveHeadLines(int reimpres) {
+
         String s,ss,ss2,su;
         String[] s2;
 		int nidx;
@@ -410,32 +413,6 @@ public class clsDocument {
                         if (cadena.length()>0) rep.add(cadena);
                     }
                 } else rep.add(clidir);
-
-
-                /*
-				String nuevaCadena="", cadena="";
-				int vMod=0;
-				double division =0.0;
-
-				cadena = "Dir : "+clidir;
-				vMod = (cadena.length() / 40)+1;
-
-				if (cadena.length() > 39){
-
-					for (int i = 0; i <vMod; i++) {
-						if (cadena.length()>=40*(i+1)){
-							nuevaCadena += cadena.substring((i*40),40) + "\n";
-						}else{
-							nuevaCadena += cadena.substring((i*40)-1,cadena.length());
-						}
-					}
-				} else {
-					nuevaCadena = cadena;
-				}
-
-            	rep.add(nuevaCadena);
-            	*/
-
 			}
 
             if (docfactura) {
@@ -445,22 +422,6 @@ public class clsDocument {
                     rep.add("");
                 }
             }
-
-            /*
-			if (pagoefectivo==1){
-                rep.add("Condiciones de pago : Efectivo");
-			} else {
-			    if(!TipoCredito.isEmpty()){
-                    rep.add("Condiciones de pago : ");
-                    rep.add(TipoCredito);
-                    rep.add("Aut#: " + NoAutorizacion);
-
-                    //rep.add("Aut#: " + NoAutorizacion);
-                } else {
-                    rep.add("Condiciones de pago : Crédito");
-                }
-			}
-            */
 		}
 
         rep.add("");
@@ -499,9 +460,15 @@ public class clsDocument {
 			rep.add("");
 		}
 
+        //#ejc202212131449: Título del reporte cierre X.
+        if(!nombre_reporte.equalsIgnoreCase("")){
+            rep.addc(nombre_reporte.toUpperCase());
+        }
+
     }
 
     protected void saveHeadLinesHON(int reimpres) {
+
         String s,ss,ss2,su;
         String[] s2;
         int nidx;
@@ -571,8 +538,6 @@ public class clsDocument {
             }
 
             if (docfactura) {
-
-                //if (!modofact.equalsIgnoreCase("TICKET")) {
                 if (facturaflag) {
                     if (i==7){
                         if (!banderafel) {
@@ -616,32 +581,6 @@ public class clsDocument {
                         if (cadena.length()>0) rep.add(cadena);
                     }
                 } else rep.add(clidir);
-
-
-                /*
-				String nuevaCadena="", cadena="";
-				int vMod=0;
-				double division =0.0;
-
-				cadena = "Dir : "+clidir;
-				vMod = (cadena.length() / 40)+1;
-
-				if (cadena.length() > 39){
-
-					for (int i = 0; i <vMod; i++) {
-						if (cadena.length()>=40*(i+1)){
-							nuevaCadena += cadena.substring((i*40),40) + "\n";
-						}else{
-							nuevaCadena += cadena.substring((i*40)-1,cadena.length());
-						}
-					}
-				} else {
-					nuevaCadena = cadena;
-				}
-
-            	rep.add(nuevaCadena);
-            	*/
-
             }
 
             if (docfactura) {
@@ -651,22 +590,6 @@ public class clsDocument {
                     rep.add("");
                 }
             }
-
-            /*
-			if (pagoefectivo==1){
-                rep.add("Condiciones de pago : Efectivo");
-			} else {
-			    if(!TipoCredito.isEmpty()){
-                    rep.add("Condiciones de pago : ");
-                    rep.add(TipoCredito);
-                    rep.add("Aut#: " + NoAutorizacion);
-
-                    //rep.add("Aut#: " + NoAutorizacion);
-                } else {
-                    rep.add("Condiciones de pago : Crédito");
-                }
-			}
-            */
         }
 
         rep.add("");
@@ -979,6 +902,7 @@ public class clsDocument {
 		lines.clear();
 		
 		try {
+
 			Con = new BaseDatos(cont);
 			opendb();
 			
@@ -986,8 +910,6 @@ public class clsDocument {
 				loadDocData(corel);
 				loadHeadData(corel);
 			}
-
-
 
 			loadHeadLines();
 
@@ -1061,55 +983,69 @@ public class clsDocument {
     // Aux
 	
 	private boolean loadHeadLines() {
+
         clsP_fraseObj P_fraseObj=new clsP_fraseObj(cont,Con,db);
-		Cursor DT;	
-		String s,sucur;
+		Cursor DT =null;
+		String s;
+        String sucur="";
 		int frIVA,frISR;
 		
 		try {
 
 			sql = "SELECT SUCURSAL FROM P_RUTA WHERE CODIGO_RUTA="+codigo_ruta;//+ruta;
 			DT = Con.OpenDT(sql);
-			DT.moveToFirst();
-			sucur = DT.getString(0);
 
-            sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR,NIT FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
-            DT=Con.OpenDT(sql);
+            if (DT!=null){
 
-            if (DT.getCount()>0) {
                 DT.moveToFirst();
-                textofin=DT.getString(0);
-                frIVA=DT.getInt(1);
-                frISR=DT.getInt(2);
-                felISR2="";
 
-                if (DT.getInt(1)>0) {
-                    P_fraseObj.fill("WHERE Codigo_Frase="+frIVA);
-                    if (P_fraseObj.count>0) {
-                        felIVA=P_fraseObj.first().texto;
-                    } else felIVA="";
-                } else felIVA="";
+                sucur = DT.getString(0);
 
-                if (DT.getInt(2)>0) {
-                    P_fraseObj.fill("WHERE Codigo_Frase="+frISR);
-                    if (P_fraseObj.count>0) {
-                        felISR=P_fraseObj.first().texto;
-                        if (frISR==4) felISR2="Sujeto a pagos trimestrales ISR";
-                    } else felISR="";
-                } else felISR="";
+                sql="SELECT TEXTO,CODIGO_ESCENARIO_IVA, CODIGO_ESCENARIO_ISR,NIT FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+sucur;
+                DT=Con.OpenDT(sql);
 
-                switch (empid) {
-                    case 33:
-                        felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
-                    case 34:
-                        felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                if (DT!=null){
+
+                    if (DT.getCount()>0) {
+
+                        DT.moveToFirst();
+
+                        textofin=DT.getString(0);
+                        frIVA=DT.getInt(1);
+                        frISR=DT.getInt(2);
+                        felISR2="";
+
+                        if (DT.getInt(1)>0) {
+                            P_fraseObj.fill("WHERE Codigo_Frase="+frIVA);
+                            if (P_fraseObj.count>0) {
+                                felIVA=P_fraseObj.first().texto;
+                            } else felIVA="";
+                        } else felIVA="";
+
+                        if (DT.getInt(2)>0) {
+                            P_fraseObj.fill("WHERE Codigo_Frase="+frISR);
+                            if (P_fraseObj.count>0) {
+                                felISR=P_fraseObj.first().texto;
+                                if (frISR==4) felISR2="Sujeto a pagos trimestrales ISR";
+                            } else felISR="";
+                        } else felISR="";
+
+                        switch (empid) {
+                            case 33:
+                                felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                            case 34:
+                                felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                        }
+
+                    } else {
+                        textofin="";
+                    }
+
+                    nitsuc=DT.getString(3);
+
                 }
 
-            } else {
-                textofin="";
             }
-
-            nitsuc=DT.getString(3);
 
             banderafel=false;felcert="";felnit="";
 
@@ -1117,14 +1053,18 @@ public class clsDocument {
 
                 sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=105";
                 DT=Con.OpenDT(sql);
-                DT.moveToFirst();
 
-                String val=DT.getString(0);
+                if (DT!=null){
 
-                if (val.equalsIgnoreCase("INFILE")) {
-                    banderafel=true;
-                    felcert="CERTIFICADOR : INFILE, S.A.";
-                    felnit="NIT : 12521337";
+                    DT.moveToFirst();
+
+                    String val=DT.getString(0);
+
+                    if (val.equalsIgnoreCase("INFILE")) {
+                        banderafel=true;
+                        felcert="CERTIFICADOR : INFILE, S.A.";
+                        felnit="NIT : 12521337";
+                    }
                 }
 
            } catch (Exception e) {
@@ -1133,21 +1073,29 @@ public class clsDocument {
 
             sql="SELECT TEXTO FROM P_ENCABEZADO_REPORTESHH WHERE SUCURSAL='"+sucur+"' ORDER BY CODIGO";
 			DT=Con.OpenDT(sql);
-			if (DT.getCount()==0) return false;
 
-			DT.moveToFirst();
-			while (!DT.isAfterLast()) {
-				s=DT.getString(0);	
-				lines.add(s);
-				DT.moveToNext();
-			}
+            if (DT!=null){
+
+                if (DT.getCount()==0) return false;
+
+                DT.moveToFirst();
+
+                while (!DT.isAfterLast()) {
+                    s=DT.getString(0);
+                    lines.add(s);
+                    DT.moveToNext();
+                }
+
+            }
 
 			return true;
+
 		} catch (Exception e) {
 			setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			//Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
 			return false;
-		}
+		}finally {
+            if (DT!=null) DT.close();
+        }
 	}
 	
 	public boolean emptystr(String s){
@@ -1159,6 +1107,7 @@ public class clsDocument {
 	}
 	
 	public String sfecha(long f) {
+
 	    long vy,vm,vd;
 		String s;
 		
@@ -1175,6 +1124,7 @@ public class clsDocument {
 	}
 
 	public String sfecha_dos(long f) {
+
 		long vy,vm,vd;
 		String s;
 
@@ -1191,6 +1141,7 @@ public class clsDocument {
 	}
 
 	public String shora(long vValue) {
+
 		long h,m;
 		String sh,sm;
 
@@ -1202,6 +1153,7 @@ public class clsDocument {
 	}
 	
 	public String frmdecimal(double val,int ndec) {
+
 		String ss="",ff="#,##0.";
 		DecimalFormat ffrmint = new DecimalFormat("#,##0"); 
 		
@@ -1250,7 +1202,6 @@ public class clsDocument {
 			db = Con.getWritableDatabase();
 		 	Con.vDatabase =db;
 	    } catch (Exception e) {
-	    	//Toast.makeText(cont,"Opendb "+e.getMessage(), Toast.LENGTH_LONG).show();
 			setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 
 		}

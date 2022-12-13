@@ -201,14 +201,10 @@ public class MiscUtils {
         try {
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(cCont);
-
             dialog.setTitle(R.string.app_name);
             dialog.setMessage(msg);
             dialog.setCancelable(false);
-
-            dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
+            dialog.setNeutralButton("OK", (dialog1, which) -> {});
             dialog.show();
 
         } catch (Exception ex) {
