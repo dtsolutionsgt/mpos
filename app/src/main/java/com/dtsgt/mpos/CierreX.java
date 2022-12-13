@@ -157,6 +157,7 @@ public class CierreX extends PBase {
             }
 
             doc.horaini=du.sfecha(cfi)+" "+du.shora(cfi);
+            doc.pais = gl.peFormatoFactura;
 
             if(gl.reportid==9){
                 doc.nombre_reporte ="Reporte de cierre X";
