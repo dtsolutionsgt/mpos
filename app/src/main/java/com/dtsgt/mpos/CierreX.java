@@ -154,6 +154,7 @@ public class CierreX extends PBase {
             }
 
             doc.horaini=du.sfecha(cfi)+" "+du.shora(cfi);
+            doc.pais = gl.peFormatoFactura;
 
             stampstr="Generado : "+du.sfecha(du.getActDateTime())+" : "+du.shora(du.getActDateTime())+" ("+gl.corelZ+")";
 
