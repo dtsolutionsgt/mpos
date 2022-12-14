@@ -327,7 +327,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
+                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
                 rep.addc(nombre);
                 s=s.replace("%%%","");
             }
@@ -497,7 +497,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
+                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
                 rep.addc(nombre);
                 s=s.replace("%%%","");
             }

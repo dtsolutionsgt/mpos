@@ -378,6 +378,7 @@ public class FELFactura extends PBase {
                     //toastcentlong("Documento enviado previamente." + fel.mpos_identificador_fact);
                     marcaFactura();
                     msgbox("Documento enviado previamente.");
+                    callBackSingle();
                     finish();
                     return;
                 }

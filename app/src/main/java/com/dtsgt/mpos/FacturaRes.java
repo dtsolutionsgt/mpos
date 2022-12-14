@@ -15,7 +15,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import androidx.core.content.res.ResourcesCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -30,6 +29,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.core.content.res.ResourcesCompat;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.appGlobals;
@@ -863,8 +864,10 @@ public class FacturaRes extends PBase {
 
 			} else {
 				browse=2;
-				gl.felcorel=corel;gl.feluuid="";
-				gl.codigo_cliente=0;
+				gl.felcorel=corel;
+				//#EJC202212141123: NO limpiar porque otra activity las va a utilizar aún.
+				//gl.feluuid="";
+				//gl.codigo_cliente=0;
 				startActivity(new Intent(this, FELFactura.class));
 			}
 

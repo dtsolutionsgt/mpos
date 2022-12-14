@@ -82,10 +82,10 @@ public class WebService {
 
            //#EJC 20200601: Set Timeout
            conn.setConnectTimeout(mTimeOut);
-           conn.setReadTimeout(mTimeOut);
-
+           conn.setReadTimeout(mTimeOut * 4);
            conn.setDoInput(true);
            conn.setDoOutput(true);
+           conn.connect();
 
            OutputStream ostream = conn.getOutputStream();
 
@@ -118,6 +118,7 @@ public class WebService {
            } else if (responsecode!=299 && responsecode!=400  && responsecode!=404 && responsecode!=500) {
 
                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
                while ((line = rd.readLine()) != null) mResult += line;
                rd.close();rd.close();
 
@@ -141,6 +142,9 @@ public class WebService {
            } if (responsecode==400) {
                throw new Exception("Error 400:  \n\n" + mUrl.toURI()  );
            }
+
+           ((HttpURLConnection) conn).disconnect();
+
        } catch (Exception e) {
            errorflag=true;error=e.getMessage();
            throw new Exception(error);

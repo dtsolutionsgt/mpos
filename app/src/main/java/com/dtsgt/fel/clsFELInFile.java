@@ -258,7 +258,7 @@ public class clsFELInFile {
             try {
                 connection.connect();
             } catch (SocketTimeoutException s){
-                error=s.getMessage();
+                error="ERROR_202212140931 " + s.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             } catch (IOException e) {
@@ -274,7 +274,7 @@ public class clsFELInFile {
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (SocketTimeoutException s){
-                error=s.getMessage();
+                error="ERROR_202212140931A " + s.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             } catch (IOException e) {
@@ -294,7 +294,7 @@ public class clsFELInFile {
             try {
                 is= connection.getInputStream();
             } catch (SocketTimeoutException s){
-                error=s.getMessage();
+                error="ERROR_202212140931B " + s.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             } catch (IOException e) {
@@ -367,7 +367,7 @@ public class clsFELInFile {
             }
 
         } catch (SocketTimeoutException s){
-            error=s.getMessage();
+            error="ERROR_202212140931C " + s.getMessage();
             errorcon=true;errorflag=true;constat=false;
             return errorflag;
         } catch (Exception e) {
@@ -665,6 +665,7 @@ public class clsFELInFile {
 
         errcert=false;
         errorflag =false;
+        duplicado=false;
 
         try {
 
@@ -688,7 +689,7 @@ public class clsFELInFile {
             try {
                 wr = new DataOutputStream(connection.getOutputStream ());
             } catch (SocketTimeoutException s){
-                error=s.getMessage();
+                error="ERROR_202212140931D " + s.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             } catch (IOException e) {
@@ -710,7 +711,7 @@ public class clsFELInFile {
             try {
                 is= connection.getInputStream();
             } catch (SocketTimeoutException s){
-                error=s.getMessage();
+                error="ERROR_202212140931E " + s.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             } catch (IOException e) {
@@ -804,7 +805,7 @@ public class clsFELInFile {
                 return errorflag;
             }
         } catch (SocketTimeoutException s){
-            error=s.getMessage();
+            error= "ERROR_202212140931F " + s.getMessage();
             errorcon=true;errorflag=true;constat=false;
             return errorflag;
         } catch (Exception e) {
