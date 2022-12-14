@@ -1,14 +1,12 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
@@ -272,17 +270,10 @@ public class CajaPagosPend extends PBase {
 
         try{
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-            dialog.setTitle("ROAD");
+            dialog.setTitle("mPos");
             dialog.setMessage("¿" + msg  + "?");
-
             dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    pagarDocumento();
-                }
-            });
+            dialog.setPositiveButton("Si", (dialog1, which) -> pagarDocumento());
             dialog.setNegativeButton("No", null);
             dialog.show();
         }catch (Exception e){

@@ -17,12 +17,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
-import com.dtsgt.classes.clsD_fel_errorObj;
-import com.dtsgt.classes.clsP_corelObj;
-import com.dtsgt.classes.clsP_departamentoObj;
-import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
@@ -107,7 +102,7 @@ public class FELContAnul extends PBase {
         prod=new clsP_productoObj(this,Con,db);
 
         app.parametrosExtra();
-        lbl2.setText("Certificador : "+gl.peFEL);
+        lbl2.setText("CERTIFICADOR: "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
 
         buildList();
@@ -350,12 +345,7 @@ public class FELContAnul extends PBase {
     public void msgexit(String msg) {
 
         Handler mtimer = new Handler();
-        Runnable mrunner=new Runnable() {
-            @Override
-            public void run() {
-                showMsgExit("Ocurrio error en FEL :\n\n"+ fel.error);
-            }
-        };
+        Runnable mrunner= () -> showMsgExit("Ocurrio error en FEL :\n\n"+ fel.error);
         mtimer.postDelayed(mrunner,500);
 
     }

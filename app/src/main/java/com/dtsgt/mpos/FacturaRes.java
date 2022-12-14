@@ -596,7 +596,7 @@ public class FacturaRes extends PBase {
             descgtotal=gl.descgtotal;
 
 		    descgmon=mu.round2(descg*descgtotal/100);
-            if (descgmon>0) msgboxex("Se aplicó descuento adicional por volumen de venta.\n Monto descuento : "+mu.frmcur(descgmon));
+            if (descgmon>0) msgboxex("Se aplicó descuento adicional por volumen de venta.\n Monto Descuento: "+mu.frmcur(descgmon));
 
 			totalOrder();
 

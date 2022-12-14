@@ -1,7 +1,6 @@
 package com.dtsgt.fel;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,15 +21,12 @@ import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_factura_felObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import com.dtsgt.mpos.WSEnv;
 import com.dtsgt.webservice.wsFacturasFEL;
-import com.dtsgt.webservice.wsInventEnvio;
-import com.dtsgt.webservice.wsInventRecibir;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -122,7 +118,7 @@ public class FELVerificacion extends PBase {
         prod=new clsP_productoObj(this,Con,db);
 
         app.parametrosExtra();
-        lbl2.setText("Certificador : "+gl.peFEL);
+        lbl2.setText("CERTIFICADOR: "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
 
         marcaFacturaContingencia();
@@ -669,6 +665,16 @@ public class FELVerificacion extends PBase {
                 gl.feluuid="";finish();
             });
             dialog.show();
+
+//#EJC202212131905: Quería hacer más pequeña la letra.
+//            AlertDialog adg=dialog.show();
+//            TextView textView = adg.getWindow().findViewById(android.R.id.message);
+//            textView.setTextColor(Color.BLACK);
+//            textView.setTextSize(15);
+//            Typeface tf = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
+//            textView.setTypeface(tf, Typeface.NORMAL);
+//            textView.setGravity(Gravity.CENTER);
+
         } catch (Exception ex) {
         }
     }

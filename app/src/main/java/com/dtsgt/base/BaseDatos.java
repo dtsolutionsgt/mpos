@@ -1,8 +1,6 @@
 package com.dtsgt.base;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -10,8 +8,6 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.mpos.PBase;
-import com.dtsgt.mpos.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -396,11 +392,9 @@ public class BaseDatos extends SQLiteOpenHelper {
 		    ExDialog dialog = new ExDialog(vcontext);
 		    dialog.setMessage(msg);
 
-			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-	    	    public void onClick(DialogInterface dialog, int which) {			      	
-	    	    	//Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
-	    	    }
-	    	});
+			dialog.setNeutralButton("OK", (dialog1, which) -> {
+				//Toast.makeText(getApplicationContext(), "Yes button pressed",Toast.LENGTH_SHORT).show();
+			});
 			dialog.show();
 		
 		}   
@@ -409,11 +403,8 @@ public class BaseDatos extends SQLiteOpenHelper {
 
             ExDialog dialog = new ExDialog(vcontext);
 			dialog.setMessage("La base de datos ha sido creada.");
-
-			dialog.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-	    	    public void onClick(DialogInterface dialog, int which) {
-	    	    }
-	    	});
+			dialog.setNeutralButton("OK", (dialog1, which) -> {
+			});
 		}   	  
 }
 

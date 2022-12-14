@@ -156,7 +156,7 @@ public class FELFactura extends PBase {
         prod=new clsP_productoObj(this,Con,db);
 
         app.parametrosExtra();
-        lbl2.setText("Certificador : "+gl.peFEL);
+        lbl2.setText("CERTIFICADOR: "+gl.peFEL);
         pbar.setVisibility(View.VISIBLE);
 
         facts.add(felcorel);

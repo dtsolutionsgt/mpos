@@ -3,7 +3,6 @@ package com.dtsgt.mpos;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -827,26 +826,10 @@ public class CierreX extends PBase {
                 gl.QRCodeStr="";
                 app.doPrint();
             }
-            //printEpson();
-            //prn.printask();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
-
-//    private void printEpson() {
-//        try {
-//            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
-//            intent.putExtra("mac","BT:00:01:90:85:0D:8C");
-//            intent.putExtra("fname", Environment.getExternalStorageDirectory()+"/print.txt");
-//            intent.putExtra("askprint",1);
-//            intent.putExtra("QRCodeStr",gl.QRCodeStr);
-//            this.startActivity(intent);
-//        } catch (Exception e) {
-//            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-//            msgbox("printEpson" + e.getMessage());
-//        }
-//    }
 
     //endregion
 

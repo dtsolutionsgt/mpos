@@ -1,6 +1,5 @@
 package com.dtsgt.mant;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
@@ -197,58 +196,35 @@ public class MantConceptoPago extends PBase {
     private void msgAskUpdate(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                updateItem();
-                finish();
-            }
+        dialog.setPositiveButton("Si", (dialog1, which) -> {
+            updateItem();
+            finish();
         });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
     }
 
     private void msgAskStatus(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if (item.activo==1) {
-                    item.activo=0;
-                } else {
-                    item.activo=1;
-                };
-                updateItem();
-                finish();
-            }
+        dialog.setPositiveButton("Si", (dialog1, which) -> {
+            if (item.activo==1) {
+                item.activo=0;
+            } else {
+                item.activo=1;
+            };
+            updateItem();
+            finish();
         });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
     }
 
     private void msgAskExit(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> finish());
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
 
     }

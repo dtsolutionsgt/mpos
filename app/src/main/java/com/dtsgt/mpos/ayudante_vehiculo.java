@@ -184,7 +184,7 @@ public class ayudante_vehiculo extends PBase {
         try{
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Road");
+            dialog.setTitle("mPos");
             dialog.setMessage("¿Continuar sin asignar un ayudante?");
 
             dialog.setIcon(R.drawable.ic_quest);
@@ -214,7 +214,7 @@ public class ayudante_vehiculo extends PBase {
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Road");
+            dialog.setTitle("mPos");
             dialog.setMessage(String.format("¿Quitar ayudante: %s?",selid));
 
             dialog.setIcon(R.drawable.ic_quest);
@@ -253,7 +253,7 @@ public class ayudante_vehiculo extends PBase {
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Road");
+            dialog.setTitle("mPos");
             dialog.setMessage(String.format("¿Quitar vehiculo: %s?",selid1));
 
             dialog.setIcon(R.drawable.ic_quest);
@@ -290,7 +290,7 @@ public class ayudante_vehiculo extends PBase {
         try{
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-            dialog.setTitle("Road");
+            dialog.setTitle("mPos");
             dialog.setMessage("¿Continuar sin asignar un vehículo?");
 
             dialog.setIcon(R.drawable.ic_quest);

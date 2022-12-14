@@ -1180,7 +1180,7 @@ public class Cobro extends PBase {
 
 			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-			dialog.setTitle("Road");
+			dialog.setTitle("mPos");
 			dialog.setMessage("¿Impresión correcta?");
 
 			dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {

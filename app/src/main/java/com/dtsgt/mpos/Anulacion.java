@@ -3,7 +3,6 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -11,10 +10,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -244,7 +239,9 @@ public class Anulacion extends PBase {
 			}
 
 			boolean flag=gl.peAnulSuper;
-			if (gl.rol==2 || gl.rol==3) flag=false;
+			if ((gl.rol==2 || gl.rol==3)) {
+				flag=false;
+			}
 
             if (flag) {
                 browse=1;

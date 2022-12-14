@@ -3,7 +3,6 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +11,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.SwipeListener;
@@ -19,7 +19,9 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.ladapt.ListAdaptCFDV;
+
 import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -375,39 +377,22 @@ public class MarcarFacturas extends PBase {
     }
 
     private void msgAsk2(String msg) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("MPos");
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                aplicaBandera();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> aplicaBandera());
+        dialog.setNegativeButton("No", (dialog12, which) -> {});
         dialog.show();
 
     }
 
     private void msgExit(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
         dialog.setTitle("Mpos");
         dialog.setMessage(msg);
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
+        dialog.setPositiveButton("Si", (dialog1, which) -> finish());
         dialog.show();
-
     }
 
     //endregion

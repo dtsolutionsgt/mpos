@@ -321,7 +321,7 @@ public class clsDocument {
                 s=encabezado(s);
                 ss=s.toUpperCase();
                 nidx=ss.indexOf("NIT");
-                //if (nidx>=0) s="NIT : "+nitsuc;
+                //if (nidx>=0) s="NIT: "+nitsuc;
             } catch (Exception e) {
                 s="##";
             }
@@ -491,7 +491,7 @@ public class clsDocument {
                 s=encabezado(s);
                 ss=s.toUpperCase();
                 nidx=ss.indexOf("NIT");
-                //if (nidx>=0) s="NIT : "+nitsuc;
+                //if (nidx>=0) s="NIT: "+nitsuc;
             } catch (Exception e) {
                 s="##";
             }
@@ -1062,8 +1062,8 @@ public class clsDocument {
 
                     if (val.equalsIgnoreCase("INFILE")) {
                         banderafel=true;
-                        felcert="CERTIFICADOR : INFILE, S.A.";
-                        felnit="NIT : 12521337";
+                        felcert="CERTIFICADOR: INFILE, S.A.";
+                        felnit="NIT: 12521337";
                     }
                 }
 

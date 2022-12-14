@@ -95,7 +95,7 @@ public class ListAdaptVenta extends BaseAdapter {
 		val=items.get(position).Total;
 		holder.lblTot.setText(cursym+" "+frmdec.format(val));
 
-		holder.lblPeso.setText("Descuento : "+cursym+items.get(position).valp);
+		holder.lblPeso.setText("Descuento: "+cursym+items.get(position).valp);
 		if (items.get(position).valp.equalsIgnoreCase(".")) {
 		    holder.lblPeso.setVisibility(View.GONE);
         } else holder.lblPeso.setVisibility(View.VISIBLE);

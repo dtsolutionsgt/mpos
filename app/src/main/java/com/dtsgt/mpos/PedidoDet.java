@@ -630,7 +630,7 @@ public class PedidoDet extends PBase {
             rep.add("Nombre : ");
             s=item.nombre+" ";
             sp=splitByLen(s,sps);for (int i = 0; i <sp.length; i++) rep.add(sp[i]);
-            rep.add("Direccion : ");
+            rep.add("Direccion: ");
             s=item.direccion+" ";
             sp=splitByLen(s,sps);for (int i = 0; i <sp.length; i++) rep.add(sp[i]);
             s=item.referencia;

@@ -729,19 +729,19 @@ public class clsDocFactura extends clsDocument {
             stot = stot - propina;
             tot = tot - propina;
             if (desc != 0) {
-                rep.addtotsp("Subtotal : ", stot);
-                rep.addtotsp("Descuento : ", -desc);
+                rep.addtotsp("Subtotal: ", stot);
+                rep.addtotsp("Descuento: ", -desc);
             }
         } else {
             if (desc != 0 | propina != 0) {
                 stot = stot - propina;
-                rep.addtotsp("Subtotal : ", stot);
+                rep.addtotsp("Subtotal: ", stot);
             }
-            if (desc != 0) rep.addtotsp("Descuento : ", -desc);
-            if (propina != 0) rep.addtotsp("Propina : ", propina);
+            if (desc != 0) rep.addtotsp("Descuento: ", -desc);
+            if (propina != 0) rep.addtotsp("Propina: ", propina);
         }
 
-        rep.addtotsp("TOTAL A PAGAR : ", tot);
+        rep.addtotsp("TOTAL A PAGAR: ", tot);
         rep.add("");
 
         rep.add("Detalle pago : ");
@@ -773,10 +773,10 @@ public class clsDocFactura extends clsDocument {
             totperc=stot*(percep/100);totperc=round2(totperc);
             totimp=imp-totperc;
 
-            rep.addtotsp("Subtotal : ", stot);
+            rep.addtotsp("Subtotal: ", stot);
             rep.addtotsp("Impuesto : ", totimp);
             if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion : ", totperc);
-            rep.addtotsp("Descuento : ", -desc);
+            rep.addtotsp("Descuento: ", -desc);
             rep.addtotsp("TOTAL : ", tot);
 
             rep.add("Honduras");
@@ -787,19 +787,19 @@ public class clsDocFactura extends clsDocument {
                 stot = stot - propina;
                 tot = tot - propina;
                 if (desc != 0) {
-                    rep.addtotsp("Subtotal : ", stot);
-                    rep.addtotsp("Descuento : ", -desc);
+                    rep.addtotsp("Subtotal: ", stot);
+                    rep.addtotsp("Descuento: ", -desc);
                 }
             } else {
                 if (desc != 0 | propina != 0) {
                     stot = stot - propina;
-                    rep.addtotsp("Subtotal : ", stot);
+                    rep.addtotsp("Subtotal: ", stot);
                 }
-                if (desc != 0) rep.addtotsp("Descuento : ", -desc);
-                if (propina != 0) rep.addtotsp("Propina : "+ffrmnodec.format(propperc)+" % ", propina);
+                if (desc != 0) rep.addtotsp("Descuento: ", -desc);
+                if (propina != 0) rep.addtotsp("Propina: "+ffrmnodec.format(propperc) + "% ", propina);
             }
 
-            rep.addtotsp("TOTAL A PAGAR : ", tot);
+            rep.addtotsp("TOTAL A PAGAR: ", tot);
         }
 
         if (plines.size()>0) {
@@ -812,7 +812,7 @@ public class clsDocFactura extends clsDocument {
 
         if (modorest) {
             rep.add("");
-            rep.add("Le atendio : "+nommesero);
+            rep.add("Le atendió: "+nommesero);
         }
 
         rep.add("");
@@ -836,18 +836,18 @@ public class clsDocFactura extends clsDocument {
             if (feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
                 rep.add("Factura generada en modo de contingencia");
-                rep.add("Numero de Acceso : "+contacc);
+                rep.add("Numero de Acceso: "+contacc);
                 rep.add("Su factura pueden encontrar en el portal");
-                rep.add("SAT bajo identificacion : "+serie+numero);
+                rep.add("SAT bajo identificacion: "+serie+numero);
 
 
             }
 
             if (!feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
-                rep.add("Número de autorización : ");
+                rep.add("Número de autorización: ");
                 rep.add(feluuid);
-                rep.add("Fecha de certificación : "+feldcert);
+                rep.add("Fecha de certificación: "+feldcert);
             }
 
             if (!felIVA.isEmpty()) {
@@ -863,6 +863,7 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
             rep.add(felcert);
             rep.add(felnit);
+            rep.addc("Powered by DTSolutions, S.A.");
         }
 
         //#HS_20181212 Validación para factura pendiente de pago
@@ -911,10 +912,10 @@ public class clsDocFactura extends clsDocument {
             totperc=stot*(percep/100);totperc=round2(totperc);
             totimp=imp-totperc;
 
-            rep.addtotsp("Subtotal : ", stot);
+            rep.addtotsp("Subtotal: ", stot);
             rep.addtotsp("Impuesto : ", totimp);
             if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion : ", totperc);
-            rep.addtotsp("Descuento : ", -desc);
+            rep.addtotsp("Descuento: ", -desc);
             rep.addtotsp("TOTAL : ", tot);
 
         } else {
@@ -923,19 +924,19 @@ public class clsDocFactura extends clsDocument {
                 stot = stot - propina;
                 tot = tot - propina;
                 if (desc != 0) {
-                    rep.addtotsp("Subtotal : ", stot);
-                    rep.addtotsp("Descuento : ", -desc);
+                    rep.addtotsp("Subtotal: ", stot);
+                    rep.addtotsp("Descuento: ", -desc);
                 }
             } else {
                 if (desc != 0 | propina != 0) {
                     stot = stot - propina;
-                    rep.addtotsp("Subtotal : ", stot);
+                    rep.addtotsp("Subtotal: ", stot);
                 }
-                if (desc != 0) rep.addtotsp("Descuento : ", -desc);
-                if (propina != 0) rep.addtotsp("Propina : "+ffrmnodec.format(propperc)+" % ", propina);
+                if (desc != 0) rep.addtotsp("Descuento: ", -desc);
+                if (propina != 0) rep.addtotsp("Propina: "+ffrmnodec.format(propperc)+" % ", propina);
             }
 
-            rep.addtotsp("TOTAL A PAGAR : ", tot);
+            rep.addtotsp("TOTAL A PAGAR: ", tot);
         }
 
         rep.add("HONDURAS");
@@ -950,7 +951,7 @@ public class clsDocFactura extends clsDocument {
 
         if (modorest) {
             rep.add("");
-            rep.add("Le atendio : "+nommesero);
+            rep.add("Le atendio: "+nommesero);
         }
 
         rep.add("");
@@ -958,13 +959,6 @@ public class clsDocFactura extends clsDocument {
         try {
             if (!textopie.isEmpty()) {
                 rep.addc(textopie);
-                /*
-                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
-                    textofin=textofin+" S.A.";
-                }
-                String[] sp = textofin.split(",");
-                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
-                */
             }
         } catch (Exception e) {}
 
@@ -974,18 +968,16 @@ public class clsDocFactura extends clsDocument {
             if (feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
                 rep.add("Factura generada en modo de contingencia");
-                rep.add("Numero de Acceso : "+contacc);
+                rep.add("Numero de Acceso: "+contacc);
                 rep.add("Su factura pueden encontrar en el portal");
-                rep.add("SAT bajo identificacion : "+serie+numero);
-
-
+                rep.add("SAT bajo identificacion: "+serie+numero);
             }
 
             if (!feluuid.equalsIgnoreCase(" ")) {
                 rep.add("");
-                rep.add("Número de autorización : ");
+                rep.add("Número de autorización: ");
                 rep.add(feluuid);
-                rep.add("Fecha de certificación : "+feldcert);
+                rep.add("Fecha de certificación: "+feldcert);
             }
 
             if (!felIVA.isEmpty()) {
@@ -1001,6 +993,7 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
             rep.add(felcert);
             rep.add(felnit);
+            rep.add("Powered by DTSolutions, S.A.");
         }
 
         //#HS_20181212 Validación para factura pendiente de pago
@@ -1024,7 +1017,7 @@ public class clsDocFactura extends clsDocument {
                 rep.add("");
                 rep.addc("************************");
                 rep.add("");
-                rep.addc("ORDEN # "+sod.toUpperCase());
+                rep.addc("ORDEN: # "+sod.toUpperCase());
                 rep.add("");
                 rep.addc("************************");
                 rep.add("");
@@ -1053,8 +1046,8 @@ public class clsDocFactura extends clsDocument {
 		if (corelF.equals(asignacion)) {
 
 			rep.addtotsp("Nota de Credito", totNotaC);
-			rep.addtotsp("ITBM", totimp);
-			rep.addtotsp("Total", totalNotaC);
+			rep.addtotsp("ITBM:", totimp);
+			rep.addtotsp("Total:", totalNotaC);
 			rep.add("");
 			rep.add("");
 			rep.add("Total de items: "+totitems);
@@ -1064,7 +1057,7 @@ public class clsDocFactura extends clsDocument {
 			rep.line();
 			rep.addc("Firma Cliente");
 			rep.add("");
-			rep.addc("Se aplico nota de credito: "+corelNotaC);
+			rep.addc("Se aplico nota de crédito: "+corelNotaC);
 			rep.add("");
 			rep.addc("DE SER UNA VENTA AL CREDITO, SOLAMEN");
 			rep.addc("TE NUESTRO CORRESPONDIENTE RECIBO SE");
