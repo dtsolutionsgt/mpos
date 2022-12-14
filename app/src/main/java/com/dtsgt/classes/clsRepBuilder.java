@@ -577,9 +577,15 @@ public class clsRepBuilder {
 
 	public void addtotsp(String s1,double val) {
 		String sval;
-		
+		int size = 12;
+
+		//#AT20221214 Se suma 1 al valor 12 para que se utilicen 39 espacios.
+		if (prw == 40) {
+			size += 1;
+		}
+
 		sval=cursym+decfrm.format(val);
-		ts=ltrim(s1,prw-14)+""+rtrim(sval,12)+"  ";
+		ts=ltrim(s1,prw-14)+""+rtrim(sval,size)+"  ";
 		items.add(ts);
 	}
 	

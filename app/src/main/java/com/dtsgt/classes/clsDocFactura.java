@@ -1137,9 +1137,15 @@ public class clsDocFactura extends clsDocument {
 
     private String addtotsp(String s1,double val) {
         String sval;
+        int size = 12;
+
+        //#AT20221214 Se suma 1 al valor 12 para que se utilicen 39 espacios.
+        if (prw == 40) {
+            size += 1;
+        }
 
         sval=cursymbol+decfrm.format(val);
-        return ltrim(s1,prw-14)+""+rtrim(sval,12)+"  ";
+        return ltrim(s1,prw-14)+""+rtrim(sval,size)+"  ";
     }
 
     private String ltrim(String ss,int sw) {

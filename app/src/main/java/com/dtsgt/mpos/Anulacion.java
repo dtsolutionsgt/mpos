@@ -48,7 +48,7 @@ import java.util.Calendar;
 public class Anulacion extends PBase {
 
 	private ListView listView;
-	private TextView lblTipo;
+	private TextView lblTipo, lblRegs, lblTotal;
     private ProgressBar pbar;
 	
 	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<>();
@@ -111,6 +111,8 @@ public class Anulacion extends PBase {
 		lblTipo= findViewById(R.id.lblDescrip);
 		lblDateini = findViewById(R.id.lblDateini2);
 		lblDatefin = findViewById(R.id.lblDatefin2);
+		lblRegs = findViewById(R.id.lblRegs);
+		lblTotal = findViewById(R.id.lblTotal);
         pbar=findViewById(R.id.progressBar7);pbar.setVisibility(View.INVISIBLE);
 
 		app = new AppMethods(this, gl, Con, db);
@@ -314,8 +316,8 @@ public class Anulacion extends PBase {
 
 		Cursor DT;
 		clsClasses.clsCFDV vItem;	
-		int vP,f;
-		double val;
+		int vP,f,regs;
+		double val, total=0;
 		String id,sf,sval;
 			
 		items.clear();
@@ -387,6 +389,7 @@ public class Anulacion extends PBase {
 					
 					vItem.Fecha=sf;
 					val=DT.getDouble(3);
+					total += val;
 					try {
 						sval=mu.frmcur(val);
 					} catch (Exception e) {
@@ -394,7 +397,7 @@ public class Anulacion extends PBase {
 					}					
 					
 					vItem.Valor=sval;	  
-					
+
 					if (tipo==4 || tipo==5) vItem.Valor="";
 					
 					items.add(vItem);	
@@ -411,7 +414,15 @@ public class Anulacion extends PBase {
 					}
 
 					DT.moveToNext();
-				}	
+				}
+
+				//#AT20221213 Mostrar total  de registros y montos para facturas
+				if (tipo == 3) {
+					lblRegs.setVisibility(View.VISIBLE);
+					lblTotal.setVisibility(View.VISIBLE);
+					lblRegs.setText("Registros: " + DT.getCount());
+					lblTotal.setText("Total: " + mu.frmcur(total));
+				}
 			}
 
             if (DT!=null) DT.close();
