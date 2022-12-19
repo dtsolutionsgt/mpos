@@ -863,7 +863,10 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
             rep.add(felcert);
             rep.add(felnit);
+            rep.add("");
             rep.addc("Powered by DTSolutions, S.A.");
+            rep.addc("dts.com.gt");
+
         }
 
         //#HS_20181212 Validación para factura pendiente de pago
@@ -898,7 +901,7 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
-        rep.addc("Powered by: dts.com.gt");
+        //rep.addc("Powered by: dts.com.gt");
 
         return super.buildFooter();
     }
@@ -993,7 +996,9 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
             rep.add(felcert);
             rep.add(felnit);
+            rep.add("");
             rep.add("Powered by DTSolutions, S.A.");
+            rep.addc("dts.com.gt");
         }
 
         //#HS_20181212 Validación para factura pendiente de pago
