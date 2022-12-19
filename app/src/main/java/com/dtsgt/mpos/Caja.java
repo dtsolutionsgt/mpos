@@ -311,10 +311,8 @@ public class Caja extends PBase {
                     dt.moveToFirst();
 
                     while(!dt.isAfterLast()){
-
                         totCred += mu.round2(dt.getDouble(1));
                         dt.moveToNext();
-
                     }
 
                 }
