@@ -14,8 +14,10 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,16 +28,22 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsT_cierre_credObj;
+import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.classes.extMontoDlg;
+import com.dtsgt.ladapt.LA_T_cierre_cred;
 import com.dtsgt.webservice.wsOpenDT;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Caja extends PBase {
 
+    private ListView listView;
     private TextView lblTit, lblMontoIni, lblMontoFin,lblMontoCred;
     private EditText Vendedor, Fecha, MontoIni, MontoFin, MontoCred;
     private TextView FechaB;
@@ -43,9 +51,17 @@ public class Caja extends PBase {
 
     private wsOpenDT wso;
     private Runnable rnDateCallback;
+    private extMontoDlg mdlg = new extMontoDlg();
+
+    public ArrayList<clsClasses.clsT_cierre_cred> items= new ArrayList<clsClasses.clsT_cierre_cred>();
+
+    private clsT_cierre_credObj T_cierre_credObj;
+
+    private LA_T_cierre_cred adapter;
 
     private clsClasses.clsP_cajacierre itemC;
     private clsClasses.clsP_cajahora itemH;
+    private clsClasses.clsT_cierre_cred itemCr;
 
     private double fondoCaja=0, montoIni=0, montoFin=0, gmontoDif =0, montoDifCred=0, montoCred=0,venta_total;
     private String cap;
@@ -59,6 +75,7 @@ public class Caja extends PBase {
         super.InitBase();
         addlog("Caja",""+du.getActDateTime(), String.valueOf(gl.vend));
 
+        listView =findViewById(R.id.listView1);
         lblTit = findViewById(R.id.lblTit);
         lblMontoIni = findViewById(R.id.textView133);
         MontoIni = findViewById(R.id.editText19);
@@ -77,7 +94,9 @@ public class Caja extends PBase {
         String sf=du.sfecha(du.getActDate());
         Fecha.setText(sf);FechaB.setText(sf);
 
-        try{
+        T_cierre_credObj=new clsT_cierre_credObj(this,Con,db);
+
+        try {
             Cursor dt;
 
             sql="SELECT * " +
@@ -85,15 +104,49 @@ public class Caja extends PBase {
                 "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO "+
                 "WHERE F.KILOMETRAJE=0 AND M.NIVEL <> 1";
 
+            sql="SELECT SUM(P.VALOR)  ,P.CODPAGO, M.NOMBRE " +
+                    "FROM D_FACTURAP P INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
+                    "INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO " +
+                    "WHERE F.KILOMETRAJE=0 AND M.NIVEL <> 1 " +
+                    "GROUP BY P.CODPAGO, M.NOMBRE " +
+                    "ORDER BY M.NOMBRE ";
+
             dt=Con.OpenDT(sql);
 
-            if(dt.getCount()>0){
+            MontoCred.setVisibility(View.INVISIBLE);
+            items.clear();
+
+            db.execSQL("DELETE FROM T_cierre_cred");
+
+            if (dt.getCount()>0){
+
+                clsT_cierre_credObj T_cierre_credObj=new clsT_cierre_credObj(this,Con,db);
+
+                listView.setVisibility(View.VISIBLE);
                 lblMontoCred.setVisibility(View.VISIBLE);
-                MontoCred.setVisibility(View.VISIBLE);
                 cred=1;
-            }else {
+
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    itemCr = clsCls.new clsT_cierre_cred();
+
+                    itemCr.id=dt.getInt(1);
+                    itemCr.nombre=dt.getString(2);
+                    itemCr.total=dt.getDouble(0);
+                    itemCr.caja=0;
+
+                    items.add(itemCr);
+                    T_cierre_credObj.add(itemCr);
+
+                    dt.moveToNext();
+                }
+
+                listItems();
+
+            } else {
+                listView.setVisibility(View.INVISIBLE);
                 lblMontoCred.setVisibility(View.INVISIBLE);
-                MontoCred.setVisibility(View.INVISIBLE);
                 cred=0;
             }
 
@@ -122,6 +175,7 @@ public class Caja extends PBase {
 
                 MontoIni.setEnabled(false);
                 MontoIni.setText(""+gl.fondoCaja);
+
 
                 if (app.pendientesPago("")>0) msgbox("Existen facturas pendientes de pago");
 
@@ -161,7 +215,7 @@ public class Caja extends PBase {
             if (fondoCaja==0){
                 msgbox("El monto inicial incorrecto");return;
             }
-            msgAskFecha("¿Iniciar caja con fecha\n"+FechaB.getText().toString()+"?");
+            msgAskFechaIni("¿Iniciar caja con fecha\n"+FechaB.getText().toString()+"?");
             //guardar();
         } else {
             guardar();
@@ -177,9 +231,13 @@ public class Caja extends PBase {
         startActivity(new Intent(this,CajaPagosPend.class));
     }
 
-    //endregion
+    public void doFondoClick(View view) {
+        inputValorFondo();
+    }
 
-    //region Main
+    public void doEfectClick(View view) {
+        inputValorEfect();
+    }
 
     private void setHandlers(){
 
@@ -191,8 +249,32 @@ public class Caja extends PBase {
                 }
                 return false;
             });
-        }catch (Exception e){
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    Object lvObj = listView.getItemAtPosition(position);
+                    clsClasses.clsT_cierre_cred item = (clsClasses.clsT_cierre_cred)lvObj;
+
+                    adapter.setSelectedIndex(position);
+                    inputValor(item.nombre,item.caja,position);
+                };
+            });
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    //endregion
+
+    //region Main
+
+    private void listItems() {
+        try {
+            adapter=new LA_T_cierre_cred(this,this,items);
+            listView.setAdapter(adapter);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -213,13 +295,18 @@ public class Caja extends PBase {
                 montoFin = mu.round2(Double.parseDouble(MontoFin.getText().toString().trim()));
                 gl.monto_final_ingresado=montoFin;
 
-                if(montoFin>=0){
+                if (montoFin>=0){
+                    montoCred=0;
+                    for (int i = 0; i <items.size(); i++) {
+                        montoCred=montoCred+items.get(i).caja;
+                    }
 
-                    if(cred==1 && !MontoCred.getText().toString().trim().isEmpty()){
-                        montoCred = Double.parseDouble(MontoCred.getText().toString().trim());
+                    if(cred==1 && montoCred>0){
+                    //if(cred==1 && !MontoCred.getText().toString().trim().isEmpty()){
+                        //montoCred = Double.parseDouble(MontoCred.getText().toString().trim());
                         if(montoCred<0){ msgbox("Se realizaron ventas con crédito, el monto crédito no puede ser menor a 0");return;}
                         if(montoCred==0){ msgbox("Se realizaron ventas con crédito, el monto crédito no puede ser 0");return;}
-                    }else  if(cred==1 && MontoCred.getText().toString().trim().isEmpty()){
+                    }else  if(cred==1 && montoCred==0){
                         msgbox("Se realizaron ventas con crédito, no puede dejar el monto crédito vacío");return;
                     }
 
@@ -341,7 +428,7 @@ public class Caja extends PBase {
             gmontoDif = mu.round2(montoFin - gmontoDif);
 
             //#EJC202212060953: Un cagadal!
-            //if (gmontoDif <0.01) gmontoDif =0;
+            if (Math.abs(gmontoDif) <0.01) gmontoDif =0;
 
             Log.d("MontoDif",String.valueOf(gmontoDif));
 
@@ -456,7 +543,7 @@ public class Caja extends PBase {
                     " FROM D_FACTURAP P " +
                     " INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                     " INNER JOIN P_MEDIAPAGO M ON P.CODPAGO = M.CODIGO "+
-                    " WHERE F.KILOMETRAJE=0 AND F.ANULADO = 0  " +
+                    " WHERE F.KILOMETRAJE=0 AND F.ANULADO = 0  AND M.NIVEL=1 " +
                     " AND F.FECHA >= " + gl.lastDate +
                     " GROUP BY P.CODPAGO, P.TIPO, M.NIVEL";
 
@@ -464,7 +551,7 @@ public class Caja extends PBase {
 
                 if(dt==null) throw new Exception();
 
-                if(dt.getCount()!=0){
+                if (dt.getCount()!=0){
 
                     dt.moveToFirst();
 
@@ -474,7 +561,7 @@ public class Caja extends PBase {
                         itemC.fecha = fecha;
                         itemC.estado = 1;
 
-                        if(dt.getInt(3)==1){ //#CKFK 20200623 Cuando la forma de pago es Contado
+                        if (dt.getInt(3)==1) { //#CKFK 20200623 Cuando la forma de pago es Contado
 
                             clsP_cajacierreObj caja_inicio_contado = new clsP_cajacierreObj(this,Con,db);
                             caja_inicio_contado.fill(" WHERE ESTADO = 0 AND CODPAGO =0 ORDER BY COREL");
@@ -491,7 +578,8 @@ public class Caja extends PBase {
                             }
                         }
 
-                        if(cred==1){
+                        /*
+                        if (cred==1) {
 
                             if(dt.getInt(3)==4){ //#CKFK 20200623 Cuando la forma de pago es Crédito
 
@@ -526,9 +614,11 @@ public class Caja extends PBase {
                                 caja.add(itemC);
                             }
                         }
+                        */
 
                         dt.moveToNext();
                     }
+
 
                 } else if(dt.getCount()==0) {
 
@@ -559,6 +649,56 @@ public class Caja extends PBase {
                     caja.update(itemC);
 
                 }
+
+                // Creditos
+
+                T_cierre_credObj.fill();
+
+                if (T_cierre_credObj.count>0) {
+
+                    corelidx=0;
+                    try {
+                        sql="DROP INDEX IX_P_CAJACIERRE ";
+                        db.execSQL(sql);
+                    } catch (Exception e) {
+                        String ss=e.getMessage();
+                        ss=ss+"";
+                    }
+
+                    for (int i = 0; i < T_cierre_credObj.count; i++) {
+
+                        corelidx++;
+
+                        sql="SELECT EMPRESA FROM P_cajacierre";
+                        dt2=Con.OpenDT(sql);
+                        if (dt2.getCount()>0) {
+                            sql="SELECT MAX(EMPRESA) FROM P_cajacierre";
+                            dt2=Con.OpenDT(sql);
+                            ecor=dt2.getInt(0)+1;
+                        } else {
+                            ecor=1;
+                        }
+
+                        itemC.empresa=ecor;
+                        itemC.codigo_cajacierre=gl.ruta+"_"+mu.getCorelBase()+"C"+corelidx;
+                        itemC.codpago=T_cierre_credObj.items.get(i).id;
+                        montoIni=T_cierre_credObj.items.get(i).total;
+                        montoCred=T_cierre_credObj.items.get(i).caja;
+                        itemC.montoini =mu.round2(montoIni);
+                        itemC.montofin = mu.round2(montoCred);
+                        itemC.montodif = mu.round2(montoCred - montoIni);
+                        itemC.estado=1;
+
+                        caja.add(itemC);
+
+                    }
+
+                }
+
+
+
+
+
 
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0 AND FECHA >= " + gl.lastDate;
                 db.execSQL(sql);
@@ -803,6 +943,7 @@ public class Caja extends PBase {
     //endregion
 
     //region Dialogs
+
     private void msgAskExit(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
@@ -871,8 +1012,176 @@ public class Caja extends PBase {
         dialog.show();
     }
 
-    public void msgboxValidaMonto(String msg) {
+    private void msgAskFecha(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setPositiveButton("Si", (dialog1, which) -> checkDate());
+        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
+        dialog.show();
+    }
 
+    private void msgAskFechaIni(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setPositiveButton("Si", (dialog1, which) -> checkDate());
+        dialog.setNegativeButton("No",(dialog1, which) -> {});
+        dialog.show();
+    }
+
+    private void msgAskNoFecha(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setPositiveButton("Si", (dialog1, which) -> guardar());
+        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
+        dialog.show();
+    }
+
+    private void msgAskFechaContinuar(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setPositiveButton("Si", (dialog1, which) -> guardar());
+        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
+        dialog.show();
+
+    }
+
+    private void msgText(String msg) {
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+        dialog.setPositiveButton("Si", (dialog1, which) -> { });
+        dialog.show();
+
+    }
+
+    private void inputValor(String titulo,double valor,int idx) {
+        try {
+
+            mdlg.buildDialog(Caja.this,titulo,"Salir");
+            mdlg.setDPVisible(true);
+
+            mdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mdlg.dismiss();
+                }
+            });
+
+            mdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        double val=Double.parseDouble(mdlg.getInput());
+                        items.get(idx).caja=val;
+                        T_cierre_credObj.update(items.get(idx));
+
+                        listItems();
+                    } catch (Exception e) {
+                        mu.msgbox("Monto incorrecto");
+                    }
+                    mdlg.dismiss();
+                }
+            });
+
+            mdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void inputValorFondo() {
+        try {
+
+            mdlg.buildDialog(Caja.this,"Monto inicial","Salir");
+            mdlg.setDPVisible(true);
+
+            mdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mdlg.dismiss();
+                }
+            });
+
+            mdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MontoIni.setText(mdlg.getInput());
+                    mdlg.dismiss();
+                }
+            });
+
+            mdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void inputValorEfect() {
+        try {
+
+            mdlg.buildDialog(Caja.this,"Efectivo","Salir");
+            mdlg.setDPVisible(true);
+
+            mdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mdlg.dismiss();
+                }
+            });
+
+            mdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MontoFin.setText(mdlg.getInput());
+                    mdlg.dismiss();
+                }
+            });
+
+            mdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void msgboxValidaMonto(String msg) {
+        try {
+
+            mdlg.buildDialog(Caja.this,msg,"Salir");
+            mdlg.setDPVisible(false);
+
+            captcha();
+
+            mdlg.setTitle("Ingrese valor "+cap+" para continuar");
+
+            mdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mdlg.dismiss();
+                }
+            });
+
+            mdlg.onEnterClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mdlg.getInput().equalsIgnoreCase(cap)) {
+                        acc=0;
+                        saveMontoIni();
+                        mdlg.dismiss();
+                    } else {
+                        acc=1;
+                        msgbox("Valor incorrecto");
+                    }
+                }
+            });
+
+            mdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        /*
         try{
 
             captcha();
@@ -910,40 +1219,8 @@ public class Caja extends PBase {
         } catch (Exception ex) {
             msgbox("Error msgboxValidaMonto: "+ex);return;
         }
-    }
 
-    private void msgAskFecha(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage(msg);
-        dialog.setPositiveButton("Si", (dialog1, which) -> checkDate());
-        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
-        dialog.show();
-
-    }
-
-    private void msgAskNoFecha(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage(msg);
-        dialog.setPositiveButton("Si", (dialog1, which) -> guardar());
-        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
-        dialog.show();
-    }
-
-    private void msgAskFechaContinuar(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage(msg);
-        dialog.setPositiveButton("Si", (dialog1, which) -> guardar());
-        dialog.setNegativeButton("No", (dialog12, which) -> msgText("Por favor informe soporte"));
-        dialog.show();
-
-    }
-
-    private void msgText(String msg) {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage(msg);
-        dialog.setPositiveButton("Si", (dialog1, which) -> { });
-        dialog.show();
-
+         */
     }
 
     //endregion
@@ -1054,6 +1331,12 @@ public class Caja extends PBase {
     @Override
     protected void onResume() {
         super.onResume();
+
+        try {
+            T_cierre_credObj.reconnect(Con,db);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
 
         if (browse==1) {
             browse=0;

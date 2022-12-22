@@ -1360,6 +1360,54 @@ public class BaseDatosVersion {
 
 
         try {
+            sql="CREATE TABLE [T_cierre_cred] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "CAJA REAL NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_vendedor_rol] ("+
+                    "CODIGO_VENDEDOR_ROL INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "CODIGO_ROL INTEGER NOT NULL,"+
+                    "fec_agr INTEGER NOT NULL,"+
+                    "user_agr INTEGER NOT NULL,"+
+                    "fec_mod INTEGER NOT NULL,"+
+                    "user_mod INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_VENDEDOR_ROL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_vendedor_rol_idx1 ON P_vendedor_rol(CODIGO_VENDEDOR)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_vendedor_sucursal] ("+
+                    "CODIGO_VENDEDOR_SUCURSAL INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "CODIGO_VENDEDOR INTEGER NOT NULL,"+
+                    "fec_agr INTEGER NOT NULL,"+
+                    "user_agr INTEGER NOT NULL,"+
+                    "fec_mod INTEGER NOT NULL,"+
+                    "user_mod INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_VENDEDOR_SUCURSAL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_vendedor_sucursal_idx1 ON P_vendedor_sucursal(CODIGO_VENDEDOR)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+
+        try {
 
         } catch (Exception e) { }
 

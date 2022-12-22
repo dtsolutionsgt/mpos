@@ -76,6 +76,8 @@ import com.dtsgt.classes.clsP_unidad_convObj;
 import com.dtsgt.classes.clsP_usgrupoObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsP_usopcionObj;
+import com.dtsgt.classes.clsP_vendedor_rolObj;
+import com.dtsgt.classes.clsP_vendedor_sucursalObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
@@ -396,6 +398,12 @@ public class WSRec extends PBase {
                     case 58:
                         callMethod("GetP_CORTESIA", "EMPRESA", gl.emp);
                         break;
+                    case 59:
+                        callMethod("GetP_VENDEDOR_ROL", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
+                    case 60:
+                        callMethod("GetP_VENDEDOR_SUCURSAL", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
                 }
             } catch (Exception e) {
                 error=e.getMessage();errorflag=true;
@@ -709,9 +717,7 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    //processComplete();
                     execws(53);
-                    //execws(56);
                     break;
                 case 53:
                     processModificador();
@@ -731,7 +737,6 @@ public class WSRec extends PBase {
                         processComplete();break;
                     }
                     execws(56);
-                    //processComplete();
                     break;
                 case 56:
                     processBarrilTipo();
@@ -739,7 +744,6 @@ public class WSRec extends PBase {
                         processComplete();break;
                     }
                     execws(57);
-                    //processComplete();
                     break;
                 case 57:
                     processBarrilBarra();
@@ -747,7 +751,6 @@ public class WSRec extends PBase {
                         processComplete();break;
                     }
                     execws(58);
-                    //processComplete();
                     break;
                 case 58:
                     processCortesia();
@@ -755,7 +758,20 @@ public class WSRec extends PBase {
                         processComplete();break;
                     }
                     processComplete();
+                    //execws(59);
                     break;
+                case 59:
+                    processVendedorRol();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(60);
+                case 60:
+                    processVendedorSucursal();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    processComplete();
             }
         } catch (Exception e) {
             msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -912,6 +928,10 @@ public class WSRec extends PBase {
                 plabel = "BARRIL BARRA";break;
             case 58:
                 plabel = "CORTESIA";break;
+            case 59:
+                plabel = "VENDEDOR ROL";break;
+            case 60:
+                plabel = "VENDEDOR SUCURSAL";break;
         }
 
         updateLabel();
@@ -3576,6 +3596,87 @@ public class WSRec extends PBase {
         }
     }
 
+    private void processVendedorRol() {
+        try {
+            clsP_vendedor_rolObj handler = new clsP_vendedor_rolObj(this, Con, db);
+            clsBeP_VENDEDOR_ROLList items = new clsBeP_VENDEDOR_ROLList();
+            clsBeP_VENDEDOR_ROL item = new clsBeP_VENDEDOR_ROL();
+            clsClasses.clsP_vendedor_rol var;
+
+            script.add("DELETE FROM P_VENDEDOR_ROL");
+
+            items = xobj.getresult(clsBeP_VENDEDOR_ROLList.class, "GetP_VENDEDOR_ROL");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_vendedor_rol();
+
+                var.codigo_vendedor_rol=item.CODIGO_VENDEDOR_ROL;
+                var.empresa=item.EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.codigo_vendedor=item.CODIGO_VENDEDOR;
+                var.codigo_rol=item.CODIGO_ROL;
+                var.fec_agr=0;
+                var.user_agr=0;
+                var.fec_mod=0;
+                var.user_mod=0;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+    private void processVendedorSucursal() {
+        try {
+            clsP_vendedor_sucursalObj handler = new clsP_vendedor_sucursalObj(this, Con, db);
+            clsBeP_VENDEDOR_SUCURSALList items = new clsBeP_VENDEDOR_SUCURSALList();
+            clsBeP_VENDEDOR_SUCURSAL item = new clsBeP_VENDEDOR_SUCURSAL();
+            clsClasses.clsP_vendedor_sucursal var;
+
+            script.add("DELETE FROM P_VENDEDOR_SUCURSAL");
+
+            items = xobj.getresult(clsBeP_VENDEDOR_SUCURSALList.class, "GetP_VENDEDOR_SUCURSAL");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_vendedor_sucursal();
+
+                var.codigo_vendedor_sucursal=item.CODIGO_VENDEDOR_SUCURSAL;
+                var.empresa=item.EMPRESA;
+                var.codigo_sucursal=item.CODIGO_SUCURSAL;
+                var.codigo_vendedor=item.CODIGO_VENDEDOR;
+                var.fec_agr=0;
+                var.user_agr=0;
+                var.fec_mod=0;
+                var.user_mod=0;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+
+    }
 
     //endregion
 

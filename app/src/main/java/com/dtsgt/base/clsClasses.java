@@ -1218,6 +1218,29 @@ public class clsClasses {
         public String nombre;
     }
 
+    public class clsP_vendedor_rol {
+        public int  codigo_vendedor_rol;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  codigo_vendedor;
+        public int  codigo_rol;
+        public int  fec_agr;
+        public int  user_agr;
+        public int  fec_mod;
+        public int  user_mod;
+    }
+
+    public class clsP_vendedor_sucursal {
+        public int  codigo_vendedor_sucursal;
+        public int  empresa;
+        public int  codigo_sucursal;
+        public int  codigo_vendedor;
+        public int  fec_agr;
+        public int  user_agr;
+        public int  fec_mod;
+        public int  user_mod;
+    }
+
     public class clsRes_mesa {
         public int  codigo_mesa;
         public String nombre;
@@ -1280,6 +1303,13 @@ public class clsClasses {
         public int  id;
         public int  dia;
         public String texto;
+    }
+
+    public class clsT_cierre_cred {
+        public int  id;
+        public String nombre;
+        public double total;
+        public double caja;
     }
 
     public class clsT_comanda {

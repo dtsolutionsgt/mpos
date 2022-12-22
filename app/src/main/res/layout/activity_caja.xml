@@ -120,7 +120,8 @@
                 android:enabled="false"
                 android:inputType="textPersonName"
                 android:textColor="#202020"
-                android:textSize="20sp" />
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView132"
@@ -169,10 +170,15 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
+                android:cursorVisible="false"
+                android:editable="false"
                 android:ems="10"
+                android:focusable="false"
+                android:focusableInTouchMode="true"
                 android:inputType="number|numberDecimal"
+                android:onClick="doFondoClick"
                 android:textColor="#202020"
-                android:textSize="20sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -191,7 +197,8 @@
                 android:inputType="textPersonName"
                 android:maxLines="3"
                 android:textColor="#202020"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView131"
@@ -257,9 +264,15 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
+                android:editable="false"
+                android:focusableInTouchMode="true"
+                android:cursorVisible="false"
+                android:focusable="false"
                 android:ems="10"
+                android:enabled="true"
                 android:inputType="numberDecimal"
-                android:textSize="20sp"
+                android:onClick="doEfectClick"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -294,6 +307,17 @@
                 android:text="TextView"
                 android:textSize="48sp"
                 android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/listView1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/editText20"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toEndOf="@+id/textView134" />
 
         </RelativeLayout>
 

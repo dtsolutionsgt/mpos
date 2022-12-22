@@ -928,8 +928,9 @@ public class CierreX extends PBase {
 
                     tot=0;totF=0;totSinImp=0;
 
-                    for(int j=0; j<itemRZ.size(); j++){
-                        rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
+                    for (int j=0; j<itemRZ.size(); j++){
+                        //rep.addtot(itemRZ.get(j).id,itemRZ.get(j).nombre);
+                        rep.add(itemRZ.get(j).nombre);
                         rep.add4lrrTotZ(itemRZ.get(j).cantmin,itemRZ.get(j).disp,itemRZ.get(j).precio);
                         tot+= mu.round2(itemRZ.get(j).cantmin);
                         totF+=mu.round2(itemRZ.get(j).disp);

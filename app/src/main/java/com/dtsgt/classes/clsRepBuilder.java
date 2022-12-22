@@ -416,7 +416,8 @@ public class clsRepBuilder {
 
 		tot=scom.length()-3;
 
-		ts=ltrim(sini,prwt+4)+ltrim(stot,prwt+2)+ltrim(scom,prwt);
+		//ts=ltrim(sini,prwt+4)+ltrim(stot,prwt+2)+ltrim(scom,prwt);
+		ts=rtrim(sini,prwt-2)+"  "+rtrim(stot,prwt-2)+rtrim(scom,prwt-2);
 		items.add(ts);
 	}
 
@@ -513,7 +514,12 @@ public class clsRepBuilder {
 
 		String str;
 
-		str = val.substring(0, val.length()-1);
+		try {
+			str = val.substring(0, val.length());
+		} catch (Exception e) {
+			str = val.substring(0, val.length()-1);
+		}
+
 		val = str;
 
 		ts=ltrim(s1,prw-30)+" "+ltrim(val,15);

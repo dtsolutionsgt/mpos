@@ -1387,7 +1387,9 @@ public class CliPos extends PBase {
                         txtNIT.setText(gl.gNITCliente);
                         existeCliente();
                     } else {
-                        terminaCliente();
+                        //terminaCliente();
+                        txtNIT.setText(gl.gNITCliente);
+                        existeCliente();
                     }
                 }
                 return;

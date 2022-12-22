@@ -400,6 +400,13 @@ public class WSEnv extends PBase {
                 msgboxwait(ws.error);
             } else {
 
+                if (gl.autocom==1) {
+                    if (ferr.isEmpty() && movErr.isEmpty()) {
+                        toast("Envío correcto");
+                        finish();return;
+                    }
+                }
+
                 /*
                 if (gl.autocom==1) {
                     if (ferr.isEmpty() && movErr.isEmpty()) {
@@ -456,8 +463,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception ex) {
-            msgbox2(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
+            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
         }
     }
 
