@@ -2424,6 +2424,7 @@ public class Venta extends PBase {
             listdlg.show();
 
         } catch (Exception e) {
+            String ss=e.getMessage();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }

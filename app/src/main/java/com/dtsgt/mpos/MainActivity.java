@@ -74,7 +74,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.3.1.1"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.3.1.2"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
                                         // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;
@@ -1088,6 +1088,18 @@ public class MainActivity extends PBase {
             if (gl.codigo_ruta == 0) {
                 VendedoresObj.fill("WHERE (ACTIVO=1)  ORDER BY CODIGO_VENDEDOR");
             } else {
+
+                /*
+                VendedoresObj.fill("WHERE  (ACTIVO=1) AND (CODIGO_VENDEDOR " +
+                        " IN (SELECT CODIGO_VENDEDOR FROM P_VENDEDOR_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda+")) " +
+                        " ORDER BY Nombre");
+
+                int ii=VendedoresObj.count;
+
+                if (VendedoresObj.count==0)  {
+                    VendedoresObj.fill("WHERE (ACTIVO=1) ORDER BY Nombre");
+                }
+*/
                 VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta + ") AND (ACTIVO=1) ORDER BY Nombre");
             }
 

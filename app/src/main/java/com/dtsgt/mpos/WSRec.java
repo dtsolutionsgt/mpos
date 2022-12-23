@@ -757,8 +757,8 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    processComplete();
-                    //execws(59);
+                    //processComplete();
+                    execws(59);
                     break;
                 case 59:
                     processVendedorRol();
