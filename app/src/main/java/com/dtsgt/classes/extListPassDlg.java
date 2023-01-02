@@ -94,6 +94,15 @@ public class extListPassDlg {
         khand.enable();
         lblKeyDP.setVisibility(View.INVISIBLE);
 
+        mList = dialog.findViewById(R.id.listview1);
+        mList.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                focusItem(position);
+                //dialog.dismiss();
+            };
+        });
+
         mTitleLabel = dialog.findViewById(R.id.lbltitulo);
         mTitleLabel.setText(titletext);
 

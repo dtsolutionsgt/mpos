@@ -1422,7 +1422,7 @@ public class ResCaja extends PBase {
 
         try {
             clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-            VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
+            app.fillSuper(VendedoresObj);
 
             if (VendedoresObj.count==0) {
                 msgbox("No está definido ningún supervisor");return;

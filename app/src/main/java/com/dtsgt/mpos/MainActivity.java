@@ -48,6 +48,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsKeybHandler;
+import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
@@ -74,7 +75,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.3.1.1"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.3.1.4"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
                                         // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;
@@ -623,20 +624,20 @@ public class MainActivity extends PBase {
                 return false;
             }
 
-            if (usr.isEmpty()) {
-                sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO,CODIGO_VENDEDOR,CODIGO FROM VENDEDORES WHERE CLAVE='" + pwd + "' COLLATE NOCASE";
-            } else {
+            //if (usr.isEmpty()) {
+            //    sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO,CODIGO_VENDEDOR,CODIGO FROM VENDEDORES WHERE CLAVE='" + pwd + "' COLLATE NOCASE";
+            //} else {
                 sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO,CODIGO_VENDEDOR,CODIGO FROM VENDEDORES WHERE CODIGO='" + usr + "'  COLLATE NOCASE";
-            }
+            //}
 
             DT = Con.OpenDT(sql);
-
             if (DT.getCount() == 0) {
                 mu.msgbox("Usuario incorrecto !");
                 return false;
             }
 
             DT.moveToFirst();
+            gl.codigo_vendedor = DT.getInt(4);
             dpwd = DT.getString(1);
             if (!pwd.equalsIgnoreCase(dpwd)) {
                 mu.msgbox("Contraseña incorrecta!");
@@ -649,6 +650,7 @@ public class MainActivity extends PBase {
 
             gl.nivel = gl.nivel_sucursal;
             gl.rol = DT.getInt(2);
+            setRol();
 
             //#CKFK 20200517 if (gl.caja.isEmpty() || gl.tienda==0) {
             if (gl.codigo_ruta == 0 || gl.tienda == 0) {
@@ -666,16 +668,19 @@ public class MainActivity extends PBase {
                 gl.modoinicial = false;
             }
 
+
             sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO, CODIGO_VENDEDOR FROM VENDEDORES " +
                     "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
             DT = Con.OpenDT(sql);
 
+            /*
             if (gl.rol != 3) {
                 if (DT.getCount() == 0) {
                     mu.msgbox("¡El usuario no tiene permiso de ingreso para " + gl.tiendanom + "!");
                     return false;
                 }
             }
+            */
 
             gl.vendnom = DT.getString(0);
             gl.vend = usr;
@@ -692,11 +697,37 @@ public class MainActivity extends PBase {
             return true;
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
             return false;
         }
 
+    }
+
+    private void setRol() {
+        try {
+            clsP_vendedor_rolObj P_vendedor_rolObj=new clsP_vendedor_rolObj(this,Con,db);
+            P_vendedor_rolObj.fill("WHERE (codigo_sucursal="+gl.tienda+") " +
+                                   "AND (codigo_vendedor="+gl.codigo_vendedor+") ORDER BY codigo_rol");
+
+            if (P_vendedor_rolObj.count==0) {
+                if (gl.rol<1) gl.rol=1;return;
+            }
+
+            gl.rol=0;
+            for (int i = 0; i <P_vendedor_rolObj.count; i++) {
+                if (P_vendedor_rolObj.items.get(i).codigo_rol==1) gl.rol=1;
+                if (P_vendedor_rolObj.items.get(i).codigo_rol==2) gl.rol=2;
+                if (P_vendedor_rolObj.items.get(i).codigo_rol==3) gl.rol=3;
+                if (gl.rol<3) {
+                    if (P_vendedor_rolObj.items.get(i).codigo_rol == 4) gl.rol = 4;
+                }
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        if (gl.rol<1) gl.rol=1;
     }
 
     private void logUser() {
@@ -1088,7 +1119,18 @@ public class MainActivity extends PBase {
             if (gl.codigo_ruta == 0) {
                 VendedoresObj.fill("WHERE (ACTIVO=1)  ORDER BY CODIGO_VENDEDOR");
             } else {
-                VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta + ") AND (ACTIVO=1) ORDER BY Nombre");
+
+                VendedoresObj.fill("WHERE  (ACTIVO=1) AND (CODIGO_VENDEDOR " +
+                        " IN (SELECT CODIGO_VENDEDOR FROM P_VENDEDOR_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda+")) " +
+                        " ORDER BY Nombre");
+
+                int ii=VendedoresObj.count;
+
+                if (VendedoresObj.count==0)  {
+                    VendedoresObj.fill("WHERE (RUTA = " + gl.codigo_ruta + ") AND (ACTIVO=1) ORDER BY Nombre");
+                    //VendedoresObj.fill("WHERE (ACTIVO=1) ORDER BY Nombre");
+                }
+
             }
 
             for (int i = 0; i < VendedoresObj.count; i++) {

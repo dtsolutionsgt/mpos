@@ -141,12 +141,20 @@ public class ValidaClave extends PBase {
 
             if (gl.modoclave == 0) nivel=4; else nivel=5;
 
-            sql = "WHERE CODIGO_VENDEDOR IN (SELECT VENDEDORES.CODIGO_VENDEDOR " +
-                    "FROM VENDEDORES INNER JOIN P_RUTA ON VENDEDORES.RUTA=P_RUTA.CODIGO_RUTA " +
-                    "WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND ((VENDEDORES.NIVEL="+nivel+") OR (VENDEDORES.NIVEL=6)) " +
-                    "AND (VENDEDORES.ACTIVO=1)) ORDER BY VENDEDORES.NOMBRE";
-
+            sql = "WHERE (ACTIVO=1) AND (CODIGO_VENDEDOR IN " +
+                  "(SELECT CODIGO_VENDEDOR FROM P_VENDEDOR_ROL WHERE (CODIGO_SUCURSAL="+gl.tienda+") AND (CODIGO_ROL="+nivel+"))) " +
+                  "ORDER BY NOMBRE ";
             VendedoresObj.fill(sql);
+
+            if (VendedoresObj.count==0) {
+                sql = "WHERE CODIGO_VENDEDOR IN " +
+                      "(SELECT VENDEDORES.CODIGO_VENDEDOR " +
+                      "FROM VENDEDORES INNER JOIN P_RUTA ON VENDEDORES.RUTA=P_RUTA.CODIGO_RUTA " +
+                      "WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND ((VENDEDORES.NIVEL="+nivel+")) " +
+                      "AND (VENDEDORES.ACTIVO=1)) " +
+                      "ORDER BY VENDEDORES.NOMBRE";
+                VendedoresObj.fill(sql);
+            }
 
             for (int i = 0; i < VendedoresObj.count; i++) {
                 item = clsCls.new clsMenu();

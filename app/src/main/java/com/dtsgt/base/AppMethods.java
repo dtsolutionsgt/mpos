@@ -31,6 +31,7 @@ import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
+import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.mpos.PrintView;
 import com.dtsgt.mpos.R;
 
@@ -2388,6 +2389,22 @@ public class AppMethods {
 
 		gl.idgrres=rr;gl.idgrsel=ss;
 	}
+
+	public void fillSuper(clsVendedoresObj VendedoresObj) {
+		try {
+			sql="WHERE (ACTIVO=1) AND (CODIGO_VENDEDOR IN " +
+					"(SELECT CODIGO_VENDEDOR FROM P_VENDEDOR_ROL WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
+					"AND (CODIGO_ROL IN (2,3) ) ) ) ORDER BY NOMBRE ";
+			VendedoresObj.fill(sql);
+
+			if (VendedoresObj.count==0) {
+				VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 
     //endregion
 

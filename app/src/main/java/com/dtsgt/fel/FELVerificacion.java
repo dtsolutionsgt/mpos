@@ -405,6 +405,9 @@ public class FELVerificacion extends PBase {
             fel.completar(fact.serie,
                           fact.corelativo);
 
+            String sxml=fel.xml;
+            sxml=sxml+"";
+
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
