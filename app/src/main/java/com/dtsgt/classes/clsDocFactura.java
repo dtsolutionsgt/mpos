@@ -810,6 +810,13 @@ public class clsDocFactura extends clsDocument {
             }
         }
 
+        //#AT20230102 Se muestra abajo del desglose de pago
+        if (parallevar){
+            rep.add("");
+            rep.addc("PARA LLEVAR");
+            rep.add("");
+        }
+
         if (modorest) {
             rep.add("");
             rep.add("Le atendió: "+nommesero);
@@ -876,13 +883,6 @@ public class clsDocFactura extends clsDocument {
             rep.add("EXIJA SU FACTURA ORIGINAL");
             rep.add("");
         }
-
-        if (parallevar){
-            rep.add("");
-            rep.addc("PARA LLEVAR");
-            rep.add("");
-        }
-
 
         if (impresionorden) {
             String sod=add1;
