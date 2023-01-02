@@ -91,7 +91,7 @@ public class Anulacion extends PBase {
 	final int dia = c.get(Calendar.DAY_OF_MONTH);
 	final int anio = c.get(Calendar.YEAR);
 	public int cyear, cmonth, cday, validCB=0;
-	private long datefin,dateini;
+	private long datefin,dateini,fecha_menor;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +116,11 @@ public class Anulacion extends PBase {
 
 		tipo=gl.tipo;
 		if (gl.peModal.equalsIgnoreCase("APR")) modoapr=true;
-		
+
+		if (gl.dias_anul<5) gl.dias_anul=5;
+		fecha_menor=du.addDays(du.getActDate(),-gl.dias_anul);
+		fecha_menor=du.ffecha00(fecha_menor);
+
 		if (tipo==0) lblTipo.setText("Pedido");
 		if (tipo==1) lblTipo.setText("Recibo");
 		if (tipo==2) lblTipo.setText("Depósito");
@@ -316,7 +320,7 @@ public class Anulacion extends PBase {
 		int vP,f,regs;
 		double val, total=0;
 		String id,sf,sval;
-			
+		long dfi,dff;
 		items.clear();
 		selidx=-1;vP=0;
 		
@@ -334,6 +338,9 @@ public class Anulacion extends PBase {
 			}
 			
 			if (tipo==3) {
+
+				dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
+				dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
 
 				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
 					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
@@ -467,8 +474,8 @@ public class Anulacion extends PBase {
                 } else {
 		          	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
                 	if (uuid!=null) {
-						msgAskFacturaSAT("La factura está anulada en portalSAT");
-						//anulacionFEL();
+						//msgAskFacturaSAT("La factura está anulada en portalSAT");
+						anulacionFEL();
 					} else {
 						anulFactura(itemid);
 					}
@@ -483,7 +490,7 @@ public class Anulacion extends PBase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 			
-			mu.msgbox("Documento anulado.");
+			if (tipo!=3) mu.msgbox("Documento anulado.");
 
 			listItems();
 
@@ -499,7 +506,6 @@ public class Anulacion extends PBase {
 		}
 	}
 
-
 	private void msgAskFacturaSAT(String msg) {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 		dialog.setTitle("Anular factura");
@@ -509,9 +515,6 @@ public class Anulacion extends PBase {
 		dialog.setNeutralButton("Salir", (dialog13, which) -> {});
 		dialog.show();
 	}
-
-
-
 
 	//endregion
 
@@ -1507,20 +1510,21 @@ public class Anulacion extends PBase {
 
 				if(dateTxt) {
 					datefin = du.cfechaRep(cyear, cmonth, cday, false);
+					if (datefin<fecha_menor) datefin=fecha_menor;
 				}
 
 				if(!dateTxt){
 					dateini  = du.cfechaRep(cyear, cmonth, cday, true);
+					if (dateini<fecha_menor) dateini=fecha_menor;
 				}
 
 				long fechaSel=du.cfechaSinHora(cyear, cmonth, cday)*10000;
 
 				if (tipo==3){
-					long fecha_menor=du.addDays(du.getActDate(),-gl.dias_anul);
-
 					if (fechaSel<fecha_menor){
 						msgbox("La fecha permitida de anulación es 5 días atras");
-						return;
+						fechaSel=fecha_menor;
+						//return;
 					}
 				}
 

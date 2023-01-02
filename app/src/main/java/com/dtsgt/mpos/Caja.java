@@ -896,7 +896,7 @@ public class Caja extends PBase {
             try {
                 sql="select Day(getdate()), Month(getdate()), Year(getdate())";
                 wso.execute(sql,rnDateCallback);
-                toast("Validando fecha, espere . . . ");
+                //toast("Validando fecha, espere . . . ");
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }

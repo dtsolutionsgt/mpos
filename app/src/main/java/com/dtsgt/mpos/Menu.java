@@ -472,9 +472,8 @@ public class Menu extends PBase {
 		clsClasses.clsVendedores item;
 
 		try {
-
 		    clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-			VendedoresObj.fill("WHERE (RUTA=" + gl.codigo_ruta+") AND ((NIVEL=2) OR (NIVEL=3)) ORDER BY NOMBRE");
+			app.fillSuper(VendedoresObj);
 
 			if (VendedoresObj.count==0) {
 				msgbox("No está definido ningún supervisor");return;
@@ -2230,6 +2229,10 @@ public class Menu extends PBase {
             if (T_cierreObj.items.size()==0) {
                 msgbox("No existe respaldo del ultimo cierre");return;
             }
+
+			writer.write("   ");writer.write("\r\n");
+			writer.write(" REIMPRESION CIERRE DIA  ");writer.write("\r\n");
+			writer.write("   ");writer.write("\r\n");
 
             for (int i = 0; i < T_cierreObj.items.size(); i++) {
                 writer.write(T_cierreObj.items.get(i).texto);writer.write("\r\n");

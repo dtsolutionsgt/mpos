@@ -72,7 +72,7 @@ public class CierreX extends PBase {
     private Double Fondo;
 
     private String condition,stampstr;
-    private boolean exito, reimpresion=false;
+    private boolean exito, reimpresion=false, esvacio;
     private ProgressDialog progressDialog;
     private String CorreoSucursal="", nombrecopia="";
 
@@ -198,7 +198,7 @@ public class CierreX extends PBase {
 
                     GenerarCopiaReporte();
 
-                    respaldoReporte();
+                    if (!esvacio) respaldoReporte();
 
                     txtbtn.setText(R.string.res_imprimir);
                     txtEnviarCorreo.setVisibility(View.VISIBLE);
@@ -610,7 +610,12 @@ public class CierreX extends PBase {
 
                     if(dt==null) {
                         msgbox("Ocurrió un error, vuelva a intentarlo");return false;
-                    }else{
+                    } else {
+
+                        if (sw==4) {
+                            esvacio=dt.getCount()==0;
+                        }
+
                         if(dt.getCount()!=0){
 
                             dt.moveToFirst();
