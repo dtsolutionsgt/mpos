@@ -122,4 +122,7 @@ public class appGlobals extends Application {
 
 	public ArrayList<String> peditems = new ArrayList<String>();
 
+	//#EJC202301020908AM: Parámetro para saber si se sincronizan o no
+	//todos los clientes.
+	public Boolean Sincronizar_Clientes = false;
 }

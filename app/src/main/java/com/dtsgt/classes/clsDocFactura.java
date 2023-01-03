@@ -846,8 +846,6 @@ public class clsDocFactura extends clsDocument {
                 rep.add("Numero de Acceso: "+contacc);
                 rep.add("Su factura pueden encontrar en el portal");
                 rep.add("SAT bajo identificacion: "+serie+numero);
-
-
             }
 
             if (!feluuid.equalsIgnoreCase(" ")) {

@@ -1032,9 +1032,13 @@ public class clsDocument {
 
                         switch (empid) {
                             case 33:
-                                felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                                if (frIVA!=0) {
+                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                                }
                             case 34:
-                                felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                                if (frIVA!=0) {
+                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                                }
                         }
 
                     } else {

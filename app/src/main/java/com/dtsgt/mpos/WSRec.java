@@ -19,7 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsP_Producto_TipoObj;
 import com.dtsgt.classes.clsP_almacenObj;
@@ -37,7 +36,6 @@ import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_descuentoObj;
 import com.dtsgt.classes.clsP_empresaObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
-import com.dtsgt.classes.clsP_estacionObj;
 import com.dtsgt.classes.clsP_factorconvObj;
 import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_impresoraObj;
@@ -45,7 +43,6 @@ import com.dtsgt.classes.clsP_impresora_marcaObj;
 import com.dtsgt.classes.clsP_impresora_modeloObj;
 import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
-import com.dtsgt.classes.clsP_linea_estacionObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_modificadorObj;
@@ -83,13 +80,10 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class WSRec extends PBase {
@@ -238,7 +232,9 @@ public class WSRec extends PBase {
                         callMethod("GetP_LINEA", "EMPRESA", gl.emp);
                         break;
                     case 10:
-                        callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
+                        if (gl.Sincronizar_Clientes){
+                            callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
+                        }
                         break;
                     case 11:
                         callMethod("GetP_ENCABEZADO_REPORTESHH", "EMPRESA", gl.emp);
@@ -466,7 +462,9 @@ public class WSRec extends PBase {
                     }
                     execws(10);break;
                 case 10:
-                    processCliente();
+                    if (gl.Sincronizar_Clientes) {
+                        processCliente();
+                    }
                     if (ws.errorflag) {
                         processComplete();break;
                     }

@@ -1,11 +1,13 @@
 package com.dtsgt.classes;
 
-import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
+
+import java.util.ArrayList;
 
 public class clsP_fraseObj {
 
@@ -107,6 +109,7 @@ public class clsP_fraseObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsP_frase item;
 
@@ -119,12 +122,9 @@ public class clsP_fraseObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsP_frase();
-
             item.codigo_frase=dt.getInt(0);
             item.texto=dt.getString(1);
-
             items.add(item);
-
             dt.moveToNext();
         }
 

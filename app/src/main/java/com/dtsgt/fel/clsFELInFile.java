@@ -1513,7 +1513,6 @@ public class clsFELInFile {
                     xml+="<dte:Frase CodigoEscenario=\"2\" TipoFrase=\"" + fraseIVA +"\"></dte:Frase>";
                 }
             }
-
             xml+="</dte:Frases>";
             xml+="<dte:Items>";
 

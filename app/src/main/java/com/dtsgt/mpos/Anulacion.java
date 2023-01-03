@@ -629,12 +629,9 @@ public class Anulacion extends PBase {
 	private void envioFactura() {
 
 		Handler mtimer = new Handler();
-		Runnable mrunner = new Runnable() {
-			@Override
-			public void run() {
-				ws.callback = 1;
-				ws.execute();
-			}
+		Runnable mrunner = () -> {
+			ws.callback = 1;
+			ws.execute();
 		};
 		mtimer.postDelayed(mrunner, 200);
 	}
