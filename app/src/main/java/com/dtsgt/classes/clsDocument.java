@@ -1030,6 +1030,7 @@ public class clsDocument {
                             } else felISR="";
                         } else felISR="";
 
+                        //#EJC202301040807AM: Corregir a futuro.
                         switch (empid) {
                             case 33:
                                 if (frIVA!=0) {
