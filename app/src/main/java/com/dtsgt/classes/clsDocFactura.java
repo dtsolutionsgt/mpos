@@ -770,6 +770,7 @@ public class clsDocFactura extends clsDocument {
         double totimp,totperc;
 
         if (sinimp) {
+
             stot=stot-imp;
             totperc=stot*(percep/100);totperc=round2(totperc);
             totimp=imp-totperc;
@@ -828,13 +829,6 @@ public class clsDocFactura extends clsDocument {
         try {
             if (!textopie.isEmpty()) {
                 rep.addc(textopie);
-                /*
-                if (textofin.equalsIgnoreCase("CORPORACION SANTA MARIA DE JESUS")) {
-                    textofin=textofin+" S.A.";
-                }
-                String[] sp = textofin.split(",");
-                for (int i = 0; i <sp.length; i++) rep.add(sp[i].trim());
-                */
             }
         } catch (Exception e) {}
 
