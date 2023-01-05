@@ -317,7 +317,7 @@ public class Anulacion extends PBase {
 
 		Cursor DT;
 		clsClasses.clsCFDV vItem;	
-		int vP,f,regs;
+		int vP,f,regs=0;
 		double val, total=0;
 		String id,sf,sval;
 		long dfi,dff;
@@ -420,13 +420,14 @@ public class Anulacion extends PBase {
 					DT.moveToNext();
 				}
 
-				//#AT20221213 Mostrar total  de registros y montos para facturas
-				if (tipo == 3) {
-					lblRegs.setVisibility(View.VISIBLE);
-					lblTotal.setVisibility(View.VISIBLE);
-					lblRegs.setText("Registros: " + DT.getCount());
-					lblTotal.setText("Total: " + mu.frmcur(total));
-				}
+				regs=DT.getCount();
+			}
+
+			if (tipo == 3) {
+				lblRegs.setVisibility(View.VISIBLE);
+				lblTotal.setVisibility(View.VISIBLE);
+				lblRegs.setText("Registros: " + regs);
+				lblTotal.setText("Total: " + mu.frmcur(total));
 			}
 
             if (DT!=null) DT.close();

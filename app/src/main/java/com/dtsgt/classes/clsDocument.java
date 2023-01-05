@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
-    public String nombre_reporte="";
+    public String nombre_reporte="",fversion;
 	public String resol,resfecha,resvence,resrango,fsfecha,modofact,fecharango,textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero, pais="";
@@ -424,8 +424,9 @@ public class clsDocument {
             }
 		}
 
+        if (docfactura) rep.add("Version: "+fversion);
         rep.add("");
-        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
         if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){

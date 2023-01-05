@@ -47,12 +47,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/imgTitLogo"
             android:layout_toRightOf="@+id/imgRoadTit"
+            android:gravity="center_horizontal"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:text="Caja"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6" />
+            android:textColor="#1A8AC6"
+            android:textSize="34sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <ScrollView
@@ -120,7 +125,7 @@
                 android:enabled="false"
                 android:inputType="textPersonName"
                 android:textColor="#202020"
-                android:textSize="24sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -178,7 +183,7 @@
                 android:inputType="number|numberDecimal"
                 android:onClick="doFondoClick"
                 android:textColor="#202020"
-                android:textSize="24sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -197,7 +202,7 @@
                 android:inputType="textPersonName"
                 android:maxLines="3"
                 android:textColor="#202020"
-                android:textSize="20sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -213,7 +218,7 @@
                 android:layout_marginBottom="0dp"
                 android:background="@drawable/blue_strip"
                 android:gravity="center"
-                android:text="FECHA"
+                android:text="CAJA"
                 android:textColor="#FFFFFFFF"
                 android:textSize="20sp" />
 
@@ -264,15 +269,15 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
-                android:editable="false"
-                android:focusableInTouchMode="true"
                 android:cursorVisible="false"
-                android:focusable="false"
+                android:editable="false"
                 android:ems="10"
                 android:enabled="true"
+                android:focusable="false"
+                android:focusableInTouchMode="true"
                 android:inputType="numberDecimal"
                 android:onClick="doEfectClick"
-                android:textSize="24sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -305,7 +310,7 @@
                 android:layout_toEndOf="@+id/imageView39"
                 android:gravity="center_vertical"
                 android:text="TextView"
-                android:textSize="48sp"
+                android:textSize="40sp"
                 android:textStyle="bold" />
 
             <ListView
@@ -318,6 +323,17 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_toEndOf="@+id/textView134" />
+
+            <TextView
+                android:id="@+id/textView303"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="TextView"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         </RelativeLayout>
 

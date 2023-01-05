@@ -75,8 +75,8 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode, epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.3.1.5"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
-                                        // AGREGAR A RELEASE NOTE
+    private String parVer = "4.3.1.6"; // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+                                       // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;
 
@@ -1012,16 +1012,12 @@ public class MainActivity extends PBase {
                     gl.cajanom = "";
                 }
             }
-
         } catch (Exception e) {
-            gl.tiendanom = "";
-            gl.cajanom = "";
+            gl.tiendanom = "";gl.cajanom = "";
         }
 
-        lblRTit.setText(gl.tiendanom);
-        lblRuta.setText(gl.rutanom+" ( "+gl.codigo_ruta+" )");
-        lblEmp.setText(gl.empnom);
-        lblEmp.setText(gl.tiendanom);
+        lblEmp.setText(gl.tiendanom+" ( "+gl.tienda+" ) ");
+        lblRuta.setText("Caja: "+ gl.rutanom+" ( "+gl.codigo_ruta+" )");
 
         app.getURL();
 

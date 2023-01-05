@@ -61,7 +61,7 @@ public class clsDocFactura extends clsDocument {
 		try {
 
 			sql=" SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,DESMONTO,IMPMONTO,EMPRESA,FECHAENTR,ADD1," +
-				" ADD2,IMPRES, ANULADO, FEELUUID, FEELFECHAPROCESADO, FEELSERIE, FEELNUMERO, FEELCONTINGENCIA, EMPRESA " +
+				" ADD2,IMPRES, ANULADO, FEELUUID, FEELFECHAPROCESADO, FEELSERIE, FEELNUMERO, FEELCONTINGENCIA, EMPRESA, VEHICULO " +
 				" FROM D_FACTURA WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);
 
@@ -100,6 +100,7 @@ public class clsDocFactura extends clsDocument {
                 felcont=DT.getString(18);
                 contacc=felcont;
                 empid=DT.getInt(19);
+                fversion=DT.getString(20);
 
                 if (anulado.equals("S")?true:false){
 					cantimpres = -1;

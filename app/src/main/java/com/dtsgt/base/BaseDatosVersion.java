@@ -1406,6 +1406,22 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_vendedor_sucursal_idx1 ON P_vendedor_sucursal(CODIGO_VENDEDOR)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_cierre] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "CIERRE INTEGER NOT NULL,"+
+                    "FECHA INTEGER NOT NULL,"+
+                    "TEXT TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_cierre_idx1 ON D_cierre(CIERRE)";db.execSQL(sql);
+            sql="CREATE INDEX D_cierre_idx2 ON D_cierre(FECHA)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+
+
 
         try {
 
@@ -1414,6 +1430,7 @@ public class BaseDatosVersion {
         try {
 
         } catch (Exception e) { }
+
     }
 
 	private boolean update01() {

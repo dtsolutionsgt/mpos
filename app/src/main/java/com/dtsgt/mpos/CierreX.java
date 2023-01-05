@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_cierreObj;
 import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsRepBuilder;
@@ -64,6 +65,8 @@ public class CierreX extends PBase {
 
     private clsClasses.clsReport item;
     private clsClasses.clsBonifProd itemZ;
+
+    private clsD_cierreObj D_cierreObj;
 
     private ArrayList<clsClasses.clsReport> itemR= new ArrayList<>();
     private ArrayList<clsClasses.clsBonifProd> itemRZ= new ArrayList<>();
@@ -128,6 +131,8 @@ public class CierreX extends PBase {
         setHandlers();
 
         txtbtn.setText("GENERAR");
+
+        D_cierreObj=new clsD_cierreObj(this,Con,db);
 
         clsRepBuilder rep = new clsRepBuilder(this, gl.prw, false, gl.peMon, gl.peDecImp, "");
 
@@ -238,29 +243,6 @@ public class CierreX extends PBase {
 
     public static boolean isValidEmail(CharSequence target) {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
-    }
-
-    private void respaldoReporte() {
-
-        String ss;
-
-        try {
-
-            db.beginTransaction();
-            db.execSQL("DELETE FROM T_cierre");
-
-            for (int i = 0; i <repl.size(); i++) {
-                ss=repl.get(i);
-                db.execSQL("INSERT INTO T_cierre VALUES ("+i+",0,'"+ss+"')");
-            }
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox("No se pudo generar respaldo de impresion del cierre.\n"+e.getMessage());
-        }
     }
 
     @Override
@@ -1551,6 +1533,38 @@ public class CierreX extends PBase {
 
     //region Aux
 
+    private void respaldoReporte() {
+        String ss;
+
+        try {
+
+            db.beginTransaction();
+            db.execSQL("DELETE FROM T_cierre");
+
+            for (int i = 0; i <repl.size(); i++) {
+                ss=repl.get(i);
+                db.execSQL("INSERT INTO T_cierre VALUES ("+i+",0,'"+ss+"')");
+            }
+
+            /*
+            gl.corelZ
+
+
+            db.execSQL(sql);
+
+
+
+            */
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox("No se pudo generar respaldo de impresion del cierre.\n"+e.getMessage());
+        }
+    }
+
     private void writeCorelLog(int id,int corel,String text) {
         String ss;
         try {
@@ -1768,5 +1782,17 @@ public class CierreX extends PBase {
         dialog.show();
     }
     //endregion
+
+    // Activity Events
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            D_cierreObj.reconnect(Con,db);
+        } catch (Exception e) {
+            msgbox(e.getMessage());
+        }
+    }
 
 }

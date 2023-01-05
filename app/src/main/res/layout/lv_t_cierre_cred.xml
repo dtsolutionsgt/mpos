@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/lblV2"
-        android:layout_width="180dp"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -16,7 +16,7 @@
         android:paddingStart="5dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <TextView
@@ -44,7 +44,7 @@
         android:gravity="right"
         android:text="0.00"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
 

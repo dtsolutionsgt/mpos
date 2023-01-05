@@ -38,6 +38,13 @@ public class clsClasses {
         public int  statcom;
     }
 
+    public class clsD_cierre {
+        public int  id;
+        public int  cierre;
+        public int  fecha;
+        public String text;
+    }
+
     public class clsD_costo {
         public int  codigo_costo;
         public int  codigo_empresa;

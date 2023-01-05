@@ -1,7 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -10,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,7 +26,6 @@ import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_cierre_credObj;
-import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.classes.extMontoDlg;
 import com.dtsgt.ladapt.LA_T_cierre_cred;
 import com.dtsgt.webservice.wsOpenDT;
@@ -44,8 +40,8 @@ import java.util.Random;
 public class Caja extends PBase {
 
     private ListView listView;
-    private TextView lblTit, lblMontoIni, lblMontoFin,lblMontoCred;
-    private EditText Vendedor, Fecha, MontoIni, MontoFin, MontoCred;
+    private TextView lblTit, lblMontoIni, lblMontoFin,lblMontoCred,lblVer;
+    private EditText Vendedor, lblCaja, MontoIni, MontoFin, MontoCred;
     private TextView FechaB;
     private ImageView imgpend;
 
@@ -63,7 +59,8 @@ public class Caja extends PBase {
     private clsClasses.clsP_cajahora itemH;
     private clsClasses.clsT_cierre_cred itemCr;
 
-    private double fondoCaja=0, montoIni=0, montoFin=0, gmontoDif =0, montoDifCred=0, montoCred=0,venta_total;
+    private double fondoCaja=0,montoIni=0,montoFin=0,gmontoDif=0;
+    private double montoDifCred=0,montoCred=0,venta_total;
     private String cap;
     private int acc=1,msgAcc=0,cred=0,corelidx=0;
 
@@ -79,7 +76,7 @@ public class Caja extends PBase {
         lblTit = findViewById(R.id.lblTit);
         lblMontoIni = findViewById(R.id.textView133);
         MontoIni = findViewById(R.id.editText19);
-        Fecha = findViewById(R.id.editText16);
+        lblCaja = findViewById(R.id.editText16);
         FechaB = findViewById(R.id.textView302);
         Vendedor = findViewById(R.id.editText18);
         lblMontoFin = findViewById(R.id.textView134);
@@ -87,12 +84,15 @@ public class Caja extends PBase {
         MontoCred = findViewById(R.id.editText17);
         lblMontoCred = findViewById(R.id.textView130);
         imgpend=findViewById(R.id.imageView107);
+        lblVer=findViewById(R.id.textView303);lblVer.setText("Versión: "+gl.parVer);
+
 
         Vendedor.setText(gl.vendnom);
         lblTit.setText(gl.titReport);
 
         String sf=du.sfecha(du.getActDate());
-        Fecha.setText(sf);FechaB.setText(sf);
+        FechaB.setText(sf);
+        lblCaja.setText(gl.rutanom+" ("+gl.codigo_ruta+") , Sucursal:  "+gl.tiendanom+" ("+gl.tienda+")");
 
         T_cierre_credObj=new clsT_cierre_credObj(this,Con,db);
 
