@@ -204,6 +204,7 @@ public class CierreX extends PBase {
                     GenerarCopiaReporte();
 
                     if (!esvacio) respaldoReporte();
+                    agregarReporte();
 
                     txtbtn.setText(R.string.res_imprimir);
                     txtEnviarCorreo.setVisibility(View.VISIBLE);
@@ -1546,22 +1547,49 @@ public class CierreX extends PBase {
                 db.execSQL("INSERT INTO T_cierre VALUES ("+i+",0,'"+ss+"')");
             }
 
-            /*
-            gl.corelZ
-
-
-            db.execSQL(sql);
-
-
-
-            */
-
             db.setTransactionSuccessful();
             db.endTransaction();
 
         } catch (Exception e) {
             db.endTransaction();
             msgbox("No se pudo generar respaldo de impresion del cierre.\n"+e.getMessage());
+        }
+    }
+
+    private void agregarReporte() {
+        clsClasses.clsD_cierre item;
+        String ss;
+        int ii;
+        long fl,ff=du.getActDateTime();
+
+        try {
+
+            db.beginTransaction();
+
+            fl=du.addDays(ff,-7);
+            db.execSQL("DELETE FROM D_cierre WHERE fecha<"+fl);
+
+            ii=D_cierreObj.newID("SELECT MAX(ID) FROM D_cierre");
+
+            for (int i = 0; i <repl.size(); i++) {
+                ss=repl.get(i);
+
+                item = clsCls.new clsD_cierre();
+
+                item.id=ii+i;
+                item.cierre=gl.corelZ;
+                item.fecha=ff;
+                item.text=ss;
+
+                D_cierreObj.add(item);
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox("No se pudo agregar impresion del cierre.\n"+e.getMessage());
         }
     }
 

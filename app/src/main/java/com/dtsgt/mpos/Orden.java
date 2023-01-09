@@ -1945,7 +1945,7 @@ public class Orden extends PBase {
                         item=clsCls.new clsMenu();
                         item.Cod=dt.getString(0);
                         item.icod=dt.getInt(4);
-                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+prodPrecioBase(item.icod)+" ]";
+                        item.Name=dt.getString(1)+" \n[ "+gl.peMon+prodPrecioBaseImp(item.icod)+" ]";
                         item.valor=gl.dval;
                         item.idres=gl.idgrres;
                         item.idressel=gl.idgrsel;
@@ -5088,6 +5088,59 @@ public class Orden extends PBase {
         gl.dval=pr;
 
         return sprec;
+    }
+
+    private double prodPrecioBaseImp(int prid) {
+        Cursor DT;
+        double pr,stot,pprec,tsimp;
+        double imp1,imp2,imp3,vimp1,vimp2,vimp3,vimp;
+        String sprec="";
+
+        try {
+            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+prid+") AND (NIVEL="+nivel+") ";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            pr=DT.getDouble(0);
+
+            sql="SELECT IMP1,IMP2,IMP3 FROM P_producto WHERE (CODIGO_PRODUCTO="+prid+")";
+            DT=Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            imp1=DT.getDouble(0);imp2=DT.getDouble(1);imp3=DT.getDouble(2);
+
+            if (imp1!=0) {
+                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp1+")";
+                DT=Con.OpenDT(sql);
+                DT.moveToFirst();
+                vimp1=DT.getDouble(0);
+            } else vimp1=0;
+
+            if (imp2!=0) {
+                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp2+")";
+                DT=Con.OpenDT(sql);
+                DT.moveToFirst();
+                vimp2=DT.getDouble(0);
+            } else vimp2=0;
+
+            if (imp3!=0) {
+                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp3+")";
+                DT=Con.OpenDT(sql);
+                DT.moveToFirst();
+                vimp3=DT.getDouble(0);
+            } else vimp3=0;
+
+            vimp=vimp1+vimp2+vimp3;
+            pr=pr*(1+vimp/100);
+            pr=mu.round2(pr);
+
+            if (DT!=null) DT.close();
+        } catch (Exception e) {
+            pr=0;
+        }
+
+        gl.dval=pr;
+        return pr;
     }
 
     private int getDisp(String prid) {

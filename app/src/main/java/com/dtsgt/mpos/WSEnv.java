@@ -467,6 +467,33 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void limpiaTablas() {
+        long ff=du.getActDate();
+
+        ff=du.addDays(ff,-7);
+
+        try {
+            sql="DELETE FROM D_fel_bitacora WHERE fecha<"+ff;
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        try {
+            sql="DELETE FROM D_fel_error WHERE fecha<"+ff;
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        try {
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
     //endregion
 
     //region Envío
@@ -1403,6 +1430,8 @@ public class WSEnv extends PBase {
 
         ferr = "";
         movErr = "";
+
+        limpiaTablas();
 
         try {
 

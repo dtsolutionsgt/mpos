@@ -32,6 +32,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.ExDialogT;
+import com.dtsgt.classes.clsD_cierreObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsP_almacenObj;
@@ -78,7 +79,7 @@ public class Menu extends PBase {
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
     private clsP_paramextObj P_paramextObj;
 
-    private int selId,selIdx,menuid,iicon,idalm,idalmdpred;
+    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje,modo_emerg;
 	private boolean listo=true,almacenes;
@@ -1515,7 +1516,7 @@ public class Menu extends PBase {
 			listdlg.add("Margen y Beneficio por Familia");
 			listdlg.add("Cierre X");
 			listdlg.add("Cierre Z");
-			listdlg.add("Ultimo cierre");
+			listdlg.add("Cierre del día");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -1534,7 +1535,7 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Cierre X")) gl.reportid=9;
 					if (ss.equalsIgnoreCase("Cierre Z")) gl.reportid=10;
 					if (ss.equalsIgnoreCase("Reporte de Ventas por Cliente")) gl.reportid=11;
-					if (ss.equalsIgnoreCase("Ultimo cierre")) gl.reportid=12;
+					if (ss.equalsIgnoreCase("Cierre del día")) gl.reportid=12;
 					if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
 					//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
 
@@ -1543,7 +1544,8 @@ public class Menu extends PBase {
 					if (gl.reportid == 9 || gl.reportid == 10) {
 						startActivity(new Intent(Menu.this, CierreX.class));
 					} else if (gl.reportid == 12) {
-						msgAskUltimoCierre();
+						//msgAskUltimoCierre();
+						listaCierres();
 					} else {
 						startActivity(new Intent(Menu.this,Reportes.class));
 					}
@@ -1560,6 +1562,57 @@ public class Menu extends PBase {
 		}
 
     }
+
+	private void listaCierres() {
+		String ss;
+
+		try {
+
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Cierres","Salir");
+
+			sql="SELECT DISTINCT CIERRE,FECHA FROM D_cierre ORDER BY CIERRE DESC";
+			Cursor dt=Con.OpenDT(sql);
+			if (dt.getCount()==0) {
+				msgbox("No existe cierre en ultimos 7 días");return;
+			}
+
+			dt.moveToFirst();
+			while (!dt.isAfterLast()) {
+				ss=du.sfecha(dt.getLong(1))+" "+du.shora(dt.getLong(1));
+				listdlg.add(dt.getInt(0),ss);
+				dt.moveToNext();
+			}
+
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					toastlong("Botón Salir");
+					listdlg.dismiss();
+				}
+			});
+
+			listdlg.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+					try {
+						idcierre=listdlg.getCodigoInt(position);
+						msgAskUltimoCierre();
+						listdlg.dismiss();
+					} catch (Exception e) {}
+				};
+			});
+
+			listdlg.setWidth(350);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
 
     //endregion
 
@@ -2223,19 +2276,19 @@ public class Menu extends PBase {
             FileWriter wfile=new FileWriter(fname,false);
             BufferedWriter writer = new BufferedWriter(wfile);
 
-            clsT_cierreObj T_cierreObj=new clsT_cierreObj(this,Con,db);
-            T_cierreObj.fill("ORDER BY ID");
+			clsD_cierreObj D_cierreObj=new clsD_cierreObj(this,Con,db);
+			D_cierreObj.fill("WHERE (CIERRE="+idcierre+") ORDER BY ID");
 
-            if (T_cierreObj.items.size()==0) {
-                msgbox("No existe respaldo del ultimo cierre");return;
-            }
+			if (D_cierreObj.count==0) {
+				msgbox("No existe respaldo del ultimo cierre");return;
+			}
 
 			writer.write("   ");writer.write("\r\n");
 			writer.write(" REIMPRESION CIERRE DIA  ");writer.write("\r\n");
 			writer.write("   ");writer.write("\r\n");
 
-            for (int i = 0; i < T_cierreObj.items.size(); i++) {
-                writer.write(T_cierreObj.items.get(i).texto);writer.write("\r\n");
+            for (int i = 0; i < D_cierreObj.count; i++) {
+                writer.write(D_cierreObj.items.get(i).text);writer.write("\r\n");
             }
 
             writer.close();
@@ -2250,7 +2303,42 @@ public class Menu extends PBase {
         }
     }
 
-    private void writeCorelLog(int id,int corel,String text) {
+	private void imprimirCierreOrig(boolean envio) {
+
+		String fname = Environment.getExternalStorageDirectory()+"/print.txt";
+
+		try {
+			FileWriter wfile=new FileWriter(fname,false);
+			BufferedWriter writer = new BufferedWriter(wfile);
+
+			clsT_cierreObj T_cierreObj=new clsT_cierreObj(this,Con,db);
+			T_cierreObj.fill("ORDER BY ID");
+
+			if (T_cierreObj.items.size()==0) {
+				msgbox("No existe respaldo del ultimo cierre");return;
+			}
+
+			writer.write("   ");writer.write("\r\n");
+			writer.write(" REIMPRESION CIERRE DIA  ");writer.write("\r\n");
+			writer.write("   ");writer.write("\r\n");
+
+			for (int i = 0; i < T_cierreObj.items.size(); i++) {
+				writer.write(T_cierreObj.items.get(i).texto);writer.write("\r\n");
+			}
+
+			writer.close();
+
+			if (envio) {
+				enviaImpresion();
+			} else {
+				app.doPrint();
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void writeCorelLog(int id,int corel,String text) {
         String ss;
         try {
             ss="INSERT INTO T_BARRA_BONIF VALUES ('"+du.getActDateTime()+"','"+id+"',"+corel+",0,0,'"+text+"')";
@@ -2421,7 +2509,7 @@ public class Menu extends PBase {
 
     private void msgAskUltimoCierre() {
         ExDialog dialog = new ExDialog(this);
-        dialog.setMessage("Ultimo cierre");
+        dialog.setMessage("Cierre");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Imprimir", (dialog1, which) -> imprimirCierre(false));
         dialog.setNeutralButton("Enviar", (dialog12, which) -> imprimirCierre(true));

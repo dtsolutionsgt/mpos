@@ -41,7 +41,7 @@ public class clsClasses {
     public class clsD_cierre {
         public int  id;
         public int  cierre;
-        public int  fecha;
+        public long  fecha;
         public String text;
     }
 

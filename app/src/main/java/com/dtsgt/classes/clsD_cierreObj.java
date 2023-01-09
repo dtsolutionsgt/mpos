@@ -126,7 +126,7 @@ public class clsD_cierreObj {
 
             item.id=dt.getInt(0);
             item.cierre=dt.getInt(1);
-            item.fecha=dt.getInt(2);
+            item.fecha=dt.getLong(2);
             item.text=dt.getString(3);
 
             items.add(item);
