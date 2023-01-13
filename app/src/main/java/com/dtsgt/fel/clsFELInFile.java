@@ -48,7 +48,7 @@ public class clsFELInFile {
     public int errlevel, responsecode;
     public long idcontingencia;
 
-    public String xml,xmlanul;
+    public String xml,xmlanul,tipo_nit;
     public String fact_uuid,fact_serie,fact_numero;
     public String ret_uuid,ret_serie,ret_numero;
 
@@ -1465,11 +1465,12 @@ public class clsFELInFile {
                          String codigoPostal,
                          String municipio,
                          String departamento,
-                         String pais) {
+                         String pais,
+                         String tipoNIT) {
 
         try {
 
-            String stt=pCorreo;
+            String stt=pCorreo,TE;
 
             pCorreo=pCorreo.replace(" ","");
             if (pCorreo.indexOf(".")<3)  pCorreo="";
@@ -1490,7 +1491,19 @@ public class clsFELInFile {
             String characterFilter = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]";
             pDireccionCliente = pDireccionCliente.replaceAll(characterFilter,"");
 
-            xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
+            //pNITCliente="2657742680108";
+
+            if (tipoNIT.equalsIgnoreCase("C")) {
+                TE="CUI";
+                xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" TipoEspecial=\""+TE+"\" NombreReceptor=\""+pNombreCliente+"\">";
+            } else if (tipoNIT.equalsIgnoreCase("E")) {
+                TE="EXT";
+                xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" TipoEspecial=\""+TE+"\" NombreReceptor=\""+pNombreCliente+"\">";
+            } else {
+                TE="NIT";
+                xml+="<dte:Receptor CorreoReceptor=\""+pCorreo+"\" IDReceptor=\""+pNITCliente+"\" NombreReceptor=\""+pNombreCliente+"\">";
+            }
+
             xml+="<dte:DireccionReceptor>";
             xml+="<dte:Direccion>"+pDireccionCliente+"</dte:Direccion>";
             xml+="<dte:CodigoPostal>"+codigoPostal+"</dte:CodigoPostal>";

@@ -526,6 +526,7 @@ public class FELFactura extends PBase {
             fel.fechaf_y=du.getyear(fact.fecha);
             fel.fechaf_m=du.getmonth(fact.fecha);
             fel.fechaf_d=du.getday(fact.fecha);
+            fel.tipo_nit=fact.ayudante;
 
             fel.iniciar(fact.fecha,"");
 
@@ -578,7 +579,8 @@ public class FELFactura extends PBase {
                          fel.codigo_postal,
                          muni,
                          dep,
-                         gl.codigo_pais);
+                         gl.codigo_pais,
+                         fel.tipo_nit);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 

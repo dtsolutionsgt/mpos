@@ -296,6 +296,7 @@ public class FELVerificacion extends PBase {
             }
 
             cliid=fact.cliente;
+            fel.tipo_nit=fact.ayudante;
 
             D_facturafObj.fill("WHERE Corel='"+corel+"'");
             factf=D_facturafObj.first();
@@ -379,7 +380,8 @@ public class FELVerificacion extends PBase {
                          fel.codigo_postal,
                          muni,
                          dep,
-                         gl.codigo_pais);
+                         gl.codigo_pais,
+                         fel.tipo_nit);
 
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 

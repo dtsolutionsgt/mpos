@@ -935,7 +935,7 @@
                 android:background="@drawable/blue_strip"
                 android:gravity="center_vertical"
                 android:paddingLeft="10dp"
-                android:text="Pais"
+                android:text="Modo factura"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -1092,7 +1092,8 @@
                 android:layout_marginEnd="0dp"
                 android:background="@drawable/spinner_style"
                 android:focusable="true"
-                android:focusableInTouchMode="true" />
+                android:focusableInTouchMode="true"
+                android:visibility="invisible" />
 
             <EditText
                 android:id="@+id/editTextNumber2"

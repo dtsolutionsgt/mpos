@@ -433,7 +433,7 @@ public class MantConfig extends PBase {
 
             db.beginTransaction();
 
-            db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=16");
+            //db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=16");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=100");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=102");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=103");
@@ -464,7 +464,7 @@ public class MantConfig extends PBase {
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=140");
             db.execSQL("DELETE FROM P_PARAMEXT WHERE ID=141");
 
-            db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES ( 16,'Formato factura','"+value16+"')");
+            //db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES ( 16,'Formato factura','"+value16+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (100,'Configuración centralizada','"+s100+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (102,'Lista con imagenes','"+s102+"')");
             db.execSQL("INSERT INTO P_PARAMEXT (ID, NOMBRE, VALOR) VALUES (103,'Pos modalidad','"+s103+"')");

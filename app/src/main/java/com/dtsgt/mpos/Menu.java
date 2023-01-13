@@ -1629,6 +1629,7 @@ public class Menu extends PBase {
 			listdlg.add("Pagos de Caja");
 			listdlg.add("Depósitos");
 			listdlg.add("Cierre de Caja");
+			listdlg.add("Reportes Cierre del día");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -1640,15 +1641,18 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Pagos de Caja")) gl.cajaid=2;
 					if (ss.equalsIgnoreCase("Depósitos")) gl.cajaid=4;
 					if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
+					if (ss.equalsIgnoreCase("Reportes Cierre del día")) gl.cajaid=5;
 
 					gl.titReport = ss;
 
 					if (valida()) {
 
-						if (gl.cajaid!=2) {
-							validaCaja();
+						if (gl.cajaid==2) {
+							startActivity(new Intent(Menu.this, CajaPagos.class));
+						} else if (gl.cajaid==5) {
+							listaCierres();
 						} else {
-							startActivity(new Intent(Menu.this,CajaPagos.class));
+							validaCaja();
 						}
 
 					} else {

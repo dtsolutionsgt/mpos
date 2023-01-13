@@ -832,6 +832,7 @@ public class Reportes extends PBase {
             int acc=1;
             String series="", fecha="";
             double costo;
+            String fecha1,fecha2;
 
             try {
 
@@ -861,51 +862,68 @@ public class Reportes extends PBase {
                             }
                             rep.empty();
                             //rep.add("Cant.Fact   Costo  Impuesto    Total");
-                            rep.add("No. SubTotal   Impuesto    Total");
+                            //rep.add("No. SubTotal   Impuesto    Total");
+                            rep.add3TotR("No.","SubTotal","Impuesto","Total");
                             rep.line();
                             //#EJC202211211358, PARA QUE ESTA FECHA?
                             //rep.add("             "+du.sfecha(itemR.get(i).fecha*10000));
+
+                            rep.empty();
+                            rep.add("             " + du.sfecha(itemR.get(0).fecha*10000));
+                            rep.line();
+
                             acc = 2;
                         }
 
                         series=itemR.get(i).serie;
 
                         totSinImp = itemR.get(i).total - itemR.get(i).imp;
-                        //rep.add3Tot(itemR.get(i).cant,totSinImp,itemR.get(i).imp, itemR.get(i).total);
-                        rep.add3Tot(itemR.get(i).correl,totSinImp,itemR.get(i).imp, itemR.get(i).total);
+                        //rep.add3Tot(itemR.get(i).correl,totSinImp,itemR.get(i).imp, itemR.get(i).total);
+                        rep.add3TotR(itemR.get(i).correl,totSinImp,itemR.get(i).imp, itemR.get(i).total);
 
                         tot += itemR.get(i).total;
                         sinImp += totSinImp;
                         impF += itemR.get(i).imp;
-                        cantF += itemR.get(i).cant;
+                        //cantF += itemR.get(i).cant;
+                        cantF ++;
 
-                        if(i+1==itemR.size()){
+                        if (itemR.size()==i+1) {
                             //rep.line();
                             //rep.add3Tot(cantF, sinImp, impF, tot);
+
+                            rep.line();
+                            rep.add3TotR(cantF, sinImp, impF, tot);
+
                             totF += tot;
                             totSinImpF += sinImp;
 
                         } else {
 
-                            String fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
-                            String fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
+                            fecha1=String.valueOf(itemR.get(i).fecha).substring(0,6);
+                            fecha2=String.valueOf(itemR.get(i + 1).fecha).substring(0,6);
 
                             if (!fecha1.equals(fecha2)) {
                                 rep.line();
                                 //rep.add3Tot(cantF, sinImp, impF, tot);
+                                rep.add3TotR(cantF, sinImp, impF, tot);
+
                                 totF += tot;
                                 totSinImpF += sinImp;
 
                                 cantF = 0;
                                 tot = 0;
                                 sinImp = 0;
+                                impF=0;
 
                                 rep.empty();
                                 rep.add("             " + du.sfecha(itemR.get(i+1).fecha*10000));
+                                rep.line();
                             }
                         }
 
                         SumaCant += 1;
+
+
                         //Reporte 2
                     } else if(gl.reportid==2){
 
@@ -1247,7 +1265,12 @@ public class Reportes extends PBase {
             try {
 
                 if(gl.reportid==1){
-                    rep.add3Tot(SumaCant, totSinImpF, impF, totF);
+                    rep.add("");
+                    rep.addc("Total reporte");
+                    rep.line();
+                    rep.add3TotR(SumaCant, totSinImpF, impF, totF);
+                    rep.line();
+                    rep.add("");
                 }
 
                 if(gl.reportid==2) rep.add4lrrTot("Total: ","",Integer.toString(cantfF),totF);

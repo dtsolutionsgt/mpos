@@ -926,9 +926,9 @@ public class clsDocument {
 		}
 
         //#AT20221123 SaveHeadLines por país
-        if (pais.equalsIgnoreCase("GUA")) {
+        if (pais.equalsIgnoreCase("GT")) {
             saveHeadLines(reimpres);
-        } else if (pais.equalsIgnoreCase("HON")) {
+        } else if (pais.equalsIgnoreCase("HN")) {
             saveHeadLinesHON(reimpres);
         } else {
             saveHeadLines(reimpres);

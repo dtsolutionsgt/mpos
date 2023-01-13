@@ -117,7 +117,7 @@ public class ResCliente extends PBase {
             if (!existeCliente()){
 
                 if (!validaNIT(sNITCliente)) {
-                    msgbox("NIT incorrecto");return;
+                    //msgbox("NIT incorrecto");return;
                 }
 
                 if (mu.emptystr(sNombreCliente)) {
@@ -333,13 +333,16 @@ public class ResCliente extends PBase {
     private boolean NitValidadoInfile =false;
 
     private void consultaNITInfile() {
-
+        String nc;
         nrslt=false;
         NitValidadoInfile= false;
 
         if (!gl.codigo_pais.trim().equalsIgnoreCase("GT")) return ;
 
         if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
+
+            nc=txtNIT.getText().toString();
+            if (nc.length()==13) return;
 
             JSONObject params = new JSONObject();
 

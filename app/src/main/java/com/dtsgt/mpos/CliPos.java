@@ -188,9 +188,15 @@ public class CliPos extends PBase {
 
             sDireccionCliente=sDireccionCliente+" ";
 
-            if (!validaNIT(sNITCliente)) {
-                msgbox("NIT incorrecto");return;
+            gl.nit_tipo="N";
+
+
+            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                if (!validaNIT(sNITCliente)) {
+                    //msgbox("NIT incorrecto");return;
+                }
             }
+
 
             if (mu.emptystr(sNombreCliente)) {
                 msgbox("Nombre incorrecto");return;
@@ -355,7 +361,7 @@ public class CliPos extends PBase {
             gl.gDirCliente ="Ciudad";
             gl.gTelCliente ="";
             gl.gNITCliente ="CF";
-
+            gl.nit_tipo="N";
 
             gl.dom_nit= gl.gNITCliente;
             gl.dom_nom=sNombreCliente;
@@ -822,18 +828,24 @@ public class CliPos extends PBase {
 
 	//region Aux
 
-
 	private boolean validaNIT(String N)  {
+        String P, C, s, NC;
+        int[] v = {0,0,0,0,0,0,0,0,0,0};
+        int j, mp, sum, d11, m11, r11, cn, ll;
 
         if (N.isEmpty()) return false;
         if (NitValidadoInfile) return true;
-        if (!N.contains("-")) return false;
+        //if (!N.contains("-")) return false;
 
-        try{
+        try {
+            ll = N.length();
+            if (ll<5) return false;
 
-            String P, C, s, NC;
-            int[] v = {0,0,0,0,0,0,0,0,0,0};
-            int j, mp, sum, d11, m11, r11, cn, ll;
+            if (!N.contains("-")) {
+                P = N.substring(0,ll-1);
+                C = N.substring(ll-1,ll);
+                N=P+"-"+C;
+            }
 
             N=N.trim();
             N=N.replaceAll(" ","");
@@ -1318,13 +1330,16 @@ public class CliPos extends PBase {
     private boolean NitValidadoInfile =false;
 
     private void consultaNITInfile() {
-
+        String nc;
         nrslt=false;
         NitValidadoInfile = false;
 
         if (!gl.codigo_pais.trim().equalsIgnoreCase("GT")) return ;
 
         if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
+
+            nc=txtNIT.getText().toString();
+            if (nc.length()==13) return;
 
             JSONObject params = new JSONObject();
 
@@ -1366,7 +1381,6 @@ public class CliPos extends PBase {
 
             queue.add(request);
         }
-
     }
 
     //endregion

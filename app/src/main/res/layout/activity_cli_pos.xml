@@ -262,7 +262,7 @@
             android:layout_alignParentTop="false"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="24dp"
-            android:text="NIT"
+            android:text="Identificación"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#000000"
             android:textSize="15sp" />

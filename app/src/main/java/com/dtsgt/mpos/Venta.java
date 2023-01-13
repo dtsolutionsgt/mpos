@@ -354,7 +354,6 @@ public class Venta extends PBase {
                             gl.tipoprodcod=tipo;
                             gl.idmodgr=codigoModificador(app.codigoProducto(gl.prodid));
 
-
                             if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
                                 browse=6;
                                 gl.menuitemid=prodid;
@@ -1229,18 +1228,19 @@ public class Venta extends PBase {
     }
 
     private boolean updateItemUID(){
-        double precdoc;
+        double precdoc,valimp;
 
         try {
 
             prodtot=mu.round(prec*cant,2);
             if (sinimp) precdoc=precsin; else precdoc=prec;
+            valimp=cant*prec*imp/100;valimp=mu.round2(valimp);
 
             upd.init("T_VENTA");
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
-            upd.add("IMP",imp);
-            upd.add("IMP",imp);
+            //upd.add("IMP",imp);
+            upd.add("IMP",impval);
             upd.add("DES",desc);
             upd.add("DESMON",descmon);
             upd.add("TOTAL",prodtot);
@@ -2070,7 +2070,6 @@ public class Venta extends PBase {
 
             sql += "ORDER BY P_PRODUCTO.DESCCORTA";
 
-
             dt=Con.OpenDT(sql);
 
             if (dt.getCount()==0){
@@ -2087,6 +2086,8 @@ public class Venta extends PBase {
                         item=clsCls.new clsMenu();
                         item.Cod=dt.getString(0);
                         item.icod=dt.getInt(4);
+                          //pprec=prodPrecioBase(item.icod);
+
                         pprec=prodPrecioBaseImp(item.icod);
 
                         //item.Name=dt.getString(1)+" \n[ "+gl.peMon+pprec+" ]";
@@ -3208,6 +3209,8 @@ public class Venta extends PBase {
         gl.ref2="";
         gl.ref3="";
 
+        gl.nit_tipo="N";
+
         //#CKFK 20210706
         gl.pickup=false;
         gl.delivery=false;
@@ -3433,24 +3436,36 @@ public class Venta extends PBase {
             imp1=DT.getDouble(0);imp2=DT.getDouble(1);imp3=DT.getDouble(2);
 
             if (imp1!=0) {
-                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp1+")";
-                DT=Con.OpenDT(sql);
-                DT.moveToFirst();
-                vimp1=DT.getDouble(0);
+                try {
+                    sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp1+")";
+                    DT=Con.OpenDT(sql);
+                    DT.moveToFirst();
+                    vimp1=DT.getDouble(0);
+                } catch (Exception e) {
+                    vimp1=0;
+                }
             } else vimp1=0;
 
             if (imp2!=0) {
-                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp2+")";
-                DT=Con.OpenDT(sql);
-                DT.moveToFirst();
-                vimp2=DT.getDouble(0);
-            } else vimp2=0;
+                try {
+                    sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp2+")";
+                    DT=Con.OpenDT(sql);
+                    DT.moveToFirst();
+                    vimp2=DT.getDouble(0);
+                } catch (Exception e) {
+                    vimp2=0;
+                }
+           } else vimp2=0;
 
             if (imp3!=0) {
-                sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp3+")";
-                DT=Con.OpenDT(sql);
-                DT.moveToFirst();
-                vimp3=DT.getDouble(0);
+                try {
+                    sql="SELECT VALOR FROM P_IMPUESTO  WHERE (CODIGO_IMPUESTO="+imp3+")";
+                    DT=Con.OpenDT(sql);
+                    DT.moveToFirst();
+                    vimp3=DT.getDouble(0);
+                } catch (Exception e) {
+                    vimp3=0;
+                }
             } else vimp3=0;
 
             vimp=vimp1+vimp2+vimp3;
@@ -4132,6 +4147,7 @@ public class Venta extends PBase {
                 browse=0;
                 lblVend.setText(" ");
 
+                gl.nit_tipo="N";
                 gl.numero_orden=" ";
                 gl.nivel=gl.nivel_sucursal;
                 setNivel();

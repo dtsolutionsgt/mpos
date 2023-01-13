@@ -48,9 +48,8 @@ public class clsDocFactura extends clsDocument {
 	}
 
     protected boolean loadHeadData(String corel) {
-
 		Cursor DT;
-		String cli="",vend="",val,empp="", anulado,s1,s2;
+		String cli="",vend="",val,empp="", anulado,s1,s2,s3,tp;
 		long ff;
 		int impres, cantimpres;
 				
@@ -259,14 +258,26 @@ public class clsDocFactura extends clsDocument {
                 "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
                 "WHERE (COREL='" +corel+ "') GROUP BY P.DESC2";
 
+        sql="SELECT P.DESC2, P.VALOR, P.DESC1, P.TIPO " +
+                "FROM P_MEDIAPAGO M INNER JOIN D_FACTURAP P ON P.CODPAGO = M.CODIGO " +
+                "WHERE (COREL='" +corel+ "') ";
         try {
             DT=Con.OpenDT(sql);
 
             if (DT.getCount()>0) {
                 DT.moveToFirst();
                 while (!DT.isAfterLast()) {
-                    s1=DT.getString(0);if (s1.isEmpty()) s1="Contado";
+                    s1=DT.getString(0);
+                    s3=DT.getString(2);
+                    tp=DT.getString(3);
+                    //if (s1.isEmpty()) s1="Contado";
+                    if (tp.equalsIgnoreCase("E")) s1="Contado";
                     plines.add(addtotsp(s1,DT.getDouble(1)));
+                    if (tp.equalsIgnoreCase("K")) {
+                        if (!s3.equalsIgnoreCase("NO_AUT_20221022")) {
+                            plines.add("Autorizacion: "+s3);
+                        }
+                    }
                     DT.moveToNext();
                 }
             }
@@ -536,29 +547,33 @@ public class clsDocFactura extends clsDocument {
 
     //region Detalle por empresa
 
+    @Override
 	protected boolean buildDetail() {
-	    /*
+
+        int ii=1;
+
+        if (pais.equalsIgnoreCase("GT")) {
+            return detailBaseGUA();
+        } else if (pais.equalsIgnoreCase("HN")) {
+            return detailBaseHON();
+        } else {
+            return detailBaseGUA();
+        }
+
+         /*
 	    if (modofact.equalsIgnoreCase("GUA")) {
             return detailBaseGUA();
         } else {
             return detailBase();
         }
         */
-        if (pais.equalsIgnoreCase("GUA")) {
-            return detailBaseGUA();
-        } else if (pais.equalsIgnoreCase("HON")) {
-            return detailBaseHON();
-        } else {
-            return detailBaseGUA();
-        }
 	}
 
     protected boolean detailBaseHON() {
-
         itemData item;
+        double pr,imp,tot;
         String cu,cp;
 
-        rep.add("HONDURAS");
         rep.add3sss("Cantidad ","Precio","Total");
         rep.line();
 
@@ -566,6 +581,12 @@ public class clsDocFactura extends clsDocument {
             item=items.get(i);
             if (!item.flag) {
                 rep.add(item.nombre);
+                imp=item.imp;
+                pr=item.prec-imp;pr=round2(pr);
+                tot=pr*item.cant;tot=round2(tot);
+
+                //rep.add3lrr(rep.rtrim(""+item.cant,5),pr,tot);
+
                 rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
             } else {
                 rep.add("   - "+item.nombre);
@@ -709,13 +730,13 @@ public class clsDocFactura extends clsDocument {
             return footerBaseGUA();
         }*/
 
-        if (pais.equalsIgnoreCase("GUA")) {
+        if (pais.equalsIgnoreCase("GT")) {
             if (facturaflag) {
                 return footerBaseGUA();
             } else {
                 return footerBaseGUATicket();
             }
-        } else if (pais.equalsIgnoreCase("HON")) {
+        } else if (pais.equalsIgnoreCase("HN")) {
             return footerBaseHON();
         } else {
             return footerBaseGUA();

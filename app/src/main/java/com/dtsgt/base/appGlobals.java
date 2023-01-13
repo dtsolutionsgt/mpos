@@ -40,7 +40,7 @@ public class appGlobals extends Application {
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,
 			     caja_est_pago,caja_est_pago_cmd,caja_est_pago_cue,
-			    nom_alm,nom_alm2,mesa_area;
+			     nom_alm,nom_alm2,mesa_area,nit_tipo;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
 			      dom_total,bar_cant,descadd,monto_propina;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,

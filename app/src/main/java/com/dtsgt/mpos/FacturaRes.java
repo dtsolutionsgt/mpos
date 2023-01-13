@@ -916,9 +916,9 @@ public class FacturaRes extends PBase {
                 fdoc.modorest=gl.peRest;
 				fdoc.textopie=gl.peTextoPie;
                 fdoc.nommesero=gl.nombre_mesero;
-				fdoc.pais = gl.peFormatoFactura;
+				fdoc.pais = gl.codigo_pais;
 
-                fdoc.buildPrint(corel, 0,"",gl.peMFact);
+                fdoc.buildPrint(corel,0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
 
              	app.doPrint(gl.peNumImp,0);
@@ -1030,10 +1030,10 @@ public class FacturaRes extends PBase {
         sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
         dt=Con.OpenDT(sql);
 
-        if(dt.getCount()>0){
+         if (dt.getCount()>0){
             dt.moveToFirst();
             mitem=dt.getInt(0);
-        }else{
+        } else {
             mitem=0;
         }
 		mitem++;
@@ -1120,7 +1120,7 @@ public class FacturaRes extends PBase {
 			try {
 				if (gl.nummesapedido.equalsIgnoreCase("0")) {
 					ins.add("ADD1",gl.ref1);
-				}else  {
+				} else {
 					ins.add("ADD1",gl.nummesapedido);
 				}
 			} catch (Exception e) {
@@ -1136,7 +1136,11 @@ public class FacturaRes extends PBase {
 
 			ins.add("SUPERVISOR",""+fpend);
 			ins.add("VEHICULO",gl.parVer);
-			ins.add("AYUDANTE"," ");
+
+			tipoNIT();
+			if (gl.nit_tipo.isEmpty()) gl.nit_tipo="N";
+			ins.add("AYUDANTE",gl.nit_tipo);
+
 			ins.add("CODIGOLIQUIDACION",0);
 			ins.add("RAZON_ANULACION","");
             ins.add("FEELSERIE"," ");
@@ -1340,7 +1344,7 @@ public class FacturaRes extends PBase {
 				gl.codigo_cliente=gl.emp*10;
 			}
 
-			if (gl.codigo_cliente==gl.emp*10) gl.gNITCliente="CF";
+			//if (gl.codigo_cliente==gl.emp*10) gl.gNITCliente="CF";
 
 			gl.gNITCliente=gl.gNITCliente.replace(".","");
 
@@ -4120,6 +4124,112 @@ public class FacturaRes extends PBase {
 		}
 
 		idtransbar++;
+	}
+
+	private void tipoNIT() {
+		gl.nit_tipo = "N";
+
+		if (gl.gNITCliente.isEmpty()) {
+			gl.gNITCliente = "CF";return;
+		}
+
+		if (gl.gNITCliente.length() < 6) {
+			gl.nit_tipo = "N";
+			gl.gNITCliente = "CF";
+			return;
+		}
+
+		if (gl.gNITCliente.length() == 13) {
+			gl.nit_tipo = "C";
+			return;
+		}
+
+		if (gl.gNITCliente.length() > 13) {
+			gl.nit_tipo = "N";
+			gl.gNITCliente = "CF";
+			return;
+		}
+
+		if (validaNIT(gl.gNITCliente)) {
+			gl.nit_tipo = "N";
+		} else {
+			gl.nit_tipo = "E";
+		}
+
+	}
+
+	private boolean validaNIT(String N)  {
+		String P, C, s, NC;
+		int[] v = {0,0,0,0,0,0,0,0,0,0};
+		int j, mp, sum, d11, m11, r11, cn, ll;
+
+		if (N.isEmpty()) return false;
+
+		try {
+			ll = N.length();
+			if (ll<5) return false;
+
+			if (!N.contains("-")) {
+				P = N.substring(0,ll-1);
+				C = N.substring(ll-1,ll);
+				N=P+"-"+C;
+			}
+
+			N=N.trim();
+			N=N.replaceAll(" ","");
+			if (N.isEmpty()) return false;
+
+			N=N.toUpperCase();
+			if (N.equalsIgnoreCase("CF")) N="C.F.";
+			if (N.equalsIgnoreCase("C/F")) N="C.F.";
+			if (N.equalsIgnoreCase("C.F")) N="C.F.";
+			if (N.equalsIgnoreCase("CF.")) N="C.F.";
+			if (N.equalsIgnoreCase("C.F.")) return true;
+
+			ll = N.length();
+			if (ll<5) return false;
+
+			P = N.substring(0,ll-2);
+			C = N.substring(ll-1, ll);
+
+			ll = ll - 1; sum = 0;
+
+			try {
+
+				for (int i = 0; i <ll-1; i++) {
+					s =P.substring( i, i+1);
+					j=Integer.parseInt(s);
+					mp = ll + 1 - i-1;
+					sum = sum + j * mp;
+				}
+
+				d11 =(int) Math.floor(sum/11);
+				m11 = d11 * 11;
+				r11 = sum - m11;
+				cn = 11 - r11;
+
+				if (cn == 10) s = "K"; else s=""+cn;
+
+				if (cn>10) {
+					cn = cn % 11;
+					s =""+cn;
+				}
+
+				NC = P+"-"+s;
+
+				if (N.equalsIgnoreCase(NC)) {
+					return true;
+				} else {
+					return false;
+				}
+			} catch (Exception e) {
+				return false;
+			}
+		} catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+		return true;
+
 	}
 
 

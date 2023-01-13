@@ -126,8 +126,7 @@ public class MiscUtils {
 	}
 	
 	public double round2(double val){
-
-	int ival;
+		int ival;
 		
 		val=(double) (100*val);
 		double rslt=Math.round(val);

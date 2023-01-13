@@ -310,6 +310,25 @@ public class clsRepBuilder {
         items.add(ts);
     }
 
+	public void add3TotR(int s1,double v2,double v3,double v4) {
+		String sval,sval2,sval3;
+		int val;
+
+		sval=cursym+decfrm.format(v2);
+		sval2=cursym+decfrm.format(v3);
+		sval3=cursym+decfrm.format(v4);
+
+		val=sval.length()-7;
+
+		ts=rtrim(Integer.toString(s1),prwq-4)+" "+rtrim(sval,prwq)+" "+rtrim(sval2,prwq)+" "+rtrim(sval3,prwq);
+		items.add(ts);
+	}
+
+	public void add3TotR(String s1,String s2,String s3,String s4) {
+		ts=rtrim(s1,prwq-4)+" "+rtrim(s2,prwq)+" "+rtrim(s3,prwq)+" "+rtrim(s4,prwq);
+		items.add(ts);
+	}
+
     public void add3Tot2(int s1,double v2,double v3,double v4) {
         String sval,sval2,sval3;
         int val;

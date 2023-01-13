@@ -505,7 +505,9 @@ public class Reimpresion extends PBase {
             fdoc.factsinpropina=gl.peFactSinPropina;
             fdoc.es_pickup=gl.pickup;
             fdoc.es_delivery=gl.delivery;
+			fdoc.pais=gl.codigo_pais;
 			fdoc.textopie=gl.peTextoPie;
+
 
             if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
