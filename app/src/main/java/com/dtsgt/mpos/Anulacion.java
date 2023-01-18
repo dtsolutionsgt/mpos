@@ -487,6 +487,10 @@ public class Anulacion extends PBase {
 			
 			if (tipo==5) if (!anulDevol(itemid)) return;
 
+			if (fel.errorflag) {
+				throw new Exception(fel.error);
+			}
+
 			//#CKFK 20200520 Quité la anulación de NC porque aquí no existe la tabla
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -522,8 +526,14 @@ public class Anulacion extends PBase {
     //region FEL
 
     private void anulacionFEL() {
-        if (buildAnulXML()) fel.anulacion(uuid);
-    }
+		try {
+			if (buildAnulXML()) {
+				fel.anulacion(uuid);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
     public void felCallBack()  {

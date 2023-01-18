@@ -999,21 +999,25 @@ public class clsFELInFile {
         } catch (Exception e)  { }
     }
 
-    private class AsyncCallWSIDUnico extends AsyncTask<String, Void, Void> {
+    private class AsyncCallWSIDUnico extends AsyncTask<String, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(String... params)  {
+        protected Boolean doInBackground(String... params)  {
             try  {
                 wsExecuteIDu();
-            } catch (Exception e) { }
-            return null;
+            } catch (Exception e) {
+                throw e;
+            }
+            return errorflag;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean result) {
             try {
                 wsFinishedIDu();
-            } catch (Exception e)  {}
+            } catch (Exception e)  {
+                throw e;
+            }
         }
 
         @Override
@@ -1272,12 +1276,18 @@ public class clsFELInFile {
                 String jstr=sb.toString();
                 jObj = new JSONObject(jstr);
 
-                error= jObj.getString("descripcion");
+//                try {
+//                    error= jObj.getString("descripcion");
+//                } catch (Exception e) {
+//                    error= e.getMessage();
+//                }
 
                 if (jObj.getBoolean("resultado")) {
                     errorflag=false;
                 } else {
+
                     errorflag=true;
+
                     try {
                         //#EJC20200707: Obtener mensaje de error específico en respuesta.
                         JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
@@ -1287,6 +1297,7 @@ public class clsFELInFile {
                             String name = theJsonObject.getString("mensaje_error");
                             error = name;
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
