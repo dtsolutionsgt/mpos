@@ -128,6 +128,7 @@ public class Orden extends PBase {
     private wsCommit wscom;
     private wsOpenDT wso;
     private wsCommit wsbtr;
+    private wsCommit wslock;
 
     private Runnable rnBroadcastCallback;
     private Runnable rnDetailCallback;
@@ -250,7 +251,8 @@ public class Orden extends PBase {
         clearItem();
 
         if (P_nivelprecioObj.count==0) {
-            toastlong("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");finish();return;
+            toastlong("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");
+            cerrarOrden();return;
         }
 
         imgflag=false;//imgflag=gl.peMImg;
@@ -267,6 +269,9 @@ public class Orden extends PBase {
         rnBroadcastCallback = () -> broadcastCallback();
 
         wscom =new wsCommit(gl.wsurl);
+        wslock =new wsCommit(gl.wsurl);
+
+        agregaBloqueo();
 
         rnClose = () -> closeAction();
 
@@ -311,7 +316,7 @@ public class Orden extends PBase {
                 gl.cerrarmesero=true;
                 gl.mesero_lista=true;
 
-                finish();
+                cerrarOrden();
             }
         };
     }
@@ -1633,7 +1638,7 @@ public class Orden extends PBase {
 
             envioMesa(2,true);
             gl.cerrarmesero=true;gl.mesero_lista=true;
-            finish();
+            cerrarOrden();
             //gl.cerrarmesero=true;
             //startActivity(new Intent(this,ResCaja.class));
         } catch (Exception e) {
@@ -1662,7 +1667,7 @@ public class Orden extends PBase {
             envioMesa(3,true);
 
             gl.cerrarmesero=true;gl.mesero_lista=true;
-            finish();
+            cerrarOrden();
             //gl.cerrarmesero=true;
             //startActivity(new Intent(this,ResCaja.class));
         } catch (Exception e) {
@@ -1693,7 +1698,7 @@ public class Orden extends PBase {
                 if (actorden)  broadcastJournalFlagAll(99,true);
                 gl.cerrarmesero=true;gl.mesero_lista=true;
                 if (modo==-9) toastcentlong("Las cuentas de la órden han sido cerradas");
-                finish();
+                cerrarOrden();
             }
 
         } catch (Exception e) {
@@ -2219,6 +2224,8 @@ public class Orden extends PBase {
         try {
             //if (cantRegBarril()==0) {
 
+            cerrarOrden();
+
             gl.cerrarmesero=true;
             gl.mesero_lista=true;
 
@@ -2226,7 +2233,7 @@ public class Orden extends PBase {
                 ctimer.removeCallbacks(crunner);
             } catch (Exception e) {}
 
-            finish();
+
             //} else {
             //  evnioBarril(true);
             //}
@@ -3045,7 +3052,7 @@ public class Orden extends PBase {
     private void exitBarril() {
         if (exit_mode) {
             gl.cerrarmesero=true;gl.mesero_lista=true;
-            finish();
+            cerrarOrden();
         }
     }
 
@@ -3412,7 +3419,7 @@ public class Orden extends PBase {
                 toastlong("SIN CONEXIÓN A INTERNET");
             }
             if (close_flag) {
-                finish();
+                cerrarOrden();
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -3637,7 +3644,7 @@ public class Orden extends PBase {
                         "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
             }
 
-            finish();
+            cerrarOrden();
         } catch (Exception e) {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -4781,7 +4788,7 @@ public class Orden extends PBase {
             }
 
             gl.cerrarmesero=true;gl.mesero_lista=true;
-            finish();
+            cerrarOrden();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -5005,7 +5012,7 @@ public class Orden extends PBase {
         try{
             gl.exitflag=true;
             gl.cliposflag=false;
-            super.finish();
+            cerrarOrden();
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -5629,6 +5636,34 @@ public class Orden extends PBase {
         }
     }
 
+    private void agregaBloqueo() {
+        try {
+            sql="INSERT INTO P_RES_MESA_BLOQ (CODIGO_MESA,CODIGO_VENDEDOR) " +
+                    "         VALUES ("+gl.mesa_codigo+","+gl.mesa_vend+")";
+            wscom.execute(sql,null);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void borrarBloqueo() {
+        try {
+            sql="DELETE FROM P_RES_MESA_BLOQ WHERE (CODIGO_MESA="+gl.mesa_codigo+")";
+
+            Intent intent = new Intent(Orden.this, srvCommit.class);
+            intent.putExtra("URL",gl.wsurl);
+            intent.putExtra("command",sql);
+            startService(intent);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cerrarOrden(){
+        borrarBloqueo();
+        finish();
+    }
+
     //endregion
 
     //region Dialogs
@@ -5650,7 +5685,7 @@ public class Orden extends PBase {
                     */
 
                     gl.cerrarmesero=true;gl.mesero_lista=true;
-                    finish();
+                    cerrarOrden();
                 }
             });
 
@@ -5766,7 +5801,7 @@ public class Orden extends PBase {
                 actualizaEstadoOrden(3);
                 imprimeComanda();
                 aplicaImpresion();
-                if (actorden) envioOrden();else finish();
+                if (actorden) envioOrden();else cerrarOrden();
             });
 
             dialog.setNegativeButton("No", (dialog1, which) -> {});
@@ -6554,7 +6589,7 @@ public class Orden extends PBase {
 
             dialog.setPositiveButton("Cerrar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    if (gl.peCajaPricipal!=gl.codigo_ruta) finish();
+                    if (gl.peCajaPricipal!=gl.codigo_ruta) cerrarOrden();
                 }
             });
 
@@ -6594,7 +6629,7 @@ public class Orden extends PBase {
             } catch (Exception e) { }
 
             if (gl.forcedclose) {
-                super.finish();
+                cerrarOrden();
                 return;
             }
 
@@ -6647,7 +6682,7 @@ public class Orden extends PBase {
             }
 
             if (browse==-1)   {
-                browse=0;finish();return;
+                browse=0;cerrarOrden();return;
             }
 
             if (browse==1)   {
@@ -6675,7 +6710,7 @@ public class Orden extends PBase {
             if (browse==8) {
                 browse=0;
                 if (gl.forcedclose) {
-                    super.finish();
+                    cerrarOrden();
                 } else {
                     cargaCliente();
                 }

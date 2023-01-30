@@ -69,7 +69,7 @@ public class ResMesero extends PBase {
     private wsOpenDT wso;
     private wsCommit wscom;
 
-    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback,rnOrden;
+    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback,rnOrden,rnLock;
 
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -144,6 +144,12 @@ public class ResMesero extends PBase {
             }
         };
 
+        rnLock = new Runnable() {
+            public void run() {
+                ordenAction();
+            }
+        };
+
 
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
 
@@ -197,6 +203,8 @@ public class ResMesero extends PBase {
 
                 if (wsidle) {
                     adapter.setSelectedIndex(position);
+                    gl.mesa_codigo=mesa.codigo_mesa;
+                    gl.mesa_vend=mesa.cod_vend;
                     abrirOrden();
                 } else toast("Actualizando, espere . . .");
             };
@@ -282,6 +290,7 @@ public class ResMesero extends PBase {
                     mesa.cuentas=last.cantc;
                     mesa.fecha=last.fechault;
                     mesa.idorden=last.id;
+                    mesa.cod_vend=last.vendedor;
 
                     if (espedido) mesa.numorden="#"+last.cantc;
 
@@ -297,6 +306,7 @@ public class ResMesero extends PBase {
                     mesa.cuentas=0;
                     mesa.fecha=0;
                     mesa.pendiente=0;
+                    mesa.cod_vend=gl.idmesero;
                 }
 
                 mesas.add(mesa);

@@ -1275,6 +1275,7 @@ public class clsClasses {
         public String numorden;
         public int idgrupo;
         public String area;
+        public int cod_vend;
     }
 
     public class clsP_res_sesion {

@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.BatteryManager;
@@ -21,7 +20,6 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -31,14 +29,11 @@ import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.base.clsClasses.clsMenu;
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.ExDialogT;
 import com.dtsgt.classes.clsD_cierreObj;
 import com.dtsgt.classes.clsD_facturaObj;
-import com.dtsgt.classes.clsD_fel_bitacoraObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
-import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
@@ -399,7 +394,7 @@ public class Menu extends PBase {
 				case 13:
 					apagar();break;
                 case 14:
-                    modoSinInternet();break;
+                    showEmergMenu();break;
 			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1653,7 +1648,6 @@ public class Menu extends PBase {
 			listdlg.setOnLeftClick(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					toastlong("Botón Salir");
 					listdlg.dismiss();
 				}
 			});
@@ -1787,7 +1781,54 @@ public class Menu extends PBase {
 
     //region Modo emergencia
 
-    public void modoSinInternet() {
+	public void showEmergMenu() {
+
+		try {
+
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Modo de emergencia");
+
+			listdlg.add("Sin internet - Activar única caja");
+			listdlg.add("Sin internet - Enviar pendientes ");
+			listdlg.add("Sin internet - Terminar modo sin internet");
+			listdlg.add("Modo sin red");
+
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
+
+				try {
+
+					switch (position) {
+						case 0:
+							;break;//supervisor
+						case 1:
+							;break;
+						case 2:
+							;break;//supervisor
+						case 3:
+							modoSinRed();break;
+					}
+
+					listdlg.dismiss();
+				} catch (Exception e) {}
+			});
+
+			listdlg.setOnLeftClick(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					listdlg.dismiss();
+				}
+			});
+
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+
+
+	public void modoSinRed() {
 
         try {
 
@@ -1801,7 +1842,7 @@ public class Menu extends PBase {
         }
     }
 
-    private void activarSinInternet() {
+    private void activarSinRed() {
         clsP_paramextObj P_paramextObj=new clsP_paramextObj(this,Con,db);
 
         try {
@@ -1832,7 +1873,7 @@ public class Menu extends PBase {
         validaModo();
     }
 
-    private void desactivarSinInternet() {
+    private void desactivarSinRed() {
 
         clsClasses.clsP_paramext item = clsCls.new clsP_paramext();
         clsP_paramextObj P_paramextObj=new clsP_paramextObj(this,Con,db);
@@ -2687,7 +2728,7 @@ public class Menu extends PBase {
         dialog.setMessage("¿Está seguro?");
         dialog.setCancelable(false);
         dialog.setPositiveButton("Confirmar", (dialog1, which) -> {
-			if (modo_emerg) activarSinInternet();else desactivarSinInternet();
+			if (modo_emerg) activarSinRed();else desactivarSinRed();
 		});
         dialog.setNegativeButton("Salir", (dialog12, which) -> {});
         dialog.show();

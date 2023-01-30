@@ -1010,6 +1010,19 @@ public class AppMethods {
 			gl.peFraseISR = "";
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=152";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peCafeTicket = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peCafeTicket = false;
+		}
+
     }
 
     public boolean paramCierre(int pid) {
