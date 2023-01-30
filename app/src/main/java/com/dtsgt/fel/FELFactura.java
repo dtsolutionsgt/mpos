@@ -169,10 +169,10 @@ public class FELFactura extends PBase {
                 Handler mtimer = new Handler();
                 Runnable mrunner= () -> {
                     if (multiflag) {
-                        contingencia();
+                        multipleFacturas();
                     } else {
                         Date currentTime = Calendar.getInstance().getTime();
-                        certificacion();
+                        procesaFirma();
                     }
                 };
                 mtimer.postDelayed(mrunner,100);
@@ -210,7 +210,7 @@ public class FELFactura extends PBase {
         try {
 
             Handler mtimer = new Handler();
-            Runnable mrunner = () -> contingenciaFactura();
+            Runnable mrunner = () -> certificaFactura();
             mtimer.postDelayed(mrunner, 200);
 
         } catch (Exception e) {
@@ -219,7 +219,7 @@ public class FELFactura extends PBase {
 
     }
 
-    private void contingenciaFactura() {
+    private void certificaFactura() {
         try {
             lbl1.setText("Construyendo XML...");
             buildFactXML();
@@ -230,7 +230,7 @@ public class FELFactura extends PBase {
         }
     }
 
-    private void certificacion() {
+    private void procesaFirma() {
 
         lbl1.setText("Procesando firma . . .");
         lbl3.setText("");
@@ -266,6 +266,7 @@ public class FELFactura extends PBase {
             lbl1.setText("Construyendo XML...");
             buildFactXML();
             lbl1.setText("Certificando Factura...");
+
             fel.certificacion();
 
         } catch (Exception e) {
@@ -274,7 +275,7 @@ public class FELFactura extends PBase {
 
     }
 
-    private void contingencia() {
+    private void multipleFacturas() {
         try {
             lbl1.setText("Guardando factura  . . .");
             lbl3.setText("");

@@ -1420,6 +1420,22 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_cierre_idx2 ON D_cierre(FECHA)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_facturahn] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "SUBTOTAL REAL NOT NULL,"+
+                    "EXON REAL NOT NULL,"+
+                    "EXENTO REAL NOT NULL,"+
+                    "GRAVADO REAL NOT NULL,"+
+                    "IMP1 REAL NOT NULL,"+
+                    "IMP2 REAL NOT NULL,"+
+                    "VAL1 REAL NOT NULL,"+
+                    "VAL2 REAL NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+        } catch (Exception e) { }
 
 
 

@@ -34,8 +34,6 @@ public class clsDocFactura extends clsDocument {
     //String savePath = Environment.getExternalStorageDirectory().getPath() + "/QRCode/";
     String qrpath = Environment.getExternalStorageDirectory().getPath() + "/";
 
-
-
     public clsDocFactura(Context context,int printwidth,String cursymbol,int decimpres, String archivo,boolean detallecombo) {
 		super(context, printwidth,cursymbol,decimpres, archivo);
 
@@ -130,7 +128,7 @@ public class clsDocFactura extends clsDocument {
 				}else if (cantimpres==0){
 					if (facturaflag) {
 					    if (banderafel) nombre = "FACTURA ELECTRONICA"; nombre = "FACTURA";
-                    }else {
+                    } else {
 					    nombre = "TICKET";
                     }
 				}
@@ -163,16 +161,47 @@ public class clsDocFactura extends clsDocument {
 			sql="SELECT RESOL,FECHARES,FECHAVIG,SERIE,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+ruta+") AND (RESGUARDO=0)";
 			DT=Con.OpenDT(sql);	
 			DT.moveToFirst();
-			
-			resol="Resolucion No.: "+DT.getString(0);
-			ff=DT.getLong(1);
-			resfecha="De Fecha: "+sfecha_dos(ff);
-			ff=DT.getLong(2);
-			resvence="Vigente hasta: "+sfecha_dos(ff);
-			//#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
+
+            if (pais.equalsIgnoreCase("HN")) {
+
+                resol=DT.getString(0);
+                ff=DT.getLong(1);
+                resfecha="De Fecha: "+sfecha_dos(ff);
+                ff=DT.getLong(2);
+                resvence="Fecha limite: "+sfecha_dos(ff);
+                //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
+                resrangot="Rango autorizado del";
+                String numini=""+DT.getLong(4);
+                String numfin=""+DT.getLong(5);
+                String li,lf;
+
+                if (numini.length()<8) {
+                    long nn=100000000+Long.parseLong(numini);
+                    li=""+nn;li=li.substring(1,9);
+                } else li=numini;
+
+                if (numfin.length()<8) {
+                    long nn=100000000+Long.parseLong(numfin);
+                    lf=""+nn;lf=lf.substring(1,9);
+                } else lf=numfin;
+
+                resrango=DT.getString(3)+"-"+li+" al "+lf;
+                //resrango=DT.getString(3)+"-"+DT.getInt(4)+" al "+DT.getInt(5);
+
+            } else {
+
+                resol="Resolucion No.: "+DT.getString(0);
+                ff=DT.getLong(1);
+                resfecha="De Fecha: "+sfecha_dos(ff);
+                ff=DT.getLong(2);
+                resvence="Vigente hasta: "+sfecha_dos(ff);
+                //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
 //			ff=DT.getInt(2);resvence="Resolucion vence : "+sfecha(ff);
-			resrango="Serie: "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
-			
+                resrangot="";
+                resrango="Serie: "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
+
+            }
+
 		} catch (Exception e) {
 			//Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();return false;
 	    }	
@@ -272,7 +301,7 @@ public class clsDocFactura extends clsDocument {
                     tp=DT.getString(3);
                     //if (s1.isEmpty()) s1="Contado";
                     if (tp.equalsIgnoreCase("E")) s1="Contado";
-                    plines.add(addtotsp(s1,DT.getDouble(1)));
+                    plines.add(addtotsptic(s1,DT.getDouble(1)));
                     if (tp.equalsIgnoreCase("K")) {
                         if (!s3.equalsIgnoreCase("NO_AUT_20221022")) {
                             plines.add("Autorizacion: "+s3);
@@ -471,10 +500,10 @@ public class clsDocFactura extends clsDocument {
                 Toast.makeText(cont,"Impresion pagos : "+e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
-		} catch (Exception e) {
-			Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
-	    }		
-		
+        } catch (Exception e) {
+            Toast.makeText(cont,e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
 		return true;
 	}
 
@@ -545,7 +574,7 @@ public class clsDocFactura extends clsDocument {
 
     }
 
-    //region Detalle por empresa
+    //region Detalle por pais
 
     @Override
 	protected boolean buildDetail() {
@@ -571,7 +600,7 @@ public class clsDocFactura extends clsDocument {
 
     protected boolean detailBaseHON() {
         itemData item;
-        double pr,imp,tot;
+        double pr,imp,tot,totval;
         String cu,cp;
 
         rep.add3sss("Cantidad ","Precio","Total");
@@ -582,12 +611,22 @@ public class clsDocFactura extends clsDocument {
             if (!item.flag) {
                 rep.add(item.nombre);
                 imp=item.imp;
-                pr=item.prec-imp;pr=round2(pr);
-                tot=pr*item.cant;tot=round2(tot);
+                pr=item.prec-imp;
+                if (pais.equalsIgnoreCase("HN")) pr=item.prec;
+                pr=round2(pr);
+                tot=pr*item.cant;
+                tot=round2(tot);
+
+                if (pais.equalsIgnoreCase("HN")) {
+                    totval=tot;
+                } else {
+                    totval=item.tot;
+                }
 
                 //rep.add3lrr(rep.rtrim(""+item.cant,5),pr,tot);
 
-                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+                //rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,totval);
             } else {
                 rep.add("   - "+item.nombre);
             }
@@ -716,7 +755,7 @@ public class clsDocFactura extends clsDocument {
 
     //endregion
 
-	//region Pie por empresa
+	//region Pie por pais
 
 	protected boolean buildFooter() {
         /*if (modofact.isEmpty()) {
@@ -763,7 +802,7 @@ public class clsDocFactura extends clsDocument {
             if (propina != 0) rep.addtotsp("Propina: ", propina);
         }
 
-        rep.addtotsp("TOTAL A PAGAR: ", tot);
+        rep.addtotsptic("TOTAL A PAGAR: ", tot);
         rep.add("");
 
         rep.add("Detalle pago : ");
@@ -822,7 +861,7 @@ public class clsDocFactura extends clsDocument {
                 if (propina != 0) rep.addtotsp("Propina: "+ffrmnodec.format(propperc) + "% ", propina);
             }
 
-            rep.addtotsp("TOTAL A PAGAR: ", tot);
+            rep.addtotsptic("TOTAL A PAGAR: ", tot);
         }
 
         if (plines.size()>0) {
@@ -921,50 +960,36 @@ public class clsDocFactura extends clsDocument {
     }
 
     private boolean footerBaseHON() {
-
         double totimp,totperc;
 
-        if (sinimp) {
-            stot=stot-imp;
-            totperc=stot*(percep/100);totperc=round2(totperc);
-            totimp=imp-totperc;
+        stot=stot-imp;
+        totperc=stot*(percep/100);totperc=round2(totperc);
+        totimp=imp-totperc;
 
-            rep.addtotsp("Subtotal: ", stot);
-            rep.addtotsp("Impuesto : ", totimp);
-            if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion : ", totperc);
-            rep.addtotsp("Descuento: ", -desc);
-            rep.addtotsp("TOTAL : ", tot);
+        rep.addtotsp("Subtotal: ", stot);
+        rep.addtotsp("Descuento y rebajas: ", -desc);
+        rep.addtotsp("Importe exonerado: ", fh_exon);
+        rep.addtotsp("Importe exento: ", fh_exent);
+        rep.addtotsp("Importe gravado: ", fh_grav);
+        rep.addtotsp("Impuesto "+frmdecimal(fh_val1,2)+" %", fh_imp1);
+        rep.addtotsp("Impuesto "+frmdecimal(fh_val2,2)+" %", fh_imp2);
+        rep.addtotsp("TOTAL : ", tot);
 
-        } else {
-
-            if (factsinpropina) {
-                stot = stot - propina;
-                tot = tot - propina;
-                if (desc != 0) {
-                    rep.addtotsp("Subtotal: ", stot);
-                    rep.addtotsp("Descuento: ", -desc);
-                }
-            } else {
-                if (desc != 0 | propina != 0) {
-                    stot = stot - propina;
-                    rep.addtotsp("Subtotal: ", stot);
-                }
-                if (desc != 0) rep.addtotsp("Descuento: ", -desc);
-                if (propina != 0) rep.addtotsp("Propina: "+ffrmnodec.format(propperc)+" % ", propina);
-            }
-
-            rep.addtotsp("TOTAL A PAGAR: ", tot);
-        }
-
-        rep.add("HONDURAS");
+        montoLetra();
 
         if (plines.size()>0) {
             rep.add("");
-            rep.add("Desglose de pago:");
+            rep.add("Formas de pago:");
             for (int ii= 0; ii <plines.size(); ii++) {
                 rep.add(plines.get(ii));
             }
         }
+
+        rep.add("");
+        rep.add("No. OC exenta ");
+        rep.add("No. cons. registro exonerado");
+        rep.add("No. registro SAG");
+        rep.add("");
 
         if (modorest) {
             rep.add("");
@@ -974,6 +999,10 @@ public class clsDocFactura extends clsDocument {
         rep.add("");
 
         try {
+            rep.addc("Original: Cliente");
+            rep.addc("Copia: Obligado Tributario Emisor");
+            rep.addc("La factura es beneficio de todos exija la.");
+            rep.add("");
             if (!textopie.isEmpty()) {
                 rep.addc(textopie);
             }
@@ -1023,12 +1052,12 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
+        /*
         if (parallevar){
             rep.add("");
             rep.addc("PARA LLEVAR");
             rep.add("");
         }
-
 
         if (impresionorden) {
             String sod=add1;
@@ -1041,14 +1070,42 @@ public class clsDocFactura extends clsDocument {
                 rep.addc("************************");
                 rep.add("");
             }
-
         } else {
             rep.add("");
         }
+        */
 
         rep.add("");
 
         return super.buildFooter();
+    }
+
+    private void montoLetra() {
+        clsNumALetra NLet=new clsNumALetra();
+        String nuevaCadena = "", cadena = "";
+
+        rep.add("");
+
+        String nn=NLet.Letra(""+tot);
+
+        if (nn.length()>prw) {
+
+            cadena = nn;
+            nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+            cadena = cadena.substring(prw);
+
+            if (cadena.length() > prw) {
+                nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                cadena = cadena.substring(prw);
+                if (cadena.length() > prw) {
+                    nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                } if (cadena.length()>0) rep.add(cadena);
+            } else {
+                if (cadena.length()>0) rep.add(cadena);
+            }
+        } else rep.add(nn);
+
+        rep.add("");
     }
 
 	private boolean footerToledano() {
@@ -1158,6 +1215,19 @@ public class clsDocFactura extends clsDocument {
 
         sval=cursymbol+decfrm.format(val);
         return ltrim(s1,prw-14)+""+rtrim(sval,size)+"  ";
+    }
+
+    private String addtotsptic(String s1,double val) {
+        String sval;
+        int size = 12;
+
+        //#AT20221214 Se suma 1 al valor 12 para que se utilicen 39 espacios.
+        if (prw == 40) {
+            size += 1;
+        }
+
+        sval=cursymbol+decfrm.format(val);
+        return ltrim(s1,prw-14)+""+rtrim(sval,13);
     }
 
     private String ltrim(String ss,int sw) {

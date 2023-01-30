@@ -159,6 +159,7 @@ public class Precio {
 		tot=stot-descmon;
 
 		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
+		precsin=preciobase;
 		//Toast.makeText(cont,sprec+" - "+pprec+" / "+prec+" prec sin : "+precsin, Toast.LENGTH_SHORT).show();
 		
 		totsin=mu.round(precsin*cant,ndec);

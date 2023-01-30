@@ -2,7 +2,6 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -14,12 +13,12 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
+import com.dtsgt.classes.clsD_facturahnObj;
 import com.dtsgt.classes.clsDocCanastaBod;
 import com.dtsgt.classes.clsDocCobro;
 import com.dtsgt.classes.clsDocDepos;
@@ -507,7 +506,11 @@ public class Reimpresion extends PBase {
             fdoc.es_delivery=gl.delivery;
 			fdoc.pais=gl.codigo_pais;
 			fdoc.textopie=gl.peTextoPie;
+			fdoc.pais = gl.codigo_pais;
+			fdoc.fraseIVA = gl.peFraseIVA;
+			fdoc.fraseISR = gl.peFraseISR;
 
+			if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 
             if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
@@ -524,8 +527,29 @@ public class Reimpresion extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox(e.getMessage());
 		}
-	}	
-	
+	}
+
+	private void cargaTotalesHonduras() {
+		try {
+			clsD_facturahnObj D_facturahnObj=new clsD_facturahnObj(this,Con,db);
+			D_facturahnObj.fill("WHERE (COREL='"+itemid+"')");
+
+			fdoc.fh_stotal=D_facturahnObj.first().subtotal;
+			fdoc.fh_exon=D_facturahnObj.first().exon;
+			fdoc.fh_exent=D_facturahnObj.first().exento;
+			fdoc.fh_grav=D_facturahnObj.first().gravado;
+			fdoc.fh_imp1 =D_facturahnObj.first().imp1;
+			fdoc.fh_imp2 =D_facturahnObj.first().imp2;
+			fdoc.fh_val1 =D_facturahnObj.first().val1;
+			fdoc.fh_val2 =D_facturahnObj.first().val2;
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			fdoc.fh_stotal=0;fdoc.fh_exon=0;fdoc.fh_exent=0;
+			fdoc.fh_grav=0;fdoc.fh_imp1 =0;fdoc.fh_imp2 =0;
+		}
+	}
+
 	private void imprRecarga() {
 		try {
             mdoc.buildPrint(itemid,1);

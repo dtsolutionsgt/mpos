@@ -47,6 +47,7 @@ import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -874,6 +875,7 @@ public class Menu extends PBase {
 			listdlg.add("Tablas");
 			listdlg.add("Actualizar versión");
 			listdlg.add("Enviar base de datos");
+			listdlg.add("Certificar facturas");
 			listdlg.add("Prueba de bluetooth");
 			listdlg.add("Marcar facturas certificadas");
 			listdlg.add("Actualizar correlativos contingencia");
@@ -898,22 +900,24 @@ public class Menu extends PBase {
 						case 3:
 							enviarBaseDeDatos();break;
 						case 4:
-							estadoBluTooth();break;
+							msgAskFEL("Certificar facturas pendientes");break;
 						case 5:
-							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+							estadoBluTooth();break;
 						case 6:
-							msgAskActualizar("Actualizar correlativos de contingencia");break;
+							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
 						case 7:
-							infoSystem();break;
+							msgAskActualizar("Actualizar correlativos de contingencia");break;
 						case 8:
-							msgAskImprimir();break;
+							infoSystem();break;
 						case 9:
-							msgAskCF();break;
+							msgAskImprimir();break;
 						case 10:
-							msgAskCorregirFechas();break;
+							msgAskCF();break;
 						case 11:
-							inicioDia();break;
+							msgAskCorregirFechas();break;
 						case 12:
+							inicioDia();break;
+						case 13:
 							Limpiar_Tablas_No_Criticas();break;
 
 					}
@@ -1187,23 +1191,24 @@ public class Menu extends PBase {
     }
 
 	private void Limpiar_Tablas_No_Criticas() {
-
 		try {
 
 			ExDialog dialog = new ExDialog(this);
 			dialog.setMessage("¿Borrar registros?");
 			dialog.setCancelable(false);
+
 			dialog.setPositiveButton("Si", (dialog12, which) -> {
 
-				try {
+				msgbox("Limpiando datos, por favor espere el mensaje y luego cierre este dialogo.");
 
-					clsD_fel_bitacoraObj D_fel_bitacoraObj = new clsD_fel_bitacoraObj(this, Con, db);
-					D_fel_bitacoraObj.delete_all();
-					mu.msgbox("Registros eliminados.");
-
-				} catch (Exception e) {
-					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-				}
+				Handler mtimer = new Handler();
+				Runnable mrunner=new Runnable() {
+					@Override
+					public void run() {
+						limpiaTablas();;
+					}
+				};
+				mtimer.postDelayed(mrunner,200);
 
 			});
 			dialog.setNegativeButton("No", (dialog1, which) -> {});
@@ -1212,6 +1217,66 @@ public class Menu extends PBase {
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+	}
+
+	private void limpiaTablas() {
+		long ff=du.getActDate();
+		long fd=ff-100000000;
+		String sqlfs;
+
+		ff=du.addDays(ff,-7);
+
+		try {
+			sql="DELETE FROM D_fel_bitacora WHERE fecha<"+ff;
+			db.execSQL(sql);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		try {
+			sql="DELETE FROM D_fel_error WHERE fecha<"+ff;
+			db.execSQL(sql);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+
+		try {
+			db.beginTransaction();
+
+			sqlfs="SELECT COREL FROM D_FACTURA WHERE FECHA<"+fd;
+
+			db.execSQL("DELETE FROM D_FACTURAD    WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURA_FEL WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURAC    WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURAF    WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURAHN   WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURAP    WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURAPR   WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURAR    WHERE COREL IN ("+sqlfs+")");
+			db.execSQL("DELETE FROM D_FACTURAS    WHERE COREL IN ("+sqlfs+")");
+
+			db.execSQL("DELETE FROM D_FACTURA WHERE FECHA<"+fd);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+		} catch (Exception e) {
+			db.endTransaction();msgbox(e.getMessage());
+		}
+
+
+		try {
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		try {
+			db.execSQL("VACUUM");
+		} catch (Exception e) {}
+
+		msgbox("Limpieza de datos completa.");
+
 	}
 
     private void msgAskValor(double monto,long ff) {
@@ -1948,6 +2013,7 @@ public class Menu extends PBase {
 		Cursor DT;
 		int ci,cf,ca1,ca2;
 		double dd;
+		long fv,fa;
 
         if (gl.rol==4) return true;
 
@@ -1968,7 +2034,20 @@ public class Menu extends PBase {
 				return false;
 			}
 
-			dd=cf-ci;dd=0.75*dd;
+			fa=du.getActDate();
+			fv=DT.getLong(4);
+
+			if (fa==fv) {
+				msgbox("Último día de vigencia de autorización de las facturas.");
+				toastlong("Último día de vigencia de autorización de las facturas.");
+			}
+
+			if (fa>fv) {
+				mu.msgbox("Se ha acabado vigencia de autorización de las facturas. No se puede continuar con la venta.");
+				return false;
+			}
+
+			dd=cf-ci;dd=0.90*dd;
 			ca2=ci+((int) dd);
 			if (ca1>ca2) porcentaje = true;
 
@@ -2613,6 +2692,25 @@ public class Menu extends PBase {
         dialog.setNegativeButton("Salir", (dialog12, which) -> {});
         dialog.show();
     }
+
+	private void msgAskFEL(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("¿" + msg + "?");
+
+		dialog.setPositiveButton("Si", (dialog1, which) -> {
+			try {
+				gl.felcorel="";gl.feluuid="";
+				startActivity(new Intent(Menu.this, FELVerificacion.class));
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
+		});
+
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+
+		dialog.show();
+
+	}
 
     //endregion
 

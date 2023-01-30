@@ -146,7 +146,8 @@ public class FELVerificacion extends PBase {
             if (facts.size()>0) {
                 procesaValidacion();
             } else {
-                msgexit("No existen facturas pendientes de certificación");
+                toastcentlong("No existen facturas pendientes de certificación");
+                finish();
             }
 
         } catch (Exception e) {

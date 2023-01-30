@@ -146,6 +146,18 @@ public class clsClasses {
         public String correo;
     }
 
+    public class clsD_facturahn {
+        public String corel;
+        public double subtotal;
+        public double exon;
+        public double exento;
+        public double gravado;
+        public double imp1;
+        public double imp2;
+        public double val1;
+        public double val2;
+    }
+
     public class clsD_facturap {
         public int  empresa;
         public String corel;
@@ -1621,7 +1633,7 @@ public class clsClasses {
 	}
 
     public class clsOrden {
-        public String Cod,Nombre,um,val,valp,sdesc,emp;
+        public String Cod,Nombre,um,val,valp,sdesc,emp,nota;
         public double Cant,Peso,Prec,Desc,Total,imp,percep;
         public int id,icant,cuenta,estado;
         public boolean indent,modif;

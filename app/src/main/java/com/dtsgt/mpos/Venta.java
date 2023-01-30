@@ -122,7 +122,7 @@ public class Venta extends PBase {
     private clsVenta vitem;
 
     private int browse;
-    private double cant,desc,mdesc,prec,precsin,imp,impval;
+    private double cant,desc,mdesc,prec,precsin,imp,impval,pimp;
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec,prodtotlin;
 
@@ -130,7 +130,7 @@ public class Venta extends PBase {
     private int nivel,dweek,clidia,counter,menuitemid;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private boolean horiz=true,domenvio;
+    private boolean horiz=true,domenvio,modoHN;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
@@ -161,6 +161,8 @@ public class Venta extends PBase {
         emp=gl.emp;
         gl.nivel=gl.nivel_sucursal;
         setNivel();
+
+        modoHN=gl.codigo_pais.equalsIgnoreCase("HN");
 
         cliid=gl.cliente;
         //cliid="0"; #CKFK 20200515 puse esto en comentario porque primero se le asigna el Id de cliente
@@ -584,6 +586,7 @@ public class Venta extends PBase {
                     if (sinimp) {
                         ttsin=tt-item.imp-item.percep;
                         item.Total=ttsin;
+                        if (modoHN) item.Total=tt;
                     } else {
                         item.Total=tt;
                     }
@@ -617,6 +620,10 @@ public class Venta extends PBase {
                 ttsin=tot-ttimp-ttperc;
                 ttsin=mu.round(ttsin,2);
                 lblTot.setText(mu.frmcur(ttsin));
+                if (modoHN) {
+                    lblTot.setText(mu.frmcur(tot));
+                    lblStot.setText("Subt : "+mu.frmcur(ttsin));
+                }
             } else {
                 tot=mu.round(tot,2);
                 tdesc=mu.round(tdesc,2);
@@ -989,6 +996,8 @@ public class Venta extends PBase {
                 prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
             //}
 
+            pimp=prc.imp;
+
             prec=mu.round(prec,2);
             desc=sdesc;
         }catch (Exception e){
@@ -1038,7 +1047,12 @@ public class Venta extends PBase {
 
         try {
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            //if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
 
             ins.init("T_VENTA");
             counter++;
@@ -1048,15 +1062,21 @@ public class Venta extends PBase {
             ins.add("CANT",cant);
             ins.add("UMSTOCK",gl.um);
             if (gl.umfactor==0) gl.umfactor=1;
+
             ins.add("FACTOR",gl.umfactor);
             if (porpeso) ins.add("PRECIO",gl.prectemp); else ins.add("PRECIO",prec);
             ins.add("IMP",impval);
             ins.add("DES",desc);
             ins.add("DESMON",descmon);
             ins.add("TOTAL",prodtot);
-            if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
+            //if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
+            ins.add("PRECIODOC",precdoc);
             ins.add("PESO",peso);
-            ins.add("VAL1",0);
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                ins.add("VAL1",pimp);
+            } else ins.add("VAL1",0);
+
             ins.add("VAL2","");
             ins.add("VAL3",0);
             ins.add("VAL4","0");
@@ -2355,6 +2375,8 @@ public class Venta extends PBase {
         try {
             switch (menuid) {
                 case 1:
+                    if (!validaMinimoCF()) return;
+                    if (!disponibleCorel()) return;
                     finalizarOrden();break;
                 case 3:
                     menuImprDoc(3);break;
@@ -2858,9 +2880,13 @@ public class Venta extends PBase {
 
             rep.save();
 
-            //if (gl.emp==9) {
+            if (gl.emp==47) {
+                app.doPrint(1);
+            } else {
                 gl.QRCodeStr="";
                 app.doPrint(2,1);
+            }
+
             //} else {
             //    app.doPrint(1);
             //}
@@ -3127,10 +3153,9 @@ public class Venta extends PBase {
             imgscan.setVisibility(View.INVISIBLE);
         }
 
-        try {
-            sinimp=false;
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+        if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            sinimp=true;
+        } else {
             sinimp=false;
         }
 
@@ -3948,6 +3973,73 @@ public class Venta extends PBase {
         }
 
         return 0;
+    }
+
+    private boolean disponibleCorel(){
+        Cursor DT;
+        int ca,cf,ca1,ca2,fcorel;
+
+        try {
+
+            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
+            DT=Con.OpenDT(sql);
+
+            try {
+                if (DT.getCount()>0){
+                    DT.moveToFirst();
+
+                    ca1=DT.getInt(1);
+                    cf=DT.getInt(3);
+                } else {
+                    mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+                    return false;
+                }
+            } catch (Exception e) {
+                mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+                return false;
+            }
+
+            sql="SELECT MAX(COREL) FROM D_FACT_LOG ";
+            DT=Con.OpenDT(sql);
+
+            try {
+                if (DT.getCount()>0){
+                    DT.moveToFirst();
+                    ca2=DT.getInt(0);
+                } else {
+                    ca2=0;
+                }
+            } catch (Exception e) {
+                ca2=0;
+            }
+
+            ca=ca1;
+            if (ca2>ca) ca=ca2;
+            fcorel=ca+1;
+
+            if (fcorel>cf) {
+                mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            mu.msgbox("disponibleCorel: " + e.getMessage());return false;
+        }
+
+    }
+
+    private boolean validaMinimoCF() {
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            if (gl.codigo_cliente==gl.emp*10) {
+                if (tot>2500) {
+                    msgbox("El total de vanta máximo permitido para Consumidor final es Q2500.");
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     //endregion

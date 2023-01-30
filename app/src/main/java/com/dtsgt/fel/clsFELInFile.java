@@ -1144,8 +1144,6 @@ public class clsFELInFile {
             }
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
-        } finally {
-            //if (connection!=null) connection.disconnect();
         }
     }
 
@@ -1197,6 +1195,8 @@ public class clsFELInFile {
     public void sendJSONAnul() {
 
         try {
+
+            errlevel=4;
 
             s64= anulToBase64();
 
@@ -1308,8 +1308,6 @@ public class clsFELInFile {
             }
         } catch (Exception e) {
             error=e.getMessage();errorflag=true;
-        } finally {
-            //if (connection!=null) connection.disconnect();
         }
     }
 

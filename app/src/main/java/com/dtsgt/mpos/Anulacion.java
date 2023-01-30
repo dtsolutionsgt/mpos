@@ -21,6 +21,7 @@ import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
+import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
@@ -538,6 +539,10 @@ public class Anulacion extends PBase {
 	@Override
     public void felCallBack()  {
 
+		//**************************
+		String ss=fel.error+" "+fel.errlevel;
+		ss=ss+"";
+
         if (!fel.errorflag) {
 
 			try {
@@ -561,6 +566,8 @@ public class Anulacion extends PBase {
 			}
 		} else {
 			try {
+				guardaError();
+
 				//#EJC20200706: Commit transaction from Anuldocument.
 				db.endTransaction();
 			} catch (Exception e) {
@@ -582,10 +589,17 @@ public class Anulacion extends PBase {
 
             uuid=fact.feeluuid;
 
-            if (uuid.equalsIgnoreCase(" ")) {
-                anulFactura(itemid);
-                return false;
+            if (uuid.length()<5) {
+	           anulFactura(itemid);return false;
             }
+
+			if (uuid.equalsIgnoreCase(" ")) {
+				anulFactura(itemid);return false;
+			}
+
+			if (uuid.isEmpty()) {
+				anulFactura(itemid);return false;
+			}
 
 			String NITReceptor = Get_NIT_Cliente(fact.cliente);
 
@@ -594,7 +608,6 @@ public class Anulacion extends PBase {
 			//#EJC20200527: Quitar estos caracteres del NIT.
 			NITReceptor = NITReceptor.replace("-","");
 			NITReceptor = NITReceptor.replace(".","");
-
 
             fel.anulfact(uuid, fel.fel_nit,NITReceptor, fact.fechaentr, fact.fechaentr);
 
@@ -636,7 +649,6 @@ public class Anulacion extends PBase {
 
 	//region WebService handler
 
-
 	private void envioFactura() {
 
 		Handler mtimer = new Handler();
@@ -675,6 +687,14 @@ public class Anulacion extends PBase {
 	@Override
 	public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
 		try {
+
+			String ss=errmsg+" "+errlevel;
+			ss=ss+"";
+
+			if (throwing | ws.errorflag) {
+				guardaError();
+			}
+
 			if (throwing) throw new Exception(errmsg);
 
 			if (ws.errorflag) {
@@ -693,6 +713,32 @@ public class Anulacion extends PBase {
 			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
 			processComplete();
 		}
+	}
+
+	private void guardaError() {
+		clsD_fel_errorObj D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
+		clsClasses.clsD_fel_error item=clsCls.new clsD_fel_error();
+
+		String err=fel.responsecode +" "+fel.error;
+		String cor=itemid;
+		int nivel=fel.errlevel; // nivel=3 - firma anulacion , 4 - anulacion
+
+		try {
+			int iditem=D_fel_errorObj.newID("SELECT MAX(Item) FROM D_fel_error");
+
+			item.empresa=gl.emp;
+			item.corel=cor;
+			item.item=iditem;
+			item.fecha=du.getActDateTime();
+			item.nivel=nivel;
+			item.error=err;
+			item.enviado=0;
+
+			D_fel_errorObj.add(item);
+		} catch (Exception e) {
+			msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
 	}
 
 	private void processComplete() {

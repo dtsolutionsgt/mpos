@@ -49,7 +49,7 @@ import org.json.JSONObject;
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
-	private TextView lblPed,lblDom,lblDir;
+	private TextView lblPed,lblDom,lblDir,btnNIT;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar;
@@ -97,6 +97,7 @@ public class CliPos extends PBase {
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
         cbllevar = findViewById(R.id.checkBox21);
         cbpickup = findViewById(R.id.chkPickup);
+        btnNIT= findViewById(R.id.textView6);
 
         setHandlers();
 
@@ -118,6 +119,12 @@ public class CliPos extends PBase {
             lblDom.setVisibility(View.INVISIBLE);
             lblDir.setVisibility(View.GONE);
             cbllevar.setChecked(false);cbllevar.setEnabled(true);
+        }
+
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            btnNIT.setText("Cliente con NIT");
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            btnNIT.setText("Cliente con RTN");
         }
 
         if (!gl.peVentaDomicilio) cbllevar.setEnabled(false);
@@ -190,13 +197,15 @@ public class CliPos extends PBase {
 
             gl.nit_tipo="N";
 
-
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
                 if (!validaNIT(sNITCliente)) {
-                    //msgbox("NIT incorrecto");return;
+                    msgbox("NIT incorrecto");return;
+                }
+            }  if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                if (!validaNITHon(sNITCliente)) {
+                    msgbox("NIT incorrecto");return;
                 }
             }
-
 
             if (mu.emptystr(sNombreCliente)) {
                 msgbox("Nombre incorrecto");return;
@@ -903,8 +912,12 @@ public class CliPos extends PBase {
         return true;
 
 	}
-	
-	private void buscaCliente() {
+
+    private boolean validaNITHon(String N)  {
+        return true;
+    }
+
+    private void buscaCliente() {
 
 		Cursor DT;
 

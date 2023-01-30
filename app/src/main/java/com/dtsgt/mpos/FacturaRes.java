@@ -41,6 +41,7 @@ import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
+import com.dtsgt.classes.clsD_facturahnObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
@@ -221,7 +222,7 @@ public class FacturaRes extends PBase {
         }
 
         imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
-        if (gl.peRest) {
+        if (gl.peRest | gl.emp==47) {
             imgProp.setVisibility(View.VISIBLE);lblProp.setVisibility(View.VISIBLE);
             //if (gl.pePropinaFija && gl.pePropinaPerc<=0) {
             //    imgProp.setVisibility(View.INVISIBLE);lblProp.setVisibility(View.INVISIBLE);
@@ -917,6 +918,10 @@ public class FacturaRes extends PBase {
 				fdoc.textopie=gl.peTextoPie;
                 fdoc.nommesero=gl.nombre_mesero;
 				fdoc.pais = gl.codigo_pais;
+				fdoc.fraseIVA = gl.peFraseIVA;
+				fdoc.fraseISR = gl.peFraseISR;
+
+				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 
                 fdoc.buildPrint(corel,0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
@@ -974,6 +979,27 @@ public class FacturaRes extends PBase {
 			gl.codigo_cliente=0;
 			super.finish();
 
+		}
+	}
+
+	private void cargaTotalesHonduras() {
+		try {
+			clsD_facturahnObj D_facturahnObj=new clsD_facturahnObj(this,Con,db);
+			D_facturahnObj.fill("WHERE (COREL='"+corel+"')");
+
+			fdoc.fh_stotal=D_facturahnObj.first().subtotal;
+			fdoc.fh_exon=D_facturahnObj.first().exon;
+			fdoc.fh_exent=D_facturahnObj.first().exento;
+			fdoc.fh_grav=D_facturahnObj.first().gravado;
+			fdoc.fh_imp1 =D_facturahnObj.first().imp1;
+			fdoc.fh_imp2 =D_facturahnObj.first().imp2;
+			fdoc.fh_val1 =D_facturahnObj.first().val1;
+			fdoc.fh_val2 =D_facturahnObj.first().val2;
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			fdoc.fh_stotal=0;fdoc.fh_exon=0;fdoc.fh_exent=0;
+			fdoc.fh_grav=0;fdoc.fh_imp1 =0;fdoc.fh_imp2 =0;
 		}
 	}
 
@@ -1282,6 +1308,71 @@ public class FacturaRes extends PBase {
                 }
 
             }
+
+			//endregion
+
+			//region D_FACTURAHN
+
+			if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+
+				double fh_stotal,fh_exon=0,fh_exent,fh_grav,fh_imp1,fh_imp2,fh_val1,fh_val2;
+
+				sql="SELECT VALOR FROM P_IMPUESTO WHERE (VALOR>0) ORDER BY VALOR";
+				dt=Con.OpenDT(sql);
+				if (dt.getCount()>0) {
+					dt.moveToFirst();fh_val1=dt.getDouble(0);
+				} else fh_val1=0;
+				if (dt.getCount()>1) {
+					dt.moveToNext();fh_val2=dt.getDouble(0);
+				} else fh_val2=0;
+
+				sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA";
+				dt=Con.OpenDT(sql);
+				dt.moveToFirst();
+				fh_stotal=dt.getDouble(0);
+
+				sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1=0)";
+				dt=Con.OpenDT(sql);
+				dt.moveToFirst();
+				fh_exent=dt.getDouble(0);
+
+				sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1>0)";
+				dt=Con.OpenDT(sql);
+				dt.moveToFirst();
+				fh_grav=dt.getDouble(0);
+
+				if (fh_val1>0) {
+					sql="SELECT SUM(IMP) FROM T_VENTA WHERE (VAL1="+fh_val1+")";
+					dt=Con.OpenDT(sql);
+					dt.moveToFirst();
+					fh_imp1=dt.getDouble(0);
+				} else fh_imp1=0;
+
+				if (fh_val2>0) {
+					sql="SELECT SUM(IMP) FROM T_VENTA WHERE (VAL1="+fh_val2+")";
+					dt=Con.OpenDT(sql);
+					dt.moveToFirst();
+					fh_imp2=dt.getDouble(0);
+				} else fh_imp2=0;
+
+
+				clsClasses.clsD_facturahn item = clsCls.new clsD_facturahn();
+
+				item.corel=corel;
+				item.subtotal=fh_stotal;
+				item.exon=fh_exon;
+				item.exento=fh_exent;
+				item.gravado=fh_grav;
+				item.imp1=fh_imp1;
+				item.imp2=fh_imp2;
+				item.val1=fh_val1;
+				item.val2=fh_val2;
+
+				clsD_facturahnObj D_facturahnObj=new clsD_facturahnObj(this,Con,db);
+				D_facturahnObj.fill("WHERE (COREL='0')");
+				D_facturahnObj.add(item);
+
+			}
 
 			//endregion
 

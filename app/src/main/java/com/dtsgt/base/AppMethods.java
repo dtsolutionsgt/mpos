@@ -984,6 +984,31 @@ public class AppMethods {
 			gl.peCajaPricipal = 34;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=150";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peFraseIVA = val;
+		} catch (Exception e) {
+			gl.peFraseIVA = "";
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=151";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peFraseISR = val;
+		} catch (Exception e) {
+			gl.peFraseISR = "";
+		}
 
     }
 

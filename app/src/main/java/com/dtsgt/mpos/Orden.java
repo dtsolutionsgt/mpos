@@ -153,6 +153,7 @@ public class Orden extends PBase {
     private clsT_orden_ingObj T_orden_ingObj;
     private clsD_barril_transObj D_barril_transObj;
 
+
     private clsRepBuilder rep;
 
     private int browse;
@@ -573,6 +574,7 @@ public class Orden extends PBase {
         double tt,stot,tdesc,desc;
         int ii,idpr;
         boolean esingr;
+        String snota;
 
         items.clear();tot=0;ttimp=0;ttperc=0;tdesc=0;selidx=-1;ii=0;seluid="";
 
@@ -602,6 +604,7 @@ public class Orden extends PBase {
                     tt=DT.getDouble(2);
 
                     item = clsCls.new clsOrden();
+
                     item.Cod=DT.getString(0);idpr=app.codigoProducto(item.Cod);
                     item.id=DT.getInt(15);
                     item.Cant=DT.getDouble(3);
@@ -654,6 +657,12 @@ public class Orden extends PBase {
                         item.Total=tt;
                     }
                     T_ordencomboprecioObj.items.clear();
+
+                    snota="";
+                    T_orden_notaObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+item.id+")");
+                    if (T_orden_notaObj.count>0) snota=T_orden_notaObj.first().nota;
+
+                    item.nota=snota;
 
                     //if (!cuentaPagada(idorden,item.cuenta)) {
                         items.add(item);
@@ -6232,6 +6241,8 @@ public class Orden extends PBase {
         } catch (Exception e) {
             T_orden_notaObj.update(nota);
         }
+
+        listItems();
     }
 
     private void inputMesa() {

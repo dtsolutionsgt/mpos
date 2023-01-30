@@ -25,6 +25,7 @@ import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_fel_bitacoraObj;
+import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsD_mov_almacenObj;
 import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
@@ -70,6 +71,7 @@ public class WSEnv extends PBase {
     private clsP_cajapagosObj P_cjPagosObj;
     private clsP_cajareporteObj P_cjReporteObj;
     private clsT_costoObj T_costoObj;
+    private clsD_fel_errorObj D_fel_errorObj;
 
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> rutas = new ArrayList<String>();
@@ -91,7 +93,7 @@ public class WSEnv extends PBase {
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError, corelCjPagos, cjPagosError, cStockError;
     private int ftot, fsend, fidx, fTotMov, fIdxMov, fTotMovAlm, fIdxMovAlm,
             mSend, cjCierreTot, cjCierreSend, cjAsist, fTotAnul, cjReporteTot, cjReporteSend,
-            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cCosto, cCorCie;
+            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cCosto, cCorCie,cFELErr;
     private boolean factsend, movSend, cjCierreSendB, cjReporteSendB, cjPagosSendB, cStockSendB;
 
     @Override
@@ -126,6 +128,7 @@ public class WSEnv extends PBase {
         D_mov_almacenObj = new clsD_mov_almacenObj(this, Con, db);
         D_movd_almacenObj = new clsD_movd_almacenObj(this, Con, db);
         T_costoObj = new clsT_costoObj(this, Con, db);
+        D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
 
         P_cjCierreObj = new clsP_cajacierreObj(this, Con, db);
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
@@ -235,7 +238,10 @@ public class WSEnv extends PBase {
                     case 12:
                         processMovAlmacen();
                         if (fTotMovAlm > 0) callMethod("Commit", "SQL", CSQL);
-
+                        break;
+                    case 13:
+                        processFELErr();
+                        if (cFELErr > 0) callMethod("Commit", "SQL", CSQL);
                         break;
                 }
             } catch (Exception e) {
@@ -312,10 +318,15 @@ public class WSEnv extends PBase {
                 case 12:
                     if (fTotMovAlm > 0) statusMovAlmacen();
                     if (fIdxMovAlm >= fTotMovAlm - 1) {
-                        processComplete();
+                        //processComplete();
+                        execws(13);
                     } else {
                         execws(12);
                     }
+                    break;
+                case 13:
+                    statusFELErr();
+                    processComplete();
                     break;
             }
 
@@ -1419,6 +1430,30 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processFELErr() {
+
+        D_fel_errorObj.fill("WHERE ENVIADO=0");
+        clsClasses.clsD_fel_error item;
+        CSQL = "";
+
+        for (int i = 0; i < D_fel_errorObj.count; i++) {
+            item = D_fel_errorObj.items.get(i);
+            CSQL = CSQL + "DELETE FROM D_fel_error WHERE (COREL='"+item.corel+"') AND (ITEM="+item.item+")" + ";";
+            CSQL = CSQL + addFELErrItemSql(item) + ";";
+        }
+
+        String ss = CSQL;
+    }
+
+    private void statusFELErr() {
+        try {
+            sql = "UPDATE D_fel_error SET ENVIADO=1 WHERE ENVIADO=0";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Aux
@@ -1556,6 +1591,11 @@ public class WSEnv extends PBase {
             cCosto = T_costoObj.count;
             total_enviar += cCosto;
 
+            D_fel_errorObj.fill("WHERE (ENVIADO=0)");
+            cFELErr=D_fel_errorObj.count;
+            total_enviar += cFELErr;
+
+
             if (total_enviar > 0) {
 
                 lbl1.setText("Pendientes envio : \nFacturas: " + ftot +
@@ -1617,6 +1657,28 @@ public class WSEnv extends PBase {
         ins.add("FECHA", fs);
         ins.add("COSTO", item.costo);
         ins.add("CODIGO_PROVEEDOR", item.codigo_proveedor);
+
+        return ins.sql();
+
+    }
+
+    public String addFELErrItemSql(clsClasses.clsD_fel_error item) {
+        String fs = "" + du.univfechalong(du.getActDateTime()),err;
+
+        err=item.error;
+        err=err.replace(",","");
+        err=err.replace("'","");
+        if (err.length()>250) err=err.substring(0,245);
+
+        ins.init("D_fel_error");
+
+        ins.add("EMPRESA",gl.emp);
+        ins.add("COREL",item.corel);
+        ins.add("ITEM",item.item);
+        ins.add("FECHA",fs);
+        ins.add("NIVEL",item.nivel);
+        ins.add("ERROR",err);
+        ins.add("ENVIADO",item.enviado);
 
         return ins.sql();
 
