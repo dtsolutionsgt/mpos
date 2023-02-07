@@ -1,11 +1,13 @@
 package com.dtsgt.classes;
 
-import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
+
+import java.util.ArrayList;
 
 public class clsT_ordencuentaObj {
 
@@ -126,7 +128,6 @@ public class clsT_ordencuentaObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsT_ordencuenta();
-
             item.corel=dt.getString(0);
             item.id=dt.getInt(1);
             item.cf=dt.getInt(2);
@@ -134,24 +135,24 @@ public class clsT_ordencuentaObj {
             item.nit=dt.getString(4);
             item.direccion=dt.getString(5);
             item.correo=dt.getString(6);
-
             items.add(item);
-
             dt.moveToNext();
         }
 
-        if (dt!=null) dt.close();
-
+        dt.close();
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
         try {
+
             dt=Con.OpenDT(idsql);
             dt.moveToFirst();
             nid=dt.getInt(0)+1;
+
         } catch (Exception e) {
             nid=1;
         }
@@ -164,7 +165,6 @@ public class clsT_ordencuentaObj {
     public String addItemSql(clsClasses.clsT_ordencuenta item,int idempresa) {
 
         ins.init("T_ordencuenta");
-
         ins.add("COREL",item.corel);
         ins.add("ID",item.id);
         ins.add("EMPRESA",idempresa);
@@ -173,7 +173,6 @@ public class clsT_ordencuentaObj {
         ins.add("NIT",item.nit);
         ins.add("DIRECCION",item.direccion);
         ins.add("CORREO",item.correo);
-
         return ins.sql();
 
     }
@@ -181,15 +180,12 @@ public class clsT_ordencuentaObj {
     public String updateItemSql(clsClasses.clsT_ordencuenta item) {
 
         upd.init("T_ordencuenta");
-
         upd.add("CF",item.cf);
         upd.add("NOMBRE",item.nombre);
         upd.add("NIT",item.nit);
         upd.add("DIRECCION",item.direccion);
         upd.add("CORREO",item.correo);
-
         upd.Where("(COREL='"+item.corel+"') AND (ID="+item.id+")");
-
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();

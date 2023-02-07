@@ -6,10 +6,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
@@ -23,7 +21,6 @@ import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_facturaObj;
-import com.dtsgt.classes.clsD_orden_logObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
@@ -51,6 +48,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -1832,7 +1830,9 @@ public class AppMethods {
         }
 
         if (flag) {
+
             try {
+
                 db.beginTransaction();
 
                 while ((sql=br.readLine())!= null) {
@@ -1842,10 +1842,9 @@ public class AppMethods {
 
                 lim=limitePedido(cor);
 
-                //sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0,FIRMA_CLIENTE="+lim+",CODIGO_USUARIO_CREO="+gl.codigo_vendedor+" WHERE FECHA_RECEPCION_SUC=0";
                 sql="UPDATE D_PEDIDO SET FECHA_RECEPCION_SUC="+fa+",EMPRESA=0,FIRMA_CLIENTE="+lim+",CODIGO_USUARIO_CREO=0 WHERE FECHA_RECEPCION_SUC=0";
-                db.execSQL(sql);
 
+                db.execSQL(sql);
                 db.setTransactionSuccessful();
                 db.endTransaction();
 
@@ -1874,6 +1873,7 @@ public class AppMethods {
     }
 
     private int limitePedido(String corel) {
+
         Cursor dt;
 
         try {
@@ -1886,6 +1886,9 @@ public class AppMethods {
                 dt.moveToFirst();
                 return dt.getInt(0);
             }
+
+			dt.close();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1893,31 +1896,41 @@ public class AppMethods {
     }
 
     public int pendientesPago(String pcor) {
+
         try {
+
             sql="SELECT P.COREL FROM D_FACTURAP P " +
                 "INNER JOIN D_FACTURA F ON P.COREL=F.COREL " +
                 "WHERE (P.TIPO='E') AND (F.FECHA>2009230000) AND (F.PEDCOREL<>'') AND (F.ANULADO=0) AND (P.VALOR=0) ";
             if (!pcor.isEmpty()) sql+=" AND (F.PEDCOREL='"+pcor+"')";
+
             Cursor dt=Con.OpenDT(sql);
 
+			dt.close();
+
             return dt.getCount();
+
         } catch (Exception e) {
             return -1;
         }
     }
 
 	public String prefijoCaja() {
+
 		Cursor dt;
 		String val;
 
 		try {
+
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE (ID=130) ";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 			val=dt.getString(0);
 
 			val = val+"-";
-			if (dt!=null) dt.close();
+
+			dt.close();
+
 		} catch (Exception e) {
 			val = gl.codigo_ruta+"-";
 		}
@@ -1952,9 +1965,11 @@ public class AppMethods {
     //region Caja
 
     public boolean validaCompletarCuenta(String corel) {
+
         int ccant,compl,cuenta;
 
         try {
+
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(cont,Con,db);
 
@@ -1968,12 +1983,15 @@ public class AppMethods {
             }
 
             return compl==ccant;
+
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+            msgbox(Objects.requireNonNull(new Object() {
+			}.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());return false;
         }
     }
 
 	public boolean esmesapedido(int idemp,String idgrupomesa) {
+
 		boolean rslt=false;
 		int idgrupo;
 
@@ -1996,9 +2014,12 @@ public class AppMethods {
     //region Cuentas
 
     public int cuentaActiva(String corel) {
+
         try {
+
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
             T_ordencuentaObj.fill("WHERE (COREL='"+corel+"') ORDER BY ID");
+
             for (int i =0; i< T_ordencuentaObj.count; i++) {
                 if (!cuentaPagada(corel, T_ordencuentaObj.items.get(i).id)) {
                     return T_ordencuentaObj.items.get(i).id;
@@ -2006,6 +2027,7 @@ public class AppMethods {
             }
 
             agregarCuenta(corel);
+
             int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+corel+"')");
 
             return newcid;
@@ -2015,11 +2037,14 @@ public class AppMethods {
     }
 
 	public void primeraCuenta(String corel) {
+
 		try {
+
 			clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
 			T_ordencuentaObj.fill("WHERE (COREL='"+corel+"') ");
 
 			if (T_ordencuentaObj.count==0) agregarCuenta(corel);
+
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -2027,7 +2052,9 @@ public class AppMethods {
 
 
 	private void agregarCuenta(String corel) {
+
         try {
+
             clsClasses clsCls = new clsClasses();
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
             clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
@@ -2044,34 +2071,42 @@ public class AppMethods {
 
             T_ordencuentaObj.add(cuenta);
 
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private Boolean cuentaPagada(String corr,int id) {
+
         try {
+
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(cont,Con,db);
             D_facturaObj.fill("WHERE (FACTLINK='"+corr+"_"+id+"') AND (ANULADO=0)");
-            return D_facturaObj.count!=0;
+
+			return D_facturaObj.count!=0;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
     }
 
     public int cuentaActivaPostpago(String corel) {
+
         try {
+
             clsT_ordenObj T_ordenObj=new clsT_ordenObj(cont,Con,db);
             T_ordenObj.fill("WHERE (COREL='"+corel+"') AND (PERCEP=0) ORDER BY CUENTA DESC");
+
             if (T_ordenObj.count>0) {
                 return T_ordenObj.first().cuenta;
             }
 
             agregarCuenta(corel);
+
             int newcid=T_ordenObj.newID("SELECT MAX(cuenta) FROM T_orden WHERE (corel='"+corel+"')");
 
             return newcid;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return 1;
         }
@@ -2082,11 +2117,14 @@ public class AppMethods {
 	//region Barriles
 
 	public boolean barrilAbierto(String codprod) {
+
 		Cursor dt=null;
 		boolean rslt=false;
 
 		try {
+
 			dt=Con.OpenDT("SELECT PRODUCTO_PADRE FROM P_PRODUCTO WHERE (CODIGO='"+codprod+"') ");
+
 			if (dt.getCount()>0) {
 				dt.moveToFirst();
 				int idprod=dt.getInt(0);
@@ -2094,6 +2132,9 @@ public class AppMethods {
 				dt=Con.OpenDT("SELECT CODIGO_PRODUCTO FROM D_BARRIL WHERE (CODIGO_PRODUCTO="+idprod+") AND (ACTIVO=1)");
 				rslt=dt.getCount()>0;
 			}
+
+			dt.close();
+
 		} catch (Exception e){
 			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -2103,19 +2144,26 @@ public class AppMethods {
 	}
 
 	public boolean esProductoBarril(int idprod) {
+
 		Cursor dt=null;
 		boolean rslt=false;
 		gl.bar_prod=0;gl.bar_cant=0;
 
 		try {
+
 			dt=Con.OpenDT("SELECT CODIGO_TIPO,PRODUCTO_PADRE,FACTOR_PADRE FROM P_PRODUCTO WHERE (CODIGO_PRODUCTO="+idprod+")");
+
 			if (dt.getCount()>0) {
+
 				dt.moveToFirst();
 
 				rslt=dt.getString(0).equalsIgnoreCase("PB");
 				gl.bar_prod=dt.getInt(1);
 				gl.bar_cant=dt.getInt(2);
 			}
+
+			dt.close();
+
 		} catch (Exception e){
 			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -2125,17 +2173,22 @@ public class AppMethods {
 	}
 
 	public String barrilProd(int idprod) {
+
 		Cursor dt=null;
 
 		gl.bar_um="";gl.bar_idbarril="";
+
 		try {
+
 			dt=Con.OpenDT("SELECT UNIDBAS FROM P_PRODUCTO WHERE (CODIGO_PRODUCTO="+idprod+") ");
 			dt.moveToFirst();
 			gl.bar_um=dt.getString(0);
+			dt.close();
 
 			dt=Con.OpenDT("SELECT CODIGO_BARRIL FROM D_BARRIL WHERE (CODIGO_PRODUCTO="+idprod+") AND (ACTIVO=1)");
 			dt.moveToFirst();
 			gl.bar_idbarril=dt.getString(0);
+			dt.close();
 
 		} catch (Exception e){
 			//msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -2149,6 +2202,7 @@ public class AppMethods {
 	}
 
 	public boolean pendienteBarrilEnvio() {
+
 		Cursor dt;
 		int pb=0,pt=0;
 
@@ -2249,7 +2303,8 @@ public class AppMethods {
             st=pps+" "+cnt;
             sp=sp+st+"\n";
 
-			if (DT!=null) DT.close();
+			DT.close();
+
         } catch (Exception e) {
         }
 
@@ -2258,6 +2313,7 @@ public class AppMethods {
     }
 
     public long getDateRecep() {
+
         Cursor dt;
         long resultado = 0;
 
@@ -2270,7 +2326,9 @@ public class AppMethods {
 				dt.moveToFirst();
 				resultado = dt.getLong(0);
 			}
-			if (dt!=null) dt.close();
+
+			dt.close();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             resultado= 0;
@@ -2289,17 +2347,22 @@ public class AppMethods {
     }
 
     public String cliFromNIT(String cod) {
+
         Cursor DT;
         String umm;
 
         try {
+
             String sql = "SELECT DESCCORTA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
             umm=DT.getString(0);
-			if (DT!=null) DT.close();
+
+			DT.close();
+
             return  umm;
+
         } catch (Exception e) {
             return "";
         }
@@ -2308,6 +2371,7 @@ public class AppMethods {
     public boolean setScreenDim(Activity owner) {
 
         try {
+
             Point point = new Point();
             owner.getWindowManager().getDefaultDisplay().getRealSize(point);
 

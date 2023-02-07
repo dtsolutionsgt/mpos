@@ -7,11 +7,9 @@ import com.dtsgt.base.clsClasses.clsDemoDlg;
 import com.epson.eposdevice.Device;
 import com.epson.eposdevice.printer.Printer;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 
 public class appGlobals extends Application {
-
 	public String rutanom,sucur,rutatipo, rutatipog,  vendnom, gstr, gstr2, prod, um, umpres, umstock, clitipo;
 	public String ubas, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante,
 			ayudanteID, vehiculo, vehiculoID;

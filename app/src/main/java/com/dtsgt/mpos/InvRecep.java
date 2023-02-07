@@ -37,6 +37,7 @@ import com.dtsgt.ladapt.LA_T_movr;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class InvRecep extends PBase {
 
@@ -61,7 +62,7 @@ public class InvRecep extends PBase {
     private clsP_stockObj P_stockObj;
     private clsP_stock_almacenObj P_stock_almacenObj;
 
-    private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
+    private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<>();
     private clsClasses.clsT_movd selitem;
     private clsClasses.clsT_movr selitemr;
 
@@ -465,7 +466,8 @@ public class InvRecep extends PBase {
             lblBar.setText("");lblCant.setText("");lblCosto.setText("");
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -550,7 +552,8 @@ public class InvRecep extends PBase {
                         T_costoObj.add(cost);
 
                     } catch (Exception e) {
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                        msgbox(Objects.requireNonNull(new Object() {
+                        }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
                     }
 
                     if (imovr.precio>0) {
@@ -605,7 +608,8 @@ public class InvRecep extends PBase {
 
         } catch (Exception e) {
             db.endTransaction();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -692,7 +696,8 @@ public class InvRecep extends PBase {
 
                     } catch (Exception e) {
                         String sp=e.getMessage();
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                        msgbox(Objects.requireNonNull(new Object() {
+                        }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
                     }
 
                     sql="UPDATE P_PRODUCTO SET COSTO="+imovr.precio+" WHERE CODIGO_PRODUCTO="+imovr.producto;
@@ -719,7 +724,8 @@ public class InvRecep extends PBase {
         } catch (Exception e) {
             db.endTransaction();
             String sp=e.getMessage();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -772,7 +778,8 @@ public class InvRecep extends PBase {
             return true;
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
 
         prodid=0;
@@ -804,7 +811,8 @@ public class InvRecep extends PBase {
             lblUni.setText(selitemr.unidadmedida);
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -833,7 +841,8 @@ public class InvRecep extends PBase {
             lblUni.setText(selitemr.unidadmedida);
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -857,8 +866,6 @@ public class InvRecep extends PBase {
             ins.add("CODIGOLIQUIDACION",0);
             ins.add("COREL_D_MOV","");
             ins.add("UNIDADMEDIDA",um);
-            String sp=ins.sql();
-
             db.execSQL(ins.sql());
 
         } catch (Exception e) {
@@ -900,8 +907,6 @@ public class InvRecep extends PBase {
                 ins.add("PESO",0);
                 ins.add("PESOM",0);
                 ins.add("ANULADO",0);
-
-                String sp=ins.sql();
                 db.execSQL(ins.sql());
 
             } else {
@@ -910,10 +915,12 @@ public class InvRecep extends PBase {
                 db.execSQL(sql);
             }
 
-            if (dt!=null) dt.close();
+            dt.close();
+
         } catch (Exception e) {
             String sp=e.getMessage();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -987,7 +994,8 @@ public class InvRecep extends PBase {
             listItems();
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1040,7 +1048,8 @@ public class InvRecep extends PBase {
             listItems();
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1123,7 +1132,8 @@ public class InvRecep extends PBase {
 
         } catch (Exception e) {
             db.endTransaction();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1205,7 +1215,8 @@ public class InvRecep extends PBase {
 
         } catch (Exception e) {
             db.endTransaction();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1245,7 +1256,8 @@ public class InvRecep extends PBase {
             grdbtn.setAdapter(adapterb);
 
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            addlog(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName(),e.getMessage(),"");
         }
 
     }
@@ -1269,7 +1281,8 @@ public class InvRecep extends PBase {
                     imprimir();break;
             }
         } catch (Exception e) {
-            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName(), e.getMessage(), "");
         }
     }
 
@@ -1282,7 +1295,8 @@ public class InvRecep extends PBase {
 
             listItems();
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1316,7 +1330,8 @@ public class InvRecep extends PBase {
             app.printView();
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1391,7 +1406,8 @@ public class InvRecep extends PBase {
             mov.add(header);
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1399,7 +1415,8 @@ public class InvRecep extends PBase {
         try {
             db.execSQL("DELETE FROM D_MOV WHERE STATCOM='X'");
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1409,7 +1426,8 @@ public class InvRecep extends PBase {
             P_unidadObj.fill("WHERE (CODIGO_UNIDAD='"+um+"')");
             ubas=P_unidadObj.first().nombre;
         } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            toast(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
             ubas=um;
         }
 
@@ -1451,7 +1469,8 @@ public class InvRecep extends PBase {
             listdlg.show();
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -1485,7 +1504,8 @@ public class InvRecep extends PBase {
             }
             return mu.frmdecno(val)+" "+uum;
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
         return "";
     }
@@ -1502,7 +1522,8 @@ public class InvRecep extends PBase {
             }
             return val;
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
         return 0;
     }
@@ -1540,7 +1561,8 @@ public class InvRecep extends PBase {
                 db.execSQL(sql);
                 listItems();
             } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                msgbox(Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
             }
         });
         dialog.setNegativeButton("No", (dialog1, which) -> {});
@@ -1562,7 +1584,8 @@ public class InvRecep extends PBase {
                     }
                 } else msgAskSave2("Continuar");
             } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                msgbox(Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
             }
         });
         dialog.setNegativeButton("No", (dialog1, which) -> {});
@@ -1578,7 +1601,8 @@ public class InvRecep extends PBase {
             try {
                 if (almacen) savealmacen();else save();
             } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                msgbox(Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
             }
         });
         dialog.setNegativeButton("No", (dialog1, which) -> {});
@@ -1601,7 +1625,8 @@ public class InvRecep extends PBase {
             try {
                 if (almacen) holdalmacen();else hold();
             } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                msgbox(Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
             }
         });
         dialog.setNegativeButton("No", (dialog1, which) -> {});
@@ -1621,12 +1646,12 @@ public class InvRecep extends PBase {
             try {
                 docnum=input.getText().toString();
                 if (docnum.isEmpty()) {
-                    mu.msgbox("Valor incorrecto");return;
+                    mu.msgbox("Valor incorrecto");
                 } else {
                     lblDoc.setText(docnum);
                 }
             } catch (Exception e) {
-                mu.msgbox("Valor incorrecto");return;
+                mu.msgbox("Valor incorrecto");
             }
         });
         alert.setNegativeButton("Cancelar", (dialog, whichButton) -> {});
@@ -1662,7 +1687,7 @@ public class InvRecep extends PBase {
             browse=0;
             if (gl.gstr.isEmpty()) return;
             barcode=gl.gstr;
-            addBarcode();return;
+            addBarcode();
         }
     }
 
