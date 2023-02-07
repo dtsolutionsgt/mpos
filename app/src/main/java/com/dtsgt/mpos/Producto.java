@@ -1,14 +1,11 @@
 package com.dtsgt.mpos;
 
-import android.content.pm.ActivityInfo;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -56,26 +53,33 @@ public class Producto extends PBase {
 		listView = (ListView) findViewById(R.id.listView1);
 		txtFilter = (EditText) findViewById(R.id.editText1);
 		spinFam = (Spinner) findViewById(R.id.spinner1);
-			
-		prodtipo=gl.prodtipo;
-		gl.prodtipo=0;
-		this.setTitle("Producto");
-		if (prodtipo==1) this.setTitle("Producto con existencia");
 
-        app = new AppMethods(this, gl, Con, db);
+		try {
 
-        items = new ArrayList<clsCD>();
-		
-		act=0;ordPorNombre=gl.peOrdPorNombre;
-        if (!gl.linea_sel.isEmpty()) {
-            famid=gl.linea_sel;
-        }
+			prodtipo=gl.prodtipo;
+			gl.prodtipo=0;
+			this.setTitle("Producto");
+			if (prodtipo==1) {this.setTitle("Producto con existencia");}
 
-        setHandlers();
+			app = new AppMethods(this, gl, Con, db);
 
-		fillSpinner();// Toast index 0
+			items = new ArrayList<clsCD>();
 
-		listItems();
+			act=0;
+			ordPorNombre=gl.peOrdPorNombre;
+			if (!gl.linea_sel.isEmpty()) {
+				famid=gl.linea_sel;
+			}
+
+			setHandlers();
+
+			fillSpinner();// Toast index 0
+
+			listItems();
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
 
 	}
 
@@ -231,6 +235,7 @@ public class Producto extends PBase {
     //region Main
 	
 	private void listItems() {
+
 		Cursor DT;
 		clsCD vItem;
 		int cantidad;
@@ -313,6 +318,7 @@ public class Producto extends PBase {
             DT=Con.OpenDT(sql);
 
 			cantidad = DT.getCount();
+
 			if (cantidad==0) {
                 items.clear();vitems.clear();
             } else {
@@ -340,9 +346,10 @@ public class Producto extends PBase {
 
                     DT.moveToNext();
                 }
-
-                if (DT!=null) DT.close();
             }
+
+			DT.close();
+
         } catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 	    }
