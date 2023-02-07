@@ -1,11 +1,13 @@
 package com.dtsgt.classes;
 
-import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
+
+import java.util.ArrayList;
 
 public class clsT_movrObj {
 
@@ -74,7 +76,6 @@ public class clsT_movrObj {
     private void addItem(clsClasses.clsT_movr item) {
 
         ins.init("T_movr");
-
         ins.add("CORELDET",item.coreldet);
         ins.add("COREL",item.corel);
         ins.add("PRODUCTO",item.producto);
@@ -87,7 +88,6 @@ public class clsT_movrObj {
         ins.add("UNIDADMEDIDA",item.unidadmedida);
         ins.add("PRECIO",item.precio);
         ins.add("RAZON",item.razon);
-
         db.execSQL(ins.sql());
 
     }
@@ -95,7 +95,6 @@ public class clsT_movrObj {
     private void updateItem(clsClasses.clsT_movr item) {
 
         upd.init("T_movr");
-
         upd.add("COREL",item.corel);
         upd.add("PRODUCTO",item.producto);
         upd.add("CANT",item.cant);
@@ -107,9 +106,7 @@ public class clsT_movrObj {
         upd.add("UNIDADMEDIDA",item.unidadmedida);
         upd.add("PRECIO",item.precio);
         upd.add("RAZON",item.razon);
-
         upd.Where("(CORELDET="+item.coreldet+")");
-
         db.execSQL(upd.sql());
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -127,6 +124,7 @@ public class clsT_movrObj {
     }
 
     private void fillItems(String sq) {
+
         Cursor dt;
         clsClasses.clsT_movr item;
 
@@ -139,7 +137,6 @@ public class clsT_movrObj {
         while (!dt.isAfterLast()) {
 
             item = clsCls.new clsT_movr();
-
             item.coreldet=dt.getInt(0);
             item.corel=dt.getString(1);
             item.producto=dt.getInt(2);
@@ -152,9 +149,7 @@ public class clsT_movrObj {
             item.unidadmedida=dt.getString(9);
             item.precio=dt.getDouble(10);
             item.razon=dt.getInt(11);
-
             items.add(item);
-
             dt.moveToNext();
         }
 
@@ -163,6 +158,7 @@ public class clsT_movrObj {
     }
 
     public int newID(String idsql) {
+
         Cursor dt=null;
         int nid;
 
@@ -182,7 +178,6 @@ public class clsT_movrObj {
     public String addItemSql(clsClasses.clsT_movr item) {
 
         ins.init("T_movr");
-
         ins.add("CORELDET",item.coreldet);
         ins.add("COREL",item.corel);
         ins.add("PRODUCTO",item.producto);
@@ -195,7 +190,6 @@ public class clsT_movrObj {
         ins.add("UNIDADMEDIDA",item.unidadmedida);
         ins.add("PRECIO",item.precio);
         ins.add("RAZON",item.razon);
-
         return ins.sql();
 
     }
@@ -203,7 +197,6 @@ public class clsT_movrObj {
     public String updateItemSql(clsClasses.clsT_movr item) {
 
         upd.init("T_movr");
-
         upd.add("COREL",item.corel);
         upd.add("PRODUCTO",item.producto);
         upd.add("CANT",item.cant);
@@ -215,9 +208,7 @@ public class clsT_movrObj {
         upd.add("UNIDADMEDIDA",item.unidadmedida);
         upd.add("PRECIO",item.precio);
         upd.add("RAZON",item.razon);
-
         upd.Where("(CORELDET="+item.coreldet+")");
-
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -225,4 +216,3 @@ public class clsT_movrObj {
     }
 
 }
-

@@ -8,8 +8,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -106,73 +104,68 @@ public class Producto extends PBase {
 	}
 
     private void setHandlers() {
+
 		try{
 
-			listView.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			listView.setOnItemClickListener((parent, view, position, id) -> {
 
-					try {
+				try {
 
-						Object lvObj = listView.getItemAtPosition(position);
-						clsCD item = (clsCD) lvObj;
+					Object lvObj = listView.getItemAtPosition(position);
+					clsCD item = (clsCD) lvObj;
 
-						adapter.setSelectedIndex(position);
+					adapter.setSelectedIndex(position);
 
-						switch (prodtipo) {
-							case  1:
-								if (prodBarra(item.Cod)) {
-									toastcent("Producto tipo barra, no se puede ingresar la cantidad");
-									finish();return;
-								}
-						}
-
-						itemid = item.Cod;
-						prname = item.Desc;
-						gl.um = item.um;
-						gl.pprodname = prname;
-						gl.prodcod = item.codInt;
-						gl.costo = item.costo;
-
-						appProd();
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-						mu.msgbox(e.getMessage());
+					switch (prodtipo) {
+						case  1:
+							if (prodBarra(item.Cod)) {
+								toastcent("Producto tipo barra, no se puede ingresar la cantidad");
+								finish();return;
+							}
 					}
-				}
 
-				;
+					itemid = item.Cod;
+					prname = item.Desc;
+					gl.um = item.um;
+					gl.pprodname = prname;
+					gl.prodcod = item.codInt;
+					gl.costo = item.costo;
+
+					appProd();
+				} catch (Exception e) {
+					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					mu.msgbox(e.getMessage());
+				}
 			});
 
-			listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+			listView.setOnItemLongClickListener((parent, view, position, id) -> {
 
-					try {
-						Object lvObj = listView.getItemAtPosition(position);
-						clsCD item = (clsCD) lvObj;
+				try {
 
-						adapter.setSelectedIndex(position);
+					Object lvObj = listView.getItemAtPosition(position);
+					clsCD item = (clsCD) lvObj;
 
-						if (prodBarra(item.Cod)) {
-							toastcent("Producto tipo barra, no se puede ingresar la cantidad");
-							finish();return true;
-						}
+					adapter.setSelectedIndex(position);
 
-						itemid = item.Cod;
-						prname = item.Desc;
-						gl.um = item.um;
-						gl.pprodname = prname;
-						gl.prodcod = item.codInt;
-						gl.costo = item.costo;
-
-						appProd();
-					} catch (Exception e) {
-						addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-						mu.msgbox(e.getMessage());
+					if (prodBarra(item.Cod)) {
+						toastcent("Producto tipo barra, no se puede ingresar la cantidad");
+						finish();return true;
 					}
-					return true;
+
+					itemid = item.Cod;
+					prname = item.Desc;
+					gl.um = item.um;
+					gl.pprodname = prname;
+					gl.prodcod = item.codInt;
+					gl.costo = item.costo;
+
+					appProd();
+
+				} catch (Exception e) {
+					addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+					mu.msgbox(e.getMessage());
 				}
+				return true;
 			});
 
 			txtFilter.addTextChangedListener(new TextWatcher() {
@@ -362,9 +355,12 @@ public class Producto extends PBase {
 	}
 	
 	private void appProd(){
+
 		try{
+
 			gl.gstr=itemid;
 			super.finish();
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -372,6 +368,7 @@ public class Producto extends PBase {
 	}
 
 	private double getDisp(String prodid) {
+
 		Cursor dt;
 		String umstock = "";
 		double umf1,umf2,umfactor;
@@ -379,7 +376,7 @@ public class Producto extends PBase {
         disp_und =0;
 		
 		try {			
-			//sql="SELECT UNIDADMEDIDA FROM P_PRODPRECIO WHERE (CODIGO='"+prodid+"') AND (NIVEL="+gl.nivel+")";
+
 			sql=" SELECT UNIDADMEDIDA FROM P_STOCK WHERE (CODIGO='"+prodid+"') ";
 			dt=Con.OpenDT(sql);
 
@@ -401,11 +398,11 @@ public class Producto extends PBase {
             if (dt!=null) dt.close();
 
 		} catch (Exception e) {
-			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			return 0;
 		}
 		
 		try {
+
 			sql=" SELECT  IFNULL(SUM(A.CANT),0) AS CANT, IFNULL(SUM(A.PESO),0) AS PESO " +
 				" FROM(SELECT IFNULL(SUM(CANT),0) AS CANT, IFNULL(SUM(PESO),0) AS PESO " +
 				" FROM P_STOCK WHERE (CODIGO='"+prodid+"') AND (UNIDADMEDIDA='"+um+"') ) AS A";
@@ -439,10 +436,11 @@ public class Producto extends PBase {
 			if (disp_und >0) return disp_und;
 
 		} catch (Exception e) {
-			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+
 	    }
 		
 		try {
+
 			sql="SELECT UNIDADMEDIDA FROM P_STOCK WHERE (CODIGO='"+prodid+"')";
 			dt=Con.OpenDT(sql);
 
@@ -496,8 +494,8 @@ public class Producto extends PBase {
             if (dt!=null) dt.close();
 
 			return disp_und;
+
 		} catch (Exception e) {
-			//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			return 0;
 	    }	
 		
@@ -508,6 +506,7 @@ public class Producto extends PBase {
 	//region Aux
 	
 	private void fillSpinner(){
+
 		Cursor DT;
 		String icode,iname;
 		int ssel=0;
@@ -580,7 +579,8 @@ public class Producto extends PBase {
                 }
             }
 
-            if (DT!=null) DT.close();
+			DT.close();
+
         } catch (Exception e) {
             mu.msgbox( e.getMessage());
         }
@@ -605,7 +605,9 @@ public class Producto extends PBase {
 	}	
 
 	public String ltrim(String ss,int sw) {
+
 		try{
+
 			int l=ss.length();
 			if (l>sw) {
 				ss=ss.substring(0,sw);
@@ -640,17 +642,21 @@ public class Producto extends PBase {
     }
 
     private String prodPrecioBase(String prid) {
+
         Cursor DT;
         double pr;
         String sprec="";
 
         try {
+
             sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+app.codigoProducto(prid)+") AND (NIVEL="+gl.nivel+") ";
             DT=Con.OpenDT(sql);
             DT.moveToFirst();
 
             pr=DT.getDouble(0);
-            if (DT!=null) DT.close();
+
+			DT.close();
+
         } catch (Exception e) {
             pr=0;
         }
@@ -675,5 +681,4 @@ public class Producto extends PBase {
 	}
 
 	//endregion
-
 }

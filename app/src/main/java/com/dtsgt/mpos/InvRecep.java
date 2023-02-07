@@ -8,15 +8,14 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
@@ -154,6 +153,7 @@ public class InvRecep extends PBase {
     }
 
     public void doSave(View view) {
+
         if (readonly) return;
 
         if (ingreso) {
@@ -198,9 +198,11 @@ public class InvRecep extends PBase {
     }
 
     public void doKey(View view) {
+
         if (readonly) return;
 
         khand.handleKey(view.getTag().toString());
+
         if (khand.isEnter) {
             if (khand.label==lblBar) {
                 barcode=khand.getStringValue();
@@ -223,13 +225,11 @@ public class InvRecep extends PBase {
 
     public void doListUnits(View view) {
         if (readonly) return;
-
         listUnits();
     }
 
     public void doInterrupt(View view) {
         if (readonly) return;
-
         msgAskInterrupt("Interrupir el ingreso de mercancia");
     }
 
@@ -238,51 +238,43 @@ public class InvRecep extends PBase {
     }
 
     private void setHandlers() {
+
         try {
 
-            listView.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    Object lvObj = listView.getItemAtPosition(position);
+            listView.setOnItemClickListener((parent, view, position, id) -> {
+                Object lvObj = listView.getItemAtPosition(position);
 
-                    if (readonly) return;
+                if (readonly) return;
 
-                    selidx=position;
+                selidx=position;
 
-                    if (ingreso) {
-                        selitemr = (clsClasses.clsT_movr)lvObj;
-                        adapterr.setSelectedIndex(position);
-                        setProductr();
-                    } else {
-                        selitem = (clsClasses.clsT_movd)lvObj;
-                        adapter.setSelectedIndex(position);
-                        setProduct();
-                    }
-               };
+                if (ingreso) {
+                    selitemr = (clsClasses.clsT_movr)lvObj;
+                    adapterr.setSelectedIndex(position);
+                    setProductr();
+                } else {
+                    selitem = (clsClasses.clsT_movd)lvObj;
+                    adapter.setSelectedIndex(position);
+                    setProduct();
+                }
+           });
+
+            grdbtn.setOnItemClickListener((parent, view, position, id) -> {
+                Object lvObj = grdbtn.getItemAtPosition(position);
+                clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+
+                if (readonly) return;
+
+                adapterb.setSelectedIndex(position);
+                processMenuBtn(item.ID);
+
             });
 
-            grdbtn.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    Object lvObj = grdbtn.getItemAtPosition(position);
-                    clsClasses.clsMenu item = (clsClasses.clsMenu)lvObj;
+            lblCosto.setOnFocusChangeListener((v, hasFocus) -> {
+                if (readonly) return;
 
-                    if (readonly) return;
-
-                    adapterb.setSelectedIndex(position);
-                    processMenuBtn(item.ID);
-
-                };
-            });
-
-            lblCosto.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (readonly) return;
-
-                    if(hasFocus) {
-                        if (lblCosto.getText().toString().equals("0")) lblCosto.setText("");
-                    }
+                if(hasFocus) {
+                    if (lblCosto.getText().toString().equals("0")) lblCosto.setText("");
                 }
             });
 
@@ -298,10 +290,7 @@ public class InvRecep extends PBase {
                     if (!scanning) {
                         scanning=true;
                         Handler handlerTimer = new Handler();
-                        handlerTimer.postDelayed(new Runnable(){
-                            public void run() {
-                                compareSC(ss);
-                            }}, 500);
+                        handlerTimer.postDelayed(() -> compareSC(ss), 500);
                     }
                 }
 
@@ -317,57 +306,72 @@ public class InvRecep extends PBase {
     //region Main
 
     private void listItems() {
+
         double tc,can,ex1,ex2;
         int cl=0;
 
-        selidx=-1;
-        lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
-        lblBar.setText("");lblCant.setText("");lblCosto.setText("");
-        khand.setLabel(lblBar,true);
+        try {
 
-        costot=0;cantt=0;
+            selidx=-1;
+            lblProd.setText("");
+            lblUni.setVisibility(View.INVISIBLE);
+            lblBar.setText("");
+            lblCant.setText("");
+            lblCosto.setText("");
+            khand.setLabel(lblBar,true);
 
-        if (ingreso) {
+            costot=0;
+            cantt=0;
 
-            try {
-                T_movrObj.fill();cl=T_movrObj.count;
+            if (ingreso) {
 
-                for (int i = 0; i <T_movrObj.count; i++) {
-                    can=T_movrObj.items.get(i).cant;cantt+=can;
-                    tc=can*T_movrObj.items.get(i).precio; costot+=tc;
-                    T_movrObj.items.get(i).pesom=tc;
-                    T_movrObj.items.get(i).srazon=" ";
+                try {
 
-                    ex1=dispProd(T_movrObj.items.get(i).producto);ex2=ex1+can;
-                    T_movrObj.items.get(i).val1=""+mu.frmdecno(ex1);
-                    T_movrObj.items.get(i).val2=""+mu.frmdecno(ex2);
+                    T_movrObj.fill();cl=T_movrObj.count;
+
+                    for (int i = 0; i <T_movrObj.count; i++) {
+                        can=T_movrObj.items.get(i).cant;cantt+=can;
+                        tc=can*T_movrObj.items.get(i).precio; costot+=tc;
+                        T_movrObj.items.get(i).pesom=tc;
+                        T_movrObj.items.get(i).srazon=" ";
+
+                        ex1=dispProd(T_movrObj.items.get(i).producto);ex2=ex1+can;
+                        T_movrObj.items.get(i).val1=""+mu.frmdecno(ex1);
+                        T_movrObj.items.get(i).val2=""+mu.frmdecno(ex2);
+                    }
+
+                    adapterr=new LA_T_movr(this,this,T_movrObj.items);
+                    listView.setAdapter(adapterr);
+
+                } catch (Exception e) {
+                    msgbox(e.getMessage());
                 }
 
-                adapterr=new LA_T_movr(this,this,T_movrObj.items);
-                listView.setAdapter(adapterr);
-            } catch (Exception e) {
-                msgbox(e.getMessage());
-            }
+            } else {
 
-        } else {
+                try {
 
-            try {
-                T_movdObj.fill();cl=T_movdObj.count;
+                    T_movdObj.fill();cl=T_movdObj.count;
 
-                for (int i = 0; i <T_movdObj.count; i++) {
-                    can=T_movdObj.items.get(i).cant;cantt+=can;
-                    tc=can*T_movdObj.items.get(i).precio; costot+=tc;
-                    T_movdObj.items.get(i).pesom=tc;
-                    T_movrObj.items.get(i).srazon=" ";
+                    for (int i = 0; i <T_movdObj.count; i++) {
+                        can=T_movdObj.items.get(i).cant;cantt+=can;
+                        tc=can*T_movdObj.items.get(i).precio; costot+=tc;
+                        T_movdObj.items.get(i).pesom=tc;
+                        T_movrObj.items.get(i).srazon=" ";
+                    }
+
+                    adapter=new LA_T_movd(this,this,T_movdObj.items);
+                    listView.setAdapter(adapter);
+
+                } catch (Exception e) {
+                    msgbox(e.getMessage());
                 }
 
-                adapter=new LA_T_movd(this,this,T_movdObj.items);
-                listView.setAdapter(adapter);
-            } catch (Exception e) {
-                msgbox(e.getMessage());
+                if (T_movdObj.count==0) creaEncabezadoInicial();
             }
 
-            if (T_movdObj.count==0) creaEncabezadoInicial();
+        } catch (Exception e) {
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
 
         lblTCant.setText("Cantidad : "+mu.frmdecno(cantt));
@@ -375,13 +379,14 @@ public class InvRecep extends PBase {
     }
 
     private void addItem() {
+
         clsClasses.clsT_movd item=clsCls.new clsT_movd();
         clsClasses.clsT_movr itemr=clsCls.new clsT_movr();
         double cant,costo,dd;
         String ss;
 
         if (prodid==0) {
-            toast("Falta definir articulo");
+            toast("Falta definir artículo");
             khand.setLabel(lblBar,true);return;
         }
 
@@ -468,6 +473,7 @@ public class InvRecep extends PBase {
     }
 
     private void save() {
+
         clsClasses.clsD_Mov header;
         clsClasses.clsD_MovD item;
         clsClasses.clsT_movd imov;
@@ -488,7 +494,6 @@ public class InvRecep extends PBase {
             }
 
             header =clsCls.new clsD_Mov();
-
             header.COREL=corel;
             header.RUTA=gl.codigo_ruta;
             header.ANULADO=0;
@@ -513,9 +518,7 @@ public class InvRecep extends PBase {
 
                     imovr=T_movrObj.items.get(i);
                     converUMBas(imovr.producto,imovr.cant,imovr.unidadmedida);
-
                     item =clsCls.new clsD_MovD();
-
                     item.coreldet=corm+i+1;
                     item.corel=corel;
                     item.producto=imovr.producto;
@@ -537,8 +540,8 @@ public class InvRecep extends PBase {
                     corc++;
 
                     try {
-                        cost = clsCls.new clsT_costo();
 
+                        cost = clsCls.new clsT_costo();
                         cost.corel=corel;
                         cost.codigo_costo=corc;
                         cost.codigo_producto=imovr.producto;
@@ -568,7 +571,6 @@ public class InvRecep extends PBase {
                     converUMBas(imov.producto,imov.cant,imov.unidadmedida);
 
                     item =clsCls.new clsD_MovD();
-
                     item.coreldet=corm+i+1;
                     item.corel=corel;
                     item.producto=imov.producto;
@@ -593,7 +595,6 @@ public class InvRecep extends PBase {
             }
 
             db.execSQL("DELETE FROM T_MOVR");
-
             db.setTransactionSuccessful();
             db.endTransaction();
 
@@ -613,6 +614,7 @@ public class InvRecep extends PBase {
     }
 
     private void savealmacen() {
+
         clsClasses.clsD_mov_almacen header;
         clsClasses.clsD_movd_almacen item;
         clsClasses.clsT_movr imovr;
@@ -633,7 +635,6 @@ public class InvRecep extends PBase {
             }
 
             header =clsCls.new clsD_mov_almacen();
-
             header.corel=corel;
             header.codigo_sucursal=gl.tienda;
             header.almacen_origen=0;
@@ -662,7 +663,6 @@ public class InvRecep extends PBase {
                     converUMBas(imovr.producto,imovr.cant,imovr.unidadmedida);
 
                     item =clsCls.new clsD_movd_almacen();
-
                     item.coreldet=corm+i+1;
                     item.corel=corel;
                     item.producto=imovr.producto;
@@ -683,8 +683,8 @@ public class InvRecep extends PBase {
                     corc++;
 
                     try {
-                        cost = clsCls.new clsT_costo();
 
+                        cost = clsCls.new clsT_costo();
                         cost.corel=corel;
                         cost.codigo_costo=corc;
                         cost.codigo_producto=imovr.producto;
@@ -692,7 +692,6 @@ public class InvRecep extends PBase {
                         cost.costo=imovr.precio;
                         cost.codigo_proveedor=gl.codigo_proveedor;
                         cost.statcom=0;
-
                         T_costoObj.add(cost);
 
                     } catch (Exception e) {
@@ -707,7 +706,6 @@ public class InvRecep extends PBase {
             }
 
             db.execSQL("DELETE FROM T_MOVR");
-
             db.setTransactionSuccessful();
             db.endTransaction();
 
@@ -742,7 +740,9 @@ public class InvRecep extends PBase {
     }
 
     private boolean barraProducto() {
+
         try {
+
             khand.clear(true);khand.enable();khand.focus();
             selidx=-1;
 
@@ -774,6 +774,7 @@ public class InvRecep extends PBase {
             lblDisp.setText("Disponible: "+dispProdUni(P_productoObj.first().codigo_producto));
 
             return true;
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -783,6 +784,7 @@ public class InvRecep extends PBase {
     }
 
     private void setProduct() {
+
         try {
 
             lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
@@ -811,6 +813,7 @@ public class InvRecep extends PBase {
     }
 
     private void setProductr() {
+
         try {
 
             lblProd.setText("");lblUni.setVisibility(View.INVISIBLE);
@@ -839,10 +842,10 @@ public class InvRecep extends PBase {
     }
 
     private void updateStock(int pcod,double pcant,String um) {
+
         try {
 
             ins.init("P_STOCK");
-
             ins.add("CODIGO",pcod);
             ins.add("CANT",pcant);
             ins.add("CANTM",0);
@@ -850,7 +853,6 @@ public class InvRecep extends PBase {
             ins.add("plibra",0);
             ins.add("LOTE","");
             ins.add("DOCUMENTO","");
-
             ins.add("FECHA",0);
             ins.add("ANULADO",0);
             ins.add("CENTRO","");
@@ -859,10 +861,10 @@ public class InvRecep extends PBase {
             ins.add("CODIGOLIQUIDACION",0);
             ins.add("COREL_D_MOV","");
             ins.add("UNIDADMEDIDA",um);
-
             String sp=ins.sql();
 
             db.execSQL(ins.sql());
+
         } catch (Exception e) {
             sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
             db.execSQL(sql);
@@ -870,10 +872,12 @@ public class InvRecep extends PBase {
     }
 
     private void updateStockAlmacen(int pcod,double pcant,String um) {
+
         Cursor dt;
         int newid;
 
         try {
+
             sql="SELECT CODIGO_STOCK FROM P_stock_almacen  " +
                 "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
             dt=Con.OpenDT(sql);
@@ -887,8 +891,7 @@ public class InvRecep extends PBase {
                     newid=dt.getInt(0)+1;
                 } else newid=1;
 
-                ins.init("P_stock_almacen");
-
+                ins.init("p_stock_almacen");
                 ins.add("CODIGO_STOCK",newid);
                 ins.add("EMPRESA",gl.emp);
                 ins.add("CODIGO_SUCURSAL",gl.tienda);
@@ -919,6 +922,7 @@ public class InvRecep extends PBase {
     }
 
     private void converUMBas(int prodid,Double ccant,String umed) throws Exception {
+
         String prumb;
         double factor;
 
@@ -938,6 +942,7 @@ public class InvRecep extends PBase {
     }
 
     private void cargaDatos() {
+
         clsClasses.clsD_MovD item;
         clsClasses.clsT_movr itemr=clsCls.new clsT_movr();
         int prodid;
@@ -990,6 +995,7 @@ public class InvRecep extends PBase {
     }
 
     private void cargaDatosAlmacen() {
+
         clsClasses.clsD_movd_almacen item;
         clsClasses.clsT_movr itemr=clsCls.new clsT_movr();
         int prodid;
@@ -1031,17 +1037,18 @@ public class InvRecep extends PBase {
                 itemr.codigoliquidacion=0;
                 itemr.unidadmedida=item.unidadmedida;
                 itemr.precio=item.precio;
-
                 T_movrObj.add(itemr);
             }
 
             listItems();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private void hold() {
+
         clsClasses.clsD_Mov header;
         clsClasses.clsD_MovD item;
         clsClasses.clsT_movd imov;
@@ -1049,6 +1056,7 @@ public class InvRecep extends PBase {
         String corel;
 
         try {
+
             if (gl.corelmov.isEmpty()) {
                 corel=gl.ruta+"_"+mu.getCorelBase();
             } else {
@@ -1064,7 +1072,6 @@ public class InvRecep extends PBase {
             db.execSQL("DELETE FROM D_MOVD WHERE COREL='"+gl.corelmov+"'");
 
             header =clsCls.new clsD_Mov();
-
             header.COREL=corel;
             header.RUTA=gl.codigo_ruta;
             header.ANULADO=-1;
@@ -1103,20 +1110,17 @@ public class InvRecep extends PBase {
                     item.unidadmedida=convum;   // imovr.unidadmedida;
                     item.precio=imovr.precio;
                     item.motivo_ajuste=0;
-
                     movd.add(item);
-
 
                 }
 
             }
 
             db.execSQL("DELETE FROM T_MOVR");
-
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            toastlong("Ingreso de mercancia guardado");
+            toastlong("Ingreso de mercancía guardado");
 
             finish();
 
@@ -1127,12 +1131,14 @@ public class InvRecep extends PBase {
     }
 
     private void holdalmacen() {
+
         clsClasses.clsD_mov_almacen header;
         clsClasses.clsD_movd_almacen item;
         clsClasses.clsT_movr imovr;
         String corel;
 
         try {
+
             if (gl.corelmov.isEmpty()) {
                 corel=gl.ruta+"_"+mu.getCorelBase();
             } else {
@@ -1143,12 +1149,10 @@ public class InvRecep extends PBase {
             clsD_movd_almacenObj movd=new clsD_movd_almacenObj(this,Con,db);
 
             db.beginTransaction();
-
             db.execSQL("DELETE FROM D_MOV_ALMACEN WHERE COREL='" + gl.corelmov + "'");
             db.execSQL("DELETE FROM D_MOVD_ALMACEN WHERE COREL='" + gl.corelmov + "'");
 
             header =clsCls.new clsD_mov_almacen();
-
             header.corel=corel;
             header.codigo_sucursal=gl.tienda;
             header.almacen_origen=0;
@@ -1176,7 +1180,6 @@ public class InvRecep extends PBase {
                     converUMBas(imovr.producto,imovr.cant,imovr.unidadmedida);
 
                     item =clsCls.new clsD_movd_almacen();
-
                     item.coreldet=corm+i+1;
                     item.corel=corel;
                     item.producto=imovr.producto;
@@ -1189,7 +1192,6 @@ public class InvRecep extends PBase {
                     item.unidadmedida=convum;   // imovr.unidadmedida;
                     item.precio=imovr.precio;
                     item.motivo_ajuste=0;
-
                     movd.add(item);
 
                 }
@@ -1197,11 +1199,10 @@ public class InvRecep extends PBase {
             }
 
             db.execSQL("DELETE FROM T_MOVR");
-
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            toastlong("Ingreso de mercancia guardado");
+            toastlong("Ingreso de mercancía guardado.");
 
             finish();
 
@@ -1216,6 +1217,7 @@ public class InvRecep extends PBase {
     //region Menu
 
     private void iniciaProceso() {
+
         clsClasses.clsMenu item;
 
         try {
@@ -1244,6 +1246,7 @@ public class InvRecep extends PBase {
 
             adapterb=new ListAdaptMenuVenta(this, mmitems);
             grdbtn.setAdapter(adapterb);
+
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -1251,6 +1254,7 @@ public class InvRecep extends PBase {
     }
 
     private void processMenuBtn(int menuid) {
+
         if (readonly) return;
 
         try {
@@ -1294,6 +1298,7 @@ public class InvRecep extends PBase {
     //region Impresion
 
     private void imprimir(){
+
         int aid=0;
 
         try {
@@ -1310,10 +1315,9 @@ public class InvRecep extends PBase {
             rep.empty();
             rep.empty();
             rep.empty();
-
             rep.save();
-
             app.printView();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1343,6 +1347,7 @@ public class InvRecep extends PBase {
     }
 
     private void impresionDetalle(int aid) {
+
         String dum;
         double dcant,dprec,dtot;
 
@@ -1366,14 +1371,15 @@ public class InvRecep extends PBase {
     //region Aux
 
     private void creaEncabezadoInicial() {
+
         clsClasses.clsD_Mov header;
         String corel=gl.ruta+"_"+mu.getCorelBase();
 
         try {
+
             clsD_MovObj mov=new clsD_MovObj(this,Con,db);
 
             header =clsCls.new clsD_Mov();
-
             header.COREL=corel;
             header.RUTA=gl.codigo_ruta;
             header.ANULADO=0;
@@ -1385,8 +1391,8 @@ public class InvRecep extends PBase {
             header.IMPRES=0;
             header.CODIGOLIQUIDACION=0;
             header.CODIGO_PROVEEDOR= gl.codigo_proveedor;
-
             mov.add(header);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1401,6 +1407,7 @@ public class InvRecep extends PBase {
     }
 
     private void nombreUnidad() {
+
         try {
             P_unidadObj.fill("WHERE (CODIGO_UNIDAD='"+um+"')");
             ubas=P_unidadObj.first().nombre;
