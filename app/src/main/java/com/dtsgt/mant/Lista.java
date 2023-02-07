@@ -6,20 +6,20 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
+
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsListaObj;
 import com.dtsgt.ladapt.LA_Lista;
 import com.dtsgt.ladapt.listAdapt_desc;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -124,11 +124,7 @@ public class Lista extends PBase {
 
         });
 
-        swact.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-               listItems();
-            }
-        });
+        swact.setOnCheckedChangeListener((buttonView, isChecked) -> listItems());
 
 
         txtFilter.addTextChangedListener(new TextWatcher() {
@@ -200,6 +196,7 @@ public class Lista extends PBase {
     }
 
     private void setTableSQL() {
+
         String ft=txtFilter.getText().toString();
         boolean flag=!ft.isEmpty();
         boolean act=!swact.isChecked();
@@ -542,10 +539,12 @@ public class Lista extends PBase {
     }
 
     private void listFPrints() {
+
         Cursor dt;
         String ss;
 
         try {
+
             fprints.clear();
 
             sql="SELECT DISTINCT CODIGO FROM FPrint";
@@ -558,6 +557,8 @@ public class Lista extends PBase {
                     dt.moveToNext();
                 }
             }
+
+            dt.close();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

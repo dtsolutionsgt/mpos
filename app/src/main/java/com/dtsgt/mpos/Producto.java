@@ -446,7 +446,6 @@ public class Producto extends PBase {
 
 			if (dt.getCount()>0){
 				dt.moveToFirst();
-
 				umstock=dt.getString(0);
 			}
 

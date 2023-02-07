@@ -1,7 +1,6 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
@@ -10,8 +9,6 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -583,7 +580,6 @@ public class InvRecep extends PBase {
                     item.unidadmedida=convum;   // imov.unidadmedida;
                     item.precio=imov.precio;
                     item.motivo_ajuste=0;
-
                     movd.add(item);
 
                     updateStock(imov.producto,convcant,convum);
@@ -989,6 +985,7 @@ public class InvRecep extends PBase {
             }
 
             listItems();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1430,34 +1427,29 @@ public class InvRecep extends PBase {
     }
 
     private void listUnits() {
+
         try {
+
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(InvRecep.this,"Unidad de medida");
 
             P_unidad_convObj.fill("WHERE (CODIGO_UNIDAD1='"+um+"') AND (CODIGO_UNIDAD2<>'"+um+"')");
             listdlg.add(um);
+
             for (int i = 0; i <P_unidad_convObj.count; i++) {
                 listdlg.add(P_unidad_convObj.items.get(i).codigo_unidad2);
             }
 
-            listdlg.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
-                    try {
-                        lblUni.setText(listdlg.getText(position));
-                        listdlg.dismiss();
-                    } catch (Exception e) {}
-                };
-            });
-
-            listdlg.setOnLeftClick(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            listdlg.setOnItemClickListener((parent, view, position, id) -> {
+                try {
+                    lblUni.setText(listdlg.getText(position));
                     listdlg.dismiss();
-                }
+                } catch (Exception e) {}
             });
 
+            listdlg.setOnLeftClick(v -> listdlg.dismiss());
             listdlg.show();
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1541,154 +1533,103 @@ public class InvRecep extends PBase {
 
     private void msgAskTodo(String msg) {
         ExDialog dialog = new ExDialog(this);
-
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    sql="DELETE FROM T_MOVR";
-                    db.execSQL(sql);
-                    listItems();
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+        dialog.setPositiveButton("Si", (dialog12, which) -> {
+            try {
+                sql="DELETE FROM T_MOVR";
+                db.execSQL(sql);
+                listItems();
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
         });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
         dialog.show();
 
     }
 
     private void msgAskSave(String msg) {
+
         ExDialog dialog = new ExDialog(this);
-
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    if (ingreso) {
-                        if (almacen) {
-                            savealmacen();
-                        }else {
-                            save();
-                        }
-                    } else msgAskSave2("Continuar");
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+        dialog.setPositiveButton("Si", (dialog12, which) -> {
+            try {
+                if (ingreso) {
+                    if (almacen) {
+                        savealmacen();
+                    }else {
+                        save();
+                    }
+                } else msgAskSave2("Continuar");
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
         });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
         dialog.show();
 
     }
 
     private void msgAskSave2(String msg) {
+
         ExDialog dialog = new ExDialog(this);
-
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    if (almacen) savealmacen();else save();
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+        dialog.setPositiveButton("Si", (dialog12, which) -> {
+            try {
+                if (almacen) savealmacen();else save();
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
         });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
         dialog.show();
 
     }
 
     private void msgAskExit(String msg) {
-
         ExDialog dialog = new ExDialog(this);
-
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setPositiveButton("Si", (dialog12, which) -> finish());
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
         dialog.show();
-
     }
 
     private void msgAskInterrupt(String msg) {
         ExDialog dialog = new ExDialog(this);
-
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    if (almacen) holdalmacen();else hold();
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+        dialog.setPositiveButton("Si", (dialog12, which) -> {
+            try {
+                if (almacen) holdalmacen();else hold();
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
         });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
+        dialog.setNegativeButton("No", (dialog1, which) -> {});
         dialog.show();
 
     }
 
     private void inputDoc() {
+
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
         alert.setTitle("Número de documento");
-
         final EditText input = new EditText(this);
         alert.setView(input);
-
         input.setText(docnum);
         input.requestFocus();
-
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    docnum=input.getText().toString();
-                    if (docnum.isEmpty()) {
-                        mu.msgbox("Valor incorrecto");return;
-                    } else {
-                        lblDoc.setText(docnum);
-                    }
-                } catch (Exception e) {
+        alert.setPositiveButton("Aplicar", (dialog, whichButton) -> {
+            try {
+                docnum=input.getText().toString();
+                if (docnum.isEmpty()) {
                     mu.msgbox("Valor incorrecto");return;
+                } else {
+                    lblDoc.setText(docnum);
                 }
+            } catch (Exception e) {
+                mu.msgbox("Valor incorrecto");return;
             }
         });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
+        alert.setNegativeButton("Cancelar", (dialog, whichButton) -> {});
         alert.show();
     }
 
@@ -1701,6 +1642,7 @@ public class InvRecep extends PBase {
         super.onResume();
 
         try {
+
             T_movdObj.reconnect(Con,db);
             T_movrObj.reconnect(Con,db);
             P_productoObj.reconnect(Con,db);
@@ -1709,6 +1651,7 @@ public class InvRecep extends PBase {
             T_costoObj.reconnect(Con,db);
             P_stockObj.reconnect(Con,db);
             P_stock_almacenObj.reconnect(Con,db);
+
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
