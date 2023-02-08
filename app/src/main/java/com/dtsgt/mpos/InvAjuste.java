@@ -1,6 +1,7 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -62,7 +63,7 @@ public class InvAjuste extends PBase {
 
     private String barcode,prodname,um,invtext,corel;
     private int prodid,selidx, motivo,selcant;
-    private double exist,cantt,costot,htot;
+    private double exist,cantt,costot,htot,disp;
     private boolean almpr,almacen,scanning=false;
 
     @Override
@@ -94,7 +95,7 @@ public class InvAjuste extends PBase {
         invtext=na+" Ajuste de inventario - #"+corel;
         lblTit.setText(invtext);
 
-        prodid=0;
+        prodid=0;disp=0;
         almpr=gl.idalm==gl.idalmpred;
         almacen=gl.tipo==5;if (almpr) almacen=false;
 
@@ -109,7 +110,6 @@ public class InvAjuste extends PBase {
         P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
 
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
-
 
         setHandlers();
 
@@ -159,8 +159,20 @@ public class InvAjuste extends PBase {
                 listaMotivos();
             }
         }
-
     }
+
+    public void doDisp(View view) {
+        try {
+            double dval;
+            if (disp==0) dval=0; else dval=-disp;
+            khand.value=dval;
+            if (disp==0)khand.val="0";else khand.val=""+dval;
+            lblCant.setText(khand.val);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     private void setHandlers() {
         try {
@@ -327,6 +339,7 @@ public class InvAjuste extends PBase {
             lblProd.setText("");lblBar.setText("");lblCant.setText("");lblDisp.setText("Disponible:");
             lblRazon.setText("");
 
+            disp=0;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -337,6 +350,8 @@ public class InvAjuste extends PBase {
         clsClasses.clsD_MovD item;
         clsClasses.clsT_movd imov;
         clsClasses.clsT_movr imovr;
+
+        boolean errflag=false;
 
         try {
 
@@ -385,7 +400,7 @@ public class InvAjuste extends PBase {
 
                 movd.add(item);
 
-                adjustStock(imovr.producto,imovr.cant,imovr.unidadmedida);
+                if (adjustStock(imovr.producto,imovr.cant,imovr.unidadmedida)==0) errflag=true;
             }
 
             db.execSQL("DELETE FROM T_MOVR");
@@ -393,12 +408,18 @@ public class InvAjuste extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            toastlong("Existencias actualizadas");
+            if (errflag) {
+                toastlong("El ajuste no actualizó todos los productos, por favor revise las existencias.");
+            } else {
+                toastlong("Existencias actualizadas");
+            }
 
-            if (gl.peInvCompart) {
+
+            //if (gl.peInvCompart) {
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
-            }
+            //}
+
             finish();
 
         } catch (Exception e) {
@@ -471,10 +492,10 @@ public class InvAjuste extends PBase {
 
             toastlong("Existencias actualizadas");
 
-            if (gl.peInvCompart) {
+            //if (gl.peInvCompart) {
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
-            }
+            //}
             finish();
 
         } catch (Exception e) {
@@ -541,6 +562,7 @@ public class InvAjuste extends PBase {
             }
 
             motivo=-1;
+
             lblDisp.setText("Disponible: "+dispProdUni(prodid));
 
             return true;
@@ -581,7 +603,10 @@ public class InvAjuste extends PBase {
         }
     }
 
-    private void adjustStock(int pcod,double pcant,String um) {
+    private int adjustStock(int pcod,double pcant,String um) {
+        Cursor dt;
+        int rows=0;
+        double ex1=0,ex2=0;
 
         try {
 
@@ -607,10 +632,40 @@ public class InvAjuste extends PBase {
             String sp=ins.sql();
 
             db.execSQL(ins.sql());
+
+            rows=1;
+
         } catch (Exception e) {
-            sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-            db.execSQL(sql);
+
+            try {
+                dt=Con.OpenDT("SELECT CANT FROM P_STOCK WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"')");
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();ex1=dt.getDouble(0);
+                }
+
+                sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+                db.execSQL(sql);
+
+                dt=Con.OpenDT("SELECT CANT FROM P_STOCK WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"')");
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();ex2=dt.getDouble(0);
+                }
+
+                if (dt!=null) dt.close();
+
+                if (ex1!=ex2) rows=1;
+            } catch (Exception ee) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
+                rows=0;
+            }
+
+            //ContentValues values=new ContentValues();
+            //values.put("name","aaa");
+            //rows=db.update("P_STOCK",values,"(CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"')",null);
+
         }
+
+        return rows;
 
         /*
         sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE CODIGO="+pcod+" ";
@@ -817,6 +872,7 @@ public class InvAjuste extends PBase {
                     uum=P_stockObj.first().unidadmedida;
                 }
             }
+            disp=val;
             return mu.frmdecno(val)+" "+uum;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

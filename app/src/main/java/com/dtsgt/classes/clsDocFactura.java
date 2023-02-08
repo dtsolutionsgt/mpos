@@ -837,11 +837,9 @@ public class clsDocFactura extends clsDocument {
 
             rep.addtotsp("Subtotal: ", stot);
             rep.addtotsp("Impuesto : ", totimp);
-            if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion : ", totperc);
+            //if (contrib.equalsIgnoreCase("C")) rep.addtotsp("Percepcion : ", totperc);
             rep.addtotsp("Descuento: ", -desc);
             rep.addtotsp("TOTAL : ", tot);
-
-            rep.add("Honduras");
 
         } else {
 
@@ -849,19 +847,21 @@ public class clsDocFactura extends clsDocument {
                 stot = stot - propina;
                 tot = tot - propina;
                 if (desc != 0) {
-                    rep.addtotsp("Subtotal: ", stot);
-                    rep.addtotsp("Descuento: ", -desc);
+                    rep.addtotsptic("Subtotal: ", stot);
+                    rep.addtotsptic("Descuento: ", -desc);
                 }
             } else {
                 if (desc != 0 | propina != 0) {
                     stot = stot - propina;
-                    rep.addtotsp("Subtotal: ", stot);
+                    rep.addtotsptic("Subtotal: ", stot);
                 }
-                if (desc != 0) rep.addtotsp("Descuento: ", -desc);
-                if (propina != 0) rep.addtotsp("Propina: "+ffrmnodec.format(propperc) + "% ", propina);
+                if (desc != 0) rep.addtotsptic("Descuento: ", -desc);
+                if (propina != 0) rep.addtotsptic("Propina: ", propina);
+                //if (propina != 0) rep.addtotsptic("Propina: "+ffrmnodec.format(propperc) + "% ", propina);
             }
 
             rep.addtotsptic("TOTAL A PAGAR: ", tot);
+            //rep.addtotsptic("TOTAL A PAGAR: ", tot);
         }
 
         if (plines.size()>0) {

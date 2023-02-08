@@ -1158,6 +1158,27 @@ public class clsClasses {
         public int  anulado;
     }
 
+    public class clsP_stock_inv {
+        public int  codigo_inventario_enc;
+        public String tipo;
+        public int  estado;
+        public int  codigo_almacen;
+    }
+
+    public class clsP_stock_inv_det {
+        public int  codigo_inventario_enc;
+        public int  codigo_producto;
+        public String unidadmedida;
+        public double cant;
+        public double costo;
+    }
+
+    public class clsP_stock_inv_err {
+        public int  codigo_inventario_enc;
+        public int  codigo_producto;
+        public String nota;
+    }
+
     public class clsP_stock_update {
         public int  codigo_stock;
         public int  empresa;

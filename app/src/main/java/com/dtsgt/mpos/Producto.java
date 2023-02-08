@@ -341,7 +341,7 @@ public class Producto extends PBase {
                 }
             }
 
-			DT.close();
+			if (DT!=null) DT.close();
 
         } catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -385,7 +385,7 @@ public class Producto extends PBase {
 				um=dt.getString(0);
 			}
 
-			dt.close();
+			if (dt!=null) dt.close();
 			
 			sql="SELECT UNIDBAS	FROM P_PRODUCTO WHERE CODIGO='"+prodid+"'";
 			dt=Con.OpenDT(sql);
@@ -634,7 +634,7 @@ public class Producto extends PBase {
     public void limpiaFiltro(View view) {
 		try{
 			txtFilter.setText("");
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
@@ -663,8 +663,6 @@ public class Producto extends PBase {
         sprec=mu.frmdec(pr);
         return sprec;
     }
-
-
 
     //endregion
 

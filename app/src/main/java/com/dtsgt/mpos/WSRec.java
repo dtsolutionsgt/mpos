@@ -2784,9 +2784,16 @@ public class WSRec extends PBase {
                 var.valor = item.Valor;
                 var.ruta  = item.IdRuta;
 
-                script.add("DELETE FROM P_PARAMEXT WHERE ID="+item.ID);
-                sqlaa=addItemSqlParamExtRuta(var);
-                script.add(sqlaa);
+                //try {
+                    //int cr=Integer.parseInt(var.ruta);
+                    //if (cr==gl.codigo_ruta) {
+                        script.add("DELETE FROM P_PARAMEXT WHERE ID=" + item.ID);
+                        sqlaa = addItemSqlParamExtRuta(var);
+                        script.add(sqlaa);
+                    //}
+                //} catch (Exception e) {
+                //}
+
                 //}
            }
 

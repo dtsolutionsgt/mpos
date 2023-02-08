@@ -42,6 +42,7 @@ import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
@@ -50,6 +51,7 @@ import com.dtsgt.mant.MantConfigRes;
 import com.dtsgt.mant.MantCorel;
 import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
+import com.dtsgt.webservice.wsOpenDT;
 
 import org.apache.commons.io.FileUtils;
 
@@ -68,14 +70,19 @@ public class Menu extends PBase {
 	
 	private ArrayList<clsMenu> items= new ArrayList<clsMenu>();
 
+	private wsOpenDT wsic;
+
+	private Runnable rnInvCent;
+
 	private ListAdaptMenuGrid adaptergrid;
 	private ExDialog menudlg;
+	private extWaitDlg waitdlg;
 
     private clsP_cajacierreObj caja;
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
     private clsP_paramextObj P_paramextObj;
 
-    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre;
+    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje,modo_emerg;
 	private boolean listo=true,almacenes;
@@ -135,6 +142,18 @@ public class Menu extends PBase {
 
             gl.ingreso_mesero=gl.rol==4;
             if (gl.ingreso_mesero && gl.after_login) autoLoginMesero();
+
+			app.getURL();
+
+			wsic=new wsOpenDT(gl.wsurl);
+
+			rnInvCent = new Runnable() {
+				public void run() {
+					callbackInvCent();
+				}
+			};
+
+			waitdlg= new extWaitDlg();
 
 		} catch (Exception e) {
 			msgbox(e.getMessage());
@@ -753,6 +772,7 @@ public class Menu extends PBase {
 			}
 			listdlg.add("Orden de compra");
 			listdlg.add("Barril");
+			listdlg.add("Inventario centralizado");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -770,6 +790,7 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
 					if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
 					if (mt.equalsIgnoreCase("Barril")) menuBarril();
+					if (mt.equalsIgnoreCase("Inventario centralizado")) menuInvCentral();
 
 					listdlg.dismiss();
 				} catch (Exception e) {}
@@ -854,6 +875,90 @@ public class Menu extends PBase {
 		} catch (Exception e){}
 	}
 
+	public void menuInvCentral() {
+
+		try {
+
+			extListDlg listdlg = new extListDlg();
+			listdlg.buildDialog(Menu.this,"Inventario centralizado");
+
+			//listdlg.add("Ingreso de mercancía");
+			//listdlg.add("Ajuste de inventario");
+			listdlg.add("Inventario inicial");
+
+			listdlg.setOnItemClickListener((parent, view, position, id) -> {
+				//consultaInvCentral(position);
+				consultaInvCentral(2);
+				listdlg.dismiss();
+			});
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+	}
+
+	private void consultaInvCentral(int modo) {
+
+		try {
+			modo_invcent=modo;
+
+			switch (modo_invcent) {
+				case 0:
+					gl.invcent_tipo="R";break;
+				case 1:
+					gl.invcent_tipo="A";break;
+				case 2:
+					gl.invcent_tipo="I";break;
+			}
+
+			waitdlg.buildDialog(this,"Recibiendo inventario . . .","Ocultar");
+			waitdlg.show();
+
+			sql="SELECT CODIGO_INVENTARIO_ENC FROM P_STOCK_INVENTARIO_ENC WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
+				"AND (ESTADO<2) AND (TIPO='"+gl.invcent_tipo+"') ORDER BY CODIGO_INVENTARIO_ENC";
+			wsic.execute(sql,rnInvCent);
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void callbackInvCent() {
+		try {
+
+			try {
+				waitdlg.wdhandle.dismiss();
+			} catch (Exception e) {}
+
+			if (wsic.errflag) {
+				msgbox(wsic.error);return;
+			}
+
+			if (wsic.openDTCursor.getCount()==0) {
+				msgbox("No existe ninguna tarea pendiente");return;
+			}
+
+			wsic.openDTCursor.moveToFirst();
+			gl.invcent_cod=wsic.openDTCursor.getInt(0);
+
+			//gl.invcent_tipo
+			switch (modo_invcent) {
+				case 0:
+					;break;
+				case 1:
+					;break;
+				case 2:
+					startActivity(new Intent(this,InvCentral.class)); ;break;
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	//endregion
 
 	//region Utilerias
@@ -871,6 +976,7 @@ public class Menu extends PBase {
 			listdlg.add("Actualizar versión");
 			listdlg.add("Enviar base de datos");
 			listdlg.add("Certificar facturas");
+			listdlg.add("Limpiar tablas");
 			listdlg.add("Prueba de bluetooth");
 			listdlg.add("Marcar facturas certificadas");
 			listdlg.add("Actualizar correlativos contingencia");
@@ -879,7 +985,7 @@ public class Menu extends PBase {
 			listdlg.add("Consumidor final");
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
-			listdlg.add("Limpiar tablas");
+			listdlg.add("Inicializar inventario");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 				try {
@@ -897,23 +1003,25 @@ public class Menu extends PBase {
 						case 4:
 							msgAskFEL("Certificar facturas pendientes");break;
 						case 5:
-							estadoBluTooth();break;
-						case 6:
-							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
-						case 7:
-							msgAskActualizar("Actualizar correlativos de contingencia");break;
-						case 8:
-							infoSystem();break;
-						case 9:
-							msgAskImprimir();break;
-						case 10:
-							msgAskCF();break;
-						case 11:
-							msgAskCorregirFechas();break;
-						case 12:
-							inicioDia();break;
-						case 13:
 							Limpiar_Tablas_No_Criticas();break;
+						case 6:
+							estadoBluTooth();break;
+						case 7:
+							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+						case 8:
+							msgAskActualizar("Actualizar correlativos de contingencia");break;
+						case 9:
+							infoSystem();break;
+						case 10:
+							msgAskImprimir();break;
+						case 11:
+							msgAskCF();break;
+						case 12:
+							msgAskCorregirFechas();break;
+						case 13:
+							inicioDia();break;
+						case 14:
+							validaSuperInventario();break;
 
 					}
 					listdlg.dismiss();
@@ -1355,6 +1463,76 @@ public class Menu extends PBase {
 
     }
 
+	private void borraInventario(){
+		try {
+			db.beginTransaction();
+
+			sql="DELETE FROM P_STOCK";
+			db.execSQL(sql);
+
+			sql="DELETE FROM P_STOCK_ALMACEN";
+			db.execSQL(sql);
+
+			sql="DELETE FROM D_MOV";
+			db.execSQL(sql);
+
+			sql="DELETE FROM D_MOVD";
+			db.execSQL(sql);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			toastcentlong("Se inicializó el inventario.");
+		} catch (Exception e) {
+			db.endTransaction();
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void validaSuperInventario() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					msgAskBorrarInventario("¿Inicializar inventario?");
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 
 	//endregion
 
@@ -1702,26 +1880,34 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Cierre de Caja")) gl.cajaid=3;
 					if (ss.equalsIgnoreCase("Reportes Cierre del día")) gl.cajaid=5;
 
+					int cid=gl.cajaid;
 					gl.titReport = ss;
 
-					if (valida()) {
+					if (gl.cajaid==5) {
+						listaCierres();
+					} else {
+						if (valida()) {
 
-						if (gl.cajaid==2) {
-							startActivity(new Intent(Menu.this, CajaPagos.class));
-						} else if (gl.cajaid==5) {
-							listaCierres();
+							if (gl.cajaid==2) {
+								startActivity(new Intent(Menu.this, CajaPagos.class));
+							} else {
+								validaCaja();
+							}
+
 						} else {
-							validaCaja();
+							String txt="";
+
+							if (gl.cajaid == 0 || gl.cajaid == 2)
+								txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
+							if (gl.cajaid == 1)
+								txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
+							if (gl.cajaid == 4) txt = "Pendiente implementación.";
+							if (gl.cajaid == 3)
+								txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
+							msgAskValid(txt);
+
 						}
 
-					} else {
-						String txt="";
-
-						if(gl.cajaid==0 || gl.cajaid==2) txt = "La caja no se ha abierto, si desea iniciar turno o realizar pagos debe realizar el inicio de caja.";
-						if(gl.cajaid==1) txt = "La caja ya está abierta, si desea iniciar otro turno debe realizar el fin de caja.";
-						if(gl.cajaid==4) txt = "Pendiente implementación.";
-						if(gl.cajaid==3) txt = "La caja está cerrada, si desea iniciar operaciones o realizar pagos debe realizar el inicio de caja.";
-						msgAskValid(txt);
 					}
 
 					listdlg.dismiss();
@@ -2751,6 +2937,24 @@ public class Menu extends PBase {
 
 		dialog.show();
 
+	}
+
+	private void msgAskBorrarInventario(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) -> msgAskBorrarInventario2("¿Está seguro?"));
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskBorrarInventario2(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) -> borraInventario());
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+		dialog.show();
 	}
 
     //endregion

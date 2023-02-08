@@ -67,6 +67,7 @@ public class ResMesero extends PBase {
 
     private WebService ws;
     private wsOpenDT wso;
+    private wsOpenDT wslock;
     private wsCommit wscom;
 
     private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback,rnOrden,rnLock;
@@ -132,7 +133,10 @@ public class ResMesero extends PBase {
             }
         };
 
-        wso=new wsOpenDT(gl.wsurl);wsidle=true;
+        wso=new wsOpenDT(gl.wsurl);
+        wslock=new wsOpenDT(gl.wsurl);
+
+        wsidle=true;
 
         rnBroadcastCallback = () -> broadcastCallback();
 
@@ -146,7 +150,7 @@ public class ResMesero extends PBase {
 
         rnLock = new Runnable() {
             public void run() {
-                ordenAction();
+                checkLock();
             }
         };
 
@@ -205,6 +209,8 @@ public class ResMesero extends PBase {
                     adapter.setSelectedIndex(position);
                     gl.mesa_codigo=mesa.codigo_mesa;
                     gl.mesa_vend=mesa.cod_vend;
+
+                    //runLock();
                     abrirOrden();
                 } else toast("Actualizando, espere . . .");
             };
@@ -225,7 +231,6 @@ public class ResMesero extends PBase {
                 return true;
             }
         });
-
 
     }
 
@@ -1075,6 +1080,33 @@ public class ResMesero extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+    //endregion
+
+    //region Bloqueo mesa
+
+    private void runLock() {
+        try {
+            sql="SELECT * FROM P_RES_MESA_BLOQ";
+            wslock.execute(sql,rnLock);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void checkLock() {
+        try {
+            if (!wslock.errflag) {
+                int ii=wslock.openDTCursor.getCount();
+                abrirOrden();
+                return;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        abrirOrden();
     }
 
     //endregion

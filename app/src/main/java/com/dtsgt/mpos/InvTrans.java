@@ -1041,6 +1041,8 @@ public class InvTrans extends PBase {
     }
 
     private void nombreUnidad() {
+        ubas=um;
+        /*
         try {
             P_unidadObj.fill("WHERE (CODIGO_UNIDAD='"+um+"')");
             ubas=P_unidadObj.first().nombre;
@@ -1048,7 +1050,7 @@ public class InvTrans extends PBase {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             ubas=um;
         }
-
+        */
         lblUni.setText(um);
     }
 

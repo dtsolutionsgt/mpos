@@ -864,12 +864,19 @@ public class FacturaRes extends PBase {
 				}
 
 			} else {
+
 				browse=2;
 				gl.felcorel=corel;
 				//#EJC202212141123: NO limpiar porque otra activity las va a utilizar aún.
 				//gl.feluuid="";
 				//gl.codigo_cliente=0;
-				startActivity(new Intent(this, FELFactura.class));
+
+				//if (!gl.peNoEnviar) {
+					startActivity(new Intent(this, FELFactura.class));
+				//} else {
+					//impresionDocumento();
+				//}
+
 			}
 
 		} catch (Exception e) {
@@ -963,7 +970,9 @@ public class FacturaRes extends PBase {
 					Handler mtimer = new Handler();
 					Runnable mrunner= () -> {
 						gl.autocom = 1;
-						startActivity(new Intent(FacturaRes.this,WSEnv.class));;
+						if (!gl.peNoEnviar) {
+							startActivity(new Intent(FacturaRes.this, WSEnv.class));
+						}
 					};
 					mtimer.postDelayed(mrunner,2000);
 				}
@@ -1514,7 +1523,8 @@ public class FacturaRes extends PBase {
 
             //region D_FACTURAPR Propina por factura - solo modulo restaurante
 
-			if (gl.peRest) {
+			if (propina>0) {
+				//if (gl.peRest) {
 
 				propina=mu.round2(propina);
 
@@ -4224,11 +4234,12 @@ public class FacturaRes extends PBase {
 			gl.gNITCliente = "CF";return;
 		}
 
-		if (gl.gNITCliente.length() < 6) {
+		if (gl.gNITCliente.length() < 8) {
 			gl.nit_tipo = "N";
 			gl.gNITCliente = "CF";
 			return;
 		}
+
 
 		if (gl.gNITCliente.length() == 13) {
 			gl.nit_tipo = "C";
@@ -4245,6 +4256,12 @@ public class FacturaRes extends PBase {
 			gl.nit_tipo = "N";
 		} else {
 			gl.nit_tipo = "E";
+		}
+
+		if (gl.gNITCliente.length() > 18) {
+			gl.nit_tipo = "E";
+			gl.gNITCliente = "CF";
+			return;
 		}
 
 	}

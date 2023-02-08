@@ -1437,6 +1437,40 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_stock_inv] ("+
+                    "CODIGO_INVENTARIO_ENC INTEGER NOT NULL,"+
+                    "TIPO TEXT NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "CODIGO_ALMACEN INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_INVENTARIO_ENC])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_stock_inv_det] ("+
+                    "CODIGO_INVENTARIO_ENC INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "UNIDADMEDIDA TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "COSTO REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_INVENTARIO_ENC],[CODIGO_PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_stock_inv_err] ("+
+                    "CODIGO_INVENTARIO_ENC INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "NOTA TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_INVENTARIO_ENC],[CODIGO_PRODUCTO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+
 
 
         try {

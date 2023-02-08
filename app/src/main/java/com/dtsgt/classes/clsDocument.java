@@ -420,7 +420,7 @@ public class clsDocument {
             if (docfactura) {
                 if (!facturaflag) {
                     rep.add("");
-                    rep.add("Esto no es una factura fiscal");
+                    rep.add("Esto no es un documento fiscal");
                     rep.add("");
                 }
             }
@@ -537,21 +537,15 @@ public class clsDocument {
             if (docfactura) {
                 if (facturaflag) {
                     if (i==8){
-                        if (!banderafel) {
-                            rep.add("");
-                            if (docfactura) {
-                                rep.addc("CAI");
-                                rep.addc(resol);
-                                rep.addc(resvence);
-                                if (!resrangot.isEmpty()) rep.addc(resrangot);
-                                rep.addc(resrango);
-                            }
-                        }
-
+                        rep.add("");
+                        rep.addc("CAI");
+                        rep.addc(resol);
+                        rep.addc(resvence);
+                        if (!resrangot.isEmpty()) rep.addc(resrangot);
+                        rep.addc(resrango);
                     }
                 }
             }
-
         }
 
         if (docfactura) {
@@ -1155,12 +1149,14 @@ public class clsDocument {
                         switch (empid) {
                             case 33:
                                 if (frIVA!=0) {
-                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";
                                 }
+                                break;
                             case 34:
                                 if (frIVA!=0) {
-                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";break;
+                                    felIVA="SUJETO A RETENCION DEFINITIVA";felISR="";
                                 }
+                                break;
                         }
 
                     } else {

@@ -1921,6 +1921,7 @@ public class Orden extends PBase {
         try {
             pitems.clear();pcodes.clear();
 
+            /*
             sql = "SELECT DISTINCT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODPRECIO.UNIDADMEDIDA, " +
                     "P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO  " +
                     "FROM P_PRODUCTO INNER JOIN	P_STOCK ON P_STOCK.CODIGO=P_PRODUCTO.CODIGO_PRODUCTO INNER JOIN " +
@@ -1940,6 +1941,17 @@ public class Orden extends PBase {
                 if (famid!=0)
                     sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
             }
+             */
+
+            sql = "SELECT DISTINCT P_PRODUCTO.CODIGO,P_PRODUCTO.DESCCORTA,P_PRODPRECIO.UNIDADMEDIDA,P_PRODUCTO.ACTIVO, P_PRODUCTO.CODIGO_PRODUCTO " +
+                    "FROM P_PRODUCTO  INNER JOIN " +
+                    "P_PRODPRECIO ON P_PRODUCTO.CODIGO_PRODUCTO = P_PRODPRECIO.CODIGO_PRODUCTO  " +
+                    "WHERE (P_PRODUCTO.ACTIVO=1)";
+            if (famid !=-1) {
+                if (famid!=0)
+                    sql = sql + "AND (P_PRODUCTO.LINEA=" + famid + ") ";
+            }
+
 
             sql += "ORDER BY P_PRODUCTO.DESCCORTA";
             dt=Con.OpenDT(sql);

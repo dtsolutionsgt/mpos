@@ -1,0 +1,241 @@
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:clickable="true"
+        tools:context=".InvCentral">
+
+        <RelativeLayout
+            android:id="@+id/relheader"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignEnd="@+id/listView1"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/textView261"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:text="Producto"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView260"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="TextView"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/textView262"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                android:text="Costo total"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView264"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_toEndOf="@+id/textView260"
+                android:text="Cantidad"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView263"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:layout_toStartOf="@+id/textView260"
+                android:text="Exist. actual"
+                android:textSize="20sp"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textView155"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="0dp"
+            android:text="000"
+            android:textColor="#202020"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView72"
+            android:layout_width="6dp"
+            android:layout_height="10dp"
+            android:layout_centerInParent="true"
+            android:text="TextView"
+            android:visibility="invisible" />
+
+        <RelativeLayout
+            android:id="@+id/relRoad"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/frame_rect_blue">
+
+            <RelativeLayout
+                android:id="@+id/relRoadbar"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true">
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/lblTit3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="3dp"
+                android:text="INVENTARIO INICIAL"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relLock"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relRoad"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="25dp">
+
+            <TextView
+                android:id="@+id/textView307"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView141"
+                android:layout_marginTop="0dp"
+                android:gravity="center_horizontal"
+                android:text="Imprimir" />
+
+            <TextView
+                android:id="@+id/textView306"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView142"
+                android:layout_marginTop="0dp"
+                android:gravity="center_horizontal"
+                android:text="Cancelar" />
+
+            <TextView
+                android:id="@+id/textView305"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="0dp"
+                android:gravity="center_horizontal"
+                android:text="Aplicar" />
+
+            <ImageView
+                android:id="@+id/imageView142"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="false"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:clickable="true"
+                android:onClick="doCancel"
+                android:padding="5dp"
+                android:src="@drawable/anulacion" />
+
+            <ImageView
+                android:id="@+id/imageView141"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:clickable="true"
+                android:onClick="doPrint"
+                android:padding="5dp"
+                android:src="@drawable/btn_print2" />
+
+            <ImageView
+                android:id="@+id/imageView35"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                android:clickable="true"
+                android:onClick="doApply"
+                android:padding="5dp"
+                android:src="@drawable/icok" />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="1241dp"
+            android:layout_height="312dp"
+            android:layout_above="@+id/textView150"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toStartOf="@+id/relLock"
+            android:background="@drawable/frame_rect"
+            android:clickable="true">
+
+        </ListView>
+
+        <TextView
+            android:id="@+id/textView150"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/relheader"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:paddingEnd="10dp"
+            android:text="Q0.00"
+            android:textColor="#202020"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </RelativeLayout>

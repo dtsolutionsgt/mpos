@@ -75,6 +75,7 @@ public class CliPos extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if (pantallaHorizontal()) {
             setContentView(R.layout.activity_cli_pos);
@@ -149,7 +150,7 @@ public class CliPos extends PBase {
 
         if (gl.cliente_dom!=0) cargaCliente();
 
-	}
+    }
 
     public interface ExtRunnable extends Runnable {
         public void run(String data);
@@ -181,13 +182,23 @@ public class CliPos extends PBase {
 
 	public void clienteNIT(View view) {
 
-		try{
+		try {
+
+            purgeNIT();
 
             sNITCliente =txtNIT.getText().toString();
             sNombreCliente =txtNom.getText().toString();
             sDireccionCliente =txtRef.getText().toString();
             sCorreoCliente = txtCorreo.getText().toString();
             sTelCliente=txtTel.getText().toString();
+
+            if (sNITCliente.isEmpty()) {
+                msgbox("Identificación incorrecta");return;
+            }
+
+            if (sNITCliente.length()<3) {
+                msgbox("Identificación incorrecta");return;
+            }
 
             if (sDireccionCliente.isEmpty()) {
                 toast("Falta definir la direccion");return;
@@ -198,12 +209,17 @@ public class CliPos extends PBase {
             gl.nit_tipo="N";
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+
+                if (sNITCliente.length()>18) {
+                    msgbox("Identificación incorrecta");return;
+                }
+
                 if (!validaNIT(sNITCliente)) {
                     msgbox("NIT incorrecto");return;
                 }
             }  if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 if (!validaNITHon(sNITCliente)) {
-                    msgbox("NIT incorrecto");return;
+                    msgbox("RTNT incorrecto");return;
                 }
             }
 
@@ -234,6 +250,37 @@ public class CliPos extends PBase {
 		}
 
 	}
+
+    private void purgeNIT() {
+        try {
+            String ss=txtNIT.getText().toString();
+
+            ss=ss.trim();
+
+            ss=ss.replace("!","");
+            ss=ss.replace("#","");
+            ss=ss.replace("$","");
+            ss=ss.replace("%","");
+            ss=ss.replace("/","");
+            ss=ss.replace("(","");
+            ss=ss.replace(")","");
+            ss=ss.replace("=","");
+            ss=ss.replace("?","");
+            ss=ss.replace("'","");
+            ss=ss.replace("+","");
+            ss=ss.replace("*","");
+            ss=ss.replace(":","");
+            ss=ss.replace(";","");
+            ss=ss.replace(".","");
+            ss=ss.replace("@","");
+            ss=ss.replace("&","");
+            ss=ss.replace("_","");
+
+            txtNIT.setText(ss);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
 	public void buscarCliente(View view) {
         gl.cliente="";
@@ -914,7 +961,15 @@ public class CliPos extends PBase {
 	}
 
     private boolean validaNITHon(String N)  {
-        return true;
+        if (N.isEmpty()) return false;
+        if (N.length()<13) return false;
+
+        try {
+            long l=Long.parseLong(N);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private void buscaCliente() {
@@ -1019,6 +1074,7 @@ public class CliPos extends PBase {
 	}
 
 	private boolean agregaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
+        int codigo=10*gl.emp;
 
         if (consFinal) {
             gl.codigo_cliente = 10*gl.emp;
@@ -1026,7 +1082,12 @@ public class CliPos extends PBase {
             agregaClienteCF(NIT,Nom,dir,Correo);return true;
         }
 
-        int codigo=nitnum(NIT);
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            codigo=nitnum(NIT);
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            codigo=nitnumhn(NIT);
+        }
+
         gl.codigo_cliente=codigo;
 
         dir=dir+" ";
@@ -1137,7 +1198,13 @@ public class CliPos extends PBase {
 
     private boolean actualizaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
 
-        int codigo=nitnum(NIT);
+        int codigo=10*gl.emp;
+
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            codigo=nitnum(NIT);
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            codigo=nitnumhn(NIT);
+        }
 
         gl.codigo_cliente=codigo;
 
@@ -1186,6 +1253,18 @@ public class CliPos extends PBase {
 
             return nnit;
 
+        } catch (Exception e) {
+            return gl.emp*10;
+        }
+    }
+
+    private int nitnumhn(String nit) {
+        int nnit;
+
+        try {
+            nit=nit.substring(1,10);
+            nnit=Integer.parseInt(nit);
+            return nnit;
         } catch (Exception e) {
             return gl.emp*10;
         }

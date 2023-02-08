@@ -906,7 +906,7 @@ public class CierreX extends PBase {
                 count11 += count10;
 
                 if(gl.reportid==10){
-                    rep.add("Fondo caja : Q."+Fondo);
+                    rep.add("Fondo caja : "+gl.peMon+Fondo);
                     rep.empty();
                     rep.addc("REPORTE DE CUADRE");
                     rep.line();

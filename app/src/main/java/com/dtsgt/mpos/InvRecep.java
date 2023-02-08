@@ -9,9 +9,11 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
@@ -31,9 +33,11 @@ import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_costoObj;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
+import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.ladapt.LA_T_movd;
 import com.dtsgt.ladapt.LA_T_movr;
+import com.dtsgt.ladapt.LA_T_venta_mod;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 
 import java.util.ArrayList;
@@ -41,15 +45,17 @@ import java.util.Objects;
 
 public class InvRecep extends PBase {
 
-    private ListView listView;
+    private ListView listView,prodView;
     private GridView grdbtn;
-    private EditText txtBarra;
+    private EditText txtBarra,txtprod;
     private TextView lblBar,lblKeyDP,lblProd,lblCant,lblCosto,lblTCant;
     private TextView lblTCosto,lblTit,lblUni,lblDisp,lblDoc;
+    private RelativeLayout relprod;
 
     private clsKeybHandler khand;
     private LA_T_movd adapter;
     private LA_T_movr adapterr;
+    private LA_T_venta_mod adapterp;
     private ListAdaptMenuVenta adapterb;
     private clsRepBuilder rep;
 
@@ -61,8 +67,11 @@ public class InvRecep extends PBase {
     private clsT_costoObj T_costoObj;
     private clsP_stockObj P_stockObj;
     private clsP_stock_almacenObj P_stock_almacenObj;
+    private clsViewObj ViewObj;
 
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<>();
+    private ArrayList<clsClasses.clsT_venta_mod> pitems= new ArrayList<clsClasses.clsT_venta_mod>();
+
     private clsClasses.clsT_movd selitem;
     private clsClasses.clsT_movr selitemr;
 
@@ -85,9 +94,11 @@ public class InvRecep extends PBase {
         super.InitBase();
 
         listView =  findViewById(R.id.listView1);
+        prodView =  findViewById(R.id.listProd);
         grdbtn = findViewById(R.id.grdbtn);
         lblTit =  findViewById(R.id.lblTit3);
         txtBarra = findViewById(R.id.editText10);
+        txtprod = findViewById(R.id.editTextText);
         lblBar =  findViewById(R.id.lblCant);lblBar.setText("");
         lblKeyDP =  findViewById(R.id.textView110);
         lblProd =  findViewById(R.id.textView156);lblProd.setText("");
@@ -98,6 +109,7 @@ public class InvRecep extends PBase {
         lblUni =  findViewById(R.id.textView229);
         lblDisp =  findViewById(R.id.textView265);
         lblDoc =  findViewById(R.id.textView267);lblDoc.setText("");
+        relprod = findViewById(R.id.relprod);relprod.setVisibility(View.INVISIBLE);
 
         prodid=0;
         ingreso=gl.invregular;
@@ -117,6 +129,7 @@ public class InvRecep extends PBase {
         T_costoObj=new clsT_costoObj(this,Con,db);
         P_stockObj=new clsP_stockObj(this,Con,db);
         P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
+        ViewObj=new clsViewObj(this,Con,db);
 
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
@@ -235,6 +248,18 @@ public class InvRecep extends PBase {
         if (!readonly) inputDoc();
     }
 
+    public void doHideList(View view) {
+        relprod.setVisibility(View.INVISIBLE);
+    }
+
+    public void doProd(View view) {
+        buscarProducto();
+    }
+
+    public void doClearFilter(View view) {
+        txtprod.setText("");
+    }
+
     private void setHandlers() {
 
         try {
@@ -256,6 +281,18 @@ public class InvRecep extends PBase {
                     setProduct();
                 }
            });
+
+            prodView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    Object lvObj = prodView.getItemAtPosition(position);
+                    clsClasses.clsT_venta_mod item = (clsClasses.clsT_venta_mod)lvObj;
+
+                    adapterp.setSelectedIndex(position);
+
+                    codigoProducto(item.id);
+                };
+            });
 
             grdbtn.setOnItemClickListener((parent, view, position, id) -> {
                 Object lvObj = grdbtn.getItemAtPosition(position);
@@ -599,10 +636,10 @@ public class InvRecep extends PBase {
 
             toastlong("Existencias actualizadas");
 
-            if (gl.peInvCompart) {
+            //if (gl.peInvCompart) {
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
-            }
+            //}
 
             finish();
 
@@ -712,12 +749,11 @@ public class InvRecep extends PBase {
 
             toastlong("Existencias actualizadas");
 
-            /*
-            if (gl.peInvCompart) {
+
+            //if (gl.peInvCompart) {
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
-            }
-            */
+            //}
 
             finish();
 
@@ -1255,6 +1291,8 @@ public class InvRecep extends PBase {
             adapterb=new ListAdaptMenuVenta(this, mmitems);
             grdbtn.setAdapter(adapterb);
 
+            iniciaProductos();
+
         } catch (Exception e){
             addlog(Objects.requireNonNull(new Object() {
             }.getClass().getEnclosingMethod()).getName(),e.getMessage(),"");
@@ -1269,10 +1307,14 @@ public class InvRecep extends PBase {
         try {
             switch (menuid) {
                 case 50:
-                    gl.gstr = "";        browse = 1;
+                    relprod.setVisibility(View.VISIBLE);
+                    /*
+                    gl.gstr = "";browse = 1;
                     gl.gstr="";
                     gl.prodtipo = 2;
-                    startActivity(new Intent(this, Producto.class));break;
+                    startActivity(new Intent(this, Producto.class));
+                    */
+                    break;
                 case 54:
                     borraLinea();break;
                 case 55:
@@ -1380,6 +1422,117 @@ public class InvRecep extends PBase {
 
     //endregion
 
+    //region Lista productos
+
+    private void iniciaProductos() {
+        clsClasses.clsT_venta_mod pitem;
+
+        try {
+            sql="SELECT CODIGO_PRODUCTO, DESCLARGA,'','','', '','','','' " +
+                "FROM P_PRODUCTO WHERE  (CODIGO_TIPO='P') ORDER BY DESCLARGA";
+            ViewObj.fillSelect(sql);
+
+            pitems.clear();
+
+            for (int i = 0; i <ViewObj.count; i++) {
+                pitem = clsCls.new clsT_venta_mod();
+
+                pitem.id=ViewObj.items.get(i).pk;
+                pitem.idmod=0;
+                pitem.nombre=ViewObj.items.get(i).f1;
+
+                pitems.add(pitem);
+            }
+
+            adapterp=new LA_T_venta_mod(this,this,pitems);
+            prodView.setAdapter(adapterp);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private boolean codigoProducto(int prodcod) {
+
+        try {
+
+            khand.clear(true);khand.enable();khand.focus();
+            selidx=-1;
+
+            P_productoObj.fill("WHERE (CODIGO_PRODUCTO="+prodcod+")");
+            if (P_productoObj.count==0) return false;
+
+            prodid=P_productoObj.first().codigo_producto;
+            prodname=P_productoObj.first().codigo+" - "+P_productoObj.first().desclarga;
+            um=P_productoObj.first().unidbas;
+
+            lblProd.setText(prodname);nombreUnidad();
+            lblUni.setVisibility(View.VISIBLE);
+
+            khand.setLabel(lblCant,true);khand.val="";
+            lblCant.setText("");txtBarra.setText("");
+
+            if (P_productoObj.first().costo>0) {
+                lblCosto.setText(""+P_productoObj.first().costo);
+            } else {
+                lblCosto.setText("0");
+            }
+
+            try {
+                T_costoObj.fill("WHERE CODIGO_PRODUCTO="+P_productoObj.first().codigo_producto+" ORDER BY FECHA DESC LIMIT 1");
+                if (T_costoObj.count>0) lblCosto.setText(""+T_costoObj.first().costo);
+            } catch (Exception e) { }
+
+            lblDisp.setText("Disponible: "+dispProdUni(P_productoObj.first().codigo_producto));
+
+            return true;
+
+        } catch (Exception e) {
+            String ss=e.getMessage();
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
+        }
+
+        prodid=0;
+        return false;
+    }
+
+    private void buscarProducto() {
+        clsClasses.clsT_venta_mod pitem;
+        String flt;
+
+        try {
+
+            flt=txtprod.getText().toString();
+
+            sql="SELECT CODIGO_PRODUCTO,   DESCLARGA,'','','',   '','','','' " +
+                "FROM P_PRODUCTO WHERE (CODIGO_TIPO='P') " ;
+            if (!flt.isEmpty()) sql+=" AND (DESCLARGA LIKE '%"+flt+"%') ";
+            sql+="ORDER BY DESCLARGA";
+            ViewObj.fillSelect(sql);
+
+            pitems.clear();
+
+            for (int i = 0; i <ViewObj.count; i++) {
+                pitem = clsCls.new clsT_venta_mod();
+
+                pitem.id=ViewObj.items.get(i).pk;
+                pitem.idmod=0;
+                pitem.nombre=ViewObj.items.get(i).f1;
+
+                pitems.add(pitem);
+            }
+
+            adapterp=new LA_T_venta_mod(this,this,pitems);
+            prodView.setAdapter(adapterp);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Aux
 
     private void creaEncabezadoInicial() {
@@ -1421,16 +1574,16 @@ public class InvRecep extends PBase {
     }
 
     private void nombreUnidad() {
-
+        /*
         try {
             P_unidadObj.fill("WHERE (CODIGO_UNIDAD='"+um+"')");
             ubas=P_unidadObj.first().nombre;
         } catch (Exception e) {
-            toast(Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
             ubas=um;
         }
+        */
 
+        ubas=um;
         lblUni.setText(um);
     }
 
@@ -1676,6 +1829,7 @@ public class InvRecep extends PBase {
             T_costoObj.reconnect(Con,db);
             P_stockObj.reconnect(Con,db);
             P_stock_almacenObj.reconnect(Con,db);
+            ViewObj.reconnect(Con,db);
 
         } catch (Exception e) {
             msgbox(e.getMessage());
