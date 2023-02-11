@@ -1267,7 +1267,6 @@ public class InvRecep extends PBase {
         try {
 
             if (ingreso) db.execSQL("DELETE FROM T_movr");
-
             if (readonly) return;
 
             mmitems.clear();

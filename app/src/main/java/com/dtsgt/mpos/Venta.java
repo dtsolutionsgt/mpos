@@ -2886,10 +2886,13 @@ public class Venta extends PBase {
 
     private String getProd(int prodid) {
         try {
+            P_productoObj.fill();
             for (int i = 0; i <P_productoObj.count; i++) {
                 if (P_productoObj.items.get(i).codigo_producto==prodid) return P_productoObj.items.get(i).desclarga;
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+
+        }
         return ""+prodid;
     }
 
@@ -4325,6 +4328,7 @@ public class Venta extends PBase {
                 browse=0;listItems();
                 return;
             }
+
 
             if (browse==10) {
                 browse=0;

@@ -1395,6 +1395,7 @@ public class ResMesero extends PBase {
             listdlg.buildDialog(ResMesero.this,"Grupos asignados","Salir","","Aplicar");
             listdlg.setWidth(350);listdlg.setLines(5);
 
+
             P_res_grupoObj.fill("ORDER BY Nombre");
             for (int i = 0; i <P_res_grupoObj.count; i++) {
                 P_mesero_grupoObj.fill("WHERE (CODIGO_MESERO="+gl.idmesero+") AND (CODIGO_GRUPO="+P_res_grupoObj.items.get(i).codigo_grupo+")");

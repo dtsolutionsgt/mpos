@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -13,7 +11,9 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stock_inv_detObj;
+import com.dtsgt.classes.clsP_stock_inv_errObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.ladapt.LA_imp_inv;
@@ -34,9 +34,14 @@ public class InvCentral extends PBase {
     private extWaitDlg waitdlg;
 
     private clsP_stock_inv_detObj P_stock_inv_detObj;
+    private clsP_stock_inv_errObj P_stock_inv_errObj;
+
+    private ArrayList<Integer> pcod= new ArrayList<Integer>();
+    private ArrayList<String>  pum= new ArrayList<String>();
 
     private LA_imp_inv adapter;
 
+    private String inserr;
     private int idinv;
 
     @Override
@@ -57,6 +62,7 @@ public class InvCentral extends PBase {
             lblTit.setText("INVENTARIO INICIAL #"+idinv);
 
             P_stock_inv_detObj=new clsP_stock_inv_detObj(this,Con,db);
+            P_stock_inv_errObj=new clsP_stock_inv_errObj(this,Con,db);
 
             app.getURL();
 
@@ -140,7 +146,7 @@ public class InvCentral extends PBase {
             ViewObj.fillSelect(sql);
             int cl=ViewObj.items.size();
 
-            db.execSQL("DELETE FROM P_STOCK_INV_DET WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
+            db.execSQL("DELETE FROM P_STOCK_INV_ERR WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
 
             tot=0;
             for (int i = 0; i <cl; i++) {
@@ -254,13 +260,67 @@ public class InvCentral extends PBase {
     }
 
     private boolean applyInventory() {
+        int pc,pi,errs=0;
+        String um;
+        double cant;
+
+        try {
+            db.execSQL("DELETE FROM P_STOCK_INV_ERR WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
+
+            clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
+            P_productoObj.fill();
+
+            pcod.clear();pum.clear();
+
+            for (int i = 0; i <P_productoObj.count; i++) {
+                pcod.add(P_productoObj.items.get(i).codigo_producto);
+                pum.add(P_productoObj.items.get(i).unidbas);
+            }
+
+            P_productoObj.items.clear();
+
+            P_stock_inv_detObj.fill("WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
+            for (int i = 0; i <P_stock_inv_detObj.count; i++) {
+                pc=P_stock_inv_detObj.items.get(i).codigo_producto;
+                um=P_stock_inv_detObj.items.get(i).unidadmedida;
+
+                if (!pcod.contains(pc)) {
+                    logError(pc,"Producto no existe o deshabilitado");errs++;
+                } else {
+                    pi=pcod.indexOf(pc);
+                    if (!pum.get(pi).equalsIgnoreCase(um)) {
+                        logError(pc,"Incorrecta UM: "+um);errs++;
+                    }
+                }
+            }
+
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+
+        if (errs>0) return false;
+
         try {
             db.beginTransaction();
 
-            db.setTransactionSuccessful();
+            db.execSQL("DELETE FROM P_STOCK");
+
+            for (int i = 0; i <P_stock_inv_detObj.count; i++) {
+                pc=P_stock_inv_detObj.items.get(i).codigo_producto;
+                um=P_stock_inv_detObj.items.get(i).unidadmedida;
+                cant=P_stock_inv_detObj.items.get(i).cant;
+
+                if (!addtoStock(pc,cant,um)) {
+                   logError(pc,inserr);errs++;
+                }
+            }
+
+            if (errs==0) db.setTransactionSuccessful();
+
             db.endTransaction();
 
-            return true;
+            return errs==0;
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -269,6 +329,70 @@ public class InvCentral extends PBase {
         return false;
     }
 
+    private boolean addtoStock(int pcod,double pcant,String um) {
+        try {
+
+            ins.init("P_STOCK");
+
+            ins.add("CODIGO",pcod);
+            ins.add("CANT",pcant);
+            ins.add("CANTM",0);
+            ins.add("PESO",0);
+            ins.add("plibra",0);
+            ins.add("LOTE","");
+            ins.add("DOCUMENTO","");
+
+            ins.add("FECHA",0);
+            ins.add("ANULADO",0);
+            ins.add("CENTRO","");
+            ins.add("STATUS","");
+            ins.add("ENVIADO",1);
+            ins.add("CODIGOLIQUIDACION",0);
+            ins.add("COREL_D_MOV","");
+            ins.add("UNIDADMEDIDA",um);
+
+            db.execSQL(ins.sql());
+
+            return true;
+        } catch (Exception e) {
+            inserr=e.getMessage();
+            return false;
+        }
+
+    }
+
+    private void logError(int prid,String err) {
+        try {
+            clsClasses.clsP_stock_inv_err item = clsCls.new clsP_stock_inv_err();
+
+            item.codigo_inventario_enc=idinv;
+            item.codigo_producto=prid;
+            item.nota=err;
+
+            P_stock_inv_errObj.add(item);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void showInvErrors() {
+        String ss="";
+
+        try {
+            P_stock_inv_errObj.fill("WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
+
+            for (int i = 0; i <P_stock_inv_errObj.count; i++) {
+                ss+="Producto: "+P_stock_inv_errObj.items.get(i).codigo_producto+"\n";
+                ss+="- "+P_stock_inv_errObj.items.get(i).nota+"\n";
+                if (i==2 && P_stock_inv_errObj.count>3) {
+                    ss+="Total errores: "+P_stock_inv_errObj.count+"\n";break;
+                }
+            }
+            msgbox(ss);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 
@@ -300,9 +424,9 @@ public class InvCentral extends PBase {
         dialog.setPositiveButton("Aplicar", (dialog12, which) -> {
             try {
                 if (applyInventory()) {
-                    enviaEstado(2);
-                    finish();
-                }
+                    //enviaEstado(2);
+                    msgAskOK();
+                } else showInvErrors();
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -323,6 +447,7 @@ public class InvCentral extends PBase {
              try {
                  db.execSQL("DELETE FROM P_STOCK_INV_DET WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
                  enviaEstado(0);
+                 toastcentlong("INVENTARIO CANCELADO");
                  finish();
              } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -330,6 +455,44 @@ public class InvCentral extends PBase {
         });
 
         dialog.setNegativeButton("Salir", (dialog1, which) -> {});
+
+        dialog.show();
+    }
+
+    public void msgAskExit(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿"+msg+"?");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("OK", (dialog12, which) -> {
+            try {
+                db.execSQL("DELETE FROM P_STOCK_INV_DET WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
+                enviaEstado(0);
+                finish();
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+        });
+
+        dialog.setNegativeButton("Salir", (dialog1, which) -> {});
+
+        dialog.show();
+    }
+
+    public void msgAskOK() {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("Inventario inicializado.");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("OK", (dialog12, which) -> {
+            try {
+               finish();
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+        });
 
         dialog.show();
     }
@@ -343,10 +506,17 @@ public class InvCentral extends PBase {
         super.onResume();
         try {
             P_stock_inv_detObj.reconnect(Con,db);
+            P_stock_inv_errObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        msgAskExit("Salir sin aplicar inventario");
+    }
+
 
     //endregion
 
