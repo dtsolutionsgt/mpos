@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,9 +12,13 @@ import android.widget.TextView;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_MovDObj;
+import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stock_inv_detObj;
 import com.dtsgt.classes.clsP_stock_inv_errObj;
+import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.ladapt.LA_imp_inv;
@@ -28,13 +33,15 @@ public class InvCentral extends PBase {
     private TextView lblTCant,lblTCosto,lblTit;
 
     private wsOpenDT wsic;
-
     private Runnable rnInvCent;
-
+    public clsRepBuilder rep;
     private extWaitDlg waitdlg;
 
     private clsP_stock_inv_detObj P_stock_inv_detObj;
     private clsP_stock_inv_errObj P_stock_inv_errObj;
+
+    private ArrayList<clsClasses.clsT_movr> items= new ArrayList<clsClasses.clsT_movr>();
+    private clsClasses.clsT_movr item;
 
     private ArrayList<Integer> pcod= new ArrayList<Integer>();
     private ArrayList<String>  pum= new ArrayList<String>();
@@ -42,7 +49,7 @@ public class InvCentral extends PBase {
     private LA_imp_inv adapter;
 
     private String inserr;
-    private int idinv;
+    private int idinv,codigo_proveedor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +84,13 @@ public class InvCentral extends PBase {
 
             waitdlg= new extWaitDlg();
 
+            clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
+            suc.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            codigo_proveedor=suc.first().codigo_proveedor;
+
+            printer prn=new printer(this,null,gl.validimp);
+            rep=new clsRepBuilder(this,prn.prw,true,gl.peMon,gl.peDecImp,"");
+
             Handler mtimer = new Handler();
             Runnable mrunner=new Runnable() {
                 @Override
@@ -100,7 +114,7 @@ public class InvCentral extends PBase {
     }
 
     public void doPrint(View view) {
-
+        msgAskImprimir();
     }
 
     public void doCancel(View view) {
@@ -128,8 +142,7 @@ public class InvCentral extends PBase {
     //region Main
 
     private void listItems() {
-        ArrayList<clsClasses.clsT_movr> items= new ArrayList<clsClasses.clsT_movr>();
-        clsClasses.clsT_movr item;
+
         double tot;
 
         try {
@@ -260,9 +273,13 @@ public class InvCentral extends PBase {
     }
 
     private boolean applyInventory() {
+        clsClasses.clsD_Mov header;
+        clsClasses.clsD_MovD item;
+        clsClasses.clsT_costo cost;
+
         int pc,pi,errs=0;
-        String um;
-        double cant;
+        String um,corel;
+        double cant,cc,costo=0;
 
         try {
             db.execSQL("DELETE FROM P_STOCK_INV_ERR WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
@@ -283,6 +300,8 @@ public class InvCentral extends PBase {
             for (int i = 0; i <P_stock_inv_detObj.count; i++) {
                 pc=P_stock_inv_detObj.items.get(i).codigo_producto;
                 um=P_stock_inv_detObj.items.get(i).unidadmedida;
+                cc=P_stock_inv_detObj.items.get(i).cant*P_stock_inv_detObj.items.get(i).costo;
+                costo+=cc;
 
                 if (!pcod.contains(pc)) {
                     logError(pc,"Producto no existe o deshabilitado");errs++;
@@ -294,7 +313,6 @@ public class InvCentral extends PBase {
                 }
             }
 
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
@@ -303,6 +321,28 @@ public class InvCentral extends PBase {
 
         try {
             db.beginTransaction();
+
+            clsD_MovObj mov=new clsD_MovObj(this,Con,db);
+            clsD_MovDObj movd=new clsD_MovDObj(this,Con,db);
+            corel=gl.ruta+"_"+mu.getCorelBase();
+
+            header =clsCls.new clsD_Mov();
+            header.COREL=corel;
+            header.RUTA=gl.codigo_ruta;
+            header.ANULADO=0;
+            header.FECHA=du.getActDateTime();
+            header.TIPO="R";
+            header.USUARIO=gl.codigo_vendedor;
+            header.REFERENCIA= du.sfecha(du.getActDateTime());
+            header.STATCOM="N";
+            header.IMPRES=0;
+            header.CODIGOLIQUIDACION=0;
+            header.CODIGO_PROVEEDOR= codigo_proveedor;
+            header.TOTAL=costo;
+
+            mov.add(header);
+
+            int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD");
 
             db.execSQL("DELETE FROM P_STOCK");
 
@@ -314,6 +354,24 @@ public class InvCentral extends PBase {
                 if (!addtoStock(pc,cant,um)) {
                    logError(pc,inserr);errs++;
                 }
+
+                item =clsCls.new clsD_MovD();
+
+                item.coreldet=corm+i+1;
+                item.corel=corel;
+                item.producto=P_stock_inv_detObj.items.get(i).codigo_producto;
+                item.cant=P_stock_inv_detObj.items.get(i).cant;
+                item.cantm=0;
+                item.peso=0;
+                item.pesom=0;
+                item.lote="";
+                item.codigoliquidacion=0;
+                item.unidadmedida=P_stock_inv_detObj.items.get(i).unidadmedida;
+                item.precio=P_stock_inv_detObj.items.get(i).costo;
+                item.motivo_ajuste=0;
+
+                movd.add(item);
+
             }
 
             if (errs==0) db.setTransactionSuccessful();
@@ -411,6 +469,51 @@ public class InvCentral extends PBase {
         }
     }
 
+    private void imprimirInventario() {
+        String s1,s2;
+
+        try {
+            rep.clear();
+
+            rep.empty();
+            rep.addc("INVENTARIO INICIAL");
+            setDatosVersion();
+
+            for (int i = 0; i <items.size(); i++) {
+                item=items.get(i);
+
+                s1=item.lote;
+                s2=item.cant+" "+item.unidadmedida;
+
+                rep.addtotrs(s1,s2);
+            }
+
+            rep.line();
+            rep.addc("FIN DE REPORTE");
+            rep.empty();
+            rep.empty();
+            rep.empty();
+
+            rep.save();
+
+            app.doPrint(1,0);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void setDatosVersion() {
+        rep.empty();
+        rep.line();
+        rep.add("Empresa: " + gl.empnom);
+        rep.add("Sucursal: " + gl.tiendanom);
+        rep.add("Caja: " + gl.rutanom);
+        rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+        rep.add("Vesión MPos: "+gl.parVer);
+        rep.add("Generó: "+gl.vendnom);
+        rep.line();
+    }
+
     //endregion
 
     //region Dialogs
@@ -496,6 +599,22 @@ public class InvCentral extends PBase {
 
         dialog.show();
     }
+
+    public void msgAskImprimir() {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿Imprimir carga de inventario?");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Imprimir", (dialog12, which) -> {
+            imprimirInventario();
+        });
+
+        dialog.setNegativeButton("Salir", (dialog1, which) -> {});
+
+        dialog.show();
+    }
+
 
     //endregion
 

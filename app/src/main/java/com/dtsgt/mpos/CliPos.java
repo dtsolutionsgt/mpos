@@ -505,6 +505,7 @@ public class CliPos extends PBase {
                 crearPedido();
                 //msgAskOrden("Convertir a órden");
             } else {
+                String sn=gl.gNITCliente;
                 finish();
             }
          }

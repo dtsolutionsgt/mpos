@@ -329,6 +329,8 @@ public class FacturaRes extends PBase {
 
         //if (gl.mesero_precuenta) prnCuenta(null);
 
+		String sn=gl.gNITCliente;
+		sn=gl.gNITCliente;
     }
 
 	//region Events
@@ -1135,7 +1137,9 @@ public class FacturaRes extends PBase {
 				}
 			}
 
-			if (gl.codigo_cliente<=0) gl.codigo_cliente=gl.emp*10;
+			if (gl.codigo_cliente<=0) {
+				gl.codigo_cliente=gl.emp*10;
+			}
 
 			ins.add("CLIENTE",gl.codigo_cliente);
 			ins.add("KILOMETRAJE",0);
@@ -1437,7 +1441,9 @@ public class FacturaRes extends PBase {
 			if (gl.gNITCliente.isEmpty()) {
 				gl.gNITCliente="CF";
 			} else {
-				if (gl.gNITCliente.length()<6) gl.gNITCliente="CF";
+				if (gl.gNITCliente.length()<6) {
+					gl.gNITCliente="CF";
+				}
 			}
 
 			if (gl.codigo_cliente<=0) {
@@ -4234,7 +4240,7 @@ public class FacturaRes extends PBase {
 			gl.gNITCliente = "CF";return;
 		}
 
-		if (gl.gNITCliente.length() < 8) {
+		if (gl.gNITCliente.length() <6) {
 			gl.nit_tipo = "N";
 			gl.gNITCliente = "CF";
 			return;

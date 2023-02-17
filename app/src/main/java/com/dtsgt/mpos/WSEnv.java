@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_stock_almacenObj;
 import com.dtsgt.classes.clsP_stockbofObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_costoObj;
+import com.dtsgt.webservice.srvCommit;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -136,6 +137,8 @@ public class WSEnv extends PBase {
 
         preparaEnvio();
 
+        enviaAnulaciones();
+
         if (gl.autocom == 1) {
 
             Handler mtimer = new Handler();
@@ -145,7 +148,7 @@ public class WSEnv extends PBase {
                 //execws(1);
                 doStart(null);
             };
-            mtimer.postDelayed(mrunner, 200);
+            mtimer.postDelayed(mrunner, 1000);
 
         }
     }
@@ -503,6 +506,23 @@ public class WSEnv extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void enviaAnulaciones() {
+        try {
+            CSQL="";
+            processAnul();
+
+            if (fTotAnul>0) {
+
+                Intent intent = new Intent(WSEnv.this, srvCommit.class);
+                intent.putExtra("URL", gl.wsurl);
+                intent.putExtra("command", CSQL);
+                startService(intent);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion
@@ -978,7 +998,6 @@ public class WSEnv extends PBase {
 
     private void processAnul() {
         String corr, ssql;
-
 
         long fan = du.addDays(du.getActDate(), -5);
         D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>" + fan + ") ");

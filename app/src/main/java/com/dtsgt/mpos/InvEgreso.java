@@ -405,7 +405,7 @@ public class InvEgreso extends PBase {
                 item.pesom=0;
                 item.lote="";
                 item.codigoliquidacion=0;
-                item.unidadmedida=imovr.unidadmedida;
+                item.unidadmedida=imovr.unidadmedida.trim();
                 item.precio=imovr.precio;
                 item.motivo_ajuste=imovr.razon;
 
@@ -481,7 +481,7 @@ public class InvEgreso extends PBase {
                 item.pesom=0;
                 item.lote="";
                 item.codigoliquidacion=0;
-                item.unidadmedida=imovr.unidadmedida;
+                item.unidadmedida=imovr.unidadmedida.trim();
                 item.precio=imovr.precio;
                 item.motivo_ajuste=imovr.razon;
 
@@ -615,12 +615,13 @@ public class InvEgreso extends PBase {
     }
 
     private void adjustStock(int pcod,double pcant,String um) {
+        um=um.trim();
         sql="UPDATE P_STOCK SET CANT=CANT-"+Math.abs(pcant)+" WHERE CODIGO="+pcod+" ";
         db.execSQL(sql);
     }
 
     private void adjustStockAlmacen(int pcod,double pcant,String um) {
-
+        um=um.trim();
         sql="UPDATE P_stock_almacen SET CANT=CANT-"+Math.abs(pcant)+" " +
                 "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
         db.execSQL(sql);

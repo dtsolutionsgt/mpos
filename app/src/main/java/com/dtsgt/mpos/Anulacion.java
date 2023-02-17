@@ -29,6 +29,7 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.ladapt.ListAdaptCFDV;
+import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvInventConfirm;
 import com.dtsgt.webservice.wsInventCompartido;
 
@@ -71,7 +72,7 @@ public class Anulacion extends PBase {
 	private String CSQL;
 	private boolean factsend,bloqueado=false;
 
-	private int tipo,depparc,fcorel;	
+	private int tipo,depparc,fcorel,fTotAnul;
 	private String selid,itemid,fserie,fres,felcorel,uuid;
 	private boolean modoapr=false,demomode;
 
@@ -864,21 +865,63 @@ public class Anulacion extends PBase {
 
             listItems();
 
-            toast(String.format("Se anuló la factura %d correctamente",itemid));
+            toast("La factura se anuló correctamente");
 
 			vAnulFactura=true;
+
+			enviaAnulaciones();
 
             if (DT!=null) DT.close();
 
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+"\n"+e.getMessage()+"\n"+sql);
 			vAnulFactura=false;
 		}
 
 		return vAnulFactura;
 
 	}
-	
+
+	private void enviaAnulaciones() {
+		try {
+			CSQL="";
+			processAnul();
+
+			if (fTotAnul>0) {
+
+				Intent intent = new Intent(Anulacion.this, srvCommit.class);
+				intent.putExtra("URL", gl.wsurl);
+				intent.putExtra("command", CSQL);
+				startService(intent);
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void processAnul() {
+		String corr, ssql;
+
+		try {
+			clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+
+			long fan = du.addDays(du.getActDate(), -5);
+			D_facturaObj.fill("WHERE (ANULADO=1) AND (FECHA>" + fan + ") ");
+			fTotAnul = D_facturaObj.count;
+
+			for (int i = 0; i < D_facturaObj.count; i++) {
+
+				corr = D_facturaObj.items.get(i).corel;
+				ssql = "UPDATE D_FACTURA SET ANULADO=1 WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + corr + "')";
+
+				CSQL = CSQL + ssql + ";";
+			}
+		} catch (Exception e) {
+			fTotAnul=0;
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	private void anulBonif(String itemid) {
 
 		Cursor DT;

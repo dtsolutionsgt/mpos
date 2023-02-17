@@ -34,6 +34,7 @@ import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_cajacierreObj;
 import com.dtsgt.classes.clsP_cajahoraObj;
+import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
@@ -85,7 +86,7 @@ public class Menu extends PBase {
     private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje,modo_emerg;
-	private boolean listo=true,almacenes;
+	private boolean listo=true,almacenes,cortesias;
 	private long contcorini,contcorult,fhoy,fayer;
 
     private final int mRequestCode = 1001;
@@ -241,6 +242,10 @@ public class Menu extends PBase {
             gridView.setAdapter(adaptergrid);
             adaptergrid.setSelectedIndex(selIdx);
 
+			clsP_cortesiaObj P_cortesiaObj=new clsP_cortesiaObj(this,Con,db);
+			P_cortesiaObj.fill();
+			cortesias=P_cortesiaObj.count>0;
+
         } catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -255,8 +260,7 @@ public class Menu extends PBase {
 			startActivity(i);
 			//Needs root
 			//Process proc = Runtime.getRuntime() .exec(new String[]{ "su", "-c", "reboot -p" }); proc.waitFor();
-		}catch (Exception ex)
-		{ ex.printStackTrace(); }
+		} catch (Exception ex) { ex.printStackTrace(); }
 	}
 		
 	public void setHandlers(){
@@ -1747,6 +1751,7 @@ public class Menu extends PBase {
 			listdlg.add("Reporte Venta por Producto");
 			listdlg.add("Reporte por Forma de Pago");
 			listdlg.add("Reporte por Familia");
+			if (cortesias) listdlg.add("Cortesias");
 			listdlg.add("Reporte Ventas por Vendedor");
 			listdlg.add("Consumo materia prima");
 			listdlg.add("Reporte de Ventas por Cliente");
@@ -1776,6 +1781,8 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Cierre del día")) gl.reportid=12;
 					if (ss.equalsIgnoreCase("Consumo materia prima")) gl.reportid=13;
 					//if (ss.equalsIgnoreCase("Consumo materia prima por producto")) gl.reportid=14;
+					if (ss.equalsIgnoreCase("Cortesias")) gl.reportid=15;
+
 
 					gl.titReport = ss;
 

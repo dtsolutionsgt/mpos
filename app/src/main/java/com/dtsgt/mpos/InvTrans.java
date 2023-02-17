@@ -441,6 +441,7 @@ public class InvTrans extends PBase {
 
                 imovr=T_movrObj.items.get(i);
                 converUMBas(imovr.producto,imovr.cant,imovr.unidadmedida);
+                convum=convum.trim();
 
                 item =clsCls.new clsD_movd_almacen();
 

@@ -523,7 +523,7 @@ public class InvRecep extends PBase {
 
             db.beginTransaction();
 
-            if (!ingreso) db.execSQL("DELETE FROM P_STOCK");
+            //if (!ingreso) db.execSQL("DELETE FROM P_STOCK");
             if (!gl.corelmov.isEmpty()) {
                 db.execSQL("DELETE FROM D_MOV WHERE COREL='" + gl.corelmov + "'");
                 db.execSQL("DELETE FROM D_MOVD WHERE COREL='" + gl.corelmov + "'");
@@ -617,7 +617,7 @@ public class InvRecep extends PBase {
                     item.pesom=0;
                     item.lote="";
                     item.codigoliquidacion=0;
-                    item.unidadmedida=convum;   // imov.unidadmedida;
+                    item.unidadmedida=convum.trim();   // imov.unidadmedida;
                     item.precio=imov.precio;
                     item.motivo_ajuste=0;
                     movd.add(item);
@@ -709,7 +709,7 @@ public class InvRecep extends PBase {
                     item.pesom=0;
                     item.lote="";
                     item.codigoliquidacion=0;
-                    item.unidadmedida=convum;   // imovr.unidadmedida;
+                    item.unidadmedida=convum.trim();   // imovr.unidadmedida;
                     item.precio=imovr.precio;
                     item.motivo_ajuste=0;
 
@@ -885,6 +885,7 @@ public class InvRecep extends PBase {
     private void updateStock(int pcod,double pcant,String um) {
 
         try {
+            um=um.trim();
 
             ins.init("P_STOCK");
             ins.add("CODIGO",pcod);
@@ -916,6 +917,8 @@ public class InvRecep extends PBase {
         int newid;
 
         try {
+
+            um=um.trim();
 
             sql="SELECT CODIGO_STOCK FROM P_stock_almacen  " +
                 "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";

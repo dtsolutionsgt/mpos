@@ -545,6 +545,22 @@ public class clsRepBuilder {
 		items.add(ts);
 	}
 
+	public void addtotrs(String s1,String val) {
+
+		String str;
+
+		try {
+			str = val.substring(0, val.length());
+		} catch (Exception e) {
+			str = val.substring(0, val.length()-1);
+		}
+
+		val = str;
+
+		ts=ltrim(s1,prw-10)+" "+rtrim(val,9);
+		items.add(ts);
+	}
+
 	public void addtote(String s1,String val) {
 		ts=ltrim(s1,prw-17)+"  "+rtrim(val,15);
 		items.add(ts);
@@ -593,6 +609,11 @@ public class clsRepBuilder {
 
 	public void addtotint(String s1,int val) {
 		ts=ltrim(s1,prw-13)+" "+rtrim(Integer.toString(val),12);
+		items.add(ts);
+	}
+
+	public void addtotintsm(String s1,int val) {
+		ts=ltrim(s1,prw-7)+" "+rtrim(Integer.toString(val),6);
 		items.add(ts);
 	}
 

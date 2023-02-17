@@ -66,8 +66,6 @@ public class clsDocument {
 
 	public boolean buildPrint(String corel,int reimpres) {
 
-		setAddlog("Build print",""+DU.getActDateTime(),"");
-
 		modofact="*";
 		rep.clear();
 				

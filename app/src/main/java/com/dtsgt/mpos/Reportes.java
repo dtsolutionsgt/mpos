@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.os.Bundle;
 
+import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.ladapt.ListAdaptProd;
 import android.os.Environment;
@@ -74,7 +75,7 @@ public class Reportes extends PBase {
     private final String CERO="0";
     private String nameProd;
     private String nameVend;
-    private String id_item;
+    private String id_item,name_item;
     private clsClasses.clsVenta itemV;
 
     private Reportes.clsDocExist doc;
@@ -144,12 +145,18 @@ public class Reportes extends PBase {
 
         setHandlers();
 
-        if(gl.reportid==3 || gl.reportid==4  || gl.reportid==7 ||
-           gl.reportid==8 || gl.reportid==11 || gl.reportid==14 ){
-            txtTitle.setVisibility(View.VISIBLE);
-            btnClear.setVisibility(View.VISIBLE);
-            txtFill.setVisibility(View.VISIBLE);
+        if(gl.reportid==3 || gl.reportid==4  || gl.reportid==7  ||
+           gl.reportid==8 || gl.reportid==11 || gl.reportid==14 ||
+           gl.reportid==15){
+
+            if (gl.reportid!=15) {
+                txtTitle.setVisibility(View.VISIBLE);
+                btnClear.setVisibility(View.VISIBLE);
+                txtFill.setVisibility(View.VISIBLE);
+            }
+
             lvReport.setVisibility(View.VISIBLE);
+
             listItems();
         }
 
@@ -209,7 +216,7 @@ public class Reportes extends PBase {
                         adaptFill.setSelectedIndex(position);
 
                         report =  false;
-                        id_item = item.Cod;
+                        id_item = item.Cod;name_item=item.Desc;
 
                         if(id_item.equals("NO")) { lblProd.setText("");}
 
@@ -314,7 +321,7 @@ public class Reportes extends PBase {
 
             if(!vF.isEmpty()) condi = " WHERE CODIGO LIKE '%"+vF+"%'";
 
-            switch(gl.reportid){
+            switch (gl.reportid){
 
                 case 3:
                     sql="SELECT CODIGO, NOMBRE FROM P_LINEA"+ condi;
@@ -337,6 +344,10 @@ public class Reportes extends PBase {
                     if(!vF.isEmpty()) sql+= " AND (CODIGO LIKE '%"+vF+"%')";
                     sql+= " ORDER BY DESCCORTA";
                     break;
+                case 15:
+                    sql="SELECT CODIGO_VENDEDOR, NOMBRE FROM P_CORTESIA ORDER BY NOMBRE";
+                    break;
+
 
             }
 
@@ -367,6 +378,9 @@ public class Reportes extends PBase {
                         break;
                     case 11:
                         sql="SELECT CODIGO, NOMBRE FROM P_CLIENTE"+ condi;
+                        break;
+                    case 15:
+                        sql="SELECT CODIGO_VENDEDOR, NOMBRE FROM P_CORTESIA ORDER BY NOMBRE";
                         break;
                 }
 
@@ -462,11 +476,13 @@ public class Reportes extends PBase {
 
             if(!report) {
                 if(fillItems()){
-                    if (itemR.size() == 0) {
-                        msgbox("No se ha realizado ninguna venta con los parámetros indicados.");
-                        return;
-                    }
+                    if (gl.reportid<15) {
+                        if (itemR.size() == 0) {
+                            msgbox("No se ha realizado ninguna venta con los parámetros indicados.");
+                            return;
+                        }}
                     gl.QRCodeStr="";
+                    //if (gl.reportid<15)
                     doc.buildPrint("0", 0);
                     getTXT();
                     lblImp.setText("IMPRIMIR");
@@ -479,7 +495,7 @@ public class Reportes extends PBase {
                 printDoc();
             }
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             msgbox("msgAskReport: "+e);
         }
@@ -519,6 +535,8 @@ public class Reportes extends PBase {
 
         try{
             itemR.clear();
+
+            if (gl.reportid==15) return true;
 
             switch (gl.reportid){
                 case 1:
@@ -817,6 +835,7 @@ public class Reportes extends PBase {
             if(gl.reportid==5) nombre="REPORTE VENTA POR FAMILIA";
             if(gl.reportid==6) nombre="REPORTE VENTAS POR VENDEDOR";
             if(gl.reportid==11) nombre="REPORTE FACTURAS ANULADAS";
+            if(gl.reportid==15) nombre="CORTESIAS";
 
             numero="";
             serie="";
@@ -834,6 +853,7 @@ public class Reportes extends PBase {
             double costo;
             String fecha1,fecha2;
 
+
             try {
 
                 tot=0;
@@ -846,6 +866,10 @@ public class Reportes extends PBase {
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
                 /*rep.empty();
                 rep.line();*/
+
+                if (gl.reportid==15) {
+                    return reporteCortesias();
+                }
 
                 for (int i = 0; i <itemR.size(); i++) {
 
@@ -1262,6 +1286,8 @@ public class Reportes extends PBase {
 
         protected boolean buildFooter() {
 
+            if (gl.reportid==15) return true;
+
             try {
 
                 if(gl.reportid==1){
@@ -1305,28 +1331,64 @@ public class Reportes extends PBase {
 
         }
 
-    }
+        private boolean reporteCortesias() {
+            Cursor dt=null;
+            long ff;
 
-    //endregion
+            try {
 
-    //region Activity Events
+                rep.clear();
+                rep.empty();
+                rep.addc("REPORTE CORTESIAS");
+                rep.empty();
+                rep.addc(fecharango);
+                if (!id_item.equalsIgnoreCase("Todos")) rep.addc("Filtro: "+name_item);
+                setDatosVersion();
 
-    @Override
-    protected  void onResume(){
-        try{
-            super.onResume();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+                clsD_MovObj D_movObj=new clsD_MovObj(cont,Con,db);
+                sql="WHERE (TIPO='C') AND (ANULADO=0) AND ((FECHA>="+dateini+") AND (FECHA<="+datefin+")) ";
+                if (!id_item.equalsIgnoreCase("Todos")) sql+=" AND (USUARIO="+id_item+")";
+                D_movObj.fill(sql);
+
+                for (int ii = 0; ii <D_movObj.count; ii++) {
+                    ff=D_movObj.items.get(ii).FECHA;
+                    rep.add(du.sfecha(ff)+" "+du.shora(ff)+"   "+D_movObj.items.get(ii).REFERENCIA);
+                    rep.line();
+
+                    try {
+                        sql="SELECT P_PRODUCTO.DESCLARGA,-D_MOVD.CANT FROM D_MOVD " +
+                            "INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=D_MOVD.PRODUCTO " +
+                            "WHERE (COREL='"+D_movObj.items.get(ii).COREL+"') " +
+                            "ORDER BY P_PRODUCTO.DESCLARGA";
+                        dt=Con.OpenDT(sql);
+
+                        if (dt.getCount()>0) {
+                            dt.moveToFirst();
+                            while (!dt.isAfterLast()) {
+                                rep.addtotintsm(dt.getString(0),dt.getInt(1));
+                                dt.moveToNext();
+                            }
+                        }
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                    rep.line();
+                }
+
+                rep.addc("FIN DEL REPORTE");
+                rep.line();
+
+                rep.empty();rep.empty();rep.empty();
+
+                D_movObj.items.clear();
+                if (dt!=null) dt.close();
+
+                return true;
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+            }
         }
-    }
 
-    @Override
-    protected void onPause() {
-        try{
-            super.onPause();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
     }
 
     //endregion
@@ -1365,6 +1427,28 @@ public class Reportes extends PBase {
             return point.x>point.y;
         } catch (Exception e) {
             return true;
+        }
+    }
+
+    //endregion
+
+    //region Activity Events
+
+    @Override
+    protected  void onResume(){
+        try{
+            super.onResume();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        try{
+            super.onPause();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 
