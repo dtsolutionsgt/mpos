@@ -2820,15 +2820,15 @@ public class Venta extends PBase {
             rep.clear();
             rep.empty();
             rep.empty();
-            rep.empty();
-            rep.empty();
-            rep.empty();
-            rep.empty();
+            //rep.empty();
+            //rep.empty();
+            //rep.empty();
+            //rep.empty();
             rep.add("ORDEN MESA : "+mesa);
-            rep.empty();
+            //rep.empty();
             rep.add("Hora       : "+du.shora(du.getActDateTime()));
             rep.line();
-            rep.empty();
+            //rep.empty();
 
             T_ventaObj.fill();
 
@@ -2859,12 +2859,14 @@ public class Venta extends PBase {
             rep.empty();
             rep.empty();
 
+            /*
             ln=rep.items.size();
             if (ln<20) {
                 for (int i = 0; i <20-ln; i++) {
                     rep.empty();
                 }
             }
+            */
 
             rep.save();
 

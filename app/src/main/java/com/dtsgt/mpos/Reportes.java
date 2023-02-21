@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.os.Bundle;
 
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.ladapt.ListAdaptProd;
 import android.os.Environment;
@@ -57,10 +58,13 @@ public class Reportes extends PBase {
     private final ArrayList<clsClasses.clsReport> itemR= new ArrayList<clsClasses.clsReport>();
     private final ArrayList<String> spinlist = new ArrayList<String>();
     private final ArrayList<String> spincode = new ArrayList<String>();
+
     private ListAdaptExist adapter;
     private ListAdaptProd adaptFill;
     private ListReportVenta adapt;
+
     private clsClasses.clsReport item;
+    private clsD_facturapObj D_facturapObj;
 
     private clsDocFactura fdoc;
     private double cantT,disp,dispm,dispT;
@@ -144,6 +148,8 @@ public class Reportes extends PBase {
         lblImp.setText("GENERAR");
 
         setHandlers();
+
+        D_facturapObj=new clsD_facturapObj(this,Con,db);
 
         if(gl.reportid==3 || gl.reportid==4  || gl.reportid==7  ||
            gl.reportid==8 || gl.reportid==11 || gl.reportid==14 ||
@@ -547,7 +553,7 @@ public class Reportes extends PBase {
                             "GROUP BY SERIE, IMPMONTO, CAST(FECHA/10000 AS INTEGER) " +
                             "ORDER BY CAST(FECHA/10000 AS INTEGER)";
                     */
-                    sql="SELECT '', SERIE, CORELATIVO, '', '', '', COREL, IMPMONTO, TOTAL, CAST(FECHA/10000 AS INTEGER) " +
+                    sql="SELECT COREL, SERIE, CORELATIVO, '', '', '', COREL, IMPMONTO, TOTAL, CAST(FECHA/10000 AS INTEGER) " +
                             "FROM D_FACTURA WHERE (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
                             "AND ANULADO=0 " +
                             "ORDER BY CORELATIVO";
@@ -848,8 +854,10 @@ public class Reportes extends PBase {
         }
 
         protected boolean buildDetail() {
+
+
             int acc=1;
-            String series="", fecha="";
+            String series="", fecha="",cr;
             double costo;
             String fecha1,fecha2;
 
@@ -904,6 +912,13 @@ public class Reportes extends PBase {
                         totSinImp = itemR.get(i).total - itemR.get(i).imp;
                         //rep.add3Tot(itemR.get(i).correl,totSinImp,itemR.get(i).imp, itemR.get(i).total);
                         rep.add3TotR(itemR.get(i).correl,totSinImp,itemR.get(i).imp, itemR.get(i).total);
+
+                        D_facturapObj.fill("WHERE (COREL='"+itemR.get(i).corel+"')");
+                        if (D_facturapObj.count>0) {
+                            if (D_facturapObj.first().tipo.equalsIgnoreCase("K")) {
+                                rep.add("-- Autorizacion: "+D_facturapObj.first().desc1);
+                            }
+                        }
 
                         tot += itemR.get(i).total;
                         sinImp += totSinImp;

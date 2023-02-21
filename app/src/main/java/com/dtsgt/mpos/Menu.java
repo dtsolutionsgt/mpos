@@ -794,7 +794,7 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
 					if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
 					if (mt.equalsIgnoreCase("Barril")) menuBarril();
-					if (mt.equalsIgnoreCase("Inventario centralizado")) menuInvCentral();
+					if (mt.equalsIgnoreCase("Inventario centralizado")) validaSuperInvCent();
 
 					listdlg.dismiss();
 				} catch (Exception e) {}
@@ -879,6 +879,51 @@ public class Menu extends PBase {
 		} catch (Exception e){}
 	}
 
+	private void validaSuperInvCent() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					menuInvCentral();
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+
 	public void menuInvCentral() {
 
 		try {
@@ -891,8 +936,7 @@ public class Menu extends PBase {
 			listdlg.add("Inventario inicial");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
-				//consultaInvCentral(position);
-				consultaInvCentral(2);
+				validaInventarioCentral();
 				listdlg.dismiss();
 			});
 
@@ -902,6 +946,36 @@ public class Menu extends PBase {
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+
+	}
+
+	private void validaInventarioCentral() {
+		Cursor dt;
+
+		try {
+
+			sql="SELECT CANT FROM P_STOCK";
+			dt=Con.OpenDT(sql);
+			if (dt.getCount()>0) {
+				msgbox("Antes de procesar inventario inicial debe iniciar inventario inicial");return;
+			}
+
+			sql="SELECT CANT FROM P_STOCK_ALMACEN";
+			dt=Con.OpenDT(sql);
+			if (dt.getCount()>0) {
+				msgbox("Antes de procesar inventario inicial debe iniciar inventario inicial");return;
+			}
+
+			gl.cajaid=5;
+			if(valida()){
+				msgbox("El inventario inicial se puede realizar únicamente cuando la caja está cerrada-");return;
+			}
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		msgAskInvInic("Este proceso eliminará todas las existencías y creará las existencias nuevas.\n¿Continuar? ");
 
 	}
 
@@ -1312,7 +1386,7 @@ public class Menu extends PBase {
 				Runnable mrunner=new Runnable() {
 					@Override
 					public void run() {
-						limpiaTablas();;
+						limpiaTablas();
 					}
 				};
 				mtimer.postDelayed(mrunner,200);
@@ -2328,20 +2402,16 @@ public class Menu extends PBase {
 	}
 
 	private boolean cajaCerrada(){
-
 		boolean resultado=false;
 
 		try{
-
 			gl.cajaid=5;
-
 			if(!valida()){
 				if (gl.cajaid==5){
 					msgAskIniciarCaja("Caja cerrada. ¿Inicializar?");
 				}
 			}
-
-		}catch (Exception ex){
+		} catch (Exception ex){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
 			msgbox("Ocurrió error (valida) "+ex);
 		}
@@ -2964,7 +3034,17 @@ public class Menu extends PBase {
 		dialog.show();
 	}
 
-    //endregion
+	private void msgAskInvInic(String msg) {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage(msg);
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) -> consultaInvCentral(2));
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+
+	//endregion
 
 	//region Activity Events
 	

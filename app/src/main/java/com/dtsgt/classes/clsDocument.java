@@ -667,7 +667,7 @@ public class clsDocument {
                 } else l=numero;
 
                 if (facturaflag) {
-                    l="%%%Serie: "+serie +" No.: "+l;
+                    l="Serie: "+serie +" No.: "+l;
                 } else {
                     sfticket=serie+l;l="";
                 }
@@ -954,7 +954,7 @@ public class clsDocument {
                 if (l.indexOf("@Serie")>=0) {
                     l = StringUtils.replace(l,"@Serie","");
                 }
-                l="%%%Serie: "+serie +" No.: "+numero;
+                l="Serie: "+serie +" No.: "+numero;
             } else {
                 l="##";
             }

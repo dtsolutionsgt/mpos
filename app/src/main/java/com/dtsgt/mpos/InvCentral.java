@@ -457,8 +457,17 @@ public class InvCentral extends PBase {
     //region Aux
 
     private void enviaEstado(int estado) {
+        String cmd;
+        String fs = "" + du.univfechahora(du.getActDateTime());
+
         try {
-            String cmd="UPDATE P_STOCK_INVENTARIO_ENC SET ESTADO="+estado+" WHERE (CODIGO_INVENTARIO_ENC="+idinv+")";
+            cmd="UPDATE P_STOCK_INVENTARIO_ENC SET ESTADO="+estado+",";
+            if (estado==2) {
+                cmd+="FECHA_APLICACION='"+fs+"',USUARIO_APLICO="+gl.codigo_vendedor+" ";
+            } else {
+                cmd+="fec_mod='"+fs+"',user_mod="+gl.codigo_vendedor+" ";
+            }
+            cmd+="WHERE (CODIGO_INVENTARIO_ENC="+idinv+")";
 
             Intent intent = new Intent(InvCentral.this, srvCommit.class);
             intent.putExtra("URL",gl.wsurl);
@@ -521,13 +530,32 @@ public class InvCentral extends PBase {
     public void msgAskAplicar() {
 
         ExDialog dialog = new ExDialog(this);
-        dialog.setMessage("¿Aplicar carga de inventario?");
+        dialog.setMessage("Este proceso creara las nuevas existencias.\n¿Continuar?");
         dialog.setCancelable(false);
 
-        dialog.setPositiveButton("Aplicar", (dialog12, which) -> {
+        dialog.setPositiveButton("Continuar", (dialog12, which) -> {
+            try {
+                msgAskAplicar2();
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+        });
+
+        dialog.setNegativeButton("Salir", (dialog1, which) -> {});
+
+        dialog.show();
+    }
+
+    public void msgAskAplicar2() {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage("¿Está seguro?");
+        dialog.setCancelable(false);
+
+        dialog.setPositiveButton("Continuar", (dialog12, which) -> {
             try {
                 if (applyInventory()) {
-                    //enviaEstado(2);
+                    enviaEstado(2);
                     msgAskOK();
                 } else showInvErrors();
             } catch (Exception e) {
@@ -571,7 +599,7 @@ public class InvCentral extends PBase {
         dialog.setPositiveButton("OK", (dialog12, which) -> {
             try {
                 db.execSQL("DELETE FROM P_STOCK_INV_DET WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
-                enviaEstado(0);
+                enviaEstado(2);
                 finish();
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

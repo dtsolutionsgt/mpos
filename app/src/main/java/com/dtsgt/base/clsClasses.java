@@ -1630,7 +1630,7 @@ public class clsClasses {
 	
 	public class clsExist {
 		public String Cod,Desc,Fecha,Valor,ValorM,ValorT,Peso,PesoM,PesoT;
-		public String Lote,Doc,Centro,Stat,precio,total;
+		public String Lote,Doc,Centro,Stat,precio,total,rcant;
 		public double cant,cantm;
 		public int id,flag,items;
 	}

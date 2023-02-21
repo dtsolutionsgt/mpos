@@ -107,7 +107,7 @@ public class Exist extends PBase {
 
 		setHandlers();
 
-        rep=new clsRepBuilder(this,gl.prw,false,gl.peMon,gl.peDecImp,"");
+        rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
         P_almacenObj=new clsP_almacenObj(this,Con,db);
         almacenes=tieneAlmacenes();
@@ -205,14 +205,14 @@ public class Exist extends PBase {
 
 	public void printDoc(View view) {
 		try{
-			if(items.size()==0){
+			if (items.size()==0){
 				msgbox("No hay inventario disponible");
 				return;
 			}
-			if (doc.buildPrint("0",0)) {
-				//prn.printask();
-                app.doPrint();
-			}
+			//if (doc.buildPrint("0",0)) app.doPrint();
+
+            msgAskImprimir("Imprimir inventario");
+
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
@@ -321,8 +321,8 @@ public class Exist extends PBase {
 	private void listItems() {
 		Cursor dt, dp;
 		clsClasses.clsExist item,itemm,itemt;
-		String vF,pcod, cod, name, um, ump, sc, scm, sct="", sp, spm, spt="";
-		double val, valm, valt, peso, pesot, costo, total,gtotal=0;
+		String vF,pcod, cod, name, um, ump, sc, scm, sct="", sp, spm, spt="",rcant;
+		double val, valm, valt, peso, pesot, costo, total,gtotal=0,ccant;
 		int icnt;
 
 		items.clear();lblReg.setText(" ( 0 ) ");
@@ -416,6 +416,8 @@ public class Exist extends PBase {
 					valt += val + valm;
 					pesot += peso ;
 
+                    rcant = mu.frmint2((int) val) + " " + rep.ltrim(um, 2);
+
 					ump = gl.umpeso;
 					sp = mu.frmdecimal(peso, gl.peDecImp) + " " + rep.ltrim(ump, 3);
 					if (!gl.usarpeso) sp = "";
@@ -444,6 +446,8 @@ public class Exist extends PBase {
 					item.Peso = sp;itemm.Peso = sp;
 					item.PesoM = spm;itemm.PesoM = spm;
 					item.PesoT = spt;item.PesoT = spt;
+
+                    item.rcant=rcant;
 
 					item.Lote = dt.getString(5);//if (mu.emptystr(item.Lote)) item.Lote =cod;
                     itemm.Lote = item.Lote;
@@ -1227,6 +1231,54 @@ public class Exist extends PBase {
 
     }
 
+    private void imprimirInventario() {
+        clsClasses.clsExist item;
+        String s1,s2;
+
+        try {
+            rep.clear();
+
+            rep.empty();
+            rep.addc("REPORTE DE EXISTENCIAS");
+            setDatosVersion();
+
+            for (int i = 0; i <items.size(); i++) {
+                item=items.get(i);
+
+                if (item.flag==1) {
+                    s1 = item.Desc;
+                    s2 = item.rcant;
+                    rep.addtotrs(s1, s2);
+                }
+            }
+
+            rep.line();
+            rep.addc("FIN DE REPORTE");
+            rep.empty();
+            rep.empty();
+            rep.empty();
+
+            rep.save();
+
+            app.doPrint(1,0);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void setDatosVersion() {
+        rep.empty();
+        rep.line();
+        rep.add("Empresa: " + gl.empnom);
+        rep.add("Sucursal: " + gl.tiendanom);
+        rep.add("Caja: " + gl.rutanom);
+        rep.add("Impresión: "+du.sfecha(du.getActDateTime())+" "+du.shora(du.getActDateTime()));
+        rep.add("Vesión MPos: "+gl.parVer);
+        rep.add("Generó: "+gl.vendnom);
+        rep.line();
+    }
+
+
     //endregion
 
     //region Dialogs
@@ -1333,6 +1385,26 @@ public class Exist extends PBase {
         dialog.show();
 
     }
+
+    private void msgAskImprimir(String msg) {
+        ExDialog dialog = new ExDialog(this);
+
+        dialog.setMessage("¿" + msg + "?");
+
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                imprimirInventario();
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
+    }
+
 
     //endregion
 

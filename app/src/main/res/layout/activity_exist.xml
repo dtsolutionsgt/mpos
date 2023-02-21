@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@+id/relRoad"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="100dp">
 
         <TextView
             android:id="@+id/textView268"
@@ -135,8 +136,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/relalm1"
         android:layout_alignLeft="@+id/listView1"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginEnd="100dp"
         android:layout_toStartOf="@+id/imageView78"
         android:maxLines="1">
 
@@ -193,6 +195,7 @@
         android:layout_alignTop="@+id/txtFilter"
         android:layout_alignBottom="@+id/txtFilter"
         android:layout_marginStart="10dp"
+        android:layout_marginEnd="100dp"
         android:layout_toEndOf="@+id/txtFilter"
         android:adjustViewBounds="true"
         android:clickable="true"
@@ -263,20 +266,20 @@
 
     <ImageView
         android:id="@+id/imageView78"
-        android:layout_width="wrap_content"
+        android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/textView187"
-        android:layout_alignStart="@+id/textView187"
         android:layout_alignTop="@+id/imageView77"
-        android:layout_alignEnd="@+id/textView187"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginBottom="0dp"
         android:clickable="true"
-        android:onClick="doEnviar"
-        android:src="@drawable/enviar_archivos"
-        android:visibility="invisible" />
+        android:onClick="printDoc"
+        android:padding="5dp"
+        android:src="@drawable/reimpresion48"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/textView254"
