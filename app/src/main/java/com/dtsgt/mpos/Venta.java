@@ -51,6 +51,7 @@ import com.dtsgt.classes.clsP_orden_numeroObj;
 import com.dtsgt.classes.clsP_prodclasifmodifObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
@@ -1041,9 +1042,16 @@ public class Venta extends PBase {
             umb=um;fact=1;
         }
 
+        if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            prec=prodPrecioBaseImp(app.codigoProducto(prodid));
+        }
+        prec=mu.round(prec,2);
+
         cantbas=cant*fact;
         peso=mu.round(gl.dpeso*gl.umfactor,gl.peDec);
         prodtot=mu.round(prec*cant,2);
+
+
 
         try {
 
@@ -2097,6 +2105,7 @@ public class Venta extends PBase {
                           //pprec=prodPrecioBase(item.icod);
 
                         pprec=prodPrecioBaseImp(item.icod);
+                        pprec=mu.round(pprec,2);
 
                         //item.Name=dt.getString(1)+" \n[ "+gl.peMon+pprec+" ]";
                           item.Name=dt.getString(1)+"  [ "+gl.peMon+mu.frmcur_sm(pprec)+" ]";
@@ -2853,11 +2862,14 @@ public class Venta extends PBase {
             }
 
             rep.empty();
+            /*
             rep.empty();
             rep.empty();
             rep.empty();
             rep.empty();
             rep.empty();
+
+             */
 
             /*
             ln=rep.items.size();
@@ -3764,12 +3776,18 @@ public class Venta extends PBase {
         Cursor dt;
 
         try {
-            sql="SELECT VENDEDORES.CODIGO_VENDEDOR, VENDEDORES.NOMBRE " +
+            clsP_vendedor_rolObj P_vendedor_rolObj=new clsP_vendedor_rolObj(this,Con,db);
+            P_vendedor_rolObj.fill("WHERE (codigo_sucursal="+gl.tienda+") AND (codigo_rol=4) ");
+
+            if (P_vendedor_rolObj.count>0) {
+                meseros=true;
+            } else {
+                sql="SELECT VENDEDORES.CODIGO_VENDEDOR, VENDEDORES.NOMBRE " +
                     "FROM VENDEDORES INNER JOIN P_RUTA ON VENDEDORES.RUTA=P_RUTA.CODIGO_RUTA " +
                     "WHERE (P_RUTA.SUCURSAL="+gl.tienda+") AND (VENDEDORES.NIVEL=4) ORDER BY VENDEDORES.NOMBRE";
-            dt=Con.OpenDT(sql);
-
-            meseros=dt.getCount()>0;
+                dt=Con.OpenDT(sql);
+                meseros=dt.getCount()>0;
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             meseros=false;

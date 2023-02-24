@@ -141,8 +141,9 @@ public class Menu extends PBase {
 
 			cajaCerrada();
 
-            gl.ingreso_mesero=gl.rol==4;
-            if (gl.ingreso_mesero && gl.after_login) autoLoginMesero();
+			gl.ingreso_mesero=false;
+            //gl.ingreso_mesero=gl.rol==4;
+            //if (gl.ingreso_mesero && gl.after_login) autoLoginMesero();
 
 			app.getURL();
 
@@ -150,7 +151,7 @@ public class Menu extends PBase {
 
 			rnInvCent = new Runnable() {
 				public void run() {
-					callbackInvCent();
+					//callbackInvCent();
 				}
 			};
 
@@ -206,15 +207,14 @@ public class Menu extends PBase {
 
                     //if (app.grant(1,gl.rol))
                     addMenuItem(1,"Venta");
-                    if (app.grant(2,gl.rol)) addMenuItem(6,"Caja");
-                    if (app.grant(3,gl.rol)) addMenuItem(3,"Reimpresión");
-                    if (app.grant(4,gl.rol)) addMenuItem(7,"Inventario");
+                    addMenuItem(6,"Caja");
+                    addMenuItem(3,"Reimpresión");
+                    addMenuItem(7,"Inventario");
                     addMenuItem(2,"Comunicación");
-                    //if (app.grant(5,gl.rol)) addMenuItem(2,"Comunicación");
-                    if (app.grant(6,gl.rol)) addMenuItem(9,"Utilerias");
-                    if (app.grant(7,gl.rol)) addMenuItem(11,"Mantenimientos");
-                    if (app.grant(8,gl.rol)) addMenuItem(12,"Reportes");
-                    if (app.grant(9,gl.rol)) addMenuItem(4,"Anulación");
+                    addMenuItem(9,"Utilerias");
+                    addMenuItem(11,"Mantenimientos");
+                    addMenuItem(12,"Reportes");
+                    addMenuItem(4,"Anulación");
 
                 } else {
 
@@ -402,15 +402,7 @@ public class Menu extends PBase {
 				case 10:  // Cambio usuario
 					askCambUsuario();break;
 				case 11:
-				    if (gl.peMCent) {
-                        if (app.grant(11,gl.rol)) {
-                            showMantMenu();
-                        } else {
-                            if (app.grant(12,gl.rol)) showMantCliente();
-                       }
-                    } else {
-                        if (gl.rol>2) showMantMenu(); else showMantCliente();
-                    }
+					if (gl.rol==3) showMantMenu(); else showMantCliente();
 					break;
 				case 12:
 					showReportMenu();break;
@@ -2745,10 +2737,13 @@ public class Menu extends PBase {
     }
 
     public void autoLoginMesero() {
+		/*
         gl.after_login=false;
         menuid=1;
         toast("Validando ingreso . . .");
         showMenuItem();
+
+		 */
     }
 
     public boolean tieneAlmacenes() {

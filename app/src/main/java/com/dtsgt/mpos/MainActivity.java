@@ -75,7 +75,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.5.5.0";  // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.5.8.0";  // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
                                         // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;
@@ -310,7 +310,9 @@ public class MainActivity extends PBase {
 
             gl.after_login=true;
 
-            if (gl.rol==4) toast("INICIANDO INGRESO MESERO. \n ESPERE , POR FAVOR . . .");
+            if (gl.rol==4) {
+                //toast("INICIANDO INGRESO MESERO. \n ESPERE , POR FAVOR . . .");
+            }
 
             startActivity(new Intent(this, Menu.class));
 
@@ -669,8 +671,10 @@ public class MainActivity extends PBase {
             }
 
 
+            //sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO, CODIGO_VENDEDOR FROM VENDEDORES " +
+            //        "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
             sql = "SELECT NOMBRE,CLAVE,NIVEL,NIVELPRECIO, CODIGO_VENDEDOR FROM VENDEDORES " +
-                    "WHERE (CODIGO='" + usr + "') AND (RUTA='" + gl.codigo_ruta + "') COLLATE NOCASE";
+                  "WHERE (CODIGO='" + usr + "') COLLATE NOCASE";
             DT = Con.OpenDT(sql);
 
             /*
@@ -715,11 +719,19 @@ public class MainActivity extends PBase {
 
             gl.rol=0;
             for (int i = 0; i <P_vendedor_rolObj.count; i++) {
-                if (P_vendedor_rolObj.items.get(i).codigo_rol==1) gl.rol=1;
-                if (P_vendedor_rolObj.items.get(i).codigo_rol==2) gl.rol=2;
-                if (P_vendedor_rolObj.items.get(i).codigo_rol==3) gl.rol=3;
+                if (P_vendedor_rolObj.items.get(i).codigo_rol==1) {
+                    gl.rol=1;
+                }
+                if (P_vendedor_rolObj.items.get(i).codigo_rol==2) {
+                    gl.rol=2;
+                }
+                if (P_vendedor_rolObj.items.get(i).codigo_rol==3) {
+                    gl.rol=3;
+                }
                 if (gl.rol<3) {
-                    if (P_vendedor_rolObj.items.get(i).codigo_rol == 4) gl.rol = 4;
+                    if (P_vendedor_rolObj.items.get(i).codigo_rol == 4) {
+                        gl.rol = 4;
+                    }
                 }
             }
 
