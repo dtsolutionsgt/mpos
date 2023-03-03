@@ -20,12 +20,17 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsD_MovDObj;
+import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_mov_almacenObj;
+import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
+import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsVendedoresObj;
@@ -58,6 +63,8 @@ public class AppMethods {
 
     public ArrayList<String> citems= new ArrayList<String>();
 
+	private clsRepBuilder rep;
+
 	private Context cont;
 	private appGlobals gl;
 	private SQLiteDatabase db;
@@ -72,14 +79,19 @@ public class AppMethods {
 	private Location location;
 
 	public AppMethods(Context context,appGlobals global,BaseDatos dbconnection, SQLiteDatabase database) {
+		try {
+			cont=context;
+			gl=global;
+			Con=dbconnection;
+			db=database;
 
-		cont=context;
-		gl=global;
-		Con=dbconnection;
-		db=database;
+			ins=Con.Ins;
+			upd=Con.Upd;
 
-		ins=Con.Ins;
-		upd=Con.Upd;
+			//rep=new clsRepBuilder(context,gl.prw,true,gl.peMon,gl.peDecImp, "");
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	public void reconnect(BaseDatos dbconnection, SQLiteDatabase database) 	{
@@ -1820,6 +1832,10 @@ public class AppMethods {
         }
     }
 
+    //endregion
+
+	//region Impresion inventario
+
 	public void printView() {
 		try {
 			cont.startActivity(new Intent(cont, PrintView.class));
@@ -1828,7 +1844,7 @@ public class AppMethods {
 		}
 	}
 
-    //endregion
+	//endregion
 
     //region Pedidos / Mesas
 

@@ -77,7 +77,7 @@ public class Menu extends PBase {
 
 	private ListAdaptMenuGrid adaptergrid;
 	private ExDialog menudlg;
-	private extWaitDlg waitdlg;
+	private extWaitDlg waitdlg,waitdlglimp;
 
     private clsP_cajacierreObj caja;
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
@@ -156,6 +156,7 @@ public class Menu extends PBase {
 			};
 
 			waitdlg= new extWaitDlg();
+			waitdlglimp= new extWaitDlg();
 
 		} catch (Exception e) {
 			msgbox(e.getMessage());
@@ -1073,7 +1074,7 @@ public class Menu extends PBase {
 						case 4:
 							msgAskFEL("Certificar facturas pendientes");break;
 						case 5:
-							Limpiar_Tablas_No_Criticas();break;
+							validaSuperLimpia();break;
 						case 6:
 							estadoBluTooth();break;
 						case 7:
@@ -1367,12 +1368,13 @@ public class Menu extends PBase {
 		try {
 
 			ExDialog dialog = new ExDialog(this);
-			dialog.setMessage("¿Borrar registros?");
+			dialog.setMessage("¿Limpiar tablas?");
 			dialog.setCancelable(false);
 
 			dialog.setPositiveButton("Si", (dialog12, which) -> {
 
-				msgbox("Limpiando datos, por favor espere el mensaje y luego cierre este dialogo.");
+				waitdlglimp.buildDialog(this,"Limpiando tablas, por favor espere . . .","Ocultar");
+				waitdlglimp.show();
 
 				Handler mtimer = new Handler();
 				Runnable mrunner=new Runnable() {
@@ -1381,7 +1383,7 @@ public class Menu extends PBase {
 						limpiaTablas();
 					}
 				};
-				mtimer.postDelayed(mrunner,200);
+				mtimer.postDelayed(mrunner,1000);
 
 			});
 			dialog.setNegativeButton("No", (dialog1, which) -> {});
@@ -1413,7 +1415,6 @@ public class Menu extends PBase {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 
-
 		try {
 			db.beginTransaction();
 
@@ -1437,18 +1438,22 @@ public class Menu extends PBase {
 			db.endTransaction();msgbox(e.getMessage());
 		}
 
-
-		try {
-
-		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-
 		try {
 			db.execSQL("VACUUM");
 		} catch (Exception e) {}
 
-		msgbox("Limpieza de datos completa.");
+		waitdlglimp.dismiss();
+
+		try {
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage("Limpieza de tablas completa.");
+			dialog.setCancelable(false);
+
+			dialog.setPositiveButton("OK", (dialog12, which) -> {});
+			dialog.show();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
 	}
 
@@ -1587,6 +1592,50 @@ public class Menu extends PBase {
 
 				if (listdlg.validPassword()) {
 					msgAskBorrarInventario("¿Inicializar inventario?");
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void validaSuperLimpia() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					Limpiar_Tablas_No_Criticas();
 					listdlg.dismiss();
 				} else {
 					toast("Contraseña incorrecta");

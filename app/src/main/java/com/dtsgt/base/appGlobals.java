@@ -47,7 +47,7 @@ public class appGlobals extends Application {
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,
-			       modo_cortesia,modo_apertura;
+			       modo_cortesia,modo_apertura,imp_inventario;
 
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;

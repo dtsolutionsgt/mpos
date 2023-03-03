@@ -172,6 +172,7 @@ public class ListaInventario extends PBase {
         }
 
         gl.corelmov="";
+        gl.imp_inventario=false;
 
         if (almacenes) {
 
@@ -264,7 +265,6 @@ public class ListaInventario extends PBase {
 
 
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
     }
@@ -299,7 +299,6 @@ public class ListaInventario extends PBase {
                             generarImpresion();
                         }
                     } catch (Exception e) {
-                        addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
                         mu.msgbox( e.getMessage());
                     }
                 };
@@ -332,8 +331,7 @@ public class ListaInventario extends PBase {
             });
 
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
+         }
     }
 
     //endregion
@@ -468,7 +466,6 @@ public class ListaInventario extends PBase {
             }
 
         } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox(e.getMessage());
         }
 
@@ -497,7 +494,6 @@ public class ListaInventario extends PBase {
             gl.idmov=itemid;
             startActivity(new Intent(this,InvVista.class));
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
     }
 
@@ -510,8 +506,7 @@ public class ListaInventario extends PBase {
             obtenerFecha();
             dateTxt = false;
         }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
+       }
 
     }
 
@@ -520,8 +515,7 @@ public class ListaInventario extends PBase {
             obtenerFecha();
             dateTxt = true;
         }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
+         }
 
     }
 
@@ -577,7 +571,6 @@ public class ListaInventario extends PBase {
             recogerFecha.show();
 
         }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
     }
@@ -599,8 +592,7 @@ public class ListaInventario extends PBase {
             datefin = du.cfechaRep((int) du.getyear(fecha),(int) du.getmonth(fecha),(int) du.getday(fecha),false);
 
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
+       }
     }
 
     //endregion
@@ -612,7 +604,7 @@ public class ListaInventario extends PBase {
 
         try {
 
-            rep.clear();;
+            rep.clear();
 
             switch (tipo) {
                 case 0: // Ingreso de mercancía
@@ -883,7 +875,6 @@ public class ListaInventario extends PBase {
             startActivity(new Intent(this, InvRecep.class));
 
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 
@@ -1039,6 +1030,18 @@ public class ListaInventario extends PBase {
         }
 
         listItems();
+
+        if (gl.imp_inventario) {
+            Handler mtimer = new Handler();
+            Runnable mrunner=new Runnable() {
+                @Override
+                public void run() {
+                    //generarImpresion();
+                }
+            };
+            mtimer.postDelayed(mrunner,2000);
+
+        }
     }
 
     @Override

@@ -581,6 +581,28 @@ public class Reportes extends PBase {
                             "AND F.ANULADO=0 " +
                             " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA "+
                             " ORDER BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA ";
+
+
+                    sql=" SELECT '', '', 0, D.PRODUCTO, P.DESCCORTA AS NOMBRE, D.UMVENTA, " +
+                        " SUM(D.CANT), 0, SUM(D.TOTAL), F.FECHA " +
+                        " FROM P_LINEA L " +
+                        " INNER JOIN P_PRODUCTO P ON L.CODIGO_LINEA = P.LINEA " +
+                        " INNER JOIN D_FACTURAD D ON D.PRODUCTO = P.CODIGO_PRODUCTO  " +
+                        " INNER JOIN D_FACTURA F ON F.COREL = D.COREL  " +
+                        " WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+") "+condition+" AND F.ANULADO=0 " +
+                        " GROUP BY D.PRODUCTO, P.DESCCORTA, D.UMVENTA " +
+                    " UNION " +
+                        " SELECT '', '', 0, D.IDSELECCION, P.DESCCORTA AS NOMBRE, P.UNIDBAS, " +
+                        " SUM(D.CANT), 0, 0, 0 " +
+                        " FROM   D_FACTURAC D " +
+                        " INNER JOIN D_FACTURA F ON D.COREL = F.COREL " +
+                        " INNER JOIN P_LINEA L ON L.CODIGO_LINEA = P.LINEA " +
+                        " INNER JOIN P_PRODUCTO P ON D.IDSELECCION =P.CODIGO_PRODUCTO " +
+                        " WHERE (F.FECHA BETWEEN "+ dateini +" AND "+datefin+") "+condition+" AND F.ANULADO=0 " +
+                        " GROUP BY D.IDSELECCION, P.DESCCORTA, P.UNIDBAS " +
+                    " ORDER BY NOMBRE ";
+
+
                     break;
                 case 4:
                     if(id_item.equals("Todos")){
@@ -1020,8 +1042,9 @@ public class Reportes extends PBase {
                             rep.addc(fecharango);
                             setDatosVersion();
                             if(validCB==1) rep.add("            CONSOLIDADO");
-                            if(validCB==0) rep.add("Cod   Descripcion");
-                            if(validCB==0) rep.add("Cant       UM       Total      %");
+                            if(validCB==0) rep.add("Cod            Descripcion");
+                            //if(validCB==0) rep.add("Cant       UM       Total      %");
+                            if(validCB==0) rep.add("Cant           UM               Total");
                             if(validCB==1) rep.add("Cod        Descripcion     Total");
                             rep.line();
                             acc = 2;

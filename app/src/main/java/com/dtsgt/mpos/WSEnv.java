@@ -334,8 +334,7 @@ public class WSEnv extends PBase {
             }
 
         } catch (Exception e) {
-            msgbox2(new Object() {
-            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            msgbox2("wsCallBack . " + e.getMessage());
             processComplete();
         }
     }
@@ -590,8 +589,8 @@ public class WSEnv extends PBase {
 
             if (tipo_producto.equalsIgnoreCase("P")) {
 
-                UpdateToStock = D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
-                if (!UpdateToStock.isEmpty()) CSQL = CSQL + UpdateToStock;
+                //UpdateToStock = D_facturadObj.addItemUpdateStockSql(D_facturadObj.items.get(i), gl.tienda) + ";";
+                //if (!UpdateToStock.isEmpty()) CSQL = CSQL + UpdateToStock;
 
                 if (gl.peInvCompart) {
 
@@ -872,6 +871,7 @@ public class WSEnv extends PBase {
 
             CSQL = CSQL + D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i)) + ";";
 
+            /*
             AppMethods f = new AppMethods(this, null, Con, db);
             String tipo_producto = f.prodTipo(item.producto);
 
@@ -884,6 +884,9 @@ public class WSEnv extends PBase {
                 }
             }
 
+             */
+
+            /*
             if (gl.peInvCompart && tipo_producto.equalsIgnoreCase("P")) {
                 for (int r = 0; r < rutas.size(); r++) {
                     ucant = item.cant;
@@ -894,6 +897,8 @@ public class WSEnv extends PBase {
                     CSQL = CSQL + vsql;
                 }
             }
+
+             */
 
         }
 

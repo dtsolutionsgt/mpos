@@ -219,7 +219,7 @@ public class CliPos extends PBase {
                 }
             }  if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 if (!validaNITHon(sNITCliente)) {
-                    msgbox("RTNT incorrecto");return;
+                    msgbox("RTN incorrecto");return;
                 }
             }
 
@@ -358,8 +358,12 @@ public class CliPos extends PBase {
 				public boolean onKey(View v, int keyCode, KeyEvent event) {
                     int i=0;
 					if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-                        consultaNITInfile();
-						return true;
+                        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                            consultaNITInfile();
+                        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                            buscaRTN();
+                        }
+                        return true;
 					} else {
          			    return false;
 					}
@@ -1352,6 +1356,88 @@ public class CliPos extends PBase {
         }
     }
 
+    private boolean NitValidadoInfile =false;
+
+    private void consultaNITInfile() {
+        String nc;
+        nrslt=false;
+        NitValidadoInfile = false;
+
+        if (!gl.codigo_pais.trim().equalsIgnoreCase("GT")) return ;
+
+        if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
+
+            nc=txtNIT.getText().toString();
+            if (nc.length()==13) return;
+
+            JSONObject params = new JSONObject();
+
+            try {
+
+                String nit = txtNIT.getText().toString().replace("-", "").toUpperCase();
+                params.put("emisor_codigo", gl.felUsuarioCertificacion);
+                params.put("emisor_clave", gl.felLlaveCertificacion);
+                params.put("nit_consulta", nit);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            RequestQueue queue = Volley.newRequestQueue(CliPos.this);
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, urlNit, params, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        if (!response.getString("nombre").equals("")) {
+                            txtNom.setText(response.getString("nombre").replace(",", " ").trim());
+                            nrslt=true;
+                            NitValidadoInfile= true;
+                        } else {
+                            toast("No se obtuvieron datos del cliente en Infile con el NIT proporcionado");
+                            txtNom.setText("");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    msgbox("Error consulta NIT Infile");
+                }
+            });
+
+            queue.add(request);
+        }
+    }
+
+    private void buscaRTN() {
+        Cursor DT;
+        String NIT;
+
+        try {
+            NIT=txtNIT.getText().toString();
+            if (mu.emptystr(NIT)) return;
+
+            sql="SELECT NOMBRE, DIRECCION, EMAIL FROM P_CLIENTE WHERE NIT='"+NIT+"'";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0){
+                DT.moveToFirst();
+
+                txtNom.setText(DT.getString(0));
+                txtRef.setText(DT.getString(1));
+                txtCorreo.setText(DT.getString(2));
+            }
+
+            if (DT!=null) DT.close();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
     //endregion
 
     //region Dialogos
@@ -1418,62 +1504,6 @@ public class CliPos extends PBase {
         });
 
         dialog.show();
-    }
-
-    private boolean NitValidadoInfile =false;
-
-    private void consultaNITInfile() {
-        String nc;
-        nrslt=false;
-        NitValidadoInfile = false;
-
-        if (!gl.codigo_pais.trim().equalsIgnoreCase("GT")) return ;
-
-        if  (!mu.emptystr(gl.felUsuarioCertificacion) && ! mu.emptystr(gl.felLlaveCertificacion) && !mu.emptystr(txtNIT.getText().toString())) {
-
-            nc=txtNIT.getText().toString();
-            if (nc.length()==13) return;
-
-            JSONObject params = new JSONObject();
-
-            try {
-
-                String nit = txtNIT.getText().toString().replace("-", "").toUpperCase();
-                params.put("emisor_codigo", gl.felUsuarioCertificacion);
-                params.put("emisor_clave", gl.felLlaveCertificacion);
-                params.put("nit_consulta", nit);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            RequestQueue queue = Volley.newRequestQueue(CliPos.this);
-
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, urlNit, params, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        if (!response.getString("nombre").equals("")) {
-                            txtNom.setText(response.getString("nombre").replace(",", " ").trim());
-                            nrslt=true;
-                            NitValidadoInfile= true;
-                        } else {
-                            toast("No se obtuvieron datos del cliente en Infile con el NIT proporcionado");
-                            txtNom.setText("");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    msgbox("Error consulta NIT Infile");
-                }
-            });
-
-            queue.add(request);
-        }
     }
 
     //endregion

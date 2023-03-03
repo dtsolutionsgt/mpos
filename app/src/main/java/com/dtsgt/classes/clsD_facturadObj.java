@@ -225,11 +225,14 @@ public class clsD_facturadObj {
 
         String vsql ="";
 
-        AppMethods f = new AppMethods(cont,null,Con,db);
-        String tipo_producto = f.prodTipo(item.producto);
+        //AppMethods f = new AppMethods(cont,null,Con,db);
+        //String tipo_producto = f.prodTipo(item.producto);
 
-        if (tipo_producto.equalsIgnoreCase("S")){
+        String tipo_producto = prodTipo(item.producto);
 
+
+        //if (tipo_producto.equalsIgnoreCase("S")){
+            if (tipo_producto.equalsIgnoreCase("P")){
             vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
             vsql +=" WHERE (EMPRESA="+item.empresa+")  AND (CODIGO_PRODUCTO="+item.producto+") " +
                    " AND (UNIDADMEDIDA='"+item.umpeso+"')" + "AND (SUCURSAL='"+Codigo_Sucursal+"')";
@@ -237,6 +240,28 @@ public class clsD_facturadObj {
 
         return vsql;
     }
+
+    public String prodTipo(int cod) {
+
+        Cursor DT;
+        String result="";
+
+        try {
+
+            String sql = "SELECT CODIGO_TIPO FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=" + cod;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            result = DT.getString(0);
+            if (DT!=null) DT.close();
+
+        } catch (Exception e) {
+            result="S";
+        }
+
+        return result;
+    }
+
 
     public String updateItemSql(clsClasses.clsD_facturad item) {
 

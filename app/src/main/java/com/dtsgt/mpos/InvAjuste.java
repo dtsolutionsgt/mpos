@@ -436,10 +436,12 @@ public class InvAjuste extends PBase {
 
                 movd.add(item);
 
-                if (adjustStock(imovr.producto,imovr.cant,imovr.unidadmedida)==0) errflag=true;
+                //if (adjustStock(imovr.producto,imovr.cant,imovr.unidadmedida)==0) errflag=true;
+                adjustStock(imovr.producto,imovr.cant,imovr.unidadmedida);
             }
 
             db.execSQL("DELETE FROM T_MOVR");
+            db.execSQL("DELETE FROM P_STOCK WHERE CANT=0");
 
             db.setTransactionSuccessful();
             db.endTransaction();
@@ -450,11 +452,11 @@ public class InvAjuste extends PBase {
                 toastlong("Existencias actualizadas");
             }
 
+            gl.autocom = 1;
+            startActivity(new Intent(this,WSEnv.class));
 
-            //if (gl.peInvCompart) {
-                gl.autocom = 1;
-                startActivity(new Intent(this,WSEnv.class));
-            //}
+            //gl.imp_inventario=true;
+            //gl.corelmov=corel;
 
             finish();
 
@@ -681,7 +683,8 @@ public class InvAjuste extends PBase {
                     dt.moveToFirst();ex1=dt.getDouble(0);
                 }
 
-                sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+                //sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+                sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+")  ";
                 db.execSQL(sql);
 
                 dt=Con.OpenDT("SELECT CANT FROM P_STOCK WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"')");
