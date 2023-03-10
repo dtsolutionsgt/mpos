@@ -984,7 +984,6 @@ public class Venta extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     private void prodPrecio() {
@@ -1232,7 +1231,7 @@ public class Venta extends PBase {
             savetot=mu.round(prec*cant,2);
             ptot=savetot-gl.promdesc;
             descmon = savetot-ptot;
-            desc=100*descmon/savetot;
+            if (savetot>0) desc=100*descmon/savetot;else desc=0;
 
             upd.init("T_VENTA");
 
@@ -4087,7 +4086,11 @@ public class Venta extends PBase {
         dialog.setPositiveButton("Si", (dialog1, which) -> {
             try {
                 gl.felcorel="";gl.feluuid="";
-                startActivity(new Intent(Venta.this, FELVerificacion.class));
+                if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+                    startActivity(new Intent(Venta.this, FELVerificacion.class));
+                } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+                    startActivity(new Intent(Venta.this, FELVerificacion.class));
+                }
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }

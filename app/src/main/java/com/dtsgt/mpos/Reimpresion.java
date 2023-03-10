@@ -489,13 +489,16 @@ public class Reimpresion extends PBase {
 		fdoc.deviceid =gl.deviceId;
 
 		try {
-			sql="SELECT IMPRES FROM D_FACTURA WHERE COREL='"+itemid+"'";
+			sql="SELECT IMPRES,RAZON_ANULACION FROM D_FACTURA WHERE COREL='"+itemid+"'";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 			impr=dt.getInt(0);
+			gl.parallevar=dt.getString(1).equalsIgnoreCase("P");
+
             if (dt!=null) dt.close();
 		} catch (Exception e) {
 			impr=1;
+			gl.parallevar=false;
 		}
 
 		try {
@@ -512,7 +515,7 @@ public class Reimpresion extends PBase {
 
 			if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 
-            if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
+		    if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
                 app.doPrint();
 

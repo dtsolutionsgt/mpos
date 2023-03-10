@@ -210,13 +210,16 @@ public class CliPos extends PBase {
 
             if (gl.codigo_pais.equalsIgnoreCase("GT")) {
 
-                if (sNITCliente.length()>18) {
+                if (sNITCliente.length()>13) {
                     msgbox("Identificación incorrecta");return;
                 }
 
-                if (!validaNIT(sNITCliente)) {
-                    msgbox("NIT incorrecto");return;
+                if (sNITCliente.length()!=13) {
+                    if (!validaNIT(sNITCliente)) {
+                        msgbox("NIT incorrecto");return;
+                    }
                 }
+
             }  if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 if (!validaNITHon(sNITCliente)) {
                     msgbox("RTN incorrecto");return;

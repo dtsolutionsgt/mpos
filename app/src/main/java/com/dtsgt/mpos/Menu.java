@@ -44,6 +44,7 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.classes.extWaitDlg;
+import com.dtsgt.fel.FELFactura;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
@@ -3048,7 +3049,12 @@ public class Menu extends PBase {
 		dialog.setPositiveButton("Si", (dialog1, which) -> {
 			try {
 				gl.felcorel="";gl.feluuid="";
-				startActivity(new Intent(Menu.this, FELVerificacion.class));
+
+				if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+					startActivity(new Intent(Menu.this, FELVerificacion.class));
+				} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+					startActivity(new Intent(Menu.this, FELVerificacion.class));
+				}
 			} catch (Exception e) {
 				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}

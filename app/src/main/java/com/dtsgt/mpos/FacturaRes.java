@@ -822,9 +822,7 @@ public class FacturaRes extends PBase {
 	}
 
  	private void finishOrder() {
-
 		try {
-
 			if (gl.rol==4) {
 				toast("El mesero no puede realizar venta en esta pantalla");
 				return;
@@ -864,9 +862,7 @@ public class FacturaRes extends PBase {
 					gl.InvCompSend=true;
 					impresionDocumento();
 				}
-
 			} else {
-
 				browse=2;
 				gl.felcorel=corel;
 				//#EJC202212141123: NO limpiar porque otra activity las va a utilizar aún.
@@ -874,7 +870,13 @@ public class FacturaRes extends PBase {
 				//gl.codigo_cliente=0;
 
 				//if (!gl.peNoEnviar) {
-					startActivity(new Intent(this, FELFactura.class));
+
+					if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+						startActivity(new Intent(this, FELFactura.class));
+					} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+						startActivity(new Intent(this, FELFactura.class));
+					}
+
 				//} else {
 					//impresionDocumento();
 				//}
@@ -1179,10 +1181,11 @@ public class FacturaRes extends PBase {
 			tipoNIT();
 			if (gl.nit_tipo.isEmpty()) gl.nit_tipo="N";
 			ins.add("AYUDANTE",gl.nit_tipo);
-
 			ins.add("CODIGOLIQUIDACION",0);
-			ins.add("RAZON_ANULACION","");
-            ins.add("FEELSERIE"," ");
+
+			if (gl.parallevar) ins.add("RAZON_ANULACION","P");else ins.add("RAZON_ANULACION","");
+
+				ins.add("FEELSERIE"," ");
             ins.add("FEELNUMERO"," ");
             ins.add("FEELUUID"," ");
             ins.add("FEELFECHAPROCESADO",0);
@@ -4246,7 +4249,6 @@ public class FacturaRes extends PBase {
 			return;
 		}
 
-
 		if (gl.gNITCliente.length() == 13) {
 			gl.nit_tipo = "C";
 			return;
@@ -4262,6 +4264,7 @@ public class FacturaRes extends PBase {
 			gl.nit_tipo = "N";
 		} else {
 			gl.nit_tipo = "E";
+			gl.gNITCliente = "CF";
 		}
 
 		if (gl.gNITCliente.length() > 18) {

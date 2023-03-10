@@ -1,8 +1,5 @@
 package com.dtsgt.fel;
 
-
-// InFile FEL Factura
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -37,7 +34,7 @@ import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class clsFELInFile {
+public class clsFELSal {
 
     public String error,fecha_factura;
     public Boolean errorflag,errorcon,constat,duplicado,modoiduni,iduniflag;
@@ -106,7 +103,7 @@ public class clsFELInFile {
     private String WSURLIdUni="https://certificador.feel.com.gt/fel/consulta/dte/v2/identificador_unico";
     private TextView lblProgress;
 
-    public clsFELInFile(Context context, PBase Parent,int conTimeout) {
+    public clsFELSal(Context context, PBase Parent,int conTimeout) {
         cont=context;
         parent=Parent;
         timeout=conTimeout;
@@ -564,7 +561,7 @@ public class clsFELInFile {
                     return;
                 }
             } catch (Exception e)  {
-               e.printStackTrace();
+                e.printStackTrace();
             }
         }
 
@@ -1033,6 +1030,7 @@ public class clsFELInFile {
     //region Firma Anulacion
 
     private void sendJSONFirmAnul() {
+
         try {
 
             s64=anulToBase64();
@@ -1275,11 +1273,11 @@ public class clsFELInFile {
                 String jstr=sb.toString();
                 jObj = new JSONObject(jstr);
 
-                try {
-                    error= jObj.getString("descripcion");
-                } catch (Exception e) {
-                    error= e.getMessage();
-                }
+//                try {
+//                    error= jObj.getString("descripcion");
+//                } catch (Exception e) {
+//                    error= e.getMessage();
+//                }
 
                 if (jObj.getBoolean("resultado")) {
                     errorflag=false;
@@ -1494,7 +1492,7 @@ public class clsFELInFile {
 
             pNombreCliente=pNombreCliente.trim();
             if (pNombreCliente.isEmpty() | pNombreCliente.equalsIgnoreCase("\n") |
-                pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
+                    pNombreCliente.equalsIgnoreCase(" ") | pNombreCliente.equalsIgnoreCase("  "))  pNombreCliente="Consumidor final";
 
             String characterFilter = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\s]";
             pDireccionCliente = pDireccionCliente.replaceAll(characterFilter,"");
@@ -1623,14 +1621,14 @@ public class clsFELInFile {
         NITEmisor = NITEmisor.replace("-","");
 
         xmlanul="<dte:GTAnulacionDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.1.0\" xmlns:n1=\"http://www.altova.com/samplexml/other-namespace\" " +
-        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0\">" +
-        "<dte:SAT>" +
-        "<dte:AnulacionDTE ID=\"DatosCertificados\">" +
-        "<dte:DatosGenerales FechaEmisionDocumentoAnular=\""+sf+"\" FechaHoraAnulacion=\""+sa+"\" ID=\"DatosAnulacion\" " +
-        "IDReceptor=\""+Idreceptor+"\" MotivoAnulacion=\"PRUEBA DE ANULACIÓN\" NITEmisor=\""+NITEmisor+"\" NumeroDocumentoAAnular=\""+uuid+"\"></dte:DatosGenerales>" +
-        "</dte:AnulacionDTE>" +
-        "</dte:SAT>" +
-        "</dte:GTAnulacionDocumento>";
+                "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.1.0\">" +
+                "<dte:SAT>" +
+                "<dte:AnulacionDTE ID=\"DatosCertificados\">" +
+                "<dte:DatosGenerales FechaEmisionDocumentoAnular=\""+sf+"\" FechaHoraAnulacion=\""+sa+"\" ID=\"DatosAnulacion\" " +
+                "IDReceptor=\""+Idreceptor+"\" MotivoAnulacion=\"PRUEBA DE ANULACIÓN\" NITEmisor=\""+NITEmisor+"\" NumeroDocumentoAAnular=\""+uuid+"\"></dte:DatosGenerales>" +
+                "</dte:AnulacionDTE>" +
+                "</dte:SAT>" +
+                "</dte:GTAnulacionDocumento>";
     }
 
     //endregion
@@ -1679,3 +1677,4 @@ public class clsFELInFile {
     //endregion
 
 }
+

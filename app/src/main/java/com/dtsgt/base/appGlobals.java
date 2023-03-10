@@ -49,6 +49,11 @@ public class appGlobals extends Application {
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,
 			       modo_cortesia,modo_apertura,imp_inventario;
 
+	//FEL Identificacion
+	public String felSIN="SIN FEL";
+	public String felInfile="INFILE";
+	public String felSal="FELSAL";
+
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;
     public boolean scrhoriz;

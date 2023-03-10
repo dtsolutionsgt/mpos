@@ -135,8 +135,6 @@ public class Anulacion extends PBase {
 
         getURL();
 
-        fel=new clsFELInFile(this,this,gl.timeout);
-
         wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
 		xobj = new XMLObject(ws);
 
@@ -144,14 +142,32 @@ public class Anulacion extends PBase {
         sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
         clsClasses.clsP_sucursal suc=sucursal.first();
 
-        fel.fel_llave_certificacion =suc.fel_llave_certificacion;
-        fel.fel_llave_firma=suc.fel_llave_firma;
-        fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;
-        fel.fel_usuario_certificacion=suc.fel_usuario_certificacion;
-        fel.fel_nit=suc.nit;
-        fel.fel_correo=suc.correo;
-        fel.fraseIVA=suc.codigo_escenario_iva;
-        fel.fraseISR=suc.codigo_escenario_isr;
+		if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+			fel=new clsFELInFile(this,this,gl.timeout);
+
+			fel.fel_llave_certificacion =suc.fel_llave_certificacion;
+			fel.fel_llave_firma=suc.fel_llave_firma;
+			fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;
+			fel.fel_usuario_certificacion=suc.fel_usuario_certificacion;
+			fel.fel_nit=suc.nit;
+			fel.fel_correo=suc.correo;
+			fel.fraseIVA=suc.codigo_escenario_iva;
+			fel.fraseISR=suc.codigo_escenario_isr;
+
+		} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+
+			fel=new clsFELInFile(this,this,gl.timeout);
+
+			fel.fel_llave_certificacion =suc.fel_llave_certificacion;
+			fel.fel_llave_firma=suc.fel_llave_firma;
+			fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;
+			fel.fel_usuario_certificacion=suc.fel_usuario_certificacion;
+			fel.fel_nit=suc.nit;
+			fel.fel_correo=suc.correo;
+			fel.fraseIVA=suc.codigo_escenario_iva;
+			fel.fraseISR=suc.codigo_escenario_isr;
+
+		}
 
         printotrodoc = () -> askPrint();
 		
@@ -478,7 +494,11 @@ public class Anulacion extends PBase {
 		          	//#EJC20200712: Si la factura fue generada en contingencia no anular en FEL.
                 	if (uuid!=null) {
 						//msgAskFacturaSAT("La factura está anulada en portalSAT");
-						anulacionFEL();
+						if (idfel.equalsIgnoreCase(gl.felInfile)) {
+							anulacionFEL();
+						} else if (idfel.equalsIgnoreCase(gl.felSal)) {
+							anulacionFELSal();
+						}
 					} else {
 						anulFactura(itemid);
 					}
@@ -537,14 +557,66 @@ public class Anulacion extends PBase {
 		}
 	}
 
+	private void anulacionFELSal() {
+		try {
+			if (buildAnulXML()) {
+				fel.anulacion(uuid);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Override
     public void felCallBack()  {
+		if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+			felCallBackInfile();
+		} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+			felCallBackInfileSal();
+		}
+    }
 
-		//**************************
+	private void felCallBackInfile() {
 		String ss=fel.error+" "+fel.errlevel;
 		ss=ss+"";
 
-        if (!fel.errorflag) {
+		if (!fel.errorflag) {
+			try {
+				anulFactura(itemid);
+
+				//#EJC20200706: Commit transaction from Anuldocument.
+				db.setTransactionSuccessful();
+				db.endTransaction();
+
+				envioFactura();
+
+				toast(String.format("Se anuló la factura %d correctamente",itemid));
+
+				listItems();
+
+			} catch (SQLException e) {
+				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+				db.endTransaction();
+				mu.msgbox(e.getMessage());
+			}
+		} else {
+			try {
+				guardaError();
+
+				//#EJC20200706: Commit transaction from Anuldocument.
+				db.endTransaction();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
+		}
+	}
+
+	private void felCallBackInfileSal() {
+		String ss=fel.error+" "+fel.errlevel;
+		ss=ss+"";
+
+		if (!fel.errorflag) {
 
 			try {
 
@@ -575,8 +647,8 @@ public class Anulacion extends PBase {
 				e.printStackTrace();
 			}
 			msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
-        }
-    }
+		}
+	}
 
     private boolean buildAnulXML() {
 
