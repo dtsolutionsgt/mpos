@@ -126,6 +126,8 @@ public class CliPos extends PBase {
             btnNIT.setText("Cliente con NIT");
         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             btnNIT.setText("Cliente con RTN");
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            btnNIT.setText("Cliente con NRC");
         }
 
         if (!gl.peVentaDomicilio) cbllevar.setEnabled(false);
@@ -220,11 +222,17 @@ public class CliPos extends PBase {
                     }
                 }
 
-            }  if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                 if (!validaNITHon(sNITCliente)) {
                     msgbox("RTN incorrecto");return;
                 }
+            } else   if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (!validaNITSal(sNITCliente)) {
+                    msgbox("NRC incorrecto");return;
+                }
             }
+
+
 
             if (mu.emptystr(sNombreCliente)) {
                 msgbox("Nombre incorrecto");return;
@@ -365,6 +373,8 @@ public class CliPos extends PBase {
                             consultaNITInfile();
                         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
                             buscaRTN();
+                        }  else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                            buscaNCR();
                         }
                         return true;
 					} else {
@@ -980,6 +990,10 @@ public class CliPos extends PBase {
         }
     }
 
+    private boolean validaNITSal(String N) {
+        return true;
+    }
+
     private void buscaCliente() {
 
 		Cursor DT;
@@ -1094,6 +1108,8 @@ public class CliPos extends PBase {
             codigo=nitnum(NIT);
         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             codigo=nitnumhn(NIT);
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            codigo=nitnumsv(NIT);
         }
 
         gl.codigo_cliente=codigo;
@@ -1212,6 +1228,8 @@ public class CliPos extends PBase {
             codigo=nitnum(NIT);
         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             codigo=nitnumhn(NIT);
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            codigo=nitnumsv(NIT);
         }
 
         gl.codigo_cliente=codigo;
@@ -1271,6 +1289,18 @@ public class CliPos extends PBase {
 
         try {
             nit=nit.substring(1,10);
+            nnit=Integer.parseInt(nit);
+            return nnit;
+        } catch (Exception e) {
+            return gl.emp*10;
+        }
+    }
+
+    private int nitnumsv(String nit) {
+        int nnit;
+
+        try {
+            if (nit.length()>10) nit=nit.substring(1,10);
             nnit=Integer.parseInt(nit);
             return nnit;
         } catch (Exception e) {
@@ -1440,6 +1470,30 @@ public class CliPos extends PBase {
         }
     }
 
+    private void buscaNCR() {
+        Cursor DT;
+        String NIT;
+
+        try {
+            NIT=txtNIT.getText().toString();
+            if (mu.emptystr(NIT)) return;
+
+            sql="SELECT NOMBRE, DIRECCION, EMAIL FROM P_CLIENTE WHERE NIT='"+NIT+"'";
+            DT=Con.OpenDT(sql);
+
+            if (DT.getCount()>0){
+                DT.moveToFirst();
+
+                txtNom.setText(DT.getString(0));
+                txtRef.setText(DT.getString(1));
+                txtCorreo.setText(DT.getString(2));
+            }
+
+            if (DT!=null) DT.close();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 

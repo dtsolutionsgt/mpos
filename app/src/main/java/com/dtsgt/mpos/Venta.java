@@ -131,7 +131,7 @@ public class Venta extends PBase {
     private int nivel,dweek,clidia,counter,menuitemid;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private boolean horiz=true,domenvio,modoHN;
+    private boolean horiz=true,domenvio,modoHN,modoSV;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
@@ -164,6 +164,7 @@ public class Venta extends PBase {
         setNivel();
 
         modoHN=gl.codigo_pais.equalsIgnoreCase("HN");
+        modoSV=gl.codigo_pais.equalsIgnoreCase("SV");
 
         cliid=gl.cliente;
         //cliid="0"; #CKFK 20200515 puse esto en comentario porque primero se le asigna el Id de cliente
@@ -588,6 +589,7 @@ public class Venta extends PBase {
                         ttsin=tt-item.imp-item.percep;
                         item.Total=ttsin;
                         if (modoHN) item.Total=tt;
+                        if (modoSV) item.Total=tt;
                     } else {
                         item.Total=tt;
                     }
@@ -622,6 +624,10 @@ public class Venta extends PBase {
                 ttsin=mu.round(ttsin,2);
                 lblTot.setText(mu.frmcur(ttsin));
                 if (modoHN) {
+                    lblTot.setText(mu.frmcur(tot));
+                    lblStot.setText("Subt : "+mu.frmcur(ttsin));
+                }
+                if (modoSV) {
                     lblTot.setText(mu.frmcur(tot));
                     lblStot.setText("Subt : "+mu.frmcur(ttsin));
                 }
@@ -990,15 +996,9 @@ public class Venta extends PBase {
         double sdesc=desc;
 
         try {
-            //if (prodPorPeso(prodid)) {
-            //    prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
-            //} else {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
-            //}
-
+            prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
             pimp=prc.imp;
-
-            prec=mu.round(prec,2);
+            double impv=prc.impval;
             desc=sdesc;
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
@@ -1007,7 +1007,8 @@ public class Venta extends PBase {
 
     private boolean addItem(){
         Cursor dt;
-        double precdoc,fact,cantbas,peso;
+        double precdoc,fact,cantbas,peso,vtot;
+        long prri;
         String umb;
 
         tipo=prodTipo(gl.prodcod);
@@ -1043,20 +1044,35 @@ public class Venta extends PBase {
 
         if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             prec=prodPrecioBaseImp(app.codigoProducto(prodid));
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            prec=prodPrecioBaseImp(app.codigoProducto(prodid));
         }
         prec=mu.round(prec,2);
 
         cantbas=cant*fact;
         peso=mu.round(gl.dpeso*gl.umfactor,gl.peDec);
-        prodtot=mu.round(prec*cant,2);
+        vtot=prec*cant;
+        prodtot=mu.round2dec(vtot);
 
+        impval=impval*cant;
+        impval=mu.round2dec(impval);
 
+        /*
+        vtot=vtot*100;
+        prri=Math.round(vtot);
+        vtot=(double) prri;
+        prodtot=vtot*0.01;
+        */
+
+        //prodtot=mu.round(prec*cant,2);
 
         try {
 
             //if (sinimp) precdoc=precsin; else precdoc=prec;
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                precdoc=precsin;
+                precdoc = precsin;
+            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                precdoc = precsin;
             } else {
                 precdoc=prec;
             }
@@ -1081,8 +1097,12 @@ public class Venta extends PBase {
             ins.add("PESO",peso);
 
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                ins.add("VAL1",pimp);
-            } else ins.add("VAL1",0);
+                ins.add("VAL1", pimp);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                ins.add("VAL1", pimp);
+            } else {
+                ins.add("VAL1",0);
+            }
 
             ins.add("VAL2","");
             ins.add("VAL3",0);
@@ -1134,6 +1154,8 @@ public class Venta extends PBase {
         cantbas=cant*fact;
         peso=mu.round(gl.dpeso*gl.umfactor,gl.peDec);
         prodtot=mu.round(prec*cant,2);
+
+        impval=mu.round2dec(impval*cant);
 
         try {
 
@@ -1202,6 +1224,8 @@ public class Venta extends PBase {
             ptot=mu.round(prec*cant,2);
             descmon = savetot-ptot;
 
+            imp=mu.round2dec(imp*cant);
+
             upd.init("T_VENTA");
 
             upd.add("PRECIO",prec);
@@ -1233,6 +1257,8 @@ public class Venta extends PBase {
             descmon = savetot-ptot;
             if (savetot>0) desc=100*descmon/savetot;else desc=0;
 
+            imp=mu.round2dec(imp*cant);
+
             upd.init("T_VENTA");
 
             upd.add("PRECIO",prec);
@@ -1263,7 +1289,10 @@ public class Venta extends PBase {
             if (sinimp) precdoc=precsin; else precdoc=prec;
             valimp=cant*prec*imp/100;valimp=mu.round2(valimp);
 
+            impval=mu.round2dec(impval*cant);
+
             upd.init("T_VENTA");
+
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
             //upd.add("IMP",imp);
@@ -1297,10 +1326,12 @@ public class Venta extends PBase {
             prodtot=mu.round(prec*cant,2);
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
+            imp=mu.round2dec(imp*cant);
+
             upd.init("T_VENTA");
+
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
-            upd.add("IMP",imp);
             upd.add("IMP",imp);
             upd.add("DES",desc);
             upd.add("DESMON",descmon);
@@ -3158,7 +3189,9 @@ public class Venta extends PBase {
         }
 
         if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-            sinimp=true;
+            sinimp = true;
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            sinimp = true;
         } else {
             sinimp=false;
         }
@@ -3447,8 +3480,9 @@ public class Venta extends PBase {
 
     private double prodPrecioBaseImp(int prid) {
         Cursor DT;
-        double pr,stot,pprec,tsimp;
+        double pr,prr,stot,pprec,tsimp;
         double imp1,imp2,imp3,vimp1,vimp2,vimp3,vimp;
+        long prri;
         String sprec="";
 
         try {
@@ -3498,8 +3532,13 @@ public class Venta extends PBase {
             } else vimp3=0;
 
             vimp=vimp1+vimp2+vimp3;
-            pr=pr*(1+vimp/100);
-            pr=mu.round2(pr);
+            vimp=vimp*0.01;
+            pr=pr*(1+vimp);pr=pr+0.000001;
+            //pr=mu.round2(pr);
+            prr=pr*100;
+            prri=Math.round(prr);
+            prr=(double) prri;
+            pr=prr*0.01;
 
             if (DT!=null) DT.close();
         } catch (Exception e) {

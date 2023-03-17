@@ -502,7 +502,6 @@ public class Reimpresion extends PBase {
 		}
 
 		try {
-
             fdoc.parallevar=gl.parallevar;
             fdoc.factsinpropina=gl.peFactSinPropina;
             fdoc.es_pickup=gl.pickup;
@@ -514,6 +513,7 @@ public class Reimpresion extends PBase {
 			fdoc.fraseISR = gl.peFraseISR;
 
 			if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) cargaTotalesSalvador();
 
 		    if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
@@ -533,6 +533,27 @@ public class Reimpresion extends PBase {
 	}
 
 	private void cargaTotalesHonduras() {
+		try {
+			clsD_facturahnObj D_facturahnObj=new clsD_facturahnObj(this,Con,db);
+			D_facturahnObj.fill("WHERE (COREL='"+itemid+"')");
+
+			fdoc.fh_stotal=D_facturahnObj.first().subtotal;
+			fdoc.fh_exon=D_facturahnObj.first().exon;
+			fdoc.fh_exent=D_facturahnObj.first().exento;
+			fdoc.fh_grav=D_facturahnObj.first().gravado;
+			fdoc.fh_imp1 =D_facturahnObj.first().imp1;
+			fdoc.fh_imp2 =D_facturahnObj.first().imp2;
+			fdoc.fh_val1 =D_facturahnObj.first().val1;
+			fdoc.fh_val2 =D_facturahnObj.first().val2;
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			fdoc.fh_stotal=0;fdoc.fh_exon=0;fdoc.fh_exent=0;
+			fdoc.fh_grav=0;fdoc.fh_imp1 =0;fdoc.fh_imp2 =0;
+		}
+	}
+
+	private void cargaTotalesSalvador() {
 		try {
 			clsD_facturahnObj D_facturahnObj=new clsD_facturahnObj(this,Con,db);
 			D_facturahnObj.fill("WHERE (COREL='"+itemid+"')");

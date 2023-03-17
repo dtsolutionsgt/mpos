@@ -164,42 +164,65 @@ public class clsDocFactura extends clsDocument {
 
             if (pais.equalsIgnoreCase("HN")) {
 
-                resol=DT.getString(0);
-                ff=DT.getLong(1);
-                resfecha="De Fecha: "+sfecha_dos(ff);
-                ff=DT.getLong(2);
-                resvence="Fecha limite: "+sfecha_dos(ff);
+                resol = DT.getString(0);
+                ff = DT.getLong(1);
+                resfecha = "De Fecha: " + sfecha_dos(ff);
+                ff = DT.getLong(2);
+                resvence = "Fecha limite: " + sfecha_dos(ff);
                 //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
-                resrangot="Rango autorizado del";
-                String numini=""+DT.getLong(4);
-                String numfin=""+DT.getLong(5);
-                String li,lf;
+                resrangot = "Rango autorizado del";
+                String numini = "" + DT.getLong(4);
+                String numfin = "" + DT.getLong(5);
+                String li, lf;
 
-                if (numini.length()<8) {
-                    long nn=100000000+Long.parseLong(numini);
-                    li=""+nn;li=li.substring(1,9);
-                } else li=numini;
+                if (numini.length() < 8) {
+                    long nn = 100000000 + Long.parseLong(numini);
+                    li = "" + nn;
+                    li = li.substring(1, 9);
+                } else li = numini;
 
-                if (numfin.length()<8) {
-                    long nn=100000000+Long.parseLong(numfin);
-                    lf=""+nn;lf=lf.substring(1,9);
-                } else lf=numfin;
+                if (numfin.length() < 8) {
+                    long nn = 100000000 + Long.parseLong(numfin);
+                    lf = "" + nn;
+                    lf = lf.substring(1, 9);
+                } else lf = numfin;
 
-                resrango=DT.getString(3)+"-"+li+" al "+lf;
-                //resrango=DT.getString(3)+"-"+DT.getInt(4)+" al "+DT.getInt(5);
+                resrango = DT.getString(3) + "-" + li + " al " + lf;
 
+            } else if (pais.equalsIgnoreCase("SV")) {
+
+                resol = DT.getString(0);
+                ff = DT.getLong(1);
+                resfecha = "De Fecha: " + sfecha_dos(ff);
+                ff = DT.getLong(2);
+                resvence = "Fecha limite: " + sfecha_dos(ff);
+                //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
+                resrangot = "Rango autorizado del";
+                String numini = "" + DT.getLong(4);
+                String numfin = "" + DT.getLong(5);
+                String li, lf;
+
+                if (numini.length() < 8) {
+                    long nn = 100000000 + Long.parseLong(numini);
+                    li = "" + nn;
+                    li = li.substring(1, 9);
+                } else li = numini;
+
+                if (numfin.length() < 8) {
+                    long nn = 100000000 + Long.parseLong(numfin);
+                    lf = "" + nn;
+                    lf = lf.substring(1, 9);
+                } else lf = numfin;
+
+                resrango = DT.getString(3) + "-" + li + " al " + lf;
             } else {
-
                 resol="Resolucion No.: "+DT.getString(0);
                 ff=DT.getLong(1);
                 resfecha="De Fecha: "+sfecha_dos(ff);
                 ff=DT.getLong(2);
                 resvence="Vigente hasta: "+sfecha_dos(ff);
-                //#EJC20181130: Se cambió el mensaje por revisión de auditor de SAT.
-//			ff=DT.getInt(2);resvence="Resolucion vence : "+sfecha(ff);
                 resrangot="";
                 resrango="Serie: "+DT.getString(3)+" del "+DT.getInt(4)+" al "+DT.getInt(5);
-
             }
 
 		} catch (Exception e) {
@@ -585,17 +608,12 @@ public class clsDocFactura extends clsDocument {
             return detailBaseGUA();
         } else if (pais.equalsIgnoreCase("HN")) {
             return detailBaseHON();
+        } else if (pais.equalsIgnoreCase("SV")) {
+            return detailBaseSV();
         } else {
             return detailBaseGUA();
         }
 
-         /*
-	    if (modofact.equalsIgnoreCase("GUA")) {
-            return detailBaseGUA();
-        } else {
-            return detailBase();
-        }
-        */
 	}
 
     protected boolean detailBaseHON() {
@@ -618,7 +636,43 @@ public class clsDocFactura extends clsDocument {
                 tot=round2(tot);
 
                 if (pais.equalsIgnoreCase("HN")) {
-                    totval=tot;
+                    totval = tot;
+                } else {
+                    totval=item.tot;
+                }
+
+                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,totval);
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
+
+    protected boolean detailBaseSV() {
+        itemData item;
+        double pr,imp,tot,totval;
+        String cu,cp;
+
+        rep.add3sss("Cantidad ","Precio","Total");
+        rep.line();
+
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+                rep.add(item.nombre);
+                imp=item.imp;
+                pr=item.prec-imp;
+                if (pais.equalsIgnoreCase("SV")) pr=item.prec;
+                pr=round2(pr);
+                tot=pr*item.cant;
+                tot=round2(tot);
+
+                if (pais.equalsIgnoreCase("SV")) {
+                    totval = tot;
                 } else {
                     totval=item.tot;
                 }
@@ -777,6 +831,8 @@ public class clsDocFactura extends clsDocument {
             }
         } else if (pais.equalsIgnoreCase("HN")) {
             return footerBaseHON();
+        } else if (pais.equalsIgnoreCase("SV")) {
+            return footerBaseSV();
         } else {
             return footerBaseGUA();
         }
@@ -1046,6 +1102,131 @@ public class clsDocFactura extends clsDocument {
 
         //#HS_20181212 Validación para factura pendiente de pago
         if(pendiente == 4){
+            rep.add("");
+            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
+            rep.add("EXIJA SU FACTURA ORIGINAL");
+            rep.add("");
+        }
+
+        /*
+        if (parallevar){
+            rep.add("");
+            rep.addc("PARA LLEVAR");
+            rep.add("");
+        }
+
+        if (impresionorden) {
+            String sod=add1;
+            if (!sod.isEmpty()) {
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+                rep.addc("ORDEN: # "+sod.toUpperCase());
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+            }
+        } else {
+            rep.add("");
+        }
+        */
+
+        rep.add("");
+
+        return super.buildFooter();
+    }
+
+    private boolean footerBaseSV() {
+        double totimp,totperc;
+
+        stot=stot-imp;
+        totperc=stot*(percep/100);totperc=round2(totperc);
+        totimp=imp-totperc;
+
+        rep.addtotsp("Subtotal: ", stot);
+        rep.addtotsp("Venta sujeta: ", fh_grav);
+        rep.addtotsp("Venta no sujeta: ", fh_exent);
+        //rep.addtotsp("Importe exonerado: ", fh_exon);
+        if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
+        if (fh_val1>0) rep.addtotsp("IVA Retenido: ", fh_imp1);
+        if (fh_val2>0) rep.addtotsp("IVA Retenido: ", fh_imp2);
+        rep.addtotsp("TOTAL : ", tot);
+
+        montoLetra();
+
+        if (plines.size()>0) {
+            rep.add("");
+            rep.add("Formas de pago:");
+            for (int ii= 0; ii <plines.size(); ii++) {
+                rep.add(plines.get(ii));
+            }
+        }
+
+        /*
+        rep.add("");
+        rep.add("No. OC exenta ");
+        rep.add("No. cons. registro exonerado");
+        rep.add("No. registro SAG");
+        rep.add("");
+        */
+
+        if (modorest) {
+            rep.add("");
+            rep.add("Le atendio: "+nommesero);
+        }
+
+        rep.add("");
+
+        /*
+        try {
+            rep.addc("Original: Cliente");
+            rep.addc("Copia: Obligado Tributario Emisor");
+            rep.addc("La factura es beneficio de todos exija la.");
+            rep.add("");
+            if (!textopie.isEmpty()) {
+                rep.addc(textopie);
+            }
+        } catch (Exception e) {}
+        */
+
+        //banderafel=true;
+        if (banderafel) {
+
+            if (feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Factura generada en modo de contingencia");
+                rep.add("Numero de Acceso: "+contacc);
+                rep.add("Su factura pueden encontrar en el portal");
+                rep.add("SAT bajo identificacion: "+serie+numero);
+            }
+
+            if (!feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Número de autorización: ");
+                rep.add(feluuid);
+                rep.add("Fecha de certificación: "+feldcert);
+            }
+
+            if (!felIVA.isEmpty()) {
+                rep.add(felIVA);
+            }
+            if (!felISR.isEmpty()) {
+                rep.add(felISR);
+                if (!felISR2.isEmpty()) {
+                    rep.add(felISR2);
+                }
+            }
+
+            rep.add("");
+            rep.add(felcert);
+            rep.add(felnit);
+            rep.add("");
+            rep.add("Powered by DTSolutions, S.A.");
+            rep.addc("dts.com.gt");
+        }
+
+        //#HS_20181212 Validación para factura pendiente de pago
+        if (pendiente == 4){
             rep.add("");
             rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
             rep.add("EXIJA SU FACTURA ORIGINAL");

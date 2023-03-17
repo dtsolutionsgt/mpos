@@ -875,7 +875,7 @@ public class Caja extends PBase {
 
                     clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
                     D_facturaObj.fill("WHERE (ANULADO=0) AND (FECHA<="+lf+") AND (FECHA>2009230000) AND (FEELUUID=' ') ");
-                    if (D_facturaObj.count>0) ms="Existen facturas no certificadas por FEL próximas a expirar";
+                    //if (D_facturaObj.count>0) ms="Existen facturas no certificadas por FEL próximas a expirar";
                 }
             }
 
@@ -1243,8 +1243,11 @@ public class Caja extends PBase {
             clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
             D_facturaObj.fill(sql);
             int fc=D_facturaObj.count;
+            fc=fc+0;
 
-            if (fc>0) msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que un dia. Deben informar el soporte.");
+            if (fc>0) {
+                msgAskSend("Existen facturas ("+fc+") pendientes de certificacion de mas que un dia. Deben informar el soporte.");
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

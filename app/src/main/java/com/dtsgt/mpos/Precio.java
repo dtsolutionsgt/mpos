@@ -58,12 +58,10 @@ public class Precio {
 		clsDescuento clsDesc=new clsDescuento(cont,""+codigoprod,cant);
 		desc=clsDesc.getDesc();
 
-		if (cant>0) {
-		    prodPrecio(ppeso);
-        } else {
-		    prodPrecioBase();
-        }
+		prodPrecioBase();
+		//if (cant>0) prodPrecio(ppeso); else prodPrecioBase();
 
+		double impv=impval;
 		return prec;
 	}
 
@@ -178,7 +176,8 @@ public class Precio {
 	
 	private void prodPrecioBase() {
 		Cursor DT;
-		double pr,stot,pprec,tsimp;
+		double pr,pr0,prr,stot,pprec,tsimp,vimp;
+		long prri;
 		String sprec="";
 
 		try {
@@ -197,11 +196,19 @@ public class Precio {
 		totsin=pr;tsimp=mu.round(totsin,ndec);
 		
 		imp=getImp();
-		pr=pr*(1+imp/100);
+		vimp=imp*0.01;pr0=pr;
+		pr=pr*(1+vimp);pr=pr+0.000001;
+		stot=pr;
+
+		stot=mu.round2dec(stot);
+		//stot=mu.round(stot,ndec);
 		
-		stot=pr;stot=mu.round(stot,ndec);
-		
-		if (imp>0) impval=stot-tsimp; else impval=0;
+		//if (imp>0) impval=stot-tsimp; else impval=0;
+
+		if (imp>0) {
+			impval=vimp*pr0;
+			impval=mu.round2dec(impval);
+		} else impval=0;
 		
 		descmon=0;
 		
@@ -215,7 +222,7 @@ public class Precio {
 		} catch (Exception e) {
 			pprec=prec;
 		}
-		prec=pprec;
+		//prec=pprec;
 		
 		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
 		
@@ -229,8 +236,10 @@ public class Precio {
 		} catch (Exception e) {
 			pprec=precsin;
 		}
-		precsin=pprec;
 
+		double impv=impval;
+
+		precsin=pprec;
 	}
 
     public double prodPrecioBase(int cprod,int nnivel) {
@@ -354,8 +363,6 @@ public class Precio {
 	    }		
 		
 	}
-
-
 
 
 	// Aux

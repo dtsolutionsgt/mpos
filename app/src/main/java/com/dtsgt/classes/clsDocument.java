@@ -475,7 +475,7 @@ public class clsDocument {
 
         rep.empty();rep.empty();
 
-        for (int i = 0; i <lines.size(); i++) 		{
+        for (int i = 0; i <lines.size(); i++) {
 
             s=lines.get(i);if (s.isEmpty()) s=" ";
 
@@ -544,6 +544,167 @@ public class clsDocument {
                     }
                 }
             }
+        }
+
+        if (docfactura) {
+
+            if (!emptystr(nit_cliente)) rep.add("RTN: "+nit_cliente);
+            rep.add("Fecha: "+fsfecha);
+
+            /*
+            if (!emptystr(clidir)) {
+
+                clidir="Dir.: "+clidir;
+
+                if (clidir.length()>prw) {
+
+                    String nuevaCadena = "", cadena = "";
+
+                    cadena = clidir;
+                    nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                    cadena = cadena.substring(prw);
+                    if (cadena.length() > prw) {
+                        nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                        cadena = cadena.substring(prw);
+                        if (cadena.length() > prw) {
+                            nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                        } if (cadena.length()>0) rep.add(cadena);
+                    } else {
+                        if (cadena.length()>0) rep.add(cadena);
+                    }
+                } else rep.add(clidir);
+            }
+            */
+
+            /*
+            if (docfactura) {
+                if (!facturaflag) {
+                    rep.add("");
+                    rep.add("Esto no es una factura fiscal");
+                    rep.add("");
+                }
+            }
+            */
+        }
+
+        rep.add("");
+        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+
+        if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
+
+            rep.add("");
+            if (docfactura && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            if (docfactura && (reimpres==10)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            if (docfactura && (reimpres==2)) rep.add("------  C O P I A  ------");
+            if (docfactura && (reimpres==3)) rep.add("------       A N U L A D O      ------");
+            //#HS_20181212 condición para factura pendiente de pago
+            if(docfactura && (reimpres==4)) {
+                rep.add("- P E N D I E N T E  D E  P A G O -");
+                pendiente = reimpres;
+            }
+            if (docfactura && (reimpres==5)) rep.add("------  C O N T A B I L I D A D  ------");
+            rep.add("");
+
+        }else if ((docdevolucion || docpedido) && !(modofact.equalsIgnoreCase("TOL"))){
+
+            //CKFK 2019-04-23 Consultar con Aaron
+            rep.add("");
+            if ((docdevolucion && (reimpres==1)) || (docpedido && (reimpres==1))) rep.add("-------  R E I M P R E S I O N  -------");
+            if ((docdevolucion && (reimpres==2)) || (docpedido && (reimpres==2))) rep.add("------  C O P I A  ------");
+            if ((docdevolucion && (reimpres==3)) || (docpedido && (reimpres==3))) rep.add("------       A N U L A D O      ------");
+            rep.add("");
+
+        }
+
+        if (doccanastabod && !(modofact.equalsIgnoreCase("TOL"))){
+            rep.add("");
+            if (doccanastabod && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            rep.add("");
+        }
+
+    }
+
+    protected void saveHeadLinesSV(int reimpres) {
+        String s,ss,ss2,su,l;
+        String[] s2;
+        int nidx;
+
+        rep.empty();rep.empty();
+
+        for (int i = 0; i <lines.size(); i++) 		{
+
+            s=lines.get(i);if (s.isEmpty()) s=" ";
+
+            try {
+                s=encabezadoSV(s);
+                ss=s.toUpperCase();
+                nidx=ss.indexOf("NIT");
+                //if (nidx>=0) s="NIT: "+nitsuc;
+            } catch (Exception e) {
+                s="##";
+            }
+
+            if (s.contains("%%")) {
+                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
+
+                if (facturaflag) {
+                    //rep.addc(nombre);
+                    rep.addc("FACTURA");
+                } else {
+                    rep.addc("TICKET");
+                }
+
+                if (numero.length()<8) {
+                    long nn=100000000+Long.parseLong(numero);
+                    l=""+nn;l=l.substring(1,9);
+                } else l=numero;
+
+                if (facturaflag) {
+                    l=serie +"-"+l;
+                    //rep.addc(l);
+                    s=l;
+                } else {
+                    sfticket=serie+l;l="";
+                    //rep.addc(sfticket);
+                    s=sfticket;
+                }
+
+            }
+
+            if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
+                su=s.toUpperCase();
+                if (su.contains("CLIENTE") ) {
+                    if (su.contains("<<") ) {
+                        s2=s.split("<<");
+                        for (int j = 1; j <s2.length; j++) {
+                            ss2=s2[j];
+                            rep.add(ss2);
+                        }
+                    } else {
+                        rep.add(s);
+                    }
+                } else {
+                    s=rep.ctrim(s);
+                    rep.add(s);
+                }
+            }
+
+            /*
+            if (docfactura) {
+                if (facturaflag) {
+                    if (i==8){
+                        rep.add("");
+                        rep.addc("CAI");
+                        rep.addc(resol);
+                        rep.addc(resvence);
+                        if (!resrangot.isEmpty()) rep.addc(resrangot);
+                        rep.addc(resrango);
+                    }
+                }
+            }
+            */
+
         }
 
         if (docfactura) {
@@ -839,6 +1000,113 @@ public class clsDocument {
         return l;
     }
 
+    protected String encabezadoSV(String l) {
+
+        String s,lu,a;
+        int idx;
+
+        if (l.isEmpty()) return " ";
+        lu=l.trim();
+
+        if (lu.length()==1 && lu.equalsIgnoreCase("N")) {
+            //s=nombre;s=rep.ctrim(s);return s;
+            return "##";
+        }
+
+        if (l.indexOf("dd-MM-yyyy")>=0) {
+            //s=DU.sfecha(DU.getActDateTime());
+            //l=l.replace("dd-MM-yyyy",s);return l;
+            return DU.sfecha(DU.getActDateTime())+" "+DU.shora(DU.getActDateTime());
+        }
+
+        if (l.indexOf("HH:mm:ss")>=0) {
+            //s=DU.shora(DU.getActDateTime());
+            //l=l.replace("HH:mm:ss",s);return l;
+            return "##";
+        }
+
+        idx=l.indexOf("@Serie");
+        if (idx>=0) {
+            if (docfactura) {
+                /*
+                if (l.length() > idx + serie.length()) {
+                    l = l.substring(0, idx) + serie + l.substring(idx + 6, idx + l.length() - idx - 6);
+                } else {
+                    l = l.substring(0, idx) + serie;
+                }
+                */
+
+                if (numero.length()<7) {
+                    long nn=1000000+Long.parseLong(numero);
+                    l=""+nn;l=l.substring(1,7);
+                } else l=numero;
+
+                if (facturaflag) {
+                    l="FACTURA: "+serie +"-"+l;
+                } else {
+                    sfticket=serie+l;l="";
+                }
+
+            } else {
+                l="##";
+            }
+        }
+
+        idx=lu.indexOf("@Vendedor");
+        if (idx>=0) {
+            rep.addc("");
+            if (emptystr(vendnom)) return "@@";
+            l=l.replace("@Vendedor", vendnom);return l;
+        }
+
+        idx=lu.indexOf("@Ruta");
+        if (idx>=0) {
+            if (emptystr(rutanombre)) return "@@";
+            l=l.replace("@Ruta",rutanombre);return l;
+        }
+
+        idx=lu.indexOf("@Cliente");
+        if (idx>=0) {
+            if (emptystr(nombre_cliente)) return "@@";
+
+            l=l.replace("@Cliente",nombre_cliente);l=l.trim();
+
+            if (l.length()>prw) {
+                //l=l.replace("@Cliente",clicod+" - "+cliente);
+
+                String nuevaCadena="",cadena="";
+                int vMod=0;
+
+                cadena=l;
+                nuevaCadena=cadena.substring(0,prw);cadena=cadena.substring(prw);
+                if (cadena.length()>prw) {
+                    nuevaCadena=nuevaCadena+"<<"+cadena.substring(0,prw);cadena=cadena.substring(prw);
+                    if (cadena.length()>prw) {
+                        nuevaCadena=nuevaCadena+"<<"+cadena.substring(0,prw);
+                    } else nuevaCadena=nuevaCadena+"<<"+cadena;
+                } else nuevaCadena=nuevaCadena+"<<"+cadena;
+
+				/*
+				vMod = (cadena.length()/prw)+1;
+
+				for (int i = 0; i <vMod; i++) {
+					if (cadena.length()>=prw*(i+1)){
+						nuevaCadena += cadena.substring((i*prw),prw) + "\n";
+					}else{
+						nuevaCadena += cadena.substring((i*prw)-1,cadena.length());
+					}
+				}
+
+				 */
+                l="CLIENTE<<"+nuevaCadena;
+                return l;
+            }
+            return l;
+        }
+
+        return l;
+    }
+
     protected String encabezadoOrig(String l) {
         String s,lu,a;
         int idx;
@@ -1030,16 +1298,22 @@ public class clsDocument {
         if (pais.equalsIgnoreCase("GT")) {
             saveHeadLines(reimpres);
         } else if (pais.equalsIgnoreCase("HN")) {
-            facturaflag=true;
-
+            facturaflag = true;
             if (nit_cliente.equalsIgnoreCase("CF")) {
-                facturaflag=true;
-            }else {
-                facturaflag=true;
+                facturaflag = true;
+            } else {
+                facturaflag = true;
             }
-
             saveHeadLinesHON(reimpres);
-        } else {
+        } else if (pais.equalsIgnoreCase("SV")) {
+            facturaflag = true;
+            if (nit_cliente.equalsIgnoreCase("CF")) {
+                facturaflag = true;
+            } else {
+                facturaflag = true;
+            }
+            saveHeadLinesSV(reimpres);
+       } else {
             saveHeadLines(reimpres);
         }
 		

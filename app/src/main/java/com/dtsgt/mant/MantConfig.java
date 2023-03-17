@@ -55,7 +55,7 @@ public class MantConfig extends PBase {
         cb102  = (CheckBox) findViewById(R.id.checkBox10);
         cb103  = (CheckBox) findViewById(R.id.checkBox23);
         cb104  = (CheckBox) findViewById(R.id.checkBox22);
-        spin105 = (Spinner) findViewById(R.id.spinner105);
+        spin105 = (Spinner) findViewById(R.id.spinner105);spin105.setEnabled(false);
         cb106  = (CheckBox) findViewById(R.id.checkBox24);
         cb107  = (CheckBox) findViewById(R.id.chkCierreDiario);
         txt108 = (EditText) findViewById(R.id.txtDiasAnul);
