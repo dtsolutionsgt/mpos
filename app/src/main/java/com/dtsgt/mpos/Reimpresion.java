@@ -278,6 +278,7 @@ public class Reimpresion extends PBase {
 		int vP,f;
 		double val;
 		String id,sf,sval,tm;
+		long ff;
 
 		items.clear();
 		
@@ -375,7 +376,9 @@ public class Reimpresion extends PBase {
 
 							if (tipo==3) {
 								vItem.UUID=DT.getString(6);
-								vItem.FechaFactura=du.univfechalong(DT.getLong(7));
+								ff=DT.getLong(7);
+								vItem.FechaFactura=du.sfecha(ff)+" "+du.shora(ff);
+								//vItem.FechaFactura=du.univfechalong(DT.getLong(7));
 							}else{
 								vItem.UUID="";
 								vItem.FechaFactura="";
@@ -485,15 +488,17 @@ public class Reimpresion extends PBase {
 	private void imprFactura() {
 		Cursor dt;
 		int impr;
+		String svnit="N";
 
 		fdoc.deviceid =gl.deviceId;
 
 		try {
-			sql="SELECT IMPRES,RAZON_ANULACION FROM D_FACTURA WHERE COREL='"+itemid+"'";
+			sql="SELECT IMPRES,RAZON_ANULACION,AYUDANTE FROM D_FACTURA WHERE COREL='"+itemid+"'";
 			dt=Con.OpenDT(sql);
 			dt.moveToFirst();
 			impr=dt.getInt(0);
 			gl.parallevar=dt.getString(1).equalsIgnoreCase("P");
+			svnit=dt.getString(2);
 
             if (dt!=null) dt.close();
 		} catch (Exception e) {
@@ -511,9 +516,14 @@ public class Reimpresion extends PBase {
 			fdoc.pais = gl.codigo_pais;
 			fdoc.fraseIVA = gl.peFraseIVA;
 			fdoc.fraseISR = gl.peFraseISR;
+			fdoc.idpais=gl.codigo_pais;
 
 			if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
-			if (gl.codigo_pais.equalsIgnoreCase("SV")) cargaTotalesSalvador();
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+				cargaTotalesSalvador();
+				fdoc.sal_nit="NIT: ";
+				if (svnit.equalsIgnoreCase("C")) fdoc.sal_nit="NRC: ";
+			}
 
 		    if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
@@ -522,9 +532,7 @@ public class Reimpresion extends PBase {
 				try {
 					sql="UPDATE D_FACTURA SET IMPRES=2 WHERE COREL='"+itemid+"'";
 					db.execSQL(sql);
-				} catch (Exception e) {
-				}
-
+				} catch (Exception e) {	}
 			}
 		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

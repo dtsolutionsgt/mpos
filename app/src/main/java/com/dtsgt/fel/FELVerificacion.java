@@ -640,9 +640,8 @@ public class FELVerificacion extends PBase {
     public void msgexit(String msg) {
 
         Handler mtimer = new Handler();
-        Runnable mrunner= () -> msgexit3("Ocurrio error en FEL :\n\n"+ fel.error);
+        Runnable mrunner= () -> msgexit3("Ocurrio error en FEL :\n\n"+"Factura: "+fel.mpos_identificador_fact+"\n"+ fel.error);
         mtimer.postDelayed(mrunner,500);
-
     }
 
     public void showMsgExit(String msg) {

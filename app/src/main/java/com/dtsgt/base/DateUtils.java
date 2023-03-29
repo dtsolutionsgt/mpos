@@ -1,6 +1,8 @@
 package com.dtsgt.base;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class DateUtils {
 	
@@ -486,7 +488,7 @@ public class DateUtils {
 		return ld;
 		
 	}
-	
+
 	public long timeDiff(long v1,long v2) {
 
 		long h1,m1,h2,m2,vm1,vm2,dif;
@@ -772,5 +774,33 @@ public class DateUtils {
 
         return sd+"/"+sm+"/"+sy;
     }
+
+	//endregion
+
+	// ********************
+
+	public boolean fechaNIT_SV(String fs) {
+		String yy,mm,dd;
+		int y,m,d;
+		long ld;
+
+		try {
+			dd=fs.substring(0,2);d=Integer.parseInt(dd);
+			mm=fs.substring(2,4);m=Integer.parseInt(mm);if (m>12) return false;
+			yy=fs.substring(4,6);y=Integer.parseInt(yy);
+		} catch (Exception e) {
+			return false;
+		}
+
+		try {
+			ld=LastDay(1900+y,m);
+			if (d<=ld) return true;
+
+			ld=LastDay(2000+y,m);
+			if (d<=ld) return true;
+		} catch (Exception e) {	}
+
+		return false;
+	}
 
 }

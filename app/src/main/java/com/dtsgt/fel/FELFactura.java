@@ -334,7 +334,7 @@ public class FELFactura extends PBase {
             if (multiflag) {  // Verificacion
 
                 if (fel.errorcon) {
-                    msgexit(fel.error);return;
+                    msgexit("Factura: "+fel.mpos_identificador_fact+"\n"+fel.error);return;
                 }
                 if (fel.errorflag && !fel.duplicado) {
                     marcaFactura();
@@ -485,7 +485,7 @@ public class FELFactura extends PBase {
 
             } else {
                 gl.feluuid="";
-                gl.FELmsg="Ocurrió error en FEL :\n\n"+ fel.error;
+                gl.FELmsg="Ocurrió error en FEL :\n\n"+"Factura: "+fel.mpos_identificador_fact+"\n"+ fel.error;
                 startActivity(new Intent(this,FELmsgbox.class));
                 finish();
             }
@@ -1301,7 +1301,7 @@ public class FELFactura extends PBase {
         Runnable mrunner=new Runnable() {
             @Override
             public void run() {
-                showMsgExit("Ocurrio error en FEL :\n\n"+ fel.error);
+                showMsgExit("Ocurrio error en FEL :\n\n"+"Factura: "+fel.mpos_identificador_fact+"\n"+ fel.error);
             }
         };
         mtimer.postDelayed(mrunner,500);

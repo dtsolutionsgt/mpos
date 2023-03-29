@@ -918,10 +918,12 @@ public class FacturaRes extends PBase {
 			    fdoc.impresionorden=gl.pelOrdenComanda;
 				fdoc.parallevar=gl.parallevar;
 
+				/*
 				if (!gl.nummesapedido.equalsIgnoreCase("0")) {
 					fdoc.impresionorden=true;
 					fdoc.parallevar=true;
 				}
+				*/
 
 			    fdoc.factsinpropina=gl.peFactSinPropina;
 			    fdoc.propperc=gl.pePropinaPerc;
@@ -932,8 +934,13 @@ public class FacturaRes extends PBase {
 				fdoc.fraseIVA = gl.peFraseIVA;
 				fdoc.fraseISR = gl.peFraseISR;
 
+				fdoc.idpais=gl.codigo_pais;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
-				if (gl.codigo_pais.equalsIgnoreCase("SV")) cargaTotalesSalvador();
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					cargaTotalesSalvador();
+					fdoc.sal_nit="NIT: ";
+					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
+				}
 
                 fdoc.buildPrint(corel,0,"",gl.peMFact);
 				gl.QRCodeStr = fdoc.QRCodeStr;
@@ -1200,9 +1207,17 @@ public class FacturaRes extends PBase {
 			ins.add("SUPERVISOR",""+fpend);
 			ins.add("VEHICULO",gl.parVer);
 
-			tipoNIT();
-			if (gl.nit_tipo.isEmpty()) gl.nit_tipo="N";
-			ins.add("AYUDANTE",gl.nit_tipo);
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+				String svnit="N";
+				if (gl.sal_NRC) svnit="C";
+				if (gl.codigo_cliente==gl.emp*10) svnit="T";
+				ins.add("AYUDANTE",svnit);
+			} else {
+				tipoNIT();
+				if (gl.nit_tipo.isEmpty()) gl.nit_tipo="N";
+				ins.add("AYUDANTE",gl.nit_tipo);
+			}
+
 			ins.add("CODIGOLIQUIDACION",0);
 
 			if (gl.parallevar) ins.add("RAZON_ANULACION","P");else ins.add("RAZON_ANULACION","");

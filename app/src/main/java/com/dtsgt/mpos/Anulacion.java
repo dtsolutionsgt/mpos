@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,6 +48,7 @@ public class Anulacion extends PBase {
 
 	private ListView listView;
 	private TextView lblTipo, lblRegs, lblTotal;
+	private CheckBox cbcer;
     private ProgressBar pbar;
 	
 	private ArrayList<clsClasses.clsCFDV> items= new ArrayList<>();
@@ -110,6 +113,8 @@ public class Anulacion extends PBase {
 		lblDatefin = findViewById(R.id.lblDatefin2);
 		lblRegs = findViewById(R.id.lblRegs);
 		lblTotal = findViewById(R.id.lblTotal);
+		cbcer = findViewById(R.id.checkBox27);cbcer.setVisibility(View.INVISIBLE);
+
         pbar=findViewById(R.id.progressBar7);pbar.setVisibility(View.INVISIBLE);
 
 		app = new AppMethods(this, gl, Con, db);
@@ -129,7 +134,8 @@ public class Anulacion extends PBase {
 		if (tipo==3) lblTipo.setText((gl.peMFact?"Factura":"Ticket"));
 		if (tipo==4) lblTipo.setText("Recarga");
 		if (tipo==5) lblTipo.setText("Devolución a bodega");
-		//if (tipo==6) lblTipo.setText("Nota de crédito");
+
+		if (tipo==3) cbcer.setVisibility(View.VISIBLE);
 
 		itemid="*";
 
@@ -322,7 +328,15 @@ public class Anulacion extends PBase {
 				}
 				return true;
 			});
-		}catch (Exception e){
+
+			cbcer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					listItems();
+				}
+			});
+
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
@@ -338,7 +352,7 @@ public class Anulacion extends PBase {
 		int vP,f,regs=0;
 		double val, total=0;
 		String id,sf,sval;
-		long dfi,dff;
+		long dfi,dff,ff;
 		items.clear();
 		selidx=-1;vP=0;
 		
@@ -357,16 +371,23 @@ public class Anulacion extends PBase {
 			
 			if (tipo==3) {
 
-				dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
-				dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
+				if (cbcer.isChecked()) {
+					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
+							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
+							"WHERE (D_FACTURA.FEELUUID=' ')   " +
+							"ORDER BY D_FACTURA.COREL DESC ";
+				} else {
+					dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
+					dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
 
-				sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
-					"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
-					"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-					//"WHERE (D_FACTURA.ANULADO=0) AND (D_FACTURA.KILOMETRAJE=0)  " +
-						"WHERE (D_FACTURA.ANULADO=0)   " +
-         			"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
-					"ORDER BY D_FACTURA.COREL DESC ";
+					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
+							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
+							"WHERE (D_FACTURA.ANULADO=0)   " +
+							"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+							"ORDER BY D_FACTURA.COREL DESC ";
+				}
 			}
 			
 			if (tipo==4) {
@@ -429,7 +450,9 @@ public class Anulacion extends PBase {
 
 					if (tipo==3) {
 						vItem.UUID=DT.getString(5);
-						vItem.FechaFactura=du.univfechalong(DT.getLong(6));
+						ff=DT.getLong(6);
+						vItem.FechaFactura=du.sfecha(ff)+" "+du.shora(ff);
+						//vItem.FechaFactura=du.univfechalong(DT.getLong(6));
 					}else{
 						vItem.UUID="";
 						vItem.FechaFactura="";

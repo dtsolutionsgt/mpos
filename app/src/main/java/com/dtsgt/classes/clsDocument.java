@@ -18,11 +18,12 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
-    public String nombre_reporte="",fversion;
+    public String nombre_reporte="",fversion,idpais,sal_nit;
 	public String resol,resfecha,resvence,resrango,resrangot,fsfecha,modofact,fecharango,textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
     public String felcont,contacc,nitsuc,sfticket;
-	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero, pais="";
+	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
+    public String pais="",tipo_doc;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
@@ -640,13 +641,13 @@ public class clsDocument {
                 s=encabezadoSV(s);
                 ss=s.toUpperCase();
                 nidx=ss.indexOf("NIT");
-                //if (nidx>=0) s="NIT: "+nitsuc;
+                //if (nidx>=0) s="DUI/NIT: ";
             } catch (Exception e) {
                 s="##";
             }
 
             if (s.contains("%%")) {
-                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
+                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
 
                 if (facturaflag) {
                     //rep.addc(nombre);
@@ -690,27 +691,14 @@ public class clsDocument {
                 }
             }
 
-            /*
-            if (docfactura) {
-                if (facturaflag) {
-                    if (i==8){
-                        rep.add("");
-                        rep.addc("CAI");
-                        rep.addc(resol);
-                        rep.addc(resvence);
-                        if (!resrangot.isEmpty()) rep.addc(resrangot);
-                        rep.addc(resrango);
-                    }
-                }
-            }
-            */
 
         }
 
         if (docfactura) {
 
-            if (!emptystr(nit_cliente)) rep.add("RTN: "+nit_cliente);
-            rep.add("Fecha: "+fsfecha);
+            if (facturaflag) {
+                if (!nit_cliente.isEmpty()) rep.add(sal_nit + nit_cliente);
+                rep.add("Fecha: " + fsfecha);
 
             /*
             if (!emptystr(clidir)) {
@@ -746,6 +734,10 @@ public class clsDocument {
                 }
             }
             */
+            } else {
+                rep.add("DUI/NIT: C/F");
+                rep.add("Fecha: " + fsfecha);
+            }
         }
 
         rep.add("");
@@ -1044,7 +1036,8 @@ public class clsDocument {
                 if (facturaflag) {
                     l="FACTURA: "+serie +"-"+l;
                 } else {
-                    sfticket=serie+l;l="";
+                    sfticket=serie+l;
+                    l="TICKET: "+sfticket;
                 }
 
             } else {
@@ -1308,7 +1301,7 @@ public class clsDocument {
         } else if (pais.equalsIgnoreCase("SV")) {
             facturaflag = true;
             if (nit_cliente.equalsIgnoreCase("CF")) {
-                facturaflag = true;
+                facturaflag = false;
             } else {
                 facturaflag = true;
             }

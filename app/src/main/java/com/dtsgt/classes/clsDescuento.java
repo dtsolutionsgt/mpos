@@ -145,7 +145,9 @@ public class clsDescuento {
 				
 				switch (DT.getInt(1)) {
 					case 0: 
-						if (iid.equalsIgnoreCase(prodid) || iid.equalsIgnoreCase("*")) val=DT.getDouble(2);break;
+						if (iid.equalsIgnoreCase(prodid) || iid.equalsIgnoreCase("*")) {
+							val=DT.getDouble(2);
+						}break;
 					case 1: 
 						if (iid.equalsIgnoreCase(slineaid)) val=DT.getDouble(2);break;
 					case 2: 

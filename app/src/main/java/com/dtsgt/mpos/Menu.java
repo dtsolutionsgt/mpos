@@ -1151,6 +1151,7 @@ public class Menu extends PBase {
 
         String subject,body;
         String dir=Environment.getExternalStorageDirectory()+"";
+		long fsize,fslim;
 
         try {
             File f1 = new File(dir + "/posdts.db");
@@ -1161,7 +1162,17 @@ public class Menu extends PBase {
 
             app.zip(dir+"/posdts_"+gl.codigo_ruta+".db",dir + "/posdts_"+gl.codigo_ruta+".zip");
 
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+			try {
+				fsize=f3.length();fslim=25*1024*1000;
+				if (fsize>fslim) {
+					msgbox("El tamaño de archivo mayor de 25MB, por favor avize a soporte ");return;
+				}
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
+
+
+			StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
 
             subject= "Base de datos : "+gl.tiendanom+" caja : "+gl.codigo_ruta;

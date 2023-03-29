@@ -1511,7 +1511,7 @@ public class WSEnv extends PBase {
             String idfel = gl.peFEL;
 
             if (app.usaFEL()) {
-                D_facturaObj.fill("WHERE (STATCOM='N') AND (FEELUUID<>' ') AND (FECHA>2200000000) ");
+                D_facturaObj.fill("WHERE (STATCOM='N') AND ((ANULADO=1) OR (FEELUUID<>' ')) AND (FECHA>2200000000) ");
             } else {
                 D_facturaObj.fill("WHERE (STATCOM='N') AND (FECHA>2200000000) ");
             }

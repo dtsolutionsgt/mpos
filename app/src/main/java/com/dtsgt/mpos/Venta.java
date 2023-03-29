@@ -642,6 +642,15 @@ public class Venta extends PBase {
 
             if (selidx>-1) {
                 adapter.setSelectedIndex(selidx);
+                try {
+                    Object lvObj = listView.getItemAtPosition(selidx);
+                    vitem = (clsVenta)lvObj;
+                    prodtotlin=vitem.Total;
+                    toast("tot "+prodtotlin);
+                } catch (Exception e) {
+                    prodtotlin=0;
+                }
+
                 listView.smoothScrollToPosition(selidx);
             } else seluid="";
 
@@ -982,7 +991,10 @@ public class Venta extends PBase {
     }
 
     private void updDescMonto(){
-        try{
+        try {
+
+            if (gl.promdesc<0) return;
+
             desc=gl.promdesc;
             cant=savecant;
             prodPrecio();
@@ -1054,8 +1066,10 @@ public class Venta extends PBase {
         vtot=prec*cant;
         prodtot=mu.round2dec(vtot);
 
-        impval=impval*cant;
         impval=mu.round2dec(impval);
+        impval=impval*cant;
+        impval=impval+0;
+
 
         /*
         vtot=vtot*100;
@@ -1285,10 +1299,14 @@ public class Venta extends PBase {
 
         try {
 
-            prodtot=mu.round(prec*cant,2);
+            //prodtot=mu.round(prec*cant,2);
+            prodtot=prodtot*cant;
+            prodtot= mu.round2dec(prodtot);
+
             if (sinimp) precdoc=precsin; else precdoc=prec;
             valimp=cant*prec*imp/100;valimp=mu.round2(valimp);
 
+            impval=mu.round2dec(impval);
             impval=mu.round2dec(impval*cant);
 
             upd.init("T_VENTA");
@@ -2003,6 +2021,7 @@ public class Venta extends PBase {
                         switch (position) {
                             case 0:
                                 if (mmodo==0) {
+                                    browse=6;
                                     startActivity(new Intent(Venta.this,VentaEdit.class));
                                 } else {
                                     startActivity(new Intent(Venta.this,ProdMenu.class));

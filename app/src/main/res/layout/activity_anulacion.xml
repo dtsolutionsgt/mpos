@@ -98,7 +98,7 @@
                 android:text="Inicio :"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="normal" />
 
             <TextView
@@ -113,7 +113,7 @@
                 android:gravity="center"
                 android:onClick="showDateDialog1"
                 android:text="00/00/0000"
-                android:textSize="21dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -134,7 +134,7 @@
                 android:text="Fin :    "
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="normal" />
 
             <TextView
@@ -149,7 +149,7 @@
                 android:gravity="center"
                 android:onClick="showDateDialog2"
                 android:text="00/00/0000"
-                android:textSize="21dp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
         </RelativeLayout>
     </LinearLayout>
@@ -243,5 +243,18 @@
         android:textSize="20dp"
         android:textStyle="bold"
         android:visibility="gone" />
+
+    <CheckBox
+        android:id="@+id/checkBox27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/listView1"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="0dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="NO CERTIFICADAS"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>
