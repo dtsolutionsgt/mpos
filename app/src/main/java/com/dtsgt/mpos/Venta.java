@@ -646,7 +646,6 @@ public class Venta extends PBase {
                     Object lvObj = listView.getItemAtPosition(selidx);
                     vitem = (clsVenta)lvObj;
                     prodtotlin=vitem.Total;
-                    toast("tot "+prodtotlin);
                 } catch (Exception e) {
                     prodtotlin=0;
                 }
@@ -1054,7 +1053,9 @@ public class Venta extends PBase {
             umb=um;fact=1;
         }
 
-        if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            prec = prodPrecioBaseImp(app.codigoProducto(prodid));
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             prec=prodPrecioBaseImp(app.codigoProducto(prodid));
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             prec=prodPrecioBaseImp(app.codigoProducto(prodid));
@@ -1068,7 +1069,6 @@ public class Venta extends PBase {
 
         impval=mu.round2dec(impval);
         impval=impval*cant;
-        impval=impval+0;
 
 
         /*
@@ -1300,7 +1300,7 @@ public class Venta extends PBase {
         try {
 
             //prodtot=mu.round(prec*cant,2);
-            prodtot=prodtot*cant;
+            prodtot=prec*cant;
             prodtot= mu.round2dec(prodtot);
 
             if (sinimp) precdoc=precsin; else precdoc=prec;

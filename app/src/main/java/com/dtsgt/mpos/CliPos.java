@@ -155,8 +155,11 @@ public class CliPos extends PBase {
 
         if (gl.cliente_dom!=0) cargaCliente();
 
-        //txtNIT.setText("8000-6");
-        //txtNIT.setText("8000-300499-123-4");
+        if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            //txtNIT.setText("8000-300499-123-4");
+            txtNIT.setText("8000-6");
+        }
+
     }
 
     public interface ExtRunnable extends Runnable {
@@ -188,6 +191,7 @@ public class CliPos extends PBase {
     }
 
 	public void clienteNIT(View view) {
+        boolean flag_NRC;
 
 		try {
 
@@ -228,7 +232,7 @@ public class CliPos extends PBase {
                 if (!validaNITHon(sNITCliente)) {
                     msgbox("RTN incorrecto");return;
                 }
-            } else   if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 if (!validaNITSal(sNITCliente)) {
                     msgbox("NIT/NRC incorrecto");return;
                 }
@@ -249,17 +253,26 @@ public class CliPos extends PBase {
 
             if (sTelCliente.isEmpty()) sTelCliente="";
 
-			if (!existeCliente()){
-        		if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
-			} else {
-                actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente);
-                procesaNIT(sNITCliente);
+
+            flag_NRC=false;gl.sal_PER=false;
+            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (gl.sal_NRC) flag_NRC = true;
+            }
+
+            if (flag_NRC) {
+                msgAskCG("Grande contribuyente ");
+            } else {
+                if (!existeCliente()){
+                    if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
+                } else {
+                    actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente);
+                    procesaNIT(sNITCliente);
+                }
             }
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 
     private void purgeNIT() {
@@ -1550,17 +1563,22 @@ public class CliPos extends PBase {
 
     //region Dialogos
 
-    private void msgAskCF(String msg) {
+    private void msgAskCG(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Consumidor final");
+        dialog.setTitle("Credito fiscal");
         dialog.setMessage("¿" + msg + "?");
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    consFinal=true;
-                    if (agregaCliente("C.F.","Consumidor final","Ciudad","","")) procesaCF() ;
+                    gl.sal_PER=true;
+                    if (!existeCliente()){
+                        if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
+                    } else {
+                        actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, sTelCliente);
+                        procesaNIT(sNITCliente);
+                    }
                 } catch (Exception e) {
                     msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }

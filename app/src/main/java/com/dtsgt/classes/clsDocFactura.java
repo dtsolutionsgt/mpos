@@ -445,7 +445,8 @@ public class clsDocFactura extends clsDocument {
            //#CKFK 20200520 quité la consulta que buscaba en las notas de crédito porque aquí no existe esa tabla
 
 			sql="SELECT D_FACTURAD.PRODUCTO,P_PRODUCTO.DESCLARGA,D_FACTURAD.CANT,D_FACTURAD.PRECIODOC,D_FACTURAD.IMP, " +
-				"D_FACTURAD.DES,D_FACTURAD.DESMON, D_FACTURAD.TOTAL, D_FACTURAD.UMVENTA, D_FACTURAD.UMPESO, D_FACTURAD.PESO, D_FACTURAD.VAL1, D_FACTURAD.VAL2 " +
+				"D_FACTURAD.DES,D_FACTURAD.DESMON, D_FACTURAD.TOTAL, D_FACTURAD.UMVENTA, D_FACTURAD.UMPESO, " +
+                "D_FACTURAD.PESO, D_FACTURAD.VAL1, D_FACTURAD.VAL2, D_FACTURAD.PRECIO " +
 				"FROM D_FACTURAD INNER JOIN P_PRODUCTO ON D_FACTURAD.PRODUCTO = P_PRODUCTO.CODIGO_PRODUCTO " +
 				"WHERE (D_FACTURAD.COREL='"+corel+"')";	
 			
@@ -456,6 +457,7 @@ public class clsDocFactura extends clsDocument {
 			while (!DT.isAfterLast()) {
 
                 item = new itemData();
+
                 item.cod = DT.getString(0);
                 item.nombre = DT.getString(1);
                 item.cant = DT.getDouble(2);
@@ -469,6 +471,8 @@ public class clsDocFactura extends clsDocument {
                 item.peso = DT.getDouble(10);
                 if (sinimp) item.tot = item.tot - item.imp;
                 item.flag=false;
+                item.prec_orig= DT.getDouble(13);
+
                 items.add(item);
 
                 if (DT.getDouble(11)==1) {
@@ -610,18 +614,26 @@ public class clsDocFactura extends clsDocument {
     @Override
 	protected boolean buildDetail() {
 
-        int ii=1;
-
         if (pais.equalsIgnoreCase("GT")) {
+
             return detailBaseGUA();
+
         } else if (pais.equalsIgnoreCase("HN")) {
+
             return detailBaseHON();
+
         } else if (pais.equalsIgnoreCase("SV")) {
-            if (facturaflag) {
+
+            if ( tipo_doc.equalsIgnoreCase("N")) {
                 return detailBaseSV();
-            } else {
+            } else if ( tipo_doc.equalsIgnoreCase("C")) {
+                return detailBaseSV();
+            } else if ( tipo_doc.equalsIgnoreCase("T")) {
                 return detailTicketSV();
+            } else {
+                return detailBaseSV();
             }
+
         } else {
             return detailBaseGUA();
         }
@@ -706,10 +718,10 @@ public class clsDocFactura extends clsDocument {
     protected boolean detailTicketSV() {
         itemData item;
         double pr,imp,tot,totval,dval1,dval2;
-        String ps,cu,cp;
+        String ps,psc,cu,cp;
 
-        rep.add("Cant Descripcion");
-        rep.add3sss("Precio","No sujeto","Gravado");
+        rep.add3sss("Cant","Precio","Total");
+
         rep.line();
 
         for (int i = 0; i <items.size(); i++) {
@@ -717,21 +729,21 @@ public class clsDocFactura extends clsDocument {
             if (!item.flag) {
 
                 ps=item.nombre;if (ps.length()>prw-5) ps=ps.substring(0,prw-6);
-                ps=rep.ltrim(""+((int) item.cant),4)+" "+ps;
+                //ps=rep.ltrim(""+((int) item.cant),4)+" "+ps;
+                psc=rep.ltrim(""+((int) item.cant),4);
                 rep.add(ps);
 
                 imp=item.imp;
-                pr=item.prec-imp;
-                if (pais.equalsIgnoreCase("SV")) pr=item.prec;
+                //pr=item.prec-imp;
+                pr=item.prec_orig;
                 pr=round2(pr);
                 tot=pr*item.cant;
                 tot=round2(tot);
 
-                ps=rep.frmdec(item.prec);
-                dval1=0;dval2=0;
-                if (imp==0) dval1=tot; else dval2=tot;
+                ps=rep.frmdec(pr);
+                dval2=tot;
 
-                rep.add3lrr(ps,dval1,dval2);
+                rep.add3lrr(psc,pr,dval2);
             } else {
                 rep.add("   - "+item.nombre);
             }
@@ -1201,19 +1213,137 @@ public class clsDocFactura extends clsDocument {
     }
 
     private boolean footerCredSV() {
-
-        return true;
-    }
-
-    private boolean footerTicketSV() {
         double totimp,totperc;
 
         stot=stot-imp;
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        //rep.addtotsp("Subtotal: ", stot);
-        rep.addtotsp("Total Gravado: ", fh_grav);
+        rep.addtotsp("Sumas: ", stot);
+        if (fh_val1>0) rep.addtotsp(((int) fh_val1)+"% IVA: ", fh_imp1);
+        rep.addtotsp("Subtotal: ", stot+fh_imp1);
+        //rep.addtotsp("Venta sujeta: ", fh_grav);
+        //rep.addtotsp("Venta no sujeta: ", fh_exent);
+        //rep.addtotsp("Importe exonerado: ", fh_exon);
+        rep.addtotsp("IVA Percibido: ", fh_imp2);
+        if (desc>=0.01) rep.addtotsp("Descuento: ", -desc);
+        rep.addtotsp("TOTAL : ", tot);
+
+        montoLetra();
+
+        if (plines.size()>0) {
+            rep.add("Formas de pago:");
+            for (int ii= 0; ii <plines.size(); ii++) {
+                rep.add(plines.get(ii));
+            }
+        }
+
+        /*
+        rep.add("");
+        rep.add("No. OC exenta ");
+        rep.add("No. cons. registro exonerado");
+        rep.add("No. registro SAG");
+        rep.add("");
+        */
+
+        if (modorest) {
+            rep.add("");
+            rep.add("Le atendio: "+nommesero);
+        }
+
+        rep.add("");
+
+        /*
+        try {
+            rep.addc("Original: Cliente");
+            rep.addc("Copia: Obligado Tributario Emisor");
+            rep.addc("La factura es beneficio de todos exija la.");
+            rep.add("");
+            if (!textopie.isEmpty()) {
+                rep.addc(textopie);
+            }
+        } catch (Exception e) {}
+        */
+
+        //banderafel=true;
+        if (banderafel) {
+
+            if (feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Factura generada en modo de contingencia");
+                rep.add("Numero de Acceso: "+contacc);
+                rep.add("Su factura pueden encontrar en el portal");
+                rep.add("SAT bajo identificacion: "+serie+numero);
+            }
+
+            if (!feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Número de autorización: ");
+                rep.add(feluuid);
+                rep.add("Fecha de certificación: "+feldcert);
+            }
+
+            if (!felIVA.isEmpty()) {
+                rep.add(felIVA);
+            }
+            if (!felISR.isEmpty()) {
+                rep.add(felISR);
+                if (!felISR2.isEmpty()) {
+                    rep.add(felISR2);
+                }
+            }
+
+            rep.add("");
+            rep.add(felcert);
+            rep.add(felnit);
+            rep.add("");
+            rep.add("Powered by DTSolutions, S.A.");
+            rep.addc("dts.com.gt");
+        }
+
+        //#HS_20181212 Validación para factura pendiente de pago
+        if (pendiente == 4){
+            rep.add("");
+            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
+            rep.add("EXIJA SU FACTURA ORIGINAL");
+            rep.add("");
+        }
+
+        if (parallevar){
+            rep.add("");
+            rep.addc("PARA LLEVAR");
+            rep.add("");
+        }
+
+        if (impresionorden) {
+            String sod=add1;
+            if (!sod.isEmpty()) {
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+                rep.addc("ORDEN: # "+sod.toUpperCase());
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+            }
+        } else {
+            rep.add("");
+        }
+
+        rep.add("");
+
+        return super.buildFooter();
+    }
+
+    private boolean footerTicketSV() {
+        double totimp,totperc;
+
+        //stot=stot-imp;
+        totperc=stot*(percep/100);totperc=round2(totperc);
+        totimp=imp-totperc;
+
+        rep.addtotsp("Subtotal: ", fh_grav+fh_exent+fh_imp1);
+        rep.addtotsp("Total Gravado: ", fh_grav+fh_imp1);
         rep.addtotsp("Total exento: ", 0);
         rep.addtotsp("Venta no sujeta: ", fh_exent);
         //rep.addtotsp("Importe exonerado: ", fh_exon);
@@ -1487,7 +1617,7 @@ public class clsDocFactura extends clsDocument {
 	
 	private class itemData {
 		public String cod,nombre,um,ump;
-		public double cant,peso,prec,imp,descper,desc,tot;
+		public double cant,peso,prec,imp,descper,desc,tot,prec_orig;
 		public boolean flag;
 	}
 
