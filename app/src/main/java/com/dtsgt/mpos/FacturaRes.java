@@ -41,6 +41,7 @@ import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
+import com.dtsgt.classes.clsD_factura_svObj;
 import com.dtsgt.classes.clsD_facturahnObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
@@ -1101,7 +1102,7 @@ public class FacturaRes extends PBase {
 		Cursor dt,dtc;
 		String vprod,vumstock,vumventa,vbarra,ssq;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp;
-		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid,tipo_factura=1;
 		boolean flag,pagocarta=false;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
@@ -1225,9 +1226,13 @@ public class FacturaRes extends PBase {
 			ins.add("VEHICULO",gl.parVer);
 
 			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-				String svnit="N";
-				if (gl.codigo_cliente==gl.emp*10) svnit="T";
-				if (gl.sal_NRC) svnit="C";
+				String svnit="N";tipo_factura=1;
+				if (gl.codigo_cliente==gl.emp*10) {
+					svnit="T";tipo_factura=3;
+				}
+				if (gl.sal_NRC) {
+					svnit="C";tipo_factura=2;
+				}
 				ins.add("AYUDANTE",svnit);
 			} else {
 				tipoNIT();
@@ -1244,6 +1249,7 @@ public class FacturaRes extends PBase {
             ins.add("FEELUUID"," ");
             ins.add("FEELFECHAPROCESADO",0);
             ins.add("FEELCONTINGENCIA"," ");
+			ins.add("CODIGO_TIPO_FACTURA",tipo_factura);
 
 			db.execSQL(ins.sql());
 
@@ -1655,6 +1661,29 @@ public class FacturaRes extends PBase {
             D_factura_felObj.add(ffel);
 
             //endregion
+
+			//region D_FACTURA_SV
+
+			if ( gl.codigo_pais.equalsIgnoreCase("SV")) {
+
+				if (gl.sal_PER) {
+
+					clsD_factura_svObj D_factura_svObj=new clsD_factura_svObj(this,Con,db);
+
+					clsClasses.clsD_factura_sv itemt = clsCls.new clsD_factura_sv();
+
+					itemt.corel = corel;
+					itemt.empresa = gl.emp;
+					itemt.codigo_tipo_factura = tipo_factura;
+					itemt.codigo_departamento = gl.sal_iddep;
+					itemt.codigo_municipio = gl.sal_idmun;
+					itemt.codigo_tipo_negocio = gl.sal_idneg;
+
+					D_factura_svObj.add(itemt);
+				}
+			}
+
+			//endregion
 
             procesaInventario();
 
@@ -3984,6 +4013,7 @@ public class FacturaRes extends PBase {
 				//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
 
                 gl.QRCodeStr="";
+
                 app.doPrint(1,0);
 
                 Handler mtimer = new Handler();

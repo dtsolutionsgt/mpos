@@ -1470,6 +1470,66 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_tiponeg] ("+
+                    "CODIGO_TIPO_NEGOCIO INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "DESCRIPCION TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "fec_agr INTEGER NOT NULL,"+
+                    "user_agr INTEGER NOT NULL,"+
+                    "fec_mod INTEGER NOT NULL,"+
+                    "user_mod INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_TIPO_NEGOCIO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+
+        try {
+            sql="CREATE TABLE [T_sv_gcont] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "IDDEP TEXT NOT NULL,"+
+                    "IDMUNI TEXT NOT NULL,"+
+                    "IDNEG INTEGER NOT NULL,"+
+                    "DEP TEXT NOT NULL,"+
+                    "MUNI TEXT NOT NULL,"+
+                    "NEG TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
+            db.execSQL("ALTER TABLE D_FACTURA ADD CODIGO_TIPO_FACTURA INT NULL;");
+        } catch (Exception e) { }
+
+
+
+        try {
+            sql="DROP TABLE D_facturat";
+            db.execSQL(sql);
+
+
+        } catch (Exception e) { }
+
+
+
+        try {
+            sql="CREATE TABLE [D_factura_sv] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_TIPO_FACTURA INTEGER NOT NULL,"+
+                    "CODIGO_DEPARTAMENTO TEXT NOT NULL,"+
+                    "CODIGO_MUNICIPIO TEXT NOT NULL,"+
+                    "CODIGO_TIPO_NEGOCIO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_factura_sv_idx1 ON D_factura_sv(COREL)";db.execSQL(sql);
+        } catch (Exception e) { }
 
 
 

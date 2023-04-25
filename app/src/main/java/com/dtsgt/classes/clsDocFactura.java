@@ -46,7 +46,7 @@ public class clsDocFactura extends clsDocument {
 	}
 
     protected boolean loadHeadData(String corel) {
-		Cursor DT;
+		Cursor DT,DTt;
 		String cli="",vend="",val,empp="", anulado,s1,s2,s3,tp;
 		long ff;
 		int impres, cantimpres;
@@ -59,7 +59,7 @@ public class clsDocFactura extends clsDocument {
 
 			sql=" SELECT SERIE,CORELATIVO,RUTA,VENDEDOR,CLIENTE,TOTAL,DESMONTO,IMPMONTO,EMPRESA,FECHAENTR,ADD1," +
 				" ADD2,IMPRES, ANULADO, FEELUUID, FEELFECHAPROCESADO, FEELSERIE, FEELNUMERO, FEELCONTINGENCIA, " +
-                " EMPRESA, VEHICULO, AYUDANTE  " +
+                " EMPRESA, VEHICULO, AYUDANTE,CODIGO_TIPO_FACTURA  " +
 				" FROM D_FACTURA WHERE COREL='"+corel+"'";
 			DT=Con.OpenDT(sql);
 
@@ -99,7 +99,7 @@ public class clsDocFactura extends clsDocument {
                 contacc=felcont;
                 empid=DT.getInt(19);
                 fversion=DT.getString(20);
-                tipo_doc=DT.getString(21);
+                tipo_doc=DT.getInt(22);
 
                 if (anulado.equals("S")?true:false){
 					cantimpres = -1;
@@ -239,7 +239,44 @@ public class clsDocFactura extends clsDocument {
 				
 		val=vend;
 		vendedor=val;
-		
+
+        if (pais.equalsIgnoreCase("SV")) {
+            String ss="";
+
+            sql="SELECT CODIGO_DEPARTAMENTO,CODIGO_MUNICIPIO,CODIGO_TIPO_NEGOCIO FROM D_factura_sv WHERE COREL='"+corel+"'";
+            DT=Con.OpenDT(sql);
+            if (DT.getCount()>0) {
+                DT.moveToFirst();
+                ss=DT.getString(0);
+
+                sql="SELECT NOMBRE FROM P_DEPARTAMENTO WHERE CODIGO='"+ss+"'";
+                DTt=Con.OpenDT(sql);
+                if (DTt.getCount()>0) {
+                    DTt.moveToFirst();
+                    nomdepto=DTt.getString(0);
+                }
+
+                ss=DT.getString(1);
+                sql="SELECT NOMBRE FROM P_MUNICIPIO WHERE CODIGO='"+ss+"'";
+                DTt=Con.OpenDT(sql);
+                if (DTt.getCount()>0) {
+                    DTt.moveToFirst();
+                    nommuni=DTt.getString(0);
+                }
+
+                ss=""+DT.getInt(2);
+                sql="SELECT DESCRIPCION FROM P_tiponeg WHERE CODIGO_TIPO_NEGOCIO="+ss;
+                DTt=Con.OpenDT(sql);
+                if (DTt.getCount()>0) {
+                    DTt.moveToFirst();
+                    nomtipo=DTt.getString(0);
+                }
+            } else {
+                nomdepto="";nommuni="";nomtipo="";
+            }
+        }
+
+
 		try {
 
 			sql="SELECT NOMBRE,PERCEPCION,TIPO_CONTRIBUYENTE,DIRECCION,NIT,DIACREDITO " +
@@ -411,19 +448,19 @@ public class clsDocFactura extends clsDocument {
 
         QRCodeStr= "https://felpub.c.sat.gob.gt/verificador-web/publico/vistas/verificacionDte.jsf?tipo=autorizacion&" +
                 "numero="+ Numero_Factura + "&emisor="+ nit_emisor +"&receptor="+ nit_cliente +"&monto=" + stot;
-
-//        if (!QRCodeStr.isEmpty()) {
-//            try {
-//                qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
-//                bitmap = qrgEncoder.encodeAsBitmap();
-//                if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
-//                    throw new Exception("Error al guardar la barra");
-//                }
-//            } catch (Exception e) {
-//                Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        }
-
+/*
+        if (!QRCodeStr.isEmpty()) {
+            try {
+                qrgEncoder = new QRGEncoder(QRCodeStr, null, QRGContents.Type.TEXT, 350);
+                bitmap = qrgEncoder.encodeAsBitmap();
+                if (!QRGSaver.save(qrpath, "qr", bitmap, QRGContents.ImageType.IMAGE_JPEG)) {
+                    throw new Exception("Error al guardar la barra");
+                }
+            } catch (Exception e) {
+                Toast.makeText(cont, "Error QR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+*/
 		return true;
 	}
 
@@ -624,11 +661,11 @@ public class clsDocFactura extends clsDocument {
 
         } else if (pais.equalsIgnoreCase("SV")) {
 
-            if ( tipo_doc.equalsIgnoreCase("N")) {
+            if ( tipo_doc==1) {
                 return detailBaseSV();
-            } else if ( tipo_doc.equalsIgnoreCase("C")) {
+            } else if ( tipo_doc==2) {
                 return detailBaseSV();
-            } else if ( tipo_doc.equalsIgnoreCase("T")) {
+            } else if ( tipo_doc==3) {
                 return detailTicketSV();
             } else {
                 return detailBaseSV();
@@ -1196,11 +1233,11 @@ public class clsDocFactura extends clsDocument {
     //region Salvador
 
     private boolean footerSV() {
-        if ( tipo_doc.equalsIgnoreCase("N")) {
+        if ( tipo_doc==1) {
             return footerFactSV();
-        } else if ( tipo_doc.equalsIgnoreCase("C")) {
+        } else if ( tipo_doc==2) {
             return footerCredSV();
-        } else if ( tipo_doc.equalsIgnoreCase("T")) {
+        } else if ( tipo_doc==3) {
             return footerTicketSV();
         } else {
             return footerBaseSV();

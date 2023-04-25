@@ -112,6 +112,7 @@ public class clsD_facturaObj {
         ins.add("FEELUUID",item.feeluuid);
         ins.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
         ins.add("FEELCONTINGENCIA",item.feelcontingencia);
+        ins.add("CODIGO_TIPO_FACTURA",item.codigo_tipo_factura);
 
         db.execSQL(ins.sql());
 
@@ -156,6 +157,7 @@ public class clsD_facturaObj {
         upd.add("FEELUUID",item.feeluuid);
         upd.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
         upd.add("FEELCONTINGENCIA",item.feelcontingencia);
+        upd.add("CODIGO_TIPO_FACTURA",item.codigo_tipo_factura);
 
         upd.Where("(EMPRESA="+item.empresa+") AND (COREL='"+item.corel+"')");
 
@@ -176,66 +178,61 @@ public class clsD_facturaObj {
     }
 
     private void fillItems(String sq) {
-
         Cursor dt;
         clsClasses.clsD_factura item;
 
-        items.clear();count=1;
+        items.clear();
 
         dt=Con.OpenDT(sq);
+        count =dt.getCount();
+        if (dt.getCount()>0) dt.moveToFirst();
 
-        if(dt!=null){
+        while (!dt.isAfterLast()) {
 
-            count =dt.getCount();
-            if (dt.getCount()>0) dt.moveToFirst();
+            item = clsCls.new clsD_factura();
 
-            while (!dt.isAfterLast()) {
+            item.empresa=dt.getInt(0);
+            item.corel=dt.getString(1);
+            item.anulado=(dt.getInt(2)==1?true:false);
+            item.fecha=dt.getLong(3);
+            item.ruta=dt.getInt(4);
+            item.vendedor=dt.getInt(5);
+            item.cliente=dt.getInt(6);
+            item.kilometraje=dt.getDouble(7);
+            item.fechaentr=dt.getLong(8);
+            item.factlink=dt.getString(9);
+            item.total=dt.getDouble(10);
+            item.desmonto=dt.getDouble(11);
+            item.impmonto=dt.getDouble(12);
+            item.peso=dt.getDouble(13);
+            item.bandera=dt.getString(14);
+            item.statcom=dt.getString(15);
+            item.calcobj=(dt.getInt(16)==1?true:false);
+            item.serie=dt.getString(17);
+            item.corelativo=dt.getInt(18);
+            item.impres=dt.getInt(19);
+            item.add1=dt.getString(20);
+            item.add2=dt.getString(21);
+            item.add3=dt.getString(22);
+            item.depos=(dt.getInt(23)==1?true:false);
+            item.pedcorel=dt.getString(24);
+            item.referencia=dt.getString(25);
+            item.asignacion=dt.getString(26);
+            item.supervisor=dt.getString(27);
+            item.ayudante=dt.getString(28);
+            item.vehiculo=dt.getString(29);
+            item.codigoliquidacion=dt.getInt(30);
+            item.razon_anulacion=dt.getString(31);
+            item.feelserie=dt.getString(32);
+            item.feelnumero=dt.getString(33);
+            item.feeluuid=dt.getString(34);
+            item.feelfechaprocesado=dt.getLong(35);
+            item.feelcontingencia=dt.getString(36);
+            item.codigo_tipo_factura=dt.getInt(37);
 
-                item = clsCls.new clsD_factura();
+            items.add(item);
 
-                item.empresa=dt.getInt(0);
-                item.corel=dt.getString(1);
-                item.anulado= (dt.getInt(2)==1?true:false);
-                item.fecha=dt.getLong(3);
-                item.ruta=dt.getInt(4);
-                item.vendedor=dt.getInt(5);
-                item.cliente=dt.getInt(6);
-                item.kilometraje=dt.getDouble(7);
-                item.fechaentr=dt.getLong(8);
-                item.factlink=dt.getString(9);
-                item.total=dt.getDouble(10);
-                item.desmonto=dt.getDouble(11);
-                item.impmonto=dt.getDouble(12);
-                item.peso=dt.getDouble(13);
-                item.bandera=dt.getString(14);
-                item.statcom=dt.getString(15);
-                item.calcobj= (dt.getInt(16)==1?true:false);
-                item.serie=dt.getString(17);
-                item.corelativo=dt.getInt(18);
-                item.impres=dt.getInt(19);
-                item.add1=dt.getString(20);
-                item.add2=dt.getString(21);
-                item.add3=dt.getString(22);
-                item.depos= (dt.getInt(23)==1?true:false);
-                item.pedcorel=dt.getString(24);
-                item.referencia=dt.getString(25);
-                item.asignacion=dt.getString(26);
-                item.supervisor=dt.getString(27);
-                item.ayudante=dt.getString(28);
-                item.vehiculo=dt.getString(29);
-                item.codigoliquidacion=dt.getInt(30);
-                item.razon_anulacion=dt.getString(31);
-                item.feelserie=dt.getString(32);
-                item.feelnumero=dt.getString(33);
-                item.feeluuid=dt.getString(34);
-                item.feelfechaprocesado=dt.getLong(35);
-                item.feelcontingencia=dt.getString(36);
-
-                items.add(item);
-
-                dt.moveToNext();
-            }
-
+            dt.moveToNext();
         }
 
         if (dt!=null) dt.close();
@@ -300,6 +297,7 @@ public class clsD_facturaObj {
         ins.add("FEELUUID",item.feeluuid);
         ins.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
         ins.add("FEELCONTINGENCIA",item.feelcontingencia);
+        ins.add("CODIGO_TIPO_FACTURA",item.codigo_tipo_factura);
 
         return ins.sql();
 
@@ -344,6 +342,7 @@ public class clsD_facturaObj {
         upd.add("FEELUUID",item.feeluuid);
         upd.add("FEELFECHAPROCESADO",item.feelfechaprocesado);
         upd.add("FEELCONTINGENCIA",item.feelcontingencia);
+        upd.add("CODIGO_TIPO_FACTURA",item.codigo_tipo_factura);
 
         upd.Where("(EMPRESA="+item.empresa+") AND (COREL='"+item.corel+"')");
 

@@ -68,6 +68,7 @@ import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_salaObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_tiponegObj;
 import com.dtsgt.classes.clsP_unidadObj;
 import com.dtsgt.classes.clsP_unidad_convObj;
 import com.dtsgt.classes.clsP_usgrupoObj;
@@ -399,6 +400,9 @@ public class WSRec extends PBase {
                         break;
                     case 60:
                         callMethod("GetP_VENDEDOR_SUCURSAL", "EMPRESA", gl.emp,"SUCURSAL",gl.tienda);
+                        break;
+                    case 61:
+                        callMethod("GetP_TIPO_NEGOCIO", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -755,8 +759,7 @@ public class WSRec extends PBase {
                     if (ws.errorflag) {
                         processComplete();break;
                     }
-                    processComplete();
-                    //execws(59);
+                    execws(59);
                     break;
                 case 59:
                     processVendedorRol();
@@ -766,6 +769,12 @@ public class WSRec extends PBase {
                     execws(60);
                 case 60:
                     processVendedorSucursal();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(61);
+                case 61:
+                    processTipoNegocio();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
@@ -930,6 +939,8 @@ public class WSRec extends PBase {
                 plabel = "VENDEDOR ROL";break;
             case 60:
                 plabel = "VENDEDOR SUCURSAL";break;
+            case 61:
+                plabel = "TIPO NEGOCIO";break;
         }
 
         updateLabel();
@@ -3681,6 +3692,46 @@ public class WSRec extends PBase {
             ws.error = e.getMessage(); ws.errorflag = true;
         }
 
+    }
+
+    private void processTipoNegocio() {
+        try {
+            clsP_tiponegObj handler = new clsP_tiponegObj(this, Con, db);
+            clsBeP_TIPONEGList items = new clsBeP_TIPONEGList();
+            clsBeP_TIPONEG item = new clsBeP_TIPONEG();
+            clsClasses.clsP_tiponeg var;
+
+            script.add("DELETE FROM P_TIPONEG");
+
+            items = xobj.getresult(clsBeP_TIPONEGList.class, "GetP_TIPO_NEGOCIO");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_tiponeg();
+
+                var.codigo_tipo_negocio=item.CODIGO_TIPO_NEGOCIO;
+                var.empresa=item.EMPRESA;
+                var.descripcion=item.DESCRIPCION;
+                var.activo=1;
+                var.fec_agr=0;
+                var.user_agr=0;
+                var.fec_mod=0;
+                var.user_mod=0;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
     }
 
     //endregion

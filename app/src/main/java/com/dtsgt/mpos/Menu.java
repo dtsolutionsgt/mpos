@@ -2368,15 +2368,13 @@ public class Menu extends PBase {
 		return true;
 	}
 
-	@SuppressLint("SuspiciousIndentation")
 	private boolean validaVenta() {
-
 		Cursor DT;
 		int ci,cf,ca1,ca2;
 		double dd;
 		long fv,fa;
 
-        if (gl.rol==4) return true;
+        //if (gl.rol==4) return true;
 
         try {
 
@@ -2391,7 +2389,7 @@ public class Menu extends PBase {
 			cf=DT.getInt(3);
 
 			if (ca1>=cf) {
-				mu.msgbox("Se han terminado los correlativos de facturas. No se puede continuar con la venta.");
+				mu.msgbox("Se han terminado los correlativos de las facturas. No se puede continuar con la venta.");
 				return false;
 			}
 
@@ -2415,7 +2413,7 @@ public class Menu extends PBase {
             if (DT!=null) DT.close();
 
 		} catch (Exception e) {
-			mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n"); //+e.getMessage());
+			mu.msgbox("No esta definido correlativo de las facturas. No se puede continuar con la venta.\n"); //+e.getMessage());
 			return false;
 		}
 
@@ -2434,7 +2432,7 @@ public class Menu extends PBase {
                 cf = DT.getInt(3);
 
                 if (ca1 >= cf) {
-                    mu.msgbox("Se han terminado los correlativos de contingencias. No se puede continuar con la venta.");
+                    mu.msgbox("Se han terminado los correlativos de contingencias de las facturas. No se puede continuar con la venta.");
                     return false;
                 }
 
@@ -2446,10 +2444,111 @@ public class Menu extends PBase {
                 if (DT != null) DT.close();
 
             } catch (Exception e) {
-                mu.msgbox("No esta definido correlativo de contingencia. No se puede continuar con la venta.\n"); //+e.getMessage());
+                mu.msgbox("No esta definido correlativo de contingencia para las facturas. No se puede continuar con la venta.\n"); //+e.getMessage());
                 return false;
             }
         }
+
+		if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+			return validaCorelSV();
+		} else {
+			return true;
+		}
+	}
+
+	private boolean validaCorelSV() {
+		if (validaCorelCredito()) {
+			return validaCorelTicket();
+		} else return false;
+	}
+
+	private boolean validaCorelCredito() {
+		Cursor DT;
+		int ci,cf,ca1,ca2;
+		double dd;
+		long fv,fa;
+
+		//if (gl.rol==4) return true;
+
+		try {
+
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+				"WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=2)";
+			DT=Con.OpenDT(sql);
+
+			DT.moveToFirst();
+
+			ca1=DT.getInt(1);
+			ci=DT.getInt(2);
+			cf=DT.getInt(3);
+
+			if (ca1>=cf) {
+				mu.msgbox("Se han terminado los correlativos de los creditos fiscales. No se puede continuar con la venta.");
+				return false;
+			}
+
+			fa=du.getActDate();
+			fv=DT.getLong(4);
+
+			if (fa==fv) {
+				msgbox("Último día de vigencia de autorización de los creditos fiscales.");
+				toastlong("Último día de vigencia de autorización de los creditos fiscales.");
+			}
+
+			if (fa>fv) {
+				mu.msgbox("Se ha acabado vigencia de autorización de los creditos fiscales. No se puede continuar con la venta.");
+				return false;
+			}
+
+			dd=cf-ci;dd=0.90*dd;
+			ca2=ci+((int) dd);
+			if (ca1>ca2) porcentaje = true;
+
+			if (DT!=null) DT.close();
+
+		} catch (Exception e) {
+			mu.msgbox("No esta definido correlativo de los creditos fiscales. No se puede continuar con la venta.\n"); //+e.getMessage());
+			return false;
+		}
+
+		if (app.usaFEL()) {
+
+			try {
+
+				sql = "SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+						"WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=3) AND ACTIVA = 1 ";
+				DT = Con.OpenDT(sql);
+
+				DT.moveToFirst();
+
+				ca1 = DT.getInt(1);
+				ci = DT.getInt(2);
+				cf = DT.getInt(3);
+
+				if (ca1 >= cf) {
+					mu.msgbox("Se han terminado los correlativos de contingencias de los creditos fiscales. No se puede continuar con la venta.");
+					return false;
+				}
+
+				dd = cf - ci;
+				dd = 0.75 * dd;
+				ca2 = ci + ((int) dd);
+				if (ca1 > ca2) porcentaje = true;
+
+				if (DT != null) DT.close();
+
+			} catch (Exception e) {
+				mu.msgbox("No esta definido correlativo de contingencia para los creditos fiscales. No se puede continuar con la venta.\n"); //+e.getMessage());
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean validaCorelTicket() {
+
+
 
 		return true;
 	}
