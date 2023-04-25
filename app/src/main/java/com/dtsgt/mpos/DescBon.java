@@ -110,7 +110,6 @@ public class DescBon extends PBase {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
-		
 	}
 	
 	
