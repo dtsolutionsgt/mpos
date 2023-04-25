@@ -121,10 +121,15 @@ public class FacturaRes extends PBase {
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
 
-	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext,pend,stot,stot0;
+	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext;
+	private double pend,stot,stot0,percep_total;
 	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito,descaddmonto;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
     private boolean horiz=true;
+
+	final double percep_val=1;
+
+
 
 	//@SuppressLint("MissingPermission")
 	@Override
@@ -722,7 +727,11 @@ public class FacturaRes extends PBase {
 
 		clsClasses.clsCDB item;
 
-		items.clear();
+		items.clear();gl.percepcion=0;
+
+		if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+			if ((stot>percep_val) && (gl.sal_PER)) gl.percepcion=1;
+		}
 
 		try {
 
@@ -731,11 +740,17 @@ public class FacturaRes extends PBase {
 				totimp=mu.round2(totimp);
 				stot=stot-totimp;
 
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					if ((stot>percep_val) && (gl.sal_PER)) gl.percepcion=1;
+				}
+
 				totperc=stot*(gl.percepcion/100);
-				totperc=mu.round2(totperc);
+				totperc=mu.round2dec(totperc);
+				totimp=totimp+totperc;
 
                 descmon=descmon+descaddmonto;
-				tot=stot+totimp-descmon+totperc;
+				tot=stot+totimp-descmon;
+				//tot=stot+totimp-descmon+totperc;
 				tot=tot+propina;
 				tot=mu.round2(tot);
 
@@ -744,14 +759,16 @@ public class FacturaRes extends PBase {
 				items.add(item);
 
 				item = clsCls.new clsCDB();
-				item.Cod="Impuesto";item.Desc=mu.frmcur(totimp);item.Bandera=0;
+				item.Cod="Impuestos";item.Desc=mu.frmcur(totimp);item.Bandera=0;
 				items.add(item);
 
+				/*
 				if (gl.contrib.equalsIgnoreCase("C")) {
 					item = clsCls.new clsCDB();
 					item.Cod="Percepción";item.Desc=mu.frmcur(totperc);item.Bandera=0;
 					items.add(item);
 				}
+				*/
 
 				item = clsCls.new clsCDB();
 				item.Cod="Descuento";item.Desc=mu.frmcur(-descmon);item.Bandera=0;
@@ -1209,8 +1226,8 @@ public class FacturaRes extends PBase {
 
 			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 				String svnit="N";
-				if (gl.sal_NRC) svnit="C";
 				if (gl.codigo_cliente==gl.emp*10) svnit="T";
+				if (gl.sal_NRC) svnit="C";
 				ins.add("AYUDANTE",svnit);
 			} else {
 				tipoNIT();
@@ -1408,6 +1425,13 @@ public class FacturaRes extends PBase {
 					fh_imp2=dt.getDouble(0);
 				} else fh_imp2=0;
 
+
+				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					if ((fh_grav>percep_val) && (gl.sal_PER)) {
+						//if ((fh_grav>100) && (gl.sal_PER)) {
+						fh_imp2=fh_grav*0.01;fh_imp2=mu.round2dec(fh_imp2);
+					} else fh_imp2=0;
+				}
 
 				clsClasses.clsD_facturahn item = clsCls.new clsD_facturahn();
 

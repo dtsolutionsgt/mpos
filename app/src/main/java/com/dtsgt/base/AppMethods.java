@@ -256,6 +256,7 @@ public class AppMethods {
 			Locale defaultLocale = Locale.getDefault();
 			Currency currency = Currency.getInstance(defaultLocale);
 			gl.peMon=currency.getSymbol();
+			gl.peMon="Q";
 		}
 
 		try {

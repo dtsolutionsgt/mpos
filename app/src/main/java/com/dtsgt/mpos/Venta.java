@@ -816,8 +816,7 @@ public class Venta extends PBase {
     }
 
     private void processCant(boolean updateitem){
-
-        clsDescuento clsDesc, clsDescLinea;
+        clsDescuento clsDesc;
         clsBonif clsBonif;
         Cursor DT;
         double cnt,vv;
@@ -1133,7 +1132,9 @@ public class Venta extends PBase {
             umb=um;fact=1;
         }
 
-        if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            prec = prodPrecioBaseImp(app.codigoProducto(prodid));
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
             prec=prodPrecioBaseImp(app.codigoProducto(prodid));
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             prec=prodPrecioBaseImp(app.codigoProducto(prodid));
@@ -1147,7 +1148,6 @@ public class Venta extends PBase {
 
         impval=mu.round2dec(impval);
         impval=impval*cant;
-        impval=impval+0;
 
 
         /*
@@ -1533,7 +1533,6 @@ public class Venta extends PBase {
     }
 
     private boolean updateItemUID(){
-
         double precdoc,valimp;
 
         try {

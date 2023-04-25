@@ -778,6 +778,113 @@ public class clsDocument {
 
     }
 
+    protected void saveHeadLinesSVCred(int reimpres) {
+        String s,ss,ss2,su,l;
+        String[] s2;
+        int nidx;
+
+        rep.empty();rep.empty();
+
+        for (int i = 0; i <lines.size(); i++) 		{
+
+            s=lines.get(i);if (s.isEmpty()) s=" ";
+
+            try {
+                s=encabezadoSV(s);
+                ss=s.toUpperCase();
+                nidx=ss.indexOf("NIT");
+                //if (nidx>=0) s="DUI/NIT: ";
+            } catch (Exception e) {
+                s="##";
+            }
+
+            if (s.contains("%%")) {
+                if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRONICO");
+
+                rep.addc("COMPROBANTE DE CREDITO FISCAL");
+
+                if (numero.length()<8) {
+                    long nn=100000000+Long.parseLong(numero);
+                    l=""+nn;l=l.substring(1,9);
+                } else l=numero;
+
+                if (facturaflag) {
+                    l=serie +"-"+l;
+                    //rep.addc(l);
+                    s=l;
+                } else {
+                    sfticket=serie+l;l="";
+                    //rep.addc(sfticket);
+                    s=sfticket;
+                }
+
+            }
+
+            if (!s.equalsIgnoreCase("##") && !s.equalsIgnoreCase("@@")) {
+                su=s.toUpperCase();
+                if (su.contains("CLIENTE") ) {
+                    if (su.contains("<<") ) {
+                        s2=s.split("<<");
+                        for (int j = 1; j <s2.length; j++) {
+                            ss2=s2[j];
+                            rep.add(ss2);
+                        }
+                    } else {
+                        rep.add(s);
+                    }
+                } else {
+                    s=rep.ctrim(s);
+                    rep.add(s);
+                }
+            }
+
+
+        }
+
+        if (!nit_cliente.isEmpty()) rep.add(sal_nit + nit_cliente);
+        rep.add("Fecha: " + fsfecha);
+        rep.add("Municipio: ");
+        rep.add("Departamento: ");
+        rep.add("Giro: ");
+        rep.add("");
+
+        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+
+        if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
+
+            rep.add("");
+            if (docfactura && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            if (docfactura && (reimpres==10)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            if (docfactura && (reimpres==2)) rep.add("------  C O P I A  ------");
+            if (docfactura && (reimpres==3)) rep.add("------       A N U L A D O      ------");
+            //#HS_20181212 condición para factura pendiente de pago
+            if(docfactura && (reimpres==4)) {
+                rep.add("- P E N D I E N T E  D E  P A G O -");
+                pendiente = reimpres;
+            }
+            if (docfactura && (reimpres==5)) rep.add("------  C O N T A B I L I D A D  ------");
+            rep.add("");
+
+        }else if ((docdevolucion || docpedido) && !(modofact.equalsIgnoreCase("TOL"))){
+
+            //CKFK 2019-04-23 Consultar con Aaron
+            rep.add("");
+            if ((docdevolucion && (reimpres==1)) || (docpedido && (reimpres==1))) rep.add("-------  R E I M P R E S I O N  -------");
+            if ((docdevolucion && (reimpres==2)) || (docpedido && (reimpres==2))) rep.add("------  C O P I A  ------");
+            if ((docdevolucion && (reimpres==3)) || (docpedido && (reimpres==3))) rep.add("------       A N U L A D O      ------");
+            rep.add("");
+
+        }
+
+        if (doccanastabod && !(modofact.equalsIgnoreCase("TOL"))){
+            rep.add("");
+            if (doccanastabod && (reimpres==1)) rep.add("-------  R E I M P R E S I Ó N  -------");
+            rep.add("");
+        }
+
+    }
+
     protected String encabezado(String l) {
 
         String s,lu,a;
@@ -1034,7 +1141,12 @@ public class clsDocument {
                 } else l=numero;
 
                 if (facturaflag) {
-                    l="FACTURA: "+serie +"-"+l;
+                    if ( tipo_doc.equalsIgnoreCase("N")) {
+                        l="FACTURA: "+serie +"-"+l;
+                    } else if ( tipo_doc.equalsIgnoreCase("C")) {
+                        rep.addc("COMPROBANTE DE CREDITO FISCAL");
+                        l=serie +"-"+l;
+                    }
                 } else {
                     sfticket=serie+l;
                     l="TICKET: "+sfticket;
@@ -1261,7 +1373,6 @@ public class clsDocument {
     // Private
 
 	private boolean buildHeader(String corel,int reimpres) {
-		
 		lines.clear();
 		
 		try {
@@ -1278,12 +1389,8 @@ public class clsDocument {
 
 			try {
 				Con.close();   
-			} catch (Exception e1) {
-
-			}
-			
+			} catch (Exception e1) {}
 		} catch (Exception e) {
-			setAddlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			Toast.makeText(cont,"buildheader: "+e.getMessage(), Toast.LENGTH_SHORT).show();return false;
 		}
 
@@ -1300,12 +1407,21 @@ public class clsDocument {
             saveHeadLinesHON(reimpres);
         } else if (pais.equalsIgnoreCase("SV")) {
             facturaflag = true;
-            if (nit_cliente.equalsIgnoreCase("CF")) {
-                facturaflag = false;
-            } else {
+
+            if ( tipo_doc.equalsIgnoreCase("N")) {
                 facturaflag = true;
+                saveHeadLinesSV(reimpres);
+            } else if ( tipo_doc.equalsIgnoreCase("C")) {
+                facturaflag = true;
+                saveHeadLinesSVCred(reimpres);
+            } else if ( tipo_doc.equalsIgnoreCase("T")) {
+                facturaflag = false;
+                saveHeadLinesSV(reimpres);
+            } else {
+                facturaflag = false;
+                saveHeadLinesSV(reimpres);
             }
-            saveHeadLinesSV(reimpres);
+
        } else {
             saveHeadLines(reimpres);
         }
