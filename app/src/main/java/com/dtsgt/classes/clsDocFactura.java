@@ -745,6 +745,7 @@ public class clsDocFactura extends clsDocument {
     protected boolean detailBaseGUA() {
 
         itemData item;
+        double precio, desc, cant, total;
         String cu,cp;
 
         rep.add3sss("Cantidad ","Precio","Total");
@@ -754,7 +755,13 @@ public class clsDocFactura extends clsDocument {
             item=items.get(i);
             if (!item.flag) {
                 rep.add(item.nombre);
-                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+                //rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,item.tot);
+                precio = item.prec;
+                desc = item.desc;
+                cant = item.cant;
+                total = precio * cant;
+                total = round2(total);
+                rep.add3lrr(rep.rtrim(""+item.cant,5),item.prec,total);
             } else {
                 rep.add("   - "+item.nombre);
             }

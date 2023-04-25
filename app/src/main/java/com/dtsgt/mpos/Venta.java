@@ -123,19 +123,19 @@ public class Venta extends PBase {
     private clsVenta vitem;
 
     private int browse;
-    private double cant,desc,mdesc,prec,precsin,imp,impval,pimp;
+    private double cant,desc,mdesc,prec,precsin,imp,impval,pimp, descLinea;
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec,prodtotlin;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
-    private int nivel,dweek,clidia,counter,menuitemid;
+    private int nivel,dweek,clidia,counter,menuitemid, lineaId;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private boolean horiz=true,domenvio,modoHN,modoSV;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
-
+    public static boolean DescPorProducto, DesPorLinea = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -555,7 +555,6 @@ public class Venta extends PBase {
                     tt=DT.getDouble(2);
 
                     item = clsCls.new clsVenta();
-
                     item.Cod=DT.getString(0);
                     item.Nombre=DT.getString(1);
                     item.Cant=DT.getDouble(3);
@@ -564,12 +563,10 @@ public class Venta extends PBase {
                     item.sdesc=mu.frmdec(item.Prec);
                     item.imp=DT.getDouble(6);
                     item.percep=DT.getDouble(7);
-
                     item.um=umVenta(item.Cod);
-
-
                     item.Peso=DT.getDouble(9);
                     item.emp=DT.getString(12);
+
                     if (item.emp.equalsIgnoreCase(uid)) {
                         selidx=ii;
                         seluid=uid;
@@ -646,7 +643,7 @@ public class Venta extends PBase {
                     Object lvObj = listView.getItemAtPosition(selidx);
                     vitem = (clsVenta)lvObj;
                     prodtotlin=vitem.Total;
-                    toast("tot "+prodtotlin);
+                    //toast("tot "+prodtotlin);
                 } catch (Exception e) {
                     prodtotlin=0;
                 }
@@ -819,7 +816,8 @@ public class Venta extends PBase {
     }
 
     private void processCant(boolean updateitem){
-        clsDescuento clsDesc;
+
+        clsDescuento clsDesc, clsDescLinea;
         clsBonif clsBonif;
         Cursor DT;
         double cnt,vv;
@@ -831,6 +829,7 @@ public class Venta extends PBase {
         cod_prod=app.codigoProducto(prodid);
 
         try {
+
             try {
                 sql = "SELECT CODIGO,DESCCORTA FROM P_PRODUCTO WHERE CODIGO='" + prodid + "'";
                 DT = Con.OpenDT(sql);
@@ -851,6 +850,7 @@ public class Venta extends PBase {
 
             desc = 0;
             prodPrecio();
+            saveprec=mu.round2(prc.preciobase);
             savetot=saveprec*cant;
 
             gl.bonprodcant = cant;
@@ -869,37 +869,87 @@ public class Venta extends PBase {
             }
             */
 
+            //Descuentos
+            DescPorProducto = false;
+            DesPorLinea = false;
+
             clsDesc = new clsDescuento(this, ""+cod_prod, cant);
             desc = clsDesc.getDesc();
             mdesc = clsDesc.monto;
             savecant=cant;
             descmon=0;
 
-            if (desc + mdesc > 0) {
+            //Se valida si existe descuento por producto
+            if (DescPorProducto) {
+                if (desc + mdesc > 0) {
 
-                browse = 3;
-                gl.promprod =""+cod_prod;// prodid;
-                gl.promcant = cant;
+                    browse = 3;
+                    gl.promprod = "" + cod_prod;// prodid;
+                    gl.promcant = cant;
 
-                if (desc > 0) {
-                    gl.prommodo = 0;
-                    gl.promdesc = desc;
+                    if (desc > 0) {
+                        gl.prommodo = 0;
+                        gl.promdesc = desc;
+                    } else {
+                        gl.prommodo = 1;
+                        gl.promdesc = mdesc;
+                    }
+
+                    saveprodid = prodid;
+                    if (descflag) startActivity(new Intent(this, DescBon.class));
+                    descflag = true;
+
                 } else {
-                    gl.prommodo = 1;
-                    gl.promdesc = mdesc;
+                    /*
+                    if (gl.bonus.size() > 0) {
+                        Intent intent = new Intent(this, BonList.class);
+                        startActivity(intent);
+                    }*/
                 }
+            } else if (DesPorLinea) {
+                desc = 0;
 
-                saveprodid=prodid;
-                if (descflag) startActivity(new Intent(this, DescBon.class));
-                descflag=true;
+                if (getLineaProducto()) {
 
+                    Cursor dt;
+                    double auxCant = 0;
+
+                    //T_venta
+                    int cprod = app.codigoProducto(prodid);
+
+                    clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+                    T_Venta.fill();
+
+                    for (int i = 0; i < T_Venta.count; i++) {
+                        sql="SELECT LINEA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.items.get(i).producto+"')";
+                        dt=Con.OpenDT(sql);
+                        if (lineaId == dt.getInt(0)) {
+                            if (dt.getInt(1) != cprod) {
+                                auxCant += T_Venta.items.get(i).cant;
+                            }
+                        }
+                        if (dt!=null) dt.close();
+                    }
+
+                    auxCant = auxCant + cant;
+                    clsDescLinea = new clsDescuento(this, "" + cod_prod, auxCant);
+                    descLinea = clsDescLinea.getDesc();
+
+                    browse = 3;
+                    gl.promprod =""+cod_prod;// prodid;
+                    gl.promcant = cant;
+
+                    if (descLinea > 0) {
+                        gl.prommodo = 0;
+                        gl.promdesc = descLinea;
+                        saveprodid=prodid;
+                        if (descflag) startActivity(new Intent(this, DescBon.class));
+                        descflag=true;
+                    }
+                }
             } else {
-                /*
-                if (gl.bonus.size() > 0) {
-                    Intent intent = new Intent(this, BonList.class);
-                    startActivity(intent);
-                }
-                */
+                descLinea = 0;
+                desc = 0;
             }
 
             prodPrecio();
@@ -944,6 +994,29 @@ public class Venta extends PBase {
         }
     }
 
+    public void actualizar_descuento_por_linea_otros_items(){
+
+        clsDescuento clsDesc, clsDescLinea;
+        double auxCant =0;
+        Cursor dt;
+        int cprod =0;
+
+        try {
+
+            clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+            T_Venta.fill();
+
+            for (int i = 0; i < T_Venta.count; i++) {
+              actualizar_descuento_por_linea_by_tventa((T_Venta.items.get(i)));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
     private void processMenuItem() {
         counter++;
         gl.menuitemid=""+counter;
@@ -969,6 +1042,7 @@ public class Venta extends PBase {
             gl.dval=gl.retcant;
             gl.limcant=getDisp(prodid);
             processCant(true);
+            updItemLineaProd();
             listItems();
         }
 
@@ -980,10 +1054,15 @@ public class Venta extends PBase {
 
     private void updDesc(){
         try{
-            desc=gl.promdesc;
+            //desc=gl.promdesc;
             cant=savecant;
             prodPrecio();
-            updItem();
+
+            if (desc > 0) {
+                updItem();
+            } else if (descLinea > 0) {
+                updItemLineaProd();
+            }
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
@@ -1235,8 +1314,20 @@ public class Venta extends PBase {
 
         try {
             savetot=mu.round(saveprec*cant,2);
-            ptot=mu.round(prec*cant,2);
-            descmon = savetot-ptot;
+            //ptot=mu.round(prec*cant,2);
+            //descmon = savetot-ptot;
+
+            //#AT20230410 Calcular descuento
+            if (gl.promdesc > 0) {
+                descmon = savetot * gl.promdesc / 100;
+                ptot = mu.round(savetot - descmon, 2);
+            } else if (gl.prommdesc > 0) {
+                descmon = savetot * gl.prommdesc / 100;
+                ptot = mu.round(savetot - descmon, 2);
+            } else {
+                ptot=mu.round(prec*cant,2);
+                descmon = savetot-ptot;
+            }
 
             imp=mu.round2dec(imp*cant);
 
@@ -1261,6 +1352,153 @@ public class Venta extends PBase {
         listItems();
     }
 
+    //#AT20230424 UpdateItem Desucento por linea
+    private void updItemLineaProd(){
+        double ptot=0;
+        Cursor dt;
+
+        try {
+
+            clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+            T_Venta.fill();
+
+            for (int i = 0; i < T_Venta.count; i++) {
+
+                sql="SELECT LINEA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.items.get(i).producto+"')";
+                dt=Con.OpenDT(sql);
+
+                if (lineaId == dt.getInt(0)) {
+
+                    savetot=mu.round(T_Venta.items.get(i).precio * T_Venta.items.get(i).cant,2);
+
+                    if (descLinea > 0) {
+                        descmon = savetot * descLinea / 100;
+                        ptot = mu.round(savetot - descmon, 2);
+                        //actualizar_descuento_por_linea_otros_items();
+                    } else {
+                        ptot=mu.round(T_Venta.items.get(i).precio*T_Venta.items.get(i).cant,2);
+                        descmon = savetot-ptot;
+                    }
+
+                    imp=mu.round2dec(imp*cant);
+
+                    upd.init("T_VENTA");
+                    upd.add("PRECIO",T_Venta.items.get(i).precio);
+                    upd.add("IMP",imp);
+                    upd.add("DES",descLinea);
+                    upd.add("DESMON",descmon);
+                    upd.add("TOTAL",ptot);
+                    upd.add("PRECIODOC",T_Venta.items.get(i).precio);
+                    upd.Where("PRODUCTO='"+T_Venta.items.get(i).producto+"'");
+                    db.execSQL(upd.sql());
+                }
+
+                if (dt!=null) dt.close();
+            }
+
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        listItems();
+    }
+
+    private void actualizar_linea_on_delete(){
+        double ptot=0;
+        Cursor dt;
+
+        try {
+
+            clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+            T_Venta.fill();
+
+            for (int i = 0; i < T_Venta.count; i++) {
+
+                sql="SELECT LINEA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.items.get(i).producto+"')";
+                dt=Con.OpenDT(sql);
+
+                if (lineaId == dt.getInt(0)) {
+
+                    savetot=mu.round(T_Venta.items.get(i).precio * T_Venta.items.get(i).cant,2);
+
+                    if (descLinea > 0) {
+                        descmon = savetot * descLinea / 100;
+                        ptot = mu.round(savetot - descmon, 2);
+                        actualizar_descuento_por_linea_otros_items();
+                        return;
+                    } else {
+                        ptot=mu.round(T_Venta.items.get(i).precio*T_Venta.items.get(i).cant,2);
+                        descmon = savetot-ptot;
+                    }
+
+                    imp=mu.round2dec(imp*cant);
+
+                    upd.init("T_VENTA");
+                    upd.add("PRECIO",T_Venta.items.get(i).precio);
+                    upd.add("IMP",imp);
+                    upd.add("DES",descLinea);
+                    upd.add("DESMON",descmon);
+                    upd.add("TOTAL",ptot);
+                    upd.add("PRECIODOC",T_Venta.items.get(i).precio);
+                    upd.Where("PRODUCTO='"+T_Venta.items.get(i).producto+"'");
+                    db.execSQL(upd.sql());
+                }
+
+                if (dt!=null) dt.close();
+            }
+
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        listItems();
+    }
+    private void actualizar_descuento_por_linea_by_tventa(clsClasses.clsT_venta T_Venta){
+
+        double ptot=0;
+        Cursor dt;
+
+        try {
+
+            sql="SELECT LINEA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.producto+"')";
+            dt=Con.OpenDT(sql);
+
+            if (lineaId == dt.getInt(0)) {
+
+                savetot=mu.round(T_Venta.precio * T_Venta.cant,2);
+
+                if (descLinea > 0) {
+                    descmon = savetot * descLinea / 100;
+                    ptot = mu.round(savetot - descmon, 2);
+                } else {
+                    ptot=mu.round(T_Venta.precio*T_Venta.cant,2);
+                    descmon = savetot-ptot;
+                }
+
+                imp=mu.round2dec(imp*cant);
+
+                upd.init("T_VENTA");
+                upd.add("PRECIO",T_Venta.precio);
+                upd.add("IMP",imp);
+                upd.add("DES",descLinea);
+                upd.add("DESMON",descmon);
+                upd.add("TOTAL",ptot);
+                upd.add("PRECIODOC",T_Venta.precio);
+                upd.Where("PRODUCTO='"+T_Venta.producto+"'");
+                db.execSQL(upd.sql());
+            }
+
+            if (dt!=null) dt.close();
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+    }
     private void updItemMonto(){
         double ptot=0;
 
@@ -1295,11 +1533,11 @@ public class Venta extends PBase {
     }
 
     private boolean updateItemUID(){
+
         double precdoc,valimp;
 
         try {
 
-            //prodtot=mu.round(prec*cant,2);
             prodtot=prodtot*cant;
             prodtot= mu.round2dec(prodtot);
 
@@ -1310,20 +1548,17 @@ public class Venta extends PBase {
             impval=mu.round2dec(impval*cant);
 
             upd.init("T_VENTA");
-
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
-            //upd.add("IMP",imp);
             upd.add("IMP",impval);
             upd.add("DES",desc);
             upd.add("DESMON",descmon);
             upd.add("TOTAL",prodtot);
             upd.add("PRECIODOC",precdoc);
-
             upd.Where("EMPRESA='"+uid+"'");
-
             db.execSQL(upd.sql());
 
+            updDesc();
             listItems();
 
             return true;
@@ -1347,7 +1582,6 @@ public class Venta extends PBase {
             imp=mu.round2dec(imp*cant);
 
             upd.init("T_VENTA");
-
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
             upd.add("IMP",imp);
@@ -1356,7 +1590,6 @@ public class Venta extends PBase {
             upd.add("TOTAL",prodtot);
             upd.add("PRECIODOC",precdoc);
             upd.Where("EMPRESA='"+uid+"'");
-
             db.execSQL(upd.sql());
 
             listItems();
@@ -3355,6 +3588,26 @@ public class Venta extends PBase {
         }
     }
 
+    private boolean getLineaProducto() {
+        Cursor dt;
+        try {
+            sql="SELECT LINEA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO = '"+cod_prod+"'";
+            dt=Con.OpenDT(sql);
+
+            if(dt!=null){
+                lineaId = dt.getInt(0);
+
+                if (dt!=null) dt.close();
+
+                return  true;
+            }
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+        }
+
+        return  false;
+    }
+
     private void showCredit(){
         try{
             if (hasCredits()){
@@ -4118,21 +4371,16 @@ public class Venta extends PBase {
 
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage("¿" + msg + "?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    sql="DELETE FROM T_VENTA";
-                    db.execSQL(sql);
-                    listItems();
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
+        dialog.setPositiveButton("Si", (dialog12, which) -> {
+            try {
+                sql="DELETE FROM T_VENTA";
+                db.execSQL(sql);
+                listItems();
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
         });
-
         dialog.setNegativeButton("No", (dialog1, which) -> {});
-
         dialog.show();
 
     }
@@ -4330,20 +4578,17 @@ public class Venta extends PBase {
                 }
 
                 Handler mtimer = new Handler();
-                Runnable mrunner=new Runnable() {
-                    @Override
-                    public void run() {
-                        browse=8;
-                        gl.iniciaVenta=false;
+                Runnable mrunner= () -> {
+                    browse=8;
+                    gl.iniciaVenta=false;
 
-                        if (usarbio) {
-                            startActivity(new Intent(Venta.this,Clientes.class));
-                        } else {
-                            if (!gl.cliposflag) {
-                                gl.cliposflag=true;
-                                if (!gl.forcedclose) {
-                                    if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
-                                }
+                    if (usarbio) {
+                        startActivity(new Intent(Venta.this,Clientes.class));
+                    } else {
+                        if (!gl.cliposflag) {
+                            gl.cliposflag=true;
+                            if (!gl.forcedclose) {
+                                if (!gl.peRest) startActivity(new Intent(Venta.this,CliPos.class));
                             }
                         }
                     }
