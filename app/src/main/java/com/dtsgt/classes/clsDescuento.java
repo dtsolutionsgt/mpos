@@ -5,6 +5,8 @@ import android.database.Cursor;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
+import static com.dtsgt.mpos.Venta.DescPorProducto;
+import static com.dtsgt.mpos.Venta.DesPorLinea;
 
 import java.util.ArrayList;
 
@@ -119,7 +121,8 @@ public class clsDescuento {
 		return df;
 	}
 	
-	private void listaDescRango() {
+	public void listaDescRango() {
+
 		Cursor DT;
 		String iid;
 		double val;
@@ -135,6 +138,7 @@ public class clsDescuento {
 			if (DT.getCount()==0) return;
 			
 			DT.moveToFirst();
+
 			while (!DT.isAfterLast()) {
 				  
 				iid=DT.getString(0);
@@ -142,17 +146,20 @@ public class clsDescuento {
 				canttipo=DT.getString(3);
 				val=0;
 				
-				//Toast.makeText(cont,""+iid, Toast.LENGTH_LONG).show();
-				
 				switch (DT.getInt(1)) {
 					case 0: 
 						if (iid.equalsIgnoreCase(prodid) || iid.equalsIgnoreCase("*")) {
 							val=DT.getDouble(2);
+							DescPorProducto = true;
 						}break;
 					case 1: 
 						if (iid.equalsIgnoreCase(slineaid)) val=DT.getDouble(2);break;
-					case 2: 
-						if (iid.equalsIgnoreCase(lineaid)) val=DT.getDouble(2);break;
+					case 2:
+						if (getLineaProducto()) {
+							if (iid.equalsIgnoreCase(lineaid)) val = DT.getDouble(2);
+							DesPorLinea = true;
+							break;
+						}
 					case 3: 
 						if (iid.equalsIgnoreCase(marcaid)) val=DT.getDouble(2);break;
 				}		
@@ -203,7 +210,7 @@ public class clsDescuento {
 						if (iid.equalsIgnoreCase(prodid) || iid.equalsIgnoreCase("*")) val=DT.getDouble(4);break;
 					case 1: 
 						if (iid.equalsIgnoreCase(slineaid)) val=DT.getDouble(4);break;
-					case 2: 
+					case 2:
 						if (iid.equalsIgnoreCase(lineaid)) val=DT.getDouble(4);break;
 					case 3: 
 						if (iid.equalsIgnoreCase(marcaid)) val=DT.getDouble(4);break;
@@ -263,6 +270,25 @@ public class clsDescuento {
 		} catch (Exception e) {
 			dmax=0;acum=true;
 	    }
+
+		return true;
+	}
+
+	private boolean getLineaProducto(){
+		Cursor DT;
+
+		try {
+			vSQL="SELECT DESCUENTO,LINEA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prodid;
+			DT=Con.OpenDT(vSQL);
+			DT.moveToFirst();
+
+			if (DT.getInt(0)==0) return false;
+
+			lineaid=DT.getString(1);
+
+		} catch (Exception e) {
+			return false;
+		}
 
 		return true;
 	}
