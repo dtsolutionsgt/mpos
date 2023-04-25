@@ -19,8 +19,10 @@ import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
+import com.dtsgt.classes.clsD_factura_svObj;
 import com.dtsgt.classes.clsD_facturacObj;
 import com.dtsgt.classes.clsD_facturadObj;
+import com.dtsgt.classes.clsD_facturahnObj;
 import com.dtsgt.classes.clsD_facturapObj;
 import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsD_facturarObj;
@@ -73,6 +75,8 @@ public class WSEnv extends PBase {
     private clsP_cajareporteObj P_cjReporteObj;
     private clsT_costoObj T_costoObj;
     private clsD_fel_errorObj D_fel_errorObj;
+    private clsD_factura_svObj D_factura_svObj;
+    private clsD_facturahnObj D_facturahnObj;
 
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> rutas = new ArrayList<String>();
@@ -130,6 +134,8 @@ public class WSEnv extends PBase {
         D_movd_almacenObj = new clsD_movd_almacenObj(this, Con, db);
         T_costoObj = new clsT_costoObj(this, Con, db);
         D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
+        D_factura_svObj=new clsD_factura_svObj(this,Con,db);
+        D_facturahnObj=new clsD_facturahnObj(this,Con,db);
 
         P_cjCierreObj = new clsP_cajacierreObj(this, Con, db);
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
@@ -558,6 +564,8 @@ public class WSEnv extends PBase {
         D_facturacObj.fill("WHERE COREL='" + corel + "'");
         D_facturaprObj.fill("WHERE COREL='" + corel + "'");
         D_factura_felObj.fill("WHERE COREL='" + corel + "'");
+        D_factura_svObj.fill("WHERE COREL='" + corel + "'");
+        D_facturahnObj.fill("WHERE COREL='" + corel + "'");
 
         idfact = D_facturaObj.first().serie + "-" + D_facturaObj.first().corelativo;
         int cliid = D_facturaObj.first().cliente;
@@ -624,6 +632,15 @@ public class WSEnv extends PBase {
         for (int i = 0; i < D_factura_felObj.count; i++) {
             CSQL = CSQL + D_factura_felObj.addItemSql(D_factura_felObj.items.get(i)) + ";";
         }
+
+        for (int i = 0; i < D_factura_svObj.count; i++) {
+            CSQL = CSQL + D_factura_svObj.addItemSql(D_factura_svObj.items.get(i)) + ";";
+        }
+
+        for (int i = 0; i < D_facturahnObj.count; i++) {
+            CSQL = CSQL + D_facturahnObj.addItemSql(D_facturahnObj.items.get(i)) + ";";
+        }
+
 
         CSQL = CSQL + "UPDATE P_COREL SET CORELULT=" + D_facturaObj.first().corelativo + "  " +
                 "WHERE (SERIE='" + D_facturaObj.first().serie + "') AND (ACTIVA=1) AND (RESGUARDO=0) AND (RUTA=" + gl.codigo_ruta + ");";
@@ -702,6 +719,8 @@ public class WSEnv extends PBase {
         ins.add("FEELUUID", item.feeluuid);
         ins.add("FEELFECHAPROCESADO", fst);
         ins.add("FEELCONTINGENCIA", item.feelcontingencia);
+        ins.add("CODIGO_TIPO_FACTURA", item.codigo_tipo_factura);
+
         return ins.sql();
 
     }

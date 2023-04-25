@@ -142,6 +142,7 @@ public class clsDescuento {
 			while (!DT.isAfterLast()) {
 				  
 				iid=DT.getString(0);
+
 				canttipo=DT.getString(3);
 				val=0;
 				

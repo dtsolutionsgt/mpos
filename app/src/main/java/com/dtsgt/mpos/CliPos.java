@@ -158,6 +158,7 @@ public class CliPos extends PBase {
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("8000-300499-123-4");
             txtNIT.setText("8000-6");
+            txtNom.setText("Nombre");
         }
 
     }
@@ -182,8 +183,10 @@ public class CliPos extends PBase {
                 dcor="consumidorfinal@gmail.com";
 
                 consFinal=true;
-                if (agregaCliente("C.F.",ddnom,ddir,
-                        dcor,""+txtTel.getText().toString())) procesaCF() ;
+                gl.sal_PER=false;
+
+                if (agregaCliente("C.F.",ddnom,ddir,dcor,""+txtTel.getText().toString())) procesaCF() ;
+
             } catch (Exception e) {
                 msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }
@@ -432,6 +435,7 @@ public class CliPos extends PBase {
             gl.scancliente=gl.cliente;
 
             gl.gNITCliente ="CF";
+
             sNombreCliente =txtNom.getText().toString();
             //#EJC20210130: Una dirección tenía enter... quitar espacios vacíos con Trim.
             sDireccionCliente =txtRef.getText().toString().trim();
@@ -1571,8 +1575,17 @@ public class CliPos extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+                browse=3;
+                gl.sal_idneg=-1;
+                startActivity(new Intent(CliPos.this,ContrGrande.class));
+            }
+        });
+
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 try {
-                    gl.sal_PER=true;
+                    gl.sal_PER=false;
+
                     if (!existeCliente()){
                         if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
                     } else {
@@ -1580,13 +1593,9 @@ public class CliPos extends PBase {
                         procesaNIT(sNITCliente);
                     }
                 } catch (Exception e) {
-                    msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
             }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
         });
 
         dialog.show();
@@ -1663,8 +1672,27 @@ public class CliPos extends PBase {
                 if (!gl.dom_ddir.isEmpty()) txtRef.setText(gl.dom_ddir);return;
             }
 
+            if (browse==3) {
+                browse=0;
+
+                if ( gl.sal_idneg==-1) {
+                    return;
+                }
+
+                gl.sal_PER=true;
+
+                if (!existeCliente()){
+                    if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente,sTelCliente)) procesaNIT(sNITCliente);
+                } else {
+                    actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, sTelCliente);
+                    procesaNIT(sNITCliente);
+                }
+
+                return;
+            }
+
         } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+            msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 

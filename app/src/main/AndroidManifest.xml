@@ -758,6 +758,13 @@
             android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".ContrGrande"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+
     </application>
 
 </manifest>

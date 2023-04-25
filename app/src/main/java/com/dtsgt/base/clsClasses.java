@@ -93,6 +93,7 @@ public class clsClasses {
         public String feeluuid;
         public long feelfechaprocesado;
         public String feelcontingencia;
+        public int  codigo_tipo_factura;
     }
 
     public class clsD_factura_fel {
@@ -198,6 +199,15 @@ public class clsClasses {
         public String  producto;
         public double cant;
         public String umstock;
+    }
+
+    public class clsD_factura_sv {
+        public String corel;
+        public int  empresa;
+        public int  codigo_tipo_factura;
+        public String codigo_departamento;
+        public String codigo_municipio;
+        public int  codigo_tipo_negocio;
     }
 
     public class clsD_fel_bitacora {
@@ -1219,6 +1229,17 @@ public class clsClasses {
         public int codigo_proveedor;
     }
 
+    public class clsP_tiponeg {
+        public int  codigo_tipo_negocio;
+        public int  empresa;
+        public String descripcion;
+        public int  activo;
+        public int  fec_agr;
+        public int  user_agr;
+        public int  fec_mod;
+        public int  user_mod;
+    }
+
     public class clsP_unidad {
         public String  codigo_unidad;
         public String nombre;
@@ -1555,6 +1576,16 @@ public class clsClasses {
         public double total;
         public String nota;
         public String codigo_tipo_producto;
+    }
+
+    public class clsT_sv_gcont {
+        public int  id;
+        public String iddep;
+        public String idmuni;
+        public int  idneg;
+        public String dep;
+        public String muni;
+        public String neg;
     }
 
     public class clsT_venta {

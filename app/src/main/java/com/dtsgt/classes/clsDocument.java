@@ -23,13 +23,13 @@ public class clsDocument {
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
     public String felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
-    public String pais="",tipo_doc;
+    public String pais="",nomdepto,nommuni,nomtipo;
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
 	public boolean parallevar,factsinpropina,modorest;
 	public long ffecha;
-    public int pendiente,diacred,pagoefectivo,empid;
+    public int pendiente,diacred,pagoefectivo,empid,tipo_doc;
 	public String TipoCredito, NoAutorizacion;
 	public double ptotal,pdesc,pprop,propvalor,propperc;
 
@@ -843,9 +843,10 @@ public class clsDocument {
 
         if (!nit_cliente.isEmpty()) rep.add(sal_nit + nit_cliente);
         rep.add("Fecha: " + fsfecha);
-        rep.add("Municipio: ");
-        rep.add("Departamento: ");
-        rep.add("Giro: ");
+
+        rep.add("Municipio: "+nomdepto);
+        rep.add("Departamento: "+nommuni);
+        rep.add("Giro: "+nomtipo);
         rep.add("");
 
         if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
@@ -1141,9 +1142,9 @@ public class clsDocument {
                 } else l=numero;
 
                 if (facturaflag) {
-                    if ( tipo_doc.equalsIgnoreCase("N")) {
+                    if ( tipo_doc==1) {
                         l="FACTURA: "+serie +"-"+l;
-                    } else if ( tipo_doc.equalsIgnoreCase("C")) {
+                    } else if ( tipo_doc==2) {
                         rep.addc("COMPROBANTE DE CREDITO FISCAL");
                         l=serie +"-"+l;
                     }
@@ -1408,13 +1409,13 @@ public class clsDocument {
         } else if (pais.equalsIgnoreCase("SV")) {
             facturaflag = true;
 
-            if ( tipo_doc.equalsIgnoreCase("N")) {
+            if ( tipo_doc==1) {
                 facturaflag = true;
                 saveHeadLinesSV(reimpres);
-            } else if ( tipo_doc.equalsIgnoreCase("C")) {
+            } else if ( tipo_doc==2) {
                 facturaflag = true;
                 saveHeadLinesSVCred(reimpres);
-            } else if ( tipo_doc.equalsIgnoreCase("T")) {
+            } else if ( tipo_doc==3) {
                 facturaflag = false;
                 saveHeadLinesSV(reimpres);
             } else {

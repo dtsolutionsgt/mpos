@@ -308,7 +308,7 @@ public class clsDocCuenta extends clsDocument {
         rep.add(rep.ctrim(rutanombre));
         rep.add("");
         rep.line();
-        rep.add(rep.ctrim("PREIMPRESION DE FACTURA"));
+        rep.add(rep.ctrim("PRECUENTA"));
         rep.line();
         rep.add("");
         rep.add("Mesa : "+mesa);
