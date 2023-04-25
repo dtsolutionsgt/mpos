@@ -816,7 +816,7 @@ public class Venta extends PBase {
     }
 
     private void processCant(boolean updateitem){
-        clsDescuento clsDesc;
+        clsDescuento clsDesc, clsDescLinea;
         clsBonif clsBonif;
         Cursor DT;
         double cnt,vv;
