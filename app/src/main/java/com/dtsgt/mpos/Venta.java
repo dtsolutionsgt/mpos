@@ -870,7 +870,7 @@ public class Venta extends PBase {
 
             //Descuentos
             DescPorProducto = false;
-            DesPorLinea = false;
+            DesPorLinea = true;
 
             clsDesc = new clsDescuento(this, ""+cod_prod, cant);
             desc = clsDesc.getDesc();
