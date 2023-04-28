@@ -471,7 +471,6 @@ public class clsDocFactura extends clsDocument {
 		int corrl;
 
 		ccorel=corel;
-
 		loadHeadData(corel);
 		
 		items.clear();bons.clear();pagos.clear();
