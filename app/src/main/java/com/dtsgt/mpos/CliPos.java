@@ -158,7 +158,6 @@ public class CliPos extends PBase {
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("8000-300499-123-4");
             txtNIT.setText("8000-6");
-            txtNom.setText("Nombre");
         }
 
     }
@@ -435,7 +434,6 @@ public class CliPos extends PBase {
             gl.scancliente=gl.cliente;
 
             gl.gNITCliente ="CF";
-
             sNombreCliente =txtNom.getText().toString();
             //#EJC20210130: Una dirección tenía enter... quitar espacios vacíos con Trim.
             sDireccionCliente =txtRef.getText().toString().trim();
@@ -1101,6 +1099,7 @@ public class CliPos extends PBase {
 	}
 
 	private boolean existeCliente() {
+
 		Cursor DT;
         boolean resultado=false;
         int nitcf=gl.emp*10;

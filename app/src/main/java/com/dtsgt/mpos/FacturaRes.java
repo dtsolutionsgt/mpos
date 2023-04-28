@@ -1688,6 +1688,29 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
+			//region D_FACTURA_SV
+
+			if ( gl.codigo_pais.equalsIgnoreCase("SV")) {
+
+				if (gl.sal_PER) {
+
+					clsD_factura_svObj D_factura_svObj=new clsD_factura_svObj(this,Con,db);
+
+					clsClasses.clsD_factura_sv itemt = clsCls.new clsD_factura_sv();
+
+					itemt.corel = corel;
+					itemt.empresa = gl.emp;
+					itemt.codigo_tipo_factura = tipo_factura;
+					itemt.codigo_departamento = gl.sal_iddep;
+					itemt.codigo_municipio = gl.sal_idmun;
+					itemt.codigo_tipo_negocio = gl.sal_idneg;
+
+					D_factura_svObj.add(itemt);
+				}
+			}
+
+			//endregion
+
             procesaInventario();
 
 			//region Actualizacion de ultimo correlativo
