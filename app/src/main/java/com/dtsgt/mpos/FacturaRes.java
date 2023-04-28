@@ -1093,14 +1093,13 @@ public class FacturaRes extends PBase {
  	}
 
 	private boolean saveOrder() {
-
         clsP_productoObj P_productoObj= new clsP_productoObj(this, Con, db);
         clsD_facturasObj D_facturas= new clsD_facturasObj(this, Con, db);
         clsD_facturaObj D_fact= new clsD_facturaObj(this, Con, db);
         clsClasses.clsD_facturas fsitem;
 
 		Cursor dt,dtc;
-		String vprod,vumstock,vumventa,vbarra,ssq;
+		String vprod,vumstock,vumventa,vbarra,ssq,svnit;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp;
 		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid,tipo_factura=1;
 		boolean flag,pagocarta=false;
@@ -1226,12 +1225,16 @@ public class FacturaRes extends PBase {
 			ins.add("VEHICULO",gl.parVer);
 
 			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-				String svnit="N";tipo_factura=1;
+				svnit="N";tipo_factura=1;
 				if (gl.codigo_cliente==gl.emp*10) {
 					svnit="T";tipo_factura=3;
 				}
 				if (gl.sal_NRC) {
-					svnit="C";tipo_factura=2;
+					if (gl.sal_PER) {
+						svnit="C";tipo_factura=2;
+					} else {
+						svnit="N";tipo_factura=1;
+					}
 				}
 				ins.add("AYUDANTE",svnit);
 			} else {
@@ -2105,122 +2108,6 @@ public class FacturaRes extends PBase {
 
 	}
 
-    private void assignCorel(){
-
-        Cursor DT;
-        int ca,ci,cf,ca1,ca2,cult;
-
-        fcorel=0;fserie="";
-
-        try {
-
-            sql="SELECT MAX(CORELATIVO) FROM D_FACTURA";
-            DT=Con.OpenDT(sql);
-
-
-            try {
-                if (DT.getCount()>0){
-                    DT.moveToFirst();
-                    cult=DT.getInt(0);
-                } else {
-                    cult=0;
-                }
-            } catch (Exception e) {
-                cult=0;
-            }
-
-            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
-            DT=Con.OpenDT(sql);
-
-            try {
-                if (DT.getCount()>0){
-                    DT.moveToFirst();
-
-                    fserie=DT.getString(0);
-                    ca1=DT.getInt(1);
-                    ci=DT.getInt(2);
-                    cf=DT.getInt(3);
-                } else {
-                    fcorel=0;fserie="";
-                    mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
-                    return;
-                }
-            } catch (Exception e) {
-                fcorel=0;fserie="";
-                mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
-                return;
-            }
-
-            //sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
-            sql="SELECT MAX(COREL) FROM D_FACT_LOG ";
-
-            DT=Con.OpenDT(sql);
-
-            try {
-                if (DT.getCount()>0){
-                    DT.moveToFirst();
-                    ca2=DT.getInt(0);
-                }else {
-                    ca2=0;
-                }
-            } catch (Exception e) {
-                ca2=0;
-            }
-
-            ca=ca1;
-
-            if (ca2>ca) ca=ca2;
-            fcorel=ca+1;
-
-            sql="SELECT COREL FROM D_FACT_LOG WHERE COREL="+fcorel;
-            DT=Con.OpenDT(sql);
-
-            try {
-                if (DT.getCount()>0) {
-                    try {
-                        sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
-                        DT=Con.OpenDT(sql);
-
-                        DT.moveToFirst();
-
-                        ins.init("D_FACT_LOG");
-                        ins.add("ITEM",DT.getInt(0));
-                        ins.add("SERIE","DUPL");
-                        ins.add("COREL",fcorel);
-                        ins.add("FECHA",0);
-                        ins.add("RUTA",gl.ruta);
-                        db.execSQL(ins.sql());
-                    } catch (SQLException e) { }
-                    fcorel++;
-                }
-            } catch (Exception e) {
-            }
-
-            if (!app.usaFEL()) {
-                if (fcorel>cf) {
-                    mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");
-                    fcorel=0;return;
-                }
-                //#HS_20181128_1602 Cambie el texto del mensaje.
-                if (fcorel==cf) mu.msgbox("Esta es la última factura disponible.");
-            }
-
-            if (gl.peMFact) s="Factura : ";else s="Ticket : ";
-            lblFact.setText(s+fserie+" - "+fcorel+" , Talonario : "+fcorel+" / "+cf);
-
-            if (DT!=null) DT.close();
-
-            if (fcorel-cult>1) {
-                if (cult>0) msgAskSend("Encontramos un inconveniente en los correlativos, por favor envie el siguiente correo al soporte.");
-            }
-
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("assignCorel: " + e.getMessage());
-        }
-
-	}
-
 	private boolean esProductoConStock(String prcodd) {
 
 		Cursor DT;
@@ -2262,6 +2149,246 @@ public class FacturaRes extends PBase {
             return false;
         }
     }
+
+	//endregion
+
+	//region Correlativos
+
+	private void assignCorel(){
+
+		if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+			assignCorelFactura();
+		} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+			assignCorelFactura();
+		} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+			if (gl.sal_NIT) {
+				assignCorelFactura();
+			} else if (gl.sal_NRC) {
+				if (gl.sal_PER) {
+					assignCorelCredito();
+				} else {
+					assignCorelFactura();
+				}
+			} else {
+				assignCorelTicket();
+			}
+		}
+
+	}
+
+	private void assignCorelFactura(){
+		Cursor DT;
+		int ca,ci,cf,ca1,ca2,cult;
+
+		fcorel=0;fserie="";
+
+		try {
+
+			sql="SELECT MAX(CORELATIVO) FROM D_FACTURA";
+			DT=Con.OpenDT(sql);
+
+			try {
+				if (DT.getCount()>0){
+					DT.moveToFirst();
+					cult=DT.getInt(0);
+				} else {
+					cult=0;
+				}
+			} catch (Exception e) {
+				cult=0;
+			}
+
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
+			DT=Con.OpenDT(sql);
+
+			try {
+				if (DT.getCount()>0){
+					DT.moveToFirst();
+
+					fserie=DT.getString(0);
+					ca1=DT.getInt(1);
+					ci=DT.getInt(2);
+					cf=DT.getInt(3);
+				} else {
+					fcorel=0;fserie="";
+					mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+					return;
+				}
+			} catch (Exception e) {
+				fcorel=0;fserie="";
+				mu.msgbox("No esta definido correlativo de factura. No se puede continuar con la venta.\n");
+				return;
+			}
+
+			//sql="SELECT MAX(COREL) FROM D_FACT_LOG WHERE RUTA="+gl.ruta+" AND SERIE='"+fserie+"'";
+			sql="SELECT MAX(COREL) FROM D_FACT_LOG ";
+
+			DT=Con.OpenDT(sql);
+
+			try {
+				if (DT.getCount()>0){
+					DT.moveToFirst();
+					ca2=DT.getInt(0);
+				}else {
+					ca2=0;
+				}
+			} catch (Exception e) {
+				ca2=0;
+			}
+
+			ca=ca1;
+
+			if (ca2>ca) ca=ca2;
+			fcorel=ca+1;
+
+			sql="SELECT COREL FROM D_FACT_LOG WHERE COREL="+fcorel;
+			DT=Con.OpenDT(sql);
+
+			try {
+				if (DT.getCount()>0) {
+					try {
+						sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
+						DT=Con.OpenDT(sql);
+
+						DT.moveToFirst();
+
+						ins.init("D_FACT_LOG");
+						ins.add("ITEM",DT.getInt(0));
+						ins.add("SERIE","DUPL");
+						ins.add("COREL",fcorel);
+						ins.add("FECHA",0);
+						ins.add("RUTA",gl.ruta);
+						db.execSQL(ins.sql());
+					} catch (SQLException e) { }
+					fcorel++;
+				}
+			} catch (Exception e) {
+			}
+
+			if (!app.usaFEL()) {
+				if (fcorel>cf) {
+					mu.msgbox("Se ha acabado el talonario de facturas. No se puede continuar con la venta.");
+					fcorel=0;return;
+				}
+				//#HS_20181128_1602 Cambie el texto del mensaje.
+				if (fcorel==cf) mu.msgbox("Esta es la última factura disponible.");
+			}
+
+			if (gl.peMFact) s="Factura : ";else s="Ticket : ";
+			lblFact.setText(s+fserie+" - "+fcorel+" , Talonario : "+fcorel+" / "+cf);
+
+			if (DT!=null) DT.close();
+
+			if (fcorel-cult>1) {
+				if (cult>0) msgAskSend("Encontramos un inconveniente en los correlativos, por favor envie el siguiente correo al soporte.");
+			}
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox("assignCorel: " + e.getMessage());
+		}
+
+	}
+
+	private void assignCorelCredito(){
+		Cursor DT;
+		int ca,ci,cf,ca1;
+
+		fcorel=0;fserie="";
+
+		try {
+
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=2) ";
+			DT=Con.OpenDT(sql);
+
+			try {
+				if (DT.getCount()>0){
+					DT.moveToFirst();
+
+					fserie=DT.getString(0);
+					ca1=DT.getInt(1);
+					ci=DT.getInt(2);
+					cf=DT.getInt(3);
+					fcorel=ca1+1;
+				} else {
+					fcorel=0;fserie="";
+					mu.msgbox("No esta definido correlativo de credito fiscal. No se puede continuar con la venta.\n");
+					return;
+				}
+			} catch (Exception e) {
+				fcorel=0;fserie="";
+				mu.msgbox("No esta definido correlativo de credito fiscal. No se puede continuar con la venta.\n");
+				return;
+			}
+
+
+			if (!app.usaFEL()) {
+				if (fcorel>cf) {
+					mu.msgbox("Se ha acabado el talonario de credito fiscal. No se puede continuar con la venta.");
+					fcorel=0;return;
+				}
+				//#HS_20181128_1602 Cambie el texto del mensaje.
+				if (fcorel==cf) mu.msgbox("Esta es la último credito fiscal disponible.");
+			}
+			if (DT!=null) DT.close();
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox("assignCorelCredito: " + e.getMessage());
+		}
+
+	}
+
+	private void assignCorelTicket(){
+		Cursor DT;
+		int ca,ci,cf,ca1;
+
+		fcorel=0;fserie="";
+
+		try {
+
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=4) ";
+			DT=Con.OpenDT(sql);
+
+			try {
+				if (DT.getCount()>0){
+					DT.moveToFirst();
+
+					fserie=DT.getString(0);
+					ca1=DT.getInt(1);
+					ci=DT.getInt(2);
+					cf=DT.getInt(3);
+					fcorel=ca1+1;
+				} else {
+					fcorel=0;fserie="";
+					mu.msgbox("No esta definido correlativo de ticket. No se puede continuar con la venta.\n");
+					return;
+				}
+			} catch (Exception e) {
+				fcorel=0;fserie="";
+				mu.msgbox("No esta definido correlativo de ticket. No se puede continuar con la venta.\n");
+				return;
+			}
+
+
+			if (!app.usaFEL()) {
+				if (fcorel>cf) {
+					mu.msgbox("Se ha acabado el talonario de ticketl. No se puede continuar con la venta.");
+					fcorel=0;return;
+				}
+				//#HS_20181128_1602 Cambie el texto del mensaje.
+				if (fcorel==cf) mu.msgbox("Esta es la último ticket disponible.");
+			}
+
+			if (DT!=null) DT.close();
+
+		} catch (Exception e) {
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			mu.msgbox("assignCorelticket: " + e.getMessage());
+		}
+
+	}
+
 
 	//endregion
 

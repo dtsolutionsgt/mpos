@@ -465,7 +465,6 @@ public class clsDocFactura extends clsDocument {
 	}
 
 	protected boolean loadDocData(String corel) {
-
 		Cursor DT;
 		itemData item,bon,pag;
 		String corNota,idcombo;
@@ -662,7 +661,7 @@ public class clsDocFactura extends clsDocument {
         } else if (pais.equalsIgnoreCase("SV")) {
 
             if ( tipo_doc==1) {
-                return detailBaseSV();
+                return detailFacturaSV();
             } else if ( tipo_doc==2) {
                 return detailBaseSV();
             } else if ( tipo_doc==3) {
@@ -738,6 +737,45 @@ public class clsDocFactura extends clsDocument {
                 tot=round2(tot);
 
                 ps=rep.frmdec(item.prec);
+                dval1=0;dval2=0;
+                if (imp==0) dval1=tot; else dval2=tot;
+
+                rep.add3lrr(ps,dval1,dval2);
+            } else {
+                rep.add("   - "+item.nombre);
+            }
+        }
+
+        rep.line();
+
+        return true;
+    }
+
+    protected boolean detailFacturaSV() {
+        itemData item;
+        double pr,imp,tot,totval,dval1,dval2;
+        String ps,cu,cp;
+
+        rep.add("Cant Descripcion");
+        rep.add3sss("Precio","No sujeto","Gravado");
+        rep.line();
+
+        for (int i = 0; i <items.size(); i++) {
+            item=items.get(i);
+            if (!item.flag) {
+
+                ps=item.nombre;if (ps.length()>prw-5) ps=ps.substring(0,prw-6);
+                ps=rep.ltrim(""+((int) item.cant),4)+" "+ps;
+                rep.add(ps);
+
+                imp=item.imp;
+                //pr=item.prec-imp;
+                pr=item.prec_orig;
+                pr=round2(pr);
+                tot=pr*item.cant;
+                tot=round2(tot);
+
+                ps=rep.frmdec(item.prec_orig);
                 dval1=0;dval2=0;
                 if (imp==0) dval1=tot; else dval2=tot;
 
@@ -1252,8 +1290,130 @@ public class clsDocFactura extends clsDocument {
     }
 
     private boolean footerFactSV() {
+        double totimp,totperc;
 
-        return true;
+        //stot=stot-imp;
+        stot=stot;
+        totperc=stot*(percep/100);totperc=round2(totperc);
+        totimp=imp-totperc;
+
+        rep.addtotsp("Sumas: ", stot);
+        //rep.addtotsp("Venta sujeta: ", fh_grav);
+        //rep.addtotsp("Venta no sujeta: ", fh_exent);
+        //rep.addtotsp("Importe exonerado: ", fh_exon);
+        if (desc>=0.01) {
+            rep.addtotsp("Descuento: ", -desc);
+        }
+        if (fh_val1>0) rep.addtotsp("IVA Retenido: ", fh_imp1);
+        //if (fh_val2>0) rep.addtotsp("IVA Retenido: ", fh_imp2);
+        rep.addtotsp("Venta total : ", tot);
+
+        montoLetra();
+
+        if (plines.size()>0) {
+            rep.add("Formas de pago:");
+            for (int ii= 0; ii <plines.size(); ii++) {
+                rep.add(plines.get(ii));
+            }
+        }
+
+        /*
+        rep.add("");
+        rep.add("No. OC exenta ");
+        rep.add("No. cons. registro exonerado");
+        rep.add("No. registro SAG");
+        rep.add("");
+        */
+
+        if (modorest) {
+            rep.add("");
+            rep.add("Le atendio: "+nommesero);
+        }
+
+        rep.add("");
+
+        /*
+        try {
+            rep.addc("Original: Cliente");
+            rep.addc("Copia: Obligado Tributario Emisor");
+            rep.addc("La factura es beneficio de todos exija la.");
+            rep.add("");
+            if (!textopie.isEmpty()) {
+                rep.addc(textopie);
+            }
+        } catch (Exception e) {}
+        */
+
+        //banderafel=true;
+        if (banderafel) {
+
+            if (feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Factura generada en modo de contingencia");
+                rep.add("Numero de Acceso: "+contacc);
+                rep.add("Su factura pueden encontrar en el portal");
+                rep.add("SAT bajo identificacion: "+serie+numero);
+            }
+
+            if (!feluuid.equalsIgnoreCase(" ")) {
+                rep.add("");
+                rep.add("Número de autorización: ");
+                rep.add(feluuid);
+                rep.add("Fecha de certificación: "+feldcert);
+            }
+
+            if (!felIVA.isEmpty()) {
+                rep.add(felIVA);
+            }
+            if (!felISR.isEmpty()) {
+                rep.add(felISR);
+                if (!felISR2.isEmpty()) {
+                    rep.add(felISR2);
+                }
+            }
+
+            rep.add("");
+            rep.add(felcert);
+            rep.add(felnit);
+            rep.add("");
+            rep.add("Powered by DTSolutions, S.A.");
+            rep.addc("dts.com.gt");
+        }
+
+        //#HS_20181212 Validación para factura pendiente de pago
+        if (pendiente == 4){
+            rep.add("");
+            rep.add("ESTE NO ES UN DOCUMENTO LEGAL");
+            rep.add("EXIJA SU FACTURA ORIGINAL");
+            rep.add("");
+        }
+
+        /*
+        if (parallevar){
+            rep.add("");
+            rep.addc("PARA LLEVAR");
+            rep.add("");
+        }
+
+        if (impresionorden) {
+            String sod=add1;
+            if (!sod.isEmpty()) {
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+                rep.addc("ORDEN: # "+sod.toUpperCase());
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+            }
+        } else {
+            rep.add("");
+        }
+        */
+
+        rep.add("");
+
+        return super.buildFooter();
     }
 
     private boolean footerCredSV() {

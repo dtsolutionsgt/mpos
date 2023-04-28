@@ -339,7 +339,7 @@ public class Menu extends PBase {
                         gl.cliposflag=false;gl.rutatipo="V";gl.rutatipog="V";
 
 						if (!validaVenta()) {
-							return;//Se valida si hay correlativos de factura para la venta
+							//return;//Se valida si hay correlativos de factura para la venta
 						}
 
                         gl.iniciaVenta=true;gl.exitflag=false;gl.forcedclose=false;
@@ -2286,8 +2286,8 @@ public class Menu extends PBase {
 	}
 
 	public void VentaDate(){
-		if (!validaVenta()){
-			return;//Se valida si hay correlativos de factura para la venta
+		if (!validaVenta()) {
+			//return;//Se valida si hay correlativos de factura para la venta
 		}
 		startActivity(new Intent(Menu.this,Venta.class));//#CKFK 20200518 Quité esto porque estaba en comentario
 	}
@@ -2547,8 +2547,85 @@ public class Menu extends PBase {
 	}
 
 	private boolean validaCorelTicket() {
+		Cursor DT;
+		int ci,cf,ca1,ca2;
+		double dd;
+		long fv,fa;
 
+		//if (gl.rol==4) return true;
 
+		try {
+
+			sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+					"WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=4)";
+			DT=Con.OpenDT(sql);
+
+			DT.moveToFirst();
+
+			ca1=DT.getInt(1);
+			ci=DT.getInt(2);
+			cf=DT.getInt(3);
+
+			if (ca1>=cf) {
+				mu.msgbox("Se han terminado los correlativos de los tickets. No se puede continuar con la venta.");
+				return false;
+			}
+
+			fa=du.getActDate();
+			fv=DT.getLong(4);
+
+			if (fa==fv) {
+				msgbox("Último día de vigencia de autorización de los tickets.");
+				toastlong("Último día de vigencia de autorización de los tickets.");
+			}
+
+			if (fa>fv) {
+				mu.msgbox("Se ha acabado vigencia de autorización de los tickets. No se puede continuar con la venta.");
+				return false;
+			}
+
+			dd=cf-ci;dd=0.90*dd;
+			ca2=ci+((int) dd);
+			if (ca1>ca2) porcentaje = true;
+
+			if (DT!=null) DT.close();
+
+		} catch (Exception e) {
+			mu.msgbox("No esta definido correlativo de los tickets. No se puede continuar con la venta.\n"); //+e.getMessage());
+			return false;
+		}
+
+		if (app.usaFEL()) {
+
+			try {
+
+				sql = "SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+						"WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=5) AND ACTIVA = 1 ";
+				DT = Con.OpenDT(sql);
+
+				DT.moveToFirst();
+
+				ca1 = DT.getInt(1);
+				ci = DT.getInt(2);
+				cf = DT.getInt(3);
+
+				if (ca1 >= cf) {
+					mu.msgbox("Se han terminado los correlativos de contingencias de los tickets. No se puede continuar con la venta.");
+					return false;
+				}
+
+				dd = cf - ci;
+				dd = 0.75 * dd;
+				ca2 = ci + ((int) dd);
+				if (ca1 > ca2) porcentaje = true;
+
+				if (DT != null) DT.close();
+
+			} catch (Exception e) {
+				mu.msgbox("No esta definido correlativo de contingencia para los tickets. No se puede continuar con la venta.\n"); //+e.getMessage());
+				return false;
+			}
+		}
 
 		return true;
 	}
@@ -2558,6 +2635,9 @@ public class Menu extends PBase {
 
 		try{
 			gl.cajaid=5;
+
+			gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;
+
 			if(!valida()){
 				if (gl.cajaid==5){
 					msgAskIniciarCaja("Caja cerrada. ¿Inicializar?");
