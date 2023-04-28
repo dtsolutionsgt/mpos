@@ -1369,6 +1369,7 @@ public class CliPos extends PBase {
         String NN,N;
 
         N=nit;NN=N;
+
         try {
             guc = N.length() - NN.replaceAll("-","").length();
             String[] sp = N.split("-");
