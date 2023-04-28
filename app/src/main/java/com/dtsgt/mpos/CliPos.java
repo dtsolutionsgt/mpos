@@ -403,7 +403,6 @@ public class CliPos extends PBase {
 		}
 
 		cbpickup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                     if (isChecked){
