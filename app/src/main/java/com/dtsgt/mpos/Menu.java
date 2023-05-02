@@ -2543,20 +2543,11 @@ public class Menu extends PBase {
 			}
 		}
 
-		if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-			return validaCorelSV();
-		} else {
-			return true;
-		}
+		return true;
+
 	}
 
-	private boolean validaCorelSV() {
-		if (validaCorelCredito()) {
-			return validaCorelTicket();
-		} else return false;
-	}
-
-	private boolean validaCorelCredito() {
+	private boolean validaCorelCredito2() {
 		Cursor DT;
 		int ci,cf,ca1,ca2;
 		double dd;
@@ -2636,13 +2627,6 @@ public class Menu extends PBase {
 				return false;
 			}
 		}
-
-		return true;
-	}
-
-	private boolean validaCorelTicket() {
-
-
 
 		return true;
 	}
@@ -2773,7 +2757,6 @@ public class Menu extends PBase {
 		
 	}
 
-	@SuppressLint("SuspiciousIndentation")
 	private int getPrinterType() {
 
 		Cursor DT;

@@ -474,7 +474,7 @@ public class clsDocFactura extends clsDocument {
 		loadHeadData(corel);
 		
 		items.clear();bons.clear();pagos.clear();
-		
+
 		try {
 
            //#CKFK 20200520 quité la consulta que buscaba en las notas de crédito porque aquí no existe esa tabla
