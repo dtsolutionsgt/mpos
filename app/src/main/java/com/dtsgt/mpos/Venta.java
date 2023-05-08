@@ -1543,7 +1543,8 @@ public class Venta extends PBase {
 
         try {
 
-            prodtot=prodtot*cant;
+            //prodtot=prodtot*cant;
+            prodtot=prec*cant;
             prodtot= mu.round2dec(prodtot);
 
             if (sinimp) precdoc=precsin; else precdoc=prec;

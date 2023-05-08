@@ -743,6 +743,7 @@ public class FacturaRes extends PBase {
 
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					if ((stot>percep_val) && (gl.sal_PER)) gl.percepcion=1;
+					if (stot<100) gl.percepcion=0;
 				}
 
 				totperc=stot*(gl.percepcion/100);
@@ -751,7 +752,7 @@ public class FacturaRes extends PBase {
 
                 descmon=descmon+descaddmonto;
 				tot=stot+totimp-descmon;
-				//tot=stot+totimp-descmon+totperc;
+			//tot=stot+totimp-descmon+totperc;
 				tot=tot+propina;
 				tot=mu.round2(tot);
 
