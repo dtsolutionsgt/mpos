@@ -533,7 +533,7 @@ public class Venta extends PBase {
     public void listItems() {
         Cursor DT;
         clsVenta item;
-        double tt,stot,tdesc,desc;
+        double tt,stot,tdesc,desc,pp;
         int ii;
 
         items.clear();tot=0;ttimp=0;ttperc=0;tdesc=0;selidx=-1;ii=0;seluid="";
@@ -1015,7 +1015,6 @@ public class Venta extends PBase {
 
     }
 
-
     private void processMenuItem() {
         counter++;
         gl.menuitemid=""+counter;
@@ -1180,7 +1179,11 @@ public class Venta extends PBase {
             if (gl.umfactor==0) gl.umfactor=1;
 
             ins.add("FACTOR",gl.umfactor);
-            if (porpeso) ins.add("PRECIO",gl.prectemp); else ins.add("PRECIO",prec);
+            if (porpeso) {
+                ins.add("PRECIO",gl.prectemp);
+            } else {
+                ins.add("PRECIO",prec);
+            }
             ins.add("IMP",impval);
             ins.add("DES",desc);
             ins.add("DESMON",descmon);
@@ -1390,7 +1393,8 @@ public class Venta extends PBase {
                     upd.add("TOTAL",ptot);
                     upd.add("PRECIODOC",T_Venta.items.get(i).precio);
                     upd.Where("PRODUCTO='"+T_Venta.items.get(i).producto+"'");
-                    db.execSQL(upd.sql());
+
+                    if (descLinea > 0 ) db.execSQL(upd.sql());
                 }
 
                 if (dt!=null) dt.close();
@@ -1457,6 +1461,7 @@ public class Venta extends PBase {
 
         listItems();
     }
+
     private void actualizar_descuento_por_linea_by_tventa(clsClasses.clsT_venta T_Venta){
 
         double ptot=0;
@@ -1499,6 +1504,7 @@ public class Venta extends PBase {
             mu.msgbox("Error : " + e.getMessage());
         }
     }
+
     private void updItemMonto(){
         double ptot=0;
 

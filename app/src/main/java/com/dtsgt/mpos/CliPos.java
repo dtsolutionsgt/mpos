@@ -153,13 +153,15 @@ public class CliPos extends PBase {
         }
         */
 
-        if (gl.cliente_dom!=0) cargaCliente();
+        txtRef.setText("Ciudad");
 
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            //txtNIT.setText("8000-300499-123-4");
-            txtNIT.setText("8000-6");
+            txtNIT.setText("8000-220402-123-4");
+            //txtNIT.setText("8000-6");
+            txtNom.setText("Nombre");
         }
 
+        if (gl.cliente_dom!=0) cargaCliente();
     }
 
     public interface ExtRunnable extends Runnable {
@@ -1375,7 +1377,7 @@ public class CliPos extends PBase {
             if (guc==3) {
                 val1=Integer.parseInt(sp[1]);
                 val2=Integer.parseInt(sp[2]);
-                val=val2*1000+val1;
+                val=val1*1000+val2;
 
                 return val;
             } else if (guc==1) {

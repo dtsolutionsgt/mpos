@@ -1060,6 +1060,48 @@ public class AppMethods {
 			gl.peNoEnviar = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=155";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peUsaSoloBOF = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peUsaSoloBOF = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=156";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peAcumDesc = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peAcumDesc = false;
+		}
+		// temporalmente deshabilitada acumulacion
+		gl.peAcumDesc = false;
+
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=157";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			dval=Double.parseDouble(val);
+			if (dval<0 | dval>99) dval=50;
+
+			gl.peDescMax =dval;
+		} catch (Exception e) {
+			gl.peDescMax=50;
+		}
 
 
     }
@@ -1657,33 +1699,39 @@ public class AppMethods {
     @SuppressLint("SuspiciousIndentation")
 	public void doPrint(int copies, int tipoimpr) {
 
-	    if (copies<1) copies=1;
+		try {
 
-        loadPrintConfig(tipoimpr);
+			if (copies<1) copies=1;
 
-        if (tipoimpr==0) {
-            if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
-                toast("No se puede imprimir. No está definida impresora");return;
-            }
-        }
+			loadPrintConfig(tipoimpr);
 
-        if (gl.prpar.isEmpty()) {
-            toast("No se puede imprimir. No está definido el MAC.");return;
-        }
+			if (tipoimpr==0) {
+				if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
+					toast("No se puede imprimir. No está definida impresora");return;
+				}
+			}
 
-        if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
-            if (estadoBluTooth()) {
-                printEpsonTMBT(copies);
-            } else return;
-        }
+			if (gl.prpar.isEmpty()) {
+				toast("No se puede imprimir. No está definido el MAC.");return;
+			}
 
-        if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
-            HPEngageUSB(copies);
-        }
+			if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
+				if (estadoBluTooth()) {
+					printEpsonTMBT(copies);
+				} else return;
+			}
 
-        if (gl.prtipo.equalsIgnoreCase("Aclas")) {
-            printAclas(copies);
-        }
+			if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
+				HPEngageUSB(copies);
+			}
+
+			if (gl.prtipo.equalsIgnoreCase("Aclas")) {
+				printAclas(copies);
+			}
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
     }
 
@@ -1825,12 +1873,15 @@ public class AppMethods {
     public boolean impresora() {
 
         loadPrintConfig();
-
-        if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
-            return false;
-        } else {
-            return true;
-        }
+		try {
+			if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {
+			return false;
+		}
     }
 
     //endregion

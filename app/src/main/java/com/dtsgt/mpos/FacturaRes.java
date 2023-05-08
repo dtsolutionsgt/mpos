@@ -1011,8 +1011,6 @@ public class FacturaRes extends PBase {
 			super.finish();
 
 		} catch (Exception e){
-
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 			mu.msgbox("ImpresiónDocumento : "  + e.getMessage());
             gl.ventalock=false;
 			gl.codigo_cliente=0;
@@ -1669,44 +1667,33 @@ public class FacturaRes extends PBase {
 
 			if ( gl.codigo_pais.equalsIgnoreCase("SV")) {
 
-				if (gl.sal_PER) {
+				clsD_factura_svObj D_factura_svObj=new clsD_factura_svObj(this,Con,db);
 
-					clsD_factura_svObj D_factura_svObj=new clsD_factura_svObj(this,Con,db);
+				clsClasses.clsD_factura_sv itemt = clsCls.new clsD_factura_sv();
 
-					clsClasses.clsD_factura_sv itemt = clsCls.new clsD_factura_sv();
-
-					itemt.corel = corel;
-					itemt.empresa = gl.emp;
-					itemt.codigo_tipo_factura = tipo_factura;
-					itemt.codigo_departamento = gl.sal_iddep;
-					itemt.codigo_municipio = gl.sal_idmun;
-					itemt.codigo_tipo_negocio = gl.sal_idneg;
-
-					D_factura_svObj.add(itemt);
+				try {
+					if (gl.sal_iddep.isEmpty()) gl.sal_iddep="S06";
+				} catch (Exception e) {
+					gl.sal_iddep="S06";
 				}
-			}
 
-			//endregion
-
-			//region D_FACTURA_SV
-
-			if ( gl.codigo_pais.equalsIgnoreCase("SV")) {
-
-				if (gl.sal_PER) {
-
-					clsD_factura_svObj D_factura_svObj=new clsD_factura_svObj(this,Con,db);
-
-					clsClasses.clsD_factura_sv itemt = clsCls.new clsD_factura_sv();
-
-					itemt.corel = corel;
-					itemt.empresa = gl.emp;
-					itemt.codigo_tipo_factura = tipo_factura;
-					itemt.codigo_departamento = gl.sal_iddep;
-					itemt.codigo_municipio = gl.sal_idmun;
-					itemt.codigo_tipo_negocio = gl.sal_idneg;
-
-					D_factura_svObj.add(itemt);
+				try {
+					if (gl.sal_idmun.isEmpty()) gl.sal_idmun="S0614";
+				} catch (Exception e) {
+					gl.sal_idmun="S0614";
 				}
+
+				if (gl.sal_idneg==0) gl.sal_idneg=1;
+
+				itemt.corel = corel;
+				itemt.empresa = gl.emp;
+				itemt.codigo_tipo_factura = tipo_factura;
+				itemt.codigo_departamento = gl.sal_iddep;
+				itemt.codigo_municipio = gl.sal_idmun;
+				itemt.codigo_tipo_negocio = gl.sal_idneg;
+
+				D_factura_svObj.add(itemt);
+
 			}
 
 			//endregion
