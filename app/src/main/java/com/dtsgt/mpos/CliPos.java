@@ -1166,6 +1166,8 @@ public class CliPos extends PBase {
 	private boolean agregaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
         int codigo=10*gl.emp;
 
+        codigo=10*gl.emp;
+
         if (consFinal) {
             gl.codigo_cliente = 10*gl.emp;
             gl.cliente_dom=gl.codigo_cliente;
