@@ -1103,7 +1103,6 @@ public class AppMethods {
 			gl.peDescMax=50;
 		}
 
-
     }
 
     public boolean paramCierre(int pid) {

@@ -941,6 +941,16 @@ public class clsClasses {
         public double canttot;
     }
 
+    public class clsP_prodlista {
+        public int  codigo_prodlista;
+        public int  codigo_lista;
+        public int  empresa;
+        public int  codigo_producto;
+        public double cant;
+        public double cant_min;
+        public String nombre;
+    }
+
     public class clsP_prodprecio {
         public int  codigo_precio;
         public int  empresa;
