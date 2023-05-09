@@ -5,8 +5,6 @@ import android.database.Cursor;
 
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.MiscUtils;
-import static com.dtsgt.mpos.Venta.DescPorProducto;
-import static com.dtsgt.mpos.Venta.DesPorLinea;
 
 import java.util.ArrayList;
 
@@ -67,6 +65,18 @@ public class clsDescuento {
 
         descper=dval;
         descmonto=monto;
+
+		return dval;
+	}
+
+	public double getDescuento(){
+		double dval=0;
+
+		items.clear();
+
+		listaDescRangoTipo();
+		dval=descFinal();
+		descper=dval;
 
 		return dval;
 	}
@@ -150,18 +160,15 @@ public class clsDescuento {
 					case 0: 
 						if (iid.equalsIgnoreCase(prodid) || iid.equalsIgnoreCase("*")) {
 							val=DT.getDouble(2);
-							DescPorProducto = true;
 						}break;
 					case 1: 
 						if (iid.equalsIgnoreCase(slineaid)) val=DT.getDouble(2);break;
 					case 2:
-						if (getLineaProducto()) {
 							if (iid.equalsIgnoreCase(lineaid)) val = DT.getDouble(2);
-							DesPorLinea = true;
 							break;
-						}
-					case 3: 
-						if (iid.equalsIgnoreCase(marcaid)) val=DT.getDouble(2);break;
+					case 3:
+						if (iid.equalsIgnoreCase(marcaid)) val = DT.getDouble(2);
+						break;
 				}		
 				
 				if (val>0) {
@@ -182,7 +189,67 @@ public class clsDescuento {
 		
 		
 	}
-	
+
+	public void listaDescRangoTipo() {
+
+		Cursor DT;
+		String iid;
+		double val;
+
+		if (cant<=0) return;
+
+		try {
+			vSQL="SELECT PRODUCTO,PTIPO,VALOR,PORCANT "+
+					"FROM T_DESC WHERE PRODUCTO ='"+prodid+"' AND ("+cant+">=RANGOINI) AND ("+cant+"<=RANGOFIN) "+
+					"AND (PTIPO<4) AND (DESCTIPO='R') AND (GLOBDESC='N') ";
+			//"AND (PTIPO<4) AND (DESCTIPO='R') AND (GLOBDESC='N') AND ((PORCANT='S') OR (PORCANT='1'))";
+			DT=Con.OpenDT(vSQL);
+			if (DT.getCount()==0) return;
+
+			DT.moveToFirst();
+
+			while (!DT.isAfterLast()) {
+
+				iid=DT.getString(0);
+
+				canttipo=DT.getString(3);
+				val=0;
+
+				switch (DT.getInt(1)) {
+					case 0:
+						if (iid.equalsIgnoreCase(prodid) || iid.equalsIgnoreCase("*")) {
+							val=DT.getDouble(2);
+						}break;
+					case 1:
+						if (iid.equalsIgnoreCase(prodid)) val=DT.getDouble(2);
+						break;
+					case 2:
+						if (iid.equalsIgnoreCase(prodid)) val = DT.getDouble(2);
+						break;
+					case 3:
+						if (iid.equalsIgnoreCase(prodid)) val = DT.getDouble(2);
+						break;
+				}
+
+				if (val>0) {
+					if (canttipo.equalsIgnoreCase("S")) {
+						items.add(val);
+					} else {
+						montos.add(val);
+					}
+				}
+
+				DT.moveToNext();
+			}
+
+			if (DT!=null) DT.close();
+		} catch (Exception e) {
+			MU.msgbox(e.getMessage());
+		}
+
+
+	}
+
 	private void listaDescMult(){
 		Cursor DT;
 		String iid;
@@ -285,6 +352,25 @@ public class clsDescuento {
 			if (DT.getInt(0)==0) return false;
 
 			lineaid=DT.getString(1);
+
+		} catch (Exception e) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean getMarcaProducto(){
+		Cursor DT;
+
+		try {
+			vSQL="SELECT DESCUENTO,MARCA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO="+prodid;
+			DT=Con.OpenDT(vSQL);
+			DT.moveToFirst();
+
+			if (DT.getInt(0)==0) return false;
+
+			marcaid=DT.getString(1);
 
 		} catch (Exception e) {
 			return false;

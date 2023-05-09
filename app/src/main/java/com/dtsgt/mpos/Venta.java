@@ -60,6 +60,8 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.classesws.clsBeP_DESCUENTO;
+import com.dtsgt.classesws.clsBeP_DESCUENTOList;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -105,6 +107,7 @@ public class Venta extends PBase {
     private ArrayList<clsClasses.clsMenu> mitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<clsClasses.clsMenu> fitems= new ArrayList<clsClasses.clsMenu>();
+    private ArrayList<clsClasses.clsPDescuento> itemsDesc= new ArrayList<>();
     private ArrayList<clsClasses.clsMenu> pitems= new ArrayList<clsClasses.clsMenu>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -123,19 +126,21 @@ public class Venta extends PBase {
     private clsVenta vitem;
 
     private int browse;
-    private double cant,desc,mdesc,prec,precsin,imp,impval,pimp, descLinea;
+    private double cant,desc,mdesc,prec,precsin,imp,impval,pimp, descLinea, descMarca;
     private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec,prodtotlin;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
-    private int nivel,dweek,clidia,counter,menuitemid, lineaId;
+    private int nivel,dweek,clidia,counter,menuitemid, lineaId, marcaId;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
     private boolean horiz=true,domenvio,modoHN,modoSV;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
-    public static boolean DescPorProducto, DesPorLinea = false;
+    public boolean DescPorProducto, DesPorLinea = false, DesPorMarca = false;
+    public int pTipo = -1;
+    public double auxCant=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -816,7 +821,7 @@ public class Venta extends PBase {
     }
 
     private void processCant(boolean updateitem){
-        clsDescuento clsDesc, clsDescLinea;
+        clsDescuento clsDesc, clsDescLinea, clsDescMarca;
         clsBonif clsBonif;
         Cursor DT;
         double cnt,vv;
@@ -869,9 +874,24 @@ public class Venta extends PBase {
             */
 
             //Descuentos
+            gl.auxCantVenta = cant;
+            descmon = 0;
+            DesPorLinea = false;
             DescPorProducto = false;
-            DesPorLinea = true;
+            DesPorMarca = false;
 
+            getLineaProducto();
+            getMarcaProducto();
+            setTipoDescuento();
+
+            if (itemsDesc.size() > 0) {
+                //mostar dialogo
+                listaDescuentos();
+            } else {
+                AplicaDescuento();
+            }
+
+            /*
             clsDesc = new clsDescuento(this, ""+cod_prod, cant);
             desc = clsDesc.getDesc();
             mdesc = clsDesc.monto;
@@ -899,14 +919,15 @@ public class Venta extends PBase {
                     descflag = true;
 
                 } else {
-                    /*
+
                     if (gl.bonus.size() > 0) {
                         Intent intent = new Intent(this, BonList.class);
                         startActivity(intent);
-                    }*/
+                    }
                 }
             } else if (DesPorLinea) {
                 desc = 0;
+                descLinea = 0;
 
                 if (getLineaProducto()) {
 
@@ -946,10 +967,52 @@ public class Venta extends PBase {
                         descflag=true;
                     }
                 }
+
+                if (descLinea == 0) {
+                    if (getMarcaProducto()) {
+
+                        Cursor dt;
+                        double auxCant = 0;
+
+                        //T_venta
+                        int cprod = app.codigoProducto(prodid);
+
+                        clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+                        T_Venta.fill();
+
+                        for (int i = 0; i < T_Venta.count; i++) {
+                            sql = "SELECT MARCA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='" + T_Venta.items.get(i).producto + "')";
+                            dt = Con.OpenDT(sql);
+                            if (marcaId == dt.getInt(0)) {
+                                if (dt.getInt(1) != cprod) {
+                                    auxCant += T_Venta.items.get(i).cant;
+                                }
+                            }
+                            if (dt != null) dt.close();
+                        }
+
+                        auxCant = auxCant + cant;
+                        clsDescMarca = new clsDescuento(this, "" + cod_prod, auxCant);
+                        descMarca = clsDescMarca.getDesc();
+
+                        browse = 3;
+                        gl.promprod = "" + cod_prod;// prodid;
+                        gl.promcant = cant;
+
+                        if (descMarca > 0) {
+                            gl.prommodo = 0;
+                            gl.promdesc = descMarca;
+                            saveprodid = prodid;
+                            if (descflag) startActivity(new Intent(this, DescBon.class));
+                            descflag = true;
+                        }
+                    }
+                }
             } else {
                 descLinea = 0;
+                descMarca = 0;
                 desc = 0;
-            }
+            }*/
 
             prodPrecio();
 
@@ -1054,13 +1117,22 @@ public class Venta extends PBase {
     private void updDesc(){
         try{
             //desc=gl.promdesc;
-            cant=savecant;
+            descmon = 0;
+            cant=gl.promcant;
             prodPrecio();
 
             if (desc > 0) {
                 updItem();
+                clearItem();
+                itemsDesc.clear();
             } else if (descLinea > 0) {
                 updItemLineaProd();
+                clearItem();
+                itemsDesc.clear();
+            } else if (descMarca > 0) {
+                updItemMarcaProd();
+                clearItem();
+                itemsDesc.clear();
             }
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -1390,6 +1462,8 @@ public class Venta extends PBase {
                     upd.add("TOTAL",ptot);
                     upd.add("PRECIODOC",T_Venta.items.get(i).precio);
                     upd.Where("PRODUCTO='"+T_Venta.items.get(i).producto+"'");
+
+                    //if (descLinea > 0 ) db.execSQL(upd.sql());
                     db.execSQL(upd.sql());
                 }
 
@@ -1404,6 +1478,61 @@ public class Venta extends PBase {
 
         listItems();
     }
+
+    private void updItemMarcaProd(){
+        double ptot=0;
+        Cursor dt;
+
+        try {
+
+            clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+            T_Venta.fill();
+
+            for (int i = 0; i < T_Venta.count; i++) {
+
+                sql="SELECT MARCA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.items.get(i).producto+"')";
+                dt=Con.OpenDT(sql);
+
+                if (marcaId == dt.getInt(0)) {
+
+                    savetot=mu.round(T_Venta.items.get(i).precio * T_Venta.items.get(i).cant,2);
+
+                    if (descMarca > 0) {
+                        descmon = savetot * descMarca / 100;
+                        ptot = mu.round(savetot - descmon, 2);
+                        //actualizar_descuento_por_linea_otros_items();
+                    } else {
+                        ptot=mu.round(T_Venta.items.get(i).precio*T_Venta.items.get(i).cant,2);
+                        descmon = savetot-ptot;
+                    }
+
+                    imp=mu.round2dec(imp*cant);
+
+                    upd.init("T_VENTA");
+                    upd.add("PRECIO",T_Venta.items.get(i).precio);
+                    upd.add("IMP",imp);
+                    upd.add("DES",descMarca);
+                    upd.add("DESMON",descmon);
+                    upd.add("TOTAL",ptot);
+                    upd.add("PRECIODOC",T_Venta.items.get(i).precio);
+                    upd.Where("PRODUCTO='"+T_Venta.items.get(i).producto+"'");
+
+                    //if (descMarca > 0 ) db.execSQL(upd.sql());
+                    db.execSQL(upd.sql());
+                }
+
+                if (dt!=null) dt.close();
+            }
+
+
+        } catch (SQLException e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+            mu.msgbox("Error : " + e.getMessage());
+        }
+
+        listItems();
+    }
+
 
     private void actualizar_linea_on_delete(){
         double ptot=0;
@@ -3607,6 +3736,26 @@ public class Venta extends PBase {
         return  false;
     }
 
+    private boolean getMarcaProducto() {
+        Cursor dt;
+        try {
+            sql="SELECT MARCA FROM P_PRODUCTO WHERE CODIGO_PRODUCTO = '"+cod_prod+"'";
+            dt=Con.OpenDT(sql);
+
+            if(dt!=null){
+                marcaId = dt.getInt(0);
+
+                if (dt!=null) dt.close();
+
+                return  true;
+            }
+        } catch (Exception e) {
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+        }
+
+        return  false;
+    }
+
     private void showCredit(){
         try{
             if (hasCredits()){
@@ -4511,6 +4660,302 @@ public class Venta extends PBase {
     }
 
     //endregion
+
+    //region Para descuentos
+    public void setTipoDescuento() {
+        clsClasses.clsPDescuento item;
+        Cursor dt;
+        try {
+            sql = "SELECT PRODUCTO, PTIPO, VALOR, NOMBRE, RANGOINI, RANGOFIN FROM P_DESCUENTO " +
+                  " WHERE PRODUCTO IN ('"+cod_prod+"','"+lineaId+"','"+marcaId+"') ";
+            dt = Con.OpenDT(sql);
+
+            if (dt != null) {
+                if (dt.getCount() > 0) {
+                    if (dt.getCount() == 1) {
+                        itemsDesc.clear();
+
+                        pTipo = -1;
+                        pTipo = dt.getInt(1);
+
+                        if (pTipo != -1) {
+                            switch (pTipo) {
+                                case 0:
+                                    DescPorProducto = true;
+                                    break;
+                                case 2:
+                                    DesPorLinea = true;
+                                    break;
+                                case 3:
+                                    DesPorMarca = true;
+                                    break;
+                            }
+                        }
+
+                    } else {
+                        //Tiene mas de un descuento
+
+                        double auxCant = getCantProd();
+                        itemsDesc.clear();
+                        dt.moveToFirst();
+
+                        while (!dt.isAfterLast()) {
+
+                            item = clsCls.new clsPDescuento();
+
+                            item.producto = dt.getString(0);
+                            item.ptipo = dt.getInt(1);
+                            item.valor = dt.getDouble(2);
+                            item.nombre = dt.getString(3);
+                            item.rangoini = dt.getDouble(4);
+                            item.rangofin = dt.getDouble(5);
+
+                            if (auxCant >= item.rangoini && auxCant <= item.rangofin) {
+                                itemsDesc.add(item);
+                            }
+
+                            /*if (item.valor != 0) {
+                                if (itemsDesc.size() > 0) {
+                                    for (int i = 0; i < itemsDesc.size(); i++) {
+                                        if (item.ptipo != itemsDesc.get(i).ptipo) {
+                                            itemsDesc.add(item);
+                                        }
+                                    }
+                                } else {
+                                    itemsDesc.add(item);
+                                }
+                            }*/
+
+                            dt.moveToNext();
+                        }
+
+                    }
+                }
+            }
+            if (dt != null) dt.close();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void AplicaDescuento() {
+        clsDescuento clsDesc, clsDescLinea, clsDescMarca;
+        try {
+            if (cant == 0) cant = gl.auxCantVenta;
+            desc = 0;
+            descMarca = 0;
+            descLinea = 0;
+
+            if (DescPorProducto) {
+                clsDesc = new clsDescuento(this, ""+cod_prod, cant);
+                desc = clsDesc.getDescuento();
+                mdesc = clsDesc.monto;
+                savecant=cant;
+                descmon=0;
+
+                browse = 3;
+                gl.promprod = "" + cod_prod;// prodid;
+                gl.promcant = cant;
+
+                if (desc > 0) {
+                    gl.prommodo = 0;
+                    gl.promdesc = desc;
+
+                    saveprodid = !prodid.isEmpty() ? prodid: gl.prodid;
+                    if (descflag) startActivity(new Intent(this, DescBon.class));
+                    descflag = true;
+                } else {
+                    /*gl.prommodo = 1;
+                    gl.promdesc = mdesc;*/
+                    updItem();
+                    descMarca = 0;
+                    descLinea = 0;
+                    updItemLineaProd();
+                    updItemMarcaProd();
+                }
+            } else if (DesPorLinea) {
+                Cursor dt;
+                double tmpCant = 0;
+
+                prodid = !prodid.isEmpty() ? prodid: gl.prodid;
+                int cprod = app.codigoProducto(prodid);
+
+                clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+                T_Venta.fill();
+
+                for (int i = 0; i < T_Venta.count; i++) {
+                    sql="SELECT LINEA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.items.get(i).producto+"')";
+                    dt=Con.OpenDT(sql);
+                    if (lineaId == dt.getInt(0)) {
+                        if (dt.getInt(1) != cprod) {
+                            tmpCant += T_Venta.items.get(i).cant;
+                        }
+                    }
+                    if (dt!=null) dt.close();
+                }
+
+                tmpCant = tmpCant + cant;
+                clsDescLinea = new clsDescuento(this, ""+lineaId, tmpCant);
+                descLinea = clsDescLinea.getDescuento();
+
+                browse = 3;
+                gl.promprod =""+cod_prod;// prodid;
+                gl.promcant = cant;
+
+                if (descLinea > 0) {
+                    gl.prommodo = 0;
+                    gl.promdesc = descLinea;
+                    saveprodid=prodid;
+
+                    if (descflag) startActivity(new Intent(this, DescBon.class));
+                    descflag=true;
+                } else {
+                    updItemLineaProd();
+                }
+
+            } else if (DesPorMarca) {
+                Cursor dt;
+                double tmpCant = 0;
+
+                //T_venta
+                prodid = !prodid.isEmpty() ? prodid: gl.prodid;
+                int cprod = app.codigoProducto(prodid);
+
+                clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+                T_Venta.fill();
+
+                for (int i = 0; i < T_Venta.count; i++) {
+                    sql = "SELECT MARCA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='" + T_Venta.items.get(i).producto + "')";
+                    dt = Con.OpenDT(sql);
+                    if (marcaId == dt.getInt(0)) {
+                        if (dt.getInt(1) != cprod) {
+                            tmpCant += T_Venta.items.get(i).cant;
+                        }
+                    }
+                    if (dt != null) dt.close();
+                }
+
+                tmpCant = tmpCant + cant;
+                clsDescMarca = new clsDescuento(this, ""+marcaId, tmpCant);
+                descMarca = clsDescMarca.getDescuento();
+
+                browse = 3;
+                gl.promprod = "" + cod_prod;// prodid;
+                gl.promcant = cant;
+
+                if (descMarca > 0) {
+                    gl.prommodo = 0;
+                    gl.promdesc = descMarca;
+                    saveprodid = prodid;
+                    if (descflag) startActivity(new Intent(this, DescBon.class));
+                    descflag = true;
+                } else {
+                    updItemMarcaProd();
+                }
+            } else {
+                desc = 0;
+                descLinea = 0;
+                descMarca = 0;
+                descmon = 0;
+            }
+        }catch (Exception e) {
+
+        }
+    }
+
+    public double getCantProd() {
+        Cursor dt;
+        double auxCant = 0;
+        try {
+
+            clsT_ventaObj T_Venta = new clsT_ventaObj(this, Con, db);
+            T_Venta.fill();
+
+            for (int i = 0; i < T_Venta.count; i++) {
+                sql="SELECT LINEA, MARCA, CODIGO_PRODUCTO FROM P_PRODUCTO WHERE (CODIGO='"+T_Venta.items.get(i).producto+"')";
+                dt=Con.OpenDT(sql);
+                if (lineaId == dt.getInt(0) || marcaId == dt.getInt(1)) {
+                    if (dt.getInt(2) != cod_prod) {
+                        auxCant += T_Venta.items.get(i).cant;
+                    }
+                }
+                if (dt!=null) dt.close();
+            }
+
+            auxCant = auxCant + cant;
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return  auxCant;
+    }
+
+    private void listaDescuentos() {
+        String ss;
+
+        try {
+
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(Venta.this,"Descuentos","Salir");
+
+            for (int i=0; i < itemsDesc.size(); i++) {
+                listdlg.add(itemsDesc.get(i).ptipo+"", itemsDesc.get(i).nombre," "+itemsDesc.get(i).valor+"%");
+            }
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        int pTipo = -1;
+
+                        pTipo = listdlg.getCodigoInt(position);
+
+                        if (pTipo != -1) {
+                            switch (pTipo) {
+                                case 0:
+                                    DescPorProducto = true;
+                                    descLinea = 0;
+                                    descMarca = 0;
+                                    break;
+                                case 2:
+                                    DesPorLinea = true;
+                                    descMarca = 0;
+                                    desc = 0;
+                                    break;
+                                case 3:
+                                    DesPorMarca = true;
+                                    desc = 0;
+                                    descLinea = 0;
+                                    break;
+                            }
+                        }
+
+                        AplicaDescuento();
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setWidth(350);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    //endregion
+
 
     //region Activity Events
 

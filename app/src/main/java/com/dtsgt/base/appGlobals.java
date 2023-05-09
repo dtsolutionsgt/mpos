@@ -131,4 +131,5 @@ public class appGlobals extends Application {
 	//#EJC202301020908AM: Parámetro para saber si se sincronizan o no
 	//todos los clientes.
 	public Boolean Sincronizar_Clientes = false;
+	public double auxCantVenta = 0;
 }

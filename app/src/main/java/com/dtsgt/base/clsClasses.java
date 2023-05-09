@@ -1784,7 +1784,11 @@ public class clsClasses {
 		public int inicial,fin,actual;
 	}
 
-
+    public class clsPDescuento{
+        public String producto, nombre;
+        public int ptipo;
+        public double valor, rangoini, rangofin;
+    }
 
     //endregion
 
