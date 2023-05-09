@@ -153,14 +153,15 @@ public class CliPos extends PBase {
         }
         */
 
-        if (gl.cliente_dom!=0) cargaCliente();
+        txtRef.setText("Ciudad");
 
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            //txtNIT.setText("8000-300499-123-4");
+            //txtNIT.setText("8000-220402-123-4");
             txtNIT.setText("8000-6");
             txtNom.setText("Nombre");
         }
 
+        if (gl.cliente_dom!=0) cargaCliente();
     }
 
     public interface ExtRunnable extends Runnable {
@@ -170,7 +171,6 @@ public class CliPos extends PBase {
 	//region  Events
 
     public void consFinal(View view) {
-
         String ss=txtNIT.getText().toString();
         String ddnom,ddir,dcor;
 
@@ -184,6 +184,8 @@ public class CliPos extends PBase {
 
                 consFinal=true;
                 gl.sal_PER=false;
+                gl.sal_NRC=false;
+                gl.sal_NIT=false;
 
                 if (agregaCliente("C.F.",ddnom,ddir,dcor,""+txtTel.getText().toString())) procesaCF() ;
 
@@ -255,7 +257,6 @@ public class CliPos extends PBase {
             }
 
             if (sTelCliente.isEmpty()) sTelCliente="";
-
 
             flag_NRC=false;gl.sal_PER=false;
             if (gl.codigo_pais.equalsIgnoreCase("SV")) {
@@ -404,7 +405,6 @@ public class CliPos extends PBase {
 		}
 
 		cbpickup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                     if (isChecked){
@@ -435,7 +435,6 @@ public class CliPos extends PBase {
             gl.scancliente=gl.cliente;
 
             gl.gNITCliente ="CF";
-
             sNombreCliente =txtNom.getText().toString();
             //#EJC20210130: Una dirección tenía enter... quitar espacios vacíos con Trim.
             sDireccionCliente =txtRef.getText().toString().trim();
@@ -1104,6 +1103,7 @@ public class CliPos extends PBase {
 
 		Cursor DT;
         boolean resultado=false;
+        int nitcf=gl.emp*10;
 
 		try{
 
@@ -1115,7 +1115,7 @@ public class CliPos extends PBase {
 			} else {
 
 				sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL,TELEFONO FROM P_CLIENTE " +
-					"WHERE NIT = '" + NIT + "'";
+					"WHERE (NIT='" + NIT + "') AND (CODIGO_CLIENTE<>"+nitcf+")";
 				DT=Con.OpenDT(sql);
 
 				if (DT != null){
@@ -1165,6 +1165,8 @@ public class CliPos extends PBase {
 
 	private boolean agregaCliente(String NIT,String Nom,String dir, String Correo,String tel) {
         int codigo=10*gl.emp;
+
+        codigo=10*gl.emp;
 
         if (consFinal) {
             gl.codigo_cliente = 10*gl.emp;
@@ -1365,15 +1367,33 @@ public class CliPos extends PBase {
     }
 
     private int nitnumsv(String nit) {
-        int nnit;
+        int guc,val,val1,val2;
+        String NN,N;
+
+        N=nit;NN=N;
 
         try {
-            if (nit.length()>10) nit=nit.substring(1,10);
-            nnit=Integer.parseInt(nit);
-            return nnit;
+            guc = N.length() - NN.replaceAll("-","").length();
+            String[] sp = N.split("-");
+
+            if (guc==3) {
+                val1=Integer.parseInt(sp[1]);
+                val2=Integer.parseInt(sp[2]);
+                val=val1*1000+val2;
+
+                return val;
+            } else if (guc==1) {
+                val1=Integer.parseInt(sp[0]);
+                val2=Integer.parseInt(sp[1]);
+                val=val1*10+val2;
+
+                return val;
+            }
         } catch (Exception e) {
-            return gl.emp*10;
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+        return gl.emp*10;
     }
 
 	private void limpiaCampos() {
@@ -1676,6 +1696,7 @@ public class CliPos extends PBase {
                 browse=0;
 
                 if ( gl.sal_idneg==-1) {
+                    gl.sal_PER=false;
                     return;
                 }
 

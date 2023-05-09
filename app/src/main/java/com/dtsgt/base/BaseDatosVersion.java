@@ -1531,6 +1531,21 @@ public class BaseDatosVersion {
             sql="CREATE INDEX D_factura_sv_idx1 ON D_factura_sv(COREL)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_prodlista] ("+
+                    "CODIGO_PRODLISTA INTEGER NOT NULL,"+
+                    "CODIGO_LISTA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_PRODUCTO INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "CANT_MIN REAL NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_PRODLISTA])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_prodlista_idx1 ON P_prodlista(CODIGO_LISTA)";db.execSQL(sql);
+        } catch (Exception e) { }
 
 
         try {

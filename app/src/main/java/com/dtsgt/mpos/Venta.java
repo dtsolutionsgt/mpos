@@ -60,8 +60,6 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
-import com.dtsgt.classesws.clsBeP_DESCUENTO;
-import com.dtsgt.classesws.clsBeP_DESCUENTOList;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
@@ -134,7 +132,7 @@ public class Venta extends PBase {
     private int nivel,dweek,clidia,counter,menuitemid, lineaId, marcaId;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,pedidos,descflag,meseros=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,prodflag=true,listflag=true;
-    private boolean horiz=true,domenvio,modoHN,modoSV;
+    private boolean horiz=true,porcentaje,domenvio,modoHN,modoSV;
     private int codigo_cliente, emp,pedidoscant,cod_prod;
     private String cliid,saveprodid,pedcorel;
     private int famid = -1;
@@ -538,7 +536,7 @@ public class Venta extends PBase {
     public void listItems() {
         Cursor DT;
         clsVenta item;
-        double tt,stot,tdesc,desc;
+        double tt,stot,tdesc,desc,pp;
         int ii;
 
         items.clear();tot=0;ttimp=0;ttperc=0;tdesc=0;selidx=-1;ii=0;seluid="";
@@ -1078,7 +1076,6 @@ public class Venta extends PBase {
 
     }
 
-
     private void processMenuItem() {
         counter++;
         gl.menuitemid=""+counter;
@@ -1252,7 +1249,11 @@ public class Venta extends PBase {
             if (gl.umfactor==0) gl.umfactor=1;
 
             ins.add("FACTOR",gl.umfactor);
-            if (porpeso) ins.add("PRECIO",gl.prectemp); else ins.add("PRECIO",prec);
+            if (porpeso) {
+                ins.add("PRECIO",gl.prectemp);
+            } else {
+                ins.add("PRECIO",prec);
+            }
             ins.add("IMP",impval);
             ins.add("DES",desc);
             ins.add("DESMON",descmon);
@@ -1463,8 +1464,7 @@ public class Venta extends PBase {
                     upd.add("PRECIODOC",T_Venta.items.get(i).precio);
                     upd.Where("PRODUCTO='"+T_Venta.items.get(i).producto+"'");
 
-                    //if (descLinea > 0 ) db.execSQL(upd.sql());
-                    db.execSQL(upd.sql());
+                    if (descLinea > 0 ) db.execSQL(upd.sql());
                 }
 
                 if (dt!=null) dt.close();
@@ -1586,6 +1586,7 @@ public class Venta extends PBase {
 
         listItems();
     }
+
     private void actualizar_descuento_por_linea_by_tventa(clsClasses.clsT_venta T_Venta){
 
         double ptot=0;
@@ -1628,6 +1629,7 @@ public class Venta extends PBase {
             mu.msgbox("Error : " + e.getMessage());
         }
     }
+
     private void updItemMonto(){
         double ptot=0;
 
@@ -1666,7 +1668,8 @@ public class Venta extends PBase {
 
         try {
 
-            prodtot=prodtot*cant;
+            //prodtot=prodtot*cant;
+            prodtot=prec*cant;
             prodtot= mu.round2dec(prodtot);
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
@@ -4445,6 +4448,29 @@ public class Venta extends PBase {
     }
 
     private boolean disponibleCorel(){
+
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            return disponibleCorelFactura();
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            return disponibleCorelFactura();
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            if (gl.sal_NIT) {
+                return disponibleCorelFactura();
+            } else if (gl.sal_NRC) {
+                if (gl.sal_PER) {
+                    return validaCorelCredito();
+                } else {
+                    return disponibleCorelFactura();
+                }
+            } else {
+                return validaCorelTicket();
+            }
+        }
+
+        return false;
+    }
+
+    private boolean disponibleCorelFactura(){
         Cursor DT;
         int ca,cf,ca1,ca2,fcorel;
 
@@ -4492,10 +4518,179 @@ public class Venta extends PBase {
             }
 
             return true;
+
         } catch (Exception e) {
             mu.msgbox("disponibleCorel: " + e.getMessage());return false;
         }
 
+    }
+
+    private boolean validaCorelCredito() {
+        Cursor DT;
+        int ci,cf,ca1,ca2;
+        double dd;
+        long fv,fa;
+
+        //if (gl.rol==4) return true;
+
+        try {
+
+            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+                    "WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=2)";
+            DT=Con.OpenDT(sql);
+
+            DT.moveToFirst();
+
+            ca1=DT.getInt(1);
+            ci=DT.getInt(2);
+            cf=DT.getInt(3);
+
+            if (ca1>=cf) {
+                mu.msgbox("Se han terminado los correlativos de los creditos fiscales. No se puede continuar con la venta.");
+                return false;
+            }
+
+            fa=du.getActDate();
+            fv=DT.getLong(4);
+
+            if (fa==fv) {
+                msgbox("Último día de vigencia de autorización de los creditos fiscales.");
+                toastlong("Último día de vigencia de autorización de los creditos fiscales.");
+            }
+
+            if (fa>fv) {
+                mu.msgbox("Se ha acabado vigencia de autorización de los creditos fiscales. No se puede continuar con la venta.");
+                return false;
+            }
+
+            dd=cf-ci;dd=0.90*dd;
+            ca2=ci+((int) dd);
+            if (ca1>ca2) porcentaje = true;
+
+            if (DT!=null) DT.close();
+
+        } catch (Exception e) {
+            mu.msgbox("No esta definido correlativo de los creditos fiscales. No se puede continuar con la venta.\n"); //+e.getMessage());
+            return false;
+        }
+
+        if (app.usaFEL()) {
+
+            try {
+
+                sql = "SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+                        "WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=3) AND ACTIVA = 1 ";
+                DT = Con.OpenDT(sql);
+
+                DT.moveToFirst();
+
+                ca1 = DT.getInt(1);
+                ci = DT.getInt(2);
+                cf = DT.getInt(3);
+
+                if (ca1 >= cf) {
+                    mu.msgbox("Se han terminado los correlativos de contingencias de los creditos fiscales. No se puede continuar con la venta.");
+                    return false;
+                }
+
+                dd = cf - ci;
+                dd = 0.75 * dd;
+                ca2 = ci + ((int) dd);
+                if (ca1 > ca2) porcentaje = true;
+
+                if (DT != null) DT.close();
+
+            } catch (Exception e) {
+                mu.msgbox("No esta definido correlativo de contingencia para los creditos fiscales. No se puede continuar con la venta.\n"); //+e.getMessage());
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validaCorelTicket() {
+        Cursor DT;
+        int ci,cf,ca1,ca2;
+        double dd;
+        long fv,fa;
+
+        //if (gl.rol==4) return true;
+
+        try {
+
+            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+                    "WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=4)";
+            DT=Con.OpenDT(sql);
+
+            DT.moveToFirst();
+
+            ca1=DT.getInt(1);
+            ci=DT.getInt(2);
+            cf=DT.getInt(3);
+
+            if (ca1>=cf) {
+                mu.msgbox("Se han terminado los correlativos de los tickets. No se puede continuar con la venta.");
+                return false;
+            }
+
+            fa=du.getActDate();
+            fv=DT.getLong(4);
+
+            if (fa==fv) {
+                msgbox("Último día de vigencia de autorización de los tickets.");
+                toastlong("Último día de vigencia de autorización de los tickets.");
+            }
+
+            if (fa>fv) {
+                mu.msgbox("Se ha acabado vigencia de autorización de los tickets. No se puede continuar con la venta.");
+                return false;
+            }
+
+            dd=cf-ci;dd=0.90*dd;
+            ca2=ci+((int) dd);
+            if (ca1>ca2) porcentaje = true;
+
+            if (DT!=null) DT.close();
+
+        } catch (Exception e) {
+            mu.msgbox("No esta definido correlativo de los tickets. No se puede continuar con la venta.\n"); //+e.getMessage());
+            return false;
+        }
+
+        if (app.usaFEL()) {
+
+            try {
+
+                sql = "SELECT SERIE,CORELULT,CORELINI,CORELFIN,FECHAVIG,RESGUARDO FROM P_COREL " +
+                        "WHERE (RUTA=" + gl.codigo_ruta + ") AND (RESGUARDO=5) AND ACTIVA = 1 ";
+                DT = Con.OpenDT(sql);
+
+                DT.moveToFirst();
+
+                ca1 = DT.getInt(1);
+                ci = DT.getInt(2);
+                cf = DT.getInt(3);
+
+                if (ca1 >= cf) {
+                    mu.msgbox("Se han terminado los correlativos de contingencias de los tickets. No se puede continuar con la venta.");
+                    return false;
+                }
+
+                dd = cf - ci;
+                dd = 0.75 * dd;
+                ca2 = ci + ((int) dd);
+                if (ca1 > ca2) porcentaje = true;
+
+                if (DT != null) DT.close();
+
+            } catch (Exception e) {
+                mu.msgbox("No esta definido correlativo de contingencia para los tickets. No se puede continuar con la venta.\n"); //+e.getMessage());
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private boolean validaMinimoCF() {
