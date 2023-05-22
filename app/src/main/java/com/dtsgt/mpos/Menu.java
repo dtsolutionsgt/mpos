@@ -768,9 +768,10 @@ public class Menu extends PBase {
 				listdlg.add("Traslado entre almacénes");
 				listdlg.add("Egreso de almacén");
 			}
-			listdlg.add("Orden de compra");
-			listdlg.add("Barril");
-			listdlg.add("Inventario centralizado");
+
+			//listdlg.add("Orden de compra");
+			//listdlg.add("Barril");
+			//listdlg.add("Inventario centralizado");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 

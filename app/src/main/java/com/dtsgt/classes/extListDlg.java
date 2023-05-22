@@ -88,6 +88,7 @@ public class extListDlg {
 
         mBtnLeft = dialog.findViewById(R.id.btnexit);
         mBtnLeft.setText(butleft);
+        if (butleft.isEmpty()) mBtnLeft.setEnabled(false);else mBtnLeft.setEnabled(true);
         mBtnLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {}

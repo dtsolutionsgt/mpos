@@ -24,11 +24,11 @@ public class Precio {
 	private MiscUtils mu;
 	
 	private String prodid,um,umpeso,umventa;
-	private double cant,prec;
+	private double cant,prec,descmax;
 	private int nivel,ndec,codprod;
 	private boolean porpeso;
 	
-	public Precio(Context context,MiscUtils mutil,int numdec) {
+	public Precio(Context context,MiscUtils mutil,int numdec,double dmax) {
 		
 		cont=context;
 		mu=mutil;
@@ -55,7 +55,7 @@ public class Precio {
 		prec=0;costo=0;descmon=0;imp=0;tot=0;precioespecial=0;
         if (pcant==0) pcant=1;
 
-		clsDescuento clsDesc=new clsDescuento(cont,""+codigoprod,cant);
+		clsDescuento clsDesc=new clsDescuento(cont,""+codigoprod,cant,descmax);
 		desc=clsDesc.getDesc();
 
 		prodPrecioBase();

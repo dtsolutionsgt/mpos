@@ -113,7 +113,7 @@ public class ResCaja extends PBase {
 
         actorden=gl.peActOrdenMesas;
 
-        prc=new Precio(this,mu,2);
+        prc=new Precio(this,mu,2,gl.peDescMax);
 
         setHandlers();
         listItems();

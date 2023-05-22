@@ -757,7 +757,7 @@ public class FacturaRes extends PBase {
 				tot=mu.round2(tot);
 
 				item = clsCls.new clsCDB();
-				item.Cod="Subtotal";item.Desc=mu.frmcur(stot);item.Bandera=0;
+				item.Cod="Subtotal";item.Desc=mu.frmcur(stot+totimp);item.Bandera=0;
 				items.add(item);
 
 				item = clsCls.new clsCDB();
@@ -1397,9 +1397,11 @@ public class FacturaRes extends PBase {
 
 				sql="SELECT VALOR FROM P_IMPUESTO WHERE (VALOR>0) ORDER BY VALOR";
 				dt=Con.OpenDT(sql);
+
 				if (dt.getCount()>0) {
 					dt.moveToFirst();fh_val1=dt.getDouble(0);
 				} else fh_val1=0;
+
 				if (dt.getCount()>1) {
 					dt.moveToNext();fh_val2=dt.getDouble(0);
 				} else fh_val2=0;
@@ -1414,7 +1416,12 @@ public class FacturaRes extends PBase {
 				dt.moveToFirst();
 				fh_exent=dt.getDouble(0);
 
-				sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1>0)";
+				if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+					sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1>0)";
+				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					//sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA ";
+					sql="SELECT SUM(CANT*PRECIODOC) FROM T_VENTA WHERE (VAL1>0)";
+				}
 				dt=Con.OpenDT(sql);
 				dt.moveToFirst();
 				fh_grav=dt.getDouble(0);
@@ -1437,7 +1444,9 @@ public class FacturaRes extends PBase {
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					if ((fh_grav>percep_val) && (gl.sal_PER)) {
 						//if ((fh_grav>100) && (gl.sal_PER)) {
-						fh_imp2=fh_grav*0.01;fh_imp2=mu.round2dec(fh_imp2);
+						fh_imp2=fh_grav*0.01;
+						if (fh_grav<100) fh_imp2=0;
+						fh_imp2=mu.round2dec(fh_imp2);
 					} else fh_imp2=0;
 				}
 

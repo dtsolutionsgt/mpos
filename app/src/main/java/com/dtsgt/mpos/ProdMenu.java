@@ -69,7 +69,7 @@ public class ProdMenu extends PBase {
         T_comboObj = new clsT_comboObj(this, Con, db);
         T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
 
-        prc = new Precio(this, mu, 2);
+        prc = new Precio(this, mu, 2,gl.peDescMax);
 
         setHandlers();
 

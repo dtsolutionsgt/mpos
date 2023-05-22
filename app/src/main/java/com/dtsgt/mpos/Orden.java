@@ -242,7 +242,7 @@ public class Orden extends PBase {
 
         counter=1;
 
-        prc=new Precio(this,mu,2);
+        prc=new Precio(this,mu,2,gl.peDescMax);
 
         setHandlers();
         initValues();
@@ -831,7 +831,7 @@ public class Orden extends PBase {
             }
             */
 
-            clsDesc = new clsDescuento(this, ""+cod_prod, cant);
+            clsDesc = new clsDescuento(this, ""+cod_prod, cant,gl.peDescMax);
             desc = clsDesc.getDesc();
             mdesc = saveprec*cant*desc/100;mdesc=mu.round2(mdesc);
 

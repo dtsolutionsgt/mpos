@@ -15,7 +15,12 @@ public class clsNumALetra {
         int triMillones      = (int)((parteEntera / 1000000) % 1000);
         int triMilMillones   = (int)((parteEntera / 1000000000) % 1000);
 
-        double decparte=(totalBigDecimal.doubleValue()-parteEntera)*100;
+        //double decparte=(totalBigDecimal.doubleValue()-parteEntera)*100;
+
+        double decparte=totalBigDecimal.doubleValue()-parteEntera;
+        decparte=decparte+0.000001;
+        decparte=decparte*100;
+
         String decpar=" con "+((int) (decparte))+"/100";
 
         if (parteEntera == 0) {

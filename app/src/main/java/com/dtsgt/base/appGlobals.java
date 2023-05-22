@@ -33,7 +33,7 @@ public class appGlobals extends Application {
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,mesacodigo,
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,
-				mesa_vend,mesa_codigo,invcent_cod,sal_idneg;
+				mesa_vend,mesa_codigo,invcent_cod,sal_idneg,desc_tipo_apl;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
@@ -46,7 +46,7 @@ public class appGlobals extends Application {
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
-                   ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,
+                   ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER;
 
 	//FEL Identificacion

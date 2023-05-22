@@ -1545,8 +1545,11 @@ public class clsDocFactura extends clsDocument {
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        rep.addtotsp("Subtotal: ", fh_grav+fh_exent+fh_imp1);
-        rep.addtotsp("Total Gravado: ", fh_grav+fh_imp1);
+        rep.addtotsp("Subtotal: ", fh_grav+fh_exent);
+        //rep.addtotsp("Subtotal: ", stot);
+        rep.addtotsp("Total gravado: ", fh_grav);
+        //rep.addtotsp("Subtotal: ", fh_grav+fh_exent+fh_imp1);
+        //rep.addtotsp("Total Gravado: ", fh_grav+fh_imp1);
         rep.addtotsp("Total exento: ", 0);
         rep.addtotsp("Venta no sujeta: ", fh_exent);
         //rep.addtotsp("Importe exonerado: ", fh_exon);

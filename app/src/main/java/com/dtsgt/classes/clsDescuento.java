@@ -28,7 +28,7 @@ public class clsDescuento {
 	private double cant,vmax,dmax;
 	private boolean acum;
 	
-	public clsDescuento(Context context,String producto,double cantidad) {
+	public clsDescuento(Context context,String producto,double cantidad,double descmax) {
 		
 		cont=context;
 		
@@ -43,7 +43,9 @@ public class clsDescuento {
 	    
 	    MU=new MiscUtils(context);
 		
-		vmax=0;dmax=0;acum=true;
+		vmax=0;
+		dmax=descmax;
+		acum=false;
 		lineaid="";slineaid="";marcaid="";
 		
 	}
@@ -164,7 +166,9 @@ public class clsDescuento {
 					case 1: 
 						if (iid.equalsIgnoreCase(slineaid)) val=DT.getDouble(2);break;
 					case 2:
-							if (iid.equalsIgnoreCase(lineaid)) val = DT.getDouble(2);
+							if (iid.equalsIgnoreCase(lineaid)) {
+								val = DT.getDouble(2);
+							}
 							break;
 					case 3:
 						if (iid.equalsIgnoreCase(marcaid)) val = DT.getDouble(2);
@@ -331,12 +335,6 @@ public class clsDescuento {
 			
 		} catch (Exception e) {
 		   	return false;
-	    }
-		
-		try {
-            dmax=0;acum=true;
-		} catch (Exception e) {
-			dmax=0;acum=true;
 	    }
 
 		return true;
