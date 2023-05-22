@@ -157,8 +157,8 @@ public class CliPos extends PBase {
 
         if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             //txtNIT.setText("8000-220402-123-4");
-            txtNIT.setText("8000-6");
-            txtNom.setText("Nombre");
+            //txtNIT.setText("8000-6");
+            //txtNom.setText("Nombre");
         }
 
         if (gl.cliente_dom!=0) cargaCliente();
