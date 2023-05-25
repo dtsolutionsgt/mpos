@@ -49,7 +49,7 @@ public class Reimpresion extends PBase {
 	private printer prn_nc;
 	private printer  prn_can,prn_paseante;
 	private Runnable printclose,printcallback,printvoid;
-	public clsRepBuilder rep;
+	private clsRepBuilder rep;
 	
 	private clsDocFactura fdoc;
 	private clsDocMov mdoc;

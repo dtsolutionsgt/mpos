@@ -21,6 +21,7 @@ import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -52,6 +53,11 @@ public class PBase extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_plist_base);
+		try {
+			FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	public void InitBase(){

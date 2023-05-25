@@ -88,6 +88,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="5dp"
             android:adjustViewBounds="true"
+            android:paddingEnd="10dp"
             android:src="@drawable/logo_panel" />
 
         <ImageView
@@ -115,19 +116,6 @@
             android:textColor="#1A8AC6"
             android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/textView245"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="9dp"
-            android:layout_marginEnd="9dp"
-            android:layout_toStartOf="@+id/imgTitLogo"
-            android:background="@drawable/frame_btn"
-            android:clickable="true"
-            android:onClick="doCor"
-            android:padding="5dp"
-            android:text="Corregir inventario" />
     </RelativeLayout>
 
     <EditText
@@ -160,33 +148,21 @@
 
     </ListView>
 
-    <ImageView
-        android:id="@+id/btnImp"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentRight="false"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/textView1"
-        android:clickable="true"
-        android:onClick="printDoc"
-        android:padding="5dp"
-        android:src="@drawable/reimpresion48" />
-
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/listView1"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/ImageView01"
+        android:layout_marginBottom="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="10dp"
         android:text=" ( 0 )"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="14sp" />
+        android:textColor="#1A8AC6"
+        android:textColorLink="#1A8AC6"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/ImageView01"
@@ -212,67 +188,14 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
-    <TextView
-        android:id="@+id/textView186"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/listView1"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="-5dp"
-        android:layout_toStartOf="@+id/imageView78"
-        android:clickable="true"
-        android:gravity="center_horizontal"
-        android:onClick="doRecibir"
-        android:text="Actualizar"
-        android:textSize="10sp"
-        android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/imageView77"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView186"
-        android:layout_alignStart="@+id/textView186"
-        android:layout_alignTop="@+id/btnImp"
-        android:layout_alignEnd="@+id/textView186"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:clickable="true"
-        android:onClick="doRecibir"
-        android:src="@drawable/recibir_rapido"
-        android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/textView187"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView186"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="0dp"
-        android:clickable="true"
-        android:gravity="center_horizontal"
-        android:onClick="doEnviar"
-        android:text="Enviar"
-        android:textSize="10sp"
-        android:visibility="invisible" />
-
     <ImageView
         android:id="@+id/imageView78"
         android:layout_width="96dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView187"
-        android:layout_alignTop="@+id/imageView77"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="53dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="0dp"
         android:clickable="true"

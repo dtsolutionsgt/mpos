@@ -1636,6 +1636,27 @@ public class clsClasses {
 
     //
 
+    public class clsFbPStock {
+        public int id;
+        public int idalm;
+        public double cant;
+        public String nombre;
+        public String um;
+    }
+
+    public class clsFbPStockTrans {
+        public int idruta;
+        public int id;
+        public int idalm;
+        public double cant;
+        public String nombre;
+        public String um;
+        public int bandera;
+    }
+
+
+    //
+
 	public class clsLista {
 		public int  pk;
 		public String f1;
@@ -1671,7 +1692,7 @@ public class clsClasses {
 	
 	public class clsExist {
 		public String Cod,Desc,Fecha,Valor,ValorM,ValorT,Peso,PesoM,PesoT;
-		public String Lote,Doc,Centro,Stat,precio,total,rcant;
+		public String Lote,Doc,Centro,Stat,precio,total,rcant,totaluni;
 		public double cant,cantm;
 		public int id,flag,items;
 	}

@@ -883,7 +883,34 @@ public class InvRecep extends PBase {
     }
 
     private void updateStock(int pcod,double pcant,String um) {
+        try {
+            um=um.trim();
 
+            ins.init("P_STOCK");
+            ins.add("CODIGO",pcod);
+            ins.add("CANT",pcant);
+            ins.add("CANTM",0);
+            ins.add("PESO",0);
+            ins.add("plibra",0);
+            ins.add("LOTE","");
+            ins.add("DOCUMENTO","");
+            ins.add("FECHA",0);
+            ins.add("ANULADO",0);
+            ins.add("CENTRO","");
+            ins.add("STATUS","");
+            ins.add("ENVIADO",1);
+            ins.add("CODIGOLIQUIDACION",0);
+            ins.add("COREL_D_MOV","");
+            ins.add("UNIDADMEDIDA",um);
+            db.execSQL(ins.sql());
+
+        } catch (Exception e) {
+            sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+            db.execSQL(sql);
+        }
+    }
+
+    private void updateStockOld(int pcod,double pcant,String um) {
         try {
             um=um.trim();
 
@@ -951,6 +978,58 @@ public class InvRecep extends PBase {
             } else {
                 sql="UPDATE P_stock_almacen SET CANT=CANT+"+pcant+" " +
                     "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+                db.execSQL(sql);
+            }
+
+            dt.close();
+
+        } catch (Exception e) {
+            String sp=e.getMessage();
+            msgbox(Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void updateStockAlmacenOld(int pcod,double pcant,String um) {
+
+        Cursor dt;
+        int newid;
+
+        try {
+
+            um=um.trim();
+
+            sql="SELECT CODIGO_STOCK FROM P_stock_almacen  " +
+                    "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
+            dt=Con.OpenDT(sql);
+
+            if (dt.getCount()==0) {
+
+                sql="SELECT MAX(CODIGO_STOCK) FROM P_stock_almacen";
+                dt=Con.OpenDT(sql);
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    newid=dt.getInt(0)+1;
+                } else newid=1;
+
+                ins.init("p_stock_almacen");
+                ins.add("CODIGO_STOCK",newid);
+                ins.add("EMPRESA",gl.emp);
+                ins.add("CODIGO_SUCURSAL",gl.tienda);
+                ins.add("CODIGO_ALMACEN",gl.idalm);
+                ins.add("CODIGO_PRODUCTO",pcod);
+                ins.add("UNIDADMEDIDA",um);
+                ins.add("LOTE","");
+                ins.add("CANT",pcant);
+                ins.add("CANTM",0);
+                ins.add("PESO",0);
+                ins.add("PESOM",0);
+                ins.add("ANULADO",0);
+                db.execSQL(ins.sql());
+
+            } else {
+                sql="UPDATE P_stock_almacen SET CANT=CANT+"+pcant+" " +
+                        "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
                 db.execSQL(sql);
             }
 
