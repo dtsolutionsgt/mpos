@@ -11,18 +11,22 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class fbStock extends fbBase {
 
-    public clsClasses.clsFbPStock item,litem;
-    public ArrayList<clsClasses.clsFbPStock> items= new ArrayList<clsClasses.clsFbPStock>();
+    public clsClasses.clsFbStock item,litem;
+    public ArrayList<clsClasses.clsFbStock> items= new ArrayList<clsClasses.clsFbStock>();
+    public ArrayList<clsClasses.clsT_stock> sitems= new ArrayList<clsClasses.clsT_stock>();
+
     public boolean errflag,transresult;
     public int transstatus;
+    public double total;
+    public String unimed;
 
     private clsClasses clsCls=new clsClasses();
-    private clsClasses.clsFbPStock tritem;
+    private clsClasses.clsFbStock tritem;
+    private clsClasses.clsT_stock sitem;
+
 
     private String transerr;
     private int idsuc;
@@ -32,7 +36,13 @@ public class fbStock extends fbBase {
         idsuc=idsucursal;
     }
 
-    //region Public
+    //region Publiclist
+
+    public void addItem(String node, clsClasses.clsFbStock item) {
+        String key = fdt.push().getKey();
+        fdt=fdb.getReference(root+node+key);
+        fdt.setValue(item);
+    }
 
     public void setItem(String node, clsClasses.clsFbPStock item) {
         fdt=fdb.getReference(root+node);
@@ -47,12 +57,12 @@ public class fbStock extends fbBase {
                 if (task.isSuccessful()) {
                     DataSnapshot res=task.getResult();
 
-                    item=clsCls.new clsFbPStock();
+                    item=clsCls.new clsFbStock();
 
-                    item.id=res.child("id").getValue(Integer.class);
+                    item.idprod=res.child("idprod").getValue(Integer.class);
                     item.idalm=res.child("idalm").getValue(Integer.class);
                     item.cant=res.child("cant").getValue(Double.class);
-                    item.nombre =res.child("nombre").getValue(String.class);
+                    item.bandera =res.child("bandera").getValue(Integer.class);
                     item.um =res.child("um").getValue(String.class);
 
                     callBack=rnCallback;
@@ -66,11 +76,11 @@ public class fbStock extends fbBase {
         });
     }
 
-    public void updateItem(String node, clsClasses.clsFbPStock val) {
-        fdb.getReference(root+node).child("id").setValue(val.id);
+    public void updateItem(String node, clsClasses.clsFbStock val) {
+        fdb.getReference(root+node).child("idprod").setValue(val.idprod);
         fdb.getReference(root+node).child("idalm").setValue(val.idalm);
         fdb.getReference(root+node).child("cant").setValue(val.cant);
-        fdb.getReference(root+node).child("nombre").setValue(val.nombre);
+        fdb.getReference(root+node).child("bandera").setValue(val.bandera);
         fdb.getReference(root+node).child("um").setValue(val.um);
     }
 
@@ -102,12 +112,12 @@ public class fbStock extends fbBase {
 
                             for (DataSnapshot snap : res.getChildren()) {
 
-                                litem=clsCls.new clsFbPStock();
+                                litem=clsCls.new clsFbStock();
 
-                                litem.id=snap.child("id").getValue(Integer.class);
+                                litem.idprod=snap.child("idprod").getValue(Integer.class);
                                 litem.idalm=snap.child("idalm").getValue(Integer.class);
                                 litem.cant=snap.child("cant").getValue(Double.class);
-                                litem.nombre=snap.child("nombre").getValue(String.class);
+                                litem.bandera=snap.child("bandera").getValue(Integer.class);
                                 litem.um=snap.child("um").getValue(String.class);
 
                                 items.add(litem);
@@ -135,12 +145,104 @@ public class fbStock extends fbBase {
 
     }
 
-    public boolean transUpdateCant(clsClasses.clsFbPStock item, Runnable rnCallback) {
+    public void calculaTotal(String node,int idalm,int idprod, Runnable rnCallback) {
+        try {
+            items.clear();total=0;unimed="";
+
+            fdb.getReference(root+node).orderByChild("idprod").equalTo(idprod).
+                    get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    double tot;
+                    int alm;
+
+                    if (task.isSuccessful()) {
+
+                        DataSnapshot res=task.getResult();
+
+                        if (res.exists()) {
+                            for (DataSnapshot snap : res.getChildren()) {
+                                alm=snap.child("idalm").getValue(Integer.class);
+                                if (alm==idalm) {
+                                    tot=snap.child("cant").getValue(Double.class);total+=tot;
+                                    unimed=snap.child("um").getValue(String.class);
+                                }
+                            }
+                        }
+
+                        errflag=false;
+                    } else {
+                        String se=task.getException().getMessage();
+                        errflag=true;
+                    }
+
+                    callBack=rnCallback;
+                    runCallBack();
+                }
+            });
+        } catch (Exception e) {
+            errflag=true;
+            String ss=e.getMessage();
+        }
+
+        int nc=items.size();
+
+    }
+
+    public void listExist(String node,int idalm, Runnable rnCallback) {
+        try {
+            sitems.clear();
+
+            fdb.getReference(root+node).orderByChild("idalm").equalTo(idalm).
+                    get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    int ii=0;
+
+                    if (task.isSuccessful()) {
+
+                        DataSnapshot res=task.getResult();
+
+                        if (res.exists()) {
+
+                            for (DataSnapshot snap : res.getChildren()) {
+
+                                sitem=clsCls.new clsT_stock();
+
+                                sitem.id=ii;
+                                sitem.idprod=snap.child("idprod").getValue(Integer.class);
+                                sitem.cant=snap.child("cant").getValue(Double.class);
+                                sitem.um=snap.child("um").getValue(String.class);
+
+                                sitems.add(sitem);ii++;
+                            }
+                        }
+
+                        errflag=false;
+                    } else {
+                        String se=task.getException().getMessage();
+                        errflag=true;
+                    }
+
+                    callBack=rnCallback;
+                    runCallBack();
+                }
+            });
+        } catch (Exception e) {
+            errflag=true;
+            String ss=e.getMessage();
+        }
+
+        int nc=items.size();
+
+    }
+
+    public boolean transUpdateCant(clsClasses.clsFbStock item, Runnable rnCallback) {
 
         try {
             tritem =item;
             transerr="";transresult=false;transstatus=-1;
-            String rnode="/"+idsuc+"/"+idsuc+"_"+item.idalm+"_"+item.id;
+            String rnode="/"+idsuc+"/"+idsuc+"_"+item.idalm+"_"+item.idprod;
 
             fdt.runTransaction(new Transaction.Handler() {
                 public Transaction.Result doTransaction(MutableData mutableData) {
@@ -195,21 +297,8 @@ public class fbStock extends fbBase {
         }
     }
 
-    public void orderByNombre() {
-        Collections.sort(items, new ItemComparatorNombre());
-    }
-
     //endregion
 
-    //region Private
-
-    private  class ItemComparatorNombre implements Comparator<clsClasses.clsFbPStock> {
-        public int compare(clsClasses.clsFbPStock left, clsClasses.clsFbPStock right) {
-            return left.nombre.compareTo(right.nombre);
-        }
-    }
-
-    //endregion
 
 }
 

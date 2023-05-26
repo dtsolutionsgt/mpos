@@ -1588,6 +1588,16 @@ public class clsClasses {
         public String codigo_tipo_producto;
     }
 
+    public class clsT_stock {
+        public int  id;
+        public int  idprod;
+        public double cant;
+        public String um;
+
+        public String nombre;
+        public double costo;
+    }
+
     public class clsT_sv_gcont {
         public int  id;
         public String iddep;
@@ -1635,6 +1645,14 @@ public class clsClasses {
 
 
     //
+
+    public class clsFbStock {
+        public int idalm;
+        public int idprod;
+        public double cant;
+        public String um;
+        public int bandera;
+    }
 
     public class clsFbPStock {
         public int id;

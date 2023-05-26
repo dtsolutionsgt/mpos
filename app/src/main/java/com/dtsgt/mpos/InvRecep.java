@@ -33,8 +33,11 @@ import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_costoObj;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
+import com.dtsgt.classes.clsT_stockObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.firebase.fbPStock;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_T_movd;
 import com.dtsgt.ladapt.LA_T_movr;
 import com.dtsgt.ladapt.LA_T_venta_mod;
@@ -57,7 +60,10 @@ public class InvRecep extends PBase {
     private LA_T_movr adapterr;
     private LA_T_venta_mod adapterp;
     private ListAdaptMenuVenta adapterb;
+
     private clsRepBuilder rep;
+    private fbStock fbb;
+    private Runnable rnFbCallBack;
 
     private clsT_movdObj T_movdObj;
     private clsT_movrObj T_movrObj;
@@ -68,6 +74,7 @@ public class InvRecep extends PBase {
     private clsP_stockObj P_stockObj;
     private clsP_stock_almacenObj P_stock_almacenObj;
     private clsViewObj ViewObj;
+    private clsT_stockObj T_stockObj;
 
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<>();
     private ArrayList<clsClasses.clsT_venta_mod> pitems= new ArrayList<clsClasses.clsT_venta_mod>();
@@ -76,7 +83,7 @@ public class InvRecep extends PBase {
     private clsClasses.clsT_movr selitemr;
 
     private String barcode,prodname,um,invtext,ubas,convum,corel,docnum;
-    private int prodid,selidx;
+    private int prodid,fbprodid,selidx;
     private double cantt,costot,convcant,htot;
     private boolean ingreso,almpr,almacen,readonly,scanning=false;
 
@@ -130,8 +137,16 @@ public class InvRecep extends PBase {
         P_stockObj=new clsP_stockObj(this,Con,db);
         P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
         ViewObj=new clsViewObj(this,Con,db);
+        T_stockObj=new clsT_stockObj(this,Con,db);
 
         rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
+
+        rnFbCallBack = new Runnable() {
+            public void run() {
+                runFbCallBack();
+            }
+        };
+        fbb=new fbStock("Stock",gl.tienda);
 
         setHandlers();
 
@@ -261,7 +276,6 @@ public class InvRecep extends PBase {
     }
 
     private void setHandlers() {
-
         try {
 
             listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -634,12 +648,14 @@ public class InvRecep extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+            /*
             toastlong("Existencias actualizadas");
 
             //if (gl.peInvCompart) {
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
             //}
+            */
 
             finish();
 
@@ -747,13 +763,15 @@ public class InvRecep extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
+            /*
             toastlong("Existencias actualizadas");
-
 
             //if (gl.peInvCompart) {
                 gl.autocom = 1;
                 startActivity(new Intent(this,WSEnv.class));
             //}
+
+             */
 
             finish();
 
@@ -809,7 +827,8 @@ public class InvRecep extends PBase {
                 if (T_costoObj.count>0) lblCosto.setText(""+T_costoObj.first().costo);
             } catch (Exception e) { }
 
-            lblDisp.setText("Disponible: "+dispProdUni(P_productoObj.first().codigo_producto));
+            lblDisp.setText("Disponible: ");
+            dispProdUni(P_productoObj.first().codigo_producto);
 
             return true;
 
@@ -884,30 +903,19 @@ public class InvRecep extends PBase {
 
     private void updateStock(int pcod,double pcant,String um) {
         try {
-            um=um.trim();
+            clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
-            ins.init("P_STOCK");
-            ins.add("CODIGO",pcod);
-            ins.add("CANT",pcant);
-            ins.add("CANTM",0);
-            ins.add("PESO",0);
-            ins.add("plibra",0);
-            ins.add("LOTE","");
-            ins.add("DOCUMENTO","");
-            ins.add("FECHA",0);
-            ins.add("ANULADO",0);
-            ins.add("CENTRO","");
-            ins.add("STATUS","");
-            ins.add("ENVIADO",1);
-            ins.add("CODIGOLIQUIDACION",0);
-            ins.add("COREL_D_MOV","");
-            ins.add("UNIDADMEDIDA",um);
-            db.execSQL(ins.sql());
+            ritem.idprod=pcod;
+            ritem.idalm=0;
+            ritem.cant=pcant;
+            ritem.um=um.trim();
+            ritem.bandera=0;
 
+            fbb.addItem("/"+gl.tienda+"/",ritem);
         } catch (Exception e) {
-            sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-            db.execSQL(sql);
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
     }
 
     private void updateStockOld(int pcod,double pcant,String um) {
@@ -1348,7 +1356,8 @@ public class InvRecep extends PBase {
 
         try {
 
-            if (ingreso) db.execSQL("DELETE FROM T_movr");
+            db.execSQL("DELETE FROM T_movr");
+            db.execSQL("DELETE FROM T_stock");
             if (readonly) return;
 
             mmitems.clear();
@@ -1503,6 +1512,31 @@ public class InvRecep extends PBase {
 
     //endregion
 
+    //region Firebase
+
+    private void runFbCallBack() {
+        try {
+            lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
+
+            db.execSQL("DELETE FROM T_stock WHERE IDPROD="+fbprodid);
+            db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+fbb.total+",'"+fbb.unimed+"')");
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void getFbProdStock(int prodid) {
+        try {
+            fbprodid=prodid;
+            fbb.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Lista productos
 
     private void iniciaProductos() {
@@ -1564,7 +1598,8 @@ public class InvRecep extends PBase {
                 if (T_costoObj.count>0) lblCosto.setText(""+T_costoObj.first().costo);
             } catch (Exception e) { }
 
-            lblDisp.setText("Disponible: "+dispProdUni(P_productoObj.first().codigo_producto));
+            lblDisp.setText("Disponible: ");
+            dispProdUni(P_productoObj.first().codigo_producto);
 
             return true;
 
@@ -1730,13 +1765,18 @@ public class InvRecep extends PBase {
                     uum=P_stock_almacenObj.first().unidadmedida;
                 }
             } else {
+                getFbProdStock(prodid);
+                /*
                 P_stockObj.fill("WHERE CODIGO="+prodid);
                 if (P_stockObj.count>0) {
                     val=P_stockObj.first().cant;
                     uum=P_stockObj.first().unidadmedida;
                 }
+                */
             }
-            return mu.frmdecno(val)+" "+uum;
+
+            //return mu.frmdecno(val)+" "+uum;
+            return " ";
         } catch (Exception e) {
             msgbox(Objects.requireNonNull(new Object() {
             }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
@@ -1753,6 +1793,10 @@ public class InvRecep extends PBase {
             } else {
                 P_stockObj.fill("WHERE CODIGO="+prodid);
                 if (P_stockObj.count>0) val=P_stockObj.first().cant;
+
+                execSQL("SELECT FROM T_stock WHERE IDPROD="+fbprodid);
+
+
             }
             return val;
         } catch (Exception e) {
@@ -1911,6 +1955,7 @@ public class InvRecep extends PBase {
             P_stockObj.reconnect(Con,db);
             P_stock_almacenObj.reconnect(Con,db);
             ViewObj.reconnect(Con,db);
+            T_stockObj.reconnect(Con,db);
 
         } catch (Exception e) {
             msgbox(e.getMessage());

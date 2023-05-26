@@ -24,13 +24,17 @@ import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsRepBuilder;
+import com.dtsgt.classes.clsT_stockObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.firebase.fbPStock;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptExist;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Exist extends PBase {
 
@@ -51,7 +55,7 @@ public class Exist extends PBase {
     private printer prn;
     private clsRepBuilder rep;
 
-    private fbPStock fbb;
+    private fbStock fbb;
 
     private Runnable rnFbCallBack;
     private Runnable printclose;
@@ -87,7 +91,7 @@ public class Exist extends PBase {
 
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
-            fbb=new fbPStock("PStock",gl.tienda);
+            fbb=new fbStock("Stock",gl.tienda);
             rnFbCallBack = new Runnable() {
                 public void run() {
                     buildItemList();
@@ -227,7 +231,7 @@ public class Exist extends PBase {
 	private void listItems() {
         try {
             if (gl.idalm==gl.idalmpred) {
-                fbb.listItems(fbsucursal,0,rnFbCallBack);
+                fbb.listExist(fbsucursal,0,rnFbCallBack);
             } else {
 
             }
@@ -238,18 +242,145 @@ public class Exist extends PBase {
 
     private void buildItemList() {
         clsClasses.clsExist item,itemt;
-        clsClasses.clsFbPStock fbitem;
+        clsClasses.clsT_stock fbitem;
+        ArrayList<clsClasses.clsT_stock> sitems= new ArrayList<clsClasses.clsT_stock>();
+
         String vF,cod, name;
         double costo, total, gtotal=0;
         boolean flag;
 
-        fbb.orderByNombre();
+        //fbb.orderByNombre();
 
         items.clear();gtotal=0;
         lblReg.setText("Registros : 0 ");lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
 
         vF = txtFilter.getText().toString().replace("'","").toUpperCase();
 
+        try {
+
+            if (fbb.sitems.size() == 0) {
+                adapter = new ListAdaptExist(this, items,gl.usarpeso);
+                listView.setAdapter(adapter);
+                return;
+            }
+
+            clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
+            clsT_stockObj T_stockObj=new clsT_stockObj(this,Con,db);
+            db.execSQL("DELETE FROM T_stock");
+
+            for (int i = 0; i <fbb.sitems.size(); i++) {
+                T_stockObj.add(fbb.sitems.get(i));
+            }
+
+            try {
+                sql="select IDPROD,SUM(CANT),UM FROM T_STOCK GROUP BY IDPROD";
+                Cursor dt=Con.OpenDT(sql);
+
+                sitems.clear();
+                if (dt.getCount()>0) {
+                    dt.moveToFirst();
+                    while (!dt.isAfterLast()) {
+
+                        fbitem=clsCls.new clsT_stock();
+
+                        fbitem.id=0;
+                        fbitem.idprod=dt.getInt(0);
+                        fbitem.cant=dt.getDouble(1);
+                        fbitem.um=dt.getString(2);
+
+                        P_productoObj.fill("WHERE CODIGO_PRODUCTO="+fbitem.idprod+"");
+                        fbitem.nombre=P_productoObj.first().desclarga;
+                        fbitem.costo=P_productoObj.first().costo;
+
+                        sitems.add(fbitem);
+                        dt.moveToNext();
+                    }
+                }
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            Collections.sort(sitems, new ItemComparatorNombre());
+
+            try {
+                db.beginTransaction();
+
+                for (int i = 0; i <sitems.size(); i++) {
+
+                    fbitem=sitems.get(i);
+                    flag=false;
+
+                    cod=""+fbitem.id;
+                    name=fbitem.nombre.toUpperCase();
+                    costo=fbitem.costo;
+                    total=fbitem.cant*costo;gtotal+=total;
+
+
+                    if (!vF.isEmpty()) {
+                        if (cod.indexOf(vF)>-1) {
+                            flag=true;
+                        } else {
+                            if (name.indexOf(vF)>-1) flag=true;
+                        }
+                    } else flag=true;
+
+                    if (fbitem.cant==0) flag=false;
+
+                    if (flag) {
+
+                        item = clsCls.new clsExist();
+                        item.Cod = ""+fbitem.id;
+                        item.Desc = fbitem.nombre;
+                        item.flag = 0;
+                        item.items=2;
+                        items.add(item);
+
+                        itemt = clsCls.new clsExist();
+                        itemt.totaluni=mu.frmdecimal(fbitem.cant,0)+" "+fbitem.um;
+                        itemt.ValorT = mu.frmdecimal(costo, gl.peDecImp);
+                        itemt.PesoT = mu.frmdecimal(total, gl.peDecImp);
+                        itemt.flag = 3;
+                        items.add(itemt);
+                    }
+
+                }
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (Exception e) {
+                db.endTransaction();
+                msgbox(e.getMessage());
+            }
+
+        } catch (Exception e) {
+            mu.msgbox(e.getMessage());
+        }
+
+        adapter = new ListAdaptExist(this, items, gl.usarpeso);
+        listView.setAdapter(adapter);
+
+        lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
+        lblReg.setText("Registros : "+ ((int) items.size()/2));
+        pbar.setVisibility(View.INVISIBLE);
+
+    }
+
+    private void buildItemListOld() {
+        clsClasses.clsExist item,itemt;
+        clsClasses.clsFbPStock fbitem;
+        String vF,cod, name;
+        double costo, total, gtotal=0;
+        boolean flag;
+
+        //fbb.orderByNombre();
+
+        items.clear();gtotal=0;
+        lblReg.setText("Registros : 0 ");lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
+
+        vF = txtFilter.getText().toString().replace("'","").toUpperCase();
+
+        /*
         try {
 
             if (fbb.items.size() == 0) {
@@ -311,6 +442,9 @@ public class Exist extends PBase {
         lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
         lblReg.setText("Registros : "+ ((int) items.size()/2));
         pbar.setVisibility(View.INVISIBLE);
+
+
+         */
     }
 
     private void listItemsOld() {
@@ -749,6 +883,13 @@ public class Exist extends PBase {
         rep.add("Generó: "+gl.vendnom);
         rep.line();
     }
+
+    private  class ItemComparatorNombre implements Comparator<clsClasses.clsT_stock> {
+        public int compare(clsClasses.clsT_stock left, clsClasses.clsT_stock right) {
+            return left.nombre.compareTo(right.nombre);
+        }
+    }
+
 
     //endregion
 

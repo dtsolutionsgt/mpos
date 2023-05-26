@@ -1549,6 +1549,21 @@ public class BaseDatosVersion {
 
 
         try {
+            sql="CREATE TABLE [T_stock] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "IDPROD INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_stock_idx1 ON T_stock(ID)";db.execSQL(sql);
+            sql="CREATE INDEX T_stock_idx2 ON T_stock(IDPROD)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+        try {
 
         } catch (Exception e) { }
 
