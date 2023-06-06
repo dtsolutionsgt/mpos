@@ -261,6 +261,7 @@ public class Exist extends PBase {
             if (fbb.sitems.size() == 0) {
                 adapter = new ListAdaptExist(this, items,gl.usarpeso);
                 listView.setAdapter(adapter);
+                pbar.setVisibility(View.INVISIBLE);
                 return;
             }
 

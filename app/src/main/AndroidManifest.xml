@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.8.1.0">
+    android:versionName="4.9.0.0">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -40,10 +40,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
-        <activity
-            android:name=".FBTest"
-            android:exported="false" />
-        <activity
+          <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
@@ -69,6 +66,13 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name="com.dtsgt.firebase.fbNetworkState">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
 
         <service
             android:name="com.dtsgt.webservice.srvBase"
@@ -756,6 +760,9 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".FBTest"
+            android:exported="false" />
+        <activity
             android:name=".InvCentral"
             android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
@@ -765,6 +772,12 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".InicioInventario"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
     </application>
 
 </manifest>

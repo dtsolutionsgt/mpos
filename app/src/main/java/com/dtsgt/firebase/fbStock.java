@@ -21,14 +21,13 @@ public class fbStock extends fbBase {
     public boolean errflag,transresult;
     public int transstatus;
     public double total;
-    public String unimed;
+    public String unimed,transerr;
+    public long retlongvalue;
 
     private clsClasses clsCls=new clsClasses();
     private clsClasses.clsFbStock tritem;
     private clsClasses.clsT_stock sitem;
 
-
-    private String transerr;
     private int idsuc;
 
     public fbStock(String troot, int idsucursal) {
@@ -36,7 +35,11 @@ public class fbStock extends fbBase {
         idsuc=idsucursal;
     }
 
-    //region Publiclist
+    public fbStock(String troot) {
+        super(troot);
+    }
+
+    //region Public
 
     public void addItem(String node, clsClasses.clsFbStock item) {
         String key = fdt.push().getKey();
@@ -47,6 +50,32 @@ public class fbStock extends fbBase {
     public void setItem(String node, clsClasses.clsFbPStock item) {
         fdt=fdb.getReference(root+node);
         fdt.setValue(item);
+    }
+
+    public void getIntValue(String node,String childnode,Runnable rnCallback) {
+        retlongvalue =-1;
+        fdb.getReference(root+node).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                String sv="";
+                if (task.isSuccessful()) {
+                    DataSnapshot res=task.getResult();
+
+                    try {
+                        sv=res.child(childnode).getValue(String.class);
+                        retlongvalue=Long.parseLong(sv);
+                    } catch (Exception e) {
+                        String ss=e.getMessage()+" : "+sv;
+                        retlongvalue=-1;
+                    }
+
+                    callBack=rnCallback;
+                    runCallBack();
+                } else {
+                    retlongvalue =-1;
+                }
+            }
+        });
     }
 
     public void getItem(String node,Runnable rnCallback) {
@@ -84,12 +113,12 @@ public class fbStock extends fbBase {
         fdb.getReference(root+node).child("um").setValue(val.um);
     }
 
-    public void updateValue(String node, String value) {
-        fdb.getReference(root+node).setValue(value);
+    public void updateValue(String node,String child, String value) {
+        fdb.getReference(root+node).child(child).setValue(value);
     }
 
     public void removeValue(String node) {
-        fdb.getReference(root+node).removeValue();
+        fdb.getReference(root).child(node).setValue(null);
     }
 
     public void listItems(String node,int idalm, Runnable rnCallback) {
@@ -147,7 +176,6 @@ public class fbStock extends fbBase {
 
     public void calculaTotal(String node,int idalm,int idprod, Runnable rnCallback) {
         try {
-            items.clear();total=0;unimed="";
 
             fdb.getReference(root+node).orderByChild("idprod").equalTo(idprod).
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -155,6 +183,8 @@ public class fbStock extends fbBase {
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     double tot;
                     int alm;
+
+                    total=0;items.clear();unimed="";
 
                     if (task.isSuccessful()) {
 
@@ -176,6 +206,7 @@ public class fbStock extends fbBase {
                         errflag=true;
                     }
 
+                    total=total+0;
                     callBack=rnCallback;
                     runCallBack();
                 }
@@ -185,11 +216,10 @@ public class fbStock extends fbBase {
             String ss=e.getMessage();
         }
 
-        int nc=items.size();
-
     }
 
     public void listExist(String node,int idalm, Runnable rnCallback) {
+
         try {
             sitems.clear();
 
@@ -197,7 +227,7 @@ public class fbStock extends fbBase {
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    int ii=0;
+                    int ii=0,palm;
 
                     if (task.isSuccessful()) {
 
@@ -207,16 +237,22 @@ public class fbStock extends fbBase {
 
                             for (DataSnapshot snap : res.getChildren()) {
 
-                                sitem=clsCls.new clsT_stock();
+                                palm=snap.child("idalm").getValue(Integer.class);
+                                if (palm==idalm) {
 
-                                sitem.id=ii;
-                                sitem.idprod=snap.child("idprod").getValue(Integer.class);
-                                sitem.cant=snap.child("cant").getValue(Double.class);
-                                sitem.um=snap.child("um").getValue(String.class);
+                                    sitem=clsCls.new clsT_stock();
 
-                                sitems.add(sitem);ii++;
-                            }
-                        }
+                                    sitem.id=ii;
+                                    sitem.idprod=snap.child("idprod").getValue(Integer.class);
+                                    sitem.cant=snap.child("cant").getValue(Double.class);
+                                    sitem.um=snap.child("um").getValue(String.class);
+                                    sitem.key=snap.getKey();
+
+                                    sitems.add(sitem);ii++;
+
+                                }
+                            } // Datasnap
+                        } // Exists
 
                         errflag=false;
                     } else {

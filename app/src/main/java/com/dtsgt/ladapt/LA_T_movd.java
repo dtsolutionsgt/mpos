@@ -23,7 +23,7 @@ public class LA_T_movd  extends BaseAdapter {
     private DateUtils du;
     private AppMethods app;
 
-    private ArrayList<clsClasses.clsT_movd> items= new ArrayList<clsClasses.clsT_movd>();
+    public ArrayList<clsClasses.clsT_movd> items= new ArrayList<clsClasses.clsT_movd>();
     private int selectedIndex;
     private LayoutInflater l_Inflater;
 

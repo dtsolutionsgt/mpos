@@ -37,6 +37,7 @@ import com.dtsgt.classes.clsP_cajahoraObj;
 import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
+import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsT_cierreObj;
@@ -46,6 +47,7 @@ import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.classes.extWaitDlg;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.fel.FELVerificacion;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
@@ -80,11 +82,14 @@ public class Menu extends PBase {
 	private ExDialog menudlg;
 	private extWaitDlg waitdlg,waitdlglimp;
 
-    private clsP_cajacierreObj caja;
+	private fbStock fbb;
+	private Runnable rnFbInvCallBack;
+
+	private clsP_cajacierreObj caja;
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
     private clsP_paramextObj P_paramextObj;
 
-    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent;
+    private int selId,selIdx,menuid,iicon,idalm,idalmdpred,idcierre,modo_invcent,modo_supervis;
 	private String rutatipo,sdoc;
 	private boolean rutapos,horizpos,porcentaje,modo_emerg;
 	private boolean listo=true,almacenes,cortesias;
@@ -137,6 +142,13 @@ public class Menu extends PBase {
 			}
 
 			this.setTitle("mPos");
+
+			rnFbInvCallBack = new Runnable() {
+				public void run() {
+					fbInvCallBack();
+				}
+			};
+			fbb=new fbStock("Stock",gl.tienda);
 
 			listItems();
 
@@ -372,6 +384,7 @@ public class Menu extends PBase {
 			        showPrintMenuTodo();break;
 				case 4:  // Anulacion
 				    //showVoidMenuTodo();
+					modo_supervis=0;
 					validaSupervisor();
 					break;
 				case 5:  // Consultas
@@ -480,50 +493,6 @@ public class Menu extends PBase {
 	//endregion
 	
 	//region Anulacion
-
-	private void validaSupervisor() {
-
-		clsClasses.clsVendedores item;
-
-		try {
-		    clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-			app.fillSuper(VendedoresObj);
-
-			if (VendedoresObj.count==0) {
-				msgbox("No está definido ningún supervisor");return;
-			}
-
-			extListPassDlg listdlg = new extListPassDlg();
-			listdlg.buildDialog(Menu.this,"Autorización","Salir");
-
-			for (int i = 0; i <VendedoresObj.count; i++) {
-				item=VendedoresObj.items.get(i);
-				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
-			}
-
-			listdlg.setOnLeftClick(v -> listdlg.dismiss());
-
-			listdlg.onEnterClick(v -> {
-
-				if (listdlg.getInput().isEmpty()) return;
-
-				if (listdlg.validPassword()) {
-					showVoidMenuTodo();
-					listdlg.dismiss();
-				} else {
-					toast("Contraseña incorrecta");
-				}
-			});
-
-			listdlg.setWidth(350);
-			listdlg.setLines(4);
-
-			listdlg.show();
-
-		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-	}
 
 	public void showVoidMenuTodo() {
 
@@ -1048,6 +1017,7 @@ public class Menu extends PBase {
 			listdlg.add("Tablas");
 			listdlg.add("Actualizar versión");
 			listdlg.add("Enviar base de datos");
+			listdlg.add("Iniciar inventario");
 			listdlg.add("Certificar facturas");
 			listdlg.add("Limpiar tablas");
 			listdlg.add("Prueba de bluetooth");
@@ -1074,26 +1044,29 @@ public class Menu extends PBase {
 						case 3:
 							enviarBaseDeDatos();break;
 						case 4:
-							msgAskFEL("Certificar facturas pendientes");break;
+							modo_supervis=1;
+							validaSupervisor();break;
 						case 5:
-							validaSuperLimpia();break;
+							msgAskFEL("Certificar facturas pendientes");break;
 						case 6:
-							estadoBluTooth();break;
+							validaSuperLimpia();break;
 						case 7:
-							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
+							estadoBluTooth();break;
 						case 8:
-							msgAskActualizar("Actualizar correlativos de contingencia");break;
+							startActivity(new Intent(Menu.this,MarcarFacturas.class));break;
 						case 9:
-							infoSystem();break;
+							msgAskActualizar("Actualizar correlativos de contingencia");break;
 						case 10:
-							msgAskImprimir();break;
+							infoSystem();break;
 						case 11:
-							msgAskCF();break;
+							msgAskImprimir();break;
 						case 12:
-							msgAskCorregirFechas();break;
+							msgAskCF();break;
 						case 13:
-							inicioDia();break;
+							msgAskCorregirFechas();break;
 						case 14:
+							inicioDia();break;
+						case 15:
 							validaSuperInventario();break;
 
 					}
@@ -1195,6 +1168,21 @@ public class Menu extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+	private void inicioInventario() {
+		try {
+			clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
+			P_productoObj.fill("WHERE (CODIGO_TIPO='P')");
+			if (P_productoObj.count>0) {
+				gl.inic_inv_auto=false;
+				startActivity(new Intent(this,InicioInventario.class));
+			} else {
+				msgbox("Inventario inicializado.");
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
 
     private void infoSystem() {
 
@@ -2026,7 +2014,11 @@ public class Menu extends PBase {
 							if (gl.cajaid==2) {
 								startActivity(new Intent(Menu.this, CajaPagos.class));
 							} else {
-								validaCaja();
+								if (gl.cajaid==1) {
+									validaInicioInv();
+								} else {
+									validaCaja();
+								}
 							}
 
 						} else {
@@ -2097,7 +2089,6 @@ public class Menu extends PBase {
 		dialog.show();
 	}
 
-
 	//endregion
 
     //region Modo emergencia
@@ -2146,8 +2137,6 @@ public class Menu extends PBase {
 		}
 
 	}
-
-
 
 	public void modoSinRed() {
 
@@ -2278,6 +2267,36 @@ public class Menu extends PBase {
     }
 
     //endregion
+
+	//region Firebase
+
+	private void validaInicioInv() {
+		try {
+			//fbb.getIntValue("/config/"+gl.tienda+"/","fecha",rnFbInvCallBack);
+			fbb.getIntValue("/config/",""+gl.tienda,rnFbInvCallBack);
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void fbInvCallBack() {
+		long ff,af=du.getActDate();
+
+		try {
+			ff = fbb.retlongvalue;
+			if (ff==af) {
+				validaCaja();
+			} else {
+				browse=2;
+				startActivity(new Intent(this,InicioInventario.class));
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	//endregion
 
 	//region Aux
 
@@ -2722,8 +2741,6 @@ public class Menu extends PBase {
 		try{
 			gl.cajaid=5;
 
-			gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;gl.cajaid=5;
-
 			if(!valida()){
 				if (gl.cajaid==5){
 					msgAskIniciarCaja("Caja cerrada. ¿Inicializar?");
@@ -3099,7 +3116,58 @@ public class Menu extends PBase {
 
     //region Dialogs
 
-    private void msgAskValid(String msg) {
+	private void validaSupervisor() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+
+					switch (modo_supervis) {
+						case 0:
+							showVoidMenuTodo();break;
+						case 1:
+							inicioInventario();break;
+					}
+
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void msgAskValid(String msg) {
         ExDialog dialog = new ExDialog(this);
         dialog.setMessage(msg);
         dialog.setCancelable(false);
@@ -3114,20 +3182,14 @@ public class Menu extends PBase {
         dialog.setCancelable(false);
 		dialog.setPositiveButton("Si", (dialog12, which) -> {
 
-			if(gl.cajaid==5){
-
+			if (gl.cajaid==5){
 				gl.cajaid=1;
-
 				if (valida()){
-
 					if (gl.cajaid!=2){
-
 						gl.inicio_caja_correcto =false;
-
-						startActivity(new Intent(Menu.this,Caja.class));
-
+						validaInicioInv();
+						//startActivity(new Intent(Menu.this,Caja.class));
 					}
-
 				}
 			}
 		});
@@ -3368,7 +3430,6 @@ public class Menu extends PBase {
 		dialog.show();
 	}
 
-
 	//endregion
 
 	//region Activity Events
@@ -3386,12 +3447,19 @@ public class Menu extends PBase {
 
 			setPrintWidth();
 
-			if(browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
+			if (browse==1 && gl.inicio_caja_correcto && !gl.inicia_caja_primera_vez){
 				gl.recibir_automatico = false;
 				browse=0;
+				return;
 			}
 
- 		} catch (Exception e){
+			if (browse==2){
+				browse=0;
+				validaCaja();
+				return;
+			}
+
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 

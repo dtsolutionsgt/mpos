@@ -44,7 +44,7 @@ import java.util.Objects;
 
 public class InvAjuste extends PBase {
 
-    private ListView listView,prodView;;
+    private ListView listView,prodView;
     private GridView grdbtn;
     private EditText txtBarra,txtprod;
     private TextView lblBar,lblKeyDP,lblProd,lblCant, lblRazon,lblCosto,lblTCant;

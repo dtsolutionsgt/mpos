@@ -136,7 +136,6 @@ public class fbPStock extends fbBase {
     }
 
     public boolean transUpdateCant(clsClasses.clsFbPStock item, Runnable rnCallback) {
-
         try {
             tritem =item;
             transerr="";transresult=false;transstatus=-1;

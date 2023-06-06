@@ -75,7 +75,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla;
 
-    private String parVer = "4.8.1.0";  // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
+    private String parVer = "4.9.0.0";  // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
                                         // AGREGAR A RELEASE NOTE
 
     private Typeface typeface;
@@ -88,7 +88,7 @@ public class MainActivity extends PBase {
             super.onCreate(savedInstanceState);
 
             if (pantallaHorizontal()) {
-                if (scrdim > 8) {
+                if (scrdim > 6) {
                     setContentView(R.layout.activity_main);
                     modopantalla = 1;
                 } else {
