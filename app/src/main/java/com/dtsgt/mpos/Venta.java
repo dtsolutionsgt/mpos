@@ -3201,8 +3201,8 @@ public class Venta extends PBase {
             } else {
                 gl.QRCodeStr="";
 
-                if (gl.emp==52) {
-                    app.doPrint(1,1);
+                if (gl.emp>=52) {
+                    app.doPrint(1, 1);
                 } else {
                     app.doPrint(2,1);
                 }
