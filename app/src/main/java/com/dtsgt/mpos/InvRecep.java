@@ -919,7 +919,6 @@ public class InvRecep extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     private void updateStockOld(int pcod,double pcant,String um) {
@@ -1541,7 +1540,9 @@ public class InvRecep extends PBase {
 
     private void runFbCallBack() {
         try {
-            lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
+            if (fbb.total>0) {
+                lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
+            } else      lblDisp.setText("Disponible: -");
 
             db.execSQL("DELETE FROM T_stock WHERE IDPROD="+fbprodid);
             db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+fbb.total+",'"+fbb.unimed+"')");
@@ -1878,9 +1879,7 @@ public class InvRecep extends PBase {
                 if (P_stock_almacenObj.count>0) val=P_stock_almacenObj.first().cant;
             } else {
                 T_stockObj.fill("WHERE IDPROD="+prodid);
-                if (T_stockObj.count>0) {
-                    val=T_stockObj.first().cant;
-                }
+                if (T_stockObj.count>0) val=T_stockObj.first().cant;
             }
             return val;
         } catch (Exception e) {
