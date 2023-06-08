@@ -3713,7 +3713,7 @@ public class FacturaRes extends PBase {
         clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
         clsClasses.clsT_combo combo;
 
-        String prname,cname;
+        String prname,cname,nnota;
         int prodid,prid,idcomb,linea=1;
 
         try {
@@ -3729,6 +3729,7 @@ public class FacturaRes extends PBase {
                 prodid = app.codigoProducto(venta.producto);
                 prname=getProd(prodid);
                 s = mu.frmdecno(venta.cant) + "  " + prname;
+				nnota=venta.val2;
 
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
 
@@ -3736,6 +3737,9 @@ public class FacturaRes extends PBase {
                     for (int k = 0; k <P_linea_impresoraObj.count; k++) {
                         prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
                         agregaComanda(linea,prid,s);linea++;
+						if (!nnota.isEmpty()) {
+							agregaComanda(linea,prid,nnota);linea++;
+						}
                     }
 
                 } else {
@@ -3831,7 +3835,16 @@ public class FacturaRes extends PBase {
                 rep.add("Cajero : "+gl.vendnom);
                 rep.add("");rep.add("");
 
-                rep.save();rep.clear();
+				if (gl.peNumOrdCommandaVenta) {
+					rep.add("");
+					rep.addc("************************");
+					rep.addc("ORDEN # "+gl.ref1.toUpperCase());
+					rep.addc("************************");
+					rep.add("");
+				}
+
+
+				rep.save();rep.clear();
             }
             //mesa
             //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
