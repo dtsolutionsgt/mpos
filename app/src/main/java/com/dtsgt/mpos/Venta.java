@@ -3206,6 +3206,7 @@ public class Venta extends PBase {
                 } else {
                     app.doPrint(2,1);
                 }
+
             }
 
             //} else {
