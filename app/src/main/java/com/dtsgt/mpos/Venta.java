@@ -3201,7 +3201,7 @@ public class Venta extends PBase {
             } else {
                 gl.QRCodeStr="";
 
-                if (gl.emp==52) {
+                if (gl.emp>=52) {
                     app.doPrint(1,1);
                 } else {
                     app.doPrint(2,1);
@@ -3593,7 +3593,7 @@ public class Venta extends PBase {
         gl.pickup=false;
         gl.delivery=false;
 
-        numeroOrden();
+        //numeroOrden();
 
         clsDescFiltro clsDFilt=new clsDescFiltro(this,gl.codigo_ruta,gl.codigo_cliente);
 
@@ -4316,7 +4316,6 @@ public class Venta extends PBase {
                 clsClasses.clsP_orden_numero orditem = clsCls.new clsP_orden_numero();
                 orditem.id=ordennum;
                 P_orden_numeroObj.add(orditem);
-
 
                 ordennum=ordennum % 1000;ordennum=ordennum+1000;
                 ordencod=""+ordennum;
