@@ -1103,6 +1103,21 @@ public class AppMethods {
 			gl.peDescMax=50;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=158";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peNumOrdCommandaVenta = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peNumOrdCommandaVenta = false;
+		}
+
+
+
     }
 
     public boolean paramCierre(int pid) {

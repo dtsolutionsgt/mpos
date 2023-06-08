@@ -130,8 +130,6 @@ public class FacturaRes extends PBase {
 
 	final double percep_val=1;
 
-
-
 	//@SuppressLint("MissingPermission")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -935,6 +933,9 @@ public class FacturaRes extends PBase {
 			if (app.impresora()) {
 
 			    fdoc.impresionorden=gl.pelOrdenComanda;
+				if (gl.peNumOrdCommandaVenta) {
+					fdoc.impresionorden=true;
+				}
 				fdoc.parallevar=gl.parallevar;
 
 				/*
@@ -1204,7 +1205,7 @@ public class FacturaRes extends PBase {
 			ins.add("IMPRES",0);
 
 			try {
-				if (gl.nummesapedido.equalsIgnoreCase("0")) {
+				if (gl.nummesapedido.equalsIgnoreCase("0") | gl.peNumOrdCommandaVenta) {
 					ins.add("ADD1",gl.ref1);
 				} else {
 					ins.add("ADD1",gl.nummesapedido);

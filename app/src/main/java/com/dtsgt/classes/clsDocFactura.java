@@ -1002,6 +1002,22 @@ public class clsDocFactura extends clsDocument {
             rep.addtotDS(pagos.get(i).nombre,pagos.get(i).cant);
         }
 
+        if (impresionorden) {
+            String sod=add1;
+            if (!sod.isEmpty()) {
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+                rep.addc("ORDEN # "+sod.toUpperCase());
+                rep.add("");
+                rep.addc("************************");
+                rep.add("");
+            }
+
+        } else {
+            rep.add("");
+        }
+
         //rep.addc("----------------------");
         //rep.addc("Firma cliente  ");
         rep.add("");
