@@ -204,7 +204,6 @@ public class VentaEdit extends PBase {
 
     //endregion
 
-
     //region Firebase
 
     private void runFbCallBack() {
@@ -235,7 +234,6 @@ public class VentaEdit extends PBase {
     }
 
     //endregion
-
 
     //region Aux
 

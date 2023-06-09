@@ -61,6 +61,7 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELVerificacion;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -118,6 +119,10 @@ public class Venta extends PBase {
     private clsP_productoObj P_productoObj;
     private clsVendedoresObj MeserosObj;
     private clsT_ordencomboprecioObj T_ordencomboprecioObj;
+
+    private fbStock fbb;
+    private Runnable rnFbCallBack;
+    private int fbprodid,fbcallmode=0;
 
     private clsRepBuilder rep;
     private printer prn;
@@ -200,6 +205,13 @@ public class Venta extends PBase {
 
         prc=new Precio(this,mu,2,gl.peDescMax);
         khand=new clsKeybHandler(this,lblCant,lblKeyDP);
+
+        rnFbCallBack = new Runnable() {
+            public void run() {
+                runFbCallBack();
+            }
+        };
+        fbb=new fbStock("Stock",gl.tienda);
 
         modoMeseros();
 
@@ -3408,7 +3420,39 @@ public class Venta extends PBase {
     }
 
     //endregion
-    
+
+    //region Firebase
+
+    private void runFbCallBack() {
+        int cstock, cbcombo;
+
+        try {
+            cstock=(int) fbb.total;
+            cbcombo=cantProdCombo(fbprodid);
+            cstock=cstock-cbcombo;
+
+
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void getDisp(String prid) {
+        fbprodid=app.codigoProducto(prid);
+        try {
+            fbb.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        //return -1;
+    }
+
+
+
+    //endregion
+
     //region Aux
 
     private void setControls(){
@@ -3904,7 +3948,7 @@ public class Venta extends PBase {
         return pr;
     }
 
-    private int getDisp(String prid) {
+    private int getDispOld(String prid) {
         int cdisp, cstock, cbcombo;
         int vprodid=app.codigoProducto(prid);
         String vum = app.umVenta3(vprodid);
