@@ -367,8 +367,9 @@ public class Venta extends PBase {
 
                         gl.gstr=vitem.Nombre;
                         gl.retcant=(int) vitem.Cant;
-                        gl.limcant=getDisp(prodid);
                         menuitemadd=false;
+                        fbcallmode=1;
+                        gl.limcant=getDisp(prodid);
 
                         if (!gl.ventalock) {
                             //tipo=prodTipo(gl.prodcod);
@@ -717,9 +718,10 @@ public class Venta extends PBase {
             saveprec=mu.round2(prc.preciobase);
 
             gl.dval=1;
-            gl.limcant=getDisp(prodid);
             tipo=prodTipo(gl.prodcod);
             gl.tipoprodcod=tipo;
+            fbcallmode=2;
+            gl.limcant=getDisp(prodid);
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
@@ -767,9 +769,11 @@ public class Venta extends PBase {
             prodPrecio();
 
             gl.dval=prcant;
-            gl.limcant=getDisp(prodid);
             tipo=prodTipo(gl.prodcod);
             gl.tipoprodcod=tipo;
+            fbcallmode=3;
+            gl.limcant=getDisp(prodid);
+
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
@@ -1135,7 +1139,9 @@ public class Venta extends PBase {
 
         if (!tipo.isEmpty()){
             gl.dval=gl.retcant;
+            fbcallmode=4;
             gl.limcant=getDisp(prodid);
+
             processCant(true);
             updItemLineaProd();
             listItems();
@@ -3431,24 +3437,46 @@ public class Venta extends PBase {
             cbcombo=cantProdCombo(fbprodid);
             cstock=cstock-cbcombo;
 
+            gl.limcant=cstock;
 
+            switch (fbcallmode) {
+                case 1:
+                    ;break;
+                case 2:
+                    ;break;
+                case 3:
+                    ;break;
+                case 4:
+                    ;break;
+                case 5:
+                    break;
+            }
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
-    private void getDisp(String prid) {
-        fbprodid=app.codigoProducto(prid);
+    private void getDispProdx(String prid) {
         try {
+            fbprodid=app.codigoProducto(prid);
             fbb.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        //return -1;
     }
 
+    private int getDisp(String prid) {
+        /*
+         try {
+             fbprodid=app.codigoProducto(prid);
+             fbb.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        */
+        return 0;
+    }
 
 
     //endregion
@@ -4037,7 +4065,6 @@ public class Venta extends PBase {
     }
 
     private void openItem() {
-
         try {
             for (int i = 0; i <items.size(); i++) {
 
@@ -4050,11 +4077,15 @@ public class Venta extends PBase {
                     uid=item.emp;
                     gl.gstr=item.Nombre;
                     gl.retcant=(int) item.Cant;
-                    gl.limcant=getDisp(prodid);
-                    browse=6;
 
+                    fbcallmode=5;
+                    gl.limcant=getDisp(prodid);
+
+                    browse=6;
                     startActivity(new Intent(Venta.this,VentaEdit.class));
-                 }
+
+
+                }
             }
 
         } catch (Exception e) {

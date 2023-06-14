@@ -273,6 +273,43 @@ public class fbStock extends fbBase {
 
     }
 
+    public boolean transBatchStock(Runnable rnCallback) {
+
+        try {
+            transerr="";transresult=false;transstatus=-1;
+
+            fdt.runTransaction(new Transaction.Handler() {
+                public Transaction.Result doTransaction(MutableData mutableData) {
+
+                    try {
+                        removeValue("/"+idsuc+"/");
+
+                        for (int i = 0; i <items.size(); i++) {
+                            addItem("/"+idsuc+"/",items.get(i));
+                        }
+
+                        transresult=true;
+                    } catch (Exception e) {
+                        transerr=e.getMessage();transresult=false;
+                    }
+
+                    return Transaction.success(mutableData);
+                }
+
+                public void onComplete(DatabaseError databaseError, boolean complete, DataSnapshot dataSnapshot) {
+                    if (complete) transstatus=1;else transstatus=0;
+                    callBack=rnCallback;
+                    runCallBack();
+                }
+            });
+
+            return transresult;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
     public boolean transUpdateCant(clsClasses.clsFbStock item, Runnable rnCallback) {
 
         try {

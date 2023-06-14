@@ -30,6 +30,7 @@ import com.dtsgt.classes.clsDocument;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.fel.clsFELInFile;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvInventConfirm;
@@ -58,7 +59,9 @@ public class Anulacion extends PBase {
     private wsInventCompartido wsi;
     private Runnable recibeInventario;
 
-    private Runnable printotrodoc,printclose;
+	private fbStock fbb;
+
+	private Runnable printotrodoc,printclose;
 	private printer prn;
     private printer prn_nc;
     private clsRepBuilder rep;
@@ -105,8 +108,7 @@ public class Anulacion extends PBase {
 		setContentView(R.layout.activity_anulacion);
 		
 		super.InitBase();
-		addlog("Anulacion",""+du.getActDateTime(),String.valueOf(gl.vend));
-		
+
 		listView = findViewById(R.id.listView1);
 		lblTipo= findViewById(R.id.lblDescrip);
 		lblDateini = findViewById(R.id.lblDateini2);
@@ -141,7 +143,9 @@ public class Anulacion extends PBase {
 
         getURL();
 
-        wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
+		fbb=new fbStock("Stock",gl.tienda);
+
+		wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
 		xobj = new XMLObject(ws);
 
         clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
@@ -173,6 +177,8 @@ public class Anulacion extends PBase {
 			fel.fraseIVA=suc.codigo_escenario_iva;
 			fel.fraseISR=suc.codigo_escenario_isr;
 
+		} else {
+			fel=new clsFELInFile(this,this,gl.timeout);
 		}
 
         printotrodoc = () -> askPrint();
@@ -1017,87 +1023,28 @@ public class Anulacion extends PBase {
 		}
 	}
 
-	private void anulBonif(String itemid) {
+	private void revertProd(int pcod,String um,double pcant) {
+		try {
+			clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
-		Cursor DT;
-		String prod,um;
+			ritem.idprod=pcod;
+			ritem.idalm=0;
+			ritem.cant=pcant;
+			ritem.um=um.trim();
+			ritem.bandera=0;
 
-		try{
-
-			sql = "UPDATE D_BONIF SET Anulado=1 WHERE COREL='" + itemid + "'";
-			db.execSQL(sql);
-
+			fbb.addItem("/"+gl.tienda+"/",ritem);
 		} catch (Exception e) {
-			addlog(new Object() {
-			}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
-		}
-	}
-	
-	private void revertStock(String corel,String pcod,String um) {
-
-		Cursor dt;
-		String doc,stat,lot;
-		double cant,ppeso;
-		
-		doc="";stat="";lot="";
-
-		try{
-			sql = "SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV FROM D_FACTURA_STOCK " +
-					"WHERE (COREL='" + corel + "') AND (CODIGO='" + pcod + "') AND (UNIDADMEDIDA='" + um + "')";
-			dt = Con.OpenDT(sql);
-
-			if (dt.getCount()==0) return;
-
-			dt.moveToFirst();
-
-			while (!dt.isAfterLast()) {
-
-				cant = dt.getInt(0);
-				ppeso = dt.getDouble(2);
-				lot = dt.getString(4);
-				doc = dt.getString(5);
-				stat = dt.getString(9);
-
-				try {
-
-                    ins.init("P_STOCK");
-
-					ins.add("CODIGO", pcod);
-					ins.add("CANT", 0);
-					ins.add("CANTM", dt.getDouble(1));
-					ins.add("PESO", 0);
-					ins.add("plibra", dt.getDouble(3));
-					ins.add("LOTE", lot);
-					ins.add("DOCUMENTO", doc);
-					ins.add("FECHA", dt.getInt(6));
-					ins.add("ANULADO", dt.getInt(7));
-					ins.add("CENTRO", dt.getString(8));
-					ins.add("STATUS", stat);
-					ins.add("ENVIADO", dt.getInt(10));
-					ins.add("CODIGOLIQUIDACION", dt.getInt(11));
-					ins.add("COREL_D_MOV", dt.getString(12));
-					ins.add("UNIDADMEDIDA", um);
-
-					db.execSQL(ins.sql());
-
-				} catch (Exception e) {
-					//#CKFK 20190308 Este addlog lo quité porque da error porque el registro ya existe y en ese caso solo se va a hacer el update.
-					//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-					//mu.msgbox(e.getMessage());
-				}
-
-				sql = "UPDATE P_STOCK SET CANT=CANT+"+cant+",PESO=PESO+"+ppeso+"  WHERE (CODIGO='" + pcod + "') AND (UNIDADMEDIDA='" + um + "') ";
-				db.execSQL(sql);
-
-				dt.moveToNext();
-			}
-
-            if (dt!=null) dt.close();
-		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 
 	}
+
+	private void revertProd(int pcod,String um,int pcant) {
+		revertProd(pcod,um,(double) pcant);
+	}
+
+	/*
 
     private void revertProd(int pcod,String um,int pcant) {
 
@@ -1230,6 +1177,89 @@ public class Anulacion extends PBase {
 		}
 
 	}
+
+	private void anulBonif(String itemid) {
+
+		Cursor DT;
+		String prod,um;
+
+		try{
+
+			sql = "UPDATE D_BONIF SET Anulado=1 WHERE COREL='" + itemid + "'";
+			db.execSQL(sql);
+
+		} catch (Exception e) {
+			addlog(new Object() {
+			}.getClass().getEnclosingMethod().getName(), e.getMessage(), sql);
+		}
+	}
+
+	private void revertStock(String corel,String pcod,String um) {
+
+		Cursor dt;
+		String doc,stat,lot;
+		double cant,ppeso;
+
+		doc="";stat="";lot="";
+
+		try{
+			sql = "SELECT CANT,CANTM,PESO,plibra,LOTE,DOCUMENTO,FECHA,ANULADO,CENTRO,STATUS,ENVIADO,CODIGOLIQUIDACION,COREL_D_MOV FROM D_FACTURA_STOCK " +
+					"WHERE (COREL='" + corel + "') AND (CODIGO='" + pcod + "') AND (UNIDADMEDIDA='" + um + "')";
+			dt = Con.OpenDT(sql);
+
+			if (dt.getCount()==0) return;
+
+			dt.moveToFirst();
+
+			while (!dt.isAfterLast()) {
+
+				cant = dt.getInt(0);
+				ppeso = dt.getDouble(2);
+				lot = dt.getString(4);
+				doc = dt.getString(5);
+				stat = dt.getString(9);
+
+				try {
+
+                    ins.init("P_STOCK");
+
+					ins.add("CODIGO", pcod);
+					ins.add("CANT", 0);
+					ins.add("CANTM", dt.getDouble(1));
+					ins.add("PESO", 0);
+					ins.add("plibra", dt.getDouble(3));
+					ins.add("LOTE", lot);
+					ins.add("DOCUMENTO", doc);
+					ins.add("FECHA", dt.getInt(6));
+					ins.add("ANULADO", dt.getInt(7));
+					ins.add("CENTRO", dt.getString(8));
+					ins.add("STATUS", stat);
+					ins.add("ENVIADO", dt.getInt(10));
+					ins.add("CODIGOLIQUIDACION", dt.getInt(11));
+					ins.add("COREL_D_MOV", dt.getString(12));
+					ins.add("UNIDADMEDIDA", um);
+
+					db.execSQL(ins.sql());
+
+				} catch (Exception e) {
+					//#CKFK 20190308 Este addlog lo quité porque da error porque el registro ya existe y en ese caso solo se va a hacer el update.
+					//addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+					//mu.msgbox(e.getMessage());
+				}
+
+				sql = "UPDATE P_STOCK SET CANT=CANT+"+cant+",PESO=PESO+"+ppeso+"  WHERE (CODIGO='" + pcod + "') AND (UNIDADMEDIDA='" + um + "') ";
+				db.execSQL(sql);
+
+				dt.moveToNext();
+			}
+
+            if (dt!=null) dt.close();
+		} catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+		}
+
+	}
+	*/
 
 	private void anulDepos(String itemid) {
 
@@ -2033,7 +2063,6 @@ public class Anulacion extends PBase {
             return false;
         }
     }
-
 
     //endregion
 

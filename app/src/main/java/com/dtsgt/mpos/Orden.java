@@ -752,12 +752,12 @@ public class Orden extends PBase {
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
-                    if (gl.limcant>0) {
+                    //if (gl.limcant>0) {
                         if (exists) descflag=false;
                         processCant(updateitem);
-                    } else {
-                        msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
-                    }
+                    //} else {
+                    //    msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
+                    //}
                 } else if (tipo.equalsIgnoreCase("S")) {
                     if (exists) descflag=false;
                     processCant(updateitem);

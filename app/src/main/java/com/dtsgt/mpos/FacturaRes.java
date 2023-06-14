@@ -75,6 +75,7 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELFactura;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptTotals;
 import com.dtsgt.webservice.srvCommit;
 
@@ -94,7 +95,9 @@ public class FacturaRes extends PBase {
 	private List<String> spname = new ArrayList<String>();
 	private ArrayList<clsClasses.clsCDB> items= new ArrayList<clsClasses.clsCDB>();
 	private ListAdaptTotals adapter;
-	
+
+	private fbStock fbb;
+
 	private Runnable printcallback,printclose,printexit;
 
     private clsP_prodrecetaObj P_prodrecetaObj;
@@ -129,7 +132,6 @@ public class FacturaRes extends PBase {
     private boolean horiz=true;
 
 	final double percep_val=1;
-
 
 
 	//@SuppressLint("MissingPermission")
@@ -314,6 +316,8 @@ public class FacturaRes extends PBase {
 		fdev.deviceid =gl.deviceId;
 
 		saved=false;
+
+		fbb=new fbStock("Stock",gl.tienda);
 
 		assignCorel();
 
@@ -1877,7 +1881,23 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-    private void rebajaStockUM(int prid,String umstock,double cantapl) {
+	private void rebajaStockUM(int pcod,String um,double pcant) {
+		try {
+			clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
+
+			ritem.idprod=pcod;
+			ritem.idalm=0;
+			ritem.cant=-pcant;
+			ritem.um=um.trim();
+			ritem.bandera=0;
+
+			fbb.addItem("/"+gl.tienda+"/",ritem);
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void rebajaStockUMOld(int prid,String umstock,double cantapl) {
         Cursor dt;
         double dispcant,actcant;
 

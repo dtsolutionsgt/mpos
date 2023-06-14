@@ -1034,9 +1034,7 @@ public class InvAjuste extends PBase {
 
     private void runFbCallBack() {
         try {
-            if (fbb.total>0) {
-                lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
-            } else      lblDisp.setText("Disponible: -");
+            lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
 
             db.execSQL("DELETE FROM T_stock WHERE IDPROD="+fbprodid);
             db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+fbb.total+",'"+fbb.unimed+"')");

@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
+import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
@@ -83,7 +84,7 @@ public class Menu extends PBase {
 	private extWaitDlg waitdlg,waitdlglimp;
 
 	private fbStock fbb;
-	private Runnable rnFbInvCallBack;
+	private Runnable rnFbInvCallBack,rnFbVerInv;
 
 	private clsP_cajacierreObj caja;
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
@@ -148,6 +149,13 @@ public class Menu extends PBase {
 					fbInvCallBack();
 				}
 			};
+
+			rnFbVerInv = new Runnable() {
+				public void run() {
+					versionInvFinish();
+				}
+			};
+
 			fbb=new fbStock("Stock",gl.tienda);
 
 			listItems();
@@ -502,8 +510,8 @@ public class Menu extends PBase {
 
 			listdlg.add((gl.peMFact?"Factura":"Ticket"));
 			listdlg.add("Depósito");
-			listdlg.add("Ingreso de mercancía");
-			listdlg.add("Ajuste de inventario");
+			//listdlg.add("Ingreso de mercancía");
+			//listdlg.add("Ajuste de inventario");
 
 			listdlg.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -724,6 +732,15 @@ public class Menu extends PBase {
 	//region Inventario
 	
 	public void showInvMenuVenta() 	{
+		boolean exp_stock=false;
+
+		try {
+			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+			P_stockObj.fill();
+			exp_stock=P_stockObj.count>0;
+		} catch (Exception e) {
+			exp_stock=false;
+		}
 
 		try {
 
@@ -737,6 +754,8 @@ public class Menu extends PBase {
 				listdlg.add("Traslado entre almacénes");
 				listdlg.add("Egreso de almacén");
 			}
+			if (exp_stock) 	listdlg.add("Cambiar version de inventario");
+
 
 			//listdlg.add("Orden de compra");
 			//listdlg.add("Barril");
@@ -756,6 +775,8 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Inventario inicial")) menuInvIni();
 					if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
 					if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
+					if (mt.equalsIgnoreCase("Cambiar version de inventario")) menuVersInventario();
+
 					if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
 					if (mt.equalsIgnoreCase("Barril")) menuBarril();
 					if (mt.equalsIgnoreCase("Inventario centralizado")) validaSuperInvCent();
@@ -887,7 +908,6 @@ public class Menu extends PBase {
 		}
 	}
 
-
 	public void menuInvCentral() {
 
 		try {
@@ -941,6 +961,11 @@ public class Menu extends PBase {
 
 		msgAskInvInic("Este proceso eliminará todas las existencías y creará las existencias nuevas.\n¿Continuar? ");
 
+	}
+
+	private void menuVersInventario() {
+		modo_supervis=2;
+		validaSupervisor();
 	}
 
 	private void consultaInvCentral(int modo) {
@@ -2296,6 +2321,56 @@ public class Menu extends PBase {
 		}
 	}
 
+	//region Conversion inventario Firebase
+
+	private void existenciasFirebase() {
+		clsClasses.clsFbStock ritem;
+
+		try {
+			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
+			P_stockObj.fill();
+
+			fbb.items.clear();
+
+			for (int i = 0; i <P_stockObj.count; i++) {
+
+				ritem=clsCls.new clsFbStock();
+
+				ritem.idprod=P_stockObj.items.get(i).codigo;
+				ritem.idalm=0;
+				ritem.cant=P_stockObj.items.get(i).cant;
+				ritem.um=P_stockObj.items.get(i).unidadmedida;
+				ritem.bandera=0;
+
+				fbb.items.add(ritem);
+
+			}
+
+			fbb.transBatchStock(rnFbVerInv);
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void versionInvFinish() {
+
+		if (fbb.transresult) {
+			try {
+				db.execSQL("DELETE FROM P_STOCK");
+				menuExist();
+				toast("Versión de existencias cambiada");
+			} catch (Exception e) {
+				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+			}
+		} else {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+fbb.transerr);
+		}
+	}
+
+	//endregion
+
+
 	//endregion
 
 	//region Aux
@@ -2789,8 +2864,11 @@ public class Menu extends PBase {
 			
 			prtipo=DT.getString(0);
 				
-			if (prtipo.equalsIgnoreCase("DATAMAX")) prid=1;
-			if (prtipo.equalsIgnoreCase("EPSON")) prid=2;
+			if (prtipo.equalsIgnoreCase("DATAMAX")) {
+				prid=1;
+			} else if (prtipo.equalsIgnoreCase("EPSON")) {
+				prid=2;
+			}
 
             if (DT!=null) DT.close();
 		} catch (Exception e) {
@@ -3149,6 +3227,8 @@ public class Menu extends PBase {
 							showVoidMenuTodo();break;
 						case 1:
 							inicioInventario();break;
+						case 2:
+							msgAskVersInv();break;
 					}
 
 					listdlg.dismiss();
@@ -3317,7 +3397,7 @@ public class Menu extends PBase {
 
     }
 
-    public void msgAskCorregirFechas() {
+	private void msgAskCorregirFechas() {
 
 		ExDialog dialog = new ExDialog(this);
 		dialog.setMessage("¿Corregir  fechas erroneas por la fecha actual?");
@@ -3426,6 +3506,15 @@ public class Menu extends PBase {
 		dialog.setMessage(msg);
 		dialog.setCancelable(false);
 		dialog.setPositiveButton("Si", (dialog1, which) -> consultaInvCentral(2));
+		dialog.setNegativeButton("No", (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskVersInv() {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("Trasladar existencias a la nueva versión?");
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Si", (dialog1, which) -> existenciasFirebase());
 		dialog.setNegativeButton("No", (dialog12, which) -> {});
 		dialog.show();
 	}
