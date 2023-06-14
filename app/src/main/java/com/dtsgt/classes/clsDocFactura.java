@@ -1007,9 +1007,7 @@ public class clsDocFactura extends clsDocument {
             if (!sod.isEmpty()) {
                 rep.add("");
                 rep.addc("************************");
-                rep.add("");
                 rep.addc("ORDEN # "+sod.toUpperCase());
-                rep.add("");
                 rep.addc("************************");
                 rep.add("");
             }
@@ -1017,6 +1015,12 @@ public class clsDocFactura extends clsDocument {
         } else {
             rep.add("");
         }
+
+        if (parallevar){
+            rep.addc("PARA LLEVAR");
+            rep.add("");
+        }
+
 
         //rep.addc("----------------------");
         //rep.addc("Firma cliente  ");
@@ -1150,9 +1154,7 @@ public class clsDocFactura extends clsDocument {
             if (!sod.isEmpty()) {
                 rep.add("");
                 rep.addc("************************");
-                rep.add("");
                 rep.addc("ORDEN # "+sod.toUpperCase());
-                rep.add("");
                 rep.addc("************************");
                 rep.add("");
             }

@@ -707,8 +707,8 @@ public class FacturaRes extends PBase {
 				propina=mu.roundtoint(propina);
 			}
 
-			if (gl.parallevar) propina=0;
-			if (gl.pickup) propina=0;
+			//if (gl.parallevar) propina=0;
+			//if (gl.pickup) propina=0;
 			if (gl.sin_propina) propina=0;
 
 			fillTotals();
@@ -3841,8 +3841,13 @@ public class FacturaRes extends PBase {
 					rep.addc("ORDEN # "+gl.ref1.toUpperCase());
 					rep.addc("************************");
 					rep.add("");
+
 				}
 
+				if (!plev.isEmpty()) {
+					rep.addc(" P A R A   L L E V A R ");
+					rep.add("");
+				}
 
 				rep.save();rep.clear();
             }
