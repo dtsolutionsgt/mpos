@@ -111,17 +111,31 @@ public class CliPos extends PBase {
         gl.pedcorel="";gl.parallevar=false;gl.cf_domicilio=false;
         bloqueado=false;
 
-        domicilio=gl.modo_domicilio;
-        cbllevar.setEnabled(true);cbpickup.setEnabled(true);
+        //domicilio=gl.modo_domicilio;
+        domicilio=gl.peVentaDomicilio;
+        cbllevar.setEnabled(true);
+
+        cbpickup.setChecked(false);cbpickup.setEnabled(true);
+        cbpickup.setVisibility(View.INVISIBLE);
+        lblDir.setVisibility(View.GONE);
+
         if (domicilio) {
             lblDom.setVisibility(View.VISIBLE);
-            lblDir.setVisibility(View.VISIBLE);
-            cbllevar.setChecked(true);cbllevar.setEnabled(false);
+            cbllevar.setVisibility(View.VISIBLE);
+            //lblDir.setVisibility(View.VISIBLE);
+            cbllevar.setChecked(false);
+            cbllevar.setEnabled(true);
         } else {
             lblDom.setVisibility(View.INVISIBLE);
-            lblDir.setVisibility(View.GONE);
-            cbllevar.setChecked(false);cbllevar.setEnabled(true);
+            cbllevar.setVisibility(View.INVISIBLE);
+            //lblDir.setVisibility(View.GONE);
+            cbllevar.setChecked(false);
+            cbllevar.setEnabled(false);
         }
+
+        lblDir.setVisibility(View.GONE);
+        cbpickup.setVisibility(View.GONE);
+
 
         btnCF.setText("Consumidor Final");
         if (gl.codigo_pais.equalsIgnoreCase("GT")) {

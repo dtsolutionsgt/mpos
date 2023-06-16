@@ -3193,7 +3193,16 @@ public class Venta extends PBase {
                 }
             }
 
+            if (gl.peNumOrdCommandaVenta) {
+                rep.add("");
+                rep.addc("************************");
+                rep.addc("ORDEN # "+gl.ref1.toUpperCase());
+                rep.addc("************************");
+                rep.add("");
+            }
+
             rep.empty();
+
             /*
             rep.empty();
             rep.empty();
@@ -3224,6 +3233,7 @@ public class Venta extends PBase {
                 } else {
                     app.doPrint(2,1);
                 }
+
             }
 
             //} else {
@@ -4384,7 +4394,7 @@ public class Venta extends PBase {
         int ordennum;
         String ordencod;
 
-        if (gl.pelOrdenComanda) {
+        if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
             try {
                 clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
                 ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");

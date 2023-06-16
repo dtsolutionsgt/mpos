@@ -151,7 +151,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="230dp"
+            android:layout_marginEnd="280dp"
             android:layout_marginBottom="5dp"
             android:maxLines="2" />
 
@@ -432,7 +432,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="20dp"
-            android:text=" DOMICILIO"
+            android:text="PARA  LLEVAR"
             android:textColor="#000000"
             android:textColorHighlight="#000000"
             android:textSize="30sp"
