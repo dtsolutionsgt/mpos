@@ -919,10 +919,10 @@ public class CliPos extends PBase {
         try {
             if (gl.peDomEntEnvio | gl.pePedidos) {
                 gl.pedid=pedcorel;
-                startActivity(new Intent(this, PedidoEnviar.class));
+                //startActivity(new Intent(this, PedidoEnviar.class));
             } else {
                 gl.closePedido = false;
-                startActivity(new Intent(this, Pedidos.class));
+                //startActivity(new Intent(this, Pedidos.class));
             }
         } catch (Exception e) {
         }
