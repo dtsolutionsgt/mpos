@@ -75,10 +75,10 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla;
 
+    private Typeface typeface;
+
     private String parVer = "4.9.1.0";  // REGISTRAR CAMBIO EN LA TABLA P_VERSION_LOG
                                         // AGREGAR A RELEASE NOTE
-
-    private Typeface typeface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
