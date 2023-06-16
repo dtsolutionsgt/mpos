@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsT_stockObj;
@@ -18,8 +20,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -28,8 +32,10 @@ public class InicioInventario extends PBase {
     private ProgressBar pBar,pBarw;
 
     private fbStock fbb;
+    private DatabaseReference fbconnRef;
 
     private Runnable rnFbPullCallBack,rnFbFinishItem;
+    private ValueEventListener fbconnListener;
 
     private ArrayList<clsClasses.clsT_stock> stockitems= new ArrayList<clsClasses.clsT_stock>();
 
@@ -48,6 +54,8 @@ public class InicioInventario extends PBase {
             pBarw=findViewById(R.id.progressBar12);
 
             fbb=new fbStock("Stock",gl.tienda);
+            fbconnRef = fbb.fdb.getReference(".info/connected");
+
             rnFbPullCallBack = new Runnable() {
                 public void run() {
                     buildItemList();
@@ -56,28 +64,27 @@ public class InicioInventario extends PBase {
 
             fbsucursal ="/"+gl.tienda+"/";
 
-            msgAskStart("Antes de iniciar inventario asegure se que ninguno otro dispositivo está activo");
-
-            /*
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
+            fbconnListener=new ValueEventListener() {
                 @Override
-                public void run() {
-                    compactarInventario();
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean connected = snapshot.getValue(Boolean.class);
+                    if (connected) {
+                        msgAskStart("Antes de iniciar inventario asegure se que ninguno otro dispositivo está activo");
+                    } else {
+                        msgboxexit("Proceso cancelado.");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    toastlong("Proceso cancelado.");finish();
                 }
             };
-            mtimer.postDelayed(mrunner,200);
-            */
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
-    //region Events
-
-
-    //endregion
 
     //region Main
 
@@ -230,12 +237,14 @@ public class InicioInventario extends PBase {
                             }
 
                             transstatus=1;
+                            transresult=true;
                         } catch (Exception ee) {
-                            transstatus=0;transerr=ee.getMessage();
+                            transstatus=0;transresult=false;transerr=ee.getMessage();
                         }
 
                         return Transaction.success(mutableData);
                     }
+
 
                     public void onComplete(DatabaseError databaseError, boolean complete, DataSnapshot dataSnapshot) {
                         if (complete) {
@@ -274,11 +283,6 @@ public class InicioInventario extends PBase {
 
     //endregion
 
-    //region Aux
-
-
-    //endregion
-
     //region Dialogs
 
     private void msgAskStart(String msg) {
@@ -303,9 +307,60 @@ public class InicioInventario extends PBase {
 
     }
 
+    public void msgboxexit(String msg) {
+        try {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle(R.string.app_name);
+            dialog.setMessage(msg);
+            dialog.setCancelable(false);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            dialog.show();
+        } catch (Exception e){ }
+    }
+
     //endregion
 
     //region Activity Events
+
+    @Override
+    protected  void onResume(){
+        try{
+            super.onResume();
+            fbconnRef.addValueEventListener(fbconnListener);
+        } catch (Exception e) {}
+    }
+
+    @Override
+    protected void onPause() {
+        try {
+            try {
+                fbconnRef.removeEventListener(fbconnListener);
+            } catch (Exception e) { }
+            super.onPause();
+        } catch (Exception e) {}
+    }
+
+    @Override
+    public void onBackPressed() {
+        try {
+            fbconnRef.removeEventListener(fbconnListener);
+        } catch (Exception e) {}
+    }
+
+    @Override
+    public void onDestroy() {
+        try {
+            fbconnRef.removeEventListener(fbconnListener);
+        } catch (Exception e) {}
+        super.onDestroy();
+
+    }
 
 
     //endregion

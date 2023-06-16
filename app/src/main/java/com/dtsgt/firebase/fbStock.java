@@ -39,8 +39,6 @@ public class fbStock extends fbBase {
         super(troot);
     }
 
-    //region Public
-
     public void addItem(String node, clsClasses.clsFbStock item) {
         String key = fdt.push().getKey();
         fdt=fdb.getReference(root+node+key);
@@ -309,7 +307,6 @@ public class fbStock extends fbBase {
         }
     }
 
-
     public boolean transUpdateCant(clsClasses.clsFbStock item, Runnable rnCallback) {
 
         try {
@@ -369,8 +366,6 @@ public class fbStock extends fbBase {
             return false;
         }
     }
-
-    //endregion
 
 
 }

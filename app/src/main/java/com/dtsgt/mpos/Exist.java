@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.appGlobals;
@@ -26,9 +29,12 @@ import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_stockObj;
 import com.dtsgt.classes.extListDlg;
-import com.dtsgt.firebase.fbPStock;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptExist;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -43,6 +49,7 @@ public class Exist extends PBase {
 	private TextView lblReg,lblTit,lblTotal,lblalm;
 	private ProgressBar pbar;
     private RelativeLayout relalm;
+    private ImageView imgref;
 
     private AppMethods app;
 
@@ -56,13 +63,15 @@ public class Exist extends PBase {
     private clsRepBuilder rep;
 
     private fbStock fbb;
+    private DatabaseReference fbconnRef;
+    private ValueEventListener fbconnListener,fbrefListener;
 
     private Runnable rnFbCallBack;
     private Runnable printclose;
 
 	private int tipo,lns, cantExistencia, idalmdpred,idalm;
 	private String itemid,prodid,savecant, fbsucursal;
-	private boolean bloqueado=false,almacenes;
+	private boolean bloqueado=false,almacenes,idle=false,disconnected=false;
     private double cantT,disp,dispm,dispT;
 
 	@Override
@@ -88,10 +97,19 @@ public class Exist extends PBase {
             lblalm = findViewById(R.id.textView268);
             relalm= findViewById(R.id.relalm1);
             pbar=findViewById(R.id.progressBar5);pbar.setVisibility(View.VISIBLE);
+            imgref= findViewById(R.id.imageView146);imgref.setVisibility(View.INVISIBLE);
 
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
+            try {
+                fbb.fdb.goOnline();
+                fbb.fdt.push();
+            } catch (Exception e) {}
+
             fbb=new fbStock("Stock",gl.tienda);
+            fbconnRef = fbb.fdb.getReference(".info/connected");
+            CreateFbCheckStatus();
+
             rnFbCallBack = new Runnable() {
                 public void run() {
                     buildItemList();
@@ -121,6 +139,7 @@ public class Exist extends PBase {
 
             setHandlers();
 
+
         } catch (Exception e) {
             String ss=e.getMessage();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -149,7 +168,11 @@ public class Exist extends PBase {
 		}
 	}
 
-	public void limpiaFiltro(View view) {
+    public void doRefresh(View view) {
+        if (idle) listItems();
+    }
+
+    public void limpiaFiltro(View view) {
 		try{
 			txtFilter.setText("");
 		}catch (Exception e){
@@ -230,6 +253,9 @@ public class Exist extends PBase {
 
 	private void listItems() {
         try {
+            imgref.setVisibility(View.INVISIBLE);
+            idle=false;
+
             if (gl.idalm==gl.idalmpred) {
                 fbb.listExist(fbsucursal,0,rnFbCallBack);
             } else {
@@ -364,6 +390,15 @@ public class Exist extends PBase {
         lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
         lblReg.setText("Registros : "+ ((int) items.size()/2));
         pbar.setVisibility(View.INVISIBLE);
+
+        //imgref.setVisibility(View.VISIBLE);
+        idle=true;
+
+        try {
+            //if (disconnected) fbconnRef.addValueEventListener(fbrefListener);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
 
     }
 
@@ -885,12 +920,66 @@ public class Exist extends PBase {
         rep.line();
     }
 
-    private  class ItemComparatorNombre implements Comparator<clsClasses.clsT_stock> {
+    private class ItemComparatorNombre implements Comparator<clsClasses.clsT_stock> {
         public int compare(clsClasses.clsT_stock left, clsClasses.clsT_stock right) {
             return left.nombre.compareTo(right.nombre);
         }
     }
 
+    private void CreateFbCheckStatus() {
+        try {
+            fbconnListener=new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean connected = snapshot.getValue(Boolean.class);
+                    disconnected=!connected;
+                    if (!connected) msgboxexit("Las existencias no están actualizadas.\nPor favor intente mas tarde.");
+                 }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    disconnected=true;
+                    msgboxexit("Las existencias no están actualizadas.\nPor favor intente mas tarde.");
+                }
+
+            };
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+
+        try {
+            fbrefListener=new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean connected = snapshot.getValue(Boolean.class);
+                    disconnected=!connected;
+
+                    if (!connected) msgboxexit("Las existencias no están actualizadas.\nPor favor intente mas tarde.");
+                    try {
+                        fbconnRef.removeEventListener(this);
+                    } catch (Exception e) {}
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    disconnected=true;
+                    msgboxexit("Las existencias no están actualizadas.\nPor favor intente mas tarde.");
+
+                    try {
+                        fbconnRef.removeEventListener(this);
+                    } catch (Exception e) {}
+                }
+
+            };
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+
+    }
 
     //endregion
 
@@ -915,6 +1004,23 @@ public class Exist extends PBase {
 
     }
 
+    public void msgboxexit(String msg) {
+        try {
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+
+            dialog.show();
+        } catch (Exception e){ }
+    }
+
+
     //endregion
 
 	//region Activity Events
@@ -923,16 +1029,21 @@ public class Exist extends PBase {
 	protected  void onResume(){
 		try{
 			super.onResume();
-		}catch (Exception e){
+            fbconnRef.addValueEventListener(fbconnListener);
+
+        }catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
 
 	@Override
 	protected void onPause() {
-		try{
-			super.onPause();
-		}catch (Exception e){
+		try {
+            try {
+                fbconnRef.removeEventListener(fbconnListener);
+            } catch (Exception e) { }
+            super.onPause();
+		} catch (Exception e) {
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
@@ -940,6 +1051,10 @@ public class Exist extends PBase {
 
     @Override
     public void onBackPressed() {
+        try {
+            fbconnRef.removeEventListener(fbconnListener);
+        } catch (Exception e) { }
+
         if (bloqueado) toast("Actualizando inventario . . .");else super.onBackPressed();
     }
 

@@ -230,7 +230,23 @@ public class MiscUtils {
 	
 	public void msgbox(double v) {
         msgbox(String.valueOf(v));
-	}   
+	}
+
+	public void msgboxinfo(String msg) {
+		try {
+			ExDialog dialog = new ExDialog(cCont);
+			dialog.setMessage(msg);
+			dialog.setIcon(R.drawable.ic_quest);
+
+			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			});
+
+			dialog.show();
+		} catch (Exception e){ }
+	}
 
 	public void toast(String msg) {
 		Toast.makeText(cCont,msg, Toast.LENGTH_SHORT).show();

@@ -209,7 +209,7 @@
             android:paddingBottom="5dp"
             android:text="Código"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#2020d0"
+            android:textColor="#1A8AC6"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -222,8 +222,8 @@
             android:gravity="right"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#2020d0"
-            android:textStyle="normal" />
+            android:textColor="#1A8AC6"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView"
@@ -237,7 +237,7 @@
             android:paddingBottom="5dp"
             android:text="Total"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#2020d0"
+            android:textColor="#1A8AC6"
             android:textSize="18sp"
             android:textStyle="bold" />
     </RelativeLayout>
