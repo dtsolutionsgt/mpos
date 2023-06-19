@@ -133,8 +133,6 @@ public class FacturaRes extends PBase {
 
 	final double percep_val=1;
 
-
-
 	//@SuppressLint("MissingPermission")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
