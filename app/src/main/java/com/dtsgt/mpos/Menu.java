@@ -164,6 +164,13 @@ public class Menu extends PBase {
 		}
 
         validaModo();
+
+		/*
+		if (gl.peImpFactBT)  toast("Impresion BT");
+		if (gl.peImpFactLan) toast("Impresion LAN");
+		if (gl.peImpFactUSB) toast("Impresion USB");
+		*/
+
 	}
 
 	//region Events
@@ -428,13 +435,13 @@ public class Menu extends PBase {
 		try {
 
 			extListDlg listdlg = new extListDlg();
-			listdlg.buildDialog(Menu.this,"Impresión");
+			listdlg.buildDialog(Menu.this,"Reimpresión");
 
      		listdlg.add((gl.peMFact?"Factura":"Ticket"));
-			listdlg.add("Depósito");
-			listdlg.add("Pagos");
-			listdlg.add("Recarga");
-			listdlg.add("Devolución a bodega");
+			//listdlg.add("Depósito");
+			//listdlg.add("Pagos");
+			//listdlg.add("Recarga");
+			//listdlg.add("Devolución a bodega");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 

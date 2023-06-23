@@ -204,14 +204,13 @@ public class Reimpresion extends PBase {
 	// Events
 	
 	public void printDoc(View view){
-
 		try{
 			if (itemid.equalsIgnoreCase("*")) {
 				mu.msgbox("Debe seleccionar un documento.");return;
 			}
 
 			printDocument();
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 
@@ -525,7 +524,10 @@ public class Reimpresion extends PBase {
 				if (svnit.equalsIgnoreCase("C")) fdoc.sal_nit="NRC: ";
 			}
 
-		    if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
+			fdoc.LANPrint=gl.peImpFactLan;
+			if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
+
+			if (fdoc.buildPrint(itemid,impr,gl.peFormatoFactura,gl.peMFact)) {
                 gl.QRCodeStr = fdoc.QRCodeStr;
                 app.doPrint();
 

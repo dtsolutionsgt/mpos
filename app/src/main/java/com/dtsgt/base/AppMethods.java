@@ -1116,7 +1116,26 @@ public class AppMethods {
 			gl.peNumOrdCommandaVenta = false;
 		}
 
+		try {
+			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
 
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=159";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (!emptystr(val)) {
+				if (val.equalsIgnoreCase("USB")) {
+					gl.peImpFactBT=false;gl.peImpFactLan=false;gl.peImpFactUSB=true;
+					gl.peImpFactIP="";
+				} else if (val.indexOf(".")>0){
+					gl.peImpFactBT=false;gl.peImpFactLan=true;gl.peImpFactUSB=false;
+					gl.peImpFactIP=val;
+				}
+			}
+		} catch (Exception e) {
+			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
+		}
 
     }
 
@@ -1712,7 +1731,6 @@ public class AppMethods {
 
     @SuppressLint("SuspiciousIndentation")
 	public void doPrint(int copies, int tipoimpr) {
-
 		try {
 
 			if (copies<1) copies=1;
@@ -1730,9 +1748,12 @@ public class AppMethods {
 			}
 
 			if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
-				if (estadoBluTooth()) {
-					printEpsonTMBT(copies);
-				} else return;
+
+				if (gl.peImpFactBT) {
+					if (estadoBluTooth()) printEpsonTMBT(copies);else return;
+				}
+				if (gl.peImpFactLan) print3nstar_print();
+				if (gl.peImpFactUSB) print3nstarnusb();
 			}
 
 			if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
@@ -1779,11 +1800,9 @@ public class AppMethods {
 
         try {
 			if (gl.prpar.isEmpty()) {
-				toastlong("MAC VACIO");
-				msgbox("MAC VACIO");
+				msgbox("No se puede imprimir factura.\nPor favor realize reimpresión.");
 				return;
 			}
-
 
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
             intent.putExtra("mac","BT:"+gl.prpar);
@@ -1793,21 +1812,9 @@ public class AppMethods {
 			intent.putExtra("QRCodeStr",""+gl.QRCodeStr);
             cont.startActivity(intent);
 
-
 		} catch (Exception e) {
             toastlong("El controlador de Epson TM BT no está instalado");
-
-            String fname = Environment.getExternalStorageDirectory()+"/print.txt";
-            String fnamenew = Environment.getExternalStorageDirectory()+"/not_printed.txt";
-
-            File currentFile = new File(fname);
-            File newFile = new File(fnamenew);
-
-            if (rename(currentFile, newFile)) Log.i("TAG", "Success");else Log.i("TAG", "Fail");
-
-            //msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
-            //msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
-        }
+		}
     }
 
     private void printAclas(int copies) {
@@ -1829,11 +1836,29 @@ public class AppMethods {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nsw");
             cont.startActivity(intent);
         } catch (Exception e) {
-            toastlong("El controlador de 3nStar LAN  no está instalado");
+            toastlong("El controlador de 3nStar LAN no está instalado");
         }
     }
 
-    private void HPEngageUSB(int copies) {
+	public void print3nstar_print() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nswprint");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de 3nStar print LAN no está instalado");
+		}
+	}
+
+	public void print3nstarnusb() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nsusb");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de 3nStar USB no está instalado");
+		}
+	}
+
+	private void HPEngageUSB(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
             cont.startActivity(intent);

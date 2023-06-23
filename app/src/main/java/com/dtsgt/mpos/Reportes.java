@@ -876,13 +876,10 @@ public class Reportes extends PBase {
         }
 
         protected boolean buildDetail() {
-
-
             int acc=1;
             String series="", fecha="",cr;
             double costo;
             String fecha1,fecha2;
-
 
             try {
 
@@ -894,6 +891,10 @@ public class Reportes extends PBase {
                 SumaCant=0;
                 cantF=0;
                 fecharango="Del "+du.univfechaReport(dateini)+" Hasta "+du.univfechaReport(datefin);
+
+                rep.clear();
+                if (gl.peImpFactLan) rep.lanheader(gl.peImpFactIP);
+
                 /*rep.empty();
                 rep.line();*/
 
@@ -1376,6 +1377,8 @@ public class Reportes extends PBase {
             try {
 
                 rep.clear();
+                if (gl.peImpFactLan) rep.lanheader(gl.peImpFactIP);
+
                 rep.empty();
                 rep.addc("REPORTE CORTESIAS");
                 rep.empty();

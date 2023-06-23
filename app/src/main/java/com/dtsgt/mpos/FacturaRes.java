@@ -962,8 +962,12 @@ public class FacturaRes extends PBase {
 					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
 				}
 
+				fdoc.LANPrint=gl.peImpFactLan;
+				if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
+
                 fdoc.buildPrint(corel,0,"",gl.peMFact);
-				gl.QRCodeStr = fdoc.QRCodeStr;
+
+				if (gl.peMFact)	gl.QRCodeStr=fdoc.QRCodeStr;else gl.QRCodeStr="";
 
              	app.doPrint(gl.peNumImp,0);
 
@@ -1238,7 +1242,9 @@ public class FacturaRes extends PBase {
 				}
 				ins.add("AYUDANTE",svnit);
 			} else {
-				tipoNIT();
+				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+					tipoNIT();
+				}
 				if (gl.nit_tipo.isEmpty()) gl.nit_tipo="N";
 				ins.add("AYUDANTE",gl.nit_tipo);
 			}

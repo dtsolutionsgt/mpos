@@ -120,7 +120,7 @@ public class CliPos extends PBase {
         lblDir.setVisibility(View.GONE);
 
         if (domicilio) {
-            lblDom.setVisibility(View.VISIBLE);
+            lblDom.setVisibility(View.INVISIBLE);
             cbllevar.setVisibility(View.VISIBLE);
             //lblDir.setVisibility(View.VISIBLE);
             cbllevar.setChecked(false);
@@ -729,7 +729,7 @@ public class CliPos extends PBase {
             }
            */
 
-            menuPedidos();
+            //menuPedidos();
 
             if (domicilio) finish();
         } catch (Exception e) {

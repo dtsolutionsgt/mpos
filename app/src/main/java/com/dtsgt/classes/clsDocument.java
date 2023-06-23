@@ -27,10 +27,10 @@ public class clsDocument {
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
-	public boolean parallevar,factsinpropina,modorest;
+	public boolean parallevar,factsinpropina,modorest,LANPrint;
 	public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc;
-	public String TipoCredito, NoAutorizacion;
+	public String TipoCredito, NoAutorizacion,LAN_IP;
 	public double ptotal,pdesc,pprop,propvalor,propperc;
 
     public boolean es_pickup, es_delivery;
@@ -305,6 +305,7 @@ public class clsDocument {
         String[] s2;
 		int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         if (docfactura) {
@@ -474,6 +475,7 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) {
@@ -631,6 +633,7 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) 		{
@@ -783,6 +786,7 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) 		{
@@ -1700,6 +1704,11 @@ public class clsDocument {
 		}
 	}
 
+    public void lanheader() {
+        rep.add(" ");
+        rep.add("IMPRESORA DE CAJA");
+        rep.add(LAN_IP);
+    }
 	private void opendb() {
 		
 		try {

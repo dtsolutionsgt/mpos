@@ -197,6 +197,9 @@ public class CierreX extends PBase {
                         toastlong("No ha realizado ninguna venta desde el último cierre Z.");
                     }
 
+                    doc.LANPrint=gl.peImpFactLan;
+                    if (gl.peImpFactLan) doc.LAN_IP=gl.peImpFactIP;else doc.LAN_IP="";
+
                     doc.buildPrint("0", 0);
 
                     getTXT();
