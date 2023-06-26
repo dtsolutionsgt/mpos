@@ -495,20 +495,20 @@ public class WSEnv extends PBase {
             sql="DELETE FROM D_fel_bitacora WHERE fecha<"+ff;
             db.execSQL(sql);
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         try {
             sql="DELETE FROM D_fel_error WHERE fecha<"+ff;
             db.execSQL(sql);
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         try {
 
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -1509,7 +1509,7 @@ public class WSEnv extends PBase {
         ferr = "";
         movErr = "";
 
-        limpiaTablas();
+        //limpiaTablas();
 
         try {
 

@@ -127,10 +127,18 @@ public class CliPos extends PBase {
             cbllevar.setEnabled(true);
         } else {
             lblDom.setVisibility(View.INVISIBLE);
+            cbllevar.setVisibility(View.VISIBLE);
+            //lblDir.setVisibility(View.VISIBLE);
+            cbllevar.setChecked(false);
+            cbllevar.setEnabled(true);
+
+            /*
+            lblDom.setVisibility(View.INVISIBLE);
             cbllevar.setVisibility(View.INVISIBLE);
             //lblDir.setVisibility(View.GONE);
             cbllevar.setChecked(false);
             cbllevar.setEnabled(false);
+             */
         }
 
         lblDir.setVisibility(View.GONE);
@@ -147,7 +155,7 @@ public class CliPos extends PBase {
             btnCF.setText("Ticket");
         }
 
-        if (!gl.peVentaDomicilio) cbllevar.setEnabled(false);
+        //if (!gl.peVentaDomicilio) cbllevar.setEnabled(false);
         if (!gl.peVentaEntrega)   cbpickup.setEnabled(false);
 
         NitValidadoInfile =false;

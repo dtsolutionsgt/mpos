@@ -163,7 +163,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/editText2"
             android:layout_alignStart="@+id/editText2"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentEnd="false"
             android:layout_marginStart="0dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="10dp"
@@ -399,13 +399,13 @@
 
         <EditText
             android:id="@+id/editTextNumber4"
-            android:layout_width="wrap_content"
+            android:layout_width="594dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/txtCorreo"
-            android:layout_alignEnd="@+id/editText2"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="27dp"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="-1dp"
+            android:layout_marginEnd="230dp"
             android:layout_toEndOf="@+id/textView223"
             android:ems="10"
             android:inputType="number" />
@@ -420,7 +420,8 @@
             android:layout_marginStart="-1dp"
             android:layout_marginTop="9dp"
             android:layout_marginEnd="20dp"
-            android:text=" ENTREGA "
+            android:button="@drawable/checkbox_selector"
+            android:text="  ENTREGA "
             android:textColor="#000000"
             android:textColorHighlight="#000000"
             android:textSize="30sp"
@@ -434,7 +435,8 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="20dp"
-            android:text="PARA  LLEVAR"
+            android:button="@drawable/checkbox_selector"
+            android:text="  PARA  LLEVAR"
             android:textColor="#000000"
             android:textColorHighlight="#000000"
             android:textSize="30sp"
@@ -483,6 +485,22 @@
 
         <ImageView
             android:id="@+id/imageView146"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView184"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/icono"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/imageView147"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/editTextNumber4"
@@ -490,9 +508,9 @@
             android:layout_alignParentBottom="true"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/icono" />
+            android:layout_marginBottom="5dp"
+            android:padding="10dp"
+            android:src="@drawable/logo_nuevo" />
 
     </RelativeLayout>
 

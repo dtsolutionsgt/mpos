@@ -19,7 +19,8 @@ public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
     public String nombre_reporte="",fversion,idpais,sal_nit;
-	public String resol,resfecha,resvence,resrango,resrangot,fsfecha,modofact,fecharango,textofin,textopie,cursymbol;
+	public String resol,resfecha,resvence,resrango,resrangot,fsfecha,fsfechah,modofact,fecharango,
+                  textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
     public String felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
@@ -552,7 +553,7 @@ public class clsDocument {
         if (docfactura) {
 
             if (!emptystr(nit_cliente)) rep.add("RTN: "+nit_cliente);
-            rep.add("Fecha: "+fsfecha);
+            rep.add("Fecha: "+fsfechah);
 
             /*
             if (!emptystr(clidir)) {
@@ -1631,7 +1632,24 @@ public class clsDocument {
 		return s;
 	}
 
-	public String sfecha_dos(long f) {
+    public String sfechahon(long f) {
+
+        long vy,vm,vd;
+        String s;
+
+        vy=(long) f/100000000;f=f % 100000000;
+        vm=(long) f/1000000;f=f % 1000000;
+        vd=(long) f/10000;f=f % 10000;
+
+        s="";
+        if (vd>9) { s=s+String.valueOf(vd)+"/";} else {s=s+"0"+String.valueOf(vd)+"/";}
+        if (vm>9) { s=s+String.valueOf(vm)+"/20";} else {s=s+"0"+String.valueOf(vm)+"/20";}
+        if (vy>9) { s=s+String.valueOf(vy);} else {s=s+"0"+String.valueOf(vy);}
+
+        return s;
+    }
+
+    public String sfecha_dos(long f) {
 
 		long vy,vm,vd;
 		String s;
@@ -1641,9 +1659,9 @@ public class clsDocument {
 		vd=(long) f/10000;f=f % 10000;
 
 		s="";
-		if (vd>9) { s=s+String.valueOf(vd)+"-";} else {s=s+"0"+String.valueOf(vd)+"-";}
-		if (vm>9) { s=s+String.valueOf(vm)+"-";} else {s=s+"0"+String.valueOf(vm)+"-";}
-		if (vy>9) { s=s+String.valueOf(vy);} else {s=s+"0"+String.valueOf(vy);}
+		if (vd>9)  s=s+String.valueOf(vd)+"/"; else s=s+"0"+String.valueOf(vd)+"/";
+		if (vm>9)  s=s+String.valueOf(vm)+"/"; else s=s+"0"+String.valueOf(vm)+"/";
+		if (vy>9)  s=s+String.valueOf(vy); else s=s+"0"+String.valueOf(vy);
 
 		return s;
 	}

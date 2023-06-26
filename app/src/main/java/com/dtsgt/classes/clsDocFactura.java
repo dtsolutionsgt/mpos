@@ -80,7 +80,9 @@ public class clsDocFactura extends clsDocument {
 				stot=tot+desc;
 
 				empp=DT.getString(8);
-				ffecha=DT.getLong(9);fsfecha=sfecha(ffecha)+" "+shora(ffecha);
+				ffecha=DT.getLong(9);
+                fsfecha=sfecha(ffecha)+" "+shora(ffecha);
+                fsfechah=sfechahon(ffecha)+" "+shora(ffecha);
 
 				add1=DT.getString(10);
 				add2=DT.getString(11);
@@ -1264,28 +1266,26 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
-        /*
-        if (parallevar){
-            rep.add("");
-            rep.addc("PARA LLEVAR");
-            rep.add("");
-        }
-
         if (impresionorden) {
             String sod=add1;
             if (!sod.isEmpty()) {
                 rep.add("");
                 rep.addc("************************");
-                rep.add("");
-                rep.addc("ORDEN: # "+sod.toUpperCase());
-                rep.add("");
+                rep.addc("ORDEN # "+sod.toUpperCase());
                 rep.addc("************************");
                 rep.add("");
             }
+
         } else {
             rep.add("");
         }
-        */
+
+        if (parallevar){
+            rep.addc(" P A R A   L L E V A R ");rep.add("");
+            if (!nombre_cliente.isEmpty()) {
+                rep.addc(nombre_cliente);rep.add("");
+            }
+        }
 
         rep.add("");
 

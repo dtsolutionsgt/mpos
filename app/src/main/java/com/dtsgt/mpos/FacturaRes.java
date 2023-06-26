@@ -1264,20 +1264,6 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
-			//region Bonificacion
-
-            /*
-			clsBonifSave bonsave=new clsBonifSave(this,corel,"V");
-
-			bonsave.ruta=gl.ruta;
-			bonsave.cliente=gl.cliente;
-			bonsave.fecha=fecha;
-			bonsave.emp=gl.emp;
-
-			bonsave.save();
-            */
-			//endregion
-
 			//region D_FACTURAD
 
 
@@ -1546,7 +1532,11 @@ public class FacturaRes extends PBase {
 
 				ins.init("D_FACTURAF");
 				ins.add("COREL",corel);
-				ins.add("NOMBRE","Consumidor Final");
+				if (gl.parallevar) {
+					ins.add("NOMBRE",gl.dom_nom);
+				} else {
+					ins.add("NOMBRE","Consumidor Final");
+				}
 				ins.add("NIT","CF");
 				ins.add("DIRECCION","Ciudad");
                 ins.add("CORREO",vCorreoDefecto);
@@ -3851,8 +3841,10 @@ public class FacturaRes extends PBase {
 				}
 
 				if (!plev.isEmpty()) {
-					rep.addc(" P A R A   L L E V A R ");
-					rep.add("");
+					rep.addc(" P A R A   L L E V A R ");rep.add("");
+					if (!gl.dom_nom.isEmpty()) {
+						rep.addc(gl.dom_nom);rep.add("");
+					}
 				}
 
 				rep.save();rep.clear();
