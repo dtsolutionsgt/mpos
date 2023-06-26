@@ -474,6 +474,7 @@ public class CliPos extends PBase {
             gl.gNITCliente ="CF";
             gl.nit_tipo="N";
 
+
             gl.dom_nit= gl.gNITCliente;
             gl.dom_nom=sNombreCliente;
             gl.dom_dir =sDireccionCliente;gl.dom_ref="";
