@@ -1727,6 +1727,7 @@ public class clsDocument {
         rep.add("IMPRESORA DE CAJA");
         rep.add(LAN_IP);
     }
+
 	private void opendb() {
 		
 		try {

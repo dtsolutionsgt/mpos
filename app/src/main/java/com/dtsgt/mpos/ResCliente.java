@@ -42,7 +42,7 @@ import java.util.TimerTask;
 public class ResCliente extends PBase {
 
     private EditText txtNIT,txtNom,txtRef, txtCorreo;
-    private TextView lblPed;
+    private TextView lblPed,btnCF,btnNIT;
     private RelativeLayout relped,relcli;
     private ProgressBar pbar;
 
@@ -77,6 +77,8 @@ public class ResCliente extends PBase {
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
+        btnCF = findViewById(R.id.textView4);
+        btnNIT = findViewById(R.id.textView6);
 
         setHandlers();
 
@@ -86,14 +88,37 @@ public class ResCliente extends PBase {
 
         cargaCliente();
 
+        btnCF.setText("Consumidor Final");
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            btnNIT.setText("Cliente con NIT");
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            btnNIT.setText("Cliente con RTN");
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            btnNIT.setText("Cliente con NIT/NRC");
+            btnCF.setText("Ticket");
+        }
+
     }
 
     //region  Events
 
     public void consFinal(View view) {
+        String ss=txtNIT.getText().toString();
+        String ddnom,ddir,dcor;
+
+
         try {
+            ddnom =txtNom.getText().toString();if (ddnom.isEmpty()) ddnom="Consumidor final";
+            ddir =txtRef.getText().toString();if (ddir.isEmpty()) ddir="Ciudad";
+            dcor="consumidorfinal@gmail.com";
+
             consFinal=true;
-            if (agregaCliente("C.F.","Consumidor final","Ciudad","")) procesaCF() ;
+            gl.sal_PER=false;
+            gl.sal_NRC=false;
+            gl.sal_NIT=false;
+
+            if (agregaCliente("CF",ddnom,ddir,"")) procesaCF() ;
+            //if (agregaCliente("C.F.","Consumidor final","Ciudad","")) procesaCF() ;
         } catch (Exception e) {
             msgbox2(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -101,12 +126,20 @@ public class ResCliente extends PBase {
 
     public void clienteNIT(View view) {
 
-        try{
+        try {
 
             sNITCliente =txtNIT.getText().toString();
             sNombreCliente =txtNom.getText().toString();
             sDireccionCliente =txtRef.getText().toString();
             sCorreoCliente = txtCorreo.getText().toString();
+
+            if (!correctoNIT()) {
+                toast("Identificación incorrecta");return;
+            }
+
+            if (mu.emptystr(sNombreCliente)) {
+                msgbox("Nombre incorrecto");return;
+            }
 
             if (sDireccionCliente.isEmpty()) {
                 toast("Falta definir la direccion");return;
@@ -121,7 +154,7 @@ public class ResCliente extends PBase {
                 }
 
                 if (mu.emptystr(sNombreCliente)) {
-                    msgbox("Nombre incorrecto");return;
+                        msgbox("Nombre incorrecto");return;
                 }
 
                 if (!sCorreoCliente.isEmpty()) {
@@ -154,20 +187,20 @@ public class ResCliente extends PBase {
     }
 
     private void setHandlers() {
-
-        try{
-
+        try {
             txtNIT.setOnKeyListener((v, keyCode, event) -> {
                 if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
                     //if (!existeCliente()) txtNom.requestFocus();
-                    consultaNITInfile();
+                    if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                        consultaNITInfile();
+                    } else existeCliente();
                     return true;
                 } else {
-                    //existeCliente();
                     return false;
                 }
             });
 
+            /*
             txtNIT.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 public void onFocusChange(View v, boolean hasFocus) {
                     if(hasFocus) return;
@@ -176,6 +209,7 @@ public class ResCliente extends PBase {
                     }
                 }
             });
+            */
 
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -198,10 +232,34 @@ public class ResCliente extends PBase {
             gl.percepcion=0;
             gl.contrib="";
             gl.scancliente=gl.cliente;
-            gl.gNombreCliente ="Consumidor final";
+
             gl.gNITCliente ="CF";
+            sNITCliente =txtNIT.getText().toString();
+            sNombreCliente =txtNom.getText().toString();
+            sDireccionCliente =txtRef.getText().toString();
+            sCorreoCliente = txtCorreo.getText().toString();
+
+            if (sNombreCliente.isEmpty()) gl.gNombreCliente ="Consumidor final";else gl.gNombreCliente=sNombreCliente;
+            if (sDireccionCliente.isEmpty()) gl.gDirCliente ="Ciudad";else gl.gDirCliente=sDireccionCliente;
+            gl.gTelCliente ="";
+
+            /*
+            gl.gNombreCliente ="Consumidor final";
             gl.gDirCliente ="Ciudad";
             gl.gCorreoCliente ="Ciudad";
+            */
+
+            gl.gNombreCliente ="Consumidor final";
+            gl.gDirCliente ="Ciudad";
+            gl.gTelCliente ="";
+            gl.gNITCliente ="CF";
+            gl.nit_tipo="N";
+
+            gl.dom_nit= gl.gNITCliente;
+            gl.dom_nom=sNombreCliente;
+            gl.dom_dir =sDireccionCliente;gl.dom_ref="";
+            gl.dom_tel="";
+
             gl.media=1;
             consFinal=false;
 
@@ -211,17 +269,39 @@ public class ResCliente extends PBase {
 
             finish();
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
     }
 
-    private void procesaNIT(String snit) {
+    private boolean correctoNIT() {
+        sNITCliente =txtNIT.getText().toString();
 
-        int codigo=nitnum(snit);
+        if (sNITCliente.isEmpty()) return false;
+        if (sNITCliente.length()<3) return false;
+
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            if (sNITCliente.length()>13) return false;
+            if (sNITCliente.length()!=13) {
+                if (!validaNIT(sNITCliente)) return false;
+            }
+        }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            if (!validaNITHon(sNITCliente)) return false;
+        } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            if (!validaNITSal(sNITCliente)) return false;
+        }
+
+        return true;
+    }
+
+    private void procesaNIT(String snit) {
+        boolean flag_NRC;
 
         try {
+            purgeNIT();
+
+            int codigo=nitnum(snit);
 
             gl.rutatipo="V";
             gl.cliente=""+codigo; if (codigo==-1) gl.cliente=gl.emp+"0";
@@ -230,12 +310,84 @@ public class ResCliente extends PBase {
             gl.contrib="";
             gl.scancliente = gl.cliente;
 
+            sNITCliente =txtNIT.getText().toString();
+            sNombreCliente =txtNom.getText().toString();
+            sDireccionCliente =txtRef.getText().toString();
+            sCorreoCliente = txtCorreo.getText().toString();
+
+            if (sNITCliente.isEmpty()) {
+                msgbox("Identificación incorrecta");return;
+            }
+
+            if (sNITCliente.length()<3) {
+                msgbox("Identificación incorrecta");return;
+            }
+
+            if (sDireccionCliente.isEmpty()) {
+                toast("Falta definir la direccion");return;
+            }
+
+            sDireccionCliente=sDireccionCliente+" ";
+
+            gl.nit_tipo="N";
+
+            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                if (sNITCliente.length()>13) {
+                    msgbox("Identificación incorrecta");return;
+                }
+                if (sNITCliente.length()!=13) {
+                    if (!validaNIT(sNITCliente)) {
+                        msgbox("NIT incorrecto");return;
+                    }
+                }
+            }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                if (!validaNITHon(sNITCliente)) {
+                    msgbox("RTN incorrecto");return;
+                }
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (!validaNITSal(sNITCliente)) {
+                    msgbox("NIT/NRC incorrecto");return;
+                }
+            }
+
+            if (mu.emptystr(sNombreCliente)) {
+                msgbox("Nombre incorrecto");return;
+            }
+
+            if (!sCorreoCliente.isEmpty()) {
+                if (sCorreoCliente.indexOf("@")<3) {
+                    msgbox2("Correo incorrecto, falta '@' ");return;
+                }
+                if (sCorreoCliente.indexOf(".")<0) {
+                    msgbox2("Correo incorrecto falta '.' ");return;
+                }
+            }
+
             gl.gNombreCliente = sNombreCliente;
-            gl.gNITCliente =snit;
+            gl.gNITCliente =sNITCliente;
             gl.gDirCliente = sDireccionCliente;
             gl.gCorreoCliente = sCorreoCliente;
+            gl.gTelCliente = "";
 
             gl.media=1;
+
+            flag_NRC=false;gl.sal_PER=false;
+            if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (gl.sal_NRC) flag_NRC = true;
+            }
+
+            if (flag_NRC) {
+                //msgAskCG("Grande contribuyente ");
+            } else {
+                /*
+                if (!existeCliente()){
+                    if (agregaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente)) {
+                    }
+                } else {
+                    actualizaCliente(sNITCliente, sNombreCliente, sDireccionCliente,sCorreoCliente);
+                }
+                */
+            }
 
             limpiaCampos();
 
@@ -243,10 +395,41 @@ public class ResCliente extends PBase {
 
             finish();
 
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
+    }
+
+    private void purgeNIT() {
+        try {
+            String ss=txtNIT.getText().toString();
+
+            ss=ss.trim();
+
+            ss=ss.replace("!","");
+            ss=ss.replace("#","");
+            ss=ss.replace("$","");
+            ss=ss.replace("%","");
+            ss=ss.replace("/","");
+            ss=ss.replace("(","");
+            ss=ss.replace(")","");
+            ss=ss.replace("=","");
+            ss=ss.replace("?","");
+            ss=ss.replace("'","");
+            ss=ss.replace("+","");
+            ss=ss.replace("*","");
+            ss=ss.replace(":","");
+            ss=ss.replace(";","");
+            ss=ss.replace(".","");
+            ss=ss.replace("@","");
+            ss=ss.replace("&","");
+            ss=ss.replace("_","");
+
+            txtNIT.setText(ss);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private void cargaCliente() {
@@ -298,31 +481,19 @@ public class ResCliente extends PBase {
             T_ordencuentaObj.update(T_ordencuentaObj.first());
 
             //#EJC202212092141:Validar si ya existe o no el registro en D_FACTURAF si no existe lo inserta.
-            Cursor dt;
+            String sql = "SELECT * FROM D_FACTURAF WHERE COREL='"+gl.ordcorel+"'";
+            Cursor dt = Con.OpenDT(sql);
 
-            try {
+            if (dt.getCount()==0) {
 
-               String vSQL = "SELECT * FROM D_FACTURAF WHERE COREL='"+gl.ordcorel+"'";
-               dt = Con.OpenDT(sql);
+                item = clsCls.new clsD_facturaf();
+                item.corel = gl.ordcorel;
+                item.nombre=gl.gNombreCliente;
+                item.nit=gl.gNITCliente;
+                item.direccion=gl.gDirCliente;
+                item.correo=gl.gCorreoCliente;
 
-               if(dt!=null){
-
-                   dt.moveToFirst();
-
-               }else{
-
-                   item = clsCls.new clsD_facturaf();
-                   item.corel = gl.ordcorel;
-                   item.nombre=gl.gNombreCliente;
-                   item.nit=gl.gNITCliente;
-                   item.direccion=gl.gDirCliente;
-                   item.correo=gl.gCorreoCliente;
-                   D_facturafObj.add(item);
-               }
-
-
-            } catch (Exception e) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                D_facturafObj.add(item);
             }
 
         } catch (Exception e) {
@@ -464,65 +635,114 @@ public class ResCliente extends PBase {
 
     }
 
+    private boolean validaNITHon(String N)  {
+        if (N.isEmpty()) return false;
+        if (N.length()<13) return false;
+
+        try {
+            long l=Long.parseLong(N);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean validaNITSal(String N) {
+        int guc,val,valm,vald;
+        String NN;
+
+        gl.sal_NIT=false;gl.sal_NRC=false;NN=N;
+
+        try {
+            if (!N.contains("-")) return false;
+            guc = N.length() - NN.replaceAll("-","").length();
+            if (guc==3) {
+                String[] sp = N.split("-");
+
+                if (sp[0].length()!=4) return false;
+                try {
+                    val=Integer.parseInt(sp[0]);
+                } catch (Exception e) { return false; }
+
+                if (sp[1].length()!=6) return false;
+                if (!du.fechaNIT_SV(sp[1])) return false;
+
+                if (sp[2].length()!=3) return false;
+                try {
+                    val=Integer.parseInt(sp[2]);
+                } catch (Exception e) { return false; }
+
+                if (sp[3].length()!=1) return false;
+                try {
+                    val=Integer.parseInt(sp[3]);
+                } catch (Exception e) { return false; }
+
+                gl.sal_NIT=true;return true;
+
+            } else if (guc==1) {
+                String[] sp = N.split("-");
+
+                if (sp[1].length()!=1) return false;
+                try {
+                    val=Integer.parseInt(sp[1]);
+                } catch (Exception e) { return false; }
+
+                if (sp[0].length()>7) return false;
+                if (sp[0].length()<2) return false;
+                try {
+                    val=Integer.parseInt(sp[0]);
+                } catch (Exception e) { return false; }
+
+                gl.sal_NRC=true;return true;
+            } else return false;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
+    }
+
     private boolean existeCliente() {
-
         Cursor DT;
-        boolean resultado=false;
 
-        try{
-
+        try {
             String NIT=txtNIT.getText().toString();
 
             if (mu.emptystr(NIT)) {
-                txtNIT.requestFocus();
-                resultado=false;
+                txtNIT.requestFocus();return false;
             } else {
-
-                sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE,CODIGO_CLIENTE, EMAIL FROM P_CLIENTE " +
-                        "WHERE NIT = '" + NIT + "'";
+                sql="SELECT CODIGO, NOMBRE,DIRECCION,NIVELPRECIO,DIRECCION, MEDIAPAGO,TIPO_CONTRIBUYENTE," +
+                    "CODIGO_CLIENTE, EMAIL FROM P_CLIENTE WHERE NIT='"+NIT+"'";
                 DT=Con.OpenDT(sql);
 
-                if (DT != null){
+                if (DT.getCount()>0){
+                    DT.moveToFirst();
 
-                    if (DT.getCount()>0){
+                    txtNom.setText(DT.getString(1));
+                    txtRef.setText(DT.getString(2));
+                    txtCorreo.setText(DT.getString(8));
 
-                        DT.moveToFirst();
+                    gl.rutatipo="V";
+                    gl.cliente=DT.getString(0);
+                    gl.nivel=gl.nivel_sucursal;
+                    gl.percepcion=0;
+                    gl.contrib=DT.getString(6);;
+                    gl.scancliente = gl.cliente;
+                    gl.gNombreCliente =txtNom.getText().toString();
+                    gl.gNITCliente =NIT;
+                    gl.gDirCliente =DT.getString(4);
+                    gl.media=DT.getInt(5);
+                    gl.codigo_cliente=DT.getInt(7);
 
-                        txtNom.setText(DT.getString(1));
-                        txtRef.setText(DT.getString(2));
-                        txtCorreo.setText(DT.getString(8));
-
-                        gl.rutatipo="V";
-                        gl.cliente=DT.getString(0);
-                        gl.nivel=gl.nivel_sucursal;
-                        gl.percepcion=0;
-                        gl.contrib=DT.getString(6);;
-                        gl.scancliente = gl.cliente;
-                        gl.gNombreCliente =txtNom.getText().toString();
-                        gl.gNITCliente =NIT;
-                        gl.gDirCliente =DT.getString(4);
-
-                        gl.media=DT.getInt(5);
-                        gl.codigo_cliente=DT.getInt(7);
-
-                        resultado=true;
-
-                    } else {
-
-                        //txtNom.setText("");
-                        //txtRef.setText("");
-                        //txtCorreo.setText("");
-
-                    }
+                    return true;
+                } else {
+                    //txtNom.setText("");txtRef.setText("");txtCorreo.setText("");
+                    return false;
                 }
-                if (DT!=null) DT.close();
             }
-
         } catch (Exception e){
-            mu.toast("Ocurrió un error buscando al cliente");
-            resultado=false;
+            mu.toast("Ocurrió un error buscando al cliente");return true;
         }
-        return resultado;
     }
 
     private boolean agregaCliente(String NIT,String Nom,String dir, String Correo) {
@@ -651,7 +871,10 @@ public class ResCliente extends PBase {
             upd.add("NOMBRE",Nom);
             upd.add("DIRECCION",dir);
             upd.add("EMAIL",Correo);
-            upd.Where("CODIGO='"+gl.cliente+"'");
+
+            upd.Where("NIT='"+NIT+"'");
+
+            //upd.Where("CODIGO='"+gl.cliente+"'");
             db.execSQL(upd.sql());
 
             return true;

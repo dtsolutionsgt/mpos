@@ -1044,7 +1044,7 @@ public class AppMethods {
 
 			gl.pePorConsumo = ival;
 		} catch (Exception e) {
-			gl.peCajaPricipal = 0;
+			gl.pePorConsumo = 0;
 		}
 
 		try {
@@ -1137,7 +1137,34 @@ public class AppMethods {
 			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
 		}
 
-    }
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=160";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			ival=Integer.parseInt(val);
+
+			gl.peMaxOrden = ival;
+		} catch (Exception e) {
+			gl.peMaxOrden = 1000;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=161";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peNumOrdCentral = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peNumOrdCentral = false;
+		}
+
+
+	}
 
     public boolean paramCierre(int pid) {
         Cursor dt;

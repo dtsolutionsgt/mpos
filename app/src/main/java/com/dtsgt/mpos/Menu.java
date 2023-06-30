@@ -53,6 +53,7 @@ import com.dtsgt.mant.MantConfigRes;
 import com.dtsgt.mant.MantCorel;
 import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
+import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
 import org.apache.commons.io.FileUtils;
@@ -73,8 +74,9 @@ public class Menu extends PBase {
 	private ArrayList<clsMenu> items= new ArrayList<clsMenu>();
 
 	private wsOpenDT wsic;
+	private wsCommit wscom;
 
-	private Runnable rnInvCent;
+	private Runnable rnInvCent,rnNumOrden;
 
 	private ListAdaptMenuGrid adaptergrid;
 	private ExDialog menudlg;
@@ -97,7 +99,6 @@ public class Menu extends PBase {
 	protected void onCreate(Bundle savedInstanceState) 	{
 
 		try {
-
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.activity_menu);
 
@@ -147,13 +148,15 @@ public class Menu extends PBase {
             //if (gl.ingreso_mesero && gl.after_login) autoLoginMesero();
 
 			app.getURL();
-
 			wsic=new wsOpenDT(gl.wsurl);
+			wscom =new wsCommit(gl.wsurl);
 
-			rnInvCent = new Runnable() {
-				public void run() {
-					//callbackInvCent();
-				}
+			rnInvCent= () -> {
+				//callbackInvCent();
+			};
+
+			rnNumOrden= () -> {
+				callBackNumOrden();
 			};
 
 			waitdlg= new extWaitDlg();
@@ -164,12 +167,6 @@ public class Menu extends PBase {
 		}
 
         validaModo();
-
-		/*
-		if (gl.peImpFactBT)  toast("Impresion BT");
-		if (gl.peImpFactLan) toast("Impresion LAN");
-		if (gl.peImpFactUSB) toast("Impresion USB");
-		*/
 
 	}
 
@@ -1066,6 +1063,8 @@ public class Menu extends PBase {
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
 			listdlg.add("Inicializar inventario");
+			listdlg.add("Reinicializar numero de orden");
+
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 				try {
@@ -1102,6 +1101,8 @@ public class Menu extends PBase {
 							inicioDia();break;
 						case 14:
 							validaSuperInventario();break;
+						case 15:
+							validaSuperNumOrden();break;
 
 					}
 					listdlg.dismiss();
@@ -1672,6 +1673,71 @@ public class Menu extends PBase {
 		}
 	}
 
+	private void validaSuperNumOrden() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					reiiniciaNumeroOrden();
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void reiiniciaNumeroOrden() {
+		try {
+			if (gl.peNumOrdCentral) {
+				sql="DELETE FROM T_ORDEN_CODIGO WHERE CODIGO_SUCURSAL="+gl.tienda;
+				wscom.execute(sql,rnNumOrden);
+			} else {
+				db.execSQL("DELETE FROM P_orden_numero ");
+				msgbox("Número de orden reiniciado");
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void callBackNumOrden() {
+		if (!wscom.errflag) {
+			msgbox("Número de orden reiniciado");
+		} else {
+			msgbox(wscom.error);
+		}
+	}
 
 	//endregion
 

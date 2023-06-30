@@ -144,7 +144,6 @@ public class CliPos extends PBase {
         lblDir.setVisibility(View.GONE);
         cbpickup.setVisibility(View.GONE);
 
-
         btnCF.setText("Consumidor Final");
         if (gl.codigo_pais.equalsIgnoreCase("GT")) {
             btnNIT.setText("Cliente con NIT");
