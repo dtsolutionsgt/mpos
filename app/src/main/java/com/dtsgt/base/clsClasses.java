@@ -807,6 +807,14 @@ public class clsClasses {
         public int  activo;
     }
 
+    public class clsP_impresora_redireccion {
+        public int  codigo_redir;
+        public int  empresa;
+        public int  codigo_ruta;
+        public int  codigo_impresora;
+        public int  codigo_impresora_final;
+    }
+
     public class clsP_linea   {
         public String codigo;
         public String marca;
@@ -1423,6 +1431,11 @@ public class clsClasses {
         public String feeluuid;
         public long feelfechaprocesado;
         public String feelcontingencia;
+    }
+
+    public class clsT_ipbypass {
+        public String ipo;
+        public String ipr;
     }
 
     public class clsT_movd {

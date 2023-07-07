@@ -672,9 +672,30 @@ public class WSEnv extends PBase {
 
     public String addFactheader(clsClasses.clsD_factura item) {
 
-        String fst, fs, fse;
+        String fst, fs, fse,add1,add2,add3;
 
-        //String fs=""+du.univfechalong(item.fecha);
+        try {
+            add1=item.add1;
+            if (item.add1.length()>5) add1=add1.substring(0,4);
+        } catch (Exception e) {
+            add1="";
+        }
+        try {
+            add2=item.add2;
+            if (item.add2.length()>5) add2=add2.substring(0,4);
+        } catch (Exception e) {
+            add2="";
+        }
+        try {
+            add3=item.add3;
+            if (item.add3.length()>5) add3=add3.substring(0,4);
+        } catch (Exception e) {
+            add3="";
+        }
+
+
+
+                //String fs=""+du.univfechalong(item.fecha);
         //#EJC20200702: Formato fecha corregido.
         fs = "" + du.univfecha(item.fecha);
         if (item.feelfechaprocesado > 0) fst = du.univfecha(item.feelfechaprocesado);
@@ -702,9 +723,9 @@ public class WSEnv extends PBase {
         ins.add("SERIE", item.serie);
         ins.add("CORELATIVO", item.corelativo);
         ins.add("IMPRES", item.impres);
-        ins.add("ADD1", item.add1);
-        ins.add("ADD2", item.add2);
-        ins.add("ADD3", item.add3);
+        ins.add("ADD1", add1);
+        ins.add("ADD2", add2);
+        ins.add("ADD3", add3);
         ins.add("DEPOS", item.depos);
         ins.add("PEDCOREL", item.pedcorel);
         ins.add("REFERENCIA", item.referencia);

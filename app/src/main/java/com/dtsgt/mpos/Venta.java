@@ -160,8 +160,6 @@ public class Venta extends PBase {
 
             super.InitBase();
 
-            addlog("Venta",""+du.getActDateTime(),String.valueOf(gl.vend));
-
             setControls();
 
             P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
@@ -3492,6 +3490,8 @@ public class Venta extends PBase {
     private void numeroOrdenContingencia() {
         int ordennum;
         String ordencod;
+
+        if (!db.isOpen()) onResume();
 
         if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
             try {

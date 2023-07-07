@@ -304,7 +304,11 @@ public class clsDocCuenta extends clsDocument {
         itemData item;
         String ss;
 
-        rep.add("");rep.add("");rep.add("");
+		if (LANPrint) {
+			lanheader();
+		}
+
+		rep.add("");rep.add("");rep.add("");
         rep.add(rep.ctrim(rutanombre));
         rep.add("");
         rep.line();
@@ -411,6 +415,12 @@ public class clsDocCuenta extends clsDocument {
         boolean vPendiente=false;
         return vPendiente;
     }
+
+	public void lanheader() {
+		rep.add(" ");
+		rep.add("IMPRESORA DE CAJA");
+		rep.add(LAN_IP);
+	}
 
     //endregion
 

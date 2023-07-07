@@ -68,7 +68,7 @@ public class Menu extends PBase {
 
 	private GridView gridView;
 	private RelativeLayout relbotpan;
-	private TextView lblVendedor,lblRuta;
+	private TextView lblVendedor,lblRuta,lblTit;
 	private ImageView imgnowifi;
 	
 	private ArrayList<clsMenu> items= new ArrayList<clsMenu>();
@@ -109,6 +109,7 @@ public class Menu extends PBase {
 			lblVendedor = findViewById(R.id.lblVendedor);
 			lblRuta = findViewById(R.id.textView9);
             imgnowifi = findViewById(R.id.imageView122);
+			lblTit = findViewById(R.id.lblTit);
 
             P_modo_emergenciaObj=new clsP_modo_emergenciaObj(this,Con,db);
             P_paramextObj=new clsP_paramextObj(this,Con,db);
@@ -138,6 +139,8 @@ public class Menu extends PBase {
 			}
 
 			this.setTitle("mPos");
+			lblTit.setText("mPos   -   Versión: "+gl.parVer+"   -   Caja: "+gl.rutanom+" [ "+gl.codigo_ruta+" ] ," +
+					       " -  Sucursal: "+gl.tiendanom+" [ "+gl.tienda+" ]");
 
 			listItems();
 

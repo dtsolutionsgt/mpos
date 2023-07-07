@@ -712,7 +712,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
-            android:onClick="doDialog"
+            android:onClick="doFragTest"
             android:text="Button"
             android:visibility="invisible" />
 

@@ -490,12 +490,13 @@ public class ResCaja extends PBase {
 
                 if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
                     T_ventaObj.add(venta);
-                }else{
+                } else {
                     if (T_ventaObj.count==0) {
                         T_ventaObj.add(venta);
                     } else {
                         ventau.cant+= oitem.cant;
                         ventau.total = ventau.total+mu.round(oitem.total,2);
+                        ventau.imp = ventau.imp + mu.round(oitem.imp,2);
                         T_ventaObj.update(ventau);
                     }
                 }
@@ -507,6 +508,7 @@ public class ResCaja extends PBase {
 
                 T_ordencomboObj.fill("WHERE (COREL='"+corel+"') AND (IDCOMBO="+oitem.empresa+")");
                 for (int j = 0; j <T_ordencomboObj.count; j++) {
+
                     citem=T_ordencomboObj.items.get(j);
                     combo=clsCls.new clsT_combo();
                     combo.codigo_menu=citem.codigo_menu;
@@ -515,6 +517,7 @@ public class ResCaja extends PBase {
                     combo.unid=citem.unid;
                     combo.idseleccion=citem.idseleccion;
                     combo.orden=citem.orden;
+
                     T_comboObj.add(combo);
                 }
             }

@@ -1943,7 +1943,6 @@ public class AppMethods {
     }
 
     public boolean impresora() {
-
         loadPrintConfig();
 		try {
 			if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
@@ -1955,6 +1954,24 @@ public class AppMethods {
 			return false;
 		}
     }
+
+	public String ipBypass(String ipo) {
+		Cursor DT;
+		String ipb=ipo;
+
+		try {
+			sql="SELECT IPR FROM T_ipbypass WHERE (IPO='"+ipo+"') ";
+			DT=Con.OpenDT(sql);
+
+			if (DT.getCount()>0) {
+				DT.moveToFirst();
+				ipb=DT.getString(0);
+			}
+			if (DT!=null) DT.close();
+		} catch (Exception e) {}
+
+		return ipb;
+	}
 
     //endregion
 

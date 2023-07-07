@@ -42,7 +42,9 @@
             android:layout_marginLeft="20dp"
             android:text="MPos"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#1A8AC6" />
+            android:textColor="#1A8AC6"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/btnImp"

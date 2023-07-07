@@ -1547,6 +1547,28 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_prodlista_idx1 ON P_prodlista(CODIGO_LISTA)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_impresora_redireccion] ("+
+                    "CODIGO_REDIR INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_RUTA INTEGER NOT NULL,"+
+                    "CODIGO_IMPRESORA INTEGER NOT NULL,"+
+                    "CODIGO_IMPRESORA_FINAL INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_REDIR])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [T_ipbypass] ("+
+                    "IPO TEXT NOT NULL,"+
+                    "IPR TEXT NOT NULL,"+
+                    "PRIMARY KEY ([IPO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+
 
         try {
 

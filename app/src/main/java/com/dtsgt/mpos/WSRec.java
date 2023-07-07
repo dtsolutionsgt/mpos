@@ -41,6 +41,7 @@ import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_impresora_marcaObj;
 import com.dtsgt.classes.clsP_impresora_modeloObj;
+import com.dtsgt.classes.clsP_impresora_redireccionObj;
 import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
@@ -76,6 +77,7 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsP_usopcionObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsP_vendedor_sucursalObj;
+import com.dtsgt.classes.clsT_ipbypassObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
@@ -403,6 +405,9 @@ public class WSRec extends PBase {
                         break;
                     case 61:
                         callMethod("GetP_TIPO_NEGOCIO", "EMPRESA", gl.emp);
+                        break;
+                    case 62:
+                        callMethod("GetP_IMPRESORA_REDIRECCION", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -767,18 +772,28 @@ public class WSRec extends PBase {
                         processComplete();break;
                     }
                     execws(60);
+                    break;
                 case 60:
                     processVendedorSucursal();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
                     execws(61);
+                    break;
                 case 61:
                     processTipoNegocio();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(62);
+                    break;
+                case 62:
+                    processImpresoraRedir();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
+                    break;
             }
         } catch (Exception e) {
             msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -941,6 +956,8 @@ public class WSRec extends PBase {
                 plabel = "VENDEDOR SUCURSAL";break;
             case 61:
                 plabel = "TIPO NEGOCIO";break;
+            case 62:
+                plabel = "IMPRESORA REDIRECCION";break;
         }
 
         updateLabel();
@@ -1134,7 +1151,11 @@ public class WSRec extends PBase {
                 msgboxexit("Configuración de tienda o caja incorrecta");
                 //finish();
             }
+
             validaCombos();
+            printBypass();
+
+            if (app.citems.size()>0) mostrarLista();
 
             return true;
 
@@ -1168,12 +1189,57 @@ public class WSRec extends PBase {
                 }
             }
 
-            if (app.citems.size()>0) mostrarLista();
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void printBypass() {
+        clsClasses.clsT_ipbypass item;
+        String ipo="",ipr="";
+        int cimpr;
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM T_ipbypass");
+
+            clsP_impresora_redireccionObj P_impresora_redireccionObj=new clsP_impresora_redireccionObj(this,Con,db);
+            P_impresora_redireccionObj.fill("WHERE (CODIGO_RUTA="+gl.codigo_ruta+")");
+
+            if (P_impresora_redireccionObj.count>0) {
+                clsT_ipbypassObj T_ipbypassObj=new clsT_ipbypassObj(this,Con,db);
+                clsP_impresoraObj P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+
+                for (int i = 0; i <P_impresora_redireccionObj.count; i++) {
+
+                    try {
+                        cimpr=P_impresora_redireccionObj.items.get(i).codigo_impresora;
+                        P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA="+cimpr+")");
+                        ipo=P_impresoraObj.first().ip;
+
+                        cimpr=P_impresora_redireccionObj.items.get(i).codigo_impresora_final;
+                        P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA="+cimpr+")");
+                        ipr=P_impresoraObj.first().ip;
+
+                        item = clsCls.new clsT_ipbypass();
+                        item.ipo=ipo;
+                        item.ipr=ipr;
+                        T_ipbypassObj.add(item);
+
+                    } catch (Exception e) {
+                        //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private void mostrarLista() {
@@ -1208,6 +1274,10 @@ public class WSRec extends PBase {
         }
 
     }
+
+    //endregion
+
+    //region Tablas
 
     private void processEmpresas() {
 
@@ -3725,6 +3795,43 @@ public class WSRec extends PBase {
                 var.user_agr=0;
                 var.fec_mod=0;
                 var.user_mod=0;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+    private void processImpresoraRedir() {
+        try {
+            clsP_impresora_redireccionObj handler = new clsP_impresora_redireccionObj(this, Con, db);
+            clsBeP_IMPRESORA_REDIRECCIONList items = new clsBeP_IMPRESORA_REDIRECCIONList();
+            clsBeP_IMPRESORA_REDIRECCION item = new clsBeP_IMPRESORA_REDIRECCION();
+            clsClasses.clsP_impresora_redireccion var;
+
+            script.add("DELETE FROM P_IMPRESORA_REDIRECCION");
+
+            items = xobj.getresult(clsBeP_IMPRESORA_REDIRECCIONList.class, "GetP_IMPRESORA_REDIRECCION");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_impresora_redireccion();
+
+                var.codigo_redir=item.CODIGO_REDIR;
+                var.empresa=item.EMPRESA;
+                var.codigo_ruta=item.CODIGO_RUTA;
+                var.codigo_impresora=item.CODIGO_IMPRESORA;
+                var.codigo_impresora_final=item.CODIGO_IMPRESORA_FINAL;
 
                 script.add(handler.addItemSql(var));
             }

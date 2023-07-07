@@ -160,7 +160,7 @@ public class Orden extends PBase {
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
-    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
+    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant,pimp;
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
@@ -881,6 +881,8 @@ public class Orden extends PBase {
             precsin = prc.precsin;
             imp = prc.imp;
             impval = prc.impval;
+            impval=mu.round2dec(impval);
+
             tot = prc.tot;
             descmon = mdesc;
             prodtot = tot;
@@ -969,21 +971,10 @@ public class Orden extends PBase {
         double sdesc=desc;
 
         try {
-
-            if (prodPorPeso(prodid)) {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
-                    if (prc.precioespecial>0) prec=prc.precioespecial;
-                }
-            } else {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,0)) {
-                    if (prc.precioespecial>0) prec=prc.precioespecial;
-                }
-            }
-
+            prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
             prec=mu.round(prec,2);
 
+            pimp=prc.imp;
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
@@ -1062,7 +1053,16 @@ public class Orden extends PBase {
             ins.add("TOTAL",prodtot);
             if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
             ins.add("PESO",peso);
-            ins.add("VAL1",0);
+
+            //ins.add("VAL1",0);
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                ins.add("VAL1", pimp);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                ins.add("VAL1", pimp);
+            } else {
+                ins.add("VAL1",0);
+            }
+
             ins.add("VAL2","0");
             ins.add("VAL3",0);
             ins.add("VAL4","0");
@@ -1292,6 +1292,7 @@ public class Orden extends PBase {
                     } else {
                         ventau.cant+= oitem.cant;
                         ventau.total = ventau.total+mu.round(oitem.total,2);
+                        ventau.imp = ventau.imp + mu.round(oitem.imp,2);
                         T_ventaObj.update(ventau);
                     }
                 }

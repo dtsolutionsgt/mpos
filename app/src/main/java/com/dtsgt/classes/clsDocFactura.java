@@ -1166,12 +1166,16 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
-        //rep.addc("Powered by: dts.com.gt");
+        rep.add("");
+        rep.add("");
+        rep.add("");
 
         return super.buildFooter();
     }
 
     //endregion
+
+    //region Honduras
 
     private boolean footerBaseHON() {
         double totimp,totperc;
@@ -1288,9 +1292,13 @@ public class clsDocFactura extends clsDocument {
         }
 
         rep.add("");
+        rep.add("");
+        rep.add("");
 
         return super.buildFooter();
     }
+
+    //endregion
 
     //region Salvador
 
@@ -1429,6 +1437,9 @@ public class clsDocFactura extends clsDocument {
         */
 
         rep.add("");
+        rep.add("");
+        rep.add("");
+        rep.add("");
 
         return super.buildFooter();
     }
@@ -1551,6 +1562,9 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
+        rep.add("");
+        rep.add("");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();
@@ -1719,6 +1733,9 @@ public class clsDocFactura extends clsDocument {
         }
         */
 
+        rep.add("");
+        rep.add("");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();

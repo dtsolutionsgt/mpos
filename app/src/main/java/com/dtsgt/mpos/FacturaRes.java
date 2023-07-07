@@ -3796,8 +3796,7 @@ public class FacturaRes extends PBase {
                     file.delete();
                 } catch (Exception e) { }
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
             clsViewObj ViewObj=new clsViewObj(this,Con,db);
@@ -4172,7 +4171,11 @@ public class FacturaRes extends PBase {
                 P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
                 if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
 
-                fdoc.vendedor=gl.vendnom;
+				fdoc.LANPrint=gl.peImpFactLan;
+				if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
+
+
+				fdoc.vendedor=gl.vendnom;
                 fdoc.rutanombre=gl.tiendanom;
 				fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
 						descimp,propinaperc,gl.pePropinaFija,propina);
