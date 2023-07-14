@@ -2537,7 +2537,6 @@ public class Venta extends PBase {
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
-
     }
 
     private void processMenuItems(int menuid) {
@@ -2563,7 +2562,7 @@ public class Venta extends PBase {
                     }
                     break;
                 case 52:
-                    if (!gl.exitflag) {
+                    //if (!gl.exitflag) {
                         browse = 8;
                         gl.climode = false;
 
@@ -2575,7 +2574,7 @@ public class Venta extends PBase {
                                 startActivity(new Intent(Venta.this, CliPos.class));
                             }
                         }
-                    }
+                    //}
                     break;
                 case 53:
                     break;
@@ -3204,19 +3203,16 @@ public class Venta extends PBase {
                 rep.addc("************************");
                 rep.addc("ORDEN # "+gl.ref1.toUpperCase());
                 rep.addc("************************");
-                rep.add("");
             }
 
             rep.empty();
 
-            /*
-            rep.empty();
-            rep.empty();
-            rep.empty();
-            rep.empty();
-            rep.empty();
-
-             */
+            if ( gl.parallevar) {
+                rep.addc(" P A R A   L L E V A R ");rep.add("");
+                if (!gl.dom_nom.isEmpty()) {
+                    rep.addc(gl.dom_nom);rep.add("");
+                }
+            }
 
             /*
             ln=rep.items.size();

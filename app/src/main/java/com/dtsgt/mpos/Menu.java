@@ -51,6 +51,7 @@ import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
 import com.dtsgt.mant.MantConfigRes;
 import com.dtsgt.mant.MantCorel;
+import com.dtsgt.mant.MantImpRedir;
 import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
 import com.dtsgt.webservice.wsCommit;
@@ -1779,6 +1780,7 @@ public class Menu extends PBase {
 			if (gl.peRest) listdlg.add("Restaurante");
 			listdlg.add("Configuración");
 			listdlg.add("Configuración reportes Cierre");
+			listdlg.add("Redirección de impresoras LAN");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -1813,6 +1815,8 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Impresora marca")) gl.mantid = 32;
 					if (ss.equalsIgnoreCase("Impresora modelo")) gl.mantid = 33;
 					if (ss.equalsIgnoreCase("Impresora")) gl.mantid = 34;
+					//if (ss.equalsIgnoreCase("Redirección de impresoras LAN")) gl.mantid = 35;
+
 
 					if (gl.mantid == 16) {
 						startActivity(new Intent(Menu.this, MantConfig.class));
@@ -1827,6 +1831,8 @@ public class Menu extends PBase {
 					} else if (gl.mantid == 24) {
 						showMantRestMenu();
 						//startActivity(new Intent(Menu.this, SalaDis.class));
+					} else if (gl.mantid == 35) {
+						startActivity(new Intent(Menu.this, MantImpRedir.class));
 					} else {
 						startActivity(new Intent(Menu.this, Lista.class));
 					}

@@ -462,11 +462,15 @@ public class FacturaRes extends PBase {
     }
 
     public void prnCuenta(View view) {
-		if (tot<=0) {
-			msgbox("Total incorrecto");return;
+		try {
+			if (tot<=0) {
+				msgbox("Total incorrecto");return;
+			}
+			//askPrecuenta();
+			impresionCuenta();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
-        //askPrecuenta();
-		impresionCuenta();
     }
 
     public void showBon(View view) {
@@ -3782,7 +3786,7 @@ public class FacturaRes extends PBase {
     private boolean generaArchivos() {
         clsRepBuilder rep;
         int printid;
-        String fname,plev="";
+        String fname,plev="",prip;
         File file;
 
         if (gl.parallevar) plev=" - PARA LLEVAR";
@@ -3810,7 +3814,8 @@ public class FacturaRes extends PBase {
 
                 rep.add(P_impresoraObj.first().tipo_impresora);
                 rep.add(P_impresoraObj.first().nombre);
-                rep.add(P_impresoraObj.first().ip);
+				prip=app.ipBypass(P_impresoraObj.first().ip);
+				rep.add(prip);
 
                 rep.add("");rep.add("");rep.add("");
                 rep.add("ORDEN : "+gl.ref1.toUpperCase()+plev);
@@ -3836,7 +3841,6 @@ public class FacturaRes extends PBase {
 					rep.addc("ORDEN # "+gl.ref1.toUpperCase());
 					rep.addc("************************");
 					rep.add("");
-
 				}
 
 				if (!plev.isEmpty()) {
@@ -4149,67 +4153,70 @@ public class FacturaRes extends PBase {
         }
     }
 
-    private void impresionCuenta() {
-        try {
-            clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
-
-            if (true) {
-
-                try {
-                    db.execSQL("UPDATE P_RES_SESION SET ESTADO=3 WHERE ID='"+ gl.ordcorel+"'");
-                } catch (SQLException e) { }
-
-				clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
-				P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
-         		clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
-
-                clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-                VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
-                if (VendedoresObj.count>0) gl.vendnom=VendedoresObj.first().nombre;else gl.vendnom="";
-
-                clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
-                P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
-                if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
-
-				fdoc.LANPrint=gl.peImpFactLan;
-				if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
-
-
-				fdoc.vendedor=gl.vendnom;
-                fdoc.rutanombre=gl.tiendanom;
-				fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
-						descimp,propinaperc,gl.pePropinaFija,propina);
-				//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
-
-                gl.QRCodeStr="";
-
-                app.doPrint(1,0);
-
-                Handler mtimer = new Handler();
-                Runnable mrunner=new Runnable() {
-                    @Override
-                    public void run() {
-                        gl.iniciaVenta=false;
-                        finish();
-                    }
-                };
-                mtimer.postDelayed(mrunner,200);
-            }
-        } catch (Exception e){
-            mu.msgbox("impresionCuenta : "  + e.getMessage());
-        }
-    }
-
-	private void completaEstadoOrden() {
-
-		gl.numero_orden="";
-		gl.mesero_venta=0;
+	private void impresionCuenta() {
+		String psql;
 
 		try {
+			clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
+			psql="UPDATE P_RES_SESION SET ESTADO=3  WHERE ID='"+ gl.ordcorel+"'";
+
+			try {
+				db.execSQL(psql);
+			} catch (SQLException e) {
+				mu.msgbox("impresionCuenta : "  + e.getMessage());
+			}
+
+			if (gl.peActOrdenMesas) enviaPrecuenta(psql);
+
+			clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+			P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
+			clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
+			if (VendedoresObj.count>0) gl.vendnom=VendedoresObj.first().nombre;else gl.vendnom="";
+
+			clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
+			P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
+			if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
+
+			fdoc.LANPrint=gl.peImpFactLan;
+			if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
+
+			fdoc.vendedor=gl.vendnom;
+			fdoc.rutanombre=gl.tiendanom;
+			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
+					descimp,propinaperc,gl.pePropinaFija,propina);
+			//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
+
+			gl.QRCodeStr="";
+
+			app.doPrint(1,0);
+
+			Handler mtimer = new Handler();
+			Runnable mrunner=new Runnable() {
+				@Override
+				public void run() {
+					gl.iniciaVenta=false;
+					finish();
+				}
+			};
+			mtimer.postDelayed(mrunner,500);
+
+		} catch (Exception e){
+			mu.msgbox("impresionCuenta : "  + e.getMessage());
+		}
+	}
+
+	private void completaEstadoOrden() {
+		Long fs=du.getActDateTime();
+
+		gl.numero_orden="";gl.mesero_venta=0;
+
+		try {
 			if (!todasCuentasPagadas()) {
-				broadcastJournalCuenta(gl.cuenta_borrar);
-				return;
+				broadcastJournalCuenta(gl.cuenta_borrar);return;
 			}
 
 			broadcastJournalCuenta(gl.cuenta_borrar);
@@ -4222,16 +4229,15 @@ public class FacturaRes extends PBase {
 
 			if (!gl.peActOrdenMesas) return;
 
-			try {
-				broadcastJournalFlag(99);
-			} catch (Exception e) {
-				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-			}
+			sql="UPDATE P_RES_SESION SET ESTADO=-1,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+gl.ordcorel+"'";
+			//sql="UPDATE P_RES_SESION SET ESTADO=99,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+gl.ordcorel+"'";
+			enviaEstado(sql);
+			broadcastJournalFlag(99);
+
 
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
-
 	}
 
 	private void broadcastJournalFlag(int flag) {
@@ -4467,6 +4473,28 @@ public class FacturaRes extends PBase {
         }
     }
 
+	private void enviaPrecuenta(String csql) {
+		try {
+			Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+			intent.putExtra("URL",gl.wsurl);
+			intent.putExtra("command",csql);
+			startService(intent);
+		} catch (Exception e) {
+			toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void enviaEstado(String csql) {
+		try {
+			Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+			intent.putExtra("URL",gl.wsurl);
+			intent.putExtra("command",csql);
+			startService(intent);
+		} catch (Exception e) {
+			toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	private void agregaRegistroBarril(int idprod,double factor,double cant) {
 
 		if (app.barrilProd(idprod).isEmpty()) return;
@@ -4608,7 +4636,6 @@ public class FacturaRes extends PBase {
 		return true;
 
 	}
-
 
 	//endregion
 

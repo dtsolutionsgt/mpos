@@ -136,8 +136,8 @@ public class Orden extends PBase {
     private Runnable rnClose;
     private Runnable rnOrdenInsert,rnOrdenQuery;
 
-    private Handler ctimer;
-    private Runnable crunner;
+    //private Handler ctimer;
+    //private Runnable crunner;
 
     private AppMethods app;
 
@@ -273,10 +273,11 @@ public class Orden extends PBase {
         wscom =new wsCommit(gl.wsurl);
         wslock =new wsCommit(gl.wsurl);
 
-        agregaBloqueo();
+        //agregaBloqueo();
 
         rnClose = () -> closeAction();
 
+        /*
         rnDetailCallback = () -> {
             switch (wso.level) {
                 case 1:
@@ -287,6 +288,8 @@ public class Orden extends PBase {
                     broadcastCompleteCallback();break;
             }
         };
+        */
+
         wso=new wsOpenDT(gl.wsurl);
 
         rnBarTrans = new Runnable() {
@@ -304,6 +307,7 @@ public class Orden extends PBase {
             ordenQuery();
         };
 
+        /*
         Handler mtimer = new Handler();
         Runnable mrunner=new Runnable() {
             @Override
@@ -317,36 +321,42 @@ public class Orden extends PBase {
         };
         mtimer.postDelayed(mrunner,500);
 
+         */
+
         //fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
 
+        /*
         ctimer = new Handler();
         crunner=new Runnable() {
             @Override
             public void run() {
-                gl.cerrarmesero=true;
-                gl.mesero_lista=true;
-
-                cerrarOrden();
+                //gl.cerrarmesero=true;
+                //gl.mesero_lista=true;
+                //cerrarOrden();
             }
         };
+        */
     }
 
     //region Events
 
+    /*
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        try{
+        //super.onActivityResult(requestCode, resultCode, intent);
+        try {
             //if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
-                barcode=contents;
+                barcode = contents;
                 toast(barcode);
             }
             //}
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
-
     }
+    */
 
     public void showPromo(View view){
         try{
@@ -1814,9 +1824,11 @@ public class Orden extends PBase {
             gl.ventalock=true;
             gl.cerrarmesero=true;
             gl.mesero_lista=false;
-
             gl.mesero_precuenta=true;
+
             finalizarOrden();
+            exitBtn(false);
+
             //finish();
 
         } catch (Exception e) {
@@ -2209,7 +2221,9 @@ public class Orden extends PBase {
                     if (pendienteImpresion()) {
                         msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
-                        if (limpiaVenta()) showListaCuentas();
+                        if (limpiaVenta()) {
+                            showListaCuentas();
+                        }
                     }
 
                     break;
@@ -2253,7 +2267,7 @@ public class Orden extends PBase {
             gl.mesero_lista=true;
 
             try {
-                ctimer.removeCallbacks(crunner);
+                //ctimer.removeCallbacks(crunner);
             } catch (Exception e) {}
 
 
@@ -2555,7 +2569,7 @@ public class Orden extends PBase {
 
         clsRepBuilder rep;
         int printid,ln;
-        String fname,ss,narea;
+        String fname,ss,narea,prip;
         File file;
 
         try {
@@ -2587,7 +2601,8 @@ public class Orden extends PBase {
 
                         rep.add(P_impresoraObj.first().tipo_impresora);
                         rep.add(P_impresoraObj.first().nombre);
-                        rep.add(P_impresoraObj.first().ip);
+                        prip=app.ipBypass(P_impresoraObj.first().ip);
+                        rep.add(prip);
 
                         rep.empty();
                         //rep.empty();
@@ -3820,30 +3835,12 @@ public class Orden extends PBase {
 
     //region Broadcast Detalle
 
+    /*
+
     private void broadcastDetail() {
         wsoidle=false;
 
         if (actorden) broadcastDetailCallback();
-
-        /*
-        wso.level=1;
-        brtcorel ="";brtid=0;brtitems.clear();
-
-        try {
-            sql="SELECT  CODIGO, COREL_ORDEN, COMANDA " +
-                "FROM T_ORDENCOM WHERE (COREL_ORDEN='"+idorden+"') AND (COREL_LINEA=2)" +
-                "ORDER BY COREL_ORDEN,CODIGO";
-            wso.execute(sql,rnDetailCallback);
-
-            //toastcent("Actualizando orden . . .");
-        } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),
-                    "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsoidle=true;
-        }
-        */
-
     }
 
     private void broadcastDetailCallback() {
@@ -3857,20 +3854,6 @@ public class Orden extends PBase {
                 cierraPantalla();
                 wsoidle=true;return;
             }
-            /*
-            if (wso.errflag) {
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),wso.error,sql);
-                wsoidle=true;return;
-            }
-
-            if (wso.openDTCursor.getCount()==0) {
-                //wsoidle=true;return;
-            }
-
-            wso.openDTCursor.moveToFirst();
-            brtcorel=wso.openDTCursor.getString(1);brtid=wso.openDTCursor.getInt(0);
-             */
 
             brtcorel=idorden;
 
@@ -4012,12 +3995,6 @@ public class Orden extends PBase {
         String cmd="DELETE FROM T_ordencom WHERE CODIGO="+brtid;
 
         try {
-            /*
-            Intent intent = new Intent(Orden.this, srvCommit.class);
-            intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("command",cmd);
-            if (actorden) startService(intent);
-            */
             enviaCommit(false,cmd);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -4070,6 +4047,8 @@ public class Orden extends PBase {
         return ins.sql();
 
     }
+
+    */
 
     //endregion
 
@@ -5544,17 +5523,18 @@ public class Orden extends PBase {
 
     private void cierraPantalla() {
         try {
-            ctimer.removeCallbacks(crunner);
+            //ctimer.removeCallbacks(crunner);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
         try {
-            ctimer.postDelayed(crunner,20000);
+            //ctimer.postDelayed(crunner,20000);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
+    /*
     private void agregaBloqueo() {
         try {
             sql="INSERT INTO P_RES_MESA_BLOQ (CODIGO_MESA,CODIGO_VENDEDOR) " +
@@ -5577,9 +5557,10 @@ public class Orden extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+    */
 
     private void cerrarOrden(){
-        borrarBloqueo();
+        //borrarBloqueo();
         finish();
     }
 
@@ -6660,7 +6641,7 @@ public class Orden extends PBase {
     @Override
     protected void onPause() {
         try {
-            ctimer.removeCallbacks(crunner);
+            //ctimer.removeCallbacks(crunner);
         } catch (Exception e) {}
         super.onPause();
     }

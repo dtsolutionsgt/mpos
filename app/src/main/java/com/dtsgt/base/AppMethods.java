@@ -1163,6 +1163,18 @@ public class AppMethods {
 			gl.peNumOrdCentral = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=162";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peCajaMesasManual = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peCajaMesasManual = false;
+		}
 
 	}
 

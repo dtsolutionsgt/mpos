@@ -1568,6 +1568,70 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [Tx_orden] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "PRODUCTO TEXT NOT NULL,"+
+                    "EMPRESA TEXT NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UMSTOCK TEXT NOT NULL,"+
+                    "FACTOR REAL NOT NULL,"+
+                    "PRECIO REAL NOT NULL,"+
+                    "IMP REAL NOT NULL,"+
+                    "DES REAL NOT NULL,"+
+                    "DESMON REAL NOT NULL,"+
+                    "TOTAL REAL NOT NULL,"+
+                    "PRECIODOC REAL NOT NULL,"+
+                    "PESO REAL NOT NULL,"+
+                    "VAL1 REAL NOT NULL,"+
+                    "VAL2 TEXT NOT NULL,"+
+                    "VAL3 REAL NOT NULL,"+
+                    "VAL4 TEXT NOT NULL,"+
+                    "PERCEP REAL NOT NULL,"+
+                    "CUENTA INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID],[COREL])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX Tx_orden_idx1 ON Tx_orden(COREL)";db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [Tx_ordencuenta] ("+
+                    "COREL TEXT NOT NULL,"+
+                    "ID INTEGER NOT NULL,"+
+                    "CF INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "NIT TEXT NOT NULL,"+
+                    "DIRECCION TEXT NOT NULL,"+
+                    "CORREO TEXT NOT NULL,"+
+                    "PRIMARY KEY ([COREL],[ID])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [Tx_res_sesion] ("+
+                    "ID TEXT NOT NULL,"+
+                    "CODIGO_MESA INTEGER NOT NULL,"+
+                    "VENDEDOR INTEGER NOT NULL,"+
+                    "ESTADO INTEGER NOT NULL,"+
+                    "CANTP INTEGER NOT NULL,"+
+                    "CANTC INTEGER NOT NULL,"+
+                    "FECHAINI INTEGER NOT NULL,"+
+                    "FECHAFIN INTEGER NOT NULL,"+
+                    "FECHAULT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX Tx_res_sesion_idx1 ON Tx_res_sesion(CODIGO_MESA)";db.execSQL(sql);
+            sql="CREATE INDEX Tx_res_sesion_idx2 ON Tx_res_sesion(ESTADO)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {
