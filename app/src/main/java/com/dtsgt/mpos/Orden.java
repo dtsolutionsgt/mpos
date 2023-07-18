@@ -2291,6 +2291,8 @@ public class Orden extends PBase {
             } else {
                 numeroOrdenLocal();
             }
+        } else {
+            numeroOrdenLocal();
         }
     }
 
@@ -2317,6 +2319,8 @@ public class Orden extends PBase {
             }
 
             lblAlm.setText("#"+ordennum);toast("#"+ordennum);
+            procesaComanda();
+        } else {
             procesaComanda();
         }
     }

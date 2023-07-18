@@ -3159,6 +3159,13 @@ public class Venta extends PBase {
 
         try {
             rep.clear();
+
+            if (gl.peImpFactLan) {
+                rep.add(" ");
+                rep.add("IMPRESORA DE CAJA");
+                rep.add(gl.peImpFactIP);
+            }
+
             rep.empty();
             rep.empty();
             //rep.empty();
@@ -3222,6 +3229,13 @@ public class Venta extends PBase {
                 }
             }
             */
+
+            if (gl.peImpFactLan) {
+                rep.add("");
+                rep.add("");
+                rep.add("");
+                rep.add("");
+            }
 
             rep.save();
 
