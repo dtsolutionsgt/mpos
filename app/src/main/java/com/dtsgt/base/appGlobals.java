@@ -6,10 +6,23 @@ import com.dtsgt.base.clsClasses.clsBonifItem;
 import com.dtsgt.base.clsClasses.clsDemoDlg;
 import com.epson.eposdevice.Device;
 import com.epson.eposdevice.printer.Printer;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 public class appGlobals extends Application {
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		try {
+			//FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+		} catch (Exception e) {
+			String ss=e.getMessage();
+		}
+	}
+
+
 	public String rutanom,sucur,rutatipo, rutatipog,  vendnom, gstr, gstr2, prod, um, umpres, umstock, clitipo;
 	public String ubas, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante,
 			ayudanteID, vehiculo, vehiculoID;

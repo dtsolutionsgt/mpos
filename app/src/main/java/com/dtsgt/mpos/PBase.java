@@ -55,6 +55,7 @@ public class PBase extends Activity {
 		setContentView(R.layout.activity_plist_base);
 		try {
 			FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+			// Alternativa   appGlobals.OnCreate
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
