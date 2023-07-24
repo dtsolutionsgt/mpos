@@ -1632,6 +1632,19 @@ public class BaseDatosVersion {
             sql="CREATE INDEX Tx_res_sesion_idx2 ON Tx_res_sesion(ESTADO)";db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [T_venta_hora] ("+
+                    "HORA INTEGER NOT NULL,"+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "CANT INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([HORA],[CODIGO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_venta_hora_idx1 ON T_venta_hora(HORA)";db.execSQL(sql);
+            sql="CREATE INDEX T_venta_hora_idx2 ON T_venta_hora(CODIGO)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
-    public String nombre_reporte="",fversion,idpais,sal_nit;
+    public String nombre_reporte="",fversion,idpais,sal_nit,clitel;
 	public String resol,resfecha,resvence,resrango,resrangot,fsfecha,fsfechah,modofact,fecharango,
                   textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
@@ -28,7 +28,7 @@ public class clsDocument {
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
-	public boolean parallevar,factsinpropina,modorest,LANPrint;
+	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint;
 	public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc;
 	public String TipoCredito, NoAutorizacion,LAN_IP;

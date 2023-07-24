@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
@@ -41,7 +42,9 @@ import com.dtsgt.classes.clsP_stock_almacenObj;
 import com.dtsgt.classes.clsP_stockbofObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_costoObj;
+import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.webservice.srvCommit;
+import com.dtsgt.webservice.wsOpenDT;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -58,6 +61,9 @@ public class WSEnv extends PBase {
 
     private WebServiceHandler ws;
     private XMLObject xobj;
+
+    private wsOpenDT wso;
+    private Runnable rnVentaHora;
 
     private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
@@ -77,6 +83,7 @@ public class WSEnv extends PBase {
     private clsD_fel_errorObj D_fel_errorObj;
     private clsD_factura_svObj D_factura_svObj;
     private clsD_facturahnObj D_facturahnObj;
+    private clsT_venta_horaObj T_venta_horaObj;
 
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> rutas = new ArrayList<String>();
@@ -121,6 +128,10 @@ public class WSEnv extends PBase {
         ws = new WebServiceHandler(WSEnv.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
+        wso=new wsOpenDT(gl.wsurl);
+        rnVentaHora= () -> { ventaHoraCallback();};
+
+
         D_facturaObj = new clsD_facturaObj(this, Con, db);
         D_facturadObj = new clsD_facturadObj(this, Con, db);
         D_facturapObj = new clsD_facturapObj(this, Con, db);
@@ -136,7 +147,7 @@ public class WSEnv extends PBase {
         D_fel_errorObj=new clsD_fel_errorObj(this,Con,db);
         D_factura_svObj=new clsD_factura_svObj(this,Con,db);
         D_facturahnObj=new clsD_facturahnObj(this,Con,db);
-
+        T_venta_horaObj=new clsT_venta_horaObj(this,Con,db);
         P_cjCierreObj = new clsP_cajacierreObj(this, Con, db);
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
         P_cjReporteObj = new clsP_cajareporteObj(this, Con, db);
@@ -167,6 +178,15 @@ public class WSEnv extends PBase {
             pbar.setVisibility(View.VISIBLE);
             lbl3.setVisibility(View.INVISIBLE);
             execws(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void doStartClean(View view) {
+        try {
+            db.execSQL("DELETE FROM T_venta_hora");
+            toast("CLEAR");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -404,16 +424,28 @@ public class WSEnv extends PBase {
             try {
                 db.execSQL("DELETE FROM D_barril_trans WHERE STATCOM=1");
             } catch (Exception e) {
-                msgbox(new Object() {
-                }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+                msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
             }
 
             pbar.setVisibility(View.INVISIBLE);
-            //lbl3.setVisibility(View.VISIBLE);
 
             plabel = "";
 
             updateLabel();
+
+            if (tieneDatosVentaHora()) {
+                finEnvio();
+            } else {
+                generaDatosVentaHora();
+            }
+
+        } catch (Exception ex) {
+            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
+        }
+    }
+
+    private void finEnvio() {
+        try {
 
             if (ws.errorflag) {
                 msgboxwait(ws.error);
@@ -425,18 +457,6 @@ public class WSEnv extends PBase {
                         finish();return;
                     }
                 }
-
-                /*
-                if (gl.autocom==1) {
-                    if (ferr.isEmpty() && movErr.isEmpty()) {
-                        if (app.pendienteBarrilEnvio()) {
-                            startActivity(new Intent(this,BarrilPendientes.class));
-                        }
-                        finish();return;
-                    }
-                }
-
-                 */
 
                 ss = "Envío completo\n";
 
@@ -472,17 +492,10 @@ public class WSEnv extends PBase {
                     }
                 }
 
-                /*
-                if (app.pendienteBarrilEnvio()) {
-                    startActivity(new Intent(this,BarrilPendientes.class));
-                }
-
-                 */
-
             }
 
-        } catch (Exception ex) {
-            msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + ex.getMessage());
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -1520,6 +1533,85 @@ public class WSEnv extends PBase {
 
     //endregion
 
+    //region Venta x Hora
+
+    private void generaDatosVentaHora() {
+        Long fa,fs;
+        String fss;
+
+        try {
+            fa=du.getActDate();fs=du.addDays(fa,-30);
+            fss=du.univfechasql(fs);
+
+            sql="SELECT { fn HOUR(D_FACTURA.FECHAENTR) } AS Hora, D_FACTURAD.PRODUCTO, SUM(D_FACTURAD.CANT) AS CANT " +
+            "FROM  D_FACTURAD INNER JOIN " +
+            "D_FACTURA ON D_FACTURAD.COREL=D_FACTURA.COREL AND D_FACTURAD.EMPRESA=D_FACTURA.EMPRESA INNER JOIN " +
+            "P_RUTA ON D_FACTURA.RUTA=P_RUTA.CODIGO_RUTA INNER JOIN " +
+            "P_SUCURSAL ON P_RUTA.SUCURSAL=P_SUCURSAL.CODIGO_SUCURSAL " +
+            "WHERE (D_FACTURA.EMPRESA="+gl.emp+") AND (P_SUCURSAL.CODIGO_SUCURSAL="+gl.tienda+") " +
+            "AND (D_FACTURA.FECHA >='"+fss+"') " +
+            "GROUP BY D_FACTURAD.PRODUCTO, {fn HOUR(D_FACTURA.FECHAENTR) } ";
+
+            wso.execute(sql,rnVentaHora);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ventaHoraCallback() {
+        Cursor dt=null;
+        int hora,prod,cant;
+
+        try {
+            if (wso.errflag) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+wso.error);
+            } else {
+                if (wso.openDTCursor.getCount()>0) {
+                    try {
+                        dt=wso.openDTCursor;
+
+                        db.beginTransaction();
+
+                        db.execSQL("DELETE FROM T_venta_hora");
+
+                        dt.moveToFirst();
+                        while (!dt.isAfterLast()) {
+
+                            hora=dt.getInt(0);
+                            prod=dt.getInt(1);
+                            cant=(int) dt.getDouble(2);
+                            db.execSQL("INSERT INTO T_venta_hora VALUES("+hora+","+prod+","+cant+");");
+
+                            dt.moveToNext();
+                        }
+
+                        db.setTransactionSuccessful();
+                        db.endTransaction();
+                    } catch (Exception ee) {
+                        db.endTransaction();
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        finEnvio();
+    }
+
+    private boolean tieneDatosVentaHora() {
+        try {
+            T_venta_horaObj.fill();
+            return T_venta_horaObj.count>0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return false;
+    }
+
+    //endregion
+
     //region Aux
 
     private void preparaEnvio() {
@@ -1672,7 +1764,7 @@ public class WSEnv extends PBase {
 
             } else {
                 msgboxwait("No hay datos pendientes de envío");
-            }
+           }
 
         } catch (Exception e) {
             msgbox2(new Object() {

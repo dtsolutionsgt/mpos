@@ -1634,6 +1634,12 @@ public class clsClasses {
         public double percep;
     }
 
+    public class clsT_venta_hora {
+        public int  hora;
+        public int  codigo;
+        public int  cant;
+    }
+
     public class clsT_venta_ing {
         public int  codigo_ing;
         public int  id;

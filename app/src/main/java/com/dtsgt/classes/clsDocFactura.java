@@ -974,6 +974,41 @@ public class clsDocFactura extends clsDocument {
         }
 	}
 
+    private void agregaDomicilio() {
+        if (!domicilio) return;
+
+        rep.add("");
+        rep.addc("D O M I C I L I O");
+        rep.add("");
+        rep.add(nombre_cliente);
+
+        if (!emptystr(clidir)) {
+            clidir="Dir.: "+clidir;
+            if (clidir.length()>prw) {
+
+                String nuevaCadena = "", cadena = "";
+
+                cadena = clidir;
+                nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                cadena = cadena.substring(prw);
+                if (cadena.length() > prw) {
+                    nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                    cadena = cadena.substring(prw);
+                    if (cadena.length() > prw) {
+                        nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                    } if (cadena.length()>0) rep.add(cadena);
+                } else {
+                    if (cadena.length()>0) rep.add(cadena);
+                }
+            } else rep.add(clidir);
+        }
+
+        try {
+            if (!clitel.isEmpty()) rep.add("Tel.: "+clitel);
+        } catch (Exception e) {}
+
+    }
+
     //region Guatemala
 
     private boolean footerBaseGUATicket() {
@@ -1023,7 +1058,6 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
-
         //rep.addc("----------------------");
         //rep.addc("Firma cliente  ");
         rep.add("");
@@ -1031,6 +1065,9 @@ public class clsDocFactura extends clsDocument {
         //rep.addc("NO ES UNA FACTURA COMERCIAL");
         //rep.add("");
         //rep.addc(sfticket);
+
+        agregaDomicilio();
+
         rep.add("");
         rep.add("");
         rep.add("");
@@ -1165,6 +1202,8 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
+        agregaDomicilio();
+
         rep.add("");
         rep.add("");
         rep.add("");
@@ -1290,6 +1329,8 @@ public class clsDocFactura extends clsDocument {
                 rep.addc(nombre_cliente);rep.add("");
             }
         }
+
+        agregaDomicilio();
 
         rep.add("");
         rep.add("");
@@ -1436,6 +1477,8 @@ public class clsDocFactura extends clsDocument {
         }
         */
 
+        agregaDomicilio();
+
         rep.add("");
         rep.add("");
         rep.add("");
@@ -1562,6 +1605,8 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
+        agregaDomicilio();
+
         rep.add("");
         rep.add("");
         rep.add("");
@@ -1601,6 +1646,8 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
             rep.add("Le atendio: "+nommesero);
         }
+
+        agregaDomicilio();
 
         rep.add("");
         //rep.add("Datos del Cliente");
@@ -1732,6 +1779,8 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
         */
+
+        agregaDomicilio();
 
         rep.add("");
         rep.add("");

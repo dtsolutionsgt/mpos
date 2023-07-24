@@ -16,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -71,8 +70,6 @@ import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMenuOrden;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptOrden;
-import com.dtsgt.webservice.srvCommit;
-import com.dtsgt.webservice.srvOrdenEnvio;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -1845,7 +1842,7 @@ public class Orden extends PBase {
 
             try{
                 gl.delivery = false;
-                gl.EsNivelPrecioDelivery = (gl.delivery || gl.pickup);
+                gl.EsNivelPrecioDelivery = (gl.delivery || gl.domicilio);
             } catch (Exception e){
                 mu.msgbox("finishOrder: "+e.getMessage());
             }
@@ -2622,8 +2619,10 @@ public class Orden extends PBase {
                             narea = " " + gl.mesa_area;
                         }
 
+                        rep.add("Envio: " +gl.rutanom);
+
                         if (ordenpedido) {
-                            rep.add("ORDEN : #" + numpedido);
+                            if (numpedido!=0) rep.add("ORDEN : #" + numpedido);
                             rep.empty();
                             if (numpedido == 0) rep.add("MESA : " + mesa+narea);
                             if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);

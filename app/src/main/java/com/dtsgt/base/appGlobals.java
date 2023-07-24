@@ -62,7 +62,7 @@ public class appGlobals extends Application {
 	public String QRCodeStr ="";
 
 	//#CKFK 20210705
-	public boolean pickup = false,delivery = false;
+	public boolean domicilio = false,delivery = false;
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false
 	public boolean debug=true;

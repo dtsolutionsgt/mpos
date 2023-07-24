@@ -33,6 +33,7 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
+import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.mpos.PrintView;
 import com.dtsgt.mpos.R;
@@ -2703,7 +2704,6 @@ public class AppMethods {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
-
 
     //endregion
 

@@ -117,7 +117,7 @@ public class FacturaRes extends PBase {
 	private clsRepBuilder rep;
 
 	private long fecha,fechae;
-	private int fcorel,clidia, Nivel_Media_Pago,idtransbar;
+	private int fcorel,clidia, Nivel_Media_Pago,idtransbar,hora;
 	private boolean EsNivelPrecioDelivery =false;
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
@@ -863,8 +863,8 @@ public class FacturaRes extends PBase {
 
 			gl.cliposflag=false;
 			gl.InvCompSend=false;
-			gl.delivery =false;
-			gl.pickup = false;
+			//gl.delivery =false;
+			//gl.domicilio = false;
 			gl.sin_propina=false;
 
 			if (gl.pelDespacho) {
@@ -919,7 +919,7 @@ public class FacturaRes extends PBase {
             gl.nombre_mesero="";
 
             //#CKFK 20210705
-			fdoc.es_pickup=gl.pickup;
+			fdoc.es_pickup=gl.domicilio;
 			fdoc.es_delivery=gl.delivery;
 
             if (gl.mesero_venta>0) {
@@ -941,13 +941,8 @@ public class FacturaRes extends PBase {
 					fdoc.impresionorden=true;
 				}
 				fdoc.parallevar=gl.parallevar;
-
-				/*
-				if (!gl.nummesapedido.equalsIgnoreCase("0")) {
-					fdoc.impresionorden=true;
-					fdoc.parallevar=true;
-				}
-				*/
+				fdoc.domicilio=gl.domicilio;
+				fdoc.clitel=gl.gTelCliente;
 
 			    fdoc.factsinpropina=gl.peFactSinPropina;
 			    fdoc.propperc=gl.pePropinaPerc;
@@ -1107,12 +1102,14 @@ public class FacturaRes extends PBase {
         clsClasses.clsD_facturas fsitem;
 
 		Cursor dt,dtc;
-		String vprod,vumstock,vumventa,vbarra,ssq,svnit;
+		String vprod,vumstock,vumventa,vbarra,ssq,svnit,llevdom;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp;
-		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid,tipo_factura=1;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,
+			intcod,itemuid,cuid,tipo_factura=1;
 		boolean flag,pagocarta=false;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
+		hora=du.getActHour();
 
         try {
             if (gl.numero_orden.isEmpty()) gl.numero_orden=" ";
@@ -1123,7 +1120,7 @@ public class FacturaRes extends PBase {
         sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
         dt=Con.OpenDT(sql);
 
-         if (dt.getCount()>0){
+        if (dt.getCount()>0){
             dt.moveToFirst();
             mitem=dt.getInt(0);
         } else {
@@ -1255,7 +1252,10 @@ public class FacturaRes extends PBase {
 
 			ins.add("CODIGOLIQUIDACION",0);
 
-			if (gl.parallevar) ins.add("RAZON_ANULACION","P");else ins.add("RAZON_ANULACION","");
+			llevdom="";
+			if (gl.parallevar) llevdom="P";
+			if (gl.domicilio)  llevdom="D";
+			ins.add("RAZON_ANULACION",llevdom);
 
 			ins.add("FEELSERIE"," ");
             ins.add("FEELNUMERO"," ");
@@ -1269,7 +1269,6 @@ public class FacturaRes extends PBase {
 			//endregion
 
 			//region D_FACTURAD
-
 
             if (gl.numero_orden.isEmpty() || gl.numero_orden.equalsIgnoreCase(" ")) {
                 //toastlong("Venta directa ");
@@ -1292,10 +1291,11 @@ public class FacturaRes extends PBase {
                 adescv1=dt.getDouble(1)*dt.getDouble(2);
                 adescmon=adescv1*descaddmonto/stot;
                 adescv1=dt.getDouble(5);
+				intcod=app.codigoProducto(dt.getString(0));
 
 			  	ins.init("D_FACTURAD");
 				ins.add("COREL",corel);
-				ins.add("PRODUCTO",app.codigoProducto(dt.getString(0)));
+				ins.add("PRODUCTO",intcod);
 				ins.add("EMPRESA",gl.emp);
 				ins.add("ANULADO",false);
 				ins.add("CANT",dt.getDouble(1));
@@ -1323,6 +1323,8 @@ public class FacturaRes extends PBase {
 				vpeso=dt.getDouble(8);
 				vfactor=vpeso/(vcant*factpres);
 				vumventa=dt.getString(11);
+
+				agregaMasVendidos(intcod,vcant);
 
 				if (esProductoConStock(dt.getString(0))) {
 					//rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
@@ -1536,14 +1538,18 @@ public class FacturaRes extends PBase {
 
 				ins.init("D_FACTURAF");
 				ins.add("COREL",corel);
-				if (gl.parallevar) {
+				if (gl.parallevar | gl.domicilio) {
 					ins.add("NOMBRE",gl.dom_nom);
 				} else {
 					ins.add("NOMBRE","Consumidor Final");
 				}
 				ins.add("NIT","CF");
-				ins.add("DIRECCION","Ciudad");
-                ins.add("CORREO",vCorreoDefecto);
+				if (!gl.gDirCliente.isEmpty()) {
+					ins.add("DIRECCION",gl.gDirCliente);
+				} else {
+					ins.add("DIRECCION","Ciudad");
+				}
+				ins.add("CORREO",vCorreoDefecto);
 
             } else {
 
@@ -2043,6 +2049,23 @@ public class FacturaRes extends PBase {
 			mu.msgbox("rebajaStockUM: "+e.getMessage());
 		}
 
+	}
+
+	private void agregaMasVendidos(int prid,double cant) {
+		String ssql;
+		int icant=(int) cant;
+
+		try {
+			try {
+				ssql="INSERT INTO T_venta_hora VALUES("+hora+","+prid+","+icant+");";
+				db.execSQL(ssql);
+			} catch (Exception e) {
+				ssql="UPDATE T_venta_hora SET CANT=CANT+"+icant+" WHERE (HORA="+hora+") AND (CODIGO="+prid+");";
+				db.execSQL(ssql);
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	private void saveAtten(double tot) {
@@ -2613,7 +2636,7 @@ public class FacturaRes extends PBase {
 		gl.cliposflag=false;
 		gl.InvCompSend=false;
 		gl.delivery =false;
-		gl.pickup = false;
+		gl.domicilio = false;
 		gl.sin_propina=false;
 		gl.InvCompSend=true;
 
@@ -2819,7 +2842,7 @@ public class FacturaRes extends PBase {
 		try {
 			gl.nombre_mesero="";
 
-			fdoc.es_pickup=gl.pickup;
+			fdoc.es_pickup=gl.domicilio;
 			fdoc.es_delivery=gl.delivery;
 
 			if (gl.mesero_venta>0) {
@@ -4054,7 +4077,7 @@ public class FacturaRes extends PBase {
 			db.execSQL("DELETE FROM T_BONITEM WHERE PRODID='*'");
 
 			//#CKFK 20210706
-			gl.pickup=false;
+			gl.domicilio =false;
 			gl.delivery=false;
 
 		} catch (SQLException e) {

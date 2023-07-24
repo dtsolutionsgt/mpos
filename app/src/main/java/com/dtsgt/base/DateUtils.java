@@ -654,6 +654,11 @@ public class DateUtils {
 		return f;
 	}
 
+	public int getActHour(){
+		final Calendar c = Calendar.getInstance();
+		return c.get(Calendar.HOUR_OF_DAY);
+	}
+
 	public long cfecha(long year, long month, long day) {
 		long c;
 		c=year % 100;

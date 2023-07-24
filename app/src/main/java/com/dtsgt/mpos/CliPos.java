@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.dtsgt.base.clsClasses;
@@ -24,7 +23,6 @@ import com.dtsgt.classes.clsD_pedidoObj;
 import com.dtsgt.classes.clsD_pedidocObj;
 import com.dtsgt.classes.clsD_pedidocomboObj;
 import com.dtsgt.classes.clsD_pedidodObj;
-import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_pedidodObj;
 import com.dtsgt.classes.clsT_ventaObj;
@@ -52,8 +50,7 @@ public class CliPos extends PBase {
 	private TextView lblPed,lblDom,lblDir,btnNIT,btnCF;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
-	private CheckBox cbllevar;
-    private CheckBox cbpickup;
+	private CheckBox cbllevar,cbdomicilio;
 
     //private wsInventCompartido wsi;
 
@@ -97,7 +94,7 @@ public class CliPos extends PBase {
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
         cbllevar = findViewById(R.id.checkBox21);
-        cbpickup = findViewById(R.id.chkPickup);
+        cbdomicilio = findViewById(R.id.chkPickup);
         btnNIT= findViewById(R.id.textView6);
         btnCF= findViewById(R.id.textView4);
 
@@ -113,36 +110,10 @@ public class CliPos extends PBase {
 
         //domicilio=gl.modo_domicilio;
         domicilio=gl.peVentaDomicilio;
-        cbllevar.setEnabled(true);
-
-        cbpickup.setChecked(false);cbpickup.setEnabled(true);
-        cbpickup.setVisibility(View.INVISIBLE);
-        lblDir.setVisibility(View.GONE);
-
-        if (domicilio) {
-            lblDom.setVisibility(View.INVISIBLE);
-            cbllevar.setVisibility(View.VISIBLE);
-            //lblDir.setVisibility(View.VISIBLE);
-            cbllevar.setChecked(false);
-            cbllevar.setEnabled(true);
-        } else {
-            lblDom.setVisibility(View.INVISIBLE);
-            cbllevar.setVisibility(View.VISIBLE);
-            //lblDir.setVisibility(View.VISIBLE);
-            cbllevar.setChecked(false);
-            cbllevar.setEnabled(true);
-
-            /*
-            lblDom.setVisibility(View.INVISIBLE);
-            cbllevar.setVisibility(View.INVISIBLE);
-            //lblDir.setVisibility(View.GONE);
-            cbllevar.setChecked(false);
-            cbllevar.setEnabled(false);
-             */
-        }
+        cbllevar.setEnabled(true); cbllevar.setChecked(false);
+        cbdomicilio.setEnabled(true); cbdomicilio.setChecked(false);
 
         lblDir.setVisibility(View.GONE);
-        cbpickup.setVisibility(View.GONE);
 
         btnCF.setText("Consumidor Final");
         if (gl.codigo_pais.equalsIgnoreCase("GT")) {
@@ -154,25 +125,7 @@ public class CliPos extends PBase {
             btnCF.setText("Ticket");
         }
 
-        //if (!gl.peVentaDomicilio) cbllevar.setEnabled(false);
-        if (!gl.peVentaEntrega)   cbpickup.setEnabled(false);
-
         NitValidadoInfile =false;
-
-        /*
-        if (gl.InvCompSend) {
-            gl.InvCompSend=false;
-            Handler mtimer = new Handler();
-            Runnable mrunner=new Runnable() {
-                @Override
-                public void run() {
-                    gl.autocom = 1;
-                    startActivity(new Intent(CliPos.this,WSEnv.class));
-                }
-            };
-            mtimer.postDelayed(mrunner,200);
-        }
-        */
 
         txtRef.setText("Ciudad");
 
@@ -383,30 +336,30 @@ public class CliPos extends PBase {
         toast(wspnerror);
     }
 
-	private void setHandlers() {
+    private void setHandlers() {
 
         rnRecibeInventario = new Runnable() {
             public void run() {
                 bloqueado=false;
                 pbar.setVisibility(View.INVISIBLE);
-               // if (wsi.errflag) {
-                    //msgbox2("wsi"+wsi.error);
+                // if (wsi.errflag) {
+                //msgbox2("wsi"+wsi.error);
                 //} else {
-                    //confirmaInventario();
-                    gl.ventalock=false;
-                    gl.parallevar=cbllevar.isChecked();
-                    finish();
+                //confirmaInventario();
+                gl.ventalock=false;
+                gl.parallevar=cbllevar.isChecked();
+                finish();
                 //}
             }
         };
 
-		try{
+        try {
 
-			txtNIT.setOnKeyListener(new View.OnKeyListener() {
-				@Override
-				public boolean onKey(View v, int keyCode, KeyEvent event) {
+            txtNIT.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
                     int i=0;
-					if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
                         if (gl.codigo_pais.equalsIgnoreCase("GT")) {
                             consultaNITInfile();
                         } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
@@ -415,27 +368,40 @@ public class CliPos extends PBase {
                             buscaNCR();
                         }
                         return true;
-					} else {
-         			    return false;
-					}
-				}
-			});
-
-		} catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-		cbpickup.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                    if (isChecked){
-                        gl.pickup = true;
-                    }else{
-                        gl.pickup = false;
+                    } else {
+                        return false;
                     }
                 }
+            });
+
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+
+        cbdomicilio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                if (isChecked){
+                    gl.domicilio = true;cbllevar.setChecked(false);
+                } else{
+                    gl.domicilio = false;
+                }
             }
+        }
         );
+
+        cbllevar.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                if (isChecked){
+                    gl.parallevar = true;cbdomicilio.setChecked(false);
+                } else{
+                    gl.parallevar = false;
+                }
+            }
+        }
+        );
+
 
     }
 
@@ -462,14 +428,13 @@ public class CliPos extends PBase {
             sCorreoCliente = txtCorreo.getText().toString();
             sTelCliente=txtTel.getText().toString();
 
-
             if (sNombreCliente.isEmpty()) gl.gNombreCliente ="Consumidor final";else gl.gNombreCliente=sNombreCliente;
             if (sDireccionCliente.isEmpty()) gl.gDirCliente ="Ciudad";else gl.gDirCliente=sDireccionCliente;
             if (sTelCliente.isEmpty()) gl.gTelCliente =""; else gl.gTelCliente=sTelCliente;
 
-            gl.gNombreCliente ="Consumidor final";
-            gl.gDirCliente ="Ciudad";
-            gl.gTelCliente ="";
+            //gl.gNombreCliente ="Consumidor final";
+            //gl.gDirCliente ="Ciudad";
+            //gl.gTelCliente ="";
             gl.gNITCliente ="CF";
             gl.nit_tipo="N";
 
@@ -541,7 +506,7 @@ public class CliPos extends PBase {
 	private void terminaCliente() {
 
         gl.parallevar=cbllevar.isChecked();
-        gl.pickup = cbpickup.isChecked();
+        gl.domicilio =cbdomicilio.isChecked();
 
         if (gl.peInvCompart) {
             //bloqueado=true;

@@ -421,7 +421,7 @@
             android:layout_marginTop="9dp"
             android:layout_marginEnd="20dp"
             android:button="@drawable/checkbox_selector"
-            android:text="  ENTREGA "
+            android:text="  DOMICILIO "
             android:textColor="#000000"
             android:textColorHighlight="#000000"
             android:textSize="30sp"

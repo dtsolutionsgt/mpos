@@ -280,7 +280,7 @@ public class Caja extends PBase {
 
     public void guardar(){
 
-        try{
+        try {
 
             app.logoutUser(du.getActDateTime());
 
@@ -314,15 +314,15 @@ public class Caja extends PBase {
 
                     montoDif();
 
-                    if(gmontoDif !=0){
-                        if(acc==1){
+                    if (gmontoDif !=0){
+                        if (acc==1){
                             msgboxValidaMonto("El monto de efectivo no cuadra: diferencia (" + gmontoDif + ")");
                             //acc=0;
                         } else saveMontoIni();
                     } else {
-                        if(cred==1){
-                            if(montoDifCred!=0){
-                                if(acc==1){
+                        if (cred==1){
+                            if (montoDifCred!=0){
+                                if (acc==1){
                                     msgboxValidaMonto("El monto de crédito no cuadra diferencia: (" + montoDifCred + ")");
                                     //acc=0;
                                 } else saveMontoIni();
@@ -439,13 +439,12 @@ public class Caja extends PBase {
     }
 
     public void saveMontoIni(){
-
         Cursor dt, dt2;
         int codpago=0,ecor;
         Long fecha=0L;
         boolean finalizo_transaccion =false;
 
-        try{
+        try {
 
             db.beginTransaction();
 
@@ -694,11 +693,6 @@ public class Caja extends PBase {
                     }
 
                 }
-
-
-
-
-
 
                 sql="UPDATE D_FACTURA SET KILOMETRAJE = "+ gl.corelZ +" WHERE KILOMETRAJE = 0 AND FECHA >= " + gl.lastDate;
                 db.execSQL(sql);

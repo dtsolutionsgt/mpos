@@ -134,6 +134,14 @@ public class WSRec extends PBase {
         app.parametrosExtra();
         setHandlers();
 
+        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+            gl.Sincronizar_Clientes=false;
+        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+            gl.Sincronizar_Clientes=true;
+        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+            gl.Sincronizar_Clientes=true;
+        }
+
         ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
         xobj = new XMLObject(ws);
 
