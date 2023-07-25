@@ -83,6 +83,7 @@ public class InicioDia extends PBase implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+        /*
         try{
             switch (v.getId()){
                 case R.id.imgCalendario:
@@ -101,6 +102,8 @@ public class InicioDia extends PBase implements View.OnClickListener{
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
+
+         */
 
     }
 

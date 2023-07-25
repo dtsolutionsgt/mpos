@@ -73,7 +73,7 @@ public class MainActivity extends PBase {
     private clsKeybHandler khand;
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
-    private int scrdim, modopantalla;
+    private int scrdim, modopantalla,fri=0;
 
     private String parVer = "5.0.0.0";
 
@@ -263,6 +263,7 @@ public class MainActivity extends PBase {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         try {
 
             if (Build.VERSION.SDK_INT > 30) {
@@ -293,8 +294,10 @@ public class MainActivity extends PBase {
             }
 
         } catch (Exception e) {
-            addlog(new Object() { }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-            msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            msgbox(new Object() {
+            }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
 
     }
@@ -374,6 +377,10 @@ public class MainActivity extends PBase {
 
     public void doFPTest(View view) {
         startActivity(new Intent(this, FBTest.class));
+    }
+
+    public void doFragTest(View view) {
+        startActivity(new Intent(this,FragmentTest.class));
     }
 
     private void setHandlers() {
@@ -1310,6 +1317,10 @@ public class MainActivity extends PBase {
 
     //endregion
 
+    //region Test Button
+
+
+
     //region Custom dialog
 
     public void doDialog(View view) {
@@ -1545,6 +1556,8 @@ public class MainActivity extends PBase {
 
     //endregion
 
+    //endregion
+
     //region Activity Events
 
     protected void onResume() {
@@ -1567,8 +1580,7 @@ public class MainActivity extends PBase {
             }
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 

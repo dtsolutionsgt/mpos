@@ -33,6 +33,7 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
+import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.mpos.PrintView;
 import com.dtsgt.mpos.R;
@@ -1044,7 +1045,7 @@ public class AppMethods {
 
 			gl.pePorConsumo = ival;
 		} catch (Exception e) {
-			gl.peCajaPricipal = 0;
+			gl.pePorConsumo = 0;
 		}
 
 		try {
@@ -1103,7 +1104,80 @@ public class AppMethods {
 			gl.peDescMax=50;
 		}
 
-    }
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=158";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peNumOrdCommandaVenta = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peNumOrdCommandaVenta = false;
+		}
+
+		try {
+			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
+
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=159";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (!emptystr(val)) {
+				if (val.equalsIgnoreCase("USB")) {
+					gl.peImpFactBT=false;gl.peImpFactLan=false;gl.peImpFactUSB=true;
+					gl.peImpFactIP="";
+				} else if (val.indexOf(".")>0){
+					gl.peImpFactBT=false;gl.peImpFactLan=true;gl.peImpFactUSB=false;
+					gl.peImpFactIP=val;
+				}
+			}
+		} catch (Exception e) {
+			gl.peImpFactBT=true;gl.peImpFactLan=false;gl.peImpFactUSB=false;gl.peImpFactIP="";
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=160";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			ival=Integer.parseInt(val);
+
+			gl.peMaxOrden = ival;
+		} catch (Exception e) {
+			gl.peMaxOrden = 1000;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=161";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peNumOrdCentral = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peNumOrdCentral = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=162";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peCajaMesasManual = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peCajaMesasManual = false;
+		}
+
+	}
 
     public boolean paramCierre(int pid) {
         Cursor dt;
@@ -1697,7 +1771,6 @@ public class AppMethods {
 
     @SuppressLint("SuspiciousIndentation")
 	public void doPrint(int copies, int tipoimpr) {
-
 		try {
 
 			if (copies<1) copies=1;
@@ -1715,9 +1788,12 @@ public class AppMethods {
 			}
 
 			if (gl.prtipo.equalsIgnoreCase("EPSON TM BlueTooth")) {
-				if (estadoBluTooth()) {
-					printEpsonTMBT(copies);
-				} else return;
+
+				if (gl.peImpFactBT) {
+					if (estadoBluTooth()) printEpsonTMBT(copies);else return;
+				}
+				if (gl.peImpFactLan) print3nstar_print();
+				if (gl.peImpFactUSB) print3nstarnusb();
 			}
 
 			if (gl.prtipo.equalsIgnoreCase("HP Engage USB")) {
@@ -1763,6 +1839,10 @@ public class AppMethods {
     private void printEpsonTMBT(int copies) {
 
         try {
+			if (gl.prpar.isEmpty()) {
+				msgbox("No se puede imprimir factura.\nPor favor realize reimpresión.");
+				return;
+			}
 
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.epsonprint");
             intent.putExtra("mac","BT:"+gl.prpar);
@@ -1772,21 +1852,9 @@ public class AppMethods {
 			intent.putExtra("QRCodeStr",""+gl.QRCodeStr);
             cont.startActivity(intent);
 
-
 		} catch (Exception e) {
             toastlong("El controlador de Epson TM BT no está instalado");
-
-            String fname = Environment.getExternalStorageDirectory()+"/print.txt";
-            String fnamenew = Environment.getExternalStorageDirectory()+"/not_printed.txt";
-
-            File currentFile = new File(fname);
-            File newFile = new File(fnamenew);
-
-            if (rename(currentFile, newFile)) Log.i("TAG", "Success");else Log.i("TAG", "Fail");
-
-            //msgbox("El controlador de impresión está instalado (Ref -> Could be: EpsonTMBT)");
-            //msgbox("El controlador de Epson TM BT no está instalado\n"+e.getMessage());
-        }
+		}
     }
 
     private void printAclas(int copies) {
@@ -1808,11 +1876,29 @@ public class AppMethods {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nsw");
             cont.startActivity(intent);
         } catch (Exception e) {
-            toastlong("El controlador de 3nStar LAN  no está instalado");
+            toastlong("El controlador de 3nStar LAN no está instalado");
         }
     }
 
-    private void HPEngageUSB(int copies) {
+	public void print3nstar_print() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nswprint");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de 3nStar print LAN no está instalado");
+		}
+	}
+
+	public void print3nstarnusb() {
+		try {
+			Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.dts.prn3nsusb");
+			cont.startActivity(intent);
+		} catch (Exception e) {
+			toastlong("El controlador de 3nStar USB no está instalado");
+		}
+	}
+
+	private void HPEngageUSB(int copies) {
         try {
             Intent intent = cont.getPackageManager().getLaunchIntentForPackage("com.hp.retail.test");
             cont.startActivity(intent);
@@ -1870,7 +1956,6 @@ public class AppMethods {
     }
 
     public boolean impresora() {
-
         loadPrintConfig();
 		try {
 			if (gl.prtipo.isEmpty() | gl.prtipo.equalsIgnoreCase("SIN IMPRESORA")) {
@@ -1882,6 +1967,24 @@ public class AppMethods {
 			return false;
 		}
     }
+
+	public String ipBypass(String ipo) {
+		Cursor DT;
+		String ipb=ipo;
+
+		try {
+			sql="SELECT IPR FROM T_ipbypass WHERE (IPO='"+ipo+"') ";
+			DT=Con.OpenDT(sql);
+
+			if (DT.getCount()>0) {
+				DT.moveToFirst();
+				ipb=DT.getString(0);
+			}
+			if (DT!=null) DT.close();
+		} catch (Exception e) {}
+
+		return ipb;
+	}
 
     //endregion
 
@@ -2601,7 +2704,6 @@ public class AppMethods {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
-
 
     //endregion
 

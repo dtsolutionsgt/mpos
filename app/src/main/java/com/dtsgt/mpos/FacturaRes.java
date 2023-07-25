@@ -120,7 +120,7 @@ public class FacturaRes extends PBase {
 	private clsRepBuilder rep;
 
 	private long fecha,fechae;
-	private int fcorel,clidia, Nivel_Media_Pago,idtransbar;
+	private int fcorel,clidia, Nivel_Media_Pago,idtransbar,hora;
 	private boolean EsNivelPrecioDelivery =false;
 	private String itemid,cliid,corel,sefect,fserie,desc1,svuelt,corelNC,idfel,osql;
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
@@ -132,6 +132,7 @@ public class FacturaRes extends PBase {
     private boolean horiz=true;
 
 	final double percep_val=1;
+
 
 
 	//@SuppressLint("MissingPermission")
@@ -468,11 +469,15 @@ public class FacturaRes extends PBase {
     }
 
     public void prnCuenta(View view) {
-		if (tot<=0) {
-			msgbox("Total incorrecto");return;
+		try {
+			if (tot<=0) {
+				msgbox("Total incorrecto");return;
+			}
+			//askPrecuenta();
+			impresionCuenta();
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
-        //askPrecuenta();
-		impresionCuenta();
     }
 
     public void showBon(View view) {
@@ -713,8 +718,8 @@ public class FacturaRes extends PBase {
 				propina=mu.roundtoint(propina);
 			}
 
-			if (gl.parallevar) propina=0;
-			if (gl.pickup) propina=0;
+			//if (gl.parallevar) propina=0;
+			//if (gl.pickup) propina=0;
 			if (gl.sin_propina) propina=0;
 
 			fillTotals();
@@ -865,8 +870,8 @@ public class FacturaRes extends PBase {
 
 			gl.cliposflag=false;
 			gl.InvCompSend=false;
-			gl.delivery =false;
-			gl.pickup = false;
+			//gl.delivery =false;
+			//gl.domicilio = false;
 			gl.sin_propina=false;
 
 			if (gl.pelDespacho) {
@@ -921,7 +926,7 @@ public class FacturaRes extends PBase {
             gl.nombre_mesero="";
 
             //#CKFK 20210705
-			fdoc.es_pickup=gl.pickup;
+			fdoc.es_pickup=gl.domicilio;
 			fdoc.es_delivery=gl.delivery;
 
             if (gl.mesero_venta>0) {
@@ -939,14 +944,12 @@ public class FacturaRes extends PBase {
 			if (app.impresora()) {
 
 			    fdoc.impresionorden=gl.pelOrdenComanda;
-				fdoc.parallevar=gl.parallevar;
-
-				/*
-				if (!gl.nummesapedido.equalsIgnoreCase("0")) {
+				if (gl.peNumOrdCommandaVenta) {
 					fdoc.impresionorden=true;
-					fdoc.parallevar=true;
 				}
-				*/
+				fdoc.parallevar=gl.parallevar;
+				fdoc.domicilio=gl.domicilio;
+				fdoc.clitel=gl.gTelCliente;
 
 			    fdoc.factsinpropina=gl.peFactSinPropina;
 			    fdoc.propperc=gl.pePropinaPerc;
@@ -965,8 +968,12 @@ public class FacturaRes extends PBase {
 					if (gl.sal_NRC) fdoc.sal_nit="NRC: ";
 				}
 
+				fdoc.LANPrint=gl.peImpFactLan;
+				if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
+
                 fdoc.buildPrint(corel,0,"",gl.peMFact);
-				gl.QRCodeStr = fdoc.QRCodeStr;
+
+				if (gl.peMFact)	gl.QRCodeStr=fdoc.QRCodeStr;else gl.QRCodeStr="";
 
              	app.doPrint(gl.peNumImp,0);
 
@@ -1102,12 +1109,14 @@ public class FacturaRes extends PBase {
         clsClasses.clsD_facturas fsitem;
 
 		Cursor dt,dtc;
-		String vprod,vumstock,vumventa,vbarra,ssq,svnit;
+		String vprod,vumstock,vumventa,vbarra,ssq,svnit,llevdom;
 		double vcant,vpeso,vfactor,peso,factpres,vtot,vprec,adescmon,adescv1,valp;
-		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,itemuid,cuid,tipo_factura=1;
+		int mitem,bitem,prid,prcant,unid,unipr,dev_ins=1,fsid,counter,fpend,
+			intcod,itemuid,cuid,tipo_factura=1;
 		boolean flag,pagocarta=false;
 
         corel=gl.codigo_ruta+"_"+mu.getCorelBase();
+		hora=du.getActHour();
 
         try {
             if (gl.numero_orden.isEmpty()) gl.numero_orden=" ";
@@ -1118,7 +1127,7 @@ public class FacturaRes extends PBase {
         sql="SELECT MAX(ITEM) FROM D_FACT_LOG";
         dt=Con.OpenDT(sql);
 
-         if (dt.getCount()>0){
+        if (dt.getCount()>0){
             dt.moveToFirst();
             mitem=dt.getInt(0);
         } else {
@@ -1208,7 +1217,7 @@ public class FacturaRes extends PBase {
 			ins.add("IMPRES",0);
 
 			try {
-				if (gl.nummesapedido.equalsIgnoreCase("0")) {
+				if (gl.nummesapedido.equalsIgnoreCase("0") | gl.peNumOrdCommandaVenta) {
 					ins.add("ADD1",gl.ref1);
 				} else {
 					ins.add("ADD1",gl.nummesapedido);
@@ -1241,14 +1250,19 @@ public class FacturaRes extends PBase {
 				}
 				ins.add("AYUDANTE",svnit);
 			} else {
-				tipoNIT();
+				if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+					tipoNIT();
+				}
 				if (gl.nit_tipo.isEmpty()) gl.nit_tipo="N";
 				ins.add("AYUDANTE",gl.nit_tipo);
 			}
 
 			ins.add("CODIGOLIQUIDACION",0);
 
-			if (gl.parallevar) ins.add("RAZON_ANULACION","P");else ins.add("RAZON_ANULACION","");
+			llevdom="";
+			if (gl.parallevar) llevdom="P";
+			if (gl.domicilio)  llevdom="D";
+			ins.add("RAZON_ANULACION",llevdom);
 
 			ins.add("FEELSERIE"," ");
             ins.add("FEELNUMERO"," ");
@@ -1261,22 +1275,7 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
-			//region Bonificacion
-
-            /*
-			clsBonifSave bonsave=new clsBonifSave(this,corel,"V");
-
-			bonsave.ruta=gl.ruta;
-			bonsave.cliente=gl.cliente;
-			bonsave.fecha=fecha;
-			bonsave.emp=gl.emp;
-
-			bonsave.save();
-            */
-			//endregion
-
 			//region D_FACTURAD
-
 
             if (gl.numero_orden.isEmpty() || gl.numero_orden.equalsIgnoreCase(" ")) {
                 //toastlong("Venta directa ");
@@ -1299,10 +1298,11 @@ public class FacturaRes extends PBase {
                 adescv1=dt.getDouble(1)*dt.getDouble(2);
                 adescmon=adescv1*descaddmonto/stot;
                 adescv1=dt.getDouble(5);
+				intcod=app.codigoProducto(dt.getString(0));
 
 			  	ins.init("D_FACTURAD");
 				ins.add("COREL",corel);
-				ins.add("PRODUCTO",app.codigoProducto(dt.getString(0)));
+				ins.add("PRODUCTO",intcod);
 				ins.add("EMPRESA",gl.emp);
 				ins.add("ANULADO",false);
 				ins.add("CANT",dt.getDouble(1));
@@ -1330,6 +1330,8 @@ public class FacturaRes extends PBase {
 				vpeso=dt.getDouble(8);
 				vfactor=vpeso/(vcant*factpres);
 				vumventa=dt.getString(11);
+
+				agregaMasVendidos(intcod,vcant);
 
 				if (esProductoConStock(dt.getString(0))) {
 					//rebajaStockUM(vprod, vumstock, vcant, vfactor, vumventa,factpres,peso);
@@ -1543,10 +1545,18 @@ public class FacturaRes extends PBase {
 
 				ins.init("D_FACTURAF");
 				ins.add("COREL",corel);
-				ins.add("NOMBRE","Consumidor Final");
+				if (gl.parallevar | gl.domicilio) {
+					ins.add("NOMBRE",gl.dom_nom);
+				} else {
+					ins.add("NOMBRE","Consumidor Final");
+				}
 				ins.add("NIT","CF");
-				ins.add("DIRECCION","Ciudad");
-                ins.add("CORREO",vCorreoDefecto);
+				if (!gl.gDirCliente.isEmpty()) {
+					ins.add("DIRECCION",gl.gDirCliente);
+				} else {
+					ins.add("DIRECCION","Ciudad");
+				}
+				ins.add("CORREO",vCorreoDefecto);
 
             } else {
 
@@ -2062,6 +2072,23 @@ public class FacturaRes extends PBase {
 			mu.msgbox("rebajaStockUM: "+e.getMessage());
 		}
 
+	}
+
+	private void agregaMasVendidos(int prid,double cant) {
+		String ssql;
+		int icant=(int) cant;
+
+		try {
+			try {
+				ssql="INSERT INTO T_venta_hora VALUES("+hora+","+prid+","+icant+");";
+				db.execSQL(ssql);
+			} catch (Exception e) {
+				ssql="UPDATE T_venta_hora SET CANT=CANT+"+icant+" WHERE (HORA="+hora+") AND (CODIGO="+prid+");";
+				db.execSQL(ssql);
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 	}
 
 	private void saveAtten(double tot) {
@@ -2632,7 +2659,7 @@ public class FacturaRes extends PBase {
 		gl.cliposflag=false;
 		gl.InvCompSend=false;
 		gl.delivery =false;
-		gl.pickup = false;
+		gl.domicilio = false;
 		gl.sin_propina=false;
 		gl.InvCompSend=true;
 
@@ -2838,7 +2865,7 @@ public class FacturaRes extends PBase {
 		try {
 			gl.nombre_mesero="";
 
-			fdoc.es_pickup=gl.pickup;
+			fdoc.es_pickup=gl.domicilio;
 			fdoc.es_delivery=gl.delivery;
 
 			if (gl.mesero_venta>0) {
@@ -3732,7 +3759,7 @@ public class FacturaRes extends PBase {
         clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
         clsClasses.clsT_combo combo;
 
-        String prname,cname;
+        String prname,cname,nnota;
         int prodid,prid,idcomb,linea=1;
 
         try {
@@ -3748,6 +3775,7 @@ public class FacturaRes extends PBase {
                 prodid = app.codigoProducto(venta.producto);
                 prname=getProd(prodid);
                 s = mu.frmdecno(venta.cant) + "  " + prname;
+				nnota=venta.val2;
 
                 if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
 
@@ -3755,6 +3783,9 @@ public class FacturaRes extends PBase {
                     for (int k = 0; k <P_linea_impresoraObj.count; k++) {
                         prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
                         agregaComanda(linea,prid,s);linea++;
+						if (!nnota.isEmpty()) {
+							agregaComanda(linea,prid,nnota);linea++;
+						}
                     }
 
                 } else {
@@ -3801,7 +3832,7 @@ public class FacturaRes extends PBase {
     private boolean generaArchivos() {
         clsRepBuilder rep;
         int printid;
-        String fname,plev="";
+        String fname,plev="",prip;
         File file;
 
         if (gl.parallevar) plev=" - PARA LLEVAR";
@@ -3815,8 +3846,7 @@ public class FacturaRes extends PBase {
                     file.delete();
                 } catch (Exception e) { }
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
 
         try {
             clsViewObj ViewObj=new clsViewObj(this,Con,db);
@@ -3830,7 +3860,8 @@ public class FacturaRes extends PBase {
 
                 rep.add(P_impresoraObj.first().tipo_impresora);
                 rep.add(P_impresoraObj.first().nombre);
-                rep.add(P_impresoraObj.first().ip);
+				prip=app.ipBypass(P_impresoraObj.first().ip);
+				rep.add(prip);
 
                 rep.add("");rep.add("");rep.add("");
                 rep.add("ORDEN : "+gl.ref1.toUpperCase()+plev);
@@ -3850,7 +3881,24 @@ public class FacturaRes extends PBase {
                 rep.add("Cajero : "+gl.vendnom);
                 rep.add("");rep.add("");
 
-                rep.save();rep.clear();
+				if (gl.peNumOrdCommandaVenta) {
+					rep.add("");
+					rep.addc("************************");
+					rep.addc("ORDEN # "+gl.ref1.toUpperCase());
+					rep.addc("************************");
+					rep.add("");
+				}
+
+				if (!plev.isEmpty()) {
+					rep.addc(" P A R A   L L E V A R ");rep.add("");
+					if (!gl.dom_nom.isEmpty()) {
+						rep.addc(gl.dom_nom);rep.add("");
+					}
+				}
+
+				rep.add("");rep.add("");rep.add("");
+
+				rep.save();rep.clear();
             }
             //mesa
             //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
@@ -4052,7 +4100,7 @@ public class FacturaRes extends PBase {
 			db.execSQL("DELETE FROM T_BONITEM WHERE PRODID='*'");
 
 			//#CKFK 20210706
-			gl.pickup=false;
+			gl.domicilio =false;
 			gl.delivery=false;
 
 		} catch (SQLException e) {
@@ -4151,63 +4199,70 @@ public class FacturaRes extends PBase {
         }
     }
 
-    private void impresionCuenta() {
-        try {
-            clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
-
-            if (true) {
-
-                try {
-                    db.execSQL("UPDATE P_RES_SESION SET ESTADO=3 WHERE ID='"+ gl.ordcorel+"'");
-                } catch (SQLException e) { }
-
-				clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
-				P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
-         		clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
-
-                clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-                VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
-                if (VendedoresObj.count>0) gl.vendnom=VendedoresObj.first().nombre;else gl.vendnom="";
-
-                clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
-                P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
-                if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
-
-                fdoc.vendedor=gl.vendnom;
-                fdoc.rutanombre=gl.tiendanom;
-				fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
-						descimp,propinaperc,gl.pePropinaFija,propina);
-				//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
-
-                gl.QRCodeStr="";
-
-                app.doPrint(1,0);
-
-                Handler mtimer = new Handler();
-                Runnable mrunner=new Runnable() {
-                    @Override
-                    public void run() {
-                        gl.iniciaVenta=false;
-                        finish();
-                    }
-                };
-                mtimer.postDelayed(mrunner,200);
-            }
-        } catch (Exception e){
-            mu.msgbox("impresionCuenta : "  + e.getMessage());
-        }
-    }
-
-	private void completaEstadoOrden() {
-
-		gl.numero_orden="";
-		gl.mesero_venta=0;
+	private void impresionCuenta() {
+		String psql;
 
 		try {
+			clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
+			psql="UPDATE P_RES_SESION SET ESTADO=3  WHERE ID='"+ gl.ordcorel+"'";
+
+			try {
+				db.execSQL(psql);
+			} catch (SQLException e) {
+				mu.msgbox("impresionCuenta : "  + e.getMessage());
+			}
+
+			if (gl.peActOrdenMesas) enviaPrecuenta(psql);
+
+			clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+			P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
+			clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
+			if (VendedoresObj.count>0) gl.vendnom=VendedoresObj.first().nombre;else gl.vendnom="";
+
+			clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
+			P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
+			if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
+
+			fdoc.LANPrint=gl.peImpFactLan;
+			if (gl.peImpFactLan) fdoc.LAN_IP=gl.peImpFactIP;else fdoc.LAN_IP="";
+
+			fdoc.vendedor=gl.vendnom;
+			fdoc.rutanombre=gl.tiendanom;
+			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
+					descimp,propinaperc,gl.pePropinaFija,propina);
+			//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
+
+			gl.QRCodeStr="";
+
+			app.doPrint(1,0);
+
+			Handler mtimer = new Handler();
+			Runnable mrunner=new Runnable() {
+				@Override
+				public void run() {
+					gl.iniciaVenta=false;
+					finish();
+				}
+			};
+			mtimer.postDelayed(mrunner,500);
+
+		} catch (Exception e){
+			mu.msgbox("impresionCuenta : "  + e.getMessage());
+		}
+	}
+
+	private void completaEstadoOrden() {
+		Long fs=du.getActDateTime();
+
+		gl.numero_orden="";gl.mesero_venta=0;
+
+		try {
 			if (!todasCuentasPagadas()) {
-				broadcastJournalCuenta(gl.cuenta_borrar);
-				return;
+				broadcastJournalCuenta(gl.cuenta_borrar);return;
 			}
 
 			broadcastJournalCuenta(gl.cuenta_borrar);
@@ -4220,16 +4275,15 @@ public class FacturaRes extends PBase {
 
 			if (!gl.peActOrdenMesas) return;
 
-			try {
-				broadcastJournalFlag(99);
-			} catch (Exception e) {
-				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-			}
+			sql="UPDATE P_RES_SESION SET ESTADO=-1,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+gl.ordcorel+"'";
+			//sql="UPDATE P_RES_SESION SET ESTADO=99,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+gl.ordcorel+"'";
+			enviaEstado(sql);
+			broadcastJournalFlag(99);
+
 
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
-
 	}
 
 	private void broadcastJournalFlag(int flag) {
@@ -4465,6 +4519,28 @@ public class FacturaRes extends PBase {
         }
     }
 
+	private void enviaPrecuenta(String csql) {
+		try {
+			Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+			intent.putExtra("URL",gl.wsurl);
+			intent.putExtra("command",csql);
+			startService(intent);
+		} catch (Exception e) {
+			toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void enviaEstado(String csql) {
+		try {
+			Intent intent = new Intent(FacturaRes.this, srvCommit.class);
+			intent.putExtra("URL",gl.wsurl);
+			intent.putExtra("command",csql);
+			startService(intent);
+		} catch (Exception e) {
+			toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	private void agregaRegistroBarril(int idprod,double factor,double cant) {
 
 		if (app.barrilProd(idprod).isEmpty()) return;
@@ -4606,7 +4682,6 @@ public class FacturaRes extends PBase {
 		return true;
 
 	}
-
 
 	//endregion
 

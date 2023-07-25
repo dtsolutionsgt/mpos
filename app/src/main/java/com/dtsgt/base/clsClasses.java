@@ -807,6 +807,16 @@ public class clsClasses {
         public int  activo;
     }
 
+    public class clsP_impresora_redireccion {
+        public int  codigo_redir;
+        public int  empresa;
+        public int  codigo_ruta;
+        public int  codigo_impresora;
+        public int  codigo_impresora_final;
+
+        public String nombre1,nombre2;
+    }
+
     public class clsP_linea   {
         public String codigo;
         public String marca;
@@ -1425,6 +1435,11 @@ public class clsClasses {
         public String feelcontingencia;
     }
 
+    public class clsT_ipbypass {
+        public String ipo;
+        public String ipr;
+    }
+
     public class clsT_movd {
         public int  coreldet;
         public String corel;
@@ -1631,6 +1646,12 @@ public class clsClasses {
         public double percep;
     }
 
+    public class clsT_venta_hora {
+        public int  hora;
+        public int  codigo;
+        public int  cant;
+    }
+
     public class clsT_venta_ing {
         public int  codigo_ing;
         public int  id;
@@ -1645,8 +1666,59 @@ public class clsClasses {
         public String nombre;
     }
 
+    public class clsTx_orden {
+        public int  id;
+        public String corel;
+        public String producto;
+        public String empresa;
+        public String um;
+        public double cant;
+        public String umstock;
+        public double factor;
+        public double precio;
+        public double imp;
+        public double des;
+        public double desmon;
+        public double total;
+        public double preciodoc;
+        public double peso;
+        public double val1;
+        public String val2;
+        public double val3;
+        public String val4;
+        public double percep;
+        public int  cuenta;
+        public int  estado;
+    }
 
-    //
+    public class clsTx_ordencuenta {
+        public String corel;
+        public int  id;
+        public int  cf;
+        public String nombre;
+        public String nit;
+        public String direccion;
+        public String correo;
+    }
+
+    public class clsTx_res_sesion {
+        public String id;
+        public int  codigo_mesa;
+        public int  vendedor;
+        public int  estado;
+        public int  cantp;
+        public int  cantc;
+        public long fechaini;
+        public long fechafin;
+        public long fechault;
+    }
+
+
+
+
+
+
+    // ------------------------------------------------------------
 
     public class clsFbStock {
         public int idalm;

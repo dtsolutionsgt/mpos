@@ -31,6 +31,9 @@ import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
+import com.dtsgt.classes.clsTx_ordenObj;
+import com.dtsgt.classes.clsTx_ordencuentaObj;
+import com.dtsgt.classes.clsTx_res_sesionObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
@@ -74,13 +77,13 @@ public class ResCaja extends PBase {
     //private Runnable rnCargaOrdenes;
     //private Runnable rnOrdenesNuevos;
 
-    private Runnable rnBroadcastCallback;
-    private Runnable rnDetailCallback;
+    private Runnable rnBroadcastCallback, rnDetailCallback, rnListaPagarCallback;
+    private Runnable rnOrdenSes,rnOrdenDetail,rnOrdenCuenta;
 
     private Precio prc;
 
-    private String corel,mesa,numpedido,brtcorel;
-    private int cuenta,counter,idmesero;
+    private String corel,mesa,numpedido,brtcorel,selordid;
+    private int cuenta,counter,idmesero,estadoCargaManual;
     private boolean idle=true,exitflag=false,loading=false;
 
     private TimerTask ptask;
@@ -104,6 +107,12 @@ public class ResCaja extends PBase {
 
         calibraPantalla();
 
+        if (gl.peCajaMesasManual) {
+            imgRec.setVisibility(View.VISIBLE);lblRec.setVisibility(View.VISIBLE);
+        } else {
+            imgRec.setVisibility(View.INVISIBLE);lblRec.setVisibility(View.INVISIBLE);
+        }
+
         ViewObj=new clsViewObj(this,Con,db);
         T_ordenObj=new clsT_ordenObj(this,Con,db);
         T_ordencomboObj=new clsT_ordencomboObj(this,Con,db);
@@ -124,8 +133,11 @@ public class ResCaja extends PBase {
         wso=new wsOpenDT(gl.wsurl);wsidle=true;
 
         rnBroadcastCallback = () -> broadcastCallback();
-
         rnDetailCallback = () -> detailCallback();
+        rnListaPagarCallback = () -> listaMesasPagar();
+        rnOrdenSes = () -> ordenSesCallBack();
+        rnOrdenDetail = () -> ordenDetailCallBack();
+        rnOrdenCuenta = () -> ordenCuentaCallBack();
 
         /*
         rnOrdenesNuevos = new Runnable() {
@@ -140,7 +152,8 @@ public class ResCaja extends PBase {
     //region Events
 
     public void doRec(View view) {
-        recibeOrdenes();
+        listaParaPagar();
+        //recibeOrdenes();
     }
 
     public void doOrden(View view) { }
@@ -490,12 +503,13 @@ public class ResCaja extends PBase {
 
                 if (app.prodTipo(venta.producto).equalsIgnoreCase("M")){
                     T_ventaObj.add(venta);
-                }else{
+                } else {
                     if (T_ventaObj.count==0) {
                         T_ventaObj.add(venta);
                     } else {
                         ventau.cant+= oitem.cant;
                         ventau.total = ventau.total+mu.round(oitem.total,2);
+                        ventau.imp = ventau.imp + mu.round(oitem.imp,2);
                         T_ventaObj.update(ventau);
                     }
                 }
@@ -507,6 +521,7 @@ public class ResCaja extends PBase {
 
                 T_ordencomboObj.fill("WHERE (COREL='"+corel+"') AND (IDCOMBO="+oitem.empresa+")");
                 for (int j = 0; j <T_ordencomboObj.count; j++) {
+
                     citem=T_ordencomboObj.items.get(j);
                     combo=clsCls.new clsT_combo();
                     combo.codigo_menu=citem.codigo_menu;
@@ -515,6 +530,7 @@ public class ResCaja extends PBase {
                     combo.unid=citem.unid;
                     combo.idseleccion=citem.idseleccion;
                     combo.orden=citem.orden;
+
                     T_comboObj.add(combo);
                 }
             }
@@ -530,9 +546,7 @@ public class ResCaja extends PBase {
 
     //region Detalle
 
-
     private void ordenDetail() {
-
         try {
             brtcorel=corel;
 
@@ -777,6 +791,281 @@ public class ResCaja extends PBase {
         }
     }
 
+    //endregion
+
+    //region Caja Manual
+
+    private void cargaOrden() {
+        try {
+            estadoCargaManual=0;
+
+            db.execSQL("DELETE FROM Tx_res_sesion");
+            db.execSQL("DELETE FROM Tx_orden");
+            db.execSQL("DELETE FROM Tx_ordencuenta");
+
+            ordenSessionws();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void finalizaCargaOrden(int estado,String errmsg) {
+        estadoCargaManual=estado;
+
+        try {
+            switch (estadoCargaManual) {
+                case -1:
+                    msgbox(errmsg);break;
+                case 0:
+                    toast("Ningúna mesa está pendiente de pago");break;
+                case 1:
+                    agregaNuevoOrden();break;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //selordid
+    private void agregaNuevoOrden() {
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM P_RES_SESION WHERE (ID='"+selordid+"')");
+            db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+selordid+"')");
+            db.execSQL("DELETE FROM T_ORDENCUENTA WHERE (COREL='"+selordid+"')");
+
+            sql="INSERT INTO P_RES_SESION " +
+                "SELECT ID, CODIGO_MESA, VENDEDOR, ESTADO, CANTP, CANTC, FECHAINI, FECHAFIN, FECHAULT " +
+                "FROM Tx_res_sesion";
+            db.execSQL(sql);
+
+            sql="INSERT INTO T_ORDEN " +
+                "SELECT ID, COREL, PRODUCTO, EMPRESA, UM, CANT, UMSTOCK, FACTOR, PRECIO, IMP, DES, DESMON, TOTAL, PRECIODOC, PESO, VAL1, VAL2, VAL3, VAL4, PERCEP, CUENTA, ESTADO " +
+                "FROM Tx_orden";
+            db.execSQL(sql);
+
+            sql="INSERT INTO T_ORDENCUENTA " +
+                "SELECT COREL, ID, CF, NOMBRE, NIT, DIRECCION, CORREO " +
+                "FROM Tx_ordencuenta";
+            db.execSQL(sql);
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            listItems();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ordenSessionws() {
+        try {
+            sql="SELECT ID, CODIGO_MESA, VENDEDOR, ESTADO, CANTP, CANTC, FECHAINI, FECHAFIN, FECHAULT " +
+                "FROM P_RES_SESION WHERE (ID='"+selordid+"')";
+            wso.execute(sql,rnOrdenSes);
+        } catch (Exception e) {
+            finalizaCargaOrden(-1,new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ordenSesCallBack() {
+        try {
+            clsTx_res_sesionObj Tx_res_sesionObj=new clsTx_res_sesionObj(this,Con,db);
+
+            if (wso.errflag) throw new Exception(wso.error);
+            if (wso.openDTCursor.getCount()==0) {
+                finalizaCargaOrden(0,"");return;
+            }
+
+            Cursor dt=wso.openDTCursor;
+            dt.moveToFirst();
+
+            clsClasses.clsTx_res_sesion item = clsCls.new clsTx_res_sesion();
+
+            item.id=dt.getString(0);
+            item.codigo_mesa=dt.getInt(1);
+            item.vendedor=dt.getInt(2);
+            item.estado=dt.getInt(3);
+            item.cantp=dt.getInt(4);
+            item.cantc=dt.getInt(5);
+            item.fechaini=dt.getLong(6);
+            item.fechafin=dt.getLong(7);
+            item.fechault=dt.getLong(8);
+
+            Tx_res_sesionObj.add(item);
+
+            ordenDetailws();
+
+        } catch (Exception e) {
+            finalizaCargaOrden(-1,new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ordenDetailws() {
+        try {
+            sql="SELECT ID, COREL, PRODUCTO, EMPRESA, UM, CANT, UMSTOCK, FACTOR, PRECIO, IMP, DES, DESMON, TOTAL, PRECIODOC, PESO, VAL1, VAL2, VAL3, VAL4, PERCEP, CUENTA, ESTADO " +
+                "FROM T_ORDEN WHERE (COREL='"+selordid+"')";
+            wso.execute(sql,rnOrdenDetail);
+        } catch (Exception e) {
+            finalizaCargaOrden(-1,new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ordenDetailCallBack() {
+        try {
+            clsTx_ordenObj Tx_ordenObj=new clsTx_ordenObj(this,Con,db);
+
+            if (wso.errflag)  throw new Exception(wso.error);
+            if (wso.openDTCursor.getCount()==0) {
+                finalizaCargaOrden(0,"");return;
+            }
+
+            Cursor dt=wso.openDTCursor;
+            dt.moveToFirst();
+
+            while (!dt.isAfterLast()) {
+
+                clsClasses.clsTx_orden item = clsCls.new clsTx_orden();
+
+                item.id=dt.getInt(0);
+                item.corel=dt.getString(1);
+                item.producto=dt.getString(2);
+                item.empresa=dt.getString(3);
+                item.um=dt.getString(4);
+                item.cant=dt.getDouble(5);
+                item.umstock=dt.getString(6);
+                item.factor=dt.getDouble(7);
+                item.precio=dt.getDouble(8);
+                item.imp=dt.getDouble(9);
+                item.des=dt.getDouble(10);
+                item.desmon=dt.getDouble(11);
+                item.total=dt.getDouble(12);
+                item.preciodoc=dt.getDouble(13);
+                item.peso=dt.getDouble(14);
+                item.val1=dt.getDouble(15);
+                item.val2=dt.getString(16);
+                item.val3=dt.getDouble(17);
+                item.val4=dt.getString(18);
+                item.percep=dt.getDouble(19);
+                item.cuenta=dt.getInt(20);
+                item.estado=dt.getInt(21);
+
+                Tx_ordenObj.add(item);
+
+                dt.moveToNext();
+            }
+
+            ordenCuentaws();
+        } catch (Exception e) {
+            finalizaCargaOrden(-1,new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ordenCuentaws() {
+        try {
+            sql="SELECT COREL, ID, EMPRESA, CF, NOMBRE, NIT, DIRECCION, CORREO " +
+                "FROM T_ORDENCUENTA WHERE (COREL='"+selordid+"')";
+            wso.execute(sql,rnOrdenCuenta);
+        } catch (Exception e) {
+            finalizaCargaOrden(-1,new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ordenCuentaCallBack() {
+        try {
+            clsTx_ordencuentaObj Tx_ordencuentaObj=new clsTx_ordencuentaObj(this,Con,db);
+
+            if (wso.errflag)  throw new Exception(wso.error);
+            if (wso.openDTCursor.getCount()==0) {
+                finalizaCargaOrden(0,"");return;
+            }
+
+            Cursor dt=wso.openDTCursor;
+            dt.moveToFirst();
+
+            while (!dt.isAfterLast()) {
+
+                clsClasses.clsTx_ordencuenta item = clsCls.new clsTx_ordencuenta();
+
+                item.corel=dt.getString(0);
+                item.id=dt.getInt(1);
+                item.cf=dt.getInt(2);
+                item.nombre=dt.getString(3);
+                item.nit=dt.getString(4);
+                item.direccion=dt.getString(5);
+                item.correo=dt.getString(6);
+
+                Tx_ordencuentaObj.add(item);
+
+                dt.moveToNext();
+            }
+
+            finalizaCargaOrden(1,"");
+        } catch (Exception e) {
+            finalizaCargaOrden(-1,new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void listaParaPagar() {
+        Long ff=du.getActDate();
+
+        imgRec.setVisibility(View.INVISIBLE);lblRec.setVisibility(View.INVISIBLE);
+
+        try {
+            sql="SELECT P_RES_SESION.ID, P_RES_MESA.NOMBRE FROM " +
+                "P_RES_SESION INNER JOIN  P_RES_MESA ON P_RES_SESION.CODIGO_MESA = P_RES_MESA.CODIGO_MESA " +
+                "WHERE  (P_RES_SESION.EMPRESA="+gl.emp+") AND ((P_RES_SESION.ESTADO=1) OR (P_RES_SESION.ESTADO=3)) " +
+                "AND (P_RES_MESA.CODIGO_SUCURSAL="+gl.tienda+") AND (P_RES_SESION.FECHAINI>"+ff+") " +
+                "ORDER BY P_RES_MESA.NOMBRE";
+            wso.execute(sql,rnListaPagarCallback);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void listaMesasPagar() {
+        try {
+
+            if (wso.errflag) {
+                imgRec.setVisibility(View.VISIBLE);lblRec.setVisibility(View.VISIBLE);
+                msgAskPagar(wso.error);return;
+            }
+
+            if (wso.openDTCursor.getCount()==0) {
+                imgRec.setVisibility(View.VISIBLE);lblRec.setVisibility(View.VISIBLE);
+                msgbox("Ninguna mesa tiene pendiente pago");return;
+            }
+
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResCaja.this,"Mesa a pagar");
+
+            wso.openDTCursor.moveToFirst();
+            while (!wso.openDTCursor.isAfterLast()) {
+                listdlg.add(wso.openDTCursor.getString(0),wso.openDTCursor.getString(1));
+
+                wso.openDTCursor.moveToNext();
+            }
+
+            listdlg.setOnItemClickListener((parent, view, position, id) -> {
+                try {
+                    selordid=listdlg.getCodigo(position);
+                    cargaOrden();
+                    listdlg.dismiss();
+                } catch (Exception e) {}
+            });
+
+            listdlg.setOnLeftClick(v -> listdlg.dismiss());
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
+        }
+
+        imgRec.setVisibility(View.VISIBLE);lblRec.setVisibility(View.VISIBLE);
+
+    }
 
     //endregion
 
@@ -1509,7 +1798,7 @@ public class ResCaja extends PBase {
         }
 
         if (actorden) {
-            recibeOrdenes();
+            //recibeOrdenes();
         }
 
         if (browse==1) {

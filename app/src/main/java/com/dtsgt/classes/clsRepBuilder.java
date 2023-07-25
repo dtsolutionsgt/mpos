@@ -251,8 +251,13 @@ public class clsRepBuilder {
 		
 		return ss;		
 	}
-	
-	
+
+	public void lanheader(String ip) {
+		items.add(" ");
+		items.add("IMPRESORA DE CAJA");
+		items.add(ip);
+	}
+
 	// Composed 
 
 	public void add(String tn){
@@ -378,7 +383,6 @@ public class clsRepBuilder {
 		ts=ltrim(s1,prwt)+rtrim(s2,prwt-5)+rtrim(stot,prwt+1)+rtrim(sval,prwt-5);
 		items.add(ts);
 	}
-
 
 	public void add4lrrTotPorc2(String s1,String s2,double s3,double v3) {
         String stot;

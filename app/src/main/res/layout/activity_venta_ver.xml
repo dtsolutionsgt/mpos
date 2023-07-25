@@ -223,6 +223,31 @@
                 android:onClick="doFocus">
 
                 <RelativeLayout
+                    android:id="@+id/relSmartPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/frame_rect"
+                    android:visibility="invisible">
+
+                    <ListView
+                        android:id="@+id/listMas"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@id/textView314" />
+
+                    <TextView
+                        android:id="@+id/textView314"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/frame_rect_blue"
+                        android:gravity="center_horizontal"
+                        android:text="Los más vendidos"
+                        android:textColor="#FFFFFF"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/rellaytot"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

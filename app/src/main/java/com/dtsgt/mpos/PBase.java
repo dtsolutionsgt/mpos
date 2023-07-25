@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -9,11 +8,12 @@ import android.os.Bundle;
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatos;
@@ -26,10 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-public class PBase extends Activity {
+public class PBase extends FragmentActivity {
 
-	protected SQLiteDatabase db;
-	protected BaseDatos Con;
+	public SQLiteDatabase db;
+	public BaseDatos Con;
 	protected BaseDatos.Insert ins;
 	protected BaseDatos.Update upd;
 	protected String sql;
@@ -300,6 +300,8 @@ public class PBase extends Activity {
   			} else {
 			}
 	    } catch (Exception e) {
+			String ss=e.getMessage();
+			ss=ss+"";
 	    	//mu.msgbox(e.getMessage());
 	    }
 	}			

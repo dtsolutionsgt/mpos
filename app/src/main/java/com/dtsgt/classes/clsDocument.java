@@ -18,8 +18,9 @@ import java.util.ArrayList;
 public class clsDocument {
 
 	public String nombre,numero,serie,ruta,rutanombre, nombre_cliente, nit_emisor, nit_cliente,tipo,ref,vendedor,codigo_ruta;
-    public String nombre_reporte="",fversion,idpais,sal_nit;
-	public String resol,resfecha,resvence,resrango,resrangot,fsfecha,modofact,fecharango,textofin,textopie,cursymbol;
+    public String nombre_reporte="",fversion,idpais,sal_nit,clitel;
+	public String resol,resfecha,resvence,resrango,resrangot,fsfecha,fsfechah,modofact,fecharango,
+                  textofin,textopie,cursymbol;
 	public String felcert,felnit,feluuid,feldcert,felIVA,felISR,felISR2,fraseIVA,fraseISR;
     public String felcont,contacc,nitsuc,sfticket;
 	public String tf1="",tf2="",tf3="",tf4="",tf5="",add1="",add2="",deviceid,mesa,cuenta,nommesero;
@@ -27,10 +28,10 @@ public class clsDocument {
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
-	public boolean parallevar,factsinpropina,modorest;
+	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint;
 	public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc;
-	public String TipoCredito, NoAutorizacion;
+	public String TipoCredito, NoAutorizacion,LAN_IP;
 	public double ptotal,pdesc,pprop,propvalor,propperc;
 
     public boolean es_pickup, es_delivery;
@@ -305,6 +306,7 @@ public class clsDocument {
         String[] s2;
 		int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         if (docfactura) {
@@ -427,8 +429,8 @@ public class clsDocument {
 
         if (docfactura) rep.add("Version: "+fversion);
         rep.add("");
-        if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -474,6 +476,7 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) {
@@ -550,7 +553,7 @@ public class clsDocument {
         if (docfactura) {
 
             if (!emptystr(nit_cliente)) rep.add("RTN: "+nit_cliente);
-            rep.add("Fecha: "+fsfecha);
+            rep.add("Fecha: "+fsfechah);
 
             /*
             if (!emptystr(clidir)) {
@@ -589,8 +592,8 @@ public class clsDocument {
         }
 
         rep.add("");
-        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -631,6 +634,7 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) 		{
@@ -741,8 +745,8 @@ public class clsDocument {
         }
 
         rep.add("");
-        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -783,6 +787,7 @@ public class clsDocument {
         String[] s2;
         int nidx;
 
+        if (LANPrint) lanheader();
         rep.empty();rep.empty();
 
         for (int i = 0; i <lines.size(); i++) 		{
@@ -849,8 +854,8 @@ public class clsDocument {
         rep.add("Giro: "+nomtipo);
         rep.add("");
 
-        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -1627,7 +1632,24 @@ public class clsDocument {
 		return s;
 	}
 
-	public String sfecha_dos(long f) {
+    public String sfechahon(long f) {
+
+        long vy,vm,vd;
+        String s;
+
+        vy=(long) f/100000000;f=f % 100000000;
+        vm=(long) f/1000000;f=f % 1000000;
+        vd=(long) f/10000;f=f % 10000;
+
+        s="";
+        if (vd>9) { s=s+String.valueOf(vd)+"/";} else {s=s+"0"+String.valueOf(vd)+"/";}
+        if (vm>9) { s=s+String.valueOf(vm)+"/20";} else {s=s+"0"+String.valueOf(vm)+"/20";}
+        if (vy>9) { s=s+String.valueOf(vy);} else {s=s+"0"+String.valueOf(vy);}
+
+        return s;
+    }
+
+    public String sfecha_dos(long f) {
 
 		long vy,vm,vd;
 		String s;
@@ -1637,9 +1659,9 @@ public class clsDocument {
 		vd=(long) f/10000;f=f % 10000;
 
 		s="";
-		if (vd>9) { s=s+String.valueOf(vd)+"-";} else {s=s+"0"+String.valueOf(vd)+"-";}
-		if (vm>9) { s=s+String.valueOf(vm)+"-";} else {s=s+"0"+String.valueOf(vm)+"-";}
-		if (vy>9) { s=s+String.valueOf(vy);} else {s=s+"0"+String.valueOf(vy);}
+		if (vd>9)  s=s+String.valueOf(vd)+"/"; else s=s+"0"+String.valueOf(vd)+"/";
+		if (vm>9)  s=s+String.valueOf(vm)+"/"; else s=s+"0"+String.valueOf(vm)+"/";
+		if (vy>9)  s=s+String.valueOf(vy); else s=s+"0"+String.valueOf(vy);
 
 		return s;
 	}
@@ -1699,6 +1721,12 @@ public class clsDocument {
 			//msgbox("Error " + e.getMessage());
 		}
 	}
+
+    public void lanheader() {
+        rep.add(" ");
+        rep.add("IMPRESORA DE CAJA");
+        rep.add(LAN_IP);
+    }
 
 	private void opendb() {
 		

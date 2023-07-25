@@ -41,6 +41,7 @@ import com.dtsgt.classes.clsP_fraseObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_impresora_marcaObj;
 import com.dtsgt.classes.clsP_impresora_modeloObj;
+import com.dtsgt.classes.clsP_impresora_redireccionObj;
 import com.dtsgt.classes.clsP_impuestoObj;
 import com.dtsgt.classes.clsP_lineaObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
@@ -76,6 +77,7 @@ import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsP_usopcionObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsP_vendedor_sucursalObj;
+import com.dtsgt.classes.clsT_ipbypassObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
@@ -107,77 +109,95 @@ public class WSRec extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wsrec);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_wsrec);
 
-        super.InitBase();
+            super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);
-        lbl1.setText("");
-        lblTitulo = (TextView) findViewById(R.id.lblTit6);
+            lbl1 = (TextView) findViewById(R.id.textView7);
+            lbl1.setText("");
+            lblTitulo = (TextView) findViewById(R.id.lblTit6);
 
-        txtClave = (EditText) findViewById(R.id.txtClave);
-        txtEmpresa = (EditText) findViewById(R.id.txtEmpresa);
-        txtURLWS = (EditText) findViewById(R.id.txtURLWS);
+            txtClave = (EditText) findViewById(R.id.txtClave);
+            txtEmpresa = (EditText) findViewById(R.id.txtEmpresa);
+            txtURLWS = (EditText) findViewById(R.id.txtURLWS);
 
-        cmdRecibir = (TextView) findViewById(R.id.textView45);
+            cmdRecibir = (TextView) findViewById(R.id.textView45);
 
-        lblIdDispositivo = (TextView) findViewById(R.id.lblIdDispositivo);
+            lblIdDispositivo = (TextView) findViewById(R.id.lblIdDispositivo);
 
-        pbar = (ProgressBar) findViewById(R.id.progressBar);
-        pbar.setVisibility(View.INVISIBLE);
+            pbar = (ProgressBar) findViewById(R.id.progressBar);
+            pbar.setVisibility(View.INVISIBLE);
 
-        app.getURL();
-        app.parametrosExtra();
-        setHandlers();
+            app.getURL();
+            app.parametrosExtra();
+            setHandlers();
 
-        ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
-        xobj = new XMLObject(ws);
+            try {
+                if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                    gl.Sincronizar_Clientes=false;
+                } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                    gl.Sincronizar_Clientes=true;
+                } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                    gl.Sincronizar_Clientes=true;
+                }
+            } catch (Exception e) {
+                gl.Sincronizar_Clientes=false;
+            }
 
-        long fs = app.getDateRecep();
-        if (fs > 0) fs = du.addDays(fs, -1);
 
-        pbd_vacia = getIntent().getBooleanExtra("bd_vacia", false);
+            ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
+            xobj = new XMLObject(ws);
 
-        if (pbd_vacia) fs=2001010000;
-        if (fs==0) fs=2001010000;
+            long fs = app.getDateRecep();
+            if (fs > 0) fs = du.addDays(fs, -1);
 
-        fechasync = "" + fs;
+            pbd_vacia = getIntent().getBooleanExtra("bd_vacia", false);
 
-        lblIdDispositivo.setText("ID - " + gl.deviceId);
+            if (pbd_vacia) fs=2001010000;
+            if (fs==0) fs=2001010000;
 
-        if (pbd_vacia) {
+            fechasync = "" + fs;
 
-            lblTitulo.setText("B.D. Vacía");
+            lblIdDispositivo.setText("ID - " + gl.deviceId);
 
-            txtURLWS.setEnabled(true);
-            txtClave.setEnabled(true);
-            txtEmpresa.setEnabled(true);
+            if (pbd_vacia) {
 
-            txtURLWS.setText(gl.wsurl);if (gl.wsurl.isEmpty()) txtURLWS.setText("http://192.168.0.12/mposws/mposws.asmx");
-            txtClave.setText("");
-            txtEmpresa.setText("");
+                lblTitulo.setText("B.D. Vacía");
 
-            showkeyb();
-            txtEmpresa.requestFocus();
+                txtURLWS.setEnabled(true);
+                txtClave.setEnabled(true);
+                txtEmpresa.setEnabled(true);
 
-        } else {
+                txtURLWS.setText(gl.wsurl);if (gl.wsurl.isEmpty()) txtURLWS.setText("http://192.168.0.12/mposws/mposws.asmx");
+                txtClave.setText("");
+                txtEmpresa.setText("");
 
-            txtURLWS.setEnabled(false);
-            txtClave.setEnabled(false);
-            txtEmpresa.setEnabled(false);
+                showkeyb();
+                txtEmpresa.requestFocus();
 
-            txtURLWS.setText(gl.wsurl);
-            txtClave.setText(gl.clave);
-            txtEmpresa.setText(String.valueOf(gl.emp));
-        }
+            } else {
 
-        if (gl.recibir_automatico){
-            cmdRecibir.setVisibility(View.INVISIBLE);
-            browse=2;
-        }else{
-            cmdRecibir.setVisibility(View.VISIBLE);
+                txtURLWS.setEnabled(false);
+                txtClave.setEnabled(false);
+                txtEmpresa.setEnabled(false);
+
+                txtURLWS.setText(gl.wsurl);
+                txtClave.setText(gl.clave);
+                txtEmpresa.setText(String.valueOf(gl.emp));
+            }
+
+            if (gl.recibir_automatico){
+                cmdRecibir.setVisibility(View.INVISIBLE);
+                browse=2;
+            }else{
+                cmdRecibir.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            String ss=e.getMessage();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         //if (gl.emp==2) gl.peRest=false;
@@ -403,6 +423,9 @@ public class WSRec extends PBase {
                         break;
                     case 61:
                         callMethod("GetP_TIPO_NEGOCIO", "EMPRESA", gl.emp);
+                        break;
+                    case 62:
+                        callMethod("GetP_IMPRESORA_REDIRECCION", "EMPRESA", gl.emp);
                         break;
                 }
             } catch (Exception e) {
@@ -767,18 +790,28 @@ public class WSRec extends PBase {
                         processComplete();break;
                     }
                     execws(60);
+                    break;
                 case 60:
                     processVendedorSucursal();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
                     execws(61);
+                    break;
                 case 61:
                     processTipoNegocio();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
+                    execws(62);
+                    break;
+                case 62:
+                    processImpresoraRedir();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
                     processComplete();
+                    break;
             }
         } catch (Exception e) {
             msgbox2(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -941,6 +974,8 @@ public class WSRec extends PBase {
                 plabel = "VENDEDOR SUCURSAL";break;
             case 61:
                 plabel = "TIPO NEGOCIO";break;
+            case 62:
+                plabel = "IMPRESORA REDIRECCION";break;
         }
 
         updateLabel();
@@ -1134,7 +1169,11 @@ public class WSRec extends PBase {
                 msgboxexit("Configuración de tienda o caja incorrecta");
                 //finish();
             }
+
             validaCombos();
+            printBypass();
+
+            if (app.citems.size()>0) mostrarLista();
 
             return true;
 
@@ -1168,12 +1207,57 @@ public class WSRec extends PBase {
                 }
             }
 
-            if (app.citems.size()>0) mostrarLista();
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void printBypass() {
+        clsClasses.clsT_ipbypass item;
+        String ipo="",ipr="";
+        int cimpr;
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM T_ipbypass");
+
+            clsP_impresora_redireccionObj P_impresora_redireccionObj=new clsP_impresora_redireccionObj(this,Con,db);
+            P_impresora_redireccionObj.fill("WHERE (CODIGO_RUTA="+gl.codigo_ruta+")");
+
+            if (P_impresora_redireccionObj.count>0) {
+                clsT_ipbypassObj T_ipbypassObj=new clsT_ipbypassObj(this,Con,db);
+                clsP_impresoraObj P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+
+                for (int i = 0; i <P_impresora_redireccionObj.count; i++) {
+
+                    try {
+                        cimpr=P_impresora_redireccionObj.items.get(i).codigo_impresora;
+                        P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA="+cimpr+")");
+                        ipo=P_impresoraObj.first().ip;
+
+                        cimpr=P_impresora_redireccionObj.items.get(i).codigo_impresora_final;
+                        P_impresoraObj.fill("WHERE (CODIGO_IMPRESORA="+cimpr+")");
+                        ipr=P_impresoraObj.first().ip;
+
+                        item = clsCls.new clsT_ipbypass();
+                        item.ipo=ipo;
+                        item.ipr=ipr;
+                        T_ipbypassObj.add(item);
+
+                    } catch (Exception e) {
+                        //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private void mostrarLista() {
@@ -1208,6 +1292,10 @@ public class WSRec extends PBase {
         }
 
     }
+
+    //endregion
+
+    //region Tablas
 
     private void processEmpresas() {
 
@@ -3725,6 +3813,43 @@ public class WSRec extends PBase {
                 var.user_agr=0;
                 var.fec_mod=0;
                 var.user_mod=0;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+    private void processImpresoraRedir() {
+        try {
+            clsP_impresora_redireccionObj handler = new clsP_impresora_redireccionObj(this, Con, db);
+            clsBeP_IMPRESORA_REDIRECCIONList items = new clsBeP_IMPRESORA_REDIRECCIONList();
+            clsBeP_IMPRESORA_REDIRECCION item = new clsBeP_IMPRESORA_REDIRECCION();
+            clsClasses.clsP_impresora_redireccion var;
+
+            script.add("DELETE FROM P_IMPRESORA_REDIRECCION");
+
+            items = xobj.getresult(clsBeP_IMPRESORA_REDIRECCIONList.class, "GetP_IMPRESORA_REDIRECCION");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_impresora_redireccion();
+
+                var.codigo_redir=item.CODIGO_REDIR;
+                var.empresa=item.EMPRESA;
+                var.codigo_ruta=item.CODIGO_RUTA;
+                var.codigo_impresora=item.CODIGO_IMPRESORA;
+                var.codigo_impresora_final=item.CODIGO_IMPRESORA_FINAL;
 
                 script.add(handler.addItemSql(var));
             }

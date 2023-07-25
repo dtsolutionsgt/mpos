@@ -16,7 +16,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -71,8 +70,6 @@ import com.dtsgt.ladapt.ListAdaptGridProdList;
 import com.dtsgt.ladapt.ListAdaptMenuOrden;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
 import com.dtsgt.ladapt.ListAdaptOrden;
-import com.dtsgt.webservice.srvCommit;
-import com.dtsgt.webservice.srvOrdenEnvio;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
@@ -134,9 +131,10 @@ public class Orden extends PBase {
     private Runnable rnDetailCallback;
     private Runnable rnBarTrans;
     private Runnable rnClose;
+    private Runnable rnOrdenInsert,rnOrdenQuery;
 
-    private Handler ctimer;
-    private Runnable crunner;
+    //private Handler ctimer;
+    //private Runnable crunner;
 
     private AppMethods app;
 
@@ -153,20 +151,20 @@ public class Orden extends PBase {
     private clsT_orden_modObj T_orden_modObj;
     private clsT_orden_ingObj T_orden_ingObj;
     private clsD_barril_transObj D_barril_transObj;
-
+    private clsP_orden_numeroObj P_orden_numeroObj;
 
     private clsRepBuilder rep;
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval;
-    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
+    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant,pimp;
     private double px,py,cpx,cpy,cdist,savetot,saveprec;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname,cbui;
     private int nivel,dweek,clidia,counter,prodlinea,cuenta, IdcuentamovDestino,lineaingred;
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
     private boolean enviarorden,actorden,modo_emerg,exit_mode,close_flag;
-    private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false;
+    private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,ordencentral;
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest;
@@ -204,6 +202,7 @@ public class Orden extends PBase {
         T_orden_modObj=new clsT_orden_modObj(this,Con,db);
         T_orden_ingObj=new clsT_orden_ingObj(this,Con,db);
         D_barril_transObj=new clsD_barril_transObj(this,Con,db);
+        P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
 
         gl.scancliente="";
         emp=gl.emp;
@@ -271,10 +270,11 @@ public class Orden extends PBase {
         wscom =new wsCommit(gl.wsurl);
         wslock =new wsCommit(gl.wsurl);
 
-        agregaBloqueo();
+        //agregaBloqueo();
 
         rnClose = () -> closeAction();
 
+        /*
         rnDetailCallback = () -> {
             switch (wso.level) {
                 case 1:
@@ -285,6 +285,8 @@ public class Orden extends PBase {
                     broadcastCompleteCallback();break;
             }
         };
+        */
+
         wso=new wsOpenDT(gl.wsurl);
 
         rnBarTrans = new Runnable() {
@@ -294,6 +296,15 @@ public class Orden extends PBase {
         };
         wsbtr =new wsCommit(gl.wsurl);
 
+        rnOrdenInsert= () -> {
+            ordenInsert();
+        };
+
+        rnOrdenQuery= () -> {
+            ordenQuery();
+        };
+
+        /*
         Handler mtimer = new Handler();
         Runnable mrunner=new Runnable() {
             @Override
@@ -307,36 +318,42 @@ public class Orden extends PBase {
         };
         mtimer.postDelayed(mrunner,500);
 
+         */
+
         //fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
 
+        /*
         ctimer = new Handler();
         crunner=new Runnable() {
             @Override
             public void run() {
-                gl.cerrarmesero=true;
-                gl.mesero_lista=true;
-
-                cerrarOrden();
+                //gl.cerrarmesero=true;
+                //gl.mesero_lista=true;
+                //cerrarOrden();
             }
         };
+        */
     }
 
     //region Events
 
+    /*
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        try{
+        //super.onActivityResult(requestCode, resultCode, intent);
+        try {
             //if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 String contents = intent.getStringExtra("SCAN_RESULT");
-                barcode=contents;
+                barcode = contents;
                 toast(barcode);
             }
             //}
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        } catch (Exception e) {
+            addlog(new Object() {
+            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
-
     }
+    */
 
     public void showPromo(View view){
         try{
@@ -871,6 +888,8 @@ public class Orden extends PBase {
             precsin = prc.precsin;
             imp = prc.imp;
             impval = prc.impval;
+            impval=mu.round2dec(impval);
+
             tot = prc.tot;
             descmon = mdesc;
             prodtot = tot;
@@ -959,21 +978,10 @@ public class Orden extends PBase {
         double sdesc=desc;
 
         try {
-
-            if (prodPorPeso(prodid)) {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, gl.dpeso,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,gl.dpeso)) {
-                    if (prc.precioespecial>0) prec=prc.precioespecial;
-                }
-            } else {
-                prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
-                if (prc.existePrecioEspecial(prodid,cant,gl.codigo_cliente,gl.clitipo,um,gl.umpeso,0)) {
-                    if (prc.precioespecial>0) prec=prc.precioespecial;
-                }
-            }
-
+            prec = prc.precio(prodid, cant, nivel, um, gl.umpeso, 0,um,gl.prodcod);
             prec=mu.round(prec,2);
 
+            pimp=prc.imp;
         } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
@@ -1052,7 +1060,16 @@ public class Orden extends PBase {
             ins.add("TOTAL",prodtot);
             if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
             ins.add("PESO",peso);
-            ins.add("VAL1",0);
+
+            //ins.add("VAL1",0);
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                ins.add("VAL1", pimp);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                ins.add("VAL1", pimp);
+            } else {
+                ins.add("VAL1",0);
+            }
+
             ins.add("VAL2","0");
             ins.add("VAL3",0);
             ins.add("VAL4","0");
@@ -1282,6 +1299,7 @@ public class Orden extends PBase {
                     } else {
                         ventau.cant+= oitem.cant;
                         ventau.total = ventau.total+mu.round(oitem.total,2);
+                        ventau.imp = ventau.imp + mu.round(oitem.imp,2);
                         T_ventaObj.update(ventau);
                     }
                 }
@@ -1803,9 +1821,11 @@ public class Orden extends PBase {
             gl.ventalock=true;
             gl.cerrarmesero=true;
             gl.mesero_lista=false;
-
             gl.mesero_precuenta=true;
+
             finalizarOrden();
+            exitBtn(false);
+
             //finish();
 
         } catch (Exception e) {
@@ -1822,7 +1842,7 @@ public class Orden extends PBase {
 
             try{
                 gl.delivery = false;
-                gl.EsNivelPrecioDelivery = (gl.delivery || gl.pickup);
+                gl.EsNivelPrecioDelivery = (gl.delivery || gl.domicilio);
             } catch (Exception e){
                 mu.msgbox("finishOrder: "+e.getMessage());
             }
@@ -2198,7 +2218,9 @@ public class Orden extends PBase {
                     if (pendienteImpresion()) {
                         msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
-                        if (limpiaVenta()) showListaCuentas();
+                        if (limpiaVenta()) {
+                            showListaCuentas();
+                        }
                     }
 
                     break;
@@ -2242,7 +2264,7 @@ public class Orden extends PBase {
             gl.mesero_lista=true;
 
             try {
-                ctimer.removeCallbacks(crunner);
+                //ctimer.removeCallbacks(crunner);
             } catch (Exception e) {}
 
 
@@ -2256,9 +2278,138 @@ public class Orden extends PBase {
 
     //endregion
 
+    //region Numero orden
+
+    private void numeroOrden() {
+        ordencentral=true;
+        if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
+            if (gl.peNumOrdCentral) {
+                numeroOrdenCentral();
+            } else {
+                numeroOrdenLocal();
+            }
+        } else {
+            numeroOrdenLocal();
+        }
+    }
+
+    private void numeroOrdenLocal() {
+
+        if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
+            try {
+                ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+                if (ordennum % gl.peMaxOrden==0) ordennum++;
+
+                clsClasses.clsP_orden_numero orditem = clsCls.new clsP_orden_numero();
+                orditem.id=ordennum;
+                P_orden_numeroObj.add(orditem);
+
+                try {
+                    int ilimit=ordennum-10;
+                    db.execSQL("DELETE FROM P_orden_numero WHERE ID<"+ilimit);
+                } catch (Exception e) { }
+
+                ordennum=ordennum % gl.peMaxOrden;if (ordennum==0) ordennum=1;
+
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            lblAlm.setText("#"+ordennum);toast("#"+ordennum);
+            procesaComanda();
+        } else {
+            procesaComanda();
+        }
+    }
+
+    private void numeroOrdenContingencia() {
+        ordencentral=false;
+
+        if (!db.isOpen()) onResume();
+
+        if (gl.pelOrdenComanda | gl.peNumOrdCommandaVenta) {
+            try {
+                ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+                if (ordennum % gl.peMaxOrden==0) ordennum++;
+
+                clsClasses.clsP_orden_numero orditem = clsCls.new clsP_orden_numero();
+                orditem.id=ordennum;
+                P_orden_numeroObj.add(orditem);
+
+                try {
+                    int ilimit=ordennum-10;
+                    db.execSQL("DELETE FROM P_orden_numero WHERE ID<"+ilimit);
+                } catch (Exception e) { }
+
+                ordennum=ordennum % gl.peMaxOrden;if (ordennum==0) ordennum=1;
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+            lblAlm.setText("#"+ordennum);toastlong("#"+ordennum);
+            procesaComanda();
+        }
+    }
+
+    private void numeroOrdenCentral() {
+        gl.ref1="";lblAlm.setText("# ...");
+
+        try {
+            sql="INSERT INTO T_ORDEN_CODIGO (ID_ORDEN,CODIGO_SUCURSAL,CODIGO_RUTA) " +
+                    "SELECT ISNULL(MAX(ID_ORDEN)+1,1),"+gl.tienda+","+gl.codigo_ruta+" " +
+                    "FROM T_ORDEN_CODIGO WHERE CODIGO_SUCURSAL="+gl.tienda;
+            wscom.execute(sql,rnOrdenInsert);
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            numeroOrdenContingencia();
+        }
+    }
+
+    private void ordenInsert() {
+        if (!wscom.errflag) {
+            try {
+                sql="SELECT MAX(ID_ORDEN) FROM T_ORDEN_CODIGO WHERE CODIGO_SUCURSAL="+gl.tienda;
+                wso.execute(sql,rnOrdenQuery);
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                numeroOrdenContingencia();
+            }
+        } else {
+            toast(wscom.error);
+            numeroOrdenContingencia();
+        }
+    }
+
+    private void ordenQuery() {
+        if (!wso.errflag) {
+            try {
+                wso.openDTCursor.moveToFirst();
+                ordennum=wso.openDTCursor.getInt(0);
+                ordennum=ordennum % gl.peMaxOrden;if (ordennum==0) ordennum=1;
+
+                lblAlm.setText("#"+ordennum);toast("#"+ordennum);
+                procesaComanda();
+            } catch (Exception e) {
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                numeroOrdenContingencia();
+            }
+        } else {
+            toast(wso.error);
+            numeroOrdenContingencia();
+        }
+    }
+
+    //endregion
+
     //region Comanda
 
     private void imprimeComanda() {
+        numeroOrden();
+        //procesaComanda();
+    }
+
+    private void procesaComanda() {
+        if (!db.isOpen()) onResume();
 
         if (gl.pelComandaBT) {
             imprimeComandaBT();
@@ -2268,10 +2419,14 @@ public class Orden extends PBase {
             if (!generaArchivos()) return;
             //generaRegistrosBarril();
             ejecutaImpresion();
+
+            aplicaImpresion();
+            if (actorden) envioOrden();else cerrarOrden();
+
             exitBtn(false);
         }
 
-     }
+    }
 
     private boolean divideComanda() {
         clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
@@ -2284,11 +2439,12 @@ public class Orden extends PBase {
 
         try {
 
-            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
-            ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
-            clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
-            ord.id=ordennum;
-            P_orden_numeroObj.add(ord);
+            //clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+            //ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+
+            //clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
+            //ord.id=ordennum;
+            //P_orden_numeroObj.add(ord);
 
             db.execSQL("DELETE FROM T_comanda");
 
@@ -2383,7 +2539,6 @@ public class Orden extends PBase {
                                         linea++;
                                     }
                                 }
-
                             }
                         }
                     }
@@ -2393,235 +2548,6 @@ public class Orden extends PBase {
             return true;
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage()+"\nPaso: "+paso);return false;
-        }
-    }
-
-    private boolean divideComandaOrig() {
-        clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
-        clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
-        clsClasses.clsT_orden venta;
-        clsClasses.clsT_ordencombo combo;
-
-        String prname,cname,nn;
-        int prodid,prid=0,idcomb,pruid,linea=1,paso=0;
-
-        try {
-
-            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
-            ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
-            clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
-            ord.id=ordennum;
-            P_orden_numeroObj.add(ord);
-
-            db.execSQL("DELETE FROM T_comanda");
-
-            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
-            if (T_ordenObj.count>0) {
-                for (int i = 0; i < T_ordenObj.count; i++) {
-                    paso=1;
-                    venta = T_ordenObj.items.get(i);
-
-                    pruid = venta.id;
-                    prodid = app.codigoProducto(venta.producto);
-                    prname = getProd(prodid);
-                    s = mu.frmdecno(venta.cant) + "  " + prname;
-
-                    nn = "";
-                    T_orden_notaObj.fill("WHERE (id=" + venta.id + ") AND (corel='" + idorden + "')");
-                    if (T_orden_notaObj.count > 0) nn = T_orden_notaObj.first().nota + "";
-
-                    paso=2;
-                    if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
-
-                        P_linea_impresoraObj.fill("WHERE CODIGO_LINEA=" + prodlinea);
-
-                        if (P_linea_impresoraObj.count > 0) {
-                            paso=3;
-                            for (int k = 0; k < P_linea_impresoraObj.count; k++) {
-
-                                if (!esIngrediente(prodid)) {
-
-                                    prid = P_linea_impresoraObj.items.get(k).codigo_impresora;
-                                    agregaComanda(linea, prid, s);
-                                    linea++;
-                                    if (!nn.isEmpty()) {
-                                        agregaComanda(linea, prid, nn);
-                                        linea++;
-                                    }
-
-                                    T_orden_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
-                                    paso=4;
-                                    if (T_orden_modObj.count > 0) {
-                                        for (int ii = 0; ii < T_orden_modObj.count; ii++) {
-                                            nn = "   " + T_orden_modObj.items.get(ii).nombre;
-                                            agregaComanda(linea, prid, nn);
-                                            linea++;
-                                        }
-                                    }
-
-                                    T_orden_ingObj.fill("WHERE (Corel='" + gl.ordcorel + "') AND (Id=" + pruid + ") ORDER BY Nombre");
-                                    paso=5;
-                                    if (T_orden_ingObj.count > 0) {
-                                        for (int ii = 0; ii < T_orden_ingObj.count; ii++) {
-                                            nn = "   " + T_orden_ingObj.items.get(ii).nombre;
-                                            agregaComanda(linea, prid, nn);
-                                            linea++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        paso=10;
-                        T_comboObj.fill("WHERE (IdCombo=" + venta.val4 + ") AND (IdSeleccion<>0)");
-                        idcomb = mu.CInt(venta.val4);
-                        idcomb = idcomb % 100;
-                        //cname=s+" [#"+idcomb+"]";
-                        cname = s;
-
-                        for (int j = 0; j < T_comboObj.count; j++) {
-                            prodid = T_comboObj.items.get(j).idseleccion;
-                            //s = " - " + getProd(prodid);
-                            s = " " + getProd(prodid);
-                            P_linea_impresoraObj.fill("WHERE CODIGO_LINEA=" + prodlinea);
-
-                            for (int k = 0; k < P_linea_impresoraObj.count; k++) {
-                                prid = P_linea_impresoraObj.items.get(k).codigo_impresora;
-                                if (j == 0) {
-                                    agregaComanda(linea, prid, cname);
-                                    linea++;
-                                }
-                                agregaComanda(linea, prid, s);
-                                linea++;
-                                if (!nn.isEmpty()) {
-                                    agregaComanda(linea, prid, nn);
-                                    linea++;
-                                }
-
-                                if (k == P_linea_impresoraObj.count - 1) {
-                                    T_orden_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
-                                    for (int ii = 0; ii < T_orden_modObj.count; ii++) {
-                                        nn = "  " + T_orden_modObj.items.get(ii).nombre;
-                                        agregaComanda(linea, prid, nn);
-                                        linea++;
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage()+"\nPaso: "+paso);return false;
-        }
-    }
-
-    private boolean divideComandaOrig2() {
-        clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
-        clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
-        clsClasses.clsT_orden venta;
-        clsClasses.clsT_ordencombo combo;
-
-        String prname,cname,nn;
-        int prodid,prid=0,idcomb,pruid,linea=1;
-
-        try {
-
-            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
-            ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
-            clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
-            ord.id=ordennum;
-            P_orden_numeroObj.add(ord);
-
-            db.execSQL("DELETE FROM T_comanda");
-
-            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
-
-            for (int i = 0; i <T_ordenObj.count; i++) {
-                venta=T_ordenObj.items.get(i);
-
-                pruid=venta.id;
-                prodid = app.codigoProducto(venta.producto);
-                prname=getProd(prodid);
-                s = mu.frmdecno(venta.cant) + "  " + prname;
-
-                nn="";
-                T_orden_notaObj.fill("WHERE (id="+venta.id+") AND (corel='"+idorden+"')");
-                if (T_orden_notaObj.count>0) nn=T_orden_notaObj.first().nota+"";
-
-                if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
-
-                    P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
-                    for (int k = 0; k <P_linea_impresoraObj.count; k++) {
-
-                        if (!esIngrediente(prodid)) {
-
-                            prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
-                            agregaComanda(linea,prid,s);linea++;
-                            if (!nn.isEmpty()) {
-                                agregaComanda(linea,prid,nn);linea++;
-                            }
-
-                            T_orden_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
-                            for (int ii = 0; ii < T_orden_modObj.count; ii++) {
-                                nn = "   " + T_orden_modObj.items.get(ii).nombre;
-                                agregaComanda(linea, prid, nn);
-                                linea++;
-                            }
-
-                            T_orden_ingObj.fill("WHERE (Corel='"+gl.ordcorel+"') AND (Id="+pruid+") ORDER BY Nombre");
-                            for (int ii = 0;ii <T_orden_ingObj.count; ii++) {
-                                nn = "   " + T_orden_ingObj.items.get(ii).nombre;
-                                agregaComanda(linea, prid, nn);
-                                linea++;
-                            }
-
-                        }
-                    }
-
-                } else {
-
-                    T_comboObj.fill("WHERE (IdCombo=" + venta.val4+") AND (IdSeleccion<>0)");
-                    idcomb=mu.CInt(venta.val4);idcomb=idcomb % 100;
-                    //cname=s+" [#"+idcomb+"]";
-                    cname=s;
-
-                    for (int j = 0; j < T_comboObj.count; j++) {
-                        prodid=T_comboObj.items.get(j).idseleccion;
-                        //s = " - " + getProd(prodid);
-                        s = " " + getProd(prodid);
-                        P_linea_impresoraObj.fill("WHERE CODIGO_LINEA="+prodlinea);
-
-                        for (int k = 0; k <P_linea_impresoraObj.count; k++) {
-                            prid=P_linea_impresoraObj.items.get(k).codigo_impresora;
-                            if (j==0) {
-                                agregaComanda(linea,prid,cname);linea++;
-                            }
-                            agregaComanda(linea,prid,s);linea++;
-                            if (!nn.isEmpty()) {
-                                agregaComanda(linea,prid,nn);linea++;
-                            }
-
-                            if (k==P_linea_impresoraObj.count-1) {
-                                T_orden_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
-                                for (int ii = 0; ii < T_orden_modObj.count; ii++) {
-                                    nn = "  " + T_orden_modObj.items.get(ii).nombre;
-                                    agregaComanda(linea, prid, nn);
-                                    linea++;
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-            }
-            return true;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
         }
     }
 
@@ -2644,7 +2570,7 @@ public class Orden extends PBase {
 
         clsRepBuilder rep;
         int printid,ln;
-        String fname,ss,narea;
+        String fname,ss,narea,prip;
         File file;
 
         try {
@@ -2676,7 +2602,8 @@ public class Orden extends PBase {
 
                         rep.add(P_impresoraObj.first().tipo_impresora);
                         rep.add(P_impresoraObj.first().nombre);
-                        rep.add(P_impresoraObj.first().ip);
+                        prip=app.ipBypass(P_impresoraObj.first().ip);
+                        rep.add(prip);
 
                         rep.empty();
                         //rep.empty();
@@ -2692,8 +2619,10 @@ public class Orden extends PBase {
                             narea = " " + gl.mesa_area;
                         }
 
+                        rep.add("Envio: " +gl.rutanom);
+
                         if (ordenpedido) {
-                            rep.add("ORDEN : #" + numpedido);
+                            if (numpedido!=0) rep.add("ORDEN : #" + numpedido);
                             rep.empty();
                             if (numpedido == 0) rep.add("MESA : " + mesa+narea);
                             if (!gl.mesa_alias.isEmpty()) rep.add(gl.mesa_alias);
@@ -2796,33 +2725,29 @@ public class Orden extends PBase {
     }
 
     private void imprimeComandaBT() {
-        clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
-        clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
+        clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
+        clsT_ordencomboObj T_comboObj = new clsT_ordencomboObj(this, Con, db);
         clsClasses.clsT_orden venta;
         clsClasses.clsT_ordencombo combo;
-        String prname,csi;
+        String prname, csi;
         int prid;
 
         try {
+            T_ordenObj.fill("WHERE (COREL='" + idorden + "') AND (ESTADO=1)");
 
-            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
-
-            if (T_ordenObj.count==0) {
-                msgInfo("Ninguno artículo está marcado para la impresión");return;
+            if (T_ordenObj.count == 0) {
+                msgInfo("Ninguno artículo está marcado para la impresión");
+                return;
             }
 
-            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
-            ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
+            //clsP_orden_numeroObj P_orden_numeroObj = new clsP_orden_numeroObj(this, Con, db);
+            ordennum = P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
             clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
-            ord.id=ordennum;
+            ord.id = ordennum;
             P_orden_numeroObj.add(ord);
-        } catch (Exception e) {
-            ordennum=0;
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
 
+            ordencentral=false;
 
-        try {
             rep.clear();
             rep.empty();
             rep.add("ORDEN : "+ordennum);
@@ -2966,7 +2891,7 @@ public class Orden extends PBase {
 
         try {
 
-            clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+            //clsP_orden_numeroObj P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
             ordennum=P_orden_numeroObj.newID("SELECT MAX(ID) FROM P_orden_numero");
             clsClasses.clsP_orden_numero ord = clsCls.new clsP_orden_numero();
             ord.id=ordennum;
@@ -3913,30 +3838,12 @@ public class Orden extends PBase {
 
     //region Broadcast Detalle
 
+    /*
+
     private void broadcastDetail() {
         wsoidle=false;
 
         if (actorden) broadcastDetailCallback();
-
-        /*
-        wso.level=1;
-        brtcorel ="";brtid=0;brtitems.clear();
-
-        try {
-            sql="SELECT  CODIGO, COREL_ORDEN, COMANDA " +
-                "FROM T_ORDENCOM WHERE (COREL_ORDEN='"+idorden+"') AND (COREL_LINEA=2)" +
-                "ORDER BY COREL_ORDEN,CODIGO";
-            wso.execute(sql,rnDetailCallback);
-
-            //toastcent("Actualizando orden . . .");
-        } catch (Exception e) {
-            app.addToOrdenLog(du.getActDateTime(),
-                    "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsoidle=true;
-        }
-        */
-
     }
 
     private void broadcastDetailCallback() {
@@ -3950,20 +3857,6 @@ public class Orden extends PBase {
                 cierraPantalla();
                 wsoidle=true;return;
             }
-            /*
-            if (wso.errflag) {
-                app.addToOrdenLog(du.getActDateTime(),
-                        "Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),wso.error,sql);
-                wsoidle=true;return;
-            }
-
-            if (wso.openDTCursor.getCount()==0) {
-                //wsoidle=true;return;
-            }
-
-            wso.openDTCursor.moveToFirst();
-            brtcorel=wso.openDTCursor.getString(1);brtid=wso.openDTCursor.getInt(0);
-             */
 
             brtcorel=idorden;
 
@@ -4105,12 +3998,6 @@ public class Orden extends PBase {
         String cmd="DELETE FROM T_ordencom WHERE CODIGO="+brtid;
 
         try {
-            /*
-            Intent intent = new Intent(Orden.this, srvCommit.class);
-            intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("command",cmd);
-            if (actorden) startService(intent);
-            */
             enviaCommit(false,cmd);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -4163,6 +4050,8 @@ public class Orden extends PBase {
         return ins.sql();
 
     }
+
+    */
 
     //endregion
 
@@ -5637,17 +5526,18 @@ public class Orden extends PBase {
 
     private void cierraPantalla() {
         try {
-            ctimer.removeCallbacks(crunner);
+            //ctimer.removeCallbacks(crunner);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
         try {
-            ctimer.postDelayed(crunner,20000);
+            //ctimer.postDelayed(crunner,20000);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
+    /*
     private void agregaBloqueo() {
         try {
             sql="INSERT INTO P_RES_MESA_BLOQ (CODIGO_MESA,CODIGO_VENDEDOR) " +
@@ -5670,9 +5560,10 @@ public class Orden extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+    */
 
     private void cerrarOrden(){
-        borrarBloqueo();
+        //borrarBloqueo();
         finish();
     }
 
@@ -5812,15 +5703,15 @@ public class Orden extends PBase {
             dialog.setPositiveButton("Si", (dialog12, which) -> {
                 actualizaEstadoOrden(3);
                 imprimeComanda();
-                aplicaImpresion();
-                if (actorden) envioOrden();else cerrarOrden();
+                //aplicaImpresion();
+                //if (actorden) envioOrden();else cerrarOrden();
             });
 
             dialog.setNegativeButton("No", (dialog1, which) -> {});
 
             dialog.show();
 
-        }catch (Exception e){
+        } catch (Exception e){
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" : "+e.getMessage());
         }
     }
@@ -6635,6 +6526,7 @@ public class Orden extends PBase {
             T_orden_modObj.reconnect(Con,db);
             T_orden_ingObj.reconnect(Con,db);
             D_barril_transObj.reconnect(Con,db);
+            P_orden_numeroObj.reconnect(Con,db);
 
             try {
                 P_nivelprecioObj.reconnect(Con,db);
@@ -6752,7 +6644,7 @@ public class Orden extends PBase {
     @Override
     protected void onPause() {
         try {
-            ctimer.removeCallbacks(crunner);
+            //ctimer.removeCallbacks(crunner);
         } catch (Exception e) {}
         super.onPause();
     }

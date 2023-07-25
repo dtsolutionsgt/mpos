@@ -80,7 +80,9 @@ public class clsDocFactura extends clsDocument {
 				stot=tot+desc;
 
 				empp=DT.getString(8);
-				ffecha=DT.getLong(9);fsfecha=sfecha(ffecha)+" "+shora(ffecha);
+				ffecha=DT.getLong(9);
+                fsfecha=sfecha(ffecha)+" "+shora(ffecha);
+                fsfechah=sfechahon(ffecha)+" "+shora(ffecha);
 
 				add1=DT.getString(10);
 				add2=DT.getString(11);
@@ -972,6 +974,41 @@ public class clsDocFactura extends clsDocument {
         }
 	}
 
+    private void agregaDomicilio() {
+        if (!domicilio) return;
+
+        rep.add("");
+        rep.addc("D O M I C I L I O");
+        rep.add("");
+        rep.add(nombre_cliente);
+
+        if (!emptystr(clidir)) {
+            //clidir="Dir.: "+clidir;
+            if (clidir.length()>prw) {
+
+                String nuevaCadena = "", cadena = "";
+
+                cadena = clidir;
+                nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                cadena = cadena.substring(prw);
+                if (cadena.length() > prw) {
+                    nuevaCadena =cadena.substring(0, prw);rep.add(nuevaCadena);
+                    cadena = cadena.substring(prw);
+                    if (cadena.length() > prw) {
+                        nuevaCadena = cadena.substring(0, prw);rep.add(nuevaCadena);
+                    } if (cadena.length()>0) rep.add(cadena);
+                } else {
+                    if (cadena.length()>0) rep.add(cadena);
+                }
+            } else rep.add(clidir);
+        }
+
+        try {
+            if (!clitel.isEmpty()) rep.add("Tel.: "+clitel);
+        } catch (Exception e) {}
+
+    }
+
     //region Guatemala
 
     private boolean footerBaseGUATicket() {
@@ -1002,6 +1039,25 @@ public class clsDocFactura extends clsDocument {
             rep.addtotDS(pagos.get(i).nombre,pagos.get(i).cant);
         }
 
+        if (impresionorden) {
+            String sod=add1;
+            if (!sod.isEmpty()) {
+                rep.add("");
+                rep.addc("************************");
+                rep.addc("ORDEN # "+sod.toUpperCase());
+                rep.addc("************************");
+                rep.add("");
+            }
+
+        } else {
+            rep.add("");
+        }
+
+        if (parallevar){
+            rep.addc("PARA LLEVAR");
+            rep.add("");
+        }
+
         //rep.addc("----------------------");
         //rep.addc("Firma cliente  ");
         rep.add("");
@@ -1009,6 +1065,9 @@ public class clsDocFactura extends clsDocument {
         //rep.addc("NO ES UNA FACTURA COMERCIAL");
         //rep.add("");
         //rep.addc(sfticket);
+
+        agregaDomicilio();
+
         rep.add("");
         rep.add("");
         rep.add("");
@@ -1134,9 +1193,7 @@ public class clsDocFactura extends clsDocument {
             if (!sod.isEmpty()) {
                 rep.add("");
                 rep.addc("************************");
-                rep.add("");
                 rep.addc("ORDEN # "+sod.toUpperCase());
-                rep.add("");
                 rep.addc("************************");
                 rep.add("");
             }
@@ -1145,13 +1202,19 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
+        agregaDomicilio();
+
         rep.add("");
-        //rep.addc("Powered by: dts.com.gt");
+        rep.add("");
+        rep.add("");
+        rep.add("");
 
         return super.buildFooter();
     }
 
     //endregion
+
+    //region Honduras
 
     private boolean footerBaseHON() {
         double totimp,totperc;
@@ -1246,33 +1309,37 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
-        /*
-        if (parallevar){
-            rep.add("");
-            rep.addc("PARA LLEVAR");
-            rep.add("");
-        }
-
         if (impresionorden) {
             String sod=add1;
             if (!sod.isEmpty()) {
                 rep.add("");
                 rep.addc("************************");
-                rep.add("");
-                rep.addc("ORDEN: # "+sod.toUpperCase());
-                rep.add("");
+                rep.addc("ORDEN # "+sod.toUpperCase());
                 rep.addc("************************");
                 rep.add("");
             }
+
         } else {
             rep.add("");
         }
-        */
 
+        if (parallevar){
+            rep.addc(" P A R A   L L E V A R ");rep.add("");
+            if (!nombre_cliente.isEmpty()) {
+                rep.addc(nombre_cliente);rep.add("");
+            }
+        }
+
+        agregaDomicilio();
+
+        rep.add("");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();
     }
+
+    //endregion
 
     //region Salvador
 
@@ -1410,6 +1477,11 @@ public class clsDocFactura extends clsDocument {
         }
         */
 
+        agregaDomicilio();
+
+        rep.add("");
+        rep.add("");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();
@@ -1533,6 +1605,11 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
         }
 
+        agregaDomicilio();
+
+        rep.add("");
+        rep.add("");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();
@@ -1569,6 +1646,8 @@ public class clsDocFactura extends clsDocument {
             rep.add("");
             rep.add("Le atendio: "+nommesero);
         }
+
+        agregaDomicilio();
 
         rep.add("");
         //rep.add("Datos del Cliente");
@@ -1701,6 +1780,11 @@ public class clsDocFactura extends clsDocument {
         }
         */
 
+        agregaDomicilio();
+
+        rep.add("");
+        rep.add("");
+        rep.add("");
         rep.add("");
 
         return super.buildFooter();

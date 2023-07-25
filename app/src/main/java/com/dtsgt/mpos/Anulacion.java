@@ -152,8 +152,9 @@ public class Anulacion extends PBase {
         sucursal.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
         clsClasses.clsP_sucursal suc=sucursal.first();
 
+		fel=new clsFELInFile(this,this,gl.timeout);
+
 		if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
-			fel=new clsFELInFile(this,this,gl.timeout);
 
 			fel.fel_llave_certificacion =suc.fel_llave_certificacion;
 			fel.fel_llave_firma=suc.fel_llave_firma;

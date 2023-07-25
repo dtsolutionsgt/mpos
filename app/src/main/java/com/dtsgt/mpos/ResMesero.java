@@ -52,8 +52,8 @@ import java.util.TimerTask;
 public class ResMesero extends PBase {
 
     private GridView gridView;
-    private TextView lblcuenta, lblgrupo,lblmes,lblbarril;
-    private ImageView imgwsref,imgnowifi,imgbarril;
+    private TextView lblcuenta, lblgrupo,lblmes,lblbarril,lblact;
+    private ImageView imgwsref,imgnowifi,imgbarril,imgact;
     private RelativeLayout relmain;
 
     private clsP_res_grupoObj P_res_grupoObj;
@@ -70,7 +70,8 @@ public class ResMesero extends PBase {
     private wsOpenDT wslock;
     private wsCommit wscom;
 
-    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback,rnOrden,rnLock;
+    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback,
+            rnOrden,rnLock,rnOrdenRem;
 
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -85,8 +86,8 @@ public class ResMesero extends PBase {
     private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2,idorden;
     private boolean horiz,actorden,wsidle=false,wcoridle=true;
 
-    private TimerTask ptask,etask;
-    private int period=15000,delay=50;
+    //private TimerTask ptask,etask;
+    //private int period=15000,delay=50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +101,10 @@ public class ResMesero extends PBase {
         lblgrupo =findViewById(R.id.textView179b);
         lblmes =findViewById(R.id.textView179b2);
         lblbarril =findViewById(R.id.textView221);
+        lblact =findViewById(R.id.textView212);
         imgbarril =findViewById(R.id.imageView106);
         imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
+        imgact =findViewById(R.id.imageView87);
         imgnowifi=findViewById(R.id.imageView71a);
         relmain=findViewById(R.id.relmmain);
 
@@ -127,11 +130,7 @@ public class ResMesero extends PBase {
         ws=new WebService(ResMesero.this,gl.wsurl);
         wscom =new wsCommit(gl.wsurl);
 
-        rnCorelPutCallback = new Runnable() {
-            public void run() {
-                PutCorelCallback();
-            }
-        };
+        rnCorelPutCallback = () -> PutCorelCallback();
 
         wso=new wsOpenDT(gl.wsurl);
         wslock=new wsOpenDT(gl.wsurl);
@@ -139,21 +138,10 @@ public class ResMesero extends PBase {
         wsidle=true;
 
         rnBroadcastCallback = () -> broadcastCallback();
-
         rnCorelGetCallback = () -> GetCorelCallback();
-
-        rnOrden = new Runnable() {
-            public void run() {
-                ordenAction();
-            }
-        };
-
-        rnLock = new Runnable() {
-            public void run() {
-                checkLock();
-            }
-        };
-
+        rnOrden = () ->  ordenAction();
+        rnLock = () ->  checkLock();
+        rnOrdenRem = () ->  ordenRemCallback();
 
         if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
 
@@ -178,7 +166,11 @@ public class ResMesero extends PBase {
     }
 
     public void doRec(View view) {
-        recibeOrdenes();
+        if (gl.emp==55 | gl.emp==1) {
+            recibeOrdenesRemotos();
+        } else {
+            //recibeOrdenes();
+        }
     }
 
     public void doBarril(View view) {
@@ -663,9 +655,10 @@ public class ResMesero extends PBase {
             procesaOrdenes();
         }
 
-        cierraPantalla();
+        //cierraPantalla();
     }
 
+    /*
     private void iniciaOrdenes() {
         try {
             Timer timer = new Timer();
@@ -681,10 +674,11 @@ public class ResMesero extends PBase {
             }, delay, period);
         } catch (Exception e) { }
     }
+     */
 
     private void cancelaOrdenes() {
         try {
-            ptask.cancel();
+            //ptask.cancel();
         } catch (Exception e) {}
     }
 
@@ -705,6 +699,73 @@ public class ResMesero extends PBase {
             toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             wsidle=true;
             imgwsref.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void recibeOrdenesRemotos() {
+        String sw="WHERE ID IN (";
+
+        try {
+            wsidle=false;
+            imgact.setVisibility(View.INVISIBLE);lblact.setVisibility(View.INVISIBLE);
+
+            P_res_sesionObj.fill("WHERE (ESTADO IN (1,2,3))");
+            if (P_res_sesionObj.count==0) return;
+
+            for (int i = 0; i <P_res_sesionObj.count; i++) {
+                sw+="'"+P_res_sesionObj.items.get(i).id+"'";
+                if (i <P_res_sesionObj.count-1) sw+=","; else sw+=") ";
+            }
+
+            sql="SELECT ID,ESTADO FROM P_RES_SESION "+sw+" AND (FECHAINI>"+du.getActDate()+")";
+            wso.execute(sql,rnOrdenRem);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            wsidle=true;
+            imgact.setVisibility(View.VISIBLE);lblact.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void ordenRemCallback() {
+        String oid;
+        int est;
+
+        imgact.setVisibility(View.VISIBLE);lblact.setVisibility(View.VISIBLE);wsidle=true;
+
+        try {
+            if (wso.errflag) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+wso.error);return;
+            }
+            if (wso.openDTCursor.getCount()==0) return;
+
+            wso.openDTCursor.moveToFirst();
+            while (!wso.openDTCursor.isAfterLast()) {
+
+                oid = wso.openDTCursor.getString(0);
+                est = wso.openDTCursor.getInt(1);
+                if (est==-1) {
+                    try {
+                        db.beginTransaction();
+
+                        db.execSQL("UPDATE T_ORDEN SET ESTADO=2 WHERE (COREL='"+oid+"')");
+                        db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1,FECHAULT="+du.getActDateTime()+"  WHERE (ID='"+oid+"')");
+
+                        db.setTransactionSuccessful();
+                        db.endTransaction();
+                    } catch (Exception e) {
+                        db.endTransaction();
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+
+                }
+
+                wso.openDTCursor.moveToNext();
+            }
+
+            listItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
@@ -896,6 +957,7 @@ public class ResMesero extends PBase {
     //region Estado
 
     private void iniciaEstados() {
+        /*
         try {
             Timer timer = new Timer();
             timer.scheduleAtFixedRate(etask=new TimerTask() {
@@ -909,11 +971,12 @@ public class ResMesero extends PBase {
                 }
             }, delay, period);
         } catch (Exception e) { }
+        */
     }
 
     private void cancelaEstados() {
         try {
-            etask.cancel();
+            //etask.cancel();
         } catch (Exception e) {}
     }
 
@@ -1314,6 +1377,7 @@ public class ResMesero extends PBase {
 
     }
 
+    /*
     private void cierraPantalla() {
         try {
             Handler ctimer = new Handler();
@@ -1323,11 +1387,12 @@ public class ResMesero extends PBase {
                     finish();
                 }
             };
-            ctimer.postDelayed(crunner,20000);
+            ctimer.postDelayed(crunner,40000);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+    */
 
     //endregion
 
@@ -1653,7 +1718,7 @@ public class ResMesero extends PBase {
         }
 
         if (actorden) {
-            recibeOrdenes();
+            //recibeOrdenes();
             //iniciaOrdenes();
         }
 
@@ -1669,7 +1734,9 @@ public class ResMesero extends PBase {
         }
 
         if (gl.cerrarmesero) {
-            if (!gl.peNoCerrarMesas) finish();
+            if (!gl.peNoCerrarMesas) {
+                finish();
+            }
         } else {
             listItems();
 

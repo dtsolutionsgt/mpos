@@ -112,6 +112,8 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginBottom="5dp"
                     android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:onClick="doStartClean"
                     android:padding="7dp"
                     android:src="@drawable/logo_panel" />
 

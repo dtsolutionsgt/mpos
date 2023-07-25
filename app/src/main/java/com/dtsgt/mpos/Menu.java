@@ -54,8 +54,10 @@ import com.dtsgt.mant.Lista;
 import com.dtsgt.mant.MantConfig;
 import com.dtsgt.mant.MantConfigRes;
 import com.dtsgt.mant.MantCorel;
+import com.dtsgt.mant.MantImpRedir;
 import com.dtsgt.mant.MantRepCierre;
 import com.dtsgt.mant.MantRol;
+import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
 
 import org.apache.commons.io.FileUtils;
@@ -70,14 +72,15 @@ public class Menu extends PBase {
 
 	private GridView gridView;
 	private RelativeLayout relbotpan;
-	private TextView lblVendedor,lblRuta;
+	private TextView lblVendedor,lblRuta,lblTit;
 	private ImageView imgnowifi;
 	
 	private ArrayList<clsMenu> items= new ArrayList<clsMenu>();
 
 	private wsOpenDT wsic;
+	private wsCommit wscom;
 
-	private Runnable rnInvCent;
+	private Runnable rnInvCent,rnNumOrden;
 
 	private ListAdaptMenuGrid adaptergrid;
 	private ExDialog menudlg;
@@ -103,7 +106,6 @@ public class Menu extends PBase {
 	protected void onCreate(Bundle savedInstanceState) 	{
 
 		try {
-
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.activity_menu);
 
@@ -114,6 +116,7 @@ public class Menu extends PBase {
 			lblVendedor = findViewById(R.id.lblVendedor);
 			lblRuta = findViewById(R.id.textView9);
             imgnowifi = findViewById(R.id.imageView122);
+			lblTit = findViewById(R.id.lblTit);
 
             P_modo_emergenciaObj=new clsP_modo_emergenciaObj(this,Con,db);
             P_paramextObj=new clsP_paramextObj(this,Con,db);
@@ -143,6 +146,8 @@ public class Menu extends PBase {
 			}
 
 			this.setTitle("mPos");
+			lblTit.setText("mPos   -   Versión: "+gl.parVer+"   -   Caja: "+gl.rutanom+" [ "+gl.codigo_ruta+" ] ," +
+					       " -  Sucursal: "+gl.tiendanom+" [ "+gl.tienda+" ]");
 
 			rnFbInvCallBack = new Runnable() {
 				public void run() {
@@ -167,13 +172,15 @@ public class Menu extends PBase {
             //if (gl.ingreso_mesero && gl.after_login) autoLoginMesero();
 
 			app.getURL();
-
 			wsic=new wsOpenDT(gl.wsurl);
+			wscom =new wsCommit(gl.wsurl);
 
-			rnInvCent = new Runnable() {
-				public void run() {
-					//callbackInvCent();
-				}
+			rnInvCent= () -> {
+				//callbackInvCent();
+			};
+
+			rnNumOrden= () -> {
+				callBackNumOrden();
 			};
 
 			waitdlg= new extWaitDlg();
@@ -184,6 +191,7 @@ public class Menu extends PBase {
 		}
 
         validaModo();
+
 	}
 
 	//region Events
@@ -449,13 +457,13 @@ public class Menu extends PBase {
 		try {
 
 			extListDlg listdlg = new extListDlg();
-			listdlg.buildDialog(Menu.this,"Impresión");
+			listdlg.buildDialog(Menu.this,"Reimpresión");
 
      		listdlg.add((gl.peMFact?"Factura":"Ticket"));
-			listdlg.add("Depósito");
-			listdlg.add("Pagos");
-			listdlg.add("Recarga");
-			listdlg.add("Devolución a bodega");
+			//listdlg.add("Depósito");
+			//listdlg.add("Pagos");
+			//listdlg.add("Recarga");
+			//listdlg.add("Devolución a bodega");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -1054,6 +1062,8 @@ public class Menu extends PBase {
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
 			listdlg.add("Inicializar inventario");
+			listdlg.add("Reinicializar numero de orden");
+
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 				try {
@@ -1093,6 +1103,8 @@ public class Menu extends PBase {
 							inicioDia();break;
 						case 15:
 							validaSuperInventario();break;
+						case 15:
+							validaSuperNumOrden();break;
 
 					}
 					listdlg.dismiss();
@@ -1678,6 +1690,71 @@ public class Menu extends PBase {
 		}
 	}
 
+	private void validaSuperNumOrden() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					reiiniciaNumeroOrden();
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void reiiniciaNumeroOrden() {
+		try {
+			if (gl.peNumOrdCentral) {
+				sql="DELETE FROM T_ORDEN_CODIGO WHERE CODIGO_SUCURSAL="+gl.tienda;
+				wscom.execute(sql,rnNumOrden);
+			} else {
+				db.execSQL("DELETE FROM P_orden_numero ");
+				msgbox("Número de orden reiniciado");
+			}
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void callBackNumOrden() {
+		if (!wscom.errflag) {
+			msgbox("Número de orden reiniciado");
+		} else {
+			msgbox(wscom.error);
+		}
+	}
 
 	//endregion
 
@@ -1716,6 +1793,7 @@ public class Menu extends PBase {
 			if (gl.peRest) listdlg.add("Restaurante");
 			listdlg.add("Configuración");
 			listdlg.add("Configuración reportes Cierre");
+			listdlg.add("Redirección de impresoras LAN");
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -1750,6 +1828,8 @@ public class Menu extends PBase {
 					if (ss.equalsIgnoreCase("Impresora marca")) gl.mantid = 32;
 					if (ss.equalsIgnoreCase("Impresora modelo")) gl.mantid = 33;
 					if (ss.equalsIgnoreCase("Impresora")) gl.mantid = 34;
+					//if (ss.equalsIgnoreCase("Redirección de impresoras LAN")) gl.mantid = 35;
+
 
 					if (gl.mantid == 16) {
 						startActivity(new Intent(Menu.this, MantConfig.class));
@@ -1764,6 +1844,8 @@ public class Menu extends PBase {
 					} else if (gl.mantid == 24) {
 						showMantRestMenu();
 						//startActivity(new Intent(Menu.this, SalaDis.class));
+					} else if (gl.mantid == 35) {
+						startActivity(new Intent(Menu.this, MantImpRedir.class));
 					} else {
 						startActivity(new Intent(Menu.this, Lista.class));
 					}

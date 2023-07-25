@@ -150,7 +150,7 @@ public class EPrint extends PBase implements  ReceiveListener {
             method = "addTextSize";
             mPrinter.addTextSize(2, 2);
             method = "addText";
-            mPrinter.addText("TOTAL    174.81\n");
+            mPrinter.addText("TOTAL    99.81\n");
             mPrinter.addText(textData.toString());
             textData.delete(0, textData.length());
 

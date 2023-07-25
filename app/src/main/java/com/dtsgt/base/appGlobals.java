@@ -76,7 +76,7 @@ public class appGlobals extends Application {
 	public String QRCodeStr ="";
 
 	//#CKFK 20210705
-	public boolean pickup = false,delivery = false;
+	public boolean domicilio = false,delivery = false;
 
 	//#CKFK 20190319 Para facilidades de desarrollo se debe colocar la variable debug en true, por defecto estará en false
 	public boolean debug=true;
@@ -91,16 +91,17 @@ public class appGlobals extends Application {
 
 	// Parametros Extra
 	public String peModal,peMon,peFormatoFactura,peMMod,peFEL,peComNoAplic,peTextoPie;
-	public String peFraseIVA,peFraseISR;
+	public String peFraseIVA,peFraseISR,peImpFactIP;
 	public int peDec,peDecCant,peDecImp,peLimiteGPS,peMargenGPS,peVentaGps,peAvizoFEL;
-	public int peCajaPricipal,peNumImp,peLineaIngred,pePorConsumo;
+	public int peCajaPricipal,peNumImp,peLineaIngred,pePorConsumo,peMaxOrden;
     public Boolean peStockItf,peSolicInv,peAceptarCarga,peBotInv,peBotPrec,pePedidos;
 	public Boolean peBotStock,peVehAyud,peEnvioParcial,peOrdPorNombre,peFotoBio,peInvCompart;
     public Boolean peImprFactCorrecta,peMCent,peImpOrdCos,peMImg,peMFact,peEnvio,peCajaRec,peRepVenCod;
     public Boolean peAnulSuper,peRest,peModifPed,pePropinaFija,peBotComanda,peEditTotCombo;
     public Boolean peAgregarCombo,peComboLimite,peComboDet,peFactSinPropina,peRedondPropina;
 	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas,peActOrdenMesas;
-	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc;
+	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
+	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peNumOrdCentral,peCajaMesasManual;
     public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local
