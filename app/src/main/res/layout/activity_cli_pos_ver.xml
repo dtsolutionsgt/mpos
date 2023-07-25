@@ -178,7 +178,7 @@
             android:layout_alignStart="@+id/editText1"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="130dp"
+            android:layout_marginEnd="140dp"
             android:ems="10"
             android:hint="Correo"
             android:inputType="textEmailAddress" />
@@ -362,14 +362,12 @@
 
         <EditText
             android:id="@+id/editTextNumber4"
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txtCorreo"
             android:layout_alignStart="@+id/txtCorreo"
-            android:layout_alignEnd="@+id/txtCorreo"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
             android:ems="10"
             android:hint="Teléfono"
             android:inputType="number" />
@@ -383,13 +381,13 @@
 
         <CheckBox
             android:id="@+id/chkPickup"
-            android:layout_width="110dp"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/editTextNumber4"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="10dp"
-            android:text="LLEVAR"
+            android:text=" DOMICILIO"
             android:textColor="#000000"
             android:textColorHighlight="#000000"
             android:textSize="16sp"
@@ -403,7 +401,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
-            android:text=" DOMICILIO"
+            android:text="  LLEVAR"
             android:textColor="#000000"
             android:textColorHighlight="#000000"
             android:textSize="16sp"
