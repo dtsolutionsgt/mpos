@@ -285,6 +285,8 @@ public class PBase extends FragmentActivity {
   			} else {
 			}
 	    } catch (Exception e) {
+			String ss=e.getMessage();
+			ss=ss+"";
 	    	//mu.msgbox(e.getMessage());
 	    }
 	}			

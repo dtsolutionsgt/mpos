@@ -74,7 +74,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String parVer = "4.8.6.0";
+    private String parVer = "4.8.7.0";
 
 
     private Typeface typeface;
@@ -1579,8 +1579,7 @@ public class MainActivity extends PBase {
             }
 
         } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
+            addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
     }
 

@@ -109,85 +109,95 @@ public class WSRec extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wsrec);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_wsrec);
 
-        super.InitBase();
+            super.InitBase();
 
-        lbl1 = (TextView) findViewById(R.id.textView7);
-        lbl1.setText("");
-        lblTitulo = (TextView) findViewById(R.id.lblTit6);
+            lbl1 = (TextView) findViewById(R.id.textView7);
+            lbl1.setText("");
+            lblTitulo = (TextView) findViewById(R.id.lblTit6);
 
-        txtClave = (EditText) findViewById(R.id.txtClave);
-        txtEmpresa = (EditText) findViewById(R.id.txtEmpresa);
-        txtURLWS = (EditText) findViewById(R.id.txtURLWS);
+            txtClave = (EditText) findViewById(R.id.txtClave);
+            txtEmpresa = (EditText) findViewById(R.id.txtEmpresa);
+            txtURLWS = (EditText) findViewById(R.id.txtURLWS);
 
-        cmdRecibir = (TextView) findViewById(R.id.textView45);
+            cmdRecibir = (TextView) findViewById(R.id.textView45);
 
-        lblIdDispositivo = (TextView) findViewById(R.id.lblIdDispositivo);
+            lblIdDispositivo = (TextView) findViewById(R.id.lblIdDispositivo);
 
-        pbar = (ProgressBar) findViewById(R.id.progressBar);
-        pbar.setVisibility(View.INVISIBLE);
+            pbar = (ProgressBar) findViewById(R.id.progressBar);
+            pbar.setVisibility(View.INVISIBLE);
 
-        app.getURL();
-        app.parametrosExtra();
-        setHandlers();
+            app.getURL();
+            app.parametrosExtra();
+            setHandlers();
 
-        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-            gl.Sincronizar_Clientes=false;
-        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-            gl.Sincronizar_Clientes=true;
-        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            gl.Sincronizar_Clientes=true;
-        }
+            try {
+                if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                    gl.Sincronizar_Clientes=false;
+                } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                    gl.Sincronizar_Clientes=true;
+                } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                    gl.Sincronizar_Clientes=true;
+                }
+            } catch (Exception e) {
+                gl.Sincronizar_Clientes=false;
+            }
 
-        ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
-        xobj = new XMLObject(ws);
 
-        long fs = app.getDateRecep();
-        if (fs > 0) fs = du.addDays(fs, -1);
+            ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
+            xobj = new XMLObject(ws);
 
-        pbd_vacia = getIntent().getBooleanExtra("bd_vacia", false);
+            long fs = app.getDateRecep();
+            if (fs > 0) fs = du.addDays(fs, -1);
 
-        if (pbd_vacia) fs=2001010000;
-        if (fs==0) fs=2001010000;
+            pbd_vacia = getIntent().getBooleanExtra("bd_vacia", false);
 
-        fechasync = "" + fs;
+            if (pbd_vacia) fs=2001010000;
+            if (fs==0) fs=2001010000;
 
-        lblIdDispositivo.setText("ID - " + gl.deviceId);
+            fechasync = "" + fs;
 
-        if (pbd_vacia) {
+            lblIdDispositivo.setText("ID - " + gl.deviceId);
 
-            lblTitulo.setText("B.D. Vacía");
+            if (pbd_vacia) {
 
-            txtURLWS.setEnabled(true);
-            txtClave.setEnabled(true);
-            txtEmpresa.setEnabled(true);
+                lblTitulo.setText("B.D. Vacía");
 
-            txtURLWS.setText(gl.wsurl);if (gl.wsurl.isEmpty()) txtURLWS.setText("http://192.168.0.12/mposws/mposws.asmx");
-            txtClave.setText("");
-            txtEmpresa.setText("");
+                txtURLWS.setEnabled(true);
+                txtClave.setEnabled(true);
+                txtEmpresa.setEnabled(true);
 
-            showkeyb();
-            txtEmpresa.requestFocus();
+                txtURLWS.setText(gl.wsurl);if (gl.wsurl.isEmpty()) txtURLWS.setText("http://192.168.0.12/mposws/mposws.asmx");
+                txtClave.setText("");
+                txtEmpresa.setText("");
 
-        } else {
+                showkeyb();
+                txtEmpresa.requestFocus();
 
-            txtURLWS.setEnabled(false);
-            txtClave.setEnabled(false);
-            txtEmpresa.setEnabled(false);
+            } else {
 
-            txtURLWS.setText(gl.wsurl);
-            txtClave.setText(gl.clave);
-            txtEmpresa.setText(String.valueOf(gl.emp));
-        }
+                txtURLWS.setEnabled(false);
+                txtClave.setEnabled(false);
+                txtEmpresa.setEnabled(false);
 
-        if (gl.recibir_automatico){
-            cmdRecibir.setVisibility(View.INVISIBLE);
-            browse=2;
-        }else{
-            cmdRecibir.setVisibility(View.VISIBLE);
+                txtURLWS.setText(gl.wsurl);
+                txtClave.setText(gl.clave);
+                txtEmpresa.setText(String.valueOf(gl.emp));
+            }
+
+            if (gl.recibir_automatico){
+                cmdRecibir.setVisibility(View.INVISIBLE);
+                browse=2;
+            }else{
+                cmdRecibir.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            String ss=e.getMessage();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         //if (gl.emp==2) gl.peRest=false;

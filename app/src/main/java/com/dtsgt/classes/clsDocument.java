@@ -429,8 +429,8 @@ public class clsDocument {
 
         if (docfactura) rep.add("Version: "+fversion);
         rep.add("");
-        if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------ (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -592,8 +592,8 @@ public class clsDocument {
         }
 
         rep.add("");
-        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -745,8 +745,8 @@ public class clsDocument {
         }
 
         rep.add("");
-        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 
@@ -854,8 +854,8 @@ public class clsDocument {
         rep.add("Giro: "+nomtipo);
         rep.add("");
 
-        if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
-        if (es_delivery) rep.add("-------  (DELIVERY)  -------");
+        //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
+        //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
 
         if (docfactura && !(modofact.equalsIgnoreCase("TOL"))){
 

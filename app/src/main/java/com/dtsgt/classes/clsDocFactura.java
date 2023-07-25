@@ -983,7 +983,7 @@ public class clsDocFactura extends clsDocument {
         rep.add(nombre_cliente);
 
         if (!emptystr(clidir)) {
-            clidir="Dir.: "+clidir;
+            //clidir="Dir.: "+clidir;
             if (clidir.length()>prw) {
 
                 String nuevaCadena = "", cadena = "";
