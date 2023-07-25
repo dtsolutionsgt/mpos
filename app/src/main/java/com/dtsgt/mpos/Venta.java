@@ -4666,7 +4666,7 @@ public class Venta extends PBase {
         }
     }
 
-    private void numeroOrden() {
+    private void numeroOrdenOld() {
         int ordennum;
         String ordencod;
 

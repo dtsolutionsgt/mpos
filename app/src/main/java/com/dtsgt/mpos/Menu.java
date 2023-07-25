@@ -1101,8 +1101,8 @@ public class Menu extends PBase {
 							msgAskCorregirFechas();break;
 						case 14:
 							inicioDia();break;
-						case 15:
-							validaSuperInventario();break;
+						//case 15:
+						//	validaSuperInventario();break;
 						case 15:
 							validaSuperNumOrden();break;
 
