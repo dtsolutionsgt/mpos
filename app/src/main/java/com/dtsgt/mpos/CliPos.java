@@ -382,9 +382,10 @@ public class CliPos extends PBase {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
                 if (isChecked){
-                    gl.domicilio = true;cbllevar.setChecked(false);
+                    //gl.domicilio = true;
+                    cbllevar.setChecked(false);
                 } else{
-                    gl.domicilio = false;
+                    //gl.domicilio = false;
                 }
             }
         }

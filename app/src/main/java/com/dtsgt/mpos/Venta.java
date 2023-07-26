@@ -3276,6 +3276,10 @@ public class Venta extends PBase {
                 }
             }
 
+            if ( gl.domicilio) {
+                rep.addc(" D O M I C I L I O ");rep.add("");
+            }
+
             /*
             ln=rep.items.size();
             if (ln<20) {
