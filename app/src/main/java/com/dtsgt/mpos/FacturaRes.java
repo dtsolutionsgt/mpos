@@ -3873,6 +3873,10 @@ public class FacturaRes extends PBase {
 					}
 				}
 
+				if ( gl.domicilio) {
+					rep.addc(" D O M I C I L I O ");rep.add("");
+				}
+
 				rep.add("");rep.add("");rep.add("");
 
 				rep.save();rep.clear();
