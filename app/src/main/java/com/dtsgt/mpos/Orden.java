@@ -63,6 +63,8 @@ import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.firebase.fbMesaAbierta;
+import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -107,6 +109,8 @@ public class Orden extends PBase {
     private ListAdaptGridFamList adapterfl;
     private ListAdaptGridProd adapterp;
     private ListAdaptGridProdList adapterpl;
+
+    private fbMesaAbierta fbma;
 
     private ExDialog mMenuDlg;
 
@@ -175,104 +179,108 @@ public class Orden extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        try {
 
-        if (pantallaHorizontal()) {
-            setContentView(R.layout.activity_orden);horiz=true;
-        } else {
-            setContentView(R.layout.activity_orden_ver);horiz=false;
-        }
+            super.onCreate(savedInstanceState);
 
-        super.InitBase();
+            if (pantallaHorizontal()) {
+                setContentView(R.layout.activity_orden);horiz=true;
+            } else {
+                setContentView(R.layout.activity_orden_ver);horiz=false;
+            }
 
-        setControls();
-        calibraPantalla();
+            super.InitBase();
 
-        P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
-        T_comandaObj=new clsT_comandaObj(this,Con,db);
-        T_orden_notaObj=new clsT_orden_notaObj(this,Con,db);
-        T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
-        P_impresoraObj=new clsP_impresoraObj(this,Con,db);
-        T_ventaObj=new clsT_ventaObj(this,Con,db);
-        T_ordencomboObj=new clsT_ordencomboObj(this,Con,db);
-        T_comboObj = new clsT_comboObj(this, Con, db);
-        P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
-        P_nivelprecioObj.fill("ORDER BY Nombre");
-        ViewObj=new clsListaObj(this,Con,db);
-        T_orden_modObj=new clsT_orden_modObj(this,Con,db);
-        T_orden_ingObj=new clsT_orden_ingObj(this,Con,db);
-        D_barril_transObj=new clsD_barril_transObj(this,Con,db);
-        P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
+            setControls();
+            calibraPantalla();
 
-        gl.scancliente="";
-        emp=gl.emp;
-        gl.nivel_sucursal=nivelSucursal();
-        gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
+            P_linea_impresoraObj=new clsP_linea_impresoraObj(this,Con,db);
+            T_comandaObj=new clsT_comandaObj(this,Con,db);
+            T_orden_notaObj=new clsT_orden_notaObj(this,Con,db);
+            T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
+            P_impresoraObj=new clsP_impresoraObj(this,Con,db);
+            T_ventaObj=new clsT_ventaObj(this,Con,db);
+            T_ordencomboObj=new clsT_ordencomboObj(this,Con,db);
+            T_comboObj = new clsT_comboObj(this, Con, db);
+            P_nivelprecioObj=new clsP_nivelprecioObj(this,Con,db);
+            P_nivelprecioObj.fill("ORDER BY Nombre");
+            ViewObj=new clsListaObj(this,Con,db);
+            T_orden_modObj=new clsT_orden_modObj(this,Con,db);
+            T_orden_ingObj=new clsT_orden_ingObj(this,Con,db);
+            D_barril_transObj=new clsD_barril_transObj(this,Con,db);
+            P_orden_numeroObj=new clsP_orden_numeroObj(this,Con,db);
 
-        //msgbox("id orden "+gl.idorden);
+            gl.scancliente="";
+            emp=gl.emp;
+            gl.nivel_sucursal=nivelSucursal();
+            gl.nivel=gl.nivel_sucursal;nivel=gl.nivel;
 
-        idorden=gl.idorden;
-        gl.ordcorel=gl.idorden;
+            //msgbox("id orden "+gl.idorden);
 
-        enviarorden= gl.pelMeseroCaja;
-        actorden=gl.peActOrdenMesas;
-        gl.mesero_lista=true;
-        lineaingred=gl.peLineaIngred;
+            idorden=gl.idorden;
+            gl.ordcorel=gl.idorden;
 
-        cliid=gl.cliente;
-        decimal=false;
+            enviarorden= gl.pelMeseroCaja;
+            actorden=gl.peActOrdenMesas;
+            gl.mesero_lista=true;
+            lineaingred=gl.peLineaIngred;
 
-        gl.atentini=du.getActDateTime();
-        gl.ateninistr=du.geActTimeStr();
-        gl.climode=true;
-        mu.currsymb(gl.peMon);
+            cliid=gl.cliente;
+            decimal=false;
 
-        getURL();
+            gl.atentini=du.getActDateTime();
+            gl.ateninistr=du.geActTimeStr();
+            gl.climode=true;
+            mu.currsymb(gl.peMon);
 
-        P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
+            getURL();
 
-        app = new AppMethods(this, gl, Con, db);
-        app.parametrosExtra();
-        modo_emerg=app.modoSinInternet();
+            P_productoObj=new clsP_productoObj(this,Con,db);P_productoObj.fill();
 
-        setPrintWidth();
-        rep=new clsRepBuilder(this,24,true,gl.peMon,gl.peDecImp,"");
-        //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
+            app = new AppMethods(this, gl, Con, db);
+            app.parametrosExtra();
+            modo_emerg=app.modoSinInternet();
 
-        counter=1;
+            setPrintWidth();
+            rep=new clsRepBuilder(this,24,true,gl.peMon,gl.peDecImp,"");
+            //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
-        prc=new Precio(this,mu,2,gl.peDescMax);
+            counter=1;
 
-        setHandlers();
-        initValues();
+            prc=new Precio(this,mu,2,gl.peDescMax);
 
-        browse=0;
-        clearItem();
+            setHandlers();
+            initValues();
 
-        if (P_nivelprecioObj.count==0) {
-            toastlong("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");
-            cerrarOrden();return;
-        }
+            browse=0;
+            clearItem();
 
-        imgflag=false;//imgflag=gl.peMImg;
+            if (P_nivelprecioObj.count==0) {
+                toastlong("NO SE PUEDE VENDER, NO ESTÁ DEFINIDO NINGUNO NIVEL DE PRECIO");
+                cerrarOrden();return;
+            }
 
-        setVisual();
+            imgflag=false;//imgflag=gl.peMImg;
 
-        listItems();
+            setVisual();
 
-        if (gl.nombre_mesero_sel.isEmpty()) gl.nombre_mesero_sel=gl.vendnom;
+            listItems();
 
-        ws=new WebService(Orden.this,gl.wsurl);
-        actualizaEstadoOrden(0);
+            if (gl.nombre_mesero_sel.isEmpty()) gl.nombre_mesero_sel=gl.vendnom;
 
-        rnBroadcastCallback = () -> broadcastCallback();
+            ws=new WebService(Orden.this,gl.wsurl);
+            actualizaEstadoOrden(0);
 
-        wscom =new wsCommit(gl.wsurl);
-        wslock =new wsCommit(gl.wsurl);
+            rnBroadcastCallback = () -> broadcastCallback();
 
-        //agregaBloqueo();
+            wscom =new wsCommit(gl.wsurl);
+            wslock =new wsCommit(gl.wsurl);
 
-        rnClose = () -> closeAction();
+            fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
+
+            agregaBloqueo();
+
+            rnClose = () -> closeAction();
 
         /*
         rnDetailCallback = () -> {
@@ -287,22 +295,22 @@ public class Orden extends PBase {
         };
         */
 
-        wso=new wsOpenDT(gl.wsurl);
+            wso=new wsOpenDT(gl.wsurl);
 
-        rnBarTrans = new Runnable() {
-            public void run() {
-                envioBarrilTrans();
-            }
-        };
-        wsbtr =new wsCommit(gl.wsurl);
+            rnBarTrans = new Runnable() {
+                public void run() {
+                    envioBarrilTrans();
+                }
+            };
+            wsbtr =new wsCommit(gl.wsurl);
 
-        rnOrdenInsert= () -> {
-            ordenInsert();
-        };
+            rnOrdenInsert= () -> {
+                ordenInsert();
+            };
 
-        rnOrdenQuery= () -> {
-            ordenQuery();
-        };
+            rnOrdenQuery= () -> {
+                ordenQuery();
+            };
 
         /*
         Handler mtimer = new Handler();
@@ -320,7 +328,7 @@ public class Orden extends PBase {
 
          */
 
-        //fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
+            //fbs=new fbP_res_sesion("P_RES_SESION/"+gl.emp+"/"+gl.tienda+"/");
 
         /*
         ctimer = new Handler();
@@ -333,6 +341,10 @@ public class Orden extends PBase {
             }
         };
         */
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //region Events
@@ -5537,12 +5549,14 @@ public class Orden extends PBase {
         }
     }
 
-    /*
     private void agregaBloqueo() {
         try {
-            sql="INSERT INTO P_RES_MESA_BLOQ (CODIGO_MESA,CODIGO_VENDEDOR) " +
-                    "         VALUES ("+gl.mesa_codigo+","+gl.mesa_vend+")";
-            wscom.execute(sql,null);
+            clsClasses.clsfbMesaAbierta item = clsCls.new clsfbMesaAbierta();
+
+            item.codigo_mesa=gl.mesacodigo;
+            item.estado=1;
+
+            fbma.setItem(item.codigo_mesa, item);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -5550,20 +5564,19 @@ public class Orden extends PBase {
 
     private void borrarBloqueo() {
         try {
-            sql="DELETE FROM P_RES_MESA_BLOQ WHERE (CODIGO_MESA="+gl.mesa_codigo+")";
+            clsClasses.clsfbMesaAbierta item = clsCls.new clsfbMesaAbierta();
 
-            Intent intent = new Intent(Orden.this, srvCommit.class);
-            intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("command",sql);
-            startService(intent);
+            item.codigo_mesa=gl.mesacodigo;
+            item.estado=0;
+
+            fbma.setItem(item.codigo_mesa, item);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-    */
 
     private void cerrarOrden(){
-        //borrarBloqueo();
+        borrarBloqueo();
         finish();
     }
 

@@ -18,17 +18,15 @@ public class fbStock extends fbBase {
     public ArrayList<clsClasses.clsFbStock> items= new ArrayList<clsClasses.clsFbStock>();
     public ArrayList<clsClasses.clsT_stock> sitems= new ArrayList<clsClasses.clsT_stock>();
 
-    public boolean errflag,transresult;
+    public boolean transresult;
     public int transstatus;
     public double total;
     public String unimed,transerr;
     public long retlongvalue;
 
-    private clsClasses clsCls=new clsClasses();
     private clsClasses.clsFbStock tritem;
     private clsClasses.clsT_stock sitem;
 
-    private int idsuc;
 
     public fbStock(String troot, int idsucursal) {
         super(troot);

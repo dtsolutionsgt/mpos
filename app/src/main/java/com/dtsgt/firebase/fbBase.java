@@ -2,6 +2,7 @@ package com.dtsgt.firebase;
 
 import android.os.Handler;
 
+import com.dtsgt.base.clsClasses;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -11,6 +12,13 @@ public class fbBase {
     public DatabaseReference fdt;
 
     public Runnable callBack;
+
+    public clsClasses clsCls=new clsClasses();
+
+    public boolean errflag,itemexists;
+
+    public String error;
+    public int idsuc;
 
     public String value,root;
 

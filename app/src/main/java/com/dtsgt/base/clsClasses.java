@@ -2,6 +2,9 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
+
+    //region D Clases
+
     public class clsD_barril {
         public String codigo_barril;
         public int  empresa;
@@ -470,6 +473,57 @@ public class clsClasses {
         public long fin;
         public int  bandera;
     }
+
+    //endregion
+
+    //region FB Clases
+
+    public class clsfbMesaAbierta {
+        public int  codigo_mesa;
+        public int  estado;
+    }
+
+    public class clsfbResSesion {
+        public String id;
+        public int  codigo_mesa;
+        public int  vendedor;
+        public int  estado;
+        public int  cantp;
+        public int  cantc;
+        public long fechaini;
+        public long fechafin;
+        public long fechault;
+    }
+
+    public class clsFbStock {
+        public int idalm;
+        public int idprod;
+        public double cant;
+        public String um;
+        public int bandera;
+    }
+
+    public class clsFbPStock {
+        public int id;
+        public int idalm;
+        public double cant;
+        public String nombre;
+        public String um;
+    }
+
+    public class clsFbPStockTrans {
+        public int idruta;
+        public int id;
+        public int idalm;
+        public double cant;
+        public String nombre;
+        public String um;
+        public int bandera;
+    }
+
+    //endregion
+
+    //region P Clases
 
     public class clsP_almacen {
         public int  codigo_almacen;
@@ -1368,6 +1422,10 @@ public class clsClasses {
         public long fecha_fin_labores;
     }
 
+    //endregion
+
+    //region T Clases
+
     public class clsT_prodmenu {
         public int  id;
         public int  idsess;
@@ -1713,41 +1771,9 @@ public class clsClasses {
         public long fechault;
     }
 
+    //endregion
 
-
-
-
-
-    // ------------------------------------------------------------
-
-    public class clsFbStock {
-        public int idalm;
-        public int idprod;
-        public double cant;
-        public String um;
-        public int bandera;
-    }
-
-    public class clsFbPStock {
-        public int id;
-        public int idalm;
-        public double cant;
-        public String nombre;
-        public String um;
-    }
-
-    public class clsFbPStockTrans {
-        public int idruta;
-        public int id;
-        public int idalm;
-        public double cant;
-        public String nombre;
-        public String um;
-        public int bandera;
-    }
-
-
-    //
+    //region Varias Clases
 
 	public class clsLista {
 		public int  pk;
@@ -1926,5 +1952,8 @@ public class clsClasses {
         public String f7;
         public String f8;
     }
+
+    //endregion
+
 
 }

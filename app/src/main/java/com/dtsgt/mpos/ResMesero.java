@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,6 +16,8 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
@@ -35,19 +36,24 @@ import com.dtsgt.classes.clsT_ordenpendObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.firebase.fbMesaAbierta;
+import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.ladapt.LA_Res_mesa;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ResMesero extends PBase {
 
@@ -55,6 +61,10 @@ public class ResMesero extends PBase {
     private TextView lblcuenta, lblgrupo,lblmes,lblbarril,lblact;
     private ImageView imgwsref,imgnowifi,imgbarril,imgact;
     private RelativeLayout relmain;
+
+    private fbResSesion fbrs;
+    private fbMesaAbierta fbma;
+    private Runnable rnFbResSesionList,rnFbMesaAbierta,rnFbMesaComensales,rnFbListenerResSesion;
 
     private clsP_res_grupoObj P_res_grupoObj;
     private clsP_res_turnoObj P_res_turnoObj;
@@ -81,6 +91,7 @@ public class ResMesero extends PBase {
 
     private ArrayList<clsClasses.clsRes_mesa> mesas= new ArrayList<clsClasses.clsRes_mesa>();
     private clsClasses.clsRes_mesa mesa= clsCls.new clsRes_mesa();
+    private clsClasses.clsfbResSesion rsesion = clsCls.new clsfbResSesion();
 
     private int idgrupo,cantpers,numorden,codigomesa;
     private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2,idorden;
@@ -91,68 +102,88 @@ public class ResMesero extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_res_mesero);
+        try {
 
-        super.InitBase();
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_res_mesero);
 
-        gridView = findViewById(R.id.gridView1);
-        lblcuenta =findViewById(R.id.textView179a);
-        lblgrupo =findViewById(R.id.textView179b);
-        lblmes =findViewById(R.id.textView179b2);
-        lblbarril =findViewById(R.id.textView221);
-        lblact =findViewById(R.id.textView212);
-        imgbarril =findViewById(R.id.imageView106);
-        imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
-        imgact =findViewById(R.id.imageView87);
-        imgnowifi=findViewById(R.id.imageView71a);
-        relmain=findViewById(R.id.relmmain);
+            super.InitBase();
 
-        calibraPantalla();
+            gridView = findViewById(R.id.gridView1);
+            lblcuenta =findViewById(R.id.textView179a);
+            lblgrupo =findViewById(R.id.textView179b);
+            lblmes =findViewById(R.id.textView179b2);
+            lblbarril =findViewById(R.id.textView221);
+            lblact =findViewById(R.id.textView212);
+            imgbarril =findViewById(R.id.imageView106);
+            imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
+            imgact =findViewById(R.id.imageView87);
+            imgnowifi=findViewById(R.id.imageView71a);
+            relmain=findViewById(R.id.relmmain);
 
-        P_res_grupoObj=new clsP_res_grupoObj(this,Con,db);
-        P_res_turnoObj=new clsP_res_turnoObj(this,Con,db);
-        P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
-        P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
-        T_ordenObj=new clsT_ordenObj(this,Con,db);
-        P_mesero_grupoObj=new clsP_mesero_grupoObj(this,Con,db);
-        P_mesa_nombreObj=new clsP_mesa_nombreObj(this,Con,db);
-        T_ordenpendObj=new clsT_ordenpendObj(this,Con,db);
+            calibraPantalla();
 
-        actorden=gl.peActOrdenMesas;
+            P_res_grupoObj=new clsP_res_grupoObj(this,Con,db);
+            P_res_turnoObj=new clsP_res_turnoObj(this,Con,db);
+            P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
+            P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
+            T_ordenObj=new clsT_ordenObj(this,Con,db);
+            P_mesero_grupoObj=new clsP_mesero_grupoObj(this,Con,db);
+            P_mesa_nombreObj=new clsP_mesa_nombreObj(this,Con,db);
+            T_ordenpendObj=new clsT_ordenpendObj(this,Con,db);
 
-        setHandlers();
-        cargaConfig();
-        gl.ventalock=false;
+            actorden=gl.peActOrdenMesas;
 
-        getURL();
+            //region Firebase
 
-        ws=new WebService(ResMesero.this,gl.wsurl);
-        wscom =new wsCommit(gl.wsurl);
+            fbrs=new fbResSesion("ResSesion",gl.tienda);
+            fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
 
-        rnCorelPutCallback = () -> PutCorelCallback();
+            rnFbResSesionList= () -> { FbResSesionList();};
+            rnFbListenerResSesion= () -> { FbListenerResSesion();};
+            rnFbMesaAbierta= () -> {FbMesaAbierta();};
+            rnFbMesaComensales= () -> {FbMesaComensales();};
 
-        wso=new wsOpenDT(gl.wsurl);
-        wslock=new wsOpenDT(gl.wsurl);
+            fbrs.setListener(rnFbListenerResSesion);
 
-        wsidle=true;
+            //endregion
 
-        rnBroadcastCallback = () -> broadcastCallback();
-        rnCorelGetCallback = () -> GetCorelCallback();
-        rnOrden = () ->  ordenAction();
-        rnLock = () ->  checkLock();
-        rnOrdenRem = () ->  ordenRemCallback();
+            setHandlers();
+            cargaConfig();
+            gl.ventalock=false;
 
-        if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
+            getURL();
 
-        clsD_barrilObj D_barrilObj=new clsD_barrilObj(this,Con,db);
-        D_barrilObj.fill();
-        if (D_barrilObj.count==0) {
-            lblbarril.setVisibility(View.INVISIBLE);
-            imgbarril.setVisibility(View.INVISIBLE);
+            ws=new WebService(ResMesero.this,gl.wsurl);
+            wscom =new wsCommit(gl.wsurl);
+
+            rnCorelPutCallback = () -> PutCorelCallback();
+
+            wso=new wsOpenDT(gl.wsurl);
+            wslock=new wsOpenDT(gl.wsurl);
+
+            wsidle=true;
+
+            rnBroadcastCallback = () -> broadcastCallback();
+            rnCorelGetCallback = () -> GetCorelCallback();
+            rnOrden = () ->  validaMesaAbierta();
+            rnOrdenRem = () ->  ordenRemCallback();
+
+            if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
+
+            clsD_barrilObj D_barrilObj=new clsD_barrilObj(this,Con,db);
+            D_barrilObj.fill();
+            if (D_barrilObj.count==0) {
+                lblbarril.setVisibility(View.INVISIBLE);
+                imgbarril.setVisibility(View.INVISIBLE);
+            }
+
+            imgwsref.setVisibility(View.INVISIBLE);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        imgwsref.setVisibility(View.INVISIBLE);
     }
 
     //region Events
@@ -274,8 +305,8 @@ public class ResMesero extends PBase {
                     mesa.alias2=amesa;
                 }
 
+                /*
                 P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+") AND (FECHAINI>="+flim+")");
-
                 if (P_res_sesionObj.count>0) {
 
                     last=P_res_sesionObj.items.get(P_res_sesionObj.count-1);
@@ -306,11 +337,55 @@ public class ResMesero extends PBase {
                     mesa.cod_vend=gl.idmesero;
                 }
 
+                 */
+
+                mesa.estado=0;
+                mesa.pers=0;
+                mesa.cuentas=0;
+                mesa.fecha=0;
+                mesa.pendiente=0;
+                mesa.cod_vend=gl.idmesero;
+
                 mesas.add(mesa);
+            }
+
+            //adapter=new LA_Res_mesa(this,this,mesas,horiz);
+            //gridView.setAdapter(adapter);
+
+            fbrs.listItemsActivos(rnFbResSesionList);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void FbResSesionList() {
+        try {
+            //mesaActiva
+
+            for (int i = 0; i <mesas.size(); i++) {
+                mesa=mesas.get(i);
+
+                if (mesaActiva(mesa.codigo_mesa)) {
+
+                    mesa.estado=rsesion.estado;toast("estado :"+mesa.estado);
+                    mesa.pers=rsesion.cantp;
+                    mesa.cuentas=rsesion.cantc;
+                    mesa.fecha=rsesion.fechault;
+                    mesa.idorden=rsesion.id;
+                    mesa.cod_vend=rsesion.vendedor;
+
+                    T_ordenObj.fill("WHERE (COREL='"+rsesion.id+"') AND (ESTADO=1)");
+                    mesa.pendiente=T_ordenObj.count;
+
+                    T_ordenpendObj.fill("WHERE GODIGO_ORDEN='"+rsesion.id+"'");
+                    if (T_ordenpendObj.count>0) mesa.est_envio=0;
+
+                }
             }
 
             adapter=new LA_Res_mesa(this,this,mesas,horiz);
             gridView.setAdapter(adapter);
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -332,7 +407,7 @@ public class ResMesero extends PBase {
                 try {
                     gl.idorden=mesa.idorden;
                     if (!gl.idorden.isEmpty()) {
-                        startActivity(new Intent(this,Orden.class));
+                        validaMesaAbierta();
                     } else {
                         throw new Exception();
                     }
@@ -342,7 +417,7 @@ public class ResMesero extends PBase {
                         P_res_sesionObj.update(P_res_sesionObj.first());
                         browse = 1;
                         gl.idorden = "";
-                        startActivity(new Intent(this, Comensales.class));
+                        validaMesaComensales();
                     } catch (Exception ee) {
                         msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ee.getMessage());
                     }
@@ -351,7 +426,7 @@ public class ResMesero extends PBase {
                 //inputPersonas();
                 browse=1;
                 gl.idorden="";
-                startActivity(new Intent(this,Comensales.class));
+                validaMesaComensales();
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -364,6 +439,7 @@ public class ResMesero extends PBase {
 
             db.beginTransaction();
 
+            /*
             clsClasses.clsP_res_sesion item = clsCls.new clsP_res_sesion();
 
             item.id=gl.codigo_ruta+"_"+mu.getCorelBase();
@@ -377,6 +453,22 @@ public class ResMesero extends PBase {
             item.fechault=du.getActDateTime();
 
             P_res_sesionObj.add(item);
+
+             */
+
+            clsClasses.clsfbResSesion item = clsCls.new clsfbResSesion();
+
+            item.id=gl.codigo_ruta+"_"+mu.getCorelBase();
+            item.codigo_mesa=codigomesa;
+            item.vendedor=gl.idmesero;
+            item.estado=1;
+            item.cantp=cantpers;
+            item.cantc=numorden;
+            item.fechaini=du.getActDateTime();
+            item.fechafin=0;
+            item.fechault=du.getActDateTime();
+
+            fbrs.setItem(item.id, item);
 
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
@@ -399,7 +491,7 @@ public class ResMesero extends PBase {
             if (actorden) {
                 envioOrden();
             } else {
-                startActivity(new Intent(this,Orden.class));
+                validaMesaAbierta();
             }
         } catch (Exception e) {
             db.endTransaction();
@@ -490,15 +582,120 @@ public class ResMesero extends PBase {
 
     //endregion
 
+    //region Bloqueo de mesa
+
+    private void validaMesaAbierta() {
+        try {
+            if (wscom.errflag) toast("SIN CONEXIÓN A INTERNET");
+            fbma.getItem(gl.mesacodigo,rnFbMesaAbierta);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void validaMesaComensales() {
+        try {
+            if (wscom.errflag) toast("SIN CONEXIÓN A INTERNET");
+            fbma.getItem(gl.mesacodigo,rnFbMesaComensales);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void FbMesaAbierta() {
+        try {
+            if (fbma.errflag) {
+                msgbox("FbMesaAbierta . "+fbma.error);return;
+            }
+
+            if (fbma.itemexists) {
+                if (fbma.item.estado==1) {
+                    msgAskMesa("La mesa está abierta");return;
+                }
+            }
+
+            startActivity(new Intent(this,Orden.class));
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void FbMesaComensales() {
+        try {
+            if (fbma.errflag) {
+                msgbox("FbMesaComensales . "+fbma.error);return;
+            }
+
+            if (fbma.itemexists) {
+                if (fbma.item.estado==1) {
+                    msgAskMesa("La mesa está abierta");return;
+                }
+            }
+
+            startActivity(new Intent(this,Comensales.class));
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void desbloquoMesa() {
+        try {
+            clsClasses.clsfbMesaAbierta item = clsCls.new clsfbMesaAbierta();
+
+            item.codigo_mesa=gl.mesacodigo;
+            item.estado=0;
+            fbma.setItem(item.codigo_mesa, item);
+
+            msgbox("Mesa desbloqueada.\nAsegure se que ninguno otro\nusuario no la tiene abierta.");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
+    //region Listener
+
+    private void FbListenerResSesion() {
+        try {
+            toast("Listener");
+            listItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void registerListener() {
+        try {
+
+
+            fbrs.refResSesion.addValueEventListener(fbrs.listResSesion);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void unregisterListener() {
+        try {
+            fbrs.refResSesion.removeEventListener(fbrs.listResSesion);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    //endregion
+
     //region Envio
 
     private void envioOrden() {
         String cmd="";
 
         try {
+            /*
             clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
             P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
             cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+             */
 
             clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
             T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
@@ -528,18 +725,6 @@ public class ResMesero extends PBase {
     private void enviaCommit(String cmd) {
         if (!actorden) return;
         wscom.execute(cmd,rnOrden);
-    }
-
-    private void ordenAction() {
-        try {
-            if (wscom.errflag) {
-                toastlong("SIN CONEXIÓN A INTERNET");
-            }
-
-            startActivity(new Intent(this,Orden.class));
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
     }
 
     private String buildDetailJournal() {
@@ -875,19 +1060,21 @@ public class ResMesero extends PBase {
     private void agregaOrden() {
 
         numorden=0;
-        boolean espedido=app.esmesapedido(gl.emp,""+mesa.idgrupo);
 
+        /*
+        boolean espedido=app.esmesapedido(gl.emp,""+mesa.idgrupo);
         if (!espedido) {
             addOrden();return;
         }
+        */
 
-        if(!wsidle) {
+        if (!wsidle) {
             msgbox("Agregar orden: No se puede crear orden, por favor intente de nuevo ");return;
         }
 
         corcorel=gl.codigo_ruta+"_"+mu.getCorelBase();
 
-        try{
+        try {
 
             wcoridle=false;
 
@@ -1147,34 +1334,21 @@ public class ResMesero extends PBase {
 
     //endregion
 
-    //region Bloqueo mesa
+    //region Aux
 
-    private void runLock() {
+    private boolean mesaActiva(int cmesa) {
         try {
-            sql="SELECT * FROM P_RES_MESA_BLOQ";
-            wslock.execute(sql,rnLock);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void checkLock() {
-        try {
-            if (!wslock.errflag) {
-                int ii=wslock.openDTCursor.getCount();
-                abrirOrden();
-                return;
+            for (int ir = 0; ir <fbrs.items.size(); ir++) {
+                rsesion=fbrs.items.get(ir);
+                if (rsesion.codigo_mesa==cmesa) {
+                    if (rsesion.estado>0) return true;
+                }
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        abrirOrden();
+        return false;
     }
-
-    //endregion
-
-    //region Aux
 
     private void cargaConfig() {
 
@@ -1695,6 +1869,72 @@ public class ResMesero extends PBase {
         }
     }
 
+    private void msgAskMesa(String msg) {
+        try {
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    validaSupervisor();
+                }
+            });
+
+            dialog.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void validaSupervisor() {
+
+        clsClasses.clsVendedores item;
+
+        try {
+            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+            app.fillSuper(VendedoresObj);
+
+            if (VendedoresObj.count==0) {
+                msgbox("No está definido ningún supervisor");return;
+            }
+
+            extListPassDlg listdlg = new extListPassDlg();
+            listdlg.buildDialog(ResMesero.this,"Autorización","Salir");
+
+            for (int i = 0; i <VendedoresObj.count; i++) {
+                item=VendedoresObj.items.get(i);
+                listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+            }
+
+            listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+            listdlg.onEnterClick(v -> {
+
+                if (listdlg.getInput().isEmpty()) return;
+
+                if (listdlg.validPassword()) {
+                    desbloquoMesa();
+                    listdlg.dismiss();
+                } else {
+                    toast("Contraseña incorrecta");
+                }
+            });
+
+            listdlg.setWidth(350);
+            listdlg.setLines(4);
+
+            listdlg.show();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     //endregion
 
@@ -1716,6 +1956,8 @@ public class ResMesero extends PBase {
         } catch (Exception e) {
             msgbox(e.getMessage());
         }
+
+        registerListener();
 
         if (actorden) {
             //recibeOrdenes();
@@ -1754,6 +1996,9 @@ public class ResMesero extends PBase {
     @Override
     protected void onPause() {
         if (actorden) cancelaOrdenes();
+
+        unregisterListener();
+
         super.onPause();
     }
 
