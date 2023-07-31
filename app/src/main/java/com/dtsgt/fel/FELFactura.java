@@ -499,7 +499,7 @@ public class FELFactura extends PBase {
 
         String dir,muni,dep,iddep,idmuni,lcombo;
         int idcont;
-        double ldesc;
+        double ldesc,propina;
 
         corel=facts.get(fidx);
 
@@ -583,6 +583,12 @@ public class FELFactura extends PBase {
                          gl.codigo_pais,
                          fel.tipo_nit);
 
+            propina=0;
+            D_facturaprObj.fill("WHERE Corel='"+corel+"'");
+            if (D_facturaprObj.count>0) {
+                propina=D_facturaprObj.first().propina;
+            }
+
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 
             for (int i = 0; i <D_facturadObj.count; i++) {
@@ -601,6 +607,10 @@ public class FELFactura extends PBase {
                             mu.round2(factd.total),
                             factd.desmon,
                             lcombo);
+            }
+
+            if (propina>0) {
+                fel.detalle_propina(propina);
             }
 
             fel.completar(fact.serie,fact.corelativo);

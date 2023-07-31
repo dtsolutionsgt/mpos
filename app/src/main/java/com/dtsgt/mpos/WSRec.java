@@ -1172,6 +1172,7 @@ public class WSRec extends PBase {
 
             validaCombos();
             printBypass();
+            productoPropinaServicio();
 
             if (app.citems.size()>0) mostrarLista();
 
@@ -1256,6 +1257,75 @@ public class WSRec extends PBase {
             db.endTransaction();
         } catch (Exception e) {
             db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void productoPropinaServicio() {
+        try {
+            db.execSQL("DELETE FROM P_PRODUCTO WHERE CODIGO_PRODUCTO=577");
+
+            ins.init("P_producto");
+
+            ins.add("CODIGO_PRODUCTO",577);
+            ins.add("CODIGO","SPROPINA");
+            ins.add("CODIGO_TIPO","S");
+            ins.add("LINEA",23);
+            ins.add("EMPRESA",gl.emp);
+            ins.add("MARCA",1);
+            ins.add("CODBARRA","");
+            ins.add("DESCCORTA","Propina");
+            ins.add("DESCLARGA","Propina");
+            ins.add("COSTO",0);
+            ins.add("FACTORCONV",0);
+            ins.add("UNIDBAS","UN");
+            ins.add("UNIDMED","");
+            ins.add("UNIMEDFACT",0);
+            ins.add("UNIGRA","");
+            ins.add("UNIGRAFACT",0);
+            ins.add("DESCUENTO",0);
+            ins.add("BONIFICACION",0);
+            ins.add("IMP1",0);
+            ins.add("IMP2",0);
+            ins.add("IMP3",0);
+            ins.add("VENCOMP","");
+            ins.add("DEVOL",0);
+            ins.add("OFRECER",0);
+            ins.add("RENTAB",0);
+            ins.add("DESCMAX",0);
+            ins.add("IVA","");
+            ins.add("CODBARRA2","");
+            ins.add("CBCONV",1);
+            ins.add("BODEGA","");
+            ins.add("SUBBODEGA","");
+            ins.add("PESO_PROMEDIO",1);
+            ins.add("MODIF_PRECIO",0);
+            ins.add("VIDEO","");
+            ins.add("VENTA_POR_PESO",0);
+            ins.add("ES_PROD_BARRA",0);
+            ins.add("UNID_INV","UN");
+            ins.add("VENTA_POR_PAQUETE",0);
+            ins.add("VENTA_POR_FACTOR_CONV",0);
+            ins.add("ES_SERIALIZADO",0);
+            ins.add("PARAM_CADUCIDAD",0);
+            ins.add("PRODUCTO_PADRE",0);
+            ins.add("FACTOR_PADRE",1);
+            ins.add("TIENE_INV",0);
+            ins.add("TIENE_VINETA_O_TUBO",0);
+            ins.add("PRECIO_VINETA_O_TUBO",0);
+            ins.add("ES_VENDIBLE",0);
+            ins.add("UNIGRASAP","UN");
+            ins.add("UM_SALIDA","UN");
+            ins.add("ACTIVO",0);
+            ins.add("IMAGEN","");
+            ins.add("tiempo_preparacion",0);
+
+            db.execSQL(ins.sql());
+
+        //prodprecioz
+        //BienOServicio
+
+        } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }

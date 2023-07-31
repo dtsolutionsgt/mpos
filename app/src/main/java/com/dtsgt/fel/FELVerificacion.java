@@ -17,6 +17,7 @@ import com.dtsgt.classes.clsD_facturacObj;
 import com.dtsgt.classes.clsD_facturadObj;
 import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturapObj;
+import com.dtsgt.classes.clsD_facturaprObj;
 import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_departamentoObj;
 import com.dtsgt.classes.clsP_municipioObj;
@@ -47,6 +48,7 @@ public class FELVerificacion extends PBase {
     private clsD_facturafObj D_facturafObj;
     private clsD_facturapObj D_facturapObj;
     private clsP_productoObj prod;
+    private clsD_facturaprObj D_facturaprObj;
 
     private wsFacturasFEL ffel;
     private Runnable rnFacturasFEL;
@@ -115,6 +117,8 @@ public class FELVerificacion extends PBase {
         D_facturadObj=new clsD_facturadObj(this,Con,db);
         D_facturafObj=new clsD_facturafObj(this,Con,db);
         D_facturapObj=new clsD_facturapObj(this,Con,db);
+        D_facturaprObj=new clsD_facturaprObj(this,Con,db);
+
         prod=new clsP_productoObj(this,Con,db);
 
         app.parametrosExtra();
@@ -279,7 +283,7 @@ public class FELVerificacion extends PBase {
 
         String dir,muni,dep,iddep,idmuni;
         int idcont;
-        double lprec,ltot,ldesc;
+        double lprec,ltot,ldesc,propina;
 
         corel=facts.get(fidx);
 
@@ -384,6 +388,13 @@ public class FELVerificacion extends PBase {
                          gl.codigo_pais,
                          fel.tipo_nit);
 
+            propina=0;
+            D_facturaprObj.fill("WHERE Corel='"+corel+"'");
+            if (D_facturaprObj.count>0) {
+                propina=D_facturaprObj.first().propina;
+            }
+
+
             D_facturadObj.fill("WHERE Corel='"+corel+"'");
 
             for (int i = 0; i <D_facturadObj.count; i++) {
@@ -403,6 +414,10 @@ public class FELVerificacion extends PBase {
                             mu.round2(factd.total),
                             factd.desmon,
                             lcombo);
+            }
+
+            if (propina>0) {
+                fel.detalle_propina(propina);
             }
 
             fel.completar(fact.serie,
@@ -710,6 +725,8 @@ public class FELVerificacion extends PBase {
             D_facturadObj.reconnect(Con,db);
             D_facturafObj.reconnect(Con,db);
             D_facturapObj.reconnect(Con,db);
+            D_facturaprObj.reconnect(Con,db);
+
             prod.reconnect(Con,db);
         } catch (Exception e) {
             msgbox2(e.getMessage());
@@ -722,4 +739,5 @@ public class FELVerificacion extends PBase {
     }
 
     //endregion
+
 }
