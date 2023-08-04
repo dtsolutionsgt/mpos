@@ -3836,7 +3836,8 @@ public class FacturaRes extends PBase {
                 rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"comanda_"+printid+".txt");
 
                 rep.add(P_impresoraObj.first().tipo_impresora);
-                rep.add(P_impresoraObj.first().nombre);
+                //rep.add(P_impresoraObj.first().nombre);
+				rep.add(gl.rutanom);
 				prip=app.ipBypass(P_impresoraObj.first().ip);
 				rep.add(prip);
 
