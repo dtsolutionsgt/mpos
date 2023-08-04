@@ -2,7 +2,6 @@ package com.dtsgt.base;
 
 public class clsClasses {
 
-
     //region D Clases
 
     public class clsD_barril {

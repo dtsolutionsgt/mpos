@@ -2993,7 +2993,7 @@ public class WSRec extends PBase {
             clsBeP_RES_SALA item = new clsBeP_RES_SALA();
             clsClasses.clsP_res_sala var;
 
-            script.add("DELETE FROM P_RES_SALA");
+            script.add("DELETE FROM P_res_sala");
 
             items = xobj.getresult(clsBeP_RES_SALAList.class, "GetP_RES_SALA");
             if (items==null) return;

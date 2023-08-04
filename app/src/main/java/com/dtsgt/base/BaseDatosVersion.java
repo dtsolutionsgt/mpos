@@ -111,17 +111,6 @@ public class BaseDatosVersion {
 
         try {
 
-            sql="CREATE TABLE [P_res_sala] ("+
-                    "CODIGO_SALA INTEGER NOT NULL,"+
-                    "EMPRESA INTEGER NOT NULL,"+
-                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
-                    "NOMBRE TEXT NOT NULL,"+
-                    "ACTIVO INTEGER NOT NULL,"+
-                    "ESCALA REAL NOT NULL,"+
-                    "TAM_LETRA REAL NOT NULL,"+
-                    "PRIMARY KEY ([CODIGO_SALA])"+
-                    ");";
-            db.execSQL(sql);
 
         } catch (Exception e) {
         }
@@ -1660,6 +1649,20 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_stock_idx1 ON T_stock(ID)";db.execSQL(sql);
             sql="CREATE INDEX T_stock_idx2 ON T_stock(IDPROD)";db.execSQL(sql);
 
+        } catch (Exception e) { }
+
+        try {
+            sql="CREATE TABLE [P_res_sala] ("+
+                    "CODIGO_SALA INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "CODIGO_SUCURSAL INTEGER NOT NULL,"+
+                    "NOMBRE TEXT NOT NULL,"+
+                    "ACTIVO INTEGER NOT NULL,"+
+                    "ESCALA REAL NOT NULL,"+
+                    "TAM_LETRA REAL NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_SALA])"+
+                    ");";
+            db.execSQL(sql);
         } catch (Exception e) { }
 
         try {

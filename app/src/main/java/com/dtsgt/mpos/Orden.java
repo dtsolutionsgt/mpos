@@ -3092,10 +3092,13 @@ public class Orden extends PBase {
             cmd += "DELETE FROM T_orden WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
             cmd += "DELETE FROM T_ordencuenta WHERE (EMPRESA=" + gl.emp + ") AND (COREL='" + idorden + "')" + ";";
 
+            /*
             clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
             P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
             cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
             //cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
+
+             */
 
             clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
             T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
@@ -3109,7 +3112,7 @@ public class Orden extends PBase {
                 cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
             }
 
-            cmd+=buildDetailJournal();
+            //cmd+=buildDetailJournal();
 
             try {
                 /*
@@ -3149,7 +3152,7 @@ public class Orden extends PBase {
                 cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
             }
 
-            cmd+=buildDetailJournal();
+            //cmd+=buildDetailJournal();
 
             try {
                 /*
@@ -3197,7 +3200,7 @@ public class Orden extends PBase {
                 cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
             }
 
-            cmd+=buildDetailJournal();
+            //cmd+=buildDetailJournal();
 
             try {
                 /*
@@ -3245,7 +3248,7 @@ public class Orden extends PBase {
                 cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
             }
 
-            cmd+=buildDetailJournalTodasCajas();
+            //cmd+=buildDetailJournalTodasCajas();
 
             try {
                 /*
@@ -3290,7 +3293,7 @@ public class Orden extends PBase {
                 cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
             }
 
-            cmd+=buildDetailJournalTodasCajas();
+            //cmd+=buildDetailJournalTodasCajas();
 
             try {
                 /*
@@ -3336,7 +3339,7 @@ public class Orden extends PBase {
                 cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
             }
 
-            cmd+=buildDetailJournalTodasCajas();
+            //cmd+=buildDetailJournalTodasCajas();
 
             try {
                 /*
