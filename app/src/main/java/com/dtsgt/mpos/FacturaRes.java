@@ -3897,12 +3897,15 @@ public class FacturaRes extends PBase {
 				}
 
 				if ( gl.domicilio) {
-					rep.addc(" D O M I C I L I O ");rep.add("");
+					//rep.addc(" D O M I C I L I O ");rep.add("");
+					agregaDomicilio(rep);
 				}
 
 				rep.add("");rep.add("");rep.add("");
 
-				rep.save();rep.clear();
+				rep.save();
+
+				rep.clear();
             }
             //mesa
             //rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
@@ -3914,7 +3917,46 @@ public class FacturaRes extends PBase {
         }
     }
 
-    private void ejecutaImpresion() {
+	private void agregaDomicilio(clsRepBuilder repp) {
+
+		int prw=gl.prw;
+		String nombre_cliente=gl.gNombreCliente;
+		String clidir=gl.gDirCliente;
+		String clitel=gl.gTelCliente;
+
+		repp.add("");
+		repp.addc("D O M I C I L I O");
+		repp.add("");
+		repp.add(nombre_cliente);
+
+		if (!clidir.isEmpty()) {
+			//clidir="Dir.: "+clidir;
+			if (clidir.length()>prw) {
+
+				String nuevaCadena = "", cadena = "";
+
+				cadena = clidir;
+				nuevaCadena = cadena.substring(0, prw);repp.add(nuevaCadena);
+				cadena = cadena.substring(prw);
+				if (cadena.length() > prw) {
+					nuevaCadena =cadena.substring(0, prw);repp.add(nuevaCadena);
+					cadena = cadena.substring(prw);
+					if (cadena.length() > prw) {
+						nuevaCadena = cadena.substring(0, prw);repp.add(nuevaCadena);
+					} if (cadena.length()>0) repp.add(cadena);
+				} else {
+					if (cadena.length()>0) repp.add(cadena);
+				}
+			} else repp.add(clidir);
+		}
+
+		try {
+			if (!clitel.isEmpty()) repp.add("Tel.: "+clitel);
+		} catch (Exception e) {}
+
+	}
+
+	private void ejecutaImpresion() {
         try {
             app.print3nstarw();
         } catch (Exception e) {
