@@ -64,7 +64,7 @@ import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
-import com.dtsgt.firebase.fbResSesion;
+import com.dtsgt.firebase.fbOrden;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -80,6 +80,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Orden extends PBase {
 
@@ -100,6 +101,8 @@ public class Orden extends PBase {
     private clsClasses.clsP_res_sesion rsitem;
     private clsClasses.clsD_barril_trans btrans;
 
+    private clsClasses.clsT_orden fbitem;
+
     private Precio prc;
     private clsListaObj ViewObj;
 
@@ -109,8 +112,6 @@ public class Orden extends PBase {
     private ListAdaptGridFamList adapterfl;
     private ListAdaptGridProd adapterp;
     private ListAdaptGridProdList adapterpl;
-
-    private fbMesaAbierta fbma;
 
     private ExDialog mMenuDlg;
 
@@ -136,6 +137,13 @@ public class Orden extends PBase {
     private Runnable rnBarTrans;
     private Runnable rnClose;
     private Runnable rnOrdenInsert,rnOrdenQuery;
+
+    private fbMesaAbierta fbma;
+    private fbOrden fbo;
+
+    private Runnable rnfsoList,rnfsoNewid;
+
+
 
     //private Handler ctimer;
     //private Runnable crunner;
@@ -264,6 +272,12 @@ public class Orden extends PBase {
 
             setVisual();
 
+            fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
+            fbo =new fbOrden("Orden",gl.tienda,idorden);
+
+            rnfsoList = () -> fsoListItems();
+            rnfsoNewid = () -> fsoSaveItem();
+
             listItems();
 
             if (gl.nombre_mesero_sel.isEmpty()) gl.nombre_mesero_sel=gl.vendnom;
@@ -276,7 +290,6 @@ public class Orden extends PBase {
             wscom =new wsCommit(gl.wsurl);
             wslock =new wsCommit(gl.wsurl);
 
-            fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
 
             agregaBloqueo();
 
@@ -602,7 +615,42 @@ public class Orden extends PBase {
 
     //region Main
 
-    public void listItems() {
+    private void listItems() {
+        try {
+            fbo.listItems(rnfsoList);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void fsoListItems() {
+        try {
+
+            try {
+                db.beginTransaction();
+
+                db.execSQL("DELETE FROM T_ORDEN");
+
+                clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+
+                for (int ii = 0; ii <fbo.items.size(); ii++) {
+                    T_ordenObj.add(fbo.items.get(ii));
+                }
+
+                db.setTransactionSuccessful();
+                db.endTransaction();
+            } catch (Exception e) {
+                db.endTransaction();
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
+            }
+
+            showItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void showItems() {
         Cursor DT;
         clsOrden item;
         double tt,stot,tdesc,desc;
@@ -614,10 +662,10 @@ public class Orden extends PBase {
 
         try {
             sql="SELECT T_ORDEN.PRODUCTO, P_PRODUCTO.DESCCORTA, T_ORDEN.TOTAL, T_ORDEN.CANT, T_ORDEN.PRECIODOC, " +
-                "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
-                "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
-                "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
-                "WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<2) ORDER BY T_ORDEN.ID ";
+                    "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
+                    "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
+                    "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
+                    "WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<2) ORDER BY T_ORDEN.ID ";
 
             DT=Con.OpenDT(sql);
 
@@ -699,11 +747,11 @@ public class Orden extends PBase {
                     item.nota=snota;
 
                     //if (!cuentaPagada(idorden,item.cuenta)) {
-                        items.add(item);
+                    items.add(item);
 
-                        tot+=tt;
-                        ttimp+=item.imp;
-                        ttperc+=item.percep;
+                    tot+=tt;
+                    ttimp+=item.imp;
+                    ttperc+=item.percep;
                     //}
 
                     DT.moveToNext();ii++;
@@ -753,6 +801,7 @@ public class Orden extends PBase {
 
         try{
 
+            /*
             try {
                 sql="SELECT Empresa,Cant FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (PRODUCTO='"+prodid+"')";
                 Cursor dt=Con.OpenDT(sql);
@@ -761,6 +810,11 @@ public class Orden extends PBase {
                 exists=false;
             }
             descflag=true;
+            */
+
+            descflag=true;exists=false;
+
+
 
             String pid=gl.gstr;
             if (mu.emptystr(pid)) return;
@@ -914,7 +968,7 @@ public class Orden extends PBase {
                 if (updateitem) {
                     if (updateItemUID()) clearItem();
                 } else {
-                    if (addItem()) clearItem();
+                    addItem();
                 }
             } else if (tipo.equalsIgnoreCase("M")){
                 if (updateitem) {
@@ -927,6 +981,7 @@ public class Orden extends PBase {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
         }
 
+        /*
         try {
             sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (CANT=0)";
             db.execSQL(sql);
@@ -934,6 +989,8 @@ public class Orden extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());
         }
+
+         */
     }
 
     private void processMenuItem() {
@@ -980,7 +1037,7 @@ public class Orden extends PBase {
             cant=savecant;
             prodPrecio();
             updItem();
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
@@ -999,7 +1056,7 @@ public class Orden extends PBase {
         }
     }
 
-    private boolean addItem(){
+    private void addItem(){
 
         Cursor dt;
         double precdoc,fact,cantbas,peso;
@@ -1010,8 +1067,7 @@ public class Orden extends PBase {
         gl.uidingrediente=0;
 
         if (items.size()>=maxitems) {
-            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");
-            return false;
+            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");return;
         }
 
         try {
@@ -1053,53 +1109,46 @@ public class Orden extends PBase {
                 cui=app.cuentaActivaPostpago(idorden);
             }
 
-            ins.init("T_ORDEN");
+            fbitem=clsCls.new clsT_orden();
 
-            ins.add("ID",newid);
-            ins.add("COREL",idorden);
-            ins.add("PRODUCTO",prodid);
-            //ins.add("EMPRESA",""+counter);
-            ins.add("EMPRESA",""+newid);
-            if (porpeso) ins.add("UM",gl.umpeso);else ins.add("UM",gl.um);
-            ins.add("CANT",cant);
-            ins.add("UMSTOCK",gl.um);
+            fbitem.corel=idorden;
+            fbitem.producto=prodid;
+            fbitem.empresa=""+newid;
+            if (porpeso) fbitem.um=gl.umpeso;else fbitem.um=gl.um;
+            fbitem.cant=cant;
+            fbitem.umstock=gl.um;
             if (gl.umfactor==0) gl.umfactor=1;
-            ins.add("FACTOR",gl.umfactor);
-            if (porpeso) ins.add("PRECIO",gl.prectemp); else ins.add("PRECIO",prec);
-            ins.add("IMP",impval);
-            ins.add("DES",desc);
-            ins.add("DESMON",descmon);
-            ins.add("TOTAL",prodtot);
-            if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
-            ins.add("PESO",peso);
+            fbitem.factor=gl.umfactor;
+            if (porpeso) fbitem.precio=gl.prectemp; else fbitem.precio=prec;
+            fbitem.imp=impval;
+            fbitem.des=desc;
+            fbitem.desmon=descmon;
+            fbitem.total=prodtot;
+            if (porpeso) fbitem.preciodoc=gl.prectemp; else fbitem.preciodoc=precdoc;
+            fbitem.peso=peso;
 
-            //ins.add("VAL1",0);
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                ins.add("VAL1", pimp);
+                fbitem.val1=pimp;
             } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                ins.add("VAL1", pimp);
+                fbitem.val1=pimp;
             } else {
-                ins.add("VAL1",0);
+                fbitem.val1=0;
             }
 
-            ins.add("VAL2","0");
-            ins.add("VAL3",0);
-            ins.add("VAL4","0");
-            ins.add("PERCEP",percep);
-            ins.add("CUENTA",cui);
-            ins.add("ESTADO",1);
+            fbitem.val2="0";
+            fbitem.val3=0;
+            fbitem.val4="0";
+            fbitem.percep=percep;
+            fbitem.cuenta=cui;
+            fbitem.estado=1;
 
-            db.execSQL(ins.sql());
-
-            counter++;
-
-            gl.uidingrediente=newid;
+            fbo.newid(rnfsoNewid);
 
         } catch (SQLException e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox("Error : " + e.getMessage());return false;
+            mu.msgbox("Error : " + e.getMessage());return;
         }
 
+        /*
         try {
             sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (CANT=0)";
             db.execSQL(sql);
@@ -1111,7 +1160,29 @@ public class Orden extends PBase {
         if (actorden) envioOrden();
         listItems();
 
-        return true;
+         return true;
+        */
+
+    }
+
+    private void fsoSaveItem() {
+        try {
+            if (fbo.errflag) {
+                msgbox("fsoSaveItem . "+ fbo.error);return;
+            }
+
+            fbitem.id= fbo.new_id;
+            fbo.setItem(""+fbitem.id,fbitem);
+
+            counter++;
+            gl.uidingrediente= fbo.new_id;
+
+            listItems();
+            clearItem();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
     }
 
     private boolean addItemMenu(){
@@ -1497,13 +1568,16 @@ public class Orden extends PBase {
     }
 
     private boolean updateItemUID(){
+        clsClasses.clsT_orden sfitem;
         double precdoc;
+        String suid;
 
         try {
 
             prodtot=mu.round(prec*cant,2);
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
+            /*
             upd.init("T_ORDEN");
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
@@ -1517,6 +1591,53 @@ public class Orden extends PBase {
             upd.Where("(COREL='"+idorden+"') AND (ID='"+uid+"')");
 
             db.execSQL(upd.sql());
+
+             */
+
+            fbo.updateValue(uid,"cant",cant);
+            fbo.updateValue(uid,"precio",prec);
+            fbo.updateValue(uid,"imp",imp);
+            fbo.updateValue(uid,"des",desc);
+            fbo.updateValue(uid,"desmon",descmon);
+            fbo.updateValue(uid,"total",prodtot);
+            fbo.updateValue(uid,"preciodoc",precdoc);
+
+
+            for (int ii = 0; ii <fbo.items.size(); ii++) {
+                suid=""+fbo.items.get(ii).id;
+                if (suid.equalsIgnoreCase(uid)) {
+                    sfitem=fbo.items.get(ii);
+
+                    HashMap<String, Object> upd = new HashMap<>();
+
+                    upd.put("id",sfitem.id);
+                    upd.put("corel",sfitem.corel);
+                    upd.put("producto",sfitem.producto);
+                    upd.put("empresa",sfitem.empresa);
+                    upd.put("um",sfitem.um);
+                    upd.put("umstock",sfitem.umstock);
+                    upd.put("factor",sfitem.factor);
+                    upd.put("peso",sfitem.peso);
+                    upd.put("val1",sfitem.val1);
+                    upd.put("val2",sfitem.val2);
+                    upd.put("val3",sfitem.val3);
+                    upd.put("val4",sfitem.val4);
+                    upd.put("percep",sfitem.percep);
+                    upd.put("cuenta",sfitem.cuenta);
+                    upd.put("estado",sfitem.estado);
+
+                    upd.put("cant",cant);
+                    upd.put("precio",prec);
+                    upd.put("imp",imp);
+                    upd.put("des",desc);
+                    upd.put("desmon",descmon);
+                    upd.put("total",prodtot);
+                    upd.put("preciodoc",precdoc);
+
+                    fbo.updateValues(uid,upd);
+
+                }
+            }
 
             listItems();
 
@@ -2149,9 +2270,12 @@ public class Orden extends PBase {
 
         try {
 
+            /*
             clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
             P_res_sesionObj.fill("WHERE ID='"+idorden+"'");
             int est=P_res_sesionObj.first().estado;
+
+             */
 
             switch (menuid) {
 
@@ -3603,7 +3727,7 @@ public class Orden extends PBase {
 
     }
 
-    private String buildDetailJournal() {
+    private String buildDetailJournalx() {
         clsClasses.clsT_ordencom pitem;
         clsClasses.clsT_ordencuenta citem;
         int idruta;
@@ -3665,7 +3789,7 @@ public class Orden extends PBase {
         }
     }
 
-    private String buildDetailJournalTodasCajas() {
+    private String buildDetailJournalTodasCajasx() {
         clsClasses.clsT_ordencom pitem;
         clsClasses.clsT_ordencuenta citem;
         int idruta;

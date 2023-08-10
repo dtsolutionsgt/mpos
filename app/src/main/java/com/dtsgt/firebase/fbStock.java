@@ -119,13 +119,13 @@ public class fbStock extends fbBase {
 
     public void listItems(String node,int idalm, Runnable rnCallback) {
         try {
-            items.clear();
 
             fdb.getReference(root+node).orderByChild("idalm").equalTo(idalm).
                     //fdb.getReference(root+node).orderByChild(field).equalTo(filter).
                             get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    items.clear();
 
                     if (task.isSuccessful()) {
 
@@ -215,15 +215,14 @@ public class fbStock extends fbBase {
     }
 
     public void listExist(String node,int idalm, Runnable rnCallback) {
-
         try {
-            sitems.clear();
 
             fdb.getReference(root+node).orderByChild("idalm").equalTo(idalm).
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     int ii=0,palm;
+                    sitems.clear();
 
                     if (task.isSuccessful()) {
 

@@ -17,8 +17,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_barrilObj;
@@ -44,10 +42,6 @@ import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.srvOrdenEnvio;
 import com.dtsgt.webservice.wsCommit;
 import com.dtsgt.webservice.wsOpenDT;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -64,7 +58,8 @@ public class ResMesero extends PBase {
 
     private fbResSesion fbrs;
     private fbMesaAbierta fbma;
-    private Runnable rnFbResSesionList,rnFbMesaAbierta,rnFbMesaComensales,rnFbListenerResSesion;
+    private Runnable rnFbResSesionList,rnFbMesaAbierta,rnFbMesaComensales,
+            rnFbListenerResSesion, rnfbrsMesaActiva;
 
     private clsP_res_grupoObj P_res_grupoObj;
     private clsP_res_turnoObj P_res_turnoObj;
@@ -139,10 +134,11 @@ public class ResMesero extends PBase {
             fbrs=new fbResSesion("ResSesion",gl.tienda);
             fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
 
-            rnFbResSesionList= () -> { FbResSesionList();};
-            rnFbListenerResSesion= () -> { FbListenerResSesion();};
-            rnFbMesaAbierta= () -> {FbMesaAbierta();};
-            rnFbMesaComensales= () -> {FbMesaComensales();};
+            rnFbResSesionList = () -> { FbResSesionList();};
+            rnFbListenerResSesion = () -> { FbListenerResSesion();};
+            rnFbMesaAbierta = () -> {FbMesaAbierta();};
+            rnFbMesaComensales = () -> {FbMesaComensales();};
+            rnfbrsMesaActiva = () -> {abrirOrdenMesa();};
 
             fbrs.setListener(rnFbListenerResSesion);
 
@@ -367,7 +363,7 @@ public class ResMesero extends PBase {
 
                 if (mesaActiva(mesa.codigo_mesa)) {
 
-                    mesa.estado=rsesion.estado;toast("estado :"+mesa.estado);
+                    mesa.estado=rsesion.estado;
                     mesa.pers=rsesion.cantp;
                     mesa.cuentas=rsesion.cantc;
                     mesa.fecha=rsesion.fechault;
@@ -393,6 +389,17 @@ public class ResMesero extends PBase {
 
     private void abrirOrden() {
         try {
+            fbrs.listItemsActivos(rnfbrsMesaActiva);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
+    private void abrirOrdenMesa() {
+        boolean activa=false;
+
+        try {
 
             gl.mesa_grupo=idgrupo;
             gl.mesa_alias=aliasMesa(mesa.codigo_mesa);
@@ -401,8 +408,17 @@ public class ResMesero extends PBase {
             gl.mesacodigo=codigomesa;
             gl.mesa_area=mesa.area;
 
-            P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
-            if (P_res_sesionObj.count>0) {
+            for (int i = 0; i <fbrs.items.size(); i++) {
+                if (fbrs.items.get(i).codigo_mesa==mesa.codigo_mesa) {
+                    gl.idorden=mesa.idorden;
+
+                    activa=true;break;
+                }
+            }
+
+            //P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
+
+            if (activa) {
                 //gl.idorden=P_res_sesionObj.first().id;
                 try {
                     gl.idorden=mesa.idorden;
@@ -658,7 +674,6 @@ public class ResMesero extends PBase {
 
     private void FbListenerResSesion() {
         try {
-            toast("Listener");
             listItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -709,7 +724,7 @@ public class ResMesero extends PBase {
                 cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
             }
 
-            cmd+=buildDetailJournal();
+            //cmd+=buildDetailJournal();
 
             try {
                 enviaCommit(cmd);

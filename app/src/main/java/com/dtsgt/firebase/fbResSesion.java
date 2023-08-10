@@ -88,13 +88,13 @@ public class fbResSesion extends fbBase {
 
     public void listItemsActivos(Runnable rnCallback) {
         try {
-            items.clear();
 
             fdb.getReference(root+"/"+idsuc+"/").
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DataSnapshot> task) {
                     int estado;
+                    items.clear();
 
                     if (task.isSuccessful()) {
                         DataSnapshot res=task.getResult();
@@ -147,7 +147,5 @@ public class fbResSesion extends fbBase {
         int nc=items.size();
 
     }
-
-
 
 }

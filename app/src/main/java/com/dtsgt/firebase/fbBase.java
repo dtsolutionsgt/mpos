@@ -17,7 +17,7 @@ public class fbBase {
 
     public boolean errflag,itemexists;
 
-    public String error;
+    public String node,error;
     public int idsuc;
 
     public String value,root;
