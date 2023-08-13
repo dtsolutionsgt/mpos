@@ -682,8 +682,6 @@ public class ResMesero extends PBase {
 
     private void registerListener() {
         try {
-
-
             fbrs.refResSesion.addValueEventListener(fbrs.listResSesion);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

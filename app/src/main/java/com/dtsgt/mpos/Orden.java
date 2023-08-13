@@ -283,7 +283,7 @@ public class Orden extends PBase {
             if (gl.nombre_mesero_sel.isEmpty()) gl.nombre_mesero_sel=gl.vendnom;
 
             ws=new WebService(Orden.this,gl.wsurl);
-            actualizaEstadoOrden(0);
+            //actualizaEstadoOrden(0);
 
             rnBroadcastCallback = () -> broadcastCallback();
 
@@ -665,7 +665,8 @@ public class Orden extends PBase {
                     "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
                     "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
                     "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
-                    "WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<2) ORDER BY T_ORDEN.ID ";
+                    "WHERE (COREL='"+idorden+"') ORDER BY T_ORDEN.ID ";
+                    //"WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<2) ORDER BY T_ORDEN.ID ";
 
             DT=Con.OpenDT(sql);
 
@@ -4197,6 +4198,21 @@ public class Orden extends PBase {
     //region Estado
 
     private void actualizaEstadoOrden(int modo) {
+        imgrefr.setVisibility(View.INVISIBLE);
+
+        estado_modo=modo;
+        if (fbo.items.size()==0) return;
+
+        try {
+            for (int i = 0; i <fbo.items.size(); i++) {
+                fbo.updateValue(fbo.items.get(i).id,"estado",modo);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void actualizaEstadoOrdenOld(int modo) {
         estado_modo=modo;
         if (items.size()>0) {
 
@@ -5816,7 +5832,6 @@ public class Orden extends PBase {
     }
 
     private void msgAskComanda() {
-
         clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
         int art;
         String msg;
@@ -5916,6 +5931,8 @@ public class Orden extends PBase {
 
                         sql="UPDATE P_res_sesion SET FECHAULT="+du.getActDateTime()+" WHERE (ID='"+idorden+"')";
                         db.execSQL(sql);
+
+                        fbo.updateValue(selitem.id,"estado",flag);
 
                     } catch (SQLException e) {
                         msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
