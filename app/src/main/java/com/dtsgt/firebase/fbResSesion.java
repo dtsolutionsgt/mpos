@@ -52,7 +52,7 @@ public class fbResSesion extends fbBase {
     }
 
     public void removeValue(String itemid) {
-        fdb.getReference(root).child("/"+idsuc+"/").child(itemid).setValue(null);
+        fdb.getReference(root).child(idsuc+"").child(itemid).setValue(null);
     }
 
     public void getItem(String itemid,Runnable rnCallback) {

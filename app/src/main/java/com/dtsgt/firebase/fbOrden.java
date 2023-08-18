@@ -6,7 +6,10 @@ import com.dtsgt.base.clsClasses;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,14 +19,16 @@ public class fbOrden extends fbBase {
 
     public int new_id;
 
-    public DatabaseReference refnode;
+    public String transerr="";
+    public boolean transresult=false,transstat=false;
 
     public clsClasses.clsT_orden item,litem;
     public ArrayList<clsClasses.clsT_orden> items= new ArrayList<clsClasses.clsT_orden>();
 
     private Runnable rnListener;
 
-    private int maxid;
+    private int maxid,tr_newid,tr_cant;
+    private clsClasses.clsT_orden tritem;
 
     public fbOrden(String troot, int idsucursal,String idorden) {
         super(troot);
@@ -38,8 +43,12 @@ public class fbOrden extends fbBase {
         fdt.setValue(item);
     }
 
-    public void removeKey(String node) {
+    public void removeKey() {
         fdb.getReference(root).child(""+idsuc).child(node).removeValue();
+    }
+
+    public void removeItem(int prodid) {
+        fdb.getReference(root).child(""+idsuc).child(node).child(""+prodid).removeValue();
     }
 
     public void getItem(String itemid,Runnable rnCallback) {
@@ -77,6 +86,7 @@ public class fbOrden extends fbBase {
                         item.percep=res.child("percep").getValue(Double.class);
                         item.cuenta=res.child("cuenta").getValue(Integer.class);
                         item.estado=res.child("estado").getValue(Integer.class);
+                        item.idmesero=res.child("idmesero").getValue(Integer.class);
 
                         itemexists=true;
 
@@ -112,6 +122,8 @@ public class fbOrden extends fbBase {
 
                                 if (res.exists()) {
 
+                                    long ii=res.getChildrenCount();
+
                                     for (DataSnapshot snap : res.getChildren()) {
 
                                         try {
@@ -141,10 +153,17 @@ public class fbOrden extends fbBase {
                                             litem.cuenta=snap.child("cuenta").getValue(Integer.class);
                                             litem.estado=snap.child("estado").getValue(Integer.class);
 
+                                            try {
+                                                litem.idmesero=snap.child("idmesero").getValue(Integer.class);
+                                            } catch (Exception e) {
+                                                litem.idmesero=0;
+                                            }
+
                                             items.add(litem);
 
                                         } catch (Exception e) {
-                                            error = e.getMessage();errflag = true;break;
+                                            error = e.getMessage();
+                                            errflag = true;break;
                                         }
                                     }
                                 }
@@ -221,5 +240,46 @@ public class fbOrden extends fbBase {
         childUpdates.put(path, upd);
         fdb.getReference().updateChildren(childUpdates);
     }
+
+    public boolean transSplitItem(clsClasses.clsT_orden titem, int tnewid,Runnable rnTrCallback) {
+
+        try {
+            tritem=titem;
+            transerr="";transresult=false;transstat=false;
+            tr_newid=tnewid;tr_cant=(int) tritem.cant;
+
+            fdt.runTransaction(new Transaction.Handler() {
+                public Transaction.Result doTransaction(MutableData mutableData) {
+
+                    try {
+
+                        removeItem(tritem.id);
+
+                        tritem.cant=1;
+                        for (int i = 0; i <tr_cant; i++) {
+                            tritem.id=tr_newid+i;
+                            setItem(""+tritem.id,tritem);
+                        }
+
+                        transresult=true;
+                    } catch (Exception e) {
+                        transerr=e.getMessage();transresult=false;
+                    }
+                    return Transaction.success(mutableData);
+                }
+
+                public void onComplete(DatabaseError databaseError, boolean complete, DataSnapshot dataSnapshot) {
+                    transstat=complete;
+                    callBack=rnTrCallback;
+                    runCallBack();
+                }
+            });
+
+            return transresult;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
 }

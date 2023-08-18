@@ -126,9 +126,6 @@ public class fbPStockTransExec extends fbBase {
         }
     }
 
-
-
-
     public void setItem(String node, clsClasses.clsFbPStock item) {
         fdt=fdb.getReference(root+node);
         fdt.setValue(item);

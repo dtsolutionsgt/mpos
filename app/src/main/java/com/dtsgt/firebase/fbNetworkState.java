@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.Gravity;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -43,7 +44,14 @@ public class fbNetworkState extends BroadcastReceiver {
             notificationManager = (NotificationManager) cont.getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (mConnected) {
-                notify("MPos está conectado al internet");
+                //notify("MPos está conectado al internet");
+
+                Handler mtimer = new Handler();
+                Runnable mrunner= () -> {
+                    notify("MPos está conectado al internet");
+                };
+                mtimer.postDelayed(mrunner,40000);
+
             } else {
                 notify("Se perdió la conexión al internet");
             }

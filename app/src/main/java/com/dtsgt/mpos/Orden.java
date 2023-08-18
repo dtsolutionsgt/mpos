@@ -65,6 +65,8 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
 import com.dtsgt.firebase.fbOrden;
+import com.dtsgt.firebase.fbOrdenNota;
+import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
 import com.dtsgt.ladapt.ListAdaptGridFamList;
 import com.dtsgt.ladapt.ListAdaptGridProd;
@@ -140,10 +142,9 @@ public class Orden extends PBase {
 
     private fbMesaAbierta fbma;
     private fbOrden fbo;
+    private fbOrdenNota fbon;
 
-    private Runnable rnfsoList,rnfsoNewid;
-
-
+    private Runnable rnfboList, rnfboNewid,rnfboSplit;
 
     //private Handler ctimer;
     //private Runnable crunner;
@@ -180,7 +181,7 @@ public class Orden extends PBase {
     private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest;
-    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo;
+    private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,maxprodid;
     private int IdCuentaAMover =0;
 
     private int maxitems=100;
@@ -273,10 +274,12 @@ public class Orden extends PBase {
             setVisual();
 
             fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
-            fbo =new fbOrden("Orden",gl.tienda,idorden);
+            fbo=new fbOrden("Orden",gl.tienda,idorden);
+            fbon=new fbOrdenNota("OrdenNota",gl.tienda,idorden);
 
-            rnfsoList = () -> fsoListItems();
-            rnfsoNewid = () -> fsoSaveItem();
+            rnfboList = () -> fsoListItems();
+            rnfboNewid = () -> fsoSaveItem();
+            rnfboSplit = () -> fsoSplitItem();
 
             listItems();
 
@@ -426,8 +429,7 @@ public class Orden extends PBase {
         alert.show();
     }
 
-    public void subItemClick(int position,int handle) {
-    }
+    public void subItemClick(int position,int handle) {   }
 
     private void setHandlers(){
 
@@ -617,23 +619,29 @@ public class Orden extends PBase {
 
     private void listItems() {
         try {
-            fbo.listItems(rnfsoList);
+            fbo.listItems(rnfboList);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     public void fsoListItems() {
+        int apid;
+
         try {
 
+            if (!db.isOpen()) onResume();
+
             try {
+                clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+
                 db.beginTransaction();
 
                 db.execSQL("DELETE FROM T_ORDEN");
 
-                clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
-
+                maxprodid=0;
                 for (int ii = 0; ii <fbo.items.size(); ii++) {
+                    apid=fbo.items.get(ii).id;if (apid>maxprodid) maxprodid=apid;
                     T_ordenObj.add(fbo.items.get(ii));
                 }
 
@@ -641,6 +649,7 @@ public class Orden extends PBase {
                 db.endTransaction();
             } catch (Exception e) {
                 db.endTransaction();
+                String ee=e.getMessage();
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
             }
 
@@ -744,7 +753,6 @@ public class Orden extends PBase {
                     snota="";
                     T_orden_notaObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+item.id+")");
                     if (T_orden_notaObj.count>0) snota=T_orden_notaObj.first().nota;
-
                     item.nota=snota;
 
                     //if (!cuentaPagada(idorden,item.cuenta)) {
@@ -1142,8 +1150,9 @@ public class Orden extends PBase {
             fbitem.percep=percep;
             fbitem.cuenta=cui;
             fbitem.estado=1;
+            fbitem.idmesero=gl.idmesero;
 
-            fbo.newid(rnfsoNewid);
+            fbo.newid(rnfboNewid);
 
         } catch (SQLException e) {
             mu.msgbox("Error : " + e.getMessage());return;
@@ -1603,7 +1612,6 @@ public class Orden extends PBase {
             fbo.updateValue(uid,"total",prodtot);
             fbo.updateValue(uid,"preciodoc",precdoc);
 
-
             for (int ii = 0; ii <fbo.items.size(); ii++) {
                 suid=""+fbo.items.get(ii).id;
                 if (suid.equalsIgnoreCase(uid)) {
@@ -1689,6 +1697,9 @@ public class Orden extends PBase {
             db.beginTransaction();
 
             db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+            fbo.removeItem(gl.produid);
+            fbon.removeItem(gl.produid);
+
             db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
             db.execSQL("DELETE FROM T_ORDENCOMBOAD WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
             db.execSQL("DELETE FROM T_ORDENCOMBODET WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
@@ -1742,8 +1753,6 @@ public class Orden extends PBase {
             db.endTransaction();
             msgbox(e.getMessage());
         }
-
-
     }
 
     private void delItemIng(){
@@ -1855,49 +1864,6 @@ public class Orden extends PBase {
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void splitItem() {
-        clsClasses.clsT_orden item,fitem;
-        int cnt,newid;
-        double ttot;
-
-        try {
-            db.beginTransaction();
-
-            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
-            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+selitem.id+")");
-            fitem=T_ordenObj.first();
-            cnt=(int) fitem.cant;if (cnt<=1) return;
-
-            newid=T_ordenObj.newID("SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')");
-
-            fitem.cant=1;
-            ttot=fitem.cant*fitem.precio;ttot=mu.round2(ttot);
-            fitem.total=ttot;
-            T_ordenObj.update(fitem);
-
-            for (int i = 1; i <cnt; i++) {
-                //item = clsCls.new clsT_orden();
-                item = fitem;
-                item.empresa=""+newid;
-                item.id=newid;newid++;
-                item.cant=1;
-                ttot=item.cant*item.precio;ttot=mu.round2(ttot);
-                item.total=ttot;
-
-                T_ordenObj.add(item);
-            }
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            envioCuentas();
-            listItems();
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox(e.getMessage());
         }
     }
 
@@ -2353,10 +2319,12 @@ public class Orden extends PBase {
                         msgbox("La venta está vacia.");return;
                     }
                     if (pendienteImpresion()) {
-                        msgbox("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
+                        msgmsg("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
-                        if (limpiaVenta()) {
-                            showListaCuentas();
+                        if (app.isOnWifi()==1) {
+                            if (limpiaVenta()) showListaCuentas();
+                        } else {
+                            msgAskPrecuentaSinWifi("MPos sin conexión al internet.\nRevise estado de la orden.");
                         }
                     }
 
@@ -2558,8 +2526,9 @@ public class Orden extends PBase {
             ejecutaImpresion();
 
             aplicaImpresion();
-            if (actorden) envioOrden();else cerrarOrden();
+            //if (actorden) envioOrden();else cerrarOrden();
 
+            borrarBloqueo();
             exitBtn(false);
         }
 
@@ -2854,7 +2823,15 @@ public class Orden extends PBase {
 
     private void actualizaEstado() {
         try {
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO<>0)");
+            for (int i = 0; i <T_ordenObj.count; i++) {
+                fbo.updateValue(T_ordenObj.items.get(i).id,"estado",0);
+            }
+
             db.execSQL("UPDATE T_ORDEN SET ESTADO=0 WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
+
             listItems();
         } catch (Exception e) {
             msgbox(e.getMessage());
@@ -2963,6 +2940,143 @@ public class Orden extends PBase {
     }
 
      */
+
+    //endregion
+
+    //region Nota , Dividir
+
+    private void inputNota() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        String nn="";
+
+        try {
+            T_orden_notaObj.fill("WHERE (id="+gl.produid+") AND (corel='"+idorden+"')");
+            if (T_orden_notaObj.count>0) nn=T_orden_notaObj.first().nota+"";
+        } catch (Exception e) {
+            nn="";
+        }
+
+        alert.setTitle("Nota");
+
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        input.setText(""+nn);
+        input.requestFocus();
+
+        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                try {
+                    String s=input.getText().toString();
+                    aplicaNota(s);
+                } catch (Exception e) {
+                    mu.msgbox("Error : "+e.getMessage());return;
+                }
+            }
+        });
+
+        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {}
+        });
+
+        alert.show();
+    }
+
+    private void aplicaNota(String nn) {
+        try {
+            db.execSQL("DELETE FROM T_orden_nota WHERE (id="+gl.produid+") AND (corel='"+idorden+"')");
+
+            clsClasses.clsT_orden_nota nota = clsCls.new clsT_orden_nota();
+            nota.id=gl.produid;
+            nota.corel=idorden;
+            nota.nota=nn+"";
+
+            T_orden_notaObj.add(nota);
+
+            fbon.removeItem(gl.produid);
+
+            clsClasses.clsFbOrdenNota fbnota = clsCls.new clsFbOrdenNota();
+            fbnota.id=gl.produid;
+            fbnota.nota=nn+"";
+
+            fbon.setItem(gl.produid,fbnota);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        listItems();
+    }
+
+    private void splitItem() {
+        clsClasses.clsT_orden item,fitem;
+        int cnt;
+        double ttot;
+
+        try {
+            int newid=maxprodid+1;
+
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+selitem.id+")");
+            if (T_ordenObj.count>0) {
+                fbo.transSplitItem(T_ordenObj.first(),newid,rnfboSplit);
+            } else {
+                msgbox("No se logró dividir articúlo");
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        /*
+        try {
+
+            db.beginTransaction();
+
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+            T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+selitem.id+")");
+            fitem=T_ordenObj.first();
+            cnt=(int) fitem.cant;if (cnt<=1) return;
+
+            newid=T_ordenObj.newID("SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')");
+
+            fitem.cant=1;
+            ttot=fitem.cant*fitem.precio;ttot=mu.round2(ttot);
+            fitem.total=ttot;
+            T_ordenObj.update(fitem);
+
+            for (int i = 1; i <cnt; i++) {
+                //item = clsCls.new clsT_orden();
+                item = fitem;
+                item.empresa=""+newid;
+                item.id=newid;newid++;
+                item.cant=1;
+                ttot=item.cant*item.precio;ttot=mu.round2(ttot);
+                item.total=ttot;
+
+                T_ordenObj.add(item);
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+
+            envioCuentas();
+            listItems();
+
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(e.getMessage());
+        }
+
+         */
+    }
+
+    public void fsoSplitItem() {
+        if (fbo.transresult && fbo.transstat) {
+            listItems();
+        } else {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+fbo.error);
+        }
+    }
 
     //endregion
 
@@ -4800,6 +4914,19 @@ public class Orden extends PBase {
     //region Anular
 
     private void anulaItem() {
+        try {
+
+            fbResSesion fbrs=new fbResSesion("ResSesion",gl.tienda);
+
+            fbrs.removeValue(idorden);
+            fbo.removeKey();
+            fbon.removeKey();
+            borrarBloqueo();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return;
+        }
 
         try {
             db.beginTransaction();
@@ -4811,11 +4938,14 @@ public class Orden extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            anulaOrden();
+            gl.cerrarmesero=true;gl.mesero_lista=true;
+            cerrarOrden();
+
+            //anulaOrden();
             //listItems();
         } catch (Exception e) {
             db.endTransaction();
-            msgbox(e.getMessage());
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -5045,7 +5175,8 @@ public class Orden extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        lblVend.setText("Mesa : "+mesa+" "+spend);
+        lblVend.setText("Mesa # "+mesa+" - "+gl.nombre_mesero_sel+" [ "+gl.rutanom+" ]");
+        //lblVend.setText("Mesa # "+mesa+" "+spend);
     }
 
     private boolean hasProducts(){
@@ -5698,6 +5829,9 @@ public class Orden extends PBase {
 
             item.codigo_mesa=gl.mesacodigo;
             item.estado=1;
+            item.mesero=gl.nombre_mesero_sel;
+            item.caja=gl.rutanom;
+            item.fecha=du.getActDateTime();
 
             fbma.setItem(item.codigo_mesa, item);
         } catch (Exception e) {
@@ -5711,6 +5845,9 @@ public class Orden extends PBase {
 
             item.codigo_mesa=gl.mesacodigo;
             item.estado=0;
+            item.mesero=" ";
+            item.caja=gl.rutanom;
+            item.fecha=du.getActDateTime();
 
             fbma.setItem(item.codigo_mesa, item);
         } catch (Exception e) {
@@ -5764,9 +5901,9 @@ public class Orden extends PBase {
             dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     if (esIngrediente()) {
-                        delItem();
-                    } else {
                         delItemIng();
+                    } else {
+                        delItem();
                     }
                 }
             });
@@ -5793,7 +5930,7 @@ public class Orden extends PBase {
                     if (esIngrediente()) {
                         msgbox("Artículo es un ingrediente, no se puede borrar");
                     } else {
-                        borrarItemComanda();
+                        delItem();
                     }
                 }
             });
@@ -5970,8 +6107,8 @@ public class Orden extends PBase {
             listdlg.add(R.drawable.cambio_usuario,"Cambiar cuenta");
             listdlg.add(R.drawable.anulacion,"Borrar");
             listdlg.add(R.drawable.recibir_archivos,"Dividir");
-            listdlg.add(R.drawable.venta_add,"Ingredientes adicionales");
-            if (gl.idmodgr>0) listdlg.add(R.drawable.btn_detail,"Modificadores");
+            //listdlg.add(R.drawable.venta_add,"Ingredientes adicionales");
+            //if (gl.idmodgr>0) listdlg.add(R.drawable.btn_detail,"Modificadores");
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -6000,7 +6137,7 @@ public class Orden extends PBase {
                                 if (selitem.Cant>1) {
                                     msgAskDividir("Dividir articulo");
                                 } else {
-                                    toastcent("No se puede dividir articulo con cantidad 1 ");
+                                    msgbox("No se puede dividir articulo con cantidad 1 ");
                                 }
                                 break;
                             case 5:
@@ -6286,58 +6423,6 @@ public class Orden extends PBase {
 
         dialog.show();
 
-    }
-
-    private void inputNota() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        String nn="";
-
-        try {
-            T_orden_notaObj.fill("WHERE (id="+gl.produid+") AND (corel='"+idorden+"')");
-            if (T_orden_notaObj.count>0) nn=T_orden_notaObj.first().nota+"";
-        } catch (Exception e) {
-            nn="";
-        }
-
-        alert.setTitle("Nota");
-
-        final EditText input = new EditText(this);
-        alert.setView(input);
-
-        input.setText(""+nn);
-        input.requestFocus();
-
-        alert.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                try {
-                    String s=input.getText().toString();
-                    aplicaNota(s);
-                } catch (Exception e) {
-                    mu.msgbox("Error : "+e.getMessage());return;
-                }
-            }
-        });
-
-        alert.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
-        alert.show();
-    }
-
-    private void aplicaNota(String nn) {
-        clsClasses.clsT_orden_nota nota = clsCls.new clsT_orden_nota();
-
-        try {
-            nota.id=gl.produid;
-            nota.corel=idorden;
-            nota.nota=nn+"";
-            T_orden_notaObj.add(nota);
-        } catch (Exception e) {
-            T_orden_notaObj.update(nota);
-        }
-
-        listItems();
     }
 
     private void inputMesa() {
@@ -6657,6 +6742,25 @@ public class Orden extends PBase {
         }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
+    }
+
+    private void msgAskPrecuentaSinWifi(String msg) {
+
+        ExDialog dialog = new ExDialog(this);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if (limpiaVenta()) showListaCuentas();
+            }
+        });
+
+        dialog.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+
+        dialog.show();
+
     }
 
     //endregion

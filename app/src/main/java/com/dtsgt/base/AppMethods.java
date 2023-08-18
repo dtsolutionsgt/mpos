@@ -1177,6 +1177,20 @@ public class AppMethods {
 			gl.peCajaMesasManual = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=163";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) val="S";
+
+			gl.peMesaAtenderTodos = val.equalsIgnoreCase("N");
+		} catch (Exception e) {
+			gl.peMesaAtenderTodos = true;
+		}
+
+
 	}
 
     public boolean paramCierre(int pid) {

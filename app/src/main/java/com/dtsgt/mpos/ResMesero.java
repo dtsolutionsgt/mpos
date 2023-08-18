@@ -69,6 +69,7 @@ public class ResMesero extends PBase {
     private clsP_mesero_grupoObj P_mesero_grupoObj;
     private clsP_mesa_nombreObj P_mesa_nombreObj;
     private clsT_ordenpendObj T_ordenpendObj;
+    private clsVendedoresObj VendedoresObj;
 
     private WebService ws;
     private wsOpenDT wso;
@@ -89,7 +90,7 @@ public class ResMesero extends PBase {
     private clsClasses.clsfbResSesion rsesion = clsCls.new clsfbResSesion();
 
     private int idgrupo,cantpers,numorden,codigomesa;
-    private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2,idorden;
+    private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2,idorden,nmesabrio;
     private boolean horiz,actorden,wsidle=false,wcoridle=true;
 
     //private TimerTask ptask,etask;
@@ -126,6 +127,7 @@ public class ResMesero extends PBase {
             P_mesero_grupoObj=new clsP_mesero_grupoObj(this,Con,db);
             P_mesa_nombreObj=new clsP_mesa_nombreObj(this,Con,db);
             T_ordenpendObj=new clsT_ordenpendObj(this,Con,db);
+            VendedoresObj=new clsVendedoresObj(this,Con,db);
 
             actorden=gl.peActOrdenMesas;
 
@@ -229,8 +231,25 @@ public class ResMesero extends PBase {
                     gl.mesa_codigo=mesa.codigo_mesa;
                     gl.mesa_vend=mesa.cod_vend;
 
+                    if (gl.peMesaAtenderTodos) {
+                        abrirOrden();
+                    } else {
+                        if (gl.idmesero==gl.mesa_vend) {
+                            abrirOrden();
+                        } else {
+                            try {
+                                VendedoresObj.fill("WHERE codigo_vendedor="+gl.mesa_vend);
+                                nmesabrio=VendedoresObj.first().nombre;
+                                msgmsg("La cuanta creada por "+nmesabrio+".\n No la puede atender otro mesero.");
+                            } catch (Exception e) {
+                                abrirOrden();
+                                //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                            }
+                        }
+                    }
+
                     //runLock();
-                    abrirOrden();
+
                 } else toast("Actualizando, espere . . .");
             };
         });
@@ -394,7 +413,6 @@ public class ResMesero extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
-
 
     private void abrirOrdenMesa() {
         boolean activa=false;
@@ -619,6 +637,7 @@ public class ResMesero extends PBase {
     }
 
     private void FbMesaAbierta() {
+
         try {
             if (fbma.errflag) {
                 msgbox("FbMesaAbierta . "+fbma.error);return;
@@ -626,7 +645,9 @@ public class ResMesero extends PBase {
 
             if (fbma.itemexists) {
                 if (fbma.item.estado==1) {
-                    msgAskMesa("La mesa está abierta");return;
+                    String sm="La mesa está abierta :\n"+
+                           fbma.item.caja+" a las "+du.shora(fbma.item.fecha)+" "+"\n"+fbma.item.mesero;
+                    msgAskMesa(sm);return;
                 }
             }
 
@@ -644,7 +665,9 @@ public class ResMesero extends PBase {
 
             if (fbma.itemexists) {
                 if (fbma.item.estado==1) {
-                    msgAskMesa("La mesa está abierta");return;
+                    String sm="La mesa está abierta :\n"+
+                           fbma.item.caja+" a las "+du.shora(fbma.item.fecha)+" "+"\n"+fbma.item.mesero;
+                    msgAskMesa(sm);return;
                 }
             }
 
@@ -660,9 +683,13 @@ public class ResMesero extends PBase {
 
             item.codigo_mesa=gl.mesacodigo;
             item.estado=0;
+            item.mesero=" ";
+            item.caja=gl.rutanom;
+            item.fecha=du.getActDateTime();
+
             fbma.setItem(item.codigo_mesa, item);
 
-            msgbox("Mesa desbloqueada.\nAsegure se que ninguno otro\nusuario no la tiene abierta.");
+            msgdebloq("Mesa desbloqueada.\nAsegure se que ninguno otro\nusuario no la tiene abierta.");
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1369,11 +1396,10 @@ public class ResMesero extends PBase {
 
         try {
 
-            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
             VendedoresObj.fill("WHERE codigo_vendedor="+gl.idmesero);
 
             nommes=VendedoresObj.first().nombre;
-            lblmes.setText(nommes);
+            lblmes.setText(nommes+" [ "+gl.rutanom+" ]");
 
             P_res_turnoObj.fill("WHERE vendedor="+gl.idmesero);
 
@@ -1905,12 +1931,28 @@ public class ResMesero extends PBase {
         }
     }
 
+    private void msgdebloq(String msg) {
+        try {
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
     private void validaSupervisor() {
 
         clsClasses.clsVendedores item;
 
         try {
-            clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
             app.fillSuper(VendedoresObj);
 
             if (VendedoresObj.count==0) {
@@ -1966,6 +2008,7 @@ public class ResMesero extends PBase {
             P_mesero_grupoObj.reconnect(Con,db);
             P_mesa_nombreObj.reconnect(Con,db);
             T_ordenpendObj.reconnect(Con,db);
+            VendedoresObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox(e.getMessage());
         }

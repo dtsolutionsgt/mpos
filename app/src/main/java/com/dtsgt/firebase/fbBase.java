@@ -10,6 +10,7 @@ public class fbBase {
 
     public FirebaseDatabase fdb;
     public DatabaseReference fdt;
+    public DatabaseReference refnode;
 
     public Runnable callBack;
 

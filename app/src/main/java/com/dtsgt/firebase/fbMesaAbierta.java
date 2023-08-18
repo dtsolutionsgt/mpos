@@ -34,6 +34,9 @@ public class fbMesaAbierta extends fbBase {
 
                         item.codigo_mesa=res.child("codigo_mesa").getValue(Integer.class);
                         item.estado=res.child("estado").getValue(Integer.class);
+                        item.mesero=res.child("mesero").getValue(String.class);
+                        item.caja=res.child("caja").getValue(String.class);
+                        item.fecha=res.child("fecha").getValue(Long.class);
 
                         itemexists=true;
 

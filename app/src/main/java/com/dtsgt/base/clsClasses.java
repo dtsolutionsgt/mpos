@@ -480,6 +480,9 @@ public class clsClasses {
     public class clsfbMesaAbierta {
         public int  codigo_mesa;
         public int  estado;
+        public String mesero;
+        public String caja;
+        public Long fecha;
     }
 
     public class clsfbResSesion {
@@ -518,6 +521,11 @@ public class clsClasses {
         public String nombre;
         public String um;
         public int bandera;
+    }
+
+    public class clsFbOrdenNota {
+        public int id;
+        public String nota;
     }
 
     //endregion
@@ -1554,6 +1562,7 @@ public class clsClasses {
         public double percep;
         public int  cuenta;
         public int  estado;
+        public int  idmesero;
     }
 
     public class clsT_orden_cor {

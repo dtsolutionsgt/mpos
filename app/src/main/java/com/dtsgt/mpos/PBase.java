@@ -2,6 +2,7 @@ package com.dtsgt.mpos;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.dtsgt.base.DateUtils;
 import com.dtsgt.base.MiscUtils;
 import com.dtsgt.base.appGlobals;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.BufferedWriter;
@@ -157,6 +159,22 @@ public class PBase extends FragmentActivity {
 			mu.msgboxinfo(msg);
 		}catch (Exception ex){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),ex.getMessage(),"");
+		}
+	}
+
+	protected void msgmsg(String msg) {
+		try {
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage(msg);
+			dialog.setIcon(R.drawable.ic_quest);
+
+			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {}
+			});
+
+			dialog.show();
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}
 

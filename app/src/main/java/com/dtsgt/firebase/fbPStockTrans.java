@@ -195,6 +195,7 @@ public class fbPStockTrans extends fbBase {
 
                     return Transaction.success(mutableData);
                 }
+
                 public void onComplete(DatabaseError databaseError, boolean complete, DataSnapshot dataSnapshot) {
                     if (complete) transstatus=1;else transstatus=0;
                     callBack=rnCallback;
