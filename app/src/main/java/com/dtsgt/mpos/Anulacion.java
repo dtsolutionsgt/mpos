@@ -3,6 +3,7 @@ package com.dtsgt.mpos;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.clsClasses;
+import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
@@ -258,15 +260,27 @@ public class Anulacion extends PBase {
 	}
 
 	public void anulDoc(View view) {
+		long fa,ff,ma,mf;
 
         if (bloqueado) {
             toast("Actualizando inventario . . .");return;
         }
 
+		fa=du.getActDate();ma=du.getmonth(fa);
+
         try {
 
 			if (itemid.equalsIgnoreCase("*")) {
 				mu.msgbox("Debe seleccionar un documento.");return;
+			}
+
+			if (tipo==3) {
+				clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+				D_facturaObj.fill("WHERE COREL='"+itemid+"'");
+				ff=D_facturaObj.first().fecha;mf=du.getmonth(ff);
+				if (ma!=mf) {
+					msgAnul("La factura se puede anular únicamente en el transcurso de mes de la emisión");return;
+				}
 			}
 
 			boolean flag=gl.peAnulSuper;
@@ -2035,8 +2049,24 @@ public class Anulacion extends PBase {
         }
     }
 
+	private void msgAnul(String msg) {
+		try{
 
-    //endregion
+			ExDialog dialog = new ExDialog(this);
+			dialog.setMessage(msg);
+			dialog.setIcon(R.drawable.ic_quest);
+
+			dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {}
+			});
+
+			dialog.show();
+		}catch (Exception e){
+			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		}
+	}
+
+	//endregion
 
     //region Activity Events
 
