@@ -944,7 +944,7 @@ public class Orden extends PBase {
         /*
         try {
             sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (CANT=0)";
-            db.execSQL(sql);
+            //db.execSQL(sql);
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());
@@ -1236,8 +1236,9 @@ public class Orden extends PBase {
         }
 
         try {
+            //DELETE FROM T_ORDEN
             sql="DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (CANT=0)";
-            db.execSQL(sql);
+            //db.execSQL(sql);
         } catch (SQLException e) {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
             mu.msgbox("Error : " + e.getMessage());
@@ -2423,7 +2424,8 @@ public class Orden extends PBase {
                         rep = new clsRepBuilder(this, gl.prw, true, gl.peMon, gl.peDecImp, "comanda_" + printid + ".txt");
 
                         rep.add(P_impresoraObj.first().tipo_impresora);
-                        rep.add(P_impresoraObj.first().nombre);
+                        //P_imprerep.add(soraObj.first().nombre);
+                        rep.add(gl.rutanom);
                         prip=app.ipBypass(P_impresoraObj.first().ip);
                         rep.add(prip);
 
@@ -3011,225 +3013,6 @@ public class Orden extends PBase {
 
     }
 
-
-    //endregion
-
-    //region Broadcast Detalle
-
-    /*
-
-    private void broadcastDetail() {
-        wsoidle=false;
-
-        if (actorden) broadcastDetailCallback();
-    }
-
-    private void broadcastDetailCallback() {
-
-        wso.level=2;
-
-        try {
-            if (wso.errflag) {
-                msgBoxWifi("No hay conexíon al internet");
-                relback.setBackgroundColor(Color.parseColor("#F4C6D0"));
-                cierraPantalla();
-                wsoidle=true;return;
-            }
-
-            brtcorel=idorden;
-
-            sql="SELECT ID, COREL, PRODUCTO, EMPRESA, UM, CANT, UMSTOCK, FACTOR, PRECIO, IMP, " +
-                "DES, DESMON, TOTAL, PRECIODOC, PESO, VAL1, VAL2, VAL3, VAL4, PERCEP, CUENTA, ESTADO " +
-                "FROM T_ORDEN WHERE COREL='"+ brtcorel +"'";
-
-            wso.execute(sql,rnDetailCallback);
-        } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsoidle=true;
-        }
-    }
-
-    private void broadcastAccountCallback() {
-
-        clsClasses.clsT_orden btitem;
-        
-        wso.level=3;
-
-        try {
-
-            if (wso.errflag) {
-                cierraPantalla();
-                wsoidle=true;return;
-            }
-
-            if (wso.openDTCursor.getCount()==0) {
-                cierraPantalla();
-                wsoidle=true;return;
-            }
-
-            brtitems.add("DELETE FROM T_orden WHERE COREL='"+brtcorel+"'");
-
-            wso.openDTCursor.moveToFirst();
-            while (!wso.openDTCursor.isAfterLast()) {
-
-                btitem = clsCls.new clsT_orden();
-
-                btitem.id=wso.openDTCursor.getInt(0);
-                btitem.corel=wso.openDTCursor.getString(1);
-                btitem.producto=wso.openDTCursor.getString(2);
-                btitem.empresa=wso.openDTCursor.getString(3);
-                btitem.um=wso.openDTCursor.getString(4);
-                btitem.cant=wso.openDTCursor.getDouble(5);
-                btitem.umstock=wso.openDTCursor.getString(6);
-                btitem.factor=wso.openDTCursor.getDouble(7);
-                btitem.precio=wso.openDTCursor.getDouble(8);
-                btitem.imp=wso.openDTCursor.getDouble(9);
-
-                btitem.des=wso.openDTCursor.getDouble(10);
-                btitem.desmon=wso.openDTCursor.getDouble(11);
-                btitem.total=wso.openDTCursor.getDouble(12);
-                btitem.preciodoc=wso.openDTCursor.getDouble(13);
-                btitem.peso=wso.openDTCursor.getDouble(14);
-                btitem.val1=wso.openDTCursor.getDouble(15);
-                btitem.val2=wso.openDTCursor.getString(16);
-                btitem.val3=wso.openDTCursor.getDouble(17);
-                btitem.val4=wso.openDTCursor.getString(18);
-                btitem.percep=wso.openDTCursor.getDouble(19);
-                btitem.cuenta=wso.openDTCursor.getInt(20);
-                btitem.estado=wso.openDTCursor.getInt(21);
-
-                brtitems.add(addTordenItemSql(btitem));
-
-                wso.openDTCursor.moveToNext();
-            }
-
-            sql="SELECT COREL, ID, EMPRESA, CF, NOMBRE, NIT, DIRECCION, CORREO " +
-                "FROM T_ORDENCUENTA WHERE (COREL='"+brtcorel+"')";
-            wso.execute(sql,rnDetailCallback);
-        } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsoidle=true;
-        }
-    }
-
-    private void broadcastCompleteCallback() {
-        clsClasses.clsT_ordencuenta btitem;
-
-        try {
-            if (wso.errflag) {
-                cierraPantalla();
-                wsoidle=true;return;
-            }
-
-            if (wso.openDTCursor.getCount()>0) {
-
-                brtitems.add("DELETE FROM T_ORDENCUENTA WHERE COREL='"+brtcorel+"'");
-
-                wso.openDTCursor.moveToFirst();
-                while (!wso.openDTCursor.isAfterLast()) {
-
-                    btitem = clsCls.new clsT_ordencuenta();
-
-                    btitem.corel=wso.openDTCursor.getString(0);
-                    btitem.id=wso.openDTCursor.getInt(1);
-                    btitem.cf=wso.openDTCursor.getInt(2);
-                    btitem.nombre=wso.openDTCursor.getString(3);
-                    btitem.nit=wso.openDTCursor.getString(4);
-                    btitem.direccion=wso.openDTCursor.getString(5);
-                    btitem.correo=wso.openDTCursor.getString(6);
-
-                    brtitems.add(addTordencuentaItemSql(btitem));
-
-                    wso.openDTCursor.moveToNext();
-                }
-            }
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsoidle=true; return;
-        }
-
-        try {
-            db.beginTransaction();
-
-            for (int i = 0; i <brtitems.size(); i++) {
-                sql=brtitems.get(i);
-                db.execSQL(sql);
-            }
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            broadcastConfirmDetail();
-
-            listItems();
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox(e.getMessage());
-        }
-
-        cierraPantalla();
-        wsoidle=true;
-    }
-
-    private void broadcastConfirmDetail() {
-        String cmd="DELETE FROM T_ordencom WHERE CODIGO="+brtid;
-
-        try {
-            enviaCommit(false,cmd);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-         }
-    }
-
-    public String addTordenItemSql(clsClasses.clsT_orden item) {
-
-        ins.init("T_orden");
-
-        ins.add("ID",item.id);
-        ins.add("COREL",item.corel);
-        ins.add("PRODUCTO",item.producto);
-        ins.add("EMPRESA",item.empresa);
-        ins.add("UM",item.um);
-        ins.add("CANT",item.cant);
-        ins.add("UMSTOCK",item.umstock);
-        ins.add("FACTOR",item.factor);
-        ins.add("PRECIO",item.precio);
-        ins.add("IMP",item.imp);
-        ins.add("DES",item.des);
-        ins.add("DESMON",item.desmon);
-        ins.add("TOTAL",item.total);
-        ins.add("PRECIODOC",item.preciodoc);
-        ins.add("PESO",item.peso);
-        ins.add("VAL1",item.val1);
-        ins.add("VAL2",item.val2);
-        ins.add("VAL3",item.val3);
-        ins.add("VAL4",item.val4);
-        ins.add("PERCEP",item.percep);
-        ins.add("CUENTA",item.cuenta);
-        ins.add("ESTADO",item.estado);
-
-        return ins.sql();
-
-    }
-
-    public String addTordencuentaItemSql(clsClasses.clsT_ordencuenta item) {
-
-        ins.init("T_ordencuenta");
-
-        ins.add("COREL",item.corel);
-        ins.add("ID",item.id);
-        ins.add("CF",item.cf);
-        ins.add("NOMBRE",item.nombre);
-        ins.add("NIT",item.nit);
-        ins.add("DIRECCION",item.direccion);
-        ins.add("CORREO",item.correo);
-
-        return ins.sql();
-
-    }
-
-    */
 
     //endregion
 
@@ -5506,7 +5289,8 @@ public class Orden extends PBase {
                 gl.nivel=gl.nivel_sucursal;
 
                 try  {
-                    db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"')");
+                    //DELETE FROM T_ORDEN
+                    //db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"')");
                     listItems();
                 } catch (SQLException e){
                     addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);

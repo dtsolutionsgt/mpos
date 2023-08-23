@@ -146,9 +146,9 @@ public class FacturaRes extends PBase {
 
             if (ggl.mesero_precuenta) {
                 if (pantallaHorizontal()) {
-                    setContentView(R.layout.activity_factura_res_precue);horiz=true;
+					setContentView(R.layout.activity_factura_res_precue);horiz=true;
                 } else {
-                    setContentView(R.layout.activity_factura_res_ver);horiz=false;
+                    setContentView(R.layout.activity_factura_res_ver_precue);horiz=false;
                 }
             } else {
                 if (pantallaHorizontal()) {
@@ -3859,7 +3859,8 @@ public class FacturaRes extends PBase {
                 rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"comanda_"+printid+".txt");
 
                 rep.add(P_impresoraObj.first().tipo_impresora);
-                rep.add(P_impresoraObj.first().nombre);
+                //rep.add(P_impresoraObj.first().nombre);
+				rep.add(gl.rutanom);
 				prip=app.ipBypass(P_impresoraObj.first().ip);
 				rep.add(prip);
 
@@ -4292,6 +4293,17 @@ public class FacturaRes extends PBase {
 			gl.QRCodeStr="";
 
 			app.doPrint(1,0);
+
+			try {
+				db.execSQL("DELETE FROM T_VENTA");
+				db.execSQL("DELETE FROM T_VENTA_MOD");
+				db.execSQL("DELETE FROM T_VENTA_ING");
+			} catch (Exception e) {
+				String se=e.getMessage();
+				se=se+"";
+			}
+
+			gl.iniciaVenta=false;
 
 			Handler mtimer = new Handler();
 			Runnable mrunner=new Runnable() {
