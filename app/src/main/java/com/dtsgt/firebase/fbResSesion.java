@@ -46,9 +46,13 @@ public class fbResSesion extends fbBase {
 
     }
 
-    public void setItem(String itemid, clsClasses.clsfbResSesion item) {
-        fdt=fdb.getReference(root+"/"+idsuc+"/"+itemid);
+    public void setItem(clsClasses.clsfbResSesion item) {
+        fdt=fdb.getReference(root+"/"+idsuc+"/"+item.id);
         fdt.setValue(item);
+    }
+
+    public void updateEstado(int itemid,int value) {
+        fdb.getReference(root+"/"+idsuc+"/"+itemid).child("estado").setValue(value);
     }
 
     public void removeValue(String itemid) {
@@ -60,6 +64,9 @@ public class fbResSesion extends fbBase {
         fdb.getReference(root+"/"+idsuc+"/"+itemid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                errflag=false;error="";itemexists=false;
+
                 if (task.isSuccessful()) {
                     DataSnapshot res=task.getResult();
 
@@ -74,6 +81,8 @@ public class fbResSesion extends fbBase {
                     item.fechaini=res.child("fechaini").getValue(Long.class);
                     item.fechafin=res.child("fechafin").getValue(Long.class);
                     item.fechault=res.child("fechault").getValue(Long.class);
+
+                    itemexists=true;
 
                     callBack=rnCallback;
                     runCallBack();
@@ -120,11 +129,11 @@ public class fbResSesion extends fbBase {
                                         litem.fechafin = snap.child("fechafin").getValue(Long.class);
                                         litem.fechault = snap.child("fechault").getValue(Long.class);
 
+                                        items.add(litem);
                                     } catch (Exception e) {
                                         error = e.getMessage();errflag = true;break;
                                     }
 
-                                    items.add(litem);
                                 } // if
                             }
                         }
@@ -139,6 +148,62 @@ public class fbResSesion extends fbBase {
                     runCallBack();
                 }
             });
+        } catch (Exception e) {
+            errflag=true;
+            String ss=e.getMessage();
+        }
+
+        int nc=items.size();
+
+    }
+
+    public void listItems(Runnable rnCallback) {
+        try {
+
+            fdb.getReference(root+"/"+idsuc+"/").
+                    get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            items.clear();
+
+                            if (task.isSuccessful()) {
+                                DataSnapshot res=task.getResult();
+                                if (res.exists()) {
+
+                                    for (DataSnapshot snap : res.getChildren()) {
+                                        try {
+
+                                            litem = clsCls.new clsfbResSesion();
+
+                                            litem.id = snap.child("id").getValue(String.class);
+                                            litem.codigo_mesa = snap.child("codigo_mesa").getValue(Integer.class);
+                                            litem.vendedor = snap.child("vendedor").getValue(Integer.class);
+                                            litem.estado = snap.child("estado").getValue(Integer.class);
+                                            litem.cantp = snap.child("cantp").getValue(Integer.class);
+                                            litem.cantc = snap.child("cantc").getValue(Integer.class);
+                                            litem.fechaini = snap.child("fechaini").getValue(Long.class);
+                                            litem.fechafin = snap.child("fechafin").getValue(Long.class);
+                                            litem.fechault = snap.child("fechault").getValue(Long.class);
+
+                                            items.add(litem);
+                                        } catch (Exception e) {
+                                            error = e.getMessage();errflag = true;break;
+                                        }
+
+
+                                    } // if
+                                }
+
+                                errflag=false;
+                            } else {
+                                error=task.getException().getMessage();
+                                errflag=true;
+                            }
+
+                            callBack=rnCallback;
+                            runCallBack();
+                        }
+                    });
         } catch (Exception e) {
             errflag=true;
             String ss=e.getMessage();

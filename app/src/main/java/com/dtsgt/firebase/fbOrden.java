@@ -18,7 +18,6 @@ import java.util.Map;
 public class fbOrden extends fbBase {
 
     public int new_id;
-
     public String transerr="";
     public boolean transresult=false,transstat=false;
 
@@ -38,7 +37,7 @@ public class fbOrden extends fbBase {
         refnode=fdb.getReference(root+"/"+idsuc+"/"+node+"/");
     }
 
-    public void setItem(String itemid, clsClasses.clsT_orden item) {
+    public void setItem(int itemid, clsClasses.clsT_orden item) {
         fdt=fdb.getReference(root+"/"+idsuc+"/"+node+"/"+itemid);
         fdt.setValue(item);
     }
@@ -110,6 +109,84 @@ public class fbOrden extends fbBase {
             errflag=false;error="";
 
             fdb.getReference(root+"/"+idsuc+"/"+node+"/").
+                    get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                            items.clear();
+
+                            if (task.isSuccessful()) {
+
+                                DataSnapshot res=task.getResult();
+
+                                if (res.exists()) {
+
+                                    long ii=res.getChildrenCount();
+
+                                    for (DataSnapshot snap : res.getChildren()) {
+
+                                        try {
+
+                                            litem=clsCls.new clsT_orden();
+
+                                            litem.id=snap.child("id").getValue(Integer.class);
+                                            litem.corel=snap.child("corel").getValue(String.class);
+                                            litem.producto=snap.child("producto").getValue(String.class);
+                                            litem.empresa=snap.child("empresa").getValue(String.class);
+                                            litem.um=snap.child("um").getValue(String.class);
+                                            litem.cant=snap.child("cant").getValue(Double.class);
+                                            litem.umstock=snap.child("umstock").getValue(String.class);
+                                            litem.factor=snap.child("factor").getValue(Double.class);
+                                            litem.precio=snap.child("precio").getValue(Double.class);
+                                            litem.imp=snap.child("imp").getValue(Double.class);
+                                            litem.des=snap.child("des").getValue(Double.class);
+                                            litem.desmon=snap.child("desmon").getValue(Double.class);;
+                                            litem.total=snap.child("total").getValue(Double.class);
+                                            litem.preciodoc=snap.child("preciodoc").getValue(Double.class);
+                                            litem.peso=snap.child("peso").getValue(Double.class);
+                                            litem.val1=snap.child("val1").getValue(Double.class);
+                                            litem.val2=snap.child("val2").getValue(String.class);
+                                            litem.val3=snap.child("val3").getValue(Double.class);
+                                            litem.val4=snap.child("val4").getValue(String.class);
+                                            litem.percep=snap.child("percep").getValue(Double.class);
+                                            litem.cuenta=snap.child("cuenta").getValue(Integer.class);
+                                            litem.estado=snap.child("estado").getValue(Integer.class);
+
+                                            try {
+                                                litem.idmesero=snap.child("idmesero").getValue(Integer.class);
+                                            } catch (Exception e) {
+                                                litem.idmesero=0;
+                                            }
+
+                                            items.add(litem);
+
+                                        } catch (Exception e) {
+                                            error = e.getMessage();
+                                            errflag = true;break;
+                                        }
+                                    }
+                                }
+
+                            } else {
+                                error=task.getException().getMessage();errflag=true;
+                            }
+
+                            callBack=rnCallback;
+                            runCallBack();
+                        }
+                    });
+        } catch (Exception e) {
+            String ss=e.getMessage();
+            errflag=true;
+        }
+    }
+
+    public void listItems(String idorden,Runnable rnCallback) {
+        try {
+            items.clear();
+            errflag=false;error="";
+
+            fdb.getReference(root+"/"+idsuc+"/"+idorden+"/").
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -258,7 +335,7 @@ public class fbOrden extends fbBase {
                         tritem.cant=1;
                         for (int i = 0; i <tr_cant; i++) {
                             tritem.id=tr_newid+i;
-                            setItem(""+tritem.id,tritem);
+                            setItem(tritem.id,tritem);
                         }
 
                         transresult=true;
@@ -280,6 +357,5 @@ public class fbOrden extends fbBase {
             return false;
         }
     }
-
 
 }

@@ -35,6 +35,7 @@ import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_venta_horaObj;
 import com.dtsgt.classes.clsVendedoresObj;
+import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.mpos.PrintView;
 import com.dtsgt.mpos.R;
 
@@ -2262,18 +2263,19 @@ public class AppMethods {
 		}
 	}
 
-
 	private void agregarCuenta(String corel) {
 
         try {
+			fbOrdenCuenta fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
 
-            clsClasses clsCls = new clsClasses();
+			clsClasses clsCls = new clsClasses();
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
-            clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
 
             int newcid=T_ordencuentaObj.newID("SELECT MAX(ID) FROM T_ordencuenta WHERE (corel='"+corel+"')");
 
-            cuenta.corel=corel;
+			clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
+
+			cuenta.corel=corel;
             cuenta.id=newcid;
             cuenta.cf=1;
             cuenta.nombre="Consumidor final";
@@ -2282,8 +2284,9 @@ public class AppMethods {
             cuenta.correo="";
 
             T_ordencuentaObj.add(cuenta);
+			fboc.setItem(cuenta);
 
-        } catch (Exception e) {
+		} catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }

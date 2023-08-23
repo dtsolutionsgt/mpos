@@ -47,12 +47,12 @@ public class appGlobals extends Application {
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,mesacodigo,
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,
-				mesa_vend,mesa_codigo,invcent_cod,sal_idneg,desc_tipo_apl;
+				mesa_vend,mesa_codigo,invcent_cod,sal_idneg,desc_tipo_apl,prcu_mesa,prcu_vend;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
-			     caja_est_pago,caja_est_pago_cmd,caja_est_pago_cue,
+			     caja_est_pago,caja_est_pago_cmd,caja_est_pago_cue,prcu_corel,
 			     nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
 			      dom_total,bar_cant,descadd,monto_propina;

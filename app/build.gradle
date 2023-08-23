@@ -102,6 +102,7 @@ dependencies {
     implementation files('libs/javax.mail.jar')
 
     implementation platform('com.google.firebase:firebase-bom:30.4.1')
+
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-crashlytics:18.3.1'

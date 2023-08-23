@@ -2165,7 +2165,7 @@ public class Menu extends PBase {
 	private void validaCaja() {
 
 		try {
-
+			/*
 			long flim = du.addHours(-12);
 			clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
 			P_res_sesionObj.fill("WHERE (Estado>0) AND (FECHAINI>=" + flim + ")");
@@ -2173,11 +2173,12 @@ public class Menu extends PBase {
 			if (P_res_sesionObj.count>0) {
 				msgAskMesas("Existen mesas abiertas.\n¿Continuar?");
 			} else {
+			*/
 				gl.inicio_caja_correcto = false;
 				browse = 1;
 				startActivity(new Intent(Menu.this, Caja.class));
-			}
-			} catch (Exception e) {
+			//}
+		} catch (Exception e) {
 			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
 		}
 	}
@@ -3627,7 +3628,6 @@ public class Menu extends PBase {
 			if (browse==2){
 				browse=0;
 				validaCaja();
-				return;
 			}
 
 		} catch (Exception e){

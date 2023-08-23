@@ -4251,9 +4251,9 @@ public class FacturaRes extends PBase {
 		try {
 			clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
-			psql="UPDATE P_RES_SESION SET ESTADO=3  WHERE ID='"+ gl.ordcorel+"'";
-
+		    /*
 			try {
+				psql="UPDATE P_RES_SESION SET ESTADO=3  WHERE ID='"+ gl.ordcorel+"'";
 				db.execSQL(psql);
 			} catch (SQLException e) {
 				mu.msgbox("impresionCuenta : "  + e.getMessage());
@@ -4261,16 +4261,23 @@ public class FacturaRes extends PBase {
 
 			if (gl.peActOrdenMesas) enviaPrecuenta(psql);
 
+			*/
+
+
+			/*
 			clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
 			P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
 			clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
+			*/
 
 			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
-			VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
+			//VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
+			VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+gl.prcu_vend+")");
 			if (VendedoresObj.count>0) gl.vendnom=VendedoresObj.first().nombre;else gl.vendnom="";
 
 			clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
-			P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
+			//P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
+			P_res_mesaObj.fill("WHERE (CODIGO_MESA="+gl.prcu_mesa+")");
 			if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
 
 			fdoc.LANPrint=gl.peImpFactLan;

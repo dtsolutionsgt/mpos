@@ -2,7 +2,7 @@ package com.dtsgt.firebase;
 
 import com.dtsgt.base.clsClasses;
 
-public class fbOrdenNota  extends fbBase {
+public class fbOrdenNota extends fbBase {
 
     public fbOrdenNota(String troot, int idsucursal,String idorden) {
         super(troot);

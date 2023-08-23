@@ -36,6 +36,7 @@ import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
+import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.ladapt.LA_Res_mesa;
 import com.dtsgt.webservice.srvCommit;
@@ -52,12 +53,12 @@ import java.util.ArrayList;
 public class ResMesero extends PBase {
 
     private GridView gridView;
-    private TextView lblcuenta, lblgrupo,lblmes,lblbarril,lblact;
-    private ImageView imgwsref,imgnowifi,imgbarril,imgact;
-    private RelativeLayout relmain;
+    private TextView lblcuenta, lblgrupo,lblmes,lblbarril;
+    private ImageView imgnowifi,imgbarril;
 
     private fbResSesion fbrs;
     private fbMesaAbierta fbma;
+    private fbOrdenCuenta fboc;
     private Runnable rnFbResSesionList,rnFbMesaAbierta,rnFbMesaComensales,
             rnFbListenerResSesion, rnfbrsMesaActiva;
 
@@ -71,16 +72,11 @@ public class ResMesero extends PBase {
     private clsT_ordenpendObj T_ordenpendObj;
     private clsVendedoresObj VendedoresObj;
 
-    private WebService ws;
     private wsOpenDT wso;
-    private wsOpenDT wslock;
     private wsCommit wscom;
 
-    private Runnable rnBroadcastCallback,rnCorelPutCallback,rnCorelGetCallback,
-            rnOrden,rnLock,rnOrdenRem;
+    private Runnable rnCorelPutCallback,rnCorelGetCallback;
 
-    private ArrayList<String> lcode = new ArrayList<String>();
-    private ArrayList<String> lname = new ArrayList<String>();
     private ArrayList<String> corels = new ArrayList<String>();
 
     private LA_Res_mesa adapter;
@@ -91,10 +87,7 @@ public class ResMesero extends PBase {
 
     private int idgrupo,cantpers,numorden,codigomesa;
     private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2,idorden,nmesabrio;
-    private boolean horiz,actorden,wsidle=false,wcoridle=true;
-
-    //private TimerTask ptask,etask;
-    //private int period=15000,delay=50;
+    private boolean horiz,actorden;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,12 +103,8 @@ public class ResMesero extends PBase {
             lblgrupo =findViewById(R.id.textView179b);
             lblmes =findViewById(R.id.textView179b2);
             lblbarril =findViewById(R.id.textView221);
-            lblact =findViewById(R.id.textView212);
             imgbarril =findViewById(R.id.imageView106);
-            imgwsref=findViewById(R.id.imageView120);imgwsref.setVisibility(View.INVISIBLE);
-            imgact =findViewById(R.id.imageView87);
             imgnowifi=findViewById(R.id.imageView71a);
-            relmain=findViewById(R.id.relmmain);
 
             calibraPantalla();
 
@@ -135,6 +124,7 @@ public class ResMesero extends PBase {
 
             fbrs=new fbResSesion("ResSesion",gl.tienda);
             fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
+            fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
 
             rnFbResSesionList = () -> { FbResSesionList();};
             rnFbListenerResSesion = () -> { FbListenerResSesion();};
@@ -152,20 +142,11 @@ public class ResMesero extends PBase {
 
             getURL();
 
-            ws=new WebService(ResMesero.this,gl.wsurl);
             wscom =new wsCommit(gl.wsurl);
+            wso=new wsOpenDT(gl.wsurl);
 
             rnCorelPutCallback = () -> PutCorelCallback();
-
-            wso=new wsOpenDT(gl.wsurl);
-            wslock=new wsOpenDT(gl.wsurl);
-
-            wsidle=true;
-
-            rnBroadcastCallback = () -> broadcastCallback();
             rnCorelGetCallback = () -> GetCorelCallback();
-            rnOrden = () ->  validaMesaAbierta();
-            rnOrdenRem = () ->  ordenRemCallback();
 
             if (!app.modoSinInternet()) imgnowifi.setVisibility(View.INVISIBLE);
 
@@ -175,8 +156,6 @@ public class ResMesero extends PBase {
                 lblbarril.setVisibility(View.INVISIBLE);
                 imgbarril.setVisibility(View.INVISIBLE);
             }
-
-            imgwsref.setVisibility(View.INVISIBLE);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -195,11 +174,7 @@ public class ResMesero extends PBase {
     }
 
     public void doRec(View view) {
-        if (gl.emp==55 | gl.emp==1) {
-            recibeOrdenesRemotos();
-        } else {
-            //recibeOrdenes();
-        }
+
     }
 
     public void doBarril(View view) {
@@ -226,31 +201,27 @@ public class ResMesero extends PBase {
                 Object lvObj = gridView.getItemAtPosition(position);
                 mesa = (clsClasses.clsRes_mesa)lvObj;
 
-                if (wsidle) {
-                    adapter.setSelectedIndex(position);
-                    gl.mesa_codigo=mesa.codigo_mesa;
-                    gl.mesa_vend=mesa.cod_vend;
+                adapter.setSelectedIndex(position);
+                gl.mesa_codigo=mesa.codigo_mesa;
+                gl.mesa_vend=mesa.cod_vend;
+                gl.mesero_venta=mesa.cod_vend;
 
-                    if (gl.peMesaAtenderTodos) {
+                if (gl.peMesaAtenderTodos) {
+                    abrirOrden();
+                } else {
+                    if (gl.idmesero==gl.mesa_vend) {
                         abrirOrden();
                     } else {
-                        if (gl.idmesero==gl.mesa_vend) {
+                        try {
+                            VendedoresObj.fill("WHERE codigo_vendedor="+gl.mesa_vend);
+                            nmesabrio=VendedoresObj.first().nombre;
+                            msgmsg("La cuenta fue creada por "+nmesabrio+".\n No la puede ser atendida otro mesero.");
+                        } catch (Exception e) {
                             abrirOrden();
-                        } else {
-                            try {
-                                VendedoresObj.fill("WHERE codigo_vendedor="+gl.mesa_vend);
-                                nmesabrio=VendedoresObj.first().nombre;
-                                msgmsg("La cuanta creada por "+nmesabrio+".\n No la puede atender otro mesero.");
-                            } catch (Exception e) {
-                                abrirOrden();
-                                //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                            }
+                            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                         }
                     }
-
-                    //runLock();
-
-                } else toast("Actualizando, espere . . .");
+                }
             };
         });
 
@@ -263,7 +234,7 @@ public class ResMesero extends PBase {
                     mesa = (clsClasses.clsRes_mesa)lvObj;
 
                     adapter.setSelectedIndex(position);
-                    opcionesMesa();
+                    //opcionesMesa();
                 } catch (Exception e) {
                 }
                 return true;
@@ -319,40 +290,6 @@ public class ResMesero extends PBase {
                     mesa.alias=mesa.nombre+" - "+amesa;mesa.nombre=" ";
                     mesa.alias2=amesa;
                 }
-
-                /*
-                P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+") AND (FECHAINI>="+flim+")");
-                if (P_res_sesionObj.count>0) {
-
-                    last=P_res_sesionObj.items.get(P_res_sesionObj.count-1);
-
-                    corels.add(last.id);
-
-                    mesa.estado=last.estado;
-                    mesa.pers=last.cantp;
-                    mesa.cuentas=last.cantc;
-                    mesa.fecha=last.fechault;
-                    mesa.idorden=last.id;
-                    mesa.cod_vend=last.vendedor;
-
-                    if (espedido) mesa.numorden="#"+last.cantc;
-
-                    T_ordenObj.fill("WHERE (COREL='"+last.id+"') AND (ESTADO=1)");
-                    mesa.pendiente=T_ordenObj.count;
-
-                    T_ordenpendObj.fill("WHERE GODIGO_ORDEN='"+last.id+"'");
-                    if (T_ordenpendObj.count>0) mesa.est_envio=0;
-
-                } else {
-                    mesa.estado=0;
-                    mesa.pers=0;
-                    mesa.cuentas=0;
-                    mesa.fecha=0;
-                    mesa.pendiente=0;
-                    mesa.cod_vend=gl.idmesero;
-                }
-
-                 */
 
                 mesa.estado=0;
                 mesa.pers=0;
@@ -434,11 +371,8 @@ public class ResMesero extends PBase {
                 }
             }
 
-            //P_res_sesionObj.fill("WHERE (Estado>0) AND (CODIGO_MESA="+mesa.codigo_mesa+")");
-
             if (activa) {
-                //gl.idorden=P_res_sesionObj.first().id;
-                try {
+                 try {
                     gl.idorden=mesa.idorden;
                     if (!gl.idorden.isEmpty()) {
                         validaMesaAbierta();
@@ -447,8 +381,6 @@ public class ResMesero extends PBase {
                     }
                 } catch (Exception ed) {
                     try {
-                        P_res_sesionObj.first().estado=-1;
-                        P_res_sesionObj.update(P_res_sesionObj.first());
                         browse = 1;
                         gl.idorden = "";
                         validaMesaComensales();
@@ -457,7 +389,6 @@ public class ResMesero extends PBase {
                     }
                 }
             } else {
-                //inputPersonas();
                 browse=1;
                 gl.idorden="";
                 validaMesaComensales();
@@ -471,25 +402,6 @@ public class ResMesero extends PBase {
 
         try {
 
-            db.beginTransaction();
-
-            /*
-            clsClasses.clsP_res_sesion item = clsCls.new clsP_res_sesion();
-
-            item.id=gl.codigo_ruta+"_"+mu.getCorelBase();
-            item.codigo_mesa=codigomesa;
-            item.vendedor=gl.idmesero;
-            item.estado=1;
-            item.cantp=cantpers;
-            item.cantc=numorden;
-            item.fechaini=du.getActDateTime();
-            item.fechafin=0;
-            item.fechault=du.getActDateTime();
-
-            P_res_sesionObj.add(item);
-
-             */
-
             clsClasses.clsfbResSesion item = clsCls.new clsfbResSesion();
 
             item.id=gl.codigo_ruta+"_"+mu.getCorelBase();
@@ -502,7 +414,7 @@ public class ResMesero extends PBase {
             item.fechafin=0;
             item.fechault=du.getActDateTime();
 
-            fbrs.setItem(item.id, item);
+            fbrs.setItem(item);
 
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
@@ -515,18 +427,12 @@ public class ResMesero extends PBase {
             cuenta.direccion="Ciudad";
             cuenta.correo="";
 
+            fboc.setItem(cuenta);
             T_ordencuentaObj.add(cuenta);
 
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
             gl.idorden=item.id;idorden=item.id;
-
-            if (actorden) {
-                envioOrden();
-            } else {
-                validaMesaAbierta();
-            }
+            //if (actorden) envioOrden(); else validaMesaAbierta();
+            validaMesaAbierta();
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -551,8 +457,7 @@ public class ResMesero extends PBase {
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     idmesa=listdlg.items.get(position).codigo;
                     nmesa=listdlg.items.get(position).text;
-                    listComp();
-                    listdlg.dismiss();
+                   listdlg.dismiss();
                 };
             });
 
@@ -560,58 +465,6 @@ public class ResMesero extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-    }
-
-    private void listComp() {
-
-        /*
-        try {
-            lcode.clear();lname.clear();
-
-            P_res_sesionObj.fill("WHERE (CODIGO_MESA="+idmesa+") AND (Estado=-1) AND (FECHAULT>="+du.ffecha00(du.getActDate())+")");
-
-            if (P_res_sesionObj.count==0) {
-                msgbox("No existe ninguna cuenta completa para la mesa");return;
-            }
-
-            for (int i = 0; i <P_res_sesionObj.count; i++) {
-                lcode.add(P_res_sesionObj.items.get(i).id);
-                lname.add("Mesa : "+nmesa+"  "+du.shora(P_res_sesionObj.items.get(i).fechault));
-            }
-
-            final String[] xselitems = new String[lname.size()];
-
-            for (int i = 0; i < lname.size(); i++) {
-                selitems[i] = lname.get(i);
-            }
-
-            ExDialog mMenuDlg = new ExDialog(this);
-
-            mMenuDlg.setTitle("Activar cuenta completa");
-
-            mMenuDlg.setItems(selitems , new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int item) {
-                    try {
-                        msgAskActivar("Activar la cuenta",lcode.get(item));
-                     } catch (Exception e) {
-                        toast(e.getMessage());
-                    }
-                }
-            });
-
-            mMenuDlg.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            AlertDialog Dialog = mMenuDlg.create();
-            Dialog.show();
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-         */
     }
 
     //endregion
@@ -645,8 +498,8 @@ public class ResMesero extends PBase {
 
             if (fbma.itemexists) {
                 if (fbma.item.estado==1) {
-                    String sm="La mesa está abierta :\n"+
-                           fbma.item.caja+" a las "+du.shora(fbma.item.fecha)+" "+"\n"+fbma.item.mesero;
+                    String sm="La mesa está ocupada en\nel dispositivo: "+fbma.item.caja+"\n"+
+                           "Inicio: "+du.shora(fbma.item.fecha)+"\nMesero: "+fbma.item.mesero;
                     msgAskMesa(sm);return;
                 }
             }
@@ -725,407 +578,20 @@ public class ResMesero extends PBase {
 
     //endregion
 
-    //region Envio
-
-    private void envioOrden() {
-        String cmd="";
-
-        try {
-            /*
-            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
-            P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
-            cmd += P_res_sesionObj.addItemSql(P_res_sesionObj.first(), gl.emp) + ";";
-             */
-
-            clsT_ordenObj T_ordenObj = new clsT_ordenObj(this, Con, db);
-            T_ordenObj.fill("WHERE (COREL='" + idorden + "')");
-            for (int i = 0; i < T_ordenObj.count; i++) {
-                cmd += T_ordenObj.addItemSql(T_ordenObj.items.get(i), gl.emp) + ";";
-            }
-
-            clsT_ordencuentaObj T_ordencuentaObj = new clsT_ordencuentaObj(this, Con, db);
-            T_ordencuentaObj.fill("WHERE (COREL='" + idorden + "')");
-            for (int i = 0; i < T_ordencuentaObj.count; i++) {
-                cmd += T_ordencuentaObj.addItemSql(T_ordencuentaObj.items.get(i), gl.emp) + ";";
-            }
-
-            //cmd+=buildDetailJournal();
-
-            try {
-                enviaCommit(cmd);
-            } catch (Exception e) {
-                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            }
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void enviaCommit(String cmd) {
-        if (!actorden) return;
-        wscom.execute(cmd,rnOrden);
-    }
-
-    private String buildDetailJournal() {
-        clsClasses.clsT_ordencom pitem;
-        clsClasses.clsT_ordencuenta citem;
-        int idruta;
-        String ss="";
-
-        try {
-
-            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
-            P_rutaObj.fill();
-
-            clsP_res_sesionObj P_res_sesionObj = new clsP_res_sesionObj(this, Con, db);
-            P_res_sesionObj.fill("WHERE ID='" + idorden + "'");
-            clsClasses.clsP_res_sesion rsitem=P_res_sesionObj.first();
-
-            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
-            T_ordencuentaObj.fill("WHERE COREL='" + idorden + "'");
-
-            for (int i = 0; i <P_rutaObj.count; i++) {
-
-                idruta=P_rutaObj.items.get(i).codigo_ruta;
-
-                if (idruta!=gl.codigo_ruta) {
-
-                    pitem= clsCls.new clsT_ordencom();
-
-                    pitem.codigo_ruta=idruta;
-                    pitem.corel_orden=idorden;
-                    pitem.corel_linea=1;
-                    pitem.comanda= addP_res_sesionSqlAndroid(rsitem,gl.emp);
-
-                    ss+=addItemSqlOrdenCom(pitem) + ";";
-
-                    /*
-                    pitem.codigo_ruta=idruta;
-                    pitem.corel_orden=idorden;
-                    pitem.corel_linea=2;
-                    pitem.comanda="";
-                    ss+=addItemSqlOrdenCom(pitem) + ";";
-                     */
-
-                    for (int c = 0; c <T_ordencuentaObj.count; c++) {
-                        citem=T_ordencuentaObj.items.get(c);
-
-                        pitem.codigo_ruta=idruta;
-                        pitem.corel_orden=idorden;
-                        pitem.corel_linea=3;
-                        pitem.comanda= addsT_ordencuentaSqlAndroid(citem);
-
-                        ss+=addItemSqlOrdenCom(pitem) + ";";
-                    }
-
-                }
-            }
-
-            return ss;
-        } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            return "";
-        }
-    }
-
-    public String addP_res_sesionSqlAndroid(clsClasses.clsP_res_sesion item, int idemp) {
-        String corr="<>"+item.id+"<>";
-
-        ins.init("P_res_sesion");
-
-        //ins.add("EMPRESA",idemp);
-        ins.add("ID",corr);
-        ins.add("CODIGO_MESA",item.codigo_mesa);
-        ins.add("VENDEDOR",item.vendedor);
-        ins.add("ESTADO",item.estado);
-        ins.add("CANTP",item.cantp);
-        ins.add("CANTC",item.cantc);
-        ins.add("FECHAINI",item.fechaini);
-        ins.add("FECHAFIN",item.fechafin);
-        ins.add("FECHAULT",item.fechault);
-
-        return ins.sql();
-
-    }
-
-    public String addsT_ordencuentaSqlAndroid(clsClasses.clsT_ordencuenta item) {
-        String corr="<>"+idorden+"<>";
-
-        ins.init("T_ordencuenta");
-
-        ins.add("COREL",corr);
-        ins.add("ID",item.id);
-        ins.add("CF",item.cf);
-        ins.add("NOMBRE","<>"+item.nombre+"<>");
-        ins.add("NIT","<>"+item.nit+"<>");
-        ins.add("DIRECCION","<>"+item.direccion+"<>");
-        ins.add("CORREO","<>"+item.correo+"<>");
-
-        return ins.sql();
-
-    }
-
-    //endregion
-
-    //region Broadcast
-
-    private void broadcastCallback() {
-        wsidle=true;
-        if (wso.errflag) {
-            msgBoxWifi("No hay conexíon al internet");
-            relmain.setBackgroundColor(Color.parseColor("#F4C6D0"));
-            //toastlong("wsCallBack "+wso.error);
-        } else {
-            procesaOrdenes();
-        }
-
-        //cierraPantalla();
-    }
-
-    /*
-    private void iniciaOrdenes() {
-        try {
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(ptask=new TimerTask() {
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public synchronized void run() {
-                            //recibeOrdenes();
-                        }
-                    });
-                }
-            }, delay, period);
-        } catch (Exception e) { }
-    }
-     */
-
-    private void cancelaOrdenes() {
-        try {
-            //ptask.cancel();
-        } catch (Exception e) {}
-    }
-
-    private void recibeOrdenes() {
-        if (!wsidle) return;
-        if (!wcoridle) return;
-
-        try {
-            wsidle=false;
-            imgwsref.setVisibility(View.VISIBLE);
-
-            sql="SELECT  CODIGO, COREL_ORDEN, COMANDA, COREL_LINEA " +
-                "FROM T_ORDENCOM WHERE (CODIGO_RUTA="+gl.codigo_ruta+") AND " +
-                "(COREL_LINEA IN (1,3,99,100)) ORDER BY COREL_ORDEN,CODIGO";
-            wso.execute(sql,rnBroadcastCallback);
-
-        } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsidle=true;
-            imgwsref.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void recibeOrdenesRemotos() {
-        String sw="WHERE ID IN (";
-
-        try {
-            wsidle=false;
-            imgact.setVisibility(View.INVISIBLE);lblact.setVisibility(View.INVISIBLE);
-
-            P_res_sesionObj.fill("WHERE (ESTADO IN (1,2,3))");
-            if (P_res_sesionObj.count==0) return;
-
-            for (int i = 0; i <P_res_sesionObj.count; i++) {
-                sw+="'"+P_res_sesionObj.items.get(i).id+"'";
-                if (i <P_res_sesionObj.count-1) sw+=","; else sw+=") ";
-            }
-
-            sql="SELECT ID,ESTADO FROM P_RES_SESION "+sw+" AND (FECHAINI>"+du.getActDate()+")";
-            wso.execute(sql,rnOrdenRem);
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wsidle=true;
-            imgact.setVisibility(View.VISIBLE);lblact.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void ordenRemCallback() {
-        String oid;
-        int est;
-
-        imgact.setVisibility(View.VISIBLE);lblact.setVisibility(View.VISIBLE);wsidle=true;
-
-        try {
-            if (wso.errflag) {
-                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+wso.error);return;
-            }
-            if (wso.openDTCursor.getCount()==0) return;
-
-            wso.openDTCursor.moveToFirst();
-            while (!wso.openDTCursor.isAfterLast()) {
-
-                oid = wso.openDTCursor.getString(0);
-                est = wso.openDTCursor.getInt(1);
-                if (est==-1) {
-                    try {
-                        db.beginTransaction();
-
-                        db.execSQL("UPDATE T_ORDEN SET ESTADO=2 WHERE (COREL='"+oid+"')");
-                        db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1,FECHAULT="+du.getActDateTime()+"  WHERE (ID='"+oid+"')");
-
-                        db.setTransactionSuccessful();
-                        db.endTransaction();
-                    } catch (Exception e) {
-                        db.endTransaction();
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                    }
-
-                }
-
-                wso.openDTCursor.moveToNext();
-            }
-
-            listItems();
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void procesaOrdenes() {
-        int iid,trtipo;
-        String cor,cmd,del="",ins="";
-
-        try {
-            if (wso.openDTCursor.getCount()==0) {
-                imgwsref.setVisibility(View.INVISIBLE);wsidle=true;
-                return;
-            }
-
-            wso.openDTCursor.moveToFirst();
-            cmd = "";
-
-            while (!wso.openDTCursor.isAfterLast()) {
-
-                iid = wso.openDTCursor.getInt(0);
-                cor = wso.openDTCursor.getString(1);
-                sql = wso.openDTCursor.getString(2);
-                trtipo = wso.openDTCursor.getInt(3);
-
-                del = "DELETE FROM P_res_sesion WHERE ID='" + cor + "'";
-                ins = sql.replaceAll("<>", "'");
-
-                try {
-                    db.beginTransaction();
-
-                    if (trtipo==1) {
-                        db.execSQL(del);
-                    }
-
-                    switch (trtipo) {
-                        case 3:
-                            try {
-                                db.execSQL(ins);
-                            } catch (SQLException e) { }
-                            break;
-                        case 100:
-                            aplicaNombreMesa(cor,sql);break;
-                        default:
-                            db.execSQL(ins);break;
-                    }
-
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-
-                    cmd += "DELETE FROM T_ORDENCOM WHERE CODIGO=" + iid + ";";
-                } catch (Exception e) {
-                    db.endTransaction();
-                    imgwsref.setVisibility(View.INVISIBLE);wsidle=true;
-                    //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage() + "\n" + del + "\n" + ins);
-                    return;
-                }
-
-                wso.openDTCursor.moveToNext();
-            }
-
-            if (!cmd.isEmpty()) confirmaOrdenes(cmd);
-        } catch (Exception e) {
-            //msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-
-        imgwsref.setVisibility(View.INVISIBLE);wsidle=true;
-        listItems();
-    }
-
-    private void confirmaOrdenes(String cmd) {
-        try {
-            Intent intent = new Intent(ResMesero.this, srvCommit.class);
-            intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("command",cmd);
-            startService(intent);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void aplicaNombreMesa(String idmesa,String nmesa) {
-        try {
-
-            clsClasses.clsP_mesa_nombre nitem = clsCls.new clsP_mesa_nombre();
-            nitem.codigo_mesa=Integer.parseInt(idmesa);
-            nitem.nombre=nmesa;
-
-            if (nmesa.isEmpty()) {
-                P_mesa_nombreObj.delete(nitem);
-            } else {
-                try {
-                    P_mesa_nombreObj.add(nitem);
-                } catch (Exception e) {
-                    P_mesa_nombreObj.update(nitem);
-                }
-            }
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-
-    }
-
-    //endregion
-
     //region Corel global
 
     private void agregaOrden() {
 
         numorden=0;
-
-        /*
-        boolean espedido=app.esmesapedido(gl.emp,""+mesa.idgrupo);
-        if (!espedido) {
-            addOrden();return;
-        }
-        */
-
-        if (!wsidle) {
-            msgbox("Agregar orden: No se puede crear orden, por favor intente de nuevo ");return;
-        }
-
         corcorel=gl.codigo_ruta+"_"+mu.getCorelBase();
 
         try {
-
-            wcoridle=false;
-
             sql="INSERT INTO D_ORDEN_COREL (CODIGO_SUCURSAL,COREL,ID) " +
-                "SELECT "+gl.tienda+",ISNULL(MAX(COREL)+1,1),'"+corcorel+"' " +
-                "FROM D_ORDEN_COREL WHERE CODIGO_SUCURSAL="+gl.tienda;dbg1=sql;
+                    "SELECT "+gl.tienda+",ISNULL(MAX(COREL)+1,1),'"+corcorel+"' " +
+                    "FROM D_ORDEN_COREL WHERE CODIGO_SUCURSAL="+gl.tienda;dbg1=sql;
             wscom.execute(sql,rnCorelPutCallback);
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wcoridle=true;
         }
     }
 
@@ -1133,15 +599,14 @@ public class ResMesero extends PBase {
         try {
             if (wso.errflag) {
                 toastlong("1. No se pudo asignar numero de orden\n"+wso.error);
-                addOrden();wcoridle=true;return;
+                addOrden();return;
             }
 
             sql="SELECT MAX(COREL) FROM D_ORDEN_COREL WHERE ID='"+corcorel+"'";dbg2=sql;
             wso.execute(sql,rnCorelGetCallback);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-            wcoridle=true;
-        }
+       }
     }
 
     private void GetCorelCallback() {
@@ -1150,12 +615,12 @@ public class ResMesero extends PBase {
         try {
             if (wso.errflag) {
                 toastlong("2. No se pudo asignar numero de orden\n"+wso.error);
-                addOrden();wcoridle=true;return;
+                addOrden();return;
             }
 
             if (wso.openDTCursor.getCount() == 0) {
                 toastlong("3. No se pudo asignar numero de orden");
-                addOrden();wcoridle=true;return;
+                addOrden();return;
             }
 
             try {
@@ -1175,112 +640,11 @@ public class ResMesero extends PBase {
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
         }
-
-        wcoridle=true;
     }
 
     //endregion
 
     //region Estado
-
-    private void iniciaEstados() {
-        /*
-        try {
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(etask=new TimerTask() {
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public synchronized void run() {
-                            procesaEstadoMesas();
-                        }
-                    });
-                }
-            }, delay, period);
-        } catch (Exception e) { }
-        */
-    }
-
-    private void cancelaEstados() {
-        try {
-            //etask.cancel();
-        } catch (Exception e) {}
-    }
-
-    @Override
-    protected void wsCallBack(Boolean throwing,String errmsg) {
-        imgwsref.setVisibility(View.INVISIBLE);
-        try {
-            super.wsCallBack(throwing, errmsg);
-            aplicaEstados();
-        } catch (Exception e) {
-            //msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-        }
-    }
-
-    private void procesaEstadoMesas() {
-
-        String ss=" IN (";
-
-        imgwsref.setVisibility(View.INVISIBLE);
-
-        try {
-            if (corels.size()==0) return;
-
-            imgwsref.setVisibility(View.VISIBLE);
-
-            for (int i = 0; i <corels.size(); i++) {
-                ss+="'"+corels.get(i)+"'";
-                if (i<corels.size()-1) ss+=",";else ss+=")";
-            }
-
-            sql="SELECT ID,COREL,ESTADO FROM T_ORDEN  WHERE COREL "+ss;
-            ws.openDT(sql);
-
-        } catch (Exception e) {
-            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    private void aplicaEstados() {
-
-        int iid,est;
-        String cor;
-
-        try {
-
-            if (ws.openDTCursor.getCount()==0) return;
-
-            db.beginTransaction();
-
-            ws.openDTCursor.moveToFirst();
-
-            while (!ws.openDTCursor.isAfterLast()) {
-
-                iid=ws.openDTCursor.getInt(0);
-                cor=ws.openDTCursor.getString(1);
-                est=ws.openDTCursor.getInt(2);
-
-                if (est<0 | est>1) {
-                    sql = "UPDATE T_ORDEN SET ESTADO=" + est + " WHERE (COREL='" + cor + "') AND (EMPRESA=" + iid + ")";
-                    db.execSQL(sql);
-                }
-
-                validaCompleto(cor);
-
-                ws.openDTCursor.moveToNext();
-            }
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            listItems();
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-    }
 
     private void validaCompleto(String idorden) {
 
@@ -1355,23 +719,6 @@ public class ResMesero extends PBase {
         }
     }
 
-    private void actualizaEstadosOrdenes() {
-
-        try {
-
-            if (corels.size()==0) return;
-
-            for (int i = 0; i <corels.size(); i++) {
-                validaCompleto(corels.get(i));
-            }
-
-            listItems();
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
     //endregion
 
     //region Aux
@@ -1388,6 +735,27 @@ public class ResMesero extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
         return false;
+    }
+
+    private void aplicaNombreMesa(String idmesa,String nmesa) {
+        try {
+
+            clsClasses.clsP_mesa_nombre nitem = clsCls.new clsP_mesa_nombre();
+            nitem.codigo_mesa=Integer.parseInt(idmesa);
+            nitem.nombre=nmesa;
+
+            if (nmesa.isEmpty()) {
+                P_mesa_nombreObj.delete(nitem);
+            } else {
+                try {
+                    P_mesa_nombreObj.add(nitem);
+                } catch (Exception e) {
+                    P_mesa_nombreObj.update(nitem);
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private void cargaConfig() {
@@ -1527,85 +895,10 @@ public class ResMesero extends PBase {
             nitem=P_mesa_nombreObj.first();
             P_mesa_nombreObj.delete(nitem);
 
-            broadcastJournalNameFlag(mesa.codigo_mesa,"");
             listItems();
         } catch (Exception e) {
         }
     }
-
-    private void broadcastJournalNameFlag(int idmesa,String nmesa) {
-        clsClasses.clsT_ordencom pitem;
-        int idruta;
-
-        try {
-            clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
-            P_rutaObj.fill();
-
-            String cmd="";
-
-            for (int i = 0; i <P_rutaObj.count; i++) {
-
-                idruta=P_rutaObj.items.get(i).codigo_ruta;
-
-                if (idruta!=gl.codigo_ruta) {
-
-                    pitem= clsCls.new clsT_ordencom();
-
-                    pitem.codigo_ruta=idruta;
-                    pitem.corel_orden=""+idmesa;
-                    pitem.corel_linea=100;
-                    pitem.comanda=nmesa;
-
-                    cmd+=addItemSqlOrdenCom(pitem) + ";";
-                }
-
-            }
-
-            try {
-                Intent intent = new Intent(ResMesero.this, srvCommit.class);
-                intent.putExtra("URL",gl.wsurl);
-                intent.putExtra("command",cmd);
-                startService(intent);
-            } catch (Exception e) {
-                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                app.addToOrdenLog(du.getActDateTime(),"Orden."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
-            }
-
-        } catch (Exception e) {
-            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-    }
-
-    public String addItemSqlOrdenCom(clsClasses.clsT_ordencom item) {
-
-        ins.init("T_ordencom");
-
-        ins.add("CODIGO_RUTA",item.codigo_ruta);
-        ins.add("COREL_ORDEN",item.corel_orden);
-        ins.add("COREL_LINEA",item.corel_linea);
-        ins.add("COMANDA",item.comanda);
-
-        return ins.sql();
-
-    }
-
-    /*
-    private void cierraPantalla() {
-        try {
-            Handler ctimer = new Handler();
-            Runnable crunner=new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            };
-            ctimer.postDelayed(crunner,40000);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-    */
 
     //endregion
 
@@ -1730,33 +1023,6 @@ public class ResMesero extends PBase {
 
     }
 
-    private void showQuickRecep() {
-        ExDialog dialog = new ExDialog(this);
-        dialog.setMessage("¿Actualizar parametros de venta?");
-
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    gl.findiaactivo=false;
-                    gl.tipo = 0;
-                    gl.autocom = 0;
-                    gl.modoadmin = false;
-                    gl.comquickrec = true;
-                    startActivity(new Intent(ResMesero.this, WSRec.class));
-                } catch (Exception e) {
-                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                }
-            }
-        });
-
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-
-        dialog.show();
-
-    }
-
     private void msgAskExit(String msg) {
         try{
 
@@ -1768,34 +1034,6 @@ public class ResMesero extends PBase {
                 public void onClick(DialogInterface dialog, int which) {
                    app.logoutUser(du.getActDateTime());
                    finish();
-                }
-            });
-
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {}
-            });
-
-            dialog.show();
-        }catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
-    }
-
-    private void msgAskActivar(String msg,String id) {
-        try{
-
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg  + " ?");
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        db.execSQL("UPDATE P_RES_SESION SET ESTADO=1 WHERE ID='"+id+"'");
-                        listItems();
-                    } catch (Exception e) {
-                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-                    }
                 }
             });
 
@@ -1823,9 +1061,9 @@ public class ResMesero extends PBase {
                     try {
                         switch (position) {
                             case 0:
-                                ingresaNombreMesa();break;
+                                //ingresaNombreMesa();break;
                             case 1:
-                                borraNombreMesa();break;
+                                //borraNombreMesa();break;
                         }
                         listdlg.dismiss();
                     } catch (Exception e) {}
@@ -1877,7 +1115,6 @@ public class ResMesero extends PBase {
                     P_mesa_nombreObj.update(nitem);
                 }
 
-                broadcastJournalNameFlag(mesa.codigo_mesa,s);
                 listItems();
                 return;
             }
@@ -2015,11 +1252,6 @@ public class ResMesero extends PBase {
 
         registerListener();
 
-        if (actorden) {
-            //recibeOrdenes();
-            //iniciaOrdenes();
-        }
-
         if (browse==1) {
             browse=0;
             cantidadComensales();
@@ -2037,33 +1269,19 @@ public class ResMesero extends PBase {
             }
         } else {
             listItems();
-
-            if (gl.pelMeseroCaja) {
-                //procesaEstadoMesas();
-                iniciaEstados();
-            } else {
-                //actualizaEstadosOrdenes();
-            }
-            actualizaEstadosOrdenes();
         }
 
     }
 
     @Override
     protected void onPause() {
-        if (actorden) cancelaOrdenes();
-
         unregisterListener();
-
         super.onPause();
     }
 
     @Override
     public void onBackPressed() {
         try{
-            //msgAskExit("Salir");
-            if (actorden) cancelaOrdenes();
-            cancelaEstados();
             app.logoutUser(du.getActDateTime());
             finish();
         } catch (Exception e){

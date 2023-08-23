@@ -32,30 +32,45 @@ public class ValidaClave extends PBase {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
+        try {
 
-        if (pantallaHorizontal()) {
-            setContentView(R.layout.activity_valida_clave);
-        } else {
-            setContentView(R.layout.activity_valida_clave_ver);
+            super.onCreate(savedInstanceState);
+
+            if (pantallaHorizontal()) {
+                setContentView(R.layout.activity_valida_clave);
+            } else {
+                setContentView(R.layout.activity_valida_clave_ver);
+            }
+
+            super.InitBase();
+
+            listView = findViewById(R.id.listView1);
+            lblClave = findViewById(R.id.lblPass);
+            lbl2 = findViewById(R.id.lblTit);
+            lblKeyDP = findViewById(R.id.textView110);
+
+            khand = new clsKeybHandler(this, lblClave, lblKeyDP);
+            khand.enable();
+            khand.clear(false);
+
+            setHandlers();
+
+            if (gl.modoclave == 0) lbl2.setText("Ingreso mesero"); else lbl2.setText("Ingreso caja");
+
+            listItems();
+
+            try {
+                db.execSQL("DELETE FROM T_ORDEN ");
+                db.execSQL("DELETE FROM T_ORDENCOMBO ");
+                db.execSQL("DELETE FROM T_ORDENCOMBOAD ");
+                db.execSQL("DELETE FROM T_ORDENCOMBODET ");
+                db.execSQL("DELETE FROM T_ORDENCOMBOPRECIO ");
+                db.execSQL("DELETE FROM T_ORDEN_ING ");
+            } catch (Exception e) {}
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        super.InitBase();
-
-        listView = findViewById(R.id.listView1);
-        lblClave = findViewById(R.id.lblPass);
-        lbl2 = findViewById(R.id.lblTit);
-        lblKeyDP = findViewById(R.id.textView110);
-
-        khand = new clsKeybHandler(this, lblClave, lblKeyDP);
-        khand.enable();
-        khand.clear(false);
-
-        setHandlers();
-
-        if (gl.modoclave == 0) lbl2.setText("Ingreso mesero"); else lbl2.setText("Ingreso caja");
-
-        listItems();
 
     }
 
