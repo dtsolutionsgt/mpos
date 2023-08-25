@@ -61,6 +61,7 @@ public class ValidaClave extends PBase {
 
             try {
                 db.execSQL("DELETE FROM T_ORDEN ");
+                db.execSQL("DELETE FROM T_ORDENCUENTA");
                 db.execSQL("DELETE FROM T_ORDENCOMBO ");
                 db.execSQL("DELETE FROM T_ORDENCOMBOAD ");
                 db.execSQL("DELETE FROM T_ORDENCOMBODET ");

@@ -48,12 +48,12 @@ public class fbNetworkState extends BroadcastReceiver {
 
                 Handler mtimer = new Handler();
                 Runnable mrunner= () -> {
-                    notify("MPos está conectado al internet");
+                    notify("MPos está conectado a internet");
                 };
                 mtimer.postDelayed(mrunner,40000);
 
             } else {
-                notify("Se perdió la conexión al internet");
+                notify("Se perdió la conexión a internet");
             }
 
         } catch (Exception e) {

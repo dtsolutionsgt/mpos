@@ -125,7 +125,9 @@ public class ListAdaptMenuVenta extends BaseAdapter {
         if (items.get(position).Icon==71) holder.imgEst.setImageResource(R.drawable.bot_desc);
         if (items.get(position).Icon==72) holder.imgEst.setImageResource(R.drawable.bot_desc_total);
 
-        if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
+		if (items.get(position).Icon==99) holder.imgEst.setImageResource(R.drawable.nowifi3);
+
+		if (items.get(position).Icon==101) holder.imgEst.setImageResource(R.drawable.logo_baktun);
 
 		if(selectedIndex!= -1 && position == selectedIndex) {
 			convertView.setBackgroundColor(Color.rgb(26,138,198));

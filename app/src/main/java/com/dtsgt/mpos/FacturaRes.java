@@ -75,6 +75,8 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELFactura;
+import com.dtsgt.firebase.fbOrdenEstado;
+import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptTotals;
 import com.dtsgt.webservice.srvCommit;
@@ -118,6 +120,8 @@ public class FacturaRes extends PBase {
 	private AppMethods app;
     private clsKeybHandler khand;
 	private clsRepBuilder rep;
+
+	private fbOrdenEstado fboe;
 
 	private long fecha,fechae;
 	private int fcorel,clidia, Nivel_Media_Pago,idtransbar,hora;
@@ -264,6 +268,9 @@ public class FacturaRes extends PBase {
 		fechae=fecha;
 
 		dweek=mu.dayofweek();
+
+		fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
+
 
 		clsDesc=new clsDescGlob(this);
 
@@ -4252,25 +4259,6 @@ public class FacturaRes extends PBase {
 		try {
 			clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
-		    /*
-			try {
-				psql="UPDATE P_RES_SESION SET ESTADO=3  WHERE ID='"+ gl.ordcorel+"'";
-				db.execSQL(psql);
-			} catch (SQLException e) {
-				mu.msgbox("impresionCuenta : "  + e.getMessage());
-			}
-
-			if (gl.peActOrdenMesas) enviaPrecuenta(psql);
-
-			*/
-
-
-			/*
-			clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
-			P_res_sesionObj.fill("WHERE ID='"+gl.ordcorel+"'");
-			clsClasses.clsP_res_sesion sess=P_res_sesionObj.first();
-			*/
-
 			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
 			//VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+sess.vendedor+")");
 			VendedoresObj.fill("WHERE (CODIGO_VENDEDOR="+gl.prcu_vend+")");
@@ -4278,7 +4266,7 @@ public class FacturaRes extends PBase {
 
 			clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
 			//P_res_mesaObj.fill("WHERE (CODIGO_MESA="+sess.codigo_mesa+")");
-			P_res_mesaObj.fill("WHERE (CODIGO_MESA="+gl.prcu_mesa+")");
+			P_res_mesaObj.fill("WHERE (CODIGO_MESA="+gl.mesa_codigo+")");
 			if (P_res_mesaObj.count>0) gl.mesanom=P_res_mesaObj.first().nombre;else gl.mesanom="";
 
 			fdoc.LANPrint=gl.peImpFactLan;
@@ -4289,6 +4277,8 @@ public class FacturaRes extends PBase {
 			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
 					descimp,propinaperc,gl.pePropinaFija,propina);
 			//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
+
+			estadoCuenta();
 
 			gl.QRCodeStr="";
 
@@ -4317,6 +4307,24 @@ public class FacturaRes extends PBase {
 
 		} catch (Exception e){
 			mu.msgbox("impresionCuenta : "  + e.getMessage());
+		}
+	}
+
+	private void estadoCuenta() {
+		try {
+			clsClasses.clsFbOrdenEstado eitem = clsCls.new clsFbOrdenEstado();
+
+			eitem.corel = gl.idorden;
+			eitem.id = gl.precuenta_cuenta;
+			eitem.estado = 1;
+			eitem.idmesa = gl.mesa_codigo;
+			eitem.nombre = gl.mesanom;
+			eitem.fecha = du.getActDateTime();
+
+			fboe.setItem(eitem);
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
 	}
 

@@ -12,37 +12,7 @@
         android:layout_height="match_parent"
         android:background="#FFFFFF">
 
-    <TextView
-        android:id="@+id/textView253"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView123"
-        android:layout_alignStart="@+id/imageView87"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_horizontal"
-        android:text="Recibir ordenes"
-        android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/imageView123"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="false"
-        android:layout_marginTop="150dp"
-        android:layout_marginEnd="0dp"
-        android:clickable="true"
-        android:onClick="doOrden"
-        android:padding="10dp"
-        android:src="@drawable/cambio_usuario"
-        android:visibility="invisible" />
-
-    <RelativeLayout
+        <RelativeLayout
     android:id="@+id/relRoad"
     android:layout_width="match_parent"
     android:layout_height="48dp"
@@ -80,21 +50,21 @@
         android:textSize="36sp"
         android:textStyle="bold" />
 
-</RelativeLayout>
+        </RelativeLayout>
 
-    <GridView
-        android:id="@+id/gridView1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/relbotpan"
-        android:layout_below="@+id/relRoad"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="90dp"
-        android:layout_marginBottom="4dp"
-        android:numColumns="4" />
+        <GridView
+            android:id="@+id/gridView1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/relbotpan"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginBottom="4dp"
+            android:numColumns="4" />
 
         <RelativeLayout
             android:id="@+id/relbotpan"
@@ -118,48 +88,19 @@
 
         </RelativeLayout>
 
-    <TextView
-        android:id="@+id/textView212"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView87"
-        android:layout_alignStart="@+id/imageView87"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_horizontal"
-        android:text="Actualizar" />
-
-    <ImageView
-        android:id="@+id/imageView87"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignTop="@+id/gridView1"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="false"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
-        android:clickable="true"
-        android:onClick="doRec"
-        android:padding="10dp"
-        android:src="@drawable/recibir_rapido"
-        android:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/imageView96"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignStart="@+id/imageView87"
-        android:layout_alignBottom="@+id/gridView1"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="20dp"
-        android:clickable="true"
-        android:onClick="doExit"
-        android:padding="5dp"
-        android:src="@drawable/btn_exit" />
+        <ImageView
+            android:id="@+id/imageView96"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignStart="@+id/imageView87"
+            android:layout_alignBottom="@+id/gridView1"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:onClick="doExit"
+            android:padding="5dp"
+            android:src="@drawable/btn_exit" />
 
         <TextView
             android:id="@+id/textView213"
@@ -173,5 +114,34 @@
             android:layout_marginBottom="0dp"
             android:gravity="center_horizontal"
             android:text="Salir" />
+
+        <ImageView
+            android:id="@+id/imageView120"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@+id/relRoad"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:clickable="true"
+            android:onClick="doSincon"
+            android:padding="10dp"
+            android:src="@drawable/nowifi3" />
+
+        <TextView
+            android:id="@+id/textView187"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView120"
+            android:layout_alignStart="@+id/imageView120"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:clickable="true"
+            android:gravity="center_horizontal"
+            android:onClick="doSincon"
+            android:text="Sin conexión" />
+
     </RelativeLayout>
 </RelativeLayout>

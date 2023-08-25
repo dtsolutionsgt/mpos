@@ -5,15 +5,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,20 +20,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.clsD_facturafObj;
-import com.dtsgt.classes.clsD_pedidoObj;
-import com.dtsgt.classes.clsT_ordencuentaObj;
-import com.dtsgt.webservice.srvInventConfirm;
-import com.dtsgt.webservice.wsInventCompartido;
+import com.dtsgt.firebase.fbOrdenCuenta;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class ResCliente extends PBase {
@@ -47,11 +35,16 @@ public class ResCliente extends PBase {
     private ProgressBar pbar;
 
     private ArrayList<String> pedidos =new ArrayList<String>();
+    private clsClasses.clsT_ordencuenta fbitem;
 
     private String sNITCliente, sNombreCliente, sDireccionCliente, sCorreoCliente, wspnerror;
     private boolean consFinal=false,idleped=true;
     private boolean request_exit=false,bloqueado,nrslt;
     private int cantped;
+
+    private fbOrdenCuenta fboc;
+    private Runnable rnFbCuenta;
+
 
     private TimerTask ptask;
     private int period=10000,delay=50;
@@ -60,44 +53,44 @@ public class ResCliente extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (pantallaHorizontal()) {
-            setContentView(R.layout.activity_res_cliente);
-        } else {
-            setContentView(R.layout.activity_res_cliente_ver);
+
+        try {
+
+            super.onCreate(savedInstanceState);
+            if (pantallaHorizontal()) {
+                setContentView(R.layout.activity_res_cliente);
+            } else {
+                setContentView(R.layout.activity_res_cliente_ver);
+            }
+
+            super.InitBase();
+
+            txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.setText("");txtNIT.requestFocus();
+            txtNom = (EditText) findViewById(R.id.editText2);txtNom.setText("");
+            txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("Ciudad");
+            txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
+            lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
+            relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
+            relcli = (RelativeLayout) findViewById(R.id.relclipos);
+            pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
+            btnCF = findViewById(R.id.textView4);
+            btnNIT = findViewById(R.id.textView6);
+
+            setHandlers();
+
+            gl.pedcorel="";
+
+            bloqueado=false;
+
+            fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
+
+            rnFbCuenta = () -> { showCliente();};
+
+            cargaCliente();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        super.InitBase();
-
-        txtNIT = (EditText) findViewById(R.id.txt1);txtNIT.setText("");txtNIT.requestFocus();
-        txtNom = (EditText) findViewById(R.id.editText2);txtNom.setText("");
-        txtRef = (EditText) findViewById(R.id.editText1);txtRef.setText("Ciudad");
-        txtCorreo= (EditText) findViewById(R.id.txtCorreo);txtCorreo.setText("");
-        lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
-        relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
-        relcli = (RelativeLayout) findViewById(R.id.relclipos);
-        pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
-        btnCF = findViewById(R.id.textView4);
-        btnNIT = findViewById(R.id.textView6);
-
-        setHandlers();
-
-        gl.pedcorel="";
-
-        bloqueado=false;
-
-        cargaCliente();
-
-        btnCF.setText("Consumidor Final");
-        if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-            btnNIT.setText("Cliente con NIT");
-        } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-            btnNIT.setText("Cliente con RTN");
-        } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-            btnNIT.setText("Cliente con NIT/NRC");
-            btnCF.setText("Ticket");
-        }
-
     }
 
     //region  Events
@@ -433,19 +426,33 @@ public class ResCliente extends PBase {
     }
 
     private void cargaCliente() {
-
         try {
+            fboc.getItem(gl.ordcorel,gl.pricuenta,rnFbCuenta);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
-            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
-            T_ordencuentaObj.fill("WHERE (COREL='"+gl.ordcorel+"') AND (ID="+gl.pricuenta+")");
+    private void showCliente() {
+        try {
+            if (fboc.errflag) throw new Exception(fboc.error);
 
-            if (T_ordencuentaObj.count>0) {
-                gl.gNombreCliente = T_ordencuentaObj.first().nombre;
-                gl.gNITCliente = T_ordencuentaObj.first().nit;
-                gl.gDirCliente = T_ordencuentaObj.first().direccion;
-                gl.gCorreoCliente = T_ordencuentaObj.first().correo;
-                gl.gNITcf=T_ordencuentaObj.first().cf==1;
+            if (fboc.itemexists) {
+                fbitem=fboc.item;
+
+                gl.gNombreCliente = fboc.item.nombre;
+                gl.gNITCliente = fboc.item.nit;
+                gl.gDirCliente = fboc.item.direccion;
+                gl.gCorreoCliente = fboc.item.correo;
+                gl.gNITcf=fboc.item.cf==1;
             } else {
+                fbitem=clsCls.new clsT_ordencuenta();
+                fbitem.corel=gl.ordcorel;
+                try {
+                    fbitem.id=Integer.parseInt(gl.pricuenta);
+                } catch (Exception e) {
+                    fbitem.id=0;msgbox("showCliente . Numero cuenta incorrecto");return;
+                }
                 gl.gNombreCliente = "Consumidor final";
                 gl.gNITCliente ="CF";
                 gl.gDirCliente = "Ciudad";
@@ -458,10 +465,22 @@ public class ResCliente extends PBase {
             txtRef.setText(gl.gDirCliente);
             txtCorreo.setText(gl.gCorreoCliente);
 
+            btnCF.setText("Consumidor Final");
+            if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+                btnNIT.setText("Cliente con NIT");
+            } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                btnNIT.setText("Cliente con RTN");
+            } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                btnNIT.setText("Cliente con NIT/NRC");
+                btnCF.setText("Ticket");
+            }
+
+            if (!fboc.itemexists)  throw new Exception("Error a leer registro");
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
 
     private void guardaDatos(int iscf) {
 
@@ -470,15 +489,13 @@ public class ResCliente extends PBase {
 
         try {
 
-            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
-            T_ordencuentaObj.fill("WHERE (COREL='"+gl.ordcorel+"') AND (ID="+gl.pricuenta+")");
+            fbitem.nombre=gl.gNombreCliente;
+            fbitem.nit=gl.gNITCliente;
+            fbitem.direccion=gl.gDirCliente;
+            fbitem.correo=gl.gCorreoCliente;
+            fbitem.cf=iscf;
 
-            T_ordencuentaObj.first().nombre=gl.gNombreCliente;
-            T_ordencuentaObj.first().nit=gl.gNITCliente;
-            T_ordencuentaObj.first().direccion=gl.gDirCliente;
-            T_ordencuentaObj.first().correo=gl.gCorreoCliente;
-            T_ordencuentaObj.first().cf=iscf;
-            T_ordencuentaObj.update(T_ordencuentaObj.first());
+            fboc.setItem(fbitem);
 
             //#EJC202212092141:Validar si ya existe o no el registro en D_FACTURAF si no existe lo inserta.
             String sql = "SELECT * FROM D_FACTURAF WHERE COREL='"+gl.ordcorel+"'";

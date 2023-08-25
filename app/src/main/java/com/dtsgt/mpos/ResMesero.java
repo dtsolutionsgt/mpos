@@ -173,10 +173,9 @@ public class ResMesero extends PBase {
         listMesa();
     }
 
-    public void doRec(View view) {
-
+    public void doSincon(View view) {
+        startActivity(new Intent(this,Nowifi.class));
     }
-
     public void doBarril(View view) {
         try {
             startActivity(new Intent(this,Barriles.class));

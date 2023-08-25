@@ -63,6 +63,7 @@ import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
 import com.dtsgt.firebase.fbOrden;
 import com.dtsgt.firebase.fbOrdenCuenta;
+import com.dtsgt.firebase.fbOrdenEstado;
 import com.dtsgt.firebase.fbOrdenNota;
 import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.ladapt.ListAdaptGridFam;
@@ -142,11 +143,13 @@ public class Orden extends PBase {
     private fbOrden fbo,fboo;
     private fbOrdenNota fbon;
     private fbOrdenCuenta fboc;
+    private fbOrdenEstado fboe;
     private fbResSesion fbrs;
 
     private Runnable rnfboList, rnfboNewid,rnfboSplit,rnfbocLista,rnfbooLista,
                      rnfbocListaPrecuenta,rnfbocListaCliente,rnfbrsItem,
-                     rnfbrsMovcue,rnfbocMovcue,rnfboMovcue;
+                     rnfbrsMovcue,rnfbocMovcue,rnfboMovcue,rnfboMovcueOrig,
+                     rnfboDelCue,rnfbocAnul;
 
     private AppMethods app;
 
@@ -280,6 +283,7 @@ public class Orden extends PBase {
             fbon=new fbOrdenNota("OrdenNota",gl.tienda,idorden);
             fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
             fbrs=new fbResSesion("ResSesion",gl.tienda);
+            fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
 
             rnfboList = () -> fsoListItems();
             rnfboNewid = () -> fsoSaveItem();
@@ -294,6 +298,8 @@ public class Orden extends PBase {
             rnfbrsMovcue = () -> fbrsMovcue();
             rnfbocMovcue = () -> fbocMovcue();
             rnfboMovcue = () -> fboMovcue();
+            rnfboMovcueOrig = () -> fboMovcueOrig();
+            rnfbocAnul = () -> fbocAnul();
 
             rheader=false;
             fbrs.getItem(idorden,rnfbrsItem);
@@ -1968,6 +1974,13 @@ public class Orden extends PBase {
             item.Icon = 0;
             mitems.add(item);
 
+            item = clsCls.new clsMenu();
+            item.ID = 99;
+            item.Name = "Sin conexión";
+            item.Icon = 99;
+            mitems.add(item);
+
+
             if (barril) {
                 item = clsCls.new clsMenu();
                 item.ID = 78;
@@ -2016,9 +2029,7 @@ public class Orden extends PBase {
                         msgbox("No existe cuenta pendiente de pago.");return;
                     }
 
-                    if (enviarorden) {
-                        actualizaEstadoOrden(1);
-                    }
+                    if (enviarorden) actualizaEstadoOrden(1);
 
                     break;
                 case 2:
@@ -2052,8 +2063,6 @@ public class Orden extends PBase {
                         msgmsg("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
 
-
-
                         if (app.isOnWifi()==1) {
                             if (limpiaVenta()) showListaCuentas();
                         } else {
@@ -2070,6 +2079,9 @@ public class Orden extends PBase {
                     break;
                 case 78:
                     startActivity(new Intent(this,Barriles.class));
+                    break;
+                case 99:
+                    startActivity(new Intent(this,Nowifi.class));
                     break;
             }
         } catch (Exception e) {
@@ -3308,7 +3320,9 @@ public class Orden extends PBase {
             cantcuentas=cc;
             for (int i = 0; i <fboc.items.size(); i++) {
                 if (fboc.items.get(i).cf==0) {
-                    listdlg.add(""+fboc.items.get(i).id);
+                    if (articulosCuenta(fboc.items.get(i).id)>0) {
+                        listdlg.add(R.drawable.table_icon,""+fboc.items.get(i).id,"");
+                    }
                 }
             }
 
@@ -3317,6 +3331,7 @@ public class Orden extends PBase {
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
                         cuenta=Integer.parseInt(listdlg.getText(position));
+                        gl.precuenta_cuenta=cuenta;
                         gl.nocuenta_precuenta=""+cuenta;
                         crearVenta();
                         listdlg.dismiss();
@@ -3336,6 +3351,20 @@ public class Orden extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private int articulosCuenta(int cue) {
+        int cc=0;
+
+        try {
+            for (int ii = 0; ii <fbo.items.size(); ii++) {
+                if (fbo.items.get(ii).cuenta==cue) cc++;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());cc=0;
+        }
+
+        return cc;
     }
 
     private Boolean cuentaPagada(String corr,int cue) {
@@ -3463,16 +3492,23 @@ public class Orden extends PBase {
 
     private void fboMovcue() {
         try {
+            if (fbo.errflag) throw new Exception(fbo.error);
 
             movcue_maxdest=0;
             for (int i = 0; i <fbo.items.size(); i++) {
-
-
+                if (fbo.items.get(i).id>movcue_maxdest) movcue_maxdest=fbo.items.get(i).id;
             }
+            movcue_maxdest++;
+            fbo.listItems(rnfboMovcueOrig);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
-
+    private void fboMovcueOrig() {
+        try {
+            if (fbo.errflag) throw new Exception(fbo.error);
             fboc.listItemsOrden(idorden_movcue,rnfbocMovcue);
-
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -3510,11 +3546,13 @@ public class Orden extends PBase {
     }
 
     private void mueveCuenta(int IdCuentaDestino, int IdCuentaOrigen) {
+        ArrayList<Integer> rid= new ArrayList<Integer>();
         clsClasses.clsT_orden oitem;
         String idsession;
+        int iditem;
 
         try {
-            idsession=idorden_movcue;
+            idsession=idorden_movcue;rid.clear();
 
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
             clsClasses.clsT_ordencuenta cuenta = clsCls.new clsT_ordencuenta();
@@ -3531,16 +3569,29 @@ public class Orden extends PBase {
 
             T_ordencuentaObj.add(cuenta);
 
-            for (int i = 0; i <fbo.items.size(); i++) {
+            for (int i = fbo.items.size()-1; i>=0; i--) {
                 if (fbo.items.get(i).cuenta==IdCuentaOrigen) {
                     oitem=fbo.items.get(i);
+                    iditem=fbo.items.get(i).id;
+
                     oitem.corel=idsession;
                     oitem.cuenta=IdCuentaDestino;
-                    oitem.id=-1;
-                }
+                    oitem.id=movcue_maxdest;movcue_maxdest++;
 
+                    fbo.setItem(oitem);
+                    rid.add(iditem);
+                   //fbo.items.remove(i);
+                }
             }
 
+            for (int i = 0; i <rid.size(); i++) {
+                iditem=rid.get(i);
+                fbo.removeItem(iditem);
+            }
+
+            fboc.removeItem(idorden,IdCuentaOrigen);
+
+            listItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
         }
@@ -3840,6 +3891,7 @@ public class Orden extends PBase {
             fbrs.removeValue(idorden);
             fbo.removeKey();
             fbon.removeKey();
+
             borrarBloqueo();
 
         } catch (Exception e) {
@@ -3857,15 +3909,44 @@ public class Orden extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            gl.cerrarmesero=true;gl.mesero_lista=true;
-            cerrarOrden();
-
             //anulaOrden();
             //listItems();
         } catch (Exception e) {
             db.endTransaction();
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+
+        try {
+            fboc.listItemsOrden(idorden,rnfbocAnul);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fbocAnul() {
+        try {
+            if (fboc.errflag) throw new Exception(fboc.error);
+
+            for (int i = 0; i <fboc.items.size(); i++) {
+                try {
+                    fboe.removeKey(idorden+"_"+fboc.items.get(i).id);
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+
+            try {
+                fboc.removeKey(idorden);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        gl.cerrarmesero=true;gl.mesero_lista=true;
+        cerrarOrden();
     }
 
     //endregion

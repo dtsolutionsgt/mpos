@@ -523,6 +523,15 @@ public class clsClasses {
         public int bandera;
     }
 
+    public class clsFbOrdenEstado {
+        public String corel;
+        public int id;
+        public int estado;
+        public int idmesa;
+        public String nombre;
+        public Long fecha;
+    }
+
     public class clsFbOrdenNota {
         public int id;
         public String nota;

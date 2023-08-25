@@ -262,9 +262,13 @@ public class Menu extends PBase {
 
                 addMenuItem(10,"Cambio usuario");
 
+				/*
                 if (gl.rol==3 | gl.rol==2) {
                     if (gl.peRest) addMenuItem(14,"Modo de emergencia");
                 }
+                */
+
+				addMenuItem(14,"Sin interner");
 
             }
 
@@ -440,7 +444,9 @@ public class Menu extends PBase {
 				case 13:
 					apagar();break;
                 case 14:
-                    showEmergMenu();break;
+					startActivity(new Intent(this,Nowifi.class));
+					//showEmergMenu();
+					break;
 			}
 		}catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");

@@ -32,6 +32,10 @@ public class fbOrdenCuenta extends fbBase {
         fdb.getReference(root).child(""+idsuc).child(idorden).removeValue();
     }
 
+    public void removeItem(String idorden,int idcuenta) {
+        fdb.getReference(root).child(""+idsuc).child(idorden).child(""+idcuenta).removeValue();
+    }
+
     public void getItem(String idorden,String itemid,Runnable rnCallback) {
 
         fdb.getReference(root+"/"+idsuc+"/"+idorden+"/"+itemid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {

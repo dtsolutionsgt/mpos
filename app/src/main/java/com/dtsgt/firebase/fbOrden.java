@@ -42,6 +42,11 @@ public class fbOrden extends fbBase {
         fdt.setValue(item);
     }
 
+    public void setItem(clsClasses.clsT_orden item) {
+        fdt=fdb.getReference(root+"/"+idsuc+"/"+item.corel+"/"+item.id);
+        fdt.setValue(item);
+    }
+
     public void removeKey() {
         fdb.getReference(root).child(""+idsuc).child(node).removeValue();
     }

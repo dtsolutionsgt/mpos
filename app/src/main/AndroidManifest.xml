@@ -40,7 +40,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
-
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -67,13 +66,11 @@
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
             </intent-filter>
         </receiver>
-
         <receiver android:name="com.dtsgt.firebase.fbNetworkState">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
 
         <service
             android:name="com.dtsgt.webservice.srvBase"
@@ -776,7 +773,6 @@
         <activity
             android:name=".FragmentTest"
             android:exported="false" />
-
         <activity
             android:name="com.dtsgt.mant.MantImpRedir"
             android:exported="false"
@@ -786,6 +782,11 @@
             android:name=".InicioInventario"
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".Nowifi"
+            android:exported="false"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
     </application>

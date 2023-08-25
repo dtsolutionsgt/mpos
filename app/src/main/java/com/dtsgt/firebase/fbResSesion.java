@@ -43,7 +43,6 @@ public class fbResSesion extends fbBase {
                 errflag=true;error=derror.getMessage();
             }
         };
-
     }
 
     public void setItem(clsClasses.clsfbResSesion item) {

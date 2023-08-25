@@ -2693,6 +2693,11 @@ public class Venta extends PBase {
             item.ID=1;item.Name="Pago";item.Icon=58;
             mitems.add(item);
 
+            item = clsCls.new clsMenu();
+            item.ID=99;item.Name="Sin conexión";item.Icon=99;
+            mitems.add(item);
+
+
             if (app.usaFEL()) {
                 int pendfel=pendienteFEL();
 
@@ -2778,8 +2783,9 @@ public class Venta extends PBase {
                 case 16:
                     menuPedidos();break;
                 case 24:
-                    exitBtn();
-                    break;
+                    exitBtn();break;
+                case 99:
+                    startActivity(new Intent(this,Nowifi.class));break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
