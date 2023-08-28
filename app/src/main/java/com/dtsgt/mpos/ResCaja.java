@@ -15,19 +15,17 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsT_comboObj;
-import com.dtsgt.classes.clsT_ordenObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
-import com.dtsgt.classes.clsT_ordencuentaObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.firebase.fbOrden;
+import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.firebase.fbOrdenEstado;
 import com.dtsgt.ladapt.LA_ResCaja;
 
@@ -45,7 +43,6 @@ public class ResCaja extends PBase {
     private LA_ResCaja adapter;
     private clsViewObj ViewObj;
 
-    private clsT_ordenObj T_ordenObj;
     private clsT_ordencomboObj T_ordencomboObj;
     private clsT_ordencomboprecioObj T_ordencomboprecioObj;
     private clsT_ventaObj T_ventaObj;
@@ -54,14 +51,16 @@ public class ResCaja extends PBase {
     private clsClasses.clsT_orden oitem;
 
     private fbOrdenEstado fboe;
+    private fbOrdenCuenta fboc;
+    private fbOrden fbo;
 
-    private Runnable rnfboeLista,rnFbListenerrefOrdenEstado;
+    private Runnable rnfboeLista,rnFbListenerrefOrdenEstado,rnfbocListaCliente,rnfboItems;
 
     private String corel,mesa,numpedido;
-    private int cuenta;
+    private int cuenta,idmesero;
     private boolean idle=true;
 
-   private boolean horiz,espedido,actorden;
+    private boolean horiz,espedido,actorden;
 
 
     @Override
@@ -79,7 +78,6 @@ public class ResCaja extends PBase {
             calibraPantalla();
 
             ViewObj=new clsViewObj(this,Con,db);
-            T_ordenObj=new clsT_ordenObj(this,Con,db);
             T_ordencomboObj=new clsT_ordencomboObj(this,Con,db);
             T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
             T_ventaObj=new clsT_ventaObj(this,Con,db);
@@ -87,15 +85,15 @@ public class ResCaja extends PBase {
 
             actorden=gl.peActOrdenMesas;
 
-
             fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
+            fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
 
             rnfboeLista = () -> showItems();
-            rnFbListenerrefOrdenEstado = () -> { FbListenerOrdenEstado();};
+            rnFbListenerrefOrdenEstado = () -> FbListenerOrdenEstado();
+            rnfbocListaCliente = () -> cargaDatosCliente();
+            rnfboItems = () -> cargaOrden();
 
             fboe.setListener(rnFbListenerrefOrdenEstado);
-
-
 
             setHandlers();
             listItems();
@@ -136,6 +134,7 @@ public class ResCaja extends PBase {
                 espedido=app.esmesapedido(gl.emp,item.f5);
                 gl.EsVentaDelivery=espedido;
                 numpedido=item.f6;
+                idmesero=Integer.parseInt(item.f8);
 
                 showMenuMesa();
             };
@@ -176,6 +175,7 @@ public class ResCaja extends PBase {
                     witem.f3="3";
                     witem.f4=du.shora(fbitem.fecha);
                     witem.f7="";
+                    witem.f8=""+fbitem.mesero;
 
                     witems.add(witem);
                 }
@@ -233,30 +233,33 @@ public class ResCaja extends PBase {
             db.execSQL("DELETE FROM T_COMBO");
             db.execSQL("DELETE FROM T_VENTA");
 
-            clsP_res_sesionObj P_res_sesionObj=new clsP_res_sesionObj(this,Con,db);
-            P_res_sesionObj.fill("WHERE ID='"+corel+"'");
-            gl.mesero_venta=P_res_sesionObj.first().vendedor;
-
+            gl.mesero_venta=idmesero;
             gl.numero_orden=corel+"_"+cuenta;
             gl.nummesapedido=numpedido;
 
-            T_ordenObj.fill("WHERE COREL='"+corel+"'");
-
-            for (int i = 0; i <T_ordenObj.count; i++) {
-                oitem=T_ordenObj.items.get(i);
-                if (oitem.cuenta==cuenta) addItem();
-            }
-
             gl.cuenta_borrar=cuenta;
-            gl.caja_est_pago    ="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL='"+corel+"') AND (CUENTA="+cuenta+"))";
-            gl.caja_est_pago_cmd="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL=<>"+corel+"<>) AND (CUENTA="+cuenta+"))";
-            gl.caja_est_pago_cue="DELETE FROM T_ORDENCUENTA WHERE ((COREL=<>"+corel+"<>) AND (ID="+cuenta+"))";
+
+            fbo=new fbOrden("Orden",gl.tienda,corel);
+            fbo.listItems(rnfboItems);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cargaOrden() {
+        try {
+            if (fbo.errflag) throw new Exception(fbo.error);
+
+            for (int i = 0; i <fbo.items.size(); i++) {
+                oitem=fbo.items.get(i);
+                if (oitem.cuenta==cuenta) {
+                    addItem();
+                }
+            }
 
             cargaCliente();
 
-            gl.ventalock=true;
-
-            finish();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -439,28 +442,44 @@ public class ResCaja extends PBase {
     }
 
     private void cargaCliente() {
+        try {
+            fboc.getItem(gl.ordcorel,""+cuenta,rnfbocListaCliente);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cargaDatosCliente() {
 
         try {
 
+            if (fboc.errflag) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+fboc.error);return;
+            }
+
             gl.codigo_cliente=gl.emp*10;
 
-            clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(this,Con,db);
-            T_ordencuentaObj.fill("WHERE (COREL='"+corel+"') AND (ID="+cuenta+")");
+            if (fboc.itemexists) {
 
-            if (T_ordencuentaObj.count>0) {
-                gl.gNombreCliente = T_ordencuentaObj.first().nombre;
-                gl.gNITCliente = T_ordencuentaObj.first().nit;
-                gl.gDirCliente = T_ordencuentaObj.first().direccion;
-                gl.gCorreoCliente = T_ordencuentaObj.first().correo;
-                gl.gNITcf=T_ordencuentaObj.first().cf==1;
-                existeCliente(gl.gNITCliente);
+                gl.gNombreCliente = fboc.item.nombre;
+                gl.gNITCliente = fboc.item.nit;
+                gl.gDirCliente = fboc.item.direccion;
+                gl.gCorreoCliente = fboc.item.correo;
+                gl.gNITcf=fboc.item.nit.equalsIgnoreCase("C.F.");
+
             } else {
                 gl.gNombreCliente = "Consumidor final";
                 gl.gNITCliente ="C.F.";
                 gl.gDirCliente = "Ciudad";
                 gl.gCorreoCliente = "";
                 gl.gNITcf=true;
+
+                toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . Cuenta no existe.");return;
             }
+
+            gl.ventalock=true;
+
+            finish();
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -645,7 +664,6 @@ public class ResCaja extends PBase {
 
         try {
             ViewObj.reconnect(Con,db);
-            T_ordenObj.reconnect(Con,db);
             T_ordencomboObj.reconnect(Con,db);
             T_ventaObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
@@ -655,11 +673,6 @@ public class ResCaja extends PBase {
         }
 
         registerListener();
-
-        if (actorden) {
-            //recibeOrdenes();
-        }
-
     }
 
     @Override

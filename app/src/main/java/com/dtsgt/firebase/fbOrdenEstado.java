@@ -83,6 +83,7 @@ public class fbOrdenEstado extends fbBase {
                                             litem.idmesa = snap.child("idmesa").getValue(Integer.class);
                                             litem.nombre = snap.child("nombre").getValue(String.class);
                                             litem.fecha = snap.child("fecha").getValue(Long.class);
+                                            litem.mesero = snap.child("mesero").getValue(Integer.class);
 
                                             items.add(litem);
 

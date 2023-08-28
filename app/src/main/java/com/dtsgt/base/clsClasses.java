@@ -530,6 +530,7 @@ public class clsClasses {
         public int idmesa;
         public String nombre;
         public Long fecha;
+        public int mesero;
     }
 
     public class clsFbOrdenNota {

@@ -1752,8 +1752,6 @@ public class Orden extends PBase {
                 msgbox("No se puede continuar, la cuenta no contiene ninun articulo");return;
             }
 
-            gl.caja_est_pago="UPDATE T_ORDEN SET ESTADO=2 WHERE ((COREL='"+idorden+"') AND (CUENTA="+cuenta+"))";
-
             cargaCliente();
 
         } catch (Exception e) {
@@ -3311,7 +3309,12 @@ public class Orden extends PBase {
             }
 
             if (cc==1) {
+                if (selcuenta==0) {
+                    selcuenta=1;
+                }
                 cuenta=selcuenta;
+
+                gl.precuenta_cuenta=cuenta;
                 gl.nocuenta_precuenta=""+cuenta;
                 crearVenta();
                 return;
@@ -3897,23 +3900,6 @@ public class Orden extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             return;
-        }
-
-        try {
-            db.beginTransaction();
-
-            db.execSQL("DELETE FROM P_RES_SESION WHERE (ID='"+idorden+"')");
-            db.execSQL("DELETE FROM T_orden WHERE (COREL='" + idorden + "')");
-            db.execSQL("DELETE FROM T_ordencuenta WHERE (COREL='" + idorden + "')");
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-            //anulaOrden();
-            //listItems();
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         try {

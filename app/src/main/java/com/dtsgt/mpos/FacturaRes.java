@@ -57,12 +57,9 @@ import com.dtsgt.classes.clsP_corelObj;
 import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_linea_impresoraObj;
-import com.dtsgt.classes.clsP_mediapagoObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
-import com.dtsgt.classes.clsP_res_sesionObj;
-import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
@@ -644,25 +641,6 @@ public class FacturaRes extends PBase {
 
 	}
 
-	public void showPromo(){
-
-		try {
-
-			browse=1;
-			gl.promprod="";
-			gl.promcant=0;
-			gl.promdesc=descg;
-
-			Intent intent = new Intent(this,DescBon.class);
-			startActivity(intent);
-
-		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-			mu.msgbox( e.getMessage());
-		}
-
-	}
-
 	private void updDesc(){
 
 		try{
@@ -865,12 +843,6 @@ public class FacturaRes extends PBase {
 
 			if (!saved) {
 				if (!saveOrder()) return;
-			}
-
-			if (!gl.numero_orden.isEmpty()) {
-				if (gl.numero_orden.length()>3) {
-					enviaPago(gl.caja_est_pago);
-				}
 			}
 
 			completaEstadoOrden();
@@ -2675,7 +2647,6 @@ public class FacturaRes extends PBase {
 	}
 
 	private void completaEstadoOrdenCortesia() {
-
 		try {
 			db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
 		} catch (Exception e) {
@@ -2683,13 +2654,6 @@ public class FacturaRes extends PBase {
 		}
 
 		if (!gl.peActOrdenMesas) return;
-
-		try {
-			broadcastJournalFlag(99);
-		} catch (Exception e) {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-
 	}
 
 	private void totalOrderCortesia(){
@@ -3761,7 +3725,7 @@ public class FacturaRes extends PBase {
     }
 
     private boolean divideComanda() {
-        clsT_ventaObj T_ordenObj=new clsT_ventaObj(this,Con,db);
+        clsT_ventaObj T_ventaObj=new clsT_ventaObj(this,Con,db);
         clsClasses.clsT_venta venta;
         clsT_comboObj T_comboObj=new clsT_comboObj(this,Con,db);
         clsClasses.clsT_combo combo;
@@ -3773,11 +3737,11 @@ public class FacturaRes extends PBase {
 
             db.execSQL("DELETE FROM T_comanda");
 
-            T_ordenObj.fill();
+            T_ventaObj.fill();
             P_productoObj.fill();
 
-            for (int i = 0; i <T_ordenObj.count; i++) {
-                venta=T_ordenObj.items.get(i);
+            for (int i = 0; i <T_ventaObj.count; i++) {
+                venta=T_ventaObj.items.get(i);
 
                 prodid = app.codigoProducto(venta.producto);
                 prname=getProd(prodid);
@@ -4180,79 +4144,6 @@ public class FacturaRes extends PBase {
         clidia=0;
 	}
 
-	private boolean prodPorPeso(String prodid) {
-		try {
-			return app.ventaPeso(prodid);
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private void hidekeyboard() {
-		try{
-			View sview = this.getCurrentFocus();
-
-			if (sview != null) {
-				InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(sview.getWindowToken(), 0);
-			}
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
-
-    private boolean permiteTarjeta() {
-        try {
-
-            clsP_mediapagoObj P_mediapagoObj=new clsP_mediapagoObj(this,Con,db);
-            P_mediapagoObj.fill("WHERE CODIGO=5");
-            if (P_mediapagoObj.count==0) return false;
-
-            return P_mediapagoObj.first().activo==1;
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
-        }
-    }
-
-    private void marcaFacturaContingencia() {
-
-        clsClasses.clsP_corel citem;
-        clsClasses.clsD_factura fact=clsCls.new clsD_factura();
-        long corcont;
-
-        try {
-
-            db.beginTransaction();
-
-            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
-            clsP_corelObj P_corelObj=new clsP_corelObj(this,Con,db);
-
-            P_corelObj.fill("WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=1)");
-            citem=P_corelObj.first();
-            if (citem.corelult==0) {
-                corcont=citem.corelini;
-            } else {
-                corcont=citem.corelult+1;
-            }
-
-            D_facturaObj.fill("WHERE Corel='"+corel+"'");
-            fact=D_facturaObj.first();
-            fact.feelcontingencia=""+corcont;
-            D_facturaObj.update(fact);
-
-            citem.corelult=corcont;
-            P_corelObj.update(citem);
-
-            db.setTransactionSuccessful();
-            db.endTransaction();
-
-        } catch (Exception e) {
-            db.endTransaction();
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
 	private void impresionCuenta() {
 		String psql;
 
@@ -4320,6 +4211,7 @@ public class FacturaRes extends PBase {
 			eitem.idmesa = gl.mesa_codigo;
 			eitem.nombre = gl.mesanom;
 			eitem.fecha = du.getActDateTime();
+			eitem.mesero=gl.mesero_venta;
 
 			fboe.setItem(eitem);
 
@@ -4334,11 +4226,7 @@ public class FacturaRes extends PBase {
 		gl.numero_orden="";gl.mesero_venta=0;
 
 		try {
-			if (!todasCuentasPagadas()) {
-				broadcastJournalCuenta(gl.cuenta_borrar);return;
-			}
-
-			broadcastJournalCuenta(gl.cuenta_borrar);
+			if (!todasCuentasPagadas()) return;
 
 			try {
 				db.execSQL("UPDATE P_RES_SESION SET ESTADO=-1 WHERE ID='"+ gl.ordcorel+"'");
@@ -4349,124 +4237,11 @@ public class FacturaRes extends PBase {
 			if (!gl.peActOrdenMesas) return;
 
 			sql="UPDATE P_RES_SESION SET ESTADO=-1,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+gl.ordcorel+"'";
-			//sql="UPDATE P_RES_SESION SET ESTADO=99,FECHAFIN="+du.getActDateTime()+",FECHAULT="+du.getActDateTime()+" WHERE ID='"+gl.ordcorel+"'";
 			enviaEstado(sql);
-			broadcastJournalFlag(99);
-
 
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
-	}
-
-	private void broadcastJournalFlag(int flag) {
-		clsClasses.clsT_ordencom pitem;
-		int idruta;
-
-		try {
-
-			clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
-			P_rutaObj.fill();
-
-			String cmd="";
-
-			for (int i = 0; i <P_rutaObj.count; i++) {
-
-				idruta=P_rutaObj.items.get(i).codigo_ruta;
-
-				//if (idruta!=gl.codigo_ruta) {
-
-				pitem= clsCls.new clsT_ordencom();
-
-				pitem.codigo_ruta=idruta;
-				pitem.corel_orden=gl.ordcorel;
-				pitem.corel_linea=flag;
-				pitem.comanda="";
-
-				if (flag==99) pitem.comanda=updItemSqlAndroid();
-
-				cmd+=addItemSqlOrdenCom(pitem) + ";";
-				//}
-
-			}
-
-			try {
-				Intent intent = new Intent(FacturaRes.this, srvCommit.class);
-				intent.putExtra("URL",gl.wsurl);
-				intent.putExtra("command",cmd);
-				startService(intent);
-			} catch (Exception e) {
-				toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-				app.addToOrdenLog(du.getActDateTime(),
-						"FacturaRes."+new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),cmd);
-			}
-
-		} catch (Exception e) {
-			toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-
-	}
-
-	private void broadcastJournalCuenta(int idcuenta) {
-
-		clsClasses.clsT_ordencom pitem;
-		int idruta;
-
-		try {
-			if (gl.ordcorel.isEmpty()) return;
-			if (gl.caja_est_pago_cmd.isEmpty()) return;
-		} catch (Exception e) {
-			return;
-		}
-
-		try {
-
-			clsP_rutaObj P_rutaObj=new clsP_rutaObj(this,Con,db);
-			P_rutaObj.fill();
-
-			String cmd="";
-
-			for (int i = 0; i <P_rutaObj.count; i++) {
-
-				idruta=P_rutaObj.items.get(i).codigo_ruta;
-
-				if (idruta!=gl.codigo_ruta) {
-
-					pitem= clsCls.new clsT_ordencom();
-					pitem.codigo_ruta=idruta;
-					pitem.corel_orden=gl.ordcorel;
-					pitem.corel_linea=3;
-					pitem.comanda=gl.caja_est_pago_cmd;
-
-					cmd+=addItemSqlOrdenCom(pitem) + ";";
-
-					pitem= clsCls.new clsT_ordencom();
-					pitem.codigo_ruta=idruta;
-					pitem.corel_orden=gl.ordcorel;
-					pitem.corel_linea=3;
-					pitem.comanda=gl.caja_est_pago_cue;
-
-					cmd+=addItemSqlOrdenCom(pitem) + ";";
-
-				}
-
-			}
-
-			try {
-
-				Intent intent = new Intent(FacturaRes.this, srvCommit.class);
-				intent.putExtra("URL",gl.wsurl);
-				intent.putExtra("command",cmd);
-				startService(intent);
-
-			} catch (Exception e) {
-				toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-			}
-
-		} catch (Exception e) {
-			toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-
 	}
 
 	private boolean todasCuentasPagadas() {
@@ -4503,22 +4278,6 @@ public class FacturaRes extends PBase {
 		}
 	}
 
-	public String updItemSqlAndroid() {
-		String corr="<>"+gl.ordcorel+"<>";
-		return "UPDATE P_res_sesion SET ESTADO=-1 WHERE ID='"+corr+"'";
-	}
-
-	public String addItemSqlOrdenCom(clsClasses.clsT_ordencom item) {
-
-		ins.init("T_ordencom");
-		ins.add("CODIGO_RUTA",item.codigo_ruta);
-		ins.add("COREL_ORDEN",item.corel_orden);
-		ins.add("COREL_LINEA",item.corel_linea);
-		ins.add("COMANDA",item.comanda);
-		return ins.sql();
-
-	}
-
 	private void enviaAviso() {
 
         String subject,body;
@@ -4543,15 +4302,6 @@ public class FacturaRes extends PBase {
         }
     }
 
-    private String getProd2(int prodid) {
-        try {
-            for (int i = 0; i <P_productoObj.count; i++) {
-                if (P_productoObj.items.get(i).codigo_producto==prodid) return P_productoObj.items.get(i).desclarga;
-            }
-        } catch (Exception e) {}
-        return ""+prodid;
-    }
-
     private String getProd(int prodid) {
         try {
             for (int i = 0; i <P_productoObj.count; i++) {
@@ -4574,34 +4324,6 @@ public class FacturaRes extends PBase {
         }
     }
 
-    private void enviaPago(String csql) {
-
-        try {
-            db.execSQL(csql);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-
-        try {
-            Intent intent = new Intent(FacturaRes.this, srvCommit.class);
-            intent.putExtra("URL",gl.wsurl);
-            intent.putExtra("command",csql);
-            startService(intent);
-        } catch (Exception e) {
-            toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-	private void enviaPrecuenta(String csql) {
-		try {
-			Intent intent = new Intent(FacturaRes.this, srvCommit.class);
-			intent.putExtra("URL",gl.wsurl);
-			intent.putExtra("command",csql);
-			startService(intent);
-		} catch (Exception e) {
-			toastlong(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-		}
-	}
 
 	private void enviaEstado(String csql) {
 		try {
