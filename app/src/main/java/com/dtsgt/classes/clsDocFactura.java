@@ -1107,12 +1107,22 @@ public class clsDocFactura extends clsDocument {
                     rep.addtotsptic("Subtotal: ", stot);
                 }
                 if (desc != 0) rep.addtotsptic("Descuento: ", -desc);
-                if (propina != 0) rep.addtotsptic("Propina: ", propina);
-                //if (propina != 0) rep.addtotsptic("Propina: "+ffrmnodec.format(propperc) + "% ", propina);
-            }
 
-            rep.addtotsptic("TOTAL A PAGAR: ", tot);
-            //rep.addtotsptic("TOTAL A PAGAR: ", tot);
+                if (PropinaAparte) {
+                    if (propina != 0) {
+                        tot=tot-propina;
+                        rep.addtotsptic("TOTAL A PAGAR: ", tot);
+                        rep.add(" ");
+                        rep.add("Cobro por cuenta ajena ");
+                        rep.addtotsptic("Propina: ", propina);
+                    } else {
+                        rep.addtotsptic("TOTAL A PAGAR: ", tot);
+                    }
+                } else {
+                    if (propina != 0) rep.addtotsptic("Propina: ", propina);
+                    rep.addtotsptic("TOTAL A PAGAR: ", tot);
+                }
+            }
         }
 
         if (plines.size()>0) {
