@@ -601,7 +601,6 @@ public class FacturaRes extends PBase {
 	//region Main
 
 	private void processFinalPromo(){
-
 		try {
 
             descg=gl.descglob;
@@ -952,6 +951,7 @@ public class FacturaRes extends PBase {
 				fdoc.pais = gl.codigo_pais;
 				fdoc.fraseIVA = gl.peFraseIVA;
 				fdoc.fraseISR = gl.peFraseISR;
+				fdoc.PropinaAparte=gl.peFactPropinaAparte;
 
 				fdoc.idpais=gl.codigo_pais;
 				if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
@@ -4256,8 +4256,9 @@ public class FacturaRes extends PBase {
 
 			fdoc.vendedor=gl.vendnom;
 			fdoc.rutanombre=gl.tiendanom;
-			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,
-					descimp,propinaperc,gl.pePropinaFija,propina);
+			fdoc.precuenta1015=gl.pePrecu1015;
+
+			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina);
 			//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
 
 			gl.QRCodeStr="";

@@ -519,6 +519,7 @@ public class Reimpresion extends PBase {
 			fdoc.fraseIVA = gl.peFraseIVA;
 			fdoc.fraseISR = gl.peFraseISR;
 			fdoc.idpais=gl.codigo_pais;
+			fdoc.PropinaAparte=gl.peFactPropinaAparte;
 
 			if (gl.codigo_pais.equalsIgnoreCase("HN")) cargaTotalesHonduras();
 			if (gl.codigo_pais.equalsIgnoreCase("SV")) {

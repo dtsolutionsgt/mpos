@@ -341,21 +341,43 @@ public class clsDocCuenta extends clsDocument {
   	}
 
     private boolean footerBaseGUA() {
+		double subt,propbase,prop10,prop15;
+
+		subt=ptotal + pdesc-propvalor;
+		propbase=ptotal + pdesc;
 
         if (pdesc!=0 | propfija) {
             if (pprop!=0 | propfija) {
-                rep.addtotsp("Subtotal: ", (ptotal + pdesc-propvalor));
-                if (pdesc != 0)  rep.addtotsp("Descuento: ", -pdesc);
-                rep.addtotsp("Propina: ",propvalor);
+				if (precuenta1015) {
+					rep.addtotsppr("Subtotal: ", subt );
+					if (pdesc != 0)  rep.addtotsp("Descuento: ", -pdesc);
+
+					prop10=propbase*0.1;prop15=propbase*0.15;
+
+					rep.add("");
+					rep.add("");
+					rep.addtotsppr("Propina 10%:  ",roundtoint(prop10));
+					rep.add("");
+					rep.add("");
+					rep.addtotsppr("Propina 15%:  ",roundtoint(prop15));
+					rep.add("");
+
+				} else {
+
+					rep.addtotsppr("Subtotal: ", subt );
+					if (pdesc != 0)  rep.addtotsp("Descuento: ", -pdesc);
+					rep.addtotsppr("Propina: ",propvalor);
+					rep.addtotsppr("TOTAL A PAGAR: ", ptotal);
+				}
             } else {
                 if (pdesc != 0) {
-                    rep.addtotsp("Subtotal: ", (ptotal + pdesc));
-                    rep.addtotsp("Descuento: ", -pdesc);
+                    rep.addtotsppr("Subtotal: ", (ptotal + pdesc));
+                    rep.addtotsppr("Descuento: ", -pdesc);
                 }
-            }
+				rep.addtotsppr("TOTAL A PAGAR: ", ptotal);
+			}
         }
 
-        rep.addtotsp("TOTAL A PAGAR: ", ptotal);
         rep.add("");
         rep.add("Les atendio: ");
         rep.add(vendedor);
@@ -404,7 +426,17 @@ public class clsDocCuenta extends clsDocument {
 		
 		return (double) (rslt/100);
 	}
-	
+
+	public int roundtoint(double val) {
+		val=val*100;
+		int ival=(int) Math.floor(val);
+		int tval=ival % 100;
+		int rval=ival-tval;
+		if (tval>=50) rval=rval+100;
+		rval=(int) rval/100;
+		return rval;
+	}
+
 	private class itemData {
 		public String cod,nombre,um,ump;
 		public double cant,peso,prec,imp,descper,desc,tot;
