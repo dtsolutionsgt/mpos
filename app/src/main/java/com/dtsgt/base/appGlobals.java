@@ -60,7 +60,7 @@ public class appGlobals extends Application {
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
-			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER;
+			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,peMesaAtenderTodos;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
@@ -100,7 +100,8 @@ public class appGlobals extends Application {
     public Boolean peAgregarCombo,peComboLimite,peComboDet,peFactSinPropina,peRedondPropina;
 	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas,peActOrdenMesas;
 	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
-	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peNumOrdCentral,peCajaMesasManual,peMesaAtenderTodos;
+	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peNumOrdCentral,peCajaMesasManual;
+	public Boolean peFactPropinaAparte,pePrecu1015;
     public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local

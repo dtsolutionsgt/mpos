@@ -28,7 +28,7 @@ public class clsDocument {
 	public clsRepBuilder rep;
 	public boolean docfactura,docrecibo,docanul,docpedido,docdevolucion,doccanastabod;
 	public boolean docdesglose,pass,facturaflag,banderafel,propfija,impresionorden;
-	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint;
+	public boolean parallevar,domicilio,factsinpropina,modorest,LANPrint,PropinaAparte,precuenta1015;
 	public long ffecha;
     public int pendiente,diacred,pagoefectivo,empid,tipo_doc;
 	public String TipoCredito, NoAutorizacion,LAN_IP;
