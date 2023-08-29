@@ -1191,6 +1191,31 @@ public class AppMethods {
 			gl.peMesaAtenderTodos = true;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peFactPropinaAparte = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peFactPropinaAparte = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=165";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.pePrecu1015 = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.pePrecu1015 = false;
+		}
 
 		try {
 			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=164";
@@ -1551,6 +1576,7 @@ public class AppMethods {
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+
 
 	}
 
