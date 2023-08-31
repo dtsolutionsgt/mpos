@@ -149,7 +149,7 @@ public class Orden extends PBase {
     private Runnable rnfboList, rnfboNewid,rnfboSplit,rnfbocLista,rnfbooLista,
                      rnfbocListaPrecuenta,rnfbocListaCliente,rnfbrsItem,
                      rnfbrsMovcue,rnfbocMovcue,rnfboMovcue,rnfboMovcueOrig,
-                     rnfboDelCue,rnfbocAnul;
+                     rnfboDelCue,rnfbocAnul,rnfboeLista;
 
     private AppMethods app;
 
@@ -294,6 +294,7 @@ public class Orden extends PBase {
             rnfbocListaPrecuenta = () -> showListaPrecuentas();
             rnfbocListaCliente = () -> cargaDatosCliente();
             rnfbooLista = () -> showMenuCambioCuenta();
+            rnfboeLista = () -> fboeLista();
 
             rnfbrsMovcue = () -> fbrsMovcue();
             rnfbocMovcue = () -> fbocMovcue();
@@ -304,8 +305,8 @@ public class Orden extends PBase {
             rheader=false;
             fbrs.getItem(idorden,rnfbrsItem);
 
-            listItems();
 
+            listItems();
 
             if (gl.nombre_mesero_sel.isEmpty()) gl.nombre_mesero_sel=gl.vendnom;
 
@@ -586,8 +587,12 @@ public class Orden extends PBase {
         int apid;
 
         try {
-
+            browse=0;
             if (!db.isOpen()) onResume();
+
+            if (fbo.errflag) {
+                toast("fbo "+fbo.error);
+            }
 
             try {
                 clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
@@ -628,11 +633,10 @@ public class Orden extends PBase {
 
         try {
             sql="SELECT T_ORDEN.PRODUCTO, P_PRODUCTO.DESCCORTA, T_ORDEN.TOTAL, T_ORDEN.CANT, T_ORDEN.PRECIODOC, " +
-                    "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
-                    "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
-                    "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
-                    "WHERE (COREL='"+idorden+"') ORDER BY T_ORDEN.ID ";
-                    //"WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<2) ORDER BY T_ORDEN.ID ";
+                "T_ORDEN.DES, T_ORDEN.IMP, T_ORDEN.PERCEP, T_ORDEN.UM, T_ORDEN.PESO, T_ORDEN.UMSTOCK, " +
+                "T_ORDEN.DESMON, T_ORDEN.EMPRESA, T_ORDEN.CUENTA, T_ORDEN.ESTADO, T_ORDEN.ID " +
+                "FROM T_ORDEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO=T_ORDEN.PRODUCTO "+
+                "WHERE (COREL='"+idorden+"') AND (T_ORDEN.ESTADO<>2) ORDER BY T_ORDEN.ID ";
 
             DT=Con.OpenDT(sql);
 
@@ -3282,6 +3286,16 @@ public class Orden extends PBase {
 
     private void showListaCuentas() {
         try {
+            fboe.listItems(rnfboeLista);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fboeLista() {
+        try {
+            if (fboe.errflag) throw new Exception(fboe.error);
+
             fboc.listItemsOrden(idorden,rnfbocListaPrecuenta);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -3324,7 +3338,9 @@ public class Orden extends PBase {
             for (int i = 0; i <fboc.items.size(); i++) {
                 if (fboc.items.get(i).cf==0) {
                     if (articulosCuenta(fboc.items.get(i).id)>0) {
-                        listdlg.add(R.drawable.table_icon,""+fboc.items.get(i).id,"");
+                        if (cuentaPendiente(fboc.items.get(i).id)) {
+                            listdlg.add(R.drawable.table_icon,""+fboc.items.get(i).id,"");
+                        }
                     }
                 }
             }
@@ -3353,7 +3369,6 @@ public class Orden extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     private int articulosCuenta(int cue) {
@@ -3368,6 +3383,22 @@ public class Orden extends PBase {
         }
 
         return cc;
+    }
+
+    private boolean cuentaPendiente(int cue) {
+        try {
+            for (int ii = 0; ii <fboe.items.size(); ii++) {
+                if (fboe.items.get(ii).corel.equalsIgnoreCase(idorden)) {
+                    if (fboe.items.get(ii).id == cue) {
+                        return fboe.items.get(ii).estado == 1;
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return false;
     }
 
     private Boolean cuentaPagada(String corr,int cue) {

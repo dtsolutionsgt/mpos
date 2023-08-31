@@ -236,7 +236,7 @@ public class ResCaja extends PBase {
             gl.mesero_venta=idmesero;
             gl.numero_orden=corel+"_"+cuenta;
             gl.nummesapedido=numpedido;
-
+            gl.cuenta_pagar=cuenta;
             gl.cuenta_borrar=cuenta;
 
             fbo=new fbOrden("Orden",gl.tienda,corel);

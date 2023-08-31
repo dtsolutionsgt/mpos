@@ -315,6 +315,10 @@ public class fbOrden extends fbBase {
         fdb.getReference(root+"/"+idsuc+"/"+node+"/"+itemid).child(field).setValue(value);
     }
 
+    public void updatePagado(int itemid) {
+        fdb.getReference(root+"/"+idsuc+"/"+node+"/"+itemid).child("estado").setValue(2);
+    }
+
     public void updateValues(String itemid, HashMap upd) {
         String path=root+"/"+idsuc+"/"+node+"/"+itemid;
 

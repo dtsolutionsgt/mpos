@@ -50,7 +50,7 @@ public class fbResSesion extends fbBase {
         fdt.setValue(item);
     }
 
-    public void updateEstado(int itemid,int value) {
+    public void updateEstado(String itemid,int value) {
         fdb.getReference(root+"/"+idsuc+"/"+itemid).child("estado").setValue(value);
     }
 

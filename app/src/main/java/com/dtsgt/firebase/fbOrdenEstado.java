@@ -52,6 +52,10 @@ public class fbOrdenEstado extends fbBase {
         fdt.setValue(item);
     }
 
+    public void estadoPagado(String itemid,int cuenta) {
+        fdb.getReference(root+"/"+idsuc+"/"+itemid+"_"+cuenta).child("estado").setValue(2);
+    }
+
     public void removeKey(String idorden) {
         fdb.getReference(root).child(""+idsuc).child(idorden).removeValue();
     }

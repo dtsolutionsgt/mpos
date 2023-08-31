@@ -53,6 +53,7 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startMainTimer;
 
@@ -65,12 +66,17 @@ public class MainActivity extends PBase {
     private TextView lblDts,lblRuta, lblRTit, lblVer, lblEmp, lblPass, lblKeyDP;
     private ImageView imgLogo;
     private Spinner spin;
+
     private BaseDatosVersion dbVers;
     private LA_Login adapter;
+    private fbStock fbb;
+
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<>();
     private ArrayList<String> spincode = new ArrayList<>();
     private ArrayList<String> spinlist = new ArrayList<>();
+
     private clsKeybHandler khand;
+
     private boolean rutapos, scanning = false;
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
@@ -100,8 +106,14 @@ public class MainActivity extends PBase {
                 modopantalla = 2;
             }
 
+            try {
+                fbb=new fbStock("Stock",0);
+            } catch (Exception e) {
+                String se=e.getMessage();
+                se=se+"";
+            }
+
             grantPermissions();
-            //typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.inconsolata);
 
         } catch (Exception e) {
             msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
@@ -252,6 +264,14 @@ public class MainActivity extends PBase {
             } */
 
             app.setScreenDim(this);
+
+            try {
+                fbb.listExist("/"+gl.tienda+"/",0,null);
+            } catch (Exception e) {
+                String se=e.getMessage();
+                se=se+"";
+            }
+
 
         } catch (Exception e) {
             msgbox(new Object() {
