@@ -176,6 +176,7 @@ public class ResMesero extends PBase {
     public void doSincon(View view) {
         startActivity(new Intent(this,Nowifi.class));
     }
+
     public void doBarril(View view) {
         try {
             startActivity(new Intent(this,Barriles.class));
@@ -343,6 +344,7 @@ public class ResMesero extends PBase {
     }
 
     private void abrirOrden() {
+        gl.nueva_mesa=false;
         try {
             fbrs.listItemsActivos(rnfbrsMesaActiva);
         } catch (Exception e) {
@@ -365,7 +367,6 @@ public class ResMesero extends PBase {
             for (int i = 0; i <fbrs.items.size(); i++) {
                 if (fbrs.items.get(i).codigo_mesa==mesa.codigo_mesa) {
                     gl.idorden=mesa.idorden;
-
                     activa=true;break;
                 }
             }

@@ -81,7 +81,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String parVer = "5.0.0.0";
+    private String parVer = "5.0.0.1";
 
 
     private Typeface typeface;
@@ -254,15 +254,6 @@ public class MainActivity extends PBase {
                 gl.debug = false;
             }
 
-            /*
-            if (!validaLicencia()) {
-                startActivity(new Intent(this, comWSLic.class));
-                return;
-            } else
-            {
-                supervisorRuta();
-            } */
-
             app.setScreenDim(this);
 
             try {
@@ -271,7 +262,6 @@ public class MainActivity extends PBase {
                 String se=e.getMessage();
                 se=se+"";
             }
-
 
         } catch (Exception e) {
             msgbox(new Object() {

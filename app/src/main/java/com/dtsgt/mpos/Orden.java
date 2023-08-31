@@ -299,7 +299,7 @@ public class Orden extends PBase {
             rnfbrsMovcue = () -> fbrsMovcue();
             rnfbocMovcue = () -> fbocMovcue();
             rnfboMovcue = () -> fboMovcue();
-            rnfboMovcueOrig = () -> fboMovcueOrig();
+            rnfboMovcueOrig = () -> fboMovcueList();
             rnfbocAnul = () -> fbocAnul();
 
             rheader=false;
@@ -590,11 +590,16 @@ public class Orden extends PBase {
             browse=0;
             if (!db.isOpen()) onResume();
 
-            if (fbo.errflag) {
-                toast("fbo "+fbo.error);
+            if (fbo.errflag) throw new Exception(fbo.error);
+
+            if (!fbo.listresult) {
+                if (!gl.nueva_mesa) {
+                    msgSync();return;
+                }
             }
 
             try {
+
                 clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
 
                 db.beginTransaction();
@@ -3180,6 +3185,12 @@ public class Orden extends PBase {
         int idc;
 
         try {
+            if (fbo.errflag) throw new Exception(fbo.error);
+
+            if (!fbo.listresult) {
+                msgSync();return;
+            }
+
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(Orden.this,"Seleccione una cuenta","Salir","Nueva cuenta");
 
@@ -3539,9 +3550,14 @@ public class Orden extends PBase {
         }
     }
 
-    private void fboMovcueOrig() {
+    private void fboMovcueList() {
         try {
             if (fbo.errflag) throw new Exception(fbo.error);
+
+            if (!fbo.listresult) {
+                msgSync();return;
+            }
+
             fboc.listItemsOrden(idorden_movcue,rnfbocMovcue);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -5317,21 +5333,19 @@ public class Orden extends PBase {
 
     }
 
-    private void msgAskMovCuenta(String msg) {
+    private void msgSync() {
         try{
-
             ExDialog dialog = new ExDialog(this);
-            dialog.setMessage(msg);
+            dialog.setMessage("La mesa no está actualizada.\nIntente de nuevo.");
             dialog.setIcon(R.drawable.ic_quest);
 
-            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            dialog.setPositiveButton("Actualizar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    try {
-                   } catch (Exception e) {}
+                  listItems();
                 }
             });
 
-            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            dialog.setNegativeButton("Ignorar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {}
             });
 

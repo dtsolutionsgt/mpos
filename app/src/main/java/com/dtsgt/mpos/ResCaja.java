@@ -250,6 +250,9 @@ public class ResCaja extends PBase {
     private void cargaOrden() {
         try {
             if (fbo.errflag) throw new Exception(fbo.error);
+            if (!fbo.listresult) {
+                msgSync();return;
+            }
 
             for (int i = 0; i <fbo.items.size(); i++) {
                 oitem=fbo.items.get(i);
@@ -259,7 +262,6 @@ public class ResCaja extends PBase {
             }
 
             cargaCliente();
-
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -623,7 +625,6 @@ public class ResCaja extends PBase {
         }
     }
 
-
     private void inputPropina() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
@@ -652,6 +653,22 @@ public class ResCaja extends PBase {
         });
 
         alert.show();
+    }
+
+    private void msgSync() {
+        try{
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage("La cuenta no está actualizada.\nIntente de nuevo.");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            dialog.show();
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
     }
 
     //endregion

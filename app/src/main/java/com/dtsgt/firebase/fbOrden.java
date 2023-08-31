@@ -111,7 +111,6 @@ public class fbOrden extends fbBase {
     public void listItems(Runnable rnCallback) {
         try {
             items.clear();
-            errflag=false;error="";
 
             fdb.getReference(root+"/"+idsuc+"/"+node+"/").
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -119,14 +118,13 @@ public class fbOrden extends fbBase {
                         public void onComplete(@NonNull Task<DataSnapshot> task) {
 
                             items.clear();
+                            errflag=false;listresult=false;error="";
 
                             if (task.isSuccessful()) {
 
                                 DataSnapshot res=task.getResult();
 
                                 if (res.exists()) {
-
-                                    long ii=res.getChildrenCount();
 
                                     for (DataSnapshot snap : res.getChildren()) {
 
@@ -170,8 +168,12 @@ public class fbOrden extends fbBase {
                                             errflag = true;break;
                                         }
                                     }
-                                }
 
+                                    listresult=true;
+
+                                } else {
+                                    listresult=false;error="Not syncronized";
+                                }
                             } else {
                                 error=task.getException().getMessage();errflag=true;
                             }
