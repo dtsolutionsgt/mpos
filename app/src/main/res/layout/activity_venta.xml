@@ -314,7 +314,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -713,7 +713,8 @@
                     android:id="@+id/relSmartPanel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/frame_rect">
+                    android:background="@drawable/frame_rect"
+                    android:visibility="invisible">
 
                     <ListView
                         android:id="@+id/listMas"
