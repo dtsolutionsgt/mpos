@@ -1200,6 +1200,13 @@ public class FacturaRes extends PBase {
 			ins.add("FACTLINK",""+gl.numero_orden);
 	   		ins.add("TOTAL",tot);
 			ins.add("DESMONTO",descmon);
+
+			if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+				totimp=tot/1.15;
+				totimp=totimp*0.15;
+				totimp=mu.round2(totimp);
+			}
+
 			ins.add("IMPMONTO",totimp);//ins.add("IMPMONTO",totimp+totperc);
 			ins.add("PESO",peso);
 			ins.add("BANDERA","N");
