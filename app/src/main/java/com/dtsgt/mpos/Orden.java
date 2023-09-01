@@ -4133,7 +4133,7 @@ public class Orden extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-        lblVend.setText("Mesa #"+mesa+" - Mesero: "+gl.nombre_mesero_sel+", Equ: "+gl.rutanom);
+        lblVend.setText("Mesa #"+mesa+" - Mesero: "+gl.nombre_mesero_sel+", Dis: "+gl.rutanom);
         //lblVend.setText("Mesa # "+mesa+" "+spend);
     }
 
