@@ -592,12 +592,6 @@ public class Orden extends PBase {
 
             if (fbo.errflag) throw new Exception(fbo.error);
 
-            if (!fbo.listresult) {
-                if (!gl.nueva_mesa) {
-                    msgSync();return;
-                }
-            }
-
             try {
 
                 clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
@@ -621,6 +615,14 @@ public class Orden extends PBase {
             }
 
             showItems();
+
+            if (app.isOnWifi()==0) {
+                //if (!fbo.listresult) {
+                if (!gl.nueva_mesa) {
+                    msgSync();return;
+                }
+            }
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -5084,7 +5086,6 @@ public class Orden extends PBase {
         });
 
         dialog.show();
-
     }
 
     private void msgAskCuentas(String msg) {
@@ -5103,7 +5104,6 @@ public class Orden extends PBase {
         });
 
         dialog.show();
-
     }
 
     private void msgAskCuentas2(String msg) {
@@ -5330,7 +5330,6 @@ public class Orden extends PBase {
         });
 
         dialog.show();
-
     }
 
     private void msgSync() {

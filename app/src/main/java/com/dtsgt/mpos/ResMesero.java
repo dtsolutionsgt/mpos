@@ -85,9 +85,11 @@ public class ResMesero extends PBase {
     private clsClasses.clsRes_mesa mesa= clsCls.new clsRes_mesa();
     private clsClasses.clsfbResSesion rsesion = clsCls.new clsfbResSesion();
 
-    private int idgrupo,cantpers,numorden,codigomesa;
+    private int idgrupo,cantpers,numorden,codigomesa,licount=0;
     private String nommes,nmesa,idmesa,corcorel,dbg1,dbg2,idorden,nmesabrio;
     private boolean horiz,actorden;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +157,10 @@ public class ResMesero extends PBase {
             if (D_barrilObj.count==0) {
                 lblbarril.setVisibility(View.INVISIBLE);
                 imgbarril.setVisibility(View.INVISIBLE);
+            }
+
+            if (app.isOnWifi()==0) {
+                msgSync("Estado de mesas no está actualizado.\nIntente de nuevo.");
             }
 
         } catch (Exception e) {
@@ -1185,6 +1191,22 @@ public class ResMesero extends PBase {
         }
     }
 
+    private void msgSync(String msg) {
+        try{
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
     private void validaSupervisor() {
 
         clsClasses.clsVendedores item;
@@ -1227,6 +1249,7 @@ public class ResMesero extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
 
     //endregion
 

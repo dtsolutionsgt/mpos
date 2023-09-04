@@ -15,6 +15,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
@@ -39,6 +40,7 @@ public class ResCaja extends PBase {
 
     private GridView gridView;
     private ImageView imgnowifi;
+    private RelativeLayout relref;
 
     private LA_ResCaja adapter;
     private clsViewObj ViewObj;
@@ -74,6 +76,7 @@ public class ResCaja extends PBase {
 
             gridView = findViewById(R.id.gridView1);
             imgnowifi=findViewById(R.id.imageView71a);
+            relref =findViewById(R.id.relrefr);relref.setVisibility(View.INVISIBLE);
 
             calibraPantalla();
 
@@ -147,9 +150,11 @@ public class ResCaja extends PBase {
 
     private void listItems() {
         try {
+            relref.setVisibility(View.INVISIBLE);
             fboe.listItems(rnfboeLista);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            relref.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -187,7 +192,7 @@ public class ResCaja extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
+        relref.setVisibility(View.INVISIBLE);
     }
 
     //endregion
@@ -530,12 +535,23 @@ public class ResCaja extends PBase {
 
     }
 
+    private void menuVenta() {
+        try {
+            if (gl.pePropinaFija) {
+                crearVenta();
+            } else {
+                inputPropina();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //endregion
 
     //region Dialogs
 
     private void showMenuMesa() {
-
         try {
 
             extListDlg listdlg = new extListDlg();
@@ -555,15 +571,14 @@ public class ResCaja extends PBase {
                                 datosCuenta();break;
                             case 1:
                                 if (ventaVacia()) {
-
-                                    if (gl.pePropinaFija) {
-                                        crearVenta();
+                                    if (app.isOnWifi()!=0) {
+                                        menuVenta();
                                     } else {
-                                        inputPropina();
+                                        msgAskSync("La cuenta no esta actualizada.");
                                     }
-
-                                } else msgbox("Antes de pagar la cuenta debe terminar la venta actual");
-                                //msgAskPago("Pagar la cuenta "+cuenta);
+                                } else {
+                                    msgbox("Antes de pagar la cuenta debe terminar la venta actual");
+                                }
                                 break;
                             case 2:
                                 msgAskReset("Esta opción no borra la cuenta y los articulos,\n" +
@@ -595,6 +610,49 @@ public class ResCaja extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void msgAskSync(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    try {
+
+                    } catch (Exception e) {
+                        msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                    }
+                }
+            });
+
+            dialog.setNegativeButton("Regresar", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgSync() {
+        try{
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage("La cuenta no está actualizada.\nIntente de nuevo.");
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) { }
+            });
+
+            dialog.show();
+        } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
     }
 
     private void msgAskReset(String msg) {
@@ -653,22 +711,6 @@ public class ResCaja extends PBase {
         });
 
         alert.show();
-    }
-
-    private void msgSync() {
-        try{
-            ExDialog dialog = new ExDialog(this);
-            dialog.setMessage("La cuenta no está actualizada.\nIntente de nuevo.");
-            dialog.setIcon(R.drawable.ic_quest);
-
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) { }
-            });
-
-            dialog.show();
-        } catch (Exception e){
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-        }
     }
 
     //endregion

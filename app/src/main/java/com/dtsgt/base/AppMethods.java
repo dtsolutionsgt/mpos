@@ -2826,7 +2826,6 @@ public class AppMethods {
 	}
 
 	public int isOnWifi(){
-
 		int activo=0;
 
 		try{
@@ -2845,9 +2844,7 @@ public class AppMethods {
 				}
 			}
 
-		} catch (Exception ex){
-
-		}
+		} catch (Exception ex){	}
 
 		return activo;
 
