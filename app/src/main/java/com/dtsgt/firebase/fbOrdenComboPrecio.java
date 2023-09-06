@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class fbOrdenComboPrecio extends fbBase {
 
-    public clsClasses.clsT_ordencomboprecio item,litem;
+    public clsClasses.clsT_ordencomboprecio item;
     public ArrayList<clsClasses.clsT_ordencomboprecio> items= new ArrayList<clsClasses.clsT_ordencomboprecio>();
 
     public String idorden;
@@ -34,64 +34,43 @@ public class fbOrdenComboPrecio extends fbBase {
         fdb.getReference(root).child(""+idsuc).child(idorden).child(""+idcombo).removeValue();
     }
 
-    public void listItems(String orden,Runnable rnCallback) {
-        try {
-            idorden=orden;
-            items.clear();errflag=false;error="";
+    public void getItem(String idorden,int idcombo,Runnable rnCallback) {
+        errflag=false;error="";itemexists=false;
 
-            fdb.getReference(root+"/"+idsuc+"/"+idorden+"/").
-                    get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                            String cor;
+        fdb.getReference(root+"/"+idsuc+"/"+idorden+"/"+idcombo).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
 
-                            items.clear();errflag=false;error="";listresult=false;
+                errflag=false;error="";itemexists=false;
 
-                            if (task.isSuccessful()) {
-                                DataSnapshot res=task.getResult();
+                if (task.isSuccessful()) {
+                    DataSnapshot res=task.getResult();
 
-                                if (res.exists()) {
+                    try {
 
-                                    for (DataSnapshot snap : res.getChildren()) {
-                                        try {
-                                            cor=snap.child("corel").getValue(String.class);
+                        item=clsCls.new clsT_ordencomboprecio();
 
-                                            if (cor.equalsIgnoreCase(idorden)) {
+                        item.corel=res.child("corel").getValue(String.class);
+                        item.idcombo=res.child("idcombo").getValue(Integer.class);
+                        item.precorig=res.child("precorig").getValue(Double.class);
+                        item.precitems=res.child("precitems").getValue(Double.class);
+                        item.precdif=res.child("precdif").getValue(Double.class);
+                        item.prectotal=res.child("prectotal").getValue(Double.class);
 
-                                                litem = clsCls.new clsT_ordencomboprecio();
+                        itemexists=true;
 
-                                                litem.corel = snap.child("corel").getValue(String.class);
-                                                litem.idcombo = snap.child("idcombo").getValue(Integer.class);
-                                                litem.precorig = snap.child("precorig").getValue(Double.class);
-                                                litem.precitems = snap.child("precitems").getValue(Double.class);
-                                                litem.precdif = snap.child("precdif").getValue(Double.class);
-                                                litem.prectotal = snap.child("prectotal").getValue(Double.class);
+                    } catch (Exception ee) {}
 
-                                                items.add(litem);
-                                            }
-
-                                            listresult=true;
-
-                                        } catch (Exception e) {
-                                            error = e.getMessage();
-                                            errflag = true;break;
-                                        }
-                                    }
-                                } else {
-                                    listresult=false;error="Not syncronized";
-                                }
-                            } else {
-                                error=task.getException().getMessage();errflag=true;
-                            }
-
-                            callBack=rnCallback;
-                            runCallBack();
-                        }
-                    });
-        } catch (Exception e) {
-            String ss=e.getMessage();
-            errflag=true;
-        }
+                    callBack=rnCallback;
+                    runCallBack();
+                } else {
+                    error=task.getException().getMessage();errflag=true;
+                    try {
+                        throw new Exception(task.getException().getMessage());
+                    } catch (Exception e) {}
+                }
+            }
+        });
     }
 
 

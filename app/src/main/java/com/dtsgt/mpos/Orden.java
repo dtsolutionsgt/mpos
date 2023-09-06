@@ -63,6 +63,7 @@ import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
 import com.dtsgt.firebase.fbOrden;
 import com.dtsgt.firebase.fbOrdenCombo;
+import com.dtsgt.firebase.fbOrdenComboPrecio;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.firebase.fbOrdenEstado;
 import com.dtsgt.firebase.fbOrdenNota;
@@ -3946,11 +3947,13 @@ public class Orden extends PBase {
 
             fbResSesion  fbrs=new fbResSesion("ResSesion",gl.tienda);
             fbOrdenCombo fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
+            fbOrdenComboPrecio fbop=new fbOrdenComboPrecio("OrdenComboPrecio",gl.tienda);
 
             fbrs.removeValue(idorden);
             fbo.removeKey();
             fbon.removeKey();
             fbocb.removeKey(idorden);
+            fbop.removeKey(idorden);
 
             borrarBloqueo();
 

@@ -25,6 +25,7 @@ import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.firebase.fbOrden;
 import com.dtsgt.firebase.fbOrdenCombo;
+import com.dtsgt.firebase.fbOrdenComboPrecio;
 import com.dtsgt.ladapt.ListAdaptOpcion;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class OrdenMenu extends PBase {
 
     private fbOrden fbo;
     private fbOrdenCombo fbocb;
+    private fbOrdenComboPrecio fbop;
 
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
     private ArrayList<String> lcode = new ArrayList<String>();
@@ -103,6 +105,7 @@ public class OrdenMenu extends PBase {
 
             fbo=new fbOrden("Orden",gl.tienda,idorden);
             fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
+            fbop=new fbOrdenComboPrecio("OrdenComboPrecio",gl.tienda);
 
             if (newitem) {
                 newItem();
@@ -407,14 +410,17 @@ public class OrdenMenu extends PBase {
 
             db.beginTransaction();
 
+            /*
             if (!newitem){
-                //db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
-                //db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+                db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
+                db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
             } else {
                 guardaPrecios();
             }
-
             db.execSQL("UPDATE T_ordencomboprecio SET PRECTOTAL="+precnuevo+" WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
+            */
+
+            guardaPrecios();
 
             for (int i = 0; i <items.size(); i++) {
 
@@ -768,7 +774,8 @@ public class OrdenMenu extends PBase {
         pitem.precdif=precdif;
         pitem.prectotal=precnuevo;
 
-        T_ordencomboprecioObj.add(pitem);
+        fbop.setItem(pitem);
+        //T_ordencomboprecioObj.add(pitem);
     }
 
     //endregion
