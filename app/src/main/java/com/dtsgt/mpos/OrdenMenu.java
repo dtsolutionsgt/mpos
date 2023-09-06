@@ -23,6 +23,8 @@ import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencombodetObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.firebase.fbOrden;
+import com.dtsgt.firebase.fbOrdenCombo;
 import com.dtsgt.ladapt.ListAdaptOpcion;
 
 import java.util.ArrayList;
@@ -38,6 +40,9 @@ public class OrdenMenu extends PBase {
     private clsP_productoObj P_productoObj;
     private clsT_ordencomboprecioObj T_ordencomboprecioObj;
 
+    private fbOrden fbo;
+    private fbOrdenCombo fbocb;
+
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -52,61 +57,71 @@ public class OrdenMenu extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_orden_menu);
 
-        super.InitBase();
+        try {
 
-        listView = (ListView) findViewById(R.id.listView);
-        lbl1 = (TextView) findViewById(R.id.textView93);
-        lbl2 = (TextView) findViewById(R.id.textView117);
-        lbl3 = (TextView) findViewById(R.id.textView225);
-        img1 = (ImageView) findViewById(R.id.imageView27);
-        img2 = (ImageView) findViewById(R.id.imageView108);img2.setVisibility(View.INVISIBLE);
-        imgSave = findViewById(R.id.imgImg3);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_orden_menu);
 
-        //peEditTotCombo;
+            super.InitBase();
 
-        P_productoObj = new clsP_productoObj(this, Con, db);
-        T_comboObj = new clsT_ordencomboObj(this, Con, db);
-        T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
+            listView = (ListView) findViewById(R.id.listView);
+            lbl1 = (TextView) findViewById(R.id.textView93);
+            lbl2 = (TextView) findViewById(R.id.textView117);
+            lbl3 = (TextView) findViewById(R.id.textView225);
+            img1 = (ImageView) findViewById(R.id.imageView27);
+            img2 = (ImageView) findViewById(R.id.imageView108);img2.setVisibility(View.INVISIBLE);
+            imgSave = findViewById(R.id.imgImg3);
 
-        prc = new Precio(this, mu, 2,gl.peDescMax);
+            //peEditTotCombo;
 
-        setHandlers();
+            P_productoObj = new clsP_productoObj(this, Con, db);
+            T_comboObj = new clsT_ordencomboObj(this, Con, db);
+            T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
 
-        cant=1;nivel=gl.nivel;
+            prc = new Precio(this, mu, 2,gl.peDescMax);
 
-        uitemid = Integer.parseInt(gl.menuitemid);
-        newitem = gl.newmenuitem;
-        idorden=gl.idorden;
+            setHandlers();
 
-        precorig=gl.menuprecio;
-        int prodcode=app.codigoProducto(gl.prodid);
-        precorig=prodPrecioItem(prodcode);
-        idcomboval=app.codigoCombo(prodcode);
+            cant=1;nivel=gl.nivel;
 
-        lbl1.setText(gl.gstr2);
-        lbl2.setText(""+cant);
-        lbl3.setText(mu.frmcur(gl.menuprecio));
+            uitemid = Integer.parseInt(gl.menuitemid);
+            newitem = gl.newmenuitem;
+            idorden=gl.idorden;
 
-        app.parametrosExtra();
-        if (gl.peAgregarCombo) img2.setVisibility(View.VISIBLE);
+            precorig=gl.menuprecio;
+            int prodcode=app.codigoProducto(gl.prodid);
+            precorig=prodPrecioItem(prodcode);
+            idcomboval=app.codigoCombo(prodcode);
 
-        if (newitem) {
-            newItem();
-        } else {
-            listItems();
-        }
+            lbl1.setText(gl.gstr2);
+            lbl2.setText(""+cant);
+            lbl3.setText(mu.frmcur(gl.menuprecio));
 
-        if (idcomboval==0) {
-            valido=false;
-        } else {
-            valido=app.validaCombo(idcomboval);
-        }
-        if (!valido) {
-            imgSave.setVisibility(View.INVISIBLE);
-            listaInvalidos();
+            app.parametrosExtra();
+            if (gl.peAgregarCombo) img2.setVisibility(View.VISIBLE);
+
+            fbo=new fbOrden("Orden",gl.tienda,idorden);
+            fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
+
+            if (newitem) {
+                newItem();
+            } else {
+                listItems();
+            }
+
+            if (idcomboval==0) {
+                valido=false;
+            } else {
+                valido=app.validaCombo(idcomboval);
+            }
+            if (!valido) {
+                imgSave.setVisibility(View.INVISIBLE);
+                listaInvalidos();
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
     }
@@ -279,54 +294,17 @@ public class OrdenMenu extends PBase {
     }
 
     private void newItem() {
-        Cursor dt;
-        int nid1,nid2,nid3,nid4;
-
-        nid1=T_comboObj.newID("SELECT MAX(IdCombo) FROM T_ORDENCOMBOAD");
-
         try {
-            sql="SELECT MAX(ID) FROM T_orden_cor";
-            dt=Con.OpenDT(sql);
-            dt.moveToFirst();
-            nid2=dt.getInt(0)+1;
-        } catch (Exception e) {
-            nid2=1;
-        }
+            uitemid=du.getOrdenCorel(gl.codigo_ruta);
+            gl.menuitemid=""+uitemid;
 
-        try {
-            sql="SELECT MAX(IDCOMBO) FROM T_ordencombo";
-            dt=Con.OpenDT(sql);
-            dt.moveToFirst();
-            nid3=dt.getInt(0)+1;
-        } catch (Exception e) {
-            nid3=1;
-        }
+            listMenuItems();
+            precioInicial();
 
-        try {
-            sql="SELECT MAX(IDCOMBO) FROM T_ordencomboprecio";
-            dt=Con.OpenDT(sql);
-            dt.moveToFirst();
-            nid4=dt.getInt(0)+1;
-        } catch (Exception e) {
-            nid4=1;
-        }
-
-        uitemid=nid2;
-        if (nid1>uitemid) uitemid=nid1;
-        if (nid3>uitemid) uitemid=nid3;
-        if (nid4>uitemid) uitemid=nid4;
-
-        try {
-            db.execSQL("UPDATE T_orden_cor SET ID="+uitemid);
+            img1.setVisibility(View.INVISIBLE);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        gl.menuitemid=""+uitemid;
-        listMenuItems();
-        precioInicial();
-
-        img1.setVisibility(View.INVISIBLE);
     }
 
     private void listMenuItems() {
@@ -398,8 +376,9 @@ public class OrdenMenu extends PBase {
 
     private boolean saveItem() {
         Cursor dt;
-        clsClasses.clsT_ordencombo item;
+        clsClasses.clsT_ordencombo ocitem;
         int newid,cui;
+        double prec,impval,desc,descmon,tot,pimp;
 
         try {
             sql="SELECT MAX(ID) FROM T_ORDEN WHERE (COREL='"+idorden+"')";
@@ -410,17 +389,16 @@ public class OrdenMenu extends PBase {
             newid=1;
         }
 
-
         try {
 
             String um=getProdUM(gl.prodmenu);
 
-            double prec = prc.precio(gl.prodid, cant, gl.nivel, um, gl.umpeso, gl.dpeso,um,gl.prodmenu);
-
-            double impval = prc.impval;
-            double desc=prc.desc;
-            double descmon = prc.descmon;
-            double tot = prc.tot;
+            prec = prc.precio(gl.prodid, cant, gl.nivel, um, gl.umpeso, gl.dpeso,um,gl.prodmenu);
+            impval = prc.impval;
+            desc=prc.desc;
+            descmon = prc.descmon;
+            tot = prc.tot;
+            pimp = prc.imp;
 
             if (precnuevo>0) {
                 prec=precnuevo;
@@ -430,8 +408,8 @@ public class OrdenMenu extends PBase {
             db.beginTransaction();
 
             if (!newitem){
-                db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
-                db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+                //db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
+                //db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
             } else {
                 guardaPrecios();
             }
@@ -440,48 +418,62 @@ public class OrdenMenu extends PBase {
 
             for (int i = 0; i <items.size(); i++) {
 
-                item=clsCls.new clsT_ordencombo();
+                ocitem=clsCls.new clsT_ordencombo();
 
-                item.corel=idorden;
-                item.codigo_menu=items.get(i).codigo_menu_opcion;
-                item.idcombo=uitemid;
-                item.cant=cant;
-                item.unid=items.get(i).unid;
-                item.idseleccion=items.get(i).cod;
-                item.orden=items.get(i).orden;
+                ocitem.corel=idorden;
+                ocitem.codigo_menu=items.get(i).codigo_menu_opcion;
+                ocitem.idcombo=uitemid;
+                ocitem.cant=cant;
+                ocitem.unid=items.get(i).unid;
+                ocitem.idseleccion=items.get(i).cod;
+                ocitem.orden=items.get(i).orden;
 
-                T_comboObj.add(item);
+                fbocb.setItem(ocitem);
+
+                //T_comboObj.add(item);
             }
 
-            cui=app.cuentaActiva(idorden);
+            //cui=app.cuentaActiva(idorden);
 
-            ins.init("T_ORDEN");
 
-            ins.add("ID",newid);
-            ins.add("COREL",idorden);
-            ins.add("PRODUCTO",gl.prodid);
-            //ins.add("EMPRESA",""+uitemid);
-            ins.add("EMPRESA",""+newid);
-            ins.add("UM","UNI");
-            ins.add("CANT",cant);
-            ins.add("UMSTOCK","UNI");
-            ins.add("FACTOR",1);
-            ins.add("PRECIO",prec);
-            ins.add("IMP",impval);
-            ins.add("DES",desc);
-            ins.add("DESMON",descmon);
-            ins.add("TOTAL",tot);
-            ins.add("PRECIODOC",prec);
-            ins.add("PESO",0);
-            ins.add("VAL1",0);
-            ins.add("VAL2",1);
-            ins.add("VAL3",0);
-            ins.add("VAL4",""+uitemid);
-            ins.add("PERCEP",0);
-            ins.add("CUENTA",cui);
-            ins.add("ESTADO",1);
+            cui=gl.combo_cuenta;
+            newid=du.getOrdenCorel(gl.codigo_ruta);
 
-            db.execSQL(ins.sql());
+            clsClasses.clsT_orden fbitem=clsCls.new clsT_orden();
+
+            fbitem.id=newid;
+            fbitem.corel=idorden;
+            fbitem.producto=gl.prodid;
+            fbitem.empresa=""+newid;
+            fbitem.um=gl.um;
+            fbitem.cant=cant;
+            fbitem.umstock="UNI";
+            fbitem.factor=1;
+            fbitem.precio=prec;
+            fbitem.imp=impval;
+            fbitem.des=desc;
+            fbitem.desmon=descmon;
+            fbitem.total=tot;
+            fbitem.preciodoc=prec;
+            fbitem.peso=0;
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                fbitem.val1=pimp;
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                fbitem.val1=pimp;
+            } else {
+                fbitem.val1=0;
+            }
+
+            fbitem.val2="1";
+            fbitem.val3=0;
+            fbitem.val4="0"+uitemid;
+            fbitem.percep=0;
+            fbitem.cuenta=cui;
+            fbitem.estado=1;
+            fbitem.idmesero=gl.idmesero;
+
+            fbo.setItem(fbitem.id,fbitem);
 
             db.setTransactionSuccessful();
             db.endTransaction();

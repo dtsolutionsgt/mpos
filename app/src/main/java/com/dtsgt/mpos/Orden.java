@@ -62,6 +62,7 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
 import com.dtsgt.firebase.fbOrden;
+import com.dtsgt.firebase.fbOrdenCombo;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.firebase.fbOrdenEstado;
 import com.dtsgt.firebase.fbOrdenNota;
@@ -976,6 +977,11 @@ public class Orden extends PBase {
         gl.newmenuitem=true;
         gl.gstr=gl.pprodname;
         gl.retcant=1;
+
+        gl.combo_cuenta=app.cuentaActiva(idorden);
+        if (existenCuentasPagadas()) {
+            gl.combo_cuenta=app.cuentaActivaPostpago(idorden);
+        }
 
         browse=7;
         startActivity(new Intent(this,OrdenMenu.class));
@@ -3938,11 +3944,13 @@ public class Orden extends PBase {
     private void anulaItem() {
         try {
 
-            fbResSesion fbrs=new fbResSesion("ResSesion",gl.tienda);
+            fbResSesion  fbrs=new fbResSesion("ResSesion",gl.tienda);
+            fbOrdenCombo fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
 
             fbrs.removeValue(idorden);
             fbo.removeKey();
             fbon.removeKey();
+            fbocb.removeKey(idorden);
 
             borrarBloqueo();
 

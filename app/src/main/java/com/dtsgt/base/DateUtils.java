@@ -752,6 +752,23 @@ public class DateUtils {
         return s;
     }
 
+	public int getOrdenCorel(int idruta){
+		int oc,ch,cm,cs;
+		final Calendar c = Calendar.getInstance();
+
+		idruta=idruta % 1000;
+
+		ch=c.get(Calendar.HOUR_OF_DAY);
+		cm=c.get(Calendar.MINUTE);
+		cs=c.get(Calendar.SECOND);
+
+		oc=ch*10000+cm*100+cs;
+		oc=idruta*1000000+oc;
+
+		return oc;
+	}
+
+
 	//region Fecha larga
 
     public long fechalarga(int year,int month, int day) {
