@@ -135,7 +135,7 @@ public class Venta extends PBase {
 
     private int browse;
     private double cant,desc,mdesc,prec,precsin,imp,impval,pimp, descLinea, descMarca;
-    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant;
+    private double descmon,tot,totsin,percep,ttimp,ttperc,ttsin,prodtot,savecant,desccant;
     private double px,py,cpx,cpy,cdist,savetot,saveprec,prodtotlin;
 
     private String uid,seluid,prodid,uprodid,um,tiposcan,barcode,imgfold,tipo,pprodname,mesa,nivname;
@@ -383,7 +383,7 @@ public class Venta extends PBase {
                         adapter.setSelectedIndex(position);
 
                         gl.gstr=vitem.Nombre;
-                        gl.retcant=(int) vitem.Cant;
+                        gl.retcant=(int) vitem.Cant;desccant=vitem.Cant;
                         gl.limcant=getDisp(prodid);
                         menuitemadd=false;
 
@@ -644,7 +644,7 @@ public class Venta extends PBase {
                     item.val=mu.frmdecimal(item.Cant,gl.peDecImp)+" "+ltrim(item.um,6);
 
                     if (desc>0) {
-                        item.valp=mu.frmdecimal(desc,2);
+                        item.valp=mu.frmdecno(desc);
                     } else {
                         item.valp=".";
                     }
@@ -1240,7 +1240,8 @@ public class Venta extends PBase {
             if (gl.promdesc<0) return;
 
             desc=gl.promdesc;
-            cant=savecant;
+            //cant=savecant;
+            cant=desccant;
             prodPrecio();
             updItemMonto();
         }catch (Exception e){
@@ -1256,7 +1257,7 @@ public class Venta extends PBase {
             pimp=prc.imp;
             double impv=prc.impval;
             desc=sdesc;
-        }catch (Exception e){
+        } catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
         }
     }
@@ -1327,7 +1328,11 @@ public class Venta extends PBase {
 
         try {
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (sinimp) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
             if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 if (gl.sal_PER) {
                     precdoc=precsin;
@@ -1552,7 +1557,7 @@ public class Venta extends PBase {
     }
 
     private void updItemMonto(){
-        double ptot=0;
+        double ptot=0,precdoc;
 
         try {
 
@@ -1562,16 +1567,24 @@ public class Venta extends PBase {
             if (savetot>0) desc=100*descmon/savetot;else desc=0;
 
             imp=mu.round2dec(imp*cant);
+            impval=mu.round2dec(prc.impval);
+            impval=impval*cant;
+            if (sinimp) precdoc=precsin; else precdoc=prec;
 
             upd.init("T_VENTA");
 
             upd.add("PRECIO",prec);
-            upd.add("IMP",imp);
+            //upd.add("IMP",imp);
+            upd.add("IMP",impval);
             upd.add("DES",desc);
             upd.add("DESMON",descmon);
             upd.add("VAL3",gl.desc_tipo_apl);
             upd.add("TOTAL",ptot);
-            upd.add("PRECIODOC",prec);
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                upd.add("PRECIODOC",precdoc);
+            } else {
+                upd.add("PRECIODOC",prec);
+            }
 
             upd.Where("EMPRESA='"+uid+"'");
 
@@ -1618,7 +1631,12 @@ public class Venta extends PBase {
             upd.add("DESMON",descmon);
             upd.add("VAL3",gl.desc_tipo_apl);
             upd.add("TOTAL",prodtot);
-            upd.add("PRECIODOC",precdoc);
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                upd.add("PRECIODOC",precdoc);
+            } else {
+                upd.add("PRECIODOC",prec);
+            }
 
             upd.Where("EMPRESA='"+uid+"'");
             db.execSQL(upd.sql());
@@ -2332,7 +2350,8 @@ public class Venta extends PBase {
 
             listdlg.add("Cambiar cantidad");
             listdlg.add("Nota");
-            listdlg.add("Ingredientes adicionales");
+            listdlg.add("Descuento");
+            //listdlg.add("Ingredientes adicionales");
             if (gl.idmodgr>0) listdlg.add("Modificadores");
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
@@ -2352,7 +2371,7 @@ public class Venta extends PBase {
                                 ingresoNota();break;
                             case 2:
                                 //Ingredientes();
-                                break;
+                                cambiaPrecio();break;
                             case 3:
                                 startActivity(new Intent(Venta.this,ModifVenta.class));break;
                         }
@@ -2641,7 +2660,6 @@ public class Venta extends PBase {
                         gl.cerrarmesero=false;gl.cierra_clave=false;gl.modoclave=0;
                         startActivity(new Intent(this,ValidaClave.class));
                     }
-
                     break;
                 case 65:
                     if (gl.rol==4) {
@@ -5453,7 +5471,8 @@ public class Venta extends PBase {
                     upd.add("DESMON",descmon);
                     upd.add("VAL3",descvaltipo);
                     upd.add("TOTAL",ptot);
-                    upd.add("PRECIODOC",T_Venta.items.get(i).precio);
+                    //upd.add("PRECIODOC",T_Venta.items.get(i).precio);
+                    upd.add("PRECIODOC",T_Venta.items.get(i).preciodoc);
 
                     upd.Where("PRODUCTO='"+T_Venta.items.get(i).producto+"'");
 
