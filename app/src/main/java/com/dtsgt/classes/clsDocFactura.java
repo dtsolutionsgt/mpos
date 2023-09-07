@@ -1229,18 +1229,19 @@ public class clsDocFactura extends clsDocument {
     private boolean footerBaseHON() {
         double totimp,totperc;
 
-        stot=stot-imp;
+        //stot=stot-imp;
+        stot=fh_grav+fh_exent+fh_exon;
         totperc=stot*(percep/100);totperc=round2(totperc);
         totimp=imp-totperc;
 
-        rep.addtotsp("Subtotal: ", stot);
-        rep.addtotsp("Descuento y rebajas: ", -desc);
-        rep.addtotsp("Importe exonerado: ", fh_exon);
-        rep.addtotsp("Importe exento: ", fh_exent);
-        rep.addtotsp("Importe gravado: ", fh_grav);
-        rep.addtotsp("Impuesto "+frmdecimal(fh_val1,2)+" %", fh_imp1);
-        rep.addtotsp("Impuesto "+frmdecimal(fh_val2,2)+" %", fh_imp2);
-        rep.addtotsp("TOTAL : ", tot);
+        rep.addtotsph("Subtotal: ", stot);
+        rep.addtotsph("Descuento y rebajas: ", -desc);
+        rep.addtotsph("Importe exonerado: ", fh_exon);
+        rep.addtotsph("Importe exento: ", fh_exent);
+        rep.addtotsph("Importe gravado: ", fh_grav);
+        rep.addtotsph("Impuesto "+frmdecimal(fh_val1,2)+" %", fh_imp1);
+        rep.addtotsph("Impuesto "+frmdecimal(fh_val2,2)+" %", fh_imp2);
+        rep.addtotsph("TOTAL : ", tot);
 
         montoLetra();
 

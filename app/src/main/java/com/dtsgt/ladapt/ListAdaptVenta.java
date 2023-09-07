@@ -85,21 +85,16 @@ public class ListAdaptVenta extends BaseAdapter {
 		holder.lblCod.setText(items.get(position).Cod);
 		holder.lblNombre.setText(items.get(position).Nombre);
 		
-		//val=items.get(position).Cant;
-		//holder.lblCant.setText(frmdec.format(val)+" "+items.get(position).um);
 		holder.lblCant.setText(items.get(position).val);
-		//val=items.get(position).Prec;
-		//holder.lblPrec.setText(frmdec.format(val));
 		holder.lblPrec.setText("");
 		holder.lblDesc.setText(cursym+" "+items.get(position).sdesc);
 		val=items.get(position).Total;
 		holder.lblTot.setText(cursym+" "+frmdec.format(val));
+		holder.lblPeso.setText("Descuento ("+frmdecno(items.get(position).Desc)+" %)  :           "+cursym+items.get(position).valp);
 
-		holder.lblPeso.setText("Descuento ("+items.get(position).Desc+"%): "+cursym+items.get(position).valp);
 		if (items.get(position).valp.equalsIgnoreCase(".")) {
 		    holder.lblPeso.setVisibility(View.GONE);
         } else holder.lblPeso.setVisibility(View.VISIBLE);
-		//if (items.get(position).Peso==0) holder.lblPeso.setVisibility(View.GONE);
 
 		holder.lblDesc.setOnClickListener(new CustomOnClickListener( position,1));
 		holder.lblTot.setOnClickListener(new CustomOnClickListener( position,2));
@@ -144,6 +139,10 @@ public class ListAdaptVenta extends BaseAdapter {
 		public void onClick(View v) {
 			owner.subItemClick(position,handle);
 		}
+	}
+
+	public String frmdecno(double val) {
+		return frmdec.format(val);
 	}
 
 }

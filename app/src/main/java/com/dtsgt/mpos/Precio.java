@@ -226,7 +226,8 @@ public class Precio {
 		
 		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
 		
-		totsin=mu.round(precsin,ndec);
+		//totsin=mu.round(precsin,ndec);
+		totsin=mu.round2dec(precsin);
 		precsin=totsin;	
 		
 		try {
