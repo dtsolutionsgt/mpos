@@ -1075,7 +1075,18 @@ public class Orden extends PBase {
 
         try {
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (sinimp) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
 
             cui=app.cuentaActiva(idorden);
             if (existenCuentasPagadas()) {

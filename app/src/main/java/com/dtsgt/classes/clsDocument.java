@@ -591,6 +591,7 @@ public class clsDocument {
             */
         }
 
+        rep.add("Version: "+fversion);
         rep.add("");
         //if (es_pickup) rep.add("------- (RECOGER EN SITIO)  -------");
         //if (es_delivery) rep.add("-------  (DELIVERY)  -------");
