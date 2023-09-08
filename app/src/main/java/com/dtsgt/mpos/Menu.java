@@ -196,6 +196,8 @@ public class Menu extends PBase {
 					               "((CODIGO_ROL=2) OR (CODIGO_ROL=3))");
 			modosuper=P_vendedor_rolObj.count>0;
 
+			modosuper=true;
+
 			addMenuItem(1,"Venta");
 			addMenuItem(6,"Caja");
 			addMenuItem(3,"Reimpresión");
