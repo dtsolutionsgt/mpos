@@ -67,12 +67,12 @@ public class OrdenMenu extends PBase {
 
             super.InitBase();
 
-            listView = (ListView) findViewById(R.id.listView);
-            lbl1 = (TextView) findViewById(R.id.textView93);
-            lbl2 = (TextView) findViewById(R.id.textView117);
-            lbl3 = (TextView) findViewById(R.id.textView225);
-            img1 = (ImageView) findViewById(R.id.imageView27);
-            img2 = (ImageView) findViewById(R.id.imageView108);img2.setVisibility(View.INVISIBLE);
+            listView = findViewById(R.id.listView);
+            lbl1 = findViewById(R.id.textView93);
+            lbl2 = findViewById(R.id.textView117);
+            lbl3 = findViewById(R.id.textView225);
+            img1 = findViewById(R.id.imageView27);
+            img2 = findViewById(R.id.imageView108);img2.setVisibility(View.INVISIBLE);
             imgSave = findViewById(R.id.imgImg3);
 
             //peEditTotCombo;
