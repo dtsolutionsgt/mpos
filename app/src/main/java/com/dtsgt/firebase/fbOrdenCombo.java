@@ -71,13 +71,12 @@ public class fbOrdenCombo extends fbBase {
                                             litem.orden = snap.child("orden").getValue(Integer.class);
 
                                             items.add(litem);
-
-                                            listresult=true;
-
                                         } catch (Exception e) {
                                             error = e.getMessage(); errflag = true;break;
                                         }
                                     }
+
+                                    listresult=true;
                                 } else {
                                     listresult=false;error="Not syncronized";
                                 }

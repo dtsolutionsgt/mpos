@@ -45,6 +45,8 @@ public class OrdenMenu extends PBase {
     private fbOrdenCombo fbocb;
     private fbOrdenComboPrecio fbop;
 
+    private Runnable rnfbocbList;
+
     private ArrayList<clsClasses.clsOpcion> items= new ArrayList<clsClasses.clsOpcion>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
@@ -106,6 +108,8 @@ public class OrdenMenu extends PBase {
             fbo=new fbOrden("Orden",gl.tienda,idorden);
             fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
             fbop=new fbOrdenComboPrecio("OrdenComboPrecio",gl.tienda);
+
+            rnfbocbList= () -> {fbocbList();};
 
             if (newitem) {
                 newItem();
@@ -206,27 +210,46 @@ public class OrdenMenu extends PBase {
     //region Main
 
     private void listItems() {
+        try {
+            listMenuItems();
+            fbocb.listItems(idorden,uitemid,rnfbocbList);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
-        int menuid,selid,idcombo;
-
-        listMenuItems();
+    private void fbocbList() {
+        int menuid,selid,ccant;
 
         try {
 
+            /*
             clsT_ordencomboObj combo=new clsT_ordencomboObj(this,Con,db);
             combo.fill("WHERE (COREL='"+idorden+"') AND (IdCombo="+ uitemid+")");
-
             try {
-                cant=combo.first().cant;lbl2.setText(""+cant);
+                cant=combo.first().cant;
             } catch (Exception e) {}
+            */
+
+
+            lbl2.setText(""+fbocb.items.size());
 
             for (int i = 0; i <items.size(); i++) {
 
                 menuid=items.get(i).codigo_menu_opcion;
-                combo.fill("WHERE (COREL='"+idorden+"') AND (IdCombo="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
+                selid=0;ccant=0;
+                //combo.fill("WHERE (COREL='"+idorden+"') AND (IdCombo="+ uitemid+") AND (CODIGO_MENU="+menuid+")");
 
                 try {
-                    selid=combo.first().idseleccion;
+                    //selid=combo.first().idseleccion;
+
+                    for (int ii = 0; ii <fbocb.items.size(); ii++) {
+                        if (fbocb.items.get(ii).codigo_menu==menuid) {
+                            selid=fbocb.items.get(ii).idseleccion;
+                            ccant=fbocb.items.get(ii).cant;
+                            break;
+                        }
+                    }
 
                     if (selid!=0) {
                         if (selid>0) {
@@ -238,7 +261,8 @@ public class OrdenMenu extends PBase {
                             items.get(i).bandera=0;
                         }
 
-                        items.get(i).cant=combo.first().cant;
+                        //items.get(i).cant=combo.first().cant;
+                        items.get(i).cant=ccant;
                         items.get(i).precio=prodPrecioItem(selid);
                         items.get(i).sprec=mu.frmdec(items.get(i).precio);
                         if (items.get(selidx).precio==0) items.get(selidx).sprec="";
@@ -420,6 +444,9 @@ public class OrdenMenu extends PBase {
             db.execSQL("UPDATE T_ordencomboprecio SET PRECTOTAL="+precnuevo+" WHERE (COREL='"+idorden+"') AND (IdCombo="+uitemid+")");
             */
 
+            newid=du.getOrdenCorel(gl.codigo_ruta);
+
+
             guardaPrecios();
 
             for (int i = 0; i <items.size(); i++) {
@@ -428,7 +455,7 @@ public class OrdenMenu extends PBase {
 
                 ocitem.corel=idorden;
                 ocitem.codigo_menu=items.get(i).codigo_menu_opcion;
-                ocitem.idcombo=uitemid;
+                ocitem.idcombo=uitemid; //
                 ocitem.cant=cant;
                 ocitem.unid=items.get(i).unid;
                 ocitem.idseleccion=items.get(i).cod;
@@ -443,14 +470,15 @@ public class OrdenMenu extends PBase {
 
 
             cui=gl.combo_cuenta;
-            newid=du.getOrdenCorel(gl.codigo_ruta);
 
             clsClasses.clsT_orden fbitem=clsCls.new clsT_orden();
 
-            fbitem.id=newid;
+            //fbitem.id=newid;
+            fbitem.id=uitemid;
             fbitem.corel=idorden;
             fbitem.producto=gl.prodid;
-            fbitem.empresa=""+newid;
+            //fbitem.empresa=""+newid;
+            fbitem.empresa=""+uitemid;
             fbitem.um=gl.um;
             fbitem.cant=cant;
             fbitem.umstock="UNI";
