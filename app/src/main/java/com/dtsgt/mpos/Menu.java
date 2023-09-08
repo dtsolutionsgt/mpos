@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_sucursalObj;;
+import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
@@ -158,10 +159,7 @@ public class Menu extends PBase {
 			rnInvCent= () -> {
 				//callbackInvCent();
 			};
-
-			rnNumOrden= () -> {
-				callBackNumOrden();
-			};
+			rnNumOrden= () -> {	callBackNumOrden();};
 
 			waitdlg= new extWaitDlg();
 			waitdlglimp= new extWaitDlg();
@@ -180,75 +178,37 @@ public class Menu extends PBase {
     //endregion
 
 	//region  Main
-	
-	public void showClients(View view) {
-
-		try{
-			Intent intent;
-			intent = new Intent(this,Clientes.class);
-			startActivity(intent);
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
-		}
-
-	}
 
 	public void listItems() {
-
         clsMenu item;
+		boolean modosuper=false;
 
         lblVendedor.setText(gl.vendnom);
         lblRuta.setText(gl.ruta);
 
         items.clear();selIdx=-1;
 
-        try{
+        try {
 
-            if (gl.modoinicial) {
+			clsP_vendedor_rolObj P_vendedor_rolObj=new clsP_vendedor_rolObj(this,Con,db);
+			P_vendedor_rolObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+") AND " +
+				   	               "(CODIGO_VENDEDOR="+gl.codigo_vendedor+") AND " +
+					               "((CODIGO_ROL=2) OR (CODIGO_ROL=3))");
+			modosuper=P_vendedor_rolObj.count>0;
 
-                addMenuItem(11, "Mantenimientos");
-                addMenuItem(2,  "Comunicación");
-                addMenuItem(9,  "Utilerias");
-                addMenuItem(10, "Cambio usuario");
+			addMenuItem(1,"Venta");
+			addMenuItem(6,"Caja");
+			addMenuItem(3,"Reimpresión");
+			addMenuItem(7,"Inventario");
+			addMenuItem(2,"Comunicación");
+			if (modosuper) addMenuItem(9,"Utilerias");
+			if (modosuper) addMenuItem(11,"Mantenimientos");
+			if (modosuper) addMenuItem(12,"Reportes");
+			addMenuItem(4,"Anulación");
+			addMenuItem(10,"Cambio usuario");
+			addMenuItem(14,"Modo de emergencia");
 
-            } else {
-
-                if (gl.peMCent) {
-
-                    //if (app.grant(1,gl.rol))
-                    addMenuItem(1,"Venta");
-                    addMenuItem(6,"Caja");
-                    addMenuItem(3,"Reimpresión");
-                    addMenuItem(7,"Inventario");
-                    addMenuItem(2,"Comunicación");
-                    addMenuItem(9,"Utilerias");
-                    addMenuItem(11,"Mantenimientos");
-                    addMenuItem(12,"Reportes");
-                    addMenuItem(4,"Anulación");
-
-                } else {
-
-                    addMenuItem(1,"Venta");
-                    addMenuItem(6,"Caja");
-                    addMenuItem(3,"Reimpresión");
-                    addMenuItem(7,"Inventario");
-                    addMenuItem(2,"Comunicación");
-                    if (gl.rol>1) addMenuItem(9,"Utilerias");
-                    if (gl.rol>1) addMenuItem(11,"Mantenimientos");
-                    if (gl.rol>1) addMenuItem(12,"Reportes");
-                    addMenuItem(4,"Anulación");
-
-                }
-
-                addMenuItem(10,"Cambio usuario");
-
-                if (gl.rol==3 | gl.rol==2) {
-                    if (gl.peRest) addMenuItem(14,"Modo de emergencia");
-                }
-
-            }
-
-            adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
+			adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
             gridView.setAdapter(adaptergrid);
             adaptergrid.setSelectedIndex(selIdx);
 
@@ -2378,7 +2338,7 @@ public class Menu extends PBase {
 	public boolean valida(){
 
 	    //if (gl.rol==3 | gl.rol==4) return true;
-        if (gl.rol==4) return true;
+        //if (gl.rol==4) return true;
 
 		try {
 			clsP_cajacierreObj caja = new clsP_cajacierreObj(this,Con,db);
