@@ -1034,7 +1034,18 @@ public class Orden extends PBase {
 
         try {
 
-            if (sinimp) precdoc=precsin; else precdoc=prec;
+            if (sinimp) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
 
             cui=app.cuentaActiva(idorden);
             if (existenCuentasPagadas()) {
@@ -1058,7 +1069,7 @@ public class Orden extends PBase {
             ins.add("DES",desc);
             ins.add("DESMON",descmon);
             ins.add("TOTAL",prodtot);
-            if (porpeso) ins.add("PRECIODOC",gl.prectemp); else ins.add("PRECIODOC",precdoc);
+            ins.add("PRECIODOC",precdoc);
             ins.add("PESO",peso);
 
             //ins.add("VAL1",0);
