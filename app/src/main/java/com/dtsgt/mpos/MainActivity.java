@@ -83,7 +83,6 @@ public class MainActivity extends PBase {
 
     private String parVer = "5.1.0.1";
 
-
     private Typeface typeface;
 
     @Override

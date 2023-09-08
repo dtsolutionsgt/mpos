@@ -751,7 +751,10 @@ public class FacturaRes extends PBase {
 		items.clear();gl.percepcion=0;
 
 		if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-			if ((stot>percep_val) && (gl.sal_PER)) gl.percepcion=1;
+			if ((stot > percep_val) && (gl.sal_PER)) gl.percepcion = 1;
+			gl.sinimp=true;
+		} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+			gl.sinimp=true;
 		}
 
 		try {
@@ -777,7 +780,10 @@ public class FacturaRes extends PBase {
 				tot=mu.round2(tot);
 
 				item = clsCls.new clsCDB();
-				item.Cod="Subtotal";item.Desc=mu.frmcur(stot+totimp);item.Bandera=0;
+				item.Cod="Subtotal";
+				//item.Desc=mu.frmcur(stot+totimp);
+				item.Desc=mu.frmcur(stot);
+				item.Bandera=0;
 				items.add(item);
 
 				item = clsCls.new clsCDB();
