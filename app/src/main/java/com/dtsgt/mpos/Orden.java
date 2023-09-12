@@ -1039,7 +1039,7 @@ public class Orden extends PBase {
         gl.uidingrediente=0;
 
         if (items.size()>=maxitems) {
-            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");return;
+            msgbox("Se alcanzó la cantidad máxima de artículos\nNo se puede continuar.");return false;
         }
 
         try {
@@ -1129,9 +1129,10 @@ public class Orden extends PBase {
             fbo.newid(rnfboNewid);
 
         } catch (SQLException e) {
-            mu.msgbox("Error : " + e.getMessage());return;
+            mu.msgbox("Error : " + e.getMessage());return false;
         }
 
+        return true;
     }
 
     private void fsoSaveItem() {
@@ -1547,6 +1548,7 @@ public class Orden extends PBase {
 
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
+            /*
             upd.init("T_ORDEN");
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
