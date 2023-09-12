@@ -2081,7 +2081,7 @@ public class Orden extends PBase {
                         msgmsg("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
 
-                        if (app.isOnWifi()==1) {
+                        if (app.isOnWifi()>0) {
                             if (limpiaVenta()) showListaCuentas();
                         } else {
                             msgAskPrecuentaSinWifi("MPos sin conexión al internet.\nRevise estado de la orden.");
@@ -3316,7 +3316,9 @@ public class Orden extends PBase {
 
     private void fboeLista() {
         try {
-            if (fboe.errflag) throw new Exception(fboe.error);
+            if (fboe.errflag) {
+                throw new Exception(fboe.error);
+            }
 
             fboc.listItemsOrden(idorden,rnfbocListaPrecuenta);
         } catch (Exception e) {
