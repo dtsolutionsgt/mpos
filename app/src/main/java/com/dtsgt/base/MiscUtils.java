@@ -151,6 +151,19 @@ public class MiscUtils {
 		return val;
 	}
 
+	public double round6dec(double val){
+		double dval;
+		long ival;
+
+		val=val+0.000001;
+		dval=val*1000000;
+		ival=Math.round(dval);
+		dval=(double) ival;
+		val=dval*0.000001;
+
+		return val;
+	}
+
 	public boolean emptystr(String s){
 		if (s==null || s.isEmpty()) {
 			return true;
