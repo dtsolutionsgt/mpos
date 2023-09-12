@@ -888,7 +888,7 @@ public class Orden extends PBase {
             precsin = prc.precsin;
             imp = prc.imp;
             impval = prc.impval;
-            impval=mu.round2dec(impval);
+            impval=mu.round6dec(impval); //JP20230911
 
             tot = prc.tot;
             descmon = mdesc;
@@ -988,7 +988,6 @@ public class Orden extends PBase {
     }
 
     private boolean addItem(){
-
         Cursor dt;
         double precdoc,fact,cantbas,peso;
         String umb;
@@ -1503,13 +1502,21 @@ public class Orden extends PBase {
         try {
 
             prodtot=mu.round(prec*cant,2);
+
             if (sinimp) precdoc=precsin; else precdoc=prec;
+
+            if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+                precdoc=precsin;
+            } else {
+                precdoc=prec;
+            }
+
+            impval=mu.round6dec(impval*cant); //JP20230911
 
             upd.init("T_ORDEN");
             upd.add("CANT",cant);
             upd.add("PRECIO",prec);
-            upd.add("IMP",imp);
-            upd.add("IMP",imp);
+            upd.add("IMP",impval);
             upd.add("DES",desc);
             upd.add("DESMON",descmon);
             upd.add("TOTAL",prodtot);

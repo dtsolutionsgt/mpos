@@ -1313,7 +1313,7 @@ public class Venta extends PBase {
         vtot=prec*cant;
         prodtot=mu.round2dec(vtot);
 
-        impval=mu.round2dec(impval);
+        impval=mu.round6dec(impval); //JP20230911
         impval=impval*cant;
 
 
@@ -1432,7 +1432,7 @@ public class Venta extends PBase {
         peso=mu.round(gl.dpeso*gl.umfactor,gl.peDec);
         prodtot=mu.round(prec*cant,2);
 
-        impval=mu.round2dec(impval*cant);
+        impval=mu.round6dec(impval*cant); //JP20230911
 
         try {
 
@@ -1523,7 +1523,7 @@ public class Venta extends PBase {
 
             impuni=imp;
             imp=mu.round2dec(imp*cant);
-            itval=mu.round2dec(impval*cant);
+            itval=mu.round6dec(impval*cant); //JP20230911
 
 
             upd.init("T_VENTA");
@@ -1537,7 +1537,7 @@ public class Venta extends PBase {
             upd.add("TOTAL",ptot);
             if (gl.codigo_pais.equalsIgnoreCase("SV")) {
                 if (gl.sal_PER) {
-                    upd.add("PRECIODOC",prec-impval);
+                    upd.add("PRECIODOC",mu.round2dec(prec-impval));  //JP20230911
                 } else {
                     upd.add("PRECIODOC",prec);
                 }
@@ -1567,8 +1567,10 @@ public class Venta extends PBase {
             if (savetot>0) desc=100*descmon/savetot;else desc=0;
 
             imp=mu.round2dec(imp*cant);
-            impval=mu.round2dec(prc.impval);
+            //impval=mu.round2dec(prc.impval); //JP20230911
             impval=impval*cant;
+            impval=mu.round6dec(prc.impval); //JP20230911
+
             if (sinimp) precdoc=precsin; else precdoc=prec;
 
             upd.init("T_VENTA");
@@ -1620,8 +1622,9 @@ public class Venta extends PBase {
 
             valimp=cant*prec*imp/100;valimp=mu.round2(valimp);
 
-            impval=mu.round2dec(impval);
-            impval=mu.round2dec(impval*cant);
+            //impval=mu.round2dec(impval); //JP20230911
+            impval=impval*cant;
+            impval=mu.round6dec(impval); //JP20230911
 
             upd.init("T_VENTA");
             upd.add("CANT",cant);
@@ -2555,7 +2558,8 @@ public class Venta extends PBase {
                 if (gl.pelCaja && gl.peRest) {
                     item = clsCls.new clsMenu();
                     item.ID=65;item.Name="Caja";item.Icon=65;
-                    if (gl.rol!=4) mmitems.add(item);
+                    mmitems.add(item);
+                    //if (gl.rol!=4) mmitems.add(item);
                 }
 
                 item = clsCls.new clsMenu();
@@ -2601,7 +2605,7 @@ public class Venta extends PBase {
             switch (menuid) {
                 case 50:
                     if (gl.rol==4) {
-                        toast("El mesero no puede realizar venta en esta pantalla");return;
+                        //toast("El mesero no puede realizar venta en esta pantalla");return;
                     }
                     gl.gstr = "";
                     browse = 1;
@@ -2610,7 +2614,7 @@ public class Venta extends PBase {
                     break;
                 case 51:
                     if (gl.rol==4) {
-                        toast("El mesero no puede realizar venta en esta pantalla");return;
+                        //toast("El mesero no puede realizar venta en esta pantalla");return;
                     }
                     if (khand.isValid) {
                         barcode = khand.val;
@@ -2663,7 +2667,7 @@ public class Venta extends PBase {
                     break;
                 case 65:
                     if (gl.rol==4) {
-                        msgbox("El mesero no puede entrar al menu caja");return;
+                        //msgbox("El mesero no puede entrar al menu caja");return;
                     }
                     browse=10;gl.modoclave=1;
                     startActivity(new Intent(this,ValidaClave.class));

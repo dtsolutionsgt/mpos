@@ -83,8 +83,111 @@ public class Precio {
 
 	
 	// Private
-	
+
 	private void prodPrecio(double ppeso) {
+		Cursor DT;
+		double pr,stot,pprec,tsimp;
+		String sprec="";
+
+		try {
+
+			if (ppeso>0) {
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+") ";
+			} else {
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO='"+codprod+"') AND (NIVEL="+nivel+")  ";
+			}
+
+			DT=Con.OpenDT(sql);
+			DT.moveToFirst();
+			pr=DT.getDouble(0);
+
+		} catch (Exception e) {
+			pr=0;
+
+			try {
+				sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+codprod+") AND (NIVEL="+nivel+")  ";
+				DT=Con.OpenDT(sql);
+				DT.moveToFirst();
+				pr=DT.getDouble(0);
+			} catch (Exception ee) {
+				pr=0;
+			}
+		}
+
+		preciobase=pr;
+
+		totsin=pr*cant;tsimp=mu.round(totsin,ndec);
+
+		imp=getImp();
+		pr=pr*(1+imp/100);
+
+		// total
+		stot=pr*cant;stot=mu.round(stot,ndec);
+
+		if (imp>0) {
+			//impval=stot-tsimp;  //JP20230911
+			impval=preciobase*imp/100;  //JP20230911
+			impval=mu.round6dec(impval);   //JP20230911
+		} else {
+			impval=0;
+		}
+
+		descmon=(double) (stot*desc/100);descmon=mu.round(descmon,ndec);
+		tot=stot-descmon;
+
+		if (cant>0) prec=(double) (tot/cant); else prec=pr;
+
+		try {
+			sprec=ffrmprec.format(prec);sprec=sprec.replace(",",".");
+			pprec=Double.parseDouble(sprec);
+			precdoc=mu.round(pprec,ndec);
+		} catch (Exception e) {
+			precdoc=prec;
+		}
+
+		if (ppeso>0) prec=prec*ppeso/cant;
+
+		try {
+			sprec=ffrmprec.format(prec);sprec=sprec.replace(",",".");
+			pprec=Double.parseDouble(sprec);
+			pprec=mu.round(pprec,ndec);
+		} catch (Exception e) {
+			pprec=prec;
+		}
+		prec=pprec;
+
+		// total
+		stot=prec*cant;stot=mu.round(stot,ndec);
+
+		if (imp>0) {
+			//impval=stot-tsimp;  //JP20230911
+			impval=preciobase*imp/100;  //JP20230911
+			impval=mu.round6dec(impval);   //JP20230911
+		} else {
+			impval=0;
+		}
+
+		descmon=(double) (stot*desc/100);descmon=mu.round(descmon,ndec);
+		tot=stot-descmon;
+
+		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
+		precsin=preciobase;
+
+		totsin=mu.round(precsin*cant,ndec);
+		if (cant>0) precsin=(double) (totsin/cant);
+
+		try {
+			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
+			pprec=Double.parseDouble(sprec);
+			pprec=mu.round(pprec,ndec);
+		} catch (Exception e) {
+			pprec=precsin;
+		}
+		precsin=pprec;
+
+	}
+
+	private void prodPrecioOld(double ppeso) {
 		Cursor DT;
 		double pr,stot,pprec,tsimp;
 		String sprec="";
@@ -173,7 +276,7 @@ public class Precio {
 		precsin=pprec;
 
 	}
-	
+
 	private void prodPrecioBase() {
 		Cursor DT;
 		double pr,pr0,prr,stot,pprec,tsimp,vimp;
@@ -183,38 +286,45 @@ public class Precio {
 		try {
 
 			sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+codprod+") AND (NIVEL="+nivel+") ";
-           	DT=Con.OpenDT(sql);
+			DT=Con.OpenDT(sql);
 			DT.moveToFirst();
-							  
+
 			pr=DT.getDouble(0);
-			
+
 		} catch (Exception e) {
 			pr=0;
-	    }
+		}
 
-        preciobase=pr;
+		preciobase=pr;
 		totsin=pr;tsimp=mu.round(totsin,ndec);
-		
+
 		imp=getImp();
 		vimp=imp*0.01;pr0=pr;
 		pr=pr*(1+vimp);pr=pr+0.000001;
 		stot=pr;
 
 		stot=mu.round2dec(stot);
-		//stot=mu.round(stot,ndec);
-		
-		//if (imp>0) impval=stot-tsimp; else impval=0;
 
+		/*  //JP20230911
 		if (imp>0) {
 			impval=vimp*pr0;
 			impval=mu.round2dec(impval);
 		} else impval=0;
-		
+		*/
+
+		if (imp>0) {
+			//impval=stot-tsimp;  //JP20230911
+			impval=preciobase*imp/100;  //JP20230911
+			impval=mu.round6dec(impval);   //JP20230911
+		} else {
+			impval=0;
+		}
+
 		descmon=0;
-		
+
 		tot=stot-descmon;
 		prec=tot;
-			
+
 		try {
 			sprec=ffrmprec.format(prec);sprec=sprec.replace(",",".");
 			pprec=Double.parseDouble(sprec);
@@ -222,14 +332,20 @@ public class Precio {
 		} catch (Exception e) {
 			pprec=prec;
 		}
-		//prec=pprec;
-		
-		if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
-		
-		//totsin=mu.round(precsin,ndec);
-		totsin=mu.round2dec(precsin);
-		precsin=totsin;	
-		
+
+		if (imp==0) {
+			precsin=prec;
+		} else {
+			//precsin=prec/(1+imp/100);//JP20230911
+			precsin=preciobase;//JP20230911
+		}
+
+		//totsin=mu.round(precsin,ndec);  //JP20230911
+		totsin=mu.round2dec(precsin);  //JP20230911
+		precsin=totsin;
+
+
+		/*  //JP20230911
 		try {
 			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
 			pprec=Double.parseDouble(sprec);
@@ -241,65 +357,82 @@ public class Precio {
 		double impv=impval;
 
 		precsin=pprec;
+		*/
 	}
 
-    public double prodPrecioBase(int cprod,int nnivel) {
-        Cursor DT;
-        double pr,stot,pprec,tsimp;
-        String sprec="";
+	public double prodPrecioBase(int cprod,int nnivel) {
+		Cursor DT;
+		double pr, stot, pprec, tsimp;
+		String sprec = "";
 
-        try {
+		try {
 
-            sql="SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO="+cprod+") AND (NIVEL="+nnivel+") ";
-            DT=Con.OpenDT(sql);
-            DT.moveToFirst();
+			sql = "SELECT PRECIO FROM P_PRODPRECIO WHERE (CODIGO_PRODUCTO=" + cprod + ") AND (NIVEL=" + nnivel + ") ";
+			DT = Con.OpenDT(sql);
+			DT.moveToFirst();
 
-            pr=DT.getDouble(0);
+			pr = DT.getDouble(0);
+		} catch (Exception e) {
+			pr = 0;
+		}
 
-        } catch (Exception e) {
-            pr=0;
-        }
+		preciobase = pr;
+		totsin = pr;
+		tsimp = mu.round2dec(pr);//JP20230911
 
-        preciobase=pr;
-        totsin=pr;tsimp=mu.round(totsin,ndec);
+		imp = getImp();
+		pr = pr * (1 + imp / 100);
 
-        imp=getImp();
-        pr=pr*(1+imp/100);
+		stot = pr;
+		stot = mu.round(stot, ndec);
 
-        stot=pr;stot=mu.round(stot,ndec);
+		if (imp > 0) {
+			//impval=stot-tsimp;  //JP20230911
+			impval = preciobase * imp / 100;  //JP20230911
+			impval = mu.round6dec(impval);   //JP20230911
+		} else {
+			impval = 0;
+		}
 
-        if (imp>0) impval=stot-tsimp; else impval=0;
+		descmon = 0;
 
-        descmon=0;
+		tot = stot - descmon;
+		prec = tot;
 
-        tot=stot-descmon;
-        prec=tot;
+		try {
+			sprec = ffrmprec.format(prec);
+			sprec = sprec.replace(",", ".");
+			pprec = Double.parseDouble(sprec);
+			pprec = mu.round(pprec, ndec);
+		} catch (Exception e) {
+			pprec = prec;
+		}
+		prec = pprec;
 
-        try {
-            sprec=ffrmprec.format(prec);sprec=sprec.replace(",",".");
-            pprec=Double.parseDouble(sprec);
-            pprec=mu.round(pprec,ndec);
-        } catch (Exception e) {
-            pprec=prec;
-        }
-        prec=pprec;
+		if (imp == 0) {
+			precsin = prec;
+		} else {
+			//precsin=prec/(1+imp/100);//JP20230911
+			precsin = preciobase;//JP20230911
+		}
 
-        if (imp==0) precsin=prec; else precsin=prec/(1+imp/100);
+		//totsin=mu.round(precsin,ndec);  //JP20230911
+		totsin = mu.round2dec(precsin);  //JP20230911
+		precsin = totsin;
 
-        totsin=mu.round(precsin,ndec);
-        precsin=totsin;
+		/* //JP20230911
+		try {
+			sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
+			pprec=Double.parseDouble(sprec);
+			pprec=mu.round(pprec,ndec);
+		} catch (Exception e) {
+			pprec=precsin;
+		}
+		precsin=pprec;
+		*/
 
-        try {
-            sprec=ffrmprec.format(precsin);sprec=sprec.replace(",",".");
-            pprec=Double.parseDouble(sprec);
-            pprec=mu.round(pprec,ndec);
-        } catch (Exception e) {
-            pprec=precsin;
-        }
-        precsin=pprec;
-
-        return prec;
-    }
+		return prec;
+	}
 
 	private double getImp() {
 		Cursor DT;
@@ -364,7 +497,6 @@ public class Precio {
 	    }		
 		
 	}
-
 
 	// Aux
 	
