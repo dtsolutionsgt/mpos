@@ -138,7 +138,7 @@ public class FacturaRes extends PBase {
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext;
-	private double pend,stot,stot0,percep_total;
+	private double pend,stot,stot0,stotsinimp,percep_total;
 	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito,descaddmonto;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
     private boolean horiz=true;
@@ -668,18 +668,13 @@ public class FacturaRes extends PBase {
 	}
 
 	private void updDesc(){
-
-		try{
-
+		try {
 			descg=gl.promdesc;
-			//descgmon=(double) (stot0*descg/100);
 			descgmon=(double) (descg*descgtotal/100);
 			totalOrder();
-
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
-
 	}
 
 	private void totalOrder(){
@@ -711,6 +706,7 @@ public class FacturaRes extends PBase {
 			}
 
 			descmon=mu.round2(dfinmon);
+			stot=stot0;
 			stot=mu.round2(stot0);
 
 			if (!EsNivelPrecioDelivery){
@@ -767,6 +763,10 @@ public class FacturaRes extends PBase {
 				if (gl.codigo_pais.equalsIgnoreCase("SV")) {
 					if ((stot>percep_val) && (gl.sal_PER)) gl.percepcion=1;
 					if (stot<100) gl.percepcion=0;
+				} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+					stot=stot+totimp;
+					totimp=stot-stotsinimp;
+					stot=stot-totimp;
 				}
 
 				totperc=stot*(gl.percepcion/100);
@@ -775,7 +775,7 @@ public class FacturaRes extends PBase {
 
                 descmon=descmon+descaddmonto;
 				tot=stot+totimp-descmon;
-			//tot=stot+totimp-descmon+totperc;
+			    //tot=stot+totimp-descmon+totperc;
 				tot=tot+propina;
 				tot=mu.round2(tot);
 
@@ -1191,11 +1191,13 @@ public class FacturaRes extends PBase {
 	   		ins.add("TOTAL",tot);
 			ins.add("DESMONTO",descmon);
 
+			/*
 			if (gl.codigo_pais.equalsIgnoreCase("HN")) {
 				totimp=tot/1.15;
 				totimp=totimp*0.15;
 				totimp=mu.round2(totimp);
 			}
+			*/
 
 			ins.add("IMPMONTO",totimp);//ins.add("IMPMONTO",totimp+totperc);
 			ins.add("PESO",peso);
@@ -1794,7 +1796,7 @@ public class FacturaRes extends PBase {
 		Cursor DT;
 
 		try {
-			sql="SELECT SUM(DESMON),SUM(TOTAL),SUM(IMP) FROM T_VENTA";
+			sql="SELECT SUM(DESMON),SUM(TOTAL),SUM(IMP),SUM(CANT*PRECIODOC) FROM T_VENTA";
 			DT=Con.OpenDT(sql);
 
 			if(DT.getCount()>0){
@@ -1802,8 +1804,8 @@ public class FacturaRes extends PBase {
 
                 tot=DT.getDouble(1);
                 stot0=tot+DT.getDouble(0);
-
                 totimp=DT.getDouble(2);
+				stotsinimp=DT.getDouble(3);
 
                 double d=DT.getDouble(0);
                 if (DT!=null) DT.close();

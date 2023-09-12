@@ -19,7 +19,7 @@ public class clsDocFactura extends clsDocument {
     //#EJC20210804: Variable global para parámetro de QR string.
     public String QRCodeStr = "";
 
-    private double tot,desc,imp,stot,percep,propina,totNotaC;
+    private double tot,desc,imp,stot,percep,propina,totNotaC,totalsinimp;
 	private boolean sinimp,detcombo;
 	private String 	contrib,corelNotaC,asignacion,ccorel,corelF;
 	private int decimp,totitems;
@@ -475,7 +475,7 @@ public class clsDocFactura extends clsDocument {
 		ccorel=corel;
 		loadHeadData(corel);
 		
-		items.clear();bons.clear();pagos.clear();
+		items.clear();bons.clear();pagos.clear();totalsinimp=0;
 
 		try {
 
@@ -515,6 +515,8 @@ public class clsDocFactura extends clsDocument {
                 if (DT.getDouble(11)==1) {
                     if (detcombo) detalleCombo(DT.getString(12));
                 }
+
+                totalsinimp+=DT.getDouble(2)*DT.getDouble(3);
 
                 DT.moveToNext();
             }
@@ -1227,20 +1229,29 @@ public class clsDocFactura extends clsDocument {
     //region Honduras
 
     private boolean footerBaseHON() {
-        double totimp,totperc;
+        double totimp,totperc,difimp,vimp1,vimp2;
 
+        vimp1=fh_imp1;vimp2=fh_imp2;
         //stot=stot-imp;
         stot=fh_grav+fh_exent+fh_exon;
         totperc=stot*(percep/100);totperc=round2(totperc);
-        totimp=imp-totperc;
+        totimp=tot-stot;
+        difimp=fh_imp1+fh_imp2-totimp;
+
+        //totalsinimp
+        if (fh_imp1>0) {
+            vimp1=fh_imp1-difimp;
+        } else {
+            vimp2=fh_imp2-difimp;
+        }
 
         rep.addtotsph("Subtotal: ", stot);
         rep.addtotsph("Descuento y rebajas: ", -desc);
         rep.addtotsph("Importe exonerado: ", fh_exon);
         rep.addtotsph("Importe exento: ", fh_exent);
         rep.addtotsph("Importe gravado: ", fh_grav);
-        rep.addtotsph("Impuesto "+frmdecimal(fh_val1,2)+" %", fh_imp1);
-        rep.addtotsph("Impuesto "+frmdecimal(fh_val2,2)+" %", fh_imp2);
+        rep.addtotsph("Impuesto "+frmdecimal(fh_val1,2)+" %", vimp1);
+        rep.addtotsph("Impuesto "+frmdecimal(fh_val2,2)+" %", vimp2);
         rep.addtotsph("TOTAL : ", tot);
 
         montoLetra();
