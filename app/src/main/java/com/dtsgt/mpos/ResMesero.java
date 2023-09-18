@@ -1250,7 +1250,6 @@ public class ResMesero extends PBase {
         }
     }
 
-
     //endregion
 
     //region Activity Events

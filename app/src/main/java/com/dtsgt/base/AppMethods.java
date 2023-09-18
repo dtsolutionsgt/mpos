@@ -2765,6 +2765,7 @@ public class AppMethods {
 
 	public void fillSuper(clsVendedoresObj VendedoresObj) {
 		try {
+
 			sql="WHERE (ACTIVO=1) AND (CODIGO_VENDEDOR IN " +
 					"(SELECT CODIGO_VENDEDOR FROM P_VENDEDOR_ROL WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
 					"AND (CODIGO_ROL IN (2,3) ) ) ) ORDER BY NOMBRE ";

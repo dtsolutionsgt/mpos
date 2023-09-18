@@ -17,11 +17,9 @@ import com.dtsgt.classes.clsP_prodmenuObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboadObj;
 import com.dtsgt.classes.clsT_ordencombodetObj;
-import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.firebase.fbOrden;
 import com.dtsgt.firebase.fbOrdenCombo;
@@ -39,7 +37,6 @@ public class OrdenMenu extends PBase {
     private ListAdaptOpcion adapter;
     private clsT_ordencomboObj T_comboObj;
     private clsP_productoObj P_productoObj;
-    private clsT_ordencomboprecioObj T_ordencomboprecioObj;
 
     private fbOrden fbo;
     private fbOrdenCombo fbocb;
@@ -77,11 +74,8 @@ public class OrdenMenu extends PBase {
             img2 = findViewById(R.id.imageView108);img2.setVisibility(View.INVISIBLE);
             imgSave = findViewById(R.id.imgImg3);
 
-            //peEditTotCombo;
-
             P_productoObj = new clsP_productoObj(this, Con, db);
             T_comboObj = new clsT_ordencomboObj(this, Con, db);
-            T_ordencomboprecioObj=new clsT_ordencomboprecioObj(this,Con,db);
 
             prc = new Precio(this, mu, 2,gl.peDescMax);
 
@@ -231,9 +225,6 @@ public class OrdenMenu extends PBase {
             } catch (Exception e) {}
             */
 
-
-            lbl2.setText(""+fbocb.items.size());
-
             for (int i = 0; i <items.size(); i++) {
 
                 menuid=items.get(i).codigo_menu_opcion;
@@ -250,6 +241,8 @@ public class OrdenMenu extends PBase {
                             break;
                         }
                     }
+
+                    cant=ccant;
 
                     if (selid!=0) {
                         if (selid>0) {
@@ -276,6 +269,8 @@ public class OrdenMenu extends PBase {
                     String ss=e.getMessage();
                 }
             }
+
+            lbl2.setText(""+cant);
 
             adapter.notifyDataSetChanged();
             precioFinal();
@@ -446,7 +441,6 @@ public class OrdenMenu extends PBase {
 
             newid=du.getOrdenCorel(gl.codigo_ruta);
 
-
             guardaPrecios();
 
             for (int i = 0; i <items.size(); i++) {
@@ -463,21 +457,21 @@ public class OrdenMenu extends PBase {
 
                 fbocb.setItem(ocitem);
 
-                //T_comboObj.add(item);
             }
 
-            //cui=app.cuentaActiva(idorden);
-
-
             cui=gl.combo_cuenta;
+            if (cui==0) cui=1;
+            try {
+                if (gl.um.isEmpty()) gl.um="UN";
+            } catch (Exception e) {
+                gl.um="UN";
+            }
 
             clsClasses.clsT_orden fbitem=clsCls.new clsT_orden();
 
-            //fbitem.id=newid;
             fbitem.id=uitemid;
             fbitem.corel=idorden;
             fbitem.producto=gl.prodid;
-            //fbitem.empresa=""+newid;
             fbitem.empresa=""+uitemid;
             fbitem.um=gl.um;
             fbitem.cant=cant;
@@ -803,7 +797,6 @@ public class OrdenMenu extends PBase {
         pitem.prectotal=precnuevo;
 
         fbop.setItem(pitem);
-        //T_ordencomboprecioObj.add(pitem);
     }
 
     //endregion
@@ -1146,7 +1139,6 @@ public class OrdenMenu extends PBase {
         try {
             P_productoObj.reconnect(Con,db);
             T_comboObj.reconnect(Con,db);
-            T_ordencomboprecioObj.reconnect(Con,db);
         } catch (Exception e) {
             msgbox2(e.getMessage());
         }

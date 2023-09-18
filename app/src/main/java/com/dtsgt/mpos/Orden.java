@@ -429,6 +429,9 @@ public class Orden extends PBase {
                     } else if (tipo.equalsIgnoreCase("M")) {
                         gl.newmenuitem=false;
                         gl.menuitemid=item.emp;
+                        gl.combo_cuenta=item.cuenta;
+                        gl.um=item.um;
+
                         browse=7;
                     }
 
@@ -2089,7 +2092,6 @@ public class Orden extends PBase {
                     if (pendienteImpresion()) {
                         msgmsg("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
-
                         if (app.isOnWifi()>0) {
                             if (limpiaVenta()) showListaCuentas();
                         } else {
