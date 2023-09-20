@@ -63,6 +63,8 @@ import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
 import com.dtsgt.firebase.fbOrden;
 import com.dtsgt.firebase.fbOrdenCombo;
+import com.dtsgt.firebase.fbOrdenComboAd;
+import com.dtsgt.firebase.fbOrdenComboDet;
 import com.dtsgt.firebase.fbOrdenComboPrecio;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.firebase.fbOrdenEstado;
@@ -147,6 +149,8 @@ public class Orden extends PBase {
     private fbOrdenCuenta fboc;
     private fbOrdenEstado fboe;
     private fbResSesion fbrs;
+    private fbOrdenComboAd fboca;
+    private fbOrdenComboDet fbocd;
 
     private Runnable rnfboList, rnfboNewid,rnfboSplit,rnfbocLista,rnfbooLista,
                      rnfbocListaPrecuenta,rnfbocListaCliente,rnfbrsItem,
@@ -286,6 +290,9 @@ public class Orden extends PBase {
             fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
             fbrs=new fbResSesion("ResSesion",gl.tienda);
             fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
+            fboca=new fbOrdenComboAd("OrdenComboAd",gl.tienda);
+            fbocd=new fbOrdenComboDet("OrdenComboDet",gl.tienda);
+
 
             rnfboList = () -> fsoListItems();
             rnfboNewid = () -> fsoSaveItem();
@@ -1669,8 +1676,16 @@ public class Orden extends PBase {
             db.beginTransaction();
 
             db.execSQL("DELETE FROM T_ORDEN WHERE (COREL='"+idorden+"') AND (ID="+gl.produid+")");
+
+            fbOrdenCombo fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
+            fbOrdenComboPrecio fbop=new fbOrdenComboPrecio("OrdenComboPrecio",gl.tienda);
+
             fbo.removeItem(gl.produid);
+            fbop.removeItem(idorden,gl.produid);
             fbon.removeItem(gl.produid);
+            fbocb.removeCombo(idorden,gl.produid);
+            fboca.removeCombo(idorden,gl.produid);
+            fbocd.removeCombo(idorden,gl.produid);
 
             db.execSQL("DELETE FROM T_ORDENCOMBO WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
             db.execSQL("DELETE FROM T_ORDENCOMBOAD WHERE (COREL='"+idorden+"') AND (IdCombo="+cbui+")");
@@ -3969,6 +3984,8 @@ public class Orden extends PBase {
             fbon.removeKey();
             fbocb.removeKey(idorden);
             fbop.removeKey(idorden);
+            fboca.removeKey(idorden);
+            fbocd.removeKey(idorden);
 
             borrarBloqueo();
 
@@ -4964,7 +4981,7 @@ public class Orden extends PBase {
 
             if (gl.idmodgr>0) listdlg.setLines(7);else listdlg.setLines(6);
 
-            listdlg.add(R.drawable.agregar,"Cantidad"); //imagen , texto - si imagen=0 no se despliega
+            listdlg.add(R.drawable.agregar,"Modificar"); //imagen , texto - si imagen=0 no se despliega
             listdlg.add(R.drawable.reportes,"Nota");
             listdlg.add(R.drawable.cambio_usuario,"Cambiar cuenta");
             listdlg.add(R.drawable.anulacion,"Borrar");

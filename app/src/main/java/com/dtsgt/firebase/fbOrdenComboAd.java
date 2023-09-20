@@ -9,20 +9,20 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 
-public class fbOrdenComboDet extends fbBase {
+public class fbOrdenComboAd extends fbBase {
 
-    public clsClasses.clsT_ordencombodet item,litem;
-    public ArrayList<clsClasses.clsT_ordencombodet> items= new ArrayList<clsClasses.clsT_ordencombodet>();
+    public clsClasses.clsT_ordencomboad item,litem;
+    public ArrayList<clsClasses.clsT_ordencomboad> items= new ArrayList<clsClasses.clsT_ordencomboad>();
 
     public String idorden;
 
-    public fbOrdenComboDet(String troot, int idsucursal) {
+    public fbOrdenComboAd(String troot, int idsucursal) {
         super(troot);
         idsuc=idsucursal;
     }
 
-    public void setItem(clsClasses.clsT_ordencombodet item) {
-        fdt=fdb.getReference(root+"/"+idsuc+"/"+item.corel+"/"+item.idcombo+"/"+item.codigo_menuopc_det);
+    public void setItem(clsClasses.clsT_ordencomboad item) {
+        fdt=fdb.getReference(root+"/"+idsuc+"/"+item.corel+"/"+item.idcombo+"/"+item.id);
         fdt.setValue(item);
     }
 
@@ -59,13 +59,13 @@ public class fbOrdenComboDet extends fbBase {
                                     for (DataSnapshot snap : res.getChildren()) {
 
                                         try {
-                                            litem = clsCls.new clsT_ordencombodet();
+                                            litem = clsCls.new clsT_ordencomboad();
 
-                                            litem.codigo_menuopc_det = snap.child("codigo_menuopc_det").getValue(Integer.class);
-                                            litem.idcombo = snap.child("idcombo").getValue(Integer.class);
-                                            litem.codigo_menu_opcion = snap.child("codigo_menu_opcion").getValue(Integer.class);
-                                            litem.codigo_producto = snap.child("codigo_producto").getValue(Integer.class);
+                                            litem.id = snap.child("id").getValue(Integer.class);
                                             litem.corel = snap.child("corel").getValue(String.class);
+                                            litem.idcombo = snap.child("idcombo").getValue(Integer.class);
+                                            litem.nombre = snap.child("nombre").getValue(String.class);
+                                            litem.cant = snap.child("cant").getValue(Integer.class);
 
                                             items.add(litem);
                                         } catch (Exception e) {
@@ -90,6 +90,5 @@ public class fbOrdenComboDet extends fbBase {
             errflag=true;
         }
     }
-
 
 }
