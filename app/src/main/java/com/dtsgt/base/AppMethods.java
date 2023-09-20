@@ -2779,6 +2779,19 @@ public class AppMethods {
 		}
 	}
 
+	public boolean horizscr() {
+		try {
+			File file1 = new File(Environment.getExternalStorageDirectory(), "/mposhoriz.txt");
+			if(file1.exists()) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
     //endregion
 
     //region Common

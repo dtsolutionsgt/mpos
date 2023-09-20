@@ -1187,7 +1187,7 @@ public class PedidoDet extends PBase {
         try {
             Point point = new Point();
             getWindowManager().getDefaultDisplay().getRealSize(point);
-            return point.x>point.y;
+            if (app.horizscr()) return true; else return point.x>point.y;
         } catch (Exception e) {
             return true;
         }

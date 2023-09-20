@@ -1204,11 +1204,26 @@ public class MainActivity extends PBase {
             scrdim = (int) screenInches;
             boolean horiz = point.x > point.y;
 
+            if (horizscr()) horiz=true;
+
             return horiz;
         } catch (Exception e) {
             return true;
         }
 
+    }
+
+    public boolean horizscr() {
+        try {
+            File file1 = new File(Environment.getExternalStorageDirectory(), "/mposhoriz.txt");
+            if(file1.exists()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     protected void toasthoriz(String msg) {
