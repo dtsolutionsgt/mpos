@@ -129,6 +129,8 @@ public class Orden extends PBase {
     private ArrayList<String> brtitems = new ArrayList<String>();
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
+    private ArrayList<Integer> ccitems = new ArrayList<Integer>();
+    public ArrayList<clsClasses.clsT_ordencombo> combitems= new ArrayList<clsClasses.clsT_ordencombo>();
 
     private WebService ws;
 
@@ -149,13 +151,14 @@ public class Orden extends PBase {
     private fbOrdenCuenta fboc;
     private fbOrdenEstado fboe;
     private fbResSesion fbrs;
+    private fbOrdenCombo fbocb;
     private fbOrdenComboAd fboca;
     private fbOrdenComboDet fbocd;
 
     private Runnable rnfboList, rnfboNewid,rnfboSplit,rnfbocLista,rnfbooLista,
                      rnfbocListaPrecuenta,rnfbocListaCliente,rnfbrsItem,
                      rnfbrsMovcue,rnfbocMovcue,rnfboMovcue,rnfboMovcueOrig,
-                     rnfboDelCue,rnfbocAnul,rnfboeLista;
+                     rnfboDelCue,rnfbocAnul,rnfboeLista,rnfbocbCom,rnfbonList;
 
     private AppMethods app;
 
@@ -192,7 +195,7 @@ public class Orden extends PBase {
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest,idorden_movcue,mesnom_movcue;
     private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,maxprodid;
-    private int maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest;
+    private int maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest,cocount,copos;
 
     private int maxitems=100;
 
@@ -290,6 +293,7 @@ public class Orden extends PBase {
             fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
             fbrs=new fbResSesion("ResSesion",gl.tienda);
             fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
+            fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
             fboca=new fbOrdenComboAd("OrdenComboAd",gl.tienda);
             fbocd=new fbOrdenComboDet("OrdenComboDet",gl.tienda);
 
@@ -310,6 +314,9 @@ public class Orden extends PBase {
             rnfboMovcue = () -> fboMovcue();
             rnfboMovcueOrig = () -> fboMovcueList();
             rnfbocAnul = () -> fbocAnul();
+
+            rnfbocbCom = () -> fbocbCom();
+            rnfbonList = () -> fbonList();
 
             rheader=false;
             fbrs.getItem(idorden,rnfbrsItem);
@@ -2288,23 +2295,91 @@ public class Orden extends PBase {
     }
 
     private void procesaComanda() {
-        if (!db.isOpen()) onResume();
+        try {
+            P_productoObj.fill();
+            db.execSQL("DELETE FROM T_ordencombo");
 
-        if (gl.pelComandaBT) {
-            imprimeComandaBT();
-            evnioBarril(false);
-        } else {
-            if (!divideComanda()) return;
-            if (!generaArchivos()) return;
-            //generaRegistrosBarril();
-            ejecutaImpresion();
+            fbon.listItems(idorden,rnfbonList);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
-            aplicaImpresion();
+    private void fbonList() {
+        try {
+            if (fbon.errflag) throw new Exception(fbon.error);
 
-            borrarBloqueo();
-            exitBtn(false);
+            ccitems.clear();
+            for (int oi = 0; oi <fbo.items.size(); oi++) {
+                if (tipoArticulo(fbo.items.get(oi).producto).equalsIgnoreCase("M")) {
+                    if (fbo.items.get(oi).estado==1) ccitems.add(fbo.items.get(oi).id);
+                }
+            }
+
+            cocount=ccitems.size();copos=0;combitems.clear();
+            if (cocount==0) {
+                creaComandas();
+            } else {
+                cargaOrdenCombo();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void cargaOrdenCombo() {
+        try {
+            fbocb.listItems(idorden,ccitems.get(copos),rnfbocbCom);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fbocbCom() {
+        try {
+            if (fbocb.errflag) throw new Exception(fbocb.error);
+
+            for (int oi = 0; oi <fbocb.items.size(); oi++) {
+                combitems.add(fbocb.items.get(oi));
+            }
+
+            copos++;
+            if (copos>=cocount) {
+                creaComandas();
+            } else {
+                cargaOrdenCombo();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void creaComandas() {
+        try {
+
+            if (!db.isOpen()) onResume();
+
+            int ii=combitems.size();
+            ii=ii+0;
+
+            if (gl.pelComandaBT) {
+                imprimeComandaBT();
+                evnioBarril(false);
+            } else {
+                if (!divideComanda()) return;
+                if (!generaArchivos()) return;
+                //generaRegistrosBarril();
+                ejecutaImpresion();
+
+                aplicaImpresion();
+
+                borrarBloqueo();
+                exitBtn(false);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private boolean divideComanda() {
@@ -2330,17 +2405,21 @@ public class Orden extends PBase {
             T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ESTADO=1)");
             if (T_ordenObj.count>0) {
                 for (int i = 0; i < T_ordenObj.count; i++) {
+
                     paso=1;
                     venta = T_ordenObj.items.get(i);
-
                     pruid = venta.id;
                     prodid = app.codigoProducto(venta.producto);
                     prname = getProd(prodid);
                     s = mu.frmdecno(venta.cant) + "  " + prname;
 
+                    /*
                     nn = "";
                     T_orden_notaObj.fill("WHERE (id=" + venta.id + ") AND (corel='" + idorden + "')");
                     if (T_orden_notaObj.count > 0) nn = T_orden_notaObj.first().nota + "";
+                    */
+
+                    nn=notaArticulo(venta.id);
 
                     paso=2;
                     if (!app.prodTipo(prodid).equalsIgnoreCase("M")) {
@@ -2380,8 +2459,10 @@ public class Orden extends PBase {
                                             linea++;
                                         }
                                     }
+
                                 }
                             }
+
                         }
                     } else {
                         paso=10;
@@ -2428,6 +2509,24 @@ public class Orden extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage()+"\nPaso: "+paso);return false;
         }
+    }
+
+    private String notaArticulo(int itemid) {
+        for (int ni = 0; ni <fbon.items.size(); ni++) {
+            if (fbon.items.get(ni).id==itemid) {
+                return fbon.items.get(ni).nota;
+            }
+        }
+        return "";
+    }
+
+    private String tipoArticulo(String prcod) {
+        for (int ni = 0; ni <P_productoObj.items.size(); ni++) {
+            if (P_productoObj.items.get(ni).codigo.equalsIgnoreCase(prcod)) {
+                return P_productoObj.items.get(ni).codigo_tipo;
+            }
+        }
+        return "S";
     }
 
     private boolean agregaComanda(int linea,int prid,String texto) {
@@ -2712,8 +2811,7 @@ public class Orden extends PBase {
         } catch (Exception e) {}
         return ""+prodid;
     }
-
-     */
+    */
 
     //endregion
 
@@ -4898,7 +4996,8 @@ public class Orden extends PBase {
             dialog.setIcon(R.drawable.ic_quest);
 
             dialog.setPositiveButton("Si", (dialog12, which) -> {
-                actualizaEstadoOrden(3);
+                //actualizaEstadoOrden(3);
+                actualizaEstadoOrden(0);
                 imprimeComanda();
             });
 
