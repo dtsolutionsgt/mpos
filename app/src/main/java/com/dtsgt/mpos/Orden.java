@@ -3149,7 +3149,6 @@ public class Orden extends PBase {
 
     //region Broadcast
 
-
     public String addItemSqlOrdenCom(clsClasses.clsT_ordencom item) {
 
         ins.init("T_ordencom");
@@ -3162,7 +3161,6 @@ public class Orden extends PBase {
         return ins.sql();
 
     }
-
 
     //endregion
 
