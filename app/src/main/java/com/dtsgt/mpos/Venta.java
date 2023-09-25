@@ -2373,7 +2373,7 @@ public class Venta extends PBase {
             listdlg.add("Nota");
             listdlg.add("Descuento");
             //listdlg.add("Ingredientes adicionales");
-            if (gl.idmodgr>0) listdlg.add("Modificadores");
+            //if (gl.idmodgr>0) listdlg.add("Modificadores");
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
