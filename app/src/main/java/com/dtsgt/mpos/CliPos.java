@@ -518,6 +518,7 @@ public class CliPos extends PBase {
         } else {
             gl.ventalock=false;
 
+            String ssnn=gl.gNITCliente;
             String ss=gl.gNombreCliente;
 
             if (!hasProducts()) {
