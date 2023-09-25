@@ -472,8 +472,8 @@ public class InvAjuste extends PBase {
                 toastlong("Existencias actualizadas");
             }
 
-            //gl.autocom = 1;
-            //startActivity(new Intent(this,WSEnv.class));
+            gl.autocom = 1;
+            startActivity(new Intent(this,WSEnv.class));
 
             //gl.imp_inventario=true;
             //gl.corelmov=corel;

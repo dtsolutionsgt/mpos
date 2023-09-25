@@ -1,6 +1,7 @@
 package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -652,14 +653,8 @@ public class InvRecep extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            /*
-            toastlong("Existencias actualizadas");
-
-            //if (gl.peInvCompart) {
-                gl.autocom = 1;
-                startActivity(new Intent(this,WSEnv.class));
-            //}
-            */
+            gl.autocom = 1;
+            startActivity(new Intent(this,WSEnv.class));
 
             finish();
 
