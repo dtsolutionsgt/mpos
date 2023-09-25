@@ -130,7 +130,7 @@ public class Orden extends PBase {
     private ArrayList<String> lcode = new ArrayList<String>();
     private ArrayList<String> lname = new ArrayList<String>();
     private ArrayList<Integer> ccitems = new ArrayList<Integer>();
-    public ArrayList<clsClasses.clsT_ordencombo> combitems= new ArrayList<clsClasses.clsT_ordencombo>();
+    private ArrayList<clsClasses.clsT_ordencombo> combitems= new ArrayList<clsClasses.clsT_ordencombo>();
 
     private WebService ws;
 
@@ -195,7 +195,7 @@ public class Orden extends PBase {
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest,idorden_movcue,mesnom_movcue;
     private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,maxprodid;
-    private int maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest,cocount,copos;
+    private int maxcuenta=1,movcue_nueva,movcue_orig,movcue_maxdest;
 
     private int maxitems=100;
 
@@ -2316,8 +2316,8 @@ public class Orden extends PBase {
                 }
             }
 
-            cocount=ccitems.size();copos=0;combitems.clear();
-            if (cocount==0) {
+            combitems.clear();
+            if (ccitems.size()==0) {
                 creaComandas();
             } else {
                 cargaOrdenCombo();
@@ -2329,7 +2329,7 @@ public class Orden extends PBase {
 
     private void cargaOrdenCombo() {
         try {
-            fbocb.listItems(idorden,ccitems.get(copos),rnfbocbCom);
+            fbocb.listItemsActive(idorden,rnfbocbCom);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -2339,16 +2339,13 @@ public class Orden extends PBase {
         try {
             if (fbocb.errflag) throw new Exception(fbocb.error);
 
+            db.execSQL("DELETE FROM T_ordencombo");
+            clsT_ordencomboObj T_comboObj=new clsT_ordencomboObj(this,Con,db);
             for (int oi = 0; oi <fbocb.items.size(); oi++) {
-                combitems.add(fbocb.items.get(oi));
+                T_comboObj.add(fbocb.items.get(oi));
             }
 
-            copos++;
-            if (copos>=cocount) {
-                creaComandas();
-            } else {
-                cargaOrdenCombo();
-            }
+            creaComandas();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -2359,9 +2356,6 @@ public class Orden extends PBase {
         try {
 
             if (!db.isOpen()) onResume();
-
-            int ii=combitems.size();
-            ii=ii+0;
 
             if (gl.pelComandaBT) {
                 imprimeComandaBT();
@@ -2436,7 +2430,7 @@ public class Orden extends PBase {
                                     agregaComanda(linea, prid, s);
                                     linea++;
                                     if (!nn.isEmpty()) {
-                                        agregaComanda(linea, prid, nn);
+                                        agregaComanda(linea, prid, "   "+nn);
                                         linea++;
                                     }
 
@@ -2483,13 +2477,14 @@ public class Orden extends PBase {
                                 if (j == 0) {
                                     agregaComanda(linea, prid, cname);
                                     linea++;
+                                    if (!nn.isEmpty()) {
+                                        agregaComanda(linea,prid,"   "+nn);
+                                        linea++;
+                                    }
                                 }
                                 agregaComanda(linea, prid, s);
                                 linea++;
-                                if (!nn.isEmpty()) {
-                                    agregaComanda(linea, prid, nn);
-                                    linea++;
-                                }
+
 
                                 if (k == P_linea_impresoraObj.count - 1) {
                                     T_orden_modObj.fill("WHERE (COREL='" + idorden + "') AND (ID=" + pruid + ")");
@@ -2499,6 +2494,7 @@ public class Orden extends PBase {
                                         linea++;
                                     }
                                 }
+
                             }
                         }
                     }
@@ -2815,7 +2811,7 @@ public class Orden extends PBase {
 
     //endregion
 
-    //region Nota , Dividir
+    //region Nota, Dividir
 
     private void inputNota() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
