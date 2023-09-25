@@ -214,6 +214,8 @@ public class FacturaRes extends PBase {
 		lblVuelto = new TextView(this,null);
 		txtVuelto = new EditText(this,null);
 
+		String sn=gl.gNITCliente;
+
 		cliid=gl.cliente;
 		rutapos=gl.rutapos;
 		Nivel_Media_Pago =gl.media;
@@ -370,7 +372,6 @@ public class FacturaRes extends PBase {
 
         //if (gl.mesero_precuenta) prnCuenta(null);
 
-		String sn=gl.gNITCliente;
 		sn=gl.gNITCliente;
     }
 
@@ -1148,6 +1149,8 @@ public class FacturaRes extends PBase {
 
 			//endregion
 
+			String ssnt=gl.gNITCliente;
+
   			String ss="WHERE anulado=0 AND feelfechaprocesado=0 AND feeluuid=' ' AND fecha>2010010000";
             D_fact.fill(ss);
             fpend=D_fact.count;
@@ -1520,7 +1523,7 @@ public class FacturaRes extends PBase {
 			if (gl.gNITCliente.isEmpty()) {
 				gl.gNITCliente="CF";
 			} else {
-				if (gl.gNITCliente.length()<6) {
+				if (gl.gNITCliente.length()<5) {
 					gl.gNITCliente="CF";
 				}
 			}
@@ -4126,7 +4129,7 @@ public class FacturaRes extends PBase {
 			gl.gNITCliente = "CF";return;
 		}
 
-		if (gl.gNITCliente.length() <6) {
+		if (gl.gNITCliente.length() <5) {
 			gl.nit_tipo = "N";
 			gl.gNITCliente = "CF";
 			return;
@@ -4153,8 +4156,10 @@ public class FacturaRes extends PBase {
 		if (gl.gNITCliente.length() > 18) {
 			gl.nit_tipo = "E";
 			gl.gNITCliente = "CF";
-			return;
 		}
+
+		String snn=gl.gNITCliente;
+		snn=snn+"";
 
 	}
 

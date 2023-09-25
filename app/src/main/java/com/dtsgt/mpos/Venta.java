@@ -1770,7 +1770,7 @@ public class Venta extends PBase {
             if (gl.gNITCliente.isEmpty()) {
                 gl.gNITCliente="CF";
             } else {
-               if (gl.gNITCliente.length()<6) gl.gNITCliente="CF";
+               if (gl.gNITCliente.length()<5) gl.gNITCliente="CF";
             }
 
             clsDeG=new clsDeGlob(this,tot);ss="";
