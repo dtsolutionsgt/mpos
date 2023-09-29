@@ -6,9 +6,9 @@ import android.widget.TextView;
 
 public class Nowifi extends PBase {
 
-    private TextView l1,l2,l3,l4,l5,l6,l7;
+    private TextView l1,l2,l3,l4,l5,l6,l7,l8;
 
-    private String s1,s2,s3,s4,s5,s6,s7;
+    private String s1,s2,s3,s4,s5,s6,s7,s8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +26,7 @@ public class Nowifi extends PBase {
             l5 = findViewById(R.id.textView317);
             l6 = findViewById(R.id.textView318);
             l7 = findViewById(R.id.textView319);
+            l8 = findViewById(R.id.textView322);
 
             listItems();
 
@@ -52,21 +53,27 @@ public class Nowifi extends PBase {
                 s2="Si se usa más que una caja, debe usarse solo una. ";
                 s3="Todas las ventas se realizan en la única caja hasta que la conexión se recupera. ";
                 s4="Si la perdida de conexión ocurre durante de ingreso de un articulo a la orden, " +
-                   "eliminar el articulo en el equipo actual e ingresar lo de nuevo en la caja.";
-                s5="Antes de imprimir precuenta, asegurar se que en ninguno equipo no se ingresó " +
+                        "eliminar el articulo en el equipo actual e ingresar lo de nuevo en la caja.";
+                s5="Si la mesa aparece inactiva en la caja, active la e ingrese de nuevo todos los " +
+                        "articulos. Luego con la opcion Borrar cuentas en el equipo de mesero borre " +
+                        "la cuenta. Si no se barra, despues de pagar la mesa, va a aparecer de nuevo la " +
+                        "mesa como activo con los articulos";
+                s6="Antes de imprimir precuenta, asegurar se que en ninguno equipo no se ingresó " +
                    "ninguno artículo que no está incluido en la caja";
-                s6="Al momento de recuperar conexión, aparece un mensaje con la información";
-                s7="Esperar UN MINUTO y luego continuar trabajar el todos los equipos";
+                s7="Al momento de recuperar conexión, aparece un mensaje con la información";
+                s8="Esperar UN MINUTO y luego continuar trabajar el todos los equipos";
             } else {
                 s1="La perdida de conexión a internet afectará únicamente las existencias.";
                 s2="Durante trabajo sin conexión no se van a poder ver las existencias actualizadas. ";
                 s3="Al momento de recuperar conexión, aparece un mensaje con la información";
                 s4="Esperar UN MINUTO y luego continuar trabajar el todos los equipos";
-                s5="";s6="";s7="";
-                l5.setVisibility(View.INVISIBLE);l6.setVisibility(View.INVISIBLE);l7.setVisibility(View.INVISIBLE);
+                s5="";s6="";s7="";s8="";
+                l5.setVisibility(View.INVISIBLE);l6.setVisibility(View.INVISIBLE);
+                l7.setVisibility(View.INVISIBLE);l8.setVisibility(View.INVISIBLE);
             }
 
-            l1.setText(s1);l2.setText(s2);l3.setText(s3);l4.setText(s4);l5.setText(s5);l6.setText(s6);l7.setText(s7);
+            l1.setText(s1);l2.setText(s2);l3.setText(s3);l4.setText(s4);
+            l5.setText(s5);l6.setText(s6);l7.setText(s7);l8.setText(s8);
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

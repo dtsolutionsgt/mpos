@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
@@ -34,7 +35,7 @@ public class OrdenMenu extends PBase {
 
     private ListView listView;
     private TextView lbl1,lbl2,lbl3;
-    private ImageView img1,img2,imgSave;
+    private ImageView img1,img2,imgSave,imgInc,imgDec;
 
     private ListAdaptOpcion adapter;
     private clsT_ordencomboObj T_comboObj;
@@ -79,6 +80,24 @@ public class OrdenMenu extends PBase {
             img1 = findViewById(R.id.imageView27);
             img2 = findViewById(R.id.imageView108);img2.setVisibility(View.INVISIBLE);
             imgSave = findViewById(R.id.imgImg3);
+            imgDec = findViewById(R.id.imageView28);
+            imgInc = findViewById(R.id.imageView29);
+
+            if (gl.combo_edit) {
+                listView.setEnabled(true);
+                imgDec.setVisibility(View.VISIBLE);
+                imgInc.setVisibility(View.VISIBLE);
+                img1.setVisibility(View.VISIBLE);
+                imgSave.setVisibility(View.VISIBLE);
+                lbl2.setVisibility(View.VISIBLE);
+            } else {
+                listView.setEnabled(false);
+                imgDec.setVisibility(View.INVISIBLE);
+                imgInc.setVisibility(View.INVISIBLE);
+                img1.setVisibility(View.INVISIBLE);
+                imgSave.setVisibility(View.INVISIBLE);
+                lbl2.setVisibility(View.INVISIBLE);
+            }
 
             P_productoObj = new clsP_productoObj(this, Con, db);
             T_comboObj = new clsT_ordencomboObj(this, Con, db);
@@ -105,7 +124,10 @@ public class OrdenMenu extends PBase {
             lbl3.setText(mu.frmcur(gl.menuprecio));
 
             app.parametrosExtra();
-            if (gl.peAgregarCombo) img2.setVisibility(View.VISIBLE);
+            if (gl.peAgregarCombo) {
+                if (gl.combo_edit) img2.setVisibility(View.VISIBLE);
+            }
+
 
             fbo=new fbOrden("Orden",gl.tienda,idorden);
             fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
@@ -443,6 +465,11 @@ public class OrdenMenu extends PBase {
         int newid,cui;
         double prec,impval,desc,descmon,tot,pimp;
 
+        if (cant<=0) {
+            msgAskDelete("Eliminar articulo");
+            return true;
+        }
+
         try {
 
             String um=getProdUM(gl.prodmenu);
@@ -658,7 +685,7 @@ public class OrdenMenu extends PBase {
             finish();
 
         } catch (Exception e) {
-            db.endTransaction();
+            //db.endTransaction();
             msgbox(e.getMessage());
         }
     }

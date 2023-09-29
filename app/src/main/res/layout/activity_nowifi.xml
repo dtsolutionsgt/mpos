@@ -129,6 +129,21 @@ tools:context=".Nowifi">
                 android:text="TextView"
                 android:textSize="24sp"
                 android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView322"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textView319"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/br0s"
+                android:padding="10dp"
+                android:text="TextView"
+                android:textSize="24sp"
+                android:textStyle="bold" />
         </RelativeLayout>
     </ScrollView>
 

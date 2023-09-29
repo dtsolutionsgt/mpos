@@ -73,6 +73,10 @@ import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.FELFactura;
 import com.dtsgt.firebase.fbMesaAbierta;
 import com.dtsgt.firebase.fbOrden;
+import com.dtsgt.firebase.fbOrdenCombo;
+import com.dtsgt.firebase.fbOrdenComboAd;
+import com.dtsgt.firebase.fbOrdenComboDet;
+import com.dtsgt.firebase.fbOrdenComboPrecio;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.firebase.fbOrdenEstado;
 import com.dtsgt.firebase.fbOrdenNota;
@@ -97,7 +101,6 @@ public class FacturaRes extends PBase {
 	private List<String> spname = new ArrayList<String>();
 	private ArrayList<clsClasses.clsCDB> items= new ArrayList<clsClasses.clsCDB>();
 	private ListAdaptTotals adapter;
-
 
 	private Runnable printcallback,printclose,printexit;
 
@@ -1953,9 +1956,19 @@ public class FacturaRes extends PBase {
 			fbo=new fbOrden("Orden",gl.tienda,gl.ordcorel);
 			fbon=new fbOrdenNota("OrdenNota",gl.tienda,gl.ordcorel);
 
+			fbOrdenCombo fbocb=new fbOrdenCombo("OrdenCombo",gl.tienda);
+			fbOrdenComboPrecio fbop=new fbOrdenComboPrecio("OrdenComboPrecio",gl.tienda);
+			fbOrdenComboAd fboca=new fbOrdenComboAd("OrdenComboAd",gl.tienda);
+			fbOrdenComboDet fbocd=new fbOrdenComboDet("OrdenComboDet",gl.tienda);
+
 			fbrs.removeValue(gl.ordcorel);
 			fbo.removeKey();
 			fbon.removeKey();
+
+			fbocb.removeKey(gl.ordcorel);
+			fbop.removeKey(gl.ordcorel);
+			fboca.removeKey(gl.ordcorel);
+			fbocd.removeKey(gl.ordcorel);
 
 			borrarBloqueo();
 		} catch (Exception e) {
@@ -4018,6 +4031,7 @@ public class FacturaRes extends PBase {
 	private void estadoCuenta() {
 		try {
 			if (gl.idorden.isEmpty()) return;
+			if (gl.precuenta_cuenta==0) return;
 
 			clsClasses.clsFbOrdenEstado eitem = clsCls.new clsFbOrdenEstado();
 

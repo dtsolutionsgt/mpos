@@ -137,12 +137,8 @@ public class Orden extends PBase {
     private wsCommit wscom;
     private wsOpenDT wso;
     private wsCommit wsbtr;
-    private wsCommit wslock;
 
-    private Runnable rnBroadcastCallback;
-    private Runnable rnDetailCallback;
     private Runnable rnBarTrans;
-    private Runnable rnClose;
     private Runnable rnOrdenInsert,rnOrdenQuery;
 
     private fbMesaAbierta fbma;
@@ -158,7 +154,7 @@ public class Orden extends PBase {
     private Runnable rnfboList, rnfboNewid,rnfboSplit,rnfbocLista,rnfbooLista,
                      rnfbocListaPrecuenta,rnfbocListaCliente,rnfbrsItem,
                      rnfbrsMovcue,rnfbocMovcue,rnfboMovcue,rnfboMovcueOrig,
-                     rnfboDelCue,rnfbocAnul,rnfboeLista,rnfbocbCom,rnfbonList;
+                     rnfboDelCue,rnfbocAnul,rnfboeLista,rnfbocbCom,rnfbonList,rnfbonListNotas;
 
     private AppMethods app;
 
@@ -191,7 +187,7 @@ public class Orden extends PBase {
     private boolean sinimp,softscanexist,porpeso,usarscan,handlecant=true,descflag;
     private boolean enviarorden,actorden,modo_emerg,exit_mode,close_flag,rheader=false;
     private boolean decimal,menuitemadd,usarbio,imgflag,scanning=false,ordencentral;
-    private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril;
+    private boolean prodflag=true,listflag=true,horiz,wsoidle=true,ordenpedido,barril,escombo;
     private int codigo_cliente, emp,cod_prod,cantcuentas,ordennum,idimp1,idimp2,idtransbar;
     private String idorden,cliid,saveprodid, brtcorel, idresorig, idresdest,idorden_movcue,mesnom_movcue;
     private int famid = -1,statenv,estado_modo,brtid,numpedido,btrpos,valsupermodo,maxprodid;
@@ -317,6 +313,7 @@ public class Orden extends PBase {
 
             rnfbocbCom = () -> fbocbCom();
             rnfbonList = () -> fbonList();
+            rnfbonListNotas = () -> fbonListNotas();
 
             rheader=false;
             fbrs.getItem(idorden,rnfbrsItem);
@@ -327,16 +324,9 @@ public class Orden extends PBase {
             if (gl.nombre_mesero_sel.isEmpty()) gl.nombre_mesero_sel=gl.vendnom;
 
             ws=new WebService(Orden.this,gl.wsurl);
-
-            rnBroadcastCallback = () -> broadcastCallback();
-
             wscom =new wsCommit(gl.wsurl);
-            wslock =new wsCommit(gl.wsurl);
-
 
             agregaBloqueo();
-
-            rnClose = () -> closeAction();
 
             wso=new wsOpenDT(gl.wsurl);
 
@@ -440,11 +430,13 @@ public class Orden extends PBase {
                     if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
                         browse=6;
                         gl.menuitemid=prodid;
+                        escombo=false;
                     } else if (tipo.equalsIgnoreCase("M")) {
                         gl.newmenuitem=false;
                         gl.menuitemid=item.emp;
                         gl.combo_cuenta=item.cuenta;
                         gl.um=item.um;
+                        escombo=true;
 
                         browse=7;
                     }
@@ -596,6 +588,14 @@ public class Orden extends PBase {
 
     private void listItems() {
         try {
+            fbon.listItems(idorden,rnfbonListNotas);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fbonListNotas() {
+        try {
             fbo.listItems(rnfboList);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -603,6 +603,7 @@ public class Orden extends PBase {
     }
 
     public void fsoListItems() {
+        clsClasses.clsT_orden_nota nitem;
         int apid;
 
         try {
@@ -610,6 +611,34 @@ public class Orden extends PBase {
             if (!db.isOpen()) onResume();
 
             if (fbo.errflag) throw new Exception(fbo.error);
+
+            try {
+                if (!fbon.errflag) {
+                    int nn = fbon.items.size();
+
+                    db.beginTransaction();
+
+                    db.execSQL("DELETE FROM T_ORDEN_NOTA");
+
+                    for (int ni = 0; ni < nn; ni++) {
+
+                        nitem=clsCls.new clsT_orden_nota();
+                        nitem.id=fbon.items.get(ni).id;
+                        nitem.corel=idorden;
+                        nitem.nota=fbon.items.get(ni).nota;
+
+                        T_orden_notaObj.add(nitem);
+                    }
+
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+                }
+            } catch (Exception e) {
+                db.endTransaction();
+                String ee=e.getMessage();
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return;
+            }
+
 
             try {
 
@@ -1001,7 +1030,7 @@ public class Orden extends PBase {
             gl.combo_cuenta=app.cuentaActivaPostpago(idorden);
         }
 
-        browse=7;
+        browse=7;gl.combo_edit=true;
         startActivity(new Intent(this,OrdenMenu.class));
 
     }
@@ -1152,7 +1181,8 @@ public class Orden extends PBase {
             fbitem.estado=1;
             fbitem.idmesero=gl.idmesero;
 
-            fbo.newid(rnfboNewid);
+            //fbo.newid(rnfboNewid);
+            fsoSaveItem();
 
         } catch (SQLException e) {
             mu.msgbox("Error : " + e.getMessage());return false;
@@ -1163,11 +1193,14 @@ public class Orden extends PBase {
 
     private void fsoSaveItem() {
         try {
+            /*
             if (fbo.errflag) {
                 msgbox("fsoSaveItem . "+ fbo.error);return;
             }
+            */
 
-            fbitem.id= fbo.new_id;
+            //fbitem.id= fbo.new_id;
+            fbitem.id=du.getOrdenCorel(gl.codigo_ruta);
             fbo.setItem(fbitem.id,fbitem);
 
             counter++;
@@ -1567,6 +1600,13 @@ public class Orden extends PBase {
         clsClasses.clsT_orden sfitem;
         double precdoc;
         String suid;
+
+
+        if (cant<=0) {
+            gl.produid=Integer.parseInt(uid);
+            delItem();
+            return true;
+        }
 
         try {
 
@@ -3141,10 +3181,6 @@ public class Orden extends PBase {
         }
     }
 
-    private void broadcastCallback() {
-
-    }
-
     //endregion
 
     //region Broadcast
@@ -3375,7 +3411,6 @@ public class Orden extends PBase {
         clsClasses.clsT_orden item;
 
         try {
-
             for (int i = 0; i <fboo.items.size(); i++) {
                 if (fboo.items.get(i).id==gl.produid) {
                     fboo.items.get(i).cuenta=idcuenta;
@@ -3383,7 +3418,6 @@ public class Orden extends PBase {
                     break;
                 }
             }
-
 
             clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
             T_ordenObj.fill("WHERE (COREL='"+idorden+"') AND (ID="+selitem.id+")");
@@ -3446,7 +3480,6 @@ public class Orden extends PBase {
 
     private void showListaPrecuentas() {
         int cc=0,selcuenta=1;
-
         try {
             extListDlg listdlg = new extListDlg();
             listdlg.buildDialog(Orden.this,"Imprimir precuenta");
@@ -3465,9 +3498,7 @@ public class Orden extends PBase {
             }
 
             if (cc==1) {
-                if (selcuenta==0) {
-                    selcuenta=1;
-                }
+                if (selcuenta==0) selcuenta=1;
                 cuenta=selcuenta;
 
                 gl.precuenta_cuenta=cuenta;
@@ -5091,6 +5122,7 @@ public class Orden extends PBase {
                                 if (browse==6) {
                                     startActivity(new Intent(Orden.this,VentaEdit.class));
                                 } else if (browse==7) {
+                                    gl.combo_edit=true;
                                     startActivity(new Intent(Orden.this,OrdenMenu.class));
                                 }
                                 break;
@@ -5158,6 +5190,8 @@ public class Orden extends PBase {
             listdlg.add(R.drawable.recibir_archivos,"Dividir");
             listdlg.add(R.drawable.avanzar,"Mover cuenta a otra mesa");
             listdlg.add(R.drawable.avanzar,"Borrar");
+            if (escombo) listdlg.add(R.drawable.avanzar,"Ver detalle combo");
+
 
             listdlg.setOnItemClickListener(new OnItemClickListener() {
                 @Override
@@ -5179,6 +5213,10 @@ public class Orden extends PBase {
                             case 3:
                                 valsupermodo=1;
                                 validaSupervisor();
+                                break;
+                            case 4:
+                                gl.combo_edit=false;
+                                startActivity(new Intent(Orden.this,OrdenMenu.class));
                                 break;
                         }
 
