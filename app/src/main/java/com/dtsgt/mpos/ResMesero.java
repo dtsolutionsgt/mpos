@@ -37,6 +37,7 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.firebase.fbMesaAbierta;
 import com.dtsgt.firebase.fbOrdenCuenta;
+import com.dtsgt.firebase.fbOrdenEstado;
 import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.ladapt.LA_Res_mesa;
 import com.dtsgt.webservice.srvCommit;
@@ -59,8 +60,10 @@ public class ResMesero extends PBase {
     private fbResSesion fbrs;
     private fbMesaAbierta fbma;
     private fbOrdenCuenta fboc;
+    private fbOrdenEstado fboe;
+
     private Runnable rnFbResSesionList,rnFbMesaAbierta,rnFbMesaComensales,
-            rnFbListenerResSesion, rnfbrsMesaActiva;
+            rnFbListenerResSesion, rnfbrsMesaActiva,rnfboeList;
 
     private clsP_res_grupoObj P_res_grupoObj;
     private clsP_res_turnoObj P_res_turnoObj;
@@ -127,12 +130,15 @@ public class ResMesero extends PBase {
             fbrs=new fbResSesion("ResSesion",gl.tienda);
             fbma=new fbMesaAbierta("MesaAbierta",gl.tienda);
             fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
+            fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
+
 
             rnFbResSesionList = () -> { FbResSesionList();};
             rnFbListenerResSesion = () -> { FbListenerResSesion();};
             rnFbMesaAbierta = () -> {FbMesaAbierta();};
             rnFbMesaComensales = () -> {FbMesaComensales();};
             rnfbrsMesaActiva = () -> {abrirOrdenMesa();};
+            rnfboeList = () -> {fboeList();};
 
             fbrs.setListener(rnFbListenerResSesion);
 
@@ -254,7 +260,22 @@ public class ResMesero extends PBase {
     //region Main
 
     private void listItems() {
-        showItems();
+        try {
+            fboe.listItems(rnfboeList);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fboeList() {
+        try {
+            int ii=fboe.items.size();
+
+
+            showItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     private void showItems() {
@@ -329,14 +350,22 @@ public class ResMesero extends PBase {
                     mesa.pers=rsesion.cantp;
                     mesa.cuentas=rsesion.cantc;
                     mesa.fecha=rsesion.fechault;
+                    mesa.fechaini=rsesion.fechaini;
+
                     mesa.idorden=rsesion.id;
                     mesa.cod_vend=rsesion.vendedor;
+                    mesa.nom_vendedor=" ";
+                    mesa.pendiente=(int) rsesion.fechafin;
+                    if (tienePrecuenta(rsesion.id)) mesa.pendiente=2;
 
-                    T_ordenObj.fill("WHERE (COREL='"+rsesion.id+"') AND (ESTADO=1)");
-                    mesa.pendiente=T_ordenObj.count;
+                    //T_ordenObj.fill("WHERE (COREL='"+rsesion.id+"') AND (ESTADO=1)");
+                    //mesa.pendiente=T_ordenObj.count;
 
                     T_ordenpendObj.fill("WHERE GODIGO_ORDEN='"+rsesion.id+"'");
                     if (T_ordenpendObj.count>0) mesa.est_envio=0;
+
+                    VendedoresObj.fill("WHERE CODIGO_VENDEDOR="+mesa.cod_vend);
+                    if (VendedoresObj.count>0) mesa.nom_vendedor=VendedoresObj.first().nombre;
 
                 }
             }
@@ -347,6 +376,22 @@ public class ResMesero extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
+
+
+    private boolean tienePrecuenta(String idord) {
+        try {
+            if (fboe.items.size()==0) return false;
+            for (int ei = 0; ei <fboe.items.size(); ei++) {
+                if (fboe.items.get(ei).corel.equalsIgnoreCase(idord)) {
+                    if (fboe.items.get(ei).estado==1) return true;
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
     }
 
     private void abrirOrden() {
@@ -825,7 +870,8 @@ public class ResMesero extends PBase {
 
         if (horiz) {
             lblmes.setTextSize(36);lblgrupo.setTextSize(36);
-            gridView.setNumColumns(4);
+
+            if (gl.scrdim>11) gridView.setNumColumns(4); else gridView.setNumColumns(3);
         } else {
             lblmes.setTextSize(20);lblgrupo.setTextSize(20);
             gridView.setNumColumns(2);

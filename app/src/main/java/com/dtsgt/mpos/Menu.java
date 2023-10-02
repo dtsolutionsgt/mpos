@@ -228,7 +228,7 @@ public class Menu extends PBase {
 			if (modosuper) addMenuItem(12,"Reportes");
 			addMenuItem(4,"Anulación");
 			addMenuItem(10,"Cambio usuario");
-			addMenuItem(14,"Modo de emergencia");
+			addMenuItem(14,"Sin conexion");
 
 			adaptergrid=new ListAdaptMenuGrid(this, items,horizpos);
             gridView.setAdapter(adaptergrid);

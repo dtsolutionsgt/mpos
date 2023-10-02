@@ -81,10 +81,12 @@ public class LA_Res_mesa  extends BaseAdapter {
                 holder.lbl5 = convertView.findViewById(R.id.lblV5);
                 holder.lbl6 = convertView.findViewById(R.id.textView270);
                 holder.lbl7 = convertView.findViewById(R.id.textView272);
-                holder.img1 =  convertView.findViewById(R.id.imageView97);
-                holder.img2 =  convertView.findViewById(R.id.imageView130);
-                holder.img3 =  convertView.findViewById(R.id.imageView149);
-                holder.rel1 =  convertView.findViewById(R.id.relcolor);
+                holder.lbl8 = convertView.findViewById(R.id.textView323);
+                holder.lbl9 = convertView.findViewById(R.id.textView324);
+                holder.img1 = convertView.findViewById(R.id.imageView97);
+                holder.img2 = convertView.findViewById(R.id.imageView130);
+                holder.img3 = convertView.findViewById(R.id.imageView149);
+                holder.rel1 = convertView.findViewById(R.id.relcolor);
 
                 convertView.setTag(holder);
             } else {
@@ -101,16 +103,21 @@ public class LA_Res_mesa  extends BaseAdapter {
             holder.img1.setVisibility(View.INVISIBLE);
 
             if (est==0) {
-                holder.lbl5.setText("");
+                holder.lbl5.setText("");holder.lbl8.setText("");holder.lbl9.setText("");
                 holder.rel1.setBackgroundColor(Color.parseColor("#F0F0F0"));
                 holder.img3.setVisibility(View.INVISIBLE);
                 //holder.rel1.setBackgroundColor(Color.parseColor("#CCE6F3"));
             } else {
                 holder.lbl5.setText(""+du.shora(items.get(position).fecha));
+                holder.lbl8.setText(""+du.shora(items.get(position).fechaini));
+                holder.lbl9.setText(items.get(position).nom_vendedor);
+
                 holder.rel1.setBackgroundColor(Color.parseColor("#60C4F2"));
                 holder.img3.setVisibility(View.VISIBLE);
                 //holder.rel1.setBackgroundColor(Color.WHITE);
 
+
+                /*
                 switch (est) {
                     case 1:
                         holder.img1.setImageResource(R.drawable.blank48);
@@ -124,6 +131,17 @@ public class LA_Res_mesa  extends BaseAdapter {
                     case 3:
                         holder.img1.setImageResource(R.drawable.pago_pendiente);
                         break;
+                }
+                */
+            }
+
+            holder.img1.setVisibility(View.VISIBLE);
+            holder.img1.setImageResource(R.drawable.blank48);
+            if (pend>0) {
+                if (pend==2) {
+                    holder.img1.setImageResource(R.drawable.pago_caja);
+                } else {
+                    holder.img1.setImageResource(R.drawable.dish_ready);
                 }
             }
 
@@ -149,7 +167,7 @@ public class LA_Res_mesa  extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView lbl1,lbl5,lbl6,lbl7;
+        TextView lbl1,lbl5,lbl6,lbl7,lbl8,lbl9;
         ImageView img1,img2,img3;
         RelativeLayout rel1;
     }

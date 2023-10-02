@@ -154,7 +154,8 @@ public class Orden extends PBase {
     private Runnable rnfboList, rnfboNewid,rnfboSplit,rnfbocLista,rnfbooLista,
                      rnfbocListaPrecuenta,rnfbocListaCliente,rnfbrsItem,
                      rnfbrsMovcue,rnfbocMovcue,rnfboMovcue,rnfboMovcueOrig,
-                     rnfboDelCue,rnfbocAnul,rnfboeLista,rnfbocbCom,rnfbonList,rnfbonListNotas;
+                     rnfboDelCue,rnfbocAnul,rnfboeLista,rnfbocbCom,rnfbonList,
+                     rnfbonListNotas,rnfboStatCom;
 
     private AppMethods app;
 
@@ -314,6 +315,7 @@ public class Orden extends PBase {
             rnfbocbCom = () -> fbocbCom();
             rnfbonList = () -> fbonList();
             rnfbonListNotas = () -> fbonListNotas();
+            //rnfboStatCom = () -> fboStatCom();
 
             rheader=false;
             fbrs.getItem(idorden,rnfbrsItem);
@@ -425,6 +427,12 @@ public class Orden extends PBase {
 
                     //tipo=prodTipo(gl.prodcod);
                     tipo=prodTipo(prodid);
+                    try {
+                        if (tipo.isEmpty()) tipo="S";
+                    } catch (Exception e) {
+                        tipo="S";
+                    }
+
                     gl.tipoprodcod=tipo;
 
                     if (tipo.equalsIgnoreCase("P") || tipo.equalsIgnoreCase("S") || tipo.equalsIgnoreCase("PB")) {
@@ -2057,7 +2065,7 @@ public class Orden extends PBase {
             item = clsCls.new clsMenu();
             item.ID = 73;
             item.Name = "Precuenta";
-            item.Icon = 73;
+            item.Icon = 68;
             mitems.add(item);
 
             item = clsCls.new clsMenu();
@@ -2145,6 +2153,9 @@ public class Orden extends PBase {
                     if (!hasProducts()) {
                         msgbox("La venta está vacia.");return;
                     }
+
+                    fbo.listItems(null);
+
                     msgAskComanda();
                     break;
                 case 73:
@@ -2182,21 +2193,43 @@ public class Orden extends PBase {
 
     private void exitBtn(boolean enviar) {
         try {
-            //if (cantRegBarril()==0) {
+            try {
+                fbrsitem.fechault=du.getActDateTime();
+                fbrs.setItem(fbrsitem);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
 
-            cerrarOrden();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        int statcom=0;
+
+        try {
+            if (!fbo.errflag) {
+                for (int i = 0; i <fbo.items.size(); i++) {
+                    if (fbo.items.get(i).estado==1) statcom++;
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        try {
+            if (statcom>1) statcom=1;
 
             gl.cerrarmesero=true;
             gl.mesero_lista=true;
 
             try {
-                //ctimer.removeCallbacks(crunner);
-            } catch (Exception e) {}
+                fbrsitem.fechafin=statcom;
+                fbrs.setItem(fbrsitem);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
 
-
-            //} else {
-            //  evnioBarril(true);
-            //}
+            cerrarOrden();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -2403,6 +2436,7 @@ public class Orden extends PBase {
             } else {
                 if (!divideComanda()) return;
                 if (!generaArchivos()) return;
+
                 //generaRegistrosBarril();
                 ejecutaImpresion();
 
@@ -2410,6 +2444,13 @@ public class Orden extends PBase {
 
                 borrarBloqueo();
                 exitBtn(false);
+
+                try {
+                    fbrsitem.fechafin=0;
+                    fbrs.setItem(fbrsitem);
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

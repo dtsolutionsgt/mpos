@@ -1409,6 +1409,9 @@ public class clsClasses {
         public int idgrupo;
         public String area;
         public int cod_vend;
+        public long fechaini;
+        public String nom_vendedor;
+
     }
 
     public class clsP_res_sesion {
