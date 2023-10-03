@@ -92,7 +92,7 @@ public class fbOrdenEstado extends fbBase {
                                             items.add(litem);
 
                                         } catch (Exception e) {
-                                            error = e.getMessage();
+                                            error = "fbOrdenEstado.listItems: "+ e.getMessage();
                                             errflag = true;break;
                                         }
                                     }

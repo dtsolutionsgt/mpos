@@ -315,7 +315,7 @@ public class Orden extends PBase {
             rnfbocbCom = () -> fbocbCom();
             rnfbonList = () -> fbonList();
             rnfbonListNotas = () -> fbonListNotas();
-            //rnfboStatCom = () -> fboStatCom();
+            rnfboStatCom = () -> msgAskComanda();
 
             rheader=false;
             fbrs.getItem(idorden,rnfbrsItem);
@@ -582,6 +582,7 @@ public class Orden extends PBase {
                     String ss=e.getMessage();
                 }
                 cierraPantalla();
+                int iu=0;
             });
 
         } catch (Exception e){
@@ -2154,9 +2155,9 @@ public class Orden extends PBase {
                         msgbox("La venta está vacia.");return;
                     }
 
-                    fbo.listItems(null);
+                    fbo.listItems(rnfboStatCom);
+                    //msgAskComanda();
 
-                    msgAskComanda();
                     break;
                 case 73:
                     if (!hasProducts()) {
@@ -2166,7 +2167,9 @@ public class Orden extends PBase {
                         msgmsg("Existen articulos pendientes de impresion, no se puede proceder con la precuenta.");
                     } else {
                         if (app.isOnWifi()>0) {
-                            if (limpiaVenta()) showListaCuentas();
+                            if (limpiaVenta()) {
+                                showListaCuentas();
+                            }
                         } else {
                             msgAskPrecuentaSinWifi("MPos sin conexión al internet.\nRevise estado de la orden.");
                         }
@@ -4885,16 +4888,21 @@ public class Orden extends PBase {
     }
 
     private void cierraPantalla() {
+        int iu=0;
+
+        iu=1;
         try {
             //ctimer.removeCallbacks(crunner);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+        iu=2;
         try {
             //ctimer.postDelayed(crunner,20000);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+        iu=3;
     }
 
     private void agregaBloqueo() {
