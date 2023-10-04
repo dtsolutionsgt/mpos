@@ -96,7 +96,7 @@ public class Exist extends PBase {
             lblTotal = findViewById(R.id.lblTit7);
             lblalm = findViewById(R.id.textView268);
             relalm= findViewById(R.id.relalm1);
-            pbar=findViewById(R.id.progressBar5);pbar.setVisibility(View.VISIBLE);
+            pbar=findViewById(R.id.progressBar5);pbar.setVisibility(View.INVISIBLE);
             imgref= findViewById(R.id.imageView146);imgref.setVisibility(View.INVISIBLE);
 
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
@@ -138,7 +138,6 @@ public class Exist extends PBase {
             bloqueado=false;
 
             setHandlers();
-
 
         } catch (Exception e) {
             String ss=e.getMessage();
@@ -253,13 +252,14 @@ public class Exist extends PBase {
 
 	private void listItems() {
         try {
+            pbar.setVisibility(View.VISIBLE);
             imgref.setVisibility(View.INVISIBLE);
             idle=false;
 
             if (gl.idalm==gl.idalmpred) {
                 fbb.listExist(fbsucursal,0,rnFbCallBack);
             } else {
-
+                fbb.listExist(fbsucursal,gl.idalm,rnFbCallBack);
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -400,264 +400,6 @@ public class Exist extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-    }
-
-    private void buildItemListOld() {
-        clsClasses.clsExist item,itemt;
-        clsClasses.clsFbPStock fbitem;
-        String vF,cod, name;
-        double costo, total, gtotal=0;
-        boolean flag;
-
-        //fbb.orderByNombre();
-
-        items.clear();gtotal=0;
-        lblReg.setText("Registros : 0 ");lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
-
-        vF = txtFilter.getText().toString().replace("'","").toUpperCase();
-
-        /*
-        try {
-
-            if (fbb.items.size() == 0) {
-                adapter = new ListAdaptExist(this, items,gl.usarpeso);
-                listView.setAdapter(adapter);
-                return;
-            }
-
-            clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
-
-            for (int i = 0; i <fbb.items.size(); i++) {
-
-                fbitem=fbb.items.get(i);
-                flag=false;
-
-                P_productoObj.fill("WHERE CODIGO_PRODUCTO="+fbitem.id+"");
-                cod=P_productoObj.first().codigo.toUpperCase();name=fbitem.nombre.toUpperCase();
-                costo=P_productoObj.first().costo;
-                total=fbitem.cant*costo;gtotal+=total;
-
-
-                if (!vF.isEmpty()) {
-                    if (cod.indexOf(vF)>-1) {
-                        flag=true;
-                    } else {
-                        if (name.indexOf(vF)>-1) flag=true;
-                    }
-                } else flag=true;
-
-                if (fbitem.cant==0) flag=false;
-
-                if (flag) {
-
-                    item = clsCls.new clsExist();
-                    item.Cod = ""+fbitem.id;
-                    item.Desc = fbitem.nombre;
-                    item.flag = 0;
-                    item.items=2;
-                    items.add(item);
-
-                    itemt = clsCls.new clsExist();
-                    itemt.totaluni=mu.frmdecimal(fbitem.cant,0)+" "+fbitem.um;
-                    itemt.ValorT = mu.frmdecimal(costo, gl.peDecImp);
-                    itemt.PesoT = mu.frmdecimal(total, gl.peDecImp);
-                    itemt.flag = 3;
-                    items.add(itemt);
-                }
-
-            }
-
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox(e.getMessage());
-        }
-
-        adapter = new ListAdaptExist(this, items, gl.usarpeso);
-        listView.setAdapter(adapter);
-
-        lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
-        lblReg.setText("Registros : "+ ((int) items.size()/2));
-        pbar.setVisibility(View.INVISIBLE);
-
-
-         */
-    }
-
-    private void listItemsOld() {
-        Cursor dt, dp;
-        clsClasses.clsExist item,itemm,itemt;
-        String vF,pcod, cod, name, um, ump, sc, scm, sct="", sp, spm, spt="",rcant;
-        double val, valm, valt, peso, pesot, costo, total,gtotal=0,ccant;
-        int icnt;
-
-        items.clear();lblReg.setText(" ( 0 ) ");
-
-        vF = txtFilter.getText().toString().replace("'", "");
-
-        try {
-            clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
-
-            if (gl.idalm==gl.idalmpred) {
-                sql = "SELECT P_STOCK.CODIGO, P_PRODUCTO.DESCLARGA, P_PRODUCTO.CODIGO " +
-                        "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK.CODIGO  WHERE 1=1 ";
-                if (vF.length() > 0) sql = sql + "AND ((P_PRODUCTO.DESCLARGA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
-                sql += "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA ";
-                sql += "ORDER BY P_PRODUCTO.DESCLARGA";
-
-            } else {
-                sql = "SELECT P_STOCK_ALMACEN.CODIGO_PRODUCTO, P_PRODUCTO.DESCLARGA, P_PRODUCTO.CODIGO " +
-                        "FROM P_STOCK_ALMACEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK_ALMACEN.CODIGO_PRODUCTO  " +
-                        "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ";
-                if (vF.length() > 0) sql = sql + "AND ((P_PRODUCTO.DESCLARGA LIKE '%" + vF + "%') OR (P_PRODUCTO.CODIGO LIKE '%" + vF + "%')) ";
-                sql += "GROUP BY P_STOCK_ALMACEN.CODIGO_PRODUCTO,P_PRODUCTO.DESCLARGA ";
-                sql += "ORDER BY P_PRODUCTO.DESCLARGA";
-            }
-
-            dp = Con.OpenDT(sql);
-            if (dp.getCount() == 0) {
-                adapter = new ListAdaptExist(this, items,gl.usarpeso);
-                listView.setAdapter(adapter);
-                return;
-            }
-
-            lblReg.setText(" ( " + dp.getCount() + " ) ");
-            dp.moveToFirst();gtotal=0;
-
-            while (!dp.isAfterLast()) {
-
-                pcod=dp.getString(0);
-                valt=0;pesot=0;
-
-                P_productoObj.fill("WHERE CODIGO_PRODUCTO='"+pcod+"'");
-                costo=P_productoObj.first().costo;
-                if (costo==0) {
-
-                }
-
-                if (gl.idalm==gl.idalmpred) {
-                    sql =  "SELECT P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA,SUM(P_STOCK.CANT) AS TOTAL,SUM(P_STOCK.CANTM)," +
-                            "P_STOCK.UNIDADMEDIDA,P_STOCK.LOTE,P_STOCK.DOCUMENTO,P_STOCK.CENTRO,P_STOCK.STATUS,SUM(P_STOCK.PESO),P_PRODUCTO.CODIGO   " +
-                            "FROM P_STOCK INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK.CODIGO  " +
-                            "WHERE (P_PRODUCTO.CODIGO_PRODUCTO='"+pcod+"') " +
-                            "GROUP BY P_STOCK.CODIGO,P_PRODUCTO.DESCLARGA,P_STOCK.UNIDADMEDIDA,P_STOCK.LOTE,P_STOCK.DOCUMENTO,P_STOCK.CENTRO,P_STOCK.STATUS ";
-                    sql+=  "ORDER BY TOTAL ";
-                } else {
-                    sql =  "SELECT P_STOCK_ALMACEN.CODIGO_PRODUCTO, P_PRODUCTO.DESCLARGA, SUM(P_STOCK_ALMACEN.CANT) AS TOTAL, " +
-                            "SUM(P_STOCK_ALMACEN.CANTM), P_STOCK_ALMACEN.UNIDADMEDIDA, P_STOCK_ALMACEN.LOTE, " +
-                            "P_STOCK_ALMACEN.LOTE, 0, 0, SUM(P_STOCK_ALMACEN.PESO),P_PRODUCTO.CODIGO   " +
-                            "FROM P_STOCK_ALMACEN INNER JOIN P_PRODUCTO ON P_PRODUCTO.CODIGO_PRODUCTO=P_STOCK_ALMACEN.CODIGO_PRODUCTO  " +
-                            "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (P_PRODUCTO.CODIGO_PRODUCTO='"+pcod+"') " +
-                            "GROUP BY P_STOCK_ALMACEN.CODIGO_PRODUCTO, P_PRODUCTO.DESCLARGA, " +
-                            "P_STOCK_ALMACEN.UNIDADMEDIDA, P_STOCK_ALMACEN.LOTE ";
-                    sql+=  "ORDER BY TOTAL ";
-                }
-
-                dt = Con.OpenDT(sql);
-                icnt=dt.getCount();
-                if (icnt==1) {
-                    dt.moveToFirst();
-                    if (dt.getDouble(2)>0 && dt.getDouble(3)>0) icnt=2;
-                }
-
-                item = clsCls.new clsExist();
-                item.Cod = pcod;
-                item.Desc = dp.getString(1)+"  [ "+dp.getString(2)+" ]";
-                item.flag = 0;
-                item.items=icnt;
-                items.add(item);
-
-                //if (dt.getCount() == 0) return;
-
-                if (dt.getCount()>0) dt.moveToFirst();
-                while (!dt.isAfterLast()) {
-
-                    cod = dt.getString(0);
-                    name = dt.getString(1);
-                    val = dt.getDouble(2);
-                    valm = dt.getDouble(3);
-                    um = dt.getString(4);
-                    peso =  dt.getDouble(9);
-
-                    valt += val + valm;
-                    pesot += peso ;
-
-                    rcant = mu.frmint2((int) val) + " " + rep.ltrim(um, 2);
-
-                    ump = gl.umpeso;
-                    sp = mu.frmdecimal(peso, gl.peDecImp) + " " + rep.ltrim(ump, 3);
-                    if (!gl.usarpeso) sp = "";
-                    spm = mu.frmdecimal(peso, gl.peDecImp) + " " + rep.ltrim(ump, 3);
-                    if (!gl.usarpeso) spm = "";
-                    spt = mu.frmdecimal(pesot, gl.peDecImp) + " " + rep.ltrim(ump, 3);
-                    if (!gl.usarpeso) spt = "";
-
-                    sc = mu.frmdecimal(val, gl.peDecImp) + " " + rep.ltrim(um, 2);
-                    scm = mu.frmdecimal(valm, gl.peDecImp) + " " + rep.ltrim(um, 2);
-                    sct = mu.frmdecimal(valt, gl.peDecImp) + " " + rep.ltrim(um, 2);
-
-                    item = clsCls.new clsExist();
-                    itemm = clsCls.new clsExist();
-
-                    item.Cod = cod;itemm.Cod = cod;
-                    item.Fecha = cod;itemm.Fecha = cod;
-                    item.Desc = name;itemm.Desc = name;
-                    item.cant = val;itemm.cant = val;
-                    item.cantm = valm;itemm.cantm = valm;
-
-                    item.Valor = sc;itemm.Valor = sc;
-                    item.ValorM = scm;itemm.ValorM = scm;
-                    item.ValorT = sct;itemm.ValorT = sct;
-
-                    item.Peso = sp;itemm.Peso = sp;
-                    item.PesoM = spm;itemm.PesoM = spm;
-                    item.PesoT = spt;item.PesoT = spt;
-
-                    item.rcant=rcant;
-
-                    item.Lote = dt.getString(5);//if (mu.emptystr(item.Lote)) item.Lote =cod;
-                    itemm.Lote = item.Lote;
-                    item.Doc = dt.getString(6);itemm.Doc = dt.getString(6);
-                    item.Centro = dt.getString(7);itemm.Centro = dt.getString(7);
-                    item.Stat = dt.getString(8);itemm.Stat = dt.getString(8);
-
-                    total=item.cant*costo;gtotal+=total;
-                    item.precio=mu.frmdecimal(costo, gl.peDecImp);
-                    item.total=mu.frmdecimal(total, gl.peDecImp);
-
-                    if (val>0) {
-                        item.flag = 1;
-                        items.add(item);
-
-                        if (valm > 0) {
-                            icnt++;
-                            itemm.flag = 2;
-                            items.add(itemm);
-                        }
-                    } else {
-                        item.flag = 1;//item.flag = 2;
-                        items.add(item);
-                    }
-                    dt.moveToNext();
-                }
-
-                if (icnt>1) {
-                    itemt = clsCls.new clsExist();
-                    itemt.ValorT = sct;
-                    itemt.PesoT = spt;
-                    itemt.flag = 3;
-                    items.add(itemt);
-                }
-
-                dp.moveToNext();
-            }
-        } catch (Exception e) {
-            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-            mu.msgbox(e.getMessage());
-        }
-
-        adapter = new ListAdaptExist(this, items, gl.usarpeso);
-        listView.setAdapter(adapter);
-        lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
     }
 
     //endregion

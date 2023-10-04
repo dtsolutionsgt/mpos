@@ -748,8 +748,7 @@ public class InvRecep extends PBase {
 
                     } catch (Exception e) {
                         String sp=e.getMessage();
-                        msgbox(Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
+                        msgbox(Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
                     }
 
                     sql="UPDATE P_PRODUCTO SET COSTO="+imovr.precio+" WHERE CODIGO_PRODUCTO="+imovr.producto;
@@ -762,23 +761,15 @@ public class InvRecep extends PBase {
             db.setTransactionSuccessful();
             db.endTransaction();
 
-            /*
-            toastlong("Existencias actualizadas");
-
-            //if (gl.peInvCompart) {
-                gl.autocom = 1;
-                startActivity(new Intent(this,WSEnv.class));
-            //}
-
-             */
+            gl.autocom = 1;
+            startActivity(new Intent(this,WSEnv.class));
 
             finish();
 
         } catch (Exception e) {
             db.endTransaction();
             String sp=e.getMessage();
-            msgbox(Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
     }
 
@@ -916,136 +907,26 @@ public class InvRecep extends PBase {
         }
     }
 
-    private void updateStockOld(int pcod,double pcant,String um) {
-        try {
-            um=um.trim();
-
-            ins.init("P_STOCK");
-            ins.add("CODIGO",pcod);
-            ins.add("CANT",pcant);
-            ins.add("CANTM",0);
-            ins.add("PESO",0);
-            ins.add("plibra",0);
-            ins.add("LOTE","");
-            ins.add("DOCUMENTO","");
-            ins.add("FECHA",0);
-            ins.add("ANULADO",0);
-            ins.add("CENTRO","");
-            ins.add("STATUS","");
-            ins.add("ENVIADO",1);
-            ins.add("CODIGOLIQUIDACION",0);
-            ins.add("COREL_D_MOV","");
-            ins.add("UNIDADMEDIDA",um);
-            db.execSQL(ins.sql());
-
-        } catch (Exception e) {
-            sql="UPDATE P_STOCK SET CANT=CANT+"+pcant+" WHERE (CODIGO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-            db.execSQL(sql);
-        }
-    }
-
     private void updateStockAlmacen(int pcod,double pcant,String um) {
-
-        Cursor dt;
-        int newid;
+        int idalmacen=gl.idalm;
 
         try {
 
-            um=um.trim();
+            if (gl.idalm==gl.idalmpred) idalmacen=0;
 
-            sql="SELECT CODIGO_STOCK FROM P_stock_almacen  " +
-                "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-            dt=Con.OpenDT(sql);
+            clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
-            if (dt.getCount()==0) {
+            ritem.idprod=pcod;
+            ritem.idalm=idalmacen;
+            ritem.cant=pcant;
+            ritem.um=um.trim();
+            ritem.bandera=0;
 
-                sql="SELECT MAX(CODIGO_STOCK) FROM P_stock_almacen";
-                dt=Con.OpenDT(sql);
-                if (dt.getCount()>0) {
-                    dt.moveToFirst();
-                    newid=dt.getInt(0)+1;
-                } else newid=1;
-
-                ins.init("p_stock_almacen");
-                ins.add("CODIGO_STOCK",newid);
-                ins.add("EMPRESA",gl.emp);
-                ins.add("CODIGO_SUCURSAL",gl.tienda);
-                ins.add("CODIGO_ALMACEN",gl.idalm);
-                ins.add("CODIGO_PRODUCTO",pcod);
-                ins.add("UNIDADMEDIDA",um);
-                ins.add("LOTE","");
-                ins.add("CANT",pcant);
-                ins.add("CANTM",0);
-                ins.add("PESO",0);
-                ins.add("PESOM",0);
-                ins.add("ANULADO",0);
-                db.execSQL(ins.sql());
-
-            } else {
-                sql="UPDATE P_stock_almacen SET CANT=CANT+"+pcant+" " +
-                    "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-                db.execSQL(sql);
-            }
-
-            dt.close();
-
+            fbb.addItem("/"+gl.tienda+"/",ritem);
         } catch (Exception e) {
-            String sp=e.getMessage();
-            msgbox(Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-    }
 
-    private void updateStockAlmacenOld(int pcod,double pcant,String um) {
-
-        Cursor dt;
-        int newid;
-
-        try {
-
-            um=um.trim();
-
-            sql="SELECT CODIGO_STOCK FROM P_stock_almacen  " +
-                    "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-            dt=Con.OpenDT(sql);
-
-            if (dt.getCount()==0) {
-
-                sql="SELECT MAX(CODIGO_STOCK) FROM P_stock_almacen";
-                dt=Con.OpenDT(sql);
-                if (dt.getCount()>0) {
-                    dt.moveToFirst();
-                    newid=dt.getInt(0)+1;
-                } else newid=1;
-
-                ins.init("p_stock_almacen");
-                ins.add("CODIGO_STOCK",newid);
-                ins.add("EMPRESA",gl.emp);
-                ins.add("CODIGO_SUCURSAL",gl.tienda);
-                ins.add("CODIGO_ALMACEN",gl.idalm);
-                ins.add("CODIGO_PRODUCTO",pcod);
-                ins.add("UNIDADMEDIDA",um);
-                ins.add("LOTE","");
-                ins.add("CANT",pcant);
-                ins.add("CANTM",0);
-                ins.add("PESO",0);
-                ins.add("PESOM",0);
-                ins.add("ANULADO",0);
-                db.execSQL(ins.sql());
-
-            } else {
-                sql="UPDATE P_stock_almacen SET CANT=CANT+"+pcant+" " +
-                        "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
-                db.execSQL(sql);
-            }
-
-            dt.close();
-
-        } catch (Exception e) {
-            String sp=e.getMessage();
-            msgbox(Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
-        }
     }
 
     private void converUMBas(int prodid,Double ccant,String umed) throws Exception {
@@ -1546,8 +1427,10 @@ public class InvRecep extends PBase {
 
     private void getFbProdStock(int prodid) {
         try {
+            int idalmacen=gl.idalm;if (almpr) idalmacen=0;
+
             fbprodid=prodid;
-            fbb.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
+            fbb.calculaTotal("/"+gl.tienda+"/",idalmacen,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1833,32 +1716,10 @@ public class InvRecep extends PBase {
     }
 
     public String dispProdUni(int prodid) {
-        double val=0;
-        String uum="";
-
         try {
-            if (almacen) {
-                P_stock_almacenObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+") AND (CODIGO_ALMACEN="+gl.idalm+")");
-                if (P_stock_almacenObj.count>0) {
-                    val=P_stock_almacenObj.first().cant;
-                    uum=P_stock_almacenObj.first().unidadmedida;
-                }
-            } else {
-                getFbProdStock(prodid);
-                /*
-                P_stockObj.fill("WHERE CODIGO="+prodid);
-                if (P_stockObj.count>0) {
-                    val=P_stockObj.first().cant;
-                    uum=P_stockObj.first().unidadmedida;
-                }
-                */
-            }
-
-            //return mu.frmdecno(val)+" "+uum;
-            return " ";
+            getFbProdStock(prodid);
         } catch (Exception e) {
-            msgbox(Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
+            msgbox(Objects.requireNonNull(new Object() { }.getClass().getEnclosingMethod()).getName()+" . "+e.getMessage());
         }
         return "";
     }

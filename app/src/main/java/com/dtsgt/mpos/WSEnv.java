@@ -239,8 +239,7 @@ public class WSEnv extends PBase {
                         break;
                     case 7:
                         processStock();
-                        cStockTot = cStock.size();
-                        if (cStockTot > 0) callMethod("Commit", "SQL", CSQL);
+                        callMethod("Commit", "SQL", CSQL);
                         break;
                     case 8:
                         processFelBita();
@@ -266,7 +265,9 @@ public class WSEnv extends PBase {
                         break;
                     case 12:
                         processMovAlmacen();
-                        if (fTotMovAlm > 0) callMethod("Commit", "SQL", CSQL);
+                        if (fTotMovAlm > 0) {
+                            callMethod("Commit", "SQL", CSQL);
+                        }
                         break;
                     case 13:
                         processFELErr();
@@ -458,7 +459,7 @@ public class WSEnv extends PBase {
                     }
                 }
 
-                ss = "Envío completo\n";
+                ss = "Envío completo - \n";
 
                 ss += "Facturas total: " + ftot + "\n";
                 ss += "Facturas sin envio: " + (ftot - fsend) + "\n";
@@ -475,8 +476,8 @@ public class WSEnv extends PBase {
                 ss += "Caja reporte total: " + cjReporteTot + "\n";
                 ss += "Caja reporte sin envio: " + (cjReporteTot - cjReporteSend) + "\n";
 
-                ss += "Stock total: " + cStockTot + "\n";
-                ss += "Stock sin envio: " + (cStockTot - cStockSend) + "\n";
+                //ss += "Stock total: " + cStockTot + "\n";
+                //ss += "Stock sin envio: " + (cStockTot - cStockSend) + "\n";
 
                 msgboxwait(ss);
 
@@ -1307,9 +1308,10 @@ public class WSEnv extends PBase {
             clsP_stock_almacenObj P_stock_almacenObj = new clsP_stock_almacenObj(this, Con, db);
 
             //P_stockObj.fill("WHERE enviado=1");
-            P_stockObj.fill();
+            //P_stockObj.fill();
             CSQL = "DELETE FROM P_STOCK WHERE SUCURSAL=" + gl.tienda + ";";
 
+            /*
             for (int i = 0; i < P_stockObj.count; i++) {
 
                 sitem = clsCls.new clsP_stockbof();
@@ -1332,15 +1334,18 @@ public class WSEnv extends PBase {
                 cStock.add("" + i);
 
             }
+             */
 
-            P_stock_almacenObj.fill();
+            //P_stock_almacenObj.fill();
             CSQL = CSQL + "DELETE FROM P_stock_almacen WHERE CODIGO_SUCURSAL=" + gl.tienda + ";";
 
+            /*
             for (int i = 0; i < P_stock_almacenObj.count; i++) {
                 ss = P_stock_almacenObj.addItemSqlBOF(P_stock_almacenObj.items.get(i));
                 CSQL = CSQL + ss + ";";
                 //cStock.add(""+i);
             }
+             */
 
         } catch (Exception e) {
             String ss = e.getMessage();
@@ -1696,8 +1701,6 @@ public class WSEnv extends PBase {
             D_mov_almacenObj.fill("WHERE STATCOM = 'N'");
             fTotMovAlm = D_mov_almacenObj.count;
 
-            fTotMovAlm = 0;
-
             total_enviar += fTotMovAlm;
 
             fIdxMovAlm = (fTotMovAlm > 0 ? -1 : 0);
@@ -1760,7 +1763,7 @@ public class WSEnv extends PBase {
                         "\nCierres de caja: " + cjCierreTot +
                         "\nPagos de caja: " + cjPagosTot +
                         "\nReportes caja: " + cjReporteTot +
-                        "\nStock: " + cStockTot);
+                        "\n " );
 
             } else {
                 msgboxwait("No hay datos pendientes de envío");
