@@ -911,7 +911,6 @@ public class InvRecep extends PBase {
         int idalmacen=gl.idalm;
 
         try {
-
             if (gl.idalm==gl.idalmpred) idalmacen=0;
 
             clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
@@ -926,7 +925,6 @@ public class InvRecep extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     private void converUMBas(int prodid,Double ccant,String umed) throws Exception {

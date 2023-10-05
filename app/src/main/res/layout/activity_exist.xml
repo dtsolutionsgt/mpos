@@ -258,5 +258,19 @@
         android:src="@drawable/recibir_rapido"
         android:visibility="invisible" />
 
+    <ImageView
+        android:id="@+id/imageView152"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/txtFilter"
+        android:layout_alignBottom="@+id/txtFilter"
+        android:layout_marginStart="-210dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/txtFilter"
+        android:clickable="true"
+        android:onClick="doClean"
+        android:src="@drawable/erase" />
+
 </RelativeLayout>
 

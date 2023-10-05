@@ -70,7 +70,7 @@ public class Exist extends PBase {
     private Runnable printclose;
 
 	private int tipo,lns, cantExistencia, idalmdpred,idalm;
-	private String itemid,prodid,savecant, fbsucursal;
+	private String itemid,prodid,savecant, fbsucursal,pdef_nom;
 	private boolean bloqueado=false,almacenes,idle=false,disconnected=false;
     private double cantT,disp,dispm,dispT;
 
@@ -119,7 +119,17 @@ public class Exist extends PBase {
 
             P_almacenObj=new clsP_almacenObj(this,Con,db);
             almacenes=tieneAlmacenes();
-            if (!almacenes) {
+            if (almacenes) {
+                if (idalmdpred>0) {
+                    try {
+                        idalm=idalmdpred;gl.idalm=idalmdpred;
+                        gl.nom_alm = pdef_nom;lblalm.setText(gl.nom_alm);
+                        listItems();
+                    } catch (Exception e) {
+                        msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+                    }
+                }
+            } else {
                 gl.idalm=0;gl.idalmpred=0;relalm.setVisibility(View.GONE);
                 listItems();
             }
@@ -169,6 +179,11 @@ public class Exist extends PBase {
 
     public void doRefresh(View view) {
         if (idle) listItems();
+    }
+
+    public void doClean(View view) {
+        txtFilter.setText("");
+        listItems();
     }
 
     public void limpiaFiltro(View view) {
@@ -547,8 +562,7 @@ public class Exist extends PBase {
 
     public boolean tieneAlmacenes() {
 
-        gl.idalmpred =0;gl.idalm=0;
-        idalmdpred=0;
+        gl.idalmpred =0;gl.idalm=0;idalmdpred=0;pdef_nom="";
 
         try {
             clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
@@ -562,6 +576,7 @@ public class Exist extends PBase {
             if (P_almacenObj.count>0) {
                 idalmdpred=P_almacenObj.first().codigo_almacen;
                 gl.idalmpred =idalmdpred;
+                pdef_nom=P_almacenObj.first().nombre;
             }
 
             return true;

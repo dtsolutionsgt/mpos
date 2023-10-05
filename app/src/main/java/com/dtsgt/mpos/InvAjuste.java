@@ -550,10 +550,9 @@ public class InvAjuste extends PBase {
 
             toastlong("Existencias actualizadas");
 
-            //if (gl.peInvCompart) {
-                //gl.autocom = 1;
-                //startActivity(new Intent(this,WSEnv.class));
-            //}
+            gl.autocom = 1;
+            startActivity(new Intent(this,WSEnv.class));
+
             finish();
 
         } catch (Exception e) {
@@ -681,6 +680,26 @@ public class InvAjuste extends PBase {
     }
 
     private void adjustStockAlmacen(int pcod,double pcant,String um) {
+        int idalmacen=gl.idalm;
+
+        try {
+            if (gl.idalm==gl.idalmpred) idalmacen=0;
+
+            clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
+
+            ritem.idprod=pcod;
+            ritem.idalm=idalmacen;
+            ritem.cant=pcant;
+            ritem.um=um.trim();
+            ritem.bandera=0;
+
+            fbb.addItem("/"+gl.tienda+"/",ritem);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void adjustStockAlmacenOld(int pcod,double pcant,String um) {
         um=um.trim();
         sql="UPDATE P_stock_almacen SET CANT=CANT+"+pcant+" " +
                 "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
