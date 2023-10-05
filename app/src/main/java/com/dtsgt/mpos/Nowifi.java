@@ -56,10 +56,10 @@ public class Nowifi extends PBase {
                         "eliminar el articulo en el equipo actual e ingresar lo de nuevo en la caja.";
                 s5="Si la mesa aparece inactiva en la caja, active la e ingrese de nuevo todos los " +
                         "articulos. Luego con la opcion Borrar cuentas en el equipo de mesero borre " +
-                        "la cuenta. Si no se barra, despues de pagar la mesa, va a aparecer de nuevo la " +
-                        "mesa como activo con los articulos";
-                s6="Antes de imprimir precuenta, asegurar se que en ninguno equipo no se ingresó " +
-                   "ninguno artículo que no está incluido en la caja";
+                        "la cuenta. Si no se borra, despues de pagar la mesa, va a aparecer de nuevo la " +
+                        "mesa como activa con los articulos";
+                s6="Antes de imprimir precuenta, asegurar se, que en ninguno otro equipo no se ingresó " +
+                   "ninguno artículo, que no está incluido en la caja";
                 s7="Al momento de recuperar conexión, aparece un mensaje con la información";
                 s8="Esperar UN MINUTO y luego continuar trabajar el todos los equipos";
             } else {

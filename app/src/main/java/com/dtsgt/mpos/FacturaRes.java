@@ -143,7 +143,7 @@ public class FacturaRes extends PBase {
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext;
 	private double pend,stot,stot0,stotsinimp,percep_total;
 	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito,descaddmonto;
-	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,pagocompleto=false;
+	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,corcheck,pagocompleto=false;
     private boolean horiz=true;
 
 	final double percep_val=1;
@@ -156,15 +156,17 @@ public class FacturaRes extends PBase {
 
         try {
 
-            appGlobals ggl=((appGlobals) this.getApplication());
+            appGlobals ggl=((appGlobals) this.getApplication());corcheck=true;
 
-            if (ggl.mesero_precuenta) {
+			if (ggl.mesero_precuenta) {
+				corcheck=false;
                 if (pantallaHorizontal()) {
 					setContentView(R.layout.activity_factura_res_precue);horiz=true;
                 } else {
                     setContentView(R.layout.activity_factura_res_ver_precue);horiz=false;
                 }
             } else {
+				corcheck=true;
                 if (pantallaHorizontal()) {
                     setContentView(R.layout.activity_factura_res);horiz=true;
                 } else {
@@ -355,7 +357,7 @@ public class FacturaRes extends PBase {
 
 		fbb=new fbStock("Stock",gl.tienda);
 
-		assignCorel();
+		if (corcheck) assignCorel();
 
 		cliPorDia();
 
