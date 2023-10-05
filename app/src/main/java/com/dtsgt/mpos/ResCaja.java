@@ -609,7 +609,6 @@ public class ResCaja extends PBase {
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
     }
 
     private void msgAskSync(String msg) {
@@ -622,7 +621,7 @@ public class ResCaja extends PBase {
             dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     try {
-
+                        menuVenta();
                     } catch (Exception e) {
                         msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                     }
