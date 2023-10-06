@@ -2,7 +2,6 @@ package com.dtsgt.mpos;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -142,7 +141,7 @@ public class InvRecep extends PBase {
 
         rnFbCallBack = new Runnable() {
             public void run() {
-                runFbCallBack();
+                fbCallBack();
             }
         };
         fbb=new fbStock("Stock",gl.tienda);
@@ -1412,17 +1411,6 @@ public class InvRecep extends PBase {
 
     //region Firebase
 
-    private void runFbCallBack() {
-        try {
-            lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
-
-            db.execSQL("DELETE FROM T_stock WHERE IDPROD="+fbprodid);
-            db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+fbb.total+",'"+fbb.unimed+"')");
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
     private void getFbProdStock(int prodid) {
         try {
             int idalmacen=gl.idalm;if (almpr) idalmacen=0;
@@ -1433,6 +1421,18 @@ public class InvRecep extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private void fbCallBack() {
+        try {
+            lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
+
+            db.execSQL("DELETE FROM T_stock WHERE IDPROD="+fbprodid);
+            db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+fbb.total+",'"+fbb.unimed+"')");
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 

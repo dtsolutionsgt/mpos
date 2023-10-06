@@ -34,6 +34,7 @@ import com.dtsgt.classes.clsT_costoObj;
 import com.dtsgt.classes.clsT_movdObj;
 import com.dtsgt.classes.clsT_movrObj;
 import com.dtsgt.classes.extListDlg;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_T_movd;
 import com.dtsgt.ladapt.LA_T_movr;
 import com.dtsgt.ladapt.ListAdaptMenuVenta;
@@ -63,6 +64,9 @@ public class InvTrans extends PBase {
     private clsP_stockObj P_stockObj;
     private clsP_stock_almacenObj P_stock_almacenObj;
 
+    private fbStock fbb;
+    private Runnable rnFbListItems;
+
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
     private clsClasses.clsT_movd selitem;
     private clsClasses.clsT_movr selitemr;
@@ -74,66 +78,81 @@ public class InvTrans extends PBase {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        if (pantallaHorizontal()) {
-            setContentView(R.layout.activity_inv_trans);
-        } else {
-            setContentView(R.layout.activity_inv_trans_ver);
+        try {
+
+            super.onCreate(savedInstanceState);
+
+            if (pantallaHorizontal()) {
+                setContentView(R.layout.activity_inv_trans);
+            } else {
+                setContentView(R.layout.activity_inv_trans_ver);
+            }
+
+            super.InitBase();
+
+            listView = (ListView) findViewById(R.id.listView1);
+            grdbtn = (GridView) findViewById(R.id.grdbtn);
+            txtBarra = findViewById(R.id.editText10);
+            lblTit = (TextView) findViewById(R.id.lblTit3);
+            lblDocumento = (TextView) findViewById(R.id.lblDocumento);
+            lblBar = (TextView) findViewById(R.id.lblCant);lblBar.setText("");
+            lblKeyDP = (TextView) findViewById(R.id.textView110);
+            lblProd = (TextView) findViewById(R.id.textView156);lblProd.setText("");
+            lblCant = (TextView) findViewById(R.id.textView158);
+            lblCosto = (TextView) findViewById(R.id.textView160);
+            lblTCant = (TextView) findViewById(R.id.textView155);
+            lblTCosto = (TextView) findViewById(R.id.textView150);
+            lblUni = (TextView) findViewById(R.id.textView229);
+            lblDisp = (TextView) findViewById(R.id.textView265);
+
+            prodid=0;
+            almpr=gl.idalm==gl.idalmpred;
+            if (almpr) almacen=false;else almacen=true;
+
+            corel=gl.ruta+"_"+mu.getCorelBase();
+            String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="almacén: "+na+ " -";
+            invtext=na+" Traslado de: "+ gl.nom_alm + " a: " + gl.nom_alm2+"  - #"+corel;
+            lblTit.setText(invtext);
+
+            khand=new clsKeybHandler(this, lblBar,lblKeyDP);
+            khand.clear(true);khand.enable();
+
+            T_movdObj=new clsT_movdObj(this,Con,db);
+            T_movrObj=new clsT_movrObj(this,Con,db);
+            P_productoObj=new clsP_productoObj(this,Con,db);
+            P_unidadObj=new clsP_unidadObj(this,Con,db);
+            P_unidad_convObj=new clsP_unidad_convObj(this,Con,db);
+            T_costoObj=new clsT_costoObj(this,Con,db);
+            P_stockObj=new clsP_stockObj(this,Con,db);
+            P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
+
+            rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
+
+            fbb=new fbStock("Stock",gl.tienda);
+            rnFbListItems = new Runnable() {
+                public void run() {
+                    //fbListItems();
+                }
+            };
+
+
+            setHandlers();
+
+            iniciaProceso();
+
+            if (!gl.corelmov.isEmpty()) {
+                if (almacen) cargaDatosAlmacen();else cargaDatos();
+            }
+
+            listItems();
+
+            lblDocumento.requestFocus();
+            txtBarra.requestFocus();
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
-
-        super.InitBase();
-
-        listView = (ListView) findViewById(R.id.listView1);
-        grdbtn = (GridView) findViewById(R.id.grdbtn);
-        txtBarra = findViewById(R.id.editText10);
-        lblTit = (TextView) findViewById(R.id.lblTit3);
-        lblDocumento = (TextView) findViewById(R.id.lblDocumento);
-        lblBar = (TextView) findViewById(R.id.lblCant);lblBar.setText("");
-        lblKeyDP = (TextView) findViewById(R.id.textView110);
-        lblProd = (TextView) findViewById(R.id.textView156);lblProd.setText("");
-        lblCant = (TextView) findViewById(R.id.textView158);
-        lblCosto = (TextView) findViewById(R.id.textView160);
-        lblTCant = (TextView) findViewById(R.id.textView155);
-        lblTCosto = (TextView) findViewById(R.id.textView150);
-        lblUni = (TextView) findViewById(R.id.textView229);
-        lblDisp = (TextView) findViewById(R.id.textView265);
-
-        prodid=0;
-        almpr=gl.idalm==gl.idalmpred;
-        if (almpr) almacen=false;else almacen=true;
-
-        corel=gl.ruta+"_"+mu.getCorelBase();
-        String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="almacén: "+na+ " -";
-        invtext=na+" Traslado de: "+ gl.nom_alm + " a: " + gl.nom_alm2+"  - #"+corel;
-        lblTit.setText(invtext);
-
-        khand=new clsKeybHandler(this, lblBar,lblKeyDP);
-        khand.clear(true);khand.enable();
-
-        T_movdObj=new clsT_movdObj(this,Con,db);
-        T_movrObj=new clsT_movrObj(this,Con,db);
-        P_productoObj=new clsP_productoObj(this,Con,db);
-        P_unidadObj=new clsP_unidadObj(this,Con,db);
-        P_unidad_convObj=new clsP_unidad_convObj(this,Con,db);
-        T_costoObj=new clsT_costoObj(this,Con,db);
-        P_stockObj=new clsP_stockObj(this,Con,db);
-        P_stock_almacenObj=new clsP_stock_almacenObj(this,Con,db);
-
-        rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
-
-        setHandlers();
-
-        iniciaProceso();
-
-        if (!gl.corelmov.isEmpty()) {
-            if (almacen) cargaDatosAlmacen();else cargaDatos();
-        }
-
-        listItems();
-
-        lblDocumento.requestFocus();
-        txtBarra.requestFocus();
     }
 
     //region Events
@@ -654,6 +673,40 @@ public class InvTrans extends PBase {
 
     private void ingresoStock(int pcod, double pcant, String um) {
         try {
+            updateStock(0,pcod,pcant,um);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ingresoStockAlmacen(int pcod, double pcant, String um) {
+        try {
+            updateStock(gl.idalm2,pcod,pcant,um);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void egresoStock(int pcod, double pcant, String um) {
+        try {
+            pcant=Math.abs(pcant);
+            updateStock(0,pcod,-pcant,um);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void egresoStockAlmacen(int pcod, double pcant, String um) {
+        try {
+            pcant=Math.abs(pcant);
+            updateStock(gl.idalm2,pcod,-pcant,um);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void ingresoStockOld(int pcod, double pcant, String um) {
+        try {
 
             ins.init("P_STOCK");
 
@@ -683,7 +736,7 @@ public class InvTrans extends PBase {
         }
     }
 
-    private void ingresoStockAlmacen(int pcod, double pcant, String um) {
+    private void ingresoStockAlmacenOld(int pcod, double pcant, String um) {
         Cursor dt;
         int newid;
 
@@ -732,15 +785,27 @@ public class InvTrans extends PBase {
         }
     }
 
-    private void egresoStock(int pcod,double pcant,String um) {
+    private void egresoStockOld(int pcod,double pcant,String um) {
         sql="UPDATE P_STOCK SET CANT=CANT-"+Math.abs(pcant)+" WHERE CODIGO="+pcod+" ";
         db.execSQL(sql);
     }
 
-    private void egresoStockAlmacen(int pcod,double pcant,String um) {
+    private void egresoStockAlmacenOld(int pcod,double pcant,String um) {
         sql="UPDATE P_stock_almacen SET CANT=CANT-"+Math.abs(pcant)+" " +
                 "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") AND (CODIGO_PRODUCTO="+pcod+") AND (UNIDADMEDIDA='"+um+"') ";
         db.execSQL(sql);
+    }
+
+    private void updateStock(int idalmacen,int pcod,double pcant,String um) {
+        clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
+
+        ritem.idprod=pcod;
+        ritem.idalm=idalmacen;
+        ritem.cant=pcant;
+        ritem.um=um.trim();
+        ritem.bandera=0;
+
+        fbb.addItem("/"+gl.tienda+"/",ritem);
     }
 
     private void converUMBas(int prodid,Double ccant,String umed) throws Exception {
