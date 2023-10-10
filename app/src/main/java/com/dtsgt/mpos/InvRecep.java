@@ -298,7 +298,7 @@ public class InvRecep extends PBase {
                     adapter.setSelectedIndex(position);
                     setProduct();
                 }
-           });
+            });
 
             prodView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

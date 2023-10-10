@@ -918,7 +918,7 @@
                 android:src="@drawable/icok" />
         </RelativeLayout>
 
-    <ListView
+        <ListView
         android:id="@+id/listView1"
         android:layout_width="635dp"
         android:layout_height="542dp"
@@ -1019,4 +1019,119 @@
                 android:src="@drawable/add" />
         </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/relprod"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/relRoad"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="48dp"
+        android:layout_toStartOf="@+id/textView72"
+        android:background="@drawable/frame_rect_whitestrip"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/imageView145"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/listProd"
+            android:layout_below="@+id/relRoad"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="0dp"
+            android:clickable="true"
+            android:onClick="doClearFilter"
+            android:padding="5dp"
+            android:src="@drawable/erase" />
+
+        <ListView
+            android:id="@+id/listProd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/editTextText"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/imageView144"
+            android:layout_width="48dp"
+            android:layout_height="42dp"
+            android:layout_below="@id/relRoad"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:clickable="true"
+            android:filterTouchesWhenObscured="true"
+            android:onClick="doProd"
+            android:src="@drawable/btn_lupa" />
+
+        <EditText
+            android:id="@+id/editTextText"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@id/relRoad"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/imageView144"
+            android:layout_toEndOf="@+id/imageView145"
+            android:ems="10"
+            android:hint="Ingrese nombre de producto"
+            android:inputType="text"
+            android:textSize="20sp" />
+
+        <RelativeLayout
+            android:id="@+id/relRoad"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/frame_rect_blue">
+
+            <ImageView
+                android:id="@+id/imageView143"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:src="@drawable/break_w" />
+
+            <RelativeLayout
+                android:id="@+id/relRoadbar"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerVertical="true">
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/lblTit3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center|center_horizontal|center_vertical"
+                android:onClick="doHideList"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="3dp"
+                android:text="PRODUCTOS"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+        </RelativeLayout>
     </RelativeLayout>
+
+</RelativeLayout>

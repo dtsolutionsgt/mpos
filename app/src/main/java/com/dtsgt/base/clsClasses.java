@@ -503,6 +503,7 @@ public class clsClasses {
         public double cant;
         public String um;
         public int bandera;
+        public String nombre;
     }
 
     public class clsFbPStock {
