@@ -1666,6 +1666,25 @@ public class BaseDatosVersion {
         } catch (Exception e) { }
 
         try {
+            sql="CREATE TABLE [T_stockalm] ("+
+                    "ID INTEGER NOT NULL,"+
+                    "IDPROD INTEGER NOT NULL,"+
+                    "IDALM INTEGER NOT NULL,"+
+                    "CANT REAL NOT NULL,"+
+                    "UM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([ID])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX T_stockalm_idx1 ON T_stockalm(ID)";db.execSQL(sql);
+            sql="CREATE INDEX T_stockalm_idx2 ON T_stockalm(IDPROD)";db.execSQL(sql);
+            sql="CREATE INDEX T_stockalm_idx3 ON T_stockalm(IDALM)";db.execSQL(sql);
+
+        } catch (Exception e) { }
+
+
+
+        try {
 
         } catch (Exception e) { }
 

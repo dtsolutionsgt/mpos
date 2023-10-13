@@ -17,6 +17,7 @@ public class fbStock extends fbBase {
     public clsClasses.clsFbStock item,litem;
     public ArrayList<clsClasses.clsFbStock> items= new ArrayList<clsClasses.clsFbStock>();
     public ArrayList<clsClasses.clsT_stock> sitems= new ArrayList<clsClasses.clsT_stock>();
+    public ArrayList<clsClasses.clsT_stockalm> saitems= new ArrayList<clsClasses.clsT_stockalm>();
 
     public boolean transresult;
     public int transstatus;
@@ -26,6 +27,7 @@ public class fbStock extends fbBase {
 
     private clsClasses.clsFbStock tritem;
     private clsClasses.clsT_stock sitem;
+    private clsClasses.clsT_stockalm saitem;
 
 
     public fbStock(String troot, int idsucursal) {
@@ -259,6 +261,57 @@ public class fbStock extends fbBase {
                     runCallBack();
                 }
             });
+        } catch (Exception e) {
+            errflag=true;
+            String ss=e.getMessage();
+        }
+
+        int nc=items.size();
+
+    }
+
+    public void listStock(String node, Runnable rnCallback) {
+        try {
+
+            fdb.getReference(root+node).orderByChild("idalm").
+                    get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            int ii=0,palm;
+                            saitems.clear();
+
+                            if (task.isSuccessful()) {
+
+                                DataSnapshot res=task.getResult();
+
+                                if (res.exists()) {
+
+                                    for (DataSnapshot snap : res.getChildren()) {
+
+                                        saitem=clsCls.new clsT_stockalm();
+
+                                        saitem.id=ii;
+                                        saitem.idprod=snap.child("idprod").getValue(Integer.class);
+                                        saitem.idalm=snap.child("idalm").getValue(Integer.class);
+                                        saitem.cant=snap.child("cant").getValue(Double.class);
+                                        saitem.um=snap.child("um").getValue(String.class);
+                                        saitem.key=snap.getKey();
+
+                                        saitems.add(saitem);ii++;
+
+                                    } // Datasnap
+                                } // Exists
+
+                                errflag=false;
+                            } else {
+                                String se=task.getException().getMessage();
+                                errflag=true;
+                            }
+
+                            callBack=rnCallback;
+                            runCallBack();
+                        }
+                    });
         } catch (Exception e) {
             errflag=true;
             String ss=e.getMessage();

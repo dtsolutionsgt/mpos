@@ -56,7 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="0dp"
             android:layout_toStartOf="@+id/textView260"
-            android:text="Exist. actual" />
+            android:text="Exist. actual"
+            android:visibility="visible" />
     </RelativeLayout>
 
     <TextView
@@ -1030,7 +1031,7 @@
         android:layout_marginBottom="48dp"
         android:layout_toStartOf="@+id/textView72"
         android:background="@drawable/frame_rect_whitestrip"
-        android:visibility="visible">
+        android:visibility="invisible">
 
         <ImageView
             android:id="@+id/imageView145"

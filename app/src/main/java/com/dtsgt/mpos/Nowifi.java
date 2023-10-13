@@ -49,24 +49,23 @@ public class Nowifi extends PBase {
     private void listItems() {
         try {
             if (gl.peRest) {
-                s1="Si el restaurante usa más que uno equipo, deben dejar usar todos los equipos, menos una caja.";
-                s2="Si se usa más que una caja, debe usarse solo una. ";
+                s1="Si el restaurante usa más que un equipo, deben dejar de usar todos los equipos, menos una caja.";
+                s2="Si se usa más de una caja, debe usarse solo una caja. ";
                 s3="Todas las ventas se realizan en la única caja hasta que la conexión se recupera. ";
-                s4="Si la perdida de conexión ocurre durante de ingreso de un articulo a la orden, " +
-                        "eliminar el articulo en el equipo actual e ingresar lo de nuevo en la caja.";
-                s5="Si la mesa aparece inactiva en la caja, active la e ingrese de nuevo todos los " +
-                        "articulos. Luego con la opcion Borrar cuentas en el equipo de mesero borre " +
-                        "la cuenta. Si no se borra, despues de pagar la mesa, va a aparecer de nuevo la " +
-                        "mesa como activa con los articulos";
-                s6="Antes de imprimir precuenta, asegurar se que en ninguno equipo no se ingresó " +
-                   "ninguno artículo que no está incluido en la caja";
+                s4="Antes de imprimir precuenta, asegurarse que en ningún equipo no se ingresó " +
+                    "ningún artículo que no está incluido en la caja";
+                s5="Si un artículo está en el equipo de mesero, pero NO ESTÁ en la caja, " +
+                    "eliminar el artículo en el equipo de mesero e ingresarlo de nuevo en la caja.";
+                s6="Si la mesa no aparece abierta en la caja, pero está abierta en el equipo de mesero," +
+                   "abrirla en la caja e ingrese de nuevo todos los artículos. " +
+                   "Luego con la opción 'Borrar cuentas' en el equipo de mesero borre la cuenta.";
                 s7="Al momento de recuperar conexión, aparece un mensaje con la información";
-                s8="Esperar UN MINUTO y luego continuar trabajar el todos los equipos";
+                s8="Esperar UN MINUTO y luego continuar trabajando en todos los equipos";
             } else {
                 s1="La perdida de conexión a internet afectará únicamente las existencias.";
                 s2="Durante trabajo sin conexión no se van a poder ver las existencias actualizadas. ";
                 s3="Al momento de recuperar conexión, aparece un mensaje con la información";
-                s4="Esperar UN MINUTO y luego continuar trabajar el todos los equipos";
+                s4="Esperar UN MINUTO y luego continuar trabajando el todos los equipos";
                 s5="";s6="";s7="";s8="";
                 l5.setVisibility(View.INVISIBLE);l6.setVisibility(View.INVISIBLE);
                 l7.setVisibility(View.INVISIBLE);l8.setVisibility(View.INVISIBLE);

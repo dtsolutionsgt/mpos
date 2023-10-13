@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsT_stockObj;
+import com.dtsgt.classes.clsT_stockalmObj;
 import com.dtsgt.firebase.fbStock;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -37,7 +38,7 @@ public class InicioInventario extends PBase {
     private Runnable rnFbPullCallBack,rnFbFinishItem;
     private ValueEventListener fbconnListener;
 
-    private ArrayList<clsClasses.clsT_stock> stockitems= new ArrayList<clsClasses.clsT_stock>();
+    private ArrayList<clsClasses.clsT_stockalm> stockitems= new ArrayList<clsClasses.clsT_stockalm>();
 
     private String fbsucursal;
     private int pcount,ppos;
@@ -90,43 +91,44 @@ public class InicioInventario extends PBase {
 
     private void compactarInventario() {
         try {
-            fbb.listExist(fbsucursal,0,rnFbPullCallBack);
+            fbb.listStock(fbsucursal,rnFbPullCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     private void buildItemList() {
-        clsClasses.clsT_stock fbitem;
+        clsClasses.clsT_stockalm fbitem;
 
         try {
             stockitems.clear();
 
-            if (fbb.sitems.size() == 0) {
+            if (fbb.saitems.size() == 0) {
                 processItems();return;
             }
 
-            clsT_stockObj T_stockObj=new clsT_stockObj(this,Con,db);
+            clsT_stockalmObj T_stockalmObj=new clsT_stockalmObj(this,Con,db);
 
-            db.execSQL("DELETE FROM T_stock");
+            db.execSQL("DELETE FROM T_stockalm");
 
-            for (int i = 0; i <fbb.sitems.size(); i++) {
-                T_stockObj.add(fbb.sitems.get(i));
+            for (int i = 0; i <fbb.saitems.size(); i++) {
+                T_stockalmObj.add(fbb.saitems.get(i));
             }
 
             try {
-                sql="select IDPROD,SUM(CANT),UM FROM T_STOCK GROUP BY IDPROD";
+                sql="select IDPROD,IDALM,SUM(CANT),UM FROM T_STOCKALM GROUP BY IDPROD,IDALM";
                 Cursor dt=Con.OpenDT(sql);
 
-                dt.moveToFirst();
+                dt.moveToFirst();int ii=dt.getCount();
                 while (!dt.isAfterLast()) {
 
-                    fbitem=clsCls.new clsT_stock();
+                    fbitem=clsCls.new clsT_stockalm();
 
                     fbitem.id=0;
                     fbitem.idprod=dt.getInt(0);
-                    fbitem.cant=dt.getDouble(1);
-                    fbitem.um=dt.getString(2);
+                    fbitem.idalm=dt.getInt(1);
+                    fbitem.cant=dt.getDouble(2);
+                    fbitem.um=dt.getString(3);
 
                     stockitems.add(fbitem);
 
@@ -182,7 +184,7 @@ public class InicioInventario extends PBase {
         public clsClasses.clsFbStock stitem;
 
         private String um;
-        private int idprod;
+        private int idprod,idalm;
         private double totcant;
 
         public fbStockItem(String troot) {
@@ -198,6 +200,7 @@ public class InicioInventario extends PBase {
         private void processItem() {
             try {
                 idprod=stockitems.get(ppos).idprod;
+                idalm=stockitems.get(ppos).idalm;
                 um=stockitems.get(ppos).um;
                 totcant=stockitems.get(ppos).cant;
 
@@ -222,17 +225,17 @@ public class InicioInventario extends PBase {
 
                             stitem=clsCls.new clsFbStock();
 
-                            stitem.idalm=0;
                             stitem.idprod=idprod;
+                            stitem.idalm=idalm;
                             stitem.cant=totcant;
                             stitem.um=um;
                             stitem.bandera=1;
 
                             addItem(fbsucursal,stitem);
 
-                            for (int i = 0; i <fbb.sitems.size(); i++) {
-                                if (fbb.sitems.get(i).idprod==idprod) {
-                                    removeValue(rnode+fbb.sitems.get(i).key);
+                            for (int i = 0; i <fbb.saitems.size(); i++) {
+                                if (fbb.saitems.get(i).idprod==idprod && fbb.saitems.get(i).idalm==idalm) {
+                                    removeValue(rnode+fbb.saitems.get(i).key);
                                 }
                             }
 

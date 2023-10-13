@@ -880,7 +880,9 @@ public class FacturaRes extends PBase {
 			}
 
 			if (!saved) {
-				if (!saveOrder()) return;
+				if (!saveOrder()) {
+					return;
+				}
 			}
 
 			completaEstadoOrden();

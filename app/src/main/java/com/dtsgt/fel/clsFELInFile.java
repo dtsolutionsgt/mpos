@@ -1398,12 +1398,15 @@ public class clsFELInFile {
         xml+="</dte:DTE>";
 
         //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
+        String tad="10.00";
+
         xml+="<dte:Adenda>";
         if (idcontingencia==0) {
             xml+="<Documento>"+serie+"</Documento>";
         } else {
-            xml+="<Documento>"+idcontingencia+"</Documento>";
+           xml+="<Documento>"+idcontingencia+"</Documento>";
         }
+        xml+="<Propina>"+tad+"</Propina>";
         xml+="</dte:Adenda>";
 
         xml+="</dte:SAT>";

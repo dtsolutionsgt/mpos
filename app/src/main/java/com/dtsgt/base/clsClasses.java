@@ -1692,7 +1692,15 @@ public class clsClasses {
         public String nombre;
         public double costo;
         public String key;
+    }
 
+    public class clsT_stockalm {
+        public int  id;
+        public int  idprod;
+        public int  idalm;
+        public double cant;
+        public String um;
+        public String key;
     }
 
     public class clsT_sv_gcont {

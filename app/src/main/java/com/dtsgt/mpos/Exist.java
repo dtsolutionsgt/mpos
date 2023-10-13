@@ -705,7 +705,6 @@ public class Exist extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
-
         try {
             fbrefListener=new ValueEventListener() {
                 @Override

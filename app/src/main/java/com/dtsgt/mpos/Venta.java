@@ -2730,6 +2730,7 @@ public class Venta extends PBase {
                 }
             }
 
+            /*
             if (pedidos | domenvio) {
                 item = clsCls.new clsMenu();
                 item.ID=16;item.Name="Para llevar";item.Icon=16;
@@ -2737,6 +2738,7 @@ public class Venta extends PBase {
                 //if (!gl.peDomEntEnvio) mitems.add(item);
                 mitems.add(item);
             }
+            */
 
             item = clsCls.new clsMenu();
             item.ID=3;item.Name="Reimpresión";item.Icon=3;
