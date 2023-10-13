@@ -609,9 +609,9 @@ public class FELFactura extends PBase {
                             lcombo);
             }
 
-            if (propina>0) {
+            //if (propina>0) {
                 fel.detalle_propina(propina);
-            }
+            //}
 
             fel.completar(fact.serie,fact.corelativo);
 

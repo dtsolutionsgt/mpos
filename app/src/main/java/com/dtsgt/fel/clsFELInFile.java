@@ -91,8 +91,8 @@ public class clsFELInFile {
     private Handler  halttimer;
     private Runnable haltrunner;
 
-    private String s64, jsfirm,jscert,jsanul,jsidu,firma;
-    private double imp,totmonto,totiva;
+    private String s64, jsfirm,jscert,jsanul,jsidu,firma,str_propina;
+    private double imp,totmonto,totiva,monto_propina;
     private int linea;
     private boolean firmcomplete,certcomplete;
 
@@ -1398,13 +1398,19 @@ public class clsFELInFile {
         xml+="</dte:DTE>";
 
         //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
-        xml+="<dte:Adenda>";
+        if (monto_propina>0) {
+            xml += "<dte:Adenda>";
+            xml+="<Propina>"+str_propina+"</Propina>";
+            xml += "</dte:Adenda>";
+        }
+
+        /*
         if (idcontingencia==0) {
             xml+="<Documento>"+serie+"</Documento>";
         } else {
             xml+="<Documento>"+idcontingencia+"</Documento>";
         }
-        xml+="</dte:Adenda>";
+        */
 
         xml+="</dte:SAT>";
         xml+="</dte:GTDocumento>";
@@ -1608,6 +1614,11 @@ public class clsFELInFile {
     }
 
     public void detalle_propina(double cant) {
+        monto_propina=cant;
+        str_propina= String.format("%.2f",monto_propina);
+    }
+
+    public void detalle_propina_old(double cant) {
         double imp,impbase,tottot;
 
         linea++;
