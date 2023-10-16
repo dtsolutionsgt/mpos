@@ -126,6 +126,8 @@ public class InvTrans extends PBase {
             almpr=gl.idalm==gl.idalmpred;
             if (almpr) almacen=false;else almacen=true;
 
+            if (gl.idalm2==gl.idalmpred) gl.idalm2=0;
+
             corel=gl.ruta+"_"+mu.getCorelBase();
             String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="almacén: "+na+ " -";
             invtext=na+" Traslado de: "+ gl.nom_alm + " a: " + gl.nom_alm2+"  - #"+corel;
