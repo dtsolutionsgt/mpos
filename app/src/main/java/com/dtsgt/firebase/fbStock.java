@@ -12,6 +12,7 @@ import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
 
+//#FIREBASE_STOCK_20231016
 public class fbStock extends fbBase {
 
     public clsClasses.clsFbStock item,litem;

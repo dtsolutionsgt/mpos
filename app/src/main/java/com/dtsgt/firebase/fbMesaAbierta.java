@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 
+//#FIREBASE_MESA_ABIERTA_20231016
 public class fbMesaAbierta extends fbBase {
 
     public clsClasses.clsfbMesaAbierta item;
