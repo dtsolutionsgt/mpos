@@ -38,7 +38,6 @@ import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_productoObj;
-import com.dtsgt.classes.clsP_res_sesionObj;
 import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
@@ -47,7 +46,6 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.classes.extWaitDlg;
-import com.dtsgt.fel.FELFactura;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
@@ -87,7 +85,7 @@ public class Menu extends PBase {
 	private ExDialog menudlg;
 	private extWaitDlg waitdlg,waitdlglimp;
 
-	private fbStock fbb;
+	private fbStock fbs;
 	private Runnable rnFbInvCallBack,rnFbVerInv;
 
 	private clsP_cajacierreObj caja;
@@ -162,7 +160,7 @@ public class Menu extends PBase {
 				}
 			};
 
-			fbb=new fbStock("Stock",gl.tienda);
+			fbs =new fbStock("Stock",gl.tienda);
 
 			listItems();
 
@@ -2344,8 +2342,8 @@ public class Menu extends PBase {
 
 	private void validaInicioInv() {
 		try {
-			//fbb.getIntValue("/config/"+gl.tienda+"/","fecha",rnFbInvCallBack);
-			fbb.getIntValue("/config/",""+gl.tienda,rnFbInvCallBack);
+			//fbs.getIntValue("/config/"+gl.tienda+"/","fecha",rnFbInvCallBack);
+			fbs.getIntValue("/config/",""+gl.tienda,rnFbInvCallBack);
 
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -2356,7 +2354,7 @@ public class Menu extends PBase {
 		long ff,af=du.getActDate();
 
 		try {
-			ff = fbb.retlongvalue;
+			ff = fbs.retlongvalue;
 			if (ff==af) {
 				validaCaja();
 			} else {
@@ -2377,7 +2375,7 @@ public class Menu extends PBase {
 			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
 			P_stockObj.fill();
 
-			fbb.items.clear();
+			fbs.items.clear();
 
 			for (int i = 0; i <P_stockObj.count; i++) {
 
@@ -2389,11 +2387,11 @@ public class Menu extends PBase {
 				ritem.um=P_stockObj.items.get(i).unidadmedida;
 				ritem.bandera=0;
 
-				fbb.items.add(ritem);
+				fbs.items.add(ritem);
 
 			}
 
-			fbb.transBatchStock(rnFbVerInv);
+			fbs.transBatchStock(rnFbVerInv);
 
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -2402,7 +2400,7 @@ public class Menu extends PBase {
 
 	private void versionInvFinish() {
 
-		if (fbb.transresult) {
+		if (fbs.transresult) {
 			try {
 				db.execSQL("DELETE FROM P_STOCK");
 				menuExist();
@@ -2411,7 +2409,7 @@ public class Menu extends PBase {
 				msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 			}
 		} else {
-			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+fbb.transerr);
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+ fbs.transerr);
 		}
 	}
 

@@ -22,7 +22,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,7 +59,6 @@ import com.dtsgt.classes.clsP_linea_impresoraObj;
 import com.dtsgt.classes.clsP_prodrecetaObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_res_mesaObj;
-import com.dtsgt.classes.clsP_stockObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comandaObj;
@@ -124,7 +122,7 @@ public class FacturaRes extends PBase {
     private clsKeybHandler khand;
 	private clsRepBuilder rep;
 
-	private fbStock fbb;
+	private fbStock fbs;
 	private fbOrdenEstado fboe;
 	private fbOrdenCuenta fboc;
 	private fbResSesion fbrs;
@@ -355,7 +353,7 @@ public class FacturaRes extends PBase {
 
 		saved=false;
 
-		fbb=new fbStock("Stock",gl.tienda);
+		fbs =new fbStock("Stock",gl.tienda);
 
 		if (corcheck) assignCorel();
 
@@ -1779,7 +1777,7 @@ public class FacturaRes extends PBase {
 			ritem.um=um.trim();
 			ritem.bandera=0;
 
-			fbb.addItem("/"+gl.tienda+"/",ritem);
+			fbs.addItem("/"+gl.tienda+"/",ritem);
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}

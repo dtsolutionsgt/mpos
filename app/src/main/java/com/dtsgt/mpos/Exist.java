@@ -62,7 +62,7 @@ public class Exist extends PBase {
     private printer prn;
     private clsRepBuilder rep;
 
-    private fbStock fbb;
+    private fbStock fbs;
     private DatabaseReference fbconnRef;
     private ValueEventListener fbconnListener,fbrefListener;
 
@@ -102,12 +102,12 @@ public class Exist extends PBase {
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp,"");
 
             try {
-                fbb.fdb.goOnline();
-                fbb.fdt.push();
+                fbs.fdb.goOnline();
+                fbs.fdt.push();
             } catch (Exception e) {}
 
-            fbb=new fbStock("Stock",gl.tienda);
-            fbconnRef = fbb.fdb.getReference(".info/connected");
+            fbs =new fbStock("Stock",gl.tienda);
+            fbconnRef = fbs.fdb.getReference(".info/connected");
             CreateFbCheckStatus();
 
             rnFbCallBack = new Runnable() {
@@ -272,9 +272,9 @@ public class Exist extends PBase {
             idle=false;
 
             if (gl.idalm==gl.idalmpred) {
-                fbb.listExist(fbsucursal,0,rnFbCallBack);
+                fbs.listExist(fbsucursal,0,rnFbCallBack);
             } else {
-                fbb.listExist(fbsucursal,gl.idalm,rnFbCallBack);
+                fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
             }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -290,7 +290,7 @@ public class Exist extends PBase {
         double costo, total, gtotal=0;
         boolean flag;
 
-        //fbb.orderByNombre();
+        //fbs.orderByNombre();
 
         items.clear();gtotal=0;
         lblReg.setText("Registros : 0 ");lblTotal.setText("Valor total: "+mu.frmcur(gtotal));
@@ -299,7 +299,7 @@ public class Exist extends PBase {
 
         try {
 
-            if (fbb.sitems.size() == 0) {
+            if (fbs.sitems.size() == 0) {
                 adapter = new ListAdaptExist(this, items,gl.usarpeso);
                 listView.setAdapter(adapter);
                 pbar.setVisibility(View.INVISIBLE);
@@ -310,8 +310,8 @@ public class Exist extends PBase {
             clsT_stockObj T_stockObj=new clsT_stockObj(this,Con,db);
             db.execSQL("DELETE FROM T_stock");
 
-            for (int i = 0; i <fbb.sitems.size(); i++) {
-                T_stockObj.add(fbb.sitems.get(i));
+            for (int i = 0; i < fbs.sitems.size(); i++) {
+                T_stockObj.add(fbs.sitems.get(i));
             }
 
             try {

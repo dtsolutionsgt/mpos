@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -60,7 +59,7 @@ public class InvEgreso extends PBase {
     private ArrayList<clsClasses.clsMenu> mmitems= new ArrayList<clsClasses.clsMenu>();
     private clsClasses.clsT_movr selitemr;
 
-    private fbStock fbb;
+    private fbStock fbs;
     private Runnable rnFbCallBack, rnFbListItems;
 
     private String barcode,prodname,um,invtext,corel;
@@ -119,7 +118,7 @@ public class InvEgreso extends PBase {
 
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
-            fbb=new fbStock("Stock",gl.tienda);
+            fbs =new fbStock("Stock",gl.tienda);
 
             setHandlers();
 
@@ -655,7 +654,7 @@ public class InvEgreso extends PBase {
         ritem.um=um.trim();
         ritem.bandera=0;
 
-        fbb.addItem("/"+gl.tienda+"/",ritem);
+        fbs.addItem("/"+gl.tienda+"/",ritem);
     }
 
 

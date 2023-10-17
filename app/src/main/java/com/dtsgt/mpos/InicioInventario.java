@@ -4,21 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.dtsgt.base.clsClasses;
-import com.dtsgt.classes.ExDialog;
-import com.dtsgt.classes.clsT_stockObj;
 import com.dtsgt.classes.clsT_stockalmObj;
 import com.dtsgt.firebase.fbStock;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +25,7 @@ public class InicioInventario extends PBase {
 
     private ProgressBar pBar,pBarw;
 
-    private fbStock fbb;
+    private fbStock fbs;
     private DatabaseReference fbconnRef;
 
     private Runnable rnFbPullCallBack,rnFbFinishItem;
@@ -54,8 +47,8 @@ public class InicioInventario extends PBase {
             pBar=findViewById(R.id.progressBar9);pBar.setVisibility(View.INVISIBLE);
             pBarw=findViewById(R.id.progressBar12);
 
-            fbb=new fbStock("Stock",gl.tienda);
-            fbconnRef = fbb.fdb.getReference(".info/connected");
+            fbs =new fbStock("Stock",gl.tienda);
+            fbconnRef = fbs.fdb.getReference(".info/connected");
 
             rnFbPullCallBack = new Runnable() {
                 public void run() {
@@ -91,7 +84,7 @@ public class InicioInventario extends PBase {
 
     private void compactarInventario() {
         try {
-            fbb.listStock(fbsucursal,rnFbPullCallBack);
+            fbs.listStock(fbsucursal,rnFbPullCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -103,7 +96,7 @@ public class InicioInventario extends PBase {
         try {
             stockitems.clear();
 
-            if (fbb.saitems.size() == 0) {
+            if (fbs.saitems.size() == 0) {
                 processItems();return;
             }
 
@@ -111,8 +104,8 @@ public class InicioInventario extends PBase {
 
             db.execSQL("DELETE FROM T_stockalm");
 
-            for (int i = 0; i <fbb.saitems.size(); i++) {
-                T_stockalmObj.add(fbb.saitems.get(i));
+            for (int i = 0; i < fbs.saitems.size(); i++) {
+                T_stockalmObj.add(fbs.saitems.get(i));
             }
 
             try {
@@ -163,10 +156,10 @@ public class InicioInventario extends PBase {
 
     private void finishProcess() {
         try {
-            //fbb.updateValue("/config"+fbsucursal,"fecha",""+du.getActDate());
-            //fbb.updateValue("/config"+fbsucursal,"ruta",""+gl.codigo_ruta);
+            //fbs.updateValue("/config"+fbsucursal,"fecha",""+du.getActDate());
+            //fbs.updateValue("/config"+fbsucursal,"ruta",""+gl.codigo_ruta);
 
-            fbb.updateValue("/config/",""+gl.tienda,""+du.getActDate());
+            fbs.updateValue("/config/",""+gl.tienda,""+du.getActDate());
 
             toast("Inventario inicializado.");
             finish();
@@ -233,9 +226,9 @@ public class InicioInventario extends PBase {
 
                             addItem(fbsucursal,stitem);
 
-                            for (int i = 0; i <fbb.saitems.size(); i++) {
-                                if (fbb.saitems.get(i).idprod==idprod && fbb.saitems.get(i).idalm==idalm) {
-                                    removeValue(rnode+fbb.saitems.get(i).key);
+                            for (int i = 0; i < fbs.saitems.size(); i++) {
+                                if (fbs.saitems.get(i).idprod==idprod && fbs.saitems.get(i).idalm==idalm) {
+                                    removeValue(rnode+ fbs.saitems.get(i).key);
                                 }
                             }
 

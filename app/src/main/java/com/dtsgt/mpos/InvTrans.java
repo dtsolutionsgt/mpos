@@ -1,8 +1,6 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -71,7 +69,7 @@ public class InvTrans extends PBase {
     private clsP_stockObj P_stockObj;
     private clsP_stock_almacenObj P_stock_almacenObj;
 
-    private fbStock fbb;
+    private fbStock fbs;
     private Runnable rnFbCallBack,rnFbListItems;
 
     public ArrayList<clsClasses.clsFbStock> fbbitems= new ArrayList<clsClasses.clsFbStock>();
@@ -125,8 +123,7 @@ public class InvTrans extends PBase {
             prodid=0;
             almpr=gl.idalm==gl.idalmpred;
             if (almpr) almacen=false;else almacen=true;
-
-            if (gl.idalm2==gl.idalmpred) gl.idalm2=0;
+            //if (gl.idalm2==gl.idalmpred) gl.idalm2=0;
 
             corel=gl.ruta+"_"+mu.getCorelBase();
             String na=gl.nom_alm.toUpperCase();if (!na.isEmpty()) na="almacén: "+na+ " -";
@@ -148,7 +145,7 @@ public class InvTrans extends PBase {
 
             rep=new clsRepBuilder(this,gl.prw,true,gl.peMon,gl.peDecImp, "");
 
-            fbb=new fbStock("Stock",gl.tienda);
+            fbs =new fbStock("Stock",gl.tienda);
             rnFbListItems= () -> {fbListItems();};
             rnFbCallBack= () -> { fbCallBack();};
 
@@ -166,7 +163,7 @@ public class InvTrans extends PBase {
             txtBarra.requestFocus();
 
             int idapr=gl.idalm;if (almpr) idapr=0;
-            fbb.listItems("/"+gl.tienda+"/",idapr,rnFbListItems);
+            fbs.listItems("/"+gl.tienda+"/",idapr,rnFbListItems);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -749,7 +746,7 @@ public class InvTrans extends PBase {
     private void egresoStockAlmacen(int pcod, double pcant, String um) {
         try {
             pcant=Math.abs(pcant);
-            updateStock(gl.idalm2,pcod,-pcant,um);
+            updateStock(gl.idalm,pcod,-pcant,um);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -855,7 +852,7 @@ public class InvTrans extends PBase {
         ritem.um=um.trim();
         ritem.bandera=0;
 
-        fbb.addItem("/"+gl.tienda+"/",ritem);
+        fbs.addItem("/"+gl.tienda+"/",ritem);
     }
 
     private void converUMBas(int prodid,Double ccant,String umed) throws Exception {
@@ -1062,16 +1059,16 @@ public class InvTrans extends PBase {
         try {
             if (!db.isOpen()) onResume();
 
-            if (fbb.errflag) throw new Exception(fbb.error);
+            if (fbs.errflag) throw new Exception(fbs.error);
 
             P_prodObj.fill();
             fbbitems.clear();fbbcodes.clear();
 
-            for (int i = 0; i <fbb.items.size(); i++) {
-                pcod=fbb.items.get(i).idprod;
+            for (int i = 0; i < fbs.items.size(); i++) {
+                pcod= fbs.items.get(i).idprod;
                 if (!fbbcodes.contains(pcod)) {
-                    fbb.items.get(i).nombre=prodnom(fbb.items.get(i).idprod);
-                    fbbitems.add(fbb.items.get(i));
+                    fbs.items.get(i).nombre=prodnom(fbs.items.get(i).idprod);
+                    fbbitems.add(fbs.items.get(i));
                     fbbcodes.add(pcod);
                 }
             }
@@ -1298,7 +1295,7 @@ public class InvTrans extends PBase {
             int idalmacen=gl.idalm;if (almpr) idalmacen=0;
 
             fbprodid=prodid;
-            fbb.calculaTotal("/"+gl.tienda+"/",idalmacen,fbprodid,rnFbCallBack);
+            fbs.calculaTotal("/"+gl.tienda+"/",idalmacen,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1306,11 +1303,11 @@ public class InvTrans extends PBase {
 
     private void fbCallBack() {
         try {
-            dispact=fbb.total;
-            lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
+            dispact= fbs.total;
+            lblDisp.setText("Disponible: "+mu.frmdecno(fbs.total)+" "+ fbs.unimed);
 
             db.execSQL("DELETE FROM T_stock WHERE IDPROD="+fbprodid);
-            db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+fbb.total+",'"+fbb.unimed+"')");
+            db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+ fbs.total+",'"+ fbs.unimed+"')");
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

@@ -60,7 +60,7 @@ public class InvRecep extends PBase {
     private ListAdaptMenuVenta adapterb;
 
     private clsRepBuilder rep;
-    private fbStock fbb;
+    private fbStock fbs;
     private Runnable rnFbCallBack, rnFbListItems;
 
     private clsT_movdObj T_movdObj;
@@ -144,7 +144,7 @@ public class InvRecep extends PBase {
                 fbCallBack();
             }
         };
-        fbb=new fbStock("Stock",gl.tienda);
+        fbs =new fbStock("Stock",gl.tienda);
 
         rnFbListItems = new Runnable() {
             public void run() {
@@ -900,7 +900,7 @@ public class InvRecep extends PBase {
             ritem.um=um.trim();
             ritem.bandera=0;
 
-            fbb.addItem("/"+gl.tienda+"/",ritem);
+            fbs.addItem("/"+gl.tienda+"/",ritem);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -920,7 +920,7 @@ public class InvRecep extends PBase {
             ritem.um=um.trim();
             ritem.bandera=0;
 
-            fbb.addItem("/"+gl.tienda+"/",ritem);
+            fbs.addItem("/"+gl.tienda+"/",ritem);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1416,7 +1416,7 @@ public class InvRecep extends PBase {
             int idalmacen=gl.idalm;if (almpr) idalmacen=0;
 
             fbprodid=prodid;
-            fbb.calculaTotal("/"+gl.tienda+"/",idalmacen,fbprodid,rnFbCallBack);
+            fbs.calculaTotal("/"+gl.tienda+"/",idalmacen,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1424,10 +1424,10 @@ public class InvRecep extends PBase {
 
     private void fbCallBack() {
         try {
-            lblDisp.setText("Disponible: "+mu.frmdecno(fbb.total)+" "+fbb.unimed);
+            lblDisp.setText("Disponible: "+mu.frmdecno(fbs.total)+" "+ fbs.unimed);
 
             db.execSQL("DELETE FROM T_stock WHERE IDPROD="+fbprodid);
-            db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+fbb.total+",'"+fbb.unimed+"')");
+            db.execSQL("INSERT INTO T_stock VALUES ("+fbprodid+","+fbprodid+","+ fbs.total+",'"+ fbs.unimed+"')");
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

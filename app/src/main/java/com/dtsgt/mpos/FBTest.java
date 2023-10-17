@@ -10,7 +10,7 @@ import com.dtsgt.firebase.fbPStockTransExec;
 
 public class FBTest extends PBase {
 
-    private fbPStock fbb;
+    private fbPStock fbs;
     private fbPStockTrans fbt;
 
     private Runnable rnCallBack,rnTransBack;
@@ -41,7 +41,7 @@ public class FBTest extends PBase {
             }
         };
 
-        fbb=new fbPStock("PStock",gl.tienda);
+        fbs =new fbPStock("PStock",gl.tienda);
         fbt=new fbPStockTrans("PStockTrans",gl.tienda);
 
     }
@@ -84,13 +84,20 @@ public class FBTest extends PBase {
 
         try {
 
-            item=newitem2(20353,23,0,"Botella IPA","UN");fbb.setItem(node+pref+item.id,item);
-            item=newitem2(20354,15,0,"Botella Lager","UN");fbb.setItem(node+pref+item.id,item);
-            item=newitem2(20355,25,0,"Botella Stout","UN");fbb.setItem(node+pref+item.id,item);
-            item=newitem2(21160,12,0,"Pechuga","UN");fbb.setItem(node+pref+item.id,item);
-            item=newitem2(21161, 5,0,"Ensalada","UN");fbb.setItem(node+pref+item.id,item);
-            item=newitem2(21223,10,0,"Cuadril","UN");fbb.setItem(node+pref+item.id,item);
-            item=newitem2(21224,19,0,"Pierna","UN");fbb.setItem(node+pref+item.id,item);
+            item=newitem2(20353,23,0,"Botella IPA","UN");
+            fbs.setItem(node+pref+item.id,item);
+            item=newitem2(20354,15,0,"Botella Lager","UN");
+            fbs.setItem(node+pref+item.id,item);
+            item=newitem2(20355,25,0,"Botella Stout","UN");
+            fbs.setItem(node+pref+item.id,item);
+            item=newitem2(21160,12,0,"Pechuga","UN");
+            fbs.setItem(node+pref+item.id,item);
+            item=newitem2(21161, 5,0,"Ensalada","UN");
+            fbs.setItem(node+pref+item.id,item);
+            item=newitem2(21223,10,0,"Cuadril","UN");
+            fbs.setItem(node+pref+item.id,item);
+            item=newitem2(21224,19,0,"Pierna","UN");
+            fbs.setItem(node+pref+item.id,item);
 
             msgbox("OK");
         } catch (Exception e) {
@@ -142,7 +149,7 @@ public class FBTest extends PBase {
 
     private void getValue(String rnode) {
         try {
-            fbb.getItem(rnode,rnCallBack);
+            fbs.getItem(rnode,rnCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -153,7 +160,7 @@ public class FBTest extends PBase {
         try {
             item=newitem2(20353,2,0,"Botella IPA","UN");
 
-            fbb.transUpdateCant(item,null);
+            fbs.transUpdateCant(item,null);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -163,10 +170,10 @@ public class FBTest extends PBase {
         try {
             switch (rnmode) {
                 case 1:
-                    msgbox(fbb.item.nombre+" : "+fbb.item.cant);
+                    msgbox(fbs.item.nombre+" : "+ fbs.item.cant);
                     break;
                 case 2:
-                    msgbox(fbb.item.nombre+" : "+fbb.item.cant);
+                    msgbox(fbs.item.nombre+" : "+ fbs.item.cant);
                     break;
             }
 

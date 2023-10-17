@@ -130,7 +130,7 @@ public class Venta extends PBase {
     private wsOpenDT wso;
     private Runnable rnOrdenInsert,rnOrdenQuery,rnOrdenDel;
 
-    private fbStock fbb;
+    private fbStock fbs;
     private Runnable rnFbCallBack;
     private int fbprodid,fbcallmode=0;
 
@@ -236,7 +236,7 @@ public class Venta extends PBase {
                 runFbCallBack();
             }
         };
-        fbb=new fbStock("Stock",gl.tienda);
+        fbs =new fbStock("Stock",gl.tienda);
 
         modoMeseros();
 
@@ -3753,7 +3753,7 @@ public class Venta extends PBase {
         int cstock, cbcombo;
 
         try {
-            cstock=(int) fbb.total;
+            cstock=(int) fbs.total;
             cbcombo=cantProdCombo(fbprodid);
             cstock=cstock-cbcombo;
 
@@ -3780,7 +3780,7 @@ public class Venta extends PBase {
     private void getDispProdx(String prid) {
         try {
             fbprodid=app.codigoProducto(prid);
-            fbb.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
+            fbs.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -3790,7 +3790,7 @@ public class Venta extends PBase {
         /*
          try {
              fbprodid=app.codigoProducto(prid);
-             fbb.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
+             fbs.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

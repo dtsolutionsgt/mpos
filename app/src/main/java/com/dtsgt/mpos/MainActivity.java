@@ -30,7 +30,6 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -69,7 +68,7 @@ public class MainActivity extends PBase {
 
     private BaseDatosVersion dbVers;
     private LA_Login adapter;
-    private fbStock fbb;
+    private fbStock fbs;
 
     private ArrayList<clsClasses.clsMenu> mitems = new ArrayList<>();
     private ArrayList<String> spincode = new ArrayList<>();
@@ -81,7 +80,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String parVer = "5.2.0.3";
+    private String parVer = "5.2.0.4";
 
     private Typeface typeface;
 
@@ -106,7 +105,7 @@ public class MainActivity extends PBase {
             }
 
             try {
-                fbb=new fbStock("Stock",0);
+                fbs =new fbStock("Stock",0);
             } catch (Exception e) {
                 String se=e.getMessage();
                 se=se+"";
@@ -256,7 +255,7 @@ public class MainActivity extends PBase {
             app.setScreenDim(this);
 
             try {
-                fbb.listExist("/"+gl.tienda+"/",0,null);
+                fbs.listExist("/"+gl.tienda+"/",0,null);
             } catch (Exception e) {
                 String se=e.getMessage();
                 se=se+"";

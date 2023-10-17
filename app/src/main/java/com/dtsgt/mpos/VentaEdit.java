@@ -1,6 +1,5 @@
 package com.dtsgt.mpos;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ public class VentaEdit extends PBase {
     private clsT_comboObj T_comboObj;
     private clsP_productoObj P_productoObj;
 
-    private fbStock fbb;
+    private fbStock fbs;
     private Runnable rnFbCallBack;
 
     private int cant, lcant, prodid, disp, dif;
@@ -51,7 +50,7 @@ public class VentaEdit extends PBase {
                 runFbCallBack();
             }
         };
-        fbb=new fbStock("Stock",gl.tienda);
+        fbs =new fbStock("Stock",gl.tienda);
 
         Handler mtimer = new Handler();
         Runnable mrunner=new Runnable() {
@@ -210,12 +209,12 @@ public class VentaEdit extends PBase {
         int cstock, cbcombo;
 
         try {
-            cstock=(int) fbb.total;
+            cstock=(int) fbs.total;
             cbcombo=cantProdCombo(prodid);
             disp=cstock-cbcombo;
 
             if (disp>0) {
-                lbl3.setText("Disponible: "+mu.frmdecno(disp)+" "+fbb.unimed);
+                lbl3.setText("Disponible: "+mu.frmdecno(disp)+" "+ fbs.unimed);
             } else {
                 lbl3.setText("Disponible: -");
             }
@@ -227,7 +226,7 @@ public class VentaEdit extends PBase {
 
     private void getFbProdStock(int prodid) {
         try {
-            fbb.calculaTotal("/"+gl.tienda+"/",0,prodid,rnFbCallBack);
+            fbs.calculaTotal("/"+gl.tienda+"/",0,prodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

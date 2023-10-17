@@ -61,7 +61,7 @@ public class Anulacion extends PBase {
     private wsInventCompartido wsi;
     private Runnable recibeInventario;
 
-	private fbStock fbb;
+	private fbStock fbs;
 
 	private Runnable printotrodoc,printclose;
 	private printer prn;
@@ -145,7 +145,7 @@ public class Anulacion extends PBase {
 
         getURL();
 
-		fbb=new fbStock("Stock",gl.tienda);
+		fbs =new fbStock("Stock",gl.tienda);
 
 		wsi=new wsInventCompartido(this,gl.wsurl,gl.emp,3,db,Con);
 		xobj = new XMLObject(ws);
@@ -1048,7 +1048,7 @@ public class Anulacion extends PBase {
 			ritem.um=um.trim();
 			ritem.bandera=0;
 
-			fbb.addItem("/"+gl.tienda+"/",ritem);
+			fbs.addItem("/"+gl.tienda+"/",ritem);
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
