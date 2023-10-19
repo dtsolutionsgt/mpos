@@ -269,9 +269,6 @@ public class ResMesero extends PBase {
 
     private void fboeList() {
         try {
-            int ii=fboe.items.size();
-
-
             showItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

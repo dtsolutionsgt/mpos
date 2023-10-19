@@ -28,6 +28,8 @@ public class fbMesaAbierta extends fbBase {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()) {
+                    errflag=false;error="";itemexists=false;
+
                     DataSnapshot res=task.getResult();
 
                     try {

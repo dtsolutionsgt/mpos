@@ -94,18 +94,14 @@ public class BaseDatosVersion {
         }
 
         try {
-
             sql="ALTER TABLE P_res_mesa ADD COLUMN CODIGO_QR TEXT;";
             db.execSQL(sql);
-
         } catch (Exception e) {
         }
 
         try {
-
             sql="DROP TABLE P_res_mesero;";
             db.execSQL(sql);
-
         } catch (Exception e) {
         }
 
@@ -1680,6 +1676,11 @@ public class BaseDatosVersion {
             sql="CREATE INDEX T_stockalm_idx2 ON T_stockalm(IDPROD)";db.execSQL(sql);
             sql="CREATE INDEX T_stockalm_idx3 ON T_stockalm(IDALM)";db.execSQL(sql);
 
+        } catch (Exception e) { }
+
+        try {
+            sql="ALTER TABLE P_SUCURSAL ADD COLUMN FECHA_CONTR LONG;";
+            db.execSQL(sql);
         } catch (Exception e) { }
 
 

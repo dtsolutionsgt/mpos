@@ -24,7 +24,7 @@ public class fbStock extends fbBase {
     public int transstatus;
     public double total;
     public String unimed,transerr;
-    public long retlongvalue;
+    public long retlongvalue,registers;
 
     private clsClasses.clsFbStock tritem;
     private clsClasses.clsT_stock sitem;
@@ -269,6 +269,36 @@ public class fbStock extends fbBase {
 
         int nc=items.size();
 
+    }
+
+    public void cantExist(String node,int idalm, Runnable rnCallback) {
+        try {
+
+            fdb.getReference(root+node).orderByChild("idalm").equalTo(idalm).
+                    get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            registers =0;
+
+                            if (task.isSuccessful()) {
+                                DataSnapshot res=task.getResult();
+                                if (res.exists()) {
+                                    registers=res.getChildrenCount();
+                                }
+                                errflag=false;
+                            } else {
+                                String se=task.getException().getMessage();
+                                errflag=true;
+                            }
+
+                            callBack=rnCallback;
+                            runCallBack();
+                        }
+                    });
+        } catch (Exception e) {
+            errflag=true;
+            String ss=e.getMessage();
+        }
     }
 
     public void listStock(String node, Runnable rnCallback) {

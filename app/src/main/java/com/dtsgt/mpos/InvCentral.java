@@ -14,6 +14,7 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stock_inv_detObj;
 import com.dtsgt.classes.clsP_stock_inv_errObj;
@@ -21,6 +22,7 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsViewObj;
 import com.dtsgt.classes.extWaitDlg;
+import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_imp_inv;
 import com.dtsgt.webservice.srvCommit;
 import com.dtsgt.webservice.wsOpenDT;
@@ -34,7 +36,7 @@ public class InvCentral extends PBase {
 
     private wsOpenDT wsic;
     private Runnable rnInvCent;
-    public clsRepBuilder rep;
+    private clsRepBuilder rep;
     private extWaitDlg waitdlg;
 
     private clsP_stock_inv_detObj P_stock_inv_detObj;
@@ -48,8 +50,11 @@ public class InvCentral extends PBase {
 
     private LA_imp_inv adapter;
 
-    private String inserr;
-    private int idinv,codigo_proveedor;
+    private fbStock fbs;
+
+    private String inserr,alm_nom;
+    private int idinv,codigo_proveedor,idalm,idalmdpred;
+    private boolean almacen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,21 +69,32 @@ public class InvCentral extends PBase {
             lblTCant = findViewById(R.id.textView155);
             lblTCosto = findViewById(R.id.textView150);
 
-            idinv=gl.invcent_cod;
+            idinv=gl.invcent_cod;idalm=gl.invcen_alm;
 
-            lblTit.setText("INVENTARIO INICIAL #"+idinv);
+            clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+            P_almacenObj.fill("WHERE ACTIVO=1 AND ES_PRINCIPAL=1");
+            if (P_almacenObj.count>0) idalmdpred=P_almacenObj.first().codigo_almacen;else idalmdpred=0;
+
+            P_almacenObj.fill("WHERE CODIGO_ALMACEN="+idalm);
+            if (P_almacenObj.count>0) {
+                alm_nom=" - Almacen: "+P_almacenObj.first().nombre;
+            } else alm_nom="";
+            almacen=false;
+            if (idalm>0) {
+                if (idalm!=idalmdpred) almacen=true;
+            }
+
+            lblTit.setText("INVENTARIO INICIAL #"+idinv+alm_nom);
 
             P_stock_inv_detObj=new clsP_stock_inv_detObj(this,Con,db);
             P_stock_inv_errObj=new clsP_stock_inv_errObj(this,Con,db);
 
             app.getURL();
 
+            fbs =new fbStock("Stock",gl.tienda);
+
             wsic=new wsOpenDT(gl.wsurl);
-            rnInvCent = new Runnable() {
-                public void run() {
-                    callbackInvCent();
-                }
-            };
+            rnInvCent= () -> {callbackInvCent();};
 
             setHandlers();
 
@@ -99,7 +115,6 @@ public class InvCentral extends PBase {
                 }
             };
             mtimer.postDelayed(mrunner,200);
-
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -273,6 +288,14 @@ public class InvCentral extends PBase {
     }
 
     private boolean applyInventory() {
+        if (almacen) {
+            return aplicarInventario();
+        } else {
+            return aplicarInventario();
+        }
+    }
+
+    private boolean aplicarInventario() {
         clsClasses.clsD_Mov header;
         clsClasses.clsD_MovD item;
         clsClasses.clsT_costo cost;
@@ -387,7 +410,144 @@ public class InvCentral extends PBase {
         return false;
     }
 
+    private boolean aplicarInventarioAlmacen() {
+        clsClasses.clsD_Mov header;
+        clsClasses.clsD_MovD item;
+        clsClasses.clsT_costo cost;
+
+        int pc,pi,errs=0;
+        String um,corel;
+        double cant,cc,costo=0;
+
+        try {
+            db.execSQL("DELETE FROM P_STOCK_INV_ERR WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
+
+            clsP_productoObj P_productoObj=new clsP_productoObj(this,Con,db);
+            P_productoObj.fill();
+
+            pcod.clear();pum.clear();
+
+            for (int i = 0; i <P_productoObj.count; i++) {
+                pcod.add(P_productoObj.items.get(i).codigo_producto);
+                pum.add(P_productoObj.items.get(i).unidbas);
+            }
+
+            P_productoObj.items.clear();
+
+            P_stock_inv_detObj.fill("WHERE (CODIGO_INVENTARIO_ENC="+idinv+")");
+            for (int i = 0; i <P_stock_inv_detObj.count; i++) {
+                pc=P_stock_inv_detObj.items.get(i).codigo_producto;
+                um=P_stock_inv_detObj.items.get(i).unidadmedida;
+                cc=P_stock_inv_detObj.items.get(i).cant*P_stock_inv_detObj.items.get(i).costo;
+                costo+=cc;
+
+                if (!pcod.contains(pc)) {
+                    logError(pc,"Producto no existe o deshabilitado");errs++;
+                } else {
+                    pi=pcod.indexOf(pc);
+                    if (!pum.get(pi).equalsIgnoreCase(um)) {
+                        logError(pc,"Incorrecta UM: "+um);errs++;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+
+        if (errs>0) return false;
+
+        try {
+            db.beginTransaction();
+
+            clsD_MovObj mov=new clsD_MovObj(this,Con,db);
+            clsD_MovDObj movd=new clsD_MovDObj(this,Con,db);
+            corel=gl.ruta+"_"+mu.getCorelBase();
+
+            header =clsCls.new clsD_Mov();
+            header.COREL=corel;
+            header.RUTA=gl.codigo_ruta;
+            header.ANULADO=0;
+            header.FECHA=du.getActDateTime();
+            header.TIPO="R";
+            header.USUARIO=gl.codigo_vendedor;
+            header.REFERENCIA= du.sfecha(du.getActDateTime());
+            header.STATCOM="N";
+            header.IMPRES=0;
+            header.CODIGOLIQUIDACION=0;
+            header.CODIGO_PROVEEDOR= codigo_proveedor;
+            header.TOTAL=costo;
+
+            mov.add(header);
+
+            int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD");
+
+            db.execSQL("DELETE FROM P_STOCK");
+
+            for (int i = 0; i <P_stock_inv_detObj.count; i++) {
+                pc=P_stock_inv_detObj.items.get(i).codigo_producto;
+                um=P_stock_inv_detObj.items.get(i).unidadmedida;
+                cant=P_stock_inv_detObj.items.get(i).cant;
+
+                if (!addtoStock(pc,cant,um)) {
+                    logError(pc,inserr);errs++;
+                }
+
+                item =clsCls.new clsD_MovD();
+
+                item.coreldet=corm+i+1;
+                item.corel=corel;
+                item.producto=P_stock_inv_detObj.items.get(i).codigo_producto;
+                item.cant=P_stock_inv_detObj.items.get(i).cant;
+                item.cantm=0;
+                item.peso=0;
+                item.pesom=0;
+                item.lote="";
+                item.codigoliquidacion=0;
+                item.unidadmedida=P_stock_inv_detObj.items.get(i).unidadmedida;
+                item.precio=P_stock_inv_detObj.items.get(i).costo;
+                item.motivo_ajuste=0;
+
+                movd.add(item);
+
+            }
+
+            if (errs==0) db.setTransactionSuccessful();
+
+            db.endTransaction();
+
+            return errs==0;
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return false;
+    }
+
     private boolean addtoStock(int pcod,double pcant,String um) {
+        int idalmacen=idalm;
+
+        try {
+            if (!almacen) idalmacen=0;
+
+            clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
+
+            ritem.idprod=pcod;
+            ritem.idalm=idalmacen;
+            ritem.cant=pcant;
+            ritem.um=um.trim();
+            ritem.bandera=0;
+
+            fbs.addItem("/"+gl.tienda+"/",ritem);
+
+            return true;
+        } catch (Exception e) {
+            inserr=e.getMessage();return false;
+        }
+    }
+
+    private boolean addtoStockOld(int pcod,double pcant,String um) {
         try {
 
             ins.init("P_STOCK");
@@ -666,6 +826,5 @@ public class InvCentral extends PBase {
 
 
     //endregion
-
 
 }

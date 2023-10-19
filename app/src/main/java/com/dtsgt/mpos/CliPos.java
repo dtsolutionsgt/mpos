@@ -511,6 +511,25 @@ public class CliPos extends PBase {
         gl.parallevar=cbllevar.isChecked();
         gl.domicilio =cbdomicilio.isChecked();
 
+        gl.cliente_credito=false;gl.limite_credito=0;gl.dias_credito=0;
+        try {
+            sql="SELECT LIMITECREDITO,DIACREDITO FROM P_CLIENTE WHERE CODIGO_CLIENTE="+gl.codigo_cliente;
+            Cursor dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                gl.limite_credito=dt.getDouble(0);
+                gl.dias_credito=dt.getInt(1);
+
+                if (gl.limite_credito>0 && gl.dias_credito>0)  gl.cliente_credito=true;
+            }
+        } catch (Exception e) {
+            gl.cliente_credito=false;
+        }
+
+        gl.cliente_credito=false;
+
+
         if (gl.peInvCompart) {
             //bloqueado=true;
             //wsi.idstock="";
@@ -548,7 +567,6 @@ public class CliPos extends PBase {
     }
 
     private void cargaCliente() {
-
         Cursor DT;
 
         try{

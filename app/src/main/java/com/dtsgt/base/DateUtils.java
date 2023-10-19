@@ -6,8 +6,7 @@ import java.util.GregorianCalendar;
 
 public class DateUtils {
 	
-	public DateUtils() {
-	}
+	public DateUtils() {}
 	
 	public String sfecha(long f) {
 		long vy,vm,vd;

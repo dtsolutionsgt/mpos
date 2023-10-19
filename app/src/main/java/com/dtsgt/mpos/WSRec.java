@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -81,6 +82,7 @@ import com.dtsgt.classes.clsT_ipbypassObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
+import com.dtsgt.webservice.wsOpenDT;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -97,14 +99,15 @@ public class WSRec extends PBase {
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
+    private wsOpenDT wso;
+    private Runnable rnFechaContrato;
+
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
     private boolean pbd_vacia = false,nueva_version=false;
     private String plabel, fechasync;
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
-
     private String idversion,clave;
-
     public boolean automatico;
 
     @Override
@@ -151,6 +154,9 @@ public class WSRec extends PBase {
             ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
             xobj = new XMLObject(ws);
 
+            wso=new wsOpenDT(gl.wsurl);
+            rnFechaContrato= () -> { updateFechaContrato();};
+
             long fs = app.getDateRecep();
             if (fs > 0) fs = du.addDays(fs, -1);
 
@@ -159,7 +165,9 @@ public class WSRec extends PBase {
             if (pbd_vacia) fs=2001010000;
             if (fs==0) fs=2001010000;
 
-            fechasync = "" + fs;
+            // temporalmente carga todos los clientes
+            fs=2001010000;
+            fechasync = ""+fs;
 
             lblIdDispositivo.setText("ID - " + gl.deviceId);
 
@@ -1173,6 +1181,7 @@ public class WSRec extends PBase {
             validaCombos();
             printBypass();
             productoPropinaServicio();
+            fechaContratoFEL();
 
             if (app.citems.size()>0) mostrarLista();
 
@@ -1361,6 +1370,36 @@ public class WSRec extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
+    }
+
+    private void fechaContratoFEL() {
+        if (gl.tienda==0) return;
+        try {
+            String wsql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO) FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
+            wso.execute(wsql,rnFechaContrato);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void updateFechaContrato() {
+        long fc;
+        try {
+            if (wso.errflag) throw new Exception(wso.error);
+
+            if (wso.openDTCursor.getCount()>0) {
+                wso.openDTCursor.moveToFirst();
+                fc=wso.openDTCursor.getLong(0);
+                if (fc<100000000) fc=2000000000+fc;
+
+                sql="UPDATE P_SUCURSAL SET FECHA_CONTR="+fc+"  WHERE CODIGO_SUCURSAL="+gl.tienda;
+                db.execSQL(sql);
+
+                validaFechaContrato();
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion
@@ -2644,6 +2683,7 @@ public class WSRec extends PBase {
 
                 item = items.items.get(i);
                 var = clsCls.new clsP_sucursal();
+
                 var.codigo_sucursal = item.CODIGO_SUCURSAL;
                 var.codigo = item.CODIGO;
                 var.empresa = item.EMPRESA;
@@ -2667,6 +2707,7 @@ public class WSRec extends PBase {
                 var.codigo_escenario_iva=item.CODIGO_ESCENARIO_IVA;
                 var.codigo_municipio=item.CODIGO_MUNICIPIO;
                 var.codigo_proveedor=item.CODIGO_PROVEEDOR;
+                var.fecha_contr=0;
 
                 script.add(handler.addItemSql(var));
             }
@@ -2928,6 +2969,7 @@ public class WSRec extends PBase {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private void processParametrosExtraRuta() {
         try {
             clsP_paramextObj handler = new clsP_paramextObj(this, Con, db);
@@ -4136,6 +4178,35 @@ public class WSRec extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
+    }
+
+    public void validaFechaContrato() {
+        Cursor DT;
+        long fa,fc,fl,fd;
+
+        if (gl.tienda==0) return;
+
+        try {
+            if (!app.usaFEL()) return;
+
+            String sql="SELECT FECHA_CONTR FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
+            DT = Con.OpenDT(sql);
+            DT.moveToFirst();
+
+            fc=DT.getLong(0);fa=du.getActDate();
+            if (DT!=null) DT.close();
+            if (fc<2300000000L) return;
+
+            if (fc<=fa) {
+                msgbox("Su contrato de facturación electrónica ha expirado.\nInforme su contador.");return;
+            }
+
+            fl=du.addDays(fa,14);
+            if (fl>=fc) {
+                msgbox("Su contrato de facturación electrónica va a expirar "+du.sfecha(fc)+".\nInforme su contador.");
+            }
+
+        } catch (Exception e) {}
     }
 
     //endregion

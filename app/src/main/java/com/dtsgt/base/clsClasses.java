@@ -1319,6 +1319,7 @@ public class clsClasses {
         public int  codigo_escenario_iva;
         public String codigo_municipio;
         public int codigo_proveedor;
+        public long fecha_contr;
     }
 
     public class clsP_tiponeg {

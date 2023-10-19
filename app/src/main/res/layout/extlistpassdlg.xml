@@ -112,6 +112,9 @@
             android:layout_above="@id/relpass"
             android:layout_marginStart="0dp"
             android:layout_marginTop="70dp"
+            android:fadeScrollbars="false"
+            android:scrollbarFadeDuration="0"
+            android:scrollbarSize="10dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="5dp">
 

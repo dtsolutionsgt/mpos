@@ -873,14 +873,11 @@ public class FacturaRes extends PBase {
  	private void finishOrder() {
 		try {
 			if (gl.rol==4) {
-				toast("El mesero no puede realizar venta en esta pantalla");
-				return;
+				toast("El mesero no puede realizar venta en esta pantalla");return;
 			}
 
 			if (!saved) {
-				if (!saveOrder()) {
-					return;
-				}
+				if (!saveOrder()) return;
 			}
 
 			completaEstadoOrden();
@@ -891,11 +888,13 @@ public class FacturaRes extends PBase {
 			//gl.domicilio = false;
 			gl.sin_propina=false;
 
-			if (gl.pelDespacho) {
-				generaOrdenDespacho();
-			}
+			if (gl.pelDespacho) generaOrdenDespacho();
 
-			if (!app.usaFEL()) {
+
+			boolean certificarFEL=app.usaFEL();
+			if (gl.cliente_credito) certificarFEL=false;
+
+			if (!certificarFEL) {
 				if ( gl.peEnvio) {
 					if (isNetworkAvailable()) {
 						impresionDocumento();
@@ -910,22 +909,11 @@ public class FacturaRes extends PBase {
 			} else {
 				browse=2;
 				gl.felcorel=corel;
-				//#EJC202212141123: NO limpiar porque otra activity las va a utilizar aún.
-				//gl.feluuid="";
-				//gl.codigo_cliente=0;
-
-				//if (!gl.peNoEnviar) {
-
-					if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
-						startActivity(new Intent(this, FELFactura.class));
-					} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-						startActivity(new Intent(this, FELFactura.class));
-					}
-
-				//} else {
-					//impresionDocumento();
-				//}
-
+				if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+					startActivity(new Intent(this, FELFactura.class));
+				} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+					startActivity(new Intent(this, FELFactura.class));
+				}
 			}
 
 		} catch (Exception e) {

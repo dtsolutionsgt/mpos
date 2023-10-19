@@ -86,7 +86,7 @@ public class Menu extends PBase {
 	private extWaitDlg waitdlg,waitdlglimp;
 
 	private fbStock fbs;
-	private Runnable rnFbInvCallBack,rnFbVerInv;
+	private Runnable rnFbInvCallBack,rnFbVerInv,rnfbsInvCent;
 
 	private clsP_cajacierreObj caja;
     private clsP_modo_emergenciaObj P_modo_emergenciaObj;
@@ -148,19 +148,11 @@ public class Menu extends PBase {
 			lblTit.setText("mPos   -   Versión: "+gl.parVer+"   -   Caja: "+gl.rutanom+" [ "+gl.codigo_ruta+" ] ," +
 					       " -  Sucursal: "+gl.tiendanom+" [ "+gl.tienda+" ]");
 
-			rnFbInvCallBack = new Runnable() {
-				public void run() {
-					fbInvCallBack();
-				}
-			};
-
-			rnFbVerInv = new Runnable() {
-				public void run() {
-					versionInvFinish();
-				}
-			};
+			rnFbInvCallBack= () -> {fbInvCallBack();};
+			rnFbVerInv= () -> {versionInvFinish();};
 
 			fbs =new fbStock("Stock",gl.tienda);
+			rnfbsInvCent= () -> {fbsInvCent();};
 
 			listItems();
 
@@ -175,7 +167,7 @@ public class Menu extends PBase {
 			wscom =new wsCommit(gl.wsurl);
 
 			rnInvCent= () -> {
-				//callbackInvCent();
+				callbackInvCent();
 			};
 			rnNumOrden= () -> {	callBackNumOrden();};
 
@@ -726,10 +718,10 @@ public class Menu extends PBase {
 			}
 			if (exp_stock) 	listdlg.add("Cambiar version de inventario");
 
-
-			//listdlg.add("Orden de compra");
 			//listdlg.add("Barril");
-			//listdlg.add("Inventario centralizado");
+			listdlg.add("Inventario centralizado");
+			listdlg.add("Anular existencias");
+
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
 
@@ -746,7 +738,6 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Orden de compra")) menuCompra();
 					if (mt.equalsIgnoreCase("Traslado entre almacénes")) menuTraslado();
 					if (mt.equalsIgnoreCase("Cambiar version de inventario")) menuVersInventario();
-
 					if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
 					if (mt.equalsIgnoreCase("Barril")) menuBarril();
 					if (mt.equalsIgnoreCase("Inventario centralizado")) validaSuperInvCent();
@@ -878,7 +869,7 @@ public class Menu extends PBase {
 		}
 	}
 
-	public void menuInvCentral() {
+	private void menuInvCentral() {
 
 		try {
 
@@ -897,6 +888,8 @@ public class Menu extends PBase {
 			listdlg.setOnLeftClick(v -> listdlg.dismiss());
 
 			listdlg.show();
+
+			startActivity(new Intent(this,InicioInventario.class));
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
@@ -908,6 +901,7 @@ public class Menu extends PBase {
 
 		try {
 
+			/*
 			sql="SELECT CANT FROM P_STOCK";
 			dt=Con.OpenDT(sql);
 			if (dt.getCount()>0) {
@@ -919,6 +913,7 @@ public class Menu extends PBase {
 			if (dt.getCount()>0) {
 				msgbox("Antes de procesar inventario inicial debe iniciar inventario inicial");return;
 			}
+	   	    */
 
 			gl.cajaid=5;
 			if(valida()){
@@ -931,11 +926,6 @@ public class Menu extends PBase {
 
 		msgAskInvInic("Este proceso eliminará todas las existencías y creará las existencias nuevas.\n¿Continuar? ");
 
-	}
-
-	private void menuVersInventario() {
-		modo_supervis=2;
-		validaSupervisor();
 	}
 
 	private void consultaInvCentral(int modo) {
@@ -955,7 +945,7 @@ public class Menu extends PBase {
 			waitdlg.buildDialog(this,"Recibiendo inventario . . .","Ocultar");
 			waitdlg.show();
 
-			sql="SELECT CODIGO_INVENTARIO_ENC FROM P_STOCK_INVENTARIO_ENC WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
+			sql="SELECT CODIGO_INVENTARIO_ENC,CODIGO_ALMACEN FROM P_STOCK_INVENTARIO_ENC WHERE (CODIGO_SUCURSAL="+gl.tienda+") " +
 				"AND (ESTADO<2) AND (TIPO='"+gl.invcent_tipo+"') ORDER BY CODIGO_INVENTARIO_ENC";
 			wsic.execute(sql,rnInvCent);
 
@@ -981,6 +971,7 @@ public class Menu extends PBase {
 
 			wsic.openDTCursor.moveToFirst();
 			gl.invcent_cod=wsic.openDTCursor.getInt(0);
+			gl.invcen_alm=wsic.openDTCursor.getInt(1);
 
 			//gl.invcent_tipo
 			switch (modo_invcent) {
@@ -989,11 +980,37 @@ public class Menu extends PBase {
 				case 1:
 					;break;
 				case 2:
-					startActivity(new Intent(this,InvCentral.class)); ;break;
+					 fbs.cantExist("/"+gl.tienda+"/",gl.invcen_alm,rnfbsInvCent);break;
 			}
 		} catch (Exception e) {
 			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 		}
+	}
+
+	private void fbsInvCent() {
+		String alm_nom;
+
+		try {
+			if (fbs.errflag) throw new Exception(fbs.error);
+
+			if (fbs.registers>0) {
+				clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+				P_almacenObj.fill("WHERE CODIGO_ALMACEN="+gl.invcen_alm);
+
+				if (P_almacenObj.count>0) alm_nom=P_almacenObj.first().nombre; else alm_nom="";
+				msgbox("Almacen "+alm_nom+" tiene existencias disponibles.\n"+
+					   "Antes de procesar inventario inicial debe anular inventario actual");return;
+			}
+
+			startActivity(new Intent(this,InvCentral.class));
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void menuVersInventario() {
+		modo_supervis=2;
+		validaSupervisor();
 	}
 
 	//endregion

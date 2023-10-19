@@ -47,22 +47,22 @@ public class appGlobals extends Application {
 			    emp, tienda,dias_anul,cod_prov_recarga,	timeout,produid,mesero_venta,mesacodigo,
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,cuenta_pagar,
-				mesa_vend,mesa_codigo,invcent_cod,sal_idneg,desc_tipo_apl,prcu_mesa,
-			    prcu_vend,precuenta_cuenta,combo_cuenta;
+				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
+			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;
 	public String dom_nit,dom_nom, dom_dir,dom_ref,dom_tel,dom_ddir,sal_iddep,sal_idmun,sal_neg,sal_mun,sal_dep,
 			     prcu_corel,nom_alm,nom_alm2,mesa_area,nit_tipo,invcent_tipo;
 	public double precio_recarga,total_pago,propina_valor,monto_final_ingresado,menuprecio,
-			      dom_total,bar_cant,descadd,monto_propina;
+			      dom_total,bar_cant,descadd,monto_propina,limite_credito;
 	public boolean configCajaSuc = false,InvCompSend=false,pedlistcli,ventalock,
 	               inicio_caja_correcto = false,inicia_caja_primera_vez = false,
                    recibir_automatico = false,meserodir,cerrarmesero,preimpresion,parallevar,paraentrega,
                    impresion_comanda, modo_domicilio, cf_domicilio, cierra_clave, mesero_lista ,
                    ingreso_mesero,after_login,modo_prec,mesero_precuenta,sin_propina,modo_upd_venta,
 			       modo_cortesia,modo_apertura,imp_inventario,sal_NIT,sal_NRC,sal_PER,nueva_mesa,
-				   combo_edit;
+				   combo_edit,cliente_credito=false;
 
 	//FEL Identificacion
 	public String felSIN="SIN FEL";

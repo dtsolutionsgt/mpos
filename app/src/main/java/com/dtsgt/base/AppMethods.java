@@ -1358,7 +1358,6 @@ public class AppMethods {
     //region Productos
 
     public boolean ventaPeso(String cod) {
-
         Cursor DT;
         String umm;
 
@@ -2277,7 +2276,6 @@ public class AppMethods {
 		return rslt;
 	}
 
-
     //endregion
 
     //region Cuentas
@@ -2584,12 +2582,10 @@ public class AppMethods {
     }
 
     public long getDateRecep() {
-
         Cursor dt;
         long resultado = 0;
 
         try {
-
             sql="SELECT param1 FROM Params";
             dt=Con.OpenDT(sql);
 
