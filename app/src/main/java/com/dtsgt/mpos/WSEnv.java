@@ -923,7 +923,7 @@ public class WSEnv extends PBase {
 
             item = D_MovDObj.items.get(i);
 
-            CSQL = CSQL + D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i)) + ";";
+            CSQL = CSQL + D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i), gl.codigo_proveedor) + ";";
 
             /*
             AppMethods f = new AppMethods(this, null, Con, db);
@@ -1644,6 +1644,10 @@ public class WSEnv extends PBase {
             P_clienteObj.fill("WHERE ESERVICE='N'");
             ccant = P_clienteObj.count;
             total_enviar += ccant;
+
+            clsP_sucursalObj suc=new clsP_sucursalObj(this,Con,db);
+            suc.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
+            gl.codigo_proveedor=suc.first().codigo_proveedor;
 
             String idfel = gl.peFEL;
 

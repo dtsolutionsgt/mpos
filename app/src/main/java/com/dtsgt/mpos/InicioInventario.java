@@ -63,7 +63,7 @@ public class InicioInventario extends PBase {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     boolean connected = snapshot.getValue(Boolean.class);
                     if (connected) {
-                        msgAskStart("Antes de iniciar inventario asegure se que ninguno otro dispositivo está activo");
+                        msgAskStart("Antes de recalcular inventario asegure se que ninguno otro dispositivo está activo");
                     } else {
                         msgboxexit("Proceso cancelado.");
                     }
@@ -161,7 +161,7 @@ public class InicioInventario extends PBase {
 
             fbs.updateValue("/config/",""+gl.tienda,""+du.getActDate());
 
-            toast("Inventario inicializado.");
+            toast("Inventario actualizado.");
             finish();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -216,15 +216,17 @@ public class InicioInventario extends PBase {
 
                             transstatus=0;
 
-                            stitem=clsCls.new clsFbStock();
+                            if (totcant!=0) {
+                                stitem = clsCls.new clsFbStock();
 
-                            stitem.idprod=idprod;
-                            stitem.idalm=idalm;
-                            stitem.cant=totcant;
-                            stitem.um=um;
-                            stitem.bandera=1;
+                                stitem.idprod = idprod;
+                                stitem.idalm = idalm;
+                                stitem.cant = totcant;
+                                stitem.um = um;
+                                stitem.bandera = 1;
 
-                            addItem(fbsucursal,stitem);
+                                addItem(fbsucursal, stitem);
+                            }
 
                             for (int i = 0; i < fbs.saitems.size(); i++) {
                                 if (fbs.saitems.get(i).idprod==idprod && fbs.saitems.get(i).idalm==idalm) {
@@ -284,7 +286,7 @@ public class InicioInventario extends PBase {
     private void msgAskStart(String msg) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
-        dialog.setTitle("Inicio de inventario");
+        dialog.setTitle("Actualización de inventario");
         dialog.setMessage(msg);
 
         dialog.setNegativeButton("Continuar", new DialogInterface.OnClickListener() {

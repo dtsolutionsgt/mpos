@@ -720,7 +720,7 @@ public class Menu extends PBase {
 
 			//listdlg.add("Barril");
 			listdlg.add("Inventario centralizado");
-			listdlg.add("Anular existencias");
+			listdlg.add("Inicializar inventario");
 
 
 			listdlg.setOnItemClickListener((parent, view, position, id) -> {
@@ -740,7 +740,8 @@ public class Menu extends PBase {
 					if (mt.equalsIgnoreCase("Cambiar version de inventario")) menuVersInventario();
 					if (mt.equalsIgnoreCase("Egreso de almacén")) menuEgreso();
 					if (mt.equalsIgnoreCase("Barril")) menuBarril();
-					if (mt.equalsIgnoreCase("Inventario centralizado")) validaSuperInvCent();
+					if (mt.equalsIgnoreCase("Inventario centralizado")) msgAskInvCent();
+					if (mt.equalsIgnoreCase("Inicializar inventario")) msgAskAnulInv();
 
 					listdlg.dismiss();
 				} catch (Exception e) {}
@@ -853,6 +854,50 @@ public class Menu extends PBase {
 
 				if (listdlg.validPassword()) {
 					menuInvCentral();
+					listdlg.dismiss();
+				} else {
+					toast("Contraseña incorrecta");
+				}
+			});
+
+			listdlg.setWidth(350);
+			listdlg.setLines(4);
+
+			listdlg.show();
+
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
+	private void validaSuperAnulInv() {
+
+		clsClasses.clsVendedores item;
+
+		try {
+			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
+			app.fillSuper(VendedoresObj);
+
+			if (VendedoresObj.count==0) {
+				msgbox("No está definido ningún supervisor");return;
+			}
+
+			extListPassDlg listdlg = new extListPassDlg();
+			listdlg.buildDialog(Menu.this,"Autorización","Salir");
+
+			for (int i = 0; i <VendedoresObj.count; i++) {
+				item=VendedoresObj.items.get(i);
+				listdlg.addpassword(item.codigo_vendedor,item.nombre,item.clave);
+			}
+
+			listdlg.setOnLeftClick(v -> listdlg.dismiss());
+
+			listdlg.onEnterClick(v -> {
+
+				if (listdlg.getInput().isEmpty()) return;
+
+				if (listdlg.validPassword()) {
+					startActivity(new Intent(this,InvAnular.class)); ;
 					listdlg.dismiss();
 				} else {
 					toast("Contraseña incorrecta");
@@ -1029,7 +1074,7 @@ public class Menu extends PBase {
 			listdlg.add("Tablas");
 			listdlg.add("Actualizar versión");
 			listdlg.add("Enviar base de datos");
-			listdlg.add("Iniciar inventario");
+			listdlg.add("Recalcular inventario");
 			listdlg.add("Certificar facturas");
 			listdlg.add("Limpiar tablas");
 			listdlg.add("Prueba de bluetooth");
@@ -1040,7 +1085,7 @@ public class Menu extends PBase {
 			listdlg.add("Consumidor final");
 			listdlg.add("Actualizar fechas erroneas");
 			listdlg.add("Inicio de caja");
-			listdlg.add("Inicializar inventario");
+			//listdlg.add("Inicializar inventario");
 			listdlg.add("Reinicializar numero de orden");
 
 
@@ -1080,8 +1125,6 @@ public class Menu extends PBase {
 							msgAskCorregirFechas();break;
 						case 14:
 							inicioDia();break;
-						//case 15:
-						//	validaSuperInventario();break;
 						case 15:
 							validaSuperNumOrden();break;
 
@@ -3580,6 +3623,25 @@ public class Menu extends PBase {
 		dialog.setNegativeButton("No", (dialog12, which) -> {});
 		dialog.show();
 	}
+
+	private void msgAskInvCent() {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("Antes de aplicar inventario centralizado, asegure se que ninguno otro dispositivo está activo");
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Continuar", (dialog1, which) -> validaSuperInvCent());
+		dialog.setNegativeButton("Regresar" , (dialog12, which) -> {});
+		dialog.show();
+	}
+
+	private void msgAskAnulInv() {
+		ExDialog dialog = new ExDialog(this);
+		dialog.setMessage("Antes de inicializar inventario asegure se que ninguno otro dispositivo está activo");
+		dialog.setCancelable(false);
+		dialog.setPositiveButton("Continuar", (dialog1, which) -> validaSuperAnulInv());
+		dialog.setNegativeButton("Regresar", (dialog12, which) -> {});
+		dialog.show();
+	}
+
 
 	//endregion
 

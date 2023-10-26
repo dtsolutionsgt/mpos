@@ -779,7 +779,10 @@ public class InvCentral extends PBase {
 
         dialog.setPositiveButton("OK", (dialog12, which) -> {
             try {
-               finish();
+                gl.autocom = 1;
+                startActivity(new Intent(this,WSEnv.class));
+
+                finish();
             } catch (Exception e) {
                 msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
             }

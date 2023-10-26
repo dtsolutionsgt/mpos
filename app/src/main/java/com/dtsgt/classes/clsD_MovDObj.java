@@ -209,7 +209,7 @@ public class clsD_MovDObj {
 
     }
 
-    public String addItemSqlWS(clsClasses.clsD_MovD item) {
+    public String addItemSqlWS(clsClasses.clsD_MovD item,int codprov) {
 
         ins.init("D_MOVD");
 
