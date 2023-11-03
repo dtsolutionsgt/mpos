@@ -1309,6 +1309,7 @@ public class clsFELInFile {
         xml+="</dte:SAT>";
         xml+="</dte:GTDocumento>";
 
+
         String xs=xml;
     }
 
