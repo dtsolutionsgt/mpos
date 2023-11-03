@@ -14,6 +14,8 @@ import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_mov_almacenObj;
+import com.dtsgt.classes.clsD_movd_almacenObj;
 import com.dtsgt.classes.clsP_almacenObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_stock_inv_detObj;
@@ -83,6 +85,8 @@ public class InvCentral extends PBase {
             if (idalm>0) {
                 if (idalm!=idalmdpred) almacen=true;
             }
+
+            almacen=true;
 
             lblTit.setText("INVENTARIO INICIAL #"+idinv+alm_nom);
 
@@ -296,9 +300,13 @@ public class InvCentral extends PBase {
     }
 
     private boolean aplicarInventario() {
-        clsClasses.clsD_Mov header;
-        clsClasses.clsD_MovD item;
-        clsClasses.clsT_costo cost;
+        //clsClasses.clsD_Mov header;
+        //clsClasses.clsD_MovD item;
+        //clsClasses.clsT_costo cost;
+        clsClasses.clsD_mov_almacen header;
+        clsClasses.clsD_movd_almacen item;
+        clsClasses.clsT_movr imovr;
+
 
         int pc,pi,errs=0;
         String um,corel;
@@ -345,27 +353,35 @@ public class InvCentral extends PBase {
         try {
             db.beginTransaction();
 
-            clsD_MovObj mov=new clsD_MovObj(this,Con,db);
-            clsD_MovDObj movd=new clsD_MovDObj(this,Con,db);
+            //clsD_MovObj mov=new clsD_MovObj(this,Con,db);
+            //clsD_MovDObj movd=new clsD_MovDObj(this,Con,db);
+
+            clsD_mov_almacenObj mov=new clsD_mov_almacenObj(this,Con,db);
+            clsD_movd_almacenObj movd=new clsD_movd_almacenObj(this,Con,db);
+
             corel=gl.ruta+"_"+mu.getCorelBase();
 
-            header =clsCls.new clsD_Mov();
-            header.COREL=corel;
-            header.RUTA=gl.codigo_ruta;
-            header.ANULADO=0;
-            header.FECHA=du.getActDateTime();
-            header.TIPO="R";
-            header.USUARIO=gl.codigo_vendedor;
-            header.REFERENCIA= du.sfecha(du.getActDateTime());
-            header.STATCOM="N";
-            header.IMPRES=0;
-            header.CODIGOLIQUIDACION=0;
-            header.CODIGO_PROVEEDOR= codigo_proveedor;
-            header.TOTAL=costo;
+            //header =clsCls.new clsD_Mov();
+            header =clsCls.new clsD_mov_almacen();
+
+            header.corel=corel;
+            header.codigo_sucursal=gl.tienda;
+            header.almacen_origen=0;
+            header.almacen_destino=idalm;
+            header.anulado=0;
+            header.fecha=du.getActDateTime();
+            header.tipo="R";
+            header.usuario=gl.codigo_vendedor;
+            header.referencia=" ";
+            header.statcom="N";
+            header.impres=0;
+            header.codigoliquidacion=0;
+            header.codigo_proveedor= codigo_proveedor;
+            header.total=0;
 
             mov.add(header);
 
-            int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD");
+            int corm=movd.newID("SELECT MAX(coreldet) FROM D_MOVD_ALMACEN");
 
             db.execSQL("DELETE FROM P_STOCK");
 
@@ -378,7 +394,8 @@ public class InvCentral extends PBase {
                    logError(pc,inserr);errs++;
                 }
 
-                item =clsCls.new clsD_MovD();
+                //item =clsCls.new clsD_MovD();
+                item =clsCls.new clsD_movd_almacen();
 
                 item.coreldet=corm+i+1;
                 item.corel=corel;
@@ -529,7 +546,7 @@ public class InvCentral extends PBase {
         int idalmacen=idalm;
 
         try {
-            if (!almacen) idalmacen=0;
+            //if (!almacen) idalmacen=0;
 
             clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 

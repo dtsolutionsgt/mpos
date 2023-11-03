@@ -1683,6 +1683,25 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_cxc] ("+
+                    "NoFactura TEXT NOT NULL,"+
+                    "Empresa INTEGER NOT NULL,"+
+                    "IdCliente INTEGER NOT NULL,"+
+                    "Fecha INTEGER NOT NULL,"+
+                    "Monto_Total REAL NOT NULL,"+
+                    "Saldo REAL NOT NULL,"+
+                    "IdMoneda INTEGER NOT NULL,"+
+                    "Tipo_Cambio REAL NOT NULL,"+
+                    "Estado TEXT NOT NULL,"+
+                    "Referencia TEXT NOT NULL,"+
+                    "IdUsuario INTEGER NOT NULL,"+
+                    "DiasCredito INTEGER NOT NULL,"+
+                    "PRIMARY KEY ([NoFactura])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {
@@ -1692,6 +1711,7 @@ public class BaseDatosVersion {
         try {
 
         } catch (Exception e) { }
+
 
     }
 

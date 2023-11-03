@@ -121,19 +121,16 @@ public class InvAnular extends PBase {
 
             P_almacenObj=new clsP_almacenObj(this,Con,db);
             almacenes=tieneAlmacenes();
-            if (almacenes) {
-                if (idalmdpred>0) {
-                    try {
-                        idalm=idalmdpred;gl.idalm=idalmdpred;
-                        gl.nom_alm=pdef_nom;lblalm.setText(gl.nom_alm);
-                        listItems();
-                    } catch (Exception e) {
-                        msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
-                    }
+            almacenes=true;
+
+            if (idalmdpred>0) {
+                try {
+                    idalm=idalmdpred;gl.idalm=idalmdpred;
+                    gl.nom_alm=pdef_nom;lblalm.setText(gl.nom_alm);
+                    listItems();
+                } catch (Exception e) {
+                    msgbox(new Object() { }.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
                 }
-            } else {
-                gl.idalm=0;gl.idalmpred=0;relalm.setVisibility(View.GONE);
-                listItems();
             }
 
             bloqueado=false;
@@ -241,7 +238,12 @@ public class InvAnular extends PBase {
     private void anulaInventario() {
         try {
             if (almacenes) {
-                savealmacen();
+
+                //if (idalmdpred!=idalm) {
+                    savealmacen();
+                //} else {
+                //    save();
+                //}
             } else {
                 save();
             }
@@ -360,8 +362,8 @@ public class InvAnular extends PBase {
 
             header.corel=corel;
             header.codigo_sucursal=gl.tienda;
-            header.almacen_origen=0;
-            header.almacen_destino=gl.idalm;
+            header.almacen_origen=gl.idalm;
+            header.almacen_destino=0;
             header.anulado=0;
             header.fecha=du.getActDateTime();
             header.tipo="D";
@@ -445,7 +447,7 @@ public class InvAnular extends PBase {
         int idalmacen=gl.idalm;
 
         try {
-            if (gl.idalm==gl.idalmpred) idalmacen=0;
+            //if (gl.idalm==gl.idalmpred) idalmacen=0;
 
             clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
@@ -467,11 +469,7 @@ public class InvAnular extends PBase {
             imganul.setVisibility(View.INVISIBLE);
             idle=false;
 
-            if (gl.idalm==gl.idalmpred) {
-                fbs.listExist(fbsucursal,0,rnFbCallBack);
-            } else {
-                fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
-            }
+            fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }

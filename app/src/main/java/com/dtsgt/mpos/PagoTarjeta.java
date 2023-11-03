@@ -198,9 +198,9 @@ public class PagoTarjeta extends PBase {
             if (P_mediapagoObj.count>0) {
                 tipo="";
                 for (int i = 0; i <P_mediapagoObj.count; i++) {
-                    //if (i==0) tipo=P_mediapagoObj.items.get(i).nombre;
-                    //listdlg.add(0,P_mediapagoObj.items.get(i).nombre);
-                    listdlg.add(P_mediapagoObj.items.get(i).codigo,P_mediapagoObj.items.get(i).nombre);
+                    if (P_mediapagoObj.items.get(i).nivel!=5) {
+                        listdlg.add(P_mediapagoObj.items.get(i).codigo, P_mediapagoObj.items.get(i).nombre);
+                    }
                 }
             } else {
                 listdlg.add(0,"Tarjeta credito");tipo="Tarjeta credito";
@@ -230,6 +230,7 @@ public class PagoTarjeta extends PBase {
                 @Override
                 public void onClick(View v) {
                     listdlg.dismiss();
+                    finish();
                 }
             });
 

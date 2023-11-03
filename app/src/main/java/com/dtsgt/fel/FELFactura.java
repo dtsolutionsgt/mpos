@@ -508,6 +508,21 @@ public class FELFactura extends PBase {
             D_facturaObj.fill("WHERE Corel='"+corel+"'");
             fact=D_facturaObj.first();
 
+            fel.factura_credito=false;
+            try {
+                D_facturapObj.fill("WHERE Corel='"+corel+"'");
+                if (D_facturapObj.count>0) {
+                    if (D_facturapObj.first().tipo.equalsIgnoreCase("C")) {
+                        fel.factura_credito=true;
+                        fel.factura_abono_venc=D_facturapObj.first().desc3+"";
+                        if (fel.factura_abono_venc.isEmpty()) fel.factura_credito=false;
+                    }
+                }
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                fel.factura_credito=false;
+            }
+
             fel.idcontingencia=0;
 
             try {

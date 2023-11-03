@@ -226,6 +226,22 @@ public class DateUtils {
         return s;
     }
 
+	public String univfecha_vb_net_sinhora(long f) {
+		long vy,vm,vd;
+		String s;
+
+		vy=(long) f/100000000;f=f % 100000000;
+		vm=(long) f/1000000;f=f % 1000000;
+		vd=(long) f/10000;f=f % 10000;
+
+		s="20";
+		if (vy>9) s=s+vy; else s=s+"0"+vy;s=s+"-";
+		if (vm>9) s=s+vm; else s=s+"0"+vm;s=s+"-";
+		if (vd>9) s=s+vd; else s=s+"0"+vd;
+
+		return s;
+	}
+
 	public String univfechasinhora(long f) {
 
 		int vy,vm,vd;

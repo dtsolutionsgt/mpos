@@ -38,6 +38,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_cxcObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_factura_svObj;
@@ -82,6 +83,7 @@ import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptTotals;
 import com.dtsgt.webservice.srvCommit;
+import com.dtsgt.webservice.wsOpenDT;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -122,6 +124,8 @@ public class FacturaRes extends PBase {
     private clsKeybHandler khand;
 	private clsRepBuilder rep;
 
+	private wsOpenDT wso;
+
 	private fbStock fbs;
 	private fbOrdenEstado fboe;
 	private fbOrdenCuenta fboc;
@@ -130,7 +134,7 @@ public class FacturaRes extends PBase {
 	private fbOrden fbo;
 	private fbOrdenNota fbon;
 
-	private Runnable rnfbocLista,rnfbocDel;
+	private Runnable rnfbocLista,rnfbocDel,rncreditoDisp;
 
 	private long fecha,fechae;
 	private int fcorel,clidia, Nivel_Media_Pago,idtransbar,hora;
@@ -139,7 +143,7 @@ public class FacturaRes extends PBase {
 	private int cyear, cmonth, cday, dweek,stp=0,brw=0,notaC,impres,recid,ordennum,prodlinea,modo_super;
 
 	private double dmax,dfinmon,descpmon,descg,descgmon,descgtotal,tot,propina,propinaperc,propinaext;
-	private double pend,stot,stot0,stotsinimp,percep_total;
+	private double pend,stot,stot0,stotsinimp,percep_total,cdisp;
 	private double dispventa,falt,descimpstot,descmon,descimp,totimp,totperc,credito,descaddmonto;
 	private boolean acum,cleandprod,peexit,pago,saved,rutapos,porpeso,pendiente,corcheck,pagocompleto=false;
     private boolean horiz=true;
@@ -261,22 +265,24 @@ public class FacturaRes extends PBase {
 
         app.parametrosExtra();
 
-        imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+        imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
         imgMPago.setVisibility(View.INVISIBLE);lblMPago.setVisibility(View.INVISIBLE);
 
         if (!gl.pePedidos) {
             imgPend.setVisibility(View.INVISIBLE);lblPend.setVisibility(View.INVISIBLE);
         }
 
-        if (Nivel_Media_Pago ==4) {
-            if (credito<=0 || gl.facturaVen != 0) {
-                imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
-            } else if(credito > 0){
-                imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
-            }
-        }
+		if (gl.cred_lim<=0 || gl.facturaVen != 0) {
+			imgCred.setVisibility(View.INVISIBLE);lblCred.setVisibility(View.INVISIBLE);
+		} else if(gl.cred_lim > 0){
+			if (gl.pePagoCredito) {
+				imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+			}
+		}
 
-        fecha=du.getActDateTime();
+		//imgCred.setVisibility(View.VISIBLE);lblCred.setVisibility(View.VISIBLE);
+
+		fecha=du.getActDateTime();
 		fechae=fecha;
 
 		dweek=mu.dayofweek();
@@ -299,6 +305,11 @@ public class FacturaRes extends PBase {
 			fbo=new fbOrden("Orden",gl.tienda,gl.ordcorel);
 			fbo.listItems(null);
 		}
+
+		app.getURL();
+
+		wso=new wsOpenDT(gl.wsurl);
+		rncreditoDisp = () -> creditoDisp();
 
 		clsDesc=new clsDescGlob(this);
 
@@ -371,13 +382,7 @@ public class FacturaRes extends PBase {
             lblCred.setVisibility(View.INVISIBLE);
         }
 
-        //if (gl.peImpOrdCos) msgAskComanda("Imprimir comanda");
-
-        //if (gl.mesero_precuenta) prnCuenta(null);
-
-		sn=gl.gNITCliente;
     }
-
 
 	//region Events
 
@@ -469,10 +474,17 @@ public class FacturaRes extends PBase {
 				msgbox("No existe un correlativo disponible, no se puede emitir factura");return;
 			}
 
-            msgAskCredito();
+			if (app.isOnWifi()>0) {
+				sql="SELECT SUM(Monto_Total),SUM(Saldo) FROM D_CxC " +
+					 "WHERE (IdCliente="+gl.codigo_cliente+") AND (ESTADO='C')";
+				wso.execute(sql,rncreditoDisp);
+				toast("VALIDANDO CREDITO DISPONIBLE . . .");
+			} else {
+				msgAskCreditoSin();
+				toast("SIN CONEXIÓN AL INTERNET");
+			}
 
-		}catch (Exception e){
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+		} catch (Exception e){
 			mu.msgbox("payCred: " + e.getMessage());
 		}
 	}
@@ -1466,6 +1478,8 @@ public class FacturaRes extends PBase {
 
 			//region D_FACTURAP
 
+			double total_credito=0;
+
             sql = "SELECT ITEM,CODPAGO,TIPO,VALOR,DESC1,DESC2,DESC3 FROM T_PAGO";
             dt = Con.OpenDT(sql);
 
@@ -1490,8 +1504,40 @@ public class FacturaRes extends PBase {
                 ins.add("DEPOS", false);
                 db.execSQL(ins.sql());
 
+				if (dt.getString(2).equalsIgnoreCase("C")) total_credito+=dt.getDouble(3);
+
                 dt.moveToNext();
             }
+
+			if (total_credito>0) {
+
+				int idmoneda=2;
+				if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+					idmoneda=9;
+				} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+					idmoneda=1;
+				}
+
+				clsD_cxcObj D_cxcObj = new clsD_cxcObj(this, Con, db);
+
+				clsClasses.clsD_cxc item = clsCls.new clsD_cxc();
+
+				item.nofactura = corel;
+				item.empresa = gl.emp;
+				item.idcliente = gl.codigo_cliente;
+				item.fecha = fecha;
+				item.monto_total = total_credito;
+				item.saldo = 0;
+				item.idmoneda = idmoneda;
+				item.tipo_cambio = 1;
+				item.estado = "C";
+				item.referencia = " ";
+				item.idusuario = gl.codigo_vendedor;
+				item.diascredito =gl.cred_dia;
+
+				D_cxcObj.add(item);
+
+			}
 
 			//endregion
 
@@ -3188,44 +3234,23 @@ public class FacturaRes extends PBase {
 
 	}
 
-    private void msgAskCredito() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-
-        dialog.setTitle("Pago Crédito");
-        dialog.setMessage("Monto a pagar : "+tot);
-
-        dialog.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                sefect=""+tot;
-                applyCredit();
-                checkPago();
-            }
-        });
-
-        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        });
-
-        dialog.show();
-
-    }
-
     private void applyCredit() {
 		double epago;
+		long ff;
+		String sfv;
 
 		try {
+
 			epago=Double.parseDouble(sefect);
 			if (epago==0) return;
 
-			if (epago<0) throw new Exception();
+			ff=du.getActDate();
+			ff=du.addDays(ff,gl.cred_dia);
+			sfv=du.univfecha_vb_net_sinhora(ff);
 
-			//if (epago>plim) {
-			//	MU.msgbox("Total de pago mayor que total de saldos.");return;
-			//}
+			db.beginTransaction();
 
-			//if (epago>tsel) {
-			//	msgAskOverPayd("Total de pago mayor que saldo\nContinuar");return;
-			//}
+			if (epago<0) throw new Exception("Pago incorrecto.");
 
 			sql="DELETE FROM T_PAGO";
 			db.execSQL(sql);
@@ -3238,17 +3263,18 @@ public class FacturaRes extends PBase {
 			ins.add("VALOR",epago);
 			ins.add("DESC1","");
 			ins.add("DESC2","");
-			ins.add("DESC3","");
+			ins.add("DESC3",sfv);
 
-		    db.execSQL(ins.sql());
+			db.execSQL(ins.sql());
 
-			//msgAskSave("Aplicar pago y crear un recibo");
 
+			db.setTransactionSuccessful();
+			db.endTransaction();
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
+			db.endTransaction();
 			inputEfectivo();
-			mu.msgbox("Pago incorrecto"+e.getMessage());
-	    }
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
 
 	}
 
@@ -4241,6 +4267,33 @@ public class FacturaRes extends PBase {
 
 	}
 
+	private void creditoDisp() {
+		double cpend=0;
+		try {
+			if (wso.errflag) throw new Exception(wso.error);
+
+			if (wso.openDTCursor.getCount()>0) {
+				try {
+					wso.openDTCursor.moveToFirst();
+					cpend=wso.openDTCursor.getDouble(0)-wso.openDTCursor.getDouble(1);
+				} catch (Exception e) {
+					cpend=0;
+				}
+			}
+
+			cdisp=gl.cred_lim-cpend;
+			if (tot>cdisp) {
+				if (cdisp<0) cdisp=0;
+				msgbox("Insuficiente credito disponible : "+mu.frmcur(cdisp));return;
+			}
+
+			msgAskCredito();
+		} catch (Exception e) {
+			msgAskCreditoSin();
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+	}
+
 	//endregion
 
     //region Dialogs
@@ -4537,8 +4590,50 @@ public class FacturaRes extends PBase {
         alert.show();
     }
 
-	private void validaSupervisor() {
+	private void msgAskCredito() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
+		dialog.setTitle("Pago Crédito");
+		dialog.setMessage("MONTO A PAGAR : "+mu.frmcur(tot)+"\n\n(Disponible : "+mu.frmcur(cdisp)+")");
+
+		dialog.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				sefect=""+tot;
+				applyCredit();
+				checkPago();
+			}
+		});
+
+		dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {}
+		});
+
+		dialog.show();
+
+	}
+
+	private void msgAskCreditoSin() {
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+		dialog.setTitle("Pago Crédito");
+		dialog.setMessage("¡No se pudo validar credito disponible!");
+
+		dialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				modo_super=2;
+				validaSupervisor();
+			}
+		});
+
+		dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {}
+		});
+
+		dialog.show();
+
+	}
+
+	private void validaSupervisor() {
 		clsClasses.clsVendedores item;
 
 		try {
@@ -4568,6 +4663,8 @@ public class FacturaRes extends PBase {
 						startActivity(new Intent(FacturaRes.this,DescMonto.class));
 					} else if (modo_super==1) {
 						msgAskSinPropina("Anular la propina");
+					} else if (modo_super==2) {
+						msgAskCredito();
 					}
 
 					listdlg.dismiss();

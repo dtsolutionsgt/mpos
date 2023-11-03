@@ -45,6 +45,8 @@ public class clsFELInFile {
     public Boolean errcert =false;
     public Boolean halt=false;
     public boolean autocancel=false;
+    public boolean factura_credito=false;
+    public String factura_abono_venc;
     public int errlevel, responsecode;
     public long idcontingencia;
 
@@ -107,12 +109,18 @@ public class clsFELInFile {
     private TextView lblProgress;
 
     public clsFELInFile(Context context, PBase Parent,int conTimeout) {
+
         cont=context;
         parent=Parent;
         timeout=conTimeout;
-        errlevel=0;error="";errorflag=false;errorcon=false;
 
-        //#EJC202212131153:Tratar de compartir el label que se actualiza.
+        errlevel=0;
+        error="";
+        errorflag=false;
+        errorcon=false;
+
+        factura_credito=false;
+
         try {
             lblProgress = ((Activity)context).findViewById(R.id.msgHeader);
         } catch (Exception e) {
@@ -379,133 +387,7 @@ public class clsFELInFile {
         return errorflag;
     }
 
-//    private Boolean wsExecuteF(){
-//
-//        URL url;
-//        HttpURLConnection connection = null;
-//        JSONObject jObj = null;
-//        response=0;
-//        error = "";
-//        errfirma=false;
-//        errorflag = false;
-//        modoiduni=false;
-//
-//        try {
-//
-//            url = new URL(WSURL);
-//            connection = (HttpURLConnection)url.openConnection();
-//            connection.setConnectTimeout(timeout);
-//            connection.setReadTimeout(timeout);
-//            connection.setRequestMethod("POST");
-//            connection.setRequestProperty("Content-Type","application/json; charset=utf-8");
-//            connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
-//            connection.setRequestProperty("usuario",fel_usuario_certificacion);
-//            connection.setRequestProperty("llave", fel_llave_certificacion);
-//            connection.setRequestProperty("identificador", mpos_identificador_fact);
-//            connection.setUseCaches (false);
-//            connection.setDoInput(true);
-//            connection.setDoOutput(true);
-//
-//            try {
-//                connection.connect();
-//            } catch (IOException e) {
-//                error=e.getMessage();
-//                errorcon=true;errorflag=true;constat=false;
-//                return errorflag;
-//            }
-//
-//            DataOutputStream wr = null;
-//
-//            try {
-//                wr = new DataOutputStream(connection.getOutputStream ());
-//            } catch (IOException e) {
-//                error=e.getMessage();
-//                errorcon=true;errorflag=true;constat=false;
-//                return null;
-//            }
-//
-//            wr.writeBytes (jsfirm);
-//            wr.flush ();
-//            wr.close ();
-//
-//            InputStream is;
-//
-//            try {
-//                is= connection.getInputStream();
-//            } catch (IOException e) {
-//                is= connection.getInputStream();
-//            }
-//
-//            response=connection.getResponseCode();
-//
-//            if (response==200) {
-//
-//                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-//                String line;
-//                StringBuilder sb = new StringBuilder();
-//
-//                while((line = rd.readLine()) != null) {
-//                    sb.append(line + "\n");
-//                }
-//                rd.close();
-//
-//                String jstr=sb.toString();
-//                jObj = new JSONObject(jstr);
-//
-//                error= jObj.getString("descripcion");
-//
-//                if (jObj.getBoolean("resultado")) {
-//                    errorflag=false;
-//                    firma=jObj.getString("archivo");
-//                } else {
-//
-//                    errorflag=true;
-//
-//                    try {
-//
-//                        String vResultado="";
-//                        String vDescripcion="";
-//
-//                        try {
-//                            vResultado =jObj.getString("resultado");
-//                            vDescripcion =jObj.getString("descripcion");
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
-//                            error+=vDescripcion;
-//                        }else{
-//                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
-//                            JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
-//
-//                            for (int i=0; i<ArrayError.length(); i++) {
-//                                JSONObject theJsonObject = ArrayError.getJSONObject(i);
-//                                String name = theJsonObject.getString("mensaje_error");
-//                                error = name;
-//                            }
-//
-//                        }
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-//
-//            } else {
-//                error=""+response;errorflag=true;errfirma=true;
-//                return errorflag;
-//            }
-//
-//        } catch (Exception e) {
-//            error=e.getMessage();errorflag=true;errfirma=true;
-//            return errorflag;
-//        } finally {
-//            //if (connection!=null) connection.disconnect();
-//        }
-//        return errorflag;
-//    }
+
 
     private void wsFinishedF() {
 
@@ -890,7 +772,11 @@ public class clsFELInFile {
             jsoniu = new JSONObject();
             jsoniu.put("nit_emisor",fnit);
             jsoniu.put("tipo_operacion","CERTIFICACION");
-            jsoniu.put("tipo_documento","FACT");
+            if (factura_credito) {
+                jsoniu.put("tipo_documento","FCAM");
+            } else {
+                jsoniu.put("tipo_documento","FACT");
+            }
             jsoniu.put("codigo_establecimiento",""+fel_codigo_establecimiento);
             jsoniu.put("identificador_unico_dte",mpos_identificador_fact);
             jsoniu.put("anio_documento",""+fechaf_y);
@@ -1362,19 +1248,22 @@ public class clsFELInFile {
         xml+="<dte:DatosEmision ID=\"DatosEmision\">";
 
         if (idconting.isEmpty() || idconting.equalsIgnoreCase("0") ) { // sin contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+            if (factura_credito) {
+                xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FCAM\"></dte:DatosGenerales>";
+            } else {
+                xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+            }
         } else { // con contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
-        }
+            if (factura_credito) {
+                xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FCAM\"></dte:DatosGenerales>";
+            } else {
+                xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+            }
+         }
 
     }
 
     public void completar(String serie,long numero) {
-
-        //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
-        //#CKFK 20200619 puse esto en comentario porque el total del iva no se debe calcular asi
-        //totiva=Math.round(totiva*100);
-        //totiva=totiva/100;
 
         String totIvaStr = String.format("%.2f", totiva);
         totIvaStr=totIvaStr.replaceAll(",",".");
@@ -1394,23 +1283,28 @@ public class clsFELInFile {
         xml+="<dte:GranTotal>"+totmontoStr+"</dte:GranTotal>";
         xml+="</dte:Totales>";
 
+        if (factura_credito) {
+            xml+="<dte:Complementos>";
+            xml+="<dte:Complemento NombreComplemento=\"AbonosFacturaCambiaria\" URIComplemento=\"http://www.sat.gob.gt/dte/fel/0.2.0\">";
+            xml+="<cfc:AbonosFacturaCambiaria Version=\"1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/CompCambiaria/0.1.0\" xmlns:cfc=\"http://www.sat.gob.gt/dte/fel/CompCambiaria/0.1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">";
+            xml+="<cfc:Abono>";
+            xml+="<cfc:NumeroAbono>1</cfc:NumeroAbono>";
+            xml+="<cfc:FechaVencimiento>"+factura_abono_venc+"</cfc:FechaVencimiento>";
+            xml+="<cfc:MontoAbono>"+totmontoStr+"</cfc:MontoAbono>";
+            xml+="</cfc:Abono>";
+            xml+="</cfc:AbonosFacturaCambiaria>";
+            xml+="</dte:Complemento>";
+            xml+="</dte:Complementos>";
+        }
+
         xml+="</dte:DatosEmision>";
         xml+="</dte:DTE>";
 
-        //#EJC20200706: Colocar If aquí para validar si el documento fue en contingencia.
-        if (monto_propina>0) {
+        if (monto_propina > 0) {
             xml += "<dte:Adenda>";
-            xml+="<Propina>"+str_propina+"</Propina>";
+            xml += "<Propina>" + str_propina + "</Propina>";
             xml += "</dte:Adenda>";
         }
-
-        /*
-        if (idcontingencia==0) {
-            xml+="<Documento>"+serie+"</Documento>";
-        } else {
-           xml+="<Documento>"+idcontingencia+"</Documento>";
-        }
-        */
 
         xml+="</dte:SAT>";
         xml+="</dte:GTDocumento>";

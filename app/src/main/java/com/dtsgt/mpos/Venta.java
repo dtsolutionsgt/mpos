@@ -4431,9 +4431,8 @@ public class Venta extends PBase {
 
         try {
 
-            sql = "SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO, CODIGO_CLIENTE, EMAIL FROM P_CLIENTE " +
-                      "WHERE CODIGO_CLIENTE="+gl.codigo_cliente;
-
+            sql="SELECT NOMBRE,LIMITECREDITO,NIT,DIRECCION,MEDIAPAGO,CODIGO_CLIENTE,EMAIL,DIACREDITO " +
+                "FROM P_CLIENTE WHERE CODIGO_CLIENTE="+gl.codigo_cliente;
             DT = Con.OpenDT(sql);
             DT.moveToFirst();
 
@@ -4443,6 +4442,9 @@ public class Venta extends PBase {
             //gl.gDirCliente =DT.getString(3);
             gl.media=DT.getInt(4);
             gl.gCorreoCliente =  DT.getString(6);
+
+            gl.cred_lim=lcred;
+            gl.cred_dia=DT.getInt(7);
 
             if (lcred>0) {
                 cred=totalCredito();

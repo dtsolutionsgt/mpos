@@ -123,6 +123,8 @@ public class InvRecep extends PBase {
         almpr=gl.idalm==gl.idalmpred;
         if (almpr) almacen=false;
 
+        almacen=true;
+
         khand=new clsKeybHandler(this, lblBar,lblKeyDP);
         khand.clear(true);khand.enable();
 
@@ -910,7 +912,7 @@ public class InvRecep extends PBase {
         int idalmacen=gl.idalm;
 
         try {
-            if (gl.idalm==gl.idalmpred) idalmacen=0;
+            //if (gl.idalm==gl.idalmpred) idalmacen=0;
 
             clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
@@ -1789,11 +1791,11 @@ public class InvRecep extends PBase {
         dialog.setPositiveButton("Si", (dialog12, which) -> {
             try {
                 if (ingreso) {
-                    if (almacen) {
+                    //if (almacen) {
                         savealmacen();
-                    }else {
-                        save();
-                    }
+                    //}else {
+                    //    save();
+                    //}
                 } else msgAskSave2("Continuar");
             } catch (Exception e) {
                 msgbox(Objects.requireNonNull(new Object() {

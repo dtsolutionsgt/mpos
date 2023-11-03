@@ -178,10 +178,10 @@ public class clsP_sucursalObj {
             item.activo=dt.getInt(11);
             item.fel_codigo_establecimiento=dt.getString(12);
             item.fel_usuario_firma=dt.getString(13);
-            item.fel_usuario_certificacion=dt.getString(14);
+            item.fel_llave_certificacion=dt.getString(14);
             item.fel_llave_firma=dt.getString(15);
-            item.fel_llave_certificacion=dt.getString(16);
-            item.fel_afiliacion_iva=dt.getString(17);
+            item.fel_afiliacion_iva=dt.getString(16);
+            item.fel_usuario_certificacion=dt.getString(17);
             item.codigo_postal=dt.getString(18);
             item.codigo_escenario_isr=dt.getInt(19);
             item.codigo_escenario_iva=dt.getInt(20);

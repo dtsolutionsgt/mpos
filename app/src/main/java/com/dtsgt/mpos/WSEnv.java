@@ -18,6 +18,7 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_MovDObj;
 import com.dtsgt.classes.clsD_MovObj;
+import com.dtsgt.classes.clsD_cxcObj;
 import com.dtsgt.classes.clsD_facturaObj;
 import com.dtsgt.classes.clsD_factura_felObj;
 import com.dtsgt.classes.clsD_factura_svObj;
@@ -84,6 +85,7 @@ public class WSEnv extends PBase {
     private clsD_factura_svObj D_factura_svObj;
     private clsD_facturahnObj D_facturahnObj;
     private clsT_venta_horaObj T_venta_horaObj;
+    private clsD_cxcObj D_cxcObj;
 
     private ArrayList<String> clients = new ArrayList<String>();
     private ArrayList<String> rutas = new ArrayList<String>();
@@ -105,7 +107,7 @@ public class WSEnv extends PBase {
             corelCjCierre, cjCierreError, corelCjReporte, cjReporteError, corelCjPagos, cjPagosError, cStockError;
     private int ftot, fsend, fidx, fTotMov, fIdxMov, fTotMovAlm, fIdxMovAlm,
             mSend, cjCierreTot, cjCierreSend, cjAsist, fTotAnul, cjReporteTot, cjReporteSend,
-            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cCosto, cCorCie,cFELErr;
+            cjPagosTot, cjPagosSend, cjFelBita, cStockTot, cStockSend, cfjCxcSend, cCosto, cCorCie,cFELErr;
     private boolean factsend, movSend, cjCierreSendB, cjReporteSendB, cjPagosSendB, cStockSendB;
 
     @Override
@@ -151,6 +153,8 @@ public class WSEnv extends PBase {
         P_cjCierreObj = new clsP_cajacierreObj(this, Con, db);
         P_cjPagosObj = new clsP_cajapagosObj(this, Con, db);
         P_cjReporteObj = new clsP_cajareporteObj(this, Con, db);
+        D_cxcObj=new clsD_cxcObj(this,Con,db);
+
 
         preparaEnvio();
 
@@ -265,14 +269,20 @@ public class WSEnv extends PBase {
                         break;
                     case 12:
                         processMovAlmacen();
-                        if (fTotMovAlm > 0) {
-                            callMethod("Commit", "SQL", CSQL);
-                        }
+                        if (fTotMovAlm > 0) callMethod("Commit", "SQL", CSQL);
                         break;
                     case 13:
                         processFELErr();
                         if (cFELErr > 0) callMethod("Commit", "SQL", CSQL);
                         break;
+                    case 14:
+                        if (cfjCxcSend > 0) {
+                            processCxC();
+                            callMethod("Commit", "SQL", CSQL);
+                        }
+                        break;
+
+
                 }
             } catch (Exception e) {
                 error = e.getMessage();
@@ -356,6 +366,10 @@ public class WSEnv extends PBase {
                     break;
                 case 13:
                     statusFELErr();
+                    execws(14);
+                    break;
+                case 14:
+                    statusCxC();
                     processComplete();
                     break;
             }
@@ -925,34 +939,6 @@ public class WSEnv extends PBase {
 
             CSQL = CSQL + D_MovDObj.addItemSqlWS(D_MovDObj.items.get(i), gl.codigo_proveedor) + ";";
 
-            /*
-            AppMethods f = new AppMethods(this, null, Con, db);
-            String tipo_producto = f.prodTipo(item.producto);
-
-            if (Send_Stocks_Updates) {
-                if (tipo_producto.equalsIgnoreCase("P")) {
-                    vsql = "UPDATE P_STOCK SET CANT = CANT - " + item.cant;
-                    vsql += " WHERE (EMPRESA=" + gl.emp + ")  AND (CODIGO_PRODUCTO=" + item.producto + ") " +
-                            " AND (UNIDADMEDIDA='" + item.unidadmedida + "')" + "AND (SUCURSAL='" + gl.tienda + "')";
-                    CSQL = CSQL + vsql;
-                }
-            }
-
-             */
-
-            /*
-            if (gl.peInvCompart && tipo_producto.equalsIgnoreCase("P")) {
-                for (int r = 0; r < rutas.size(); r++) {
-                    ucant = item.cant;
-                    if (tipomov.equalsIgnoreCase("D")) ucant = -ucant;
-                    uruta = Integer.parseInt(rutas.get(r));
-
-                    vsql = addUpdateItem(uruta, item.producto, ucant, item.unidadmedida);
-                    CSQL = CSQL + vsql;
-                }
-            }
-
-             */
 
         }
 
@@ -1536,6 +1522,31 @@ public class WSEnv extends PBase {
         }
     }
 
+    private void processCxC() {
+        clsClasses.clsD_cxc item;
+        CSQL = "";
+
+        D_cxcObj.fill("WHERE Estado='C'");
+
+        for (int i = 0; i < D_cxcObj.count; i++) {
+            item = D_cxcObj.items.get(i);
+            CSQL = CSQL + addCxCItemSql(item) + ";";
+        }
+
+        String ss = CSQL;
+        ss=ss+"";
+    }
+
+    private void statusCxC() {
+        try {
+            sql = "UPDATE D_cxc SET Estado='P' WHERE Estado='C'";
+            db.execSQL(sql);
+        } catch (Exception e) {
+            msgbox2(e.getMessage());
+        }
+    }
+
+
     //endregion
 
     //region Venta x Hora
@@ -1740,6 +1751,11 @@ public class WSEnv extends PBase {
             cjFelBita = D_fel_bitacoraObj.count;
             total_enviar += cjFelBita;
 
+            clsD_cxcObj D_cxcObj=new clsD_cxcObj(this,Con,db);
+            D_cxcObj.fill("WHERE Estado='C'");
+            cfjCxcSend=D_cxcObj.count;
+            total_enviar += cfjCxcSend;
+
             long f0 = du.ffecha00(du.getActDate());
             clsD_usuario_asistenciaObj D_usuario_asistenciaObj = new clsD_usuario_asistenciaObj(this, Con, db);
             D_usuario_asistenciaObj.fill("WHERE (BANDERA=0) AND (FECHA<" + f0 + ")");
@@ -1810,7 +1826,6 @@ public class WSEnv extends PBase {
     }
 
     public String addCostoItemSql(clsClasses.clsT_costo item) {
-
         String fs = "" + du.univfechalong(du.getActDateTime());
 
         ins.init("D_costo");
@@ -1824,6 +1839,30 @@ public class WSEnv extends PBase {
         return ins.sql();
 
     }
+
+    public String addCxCItemSql(clsClasses.clsD_cxc item) {
+        String fs = "" + du.univfechalong(du.getActDateTime());
+
+        ins.init("D_cxc");
+
+        ins.add("NoFactura",item.nofactura);
+        ins.add("Empresa",item.empresa);
+        ins.add("IdCliente",item.idcliente);
+        //ins.add("Fecha",item.fecha);
+        ins.add("Fecha",fs);
+        ins.add("Monto_Total",item.monto_total);
+        ins.add("Saldo",item.saldo);
+        ins.add("IdMoneda",item.idmoneda);
+        ins.add("Tipo_Cambio",item.tipo_cambio);
+        ins.add("Estado",item.estado);
+        ins.add("Referencia",item.referencia);
+        ins.add("IdUsuario",item.idusuario);
+        ins.add("DiasCredito",item.diascredito);
+
+        return ins.sql();
+
+    }
+
 
     public String addFELErrItemSql(clsClasses.clsD_fel_error item) {
         String fs = "" + du.univfechalong(du.getActDateTime()),err;

@@ -119,6 +119,8 @@ public class Exist extends PBase {
 
             P_almacenObj=new clsP_almacenObj(this,Con,db);
             almacenes=tieneAlmacenes();
+            almacenes=true;
+
             if (almacenes) {
                 if (idalmdpred>0) {
                     try {
@@ -272,7 +274,7 @@ public class Exist extends PBase {
             idle=false;
 
             if (gl.idalm==gl.idalmpred) {
-                fbs.listExist(fbsucursal,0,rnFbCallBack);
+                fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
             } else {
                 fbs.listExist(fbsucursal,gl.idalm,rnFbCallBack);
             }

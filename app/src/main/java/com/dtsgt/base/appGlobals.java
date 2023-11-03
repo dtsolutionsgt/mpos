@@ -29,9 +29,10 @@ public class appGlobals extends Application {
 	public String bonprodid,bonbarid,bonbarprod,pprodname,contrib,ateninistr,tcorel,CodDev,tipoprodcod;
 	public int prodcod,prodmenu,itemid,gint,tipo,nivel,nivel_sucursal,rol,prodtipo,prw,boldep,vnivel,vnivprec,media;
 	public boolean EsVentaDelivery,EsNivelPrecioDelivery = false;
-	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid;
+	public int autocom,pagomodo,filtrocli,prdlgmode,mantid,retcant,limcant,reportid,cajaid,cred_dia;
 	public long nuevaFecha,atentini,lastDate;
-	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,umfactor,prectemp,fondoCaja,FinMonto;
+	public double dval,dpeso,pagoval,pagolim,bonprodcant,percepcion,costo,credito,cred_lim,
+			umfactor,prectemp,fondoCaja,FinMonto;
 	public boolean CellCom,closeDevBod,modoinicial,newmenuitem,validDate,comquickrec;
 	public String ref1,ref2,ref3,escaneo,corel_d_mov,barra,parVer,gcods,prtipo,prpar;
 	public String gNITCliente, gDirCliente, gNombreCliente, gCorreoCliente,gTelCliente;
@@ -103,7 +104,7 @@ public class appGlobals extends Application {
 	public Boolean peVentaDomicilio,peVentaEntrega,peDomEntEnvio,peNoCerrarMesas,peActOrdenMesas;
 	public Boolean peCafeTicket,peNoEnviar,peUsaSoloBOF,peAcumDesc, peNumOrdCommandaVenta;
 	public Boolean peImpFactBT,peImpFactLan,peImpFactUSB,peNumOrdCentral,peCajaMesasManual,peMesaAtenderTodos;
-	public Boolean peFactPropinaAparte,pePrecu1015;
+	public Boolean peFactPropinaAparte,pePrecu1015,peCargarClientes,pePagoCredito;
     public double  pePropinaPerc,pePropinaCarta,peDescMax;
 
     // Parametros Extra Local

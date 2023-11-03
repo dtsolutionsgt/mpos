@@ -716,7 +716,7 @@ public class Menu extends PBase {
 				listdlg.add("Traslado entre almacénes");
 				//listdlg.add("Egreso de almacén");
 			}
-			if (exp_stock) 	listdlg.add("Cambiar version de inventario");
+			//if (exp_stock) listdlg.add("Cambiar version de inventario");
 
 			//listdlg.add("Barril");
 			listdlg.add("Inventario centralizado");
@@ -2432,6 +2432,14 @@ public class Menu extends PBase {
 		clsClasses.clsFbStock ritem;
 
 		try {
+			clsP_almacenObj P_almacenObj=new clsP_almacenObj(this,Con,db);
+			P_almacenObj.fill("WHERE ACTIVO=1 AND ES_PRINCIPAL=1");
+			if (P_almacenObj.count>0) {
+				idalmdpred=P_almacenObj.first().codigo_almacen;
+			} else {
+				msgbox("No se está definido ningun almacen predeterminado");return;
+			}
+
 			clsP_stockObj P_stockObj=new clsP_stockObj(this,Con,db);
 			P_stockObj.fill();
 
@@ -2442,7 +2450,7 @@ public class Menu extends PBase {
 				ritem=clsCls.new clsFbStock();
 
 				ritem.idprod=P_stockObj.items.get(i).codigo;
-				ritem.idalm=0;
+				ritem.idalm=idalmdpred;
 				ritem.cant=P_stockObj.items.get(i).cant;
 				ritem.um=P_stockObj.items.get(i).unidadmedida;
 				ritem.bandera=0;

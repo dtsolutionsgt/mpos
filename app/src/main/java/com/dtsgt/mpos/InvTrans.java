@@ -1,6 +1,7 @@
 package com.dtsgt.mpos;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -123,6 +124,7 @@ public class InvTrans extends PBase {
             prodid=0;
             almpr=gl.idalm==gl.idalmpred;
             if (almpr) almacen=false;else almacen=true;
+            almacen=true;
             //if (gl.idalm2==gl.idalmpred) gl.idalm2=0;
 
             corel=gl.ruta+"_"+mu.getCorelBase();
@@ -162,7 +164,8 @@ public class InvTrans extends PBase {
             lblDocumento.requestFocus();
             txtBarra.requestFocus();
 
-            int idapr=gl.idalm;if (almpr) idapr=0;
+            int idapr=gl.idalm;
+            //if (almpr) idapr=0;
             fbs.listItems("/"+gl.tienda+"/",idapr,rnFbListItems);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -526,17 +529,8 @@ public class InvTrans extends PBase {
 
                 movd.add(item);
 
-                if (gl.idalm==gl.idalmpred) {
-                    egresoStock(imovr.producto,convcant,convum);
-                } else {
-                    egresoStockAlmacen(imovr.producto,convcant,convum);
-                }
-
-                if (gl.idalm2==gl.idalmpred) {
-                    ingresoStock(imovr.producto,convcant,convum);
-                } else {
-                    ingresoStockAlmacen(imovr.producto,convcant,convum);
-                }
+                egresoStockAlmacen(imovr.producto,convcant,convum);
+                ingresoStockAlmacen(imovr.producto,convcant,convum);
 
                 corc++;
 
@@ -573,12 +567,8 @@ public class InvTrans extends PBase {
 
             toastlong("Existencias actualizadas");
 
-            /*
-            if (gl.peInvCompart) {
-                gl.autocom = 1;
-                startActivity(new Intent(this,WSEnv.class));
-            }
-            */
+            gl.autocom = 1;
+            startActivity(new Intent(this,WSEnv.class));
 
             finish();
 
@@ -1292,7 +1282,8 @@ public class InvTrans extends PBase {
 
     private void getFbProdStock(int prodid) {
         try {
-            int idalmacen=gl.idalm;if (almpr) idalmacen=0;
+            int idalmacen=gl.idalm;
+            //if (almpr) idalmacen=0;
 
             fbprodid=prodid;
             fbs.calculaTotal("/"+gl.tienda+"/",idalmacen,fbprodid,rnFbCallBack);

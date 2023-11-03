@@ -138,19 +138,6 @@ public class WSRec extends PBase {
             app.parametrosExtra();
             setHandlers();
 
-            try {
-                if (gl.codigo_pais.equalsIgnoreCase("GT")) {
-                    gl.Sincronizar_Clientes=false;
-                } else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                    gl.Sincronizar_Clientes=true;
-                } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                    gl.Sincronizar_Clientes=true;
-                }
-            } catch (Exception e) {
-                gl.Sincronizar_Clientes=false;
-            }
-
-
             ws = new WebServiceHandler(WSRec.this, gl.wsurl, gl.timeout);
             xobj = new XMLObject(ws);
 
@@ -261,7 +248,7 @@ public class WSRec extends PBase {
                         callMethod("GetP_LINEA", "EMPRESA", gl.emp);
                         break;
                     case 10:
-                        if (gl.Sincronizar_Clientes){
+                        if (gl.peCargarClientes){
                             callMethod("GetP_CLIENTE", "EMPRESA", gl.emp, "FECHA", fechasync);
                         }
                         break;
@@ -497,7 +484,7 @@ public class WSRec extends PBase {
                     }
                     execws(10);break;
                 case 10:
-                    if (gl.Sincronizar_Clientes) {
+                    if (gl.peCargarClientes) {
                         processCliente();
                     }
                     if (ws.errorflag) {
@@ -1027,25 +1014,16 @@ public class WSRec extends PBase {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                    if ((keyCode == KeyEvent.KEYCODE_ENTER) &&
-                            (event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    if ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
 
                         if (txtClave.getText().toString().isEmpty()){
-
                             msgbox("Debe ingresar la clave para recibir los datos");
-
                             showkeyb();
-
                             txtClave.requestFocus();
-
-                        }else{
-
+                        } else {
                             clave = txtClave.getText().toString();
-
                             showkeyb();
-
                             txtURLWS.requestFocus();
-
                         }
 
                         return true;
@@ -1160,6 +1138,15 @@ public class WSRec extends PBase {
         try {
 
             db.beginTransaction();
+
+            /*
+            String sq="";
+            for (int i = 0; i < script.size(); i++) {
+                sql = script.get(i);
+                sq=sq+sql+"\n";
+            }
+            sq=sq+" ";
+            */
 
             for (int i = 0; i < script.size(); i++) {
                 sql = script.get(i);
@@ -1389,8 +1376,13 @@ public class WSRec extends PBase {
 
             if (wso.openDTCursor.getCount()>0) {
                 wso.openDTCursor.moveToFirst();
-                fc=wso.openDTCursor.getLong(0);
-                if (fc<100000000) fc=2000000000+fc;
+
+                try {
+                    fc=wso.openDTCursor.getLong(0);
+                    if (fc<100000000) fc=2000000000+fc;
+                } catch (Exception e) {
+                    fc=2001010000;
+                }
 
                 sql="UPDATE P_SUCURSAL SET FECHA_CONTR="+fc+"  WHERE CODIGO_SUCURSAL="+gl.tienda;
                 db.execSQL(sql);

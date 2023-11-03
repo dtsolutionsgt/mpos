@@ -57,6 +57,21 @@ public class clsClasses {
         public int  codigo_proveedor;
     }
 
+    public class clsD_cxc {
+        public String nofactura;
+        public int  empresa;
+        public int  idcliente;
+        public long fecha;
+        public double monto_total;
+        public double saldo;
+        public int  idmoneda;
+        public double tipo_cambio;
+        public String estado;
+        public String referencia;
+        public int  idusuario;
+        public int  diascredito;
+    }
+
     public class clsD_factura {
         public int  empresa;
         public String corel;

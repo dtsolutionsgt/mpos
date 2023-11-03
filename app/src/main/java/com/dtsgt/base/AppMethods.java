@@ -1243,6 +1243,32 @@ public class AppMethods {
 			gl.pePrecu1015 = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=166";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peCargarClientes = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peCargarClientes = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=167";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.pePagoCredito = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.pePagoCredito = false;
+		}
+
 	}
 
 	//                  Params extra
@@ -2281,7 +2307,6 @@ public class AppMethods {
     //region Cuentas
 
     public int cuentaActiva(String corel) {
-
         try {
 
             clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);
@@ -2304,7 +2329,6 @@ public class AppMethods {
     }
 
 	public void primeraCuenta(String corel) {
-
 		try {
 
 			clsT_ordencuentaObj T_ordencuentaObj=new clsT_ordencuentaObj(cont,Con,db);

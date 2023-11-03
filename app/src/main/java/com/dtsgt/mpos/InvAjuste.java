@@ -114,6 +114,7 @@ public class InvAjuste extends PBase {
         prodid=0;disp=0;
         almpr=gl.idalm==gl.idalmpred;
         almacen=gl.tipo==5;if (almpr) almacen=false;
+        almacen=true;
 
         khand=new clsKeybHandler(this, lblBar,lblKeyDP);
         khand.clear(true);khand.enable();
@@ -500,8 +501,8 @@ public class InvAjuste extends PBase {
 
             header.corel=corel;
             header.codigo_sucursal=gl.tienda;
-            header.almacen_origen=0;
-            header.almacen_destino=gl.idalm;
+            header.almacen_origen=gl.idalm;
+            header.almacen_destino=0;
             header.anulado=0;
             header.fecha=du.getActDateTime();
             header.tipo="D";
@@ -578,20 +579,22 @@ public class InvAjuste extends PBase {
             selidx=-1;
 
             if (!almacen) {
-                gl.idalm=0;gl.idalmpred=0;
+                //gl.idalm=0;gl.idalmpred=0;
             }
 
-            if (gl.idalm!=gl.idalmpred) {
+            //if (gl.idalm!=gl.idalmpred) {
                 sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_STOCK_ALMACEN.UNIDADMEDIDA, " +
                         "P_PRODUCTO.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
                         "FROM P_STOCK_ALMACEN INNER JOIN " +
                         "P_PRODUCTO ON P_STOCK_ALMACEN.CODIGO_PRODUCTO=P_PRODUCTO.CODIGO_PRODUCTO " +
                         "WHERE (P_STOCK_ALMACEN.CODIGO_ALMACEN="+gl.idalm+") ";
+            /*
             } else {
                 sql="SELECT P_PRODUCTO.CODIGO, P_PRODUCTO.DESCCORTA, P_PRODUCTO.UNIDBAS, " +
                         "P_PRODUCTO.CODIGO_PRODUCTO, P_PRODUCTO.COSTO " +
                         "FROM P_PRODUCTO WHERE (1=1) ";
             }
+            */
 
             sql+="AND (P_PRODUCTO.CODBARRA='"+barcode+"') OR (P_PRODUCTO.CODIGO='"+barcode+"') COLLATE NOCASE";
 
@@ -681,7 +684,7 @@ public class InvAjuste extends PBase {
         int idalmacen=gl.idalm;
 
         try {
-            if (gl.idalm==gl.idalmpred) idalmacen=0;
+            //if (gl.idalm==gl.idalmpred) idalmacen=0;
 
             clsClasses.clsFbStock ritem=clsCls.new clsFbStock();
 
@@ -1064,7 +1067,7 @@ public class InvAjuste extends PBase {
     private void getFbProdStock(int prodid) {
         try {
             fbprodid=prodid;
-            fbs.calculaTotal("/"+gl.tienda+"/",0,fbprodid,rnFbCallBack);
+            fbs.calculaTotal("/"+gl.tienda+"/",gl.idalm,fbprodid,rnFbCallBack);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1155,29 +1158,8 @@ public class InvAjuste extends PBase {
     }
 
     public String dispProdUni(int prodid) {
-        double val=0;
-        String uum="";
-
         try {
-            if (almacen) {
-                P_stock_almacenObj.fill("WHERE (CODIGO_PRODUCTO="+prodid+") AND (CODIGO_ALMACEN="+gl.idalm+")");
-                if (P_stock_almacenObj.count>0) {
-                    val=P_stock_almacenObj.first().cant;
-                    uum=P_stock_almacenObj.first().unidadmedida;
-                }
-            } else {
-                getFbProdStock(prodid);
-                /*
-                P_stockObj.fill("WHERE CODIGO="+prodid);
-                if (P_stockObj.count>0) {
-                    val=P_stockObj.first().cant;
-                    uum=P_stockObj.first().unidadmedida;
-                }
-                */
-            }
-            //disp=val;
-            //return mu.frmdecno(val)+" "+uum;
-            return "";
+            getFbProdStock(prodid);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -1327,11 +1309,11 @@ public class InvAjuste extends PBase {
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    if (almacen) {
+                    //if (almacen) {
                         savealmacen();
-                    } else {
-                        save();
-                    }
+                    //} else {
+                    //    save();
+                    //}
                 } catch (Exception e) {
                     msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
                 }
