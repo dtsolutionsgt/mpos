@@ -92,7 +92,7 @@ public class MainActivity extends PBase {
             super.onCreate(savedInstanceState);
 
             if (pantallaHorizontal()) {
-                if (scrdim > 6) {
+                if (scrdim > 7) {
                     setContentView(R.layout.activity_main);
                     modopantalla = 1;
                 } else {
@@ -384,7 +384,14 @@ public class MainActivity extends PBase {
     }
 
     public void doFPTest(View view) {
-        startActivity(new Intent(this, FBTest.class));
+        //startActivity(new Intent(this, FBTest.class));
+        try {
+            Intent intent = this.getPackageManager().getLaunchIntentForPackage("com.dts.mposupd");
+            intent.putExtra("filename","mpos.apk");
+            this.startActivity(intent);
+        } catch (Exception e) {
+            msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
+        }
     }
 
     public void doFragTest(View view) {

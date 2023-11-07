@@ -1154,7 +1154,6 @@ public class Menu extends PBase {
         } catch (Exception e) {
             msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
         }
-
     }
 
     private void askCambUsuario() {
