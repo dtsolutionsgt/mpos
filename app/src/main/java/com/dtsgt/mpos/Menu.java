@@ -3158,18 +3158,13 @@ public class Menu extends PBase {
         dialog.setCancelable(false);
 		dialog.setPositiveButton("Si", (dialog12, which) -> {
 
-			if(gl.cajaid==5){
-
+			if (gl.cajaid==5){
 				gl.cajaid=1;
-
 				if (valida()){
 
 					if (gl.cajaid!=2){
-
 						gl.inicio_caja_correcto =false;
-
 						startActivity(new Intent(Menu.this,Caja.class));
-
 					}
 
 				}

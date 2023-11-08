@@ -2541,12 +2541,10 @@ public class AppMethods {
     }
 
     public long getDateRecep() {
-
         Cursor dt;
         long resultado = 0;
 
         try {
-
             sql="SELECT param1 FROM Params";
             dt=Con.OpenDT(sql);
 
@@ -2735,7 +2733,7 @@ public class AppMethods {
 		}
 	}
 
-    //endregion
+	//endregion
 
     //region Common
 	

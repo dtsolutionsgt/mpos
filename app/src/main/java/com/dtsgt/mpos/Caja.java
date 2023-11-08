@@ -158,7 +158,9 @@ public class Caja extends PBase {
 
         if (gl.cajaid==1){ //Inicio de Caja
 
-            //msgbox("Inicio caja");
+            if (getEstadoLicencia()==0) {
+                msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");
+            }
 
             lblMontoFin.setVisibility(View.INVISIBLE);
             MontoFin.setVisibility(View.INVISIBLE);
@@ -1319,6 +1321,30 @@ public class Caja extends PBase {
             db.execSQL(ss);
         } catch (Exception e) {
         }
+    }
+
+    public int getEstadoLicencia() {
+        long ff,fl,fa;
+        int estado;
+
+        try {
+            Cursor dt=Con.OpenDT("SELECT Fecha,Estado FROM T_lic_estado WHERE id="+gl.tienda);
+            if (dt.getCount()==0) return 1;
+
+            dt.moveToFirst();
+            ff=dt.getLong(0);
+            estado=dt.getInt(1);
+            dt.close();
+
+            fl=du.addDays(ff,3);fa=du.getActDate();
+
+            if (fa>fl) return 0;
+            if (estado==0) return 0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return 1;
     }
 
     //endregion
