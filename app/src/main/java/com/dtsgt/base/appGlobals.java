@@ -10,6 +10,7 @@ import com.epson.eposdevice.printer.Printer;
 import java.util.ArrayList;
 
 public class appGlobals extends Application {
+	public boolean bloqueo_venta;
 	public String rutanom,sucur,rutatipo, rutatipog,  vendnom, gstr, gstr2, prod, um, umpres, umstock, clitipo;
 	public String ubas, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante,
 			ayudanteID, vehiculo, vehiculoID;
