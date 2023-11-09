@@ -2788,6 +2788,11 @@ public class Venta extends PBase {
         try {
             switch (menuid) {
                 case 1:
+                    if (gl.bloqueo_venta){
+                        msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
+                    }
+
+
                     if (getEstadoLicencia()==0) {
                         msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }

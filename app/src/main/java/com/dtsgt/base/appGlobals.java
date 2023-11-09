@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 public class appGlobals extends Application {
+	public boolean bloqueo_venta;
 
 	@Override
 	public void onCreate() {

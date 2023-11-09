@@ -1099,6 +1099,7 @@ public class Menu extends PBase {
 						case 1:
 							startActivity(new Intent(Menu.this,Tablas.class));break;
 						case 2:
+							if (gl.bloqueo_venta) return;
 							actualizaVersion();break;
 						case 3:
 							enviarBaseDeDatos();break;

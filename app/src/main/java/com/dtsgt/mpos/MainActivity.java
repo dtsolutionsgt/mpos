@@ -209,6 +209,8 @@ public class MainActivity extends PBase {
         try {
             super.InitBase();
 
+            gl.bloqueo_venta=bloqueo_venta;
+
             this.setTitle("MPos");
             gl.parVer = parVer;
 
