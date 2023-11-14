@@ -3990,6 +3990,8 @@ public class FacturaRes extends PBase {
 		String psql;
 
 		try {
+			estadoCuenta();
+
 			clsDocCuenta fdoc=new clsDocCuenta(this,prn.prw,gl.peMon,gl.peDecImp, "");
 
 			clsVendedoresObj VendedoresObj=new clsVendedoresObj(this,Con,db);
@@ -4012,7 +4014,7 @@ public class FacturaRes extends PBase {
 			fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina);
 			//fdoc.buildPrint(gl.mesanom,gl.nocuenta_precuenta,tot,descimp,propinaperc,gl.pePropinaFija,propina+propinaext);
 
-			estadoCuenta();
+			//estadoCuenta();
 
 			gl.QRCodeStr="";
 

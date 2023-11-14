@@ -1514,6 +1514,13 @@ public class clsClasses {
         public int  statcom;
     }
 
+    public class clsT_exist_list {
+        public int  idsucursal;
+        public int  idalmacen;
+        public int  flag;
+        public String nombre;
+    }
+
     public class clsT_factreceta {
         public int  id;
         public int  producto;

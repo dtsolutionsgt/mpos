@@ -135,6 +135,7 @@ public class ListAdaptMenuOrden extends BaseAdapter {
         if (items.get(position).Icon==74) holder.imgEst.setImageResource(R.drawable.btn_del_all);
         if (items.get(position).Icon==75) holder.imgEst.setImageResource(R.drawable.cambio_impresora);
 		if (items.get(position).Icon==78) holder.imgEst.setImageResource(R.drawable.barril);
+		if (items.get(position).Icon==79) holder.imgEst.setImageResource(R.drawable.btn_caja2);
 
 		if (items.get(position).Icon==99) holder.imgEst.setImageResource(R.drawable.nowifi3);
 

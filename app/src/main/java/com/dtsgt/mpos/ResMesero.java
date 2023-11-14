@@ -93,7 +93,6 @@ public class ResMesero extends PBase {
     private boolean horiz,actorden;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -269,6 +268,8 @@ public class ResMesero extends PBase {
 
     private void fboeList() {
         try {
+            if (fboe.warcount>0) msgbox("No se logro determinar estado de cuentas.\nPor favor revise con la caja si falta alguna cuenta para pagar.");
+
             showItems();
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -385,7 +386,7 @@ public class ResMesero extends PBase {
                 }
             }
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
 
         return false;
@@ -856,7 +857,7 @@ public class ResMesero extends PBase {
                 lblgrupo.setText(P_res_grupoObj.items.get(P_res_grupoObj.count-1).nombre);
             } else lblgrupo.setText("Seleccione una area");
 
-            listItems();
+            //listItems();
         } catch (Exception e) {}
 
     }
@@ -1333,7 +1334,7 @@ public class ResMesero extends PBase {
                 finish();
             }
         } else {
-            listItems();
+            //listItems();
         }
 
     }

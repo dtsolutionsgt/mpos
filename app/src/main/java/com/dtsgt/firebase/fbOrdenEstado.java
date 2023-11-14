@@ -23,6 +23,8 @@ public class fbOrdenEstado extends fbBase {
 
     private Runnable rnListener;
 
+    private String skey;
+
     public fbOrdenEstado(String troot, int idsucursal) {
         super(troot);
         idsuc=idsucursal;
@@ -63,7 +65,7 @@ public class fbOrdenEstado extends fbBase {
 
     public void listItems(Runnable rnCallback) {
         try {
-            items.clear();errflag=false;error="";
+            items.clear();errflag=false;error="";warcount=0;
 
             fdb.getReference(root+"/"+idsuc+"/").
                     get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -79,6 +81,9 @@ public class fbOrdenEstado extends fbBase {
                                 if (res.exists()) {
 
                                     for (DataSnapshot snap : res.getChildren()) {
+
+                                        skey= snap.getKey();
+
                                         try {
                                             litem = clsCls.new clsFbOrdenEstado();
 
@@ -93,8 +98,12 @@ public class fbOrdenEstado extends fbBase {
                                             items.add(litem);
 
                                         } catch (Exception e) {
-                                            error = "fbOrdenEstado.listItems: "+ e.getMessage();
-                                            errflag = true;break;
+
+                                            warcount++;
+                                            removeKey(skey);
+
+                                            //error = "fbOrdenEstado.listItems: "+ e.getMessage();
+                                            //errflag = true;break;
                                         }
                                     }
                                 }

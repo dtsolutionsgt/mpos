@@ -17,9 +17,8 @@ public class fbBase {
     public clsClasses clsCls=new clsClasses();
 
     public boolean errflag,itemexists,listresult;
-
     public String node,error;
-    public int idsuc;
+    public int idsuc,warcount;
 
     public String value,root;
 

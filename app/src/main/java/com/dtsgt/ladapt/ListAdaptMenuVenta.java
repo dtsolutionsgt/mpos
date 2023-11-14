@@ -1,5 +1,6 @@
 package com.dtsgt.ladapt;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class ListAdaptMenuVenta extends BaseAdapter {
 		return position;
 	}
 
+	@SuppressLint("SuspiciousIndentation")
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
 		int iconid;

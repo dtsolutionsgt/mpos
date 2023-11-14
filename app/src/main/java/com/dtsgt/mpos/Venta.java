@@ -2606,6 +2606,11 @@ public class Venta extends PBase {
                     mmitems.add(item);
                 }
 
+                item = clsCls.new clsMenu();
+                item.ID=73;item.Name="Existencias";item.Icon=7;
+                mmitems.add(item);
+
+
             } catch (Exception e) {
                 addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
             }
@@ -2697,6 +2702,9 @@ public class Venta extends PBase {
                     cambiaPrecio();break;
                 case 72:
                     msgbox("Pendiente implementacion");break;
+                case 73:
+                    startActivity(new Intent(this,ProdExist.class));
+                    break;
             }
         } catch (Exception e) {
             addlog(new Object() {}.getClass().getEnclosingMethod().getName(), e.getMessage(), "");

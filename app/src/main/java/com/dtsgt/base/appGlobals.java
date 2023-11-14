@@ -11,7 +11,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 public class appGlobals extends Application {
-	public boolean bloqueo_venta;
 
 	@Override
 	public void onCreate() {
@@ -23,7 +22,7 @@ public class appGlobals extends Application {
 		}
 	}
 
-
+	public boolean bloqueo_venta;
 	public String rutanom,sucur,rutatipo, rutatipog,  vendnom, gstr, gstr2, prod, um, umpres, umstock, clitipo;
 	public String ubas, empnom,imgpath,umpeso,lotedf,impresora, tipoImpresora, codSupervisor, ayudante,
 			ayudanteID, vehiculo, vehiculoID;
@@ -50,7 +49,7 @@ public class appGlobals extends Application {
                 comensales, cliente_dom, idclidir, idalm, idalm2, idalmpred,mesa_grupo,
 			    uidingrediente, idgrres, idgrsel, idgrpos, usuario_cortesia,bar_prod,cuenta_borrar,cuenta_pagar,
 				mesa_vend,mesa_codigo,invcent_cod,invcen_alm,sal_idneg,desc_tipo_apl,prcu_mesa,
-			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito;
+			    prcu_vend,precuenta_cuenta,combo_cuenta,dias_credito,precuenta_modo;
 	public String  cliente,ruta,vend, caja, clave,nombre_proveedor,idmov,FELmsg, prndrvmsg,nocuenta_precuenta,
                 codigo_pais,primesa,pricuenta,ordcorel,numero_orden,nombre_mesero,nombre_mesero_sel,
                 corelmov, linea_sel="",mesa_alias,nummesapedido, nombre_cortesia,bar_um,bar_idbarril;

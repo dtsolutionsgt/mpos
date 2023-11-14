@@ -1862,6 +1862,49 @@ public class Orden extends PBase {
         }
     }
 
+    private void crearAvisoPago() {
+        try {
+
+            clsT_ordenObj T_ordenObj=new clsT_ordenObj(this,Con,db);
+
+            gl.numero_orden=idorden+"_"+cuenta;
+            T_ordenObj.fill("WHERE COREL='"+idorden+"'");
+
+            if (T_ordenObj.count==0) {
+                msgbox("No se puede continuar, la cuenta no contiene ninun articulo");return;
+            }
+
+            msgAskAvisoPago("¿Enviar aviso de pago a la caja?");
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void estadoCuenta() {
+        try {
+            if (gl.idorden.isEmpty()) return;
+            if (gl.precuenta_cuenta==0) return;
+
+            clsClasses.clsFbOrdenEstado eitem = clsCls.new clsFbOrdenEstado();
+
+            eitem.corel = gl.idorden;
+            eitem.id = gl.precuenta_cuenta;
+            eitem.estado = 1;
+            eitem.idmesa = gl.mesa_codigo;
+            eitem.nombre = gl.mesanom;
+            eitem.fecha = du.getActDateTime();
+            eitem.mesero=gl.mesero_venta;
+
+            fboe.setItem(eitem);
+
+            exitBtn(false);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
     public void finalizarOrden(){
 
         try{
@@ -2070,6 +2113,12 @@ public class Orden extends PBase {
             mitems.add(item);
 
             item = clsCls.new clsMenu();
+            item.ID = 79;
+            item.Name = "Aviso pago";
+            item.Icon = 79;
+            mitems.add(item);
+
+            item = clsCls.new clsMenu();
             item.ID = 0;
             item.Name = "---------";
             item.Icon = 0;
@@ -2168,6 +2217,7 @@ public class Orden extends PBase {
                     } else {
                         if (app.isOnWifi()>0) {
                             if (limpiaVenta()) {
+                                gl.precuenta_modo=0;
                                 showListaCuentas();
                             }
                         } else {
@@ -2184,6 +2234,23 @@ public class Orden extends PBase {
                     break;
                 case 78:
                     startActivity(new Intent(this,Barriles.class));
+                    break;
+                case 79:
+                    if (!hasProducts()) {
+                        msgbox("La venta está vacia.");return;
+                    }
+                    if (pendienteImpresion()) {
+                        msgmsg("Existen articulos pendientes de impresion, no se puede proceder con elpago.");
+                    } else {
+                        if (app.isOnWifi()>0) {
+                            if (limpiaVenta()) {
+                                gl.precuenta_modo=1;
+                                showListaCuentas();
+                            }
+                        } else {
+                            msgAskPrecuentaSinWifi("MPos sin conexión al internet.\nRevise estado de la orden.");
+                        }
+                    }
                     break;
                 case 99:
                     startActivity(new Intent(this,Nowifi.class));
@@ -3516,6 +3583,8 @@ public class Orden extends PBase {
                 throw new Exception(fboe.error);
             }
 
+            //if (fboe.warcount>0) msgbox("No se logro determinar estado de cuentas.\nPor favor revise con la caja si falta alguna cuenta para pagar.");
+
             fboc.listItemsOrden(idorden,rnfbocListaPrecuenta);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -3526,7 +3595,7 @@ public class Orden extends PBase {
         int cc=0,selcuenta=1;
         try {
             extListDlg listdlg = new extListDlg();
-            listdlg.buildDialog(Orden.this,"Imprimir precuenta");
+            listdlg.buildDialog(Orden.this,"Seleccione una cuenta");
 
             for (int i = 0; i <fboc.items.size(); i++) {
                 if (cuentaPagada(idorden,fboc.items.get(i).id)) {
@@ -3547,7 +3616,11 @@ public class Orden extends PBase {
 
                 gl.precuenta_cuenta=cuenta;
                 gl.nocuenta_precuenta=""+cuenta;
-                crearVenta();
+                if (gl.precuenta_modo==0) {
+                    crearVenta();
+                } else {
+                    crearAvisoPago();
+                }
                 return;
             }
 
@@ -3569,7 +3642,13 @@ public class Orden extends PBase {
                         cuenta=Integer.parseInt(listdlg.getText(position));
                         gl.precuenta_cuenta=cuenta;
                         gl.nocuenta_precuenta=""+cuenta;
-                        crearVenta();
+
+                        if (gl.precuenta_modo==0) {
+                            crearVenta();
+                        } else {
+                            crearAvisoPago();
+                        }
+
                         listdlg.dismiss();
                     } catch (Exception e) {}
                 };
@@ -3643,7 +3722,6 @@ public class Orden extends PBase {
     }
 
     private void cargaDatosCliente() {
-
         try {
 
             if (fboc.errflag) {
@@ -5081,6 +5159,29 @@ public class Orden extends PBase {
 
         } catch (Exception e){
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" : "+e.getMessage());
+        }
+    }
+
+    private void msgAskAvisoPago(String msg) {
+        try{
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    estadoCuenta();
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }
 

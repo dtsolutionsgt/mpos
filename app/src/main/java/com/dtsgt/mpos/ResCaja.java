@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 
 import com.dtsgt.base.clsClasses;
 import com.dtsgt.classes.ExDialog;
+import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsT_comboObj;
 import com.dtsgt.classes.clsT_ordencomboObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
@@ -28,6 +29,7 @@ import com.dtsgt.classes.extListDlg;
 import com.dtsgt.firebase.fbOrden;
 import com.dtsgt.firebase.fbOrdenCuenta;
 import com.dtsgt.firebase.fbOrdenEstado;
+import com.dtsgt.firebase.fbResSesion;
 import com.dtsgt.ladapt.LA_ResCaja;
 
 import java.io.BufferedReader;
@@ -55,11 +57,12 @@ public class ResCaja extends PBase {
     private fbOrdenEstado fboe;
     private fbOrdenCuenta fboc;
     private fbOrden fbo;
+    private fbResSesion fbrs;
 
-    private Runnable rnfboeLista,rnFbListenerrefOrdenEstado,rnfbocListaCliente,rnfboItems;
+    private Runnable rnfboeLista,rnfbrsActivas,rnFbListenerrefOrdenEstado,rnfbocListaCliente,rnfboItems;
 
     private String corel,mesa,numpedido;
-    private int cuenta,idmesero;
+    private int cuenta,idmesero,actmesa;
     private boolean idle=true;
 
     private boolean horiz,espedido,actorden;
@@ -90,11 +93,13 @@ public class ResCaja extends PBase {
 
             fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
             fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
+            fbrs=new fbResSesion("ResSesion",gl.tienda);
 
             rnfboeLista = () -> showItems();
             rnFbListenerrefOrdenEstado = () -> FbListenerOrdenEstado();
             rnfbocListaCliente = () -> cargaDatosCliente();
             rnfboItems = () -> cargaOrden();
+            rnfbrsActivas = () -> fbrsActivas();
 
             fboe.setListener(rnFbListenerrefOrdenEstado);
 
@@ -112,6 +117,14 @@ public class ResCaja extends PBase {
     }
 
     //region Events
+
+    public void doAdd(View view) {
+        try {
+            fbrs.listItemsActivos(rnfbrsActivas);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     public void doSincon(View view) {
         startActivity(new Intent(this,Nowifi.class));
@@ -164,6 +177,10 @@ public class ResCaja extends PBase {
         clsClasses.clsFbOrdenEstado fbitem;
 
         try {
+
+            if (fboe.warcount>0) {
+                msgbox("No se logro determinar estado de cuentas.\nPor favor revise si falta alguna cuenta para pagar.");
+            }
 
             witems.clear();
 
@@ -415,6 +432,73 @@ public class ResCaja extends PBase {
         }
 
         return true;
+    }
+
+    //endregion
+
+    //region Agregar
+
+    private void fbrsActivas() {
+        int idmesa,itc=0;
+
+        try {
+
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResCaja.this,"Mesas activas");
+
+            clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
+            P_res_mesaObj.fill("ORDER BY NOMBRE");
+
+            for (int i = 0; i <P_res_mesaObj.count; i++) {
+                idmesa=P_res_mesaObj.items.get(i).codigo_mesa;
+                if (mesaActiva(idmesa)) {
+                    listdlg.add(idmesa,P_res_mesaObj.items.get(i).nombre);itc++;
+                }
+            }
+
+            if (itc==0) {
+                msgbox("Ningúna mesa está activa");return;
+            }
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        actmesa=listdlg.getCodigoInt(position);
+
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {}
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+
+
+
+    private boolean mesaActiva(int cmesa) {
+        try {
+            for (int ir = 0; ir <fbrs.items.size(); ir++) {
+                if (fbrs.items.get(ir).codigo_mesa==cmesa) {
+                    if (fbrs.items.get(ir).estado>0) return true;
+                }
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+        return false;
     }
 
     //endregion
