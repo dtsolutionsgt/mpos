@@ -1904,7 +1904,6 @@ public class Orden extends PBase {
         }
     }
 
-
     public void finalizarOrden(){
 
         try{

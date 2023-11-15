@@ -1985,6 +1985,16 @@ public class Menu extends PBase {
     //region Reportes
 
 	public void showReportMenu() {
+		boolean flag=false;
+
+		if (gl.peRepLimitado) {
+			if (gl.rol==2) flag=true;
+			if (gl.rol==3) flag=true;
+		} else flag=true;
+
+		if (!flag) {
+			msgbox("Acceso denegado.");return;
+		}
 
 		try {
 

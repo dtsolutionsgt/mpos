@@ -560,6 +560,19 @@
                     android:textStyle="bold" />
             </RelativeLayout>
 
+            <TextView
+                android:id="@+id/textView328"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relRoad"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_toEndOf="@+id/relEnter"
+                android:text="%"
+                android:textColor="#000000"
+                android:textSize="60sp"
+                android:textStyle="bold" />
+
         </RelativeLayout>
 
 </RelativeLayout>
