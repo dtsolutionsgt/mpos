@@ -1575,12 +1575,16 @@ public class Venta extends PBase {
     }
 
     private void updItemMonto(){
-        double ptot=0,precdoc;
+        double ptot=0,precdoc,valdesc;
 
         try {
-
+            valdesc=gl.promdesc;
             savetot=mu.round(prec*cant,2);
-            ptot=savetot-gl.promdesc;
+            if (gl.peDescPerc) {
+                valdesc=savetot*valdesc/100;
+                valdesc=mu.round(valdesc,2);
+            }
+            ptot=savetot-valdesc;
             descmon = savetot-ptot;
             if (savetot>0) desc=100*descmon/savetot;else desc=0;
 
@@ -2916,6 +2920,16 @@ public class Venta extends PBase {
     }
 
     public void showReportMenu() {
+        boolean flag=false;
+
+        if (gl.peRepLimitado) {
+            if (gl.rol==2) flag=true;
+            if (gl.rol==3) flag=true;
+        } else flag=true;
+
+        if (!flag) {
+            msgbox("Acceso denegado.");return;
+        }
 
         try {
             extListDlg listdlg = new extListDlg();

@@ -1269,6 +1269,34 @@ public class AppMethods {
 			gl.pePagoCredito = false;
 		}
 
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=168";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peRepLimitado = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peRepLimitado = false;
+		}
+
+		try {
+			sql="SELECT VALOR FROM P_PARAMEXT WHERE ID=169";
+			dt=Con.OpenDT(sql);
+			dt.moveToFirst();
+
+			val=dt.getString(0);
+			if (emptystr(val)) throw new Exception();
+
+			gl.peDescPerc = val.equalsIgnoreCase("S");
+		} catch (Exception e) {
+			gl.peDescPerc = false;
+		}
+
+
+
 	}
 
 	//                  Params extra

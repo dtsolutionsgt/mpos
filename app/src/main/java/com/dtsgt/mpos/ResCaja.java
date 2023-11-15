@@ -59,13 +59,15 @@ public class ResCaja extends PBase {
     private fbOrden fbo;
     private fbResSesion fbrs;
 
-    private Runnable rnfboeLista,rnfbrsActivas,rnFbListenerrefOrdenEstado,rnfbocListaCliente,rnfboItems;
+    private Runnable rnfboeLista,rnfbrsActivas,rnFbListenerrefOrdenEstado,
+            rnfbocListaCliente,rnfboItems,rnfbocCuentas,rnfboPagada;
 
-    private String corel,mesa,numpedido;
+    private ArrayList<clsClasses.clsfbResSesion> rsitems= new ArrayList<clsClasses.clsfbResSesion>();
+    private clsClasses.clsfbResSesion rsitem;
+
+    private String corel,mesa,numpedido,idorden,actidorden;
     private int cuenta,idmesero,actmesa;
-    private boolean idle=true;
-
-    private boolean horiz,espedido,actorden;
+    private boolean idle=true,horiz,espedido,actorden;
 
 
     @Override
@@ -94,12 +96,15 @@ public class ResCaja extends PBase {
             fboe=new fbOrdenEstado("OrdenEstado",gl.tienda);
             fboc=new fbOrdenCuenta("OrdenCuenta",gl.tienda);
             fbrs=new fbResSesion("ResSesion",gl.tienda);
+            fbo=new fbOrden("Orden",gl.tienda,"");
 
             rnfboeLista = () -> showItems();
             rnFbListenerrefOrdenEstado = () -> FbListenerOrdenEstado();
             rnfbocListaCliente = () -> cargaDatosCliente();
             rnfboItems = () -> cargaOrden();
             rnfbrsActivas = () -> fbrsActivas();
+            rnfbocCuentas = () -> fbocCuentas();
+            rnfboPagada = () -> fboPagada();
 
             fboe.setListener(rnFbListenerrefOrdenEstado);
 
@@ -449,10 +454,13 @@ public class ResCaja extends PBase {
             clsP_res_mesaObj P_res_mesaObj=new clsP_res_mesaObj(this,Con,db);
             P_res_mesaObj.fill("ORDER BY NOMBRE");
 
+            rsitems.clear();
             for (int i = 0; i <P_res_mesaObj.count; i++) {
                 idmesa=P_res_mesaObj.items.get(i).codigo_mesa;
                 if (mesaActiva(idmesa)) {
-                    listdlg.add(idmesa,P_res_mesaObj.items.get(i).nombre);itc++;
+                    listdlg.add(idorden,P_res_mesaObj.items.get(i).nombre);
+                    rsitems.add(rsitem);
+                    itc++;
                 }
             }
 
@@ -464,8 +472,14 @@ public class ResCaja extends PBase {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
                     try {
-                        actmesa=listdlg.getCodigoInt(position);
+                        actidorden=listdlg.getCodigo(position);
+                        rsitem=rsitems.get(position);
 
+                        gl.mesa_codigo=rsitem.codigo_mesa;
+                        gl.mesanom=listdlg.getText(position);
+                        gl.mesero_venta=rsitem.vendedor;
+
+                        fboc.listItemsOrden(actidorden,rnfbocCuentas);
 
                         listdlg.dismiss();
                     } catch (Exception e) {}
@@ -485,14 +499,106 @@ public class ResCaja extends PBase {
         }
     }
 
+    private void fbocCuentas() {
+        int cc=0;
 
+        try {
 
+            extListDlg listdlg = new extListDlg();
+            listdlg.buildDialog(ResCaja.this,"Seleccione una cuenta");
+
+            for (int i = 0; i <fboc.items.size(); i++) {
+                fboc.items.get(i).cf=0;cc++;
+            }
+
+            if (cc==0) {
+                toast("No existe ninguna cuenta activa");return;
+            }
+
+            for (int i = 0; i <fboc.items.size(); i++) {
+                if (fboc.items.get(i).cf==0) {
+                    listdlg.add(R.drawable.table_icon,""+fboc.items.get(i).id,"");
+                }
+            }
+
+            listdlg.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,	long id) {
+                    try {
+                        int ccuenta=Integer.parseInt(listdlg.getText(position));
+                        gl.precuenta_cuenta=ccuenta;
+                        gl.nocuenta_precuenta=""+ccuenta;
+
+                        fbo.listItems(actidorden,rnfboPagada);
+
+                        listdlg.dismiss();
+                    } catch (Exception e) {
+                        String ss=e.getMessage();
+                    }
+                };
+            });
+
+            listdlg.setOnLeftClick(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listdlg.dismiss();
+                }
+            });
+
+            listdlg.show();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fboPagada() {
+         try {
+            if (fbo.errflag) throw new Exception(fbo.error);
+
+            for (int i = 0; i <fbo.items.size(); i++) {
+                if (fbo.items.get(i).cuenta==gl.precuenta_cuenta && fbo.items.get(i).estado==2) {
+                    msgbox("La cuenta ya está pagada");return;
+                }
+            }
+
+             crearAvisoPago();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void crearAvisoPago() {
+        try {
+            if (actidorden.isEmpty()) return;
+            if (gl.precuenta_cuenta == 0) return;
+
+            clsClasses.clsFbOrdenEstado eitem = clsCls.new clsFbOrdenEstado();
+
+            eitem.corel = actidorden;
+            eitem.id = gl.precuenta_cuenta;
+            eitem.estado = 1;
+            eitem.idmesa = gl.mesa_codigo;
+            eitem.nombre = gl.mesanom;
+            eitem.fecha = du.getActDateTime();
+            eitem.mesero = gl.mesero_venta;
+
+            fboe.setItem(eitem);
+
+            listItems();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
 
     private boolean mesaActiva(int cmesa) {
         try {
             for (int ir = 0; ir <fbrs.items.size(); ir++) {
                 if (fbrs.items.get(ir).codigo_mesa==cmesa) {
-                    if (fbrs.items.get(ir).estado>0) return true;
+                    if (fbrs.items.get(ir).estado>0) {
+                        idorden=fbrs.items.get(ir).id;
+                        rsitem=fbrs.items.get(ir);
+                        return true;
+                    }
                 }
             }
         } catch (Exception e) {
