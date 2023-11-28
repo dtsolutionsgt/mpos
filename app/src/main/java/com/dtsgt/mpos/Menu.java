@@ -1043,6 +1043,7 @@ public class Menu extends PBase {
 						case 1:
 							startActivity(new Intent(Menu.this,Tablas.class));break;
 						case 2:
+							if (gl.bloqueo_venta) return;
 							actualizaVersion();break;
 						case 3:
 							enviarBaseDeDatos();break;
@@ -3159,18 +3160,13 @@ public class Menu extends PBase {
         dialog.setCancelable(false);
 		dialog.setPositiveButton("Si", (dialog12, which) -> {
 
-			if(gl.cajaid==5){
-
+			if (gl.cajaid==5){
 				gl.cajaid=1;
-
 				if (valida()){
 
 					if (gl.cajaid!=2){
-
 						gl.inicio_caja_correcto =false;
-
 						startActivity(new Intent(Menu.this,Caja.class));
-
 					}
 
 				}

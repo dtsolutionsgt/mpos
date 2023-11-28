@@ -81,6 +81,7 @@ import com.dtsgt.classes.clsT_ipbypassObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
+import com.dtsgt.webservice.wsCommit;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -97,6 +98,8 @@ public class WSRec extends PBase {
     private ProgressBar pbar;
 
     private WebServiceHandler ws;
+    private wsCommit wscom;
+
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
     private boolean pbd_vacia = false,nueva_version=false;
@@ -133,6 +136,9 @@ public class WSRec extends PBase {
 
             app.getURL();
             app.parametrosExtra();
+
+            wscom =new wsCommit(gl.wsurl);
+
             setHandlers();
 
             try {
@@ -1165,6 +1171,7 @@ public class WSRec extends PBase {
                 app.setDateRecep(du.getActDate());
                 msgboxwait("Recepción completa");
 
+                fechaActualizacion();
             } else {
                 msgboxexit("Configuración de tienda o caja incorrecta");
                 //finish();
@@ -4136,6 +4143,16 @@ public class WSRec extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
+    }
+
+    private void fechaActualizacion() {
+        try {
+            String fse = "" + du.univfechahora(du.getActDateTime());
+            sql="UPDATE P_RUTA SET ULTIMA_ACTUALIZACION='"+fse+"' WHERE CODIGO_RUTA="+gl.codigo_ruta;
+            wscom.execute(sql,null);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     //endregion

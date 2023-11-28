@@ -53,6 +53,7 @@ import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_comboObj;
+import com.dtsgt.classes.clsT_lic_estadoObj;
 import com.dtsgt.classes.clsT_ordencomboprecioObj;
 import com.dtsgt.classes.clsT_ventaObj;
 import com.dtsgt.classes.clsT_venta_horaObj;
@@ -127,7 +128,7 @@ public class Venta extends PBase {
 
     private wsCommit wscom;
     private wsOpenDT wso;
-    private Runnable rnOrdenInsert,rnOrdenQuery,rnOrdenDel;
+    private Runnable rnOrdenInsert,rnOrdenQuery,rnOrdenDel,rnlicSuscursal;
 
     private clsRepBuilder rep;
     private printer prn;
@@ -192,17 +193,11 @@ public class Venta extends PBase {
             wscom =new wsCommit(gl.wsurl);
             wso =new wsOpenDT(gl.wsurl);
 
-            rnOrdenInsert = () -> {
-                ordenInsert();
-            };
+            rnOrdenInsert = () -> {ordenInsert();};
+            rnOrdenQuery = () -> {ordenQuery();};
+            rnOrdenDel = () -> {ordenDel();};
+            rnlicSuscursal= () -> {licSuscursal();};
 
-            rnOrdenQuery = () -> {
-                ordenQuery();
-            };
-
-            rnOrdenDel = () -> {
-                ordenDel();
-            };
 
             pedidos=gl.pePedidos;
             domenvio=gl.peDomEntEnvio;
@@ -271,6 +266,11 @@ public class Venta extends PBase {
             }
 
             if (gl.ingreso_mesero) meseroAutoLogin();
+
+            validaEstadoLicencia();
+
+            //if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
@@ -2763,6 +2763,14 @@ public class Venta extends PBase {
         try {
             switch (menuid) {
                 case 1:
+                    if (gl.bloqueo_venta){
+                        msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
+                    }
+
+
+                    if (getEstadoLicencia()==0) {
+                        msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
+                    }
                     if (!validaMinimoCF()) return;
                     if (!disponibleCorel()) return;
                     finalizarOrden();break;
@@ -3656,6 +3664,98 @@ public class Venta extends PBase {
         } else {
             //msgbox(wscom.error);
         }
+    }
+
+    //endregion
+
+    //region Licencia
+
+    private boolean licenciaActiva() {
+        return true;
+    }
+
+    private void validaEstadoLicencia() {
+
+        try {
+            sql="SELECT ACTIVO FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
+            wso.execute(sql,rnlicSuscursal);
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void licSuscursal() {
+        clsClasses.clsT_lic_estado item;
+        String estlic;
+        int flag=1;
+
+        try {
+            if (wso.errflag) throw new Exception(wso.error);
+
+            wso.openDTCursor.moveToFirst();
+            estlic=wso.openDTCursor.getString(0);
+
+            if (!estlic.equalsIgnoreCase("True")) flag=0;
+            if (flag==0) msgbox("Su licencia ha expirado.\nNo podrá realizar ninguna venta.");
+
+            clsT_lic_estadoObj T_lic_estadoObj=new clsT_lic_estadoObj(this,Con,db);
+
+            item = clsCls.new clsT_lic_estado();
+
+            item.id=gl.tienda;
+            item.fecha=du.getActDate();
+            item.estado=flag;
+
+            try {
+                T_lic_estadoObj.add(item);
+            } catch (Exception e) {
+                T_lic_estadoObj.update(item);
+            }
+
+        } catch (Exception e) {
+            toast(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+    }
+
+    public int getEstadoLicencia() {
+        long ff,fl,fa;
+        int estado;
+
+        try {
+            Cursor dt=Con.OpenDT("SELECT Fecha,Estado FROM T_lic_estado WHERE id="+gl.tienda);
+
+            if (dt.getCount()==0) {
+                clsT_lic_estadoObj T_lic_estadoObj=new clsT_lic_estadoObj(this,Con,db);
+
+                clsClasses.clsT_lic_estado item = clsCls.new clsT_lic_estado();
+
+                item.id=gl.tienda;
+                item.fecha=du.getActDate();
+                item.estado=1;
+
+                try {
+                    T_lic_estadoObj.add(item);
+                } catch (Exception e) {
+                    T_lic_estadoObj.update(item);
+                }
+                return 1;
+            }
+
+            dt.moveToFirst();
+            ff=dt.getLong(0);
+            estado=dt.getInt(1);
+            dt.close();
+
+            fl=du.addDays(ff,3);fa=du.getActDate();
+
+            if (fa>fl) return 0;
+            if (estado==0) return 0;
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        return 1;
     }
 
     //endregion

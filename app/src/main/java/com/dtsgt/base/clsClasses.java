@@ -1440,6 +1440,12 @@ public class clsClasses {
         public String ipr;
     }
 
+    public class clsT_lic_estado {
+        public int  id;
+        public long fecha;
+        public int  estado;
+    }
+
     public class clsT_movd {
         public int  coreldet;
         public String corel;
