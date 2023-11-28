@@ -38,14 +38,13 @@ import com.dtsgt.classes.clsP_cortesiaObj;
 import com.dtsgt.classes.clsP_modo_emergenciaObj;
 import com.dtsgt.classes.clsP_paramextObj;
 import com.dtsgt.classes.clsP_res_sesionObj;
-import com.dtsgt.classes.clsP_sucursalObj;;
+import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsP_vendedor_rolObj;
 import com.dtsgt.classes.clsT_cierreObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.classes.extWaitDlg;
-import com.dtsgt.fel.FELFactura;
 import com.dtsgt.fel.FELVerificacion;
 import com.dtsgt.ladapt.ListAdaptMenuGrid;
 import com.dtsgt.mant.Lista;
@@ -65,6 +64,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
+;
 
 public class Menu extends PBase {
 
@@ -3426,7 +3427,7 @@ public class Menu extends PBase {
 			super.onResume();
 
             P_paramextObj.reconnect(Con,db);
-            P_modo_emergenciaObj.reconnect(Con,db);
+			P_modo_emergenciaObj.reconnect(Con,db);
 
 			setPrintWidth();
 

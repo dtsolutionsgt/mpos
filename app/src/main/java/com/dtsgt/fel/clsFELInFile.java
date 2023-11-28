@@ -1361,10 +1361,16 @@ public class clsFELInFile {
         xml+="<dte:DTE ID=\"DatosCertificados\">";
         xml+="<dte:DatosEmision ID=\"DatosEmision\">";
 
+        String vTipoDoc = "FACT";
+
+        if (fel_afiliacion_iva.equals("PEQ")){
+            vTipoDoc = "FPEQ";
+        }
+
         if (idconting.isEmpty() || idconting.equalsIgnoreCase("0") ) { // sin contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"" + vTipoDoc + "\"></dte:DatosGenerales>";
         } else { // con contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\"FACT\"></dte:DatosGenerales>";
+            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\""+  vTipoDoc + "\"></dte:DatosGenerales>";
         }
 
     }
@@ -1387,10 +1393,13 @@ public class clsFELInFile {
         xml+="</dte:Items>";
 
         xml+="<dte:Totales>";
-        xml+="<dte:TotalImpuestos>";
-        xml+="<dte:TotalImpuesto NombreCorto=\"IVA\" TotalMontoImpuesto=\""+totIvaStr+"\"></dte:TotalImpuesto>";
-        xml+="</dte:TotalImpuestos>";
-        //xml+="<dte:GranTotal>"+totmonto+"</dte:GranTotal>";
+
+        if (fel_afiliacion_iva.equals("GEN")){
+            xml+="<dte:TotalImpuestos>";
+            xml+="<dte:TotalImpuesto NombreCorto=\"IVA\" TotalMontoImpuesto=\""+totIvaStr+"\"></dte:TotalImpuesto>";
+            xml+="</dte:TotalImpuestos>";
+        }
+
         xml+="<dte:GranTotal>"+totmontoStr+"</dte:GranTotal>";
         xml+="</dte:Totales>";
 
@@ -1533,6 +1542,8 @@ public class clsFELInFile {
             if (fraseISR==4) {
                 xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
                 xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"2\"></dte:Frase>";
+            } else if (fraseISR==3) {
+                xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"3\"></dte:Frase>";
             } else {
                 if (fraseISR!=0) {
                     xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"" + fraseISR +"\"></dte:Frase>";
@@ -1578,10 +1589,6 @@ public class clsFELInFile {
         descstr=descstr.replaceAll(",",".");
 
         xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
-
-        //xml+="<dte:Item BienOServicio=\"S\" NumeroLinea=\""+linea+"\">";
-
-
         xml+="<dte:Cantidad>"+cantstr+"</dte:Cantidad>";
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";
@@ -1594,14 +1601,19 @@ public class clsFELInFile {
         String impstr = String.format("%.2f",imp);
         impstr=impstr.replaceAll(",",".");
 
-        xml+="<dte:Impuestos>";
-        xml+="<dte:Impuesto>";
-        xml+="<dte:NombreCorto>IVA</dte:NombreCorto>";
-        xml+="<dte:CodigoUnidadGravable>1</dte:CodigoUnidadGravable>";
-        xml+="<dte:MontoGravable>"+impbasestr+"</dte:MontoGravable>";
-        xml+="<dte:MontoImpuesto>"+impstr+"</dte:MontoImpuesto>";
-        xml+="</dte:Impuesto>";
-        xml+="</dte:Impuestos>";
+
+        if (fel_afiliacion_iva.equals("GEN")){
+
+            xml+="<dte:Impuestos>";
+            xml+="<dte:Impuesto>";
+            xml+="<dte:NombreCorto>IVA</dte:NombreCorto>";
+            xml+="<dte:CodigoUnidadGravable>1</dte:CodigoUnidadGravable>";
+            xml+="<dte:MontoGravable>"+impbasestr+"</dte:MontoGravable>";
+            xml+="<dte:MontoImpuesto>"+impstr+"</dte:MontoImpuesto>";
+            xml+="</dte:Impuesto>";
+            xml+="</dte:Impuestos>";
+
+        }
 
         String totalstr = String.format("%.2f",total);
         totalstr=totalstr.replaceAll(",",".");
