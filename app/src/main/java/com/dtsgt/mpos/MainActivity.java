@@ -40,8 +40,6 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
-import androidx.core.app.ActivityCompat;
-
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;
 import com.dtsgt.base.clsClasses;
@@ -75,7 +73,7 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String  parVer = "4.8.20.0";
+    private String  parVer = "4.8.21";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
