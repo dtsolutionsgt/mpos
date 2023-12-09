@@ -2764,12 +2764,14 @@ public class Venta extends PBase {
             switch (menuid) {
                 case 1:
                     if (gl.bloqueo_venta){
-                        msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
+                        //#EJC20231209A: Error en empresa 8, porque la fecha no se actualiza correctamente.
+                        //msgbox("MSG_202312091424: Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }
 
 
                     if (getEstadoLicencia()==0) {
-                        msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
+                        //#EJC20231209B: Error en empresa 8, porque la fecha no se actualiza correctamente.
+                        //msgbox("\"MSG_202312091424A: Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }
                     if (!validaMinimoCF()) return;
                     if (!disponibleCorel()) return;
@@ -3696,7 +3698,9 @@ public class Venta extends PBase {
             estlic=wso.openDTCursor.getString(0);
 
             if (!estlic.equalsIgnoreCase("True")) flag=0;
-            if (flag==0) msgbox("Su licencia ha expirado.\nNo podrá realizar ninguna venta.");
+
+            //#EJC20231209D: Error en empresa 8, porque la fecha no se actualiza correctamente.
+            //if (flag==0) msgbox("\"MSG_202312091426: Su licencia ha expirado.\nNo podrá realizar ninguna venta.");
 
             clsT_lic_estadoObj T_lic_estadoObj=new clsT_lic_estadoObj(this,Con,db);
 

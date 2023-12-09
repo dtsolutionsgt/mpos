@@ -158,9 +158,10 @@ public class Caja extends PBase {
 
         if (gl.cajaid==1){ //Inicio de Caja
 
-            if (getEstadoLicencia()==0) {
-                msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");
-            }
+            //#EJC20231209: Error en empresa 8, porque la fecha no se actualiza correctamente.
+//            if (getEstadoLicencia()==0) {
+//                msgbox("\"MSG_202312091425: Su licencia ha expirado.\nNo puede realizar ninguna venta.");
+//            }
 
             lblMontoFin.setVisibility(View.INVISIBLE);
             MontoFin.setVisibility(View.INVISIBLE);
