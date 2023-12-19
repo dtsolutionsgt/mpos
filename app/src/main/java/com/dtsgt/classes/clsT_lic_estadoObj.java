@@ -1,11 +1,13 @@
 package com.dtsgt.classes;
 
-import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
+
+import java.util.ArrayList;
 
 public class clsT_lic_estadoObj {
 
@@ -167,12 +169,9 @@ public class clsT_lic_estadoObj {
     public String updateItemSql(clsClasses.clsT_lic_estado item) {
 
         upd.init("T_lic_estado");
-
         upd.add("FECHA",item.fecha);
         upd.add("ESTADO",item.estado);
-
         upd.Where("(ID="+item.id+")");
-
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
