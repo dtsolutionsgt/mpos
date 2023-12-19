@@ -3698,7 +3698,7 @@ public class Venta extends PBase {
             estlic=wso.openDTCursor.getString(0);
 
             if (!estlic.equalsIgnoreCase("True")) flag=0;
-
+//EJC202312190823;
             //#EJC20231209D: Error en empresa 8, porque la fecha no se actualiza correctamente.
             //if (flag==0) msgbox("\"MSG_202312091426: Su licencia ha expirado.\nNo podrá realizar ninguna venta.");
 
