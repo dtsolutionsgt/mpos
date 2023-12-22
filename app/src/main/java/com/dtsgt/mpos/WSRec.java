@@ -1,5 +1,6 @@
 package com.dtsgt.mpos;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -69,6 +70,7 @@ import com.dtsgt.classes.clsP_res_mesaObj;
 import com.dtsgt.classes.clsP_res_salaObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.classes.clsP_tipo_contribuyenteObj;
 import com.dtsgt.classes.clsP_tiponegObj;
 import com.dtsgt.classes.clsP_unidadObj;
 import com.dtsgt.classes.clsP_unidad_convObj;
@@ -81,7 +83,9 @@ import com.dtsgt.classes.clsT_ipbypassObj;
 import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classesws.*;
+import com.dtsgt.fel.FELFactura;
 import com.dtsgt.webservice.wsCommit;
+import com.dtsgt.webservice.wsOpenDT;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -99,6 +103,9 @@ public class WSRec extends PBase {
 
     private WebServiceHandler ws;
     private wsCommit wscom;
+    private wsOpenDT wso;
+
+    private Runnable rnTipoContrib,rnFechaContrato;
 
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
@@ -107,7 +114,7 @@ public class WSRec extends PBase {
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
 
     private String idversion,clave;
-
+    private long ffel;
     public boolean automatico;
 
     @Override
@@ -138,6 +145,10 @@ public class WSRec extends PBase {
             app.parametrosExtra();
 
             wscom =new wsCommit(gl.wsurl);
+            wso=new wsOpenDT(gl.wsurl);
+
+            rnTipoContrib = () -> { tipoContrib();};
+            rnFechaContrato = () -> { fechaContrato();};
 
             setHandlers();
 
@@ -1172,6 +1183,7 @@ public class WSRec extends PBase {
                 msgboxwait("Recepción completa");
 
                 fechaActualizacion();
+                llenaTipoContrib();
             } else {
                 msgboxexit("Configuración de tienda o caja incorrecta");
                 //finish();
@@ -2935,6 +2947,7 @@ public class WSRec extends PBase {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private void processParametrosExtraRuta() {
         try {
             clsP_paramextObj handler = new clsP_paramextObj(this, Con, db);
@@ -3938,6 +3951,138 @@ public class WSRec extends PBase {
 
     //endregion
 
+    //region Web Service calls
+
+    private void llenaTipoContrib() {
+        try {
+            sql="SELECT COD_PAIS FROM P_EMPRESA";
+            Cursor dt=Con.OpenDT(sql);
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                String cpais=dt.getString(0);
+
+                sql="SELECT CODIGO_TIPO_CONTRIBUYENTE,TIPO_CONTRIBUYENTE, TIPO_DOCUMENTO " +
+                    "FROM P_TIPO_CONTRIBUYENTE WHERE (COD_PAIS='"+cpais+"') AND (ACTIVO=1)";
+                wso.execute(sql,rnTipoContrib);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void tipoContrib() {
+        Cursor dt;
+        clsP_tipo_contribuyenteObj P_tipo_contribuyenteObj;
+        clsClasses.clsP_tipo_contribuyente item;
+
+        try {
+            if (wso.errflag) throw new Exception(wso.error);
+
+            if (!db.isOpen()) {
+                browse=0;onResume();
+            }
+
+            dt=wso.openDTCursor;
+            P_tipo_contribuyenteObj=new clsP_tipo_contribuyenteObj(this,Con,db);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            return;
+        }
+
+        try {
+            db.beginTransaction();
+
+            db.execSQL("DELETE FROM P_tipo_contribuyente");
+
+            if (dt.getCount()>0) {
+                dt.moveToFirst();
+                while (!dt.isAfterLast()) {
+
+                    item = clsCls.new clsP_tipo_contribuyente();
+
+                    item.codigo=dt.getInt(0);
+                    item.contrib=dt.getString(1);
+                    item.docum=dt.getString(2);
+
+                    P_tipo_contribuyenteObj.add(item);
+
+                    dt.moveToNext();
+                }
+            }
+
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            db.endTransaction();
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        validaFechaContrato();
+    }
+
+    private void validaFechaContrato() {
+        try {
+            sql="SELECT dbo.AndrDate(FEL_FECHA_VENCE_CONTRATO) FROM P_SUCURSAL WHERE (CODIGO_SUCURSAL="+gl.tienda+")";
+            wso.execute(sql,rnFechaContrato);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void fechaContrato() {
+        try {
+            if (wso.errflag) throw new Exception(wso.error);
+
+            if (!db.isOpen()) {
+                browse=0;onResume();
+            }
+
+            Cursor dt=wso.openDTCursor;
+            try {
+                dt.moveToFirst();
+                ffel=dt.getLong(0);
+            } catch (Exception e) {
+                ffel=0;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+
+        validaFEL();
+    }
+
+    private void validaFEL() {
+        boolean flagFEL=false;
+        long fact,f14;
+
+        if (gl.tienda==0) return;
+
+        try {
+
+            if (ffel!=0) {
+                fact=du.getActDate();f14=du.addDays(fact,14);
+                if (f14>=ffel)  msgbox("Validéz de Facturación electronica está próxima a expirar.\nAvize a supervisor.");
+            }
+
+            app.parametrosExtra();
+
+            if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+                flagFEL=true;
+            } else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+                flagFEL=true;
+            }
+
+            clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
+            P_sucursalObj.fill("WHERE (CODIGO_SUCURSAL="+gl.tienda+")");
+            if (P_sucursalObj.count==0) return;
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     //region Aux
 
     private void updateLabel() {
@@ -4180,10 +4325,7 @@ public class WSRec extends PBase {
                 Recibir();
             }
 
-        } catch (Exception e) {
-            addlog(new Object() {
-            }.getClass().getEnclosingMethod().getName(), e.getMessage(), "");
-        }
+        } catch (Exception e) { }
     }
 
     //endregion

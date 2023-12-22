@@ -112,6 +112,7 @@ public class FELVerificacion extends PBase {
         fel.fraseIVA=suc.codigo_escenario_iva;
         fel.fraseISR=suc.codigo_escenario_isr;
         fel.fel_afiliacion_iva=suc.fel_afiliacion_iva;
+        fel.fel_tipo_documento=app.felTipoDocumento(fel.fel_afiliacion_iva);
 
         D_facturaObj=new clsD_facturaObj(this,Con,db);
         D_facturadObj=new clsD_facturadObj(this,Con,db);

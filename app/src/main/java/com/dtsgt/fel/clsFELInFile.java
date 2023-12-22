@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.DateUtils;
+import com.dtsgt.classes.clsP_tipo_contribuyenteObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -67,6 +68,7 @@ public class clsFELInFile {
             fel_llave_firma,
             fel_llave_certificacion,
             fel_afiliacion_iva,
+            fel_tipo_documento,
             codigo_postal,
             mpos_identificador_fact,
             fel_nit,
@@ -1346,31 +1348,31 @@ public class clsFELInFile {
     //region XML
 
     public void iniciar(long fecha_emision,String idconting) {
-
         String sf=parseDate(fecha_emision);
+        String tipodoc;
+
         fecha_factura=sf;
-
         errlevel=1;
-
         imp=0;linea=0;totmonto=0;totiva=0;
 
         //#EJC20200527: Versión 1.5.3 de FEL
-        xml="";
+        xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
         xml+="<dte:GTDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.2.0 \">";
         xml+="<dte:SAT ClaseDocumento=\"dte\">";
         xml+="<dte:DTE ID=\"DatosCertificados\">";
         xml+="<dte:DatosEmision ID=\"DatosEmision\">";
 
-        String vTipoDoc = "FACT";
+        tipodoc=fel_tipo_documento;
 
-        if (fel_afiliacion_iva.equals("PEQ")){
-            vTipoDoc = "FPEQ";
-        }
+        /*
+        String tipodoc = "FACT";
+        if (fel_afiliacion_iva.equals("PEQ")) tipodoc = "FPEQ";
+        */
 
         if (idconting.isEmpty() || idconting.equalsIgnoreCase("0") ) { // sin contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\"" + vTipoDoc + "\"></dte:DatosGenerales>";
+            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" Tipo=\""+tipodoc+"\"></dte:DatosGenerales>";
         } else { // con contingencia
-            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\""+  vTipoDoc + "\"></dte:DatosGenerales>";
+            xml+="<dte:DatosGenerales CodigoMoneda=\"GTQ\" FechaHoraEmision=\""+sf+"\" NumeroAcceso=\""+idconting+"\" Tipo=\""+tipodoc+"\"></dte:DatosGenerales>";
         }
 
     }
@@ -1447,6 +1449,18 @@ public class clsFELInFile {
 
     }
 
+    public static String escape_caracteres_sat(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
+    }
+
     public void emisor(String afiliacionIVA,
                        String codigoEstablecimiento,
                        String correoEmisor,
@@ -1457,12 +1471,14 @@ public class clsFELInFile {
         //#EJC20200708: Quitar guión de NIT emisor.
         nitEmisor= nitEmisor.replace("-","");
 
+        String nom=escape_caracteres_sat(nombreEmisor);
+
         xml+="<dte:Emisor AfiliacionIVA=\""+afiliacionIVA+"\" " +
                 "CodigoEstablecimiento=\""+codigoEstablecimiento+"\" " +
                 "CorreoEmisor=\""+correoEmisor+"\" " +
                 "NITEmisor=\""+nitEmisor+"\" " +
                 "NombreComercial=\""+nombreComercial+"\" " +
-                "NombreEmisor=\""+nombreEmisor+"\">";
+                "NombreEmisor=\""+nom+"\">";
     }
 
     public void emisorDireccion(String direccion,

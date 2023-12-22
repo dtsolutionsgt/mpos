@@ -196,7 +196,7 @@ public class Venta extends PBase {
             rnOrdenInsert = () -> {ordenInsert();};
             rnOrdenQuery = () -> {ordenQuery();};
             rnOrdenDel = () -> {ordenDel();};
-            rnlicSuscursal= () -> {licSuscursal();};
+            rnlicSuscursal= () -> { licSucursal();};
 
 
             pedidos=gl.pePedidos;
@@ -269,7 +269,7 @@ public class Venta extends PBase {
 
             validaEstadoLicencia();
 
-            //if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
+            if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -2768,10 +2768,9 @@ public class Venta extends PBase {
                         //msgbox("MSG_202312091424: Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }
 
-
                     if (getEstadoLicencia()==0) {
                         //#EJC20231209B: Error en empresa 8, porque la fecha no se actualiza correctamente.
-                        //msgbox("\"MSG_202312091424A: Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
+                        msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }
                     if (!validaMinimoCF()) return;
                     if (!disponibleCorel()) return;
@@ -3686,7 +3685,7 @@ public class Venta extends PBase {
         }
     }
 
-    private void licSuscursal() {
+    private void licSucursal() {
         clsClasses.clsT_lic_estado item;
         String estlic;
         int flag=1;
@@ -3698,9 +3697,11 @@ public class Venta extends PBase {
             estlic=wso.openDTCursor.getString(0);
 
             if (!estlic.equalsIgnoreCase("True")) flag=0;
-//EJC202312190823;
+            //EJC202312190823;
             //#EJC20231209D: Error en empresa 8, porque la fecha no se actualiza correctamente.
-            //if (flag==0) msgbox("\"MSG_202312091426: Su licencia ha expirado.\nNo podrá realizar ninguna venta.");
+            //if (flag==0) msgbox("Su licencia ha expirado.\nNo podrá realizar ninguna venta.");
+
+            if (!db.isOpen()) onResume();
 
             clsT_lic_estadoObj T_lic_estadoObj=new clsT_lic_estadoObj(this,Con,db);
 
@@ -3723,11 +3724,12 @@ public class Venta extends PBase {
     }
 
     public int getEstadoLicencia() {
+        Cursor dt;
         long ff,fl,fa;
         int estado;
 
         try {
-            Cursor dt=Con.OpenDT("SELECT Fecha,Estado FROM T_lic_estado WHERE id="+gl.tienda);
+            dt=Con.OpenDT("SELECT Fecha,Estado FROM T_lic_estado WHERE id="+gl.tienda);
 
             if (dt.getCount()==0) {
                 clsT_lic_estadoObj T_lic_estadoObj=new clsT_lic_estadoObj(this,Con,db);
