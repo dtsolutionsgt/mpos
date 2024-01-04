@@ -2770,7 +2770,7 @@ public class Venta extends PBase {
 
                     if (getEstadoLicencia()==0) {
                         //#EJC20231209B: Error en empresa 8, porque la fecha no se actualiza correctamente.
-                        msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
+                        //msgbox("Su licencia ha expirado.\nNo puede realizar ninguna venta.");return;
                     }
                     if (!validaMinimoCF()) return;
                     if (!disponibleCorel()) return;

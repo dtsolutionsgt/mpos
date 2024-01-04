@@ -4083,6 +4083,8 @@ public class WSRec extends PBase {
         }
     }
 
+    //endregion
+
     //region Aux
 
     private void updateLabel() {
