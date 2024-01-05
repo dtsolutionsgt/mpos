@@ -4706,7 +4706,13 @@ public class FacturaRes extends PBase {
             if (browse==6) {
                 browse=0;
                 if (gl.desc_monto>=0) {
-                    descaddmonto=gl.desc_monto;
+					if (gl.peDescPerc) {
+						descaddmonto=stot0*gl.desc_monto/100;
+						descaddmonto=mu.round2dec(descaddmonto);
+					} else {
+						descaddmonto=gl.desc_monto;
+					}
+
 					gl.descadd=gl.desc_monto;
                     totalOrder();
                 }
