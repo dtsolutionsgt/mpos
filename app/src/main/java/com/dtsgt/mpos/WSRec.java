@@ -106,9 +106,8 @@ public class WSRec extends PBase {
     private Runnable rnFechaContrato;
 
     private wsCommit wscom;
-    private wsOpenDT wso;
 
-    private Runnable rnTipoContrib,rnFechaContrato;
+    private Runnable rnTipoContrib;
 
     private XMLObject xobj;
     private ArrayList<String> script = new ArrayList<String>();
@@ -4322,35 +4321,6 @@ public class WSRec extends PBase {
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
 
-    }
-
-    public void validaFechaContrato() {
-        Cursor DT;
-        long fa,fc,fl,fd;
-
-        if (gl.tienda==0) return;
-
-        try {
-            if (!app.usaFEL()) return;
-
-            String sql="SELECT FECHA_CONTR FROM P_SUCURSAL WHERE CODIGO_SUCURSAL="+gl.tienda;
-            DT = Con.OpenDT(sql);
-            DT.moveToFirst();
-
-            fc=DT.getLong(0);fa=du.getActDate();
-            if (DT!=null) DT.close();
-            if (fc<2300000000L) return;
-
-            if (fc<=fa) {
-                msgbox("Su contrato de facturación electrónica ha expirado.\nInforme su contador.");return;
-            }
-
-            fl=du.addDays(fa,14);
-            if (fl>=fc) {
-                msgbox("Su contrato de facturación electrónica va a expirar "+du.sfecha(fc)+".\nInforme su contador.");
-            }
-
-        } catch (Exception e) {}
     }
 
     private void fechaActualizacion() {
