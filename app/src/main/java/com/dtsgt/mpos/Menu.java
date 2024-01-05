@@ -67,6 +67,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+;
+
 public class Menu extends PBase {
 
 	private GridView gridView;
@@ -3674,7 +3676,7 @@ public class Menu extends PBase {
 			super.onResume();
 
             P_paramextObj.reconnect(Con,db);
-            P_modo_emergenciaObj.reconnect(Con,db);
+			P_modo_emergenciaObj.reconnect(Con,db);
 
 			setPrintWidth();
 

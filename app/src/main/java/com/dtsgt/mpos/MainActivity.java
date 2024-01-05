@@ -22,9 +22,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-
-import androidx.core.app.ActivityCompat;
-
 import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.util.DisplayMetrics;
@@ -40,6 +37,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
 
 import com.dtsgt.base.AppMethods;
 import com.dtsgt.base.BaseDatosVersion;

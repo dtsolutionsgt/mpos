@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dtsgt.base.DateUtils;
+import com.dtsgt.classes.clsP_tipo_contribuyenteObj;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 
@@ -69,6 +70,7 @@ public class clsFELInFile {
             fel_llave_firma,
             fel_llave_certificacion,
             fel_afiliacion_iva,
+            fel_tipo_documento,
             codigo_postal,
             mpos_identificador_fact,
             fel_nit,
@@ -1232,20 +1234,26 @@ public class clsFELInFile {
     //region XML
 
     public void iniciar(long fecha_emision,String idconting) {
-
         String sf=parseDate(fecha_emision);
+        String tipodoc;
+
         fecha_factura=sf;
-
         errlevel=1;
-
         imp=0;linea=0;totmonto=0;totiva=0;
 
         //#EJC20200527: Versión 1.5.3 de FEL
-        xml="";
+        xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
         xml+="<dte:GTDocumento xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:dte=\"http://www.sat.gob.gt/dte/fel/0.2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" Version=\"0.1\" xsi:schemaLocation=\"http://www.sat.gob.gt/dte/fel/0.2.0 \">";
         xml+="<dte:SAT ClaseDocumento=\"dte\">";
         xml+="<dte:DTE ID=\"DatosCertificados\">";
         xml+="<dte:DatosEmision ID=\"DatosEmision\">";
+
+        tipodoc=fel_tipo_documento;
+
+        /*
+        String tipodoc = "FACT";
+        if (fel_afiliacion_iva.equals("PEQ")) tipodoc = "FPEQ";
+        */
 
         if (idconting.isEmpty() || idconting.equalsIgnoreCase("0") ) { // sin contingencia
             if (factura_credito) {
@@ -1276,10 +1284,13 @@ public class clsFELInFile {
         xml+="</dte:Items>";
 
         xml+="<dte:Totales>";
-        xml+="<dte:TotalImpuestos>";
-        xml+="<dte:TotalImpuesto NombreCorto=\"IVA\" TotalMontoImpuesto=\""+totIvaStr+"\"></dte:TotalImpuesto>";
-        xml+="</dte:TotalImpuestos>";
-        //xml+="<dte:GranTotal>"+totmonto+"</dte:GranTotal>";
+
+        if (fel_afiliacion_iva.equals("GEN")){
+            xml+="<dte:TotalImpuestos>";
+            xml+="<dte:TotalImpuesto NombreCorto=\"IVA\" TotalMontoImpuesto=\""+totIvaStr+"\"></dte:TotalImpuesto>";
+            xml+="</dte:TotalImpuestos>";
+        }
+
         xml+="<dte:GranTotal>"+totmontoStr+"</dte:GranTotal>";
         xml+="</dte:Totales>";
 
@@ -1332,6 +1343,18 @@ public class clsFELInFile {
 
     }
 
+    public static String escape_caracteres_sat(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
+    }
+
     public void emisor(String afiliacionIVA,
                        String codigoEstablecimiento,
                        String correoEmisor,
@@ -1342,12 +1365,14 @@ public class clsFELInFile {
         //#EJC20200708: Quitar guión de NIT emisor.
         nitEmisor= nitEmisor.replace("-","");
 
+        String nom=escape_caracteres_sat(nombreEmisor);
+
         xml+="<dte:Emisor AfiliacionIVA=\""+afiliacionIVA+"\" " +
                 "CodigoEstablecimiento=\""+codigoEstablecimiento+"\" " +
                 "CorreoEmisor=\""+correoEmisor+"\" " +
                 "NITEmisor=\""+nitEmisor+"\" " +
                 "NombreComercial=\""+nombreComercial+"\" " +
-                "NombreEmisor=\""+nombreEmisor+"\">";
+                "NombreEmisor=\""+nom+"\">";
     }
 
     public void emisorDireccion(String direccion,
@@ -1427,6 +1452,8 @@ public class clsFELInFile {
             if (fraseISR==4) {
                 xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"1\"></dte:Frase>";
                 xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"2\"></dte:Frase>";
+            } else if (fraseISR==3) {
+                xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"3\"></dte:Frase>";
             } else {
                 if (fraseISR!=0) {
                     xml+="<dte:Frase CodigoEscenario=\"1\" TipoFrase=\"" + fraseISR +"\"></dte:Frase>";
@@ -1472,10 +1499,6 @@ public class clsFELInFile {
         descstr=descstr.replaceAll(",",".");
 
         xml+="<dte:Item BienOServicio=\"B\" NumeroLinea=\""+linea+"\">";
-
-        //xml+="<dte:Item BienOServicio=\"S\" NumeroLinea=\""+linea+"\">";
-
-
         xml+="<dte:Cantidad>"+cantstr+"</dte:Cantidad>";
         xml+="<dte:UnidadMedida>"+unid+"</dte:UnidadMedida>";
         xml+="<dte:Descripcion>"+descrip+"</dte:Descripcion>";
@@ -1488,14 +1511,19 @@ public class clsFELInFile {
         String impstr = String.format("%.2f",imp);
         impstr=impstr.replaceAll(",",".");
 
-        xml+="<dte:Impuestos>";
-        xml+="<dte:Impuesto>";
-        xml+="<dte:NombreCorto>IVA</dte:NombreCorto>";
-        xml+="<dte:CodigoUnidadGravable>1</dte:CodigoUnidadGravable>";
-        xml+="<dte:MontoGravable>"+impbasestr+"</dte:MontoGravable>";
-        xml+="<dte:MontoImpuesto>"+impstr+"</dte:MontoImpuesto>";
-        xml+="</dte:Impuesto>";
-        xml+="</dte:Impuestos>";
+
+        if (fel_afiliacion_iva.equals("GEN")){
+
+            xml+="<dte:Impuestos>";
+            xml+="<dte:Impuesto>";
+            xml+="<dte:NombreCorto>IVA</dte:NombreCorto>";
+            xml+="<dte:CodigoUnidadGravable>1</dte:CodigoUnidadGravable>";
+            xml+="<dte:MontoGravable>"+impbasestr+"</dte:MontoGravable>";
+            xml+="<dte:MontoImpuesto>"+impstr+"</dte:MontoImpuesto>";
+            xml+="</dte:Impuesto>";
+            xml+="</dte:Impuestos>";
+
+        }
 
         String totalstr = String.format("%.2f",total);
         totalstr=totalstr.replaceAll(",",".");

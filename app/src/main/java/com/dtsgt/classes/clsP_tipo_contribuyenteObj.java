@@ -1,15 +1,13 @@
 package com.dtsgt.classes;
 
+import java.util.ArrayList;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import com.dtsgt.base.BaseDatos;
 import com.dtsgt.base.clsClasses;
 
-import java.util.ArrayList;
-
-public class clsT_lic_estadoObj {
+public class clsP_tipo_contribuyenteObj {
 
     public int count;
 
@@ -20,11 +18,11 @@ public class clsT_lic_estadoObj {
     public BaseDatos.Update upd;
     private clsClasses clsCls = new clsClasses();
 
-    private String sel="SELECT * FROM T_lic_estado";
+    private String sel="SELECT * FROM P_tipo_contribuyente";
     private String sql;
-    public ArrayList<clsClasses.clsT_lic_estado> items= new ArrayList<clsClasses.clsT_lic_estado>();
+    public ArrayList<clsClasses.clsP_tipo_contribuyente> items= new ArrayList<clsClasses.clsP_tipo_contribuyente>();
 
-    public clsT_lic_estadoObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
+    public clsP_tipo_contribuyenteObj(Context context, BaseDatos dbconnection, SQLiteDatabase dbase) {
         cont=context;
         Con=dbconnection;
         ins=Con.Ins;upd=Con.Upd;
@@ -38,15 +36,15 @@ public class clsT_lic_estadoObj {
         db = dbase;
     }
 
-    public void add(clsClasses.clsT_lic_estado item) {
+    public void add(clsClasses.clsP_tipo_contribuyente item) {
         addItem(item);
     }
 
-    public void update(clsClasses.clsT_lic_estado item) {
+    public void update(clsClasses.clsP_tipo_contribuyente item) {
         updateItem(item);
     }
 
-    public void delete(clsClasses.clsT_lic_estado item) {
+    public void delete(clsClasses.clsP_tipo_contribuyente item) {
         deleteItem(item);
     }
 
@@ -66,33 +64,33 @@ public class clsT_lic_estadoObj {
         fillItems(sq);
     }
 
-    public clsClasses.clsT_lic_estado first() {
+    public clsClasses.clsP_tipo_contribuyente first() {
         return items.get(0);
     }
 
 
     // Private
 
-    private void addItem(clsClasses.clsT_lic_estado item) {
+    private void addItem(clsClasses.clsP_tipo_contribuyente item) {
 
-        ins.init("T_lic_estado");
+        ins.init("P_tipo_contribuyente");
 
-        ins.add("ID",item.id);
-        ins.add("FECHA",item.fecha);
-        ins.add("ESTADO",item.estado);
+        ins.add("CODIGO",item.codigo);
+        ins.add("CONTRIB",item.contrib);
+        ins.add("DOCUM",item.docum);
 
         db.execSQL(ins.sql());
 
     }
 
-    private void updateItem(clsClasses.clsT_lic_estado item) {
+    private void updateItem(clsClasses.clsP_tipo_contribuyente item) {
 
-        upd.init("T_lic_estado");
+        upd.init("P_tipo_contribuyente");
 
-        upd.add("FECHA",item.fecha);
-        upd.add("ESTADO",item.estado);
+        upd.add("CONTRIB",item.contrib);
+        upd.add("DOCUM",item.docum);
 
-        upd.Where("(ID="+item.id+")");
+        upd.Where("(CODIGO="+item.codigo+")");
 
         db.execSQL(upd.sql());
 
@@ -100,19 +98,19 @@ public class clsT_lic_estadoObj {
 
     }
 
-    private void deleteItem(clsClasses.clsT_lic_estado item) {
-        sql="DELETE FROM T_lic_estado WHERE (ID="+item.id+")";
+    private void deleteItem(clsClasses.clsP_tipo_contribuyente item) {
+        sql="DELETE FROM P_tipo_contribuyente WHERE (CODIGO="+item.codigo+")";
         db.execSQL(sql);
     }
 
     private void deleteItem(int id) {
-        sql="DELETE FROM T_lic_estado WHERE id=" + id;
+        sql="DELETE FROM P_tipo_contribuyente WHERE id=" + id;
         db.execSQL(sql);
     }
 
     private void fillItems(String sq) {
         Cursor dt;
-        clsClasses.clsT_lic_estado item;
+        clsClasses.clsP_tipo_contribuyente item;
 
         items.clear();
 
@@ -122,11 +120,11 @@ public class clsT_lic_estadoObj {
 
         while (!dt.isAfterLast()) {
 
-            item = clsCls.new clsT_lic_estado();
+            item = clsCls.new clsP_tipo_contribuyente();
 
-            item.id=dt.getInt(0);
-            item.fecha=dt.getLong(1);
-            item.estado=dt.getInt(2);
+            item.codigo=dt.getInt(0);
+            item.contrib=dt.getString(1);
+            item.docum=dt.getString(2);
 
             items.add(item);
 
@@ -154,24 +152,27 @@ public class clsT_lic_estadoObj {
         return nid;
     }
 
-    public String addItemSql(clsClasses.clsT_lic_estado item) {
+    public String addItemSql(clsClasses.clsP_tipo_contribuyente item) {
 
-        ins.init("T_lic_estado");
+        ins.init("P_tipo_contribuyente");
 
-        ins.add("ID",item.id);
-        ins.add("FECHA",item.fecha);
-        ins.add("ESTADO",item.estado);
+        ins.add("CODIGO",item.codigo);
+        ins.add("CONTRIB",item.contrib);
+        ins.add("DOCUM",item.docum);
 
         return ins.sql();
 
     }
 
-    public String updateItemSql(clsClasses.clsT_lic_estado item) {
+    public String updateItemSql(clsClasses.clsP_tipo_contribuyente item) {
 
-        upd.init("T_lic_estado");
-        upd.add("FECHA",item.fecha);
-        upd.add("ESTADO",item.estado);
-        upd.Where("(ID="+item.id+")");
+        upd.init("P_tipo_contribuyente");
+
+        upd.add("CONTRIB",item.contrib);
+        upd.add("DOCUM",item.docum);
+
+        upd.Where("(CODIGO="+item.codigo+")");
+
         return upd.sql();
 
         //Toast toast= Toast.makeText(cont,upd.sql(), Toast.LENGTH_LONG);toast.show();
@@ -179,4 +180,5 @@ public class clsT_lic_estadoObj {
     }
 
 }
+
 

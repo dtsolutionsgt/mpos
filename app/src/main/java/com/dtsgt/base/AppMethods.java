@@ -29,6 +29,7 @@ import com.dtsgt.classes.clsD_usuario_asistenciaObj;
 import com.dtsgt.classes.clsP_prodmenuopcObj;
 import com.dtsgt.classes.clsP_prodmenuopcdetObj;
 import com.dtsgt.classes.clsP_productoObj;
+import com.dtsgt.classes.clsP_tipo_contribuyenteObj;
 import com.dtsgt.classes.clsP_usgrupoopcObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.classes.clsT_ordenObj;
@@ -2542,6 +2543,25 @@ public class AppMethods {
 		}
 
 		return (pb+pt)>0;
+	}
+
+	//endregion
+
+	//region FEL
+
+	public String felTipoDocumento(String tipocont) {
+		clsP_tipo_contribuyenteObj P_tipo_contribuyenteObj=new clsP_tipo_contribuyenteObj(cont,Con,db);
+		String tipodoc="FACT";
+
+		try {
+			tipocont=tipocont.toUpperCase();
+			P_tipo_contribuyenteObj.fill("WHERE (contrib='"+tipocont+"')");
+			if (P_tipo_contribuyenteObj.count>0) tipodoc=P_tipo_contribuyenteObj.first().docum;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		return tipodoc;
 	}
 
 	//endregion

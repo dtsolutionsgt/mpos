@@ -1337,6 +1337,12 @@ public class clsClasses {
         public long fecha_contr;
     }
 
+    public class clsP_tipo_contribuyente {
+        public int  codigo;
+        public String contrib;
+        public String docum;
+    }
+
     public class clsP_tiponeg {
         public int  codigo_tipo_negocio;
         public int  empresa;

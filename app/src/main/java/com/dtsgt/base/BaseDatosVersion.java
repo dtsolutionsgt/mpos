@@ -1640,6 +1640,15 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_tipo_contribuyente] ("+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "CONTRIB TEXT NOT NULL,"+
+                    "DOCUM TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO])"+
+                    ");";
+            db.execSQL(sql);
+        } catch (Exception e) { }
 
         try {
             sql="CREATE TABLE [T_stock] ("+
