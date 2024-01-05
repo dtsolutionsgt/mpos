@@ -4326,6 +4326,7 @@ public class WSRec extends PBase {
     private void fechaActualizacion() {
         try {
             String fse = "" + du.univfechahora(du.getActDateTime());
+
             sql="UPDATE P_RUTA SET ULTIMA_ACTUALIZACION='"+fse+"' WHERE CODIGO_RUTA="+gl.codigo_ruta;
             wscom.execute(sql,null);
         } catch (Exception e) {
