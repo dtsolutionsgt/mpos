@@ -18,9 +18,11 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
@@ -51,12 +53,31 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
+import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startMainTimer;
+import com.google.gson.JsonArray;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends PBase {
 
@@ -83,6 +104,17 @@ public class MainActivity extends PBase {
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
+
+    // FEL ESA
+    private JSONObject jsonf = new JSONObject();
+    private JSONObject jsonc = new JSONObject();
+    private JSONObject jsdoc = new JSONObject();
+
+    private boolean errcert, errorflag,errorcon,firmcomplete,halt,errfirma,modoiduni,constat;
+    private String jscert,jsfirm,error="",firma;
+    private AsyncCallWSCert wstask ;
+    private int responsecode,timeout=45000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -394,6 +426,10 @@ public class MainActivity extends PBase {
         } catch (Exception e) {
             msgbox("No está instalada aplicación para actualización de versiónes, por favor informe soporte.");
         }
+    }
+
+    public void doFELESA(View view) {
+        felESA();
     }
 
     public void doFragTest(View view) {
@@ -1349,9 +1385,519 @@ public class MainActivity extends PBase {
 
     //endregion
 
-    //region Test Button
+    //region FEL ESA
+
+    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+    //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
+
+    private void felESA() {
+        firmaFELESA();
+    }
+
+    private void firmaFELESA() {
+        JSONObject jsitem;
+
+        try {
+
+            //s64=toBase64();
+
+            jsonf = new JSONObject();
+            jsonf.put("llave", "fel_llave_firma");
+            //jsonf.put("archivo",s64);
+            jsonf.put("codigo","fel_codigo_establecimiento");
+            jsonf.put("alias","fel_usuario_certificacion");
+            jsonf.put("es_anulacion","N");
 
 
+            jsdoc = new JSONObject();
+
+            JSONObject jshead = new JSONObject();
+            jshead.put("tipo_dte","01");
+            jshead.put("establecimiento","0001");
+            jshead.put("condicion_pago",2);
+
+            //jsdoc.put("documento",jshead);
+
+            JSONArray jsitems=new JSONArray();
+
+            jsitem = new JSONObject();
+            jsitem.put("tipo", 1);
+            jsitem.put("cantidad", 1);
+            jsitem.put("unidad_medida", 59);
+            jsitem.put("descuento", 25);
+            jsitem.put("descripcion", "Prueba item 1");
+            jsitem.put("precio_unitario", 250);
+
+            jsitems.put(jsitem);
+
+            jshead.put("items",jsitems);
+
+            //jsdoc.put("items",jsitems);
+
+            jsdoc.put("documento",jshead);
+
+
+            executeWSFirm();
+
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void executeWSFirm() throws Exception {
+
+        try {
+
+            jsfirm = jsdoc.toString();
+            errorflag=false;
+            error="";
+
+            firmcomplete=false;
+            halt=false;
+
+            AsyncCallWS wstask = new AsyncCallWS();
+            wstask.execute();
+
+        } catch (Exception e) {
+            throw e;
+        }
+
+    }
+
+    private Boolean wsExecuteF(){
+        URL url;
+        HttpURLConnection connection = null;
+        JSONObject jObj = null;
+        responsecode =0;
+        error = "";
+        errfirma=false;
+        errorflag = false;
+        modoiduni=false;
+
+        try {
+
+            String WSURL="https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+            timeout=45000;
+
+            url = new URL(WSURL);
+            connection = (HttpURLConnection)url.openConnection();
+            connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            //connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
+            connection.setRequestProperty("usuario","06141106141147");
+            connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
+            connection.setRequestProperty("identificador","100000001");
+            connection.setUseCaches (false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+
+            try {
+                connection.connect();
+            } catch (SocketTimeoutException s){
+                error="ERROR_202212140931 " + s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
+            } catch (IOException e) {
+                error=e.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
+            }
+
+            DataOutputStream wr = null;
+
+            try {
+                wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (SocketTimeoutException s){
+                error="ERROR_202212140931A " + s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
+            } catch (IOException e) {
+                error=e.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return null;
+            }
+
+            wr.writeBytes (jsfirm);
+            wr.flush ();
+            wr.close ();
+
+            InputStream is;
+
+            try {
+                is= connection.getInputStream();
+            } catch (SocketTimeoutException s){
+                error="ERROR_202212140931B " + s.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
+            } catch (IOException e) {
+                is= connection.getInputStream();
+            }
+
+            responsecode =connection.getResponseCode();
+
+            if (responsecode ==200) {
+
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder sb = new StringBuilder();
+
+                while((line = rd.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                rd.close();
+
+                String jstr=sb.toString();
+                jObj = new JSONObject(jstr);
+
+                error= jObj.getString("descripcion");
+
+                if (jObj.getBoolean("resultado")) {
+                    errorflag=false;
+                    firma=jObj.getString("archivo");
+                } else {
+                    errorflag=true;
+                    try {
+                        String vResultado="";
+                        String vDescripcion="";
+                        try {
+                            vResultado =jObj.getString("resultado");
+                            vDescripcion =jObj.getString("descripcion");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (!vResultado.equalsIgnoreCase("") || !vDescripcion.equalsIgnoreCase("")){
+                            error+=vDescripcion;
+                        }else{
+                            //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                            JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+
+                            for (int i=0; i<ArrayError.length(); i++) {
+                                JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                                String name = theJsonObject.getString("mensaje_error");
+                                error = name;
+                            }
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                error=""+ responsecode;errorflag=true;errfirma=true;
+                return errorflag;
+            }
+        } catch (SocketTimeoutException s){
+            error="ERROR_202212140931C " + s.getMessage();
+            errorcon=true;errorflag=true;constat=false;
+            return errorflag;
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;errfirma=true;
+            return errorflag;
+        } finally {
+
+        }
+        return errorflag;
+    }
+
+    private void wsFinishedF() {
+
+        try  {
+
+            firmcomplete=true;
+
+            if (halt) {
+                errorflag=true;error="Interrupido por usuario";
+                //parent.felCallBack();
+            } else {
+
+                if (!errorflag && !errcert) {
+                    Date currentTime = Calendar.getInstance().getTime();
+                    sendJSONCert();
+                } else {
+                    //parent.felCallBack();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class AsyncCallWS extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params)  {
+            try  {
+                wsExecuteF();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return errorflag;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            try {
+                if (!errorflag){
+                    wsFinishedF();
+                }else{
+                    errcert = errorflag;;
+                    //parent.felCallBack();
+                    return;
+                }
+            } catch (Exception e)  {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+        @Override
+        protected void onCancelled() {
+            try {
+                firmcomplete=true;
+                errorflag=true;error+="Se agotó tiempo de certificación";
+                //parent.felCallBack();
+            } catch (Exception e) {
+                String ss=e.getMessage();
+                ss=ss+"";
+            }
+
+            super.onCancelled();
+
+        }
+
+    }
+
+
+    //   CERTIFICACION
+
+    private void sendJSONCert() {
+        try {
+            Handler mtimer = new Handler();
+            Runnable mrunner= () -> {
+                try {
+                    executeWSCert();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            };
+            mtimer.postDelayed(mrunner,100);
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    public void executeWSCert() throws Exception {
+
+        try {
+
+            jscert = jsonc.toString();
+            errorflag=false;
+            error="";
+
+            wstask = new AsyncCallWSCert();
+            wstask.execute();
+
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public Boolean wsExecuteC(){
+
+        URL url;
+        HttpsURLConnection connection = null;
+        JSONObject jObj = null;
+        responsecode =0;
+
+        errcert=false;
+        errorflag =false;
+
+        try {
+
+            /*
+            url = new URL(WSURLCert);
+            connection = (HttpsURLConnection)url.openConnection();
+            connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setRequestProperty("usuario",fel_usuario_certificacion);
+            connection.setRequestProperty("llave", fel_llave_certificacion);
+            connection.setRequestProperty("identificador", mpos_identificador_fact);
+            connection.setUseCaches (false);
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+
+             */
+
+            DataOutputStream wr = null;
+
+            try {
+                wr = new DataOutputStream(connection.getOutputStream ());
+            } catch (SocketTimeoutException s){
+                error="ERROR_202212140931D " + s.getMessage();
+                errorcon=true;errorflag=true;
+                return errorflag;
+            } catch (IOException e) {
+                error="No hay conexión al internet";
+                errorcon=true;errorflag=true;
+                return errorflag;
+            }
+
+            wr.writeBytes (jscert);
+            wr.flush ();
+            wr.close ();
+
+            InputStream is=null;
+
+            try {
+                is= connection.getInputStream();
+            } catch (SocketTimeoutException s){
+                error="ERROR_202212140931E " + s.getMessage();
+                errorcon=true;errorflag=true;
+                return errorflag;
+            } catch (IOException e) {
+                try {
+                    is= connection.getInputStream();
+                } catch (IOException ee) {
+                    try {
+                        is= connection.getInputStream();
+                    } catch (IOException eee) {
+                        errcert=true;
+                    }
+                }
+            }
+
+            responsecode =connection.getResponseCode();
+
+            if (errcert) return errcert;
+
+            if (responsecode ==200) {
+
+                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                String line;
+                StringBuilder sb = new StringBuilder();
+
+                while((line = rd.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                rd.close();
+
+                String jstr=sb.toString();
+
+                int duplidx=jstr.indexOf("Documento enviado previamente.");
+
+                jObj = new JSONObject(jstr);
+
+                error=jObj.getString("descripcion");
+
+                errcert = false;
+                errorflag =false;
+
+                if (!jObj.getBoolean("resultado")) {
+
+                    errorflag=true;
+                    errcert=true;
+
+                    try {
+                        //#EJC20200707: Obtener mensaje de error específico en respuesta.
+                        JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
+                        for (int i=0; i<ArrayError.length(); i++) {
+                            JSONObject theJsonObject = ArrayError.getJSONObject(i);
+                            String name = theJsonObject.getString("mensaje_error");
+                            error += name;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    return errorflag;
+                }
+
+                /*
+                fact_uuid =jObj.getString("uuid");
+                fact_serie =jObj.getString("serie");
+                fact_numero =jObj.getString("numero");
+                */
+
+                errorflag=false;
+                errcert=false;
+            } else {
+                error=""+ responsecode;errorflag=true;errcert=true;
+                return errorflag;
+            }
+        } catch (SocketTimeoutException s){
+            error= "ERROR_202212140931F " + s.getMessage();
+            errorcon=true;errorflag=true;
+            return errorflag;
+        } catch (Exception e) {
+            error=e.getMessage();errorflag=true;errcert=true;
+        }
+        return errorflag;
+    }
+
+    public void wsFinishedC() throws Exception {
+
+        try  {
+            if (!errcert) {
+                errorflag=errcert;//error="";
+                //parent.felCallBack();
+            } else if(errorflag||errcert) {
+                //parent.felCallBack();
+                throw new Exception("Error al certificar documento: " + error);
+            }
+        } catch (Exception e)  {
+            throw e;
+        }
+    }
+
+    private class AsyncCallWSCert extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params)  {
+
+            try  {
+                wsExecuteC();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return errorflag;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            try {
+                if (!errcert && !result){
+                    wsFinishedC();
+                }else{
+                    //parent.felCallBack();
+                }
+            } catch (Exception e)  {
+                errcert = result; errorflag = result;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+    }
+
+    //endregion
 
     //region Custom dialog
 

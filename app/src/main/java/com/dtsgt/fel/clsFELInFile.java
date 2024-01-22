@@ -389,8 +389,6 @@ public class clsFELInFile {
         return errorflag;
     }
 
-
-
     private void wsFinishedF() {
 
         try  {
