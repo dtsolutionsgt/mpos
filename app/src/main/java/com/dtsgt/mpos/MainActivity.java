@@ -1474,9 +1474,7 @@ public class MainActivity extends PBase {
 
         try {
 
-            //String WSURL="https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
             String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
-
             timeout=45000;
 
             url = new URL(WSURL);
@@ -1488,7 +1486,7 @@ public class MainActivity extends PBase {
             //connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
             connection.setRequestProperty("usuario","06141106141147");
             connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
-            connection.setRequestProperty("identificador","100000003");
+            connection.setRequestProperty("identificador","100000007");
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -1561,9 +1559,9 @@ public class MainActivity extends PBase {
                 String jstr=sb.toString();
                 jObj = new JSONObject(jstr);
 
-                error= jObj.getString("descripcion");
+                Boolean rslt=jObj.getBoolean("ok");
 
-                if (jObj.getBoolean("resultado")) {
+                if (rslt) {
                     errorflag=false;
                     firma=jObj.getString("archivo");
                 } else {
