@@ -30,6 +30,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -1387,8 +1388,8 @@ public class MainActivity extends PBase {
 
     //region FEL ESA
 
-    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+   //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+     //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
     //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
 
     private void felESA() {
@@ -1399,15 +1400,6 @@ public class MainActivity extends PBase {
         JSONObject jsitem;
 
         try {
-
-            //s64=toBase64();
-
-            jsonf = new JSONObject();
-            jsonf.put("llave", "fel_llave_firma");
-            //jsonf.put("archivo",s64);
-            jsonf.put("codigo","fel_codigo_establecimiento");
-            jsonf.put("alias","fel_usuario_certificacion");
-            jsonf.put("es_anulacion","N");
 
 
             jsdoc = new JSONObject();
@@ -1422,6 +1414,7 @@ public class MainActivity extends PBase {
             JSONArray jsitems=new JSONArray();
 
             jsitem = new JSONObject();
+
             jsitem.put("tipo", 1);
             jsitem.put("cantidad", 1);
             jsitem.put("unidad_medida", 59);
@@ -1433,7 +1426,10 @@ public class MainActivity extends PBase {
 
             jshead.put("items",jsitems);
 
-            //jsdoc.put("items",jsitems);
+            JSONObject jsad = new JSONObject();
+            jsad.put("adenda 1","01");
+            jsad.put("adenda 2","02");
+            jshead.put("adendas",jsad);
 
             jsdoc.put("documento",jshead);
 
@@ -1483,6 +1479,12 @@ public class MainActivity extends PBase {
 
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
+
+            int rcode = connection.getResponseCode();                   // get response code
+            String sr="Read HTTP response code: " + rcode;
+            sr=sr+"";
+
+
             connection.setConnectTimeout(timeout);
             connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
@@ -1506,7 +1508,13 @@ public class MainActivity extends PBase {
                 error=e.getMessage();
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
+            } catch (Exception e) {
+                error=e.getMessage();
+                errorcon=true;errorflag=true;constat=false;
+                return errorflag;
             }
+
+            String sco= URLUtil.isValidUrl(WSURL)+"";
 
             DataOutputStream wr = null;
 
@@ -1535,7 +1543,10 @@ public class MainActivity extends PBase {
                 errorcon=true;errorflag=true;constat=false;
                 return errorflag;
             } catch (IOException e) {
-                is= connection.getInputStream();
+                String se=e.getMessage();
+                se=se+"";
+                throw(e);
+                //is= connection.getInputStream();
             }
 
             responsecode =connection.getResponseCode();
