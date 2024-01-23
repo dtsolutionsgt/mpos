@@ -1388,8 +1388,8 @@ public class MainActivity extends PBase {
 
     //region FEL ESA
 
-   //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
-     //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
+    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
     //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
 
     private void felESA() {
@@ -1474,17 +1474,13 @@ public class MainActivity extends PBase {
 
         try {
 
-            String WSURL="https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+            //String WSURL="https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+            String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+
             timeout=45000;
 
             url = new URL(WSURL);
             connection = (HttpURLConnection)url.openConnection();
-
-            int rcode = connection.getResponseCode();                   // get response code
-            String sr="Read HTTP response code: " + rcode;
-            sr=sr+"";
-
-
             connection.setConnectTimeout(timeout);
             connection.setReadTimeout(timeout);
             connection.setRequestMethod("POST");
@@ -1492,7 +1488,7 @@ public class MainActivity extends PBase {
             //connection.setRequestProperty("Content-Length",""+ jsfirm.getBytes().length);
             connection.setRequestProperty("usuario","06141106141147");
             connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
-            connection.setRequestProperty("identificador","100000001");
+            connection.setRequestProperty("identificador","100000003");
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -1551,7 +1547,7 @@ public class MainActivity extends PBase {
 
             responsecode =connection.getResponseCode();
 
-            if (responsecode ==200) {
+            if (responsecode==200 | responsecode==201) {
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(is));
                 String line;
