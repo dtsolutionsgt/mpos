@@ -55,6 +55,7 @@ import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
 import com.dtsgt.fel.clsFELInFile;
+import com.dtsgt.felesa.FELESATest;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startMainTimer;
@@ -101,21 +102,10 @@ public class MainActivity extends PBase {
     private String cs1, cs2, cs3, barcode,epresult, usr, pwd;
     private int scrdim, modopantalla,fri=0;
 
-    private String parVer = "5.3.0.0";
+    private String parVer = "5.4.0.0";
     private boolean bloqueo_venta=false;
 
     private Typeface typeface;
-
-    // FEL ESA
-    private JSONObject jsonf = new JSONObject();
-    private JSONObject jsonc = new JSONObject();
-    private JSONObject jsdoc = new JSONObject();
-
-    private boolean errcert, errorflag,errorcon,firmcomplete,halt,errfirma,modoiduni,constat;
-    private String jscert,jsfirm,error="",firma;
-    private AsyncCallWSCert wstask ;
-    private int responsecode,timeout=45000;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -430,7 +420,8 @@ public class MainActivity extends PBase {
     }
 
     public void doFELESA(View view) {
-        felESA();
+        startActivity(new Intent(this, FELESATest.class));
+        //felESA();
     }
 
     public void doFragTest(View view) {
@@ -1386,7 +1377,7 @@ public class MainActivity extends PBase {
 
     //endregion
 
-    //region FEL ESA
+    /*
 
     //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
     //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
@@ -1611,9 +1602,7 @@ public class MainActivity extends PBase {
     }
 
     private void wsFinishedF() {
-
         try  {
-
             firmcomplete=true;
 
             if (halt) {
@@ -1683,226 +1672,7 @@ public class MainActivity extends PBase {
 
     }
 
-
-    //   CERTIFICACION
-
-    private void sendJSONCert() {
-        try {
-            Handler mtimer = new Handler();
-            Runnable mrunner= () -> {
-                try {
-                    executeWSCert();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            };
-            mtimer.postDelayed(mrunner,100);
-
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
-        }
-    }
-
-    public void executeWSCert() throws Exception {
-
-        try {
-
-            jscert = jsonc.toString();
-            errorflag=false;
-            error="";
-
-            wstask = new AsyncCallWSCert();
-            wstask.execute();
-
-        } catch (Exception e) {
-            throw e;
-        }
-    }
-
-    public Boolean wsExecuteC(){
-
-        URL url;
-        HttpsURLConnection connection = null;
-        JSONObject jObj = null;
-        responsecode =0;
-
-        errcert=false;
-        errorflag =false;
-
-        try {
-
-            /*
-            url = new URL(WSURLCert);
-            connection = (HttpsURLConnection)url.openConnection();
-            connection.setConnectTimeout(timeout);
-            connection.setReadTimeout(timeout);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type","application/json");
-            connection.setRequestProperty("usuario",fel_usuario_certificacion);
-            connection.setRequestProperty("llave", fel_llave_certificacion);
-            connection.setRequestProperty("identificador", mpos_identificador_fact);
-            connection.setUseCaches (false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-
-             */
-
-            DataOutputStream wr = null;
-
-            try {
-                wr = new DataOutputStream(connection.getOutputStream ());
-            } catch (SocketTimeoutException s){
-                error="ERROR_202212140931D " + s.getMessage();
-                errorcon=true;errorflag=true;
-                return errorflag;
-            } catch (IOException e) {
-                error="No hay conexión al internet";
-                errorcon=true;errorflag=true;
-                return errorflag;
-            }
-
-            wr.writeBytes (jscert);
-            wr.flush ();
-            wr.close ();
-
-            InputStream is=null;
-
-            try {
-                is= connection.getInputStream();
-            } catch (SocketTimeoutException s){
-                error="ERROR_202212140931E " + s.getMessage();
-                errorcon=true;errorflag=true;
-                return errorflag;
-            } catch (IOException e) {
-                try {
-                    is= connection.getInputStream();
-                } catch (IOException ee) {
-                    try {
-                        is= connection.getInputStream();
-                    } catch (IOException eee) {
-                        errcert=true;
-                    }
-                }
-            }
-
-            responsecode =connection.getResponseCode();
-
-            if (errcert) return errcert;
-
-            if (responsecode ==200) {
-
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                String line;
-                StringBuilder sb = new StringBuilder();
-
-                while((line = rd.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-                rd.close();
-
-                String jstr=sb.toString();
-
-                int duplidx=jstr.indexOf("Documento enviado previamente.");
-
-                jObj = new JSONObject(jstr);
-
-                error=jObj.getString("descripcion");
-
-                errcert = false;
-                errorflag =false;
-
-                if (!jObj.getBoolean("resultado")) {
-
-                    errorflag=true;
-                    errcert=true;
-
-                    try {
-                        //#EJC20200707: Obtener mensaje de error específico en respuesta.
-                        JSONArray ArrayError=jObj.getJSONArray("descripcion_errores");
-                        for (int i=0; i<ArrayError.length(); i++) {
-                            JSONObject theJsonObject = ArrayError.getJSONObject(i);
-                            String name = theJsonObject.getString("mensaje_error");
-                            error += name;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    return errorflag;
-                }
-
-                /*
-                fact_uuid =jObj.getString("uuid");
-                fact_serie =jObj.getString("serie");
-                fact_numero =jObj.getString("numero");
-                */
-
-                errorflag=false;
-                errcert=false;
-            } else {
-                error=""+ responsecode;errorflag=true;errcert=true;
-                return errorflag;
-            }
-        } catch (SocketTimeoutException s){
-            error= "ERROR_202212140931F " + s.getMessage();
-            errorcon=true;errorflag=true;
-            return errorflag;
-        } catch (Exception e) {
-            error=e.getMessage();errorflag=true;errcert=true;
-        }
-        return errorflag;
-    }
-
-    public void wsFinishedC() throws Exception {
-
-        try  {
-            if (!errcert) {
-                errorflag=errcert;//error="";
-                //parent.felCallBack();
-            } else if(errorflag||errcert) {
-                //parent.felCallBack();
-                throw new Exception("Error al certificar documento: " + error);
-            }
-        } catch (Exception e)  {
-            throw e;
-        }
-    }
-
-    private class AsyncCallWSCert extends AsyncTask<String, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(String... params)  {
-
-            try  {
-                wsExecuteC();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return errorflag;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            try {
-                if (!errcert && !result){
-                    wsFinishedC();
-                }else{
-                    //parent.felCallBack();
-                }
-            } catch (Exception e)  {
-                errcert = result; errorflag = result;
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-
-    }
-
-    //endregion
+    */
 
     //region Custom dialog
 

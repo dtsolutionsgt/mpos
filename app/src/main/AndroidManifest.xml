@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="5.2.3.0">
+    android:versionName="5.4.0.0">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -40,6 +40,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
+        <activity
+            android:name="com.dtsgt.felesa.FELESATest"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -803,7 +806,6 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
     </application>
 
 </manifest>
