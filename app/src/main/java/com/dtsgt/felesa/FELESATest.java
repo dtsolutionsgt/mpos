@@ -79,6 +79,7 @@ public class FELESATest extends PBase {
             cdep=D_factura_svObj.first().codigo_departamento;
             cmuni=D_factura_svObj.first().codigo_municipio;
 
+
             //cnombre="Prueba Receptor";
             //cnit="2247806";
             //cdir="Calle 2";
