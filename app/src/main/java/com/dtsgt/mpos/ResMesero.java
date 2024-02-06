@@ -858,6 +858,7 @@ public class ResMesero extends PBase {
             } else lblgrupo.setText("Seleccione una area");
 
             listItems();
+
         } catch (Exception e) {}
 
     }
