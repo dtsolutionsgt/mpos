@@ -857,7 +857,7 @@ public class ResMesero extends PBase {
                 lblgrupo.setText(P_res_grupoObj.items.get(P_res_grupoObj.count-1).nombre);
             } else lblgrupo.setText("Seleccione una area");
 
-            //listItems();
+            listItems();
         } catch (Exception e) {}
 
     }

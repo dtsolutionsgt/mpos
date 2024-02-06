@@ -2622,7 +2622,7 @@ public class Menu extends PBase {
 			}
 
 			if (fa>fv) {
-				mu.msgbox("Se ha acabado vigencia de autorización de las facturas. No se puede continuar con la venta.");
+				//mu.msgbox("Se ha acabado vigencia de autorización de las facturas. No se puede continuar con la venta.");
 				return false;
 			}
 
