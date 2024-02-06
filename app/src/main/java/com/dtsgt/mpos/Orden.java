@@ -848,8 +848,6 @@ public class Orden extends PBase {
 
             descflag=true;exists=false;
 
-
-
             String pid=gl.gstr;
             if (mu.emptystr(pid)) return;
 
@@ -869,12 +867,16 @@ public class Orden extends PBase {
 
             if (!tipo.equalsIgnoreCase("M")) {
                 if (tipo.equalsIgnoreCase("P")) {
-                    //if (gl.limcant>0) {
+                    if (gl.limcant>0) {
                         if (exists) descflag=false;
                         processCant(updateitem);
-                    //} else {
-                    //    msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
-                    //}
+                    } else {
+                        if (gl.emp!=30) {
+                            msgAskLimit("El producto "+ pprodname+" no tiene existencia disponible.\n¿Continuar con la venta?",updateitem);
+                        } else {
+                            processCant(updateitem);
+                        }
+                     }
                 } else if (tipo.equalsIgnoreCase("S")) {
                     if (exists) descflag=false;
                     processCant(updateitem);
@@ -5198,6 +5200,30 @@ public class Orden extends PBase {
 
             dialog.show();
         } catch (Exception e){
+            addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
+        }
+    }
+
+    private void msgAskLimit(String msg,boolean updateitem) {
+        final boolean updatem=updateitem;
+        try {
+
+            ExDialog dialog = new ExDialog(this);
+            dialog.setMessage(msg);
+            dialog.setIcon(R.drawable.ic_quest);
+
+            dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    processCant(updatem);
+                }
+            });
+
+            dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+
+            dialog.show();
+        }catch (Exception e){
             addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
         }
     }

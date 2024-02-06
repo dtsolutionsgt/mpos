@@ -1730,15 +1730,15 @@ public class FacturaRes extends PBase {
 				clsClasses.clsD_factura_sv itemt = clsCls.new clsD_factura_sv();
 
 				try {
-					if (gl.sal_iddep.isEmpty()) gl.sal_iddep="S06";
+					if (gl.sal_iddep.isEmpty()) gl.sal_iddep="06";
 				} catch (Exception e) {
-					gl.sal_iddep="S06";
+					gl.sal_iddep="06";
 				}
 
 				try {
-					if (gl.sal_idmun.isEmpty()) gl.sal_idmun="S0614";
+					if (gl.sal_idmun.isEmpty()) gl.sal_idmun="14";
 				} catch (Exception e) {
-					gl.sal_idmun="S0614";
+					gl.sal_idmun="14";
 				}
 
 				if (gl.sal_idneg==0) gl.sal_idneg=1;
@@ -1760,7 +1760,19 @@ public class FacturaRes extends PBase {
 
 			//region Actualizacion de ultimo correlativo
 
-			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
+			int resguardo=0;
+			if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+				if (tipo_factura==1) {
+					resguardo=4;
+				} else if(tipo_factura==2) {
+					resguardo=2;
+				} else if(tipo_factura==3) {
+					resguardo=0;
+				}
+			}
+
+			sql="UPDATE P_COREL SET CORELULT="+fcorel+"  " +
+				"WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO="+resguardo+") ";
 			db.execSQL(sql);
 
 			ins.init("D_FACT_LOG");

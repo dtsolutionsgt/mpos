@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="5.2.3.0">
+    android:versionName="5.4.0.0">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -41,6 +41,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
         <activity
+            android:name="com.dtsgt.felesa.FELESATest"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
@@ -58,6 +61,16 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <receiver
             android:name=".PedidoDet"
@@ -803,7 +816,6 @@
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
     </application>
 
 </manifest>

@@ -53,22 +53,6 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView309"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/textView2"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_toStartOf="@+id/textView5"
-            android:layout_toEndOf="@+id/textView2"
-            android:background="@drawable/spinner_style"
-            android:text="TextView"
-            android:textColor="#202020"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
         <RelativeLayout
             android:id="@+id/relRoad"
             android:layout_width="match_parent"
@@ -286,6 +270,21 @@
             android:onClick="doDep"
             android:text="TextView"
             android:textColor="#202020"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextNumber5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView311"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_alignEnd="@+id/textView311"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="-2dp"
+            android:layout_marginEnd="0dp"
+            android:ems="10"
+            android:inputType="number"
             android:textSize="24sp"
             android:textStyle="bold" />
 

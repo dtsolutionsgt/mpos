@@ -1351,7 +1351,9 @@ public class AppMethods {
                 gl.peFEL.equalsIgnoreCase("N") | gl.peFEL.equalsIgnoreCase("SIN FEL")) {
             return false;
         } else {
-            return true;
+			if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) return true;
+			if (gl.peFEL.equalsIgnoreCase(gl.felSal)) return true;
+			return false;
         }
 	}
 

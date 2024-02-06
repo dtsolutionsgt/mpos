@@ -858,6 +858,13 @@ public class clsClasses {
         public int  activo;
     }
 
+    public class clsP_giro_negocio {
+        public int  codigo_giro_negocio;
+        public String cod_pais;
+        public int  codigo;
+        public String descripcion;
+    }
+
     public class clsP_impuesto {
         public  int codigo_impuesto;
 		public int  codigo;

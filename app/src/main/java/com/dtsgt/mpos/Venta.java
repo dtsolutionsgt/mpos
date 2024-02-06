@@ -4958,7 +4958,8 @@ public class Venta extends PBase {
 
         try {
 
-            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
+            sql="SELECT SERIE,CORELULT,CORELINI,CORELFIN FROM P_COREL " +
+                "WHERE (RUTA="+gl.codigo_ruta+") AND (RESGUARDO=0) ";
             DT=Con.OpenDT(sql);
 
             try {

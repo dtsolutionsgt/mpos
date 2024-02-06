@@ -39,6 +39,7 @@ import com.dtsgt.classes.clsP_empresaObj;
 import com.dtsgt.classes.clsP_encabezado_reporteshhObj;
 import com.dtsgt.classes.clsP_factorconvObj;
 import com.dtsgt.classes.clsP_fraseObj;
+import com.dtsgt.classes.clsP_giro_negocioObj;
 import com.dtsgt.classes.clsP_impresoraObj;
 import com.dtsgt.classes.clsP_impresora_marcaObj;
 import com.dtsgt.classes.clsP_impresora_modeloObj;
@@ -114,7 +115,7 @@ public class WSRec extends PBase {
     private boolean pbd_vacia = false,nueva_version=false;
     private String plabel, fechasync;
     private String rootdir = Environment.getExternalStorageDirectory() + "/mPosFotos/";
-    private String idversion,clave;
+    private String idversion,clave,cod_pais;
     private long ffel;
     public boolean automatico;
 
@@ -144,6 +145,7 @@ public class WSRec extends PBase {
 
             app.getURL();
             app.parametrosExtra();
+            paisEmpresa();
 
             wscom =new wsCommit(gl.wsurl);
             wso=new wsOpenDT(gl.wsurl);
@@ -436,6 +438,9 @@ public class WSRec extends PBase {
                         break;
                     case 62:
                         callMethod("GetP_IMPRESORA_REDIRECCION", "EMPRESA", gl.emp);
+                        break;
+                    case 63:
+                        callMethod("GetP_GIRO_NEGOCIO", "COD_PAIS", cod_pais);
                         break;
                 }
             } catch (Exception e) {
@@ -817,6 +822,13 @@ public class WSRec extends PBase {
                     break;
                 case 62:
                     processImpresoraRedir();
+                    if (ws.errorflag) {
+                        processComplete();break;
+                    }
+                    execws(63);
+                    break;
+                case 63:
+                    processGiroNegocio();
                     if (ws.errorflag) {
                         processComplete();break;
                     }
@@ -3980,6 +3992,43 @@ public class WSRec extends PBase {
         }
     }
 
+    private void processGiroNegocio() {
+        try {
+            clsP_giro_negocioObj handler = new clsP_giro_negocioObj(this, Con, db);
+            clsBeP_GIRO_NEGOCIOList items = new clsBeP_GIRO_NEGOCIOList();
+            clsBeP_GIRO_NEGOCIO item = new clsBeP_GIRO_NEGOCIO();
+            clsClasses.clsP_giro_negocio var;
+
+            script.add("DELETE FROM P_giro_negocio");
+
+            items = xobj.getresult(clsBeP_GIRO_NEGOCIOList.class, "GetP_GIRO_NEGOCIO");
+            if (items==null) return;
+
+            try {
+                if (items.items.size() == 0) return;
+            } catch (Exception e) {
+                return;
+            }
+
+            for (int i = 0; i < items.items.size(); i++) {
+                item = items.items.get(i);
+
+                var = clsCls.new clsP_giro_negocio();
+
+                var.codigo_giro_negocio=item.CODIGO_GIRO_NEGOCIO;
+                var.cod_pais=item.COD_PAIS;
+                var.codigo=item.CODIGO;
+                var.descripcion=item.DESCRIPCION;
+
+                script.add(handler.addItemSql(var));
+            }
+
+        } catch (Exception e) {
+            ws.error = e.getMessage(); ws.errorflag = true;
+        }
+    }
+
+
     //endregion
 
     //region Web Service calls
@@ -4331,6 +4380,20 @@ public class WSRec extends PBase {
             wscom.execute(sql,null);
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void paisEmpresa() {
+        cod_pais="SV";
+        try {
+            if (gl.emp==0) return;
+
+            clsP_empresaObj P_empresaObj=new clsP_empresaObj(this,Con,db);
+            P_empresaObj.fill("WHERE (EMPRESA="+gl.emp+")");
+            cod_pais=P_empresaObj.first().cod_pais;
+            if (cod_pais.isEmpty()) cod_pais="-";
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());cod_pais="SV";
         }
     }
 

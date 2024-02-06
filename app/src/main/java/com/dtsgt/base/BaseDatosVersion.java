@@ -1720,11 +1720,25 @@ public class BaseDatosVersion {
             db.execSQL(sql);
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [P_giro_negocio] ("+
+                    "CODIGO_GIRO_NEGOCIO INTEGER NOT NULL,"+
+                    "COD_PAIS TEXT NOT NULL,"+
+                    "CODIGO INTEGER NOT NULL,"+
+                    "DESCRIPCION TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_GIRO_NEGOCIO])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX P_giro_negocio_idx1 ON P_giro_negocio(CODIGO)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
 
         try {
 
         } catch (Exception e) { }
+
 
         try {
 
