@@ -1,4 +1,4 @@
-package com.dtsgt.fel;
+package com.dtsgt.felesa;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -31,6 +31,9 @@ import com.dtsgt.classes.clsP_municipioObj;
 import com.dtsgt.classes.clsP_productoObj;
 import com.dtsgt.classes.clsP_rutaObj;
 import com.dtsgt.classes.clsP_sucursalObj;
+import com.dtsgt.fel.FELFactura;
+import com.dtsgt.fel.FELmsgbox;
+import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.mpos.PBase;
 import com.dtsgt.mpos.R;
 import com.dtsgt.mpos.WSEnv;
@@ -44,18 +47,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FELFactura extends PBase {
-
-    // gl.peFEL  "SIN FEL", "INFILE"
+public class FELFacturaSV extends PBase {
 
     private TextView lbl1,lbl2,lbl3,lblHalt;
     private ProgressBar pbar;
 
     private clsFELInFile fel;
-    private WebServiceHandler ws;
+    private FELFactura.WebServiceHandler ws;
     private XMLObject xobj;
 
-    private clsD_facturaObj  D_facturaObj;
+    private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
     private clsD_facturafObj D_facturafObj;
     private clsD_facturapObj D_facturapObj;
@@ -83,13 +84,13 @@ public class FELFactura extends PBase {
     private boolean ddemomode,multiflag,factsend,contmode;
     private int ftot,ffail,fidx,cliid,felnivel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         try {
 
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_fel_factura);
+            setContentView(R.layout.activity_felfactura_sv);
 
             super.InitBase();
 
@@ -109,9 +110,9 @@ public class FELFactura extends PBase {
             fel=new clsFELInFile(this,this,gl.timeout);
             fel.halt=false;
             fel.autocancel=true;
-            fel.owner=FELFactura.this;
+            //fel.owner=FELFactura.this;
 
-            ws = new WebServiceHandler(FELFactura.this, gl.wsurl, gl.timeout);
+            //ws = new FELFactura.WebServiceHandler(FELFactura.this, gl.wsurl, gl.timeout);
             xobj = new XMLObject(ws);
 
             clsP_sucursalObj sucursal=new clsP_sucursalObj(this,Con,db);
@@ -189,6 +190,7 @@ public class FELFactura extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
 
     //region Events
 
@@ -372,7 +374,7 @@ public class FELFactura extends PBase {
                 }  else {
                     //JP20200918 - evita procesar marcaFactura en caso que (fel.errorflag && !fel.duplicado)
                     if (!skipflag)  marcaFactura();
-                 }
+                }
 
                 callBackMulti();
 
@@ -489,7 +491,7 @@ public class FELFactura extends PBase {
             } else {
                 gl.feluuid="";
                 gl.FELmsg="Ocurrió error en FEL :\n\n"+"Factura: "+fel.mpos_identificador_fact+"\n"+ fel.error;
-                startActivity(new Intent(this,FELmsgbox.class));
+                startActivity(new Intent(this, FELmsgbox.class));
                 finish();
             }
 
@@ -550,11 +552,11 @@ public class FELFactura extends PBase {
             fel.iniciar(fact.fecha,"");
 
             fel.emisor(fel.fel_afiliacion_iva,
-                       fel.fel_codigo_establecimiento,
-                       fel.fel_correo,
-                       fel.fel_nit,
-                       fel.fel_nombre_comercial,
-                       fel.fel_usuario_firma);
+                    fel.fel_codigo_establecimiento,
+                    fel.fel_correo,
+                    fel.fel_nit,
+                    fel.fel_nombre_comercial,
+                    fel.fel_usuario_firma);
 
             clsP_sucursalObj P_sucursalObj=new clsP_sucursalObj(this,Con,db);
             P_sucursalObj.fill("WHERE CODIGO_SUCURSAL="+gl.tienda);
@@ -592,14 +594,14 @@ public class FELFactura extends PBase {
             factf.nit=factf.nit.toUpperCase();
 
             fel.receptor(factf.nit,
-                         factf.nombre,
-                         factf.direccion,
-                         factf.correo,
-                         fel.codigo_postal,
-                         muni,
-                         dep,
-                         gl.codigo_pais,
-                         fel.tipo_nit);
+                    factf.nombre,
+                    factf.direccion,
+                    factf.correo,
+                    fel.codigo_postal,
+                    muni,
+                    dep,
+                    gl.codigo_pais,
+                    fel.tipo_nit);
 
             propina=0;
             D_facturaprObj.fill("WHERE Corel='"+corel+"'");
@@ -619,16 +621,16 @@ public class FELFactura extends PBase {
                 factd.desmon=ldesc;
 
                 fel.detalle(prodName(factd.producto),
-                            factd.cant,
-                            "UNI",
-                            factd.precio,
-                            mu.round2(factd.total),
-                            factd.desmon,
-                            lcombo);
+                        factd.cant,
+                        "UNI",
+                        factd.precio,
+                        mu.round2(factd.total),
+                        factd.desmon,
+                        lcombo);
             }
 
             //if (propina>0) {
-                fel.detalle_propina(propina);
+            fel.detalle_propina(propina);
             //}
 
             fel.completar(fact.serie,fact.corelativo);
@@ -985,7 +987,7 @@ public class FELFactura extends PBase {
         Handler mtimer = new Handler();
         Runnable mrunner = () -> {
             gl.autocom = 1;
-            startActivity(new Intent(FELFactura.this, WSEnv.class));
+            startActivity(new Intent(FELFacturaSV.this, WSEnv.class));
             finish();
         };
         mtimer.postDelayed(mrunner, 200);

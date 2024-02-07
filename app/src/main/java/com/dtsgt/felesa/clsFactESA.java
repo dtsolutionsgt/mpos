@@ -40,6 +40,13 @@ public class clsFactESA {
     //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar
     //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/certificar
 
+    //URL Sandbox https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
+    //URL Prueba https://certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion
+    //URL Producción https://certificador.infile.com.sv/api/v1/certificacion/prod/documento/invalidacion
+
+
+
+
     public clsFactESA(PBase Parent, String Usuario, String Clave) {
         parent = Parent;
         cont = Parent;
@@ -74,8 +81,7 @@ public class clsFactESA {
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("usuario","06141106141147");
             connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
-            connection.setRequestProperty("identificador",corel);
-            //connection.setRequestProperty("identificador","100009018");
+            //connection.setRequestProperty("identificador",corel);
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);

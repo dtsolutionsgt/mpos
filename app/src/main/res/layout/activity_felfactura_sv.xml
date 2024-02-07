@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#D0000000"
-        tools:context="com.dtsgt.fel.FELFactura">
+        tools:context="com.dtsgt.fel.FELFacturaSV">
 
     <RelativeLayout
         android:id="@+id/relfragment"
@@ -129,7 +129,7 @@
                     android:layout_marginBottom="5dp"
                     android:adjustViewBounds="true"
                     android:padding="7dp"
-                    android:src="@drawable/guatemala" />
+                    android:src="@drawable/salvador" />
 
                 <ImageView
                     android:id="@+id/imageView56"

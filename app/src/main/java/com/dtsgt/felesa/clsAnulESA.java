@@ -62,7 +62,7 @@ public class clsAnulESA {
         try {
             responsecode=0;error="";errorflag=false;
 
-            String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/certificar";
+            String WSURL="https://sandbox-certificador.infile.com.sv/api/v1/certificacion/test/documento/invalidacion";
 
             timeout=45000;
 
@@ -74,8 +74,7 @@ public class clsAnulESA {
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("usuario","06141106141147");
             connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
-            connection.setRequestProperty("identificador",corel);
-            //connection.setRequestProperty("identificador","100009018");
+            //connection.setRequestProperty("identificador",corel);
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
