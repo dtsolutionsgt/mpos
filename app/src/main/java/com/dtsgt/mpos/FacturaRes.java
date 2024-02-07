@@ -694,7 +694,6 @@ public class FacturaRes extends PBase {
 	}
 
 	private void totalOrder(){
-
 		double dmaxmon;
 
 		cleandprod=false;

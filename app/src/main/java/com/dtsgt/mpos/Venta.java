@@ -945,6 +945,9 @@ public class Venta extends PBase {
             desc = 0;
             prodPrecio();
             saveprec=mu.round2(prc.preciobase);
+            if (saveprec==0) {
+                msgbox("El producto no tiene definido precio. No se puede vender.");return;
+            }
             savetot=saveprec*cant;
 
             gl.bonprodcant = cant;
@@ -2637,7 +2640,8 @@ public class Venta extends PBase {
                     gl.gstr = "";
                     browse = 1;
                     gl.prodtipo = 1;
-                    startActivity(new Intent(this, Producto.class));
+                    startActivity(new Intent(this, ProductoLista.class));
+                    //startActivity(new Intent(this, Producto.class));
                     break;
                 case 51:
                     if (gl.rol==4) {
