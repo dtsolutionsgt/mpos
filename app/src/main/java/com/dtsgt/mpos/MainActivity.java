@@ -54,32 +54,14 @@ import com.dtsgt.classes.clsVendedoresObj;
 import com.dtsgt.classes.extListChkDlg;
 import com.dtsgt.classes.extListDlg;
 import com.dtsgt.classes.extListPassDlg;
-import com.dtsgt.fel.clsFELInFile;
 import com.dtsgt.felesa.FELESATest;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.LA_Login;
 import com.dtsgt.webservice.startMainTimer;
-import com.google.gson.JsonArray;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
-import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends PBase {
 

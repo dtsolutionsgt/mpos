@@ -164,6 +164,42 @@ public class clsClasses {
         public String correo;
     }
 
+    public class clsD_factura_fel_pais {
+        public int  codigo_factura;
+        public int  empresa;
+        public String corel;
+        public String codigo_pais;
+        public int  codigo_moneda;
+        public long fec_agr;
+        public String sv_mensaje;
+        public String sv_pdf_path;
+        public String sv_identificador;
+        public String sv_codigogeneracion;
+        public String sv_sellorecepcion;
+        public String sv_numerocontrol;
+        public String sv_status;
+        public String sv_fechaemision;
+        public String sv_estado;
+        public double sv_totalnosuj;
+        public double sv_totalexenta;
+        public double sv_totalgravada;
+        public double sv_subtotalventas;
+        public double sv_descunosuj;
+        public double sv_descuexenta;
+        public double sv_descugravada;
+        public double sv_porcentajedescuento;
+        public double sv_totaldescu;
+        public double sv_subtotal;
+        public double sv_ivarete1;
+        public double sv_reterenta;
+        public double sv_montototaloperacion;
+        public double sv_totalnogravado;
+        public double sv_totalpagar;
+        public String sv_totalletras;
+        public double sv_saldofavor;
+        public double sv_totaliva;
+    }
+
     public class clsD_facturahn {
         public String corel;
         public double subtotal;

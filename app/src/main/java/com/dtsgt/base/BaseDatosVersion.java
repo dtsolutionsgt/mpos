@@ -1490,16 +1490,10 @@ public class BaseDatosVersion {
             db.execSQL("ALTER TABLE D_FACTURA ADD CODIGO_TIPO_FACTURA INT NULL;");
         } catch (Exception e) { }
 
-
-
         try {
             sql="DROP TABLE D_facturat";
             db.execSQL(sql);
-
-
         } catch (Exception e) { }
-
-
 
         try {
             sql="CREATE TABLE [D_factura_sv] ("+
@@ -1733,9 +1727,47 @@ public class BaseDatosVersion {
             sql="CREATE INDEX P_giro_negocio_idx1 ON P_giro_negocio(CODIGO)";db.execSQL(sql);
         } catch (Exception e) { }
 
-
-
         try {
+            sql="CREATE TABLE [D_factura_fel_pais] ("+
+                    "codigo_factura INTEGER NOT NULL,"+
+                    "empresa INTEGER NOT NULL,"+
+                    "corel TEXT NOT NULL,"+
+                    "codigo_pais TEXT NOT NULL,"+
+                    "codigo_moneda INTEGER NOT NULL,"+
+                    "fec_agr INTEGER NOT NULL,"+
+                    "SV_mensaje TEXT NOT NULL,"+
+                    "SV_pdf_path TEXT NOT NULL,"+
+                    "SV_identificador TEXT NOT NULL,"+
+                    "SV_codigoGeneracion TEXT NOT NULL,"+
+                    "SV_selloRecepcion TEXT NOT NULL,"+
+                    "SV_numeroControl TEXT NOT NULL,"+
+                    "SV_status TEXT NOT NULL,"+
+                    "SV_fechaEmision TEXT NOT NULL,"+
+                    "SV_estado TEXT NOT NULL,"+
+                    "SV_totalNoSuj REAL NOT NULL,"+
+                    "SV_totalExenta REAL NOT NULL,"+
+                    "SV_totalGravada REAL NOT NULL,"+
+                    "SV_subTotalVentas REAL NOT NULL,"+
+                    "SV_descuNoSuj REAL NOT NULL,"+
+                    "SV_descuExenta REAL NOT NULL,"+
+                    "SV_descuGravada REAL NOT NULL,"+
+                    "SV_porcentajeDescuento REAL NOT NULL,"+
+                    "SV_totalDescu REAL NOT NULL,"+
+                    "SV_subTotal REAL NOT NULL,"+
+                    "SV_ivaRete1 REAL NOT NULL,"+
+                    "SV_reteRenta REAL NOT NULL,"+
+                    "SV_montoTotalOperacion REAL NOT NULL,"+
+                    "SV_totalNoGravado REAL NOT NULL,"+
+                    "SV_totalPagar REAL NOT NULL,"+
+                    "SV_totalLetras TEXT NOT NULL,"+
+                    "SV_saldoFavor REAL NOT NULL,"+
+                    "SV_totalIva REAL NOT NULL,"+
+                    "PRIMARY KEY ([codigo_factura])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_factura_fel_pais_idx1 ON D_factura_fel_pais(empresa)";db.execSQL(sql);
+            sql="CREATE INDEX D_factura_fel_pais_idx2 ON D_factura_fel_pais(corel)";db.execSQL(sql);
 
         } catch (Exception e) { }
 
@@ -1744,6 +1776,9 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
+        try {
+
+        } catch (Exception e) { }
 
     }
 

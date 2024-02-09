@@ -89,7 +89,7 @@ public class FELESATest extends PBase {
     public void doUltimaFactura(View view) {
         try {
 
-            boolean esFactura=true;
+            boolean esFactura=false;
 
             D_facturaObj.fill("ORDER BY COREL DESC");
             corel=D_facturaObj.first().corel;

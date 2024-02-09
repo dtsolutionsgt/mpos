@@ -901,7 +901,6 @@ public class FacturaRes extends PBase {
 
 			if (gl.pelDespacho) generaOrdenDespacho();
 
-
 			boolean certificarFEL=app.usaFEL();
 			if (gl.cliente_credito) certificarFEL=false;
 

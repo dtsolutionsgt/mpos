@@ -81,7 +81,7 @@ public class clsFactESA {
             connection.setRequestProperty("Content-Type","application/json");
             connection.setRequestProperty("usuario","06141106141147");
             connection.setRequestProperty("llave","df3b5497c338a7e78d659a468e72a670");
-            //connection.setRequestProperty("identificador",corel);
+            connection.setRequestProperty("identificador",corel);
             connection.setUseCaches (false);
             connection.setDoInput(true);
             connection.setDoOutput(true);
@@ -147,8 +147,10 @@ public class clsFactESA {
                     try {
                         respuesta =fclas.new respuesta();
 
-                        respuesta.mensaje=jObj.getString("mensaje");estado= respuesta.mensaje;
+                        respuesta.mensaje=jObj.getString("mensaje");
+                        estado= respuesta.mensaje;
                         respuesta.pathpdf=jObj.getString("pdf_path");
+                        respuesta.duplicado=estado.indexOf("correctamente")<1;
 
                         jso=jObj.getJSONObject("respuesta");
                         respuesta.identificador=jso.getString("identificador");
@@ -195,14 +197,8 @@ public class clsFactESA {
                     }
 
                 } else {
-                    errorflag=true;
-                    try {
-                        //error+=vDescripcion;
-
-                    } catch (Exception se) {
-                        error="JSON error2: " + se.getMessage();
-                        errorflag=true;return errorflag;
-                    }
+                    error=" " +jObj.getString("mensaje");
+                    errorflag=true;return errorflag;
                 }
             } else {
                 error=""+ responsecode;errorflag=true;return errorflag;

@@ -68,7 +68,7 @@ public class appGlobals extends Application {
 	//FEL Identificacion
 	public String felSIN="SIN FEL";
 	public String felInfile="INFILE";
-	public String felSal="FELSAL";
+	public String felSal="INFILESV";
 
 	//Tamaño de pantalla
     public int scrx,scry,scrdim;

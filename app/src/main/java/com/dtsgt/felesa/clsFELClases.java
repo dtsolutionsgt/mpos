@@ -200,6 +200,7 @@ public class clsFELClases {
 
     public class respuesta  {
         String mensaje;
+        boolean duplicado;
         String pathpdf;
 
         String codigoGeneracion;
