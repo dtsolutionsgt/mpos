@@ -213,12 +213,18 @@ public class FELFacturaSV extends PBase {
     private void procesafactura() {
         updateLabel();
 
-        try {
-            Handler mtimer = new Handler();
-            Runnable mrunner = () -> certificaFactura();
-            mtimer.postDelayed(mrunner, 200);
-        } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        if (app.isOnWifi()==0) {
+            gl.FELmsg="ERROR DE CONEXIÓN A INTERNET";gl.feluuid="";
+            startActivity(new Intent(this, FELmsgbox.class));
+            finish();
+        } else {
+            try {
+                Handler mtimer = new Handler();
+                Runnable mrunner = () -> certificaFactura();
+                mtimer.postDelayed(mrunner, 200);
+            } catch (Exception e) {
+                msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            }
         }
     }
 
@@ -257,10 +263,6 @@ public class FELFacturaSV extends PBase {
         jfact.json();
 
     }
-
-    //endregion
-
-    //region Main GT
 
     @Override
     public void felCallBack()  {
@@ -376,6 +378,10 @@ public class FELFacturaSV extends PBase {
         */
     }
 
+    //endregion
+
+    //region Main GT
+
     @Override
     public void felProgress(String msg) {
         Handler mtimer = new Handler();
@@ -392,7 +398,7 @@ public class FELFacturaSV extends PBase {
                     if (!gl.feluuid.isEmpty()) {
                         if (gl.feluuid.length()>10) {
                             if (gl.feluuid.indexOf("-")>1) {
-                                envioFactura(felcorel);
+                                //envioFactura(felcorel);
                                 finish();
                             }
                         }
