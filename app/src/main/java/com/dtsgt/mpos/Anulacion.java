@@ -798,7 +798,6 @@ public class Anulacion extends PBase {
 
 			if (tipodoc.equalsIgnoreCase("N")) {
 				//nitvalido=app.validaNITSal("06141106141147",du);
-
 				try {
 					D_facturafObj.fill("WHERE Corel='"+itemid+"'");
 					ad.responsable_nom=D_facturafObj.first().nombre;
