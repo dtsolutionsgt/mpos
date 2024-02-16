@@ -802,7 +802,6 @@ public class Anulacion extends PBase {
 				try {
 					D_facturafObj.fill("WHERE Corel='"+itemid+"'");
 					ad.responsable_nom=D_facturafObj.first().nombre;
-					//ad.responsable_nit=D_facturafObj.first().nit;
 					if (!D_facturafObj.first().correo.isEmpty()) ad.responsable_correo=D_facturafObj.first().correo;
 				} catch (Exception e) {
 					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -812,7 +811,6 @@ public class Anulacion extends PBase {
 				try {
 					D_facturafObj.fill("WHERE Corel='"+itemid+"'");
 					ad.responsable_nom=D_facturafObj.first().nombre;
-					//ad.responsable_nit=D_facturafObj.first().nit;
 					if (!D_facturafObj.first().correo.isEmpty()) ad.responsable_correo=D_facturafObj.first().correo;
 				} catch (Exception e) {
 					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
