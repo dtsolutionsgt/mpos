@@ -797,7 +797,6 @@ public class Anulacion extends PBase {
 			tipodoc=D_facturaObj.first().ayudante;
 
 			if (tipodoc.equalsIgnoreCase("N")) {
-				//nitvalido=app.validaNITSal("06141106141147",du);
 				try {
 					D_facturafObj.fill("WHERE Corel='"+itemid+"'");
 					ad.responsable_nom=D_facturafObj.first().nombre;
@@ -806,7 +805,6 @@ public class Anulacion extends PBase {
 					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
 				}
 			} else if (tipodoc.equalsIgnoreCase("C")) {
-				//nitvalido=app.validaNITSal("06141106141147",du);
 				try {
 					D_facturafObj.fill("WHERE Corel='"+itemid+"'");
 					ad.responsable_nom=D_facturafObj.first().nombre;

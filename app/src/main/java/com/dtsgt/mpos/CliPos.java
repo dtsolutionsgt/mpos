@@ -47,7 +47,7 @@ import org.json.JSONObject;
 public class CliPos extends PBase {
 
 	private EditText txtNIT,txtNom,txtRef,txtCorreo,txtTel;
-	private TextView lblPed,lblDom,lblDir,btnNIT,btnCF;
+	private TextView lblPed,lblDom,lblNIT,lblDir,btnNIT,btnCF;
     private RelativeLayout relped,relcli;
 	private ProgressBar pbar;
 	private CheckBox cbllevar,cbdomicilio;
@@ -90,6 +90,8 @@ public class CliPos extends PBase {
         lblPed = (TextView) findViewById(R.id.textView177);lblPed.setText("");
         lblDom = (TextView) findViewById(R.id.textView237);
         lblDir= (TextView) findViewById(R.id.textView238);
+        lblNIT = (TextView) findViewById(R.id.textView1);lblNIT.setText("NIT");
+
         relped = (RelativeLayout) findViewById(R.id.relPed);relped.setVisibility(View.INVISIBLE);
         relcli = (RelativeLayout) findViewById(R.id.relclipos);
         pbar = (ProgressBar) findViewById(R.id.progressBar4);pbar.setVisibility(View.INVISIBLE);
@@ -123,6 +125,7 @@ public class CliPos extends PBase {
         } else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
             btnNIT.setText("Cliente con NIT/NRC");
             btnCF.setText("Ticket");
+            lblNIT.setText("NIT/NRC");
         }
 
         NitValidadoInfile =false;
@@ -207,7 +210,7 @@ public class CliPos extends PBase {
                 }
                 if (sNITCliente.length()!=13) {
                     if (!validaNIT(sNITCliente)) {
-                        msgbox("NIT incorrecto");return;
+                        msgbox("NIT incorrecto");txtNIT.selectAll();txtNIT.requestFocus();return;
                     }
                 }
             }  else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
@@ -215,7 +218,7 @@ public class CliPos extends PBase {
                     msgbox("RTN incorrecto");return;
                 }
             } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
-                if (!app.validaNITSal(sNITCliente,du)) {
+                if (!app.validaNITSal(sNITCliente)) {
                     msgbox("NIT/NRC incorrecto");return;
                 }
             }
@@ -1538,9 +1541,14 @@ public class CliPos extends PBase {
 
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                browse=3;
-                gl.sal_idneg=-1;
-                startActivity(new Intent(CliPos.this,ContrGrande.class));
+
+                if (gl.sal_NRC) {
+                    browse=3;
+                    gl.sal_idneg=-1;
+                    startActivity(new Intent(CliPos.this,ContrGrande.class));
+                } else {
+                    msgbox("NRC incorrecto.");return;
+                }
             }
         });
 

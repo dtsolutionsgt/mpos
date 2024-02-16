@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -2578,7 +2579,29 @@ public class AppMethods {
 		}
 	}
 
-	public boolean validaNITSal(String N,DateUtils du) {
+	public boolean validaNITSal(String N) {
+		int nlen;
+		String NN;
+
+		gl.sal_NIT=false;gl.sal_NRC=false;
+		NN=N.replaceAll("-","");nlen=NN.length();
+
+		try {
+			if (!TextUtils.isDigitsOnly(NN)) return false;
+
+			if (nlen==14) {
+				gl.sal_NIT=true;return true;
+			} else if (nlen>=2 && nlen<=8) {
+				gl.sal_NRC=true;return true;
+			} else return false;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		return false;
+	}
+
+	private boolean validaNITSalOld(String N,DateUtils du) {
 		int guc,val,valm,vald;
 		String NN;
 
@@ -2632,7 +2655,6 @@ public class AppMethods {
 
 		return false;
 	}
-
 
 	//endregion
 

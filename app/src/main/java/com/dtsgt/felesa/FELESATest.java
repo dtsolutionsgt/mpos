@@ -181,6 +181,15 @@ public class FELESATest extends PBase {
         }
     }
 
+    public void doNIT(View view) {
+        NITValidator nv=new NITValidator();
+        if (nv.isNITValid("11111111105011")) {
+            msgbox("NIT correct");
+        } else {
+            msgbox("incorrect");
+        }
+    }
+
     //endregion
 
     //region Main
@@ -393,7 +402,6 @@ public class FELESATest extends PBase {
         }
     }
 
-
     //endregion
 
     //region Download
@@ -503,6 +511,70 @@ public class FELESATest extends PBase {
         }
     }
 
+    //endregion
+
+    //region NIT SV
+
+
+    public class NITValidator {
+
+        public boolean isNITValid(String nit) {
+            // Remove any non-digit characters from the NIT
+            nit = nit.replaceAll("[^\\d]", "");
+
+            // Check if the NIT has the correct length
+            if (nit.length() != 14) {
+                return false;
+            }
+
+            // Extract the check digit from the NIT
+            int checkDigit = Character.getNumericValue(nit.charAt(13));
+
+            // Calculate the expected check digit
+            int expectedCheckDigit = calculateCheckDigit(nit.substring(0, 13));
+
+            // Compare the expected check digit with the actual check digit
+            return checkDigit == expectedCheckDigit;
+        }
+
+        private int calculateCheckDigit(String partialNIT) {
+            int sum = 0;
+
+            for (int i = 0; i < partialNIT.length(); i++) {
+                int digit = Character.getNumericValue(partialNIT.charAt(i));
+
+                // Multiply every other digit by 2
+                if (i % 2 == 0) {
+                    digit *= 2;
+
+                    // If the result is greater than 9, subtract 9
+                    if (digit > 9) {
+                        digit -= 9;
+                    }
+                }
+
+                sum += digit;
+            }
+
+            // Calculate the check digit as the difference from the next multiple of 10
+            int nextMultipleOf10 = ((sum / 10) + 1) * 10;
+            int checkDigit = nextMultipleOf10 - sum;
+
+            return checkDigit;
+        }
+
+        public void main(String[] args) {
+            // Example usage
+            String nitToValidate = "YourNITHere";
+            boolean isValid = isNITValid(nitToValidate);
+
+            if (isValid) {
+                System.out.println("The NIT is valid.");
+            } else {
+                System.out.println("The NIT is not valid.");
+            }
+        }
+    }
     //endregion
 
     @Override
