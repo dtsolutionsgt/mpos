@@ -23,15 +23,21 @@ import com.dtsgt.classes.ExDialog;
 import com.dtsgt.classes.SwipeListener;
 import com.dtsgt.classes.XMLObject;
 import com.dtsgt.classes.clsD_facturaObj;
+import com.dtsgt.classes.clsD_factura_anulacionObj;
+import com.dtsgt.classes.clsD_facturafObj;
 import com.dtsgt.classes.clsD_facturarObj;
 import com.dtsgt.classes.clsD_facturasObj;
 import com.dtsgt.classes.clsD_fel_errorObj;
 import com.dtsgt.classes.clsDocDevolucion;
 import com.dtsgt.classes.clsDocFactura;
 import com.dtsgt.classes.clsDocument;
+import com.dtsgt.classes.clsP_clienteObj;
 import com.dtsgt.classes.clsP_sucursalObj;
 import com.dtsgt.classes.clsRepBuilder;
 import com.dtsgt.fel.clsFELInFile;
+import com.dtsgt.felesa.clsAnulESA;
+import com.dtsgt.felesa.clsFELClases;
+import com.dtsgt.felesa.clsFactESA;
 import com.dtsgt.firebase.fbStock;
 import com.dtsgt.ladapt.ListAdaptCFDV;
 import com.dtsgt.webservice.srvCommit;
@@ -77,12 +83,15 @@ public class Anulacion extends PBase {
 	private Anulacion.WebServiceHandler ws;
 	private XMLObject xobj;
 
+	private clsAnulESA AnulESA;
+	private clsClasses.clsD_factura_anulacion factanul;
+
 	private String CSQL;
 	private boolean factsend,bloqueado=false;
 
 	private int tipo,depparc,fcorel,fTotAnul;
 	private String selid,itemid,fserie,fres,felcorel,uuid;
-	private boolean modoapr=false,demomode;
+	private boolean modoapr=false,demomode,modo_sv,modo_gt;
 
 	// impresion nota credito
 	
@@ -90,7 +99,7 @@ public class Anulacion extends PBase {
 	private String pserie,pnumero,pruta,pvend,pcli,presol,presfecha,pfser,pfcor;
 	private String presvence,presrango,pvendedor,pcliente,pclicod,pclidir;
 	private double ptot;
-	private int residx;
+	private int residx,idcliente;
 
 	//Fecha
 	private boolean dateTxt,report;
@@ -163,6 +172,7 @@ public class Anulacion extends PBase {
 			fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;
 			fel.fel_usuario_certificacion=suc.fel_usuario_certificacion;
 			fel.fel_nit=suc.nit;
+			fel.fel_nombre_comercial=suc.texto;
 			fel.fel_correo=suc.correo;
 			fel.fraseIVA=suc.codigo_escenario_iva;
 			fel.fraseISR=suc.codigo_escenario_isr;
@@ -171,14 +181,19 @@ public class Anulacion extends PBase {
 
 			fel=new clsFELInFile(this,this,gl.timeout);
 
-			fel.fel_llave_certificacion =suc.fel_llave_certificacion;
+			fel.fel_llave_certificacion =suc.fel_llave_firma;
 			fel.fel_llave_firma=suc.fel_llave_firma;
+			fel.fel_usuario_certificacion=suc.fel_usuario_firma;
 			fel.fel_codigo_establecimiento=suc.fel_codigo_establecimiento;
-			fel.fel_usuario_certificacion=suc.fel_usuario_certificacion;
 			fel.fel_nit=suc.nit;
+			fel.fel_nombre_comercial=suc.texto;
 			fel.fel_correo=suc.correo;
-			fel.fraseIVA=suc.codigo_escenario_iva;
-			fel.fraseISR=suc.codigo_escenario_isr;
+
+			//fel.fel_codigo_establecimiento="0001";
+			//fel.fel_usuario_certificacion="06141106141147";
+			//fel.fel_llave_certificacion="df3b5497c338a7e78d659a468e72a670";
+
+			AnulESA=new clsAnulESA(this,fel.fel_usuario_certificacion,fel.fel_llave_certificacion);
 
 		} else {
 			fel=new clsFELInFile(this,this,gl.timeout);
@@ -194,6 +209,10 @@ public class Anulacion extends PBase {
 		setHandlers();
 
 		setFechaAct();
+
+		modo_sv=false;modo_gt=false;
+		if (gl.codigo_pais.equalsIgnoreCase("GT")) modo_gt=true;
+		if (gl.codigo_pais.equalsIgnoreCase("SV")) modo_sv=true;
 
 		listItems();
 
@@ -275,31 +294,36 @@ public class Anulacion extends PBase {
 		fa=du.getActDate();ma=du.getmonth(fa);
 
         try {
-
 			if (itemid.equalsIgnoreCase("*")) {
 				mu.msgbox("Debe seleccionar un documento.");return;
 			}
 
-			if (tipo==3) {
-				clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
-				D_facturaObj.fill("WHERE COREL='"+itemid+"'");
-				ff=D_facturaObj.first().fecha;mf=du.getmonth(ff);
-				if (ma!=mf) {
-					msgAnul("La factura se puede anular únicamente en el transcurso de mes de la emisión");return;
+			//boolean flag=gl.peAnulSuper;
+			//if ((gl.rol==2 || gl.rol==3)) flag=false;
+
+			if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+				if (tipo==3) {
+					clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+					D_facturaObj.fill("WHERE COREL='"+itemid+"'");
+					ff=D_facturaObj.first().fecha;mf=du.getmonth(ff);
+					if (ma!=mf) {
+						msgAnul("La factura se puede anular únicamente en el transcurso de mes de la emisión");return;
+					}
 				}
+			} else if (gl.codigo_pais.equalsIgnoreCase("HN")) {
+				if (tipo==3) {
+					clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+					D_facturaObj.fill("WHERE COREL='"+itemid+"'");
+					ff=D_facturaObj.first().fecha;mf=du.getmonth(ff);
+					if (ma!=mf) {
+						msgAnul("La factura se puede anular únicamente en el transcurso de mes de la emisión");return;
+					}
+				}
+			} else if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+
 			}
 
-			boolean flag=gl.peAnulSuper;
-			if ((gl.rol==2 || gl.rol==3)) {
-				flag=false;
-			}
-
-            if (flag) {
-                browse=1;
-                startActivity(new Intent(this,ValidaSuper.class));
-            } else {
-                msgAsk("Anular documento");
-            }
+			msgAsk("Anular documento");
 
 		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
@@ -367,20 +391,21 @@ public class Anulacion extends PBase {
 	//region Main
 
 	public void listItems() {
-
 		Cursor DT;
 		clsClasses.clsCFDV vItem;	
 		int vP,f,regs=0;
 		double val, total=0;
-		String id,sf,sval;
-		long dfi,dff,ff;
+		String id,sf,sval,td;
+		long dfi,dff,ff,fsvf,fsvc;
+		boolean guardar;
+
 		items.clear();
 		selidx=-1;vP=0;
 		
 		try {
 
-			//#CKFK 20200530 Quité la reimpresión de 1-recibos, 0-pedidos y 6-notas de crédito
-			
+			ff=du.getActDate();fsvf=du.addDays(ff,-29);fsvc=du.addDays(ff,-1);
+
 			if (tipo==2) {
 
 				sql="SELECT D_DEPOS.COREL,P_BANCO.NOMBRE,D_DEPOS.FECHA,D_DEPOS.TOTAL,D_DEPOS.CUENTA "+
@@ -394,20 +419,18 @@ public class Anulacion extends PBase {
 
 				if (cbcer.isChecked()) {
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
-							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE "+
 							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-							"WHERE (D_FACTURA.FEELUUID=' ')   " +
-							"ORDER BY D_FACTURA.COREL DESC ";
+							"WHERE (D_FACTURA.FEELUUID=' ')  ORDER BY D_FACTURA.FECHAENTR DESC ";
 				} else {
 					dfi=dateini;if (dfi<fecha_menor) dfi=fecha_menor;
 					dff=datefin;if (dff<fecha_menor) dff=fecha_menor;
 
 					sql="SELECT D_FACTURA.COREL,P_CLIENTE.NOMBRE,D_FACTURA.SERIE,D_FACTURA.TOTAL,D_FACTURA.CORELATIVO, "+
-							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR "+
+							"D_FACTURA.FEELUUID, D_FACTURA.FECHAENTR, D_FACTURA.AYUDANTE "+
 							"FROM D_FACTURA INNER JOIN P_CLIENTE ON D_FACTURA.CLIENTE=P_CLIENTE.CODIGO_CLIENTE "+
-							"WHERE (D_FACTURA.ANULADO=0)   " +
-							"AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
-							"ORDER BY D_FACTURA.COREL DESC ";
+							"WHERE (D_FACTURA.ANULADO=0) AND (FECHA BETWEEN '"+dateini+"' AND '"+datefin+"') " +
+							"ORDER BY D_FACTURA.FECHAENTR  DESC";
 				}
 			}
 			
@@ -433,21 +456,25 @@ public class Anulacion extends PBase {
 
 				while (!DT.isAfterLast()) {
 				  
-					id=DT.getString(0);
+					id=DT.getString(0);guardar=true;
 					
 					vItem =clsCls.new clsCFDV();
 			  	
-					vItem.Cod=DT.getString(0);
+					vItem.Cod=DT.getString(0);vItem.tipodoc="";
+					if (tipo==3 && modo_sv) {
+						td=DT.getString(7);vItem.tipodoc="F";
+						if (td.equalsIgnoreCase("T")) vItem.tipodoc="T";
+						if (td.equalsIgnoreCase("C")) vItem.tipodoc="C";
+					}
+
 					vItem.Desc=DT.getString(1);
 					if (tipo==2) vItem.Desc+=" - "+DT.getString(4);
 					
 					if (tipo==3) {
-						//sf=DT.getString(2) + " - " + Integer.toString(DT.getInt(4));
-						//#CKFK 20200617 Modifique el formato en el que muestra el documento
 						sf=DT.getString(2)+ StringUtils.right("000000" + Integer.toString(DT.getInt(4)), 6);;
-					}else if(tipo==1||tipo==6){
+					} else if(tipo==1||tipo==6){
 						sf=DT.getString(0);
-					}else{
+					} else{
 						f=DT.getInt(2);sf=du.sfecha(f)+" "+du.shora(f);
 					}
 					
@@ -463,26 +490,35 @@ public class Anulacion extends PBase {
 					vItem.Valor=sval;	  
 
 					if (tipo==4 || tipo==5) vItem.Valor="";
-					
-					items.add(vItem);	
-			 
-					if (id.equalsIgnoreCase(selid)) selidx=vP;
-					vP+=1;
 
-					if (tipo==3) {
-						vItem.UUID=DT.getString(5);
-						ff=DT.getLong(6);
-						vItem.FechaFactura=du.sfecha(ff)+" "+du.shora(ff);
-						//vItem.FechaFactura=du.univfechalong(DT.getLong(6));
-					}else{
-						vItem.UUID="";
-						vItem.FechaFactura="";
+					if (modo_sv) {
+						ff=DT.getLong(6);guardar=true;
+						if (vItem.tipodoc.equalsIgnoreCase("C")) {
+							if (ff<fsvc) guardar=false;
+						} else {
+							if (ff<fsvf) guardar=false;
+			    		}
+					}
+
+					if (guardar) {
+						items.add(vItem);
+
+						if (id.equalsIgnoreCase(selid)) selidx=vP;vP+=1;
+
+						if (tipo==3) {
+							vItem.UUID=DT.getString(5);
+							ff=DT.getLong(6);
+							vItem.FechaFactura=du.sfecha(ff)+" "+du.shora(ff);
+						} else {
+							vItem.UUID="";
+							vItem.FechaFactura="";
+						}
 					}
 
 					DT.moveToNext();
 				}
 
-				regs=DT.getCount();
+				regs=items.size();
 			}
 
 			if (tipo == 3) {
@@ -495,8 +531,7 @@ public class Anulacion extends PBase {
             if (DT!=null) DT.close();
 
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-		   	mu.msgbox(e.getMessage());
+     	   	mu.msgbox(e.getMessage());
 	    }
 			 
 		adapter=new ListAdaptCFDV(this, items);
@@ -513,7 +548,6 @@ public class Anulacion extends PBase {
 	private void anulDocument() {
 		
 		try {
-			
 			db.beginTransaction();
 			
 			if (tipo==0) anulPedido(itemid);
@@ -530,6 +564,7 @@ public class Anulacion extends PBase {
                 clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
                 D_facturaObj.fill("WHERE COREL='"+itemid+"'");
                 uuid=D_facturaObj.first().feeluuid;
+				idcliente=D_facturaObj.first().cliente;
 
                 String idfel=gl.peFEL;
                 if (idfel.isEmpty() || idfel.equalsIgnoreCase("SIN FEL")) {
@@ -571,7 +606,6 @@ public class Anulacion extends PBase {
             }
 			
 		} catch (Exception e) {
-			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 			db.endTransaction();
 		   	mu.msgbox(e.getMessage());
 		}
@@ -587,9 +621,48 @@ public class Anulacion extends PBase {
 		dialog.show();
 	}
 
+	@Override
+	public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
+		try {
+
+			String ss=errmsg+" "+errlevel;
+			ss=ss+"";
+
+			if (throwing | ws.errorflag) {
+				guardaError();
+			}
+
+			if (throwing) throw new Exception(errmsg);
+
+			if (ws.errorflag) {
+				processComplete();
+				return;
+			}
+
+			switch (ws.callback) {
+				case 1:
+					statusFactura();
+					processComplete();
+					break;
+			}
+
+		} catch (Exception e) {
+			msgbox(new Object() {}.getClass().getEnclosingMethod().getName() + " . " + e.getMessage());
+			processComplete();
+		}
+	}
+
+	@Override
+	public void felCallBack()  {
+		if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
+			felCallBackInfile();
+		} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
+			felCallBackInfileSal();
+		}
+	}
 	//endregion
 
-    //region FEL
+    //region FEL GT
 
     private void anulacionFEL() {
 		try {
@@ -601,25 +674,6 @@ public class Anulacion extends PBase {
 		}
 	}
 
-	private void anulacionFELSal() {
-		try {
-			if (buildAnulXML()) {
-				fel.anulacion(uuid);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-    public void felCallBack()  {
-		if (gl.peFEL.equalsIgnoreCase(gl.felInfile)) {
-			felCallBackInfile();
-		} else if (gl.peFEL.equalsIgnoreCase(gl.felSal)) {
-			felCallBackInfileSal();
-		}
-    }
-
 	private void felCallBackInfile() {
 		String ss=fel.error+" "+fel.errlevel;
 		ss=ss+"";
@@ -628,64 +682,21 @@ public class Anulacion extends PBase {
 			try {
 				anulFactura(itemid);
 
-				//#EJC20200706: Commit transaction from Anuldocument.
 				db.setTransactionSuccessful();
 				db.endTransaction();
 
 				envioFactura();
 
-				toast(String.format("Se anuló la factura %d correctamente",itemid));
+				msgbox(String.format("Se anuló la factura %d correctamente",itemid));
 
 				listItems();
-
 			} catch (SQLException e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
 				db.endTransaction();
 				mu.msgbox(e.getMessage());
 			}
 		} else {
 			try {
 				guardaError();
-
-				//#EJC20200706: Commit transaction from Anuldocument.
-				db.endTransaction();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			msgbox("Ocurrió un error en anulacion FEL :\n\n"+ fel.error);
-		}
-	}
-
-	private void felCallBackInfileSal() {
-		String ss=fel.error+" "+fel.errlevel;
-		ss=ss+"";
-
-		if (!fel.errorflag) {
-
-			try {
-
-				anulFactura(itemid);
-
-				//#EJC20200706: Commit transaction from Anuldocument.
-				db.setTransactionSuccessful();
-				db.endTransaction();
-
-				envioFactura();
-
-				toast(String.format("Se anuló la factura %d correctamente",itemid));
-
-				listItems();
-
-			} catch (SQLException e) {
-				addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),sql);
-				db.endTransaction();
-				mu.msgbox(e.getMessage());
-			}
-		} else {
-			try {
-				guardaError();
-
-				//#EJC20200706: Commit transaction from Anuldocument.
 				db.endTransaction();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -695,17 +706,14 @@ public class Anulacion extends PBase {
 	}
 
     private boolean buildAnulXML() {
-
         try {
-
-            clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
-            clsClasses.clsD_factura fact=clsCls.new clsD_factura();
+			clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+			clsClasses.clsD_factura fact=clsCls.new clsD_factura();
 
             D_facturaObj.fill("WHERE Corel='"+itemid+"'");
             fact=D_facturaObj.first();
 
             uuid=fact.feeluuid;
-
             if (uuid.length()<5) {
 	           anulFactura(itemid);return false;
             }
@@ -737,13 +745,10 @@ public class Anulacion extends PBase {
     }
 
     private String Get_NIT_Cliente(int Codigo_Cliente) {
-
 		Cursor dt;
-
 		String NIT="";
 
 		try {
-
 			sql="SELECT NIT FROM P_CLIENTE WHERE CODIGO='"+Codigo_Cliente+"'";
 			dt=Con.OpenDT(sql);
 
@@ -754,7 +759,6 @@ public class Anulacion extends PBase {
                     if (dt!=null) dt.close();
 				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -763,6 +767,129 @@ public class Anulacion extends PBase {
 	}
 
     //endregion
+
+	//region FEL SV
+
+	private void anulacionFELSal() {
+		String tipodoc;
+		boolean nitvalido;
+
+		try {
+			clsFELClases fclas=new clsFELClases();
+			clsFELClases.anulacionDatos ad=fclas.new anulacionDatos();
+
+			ad.uuid=uuid;
+			ad.establecimiento=fel.fel_codigo_establecimiento;
+
+			ad.solicitante_nom=fel.fel_nombre_comercial;
+			ad.solicitante_nit=fel.fel_nit;
+			ad.solicitante_correo=fel.fel_correo;
+
+			ad.responsable_nom=fel.fel_nombre_comercial;
+			ad.responsable_nit=fel.fel_nit;
+			ad.responsable_correo="";
+
+			clsD_facturaObj D_facturaObj=new clsD_facturaObj(this,Con,db);
+			clsD_facturafObj D_facturafObj=new clsD_facturafObj(this,Con,db);
+
+			D_facturaObj.fill("WHERE Corel='"+itemid+"'");
+
+			tipodoc=D_facturaObj.first().ayudante;
+
+			if (tipodoc.equalsIgnoreCase("N")) {
+				//nitvalido=app.validaNITSal("06141106141147",du);
+
+				try {
+					D_facturafObj.fill("WHERE Corel='"+itemid+"'");
+					ad.responsable_nom=D_facturafObj.first().nombre;
+					//ad.responsable_nit=D_facturafObj.first().nit;
+					if (!D_facturafObj.first().correo.isEmpty()) ad.responsable_correo=D_facturafObj.first().correo;
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+			} else if (tipodoc.equalsIgnoreCase("C")) {
+				//nitvalido=app.validaNITSal("06141106141147",du);
+				try {
+					D_facturafObj.fill("WHERE Corel='"+itemid+"'");
+					ad.responsable_nom=D_facturafObj.first().nombre;
+					//ad.responsable_nit=D_facturafObj.first().nit;
+					if (!D_facturafObj.first().correo.isEmpty()) ad.responsable_correo=D_facturafObj.first().correo;
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+			} else if (tipodoc.equalsIgnoreCase("T")) {
+				ad.responsable_nom=fel.fel_nombre_comercial;
+				ad.responsable_nit=fel.fel_nit;
+			}
+
+			clsFELClases.JSONAnulacion janul=fclas.new JSONAnulacion();
+			janul.Anulacion(ad);
+
+			AnulESA.Anular(janul.json);
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void felCallBackInfileSal() {
+
+		if (!AnulESA.errorflag) {
+
+			if (AnulESA.anulresult<0) {
+				msgbox(AnulESA.mensaje);return;
+			}
+
+			try {
+
+				try {
+   					clsD_factura_anulacionObj D_factura_anulacionObj=new clsD_factura_anulacionObj(this,Con,db);
+
+					factanul = clsCls.new clsD_factura_anulacion();
+
+					int newid=D_factura_anulacionObj.newID("SELECT MAX(codigo_factura_anulacion) FROM D_factura_anulacion");
+
+					factanul.codigo_factura_anulacion=newid;
+					factanul.empresa=gl.emp;
+					factanul.corel=itemid;
+					factanul.codigo_pais=gl.codigo_pais;
+					factanul.fecha_anulacion=du.getActDateTime();
+					factanul.sv_uuid=uuid;
+					factanul.sv_codigo_generacion=AnulESA.codigoGeneracion;
+					factanul.sv_sello_recepcion=AnulESA.selloRecepcion;
+
+					D_factura_anulacionObj.add(factanul);
+				} catch (Exception e) {
+					msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+				}
+
+				anulFactura(itemid);
+
+				db.setTransactionSuccessful();
+				db.endTransaction();
+
+				envioFactura();
+
+				msgbox("El documento se anuló correctamente");
+
+				listItems();
+
+			} catch (SQLException e) {
+				db.endTransaction();
+				mu.msgbox(e.getMessage());
+			}
+		} else {
+			try {
+				guardaError();
+        		db.endTransaction();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			msgbox("Ocurrió un error en anulacion FEL :\n\n"+ AnulESA.error);
+		}
+	}
+
+	//endregion
 
 	//region WebService handler
 
@@ -787,7 +914,6 @@ public class Anulacion extends PBase {
 			try {
 				switch (ws.callback) {
 					case 1:
-
 						CSQL="UPDATE D_FACTURA SET ANULADO = 1 WHERE COREL='"+itemid+"';";
 						CSQL+="UPDATE D_FACTURAD SET ANULADO = 1 WHERE COREL='"+itemid+"';";
 						CSQL+="UPDATE D_FACTURAP SET ANULADO = 1 WHERE COREL='"+itemid+"';";
@@ -801,8 +927,7 @@ public class Anulacion extends PBase {
 		}
 	}
 
-	@Override
-	public void wsCallBack(Boolean throwing, String errmsg, int errlevel) {
+	public void wsCallBackGT(Boolean throwing, String errmsg, int errlevel) {
 		try {
 
 			String ss=errmsg+" "+errlevel;
@@ -981,7 +1106,7 @@ public class Anulacion extends PBase {
 
             listItems();
 
-            toast("La factura se anuló correctamente");
+			msgbox("El documento se anuló correctamente");
 
 			vAnulFactura=true;
 
@@ -1745,23 +1870,31 @@ public class Anulacion extends PBase {
 				cmonth = Integer.parseInt(mesFormateado);
 				cday = Integer.parseInt(diaFormateado);
 
-				if(dateTxt) {
+				if (dateTxt) {
 					datefin = du.cfechaRep(cyear, cmonth, cday, false);
-					if (datefin<fecha_menor) datefin=fecha_menor;
+					if (modo_gt) {
+						if (datefin < fecha_menor) datefin = fecha_menor;
+					}
 				}
 
-				if(!dateTxt){
+				if (!dateTxt){
 					dateini  = du.cfechaRep(cyear, cmonth, cday, true);
-					if (dateini<fecha_menor) dateini=fecha_menor;
+					if (modo_gt) {
+						if (dateini < fecha_menor) dateini = fecha_menor;
+					}
 				}
 
 				long fechaSel=du.cfechaSinHora(cyear, cmonth, cday)*10000;
 
 				if (tipo==3){
-					if (fechaSel<fecha_menor){
-						msgbox("La fecha permitida de anulación es 5 días atras");
-						fechaSel=fecha_menor;
-						//return;
+					if (modo_gt) {
+						if (fechaSel < fecha_menor) {
+							if (gl.codigo_pais.equalsIgnoreCase("GT")) {
+								msgbox("La fecha permitida de anulación es 5 días atras");
+								fechaSel = fecha_menor;
+								//return;
+							}
+						}
 					}
 				}
 
@@ -1781,12 +1914,10 @@ public class Anulacion extends PBase {
 	}
 
 	private void setFechaAct(){
-
 		Long fecha;
 		String date;
 
 		try{
-
 			fecha = du.getFechaActualReport();
 			date = du.univfechaReport(fecha);
 
@@ -1795,8 +1926,7 @@ public class Anulacion extends PBase {
 
 			datefin = du.getFechaActualReport(false);
 			dateini = du.getFechaActualReport(true);
-
-		}catch (Exception e){
+		} catch (Exception e){
 			addlog(new Object(){}.getClass().getEnclosingMethod().getName(),e.getMessage(),"");
 		}
 	}

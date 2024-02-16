@@ -59,6 +59,7 @@ public class FELFacturaSV extends PBase {
 
     private clsFELClases fclas=new clsFELClases();
     private clsFELClases.JSONFactura jfact;
+    private clsFELClases.JSONCredito jcred;
     private clsFactESA FactESA;
 
     private clsFELInFile fel;
@@ -229,39 +230,125 @@ public class FELFacturaSV extends PBase {
     }
 
     private void certificaFactura() {
+        String tipodoc;
+
         try {
             lbl1.setText("Construyendo XML...");
             creaBitacora();
-            JSONfactura();
+
+            D_facturaObj.fill("WHERE (COREL='"+felcorel+"')");
+            tipodoc=D_facturaObj.first().ayudante;
+
+            if (tipodoc.equalsIgnoreCase("N")) {
+                JSONfactura("N");
+            } else if (tipodoc.equalsIgnoreCase("C")) {
+                JSONcredito();
+            } else if (tipodoc.equalsIgnoreCase("T")) {
+                JSONfactura("T");
+            }
+
             lbl1.setText("Certificando Factura...");
-            String ss=jfact.json;
-            FactESA.Certifica(felcorel,jfact.json);
+
+            if (!tipodoc.equalsIgnoreCase("C")) {
+                FactESA.Certifica(felcorel,jfact.json);
+            } else {
+                FactESA.Certifica(felcorel,jcred.json);
+            }
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
-    private void JSONfactura() throws JSONException {
-        String nprod;
+    private void JSONfactura(String tipodoc) throws JSONException {
+        String nprod,cnom,cnit,ccor;
 
-        jfact=fclas.new JSONFactura();
+        try {
 
-        jfact.Factura(fel.fel_codigo_establecimiento);
+            jfact=fclas.new JSONFactura();
 
-        D_facturadObj.fill("WHERE (COREL='"+felcorel+"')");
-        for (int i = 0; i <D_facturadObj.count; i++) {
-            nprod=prodName(D_facturadObj.items.get(i).producto);
+            jfact.Factura(fel.fel_codigo_establecimiento);
 
-            jfact.agregarServicio(nprod,
-                    D_facturadObj.items.get(i).cant,
-                    D_facturadObj.items.get(i).precio,  // precio con iva
-                    D_facturadObj.items.get(i).desmon);
+            if (tipodoc.equalsIgnoreCase("N")) {
+                try {
+                    D_facturafObj.fill("WHERE (COREL='"+felcorel+"')");
+
+                    cnom=D_facturafObj.first().nombre;
+                    cnit=D_facturafObj.first().nit;
+                    ccor=D_facturafObj.first().correo;
+
+                    jfact.agregarReceptor(cnom,cnit,ccor);
+                } catch (Exception e) {
+                    msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+                }
+            }
+
+            D_facturadObj.fill("WHERE (COREL='"+felcorel+"')");
+            for (int i = 0; i <D_facturadObj.count; i++) {
+                nprod=prodName(D_facturadObj.items.get(i).producto);
+
+                jfact.agregarServicio(nprod,
+                        D_facturadObj.items.get(i).cant,
+                        D_facturadObj.items.get(i).precio,  // precio con iva
+                        D_facturadObj.items.get(i).desmon);
+            }
+
+            jfact.agregarAdenda(" ");
+
+            jfact.json();
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
+    }
 
-        jfact.agregarAdenda(" ");
+    private void JSONcredito() throws JSONException {
+        String dnum,nprod,cnombre,cnit,cdir,ccorreo,cgiro,cdep,cmuni;
+        long cornum,fcor;
 
-        jfact.json();
+        try {
 
+            jcred=fclas.new JSONCredito();
+            jcred.mu=mu;
+
+            jcred.Credito(fel.fel_codigo_establecimiento);
+
+            D_facturafObj.fill("WHERE (COREL='"+felcorel+"')");
+
+            fcor=D_facturaObj.first().corelativo;
+            cornum=11129000000000L;cornum=cornum+fcor;dnum=cornum+"";
+
+            cnombre=D_facturafObj.first().nombre;
+            cnit=D_facturafObj.first().nit;cnit=cnit.replace("-","");
+            cdir=D_facturafObj.first().direccion;
+            ccorreo =D_facturafObj.first().correo;
+
+            D_factura_svObj.fill("WHERE (COREL='" + felcorel + "')");
+                cgiro = D_factura_svObj.first().codigo_tipo_negocio + "";
+                cdep = D_factura_svObj.first().codigo_departamento;
+                cdep = cdep.substring(1, 3);
+                cmuni = D_factura_svObj.first().codigo_municipio;
+                cmuni = cmuni.substring(3, 5);
+
+            jcred.Receptor(dnum,cnit,cnombre,cgiro,cnombre);
+            jcred.Direccion(cdep,cmuni,cdir, ccorreo);
+
+            D_facturadObj.fill("WHERE (COREL='"+felcorel+"')");
+
+            for (int i = 0; i <D_facturadObj.count; i++) {
+                nprod=prodName(D_facturadObj.items.get(i).producto);
+
+                jcred.agregarProducto(nprod,
+                        D_facturadObj.items.get(i).cant,
+                        D_facturadObj.items.get(i).precio,  // precio sin iva
+                        D_facturadObj.items.get(i).imp);
+            }
+
+            jcred.json();
+
+            String sj= jcred.json;
+            sj=sj+"";
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
     }
 
     @Override
@@ -398,7 +485,7 @@ public class FELFacturaSV extends PBase {
                     if (!gl.feluuid.isEmpty()) {
                         if (gl.feluuid.length()>10) {
                             if (gl.feluuid.indexOf("-")>1) {
-                                //envioFactura(felcorel);
+                                envioFactura(felcorel);
                                 finish();
                             }
                         }

@@ -1771,6 +1771,23 @@ public class BaseDatosVersion {
 
         } catch (Exception e) { }
 
+        try {
+            sql="CREATE TABLE [D_factura_anulacion] ("+
+                    "CODIGO_FACTURA_ANULACION INTEGER NOT NULL,"+
+                    "EMPRESA INTEGER NOT NULL,"+
+                    "COREL TEXT NOT NULL,"+
+                    "CODIGO_PAIS TEXT NOT NULL,"+
+                    "FECHA_ANULACION INTEGER NOT NULL,"+
+                    "SV_UUID TEXT NOT NULL,"+
+                    "SV_CODIGO_GENERACION TEXT NOT NULL,"+
+                    "SV_SELLO_RECEPCION TEXT NOT NULL,"+
+                    "PRIMARY KEY ([CODIGO_FACTURA_ANULACION])"+
+                    ");";
+            db.execSQL(sql);
+
+            sql="CREATE INDEX D_factura_anulacion_idx1 ON D_factura_anulacion(COREL)";db.execSQL(sql);
+        } catch (Exception e) { }
+
 
         try {
 

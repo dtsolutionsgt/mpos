@@ -164,6 +164,17 @@ public class clsClasses {
         public String correo;
     }
 
+    public class clsD_factura_anulacion {
+        public int  codigo_factura_anulacion;
+        public int  empresa;
+        public String corel;
+        public String codigo_pais;
+        public long fecha_anulacion;
+        public String sv_uuid;
+        public String sv_codigo_generacion;
+        public String sv_sello_recepcion;
+    }
+
     public class clsD_factura_fel_pais {
         public int  codigo_factura;
         public int  empresa;
@@ -1912,7 +1923,7 @@ public class clsClasses {
 	
 	public class clsCFDV {
 		public int id,ival;
-		public String Cod,Desc,Fecha,Valor,Sid, UUID, FechaFactura;
+		public String Cod,Desc,Fecha,Valor,Sid, UUID, FechaFactura,tipodoc;
 		public double val, precio;
 	}
 	

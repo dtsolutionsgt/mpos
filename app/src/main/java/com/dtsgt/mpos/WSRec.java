@@ -4393,7 +4393,7 @@ public class WSRec extends PBase {
             cod_pais=P_empresaObj.first().cod_pais;
             if (cod_pais.isEmpty()) cod_pais="-";
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());cod_pais="SV";
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());cod_pais="SV";
         }
     }
 

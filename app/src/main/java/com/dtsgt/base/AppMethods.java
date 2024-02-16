@@ -2566,6 +2566,74 @@ public class AppMethods {
 		return tipodoc;
 	}
 
+	public boolean validaNITHon(String N)  {
+		if (N.isEmpty()) return false;
+		if (N.length()<13) return false;
+
+		try {
+			long l=Long.parseLong(N);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public boolean validaNITSal(String N,DateUtils du) {
+		int guc,val,valm,vald;
+		String NN;
+
+		gl.sal_NIT=false;gl.sal_NRC=false;NN=N;
+
+		try {
+			if (!N.contains("-")) return false;
+			guc = N.length() - NN.replaceAll("-","").length();
+			if (guc==3) {
+				String[] sp = N.split("-");
+
+				if (sp[0].length()!=4) return false;
+				try {
+					val=Integer.parseInt(sp[0]);
+				} catch (Exception e) { return false; }
+
+				if (sp[1].length()!=6) return false;
+				if (!du.fechaNIT_SV(sp[1])) return false;
+
+				if (sp[2].length()!=3) return false;
+				try {
+					val=Integer.parseInt(sp[2]);
+				} catch (Exception e) { return false; }
+
+				if (sp[3].length()!=1) return false;
+				try {
+					val=Integer.parseInt(sp[3]);
+				} catch (Exception e) { return false; }
+
+				gl.sal_NIT=true;return true;
+
+			} else if (guc==1) {
+				String[] sp = N.split("-");
+
+				if (sp[1].length()!=1) return false;
+				try {
+					val=Integer.parseInt(sp[1]);
+				} catch (Exception e) { return false; }
+
+				if (sp[0].length()>7) return false;
+				if (sp[0].length()<2) return false;
+				try {
+					val=Integer.parseInt(sp[0]);
+				} catch (Exception e) { return false; }
+
+				gl.sal_NRC=true;return true;
+			} else return false;
+		} catch (Exception e) {
+			msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+		}
+
+		return false;
+	}
+
+
 	//endregion
 
 	//region Aux
@@ -2860,6 +2928,10 @@ public class AppMethods {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	public boolean esCF(int idcli) {
+		return idcli==gl.emp*10;
 	}
 
     //endregion

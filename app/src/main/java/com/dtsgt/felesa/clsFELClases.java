@@ -1,5 +1,7 @@
 package com.dtsgt.felesa;
 
+import com.dtsgt.base.MiscUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,10 +10,13 @@ public class clsFELClases {
 
 
     public class JSONFactura {
+
         public String json;
 
-        private JSONObject jsdoc,jso,jsitem,jshead,jsad;
+        private JSONObject jsdoc,jso,jsitem,jshead,jsad,jsrec;
         private JSONArray jsitems;
+
+        private boolean receptor;
 
         public void Factura(String establecimiento) throws JSONException {
             Factura(establecimiento,2);
@@ -26,6 +31,7 @@ public class clsFELClases {
             jshead.put("establecimiento",establecimiento);
             jshead.put("condicion_pago",condicion_pago);
 
+            receptor =false;
         }
 
         public void agregarProducto(String descripcion,double cantidad,
@@ -64,7 +70,20 @@ public class clsFELClases {
             //jsad.put("adenda 2",adenda2);
         }
 
+        public void agregarReceptor(String nombre,String nit,String correo) throws JSONException {
+            jsrec = new JSONObject();
+
+            jsrec.put("tipo","02");
+            jsrec.put("nombre",nombre);
+            jsrec.put("correo",correo);
+            jsrec.put("numero_documento",nit);
+
+            receptor =true;
+        }
+
         public void json() throws JSONException {
+
+            if (receptor) jshead.put("receptor",jsrec);
             jshead.put("items",jsitems);
             jshead.put("adendas",jsad);
             jsdoc.put("documento",jshead);
@@ -75,6 +94,7 @@ public class clsFELClases {
     }
 
     public class JSONCredito {
+        public MiscUtils mu;
         public String json;
 
         private JSONObject jsdoc,jso,jsitem,jshead,jsr,jsrd,jst;
@@ -121,6 +141,9 @@ public class clsFELClases {
 
         public void agregarProducto(String descripcion,double cantidad,
                                     double precio_unitario,double impuesto_monto) throws JSONException {
+
+            double precio;
+
             jsitem = new JSONObject();
 
             jsitem.put("tipo", 1);
@@ -128,12 +151,17 @@ public class clsFELClases {
             jsitem.put("unidad_medida", 59);
             //jsitem.put("descuento", 25);
             jsitem.put("descripcion", descripcion);
-            jsitem.put("precio_unitario", precio_unitario);
+
+            precio=precio_unitario*cantidad-impuesto_monto;
+            precio=precio/cantidad;precio=mu.round2dec(precio);
+            //jsitem.put("precio_unitario", precio_unitario);
+            jsitem.put("precio_unitario", precio);
 
             JSONArray jstrib = new JSONArray();
 
             jst = new JSONObject();
             jst.put("codigo", "20");
+            impuesto_monto=mu.round2(impuesto_monto);
             jst.put("monto", impuesto_monto);
             jstrib.put(jst);
 
@@ -181,6 +209,7 @@ public class clsFELClases {
             jsres.put("nombre",ad.responsable_nom);
             jsres.put("tipo_documento","36");
             jsres.put("numero_documento",ad.responsable_nit);
+            if (!ad.responsable_correo.isEmpty()) jsres.put("correo",ad.responsable_correo);
 
             jssol.put("nombre",ad.solicitante_nom);
             jssol.put("tipo_documento","36");
@@ -196,7 +225,6 @@ public class clsFELClases {
         }
 
     }
-
 
     public class respuesta  {
         String mensaje;
@@ -236,13 +264,14 @@ public class clsFELClases {
     }
 
     public class anulacionDatos {
-        String establecimiento;
-        String uuid;
-        String responsable_nom;
-        String responsable_nit;
-        String solicitante_nom;
-        String solicitante_nit;
-        String solicitante_correo;
+        public String establecimiento;
+        public String uuid;
+        public String responsable_nom;
+        public String responsable_nit;
+        public String responsable_correo;
+        public String solicitante_nom;
+        public String solicitante_nit;
+        public String solicitante_correo;
     }
 
 }

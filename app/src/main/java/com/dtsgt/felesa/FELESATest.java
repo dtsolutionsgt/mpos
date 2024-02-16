@@ -26,11 +26,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 
@@ -54,6 +51,7 @@ public class FELESATest extends PBase {
     private String FELestabl,FELUsuario,FELClave;
     private String corel,dnum,cnombre,cnit,cdir, ccorreo,cgiro,cdep,cmuni;
     private long fcor,cornum;
+    private int callbackmode;
 
     private String fileUrl;
     private File pdffile;
@@ -89,7 +87,7 @@ public class FELESATest extends PBase {
     public void doUltimaFactura(View view) {
         try {
 
-            boolean esFactura=false;
+            boolean esFactura=true;
 
             D_facturaObj.fill("ORDER BY COREL DESC");
             corel=D_facturaObj.first().corel;
@@ -125,6 +123,7 @@ public class FELESATest extends PBase {
             //dnum="100003008";
             //if (creaJSONFijoCredito()) FactESA.Certifica(dnum, jsdoc.toString());
 
+            callbackmode=1;
             if (esFactura) {
                 if (JSOND_Factura()) FactESA.Certifica("100004001",jfact.json);
             } else {
@@ -138,10 +137,11 @@ public class FELESATest extends PBase {
 
     public void doAnular(View view) {
         try {
-             clsFELClases.anulacionDatos ad=fclas.new anulacionDatos();
+            clsFELClases.anulacionDatos ad=fclas.new anulacionDatos();
 
             ad.establecimiento="0001";
-            ad.uuid="790F807D-1DAC-40D2-97CC-4A0D54BA4FA4";
+            ad.uuid="08961DF8-948F-4E8A-B51F-5139EFEA0FA9";
+
             ad.responsable_nom="INFILE DEMO";
             ad.responsable_nit="06141106141147";
             ad.solicitante_nom="Prueba Receptor";
@@ -151,14 +151,17 @@ public class FELESATest extends PBase {
             clsFELClases.JSONAnulacion janul=fclas.new JSONAnulacion();
             janul.Anulacion(ad);
 
-            AnulESA.Certifica("100004001",janul.json);
+            callbackmode=2;
+            AnulESA.Anular(janul.json);
         } catch (Exception e) {
-            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+            felCallBack();
+            //msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
 
     public void doFactura(View view) {
         try {
+            callbackmode=1;
             if (creaJSONFijoFactura()) FactESA.Certifica("100002005",jfact.json);
             //if (creaJSONCredito()) FactESA.Certifica(jfact.json);
         } catch (Exception e) {
@@ -343,6 +346,22 @@ public class FELESATest extends PBase {
     @Override
     public void felCallBack()  {
         try {
+
+            switch (callbackmode) {
+                case 1:
+                    callbackCert();break;
+                case 2:
+                    callbackAnul();break;
+                case 3:
+                    callbackCont();break;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void callbackCert() {
+        try {
             if (!FactESA.errorflag) {
                 msgbox(FactESA.estado+"\n"+FactESA.respuesta.totalPagar);
                 //marcaFactura();
@@ -353,6 +372,27 @@ public class FELESATest extends PBase {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
     }
+
+    private void callbackAnul() {
+        try {
+            if (!AnulESA.errorflag) {
+                msgbox(AnulESA.mensaje);
+                //MarcaAnulado
+            } else {
+                msgbox(AnulESA.error);
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private void callbackCont() {
+        try {
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
 
     //endregion
 

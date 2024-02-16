@@ -1546,7 +1546,6 @@ public class Venta extends PBase {
             imp=mu.round2dec(imp*cant);
             itval=mu.round6dec(impval*cant); //JP20230911
 
-
             upd.init("T_VENTA");
 
             upd.add("PRECIO",prec);
@@ -1661,7 +1660,13 @@ public class Venta extends PBase {
             upd.add("TOTAL",prodtot);
 
             if (gl.codigo_pais.equalsIgnoreCase("HN")) {
-                upd.add("PRECIODOC",precdoc);
+                upd.add("PRECIODOC", precdoc);
+            } else  if (gl.codigo_pais.equalsIgnoreCase("SV")) {
+                if (gl.sal_PER) {
+                    upd.add("PRECIODOC", precdoc);
+                } else {
+                    upd.add("PRECIODOC",prec);
+                }
             } else {
                 upd.add("PRECIODOC",prec);
             }

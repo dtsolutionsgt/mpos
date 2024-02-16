@@ -69,7 +69,7 @@ public class ListAdaptCFDV extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		holder.lblFecha.setText(itemDetailsrrayList.get(position).Fecha);
+		holder.lblFecha.setText(itemDetailsrrayList.get(position).Fecha+" "+itemDetailsrrayList.get(position).tipodoc);
 		holder.lblDesc.setText(itemDetailsrrayList.get(position).Desc);
 		holder.lblValor.setText(itemDetailsrrayList.get(position).Valor);
 
