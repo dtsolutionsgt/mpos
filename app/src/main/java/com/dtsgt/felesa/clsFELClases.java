@@ -179,6 +179,101 @@ public class clsFELClases {
 
     }
 
+    public class JSONCreditoCont {
+        public MiscUtils mu;
+        public String json;
+        public String idDTE,iddocumento;
+
+        private JSONObject jsdoc,jso,jsitem,jshead,jsr,jsrd,jst;
+        private JSONArray jsitems;
+
+        public void CreditoCont(String iddoc,String establecimiento,int idruta,boolean produccion) throws JSONException {
+            CreditoCont(iddoc,establecimiento,idruta,produccion,2);
+        }
+
+        public void CreditoCont(String iddoc,String establecimiento,int idruta,boolean produccion,int condicion_pago) throws JSONException {
+            iddocumento=iddoc;
+            idDTE=numControlFEL(false,establecimiento,iddoc,idruta);
+
+            jsdoc = new JSONObject();
+            jsitems=new JSONArray();
+
+            jshead = new JSONObject();
+
+            jshead.put("tipo_contingencia",3);
+            jshead.put("motivo_contingencia","Pérdida de conexión a internet");
+            jshead.put("percibir_iva",true);
+            if (produccion) jshead.put("ambiente","01");else jshead.put("ambiente","00");
+            jshead.put("tipo_dte","03");
+            jshead.put("establecimiento",establecimiento);
+            jshead.put("numero_control",idDTE);
+            jshead.put("condicion_pago",condicion_pago);
+
+        }
+
+        public void Receptor(String numero_documento,String nrc,String nombre,
+                             String codigo_actividad,String nombre_comercial) throws JSONException {
+            jsr = new JSONObject();
+            jsr.put("tipo_documento","36");
+            jsr.put("numero_documento",numero_documento);
+            jsr.put("nrc",nrc);
+            jsr.put("nombre",nombre);
+            jsr.put("codigo_actividad",codigo_actividad);
+            jsr.put("nombre_comercial",nombre_comercial);
+        }
+
+        public void Direccion(String departamento,String municipio,
+                              String complemento,String correo) throws JSONException {
+            jsrd = new JSONObject();
+            jsrd.put("departamento",departamento);
+            jsrd.put("municipio",municipio);
+            jsrd.put("complemento",complemento);
+
+            jsr.put("direccion",jsrd);
+            jsr.put("correo",correo);
+
+            jshead.put("receptor",jsr);
+        }
+
+        public void agregarProducto(String descripcion,double cantidad,
+                                    double precio_unitario,double impuesto_monto) throws JSONException {
+            double precio;
+
+            jsitem = new JSONObject();
+
+            jsitem.put("tipo", 1);
+            jsitem.put("cantidad", cantidad);
+            jsitem.put("unidad_medida", 59);
+            //jsitem.put("descuento", 25);
+            jsitem.put("descripcion", descripcion);
+
+            precio=precio_unitario*cantidad-impuesto_monto;
+            precio=precio/cantidad;precio=mu.round2dec(precio);
+            //jsitem.put("precio_unitario", precio_unitario);
+            jsitem.put("precio_unitario", precio);
+
+            JSONArray jstrib = new JSONArray();
+
+            jst = new JSONObject();
+            jst.put("codigo", "20");
+            impuesto_monto=mu.round2(impuesto_monto);
+            jst.put("monto", impuesto_monto);
+            jstrib.put(jst);
+
+            jsitem.put("tributos", jstrib);
+
+            jsitems.put(jsitem);
+        }
+
+        public void json() throws JSONException {
+            jshead.put("items",jsitems);
+            jsdoc.put("documento",jshead);
+
+            json = jsdoc.toString();
+        }
+
+    }
+
     public class JSONAnulacion {
         public String json;
 
@@ -273,5 +368,26 @@ public class clsFELClases {
         public String solicitante_nit;
         public String solicitante_correo;
     }
+
+    //region Aux
+
+    private String numControlFEL(boolean esFactura,String codEstab,String uid,int idruta) {
+        String nc="DTE-",cpos;
+
+        if (esFactura) nc=nc+"01-";else nc=nc+"03-";
+
+        codEstab=mu.leftPad(codEstab,"0",4);
+        cpos=""+idruta;
+        cpos=mu.leftPad(cpos,"0",4);
+        nc=nc+codEstab+cpos+"-";
+
+        uid=mu.leftPad(uid,"0",15);
+        nc=nc+uid;
+
+        return nc;
+    }
+
+
+    //endregion
 
 }

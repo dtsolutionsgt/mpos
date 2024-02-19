@@ -201,8 +201,9 @@ public class FELESATest extends PBase {
         String s1;
 
         s1=numControlFEL(true,FELestabl,"1234567890");
+        //contingencia();
 
-        contingencia();
+        contingenciaCF();
     }
 
     //endregion
@@ -421,6 +422,18 @@ public class FELESATest extends PBase {
 
     //region Contingencia
 
+    private void contingenciaCF() {
+        contingenciaCF_prueba();
+    }
+
+    private void contingenciaCF_prueba() {
+        try {
+
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
     private void contingencia() {
         try {
 
@@ -436,7 +449,11 @@ public class FELESATest extends PBase {
             String json = contgen.generarJson(dtejson);
             String jsonFirmado = contgen.firmar(json,cert);
 
-            System.out.println(jsonFirmado);
+            JSONObject jObj = new JSONObject(jsonFirmado);
+
+            Boolean rslt=jObj.getBoolean("ok");
+            String token=jObj.getString("token");
+
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
         }
