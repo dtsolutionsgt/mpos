@@ -24,12 +24,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.stream.Collectors;
 
+import com.infile.generador.Generador;
 
 public class FELESATest extends PBase {
 
@@ -40,6 +45,7 @@ public class FELESATest extends PBase {
 
     private clsFactESA FactESA;
     private clsAnulESA AnulESA;
+    private Generador contgen;
 
     private clsD_facturaObj D_facturaObj;
     private clsD_facturadObj D_facturadObj;
@@ -76,6 +82,7 @@ public class FELESATest extends PBase {
 
             FactESA=new clsFactESA(this,FELUsuario,FELClave);
             AnulESA=new clsAnulESA(this,FELUsuario,FELClave);
+            contgen=new Generador(FELUsuario, FELClave, "02"); // 01 Sucursal, 02 Casa matriz
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
@@ -188,6 +195,14 @@ public class FELESATest extends PBase {
         } else {
             msgbox("incorrect");
         }
+    }
+
+    public void doCont(View view) {
+        String s1;
+
+        s1=numControlFEL(true,FELestabl,"1234567890");
+
+        contingencia();
     }
 
     //endregion
@@ -404,6 +419,47 @@ public class FELESATest extends PBase {
 
     //endregion
 
+    //region Contingencia
+
+    private void contingencia() {
+        try {
+
+            File fjson = new File(Environment.getExternalStorageDirectory(), "/dtemike.json");
+            File fcert = new File(Environment.getExternalStorageDirectory(), "/Certificado_06141106141147.crt");
+
+            InputStream dteStream = new FileInputStream(fjson);
+            InputStream certStream = new FileInputStream(fcert);
+
+            String dtejson = new BufferedReader(new InputStreamReader(dteStream)).lines().collect(Collectors.joining());
+            String cert = new BufferedReader(new InputStreamReader(certStream)).lines().collect(Collectors.joining());
+
+            String json = contgen.generarJson(dtejson);
+            String jsonFirmado = contgen.firmar(json,cert);
+
+            System.out.println(jsonFirmado);
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());
+        }
+    }
+
+    private String numControlFEL(boolean esFactura,String codEstab,String uid) {
+        String nc="DTE-",cpos;
+
+        if (esFactura) nc=nc+"01-";else nc=nc+"03-";
+
+        codEstab=mu.leftPad(codEstab,"0",4);
+        cpos=""+gl.codigo_ruta;
+        cpos=mu.leftPad(cpos,"0",4);
+        nc=nc+codEstab+cpos+"-";
+
+        uid=mu.leftPad(uid,"0",15);
+        nc=nc+uid;
+
+        return nc;
+    }
+
+    //endregion
+
     //region Download
 
 
@@ -514,7 +570,6 @@ public class FELESATest extends PBase {
     //endregion
 
     //region NIT SV
-
 
     public class NITValidator {
 

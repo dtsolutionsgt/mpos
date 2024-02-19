@@ -381,6 +381,25 @@ public class MiscUtils {
 		return str;
 	}
 
+	public  String leftPad(String input, String pChar, int desiredLength) {
+		char padChar=pChar.charAt(0);
+		int currentLength = input.length();
 
+		if (currentLength < desiredLength) {
+			int paddingLength = desiredLength - currentLength;
+			StringBuilder paddedString = new StringBuilder();
+
+			for (int i = 0; i < paddingLength; i++) {
+				paddedString.append(padChar);
+			}
+
+			paddedString.append(input);
+
+			return paddedString.toString();
+		} else {
+			// If the string is already equal or longer than the desired length, return the original string
+			return input;
+		}
+	}
 }
 

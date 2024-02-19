@@ -1359,14 +1359,11 @@ public class AppMethods {
 	}
 
     public void getURL() {
-
         gl.wsurl = "http://52.41.114.122/MPosWS_QA/Mposws.asmx";
         gl.timeout = 6000;
 
         try {
-
             File file1 = new File(Environment.getExternalStorageDirectory(), "/mposws.txt");
-
             if (file1.exists()) {
 
                 FileInputStream fIn = new FileInputStream(file1);
