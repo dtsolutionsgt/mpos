@@ -5,7 +5,7 @@
     android:installLocation="preferExternal"
     android:largeHeap="true"
     android:versionCode="5"
-    android:versionName="4.8.23.2">
+    android:versionName="4.8.24.0">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -40,6 +40,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity">
+
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -748,6 +749,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".ProductoLista"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysVisible" />
+        <activity
             android:name=".BarrilPendientes"
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -765,13 +770,11 @@
         <activity
             android:name=".FragmentTest"
             android:exported="false" />
-
         <activity
             android:name="com.dtsgt.mant.MantImpRedir"
             android:exported="false"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
     </application>
 
 </manifest>

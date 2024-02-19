@@ -2610,7 +2610,7 @@ public class Venta extends PBase {
                     gl.gstr = "";
                     browse = 1;
                     gl.prodtipo = 1;
-                    startActivity(new Intent(this, Producto.class));
+                    startActivity(new Intent(this, ProductoLista.class));
                     break;
                 case 51:
                     if (gl.rol==4) {
@@ -2706,7 +2706,6 @@ public class Venta extends PBase {
                     mitems.add(item);
                 }
             }
-
             if (pedidos | domenvio) {
                 item = clsCls.new clsMenu();
                 item.ID=16;item.Name="Para llevar";item.Icon=16;
