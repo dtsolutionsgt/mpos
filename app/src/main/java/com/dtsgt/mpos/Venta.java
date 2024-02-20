@@ -281,7 +281,7 @@ public class Venta extends PBase {
 
             validaEstadoLicencia();
 
-            if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
+            //if (getEstadoLicencia()==0) msgbox("Su licencia ha expirado.");
 
         } catch (Exception e) {
             msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());

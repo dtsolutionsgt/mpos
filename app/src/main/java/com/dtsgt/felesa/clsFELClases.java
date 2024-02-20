@@ -193,7 +193,7 @@ public class clsFELClases {
 
         public void CreditoCont(String iddoc,String establecimiento,int idruta,boolean produccion,int condicion_pago) throws JSONException {
             iddocumento=iddoc;
-            idDTE=numControlFEL(false,establecimiento,iddoc,idruta);
+            idDTE=numControlFEL(false,establecimiento,iddoc,idruta,mu);
 
             jsdoc = new JSONObject();
             jsitems=new JSONArray();
@@ -371,7 +371,7 @@ public class clsFELClases {
 
     //region Aux
 
-    private String numControlFEL(boolean esFactura,String codEstab,String uid,int idruta) {
+    private String numControlFEL(boolean esFactura,String codEstab,String uid,int idruta,MiscUtils mu) {
         String nc="DTE-",cpos;
 
         if (esFactura) nc=nc+"01-";else nc=nc+"03-";
