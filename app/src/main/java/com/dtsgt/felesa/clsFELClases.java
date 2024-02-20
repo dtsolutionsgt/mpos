@@ -187,6 +187,7 @@ public class clsFELClases {
         private JSONObject jsdoc,jso,jsitem,jshead,jsr,jsrd,jst;
         private JSONArray jsitems;
 
+
         public void CreditoCont(String iddoc,String establecimiento,int idruta,boolean produccion) throws JSONException {
             CreditoCont(iddoc,establecimiento,idruta,produccion,2);
         }
