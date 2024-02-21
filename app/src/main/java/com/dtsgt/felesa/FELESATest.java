@@ -421,7 +421,66 @@ public class FELESATest extends PBase {
 
     private void contingenciaCF() {
         //contingenciaCF_prueba();
-        contingenciaFact_prueba();
+        //contingenciaFact_prueba();
+
+        D_facturaObj.fill("ORDER BY COREL DESC");
+        corel=D_facturaObj.first().corel;
+
+        D_facturafObj.fill("WHERE (COREL='"+corel+"')");
+        dnum="11111111111128";
+
+        cnombre=D_facturafObj.first().nombre;
+        cnit=D_facturafObj.first().nit;cnit=cnit.replace("-","");
+        cdir=D_facturafObj.first().direccion;
+        ccorreo =D_facturafObj.first().correo;
+
+
+        //if (!esFactura) {
+            D_factura_svObj.fill("WHERE (COREL='" + corel + "')");
+            cgiro = D_factura_svObj.first().codigo_tipo_negocio + "";
+            cdep = D_factura_svObj.first().codigo_departamento;
+            cdep = cdep.substring(1, 3);
+            cmuni = D_factura_svObj.first().codigo_municipio;
+            cmuni = cmuni.substring(3, 5);
+        //}
+
+        contCF();
+    }
+
+    private boolean contCF() {
+
+        String jss;
+
+        try {
+            clsFELClases.JSONCreditoCont jcf=fclas.new JSONCreditoCont();
+            jcf.mu=mu;
+
+            jcf.CreditoCont(corel,FELestabl,101,false);
+            jcf.Receptor(dnum,cnit,cnombre,cgiro,cnombre);
+            jcf.Direccion(cdep,cmuni,cdir, ccorreo);
+
+            D_facturadObj.fill("WHERE (COREL='"+corel+"')");
+
+            for (int i = 0; i <D_facturadObj.count; i++) {
+                jcf.agregarProducto("Producto "+(i+1),
+                        D_facturadObj.items.get(i).cant,
+                        D_facturadObj.items.get(i).preciodoc,  // precio sin iva
+                        D_facturadObj.items.get(i).imp);
+            }
+
+            jcf.json();
+
+            jss=jcf.json;
+            cllave=jcont.certifica(jss);
+            if (!cllave.isEmpty()) {
+                msgbox("Certificado en mode de contingencia");return true;
+            } else {
+                msgbox("No se logro certificar:\n "+jcont.conterr);return false;
+            }
+        } catch (Exception e) {
+            msgbox(new Object(){}.getClass().getEnclosingMethod().getName()+" . "+e.getMessage());return false;
+        }
+
     }
 
     private void contingenciaCF_prueba() {

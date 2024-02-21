@@ -330,6 +330,7 @@ public class clsDocument {
             }
 
             if (s.contains("%%")) {
+                rep.addc(" ");
                 if (banderafel) rep.addc("DOCUMENTO TRIBUTARIO ELECTRÓNICO");
                 rep.addc(nombre);
                 s=s.replace("%%","");
